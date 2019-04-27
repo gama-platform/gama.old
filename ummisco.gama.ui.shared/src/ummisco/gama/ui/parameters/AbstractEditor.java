@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -283,11 +283,11 @@ public abstract class AbstractEditor<T>
 
 	protected abstract Control getEditorControl();
 
-	protected Control createEditorControl(final Composite composite) {
+	protected Control createEditorControl(final Composite comp) {
 		Control paramControl;
 		try {
-			paramControl = !isEditable ? createLabelParameterControl(composite)
-					: isCombo ? createComboParameterControl(composite) : createCustomParameterControl(composite);
+			paramControl = !isEditable ? createLabelParameterControl(comp)
+					: isCombo ? createComboParameterControl(comp) : createCustomParameterControl(comp);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("The editor for " + name + " could not be created");
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
@@ -296,7 +296,7 @@ public abstract class AbstractEditor<T>
 
 		final GridData data = getParameterGridData();
 		paramControl.setLayoutData(data);
-		paramControl.setBackground(composite.getBackground());
+		paramControl.setBackground(comp.getBackground());
 		addToolbarHiders(paramControl);
 		return paramControl;
 	}
@@ -327,10 +327,11 @@ public abstract class AbstractEditor<T>
 		}
 	}
 
-	public void createComposite(final Composite parent) {
-		this.parent = parent;
+	public void createComposite(final Composite comp) {
+		this.parent = comp;
 		internalModification = true;
-		titleLabel = createLeftLabel(parent, name, isSubParameter);
+		titleLabel = createLeftLabel(comp, name, isSubParameter);
+		titleLabel.setForeground(IGamaColors.BLACK.color()); // by default, see #2601
 		try {
 			setOriginalValue(getParameterValue());
 		} catch (final GamaRuntimeException e1) {
@@ -338,8 +339,8 @@ public abstract class AbstractEditor<T>
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 		}
 		currentValue = getOriginalValue();
-		composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(parent.getBackground());
+		composite = new Composite(comp, SWT.NONE);
+		composite.setBackground(comp.getBackground());
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.minimumWidth = 150;
 		composite.setLayoutData(data);
@@ -607,8 +608,9 @@ public abstract class AbstractEditor<T>
 		} else {
 			result = scope.getAgentVarValue(getAgent(), param.getName());
 		}
-		if (getExpectedType() == Types.STRING) { return (T) StringUtils
-				.toJavaString(GamaStringType.staticCast(scope, result, false)); }
+		if (getExpectedType() == Types.STRING) {
+			return (T) StringUtils.toJavaString(GamaStringType.staticCast(scope, result, false));
+		}
 		return (T) getExpectedType().cast(scope, result, null, false);
 
 	}
@@ -640,17 +642,18 @@ public abstract class AbstractEditor<T>
 		return d;
 	}
 
-	protected abstract Control createCustomParameterControl(Composite composite) throws GamaRuntimeException;
+	protected abstract Control createCustomParameterControl(Composite comp) throws GamaRuntimeException;
 
-	protected Control createLabelParameterControl(final Composite composite) {
-		fixedValue = new CLabel(composite, SWT.READ_ONLY | SWT.BORDER_SOLID);
+	protected Control createLabelParameterControl(final Composite comp) {
+		fixedValue = new CLabel(comp, SWT.READ_ONLY | SWT.BORDER_SOLID);
+		fixedValue.setForeground(IGamaColors.BLACK.color()); // force text color, see #2601
 		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue()
 				: StringUtils.toGaml(getOriginalValue(), false));
 		// addToolbarHiders(fixedValue);
 		return fixedValue;
 	}
 
-	protected Control createComboParameterControl(final Composite composite) {
+	protected Control createComboParameterControl(final Composite comp) {
 		possibleValues = new ArrayList<T>(param.getAmongValue(getScope()));
 		final String[] valuesAsString = new String[possibleValues.size()];
 		for (int i = 0; i < possibleValues.size(); i++) {
@@ -664,7 +667,8 @@ public abstract class AbstractEditor<T>
 				// }
 			}
 		}
-		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
+		combo = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
+		combo.setForeground(IGamaColors.BLACK.color()); // force text color, see #2601
 		combo.setItems(valuesAsString);
 		combo.select(possibleValues.indexOf(getOriginalValue()));
 		// combo.addModifyListener(new ModifyListener() {
@@ -855,8 +859,8 @@ public abstract class AbstractEditor<T>
 		return currentValue;
 	}
 
-	public void dontUseScope(final boolean dontUseScope) {
-		this.dontUseScope = dontUseScope;
+	public void dontUseScope(final boolean dont) {
+		this.dontUseScope = dont;
 
 	}
 

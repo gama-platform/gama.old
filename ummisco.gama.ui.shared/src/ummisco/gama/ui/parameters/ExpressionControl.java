@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -180,7 +180,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	protected Text createTextBox(final Composite comp, final int controlStyle) {
-		return new Text(comp, controlStyle);
+		Text t = new Text(comp, controlStyle);
+		t.setForeground(IGamaColors.BLACK.color()); // force the color, see #2601
+		return t;
 	}
 
 	@Override
