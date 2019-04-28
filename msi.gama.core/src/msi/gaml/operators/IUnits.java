@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.IUnits.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.IUnits.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -499,7 +499,7 @@ public interface IUnits {
 			altNames = { "weeks" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("week time unit: defines an exact duration of  7 days") }) public final static double week =
+			doc = { @doc ("week time unit: defines an exact duration of 7 days") }) public final static double week =
 					7d * day, weeks = week;
 
 	/** The Constant month. */
@@ -509,7 +509,7 @@ public interface IUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc (
-					value = "month time unit: does not define an exact duration. The duration will depend on the step/date at which this unit is computed.")) public final static double month =
+					value = "month time unit: defines an exact duration of 30 days. WARNING: this duration is of course not correct in terms of calendar")) public final static double month =
 							30 * day, months = month;
 
 	/** The Constant y. */
@@ -519,8 +519,8 @@ public interface IUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc (
-					value = "year time unit: does not define an exact duration. The duration will depend on the step/date at which this unit is computed.")) public final static double year =
-							12 * month, years = year, y = year;
+					value = "year time unit: defines an exact duration of 365 days. WARNING: this duration is of course not correct in terms of calendar")) public final static double year =
+							365 * day, years = year, y = year;
 
 	/** The Constant msec. */
 	@constant (
