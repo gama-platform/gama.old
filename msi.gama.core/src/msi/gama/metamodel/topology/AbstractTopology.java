@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.AbstractTopology.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.AbstractTopology.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology;
 
@@ -61,18 +61,14 @@ public abstract class AbstractTopology implements ITopology {
 	protected RootTopology root;
 	protected IContainer<?, IShape> places;
 	protected List<ISpecies> speciesInserted;
-	
+
 	// VARIABLES USED IN TORUS ENVIRONMENT
-	protected double[] adjustedXVector;
-	protected double[] adjustedYVector;
+	private double[][] adjustedXYVector = null;
 
 	public AbstractTopology(final IScope scope, final IShape env, final RootTopology root) {
 		setRoot(scope, root);
 		speciesInserted = new ArrayList<>();
 		environment = env;
-		if (isTorus()) {
-			createVirtualEnvironments();
-		}
 	}
 
 	@Override
@@ -87,7 +83,7 @@ public abstract class AbstractTopology implements ITopology {
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(copy);
 		for (int cnt = 0; cnt < 8; cnt++) {
-			at.setToTranslation(adjustedXVector[cnt], adjustedYVector[cnt]);
+			at.setToTranslation(getAdjustedXYVector()[cnt][0], getAdjustedXYVector()[cnt][1]);
 			geoms.add(at.transform(copy));
 		}
 		return geoms;
@@ -99,7 +95,7 @@ public abstract class AbstractTopology implements ITopology {
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(pt);
 		for (int cnt = 0; cnt < 8; cnt++) {
-			at.setToTranslation(adjustedXVector[cnt], adjustedYVector[cnt]);
+			at.setToTranslation(getAdjustedXYVector()[cnt][0], getAdjustedXYVector()[cnt][1]);
 			geoms.add(at.transform(pt));
 		}
 		return GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
@@ -123,49 +119,43 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	protected void createVirtualEnvironments() {
-		adjustedXVector = new double[8];
-		adjustedYVector = new double[8];
+		adjustedXYVector = new double[8][2];
 		final Envelope environmentEnvelope = environment.getEnvelope();
 
-		// shape host has not yet been initialized
-		// if ( environmentEnvelope == null ) {
-		// steps = new double[] {};
-		// return;
-		// }
 		final double environmentWidth = environmentEnvelope.getWidth();
 		final double environmentHeight = environmentEnvelope.getHeight();
 
 		// NORTH virtual environment
-		adjustedXVector[0] = 0.0;
-		adjustedYVector[0] = environmentHeight;
+		adjustedXYVector[0][0] = 0.0;
+		adjustedXYVector[0][1] = environmentHeight;
 
 		// NORTH-WEST virtual environment
-		adjustedXVector[1] = environmentWidth;
-		adjustedYVector[1] = environmentHeight;
+		adjustedXYVector[1][0] = environmentWidth;
+		adjustedXYVector[1][1] = environmentHeight;
 
 		// WEST virtual environment
-		adjustedXVector[2] = environmentWidth;
-		adjustedYVector[2] = 0.0;
+		adjustedXYVector[2][0] = environmentWidth;
+		adjustedXYVector[2][1] = 0.0;
 
 		// SOUTH-WEST virtual environment
-		adjustedXVector[3] = environmentWidth;
-		adjustedYVector[3] = -environmentHeight;
+		adjustedXYVector[3][0] = environmentWidth;
+		adjustedXYVector[3][1] = -environmentHeight;
 
 		// SOUTH virtual environment
-		adjustedXVector[4] = 0.0;
-		adjustedYVector[4] = -environmentHeight;
+		adjustedXYVector[4][0] = 0.0;
+		adjustedXYVector[4][1] = -environmentHeight;
 
 		// SOUTH-EAST virtual environment
-		adjustedXVector[5] = -environmentWidth;
-		adjustedYVector[5] = -environmentHeight;
+		adjustedXYVector[5][0] = -environmentWidth;
+		adjustedXYVector[5][1] = -environmentHeight;
 
 		// EAST virtual environment
-		adjustedXVector[6] = -environmentWidth;
-		adjustedYVector[6] = 0.0;
+		adjustedXYVector[6][0] = -environmentWidth;
+		adjustedXYVector[6][1] = 0.0;
 
 		// NORTH-EAST virtual environment
-		adjustedXVector[7] = -environmentWidth;
-		adjustedYVector[7] = environmentHeight;
+		adjustedXYVector[7][0] = -environmentWidth;
+		adjustedXYVector[7][1] = environmentHeight;
 
 	}
 
@@ -226,15 +216,15 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public void updateAgent(final Envelope previous, final IAgent agent) {
-		if(GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
+		if (GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
 			if (speciesInserted.contains(agent.getSpecies())) {
-				updateAgentBase(previous,agent);
+				updateAgentBase(previous, agent);
 			}
-		}
-		else {
-			updateAgentBase(previous,agent);
+		} else {
+			updateAgentBase(previous, agent);
 		}
 	}
+
 	public void updateAgentBase(final Envelope previous, final IAgent agent) {
 		if (previous != null && !previous.isNull()) {
 			getSpatialIndex().remove(previous, agent);
@@ -263,7 +253,7 @@ public abstract class AbstractTopology implements ITopology {
 
 			for (int cnt = 0; cnt < 8; cnt++) {
 				final AffineTransformation at = new AffineTransformation();
-				at.translate(adjustedXVector[cnt], adjustedYVector[cnt]);
+				at.translate(getAdjustedXYVector()[cnt][0], getAdjustedXYVector()[cnt][1]);
 				final GamaPoint newPt = new GamaPoint(at.transform(pt).getCoordinate());
 				if (environment.getGeometry().covers(newPt)) { return newPt; }
 			}
@@ -326,7 +316,7 @@ public abstract class AbstractTopology implements ITopology {
 			if (z > ((GamaShape) environment.getGeometry()).getDepth()) { return null; }
 			return point;
 		}
-		throw GamaRuntimeException.error("The environement must be a 3D environment (e.g shape <- cube(100).", null);
+		throw GamaRuntimeException.error("The environment must be a 3D environment (e.g shape <- cube(100).", null);
 
 	}
 
@@ -360,7 +350,7 @@ public abstract class AbstractTopology implements ITopology {
 	public IContainer<?, IShape> getPlaces() {
 		return places;
 	}
-	
+
 	protected void insertSpecies(IScope scope, ISpecies species) {
 		if (!this.speciesInserted.contains(species)) {
 			this.speciesInserted.add(species);
@@ -369,26 +359,31 @@ public abstract class AbstractTopology implements ITopology {
 			}
 		}
 	}
-	
+
 	protected void insertAgents(IScope scope, final IAgentFilter filter) {
-		if(GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
-			if(filter.getSpecies() != null) insertSpecies(scope,filter.getSpecies());
+		if (GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
+			if (filter.getSpecies() != null)
+				insertSpecies(scope, filter.getSpecies());
 			else {
 				for (IAgent ag : filter.getPopulation(scope)) {
-					insertSpecies(scope,ag.getSpecies());
+					insertSpecies(scope, ag.getSpecies());
 				}
 			}
 		}
 	}
-	
+
 	@Override
-	public Collection<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter, final int number) {
-		insertAgents(scope,filter);
-		if (!isTorus()) { return getSpatialIndex().firstAtDistance(scope, source, 0, filter, number, GamaListFactory.create()); }
+	public Collection<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter,
+			final int number) {
+		insertAgents(scope, filter);
+		if (!isTorus()) {
+			return getSpatialIndex().firstAtDistance(scope, source, 0, filter, number, GamaListFactory.create());
+		}
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
 		agents.remove(g0);
-		if (agents.keySet().size() <= number) return agents.values();
+		if (agents.keySet().size() <= number)
+			return agents.values();
 		List<Geometry> ggs = new ArrayList<>(agents.keySet());
 		scope.getRandom().shuffle(ggs);
 		final Ordering<Geometry> ordering = Ordering.natural().onResultOf(input -> g0.distance(input));
@@ -399,16 +394,14 @@ public abstract class AbstractTopology implements ITopology {
 		return shapes;
 	}
 
-
-
 	@Override
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
-		insertAgents(scope,filter);
+		insertAgents(scope, filter);
 		if (!isTorus()) { return getSpatialIndex().firstAtDistance(scope, source, 0, filter); }
 		IAgent result = null;
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
-		
+
 		double distMin = Double.MAX_VALUE;
 		for (final Geometry g1 : agents.keySet()) {
 			final IAgent ag = agents.get(g1);
@@ -476,8 +469,8 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public Collection<IAgent> getNeighborsOf(final IScope scope, final IShape source, final Double distance,
 			final IAgentFilter filter) throws GamaRuntimeException {
-		insertAgents(scope,filter);
-		
+		insertAgents(scope, filter);
+
 		if (!isTorus()) { return getSpatialIndex().allAtDistance(scope, source, distance, filter); }
 
 		// FOR TORUS ENVIRONMENTS ONLY
@@ -522,7 +515,7 @@ public abstract class AbstractTopology implements ITopology {
 	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
 			final boolean covered) {
 		if (source == null) { return Collections.EMPTY_SET; }
-		insertAgents(scope,f);
+		insertAgents(scope, f);
 		if (!isTorus()) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
 			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
@@ -565,6 +558,12 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public boolean isTorus() {
 		return root.isTorus();
+	}
+
+	protected double[][] getAdjustedXYVector() {
+		if (adjustedXYVector == null)
+			createVirtualEnvironments();
+		return adjustedXYVector;
 	}
 
 }
