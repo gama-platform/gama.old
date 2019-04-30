@@ -22,12 +22,12 @@ global {
 
 species DB_connection_tester skills: [SQLSKILL] {
 	init {
-		write "Current Time " + self timeStamp [];
-		write "Connection to SQLSERVER is " + self testConnection [params::SQLSERVER];
-		write "Connection to MySQL is " + self testConnection [params::MySQL];
-		write "Connection to SQLITE is " + self testConnection [params::SQLITE];
-		write "Connection to ORACLE is " + self testConnection [params::ORACLE];
-		write "Connection to POSTGRESQL is " + self testConnection [params::POSTGRES];
+		write "Current Time " + timeStamp();
+		write "Connection to SQLSERVER is " +  testConnection(SQLSERVER);
+		write "Connection to MySQL is " +  testConnection(MySQL);
+		write "Connection to SQLITE is " +  testConnection(SQLITE);
+		write "Connection to ORACLE is " +  testConnection(ORACLE);
+		write "Connection to POSTGRESQL is " +  testConnection(POSTGRES);
 	}
 
 }

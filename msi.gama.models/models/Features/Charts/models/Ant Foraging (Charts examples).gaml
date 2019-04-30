@@ -107,7 +107,7 @@ species ant skills: [moving] control: fsm {
 	}
 	//State to follow a road 
 	state followingRoad {
-		location <- (self choose_best_place []) as point ;
+		location <- (choose_best_place()) as point ;
 		transition to: carryingFood when: place.food > 0 {
 			do pick ;
 		}

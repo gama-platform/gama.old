@@ -17,7 +17,7 @@ global
 		create dummy;
 		ask dummy
 		{
-			if (self testConnection [params::PARAMS])
+			if (testConnection(PARAMS))
 			{
 				do executeUpdate params: PARAMS updateComm: "CREATE DATABASE spatial_DB";
 				write "spatial_BD database was created ";

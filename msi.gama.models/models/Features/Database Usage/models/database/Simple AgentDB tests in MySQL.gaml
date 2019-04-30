@@ -44,7 +44,7 @@ global {
 		write "and if the database testDB has been created." color: #red;
 
 		create DB_Accessor number: 1 {
-			if (testConnection (params::PARAMS) = false) {
+			if (!testConnection (PARAMS)) {
 				write "Impossible connection";
 			} else {
 				write "Connection of " + self;
@@ -53,7 +53,7 @@ global {
 
 		}
 
-		if (first(DB_Accessor) isConnected [] = false) {
+		if (!first(DB_Accessor).isConnected()) {
 			write "No connection.";
 			ask (DB_Accessor) {
 				do close;
@@ -84,14 +84,14 @@ global {
 
 species DB_Accessor parent: AgentDB {
 	reflex select {
-		list<list> t <- list<list> (select(select::"SELECT * FROM registration"));
+		list<list> t <- list<list> (select("SELECT * FROM registration"));
 		write "Select before updated " + t;
 	}
 
 	reflex update {
 		do executeUpdate updateComm: "UPDATE registration SET age = 30 WHERE id IN (100, 101)";
 		do executeUpdate updateComm: "DELETE FROM registration where id=103 ";
-		list<list> t <- list<list> (self select (select::"SELECT * FROM registration"));
+		list<list> t <- list<list> (select("SELECT * FROM registration"));
 		write "Select after updated " + t;
 	}
 

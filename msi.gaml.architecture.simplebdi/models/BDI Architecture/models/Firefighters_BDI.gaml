@@ -113,7 +113,7 @@ species firefighter skills: [moving] control: simple_bdi{
     plan gotoTakeWater intention: water_predicate priority:2 {
     	waterArea wa <- first(waterArea);
     	list<grille> voisins <-  (grille(location) neighbors_at (1)) + grille(location);
-			path cheminSuivi <- self goto(target: wa);
+			path cheminSuivi <-  goto(wa);
     	if (self distance_to wa <= 1) {
     		waterValue <- waterValue + 2.0;
 		}

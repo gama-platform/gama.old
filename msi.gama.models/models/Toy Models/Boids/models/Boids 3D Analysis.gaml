@@ -181,7 +181,7 @@ species flock
 		}
 		//Reflex to apply the cohesion on the boids agents
 		reflex cohesion when: apply_cohesion {
-			point acc <- (self compute_mass_center []) - location;
+			point acc <- compute_mass_center() - location;
 			acc <- acc / cohesion_factor;
 			velocity <- velocity + acc;
 		}

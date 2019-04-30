@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Dates.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.Dates.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -1005,7 +1005,7 @@ public class Dates {
 	}
 
 	static class DurationFormatter implements TemporalAccessor {
-		private static final DateTimeFormatter YMDHMS = DateTimeFormatter.ofPattern("y'y' M'm' d'd' HH:mm:ss");
+		private static final DateTimeFormatter YMDHMS = DateTimeFormatter.ofPattern("u'y' M'm' d'd' HH:mm:ss");
 		private static final DateTimeFormatter MDHMS = DateTimeFormatter.ofPattern("M' months' d 'days' HH:mm:ss");
 		private static final DateTimeFormatter M1DHMS = DateTimeFormatter.ofPattern("M' month' d 'days' HH:mm:ss");
 		private static final DateTimeFormatter M1D1HMS = DateTimeFormatter.ofPattern("M' month' d 'day' HH:mm:ss");
@@ -1069,8 +1069,9 @@ public class Dates {
 				return temporal.getLong(DAY_OF_MONTH) - 1l;
 			} else if (field == MONTH_OF_YEAR) {
 				return temporal.getLong(MONTH_OF_YEAR) - 1;
-			} else if (field == YEAR) { return temporal.getLong(YEAR)
-					- Dates.DATES_STARTING_DATE.getValue().getLong(YEAR); }
+			} else if (field == YEAR) {
+				return temporal.getLong(YEAR) - Dates.DATES_STARTING_DATE.getValue().getLong(YEAR);
+			}
 			return 0;
 		}
 

@@ -354,7 +354,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final ActionDescription action = sd.getAction(op);
 			if (action != null) {
 				final IExpression result = action(op, left, rightMember, action);
-				if (result != null) { return result; }
+				if (result != null) {
+					getContext().warning(
+							"This way of calling actions is deprecated. Please use the dotted notation (e.g. ag.action(..)) ",
+							IGamlIssue.DEPRECATED, rightMember, op);
+					return result;
+				}
 			}
 		}
 		// It is not an action, it must be an operator. We emit an error and
@@ -629,11 +634,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 */
 	@Override
 	public Arguments parseArguments(final ActionDescription action, final EObject o, final IDescription command,
-			final boolean compileArgValue) {
+			final boolean actionParameters) {
 		if (o == null) { return null; }
 		boolean completeArgs = false;
 		List<Expression> parameters = null;
 		if (o instanceof Array) {
+			// AD:#2596.
+			if (actionParameters)
+				command.warning("This way of passing arguments is deprecated. Please use (a1:v1, a2:v2) or (v1, v2)",
+						IGamlIssue.DEPRECATED, o);
 			parameters = EGaml.getExprsOf(((Array) o).getExprs());
 		} else if (o instanceof ExpressionList) {
 			parameters = EGaml.getExprsOf(o);
@@ -669,7 +678,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				ed = builder.create(exp/* , errors */);
 
 			}
-			if (ed != null && compileArgValue) {
+			if (ed != null && actionParameters) {
 				ed.compile(command);
 			}
 			// if (!errors.isEmpty()) {

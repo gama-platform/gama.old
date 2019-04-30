@@ -101,7 +101,7 @@ species prey skills: [moving] control: fsm {
 //Species predator which can move using the skill moving
 species predator skills: [moving] schedules: shuffle (list (predator)) {
 	geometry shape <- square (predator_size);
-	prey target_prey update: self choose_target_prey [];
+	prey target_prey update: self.choose_target_prey();
 	
 	//Change the target prey according to the prey who aren't fleeing if it doesn't have any yet
 	action choose_target_prey type: prey {

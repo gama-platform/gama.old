@@ -166,7 +166,7 @@ global {
 				float step_x <- step_distance * (cos (heading)) ;
 				float step_y <- step_distance * (sin (heading)) ; 
 				point tmp_location <- location + {step_x, step_y} ;
-				if (self in_bounds (tmp_location) ) {
+				if (self.in_bounds (tmp_location) ) {
 					location <- tmp_location ;
 					do separation (((ball overlapping (shape + ball_separation)) - self));
 				}
@@ -187,7 +187,7 @@ global {
 			float step_x <- step_distance * (cos (heading)) ;
 			float step_y <- step_distance * (sin (heading)) ;
 			point tmp_location <- location + {step_x, step_y} ;
-			if (self in_bounds (tmp_location)) {
+			if (self.in_bounds (tmp_location)) {
 				location <- tmp_location ;
 				do separation (nearby_balls: (ball overlapping (shape + ball_separation)) - self);
 			}
@@ -212,7 +212,7 @@ global {
 		
 		ball nearest_free_ball update: ( ball where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
 		group nearest_smaller_group update: ( ( (group as list) - self ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
-		base target update: (self get_nearer_target [])  ;
+		base target update: get_nearer_target()  ;
 		 
 		//Function to return the closest ball or small group of balls that the agent could capture
 		base get_nearer_target {
@@ -437,7 +437,7 @@ global {
 		//Reflex to capture group
 		reflex capture_group {
 			if ( (target_group != nil) and !(dead(target_group)) ) {
-				if (self can_capture [ a_group :: target_group]) {
+				if (can_capture (target_group)) {
 
 					capture target_group as: group_delegation returns: gds;
 	

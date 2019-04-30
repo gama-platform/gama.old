@@ -37,15 +37,15 @@ global {
 										) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 		}
 
-		write first(DB_accessor) select [params::PARAMS, select::SQLquery_idPoint];
+		write first(DB_accessor).select (PARAMS, SQLquery_idPoint);
 
-		create idPoint from: first(DB_accessor) select [params::PARAMS, select::SQLquery_idPoint] 
+		create idPoint from: first(DB_accessor).select(PARAMS, SQLquery_idPoint)
 		with: [name:: "idPointgrille", RRmm::"RR", Tmin::"Tmin", Tmax::"Tmax", Rglot::"Rglot", ETPmm::"ETPmm"];
 	}
 
 	reflex endSimu when: (cycle = 10) {
 		ask DB_accessor {
-			write "Data: " + (self select [params::PARAMS, select::"select * FROM " + res_DB]);
+			write "Data: " + (select(PARAMS, "select * FROM "));
 			do executeUpdate params: PARAMS updateComm: "DROP TABLE " + res_DB;
 		}
 
@@ -81,7 +81,7 @@ species DB_accessor skills: [SQLSKILL] {
 	
 	init {
 		// Test of the connection to the database
-		if (not (self testConnection [params::PARAMS])) {
+		if (!testConnection(PARAMS)) {
 			write "Connection impossible";
 			ask (world) {
 				do pause;
@@ -91,8 +91,8 @@ species DB_accessor skills: [SQLSKILL] {
 			write "Connection Database OK.";
 		}
 
-		write "" + list(self select [params::PARAMS, select::"SELECT * FROM meteo_table"]);
-		write "" + list(self select [params::PARAMS, select::SQLquery_idPoint]);
+		write "" + (select(PARAMS,"SELECT * FROM meteo_table"));
+		write "" + (select(PARAMS, SQLquery_idPoint));
 	}
 
 }
