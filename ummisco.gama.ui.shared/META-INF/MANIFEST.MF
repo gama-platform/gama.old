@@ -22,7 +22,9 @@ Require-Bundle: org.eclipse.swt,
  ummisco.gama.annotations,
  org.eclipse.ui.forms,
  org.eclipse.ui.editors,
- org.eclipse.e4.ui.model.workbench
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.core.expressions
 Export-Package: ummisco.gama.ui.access,
  ummisco.gama.ui.bindings,
  ummisco.gama.ui.commands,
