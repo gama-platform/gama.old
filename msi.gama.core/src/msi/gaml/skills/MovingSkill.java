@@ -483,6 +483,8 @@ public class MovingSkill extends Skill {
 				final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, dist, weigths);
 				if (pathFollowed == null) {
 					// scope.setStatus(ExecutionStatus.failure);
+					notMoving(agent);
+					
 					return null;
 				}
 				// scope.setStatus(ExecutionStatus.success);
@@ -492,6 +494,8 @@ public class MovingSkill extends Skill {
 			// scope.setStatus(ExecutionStatus.success);
 			return null;
 		}
+		notMoving(agent);
+		
 		// scope.setStatus(ExecutionStatus.failure);
 		return null;
 	}
@@ -568,11 +572,13 @@ public class MovingSkill extends Skill {
 		final IShape edge = rt instanceof IShape ? (IShape) rt : null;
 		final ITopology topo = rt instanceof ITopology ? (ITopology) rt : scope.getTopology();
 		if (goal == null) {
+			notMoving(agent);
 			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(),
 					false); }
 			return null;
 		}
 		if (topo == null) {
+			notMoving(agent);
 			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(),
 					false); }
 			return null;
@@ -583,8 +589,10 @@ public class MovingSkill extends Skill {
 			goal = ((GamaSpatialMatrix) topo.getPlaces()).getAgentAt(goal.getLocation()).getLocation();
 		}
 		if (source.equals(goal.getLocation())) {
+			notMoving(agent);
 			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(),
 					false); }
+		
 			return null;
 		}
 
@@ -625,6 +633,7 @@ public class MovingSkill extends Skill {
 			}
 		}
 		if (path == null) {
+			notMoving(agent);
 			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source,
 					GamaListFactory.<IShape> create(Types.GEOMETRY), false); }
 			return null;
@@ -641,6 +650,13 @@ public class MovingSkill extends Skill {
 		moveToNextLocAlongPathSimplified(scope, agent, path, maxDist, weigths);
 		// scope.setStatus(ExecutionStatus.success);
 		return null;
+	}
+	
+	
+	private void notMoving(IAgent agent) {
+		setRealSpeed(agent, 0.0);
+		agent.setAttribute("current_edge", null);
+		agent.setAttribute("current_path", null);
 	}
 
 	/**
