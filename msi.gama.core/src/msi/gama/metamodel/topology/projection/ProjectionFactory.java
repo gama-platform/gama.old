@@ -52,8 +52,8 @@ public class ProjectionFactory {
 	public CoordinateReferenceSystem targetCRS;
 
 	public void setWorldProjectionEnv(final IScope scope, final Envelope3D env) {
-		if (world == null) { return; }
-		world = new WorldProjection(scope, world.getInitialCRS(scope), env, this);
+		if (world != null) { return; }
+		world = new WorldProjection(scope, null, env, this);
 		// ((WorldProjection) world).updateTranslations(env);
 	}
 
@@ -224,6 +224,8 @@ public class ProjectionFactory {
 		gis.initialCRS = crs;
 		// gis.computeProjection();
 		gis.createTransformation(gis.computeProjection(scope));
+		
+		
 		return gis;
 	}
 

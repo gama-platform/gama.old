@@ -56,6 +56,8 @@ public class Projection implements IProjection {
 			// createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
 		}
 	}
+	
+	
 
 	@Override
 	public void createTransformation(final MathTransform t) {
@@ -134,7 +136,7 @@ public class Projection implements IProjection {
 
 	MathTransform computeProjection(final IScope scope) {
 		MathTransform crsTransformation = null;
-		// ProjectionFactory.computeTargetCRS(longitude, latitude);
+		if (initialCRS == null) return null;
 		try {
 			crsTransformation = CRS.findMathTransform(initialCRS, getTargetCRS(scope), true);
 		} catch (final FactoryException e) {
