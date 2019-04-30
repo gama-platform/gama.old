@@ -27,7 +27,7 @@ global {
 		create DB_Accessor;
 
 		// Test of the connection to the database
-		if (first(DB_Accessor) testConnection [params::PARAMS] = false) {
+		if (!first(DB_Accessor).testConnection(PARAMS)) {
 			write "Connection impossible";
 			do pause;
 		}
@@ -50,7 +50,7 @@ global {
 
 species DB_Accessor skills: [SQLSKILL] {
 	reflex select {
-		list<list> t <- list<list> (self select [params::PARAMS, select::"SELECT * FROM registration"]);
+		list<list> t <- list<list> (select(PARAMS, "SELECT * FROM registration"));
 		write "Select before updated " + t;
 		write "    Metadata (column names): " + t[0];
 		write "    Metadata (column types): " + t[1];
@@ -60,7 +60,7 @@ species DB_Accessor skills: [SQLSKILL] {
 	reflex update {
 		do executeUpdate params: PARAMS updateComm: "UPDATE registration SET age = 30 WHERE id IN (100, 101)";
 		do executeUpdate params: PARAMS updateComm: "DELETE FROM registration where id=103 ";
-		list<list> t <- list<list> (self select [params::PARAMS, select::"SELECT * FROM registration"]);
+		list<list> t <- list<list> (select(PARAMS, "SELECT * FROM registration"));
 		write "Select after updated " + t;
 	}
 

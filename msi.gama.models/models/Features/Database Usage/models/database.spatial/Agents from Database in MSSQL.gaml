@@ -28,7 +28,7 @@ global {
 	init {
 		//write "This model will work only if the corresponding database is installed" color: #red;
 		create DB_accessor {
-			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
+			create buildings from: select(PARAMS,QUERY)
 							 with:[ type::"nature", shape:: "geom"];
 		 }
 	}

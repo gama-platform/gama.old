@@ -93,7 +93,7 @@ species people skills:[moving] {
 	} 
 	 
 	reflex move when: the_target != nil {
-		path path_followed <- self goto [target::the_target, on::the_graph, return_path:: true];
+		path path_followed <- goto(target: the_target, on: the_graph, return_path: true);
 		list<geometry> segments <- path_followed.segments;
 		loop line over: segments {
 			float dist <- line.perimeter;

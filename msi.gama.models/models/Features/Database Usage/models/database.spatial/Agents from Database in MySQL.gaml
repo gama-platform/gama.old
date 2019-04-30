@@ -35,7 +35,7 @@ global {
 		write "";
 		
 		create DB_accessor {
-			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
+			create buildings from: select(PARAMS,QUERY) 
 							 with:[ type::"type", shape:: "geom"];
 		 }
 	}
