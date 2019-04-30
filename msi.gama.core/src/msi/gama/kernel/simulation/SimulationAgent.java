@@ -375,10 +375,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			geom = GamaGeometryType.buildBox(100, 100, 100, new GamaPoint(50, 50, 50));
 		}
 		final Envelope3D env = geom.getEnvelope();
-		if (getProjectionFactory().getWorld() != null) {
-			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
-			((WorldProjection) getProjectionFactory().getWorld()).updateUnit(getProjectionFactory().getUnitConverter());
-		}
+		if (getProjectionFactory().getWorld() == null) 
+			projectionFactory.setWorldProjectionEnv(GAMA.getRuntimeScope(), env);
+
+		((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
+		((WorldProjection) getProjectionFactory().getWorld()).updateUnit(getProjectionFactory().getUnitConverter());
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry.setGeometry(Transformations.translated_by(getScope(), geom, p));
 		if (getProjectionFactory().getUnitConverter() != null) {

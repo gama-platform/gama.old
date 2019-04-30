@@ -63,6 +63,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ITyped;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -651,7 +652,33 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		IProjection gis;
 		if (code == null) {
-			gis = scope.getSimulation().getProjectionFactory().getWorld();
+			boolean useNoSpecific = GamaPreferences.External.LIB_USE_DEFAULT.getValue();
+			if (!useNoSpecific) {
+				code = "EPSG:" +  GamaPreferences.External.LIB_OUTPUT_CRS.getValue();
+				try {
+					gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+				} catch (final FactoryException e1) {
+					throw GamaRuntimeException.error("The code " + code
+							+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
+				}
+			} else {
+				gis = scope.getSimulation().getProjectionFactory().getWorld();
+				if (gis == null || gis.getInitialCRS(scope) == null) {
+					boolean alreadyprojected = GamaPreferences.External.LIB_PROJECTED.getValue();
+					if (alreadyprojected) {
+						code = "EPSG:" +  GamaPreferences.External.LIB_TARGET_CRS.getValue();
+					} else {
+						code = "EPSG:" +  GamaPreferences.External.LIB_INITIAL_CRS.getValue();
+					}
+					try {
+						gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+					} catch (final FactoryException e1) {
+						throw GamaRuntimeException.error("The code " + code
+								+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
+					}
+				}
+			}
+			
 		} else {
 			try {
 				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
@@ -660,6 +687,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
 			}
 		}
+		
 		return gis;
 	}
 
