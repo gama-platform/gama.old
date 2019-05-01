@@ -4,6 +4,8 @@ update_latest_tag() {
 	echo "Upload continuous release to github"		
 	git config --global user.email "travis@travis-ci.org"
 	git config --global user.name "Travis CI"
+	git remote rm origin
+	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.git
 	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 	git fetch
 	git checkout master
@@ -19,6 +21,8 @@ update_alpha_tag() {
 	echo "Upload continuous release to github"		
 	git config --global user.email "travis@travis-ci.org"
 	git config --global user.name "Travis CI"
+	git remote rm origin
+	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.git
 	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 	git fetch
 	git checkout master
