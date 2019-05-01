@@ -27,9 +27,9 @@ update_alpha_tag() {
 	git fetch
 	git checkout master
 	git pull
-	git push origin :refs/tags/latest
-	git tag -d latest
-	git tag -fa latest -m "alpha"
+	git push origin :refs/tags/alpha
+	git tag -d alpha
+	git tag -fa alpha -m "alpha"
 	git push --tags -f
 	git ls-remote --tags origin
 	git show-ref --tags
