@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.core.runtime,
  msi.gama.core;bundle-version="1.7.0",
  com.google.guava,
  org.eclipse.e4.ui.model.workbench,
- org.eclipse.core.expressions;bundle-version="3.6.300"
+ org.eclipse.core.expressions
 Bundle-Vendor: UMMISCO
 Bundle-Version: 1.7.0.qualifier
 Bundle-ManifestVersion: 2
