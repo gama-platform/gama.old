@@ -974,7 +974,7 @@ public class Stats {
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
 			examples = { @example (
 					value = "dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)",
-					equals = "[]") })
+					equals = "[[0,1,2,3]]") })
 	public static IList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
 			final Integer minPts) throws GamaRuntimeException {
 
@@ -1011,7 +1011,7 @@ public class Stats {
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)",
-					isExecutable = false) })
+					equals = "[[0,2,3],[1]]") })
 	public static GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k,
 			final Integer maxIt) throws GamaRuntimeException {
 		final MersenneTwister rand = new MersenneTwister(scope.getRandom().getSeed().longValue());
@@ -1046,10 +1046,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "returns the dynamic time warping between the two series of value with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
+			value = "returns the dynamic time warping between the two series of values with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
 			examples = { @example (
 					value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)",
-					equals = "2.0") })
+					equals = "11.0") })
 	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2,
 			final int radius) throws GamaRuntimeException {
 		final int n1 = vals1.size();
@@ -1104,10 +1104,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "returns the dynamic time warping between the two series of value",
+			value = "returns the dynamic time warping between the two series of values",
 			examples = { @example (
-					value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0])",
-					equals = "2") })
+					value = "dtw([32.0,5.0,1.0,3.0],[1.0,10.0,5.0,1.0])",
+					equals = "42") })
 	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2)
 			throws GamaRuntimeException {
 		final int n1 = vals1.size();
@@ -1219,7 +1219,7 @@ public class Stats {
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)",
-					equals = "[]") })
+					equals = "[[0,2,3],[1]]") })
 	public static GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k)
 			throws GamaRuntimeException {
 		return KMeansPlusplusApache(scope, data, k, -1);
