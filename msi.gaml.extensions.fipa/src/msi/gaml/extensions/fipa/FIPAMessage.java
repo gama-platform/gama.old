@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'Message.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Message.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -26,7 +25,7 @@ import msi.gama.util.IList;
  * @author drogoul
  */
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class FIPAMessage extends GamaMessage {
 
 	/** The message. */
@@ -90,8 +89,8 @@ public class FIPAMessage extends GamaMessage {
 	 * @throws GamlException
 	 *             the gaml exception
 	 */
-	public FIPAMessage(final IAgent sender, final IList<IAgent> receivers, final IList content, final int performative,
-			final Conversation conversation) throws GamaRuntimeException {
+	public FIPAMessage(final IAgent sender, final IList<IAgent> receivers, final IList content,
+			final Performative performative, final Conversation conversation) throws GamaRuntimeException {
 		super(sender.getScope(), sender, null, content);
 		setSender(sender);
 		getData().setReceivers(receivers);
@@ -122,7 +121,7 @@ public class FIPAMessage extends GamaMessage {
 	 * @return the contents
 	 */
 	@Override
-	@getter(GamaMessage.CONTENTS)
+	@getter (GamaMessage.CONTENTS)
 	public Object getContents(final IScope scope) {
 		setUnread(false);
 		return getData().getContent();
@@ -135,7 +134,7 @@ public class FIPAMessage extends GamaMessage {
 	 *            the content
 	 */
 	@Override
-	@setter(GamaMessage.CONTENTS)
+	@setter (GamaMessage.CONTENTS)
 	public void setContents(final Object content) {
 		getData().setContent((IList) content);
 	}
@@ -157,7 +156,7 @@ public class FIPAMessage extends GamaMessage {
 	 * @see msi.gama.extensions.fipa.IMessage#getSender()
 	 */
 	@Override
-	@getter(FIPAMessage.SENDER)
+	@getter (FIPAMessage.SENDER)
 	public IAgent getSender() {
 		return getData().getSender();
 	}
@@ -168,7 +167,7 @@ public class FIPAMessage extends GamaMessage {
 	 * @param sender
 	 *            the sender
 	 */
-	@setter(FIPAMessage.SENDER)
+	@setter (FIPAMessage.SENDER)
 	public void setSender(final IAgent sender) {
 		if (getData() != null)
 			getData().setSender(sender);
@@ -179,7 +178,7 @@ public class FIPAMessage extends GamaMessage {
 	 *
 	 * @see msi.gama.extensions.fipa.IMessage#getPerformative()
 	 */
-	public int getPerformative() {
+	public Performative getPerformative() {
 		return getData().getPerformative();
 	}
 
@@ -188,7 +187,7 @@ public class FIPAMessage extends GamaMessage {
 	 *
 	 * @see msi.gama.extensions.fipa.IMessage#setPerformative(int)
 	 */
-	public void setPerformative(final int performative) {
+	public void setPerformative(final Performative performative) {
 		getData().setPerformative(performative);
 	}
 
