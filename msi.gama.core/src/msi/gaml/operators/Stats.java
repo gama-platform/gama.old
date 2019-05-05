@@ -1046,7 +1046,7 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "returns the dynamic time warping between the two series of values with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
+			value = "returns the dynamic time warping between the two series of values (step pattern used: symetric1) with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
 			examples = { @example (
 					value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)",
 					equals = "11.0") })
@@ -1104,7 +1104,7 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "returns the dynamic time warping between the two series of values",
+			value = "returns the dynamic time warping between the two series of values (step pattern used: symetric1)",
 			examples = { @example (
 					value = "dtw([32.0,5.0,1.0,3.0],[1.0,10.0,5.0,1.0])",
 					equals = "42") })
