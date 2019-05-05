@@ -1,13 +1,12 @@
 /*********************************************************************************************
- * 
  *
- * 'MessageData.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
+ * 'MessageData.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gaml.extensions.fipa;
 
@@ -15,10 +14,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.IList;
 
 /**
- * The Message class represents the piece of information transfered between
- * agents capable of communicating.
+ * The Message class represents the piece of information transfered between agents capable of communicating.
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class MessageData {
 
 	/** The name of sender. */
@@ -31,7 +29,7 @@ public class MessageData {
 	private IList content;
 
 	/** The performative of the message (defined by the FIPA). */
-	private int performative;
+	private Performative performative;
 
 	/** The associated conversation. */
 	private Conversation conversation;
@@ -39,8 +37,7 @@ public class MessageData {
 	/**
 	 * Instantiates a new message.
 	 */
-	public MessageData() {
-	}
+	public MessageData() {}
 
 	public void dispose() {
 		conversation = null;
@@ -51,7 +48,7 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.misc.current_development.IMessage#getSender()
 	 */
 	public IAgent getSender() {
@@ -60,10 +57,8 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * msi.misc.current_development.IMessage#setSender(msi.gama.metamodel.agent
-	 * .interfaces.BasicEntity)
+	 *
+	 * @see msi.misc.current_development.IMessage#setSender(msi.gama.metamodel.agent .interfaces.BasicEntity)
 	 */
 	public void setSender(final IAgent sender) {
 		this.sender = sender;
@@ -71,7 +66,7 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.misc.current_development.IMessage#getReceivers()
 	 */
 	public IList getReceivers() {
@@ -80,7 +75,7 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.misc.current_development.IMessage#setReceivers(java.util.List)
 	 */
 	public void setReceivers(final IList receivers) {
@@ -89,7 +84,7 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.misc.current_development.IMessage#getContent()
 	 */
 	public IList getContent() {
@@ -98,7 +93,7 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.misc.current_development.IMessage#setContent(java.lang.String)
 	 */
 	public void setContent(final IList content) {
@@ -109,44 +104,43 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.misc.current_development.IMessage#getPerformative()
 	 */
 	public String getPerformativeName() {
-		return FIPAConstants.performativeNames[performative];
+		return performative.name();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.extensions.fipa.IMessage#getPerformative()
 	 */
-	public int getPerformative() {
+	public Performative getPerformative() {
 		return performative;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * msi.misc.current_development.IMessage#setPerformative(java.lang.String)
+	 *
+	 * @see msi.misc.current_development.IMessage#setPerformative(java.lang.String)
 	 */
 	public void setPerformativeName(final String performative) {
-		this.performative = FIPASkill.performativeIndexes.get(performative);
+		this.performative = Performative.valueOf(performative);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.extensions.fipa.IMessage#setPerformative(int)
 	 */
-	public void setPerformative(final int performative) {
+	public void setPerformative(final Performative performative) {
 		this.performative = performative;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.misc.current_development.IMessage#getConversation()
 	 */
 	public Conversation getConversation() {
@@ -155,10 +149,8 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * msi.misc.current_development.IMessage#setConversation(msi.gama.metamodel
-	 * .agent.interfaces.BasicEntity)
+	 *
+	 * @see msi.misc.current_development.IMessage#setConversation(msi.gama.metamodel .agent.interfaces.BasicEntity)
 	 */
 	public void setConversation(final Conversation conv) {
 		conversation = conv;
@@ -166,24 +158,20 @@ public class MessageData {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		final StringBuffer retVal = new StringBuffer();
-		retVal.append("Message[sender : " + sender + ", receivers : " + receivers
-				+ /*
-					 * ", content : " + content +
-					 */
-				", conversation : " + conversation + ", performative : " + FIPAConstants.performativeNames[performative]
-				+ "]");
+		retVal.append("Message[sender : " + sender + ", receivers : " + receivers + ", conversation : " + conversation
+				+ ", performative : " + performative + "]");
 		return retVal.toString();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.misc.current_development.IMessage#getMessage()
 	 */
 	public MessageData getMessage() {

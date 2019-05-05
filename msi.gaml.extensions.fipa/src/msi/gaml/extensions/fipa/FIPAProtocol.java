@@ -2,223 +2,235 @@
  *
  * msi.gaml.extensions.fipa.FIPAProtocol.java, in plugin msi.gaml.extensions.fipa, is part of the source code of the
  * GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
+import static java.util.Arrays.asList;
+import static msi.gaml.extensions.fipa.Performative.accept_proposal;
+import static msi.gaml.extensions.fipa.Performative.agree;
+import static msi.gaml.extensions.fipa.Performative.cancel;
+import static msi.gaml.extensions.fipa.Performative.cfp;
+import static msi.gaml.extensions.fipa.Performative.failure;
+import static msi.gaml.extensions.fipa.Performative.inform;
+import static msi.gaml.extensions.fipa.Performative.not_understood;
+import static msi.gaml.extensions.fipa.Performative.propose;
+import static msi.gaml.extensions.fipa.Performative.proxy;
+import static msi.gaml.extensions.fipa.Performative.query;
+import static msi.gaml.extensions.fipa.Performative.refuse;
+import static msi.gaml.extensions.fipa.Performative.reject_proposal;
+import static msi.gaml.extensions.fipa.Performative.request;
+import static msi.gaml.extensions.fipa.Performative.request_when;
+import static msi.gaml.extensions.fipa.Performative.subscribe;
+import static org.jgrapht.Graphs.addOutgoingEdges;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * The Class FIPAProtocol.
- * 
+ *
  * @author drogoul
  */
-abstract public class FIPAProtocol {
+abstract public class FIPAProtocol extends DefaultDirectedGraph<ProtocolNode, Object> {
 
-	/** Constant field INITIATOR. */
-	protected static final Integer INITIATOR = 0;
+	public static enum Names {
 
-	/** Constant field PARTICIPANT. */
-	protected static final Integer PARTICIPANT = 1;
-
-	/**
-	 * A list of ProtocolNodes (performatives) that this protocol can begin with.
-	 */
-	private List<ProtocolNode> protocolRoots;
-
-	// TODO UCdetector: Remove unused code:
-	// /** The roots. */
-	// public static Object[] roots;
-
-	/** The protocols. */
-	private final static Map<String, FIPAProtocol> protocols = new HashMap<>();
-
-	static {
-		protocols.put(FIPAConstants.Protocols.FIPA_BROKERING_STR, new FIPABrokering());
-		protocols.put(FIPAConstants.Protocols.FIPA_ITERATED_CONTRACT_NET_STR, new FIPAIteratedContractNet());
-		protocols.put(FIPAConstants.Protocols.FIPA_CONTRACT_NET_STR, new FIPAContractNet());
-		protocols.put(FIPAConstants.Protocols.FIPA_PROPOSE_STR, new FIPAPropose());
-		protocols.put(FIPAConstants.Protocols.FIPA_QUERY_STR, new FIPAQuery());
-		protocols.put(FIPAConstants.Protocols.FIPA_REQUEST_STR, new FIPARequest());
-		protocols.put(FIPAConstants.Protocols.FIPA_REQUEST_WHEN_STR, new FIPARequestWhen());
-		protocols.put(FIPAConstants.Protocols.FIPA_SUBSCRIBE_STR, new FIPASubscribe());
-		protocols.put(FIPAConstants.Protocols.NO_PROTOCOL_STR, new NoProtocol());
-		for (final FIPAProtocol p : protocols.values()) {
-			p.computeProtocolRoots();
-		}
-	}
-
-	/**
-	 * Named.
-	 * 
-	 * @param name
-	 *            the name
-	 * 
-	 * @return the fIPA protocol
-	 */
-	protected static FIPAProtocol named(final String name) {
-		return protocols.get(name);
-	}
-
-	/**
-	 * Compute protocol roots.
-	 */
-	private void computeProtocolRoots() {
-		// Create the protocol tree
-		// protocolRoots = getProtocolTree(getRoots(), new TreeMap<Object[],
-		// List<ProtocolNode>>(Comparators.OBJECT_COMPARE));
-		// protocolRoots = getProtocolTree(getRoots(), new TreeMap<Object[],
-		// List<ProtocolNode>>());
-		protocolRoots = getProtocolTree(getRoots(), new HashMap<>());
-	}
-
-	/**
-	 * Produces a ProtocolNode tree based upon the given Object[] array.
-	 * 
-	 * @param previousNodes
-	 *            A map of previous nodes for loop detection
-	 * @param root
-	 *            the root
-	 * 
-	 * @return The List containing the top-level ConversationProtocol
-	 */
-	private List<ProtocolNode> getProtocolTree(final Object[] root,
-			final Map<Object[], List<ProtocolNode>> previousNodes) {
-
-		final List<ProtocolNode> tree = new ArrayList<>();
-		for (int i = 0; i < root.length / 4; i++) {
-			final ProtocolNode node = new ProtocolNode();
-			node.setPerformative((Integer) root[4 * i]);
-			node.setConversationState(((Integer) root[4 * i + 1]).intValue());
-			node.setSentByInitiator(((Integer) root[4 * i + 2]).equals(INITIATOR));
-
-			if (root[4 * i + 3] != null) {
-				// check for loop of the protocol.
-				if (previousNodes.containsKey(root[4 * i + 3])) {
-					node.setFollowingNodes(previousNodes.get(root[4 * i + 3]));
-				} else {
-					previousNodes.put(root, tree);
-					final List<ProtocolNode> subTree = getProtocolTree((Object[]) root[4 * i + 3], previousNodes);
-					node.setFollowingNodes(subTree);
-				}
-			} else {
-				node.setFollowingNodes(new ArrayList<ProtocolNode>());
+		fipa_brokering(new FIPAProtocol("fipa_brokering") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				addTree(iNode(proxy), iNode(cancel), pNode(refuse), pNode(agree));
+				addTree(iNode(cancel), iNode(proxy), pNode(failure), pNode(inform));
+				addTree(pNode(agree), iNode(cancel), pNode(failure), pNode(inform));
+				return iNode(proxy);
 			}
+		}), fipa_contract_net(new FIPAProtocol("fipa_contract_net") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				addTree(iNode(cfp), pNode(failure), iNode(cancel), pNode(refuse), pNode(propose));
+				addTree(pNode(propose), iNode(failure), iNode(cancel), iNode(accept_proposal), iNode(reject_proposal));
+				addTree(iNode(cancel), pNode(failure), pNode(inform));
+				addTree(iNode(accept_proposal), pNode(failure), pNode(inform));
+				return iNode(cfp);
+			}
+		}), fipa_iterated_contract_net(new FIPAProtocol("fipa_iterated_contract_net") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				addTree(iNode(cfp), pNode(failure), iNode(cancel), pNode(refuse), pNode(propose));
+				addTree(pNode(propose), iNode(failure), iNode(cancel), iNode(accept_proposal), iNode(reject_proposal),
+						iNode(cfp));
+				addTree(iNode(cancel), pNode(failure), pNode(inform));
+				addTree(iNode(accept_proposal), pNode(failure), pNode(inform));
+				return iNode(cfp);
+			}
+		}), fipa_propose(new FIPAProtocol("fipa_propose") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				addTree(iNode(propose), pNode(reject_proposal), pNode(accept_proposal), iNode(cancel));
+				addTree(iNode(cancel), pNode(failure), pNode(inform));
+				return iNode(propose);
+			}
+		}), fipa_query(new FIPAProtocol("fipa_query") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				addTree(iNode(query), pNode(refuse), pNode(agree), iNode(cancel));
+				addTree(pNode(agree), pNode(inform), pNode(failure));
+				addTree(iNode(cancel), pNode(inform), pNode(failure));
+				return iNode(query);
 
-			tree.add(node);
+			}
+		}), fipa_request(new FIPAProtocol("fipa_request") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				addTree(iNode(request), pNode(not_understood), iNode(cancel), pNode(agree), pNode(refuse));
+				addTree(iNode(cancel), pNode(failure), pNode(inform));
+				addTree(pNode(agree), pNode(failure), pNode(inform));
+				return iNode(request);
+			}
+		}), fipa_request_when(new FIPAProtocol("fipa_request_when") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				addTree(iNode(request_when), iNode(cancel), pNode(refuse), pNode(agree));
+				addTree(iNode(cancel), pNode(failure), pNode(inform));
+				addTree(iNode(agree), pNode(failure), pNode(inform));
+				return iNode(request_when);
+			}
+		}), fipa_subscribe(new FIPAProtocol("fipa_subscribe") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				addTree(iNode(subscribe), pNode(refuse), pNode(agree), iNode(cancel));
+				addTree(pNode(agree), pNode(inform), iNode(cancel), pNode(failure));
+				addTree(pNode(inform), iNode(cancel), pNode(failure));
+				addTree(iNode(cancel), pNode(inform), pNode(failure)); // ???
+				return iNode(subscribe);
+			}
+		}), no_protocol(new FIPAProtocol("no_protocol") {
+			@Override
+			protected ProtocolNode populateProtocolGraph() {
+				return null;
+			}
+		});
+
+		FIPAProtocol protocol;
+
+		Names(FIPAProtocol p) {
+			protocol = p;
 		}
 
-		return tree;
+	}
+
+	public FIPAProtocol(String name) {
+		super(Object.class);
+		this.name = name;
+		root = populateProtocolGraph();
+	}
+
+	private final ProtocolNode root;
+
+	private String name;
+
+	public final String getName() {
+		return name;
 	}
 
 	/**
-	 * Gets the roots.
-	 * 
-	 * @return the roots
+	 * Adds a subgraph (usually a tree) to the protocol. First parameter is the source node, others are the targets
+	 *
+	 * @param start
+	 * @param nodes
 	 */
-	private Object[] getRoots() {
-		try {
-			return (Object[]) this.getClass().getField("roots").get(null);
-		} catch (final IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (final SecurityException e) {
-			e.printStackTrace();
-		} catch (final IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (final NoSuchFieldException e) {
-			e.printStackTrace();
-		}
-
-		return null;
+	void addTree(ProtocolNode start, ProtocolNode... nodes) {
+		addOutgoingEdges(this, start, asList(nodes));
 	}
 
 	/**
-	 * Gets the index.
-	 * 
-	 * @return the index
+	 * Returns a node sent by a participant with this performative. If the node already exists, returns it. Otherwise,
+	 * creates it and adds it to the protocol nodes
+	 *
+	 * @param performative
+	 * @return
 	 */
-	// abstract public int getIndex();
+	ProtocolNode pNode(Performative performative) {
+		for (ProtocolNode node : this.vertexSet()) {
+			if (node.getPerformative() == performative && !node.isSentByInitiator()) { return node; }
+		}
+		ProtocolNode node = new ProtocolNode(this, performative, false);
+		addVertex(node);
+		return node;
+	}
 
-	abstract public String getName();
+	/**
+	 * Returns a node sent by the initiator with this performative. If the node already exists, returns it. Otherwise,
+	 * creates it and adds it to the protocol nodes
+	 *
+	 * @param performative
+	 * @return
+	 */
+	ProtocolNode iNode(Performative performative) {
+		for (ProtocolNode node : this.vertexSet()) {
+			if (node.getPerformative() == performative && node.isSentByInitiator()) { return node; }
+		}
+		ProtocolNode node = new ProtocolNode(this, performative, true);
+		addVertex(node);
+		return node;
+	}
+
+	protected abstract ProtocolNode populateProtocolGraph();
 
 	/**
 	 * Checks for protocol.
-	 * 
+	 *
 	 * @return true if a protocol tree is defined, false otherwise.
 	 */
-	public boolean hasProtocol() {
-		return !protocolRoots.isEmpty();
+	public final boolean hasProtocol() {
+		return root != null;
 	}
 
 	/**
-	 * Gets the root node.
-	 * 
-	 * @param performative
-	 *            the performative
-	 * 
-	 * @return the root node
-	 */
-	private ProtocolNode getRootNode(final int performative) {
-		for (final ProtocolNode node : protocolRoots) {
-			if (node.getPerformative() == performative) { return node; }
-		}
-		return null;
-	}
-
-	/**
-	 * Gets the node.
-	 * 
-	 * @param currentNode
-	 *            the current node
-	 * @param performative
-	 *            the performative
-	 * @param senderIsInitiator
-	 *            the sender is initiator
-	 * 
-	 * @return the node
-	 * 
-	 * @throws ProtocolErrorException
-	 *             the protocol error exception
+	 * Gets the node corresponding to a performative after the current node of the protocol.
 	 */
 	protected ProtocolNode getNode(final IScope scope, final FIPAMessage message, final ProtocolNode currentNode,
-			final int performative, final boolean senderIsInitiator) throws ProtocolErrorException {
-		if (currentNode == null) { return getRootNode(performative); }
-		final List<ProtocolNode> followingNodes = currentNode.getFollowingNodes();
-
-		if (followingNodes.size() == 0) { throw new ProtocolErrorException(scope,
-				"Message received in conversation which has already ended!"); }
-
+			final Performative performative, final boolean initiator) throws GamaRuntimeException {
+		if (currentNode == null) {
+			if (root != null && root.getPerformative() == performative)
+				return root;
+			return null;
+		}
+		final List<ProtocolNode> followingNodes = Graphs.successorListOf(this, currentNode);
+		if (followingNodes.size() == 0) {
+			throw GamaRuntimeException.warning("Message received in a conversation which has already ended!", scope);
+		}
 		final List<ProtocolNode> potentialMatchingNodes = new ArrayList<>();
 		for (final ProtocolNode followingNode : followingNodes) {
 			if (performative == followingNode.getPerformative()) {
 				potentialMatchingNodes.add(followingNode);
 			}
 		}
-
-		if (potentialMatchingNodes.isEmpty()) { throw new ProtocolErrorException(scope, "Protocol : " + this.getName()
-				+ ". Unexpected message received of performative : " + message.getPerformativeName()); }
-
+		if (potentialMatchingNodes.isEmpty()) {
+			throw GamaRuntimeException.warning("Protocol : " + this.getName()
+					+ ". Unexpected message received of performative : " + message.getPerformativeName(), scope);
+		}
 		ProtocolNode matchingNode = null;
 		for (final ProtocolNode potentialMatchingNode : potentialMatchingNodes) {
-			// verify the sender of the message against the expected sender
-			// defined in the protocol model.
-			if (senderIsInitiator == potentialMatchingNode.isSentByInitiator()) {
+			if (initiator == potentialMatchingNode.isSentByInitiator()) {
 				matchingNode = potentialMatchingNode;
 				break;
 			}
 		}
 
-		if (matchingNode == null) { throw new ProtocolErrorException(scope,
-				"Couldn't match expected message types and participant"); }
+		if (matchingNode == null) {
+			throw GamaRuntimeException.warning("Couldn't match expected message types and participant", scope);
+		}
 		return matchingNode;
 
 	}
