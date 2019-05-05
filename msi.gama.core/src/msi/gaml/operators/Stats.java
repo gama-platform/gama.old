@@ -1046,10 +1046,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "returns the dynamic time warping between the two series of values (step pattern used: symetric1) with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band) ",
+			value = "returns the dynamic time warping between the two series of value with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
 			examples = { @example (
 					value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)",
-					equals = "11.0") })
+					equals = "2.0") })
 	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2,
 			final int radius) throws GamaRuntimeException {
 		final int n1 = vals1.size();
@@ -1104,10 +1104,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "returns the dynamic time warping between the two series of value (step pattern used: symetric1)",
+			value = "returns the dynamic time warping between the two series of value",
 			examples = { @example (
 					value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0])",
-					equals = "11") })
+					equals = "2") })
 	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2)
 			throws GamaRuntimeException {
 		final int n1 = vals1.size();
