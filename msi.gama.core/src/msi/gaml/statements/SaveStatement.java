@@ -553,7 +553,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope, boolean geoJson)
 			throws GamaRuntimeException {
-		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
+		//Patrick: NO IDEA WHY THERE WAS THIS CODE ???? - SO, I COMMENTED IT....
+		/*if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
 			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
 			final IList<IShape> shapes = GamaListFactory.create();
 			for (int i = 0; i < collec.getNumGeometries(); i++) {
@@ -561,7 +562,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			saveShape(shapes, path, scope, geoJson);
 			return;
-		}
+		}*/
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = getGeometryType(agents);
 		specs.append("geometry:" + geomType);
@@ -597,48 +598,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public void saveGeoJson(final IList<? extends IShape> agents, final String path, final IScope scope)
-			throws GamaRuntimeException {
-		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
-			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
-			final IList<IShape> shapes = GamaListFactory.create();
-			for (int i = 0; i < collec.getNumGeometries(); i++) {
-				shapes.add(new GamaShape(collec.getGeometryN(i)));
-			}
-			saveGeoJson(shapes, path, scope);
-			return;
-		}
-		final StringBuilder specs = new StringBuilder(agents.size() * 20);
-		final String geomType = getGeometryType(agents);
-		specs.append("geometry:" + geomType);
-		try {
-			final SpeciesDescription species = agents instanceof IPopulation
-					? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription()
-					: agents.getGamlType().getContentType().getSpecies();
-			final Map<String, IExpression> attributes = GamaMapFactory.create();
-			if (species != null) {
-				if (withFacet != null) {
-					computeInitsFromWithFacet(scope, withFacet, attributes, species);
-				} else if (attributesFacet != null) {
-					computeInitsFromAttributesFacet(scope, attributes, species);
-				}
-				for (final String e : attributes.keySet()) {
-					final IExpression var = attributes.get(e);
-					String name = e.replaceAll("\"", "");
-					name = name.replaceAll("'", "");
-					final String type = type(var);
-					specs.append(',').append(name).append(':').append(type);
-				}
-			}
-
-			saveShapeFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
-		} catch (final GamaRuntimeException e) {
-			throw e;
-		} catch (final Throwable e) {
-			throw GamaRuntimeException.create(e, scope);
-		}
-
-	}
+	
 
 	public IProjection defineProjection(final IScope scope, final String path) {
 		String code = null;
