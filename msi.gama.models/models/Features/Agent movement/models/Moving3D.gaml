@@ -32,14 +32,14 @@ global {
 		  	else{
 		  		location <- {rnd(envSize), rnd(envSize), rnd(envSize)};
 		  	}
-		    color<-°red;	
+		    color<-#red;	
 		  }	
 		}
 		
 		if(movingType = "wander" or movingType = "complete"){
 			create wanderAgent number: number_of_agents{
 			  location <- {rnd(envSize), rnd(envSize), rnd(envSize)};
-			  color<-°green;	
+			  color<-#green;	
 			}
 		}
 		
@@ -47,7 +47,7 @@ global {
 			create gotoAgent number: number_of_agents{
 			  location <- {rnd(envSize), rnd(envSize), rnd(envSize)};
 			  myTarget <-{rnd(envSize),rnd(envSize),rnd(envSize)};
-			  color<-°yellow;
+			  color<-#yellow;
 			}
 		}
 		
@@ -66,7 +66,7 @@ global {
 			  location <- {floor(rnd(envSize)/mazeSize)*10, floor(rnd(envSize)/mazeSize)*10, floor(rnd(envSize)/mazeSize)*10};
 			  myTarget <-{0,0,0};
 			  speed <-0.1;
-			  color<-°orange;		
+			  color<-#orange;		
 			}
 		    mazeGraph <- as_distance_graph(cell, ["distance"::10.0,"species"::edge_agent]);
 		}

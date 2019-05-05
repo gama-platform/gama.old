@@ -85,7 +85,7 @@ species people skills: [moving] {
 
 experiment goto_network type: gui {
 	parameter "Type of optimizer" var: optimizer_type ;
-	parameter "Number of people" var: nb_people min: 1 max: 1000000;
+	parameter "Number of people" var: nb_people min: 1 max: 10000;
 	parameter "Computed all the shortest paths and save the results" var: save_shortest_paths;
 	parameter "Load the shortest paths from the file" var: load_shortest_paths;
 	
