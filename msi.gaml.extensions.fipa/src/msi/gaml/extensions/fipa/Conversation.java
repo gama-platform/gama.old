@@ -2,11 +2,11 @@
  *
  * msi.gaml.extensions.fipa.Conversation.java, in plugin msi.gaml.extensions.fipa, is part of the source code of the
  * GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
@@ -106,27 +106,27 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 *
 	 * @return The appropriate instance of Conversation for the protocol given
 	 *
-	 * @throws UnknownProtocolException
-	 *             the unknown protocol exception
-	 * @throws ProtocolErrorException
-	 *             the protocol error exception
-	 * @throws GamlException
+	 * @throws GamaRuntimeException
 	 *             the gaml exception
 	 *
-	 * @exception UnknownProtocolException
-	 *                Thrown if a Conversation class cannot be loaded for the given class
 	 */
 	protected Conversation(final IScope scope, final String protocolName, final FIPAMessage message)
 			throws GamaRuntimeException {
 		super(0, Types.get(IType.MESSAGE));
-		if (protocolName == null) { throw new UnknownProtocolException(scope, "undefined"); }
-		protocol = FIPAProtocol.named(protocolName);
-		if (protocol == null) { throw new UnknownProtocolException(scope, protocolName); }
+		if (protocolName == null) { throw GamaRuntimeException.error("Undefined protocol name", scope); }
+		try {
+			FIPAProtocol.Names p = FIPAProtocol.Names.valueOf(protocolName.replace('-', '_'));
+			protocol = p.protocol;
+		} catch (IllegalArgumentException e) {
+			throw GamaRuntimeException.error("Unknown protocol: " + protocolName, scope);
+		}
+
 		initiator = message.getSender();
 
 		participants.addAll(message.getReceivers());
-		if (participants.isEmpty() || participants.contains(null)) { throw new ProtocolErrorException(scope,
-				"The message : " + message.toString() + " has no receivers."); }
+		if (participants.isEmpty() || participants.contains(null)) {
+			throw GamaRuntimeException.warning("The message : " + message.toString() + " has no receivers.", scope);
+		}
 
 		MessageBroker.getInstance(scope).addConversation(this);
 	}
@@ -149,29 +149,17 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 * @param receiver
 	 *            The agent who receive the message
 	 *
-	 * @throws ProtocolErrorException
-	 *             the protocol error exception
-	 * @throws InvalidConversationException
-	 *             the invalid conversation exception
-	 * @throws ConversationFinishedException
-	 *             the conversation finished exception
-	 *
-	 * @exception ProtocolErrorException
-	 *                Thrown when the message to be added doesn't follow the correct protocol
-	 * @exception InvalidConversationException
-	 *                Thrown when the conversation ID of the ACLMessage is different to that of the conversation
-	 * @exception ConversationFinishedException
-	 *                Thrown when the conversation has already finished
 	 */
 	protected void addMessage(final IScope scope, final FIPAMessage message, final IAgent receiver)
-			throws ProtocolErrorException, InvalidConversationException, ConversationFinishedException {
+			throws GamaRuntimeException {
 
 		// OutputManager.debug(name + " adds message " + message);
 
 		// Check if the message belongs to this conversation
 		final Conversation msgConv = message.getConversation();
-		if (msgConv == null || msgConv != this) { throw new InvalidConversationException(scope,
-				"Conversation is invalid or not specified"); }
+		if (msgConv == null || msgConv != this) {
+			throw GamaRuntimeException.warning("Conversation is invalid or not specified", scope);
+		}
 
 		if (protocol.hasProtocol()) {
 			/** we use a protocol for this Conversation */
@@ -195,8 +183,8 @@ public class Conversation extends GamaList<FIPAMessage> {
 						}
 					}
 				} else {
-					throw new CommunicatingException(scope,
-							"Receiver " + receiver.getName() + " is not in the available message's receivers.");
+					throw GamaRuntimeException.warning(
+							"Receiver " + receiver.getName() + " is not in the available message's receivers.", scope);
 				}
 
 			} else if (participants.contains(message.getSender())) {
@@ -219,9 +207,10 @@ public class Conversation extends GamaList<FIPAMessage> {
 			if (senderIsInitiator) {
 				currentMessage = noProtocolNodeParticipantMap.get(receiver);
 
-				if (currentMessage != null && currentMessage
-						.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION) { throw new ConversationFinishedException(
-								scope, "Message received in conversation which has already ended." + message + this); }
+				if (currentMessage != null && currentMessage.getPerformative() == Performative.end_conversation) {
+					throw GamaRuntimeException.warning(
+							"Message received in conversation which has already ended." + message + this, scope);
+				}
 
 				if (currentMessage != null) {
 					noProtocolNodeParticipantMap.remove(receiver);
@@ -231,9 +220,10 @@ public class Conversation extends GamaList<FIPAMessage> {
 			} else if (participants.contains(message.getSender())) {
 				currentMessage = noProtocolNodeParticipantMap.get(message.getSender());
 
-				if (currentMessage != null && currentMessage
-						.getPerformative() == FIPAConstants.Performatives.END_CONVERSATION) { throw new ConversationFinishedException(
-								scope, "Message received in conversation which has already ended." + message + this); }
+				if (currentMessage != null && currentMessage.getPerformative() == Performative.end_conversation) {
+					throw GamaRuntimeException.warning(
+							"Message received in conversation which has already ended." + message + this, scope);
+				}
 
 				if (currentMessage != null) {
 					noProtocolNodeParticipantMap.remove(message.getSender());
@@ -322,7 +312,7 @@ public class Conversation extends GamaList<FIPAMessage> {
 		final Collection<FIPAMessage> finalMsgs = noProtocolNodeParticipantMap.values();
 		if (finalMsgs.isEmpty()) { return false; }
 		for (final FIPAMessage finalMsg : finalMsgs) {
-			if (finalMsg.getPerformative() != FIPAConstants.Performatives.END_CONVERSATION) { return false; }
+			if (finalMsg.getPerformative() != Performative.end_conversation) { return false; }
 		}
 		return true;
 	}
@@ -347,12 +337,6 @@ public class Conversation extends GamaList<FIPAMessage> {
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: "
 				+ this.getParticipants();
 	}
-
-	//
-	// @Override
-	// public IType type() {
-	// return Types.get(ConversationType.CONV_ID);
-	// }
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {

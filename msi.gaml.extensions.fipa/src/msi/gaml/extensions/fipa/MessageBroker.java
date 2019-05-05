@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.fipa.MessageBroker.java, in plugin msi.gaml.extensions.fipa,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.extensions.fipa.MessageBroker.java, in plugin msi.gaml.extensions.fipa, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
@@ -27,7 +27,7 @@ import msi.gaml.types.Types;
 
 /**
  * The Class MessageBroker.
- * 
+ *
  * TODO Provide this class with a copy of the scope with which it is created to simplify the API by removing the scope
  * in the parameters
  *
@@ -41,8 +41,7 @@ public class MessageBroker {
 	/**
 	 * Centralized storage of Conversations and Messages to facilitate Garbage Collection
 	 */
-	private final Map<IAgent, ConversationsMessages> conversationsMessages =
-			new HashMap<>();
+	private final Map<IAgent, ConversationsMessages> conversationsMessages = new HashMap<>();
 
 	/** The instance. */
 	private static Map<SimulationAgent, MessageBroker> instances = new HashMap<>();
@@ -95,14 +94,14 @@ public class MessageBroker {
 	 *             the gaml exception
 	 */
 	protected FIPAMessage failureMessageInReplyTo(final IScope scope, final FIPAMessage m) throws GamaRuntimeException {
-		if (m.getPerformative() == FIPAConstants.Performatives.FAILURE) { return null; }
+		if (m.getPerformative() == Performative.failure) { return null; }
 
 		final FIPAMessage f = new FIPAMessage(scope);
 		f.setSender(null);
 		final IList<IAgent> receivers = GamaListFactory.create(Types.AGENT);
 		receivers.add(m.getSender());
 		f.setReceivers(receivers);
-		f.setPerformative(FIPAConstants.Performatives.FAILURE);
+		f.setPerformative(Performative.failure);
 		f.setConversation(m.getConversation());
 		f.setContents(m.getContents(scope));
 		return f;
@@ -138,10 +137,6 @@ public class MessageBroker {
 	 * @param protocol
 	 *            the protocol name
 	 *
-	 * @throws UnknownProtocolException
-	 *             the unknown protocol exception
-	 * @throws ProtocolErrorException
-	 *             the protocol error exception
 	 * @throws GamlException
 	 *             the gaml exception
 	 */
