@@ -437,20 +437,16 @@ public class GamaShape implements IShape /* , IContainer */ {
 			if (geom.getNumGeometries() == 1) {
 				geometry = geom.getGeometryN(0);
 			} else if (geom instanceof MultiPolygon) {
-				System.out.println("ici: " + geom.getNumGeometries());
 				GamaCoordinateSequenceFactory f = new GamaCoordinateSequenceFactory();
 				Polygon gs[] = new Polygon[geom.getNumGeometries()];
 				for (int i = 0; i < geom.getNumGeometries(); i++ ) {
-					System.out.println("i: " +geom.getGeometryN(i));
 					ICoordinates coords = f.create(geom.getGeometryN(i).getCoordinates());
 					Coordinate[] coord = new Coordinate[coords.size()+1];
 					for (int j = 0; j < coords.size();j++) coord[j] = coords.getCoordinate(j);
 					coord[coords.size()] = coord[0];
 					gs[i] = GEOMETRY_FACTORY.createPolygon(coord);
 				}
-				System.out.println("lala");
 				geometry = GEOMETRY_FACTORY.createMultiPolygon(gs);
-				System.out.println("fini");
 			} else {
 				geometry = geom;
 			}
