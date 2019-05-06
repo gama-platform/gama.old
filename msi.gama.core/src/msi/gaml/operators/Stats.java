@@ -1194,17 +1194,18 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
-			value = "returns kurtosis value computed from the operand list of values",
+			value = "returns kurtosis value computed from the operand list of values (kurtosis = { [n(n+1) / (n -1)(n - 2)(n-3)] sum[(x_i - mean)^4] / std^4 } - [3(n-1)^2 / (n-2)(n-3)])",
 			special_cases = "if the length of the list is lower than 3, returns NaN",
 			examples = { @example (
 					value = "kurtosis ([1,2,3,4,5])",
-					equals = "1.0") })
+					equals = "-1.200000000000002") })
 	public static Double kurtosis(final IScope scope, final GamaList data) throws GamaRuntimeException {
 		final Kurtosis k = new Kurtosis();
 		final double[] values = new double[data.length(scope)];
 		for (int i = 0; i < values.length; i++) {
 			values[i] = Cast.asFloat(scope, data.get(i));
 		}
+		java.lang.System.out.println("KURT: "+k.evaluate(values, 0, values.length));
 		return k.evaluate(values);
 	}
 
