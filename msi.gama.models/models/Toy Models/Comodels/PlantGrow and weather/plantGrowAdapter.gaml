@@ -15,11 +15,13 @@ experiment Adapter type: gui
 
 	action transform_environment {		
 		loop p over: plotGrow {
-		
+			//p.shape <- p.shape translated_by centroid;
+			 
 			ask p {
 				shape <- shape translated_by myself.centroid;
-				// location <- location + myself.centroid;
+				//location <- location + myself.centroid;
 			}	
+			
 		}
 	}
 	

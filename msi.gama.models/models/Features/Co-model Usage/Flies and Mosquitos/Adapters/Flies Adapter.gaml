@@ -5,7 +5,7 @@
 * Tags: comodel
 */
 model flies_coupling
-import "Flies.gaml"
+import "../Models/Flies.gaml"
 
 global
 {
