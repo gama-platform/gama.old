@@ -1107,7 +1107,7 @@ public class Stats {
 			value = "returns the dynamic time warping between the two series of values (step pattern used: symetric1)",
 			examples = { @example (
 					value = "dtw([32.0,5.0,1.0,3.0],[1.0,10.0,5.0,1.0])",
-					equals = "42") })
+					equals = "38.0") })
 	public static Double OpDynamicTimeWarping(final IScope scope, final IList vals1, final IList vals2)
 			throws GamaRuntimeException {
 		final int n1 = vals1.size();
