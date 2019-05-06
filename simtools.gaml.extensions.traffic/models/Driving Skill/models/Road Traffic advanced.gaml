@@ -169,7 +169,7 @@ species intersection skills: [skill_road_node] {
 	aspect base3D {
 		if (is_traffic_signal) {
 			draw box(1, 1, 10) color: #black;
-			draw sphere(5) at: {location.x, location.y, 12} color: color_fire;
+			draw sphere(3) at: {location.x, location.y, 10} color: color_fire;
 		}
 
 	}
@@ -235,9 +235,9 @@ species people skills: [advanced_driving] {
 
 	aspect base3D {
 		point loc <- calcul_loc();
-		draw rectangle(vehicle_length, 10) + triangle(6) rotate: heading + 90 depth: 5 color: color at: loc;
+		draw rectangle(1,vehicle_length) + triangle(1) rotate: heading + 90 depth: 1 color: color at: loc;
 		if (breakdown) {
-			draw circle(2) at: loc color: #red;
+			draw circle(1) at: loc color: #red;
 		}
 
 	}

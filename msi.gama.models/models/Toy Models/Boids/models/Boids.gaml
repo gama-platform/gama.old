@@ -210,7 +210,39 @@ species obstacle skills: [moving] {
 }
 
 
-experiment boids_gui type: gui autorun: true{
+experiment boids_basic type: gui {
+	parameter 'Number of agents' var: number_of_agents;
+	parameter 'Number of obstacles' var: number_of_obstacles;
+	parameter 'Maximal speed' var: maximal_speed;
+	parameter 'Cohesion Factor' var: cohesion_factor;
+	parameter 'Alignment Factor' var: alignment_factor; 
+	parameter 'Minimal Distance'  var: minimal_distance; 
+	parameter 'Width/Height of the Environment' var: width_and_height_of_environment ;  
+	parameter 'Toroidal Environment ?'  var: torus_environment ; 
+	parameter 'Apply Cohesion ?' var: apply_cohesion ;
+	parameter 'Apply Alignment ?' var: apply_alignment ;   
+	parameter 'Apply Separation ?' var: apply_separation ;   
+	parameter 'Apply Avoidance ?' var: apply_avoid ;   
+	parameter 'Apply Wind ?' var: apply_wind ;     
+	parameter 'Moving Obstacles ?' var: moving_obstacles  ;    
+	parameter 'Direction of the wind' var: wind_vector ;  
+	
+	//Minimum duration of a step to better see the movements
+	float minimum_cycle_duration <- 0.01;
+
+	output {
+		display Sky type: opengl synchronized: true{ 
+			image '../images/sky.jpg' refresh: false;
+			species boids aspect: image;
+			species boids_goal;
+			species obstacle;
+		}
+
+	}
+}
+
+
+experiment boids_interactif type: gui autorun: true{
 	parameter 'Number of agents' var: number_of_agents;
 	parameter 'Number of obstacles' var: number_of_obstacles;
 	parameter 'Maximal speed' var: maximal_speed;
@@ -242,3 +274,5 @@ experiment boids_gui type: gui autorun: true{
 
 	}
 }
+
+

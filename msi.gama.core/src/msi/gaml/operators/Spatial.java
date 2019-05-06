@@ -4813,6 +4813,7 @@ public abstract class Spatial {
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.COLOR })
 		@doc (
 				value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z)",
+				deprecated = "Not used anymore",
 				examples = { @example (
 						value = "rgb_to_xyz(texture)",
 						equals = "a list of points",
