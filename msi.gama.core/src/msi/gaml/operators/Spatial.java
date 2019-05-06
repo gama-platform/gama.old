@@ -4649,9 +4649,9 @@ public abstract class Spatial {
 		@doc (
 				value = "Sets the z ordinate of the n-th point of a geometry to the value provided by the third argument",
 				masterDoc = true,
-				examples = { @example ("loop i from: 0 to: length(shape.points) - 1{"
-						+ "set shape <-  set_z (shape, i, 3.0);" + "}") },
+				examples = { @example (value="set_z (triangle(3), 1, 3.0)",test=false)},
 				see = {})
+		@test ("set_z (triangle(3), 1, 3.0).points[1].z = 3.0")
 		public static IShape set_z(final IScope scope, final IShape geom, final Integer index, final Double z) {
 			if (geom == null) { return null; }
 			final Geometry g = geom.getInnerGeometry();
@@ -4690,8 +4690,9 @@ public abstract class Spatial {
 				concept = {})
 		@doc (
 				value = "Sets the z ordinate of each point of a geometry to the value provided, in order, by the right argument",
-				examples = { @example ("shape <- triangle(3) set_z [5,10,14];") },
+				examples = { @example (value="triangle(3) set_z [5,10,14]",test=false) },
 				see = {})
+		@test ("list zzz <- (triangle(3) set_z [5,10,14]).points collect each.z; zzz[1] = 10")
 		public static IShape set_z(final IScope scope, final IShape geom, final IContainer<?, Double> coords) {
 			if (geom == null) { return null; }
 			final Geometry g = geom.getInnerGeometry();
