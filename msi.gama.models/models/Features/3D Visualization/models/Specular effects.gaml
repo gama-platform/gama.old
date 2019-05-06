@@ -116,7 +116,8 @@ species lamp {
 experiment specular_light type: gui {
 	parameter "turn on/off the ligth" var:button init:true;
 	output {
-		display "OpenGL Shaders" type: opengl background: #darkgreen ambient_light: 20 {
+		layout #split;
+		display "OpenGL Shaders" type: opengl background:#black ambient_light: 20 {
 			light 1 active:button type: point position: {7, 7, 48} color: #white draw_light: true;
 			species sphere_species aspect: base;
 			species cube_species aspect: base;
@@ -125,7 +126,7 @@ experiment specular_light type: gui {
 			species lamp aspect: base;
 		}
 
-		display "OpenGL Fixed Pipeline" type: opengl background: #darkgreen ambient_light: 20 {
+		display "OpenGL Fixed Pipeline" type: opengl background:#black ambient_light: 20 {
 			light 1 active:button type: point position: {7, 7, 48} color: #white draw_light: true;
 			species sphere_species aspect: base;
 			species cube_species aspect: base;
