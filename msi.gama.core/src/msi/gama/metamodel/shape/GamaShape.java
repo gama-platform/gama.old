@@ -36,6 +36,7 @@ import com.vividsolutions.jts.util.AssertionFailedException;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GamaCoordinateSequenceFactory;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.Scaling3D;
@@ -432,8 +433,27 @@ public class GamaShape implements IShape /* , IContainer */ {
 			// See Issue 725
 			return;
 		}
-		if (geom instanceof GeometryCollection && geom.getNumGeometries() == 1) {
-			geometry = geom.getGeometryN(0);
+		if (geom instanceof GeometryCollection) {
+			if (geom.getNumGeometries() == 1) {
+				geometry = geom.getGeometryN(0);
+			} else if (geom instanceof MultiPolygon) {
+				System.out.println("ici: " + geom.getNumGeometries());
+				GamaCoordinateSequenceFactory f = new GamaCoordinateSequenceFactory();
+				Polygon gs[] = new Polygon[geom.getNumGeometries()];
+				for (int i = 0; i < geom.getNumGeometries(); i++ ) {
+					System.out.println("i: " +geom.getGeometryN(i));
+					ICoordinates coords = f.create(geom.getGeometryN(i).getCoordinates());
+					Coordinate[] coord = new Coordinate[coords.size()+1];
+					for (int j = 0; j < coords.size();j++) coord[j] = coords.getCoordinate(j);
+					coord[coords.size()] = coord[0];
+					gs[i] = GEOMETRY_FACTORY.createPolygon(coord);
+				}
+				System.out.println("lala");
+				geometry = GEOMETRY_FACTORY.createMultiPolygon(gs);
+				System.out.println("fini");
+			} else {
+				geometry = geom;
+			}
 		} else {
 			geometry = geom;
 		}
