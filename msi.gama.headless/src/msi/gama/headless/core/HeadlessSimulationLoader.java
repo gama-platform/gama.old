@@ -124,12 +124,14 @@ public class HeadlessSimulationLoader {
 		final String fileName = myFile.getAbsolutePath();
 		if (!myFile.exists()) { throw new IOException("Model file does not exist: " + fileName); }
 		LOG(fileName + " model is being compiled...");
+		
 		final IModel model = GamlModelBuilder.compile(URI.createFileURI(fileName), errors);
-		if (model == null) { throw new GamaHeadlessException("Model cannot be compiled. See list of attached errors"); }
+		if (model == null) { 
+			LOG("Model compiled with following indications: \n"
+					+ (errors == null ? "" : StreamEx.of(errors).joining("\n")));	
+			throw new GamaHeadlessException("Model cannot be compiled. See list of attached errors \n"+StreamEx.of(errors).joining("\n")); }
 		// if (metaProperties != null)
 		// model.getDescription().collectMetaInformation(metaProperties);
-		LOG("Model compiled with following indications: \n"
-				+ (errors == null ? "" : StreamEx.of(errors).joining("\n")));
 		return model;
 	}
 
