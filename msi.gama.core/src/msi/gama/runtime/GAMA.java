@@ -148,21 +148,7 @@ public class GAMA {
 			}
 
 		}
-		
-		
-		System.out.println("coucou "+ seed);
-		
-		//currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), IKeyword.SEED,seed);
 		currentExperiment.open(seed);
-		/*if (seed != null) {
-			currentExperiment.getAgent().setSeed(seed);
-		}
-
-		// Test added to fix #2229
-		if (!currentExperiment.isBatch()) {
-			currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
-		}
-*/
 		controllers.add(currentExperiment.getController());
 		return currentExperiment;
 
