@@ -64,7 +64,7 @@ public class Comparison {
 		usages = { @usage("if one of the operands is nil, returns false") },
 		examples = @example(value = "13.0 > 7.0", equals = "true"),
 		see = {LT, GTE, LTE, "=", "!="})
-	@test(value="bool val <- (3 > 17); val = false; ")
+	@test(value="bool val <- (3 > 17); val = false ")
 	@test(value="val <- (13 > 7); val = true")
 	public static Boolean greater(final Integer a, final Integer b) {
 		if ( a == null || b == null ) { return false; }
