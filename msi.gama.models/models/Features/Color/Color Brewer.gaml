@@ -14,7 +14,7 @@ model ColorBrewer
 global {
 
 //number of colors
-int nb_classes<-14 min:5 max: 15;
+int nb_classes min:4 max: 15 init:4;
 
 int square_size <- 10;
 
@@ -31,10 +31,11 @@ string divergingPalette <- "BrBG" among:["PRGn","PuOr","RdGy","Spectral","RdYlGn
 string qualitativePalette <- "Pastel1" among:["Accents","Paired","Set3","Set2","Set1","Dark2","Pastel2","Pastel1"];
 
 //build the lists of colors from the palettes
-list<rgb> SequentialColors<-list<rgb>(brewer_colors(sequentialPalette));
-list<rgb> DivergingColors<-list<rgb>(brewer_colors(divergingPalette));
-list<rgb> QualitativeColors<-list<rgb>(brewer_colors(qualitativePalette));
+list<rgb> SequentialColors <- brewer_colors(sequentialPalette);
+list<rgb> DivergingColors <- brewer_colors(divergingPalette);
+list<rgb> QualitativeColors <- brewer_colors(qualitativePalette);
 
+list<string> actualPalettes;
 
 	init {
 		//if the palettes is not empty
@@ -42,10 +43,11 @@ list<rgb> QualitativeColors<-list<rgb>(brewer_colors(qualitativePalette));
 			//for each palette
 			loop i from: 0 to: length(palettes) - 1 {
 				//define a  list of nb_classes colors from the current palette
-				list<rgb> colors<-list<rgb>(brewer_colors(palettes[i],nb_classes));
+				list<rgb> colors <- brewer_colors(palettes[i],nb_classes);
 				
 				//define the colors of the corresponding cells
 				ask cell where (each.grid_y = i){
+					palette <- palettes[i];
 					color <- colors[grid_x,i];	
 				}
 			}
@@ -53,7 +55,9 @@ list<rgb> QualitativeColors<-list<rgb>(brewer_colors(qualitativePalette));
 	}
 }
 
-grid cell width:nb_classes height: max([1,length(palettes)]) ;
+grid cell width:nb_classes height: max([1,length(palettes)]) {
+	string palette;
+}
 
 
 //in this experiment, we do not use the cell agents, but we directlty draw the different palettes of colors
@@ -65,18 +69,18 @@ experiment BrewerPalette type: gui {
 		display View1 type:opengl draw_env:false{
 			graphics "brewer"{
 				//Sequential
-				draw "Sequential" at:{-world.shape.width*0.2,0} color:°black perspective:true;
+				draw "Sequential" at:{-world.shape.width*0.2,0} color:#black perspective:true;
 				loop i from:0 to:length(SequentialColors)-1{
 					draw square(square_size) color:SequentialColors[i] at: {square_size*(0.5 + i), 0, 0};
 				}
 				//Diverging
 				loop i from:0 to:length(DivergingColors)-1{
-					draw "Diverging" at:{-world.shape.width*0.2,1*square_size} color:°black perspective:false;
+					draw "Diverging" at:{-world.shape.width*0.2,1*square_size} color:#black perspective:false;
 					draw square(square_size) color:DivergingColors[i] at: {square_size*(0.5 + i), 1*square_size, 0};
 				}
 				//Qualitative		
 				loop i from:0 to:length(QualitativeColors)-1{
-					draw "Qualitative" at:{-world.shape.width*0.2,2*square_size} color:°black perspective:false;
+					draw "Qualitative" at:{-world.shape.width*0.2,2*square_size} color:#black perspective:false;
 					draw square(square_size) color:QualitativeColors[i] at: {square_size*(0.5 + i), 2*square_size, 0};
 				}
 		    }
@@ -90,6 +94,11 @@ experiment BrewerColoredAgent type: gui {
 	output {
 		display View1 {
 			grid cell lines: #black ;
+			graphics "Names" {
+				loop i from:0 to:length(palettes)-1 {
+					draw string(i)+":"+cell[0,i].palette at:cell[0,i].location-{9,-1,0} color:#black;
+				}
+			}
 		}	
 	}
 }
