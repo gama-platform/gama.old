@@ -19,7 +19,7 @@ global {
 species boat skills: [moving]{
 	point target <- any_location_in(world);
 	reflex move {
-		do goto target: target;
+		do goto target: target speed:0.5;
 		if (target = location) {
 			target <- any_location_in(world);
 		}	
@@ -29,7 +29,8 @@ species boat skills: [moving]{
 		//the location of a obj file is centroid of the bounding box, so we add with the "at" facet a translated along the z axis to place the boat on the water and not inside
 		//the size represents here the max size of the bounding box
 		//at last, we dynamically apply a rotation to the boat to make it head in direction of the heading of the agents.  
-		draw obj_file("../includes/boat/fishing-boat.obj", 90::{-1,0,0}) at: location + {0,0,9} size: 5 rotate: heading + 90;
+	    draw obj_file("../includes/boat/fishing-boat.obj", 90+ 5 * cos(cycle*10) ::{-1,0,0}) at: location + {0,0,9} size: 5 rotate: heading + 90;
+		
 	}
 }	
 
