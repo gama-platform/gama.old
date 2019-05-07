@@ -67,8 +67,7 @@ public class MulticriteriaAnalyzeOperator {
 		}
 		int cpt = 0;
 		double utilityMax = -Double.MAX_VALUE;
-		int indexCand = -1;
-		boolean first = true;
+		IList<Integer> bestCands = GamaListFactory.create(Types.INT);
 		for (final List cand : cands) {
 			int i = 0;
 			double utility = 0;
@@ -76,15 +75,16 @@ public class MulticriteriaAnalyzeOperator {
 				utility += weight.get(crit) * Cast.asFloat(scope, cand.get(i));
 				i++;
 			}
-			if (first || utilityMax < utility) {
+			if (utilityMax == utility) {
+				bestCands.add(cpt);
+			} else if (utilityMax < utility) {
+				bestCands.clear();
+				bestCands.add(cpt);
 				utilityMax = utility;
-				indexCand = cpt;
-				first = false;
 			}
 			cpt++;
 		}
-		return indexCand;
-
+		return bestCands.anyValue(scope);
 	}
 
 	public static void buildCombination(final List<String> criteria, final Set<String> currentSol,
