@@ -580,7 +580,7 @@ public abstract class SwingControl extends Composite {
 		assert Display.getCurrent() != null; // On SWT event thread
 		final Rectangle rect = super.getClientArea();
 		if (borderlessChild == this) {
-			assignInitialClientArea(rect);
+			//assignInitialClientArea(rect);
 		}
 		return rect;
 	}
