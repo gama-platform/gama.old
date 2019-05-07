@@ -46,6 +46,7 @@ import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -169,6 +170,7 @@ public class Containers {
 				can_be_const = true)
 		@doc (
 				value = "Allows to build a list of int representing all contiguous values from zero to the argument. The range can be increasing or decreasing. Passing 0 will return a singleton list with 0")
+		@test ("range(2) = [0,1,2]")
 		public static IList range(final IScope scope, final Integer end) {
 			if (end == 0) { return GamaListFactory.createWithoutCasting(Types.INT, Integer.valueOf(0)); }
 			return range(scope, 0, end);
@@ -180,7 +182,10 @@ public class Containers {
 				category = { IOperatorCategory.CONTAINER },
 				can_be_const = true)
 		@doc (
-				value = "Allows to build a list of int representing all contiguous values from the first to the second argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value")
+				value = "Allows to build a list of int representing all contiguous values from the first to the second argument. The range can be increasing or decreasing. "
+						+ "Passing the same value for both will return a singleton list with this value",
+						examples = {@example(value="range(0,2)", equals="[0,1,2]")})
+		@test("range(0,2) = [0,1,2]") 
 		public static IList range(final IScope scope, final Integer start, final Integer end) {
 			final Integer step = start > end ? -1 : 1;
 			return range(scope, start, end, step);

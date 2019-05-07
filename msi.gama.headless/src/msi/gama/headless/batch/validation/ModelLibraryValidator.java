@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
@@ -20,6 +21,7 @@ import msi.gaml.compilation.kernel.GamaBundleLoader;
 public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
 	private static ModelLibraryValidator instance;
+    public static final Logger LOGGER = Logger.getLogger(ModelLibraryValidator.class.getName());;
 
 	private ModelLibraryValidator() {}
 
@@ -60,7 +62,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {
 			log("Error in " + e.getURI().lastSegment() + ": " + e);
-			System.out.println("Error in " + e.getURI().lastSegment() + ": " + e);
+			LOGGER.info("Error in " + e.getURI().lastSegment() + ": " + ((GamlCompilationError)e).toString());
 			returnCode[0]++;
 		});
 	}

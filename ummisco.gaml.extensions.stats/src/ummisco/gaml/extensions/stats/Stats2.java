@@ -15,6 +15,7 @@ import cern.jet.stat.Descriptive;
 import cern.jet.stat.Gamma;
 import cern.jet.stat.Probability;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -63,9 +64,14 @@ public class Stats2 extends Stats {
 				expected_content_type = { IType.INT, IType.FLOAT },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the auto-correlation of a data sequence",
+				value = "Returns the auto-correlation of a data sequence given some lag",
 				comment = "",
-				examples = {})
+				examples = {@example (
+						value = "auto_correlation([1,0,1,0,1,0],2)",
+						equals = "1"),
+							@example (value = "auto_correlation([1,0,1,0,1,0],1)",
+								equals = "-1")				
+				})
 		public static Double opAutoCorrelation(final IScope scope, final IContainer data, final Integer lag) {
 
 			// TODO input parameters validation
@@ -95,9 +101,14 @@ public class Stats2 extends Stats {
 				expected_content_type = { IType.INT, IType.FLOAT },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the correlation of two data sequences",
+				value = "Returns the correlation of two data sequences (having the same size)",
 				comment = "",
-				examples = {})
+				examples = {@example (
+						value = "correlation([1,2,1,3,1,2], [1,2,1,3,1,2]) with_precision(4)",
+						equals = "1.2"),
+						@example (
+								value = "correlation([13,2,1,4,1,2], [1,2,1,3,1,2]) with_precision(2)",
+								equals = "-0.21")})
 		public static Double opCorrelation(final IScope scope, final IContainer data1, final IContainer data2) {
 
 			// TODO input parameters validation
@@ -125,7 +136,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the covariance of two data sequences",
 				comment = "",
-				examples = {})
+				examples = {@example(
+						value="covariance([13,2,1,4,1,2], [1,2,1,3,1,2]) with_precision(2)",
+						equals="-0.67")})
 		public static Double opCovariance(final IScope scope, final IContainer data1, final IContainer data2) {
 
 			// TODO input parameters validation
@@ -149,7 +162,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Durbin-Watson computation",
 				comment = "",
-				examples = {})
+				examples = {
+						@example(value="durbin_watson([13,2,1,4,1,2]) with_precision(4)",
+								equals="0.7231")
+				})
 		public static Double opDurbinWatson(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
@@ -173,7 +189,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the kurtosis (aka excess) of a data sequence",
 				comment = "",
-				examples = {})
+				examples = {
+						@example(value="kurtosis([13,2,1,4,1,2]) with_precision(4)",
+								equals="4.8083")
+				})
 		public static Double opKurtosis(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
@@ -201,7 +220,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the kurtosis (aka excess) of a data sequence",
 				comment = "",
-				examples = {})
+				examples = {
+						@example(value="kurtosis(3,12) with_precision(4)",
+						equals="-2.9999")
+				})
 		public static Double opKurtosis(final IScope scope, final Double moment4, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -228,7 +250,11 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the moment of k-th order with constant c of a data sequence",
 				comment = "",
-				examples = {})
+				examples = {
+						@example(
+								value="moment([13,2,1,4,1,2], 2, 1.2) with_precision(4)",
+								equals="24.74")
+				})
 		public static Double opMoment(final IScope scope, final IContainer data, final Integer k, final Double c) {
 
 			// TODO input parameters validation
@@ -253,7 +279,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the phi-quantile; that is, an element elem for which holds that phi percent of data elements are less than elem. The quantile need not necessarily be contained in the data sequence, it can be a linear interpolation. Note that the container holding the values must be sorted first",
 				comment = "",
-				examples = {})
+				examples = {@example(value="quantile([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 0.5)",
+						equals="35.5")
+					})
 		public static Double opQuantile(final IScope scope, final IContainer data, final Double phi) {
 
 			// TODO input parameters validation
@@ -278,7 +306,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns how many percent of the elements contained in the receiver are <= element. Does linear interpolation if the element is not contained but lies in between two contained elements. Note that the container holding the values must be sorted first",
 				comment = "",
-				examples = {})
+				examples = {
+						@example(value="quantile_inverse([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 35.5) with_precision(2)",
+						equals="0.52")
+				})
 		public static Double opQuantileInverse(final IScope scope, final IContainer data, final Double element) {
 
 			// TODO input parameters validation
@@ -303,7 +334,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the linearly interpolated number of elements in a list less or equal to a given element. The rank is the number of elements <= element. Ranks are of the form {0, 1, 2,..., sortedList.size()}. If no element is <= element, then the rank is zero. If the element lies in between two contained elements, then linear interpolation is used and a non integer value is returned. Note that the container holding the values must be sorted first",
 				comment = "",
-				examples = {})
+				examples = {
+						@example(value="rank_interpolated([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 35)",
+								equals="13.0")
+				})
 		public static Double opRankInterpolated(final IScope scope, final IContainer data, final Double element) {
 
 			// TODO input parameters validation
@@ -325,9 +359,17 @@ public class Stats2 extends Stats {
 				type = IType.FLOAT,
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the RMS (Root-Mean-Square) of a data sequence. The RMS of data sequence is the square-root of the mean of the squares of the elements in the data sequence. It is a measure of the average size of the elements of a data sequence.",
+				value = "Returns the RMS (Root-Mean-Square) of a data sequence. "
+						+ "The RMS of data sequence is the square-root of the mean of the squares "
+						+ "of the elements in the data sequence. It is a measure of the average size of "
+						+ "the elements of a data sequence.",
 				comment = "",
-				examples = {})
+				examples = {
+						@example(value=" data_sequence <- [6.0, 7.0, 8.0, 9.0]; "								
+								+ "list<float> squares <- data_sequence collect (each*each); "
+								+ "rms(length(data_sequence),sum(squares)) with_precision(4) ",
+								equals="7.5829")
+				})
 		public static Double opRms(final IScope scope, final Integer size, final Double sumOfSquares) {
 
 			// TODO input parameters validation
@@ -352,7 +394,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the skew of a data sequence, which is moment(data,3,mean) / standardDeviation3",
 				comment = "",
-				examples = {})
+				examples = {
+						@example(value="skew([1,3,5,6,9,11,12,13]) with_precision(2)",
+								equals="-0.14")
+				})
 		public static Double opSkew(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
