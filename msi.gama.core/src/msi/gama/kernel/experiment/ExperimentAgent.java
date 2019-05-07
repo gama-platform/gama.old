@@ -2,11 +2,11 @@
  *
  * msi.gama.kernel.experiment.ExperimentAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -53,7 +53,6 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
@@ -185,9 +184,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	public String getDefinedRng() {
-		if (GamaPreferences.External.CORE_RND_EDITABLE
-				.getValue()) { return (String) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.RNG)
-						.value(ownScope); }
+		if (GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
+			return (String) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.RNG).value(ownScope);
+		}
 		return GamaPreferences.External.CORE_RNG.getValue();
 	}
 
@@ -231,7 +230,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	/**
 	 * Redefinition of the callback method
-	 * 
+	 *
 	 * @see msi.gama.metamodel.agent.GamlAgent#_init_(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -246,7 +245,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	protected boolean automaticallyCreateFirstSimulation() {
-		return /*!getSpecies().isHeadless() ||*/ ((GamlSpecies) this.getSpecies()).belongsToAMicroModel();
+		// Now creates simulations by default, even for the headless experiments (see #2654)
+		return true; // !getSpecies().isHeadless() || ((GamlSpecies) this.getSpecies()).belongsToAMicroModel();
 	}
 
 	@Override
@@ -263,7 +263,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	/**
 	 * Method primDie()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.agent.MinimalAgent#primDie(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -354,7 +354,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
-		if (!(getSpecies().isHeadless()) && !GamaPreferences.External.CORE_RND_EDITABLE.getValue()) { return new ArrayList<>(); }
+		if (!(getSpecies().isHeadless()) && !GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
+			return new ArrayList<>();
+		}
 		final List<ExperimentParameter> params = new ArrayList<>();
 		final String cat = getExperimentParametersCategory();
 		ExperimentParameter p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG),
@@ -401,7 +403,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	/**
 	 * Called normally from UI directly. Does not notify the GUI.
-	 * 
+	 *
 	 * @param d
 	 */
 	public void setMinimumDurationExternal(final Double d) {
@@ -647,7 +649,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		/**
 		 * Method getRandom()
-		 * 
+		 *
 		 * @see msi.gama.runtime.IScope#getRandom()
 		 */
 		@Override
@@ -685,18 +687,21 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		public Object getGlobalVarValue(final String varName) {
 
 			// First case: we have the variable inside the experiment.
-			if (ExperimentAgent.this.hasAttribute(varName)
-					|| getSpecies().hasVar(varName)) { return super.getGlobalVarValue(varName); }
+			if (ExperimentAgent.this.hasAttribute(varName) || getSpecies().hasVar(varName)) {
+				return super.getGlobalVarValue(varName);
+			}
 			// Second case: the simulation is not null, so it should handle it
 			final SimulationAgent sim = getSimulation();
 			if (sim != null && !sim.dead()) { return sim.getScope().getGlobalVarValue(varName); }
 			// Third case, the simulation is null but the model defines this variable (see #2044). We then grab its
 			// initial value if possible
-			if (this.getModel().getSpecies()
-					.hasVar(varName)) { return getModel().getSpecies().getVar(varName).getInitialValue(this); }
+			if (this.getModel().getSpecies().hasVar(varName)) {
+				return getModel().getSpecies().getVar(varName).getInitialValue(this);
+			}
 			// Fourth case: this is a parameter, so we get it from the species
-			if (getSpecies()
-					.hasParameter(varName)) { return getSpecies().getExperimentScope().getGlobalVarValue(varName); }
+			if (getSpecies().hasParameter(varName)) {
+				return getSpecies().getExperimentScope().getGlobalVarValue(varName);
+			}
 			// Fifth case: it is an extra parameter
 			return extraParametersMap.get(varName);
 		}
@@ -752,9 +757,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	public Iterable<IOutputManager> getAllSimulationOutputs() {
 		final SimulationPopulation pop = getSimulationPopulation();
-		if (pop != null) { return Iterables
-				.filter(Iterables.concat(Iterables.transform(pop, each -> each.getOutputManager()),
-						Collections.singletonList(getOutputManager())), each -> each != null); }
+		if (pop != null) {
+			return Iterables.filter(Iterables.concat(Iterables.transform(pop, each -> each.getOutputManager()),
+					Collections.singletonList(getOutputManager())), each -> each != null);
+		}
 		return Collections.EMPTY_LIST;
 	}
 
@@ -767,7 +773,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	/**
 	 * Method closeSimulation()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IExperimentAgent#closeSimulation(msi.gama.kernel.simulation.SimulationAgent)
 	 */
 	@Override
@@ -782,7 +788,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	/**
 	 * Method getOutputManager()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.ITopLevelAgent#getOutputManager()
 	 */
 	@Override
