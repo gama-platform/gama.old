@@ -14,7 +14,7 @@ model ColorBrewer
 global {
 
 //number of colors
-int nb_classes min:4 max: 15 init:4;
+int nb_classes<-14 min:1 max: 15;
 
 int square_size <- 10;
 
