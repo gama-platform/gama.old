@@ -47,7 +47,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 			"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.tree",
 			"msi.gama.util.file", "msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
 			"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
-			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gaml.extensions.genstar",
+			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators",
 			"msi.gama.common.interfaces", "msi.gama.extensions.messaging", "msi.gama.metamodel.population" };
 
 	private ProcessorContext context;
