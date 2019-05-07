@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
+import org.eclipse.xtext.serializer.diagnostic.ISerializationDiagnostic.ToString;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,6 +61,14 @@ public class ExperimentJob implements IExperimentJob {
 
 	public static class ListenedVariable {
 
+		public class NA{
+			private NA(){}
+			
+			@Override
+			public String toString(){
+				return "NA";
+			}
+		}
 		String name;
 		public int width;
 		public int height;
@@ -69,7 +78,13 @@ public class ExperimentJob implements IExperimentJob {
 		Object value;
 		long step;
 		String path;
-
+		private boolean isNa;
+		private Object setNaValue() {
+			this.value = new NA();
+			this.isNa = true;
+			return this.value;
+		}
+		
 		public ListenedVariable(final String name, final int width, final int height, final int frameRate, final OutputType type,
 				final String outputPath) {
 			this.name = name;
@@ -78,6 +93,7 @@ public class ExperimentJob implements IExperimentJob {
 			this.frameRate = frameRate;
 			this.type = type;
 			this.path = outputPath;
+			this.setNaValue();
 		}
 
 		public String getName() {
@@ -85,10 +101,15 @@ public class ExperimentJob implements IExperimentJob {
 		}
 
 		public void setValue(final Object obj, final long st, final DataType typ) {
-			value = obj;
+			this.isNa = false; 
+			value = obj == null? setNaValue():obj;
 			this.step = st;
 			this.dataType = typ;
 		}
+		public void setValue(final Object obj, final long st) {
+			setValue(obj, st, this.dataType);
+		}
+
 
 		public Object getValue() {
 			return value;
@@ -327,18 +348,15 @@ public class ExperimentJob implements IExperimentJob {
 			if (this.step % v.frameRate == 0) {
 				final RichOutput out = simulator.getRichOutput(v);
 				if (out == null || out.getValue() == null) {
-					// LOGGER UNE ERREUR
-					// GAMA.reportError(this.
-					// .getCurrentSimulation().getScope(), g,
-					// shouldStopSimulation)
 				} else if (out.getValue() instanceof BufferedImage) {
 					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step,
 							out.getType());
 				} else {
 					v.setValue(out.getValue(), out.getStep(), out.getType());
 				}
-
 			}
+			else
+				v.setValue(null, this.step);
 		}
 		if (this.outputFile != null) {
 			this.outputFile.writeResultStep(this.step, this.listenedVariables);

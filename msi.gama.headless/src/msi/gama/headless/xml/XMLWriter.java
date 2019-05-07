@@ -55,7 +55,7 @@ public class XMLWriter implements Writer {
 			sb.append("\t\t<Variable name='").append(vars[i].getName()).append("' type='").append(vars[i].getDataType().name()).append("'>").append(vars[i].getValue())
 				.append("</Variable>\n");
 		}
-		sb.append("\n\t</Step>\n");
+		sb.append("\t</Step>\n");
 		try {
 			this.file.write(sb.toString());
 			this.file.flush();
