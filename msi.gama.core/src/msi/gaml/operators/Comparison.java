@@ -62,8 +62,10 @@ public class Comparison {
 	@doc(value = "true if the left-hand operand is greater than the right-hand operand, false otherwise.",
 		masterDoc = true,
 		usages = { @usage("if one of the operands is nil, returns false") },
-		examples = @example(value = "3 > 7", equals = "false"),
+		examples = @example(value = "13.0 > 7.0", equals = "true"),
 		see = {LT, GTE, LTE, "=", "!="})
+	@test(value="bool val <- (3 > 17); val = false; ")
+	@test(value="val <- (13 > 7); val = true")
 	public static Boolean greater(final Integer a, final Integer b) {
 		if ( a == null || b == null ) { return false; }
 		return a > b;
@@ -230,7 +232,7 @@ public class Comparison {
 		// return !(a < b) && !(a > b);
 	}
 
-	@operator(value = { "!=", "<>" }, can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = { IConcept.COMPARISON })
+	@operator(value = {"!="}, can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = { IConcept.COMPARISON })
 	@doc(value = "true if both operands are different, false otherwise",
 		masterDoc = true,
 		examples = { @example(value = "3.0 != 3.0", equals = "false"), @example(value = "4.0 != 4.7", equals = "true") },
@@ -242,7 +244,7 @@ public class Comparison {
 		// return a < b || a > b;
 	}
 	
-	@operator(value = { "!=", "<>" }, can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = {})
+	@operator(value = { "!=" }, can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = {})
 	@doc(value = "returns true if both operands are different, false otherwise", examples = {
 		@example(value = "3 != 3.0", equals = "false"), @example(value = "4 != 4.7", equals = "true") }, see = { "=" })
 	public static Boolean different(final Integer a, final Double b) {
@@ -250,7 +252,7 @@ public class Comparison {
 		// return !(a < b) && !(a > b);
 	}
 
-	@operator(value = { "!=", "<>" }, can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = {})
+	@operator(value = { "!=" }, can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = {})
 	@doc(value = "returns true if both operands are different, false otherwise", examples = {
 		@example(value = "3.0 != 3", equals = "false"), @example(value = "4.7 != 4", equals = "true") }, see = { "=" })
 	public static Boolean different(final Double a, final Integer b) {
@@ -311,7 +313,7 @@ public class Comparison {
 		return a == null ? b == null : a.equals(b);
 	}
 
-	@operator(value = { "!=", "<>" }, can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = {})
+	@operator(value = { "!=" }, can_be_const = true, category = { IOperatorCategory.COMPARISON }, concept = {})
 	@doc(value = " Returns false if the two operands are identical (i.e., the same object) or equal. Comparisons between nil values are permitted.",
 		examples = { @example(value = "[2,3] != [2,3]", equals = "false"),
 			@example(value = "[2,4] != [2,3]", equals = "true") })

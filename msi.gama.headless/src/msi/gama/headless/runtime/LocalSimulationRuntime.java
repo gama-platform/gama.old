@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -19,6 +20,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.HeadlessListener;
+import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.IDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -163,7 +165,8 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	@Override
 	public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
 		// return lockUnLock( fl,null, null) ; //lockModel(fl); //
-		return HeadlessSimulationLoader.loadModel(fl); // lockModel(fl); //mdl.c;
+		List<GamlCompilationError> errors= new ArrayList<GamlCompilationError>();
+		return HeadlessSimulationLoader.loadModel(fl,errors); // lockModel(fl); //mdl.c;
 	}
 
 	@Override
@@ -190,28 +193,37 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 
 		@Override
 		public void run() {
+			boolean noErrorFound = true;
 			try {
 				final BufferedWriter file = new BufferedWriter(new FileWriter(Globals.OUTPUT_PATH + "/"
 						+ Globals.CONSOLE_OUTPUT_FILENAME + "-" + si.getExperimentID() + ".txt"));
 				((HeadlessListener) GAMA.getHeadlessGui()).registerJob(file);
 			} catch (final IOException e1) {
 				e1.printStackTrace();
+				noErrorFound = false;
 			}
 			try {
-				si.loadAndBuild(this.runtime);
+				if(noErrorFound)
+					si.loadAndBuild(this.runtime);
 
 			} catch (final InstantiationException e) {
+				noErrorFound = false;
 				e.printStackTrace();
 			} catch (final IllegalAccessException e) {
+				noErrorFound = false;
 				e.printStackTrace();
 			} catch (final ClassNotFoundException e) {
+				noErrorFound = false;
 				e.printStackTrace();
 			} catch (final IOException e) {
+				noErrorFound = false;
 				e.printStackTrace();
 			} catch (final GamaHeadlessException e) {
+				noErrorFound = false;
 				e.printStackTrace();
 			}
-			si.playAndDispose();
+			if(noErrorFound)
+				si.playAndDispose();
 			((HeadlessListener) GAMA.getHeadlessGui()).leaveJob();
 			runtime.closeSimulation(this);
 			runtime.releaseModel(si.getSourcePath(), si.getSimulation().getModel());
