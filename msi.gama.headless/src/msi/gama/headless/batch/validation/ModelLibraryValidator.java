@@ -43,6 +43,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 			}
 		}
 
+		System.out.println(code[0]);
 		log("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
 				+ " compilation errors found");
 		return code[0];
@@ -59,6 +60,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {
 			log("Error in " + e.getURI().lastSegment() + ": " + e);
+			System.out.println("Error in " + e.getURI().lastSegment() + ": " + e);
 			returnCode[0]++;
 		});
 	}
