@@ -450,6 +450,9 @@ public class Containers {
 							value = "6 in [1::2, 3::4, 5::6]",
 							equals = "true") },
 			see = { "contains" })
+	@test("2 in [1,2,3,4,5,6] = true")
+	@test("3 in [1::2, 3::4, 5::6] = false")
+	
 	public static Boolean in(final IScope scope, final Object o, final IContainer c) throws GamaRuntimeException {
 		return notNull(scope, c).contains(scope, o);
 	}
@@ -463,6 +466,7 @@ public class Containers {
 			value = "the index of the first occurence of the right operand in the left operand container",
 			usages = @usage ("if the left operator is a species, returns the index of an agent in a species. If the argument is not an agent of this species, returns -1. Use int(agent) instead"),
 			masterDoc = true)
+	
 	public static Integer index_of(final IScope scope, final ISpecies s, final Object o) {
 		if (!(o instanceof IAgent)) { return -1; }
 		if (!((IAgent) o).isInstanceOf(notNull(scope, s), true)) { return -1; }
@@ -487,6 +491,7 @@ public class Containers {
 									value = "[4,2,3,4,5,4] index_of 4",
 									equals = "0") }),
 			see = { "at", "last_index_of" })
+	@test("[1,2,3,1,2,1,4,5] index_of 4 = 6")
 	public static Integer index_of(final IScope scope, final IList c, final Object o) {
 		return notNull(scope, c).indexOf(o);
 	}
@@ -502,6 +507,7 @@ public class Containers {
 			examples = { @example (
 					value = "[1::2, 3::4, 5::6] index_of 4",
 					equals = "3") })
+	@test("[1::2, 3::4, 5::6] index_of 4 = 3")
 	public static Object index_of(final IScope scope, final GamaMap<?, ?> c, final Object o) {
 		for (final Map.Entry<?, ?> k : notNull(scope, c).entrySet()) {
 			if (k.getValue().equals(o)) { return k.getKey(); }
@@ -521,6 +527,7 @@ public class Containers {
 					examples = { @example (
 							value = "matrix([[1,2,3],[4,5,6]]) index_of 4",
 							equals = "{1.0,0.0}") }))
+	@test("matrix([[1,2,3],[4,5,6]]) index_of 4 = {1.0,0.0}")
 	public static ILocation index_of(final IScope scope, final IMatrix c, final Object o) {
 		for (int i = 0; i < notNull(scope, c).getCols(scope); i++) {
 			for (int j = 0; j < c.getRows(scope); j++) {
@@ -561,6 +568,7 @@ public class Containers {
 									value = "[4,2,3,4,5,4] last_index_of 4",
 									equals = "5") }) },
 			see = { "at", "last_index_of" })
+	@test("[4,2,3,4,5,4] last_index_of 4 = 5")
 	public static Integer last_index_of(final IScope scope, final IList c, final Object o) {
 		return notNull(scope, c).lastIndexOf(o);
 	}
@@ -577,6 +585,7 @@ public class Containers {
 					examples = { @example (
 							value = "matrix([[1,2,3],[4,5,4]]) last_index_of 4",
 							equals = "{1.0,2.0}") }))
+	@test("matrix([[1,2,3],[4,5,4]]) last_index_of 4 = {1.0,2.0}")
 	public static ILocation last_index_of(final IScope scope, final IMatrix c, final Object o) {
 		for (int i = notNull(scope, c).getCols(scope) - 1; i > -1; i--) {
 			for (int j = c.getRows(scope) - 1; j > -1; j--) {
@@ -599,6 +608,7 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::4] last_index_of 4",
 							equals = "5") }))
+	@test("[1::2, 3::4, 5::4] last_index_of 4 = 5")
 	public static Object last_index_of(final IScope scope, final GamaMap<?, ?> c, final Object o) {
 		for (final Map.Entry<?, ?> k : Lists.reverse(new ArrayList<>(notNull(scope, c).entrySet()))) {
 			if (k.getValue().equals(o)) { return k.getKey(); }
@@ -637,6 +647,7 @@ public class Containers {
 							value = "[1,2,3,4,5,6] inter [0,8]",
 							equals = "[]") },
 			see = { "remove_duplicates" })
+	@test("[1,2,3,4,5,6] inter [0,8] = []")
 	public static IList inter(final IScope scope, final IContainer c, final IContainer c1) {
 		return (IList) stream(scope, c).filter(inContainer(scope, c1)).distinct().toCollection(listLike(c, c1));
 	}
@@ -664,6 +675,7 @@ public class Containers {
 											returnType = "list<int>",
 											equals = "[1,2,3,4,5,6]") }) },
 			see = { "" + IKeyword.PLUS })
+	@test("[1,2,3,4,5,6] - [0,8] = [1,2,3,4,5,6]")
 	public static IList minus(final IScope scope, final IContainer source, final IContainer l) {
 		final IList result = (IList) notNull(scope, source)
 				.listValue(scope, source.getGamlType().getContentType(), false).copy(scope);
@@ -690,6 +702,7 @@ public class Containers {
 									value = "[1,2,3,4,5,6] - 0",
 									returnType = "list<int>",
 									equals = "[1,2,3,4,5,6]") }) })
+	@test("[1,2,3,4,5,6] - 0 = [1,2,3,4,5,6]")
 	public static IList minus(final IScope scope, final IList l1, final Object object) {
 		final IList result = (IList) notNull(scope, l1).copy(scope);
 		result.remove(object);
@@ -822,6 +835,7 @@ public class Containers {
 											returnType = "list<int>",
 											equals = "[1,2,3,4,5,6,0,8]") }) },
 			see = { "" + IKeyword.MINUS })
+	@test("[1,2,3,4,5,6] + [2,4,9] = [1,2,3,4,5,6,2,4,9]")
 	public static IContainer plus(final IScope scope, final IContainer c1, final IContainer c2) {
 		// special case for the addition of two populations or meta-populations
 		if (c1 instanceof IPopulationSet && c2 instanceof IPopulationSet) {
@@ -848,6 +862,7 @@ public class Containers {
 									value = "[1,2,3,4,5,6] + 0",
 									returnType = "list<int>",
 									equals = "[1,2,3,4,5,6,0]") }))
+	@test("[1,2,3,4,5,6] + 2 = [1,2,3,4,5,6,2]")
 	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
 		final IList result = (IList) notNull(scope, l1).listValue(scope, Types.NO_TYPE, false).copy(scope);
 		result.add(l);
