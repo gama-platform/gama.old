@@ -1279,11 +1279,11 @@ public abstract class Spatial {
 				usages = { @usage (
 							value = "This operator is often used to define the environment of simulation") },
 				examples = { @example (
-								value = "file road_shapefile <- file(\"../includes/roads.shp\");"),
+								value = "file road_shapefile <- file(\"../includes/roads.shp\");", isExecutable = false),
 							@example (
-								value = "geometry shape <- envelope(road_shapefile);"),
+								value = "geometry shape <- envelope(road_shapefile);", isExecutable = false),
 							@example (
-									value = "// shape is the system variable of  the environment")
+									value = "// shape is the system variable of  the environment", isExecutable = false)
 						}
 				)
 		public static IShape envelope(final IScope scope, final Object obj) {
