@@ -1,6 +1,6 @@
 /**
 * Name:  Clustering of agents by their distance 
-* Author:  Patrick Taillandier
+* Author:  Patrick Taillandier et JD Zucker ;-) 
 * Description: A model to show how to use clustering operators with simple_clustering_by_distance to take into account the distances 
 *        between agents or between cells to create the clusters,  and showing the relations between the people from the same cluster. 
 * Tags: clustering, statistic, grid
@@ -119,7 +119,10 @@ experiment clustering type: gui {
 	parameter "Maximal distance for people clustering" var: max_dist_people min: 0.0 max: 100.0 category: "People";
 	parameter "Maximal distance for vegetation cell clustering" var: max_dist_cell min: 0 max: 5 category: "Forest";
 	parameter "Probability for vegetation cells" var: proba_vegetation min: 0.1 max: 1.0 category: "Forest";
+	
+	//permanent layout: horizontal([vertical([0::5000,1::5000])::5000,2::5000]) tabs:true;
 	output {
+		layout horizontal([vertical([0::5000,1::5000])::5000,2::5000]) tabs:true editors: false;
 		display map_people_clusters {
 			species people aspect: cluster;
 		}
