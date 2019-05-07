@@ -6,18 +6,20 @@ import org.w3c.dom.Element;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
 
-public class DocUsage  implements IElement {
+public class DocUsage implements IElement {
 
 	Document doc;
 	String descriptionUsage;
+	org.w3c.dom.Element exElt;
 
 	public DocUsage(final Document _doc) {
-		this(_doc,"");
+		this(_doc,"",null);
 	}
 
-	public DocUsage(final Document _doc, final String desc) {
+	public DocUsage(final Document _doc, final String desc, org.w3c.dom.Element _exElt) {
 		doc = _doc;
 		descriptionUsage = desc;
+		exElt = _exElt;
 	}
 	
 	@Override
@@ -25,13 +27,9 @@ public class DocUsage  implements IElement {
 		
 		final org.w3c.dom.Element usageElt = doc.createElement(XMLElements.USAGE);
 		usageElt.setAttribute(XMLElements.ATT_USAGE_DESC, descriptionUsage);
-	
-		
-//		usageElt.setAttribute(XMLElements.ATT_USAGE_DESC, usage.value());
-//		final org.w3c.dom.Element examplesUsageElt =
-//				getExamplesElt(usage.examples(), doc, e, tc, parentElement);
-//		usageElt.appendChild(examplesUsageElt);
-//		usagesElt.appendChild(usageElt);
+		if(exElt != null) {
+			usageElt.appendChild(exElt);			
+		}
 
 		return usageElt;
 	}	

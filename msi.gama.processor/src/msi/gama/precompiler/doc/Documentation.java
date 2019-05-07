@@ -36,8 +36,8 @@ public class Documentation  implements IElement {
 		seeAlso.add(see);
 	}
 	
-	public void addUsage(String desc) {
-		usages.add(new DocUsage(doc, desc));
+	public void addUsage(String desc, org.w3c.dom.Element exElt) {
+		usages.add(new DocUsage(doc, desc, exElt));
 	}
 	
 	@Override
