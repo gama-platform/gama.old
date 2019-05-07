@@ -90,7 +90,16 @@ public class Files {
 			category = IOperatorCategory.FILE,
 			concept = { IConcept.FILE })
 	@doc (
-			value = "Test whether the parameter is the path to an existing file.")
+			value = "Test whether the parameter is the path to an existing file.",
+			examples = { @example (
+							value="string file_name <-\"../includes/buildings.shp\";"),
+						@example (
+							value="		if file_exists(file_name){"),
+						@example (
+							value="			write \"File exists in the computer\";)"),
+						@example (
+							value="	}")
+			})
 	public static boolean exist_file(final IScope scope, final String s) {
 		if (s == null) { return false; }
 		if (scope == null) {
