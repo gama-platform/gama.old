@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.util.graph.writer;
+package prefuse.writer;
 
 import prefuse.data.io.GraphMLWriter;
 import prefuse.data.io.GraphWriter;

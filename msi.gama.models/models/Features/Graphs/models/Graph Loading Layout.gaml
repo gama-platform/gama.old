@@ -11,7 +11,7 @@ global {
 	graph the_graph ;
 	string barabasi_file <- "../includes/ProteinSimple.dgs";
 	geometry shape <- rectangle(500,500);
-	string layout_type <- "forcedirected";
+	string layout_type;
 	int layout_time <- 1000;
 	
 	//The operator load_graph_from_file generates the graph from the file, and chose the vertices as agents of node_agent 
@@ -39,7 +39,7 @@ species node_agent {
 }
 
 experiment loadgraph type: gui {
-	parameter "Layout type" var: layout_type among: [ "forcedirected", "random", "radialtree", "circle"];
+	parameter "Layout type" var: layout_type among: [ "forcedirected", "random", "radialtree", "circle"] init:"circle";
 	parameter "layout time" var: layout_time min: 1 max: 100000;
 	output {
 		display map type: opengl{

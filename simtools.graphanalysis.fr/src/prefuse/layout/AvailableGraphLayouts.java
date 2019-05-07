@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.util.graph.layout;
+package prefuse.layout;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,20 +33,20 @@ public class AvailableGraphLayouts {
 					// but also a prefixed version for disambiguation (like "prefuse.forcedirected")
 
 					// default
-					//put("fruchtermanreingold", PrefuseStaticLayoutFruchtermanReingoldLayout.class);
-					//put("forcedirected", PrefuseStaticLayoutForceDirected.class);
-					//put("random", PrefuseStaticLayoutRandom.class);
-					//put("squarifiedtreemap", PrefuseStaticLayoutSquarifiedTreeMap.class);
-					//put("radialtree", PrefuseStaticLayoutRadialTree.class);
-					put("circle", JGraphXStaticCircleLayout.class);
+					put("fruchtermanreingold", PrefuseStaticLayoutFruchtermanReingoldLayout.class);
+					put("forcedirected", PrefuseStaticLayoutForceDirected.class);
+					put("random", PrefuseStaticLayoutRandom.class);
+					put("squarifiedtreemap", PrefuseStaticLayoutSquarifiedTreeMap.class);
+					put("radialtree", PrefuseStaticLayoutRadialTree.class);
+					put("circle", PrefuseStaticLayoutCircle.class);
 
 					// prefuse
-					//put("prefuse.fruchtermanreingold", PrefuseStaticLayoutFruchtermanReingoldLayout.class);
-					//put("prefuse.forcedirected", PrefuseStaticLayoutForceDirected.class);
-					//put("prefuse.random", PrefuseStaticLayoutRandom.class);
-					//put("prefuse.squarifiedtreemap", PrefuseStaticLayoutSquarifiedTreeMap.class);
-					//put("prefuse.radialtree", PrefuseStaticLayoutRadialTree.class);
-					put("jgraphx.circle", JGraphXStaticCircleLayout.class);
+					put("prefuse.fruchtermanreingold", PrefuseStaticLayoutFruchtermanReingoldLayout.class);
+					put("prefuse.forcedirected", PrefuseStaticLayoutForceDirected.class);
+					put("prefuse.random", PrefuseStaticLayoutRandom.class);
+					put("prefuse.squarifiedtreemap", PrefuseStaticLayoutSquarifiedTreeMap.class);
+					put("prefuse.radialtree", PrefuseStaticLayoutRadialTree.class);
+					put("prefuse.circle", PrefuseStaticLayoutCircle.class);
 
 				}
 			};
