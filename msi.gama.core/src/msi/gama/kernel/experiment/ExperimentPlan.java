@@ -15,6 +15,7 @@ import static msi.gama.common.interfaces.IKeyword.TEST;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -379,6 +380,22 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// DEBUG.LOG("ExperimentPlan.dipose END");
 	}
 
+	
+	public void createAgent(Double seed) {
+		final ExperimentPopulation pop = new ExperimentPopulation(this);
+		final IScope scope = getExperimentScope();
+		pop.initializeFor(scope);
+		List<Map<String, Object>> params =
+				seed == null ? Collections.EMPTY_LIST : Arrays.asList(new HashMap<String, Object>() {
+					{
+						put(IKeyword.SEED, seed);
+					}
+				});
+		agent = pop.createAgents(scope, 1, params, false, true).get(0);
+		addDefaultParameters();
+	}
+
+/*	
 	public void createAgent() {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
@@ -386,7 +403,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
 		addDefaultParameters();
 	}
-
+*/
 	@Override
 	public IModel getModel() {
 		return model;
@@ -493,7 +510,28 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}
 
+	
+	
+	public synchronized void open(Double seed) {
+
+		createAgent(seed);
+		myScope.getGui().prepareForExperiment(myScope, this);
+		agent.schedule(agent.getScope());
+		if (isBatch()) {
+			agent.getScope().getGui().getStatus(agent.getScope())
+					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
+			agent.getScope().getGui().updateExperimentState(agent.getScope());
+		}
+	}
+
 	@Override
+	public synchronized void open() {
+		open(null);
+	}
+	
+	
+	
+	/*@Override
 	public synchronized void open() {
 
 		createAgent();
@@ -505,7 +543,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			agent.getScope().getGui().updateExperimentState(agent.getScope());
 		}
 	}
-
+*/
 	@Override
 	public void reload() {
 		if (isBatch()) {

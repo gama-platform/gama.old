@@ -78,13 +78,13 @@ species abstractAgent skills: [moving3D]{
 	rgb color;
 	aspect default {
 		if(agentAspect = "sphere"){
-			draw sphere(radius) color:color;
+			draw sphere(radius) color:color at:{location.x,location.y,location.z-radius/2};
 		}
 		if(agentAspect = "circle"){
 			draw circle(radius) color:color;
 		}
 		if(agentAspect = "direction"){
-		  draw sphere(radius) color:color;
+		  draw sphere(radius) color:color at:{location.x,location.y,location.z-radius/2};
           draw line([{location.x,location.y,location.z},{location.x+directionSize*cos(pitch)*cos(heading),location.y+directionSize*cos(pitch)*sin(heading),location.z+directionSize*sin(pitch)}]) end_arrow:1.0 color:color;	
 		}  	 	
     }
