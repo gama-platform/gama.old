@@ -75,9 +75,11 @@ public class GamlModelBuilder {
 			final GamlResource r = (GamlResource) buildResourceSet.getResource(uri, true);
 			// Syntactic errors detected, we cannot build the resource
 			if (r.hasErrors()) {
-				if (errors != null)
-					errors.add(new GamlCompilationError("Syntax errors ", IGamlIssue.GENERAL, r.getContents().get(0),
+				if (errors != null) {
+					String err_=r.getErrors()!=null && r.getErrors().size()>0?(r.getErrors().get(0).toString()):"";
+					errors.add(new GamlCompilationError("Syntax errors: "+err_, IGamlIssue.GENERAL, r.getContents().get(0),
 							false, false));
+				}
 				return null;
 			} else {
 				// We build the description
