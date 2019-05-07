@@ -19,9 +19,12 @@ import javax.swing.JComponent;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.java2d.swing.SwingControl;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -55,6 +58,20 @@ public class AWTDisplayView extends LayeredDisplayView {
 					parent.layout(true, true);
 				});
 
+			}
+			
+			
+
+			@Override
+			public Rectangle getClientArea() {
+			//	if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getClientArea());
+				return super.getClientArea();
+			}
+
+			@Override
+			public Point getSize() {
+				//if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getSize());
+				return super.getSize();
 			}
 
 			@Override

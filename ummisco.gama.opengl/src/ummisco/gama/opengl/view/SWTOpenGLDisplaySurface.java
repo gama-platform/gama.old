@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import static org.eclipse.swt.internal.DPIUtil.autoScaleUp;
+import static ummisco.gama.ui.utils.PlatformHelper.autoScaleUp;
 import static ummisco.gama.ui.utils.PlatformHelper.isLinux;
 import static ummisco.gama.ui.utils.PlatformHelper.isWindows;
 
@@ -143,6 +143,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			@SuppressWarnings ("restriction")
 			@Override
 			public Rectangle getClientArea() {
+				// see Issue #2378
 				if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
 				return super.getClientArea();
 			}

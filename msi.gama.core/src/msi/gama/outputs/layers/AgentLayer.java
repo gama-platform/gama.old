@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
@@ -46,7 +48,7 @@ public class AgentLayer extends AbstractLayer {
 	protected final THashMap<IAgent, Rectangle2D> shapes = new THashMap<>();
 	protected static final Rectangle2D DUMMY_RECT = new Rectangle2D.Double();
 
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings("unchecked")
 	protected void fillShapes(final IScope scope) {
 		shapes.clear();
 		final Object o = ((AgentLayerStatement) definition).getAgentsExpr().value(scope);
@@ -109,11 +111,14 @@ public class AgentLayer extends AbstractLayer {
 		final Rectangle2D selection = new Rectangle2D.Double();
 		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
 				y + IDisplaySurface.SELECTION_SIZE / 2);
-		for (final Map.Entry<IAgent, Rectangle2D> entry : new ArrayList<>(shapes.entrySet())) {
-			if (entry.getValue().intersects(selection)) {
-				selectedAgents.add(entry.getKey());
-			}
-		}
+		shapes.forEachEntry(new TObjectObjectProcedure<IAgent, Rectangle2D> () {
+
+			@Override
+			public boolean execute(IAgent a, Rectangle2D b) {
+				if (b.intersects(selection)) selectedAgents.add(a);
+				return true;
+			}});
+
 
 		return selectedAgents;
 	}
@@ -122,7 +127,9 @@ public class AgentLayer extends AbstractLayer {
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		if (geometry instanceof IAgent) {
 			final Rectangle2D r = shapes.get(geometry);
-			if (r != null) { return r; }
+			if (r != null) {
+				return r;
+			}
 		}
 		return super.focusOn(geometry, s);
 	}
