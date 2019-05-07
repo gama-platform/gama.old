@@ -25,6 +25,7 @@ import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 public abstract class AbstractCamera implements ICamera {
 
@@ -224,8 +225,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected void internalMouseMove(final MouseEvent e) {
-		getMousePosition().x = e.x;
-		getMousePosition().y = e.y;
+		getMousePosition().x = PlatformHelper.scaleUpIfWin(e.x);
+		getMousePosition().y = PlatformHelper.scaleUpIfWin(e.y);
 		setCtrlPressed(GamaKeyBindings.ctrl(e));
 		setShiftPressed(GamaKeyBindings.shift(e));
 	}
@@ -279,6 +280,7 @@ public abstract class AbstractCamera implements ICamera {
 	public final void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
 		invokeOnGLThread(drawable -> {
 			if (cameraInteraction) {
+				//PlatformHelper.scaleUpIfWin(e);
 				internalMouseDown(e);
 			}
 			return false;
@@ -296,26 +298,35 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	private int clickOnKeystone(final MouseEvent e) {
+		//int x = e.x;
+		//int y = e.y;
+		int x = PlatformHelper.scaleUpIfWin(e.x);
+		int y = PlatformHelper.scaleUpIfWin(e.y);
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone.
 		// final GamaPoint p = getNormalizedCoordinates(e);
-		return renderer.getKeystoneHelper().cornerSelected(new GamaPoint(e.x, e.y));
+		return renderer.getKeystoneHelper().cornerSelected(new GamaPoint(x,y));
 	}
 
 	protected int hoverOnKeystone(final MouseEvent e) {
+	//	int x = e.x;
+	//	int y = e.y;
+		int x = PlatformHelper.scaleUpIfWin(e.x);
+		int y = PlatformHelper.scaleUpIfWin(e.y);
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone. Return 10 if click on the center.
 		// final GamaPoint p = getNormalizedCoordinates(e);
-		return renderer.getKeystoneHelper().cornerHovered(new GamaPoint(e.x, e.y));
+		return renderer.getKeystoneHelper().cornerHovered(new GamaPoint(x,y));
 	}
 
 	protected void internalMouseDown(final MouseEvent e) {
+		int x = PlatformHelper.scaleUpIfWin(e.x);
+		int y = PlatformHelper.scaleUpIfWin(e.y);
 		if (firsttimeMouseDown) {
-			firstMousePressedPosition = new Point(e.x, e.y);
+			firstMousePressedPosition = new Point(x,y);
 			firsttimeMouseDown = false;
 		}
 		if (keystoneMode) {
-			// final int cornerSelected = clickOnKeystone(e);
 			if (getRenderer().getKeystoneHelper().getCornerSelected() != -1) {
 				getRenderer().getKeystoneHelper().setCornerSelected(-1);
 				return;
@@ -326,7 +337,7 @@ public abstract class AbstractCamera implements ICamera {
 			}
 		}
 
-		lastMousePressedPosition = new Point(e.x, e.y);
+		lastMousePressedPosition = new Point(x,y);
 		// Activate Picking when press and right click
 		if (e.button == 3 && !keystoneMode) {
 			if (renderer.getOpenGLHelper().mouseInROI(new GamaPoint(lastMousePressedPosition))) {
@@ -344,8 +355,8 @@ public abstract class AbstractCamera implements ICamera {
 			// renderer.getPickingState().setPicking(false);
 			// }
 		}
-		getMousePosition().x = e.x;
-		getMousePosition().y = e.y;
+		getMousePosition().x = x;
+		getMousePosition().y = y;
 
 		setMouseLeftPressed(e.button == 1 ? true : false);
 		setCtrlPressed(e.button == 1 ? GamaKeyBindings.ctrl(e) : false);
@@ -384,8 +395,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
-		getMousePosition().x = e.x;
-		getMousePosition().y = e.y;
+		getMousePosition().x = PlatformHelper.scaleUpIfWin(e.x);
+		getMousePosition().y = PlatformHelper.scaleUpIfWin(e.y);
 		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
 				new GamaPoint(getMousePosition()));
 		ROICurrentlyDrawn = true;

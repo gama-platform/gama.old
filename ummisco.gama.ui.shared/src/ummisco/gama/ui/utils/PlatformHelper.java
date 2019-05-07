@@ -19,13 +19,17 @@ package ummisco.gama.ui.utils;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.internal.DPIUtil;
+import  org.eclipse.swt.events.MouseEvent;
 
-public class PlatformHelper {
+public class PlatformHelper extends DPIUtil {
 
 	private static String platformString = SWT.getPlatform();
 	private static boolean isWindows = "win32".equals(platformString);
 	private static boolean isMac = "cocoa".equals(platformString) || "carbon".equals(platformString);
 	private static boolean isLinux = "gtk".equals(platformString);
+	
 	private static Boolean isDeveloper;
 
 	private PlatformHelper() {}
@@ -48,6 +52,93 @@ public class PlatformHelper {
 					|| Platform.getInstallLocation().getURL().getPath().contains("org.eclipse.pde.core");
 		}
 		return isDeveloper;
+	}
+	
+	public static int scaleDownIfWin(int size) {
+		return isWindows ? autoScaleDown(size): size;
+	}
+	
+	public static int scaleDownIfMac(int size) {
+		return isMac ? autoScaleDown(size): size;
+	}
+	
+	public static int scaleDownIfLinux(int size) {
+		return isLinux ? autoScaleDown(size): size;
+	}
+	
+	public static int scaleUpIfWin(int size) {
+		return isWindows ? autoScaleUp(size): size;
+	}
+	
+	public static int scaleUpIfMac(int size) {
+		return isMac ? autoScaleUp(size): size;
+	}
+	
+	public static int scaleUpIfLinux(int size) {
+		return isLinux ? autoScaleUp(size): size;
+	}
+	
+	public static Point scaleDownIfWin(Point size) {
+		return isWindows ? autoScaleDown(size): size;
+	}
+	
+	public static Point scaleDownIfMac(Point size) {
+		return isMac ? autoScaleDown(size): size;
+	}
+	
+	public static Point scaleDownIfLinux(Point size) {
+		return isLinux ? autoScaleDown(size): size;
+	}
+	
+	public static Point scaleUpIfWin(Point size) {
+		return isWindows ? autoScaleUp(size): size;
+	}
+	
+	public static Point scaleUpIfMac(Point size) {
+		return isMac ? autoScaleUp(size): size;
+	}
+	
+	public static Point scaleUpIfLinux(Point size) {
+		return isLinux ? autoScaleUp(size): size;
+	}
+	
+	
+
+	
+	private static MouseEvent autoScaleDown(MouseEvent e) {
+		e.x = autoScaleDown(e.x);
+		e.y = autoScaleDown(e.y);
+		return e;
+	}
+	
+	private static MouseEvent autoScaleUp(MouseEvent e) {
+		e.x = autoScaleDown(e.x);
+		e.y = autoScaleDown(e.y);
+		return e;
+	}
+	
+	public static MouseEvent scaleDownIfWin(MouseEvent size) {
+		return isWindows ? autoScaleDown(size): size;
+	}
+
+	public static MouseEvent scaleDownIfMac(MouseEvent size) {
+		return isMac ? autoScaleDown(size): size;
+	}
+	
+	public static MouseEvent scaleDownIfLinux(MouseEvent size) {
+		return isLinux ? autoScaleDown(size): size;
+	}
+	
+	public static MouseEvent scaleUpIfWin(MouseEvent size) {
+		return isWindows ? autoScaleUp(size): size;
+	}
+	
+	public static MouseEvent scaleUpIfMac(MouseEvent size) {
+		return isMac ? autoScaleUp(size): size;
+	}
+	
+	public static MouseEvent scaleUpIfLinux(MouseEvent size) {
+		return isLinux ? autoScaleUp(size): size;
 	}
 
 	/**

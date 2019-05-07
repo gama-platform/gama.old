@@ -42,6 +42,7 @@ import java.util.Set;
 import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.internal.DPIUtil;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -68,6 +69,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
@@ -164,7 +166,9 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void setMousePosition(final int x, final int y) {
+	public void setMousePosition(final int xm, final int ym) {
+		int x = PlatformHelper.scaleUpIfWin(xm);
+		int y = PlatformHelper.scaleUpIfWin(ym);
 		if (mousePosition == null) {
 			mousePosition = new Point(x, y);
 		} else {
@@ -175,7 +179,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void draggedTo(final int x, final int y) {
 		final Point origin = getOrigin();
-		setOrigin(origin.x + x - getMousePosition().x, origin.y + y - getMousePosition().y);
+		setOrigin(origin.x + PlatformHelper.scaleUpIfWin(x) - getMousePosition().x, origin.y + PlatformHelper.scaleUpIfWin(y) - getMousePosition().y);
 		setMousePosition(x, y);
 		updateDisplay(true);
 	}
@@ -512,6 +516,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			updateDisplay(true);
 		}
 	}
+
 
 	private int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		if (!layerManager.stayProportional()) { return new int[] { vwidth, vheight }; }

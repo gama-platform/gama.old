@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
+import static ummisco.gama.ui.utils.PlatformHelper.scaleDownIfWin;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -58,7 +60,6 @@ public class DisplaySurfaceMenu {
 		layer_images.put(GridLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
 		layer_images.put(AgentLayer.class, GamaIcons.create(IGamaIcons.LAYER_AGENTS).image());
 		layer_images.put(ImageLayer.class, GamaIcons.create(IGamaIcons.LAYER_IMAGE).image());
-		// layer_images.put(TextLayer.class, GamaIcons.create(IGamaIcons.LAYER_TEXT).image());
 		layer_images.put(SpeciesLayer.class, GamaIcons.create(IGamaIcons.LAYER_SPECIES).image());
 		layer_images.put(ChartLayer.class, GamaIcons.create(IGamaIcons.LAYER_CHART).image());
 		layer_images.put(GraphicLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRAPHICS).image());
@@ -103,7 +104,7 @@ public class DisplaySurfaceMenu {
 	public void prepareNewMenu(final Control c, final int x, final int y, final boolean withPresentation) {
 		disposeMenu();
 		menu = new Menu(c);
-		menu.setLocation(c.toDisplay(x, y));
+		//menu.setLocation(scaleDownIfWin(c.toDisplay(x, y)));
 		if (withPresentation) {
 			presentationMenu.fill(menu, -1);
 			GamaMenu.separate(menu);
