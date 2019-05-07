@@ -936,6 +936,7 @@ public class MovingSkill extends Skill {
 		IShape edge = (IShape) graph.getEdges().get(index);
 		double distance = d;
 		double travelledDist = 0.0;
+		double computedHeading = 0.0;
 		while (true) {
 			Coordinate coords[] = edge.getInnerGeometry().getCoordinates();
 			if (!graph.isDirected() && inverse == 1) {
@@ -952,7 +953,8 @@ public class MovingSkill extends Skill {
 				final GamaPoint pt = new GamaPoint(coords[j]);
 				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
-
+				computedHeading = Spatial.Relations.towards(scope, currentLocation, pt);
+				
 				if (distance < dist) {
 					final double ratio = distance / dist;
 					travelledDist += dis * ratio;
@@ -1030,6 +1032,8 @@ public class MovingSkill extends Skill {
 		agent.setAttribute("index_on_path_segment", indexSegment);
 		agent.setAttribute("reverse", inverse);
 		setLocation(agent, currentLocation);
+
+		setHeading(agent, computedHeading);
 	}
 
 	private void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final IPath path,
@@ -1043,9 +1047,7 @@ public class MovingSkill extends Skill {
 		currentLocation = (GamaPoint) indexVals.get(3);
 		final GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
 		final IList<IShape> edges = path.getEdgeGeometry();
-		String estr ="";
-		for (IShape e : edges) estr += ";" + (e.getPoints());
-		
+		double computedHeading = 0.0;
 		final int nb = edges.size();
 		double distance = d;
 		final GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
@@ -1072,6 +1074,8 @@ public class MovingSkill extends Skill {
 				}
 				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
+				computedHeading = Spatial.Relations.towards(scope, currentLocation, pt);
+				
 				if (distance < dist) {
 					final double ratio = distance / dist;
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
@@ -1079,7 +1083,6 @@ public class MovingSkill extends Skill {
 					final double newZ = currentLocation.z + ratio * (pt.z - currentLocation.z);
 					travelledDist += dis * ratio;
 					currentLocation.setLocation(newX, newY, newZ);
-
 					distance = 0;
 					break;
 				} else if (distance > dist) {
@@ -1124,7 +1127,9 @@ public class MovingSkill extends Skill {
 
 		setCurrentEdge(agent, path);
 		setLocation(agent, currentLocation);
+		setHeading(agent, computedHeading);
 		path.setSource(currentLocation/* .copy(scope) */);
+		
 
 	}
 
@@ -1153,6 +1158,7 @@ public class MovingSkill extends Skill {
 		final int nb = edges.size();
 		double distance = d;
 		double travelledDist = 0.0;
+		double computedHeading = 0.0;
 		final GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 		for (int i = index; i < nb; i++) {
 			final IShape line = edges.get(i);
@@ -1176,7 +1182,9 @@ public class MovingSkill extends Skill {
 				}
 				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
-
+				computedHeading = Spatial.Relations.towards(scope, currentLocation, pt);
+				
+				
 				if (distance < dist) {
 					final GamaPoint pto = currentLocation.copy(scope);
 
@@ -1268,6 +1276,7 @@ public class MovingSkill extends Skill {
 				PathFactory.newInstance(scope, agent.getTopology(), startLocation, currentLocation, segments, false);
 		followedPath.setRealObjects(agents);
 
+		setHeading(agent, computedHeading);
 		return followedPath;
 	}
 

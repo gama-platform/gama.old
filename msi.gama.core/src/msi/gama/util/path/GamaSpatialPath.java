@@ -35,7 +35,6 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
@@ -177,11 +176,6 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				cpt++;
 				// segmentsInGraph.put(agents, agents);
 			}
-			String str = "";
-			for(IShape shp : segments) {
-				str += ";" + shp.getPoints().lastValue(GAMA.getRuntimeScope());
-			}
-			System.out.println("segments: " + str);
 			
 		}
 	}
