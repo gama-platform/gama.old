@@ -221,6 +221,7 @@ public class Containers {
 				can_be_const = true)
 		@doc (
 				value = "Retrieves elements from the first argument every `step` (second argument) elements. Raises an error if the step is negative or equal to zero")
+		@test("[1,2,3,4,5] every 2 = [1,3,5]")
 		public static IList every(final IScope scope, final IList source, final Integer step) {
 			if (step <= 0) {
 				throw GamaRuntimeException.error("The step value in `every` should be strictly positive", scope);
@@ -243,6 +244,7 @@ public class Containers {
 				usages = { @usage ("If the first operand is empty, returns an empty object of the same type"),
 						@usage ("If the second operand is greater than or equal to the third operand, return an empty object of the same type"),
 						@usage ("If the first operand is nil, raises an error") })
+		@test("copy_between ([4, 1, 6, 9 ,7], 1, 3) = [1,6]")
 		public static IList copy_between(final IScope scope, final IList l1, final Integer begin, final Integer end) {
 			final int beginIndex = begin < 0 ? 0 : begin;
 			final int size = notNull(scope, l1).size();
@@ -330,6 +332,7 @@ public class Containers {
 			examples = { @example (
 					value = "remove_duplicates([3,2,5,1,2,3,5,5,5])",
 					equals = "[3,2,5,1]") })
+	@test("remove_duplicates([3,2,5,1,2,3,5,5,5]) = [3,2,5,1]")
 	public static IList remove_duplicates(final IScope scope, final IContainer c) {
 		return (IList) stream(scope, c).distinct().toCollection(listLike(c));
 	}
@@ -356,6 +359,9 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] contains_all [2,4]",
 							equals = "true") },
 			see = { "contains", "contains_any" })
+	@test("[1,2,3,4,5,6] contains_all [2,8] = false")
+	@test("[1::2, 3::4, 5::6] contains_all [1,3] = false")
+	@test("[1::2, 3::4, 5::6] contains_all [2,4] = true")
 	public static Boolean contains_all(final IScope scope, final IContainer c, final IContainer c2) {
 		return stream(scope, c2).allMatch(inContainer(scope, c));
 	}
@@ -382,6 +388,9 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] contains_any [2,4]",
 							equals = "true") },
 			see = { "contains", "contains_all" })
+	@test("[1,2,3,4,5,6] contains_any [2,4] = true")
+	@test("[1,2,3,4,5,6] contains_any [2,8] = true")
+	@test("[1::2, 3::4, 5::6] contains_any [2,4] = true")
 	public static Boolean contains_any(final IScope scope, final IContainer c, final IContainer c1) {
 		return stream(scope, c1).anyMatch(inContainer(scope, c));
 	}
@@ -394,6 +403,10 @@ public class Containers {
 			concept = { IConcept.CONTAINER })
 	@doc (
 			value = "Returns the nth first elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
+	@test("first(3, [1,2,3,4,5,6]) = [1,2,3]")
+	@test("first(0,[1,2,3,4,5,6]) = []")
+	@test("first_of(3, [1,2,3,4,5,6]) = [1,2,3]")
+	@test("first_of(0,[1,2,3,4,5,6]) = []")
 	public static IList first(final IScope scope, final Integer number, final IContainer c) {
 		return (IList) stream(scope, c).limit(number < 0 ? 0 : number).toCollection(listLike(c));
 	}
@@ -405,7 +418,10 @@ public class Containers {
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
 	@doc (
-			value = "Returns the nth last elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
+			value = "Returns the nth last elements of the container. If n is greater than the list size,  returns the container cast as a list. If it is equal or less than zero, returns an empty list")
+	@test("last(3, [1,2,3,4,5,6]) = [4,5,6]")
+	@test("last(0,[1,2,3,4,5,6]) = []")
+	@test("last(10,[1::2, 3::4]) is list")
 	public static IList last(final IScope scope, final Integer number, final IContainer c) {
 		final IList result = GamaListFactory.create(scope, c.getGamlType().getContentType(), Iterables.limit(
 				Lists.reverse(notNull(scope, c).listValue(scope, Types.NO_TYPE, false)), number < 0 ? 0 : number));
