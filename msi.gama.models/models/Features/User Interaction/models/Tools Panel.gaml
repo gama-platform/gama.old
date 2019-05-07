@@ -80,9 +80,8 @@ grid button width:2 height:2
 
 
 experiment ToolsPanel type: gui {
-	permanent layout: horizontal([0::7285,1::2715]) tabs:true;
 	output {
-		
+			layout horizontal([0.0::7285,1::2715]) tabs:true;
 		display map {
 			grid cell lines: #white;
 			species cell;
