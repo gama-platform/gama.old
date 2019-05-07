@@ -1009,7 +1009,7 @@ public class Stats {
 					equals = "[[0,1,2,3]]") })
 	public static IList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
 			final Integer minPts) throws GamaRuntimeException {
-
+		IList<Integer> remainingData = GamaListFactory.create(Types.INT);
 		final DBSCANClusterer<DoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
 		final List<DoublePoint> instances = new ArrayList<>();
 		for (int i = 0; i < data.size(); i++) {
@@ -1018,16 +1018,25 @@ public class Stats {
 			for (int j = 0; j < d.size(); j++) {
 				point[j] = Cast.asFloat(scope, d.get(j));
 			}
+			remainingData.add(i);
 			instances.add(new Instance(i, point));
 		}
 		final List<Cluster<DoublePoint>> clusters = dbscan.cluster(instances);
+		
 		final GamaList results = (GamaList) GamaListFactory.create();
 		for (final Cluster<DoublePoint> cl : clusters) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
 			for (final DoublePoint pt : cl.getPoints()) {
-				clG.addValue(scope, ((Instance) pt).getId());
+				Integer id = ((Instance) pt).getId();
+				clG.addValue(scope, id);
+				remainingData.remove(id);
 			}
-			results.addValue(scope, clG);
+			results.add(clG);
+		}
+		for (Integer id : remainingData) {
+			final GamaList clG = (GamaList) GamaListFactory.create();
+			clG.add(id);
+			results.add(clG);
 		}
 		return results;
 	}
