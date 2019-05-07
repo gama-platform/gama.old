@@ -36,9 +36,18 @@ public class Logic {
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL })
 	@doc (
-			value = "a bool value, equal to the logical xor between the left-hand operand and the right-hand operand. False when they are equal",
-			comment = "both operands are always casted to bool before applying the operator. Thus, an expression like 1 xor 0 is accepted and returns true.",
-			see = { "or", "and", "!" })
+			value = "a bool value, equal to the logical xor between the left-hand operand and the right-hand operand."
+					+ " False when they are equal",
+			comment = "both operands are always casted to bool before applying the operator."
+					+ " Thus, an expression like 1 xor 0 is accepted and returns true.",
+			see = { "or", "and", "!" },
+			examples= {
+					@example(value="xor(true,false)", equals="true"),
+					@example(value="xor(false,false)", equals="false"),
+					@example(value="xor(false,true)", equals="true"),
+					@example(value="xor(true,true)", equals="false"),
+					@example(value="true xor true", equals="false"),
+			})
 	public static Boolean xor(final IScope scope, final Boolean left, final Boolean right) throws GamaRuntimeException {
 		return !Objects.equals(left, right);
 	}
@@ -49,8 +58,17 @@ public class Logic {
 			concept = { IConcept.LOGICAL })
 	@doc (
 			value = "a bool value, equal to the logical or between the left-hand operand and the right-hand operand.",
-			comment = "both operands are always casted to bool before applying the operator. Thus, an expression like 1 or 0 is accepted and returns true.",
-			see = { "bool", "and", "!" })
+			comment = "both operands are always casted to bool before applying the operator. Thus, an expression "
+					+ "like 1 or 0 is accepted and returns true.",
+			see = { "bool", "and", "!" },
+					examples= {
+							@example(value="true or false", equals="true"),
+							@example(value="false or false", equals="false"),
+							@example(value="false or true", equals="true"),
+							@example(value="true or true", equals="true"),
+							@example(" int a <-3 ; int b <- 4; int c <- 7;"),
+							@example(value="((a+b) = c ) or ((a+b) > c )", equals="true"),	
+					})
 	public static Boolean or(final IScope scope, final Boolean left, final IExpression right)
 			throws GamaRuntimeException {
 		return left != null && left || right != null && Cast.asBool(scope, right.value(scope));
@@ -62,8 +80,17 @@ public class Logic {
 			concept = { IConcept.LOGICAL })
 	@doc (
 			value = "a bool value, equal to the logical and between the left-hand operand and the right-hand operand.",
-			comment = "both operands are always casted to bool before applying the operator. Thus, an expression like (1 and 0) is accepted and returns false.",
-			see = { "bool", "or", "!" })
+			comment = "both operands are always casted to bool before applying the operator. "
+					+ "Thus, an expression like (1 and 0) is accepted and returns false.",
+			see = { "bool", "or", "!" },
+					examples= {
+							@example(value="true and false", equals="false"),
+							@example(value="false and false", equals="false"),
+							@example(value="false and true", equals="false"),
+							@example(value="true and true", equals="true"),
+							@example(" int a <-3 ; int b <- 4; int c <- 7;"),
+							@example(value="((a+b) = c ) and ((a+b) > c )", equals="false"),	
+					})
 	public static Boolean and(final IScope scope, final Boolean left, final IExpression right)
 			throws GamaRuntimeException {
 		return left != null && left && right != null && Cast.asBool(scope, right.value(scope));
@@ -92,7 +119,9 @@ public class Logic {
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL, IConcept.TERNARY })
 	@doc (
-			value = "It is used in combination with the : operator: if the left-hand operand evaluates to true, returns the value of the left-hand operand of the :, otherwise that of the right-hand operand of the :",
+			value = "It is used in combination with the : operator: if the left-hand operand evaluates to true,"
+					+ " returns the value of the left-hand operand of the :, "
+					+ "otherwise that of the right-hand operand of the :",
 			comment = "These functional tests can be combined together.",
 			examples = { @example (
 					value = "[10, 19, 43, 12, 7, 22] collect ((each > 20) ? 'above' : 'below')",
