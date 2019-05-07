@@ -86,6 +86,8 @@ public class GamlModelBuilder {
 					model.validate();
 				if (errors != null)
 					Iterables.addAll(errors, r.getValidationContext());
+				if(r.getValidationContext().hasErrors())
+					return null;
 				return model;
 			}
 		} finally {
