@@ -5,7 +5,7 @@
 * Tags: comodel
 */
 model mosquitos_coupling
-import "Mosquitos.gaml"
+import "../Models/Mosquitos.gaml"
 
 global
 {

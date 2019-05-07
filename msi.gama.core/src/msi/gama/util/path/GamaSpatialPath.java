@@ -49,6 +49,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 	IList<IShape> segments;
 	IShape shape = null;
+	boolean threeD = false;
 	THashMap<IShape, IShape> realObjects; // key = part of the geometry
 
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
@@ -89,7 +90,6 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		this.segments = GamaListFactory.create(Types.GEOMETRY);
 		realObjects = new THashMap<>();
 		graphVersion = 0;
-
 		final Geometry firstLine = _edges == null || _edges.isEmpty() ? null : _edges.get(0).getInnerGeometry();
 		GamaPoint pt = null, pt0 = null, pt1 = null;
 		if (firstLine != null) {
@@ -99,8 +99,20 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		}
 		if (firstLine != null && _edges != null && pt0 != null && pt1 != null) {
 			if (_edges.size() > 1) {
+				double Z = pt0.z;
+				for (IShape e : _edges) {
+					for (GamaPoint p : GeometryUtils.getPointsOf(e)) {
+						if (p.z != Z) {
+							threeD = true; break;
+						}
+						if(threeD) break;
+					}
+				}
 				final IShape secondLine = _edges.get(1).getGeometry();
-				pt = pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0 : pt1;
+				if (threeD) pt = source.euclidianDistanceTo(pt0) < source.euclidianDistanceTo(pt1) ? pt0 : pt1;
+				
+				else pt = pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0 : pt1;
+				
 			} else {
 				final IShape lineEnd = edges.get(edges.size() - 1);
 				final GamaPoint falseTarget = (GamaPoint) _closest_point_to(getEndVertex().getLocation(), lineEnd);
@@ -120,7 +132,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					final GamaPoint c1 = points[points.length - 1];
 					IShape edge2 = null;
 					final GamaPoint[] coords = getContourCoordinates(geom).toCoordinateArray().clone();
-					if ((g == null || !g.isDirected()) && pt.distance(c0) > pt.distance(c1)) {
+					if ((g == null || !g.isDirected()) && pt.euclidianDistanceTo(c0) > pt.euclidianDistanceTo(c1)) {
 						ArrayUtils.reverse(coords);
 						pt = c0;
 					} else {
@@ -130,23 +142,26 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					geom2 = GEOMETRY_FACTORY.createLineString(cc);
 					// geom2 = geom.reverse();
 					edge2 = new GamaShape(geom2);
-					if (cpt == 0 && !source.equals(pt)) {
-						GamaPoint falseSource = source.getLocation().toGamaPoint();
-						if (source.euclidianDistanceTo(edge2) > min(0.01, edge2.getPerimeter() / 1000)) {
-							falseSource = (GamaPoint) _closest_point_to(source, edge2);
-							falseSource.z = zVal(falseSource, edge2);
+					if (!threeD ) {
+							
+						if (cpt == 0 && !source.equals(pt) ) {
+							GamaPoint falseSource = source.getLocation().toGamaPoint();
+							if (source.euclidianDistanceTo(edge2) > min(0.01, edge2.getPerimeter() / 1000)) {
+								falseSource = (GamaPoint) _closest_point_to(source, edge2);
+								falseSource.z = zVal(falseSource, edge2);
+							}
+							edge2 = split_at(edge2, falseSource).get(1);
 						}
-						edge2 = split_at(edge2, falseSource).get(1);
-					}
-					if (cpt == _edges.size() - 1 && !target.equals(
-							edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry().getNumPoints() - 1])) {
-
-						GamaPoint falseTarget = target.getLocation().toGamaPoint();
-						if (target.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000)) {
-							falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
-							falseTarget.z = zVal(falseTarget, edge2);
+						if (cpt == _edges.size() - 1 && !target.equals(
+								edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry().getNumPoints() - 1])) {
+	
+							GamaPoint falseTarget = target.getLocation().toGamaPoint();
+							if (target.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000)) {
+								falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
+								falseTarget.z = zVal(falseTarget, edge2);
+							}
+							edge2 = split_at(edge2, falseTarget).get(0);
 						}
-						edge2 = split_at(edge2, falseTarget).get(0);
 					}
 					if (ag != null) {
 						realObjects.put(edge2.getGeometry(), ag);
@@ -161,6 +176,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				cpt++;
 				// segmentsInGraph.put(agents, agents);
 			}
+			
 		}
 	}
 
@@ -495,4 +511,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			return v.euclidianDistanceTo(source) > v.euclidianDistanceTo(target) ? target : source;
 		}
 	}
+
+	public boolean isThreeD() {
+		return threeD;
+	}
+	
+	
 }

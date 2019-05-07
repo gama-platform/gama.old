@@ -8,8 +8,8 @@
 
 model coModel
 
-import "../Adapters/weather.gaml" as weather
-import "../Adapters/plantGrow.gaml" as plantGrow
+import "weather.gaml" as weather
+import "plantGrow.gaml" as plantGrow
 
 
 global {

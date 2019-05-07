@@ -6,8 +6,8 @@
 */
 model complex_comodeling_example
 
-import "../Adapters/Flies Adapter.gaml" as Flies
-import "../Adapters/Mosquitos Adapter.gaml" as Mosquitos
+import "Adapters/Flies Adapter.gaml" as Flies
+import "Adapters/Mosquitos Adapter.gaml" as Mosquitos
 
 global
 {

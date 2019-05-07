@@ -11,7 +11,7 @@
 
 model coModel
 
-import "../Adapters/weather.gaml" as weather
+import "weather.gaml" as weather
 
 
 global {

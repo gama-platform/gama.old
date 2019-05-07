@@ -142,9 +142,6 @@ species boids_goal skills: [moving] {
 		draw circle(40) color: rgb ('orange')  empty: true;
 	}
 	
-	aspect sphere{
-		draw sphere(10) color: rgb('white');
-	}
 } 
 
 //Species flock which represents the flock of boids agents, managing the boids agents captured
@@ -243,7 +240,7 @@ species aggregatedboids{
 	  location <- mean (boids collect (each.location));	
 	}
 	aspect base{   		
-		draw sphere(10) color: rgb('red');
+		draw circle(10) color: #white;
 	}
 }
 //Species to represent the boids agent using the skill moving
@@ -343,7 +340,6 @@ species boids skills: [moving] {
 	aspect dynamicColor{
 		rgb cc <- hsb (float(heading)/360.0,1.0,1.0);
 		draw triangle(20) size: 15 rotate: 90 + heading color: cc border:cc depth:5;
-		draw name color: #yellow font: font("Helvetica", 18,#bold);
 	}
 } 
 
@@ -358,6 +354,7 @@ species obstacle skills: [moving] {
 
 
 experiment start type: gui {
+	float minimum_cycle_duration <- 0.05;
 	output {
 		display RealBoids  type:opengl  {
 			image 'background' file:file_path_to_ocean;
@@ -369,12 +366,12 @@ experiment start type: gui {
 }
 
 experiment trajectory_analysis type: gui {
+	float minimum_cycle_duration <- 0.05;
 	output {
-		
+		layout #split;
 		display RealBoids  type:opengl {
 			image 'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
-			species boids aspect: image transparency:0.5 position:{0,0,0.11};
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
@@ -382,17 +379,18 @@ experiment trajectory_analysis type: gui {
 		display AggregatedBoidsTrajectory  type:opengl  {
 			image 'background' file:file_path_to_ocean;
 			species aggregatedboids  aspect: base trace:100 fading: true ;
-			species boids_goal aspect:sphere;		
+			species boids_goal aspect:default;		
 		}
 	} 
 }
 
 experiment SpaceTimeCube type: gui {
+	float minimum_cycle_duration <- 0.05;
 	output {
+		layout #split;
 		display RealBoids  type:opengl {
 			image 'background' file:file_path_to_ocean;
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
-			species boids aspect: image transparency:0.5 position:{0,0,0.11};
 			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
@@ -425,7 +423,7 @@ experiment MultipleView type: gui {
 		layout #split;
 		display RealBoids   type:opengl synchronized: true{
 			image 'background' file:file_path_to_ocean;
-			species boids aspect: image  transparency:0.5 position:{0,0,0.25};
+			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids_goal transparency:0.2 position:{0,0,0.25};
 			species obstacle ;
 			species boids  aspect: dynamicColor transparency:0.2 position:{0,0,0.24};		
