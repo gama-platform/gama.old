@@ -56,7 +56,7 @@ species  clock {
 
 				 // Uncomment the following statement to play the Alarm.mp3
 				 // But firstly, you need to go to "Help -> Install New Software..." to install the "audio" feature. 
-				start_sound source: "../includes/Alarm.mp3" ;
+				 // start_sound source: "../includes/Alarm.mp3" ;
 			}
 		}
 		aspect default {
