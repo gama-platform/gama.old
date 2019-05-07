@@ -97,10 +97,11 @@ public class Experiment implements IExperiment {
 			currentExperiment.getController().getScheduler().paused = false;
 			currentExperiment.getAgent().step(currentExperiment.getAgent().getScope());
 		} else {
-			currentExperiment.getAgent().getSimulation().step(this.getScope());
+			currentExperiment.getAgent().step(this.getScope());
+			//currentExperiment.getAgent().getSimulation().step(this.getScope());
 		}
 		return currentStep++;
-
+ 
 	}
 
 	@Override

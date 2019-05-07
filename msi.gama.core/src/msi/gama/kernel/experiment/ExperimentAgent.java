@@ -246,7 +246,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	protected boolean automaticallyCreateFirstSimulation() {
-		return !getSpecies().isHeadless() || ((GamlSpecies) this.getSpecies()).belongsToAMicroModel();
+		return /*!getSpecies().isHeadless() ||*/ ((GamlSpecies) this.getSpecies()).belongsToAMicroModel();
 	}
 
 	@Override
@@ -354,7 +354,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
-		if (!GamaPreferences.External.CORE_RND_EDITABLE.getValue()) { return new ArrayList<>(); }
+		if (!(getSpecies().isHeadless()) && !GamaPreferences.External.CORE_RND_EDITABLE.getValue()) { return new ArrayList<>(); }
 		final List<ExperimentParameter> params = new ArrayList<>();
 		final String cat = getExperimentParametersCategory();
 		ExperimentParameter p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG),
