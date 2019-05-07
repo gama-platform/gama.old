@@ -2,11 +2,11 @@
  *
  * ummisco.gama.ui.commands.CopyLayout.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
  * GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
@@ -15,7 +15,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
 import msi.gama.application.workbench.PerspectiveHelper;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -30,7 +29,7 @@ public class CopyLayout extends AbstractHandler {
 		final GamaNode<String> firstSash = tree.getRoot().getChildren().get(0);
 		firstSash.setWeight(null);
 		final StringBuilder sb = new StringBuilder();
-		sb.append(IKeyword.PERMANENT).append(" layout: " + firstSash);
+		sb.append(" layout " + firstSash);
 		if (PerspectiveHelper.keepTabs() != null) {
 			sb.append(" tabs:").append(PerspectiveHelper.keepTabs());
 		}
