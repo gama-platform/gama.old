@@ -123,19 +123,6 @@ public class Stats {
 			this.dataSetSize = 0;
 		}
 
-		//
-		// /**
-		// * Creates a data set and populates it with the specified values.
-		// * @param dataSet The values to add to this data set.
-		// */
-		// public DataSet(final double[] dataSet) {
-		// this.dataSet = dataSet.clone();
-		// this.dataSetSize = dataSet.length;
-		// for ( double value : this.dataSet ) {
-		// updateStatsWithNewValue(value);
-		// }
-		// }
-
 		/**
 		 * Adds a single value to the data set and updates any statistics that are calculated cumulatively.
 		 * 
@@ -172,24 +159,6 @@ public class Stats {
 			return dataSetSize;
 		}
 
-		// /**
-		// * @return The smallest value in the data set.
-		// * @throws EmptyDataSetException If the data set is empty.
-		// * @since 1.0.1
-		// */
-		// public final double getMinimum() {
-		// return minimum;
-		// }
-		//
-		// /**
-		// * @return The biggest value in the data set.
-		// * @throws EmptyDataSetException If the data set is empty.
-		// * @since 1.0.1
-		// */
-		// public final double getMaximum() {
-		// return maximum;
-		// }
-
 		/**
 		 * Determines the median value of the data set.
 		 * 
@@ -207,17 +176,7 @@ public class Stats {
 			if (dataCopy.length % 2 != 0) { return dataCopy[midPoint]; }
 
 			return dataCopy[midPoint - 1] + (dataCopy[midPoint] - dataCopy[midPoint - 1]) / 2;
-
 		}
-
-		/**
-		 * @return The sum of all values.
-		 * @throws EmptyDataSetException
-		 *             If the data set is empty.
-		 */
-		// public final double getAggregate() {
-		// return total;
-		// }
 
 		/**
 		 * @return The product of all values.
@@ -399,7 +358,13 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			see = { "split_in", "split_using" },
-			value = "Splits a list of numbers into n=(1+3.3*log10(elements)) bins. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+			value = "Splits a list of numbers into n=(1+3.3*log10(elements)) bins. The splitting is strict "
+					+ "(i.e. elements are in the ith bin if they are strictly smaller than the ith bound)",
+			examples = {
+					@example(value="split([1.0,2.0,1.0,3.0,1.0,2.0])",
+							equals="[[1.0,1.0,1.0],[2.0,2.0],[3.0]]")
+				
+			})
 
 	public static <T extends Number> IList<IList<T>> split(final IScope scope, final IList<T> list) {
 		final int nb = (int) (1 + 3.3 * Math.log10(list.size()));
@@ -415,7 +380,14 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			see = { "split", "split_using" },
-			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum and maximum values found in the first argument. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum "
+					+ "and maximum values found in the first argument. The splitting is strict "
+					+ "(i.e. elements are in the ith bin if they are strictly smaller than the ith bound)",
+					examples = {
+							@example("list<float> li <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"),
+									@example(value="split_in(li,3)",
+									equals="[[1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0],[19.9],[35.9,40.0]]")
+					})
 
 	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb) {
 		return split_in(scope, list, nb, true);
@@ -430,7 +402,14 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			see = { "split", "split_using" },
-			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum and maximum values found in the first argument. The boolean argument controls whether or not the splitting is strict (if true, elements are in the ith bin if they are strictly smaller than the ith bound")
+			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum and maximum values"
+					+ " found in the first argument. The boolean argument controls whether or not the splitting is "
+					+ " strict (if true, elements are in the ith bin if they are strictly smaller than the ith bound)",
+					examples = {
+							@example("list<float> l <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"),
+									@example(value="split_in(l,3, true)",
+									equals="[[1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0],[19.9],[35.9,40.0]]")
+					})
 
 	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb,
 			final boolean strict) {
@@ -453,7 +432,14 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			see = { "split", "split_in" },
-			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller than the ith bound")
+			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. "
+					+ "The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller "
+					+ "than the ith bound",
+					examples = {
+							@example("list<float> li <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"),
+							@example(value="split_using(li,[1.0,3.0,4.2])",
+							equals="[[],[1.0],[3.1],[5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0]]")
+			}) 
 	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
 			final IList<? extends Comparable> stops) {
 		return split_using(scope, list, stops, true);
@@ -468,7 +454,14 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			see = { "split", "split_in" },
-			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. The boolean argument controls whether or not the splitting is strict (if true, elements are in the ith bin if they are strictly smaller than the ith bound")
+			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument."
+					+ " The boolean argument controls whether or not the splitting is strict "
+					+ "(if true, elements are in the ith bin if they are strictly smaller than the ith bound",
+					examples = {
+							@example("list<float> l <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"),
+							@example(value="split_using(li,[1.0,3.0,4.2], true)",
+							equals="[[],[1.0],[3.1],[5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0]]")
+			}) 
 	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
 			final IList<? extends Comparable> stops, final boolean strict) {
 		if (stops.size() == 0) {
@@ -515,17 +508,25 @@ public class Stats {
 									value = "max ([100, 23.2, 34.5])",
 									equals = "100.0") }),
 					@usage (
-							value = "if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
+							value = "if it is a list of points: max returns the maximum of all points as a point "
+									+ "(i.e. the point with the greatest coordinate on the x-axis, in case of equality "
+									+ "the point with the greatest coordinate on the y-axis is chosen. "
+									+ "If all the points are equal, the first one is returned. )",
 							examples = { @example (
 									value = "max([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])",
 									equals = "{9.0,1.0}") }),
-					@usage ("if it is a population of a list of other type: max transforms all elements into integer and returns the maximum of them"),
+					@usage ("if it is a population of a list of other type: max transforms all elements into "
+							+ "integer and returns the maximum of them"),
 					@usage ("if it is a map, max returns the maximum among the list of all elements value"),
-					@usage ("if it is a file, max returns the maximum of the content of the file (that is also a container)"),
-					@usage ("if it is a graph, max returns the maximum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
-					@usage ("if it is a matrix of int, float or object, max returns the maximum of all the numerical elements (thus all elements for integer and float matrices)"),
+					@usage ("if it is a file, max returns the maximum of the content of the file (that is "
+							+ "also a container)"),
+					@usage ("if it is a graph, max returns the maximum of the list of the elements of the graph"
+							+ " (that can be the list of edges or vertexes depending on the graph)"),
+					@usage ("if it is a matrix of int, float or object, max returns the maximum of all "
+							+ "the numerical elements (thus all elements for integer and float matrices)"),
 					@usage ("if it is a matrix of geometry, max returns the maximum of the list of the geometries"),
-					@usage ("if it is a matrix of another type, max returns the maximum of the elements transformed into float") },
+					@usage ("if it is a matrix of another type, max returns the maximum of the elements "
+							+ "transformed into float") },
 			see = { "min" })
 	public static Object max(final IScope scope, final IContainer l) {
 		Number maxNum = null;
@@ -565,21 +566,29 @@ public class Stats {
 							value = "min ([100, 23.2, 34.5])",
 							equals = "23.2") }),
 					@usage (
-							value = "if it is a list of points: min returns the minimum of all points as a point (i.e. the point with the smallest coordinate on the x-axis, in case of equality the point with the smallest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )"),
+							value = "if it is a list of points: min returns the minimum of all points as a point "
+									+ "(i.e. the point with the smallest coordinate on the x-axis, in case of "
+									+ "equality the point with the smallest coordinate on the y-axis is chosen."
+									+ " If all the points are equal, the first one is returned. )"),
 					@usage (
-							value = "if it is a population of a list of other types: min transforms all elements into integer and returns the minimum of them"),
+							value = "if it is a population of a list of other types: min transforms all elements "
+									+ "into integer and returns the minimum of them"),
 					@usage (
 							value = "if it is a map, min returns the minimum among the list of all elements value"),
 					@usage (
-							value = "if it is a file, min returns the minimum of the content of the file (that is also a container)"),
+							value = "if it is a file, min returns the minimum of the content of the file (that is"
+									+ " also a container)"),
 					@usage (
-							value = "if it is a graph, min returns the minimum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
+							value = "if it is a graph, min returns the minimum of the list of the elements of "
+									+ "the graph (that can be the list of edges or vertexes depending on the graph)"),
 					@usage (
-							value = "if it is a matrix of int, float or object, min returns the minimum of all the numerical elements (thus all elements for integer and float matrices)"),
+							value = "if it is a matrix of int, float or object, min returns the minimum of all the "
+									+ "numerical elements (thus all elements for integer and float matrices)"),
 					@usage (
 							value = "if it is a matrix of geometry, min returns the minimum of the list of the geometries"),
 					@usage (
-							value = "if it is a matrix of another type, min returns the minimum of the elements transformed into float") },
+							value = "if it is a matrix of another type, min returns the minimum of the elements"
+									+ " transformed into float") },
 			see = { "max" })
 	public static Object min(final IScope scope, final IContainer l) {
 		Number minNum = null;
@@ -620,21 +629,27 @@ public class Stats {
 							value = "mul ([100, 23.2, 34.5])",
 							equals = "80040.0") }),
 					@usage (
-							value = "if it is a list of points: mul returns the product of all points as a point (each coordinate is the product of the corresponding coordinate of each element)"),
+							value = "if it is a list of points: mul returns the product of all points as a point"
+									+ " (each coordinate is the product of the corresponding coordinate of each element)"),
 					@usage (
-							value = "if it is a list of other types: mul transforms all elements into integer and multiplies them"),
+							value = "if it is a list of other types: mul transforms all elements into integer and "
+									+ "multiplies them"),
 					@usage (
 							value = "if it is a map, mul returns the product of the value of all elements"),
 					@usage (
-							value = "if it is a file, mul returns the product of the content of the file (that is also a container)"),
+							value = "if it is a file, mul returns the product of the content of the file (that is"
+									+ " also a container)"),
 					@usage (
-							value = "if it is a graph, mul returns the product of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)"),
+							value = "if it is a graph, mul returns the product of the list of the elements of the graph"
+									+ " (that can be the list of edges or vertexes depending on the graph)"),
 					@usage (
-							value = "if it is a matrix of int, float or object, mul returns the product of all the numerical elements (thus all elements for integer and float matrices)"),
+							value = "if it is a matrix of int, float or object, mul returns the product of all the numerical "
+									+ "elements (thus all elements for integer and float matrices)"),
 					@usage (
 							value = "if it is a matrix of geometry, mul returns the product of the list of the geometries"),
 					@usage (
-							value = "if it is a matrix of other types: mul transforms all elements into float and multiplies them") },
+							value = "if it is a matrix of other types: mul transforms all elements into float and "
+									+ "multiplies them") },
 			see = { "sum" })
 	public static Object product(final IScope scope, final IContainer l) {
 		final DataSet x = new DataSet();
@@ -674,7 +689,8 @@ public class Stats {
 	@doc (
 			value = "the median of all the elements of the operand.",
 			special_cases = {
-					"if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" },
+					"if the container contains points, the result will be a point. If the container contains rgb values, "
+					+ "the result will be a rgb color" },
 			examples = { @example (
 					value = "median ([4.5, 3.5, 5.5, 3.4, 7.0])",
 					equals = "4.5") },
@@ -734,8 +750,11 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "the standard deviation on the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> for more details.",
-			comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+			value = "the standard deviation on the elements of the operand. "
+					+ "See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> "
+					+ "for more details.",
+			comment = "The operator casts all the numerical element of the list into float. "
+					+ "The elements that are not numerical are discarded.",
 			special_cases = { "" },
 			examples = { @example (
 					value = "standard_deviation ([4.5, 3.5, 5.5, 7.0])",
@@ -753,8 +772,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "the geometric mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.",
-			comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+			value = "the geometric mean of the elements of the operand. "
+					+ "See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.",
+			comment = "The operator casts all the numerical element of the list into float. "
+					+ "The elements that are not numerical are discarded.",
 			special_cases = { "" },
 			examples = { @example (
 					value = "geometric_mean ([4.5, 3.5, 5.5, 7.0])",
@@ -772,8 +793,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "the harmonic mean of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Harmonic_mean\">Harmonic_mean</A> for more details.",
-			comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+			value = "the harmonic mean of the elements of the operand. "
+					+ "See <A href=\"http://en.wikipedia.org/wiki/Harmonic_mean\">Harmonic_mean</A> for more details.",
+			comment = "The operator casts all the numerical element of the list into float."
+					+ " The elements that are not numerical are discarded.",
 			special_cases = { "" },
 			examples = { @example (
 					value = "harmonic_mean ([4.5, 3.5, 5.5, 7.0])",
@@ -791,8 +814,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "the variance of the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Variance\">Variance</A> for more details.",
-			comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded. ",
+			value = "the variance of the elements of the operand. "
+					+ "See <A href=\"http://en.wikipedia.org/wiki/Variance\">Variance</A> for more details.",
+			comment = "The operator casts all the numerical element of the list into float."
+					+ " The elements that are not numerical are discarded. ",
 			examples = { @example (
 					value = "variance ([4.5, 3.5, 5.5, 7.0])",
 					equals = "1.671875") },
@@ -809,8 +834,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "the deviation from the mean of all the elements of the operand. See <A href= \"http://en.wikipedia.org/wiki/Absolute_deviation\" >Mean_deviation</A> for more details.",
-			comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.",
+			value = "the deviation from the mean of all the elements of the operand. "
+					+ "See <A href= \"http://en.wikipedia.org/wiki/Absolute_deviation\" >Mean_deviation</A> for more details.",
+			comment = "The operator casts all the numerical element of the list into float."
+					+ " The elements that are not numerical are discarded.",
 			examples = { @example (
 					value = "mean_deviation ([4.5, 3.5, 5.5, 7.0])",
 					equals = "1.125") },
@@ -829,7 +856,8 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)",
+			value = "Returns a map with keys equal to the application of the right-hand argument (like collect) "
+					+ "and values equal to the frequency of this key (i.e. how many times it has been obtained)",
 			comment = "",
 			examples = { @example (
 					value = "[ag1, ag2, ag3, ag4] frequency_of each.size",
@@ -860,7 +888,8 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).",
+			value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands)"
+					+ " in given variable  (left-hand operand).",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
 			examples = { @example (
 					value = "list X <- [1, 2, 3];",
@@ -970,14 +999,17 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
-			value = "returns the list of clusters (list of instance indices) computed with the dbscan (density-based spatial clustering of applications with noise) algorithm from the first operand data according to the maximum radius of the neighborhood to be considered (eps) and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
+			value = "returns the list of clusters (list of instance indices) computed with the dbscan"
+					+ " (density-based spatial clustering of applications with noise) algorithm from the "
+					+ "first operand data according to the maximum radius of the neighborhood to be considered (eps) "
+					+ "and the minimum number of points needed for a cluster (minPts). Usage: dbscan(data,eps,minPoints)",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
 			examples = { @example (
 					value = "dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)",
 					equals = "[[0,1,2,3]]") })
 	public static IList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
 			final Integer minPts) throws GamaRuntimeException {
-
+		IList<Integer> remainingData = GamaListFactory.create(Types.INT);
 		final DBSCANClusterer<DoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
 		final List<DoublePoint> instances = new ArrayList<>();
 		for (int i = 0; i < data.size(); i++) {
@@ -986,16 +1018,25 @@ public class Stats {
 			for (int j = 0; j < d.size(); j++) {
 				point[j] = Cast.asFloat(scope, d.get(j));
 			}
+			remainingData.add(i);
 			instances.add(new Instance(i, point));
 		}
 		final List<Cluster<DoublePoint>> clusters = dbscan.cluster(instances);
+		
 		final GamaList results = (GamaList) GamaListFactory.create();
 		for (final Cluster<DoublePoint> cl : clusters) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
 			for (final DoublePoint pt : cl.getPoints()) {
-				clG.addValue(scope, ((Instance) pt).getId());
+				Integer id = ((Instance) pt).getId();
+				clG.addValue(scope, id);
+				remainingData.remove(id);
 			}
-			results.addValue(scope, clG);
+			results.add(clG);
+		}
+		for (Integer id : remainingData) {
+			final GamaList clG = (GamaList) GamaListFactory.create();
+			clG.add(id);
+			results.add(clG);
 		}
 		return results;
 	}
@@ -1007,7 +1048,10 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
-			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k) and the maximum number of iterations to run the algorithm for (If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
+			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ "
+					+ "algorithm from the first operand data according to the number of clusters to split"
+					+ " the data into (k) and the maximum number of iterations to run the algorithm for "
+					+ "(If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)",
@@ -1046,7 +1090,8 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC })
 	@doc (
-			value = "returns the dynamic time warping between the two series of values (step pattern used: symetric1) with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
+			value = "returns the dynamic time warping between the two series of values"
+					+ " (step pattern used: symetric1) with Sakoe-Chiba band (radius: the window width of Sakoe-Chiba band)",
 			examples = { @example (
 					value = "dtw([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0], 2)",
 					equals = "11.0") })
@@ -1194,7 +1239,8 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
-			value = "returns kurtosis value computed from the operand list of values (kurtosis = { [n(n+1) / (n -1)(n - 2)(n-3)] sum[(x_i - mean)^4] / std^4 } - [3(n-1)^2 / (n-2)(n-3)])",
+			value = "returns kurtosis value computed from the operand list of values "
+					+ "(kurtosis = { [n(n+1) / (n -1)(n - 2)(n-3)] sum[(x_i - mean)^4] / std^4 } - [3(n-1)^2 / (n-2)(n-3)])",
 			special_cases = "if the length of the list is lower than 3, returns NaN",
 			examples = { @example (
 					value = "kurtosis ([1,2,3,4,5])",
@@ -1216,7 +1262,9 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
-			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ algorithm from the first operand data according to the number of clusters to split the data into (k). Usage: kmeans(data,k)",
+			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ "
+					+ "algorithm from the first operand data according to the number of clusters to split"
+					+ " the data into (k). Usage: kmeans(data,k)",
 			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)",
@@ -1233,7 +1281,9 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc (
-			value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). Usage: build(data,method)",
+			value = "returns the regression build from the matrix data (a row = an instance, the last value "
+					+ "of each line is the y value) while using the given method (\"GLS\" or \"OLS\"). "
+					+ "Usage: build(data,method)",
 			examples = { @example (
 					value = "build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")",
 					isExecutable = false) })
@@ -1253,7 +1303,9 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = {})
 	@doc (
-			value = "returns the regression build from the matrix data (a row = an instance, the last value of each line is the y value) while using the given ordinary least squares method. Usage: build(data)",
+			value = "returns the regression build from the matrix data (a row = an instance, "
+					+ "the last value of each line is the y value) while using the given ordinary "
+					+ "least squares method. Usage: build(data)",
 			examples = { @example (
 					value = "matrix([[1,2,3,4],[2,3,4,2]])",
 					isExecutable = false) })
@@ -1274,7 +1326,8 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
 	@doc (
-			value = "returns the value predict by the regression parameters for a given instance. Usage: predict(regression, instance)",
+			value = "returns the value predict by the regression parameters for a given instance. "
+					+ "Usage: predict(regression, instance)",
 			examples = { @example (
 					value = "predict(my_regression, [1,2,3])",
 					isExecutable = false) })
