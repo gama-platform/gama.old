@@ -13,45 +13,55 @@ global {
 	int k <- 4;
 	
 	//the maximum radius of the neighborhood (DBscan)
-	float eps <- 10.0; 
+	float eps <- 20.0; 
 	
 	//the minimum number of elements needed for a cluster (DBscan)
-	int minPoints <- 3;
+	int minPoints <- 10;
 	
 	init {
 		//create dummy agents
-		create dummy number: 50;
-	}
-	
+			create dummy number: 20;
+	     }	
+	     
 	reflex cluster_building {
 		//create a list of list containing for each dummy agent a list composed of its x and y values
 		list<list> instances <- dummy collect ([each.location.x, each.location.y]);
 		
 		//from the previous list, create groups with the eps and minPoints parameters and the DBSCAN algorithm (https://en.wikipedia.org/wiki/DBSCAN)
-		list<list<int>> clusters_dbscan <- list<list<int>>(dbscan(instances, eps,minPoints));
+		list<list<int>> clusters_dbscan <- list<list<int>>(dbscan(instances, eps, minPoints));
 		
-		//We give a random color to each group (i.e. to each dummy agents of the group)
+		// We give a random color to each group (i.e. to each dummy agents of the group)
        loop cluster over: clusters_dbscan {
 			rgb col <- rnd_color(255);
 			loop i over: cluster {
 				ask dummy[i] {color_dbscan <- col;}
 			}
-		}
+	   }
+	  //  		write 'Cluster =' + string(clusters_dbscan);
+//		int K <- length(clusters_dbscan);
+//		write 'length=' + string(K-1);
+//		write 'instances ' + string(instances);
+//		loop i from:0 to: K-1 {
+//			rgb col <- rnd_color(255);
+//			loop j over: clusters_dbscan[i] {
+//				write 'i=' +  string(i) + 'j=' + string(j) + 'K=' + string(K);
+//				ask dummy[j] {color_dbscan <- hsb(i/max(1,K),1,1);}
+//			}
 		
 		//from the previous list, create k groups  with the Kmeans algorithm (https://en.wikipedia.org/wiki/K-means_clustering)
 		list<list<int>> clusters_kmeans <- list<list<int>>(kmeans(instances, k));
 		
-		//We give a random color to each group (i.e. to each dummy agents of the group)
-		loop i from:0 to: length(clusters_kmeans)-1 {
-			rgb col <- rnd_color(255);
+		//We give a fixed color to each group in function of the cluwter's number (i.e. to each dummy agents of the group)
+		int K <- length(clusters_kmeans);
+		loop i from:0 to: K-1 {
+			// rgb col <- rnd_color(255);
 			loop j over: clusters_kmeans[i] {
-				ask dummy[j] {color_kmeans <- hsb(i/4,1,1);}
+				ask dummy[j] {color_kmeans <- hsb(i/K,1,1);}
 			}
 		}
-	}
-	
-}
-
+   }
+ }  
+   
 species dummy skills:[moving] {
 	rgb color_dbscan <- #grey;
 	rgb color_kmeans <- #grey;
@@ -63,8 +73,7 @@ species dummy skills:[moving] {
 	}
 	reflex move
 	{
-		do wander;
-		
+		do wander;		
 	}
 }
 
