@@ -63,7 +63,9 @@ experiment clean_network type: gui {
 		create clean_road_network_model with:[split_lines::true,reduce_to_main_connected_components::false]; 
 	}
 	output {
+		layout #split;
 		display network {
+	
 			 overlay position: { 10, 100 } size: { 1000 #px, 60 #px } background: # black transparency: 0.5 border: #black rounded: true
             {
 				draw legend color: #white font: font("SansSerif", 20, #bold) at: {40#px, 40#px, 1 };
