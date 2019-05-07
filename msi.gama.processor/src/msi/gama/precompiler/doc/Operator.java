@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package msi.gama.precompiler.doc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -22,12 +25,16 @@ public class Operator implements IElement {
 	String category;
 	String[] concepts;
 	String name;
-	Operands operands;
-	String documentation;
+	// Operands operands;
+	List<Operands> combiIO;	
+//	String documentation;
+	Documentation documentation;
 
 	public Operator(final Document _doc) {
 		doc = _doc;
-		operands = new Operands(_doc);
+		combiIO = new ArrayList<>();
+		documentation = new Documentation(_doc);
+//		operands = new Operands(_doc);
 	}
 
 	public Operator(final Document _doc, final String _category, final String[] _concepts, final String _name) {
@@ -42,21 +49,35 @@ public class Operator implements IElement {
 		this(_doc);
 		category = _category;
 		name = _name;
-		documentation = _documentation;
+		documentation = new Documentation(doc,_documentation);
 		concepts = _concepts;
 	}
 
 	public void setDocumentation(final String d) {
-		documentation = d;
+		documentation.setResult(d);
 	}
 
-	public void setOperands(final String _classe, final String _content_type, final String _return_type,
-			final String _type) {
-		operands = new Operands(doc, _classe, _content_type, _return_type, _type);
-	}
+//	public void setOperands(final String _classe, final String _content_type, final String _return_type,
+//			final String _type) {
+//		operands = new Operands(doc, _classe, _content_type, _return_type, _type);
+//	}
+	
+//	public void addOperands(final String _classe, final String _content_type, final String _return_type,
+//			final String _type) {
+//		operands = new Operands(doc, _classe, _content_type, _return_type, _type);
+//	}
+	
+	public void addOperands(Operands ops) {
+		combiIO.add(ops);
+	}	
+	
 
-	public void addOperand(final Operand op) {
-		operands.addOperand(op);
+	public void addSeeAlso(String see) {
+		documentation.addSee(see);
+	}
+	
+	public void addUsage(String descUsage) {
+		documentation.addUsage(descUsage);
 	}
 
 	@Override
@@ -85,18 +106,16 @@ public class Operator implements IElement {
 
 		// Combinaison IO
 		final org.w3c.dom.Element combiElt = doc.createElement(XMLElements.COMBINAISON_IO);
-		combiElt.appendChild(operands.getElementDOM());
-
+		for(Operands ops : combiIO) {
+			combiElt.appendChild(ops.getElementDOM());
+		}
 		eltOp.appendChild(combiElt);
 
 		// Documentation
-		final org.w3c.dom.Element docElt = doc.createElement(XMLElements.DOCUMENTATION);
-		final org.w3c.dom.Element resultElt = doc.createElement(XMLElements.RESULT);
-		resultElt.setTextContent(documentation);
-
-		docElt.appendChild(resultElt);
-		eltOp.appendChild(docElt);
+		eltOp.appendChild(documentation.getElementDOM());
 
 		return eltOp;
 	}
+
+
 }

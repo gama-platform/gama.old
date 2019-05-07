@@ -18,10 +18,12 @@ import java.util.Set;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -290,13 +292,17 @@ public class DocProcessor extends ElementProcessor<doc> {
 		for (final Element e : set) {
 			// Operators to be created:
 			// - name_type: converts the parameter into the type name_type
-			final Operator op = new Operator(document, tc.getProperCategory("Types"),
+			final Operator op_type = new Operator(document, tc.getProperCategory("Types"),
 					e.getAnnotation(type.class).concept(), e.getAnnotation(type.class).name());
-			op.setOperands(((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
-			op.addOperand(new Operand(document, "val", 0, "any"));
-			op.setDocumentation("Casts the operand into the type " + e.getAnnotation(type.class).name());
+		
+			Operands ops = new Operands(document, ((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
+			ops.addOperand(new Operand(document, "val", 0, "any"));
+			op_type.addOperands(ops);
+	//		op.setOperands(((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
+	//		op.addOperand(new Operand(document, "val", 0, "any"));
+			op_type.setDocumentation("Casts the operand into the type " + e.getAnnotation(type.class).name());
 
-			eltOpFromTypes.add(op.getElementDOM());
+			eltOpFromTypes.add(op_type.getElementDOM());
 		}
 
 		return eltOpFromTypes;
@@ -357,19 +363,52 @@ public class DocProcessor extends ElementProcessor<doc> {
 			// - "is_"+name : test whether the operand parameter is of the given
 			// kind of file
 			// - name+"_file": converts the parameter into the type name_type
+			
+			////////////////////////////////////////
+			// Operator "is_" + name
 			final Operator op_is = new Operator(document, tc.getProperCategory("Files"),
 					e.getAnnotation(file.class).concept(), "is_" + e.getAnnotation(file.class).name(),
 					"Tests whether the operand is a " + e.getAnnotation(file.class).name() + " file.");
-			op_is.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "bool", "");
-			op_is.addOperand(new Operand(document, "val", 0, "any"));
-			// op_is.setDocumentation("Tests whether the operand is a "+
-			// e.getAnnotation(file.class).name() + " file.");
 
+			Operands ops_is = new Operands(document, ((TypeElement) e).getQualifiedName().toString(), "", "bool", "");
+			ops_is.addOperand(new Operand(document, "val", 0, "any"));
+			op_is.addOperands(ops_is);
+			
+			////////////////////////////////////////
+			// Operator  name + "_file"
 			final Operator op_file = new Operator(document, tc.getProperCategory("Files"),
 					e.getAnnotation(file.class).concept(), e.getAnnotation(file.class).name() + "_file");
-			op_file.setOperands(((TypeElement) e).getQualifiedName().toString(), "", "file", "");
-			op_file.addOperand(new Operand(document, "val", 0, "string"));
-
+			
+			for( Element elt : ((TypeElement) e).getEnclosedElements()) {
+				// Parse all the constructors to define:
+				// - the possible uses
+				// - a documentation for each constructor as an usage
+				if(elt.getKind().equals(ElementKind.CONSTRUCTOR)) {
+					Operands ops_file = new Operands(document, ((TypeElement) e).getQualifiedName().toString(), "", "file", "");
+					int arity = 0;
+					String op_name_usage = e.getAnnotation(file.class).name() + "_file(";
+					
+					// Define the various possible uses 
+					// Parse the constructor parameters
+					for(VariableElement var : ((ExecutableElement) elt).getParameters()) {
+						String operandName = var.getSimpleName().toString();
+						String typeName = tc.getProperType(var.asType().toString());
+						if(!typeName.contains("IScope")) {
+							ops_file.addOperand(new Operand(document, operandName, arity, tc.getProperType(var.asType().toString())));	
+							arity++;		
+							op_name_usage = op_name_usage + tc.getProperType(var.asType().toString()) + ",";
+						}						
+					}
+					op_file.addOperands(ops_file);	
+					
+					op_name_usage = op_name_usage.substring(0, op_name_usage.length()-1) + ")";
+					
+					// Create the documentation for each constructor as an usage
+					doc docConstructor = elt.getAnnotation(doc.class) ;
+					op_file.addUsage(op_name_usage + ": " + ( (docConstructor != null) ? docConstructor.value() : "") );
+				}
+			}
+			
 			final String[] tabExtension = e.getAnnotation(file.class).extensions();
 			String listExtension = "";
 			if (tabExtension.length > 0) {
@@ -382,6 +421,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 			}
 			op_file.setDocumentation("Constructs a file of type " + e.getAnnotation(file.class).name()
 					+ ". Allowed extensions are limited to " + listExtension);
+
+			op_file.addSeeAlso("is_" + e.getAnnotation(file.class).name());
+			op_is.addSeeAlso(e.getAnnotation(file.class).name() + "_file");
 
 			eltOpFromTypes.add(op_is.getElementDOM());
 			eltOpFromTypes.add(op_file.getElementDOM());
