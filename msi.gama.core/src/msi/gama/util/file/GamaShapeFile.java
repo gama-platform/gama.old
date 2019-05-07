@@ -359,6 +359,7 @@ public class GamaShapeFile extends GamaGisFile {
 							g.apply(ZERO_Z);
 							g.geometryChanged();
 						}
+						g = multiPolygonManagement(g);
 						list.add(new GamaGisGeometry(g, feature));
 					} else if (g == null) {
 						// See Issue 725

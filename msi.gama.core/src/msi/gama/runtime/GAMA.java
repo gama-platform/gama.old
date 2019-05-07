@@ -16,6 +16,7 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -147,8 +148,13 @@ public class GAMA {
 			}
 
 		}
-		currentExperiment.open();
-		if (seed != null) {
+		
+		
+		System.out.println("coucou "+ seed);
+		
+		//currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), IKeyword.SEED,seed);
+		currentExperiment.open(seed);
+		/*if (seed != null) {
 			currentExperiment.getAgent().setSeed(seed);
 		}
 
@@ -156,7 +162,7 @@ public class GAMA {
 		if (!currentExperiment.isBatch()) {
 			currentExperiment.getAgent().createSimulation(new ParametersSet(), true);
 		}
-
+*/
 		controllers.add(currentExperiment.getController());
 		return currentExperiment;
 
