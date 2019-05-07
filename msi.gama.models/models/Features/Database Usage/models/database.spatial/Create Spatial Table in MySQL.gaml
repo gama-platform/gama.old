@@ -17,7 +17,7 @@ global
 		create test_species number: 1;
 		ask test_species
 		{
-			if (self testConnection [params::PARAMS])
+			if (testConnection (PARAMS))
 			{
 				do executeUpdate params: PARAMS updateComm: "CREATE DATABASE spatial_DB_GAMA";
 				write "spatial_BD_GAMA database was created ";

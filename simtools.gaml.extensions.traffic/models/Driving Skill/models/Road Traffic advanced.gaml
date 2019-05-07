@@ -169,7 +169,7 @@ species intersection skills: [skill_road_node] {
 	aspect base3D {
 		if (is_traffic_signal) {
 			draw box(1, 1, 10) color: #black;
-			draw sphere(5) at: {location.x, location.y, 12} color: color_fire;
+			draw sphere(3) at: {location.x, location.y, 10} color: color_fire;
 		}
 
 	}
@@ -206,29 +206,27 @@ species people skills: [advanced_driving] {
 	}
 
 	reflex time_to_go when: final_target = nil {
-		target <- one_of(intersection where not each.is_traffic_signal);
+		target <- one_of(intersection );
 		current_path <- compute_path(graph: road_network, target: target);
 		if (current_path = nil) {
-			final_target <- nil;
-		} }
+			location <- one_of(intersection).location;
+		} 
+	}
 
 	reflex move when: current_path != nil and final_target != nil {
 		do drive;
-		if (location = final_target) {
-			final_target <- nil;
-		}
-
-		if real_speed < 5 #km / #h {
-			counter_stucked <- counter_stucked + 1;
-			if (counter_stucked mod threshold_stucked = 0) {
-				proba_use_linked_road <- min([1.0, proba_use_linked_road + 0.1]);
+		if (final_target != nil) {
+			if real_speed < 5 #km / #h {
+				counter_stucked <- counter_stucked + 1;
+				if (counter_stucked mod threshold_stucked = 0) {
+					proba_use_linked_road <- min([1.0, proba_use_linked_road + 0.1]);
+				}
+	
+			} else {
+				counter_stucked <- 0;
+				proba_use_linked_road <- 0.0;
 			}
-
-		} else {
-			counter_stucked <- 0;
-			proba_use_linked_road <- 0.0;
 		}
-
 	}
 
 	aspect base {
@@ -237,9 +235,9 @@ species people skills: [advanced_driving] {
 
 	aspect base3D {
 		point loc <- calcul_loc();
-		draw rectangle(vehicle_length, 10) + triangle(6) rotate: heading + 90 depth: 5 color: color at: loc;
+		draw rectangle(1,vehicle_length) + triangle(1) rotate: heading + 90 depth: 1 color: color at: loc;
 		if (breakdown) {
-			draw circle(2) at: loc color: #red;
+			draw circle(1) at: loc color: #red;
 		}
 
 	}

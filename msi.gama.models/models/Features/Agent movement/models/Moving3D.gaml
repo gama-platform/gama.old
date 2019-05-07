@@ -15,7 +15,7 @@ global {
 	int mazeSize <-10;
 	int radius parameter: 'Radius' min: 1 <- 1 ;
 	int directionSize parameter: 'direction size' min: 1 <- 10 ;
-	string effectType <-"";// among:["","firework", "blob","direction"];
+	string effectType <-"blob";// among:["","firework", "blob","direction"];
 	string movingType <-"move";
 	graph mazeGraph;
 	geometry shape <- cube(envSize);
@@ -32,14 +32,14 @@ global {
 		  	else{
 		  		location <- {rnd(envSize), rnd(envSize), rnd(envSize)};
 		  	}
-		    color<-°red;	
+		    color<-#red;	
 		  }	
 		}
-		
+		  
 		if(movingType = "wander" or movingType = "complete"){
 			create wanderAgent number: number_of_agents{
 			  location <- {rnd(envSize), rnd(envSize), rnd(envSize)};
-			  color<-°green;	
+			  color<-#green;	
 			}
 		}
 		
@@ -47,7 +47,7 @@ global {
 			create gotoAgent number: number_of_agents{
 			  location <- {rnd(envSize), rnd(envSize), rnd(envSize)};
 			  myTarget <-{rnd(envSize),rnd(envSize),rnd(envSize)};
-			  color<-°yellow;
+			  color<-#yellow;
 			}
 		}
 		
@@ -66,9 +66,10 @@ global {
 			  location <- {floor(rnd(envSize)/mazeSize)*10, floor(rnd(envSize)/mazeSize)*10, floor(rnd(envSize)/mazeSize)*10};
 			  myTarget <-{0,0,0};
 			  speed <-0.1;
-			  color<-°orange;		
+			  color<-#orange;		
 			}
 		    mazeGraph <- as_distance_graph(cell, ["distance"::10.0,"species"::edge_agent]);
+	
 		}
 	 }
 }
@@ -108,7 +109,7 @@ species gotoAgent parent:abstractAgent{
 		if(effectType = "blob"){
 			myTarget<-{rnd(envSize),rnd(envSize),rnd(envSize)};
 		}
-	  	do goto target:myTarget;	  
+		do goto target:myTarget;	  
 	}
 }
 
@@ -120,19 +121,7 @@ species gotoAgentOnNetwork parent:abstractAgent{
 	}		
 }
 
-species followAgent parent:abstractAgent{ 
-	point myTarget;
-	string gotoType;
-	reflex goto{
-	  if(gotoType = "goto"){
-	  	do goto target:myTarget;
-	  }
-	  if(gotoType = "gotoOnNetwork"){
-	  	do goto target:myTarget on: mazeGraph;
-	  }
-	  
-	}	
-}
+
     
 species cell schedules:[]{
 	

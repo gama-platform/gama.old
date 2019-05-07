@@ -329,7 +329,7 @@ public final class NBAStarPathfinder<V, E> {
 		if (isSpatialGraph) {
 			final GamaPoint pt1 = (GamaPoint) ((IShape) node1).getLocation();
 			final GamaPoint pt2 = (GamaPoint) ((IShape) node2).getLocation();
-			return pt1.distance(pt2);
+			return pt1.euclidianDistanceTo(pt2);
 
 		}
 		return 0;

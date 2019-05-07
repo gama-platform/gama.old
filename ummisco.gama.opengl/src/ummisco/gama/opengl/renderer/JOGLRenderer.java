@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.renderer.JOGLRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer;
 
@@ -15,6 +15,8 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
+
+import org.eclipse.swt.internal.DPIUtil;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -47,6 +49,7 @@ import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -168,7 +171,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/**
 	 * Method endDrawingLayers()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGraphics#endDrawingLayers()
 	 */
 	@Override
@@ -197,12 +200,22 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	}
 
+	@SuppressWarnings ("restriction")
 	@Override
-	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
-			final int height) {
+	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
+		int width = w, height = h;
+		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
+		if (PlatformHelper.isMac()) {
+			width = DPIUtil.autoScaleDown(w);
+			height = DPIUtil.autoScaleDown(h);
+		}
 		if (width <= 0 || height <= 0) { return; }
 		if (openGL.getViewWidth() == width && openGL.getViewHeight() == height) { return; }
-		DEBUG.OUT("Reshaped to " + width + " x " + height);
+		// DEBUG.OUT("Reshaped to " + width + " x " + height);
+		// DEBUG.OUT("Zoom size: " + DPIUtil.getDeviceZoom());
+		// DEBUG.OUT("AutoScale down = ", false);
+		// DEBUG.OUT(DPIUtil.autoScaleDown(new int[] { width, height }));
+		// DEBUG.OUT("Size of window:" + ((GLCanvas) drawable).getClientArea());
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		keystoneHelper.reshape(width, height);
 		openGL.reshape(gl, width, height);
@@ -222,9 +235,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	/**
-	 * 
+	 *
 	 * IGraphics DRAWING METHODS
-	 * 
+	 *
 	 */
 
 	@Override
@@ -360,9 +373,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	/**
-	 * 
+	 *
 	 * DIMENSIONS, RATIOS AND LOCATIONS METHODS
-	 * 
+	 *
 	 */
 
 	@Override
@@ -392,7 +405,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getWidth()
 	 */
 	@Override
@@ -402,7 +415,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getHeight()
 	 */
 	@Override
@@ -412,7 +425,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getRealWorldPointFromWindowPoint (java.awt.Point)
 	 */
 	@Override
@@ -432,7 +445,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getCameraHelper()
 	 */
 
@@ -443,7 +456,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getKeystoneHelper()
 	 */
 	@Override
@@ -453,7 +466,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getPickingHelper()
 	 */
 	@Override
@@ -463,7 +476,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getOpenGLHelper()
 	 */
 	@Override
@@ -473,7 +486,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getLightHelper()
 	 */
 	@Override
@@ -483,7 +496,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getSceneHelper()
 	 */
 	@Override

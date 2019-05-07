@@ -63,6 +63,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ITyped;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -552,7 +553,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope, boolean geoJson)
 			throws GamaRuntimeException {
-		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
+		//Patrick: NO IDEA WHY THERE WAS THIS CODE ???? - SO, I COMMENTED IT....
+		/*if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
 			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
 			final IList<IShape> shapes = GamaListFactory.create();
 			for (int i = 0; i < collec.getNumGeometries(); i++) {
@@ -560,7 +562,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			saveShape(shapes, path, scope, geoJson);
 			return;
-		}
+		}*/
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = getGeometryType(agents);
 		specs.append("geometry:" + geomType);
@@ -596,48 +598,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public void saveGeoJson(final IList<? extends IShape> agents, final String path, final IScope scope)
-			throws GamaRuntimeException {
-		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
-			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
-			final IList<IShape> shapes = GamaListFactory.create();
-			for (int i = 0; i < collec.getNumGeometries(); i++) {
-				shapes.add(new GamaShape(collec.getGeometryN(i)));
-			}
-			saveGeoJson(shapes, path, scope);
-			return;
-		}
-		final StringBuilder specs = new StringBuilder(agents.size() * 20);
-		final String geomType = getGeometryType(agents);
-		specs.append("geometry:" + geomType);
-		try {
-			final SpeciesDescription species = agents instanceof IPopulation
-					? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription()
-					: agents.getGamlType().getContentType().getSpecies();
-			final Map<String, IExpression> attributes = GamaMapFactory.create();
-			if (species != null) {
-				if (withFacet != null) {
-					computeInitsFromWithFacet(scope, withFacet, attributes, species);
-				} else if (attributesFacet != null) {
-					computeInitsFromAttributesFacet(scope, attributes, species);
-				}
-				for (final String e : attributes.keySet()) {
-					final IExpression var = attributes.get(e);
-					String name = e.replaceAll("\"", "");
-					name = name.replaceAll("'", "");
-					final String type = type(var);
-					specs.append(',').append(name).append(':').append(type);
-				}
-			}
-
-			saveShapeFile(scope, path, agents, specs.toString(), attributes, defineProjection(scope, path));
-		} catch (final GamaRuntimeException e) {
-			throw e;
-		} catch (final Throwable e) {
-			throw GamaRuntimeException.create(e, scope);
-		}
-
-	}
+	
 
 	public IProjection defineProjection(final IScope scope, final String path) {
 		String code = null;
@@ -651,7 +612,33 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		IProjection gis;
 		if (code == null) {
-			gis = scope.getSimulation().getProjectionFactory().getWorld();
+			boolean useNoSpecific = GamaPreferences.External.LIB_USE_DEFAULT.getValue();
+			if (!useNoSpecific) {
+				code = "EPSG:" +  GamaPreferences.External.LIB_OUTPUT_CRS.getValue();
+				try {
+					gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+				} catch (final FactoryException e1) {
+					throw GamaRuntimeException.error("The code " + code
+							+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
+				}
+			} else {
+				gis = scope.getSimulation().getProjectionFactory().getWorld();
+				if (gis == null || gis.getInitialCRS(scope) == null) {
+					boolean alreadyprojected = GamaPreferences.External.LIB_PROJECTED.getValue();
+					if (alreadyprojected) {
+						code = "EPSG:" +  GamaPreferences.External.LIB_TARGET_CRS.getValue();
+					} else {
+						code = "EPSG:" +  GamaPreferences.External.LIB_INITIAL_CRS.getValue();
+					}
+					try {
+						gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+					} catch (final FactoryException e1) {
+						throw GamaRuntimeException.error("The code " + code
+								+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
+					}
+				}
+			}
+			
 		} else {
 			try {
 				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
@@ -660,6 +647,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
 			}
 		}
+		
 		return gis;
 	}
 

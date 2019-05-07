@@ -4,11 +4,16 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.access;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.text.TextSelection;
@@ -39,8 +44,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.common.interfaces.IGamlDescription;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
@@ -51,7 +60,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class GamlSearchField {
 
 	Shell shell;
-	private Text text;
+	protected Text text;
 	public static GamlSearchField INSTANCE;
 
 	private GamlAccessContents quickAccessContents;
@@ -65,11 +74,63 @@ public class GamlSearchField {
 
 	private String selectedString = ""; //$NON-NLS-1$
 	private AccessibleAdapter accessibleListener;
+	private boolean commandsInstalled;
 
 	private GamlSearchField() {}
 
 	public Text getText() {
 		return text;
+	}
+
+	void hookUpCommands() {
+		if (commandsInstalled)
+			return;
+		commandsInstalled = true;
+		IFocusService focus = WorkbenchHelper.getService(IFocusService.class);
+		focus.addFocusTracker(text, GamlSearchField.class.getName());
+
+		org.eclipse.core.expressions.Expression focusExpr = new org.eclipse.core.expressions.Expression() {
+			@Override
+			public void collectExpressionInfo(ExpressionInfo info) {
+				info.addVariableNameAccess(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
+			}
+
+			@Override
+			public EvaluationResult evaluate(IEvaluationContext context) {
+				return EvaluationResult.valueOf(GamlSearchField.class.getName()
+						.equals(context.getVariable(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME)));
+			}
+		};
+
+		IHandlerService whService = WorkbenchHelper.getService(IHandlerService.class);
+		whService.activateHandler(IWorkbenchCommandConstants.EDIT_SELECT_ALL, new AbstractHandler() {
+			@Override
+			public Object execute(ExecutionEvent event) {
+				text.selectAll();
+				return null;
+			}
+		}, focusExpr);
+		whService.activateHandler(IWorkbenchCommandConstants.EDIT_CUT, new AbstractHandler() {
+			@Override
+			public Object execute(ExecutionEvent event) {
+				text.cut();
+				return null;
+			}
+		}, focusExpr);
+		whService.activateHandler(IWorkbenchCommandConstants.EDIT_COPY, new AbstractHandler() {
+			@Override
+			public Object execute(ExecutionEvent event) {
+				text.copy();
+				return null;
+			}
+		}, focusExpr);
+		whService.activateHandler(IWorkbenchCommandConstants.EDIT_PASTE, new AbstractHandler() {
+			@Override
+			public Object execute(ExecutionEvent event) {
+				text.paste();
+				return null;
+			}
+		}, focusExpr);
 	}
 
 	public Control createWidget(final Composite parent) {
@@ -161,7 +222,9 @@ public class GamlSearchField {
 			}
 
 			@Override
-			public void focusGained(final FocusEvent e) {}
+			public void focusGained(final FocusEvent e) {
+				hookUpCommands();
+			}
 
 		});
 		table.addFocusListener(new FocusAdapter() {

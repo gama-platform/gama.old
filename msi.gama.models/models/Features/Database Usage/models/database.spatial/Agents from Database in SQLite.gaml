@@ -28,7 +28,7 @@ global {
 	init {
 		write "This model will work only if the corresponding database is installed";
 		create DB_accessor {
-			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
+			create buildings from: select(PARAMS, QUERY)
 							 with:[ name::"name", type::"type", shape:: "geom"];
 		 }
 	}
