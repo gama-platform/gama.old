@@ -266,6 +266,7 @@ public class GamlResource extends LazyLinkingResource {
 		// If the imports are not correctly updated, we cannot proceed
 		final EObject faulty = GamlResourceIndexer.updateImports(this);
 		if (faulty != null) {
+			System.out.println(getURI()+" cannot import "+faulty);
 			final EAttribute attribute = getContents().get(0) instanceof Model ? GamlPackage.Literals.IMPORT__IMPORT_URI
 					: GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI;
 			getErrors().add(new EObjectDiagnosticImpl(Severity.ERROR, IGamlIssue.IMPORT_ERROR,
