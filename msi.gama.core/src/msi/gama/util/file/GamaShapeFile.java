@@ -43,6 +43,7 @@ import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -248,6 +249,10 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @param scope
 	 * @param pathName
 	 */
+	@doc (value= "This file constructor allows to read a shapefile (.shp) file",
+			examples = {
+				@example(value = "file f <- shape_file(\"file\");", isExecutable = false)
+			})
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}

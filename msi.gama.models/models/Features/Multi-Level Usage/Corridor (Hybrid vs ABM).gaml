@@ -1,6 +1,6 @@
 /**
 * Name: Corridor Multi-Level Architecture with Mathematics Model and Agent Based Model
-* Author: 
+* Author: Ngoc Anh, Anh, Jean-daniel 
 * Description: This model shows how to use multi-level architecture. Two corridors are presented : one which can capture the pedestrians 
 * 	going through it and computing for them the time before releasing them at the end of the corridor, and an other doing nothing, letting 
 * 	the pedestrians moving by themselves in the corridor. 
@@ -190,7 +190,7 @@ species corridor_info_drawer
 	{
 		if target.capture_pedestrians 
 		{
-			draw 'Hybrid model (coupling: ABM and Mathematical Model)' color: #blue size: 7 at: {(target.location).x - 90, (target.location).y - 10};
+			draw 'Hybrid model (coupling: ABM and Mathematical Model)' color: #blue size: 7 at: {(target.location).x - 50, (target.location).y - 10};
 			draw  'Aggregated agents: ' + string(length(target.members)) color: #black size: 7 at: {(target.location).x - 30, (target.location).y + 2};
 		} 
 		else 

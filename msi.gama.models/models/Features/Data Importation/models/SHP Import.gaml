@@ -9,7 +9,7 @@ model simpleShapefileLoading
 
 
 global {
-	file shape_file_buildings <- file("../includes/buildings_simple.shp");
+	file shape_file_buildings <- shape_file("../includes/buildings_simple.shp");
 	
 	//definition of the geometry of the world agent (environment) as the envelope of the shapefile
 	geometry shape <- envelope(shape_file_buildings);
