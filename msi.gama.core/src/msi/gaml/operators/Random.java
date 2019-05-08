@@ -190,6 +190,7 @@ public class Random {
 	@operator(value = "shuffle", content_type = IType.STRING, category = { IOperatorCategory.RANDOM,
 			IOperatorCategory.STRING }, concept = { IConcept.RANDOM })
 	@doc(examples = { @example(value = "shuffle ('abc')", equals = "'bac' (for example)", test = false) })
+	@test("seed <- 0.0; shuffle ('abc') = 'acb'")
 	public static String opShuffle(final IScope scope, final String target) {
 		return RANDOM(scope).shuffle(target);
 	}
@@ -234,6 +235,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random float in the interval [first operand, second operand] constrained by the last operand (step)", examples = {
 			@example(value = "rnd (2.0, 4.0, 0.5)", equals = "a float number between 2.0 and 4.0 every 0.5", test = false) }, see = {})
+	@test("seed <- 1.0; rnd (2.0, 4.0, 0.5) = 3.5")
 	public static Double opRnd(final IScope scope, final Double min, final Double max, final Double step) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(min, max, step);
@@ -397,6 +399,7 @@ public class Random {
 	@operator(value = "open_simplex_generator", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "take a x, y and a bias parameters and gives a value", examples = {
 			@example(value = "open_simplex_generator(2,3,253)", equals = "10.2", test = false) })
+	@test("seed <- 1.0; open_simplex_generator(2,3,253) = -0.053513655103822125")
 	public static Double open_simplex_generator(final IScope scope, final double x, final double y, final double biais)  
 	{
 		return OpenSimplexNoise.noise(x,y,biais);
