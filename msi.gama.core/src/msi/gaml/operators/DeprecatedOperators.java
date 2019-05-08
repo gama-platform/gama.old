@@ -722,7 +722,8 @@ public class DeprecatedOperators {
 			category = { IOperatorCategory.STATISTICAL })
 	@doc (
 			deprecated = "Use R_file instead",
-			value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand).",
+			value = "returns the value of the last left-hand operand of given R file (right-hand operand) in "
+					+ "given vector  (left-hand operand).",
 			examples = { @example (
 					value = "file f <- file('Correlation.r');",
 					isTestOnly = true,

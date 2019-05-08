@@ -2115,11 +2115,13 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree) along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
+				value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree)"
+						+ " along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
 				masterDoc = true,
 				examples = { @example (
 						value = "rotated_by(pyramid(10),45, {1,0,0})",
-						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of the agent applying the operator.",
+						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
+								+ "the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double rotation,
@@ -2163,10 +2165,12 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A geometry resulting from the application of a rotation and a scaling (right-operand : point {angle(degree), scale factor} of the left-hand operand (geometry, agent, point)",
+				value = "A geometry resulting from the application of a rotation and a scaling (right-operand : "
+						+ "point {angle(degree), scale factor} of the left-hand operand (geometry, agent, point)",
 				examples = { @example (
 						value = "self transformed_by {45, 0.5}",
-						equals = "the geometry resulting from 45 degrees rotation and 50% scaling of the geometry of the agent applying the operator.",
+						equals = "the geometry resulting from 45 degrees rotation and 50% scaling of the geometry "
+								+ "of the agent applying the operator.",
 						test = false) },
 				see = { "rotated_by", "translated_by" })
 		public static IShape transformed_by(final IScope scope, final IShape g, final GamaPoint p) {
@@ -2225,7 +2229,8 @@ public abstract class Spatial {
 				value = "A geometry corresponding to the operand geometry (geometry, agent, point) without its holes",
 				examples = { @example (
 						value = "solid(self)",
-						equals = "the geometry corresponding to the geometry of the agent applying the operator without its holes.",
+						equals = "the geometry corresponding to the geometry of the agent applying the operator without "
+								+ "its holes.",
 						test = false) })
 		public static IShape without_holes(final IScope scope, final IShape g) {
 			if (g == null) { return null; }
@@ -2254,10 +2259,12 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent) with the given tolerance for the clipping and for the triangulation",
+				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry "
+						+ "(geometry, agent) with the given tolerance for the clipping and for the triangulation",
 				examples = { @example (
 						value = "skeletonize(self)",
-						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
+						equals = "the list of geometries corresponding to the skeleton of the geometry of "
+								+ "the agent applying the operator.",
 						test = false) })
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
 				final Double triangulationTolerance) {
