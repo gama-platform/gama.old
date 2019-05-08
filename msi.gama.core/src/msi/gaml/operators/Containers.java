@@ -1243,8 +1243,12 @@ public class Containers {
 	@doc (
 			value = "the variance of the right-hand expression evaluated on each of the elements of the left-hand operand",
 			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
-			see = { "min_of", "max_of", "sum_of", "product_of" }
+			see = { "min_of", "max_of", "sum_of", "product_of" },
+			examples = {
+					@example (value = "[1,2,3,4,5,6] variance_of each", equals = "2.91 with_precision 2", returnType="float")
+			}
 			)
+	
 	@test("[1,2,3,4,5,6] variance_of each = 2.91 with_precision 2")
 	public static Object variance_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return Stats.opVariance(scope, collect(scope, container, filter));
