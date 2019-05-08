@@ -22,6 +22,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -121,6 +122,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 					item.setData(entry);
 					item.setText(0, entry.provider.name);
 					item.setText(1, entry.element.getTitle());
+
 					index++;
 				}
 			}
@@ -338,7 +340,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		table = new Table(tableComposite, SWT.None /* SWT.SINGLE | SWT.FULL_SELECTION */);
+		table = new Table(tableComposite, SWT.None | SWT.FULL_SELECTION );
 		table.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		table.setLinesVisible(true);
 		textLayout = new TextLayout(table.getDisplay());
@@ -421,6 +423,29 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			public void mouseMove(final MouseEvent e) {
 				if (table.equals(e.getSource())) {
 					final Object o = table.getItem(new Point(e.x, e.y));
+//					if (lastItem == null ^ o == null) {
+//						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+//					}
+					if (o instanceof TableItem) {
+						if (!o.equals(lastItem)) {
+							lastItem = (TableItem) o;
+							table.setSelection(new TableItem[] { lastItem });
+							popup.display();
+						}
+					} else if (o == null) {
+						lastItem = null;
+					}
+				}
+			}
+		});
+		
+		table.addMouseTrackListener(new MouseTrackListener() {
+			TableItem lastItem = null;
+
+			@Override
+			public void mouseHover(final MouseEvent e) {
+				if (table.equals(e.getSource())) {
+					final Object o = table.getItem(new Point(e.x, e.y));
 					if (lastItem == null ^ o == null) {
 						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 					}
@@ -434,6 +459,18 @@ public abstract class GamlAccessContents implements IPopupProvider {
 						lastItem = null;
 					}
 				}
+			}
+
+			@Override
+			public void mouseEnter(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExit(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 

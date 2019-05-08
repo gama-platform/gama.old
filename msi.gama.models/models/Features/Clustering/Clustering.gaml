@@ -13,14 +13,14 @@ global {
 	int k <- 4;
 	
 	//the maximum radius of the neighborhood (DBscan)
-	float eps <- 20.0; 
+	float eps <- 17.0; 
 	
 	//the minimum number of elements needed for a cluster (DBscan)
-	int minPoints <- 10;
+	int minPoints <- 3;
 	
 	init {
 		//create dummy agents
-			create dummy number: 20;
+			create dummy number: 50;
 	     }	
 	     
 	reflex cluster_building {
@@ -31,37 +31,66 @@ global {
 		list<list<int>> clusters_dbscan <- list<list<int>>(dbscan(instances, eps, minPoints));
 		
 		// We give a random color to each group (i.e. to each dummy agents of the group)
-       loop cluster over: clusters_dbscan {
-			rgb col <- rnd_color(255);
-			loop i over: cluster {
-				ask dummy[i] {color_dbscan <- col;}
-			}
-	   }
-	  //  		write 'Cluster =' + string(clusters_dbscan);
-//		int K <- length(clusters_dbscan);
-//		write 'length=' + string(K-1);
-//		write 'instances ' + string(instances);
-//		loop i from:0 to: K-1 {
+//       loop cluster over: clusters_dbscan {
 //			rgb col <- rnd_color(255);
-//			loop j over: clusters_dbscan[i] {
-//				write 'i=' +  string(i) + 'j=' + string(j) + 'K=' + string(K);
-//				ask dummy[j] {color_dbscan <- hsb(i/max(1,K),1,1);}
+//			loop i over: cluster {
+//				ask dummy[i] {color_dbscan <- col;}
 //			}
+//	   }
+	 
+
+		int K <- length(clusters_dbscan);
+		loop i from:0 to: K-1 {
+			loop j over: clusters_dbscan[i] {
+				ask dummy[j] {color_dbscan <- hsb(i/max(1,K),1,1);}
+		}
 		
+		}
+		ask centroids {
+			do die;
+		}
+		//create dummy centroids
+		create centroids number:k;//create dummy centroids
+			
 		//from the previous list, create k groups  with the Kmeans algorithm (https://en.wikipedia.org/wiki/K-means_clustering)
 		list<list<int>> clusters_kmeans <- list<list<int>>(kmeans(instances, k));
 		
+		
 		//We give a fixed color to each group in function of the cluwter's number (i.e. to each dummy agents of the group)
 		int K <- length(clusters_kmeans);
+		
+		//list<centroids> the_centroids <- list(centroids) ;
+		
 		loop i from:0 to: K-1 {
-			// rgb col <- rnd_color(255);
+			ask centroids[i] {mypoints <- [];}
 			loop j over: clusters_kmeans[i] {
 				ask dummy[j] {color_kmeans <- hsb(i/K,1,1);}
-			}
-		}
-   }
+				ask centroids[i] {add dummy[j] to:mypoints;}
+			   }
+		    ask centroids[i] {
+		  			color_centroids <- hsb(i/K,1,1);
+		  	        location <- (mypoints mean_of each.location );
+		                     }	          
+        }	      
+     }
  }  
    
+   species centroids
+	{
+	rgb color_centroids;
+	list<dummy> mypoints;
+	aspect centroids_aspect
+	{
+		draw cross(3, 0.5) color: color_centroids border: # black;
+		loop pt over: mypoints
+		{
+			draw line([location, pt]) + 0.1 color: color_centroids;
+		}
+	}
+}
+
+
+	
 species dummy skills:[moving] {
 	rgb color_dbscan <- #grey;
 	rgb color_kmeans <- #grey;
@@ -100,6 +129,7 @@ experiment clustering type: gui {
                     draw string("K-means") at: { world.shape.width/2-45, 20 } color: #orange font: font("SansSerif", 36, #bold); 
                 }	
 			species dummy aspect: kmeans_aspect;
+			species centroids aspect:centroids_aspect;
 		}
 	}
 }

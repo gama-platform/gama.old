@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.precompiler;
@@ -37,7 +37,7 @@ public final class GamlAnnotations {
 
 		/**
 		 * The keyword that will allow to open this display in GAML (in "display type: keyword").
-		 * 
+		 *
 		 * @return
 		 */
 		String value();
@@ -50,7 +50,7 @@ public final class GamlAnnotations {
 
 		/**
 		 * The keyword that will allow to open this display in GAML (in "display type: keyword").
-		 * 
+		 *
 		 * @return
 		 */
 		String value();
@@ -336,7 +336,7 @@ public final class GamlAnnotations {
 	 * The class inside. Used in conjunction with symbol. Provides a way to tell where this symbol should be located in
 	 * a model (i.e. what its parents should be). Either direct symbol names (in symbols) or generic symbol kinds can be
 	 * used
-	 * 
+	 *
 	 * @see symbol
 	 * @see ISymbolKind
 	 * @author drogoul
@@ -664,7 +664,7 @@ public final class GamlAnnotations {
 	/**
 	 * The Interface symbol. Represents a "symbol" in GAML, i.e. either a statement or a declaration (variable, species,
 	 * model, etc.). Elements annotated by this annotation should indicate what kind of symbol they represent
-	 * 
+	 *
 	 * @see ISymbolKind
 	 */
 	@Retention (RetentionPolicy.SOURCE)
@@ -830,7 +830,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type() default ITypeProvider.NONE;
+		int content_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return the content type of the content if the returned value is a container of container (ex. a list of
@@ -839,7 +841,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type_content_type() default ITypeProvider.NONE;
+		int content_type_content_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return the type of the index if the returned value is a container. Can be directly a type in IType or one of
@@ -848,7 +852,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int index_type() default ITypeProvider.NONE;
+		int index_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return if the argument is a container, return the types expected for its contents. Should be an array of
@@ -1055,6 +1061,7 @@ public final class GamlAnnotations {
 		 * @return An array of usages representing possible usage of the element in GAML
 		 */
 		usage[] usages() default {};
+
 	}
 
 	/**
@@ -1168,63 +1175,81 @@ public final class GamlAnnotations {
 		 *
 		 * @return a String representing the expression to test or display
 		 */
-		String value() default "";
+		String value()
+
+		default "";
 
 		/**
 		 * var
 		 *
 		 * @return The variable that will be tested in the equals, if it is omitted a default variable will be used.
 		 */
-		String var() default "";
+		String var()
+
+		default "";
 
 		/**
 		 * equals
 		 *
 		 * @return The value to which the value will be compared
 		 */
-		String equals() default "";
+		String equals()
+
+		default "";
 
 		/**
 		 * returnType
 		 *
 		 * @return The type of the value that should be tested
 		 */
-		String returnType() default "";
+		String returnType()
+
+		default "";
 
 		/**
 		 * isnot
 		 *
 		 * @return The value to which the value will be compared
 		 */
-		String isNot() default "";
+		String isNot()
+
+		default "";
 
 		/**
 		 * raises
 		 *
 		 * @return The exception or warning that the expression could raise.
 		 */
-		String raises() default "";
+		String raises()
+
+		default "";
 
 		/**
 		 * isTestOnly
 		 *
 		 * @return isTestOnly specifies that the example should not be included into the documentation.
 		 */
-		boolean isTestOnly() default false;
+		boolean isTestOnly()
+
+		default false;
 
 		/**
 		 * isExecutable
 		 *
 		 * @return isExecutable specifies that the example is correct GAML code that can be executed.
 		 */
-		boolean isExecutable() default true;
+		boolean isExecutable()
+
+		default true;
 
 		/**
 		 * test
 		 *
 		 * @return test specifies that the example is will be tested with the equals.
 		 */
-		boolean test() default true;
+		boolean test()
+
+		default true;
 
 		/**
 		 * @return whether or not this example should be treated as part of a pattern (see @usage). If true, the
@@ -1239,6 +1264,16 @@ public final class GamlAnnotations {
 		test[] value() default {};
 	}
 
+	/**
+	 * no_test should be used to indicate that a GAML artefact does not need to be provided with tests (either with
+	 * the @test annotation or with @example). It will prevent the compiler from producing warnings in that case.
+	 *
+	 * @author drogoul
+	 *
+	 */
+	@Retention (RetentionPolicy.SOURCE)
+	public static @interface no_test {}
+
 	/***
 	 * The test annotation is intended to provide a simpler syntax than @example for producing tests. It allows to write
 	 * unit tests for any GAML artefact. These tests are then automatically generated by the annotation processor and
@@ -1247,48 +1282,48 @@ public final class GamlAnnotations {
 	 * by GAMA (so that they are also available in the UI or headless version of the platform). Depending on where they
 	 * are located, they are automatically named after the operator, constant, statement they annotate. For instance,
 	 * for the '+' operator, this annotation will produce:
-	 * 
+	 *
 	 * @test("10+10=20") -> test "+" { assert 10+10=20;}
-	 * 
+	 *
 	 * It is possible to give them a more explicit name:
-	 * 
+	 *
 	 * @test(value="10+10 = 20" name="int addition") -> test "int addition" { assert 10+10=20; }
-	 * 
+	 *
 	 * Several @test() annotations can be attached to an operator or constant. In that case, the corresponding
 	 * assertions are grouped together in a single GAML test statement. Example:
-	 * 
+	 *
 	 * @test("10+10=20") @test("0+0 = 0")
-	 * 
+	 *
 	 * will produce the following GAML test statement:
-	 * 
+	 *
 	 * test "+" { assert 10+10=20; assert 0+0=0; }
-	 * 
+	 *
 	 * If they are named, the name of the test statement is a concatenation of their names:
-	 * 
+	 *
 	 * @test(value="10+10=20" name="int addition" ) @test(value="10+0 = 10" name="zero neutrality")
-	 * 
+	 *
 	 * produces:
-	 * 
+	 *
 	 * test "int addition and zero neutrality" { assert 10+10=20; assert 10 + 0 = 10; }
-	 * 
+	 *
 	 * test annotations accept multi-line tests, provided that the last line is a boolean expression (i.e. an
 	 * assertion). Simply separate (as you would do in GAML) the lines by a semi-colon. If there are no assertion (i.e.
 	 * the last line ends with a semi-colon), the lines are simply copied to the GAML code. This can be handy if one
 	 * wants to initialize a bunch of variables, for instance. These statements can even contain complete 'assert'
 	 * statements.
-	 * 
+	 *
 	 * Example:
-	 * 
+	 *
 	 * @test("int a <- 10; int b <- 10;") @test("a+b = 20") @test("a+0 = a") @test("int c<- 0; assert c+b = b;")
-	 * 
+	 *
 	 * produces:
-	 * 
+	 *
 	 * test "+" { int a <- 10; int b <- 10; assert a+b = 20; assert a+0 = a; int c<- 0; assert c+b = 0; }
-	 * 
+	 *
 	 * Note that no syntax verification occurs when writing these annotations. It is up to the programmer to produce
 	 * syntactically correct codes, otherwise the automated validation of models (which occurs whenever the code is
 	 * committed) will fail.
-	 * 
+	 *
 	 * @author drogoul
 	 *
 	 */
@@ -1297,43 +1332,45 @@ public final class GamlAnnotations {
 
 	public static @interface test {
 		/**
-		 * 
+		 *
 		 * @return the GAML expression or list of statements that need to be tested using the 'assert' statement. For
 		 *         instance, '@test( "10+10 = 20")' will generate a test containing the statement 'assert 10+10 = 20;'
-		 * 
+		 *
 		 *         To generate a multi-line test, use semi-colons to separate the statements (like in GAML). For
 		 *         instance '@test( "int a <- 10; int b <- 10; a+b = 20") will generate the following test:
-		 * 
+		 *
 		 *         test plus { int a <- 10; int b <- 10; assert a+b = 20; }
-		 * 
+		 *
 		 *         If the string ends with a semi-colon, no attempt is made to infer the 'assert' statement and the
 		 *         whole GAML code is simply copied into the test. This can be used to initialize variables, but also to
 		 *         generate tests that will "abort" instead of "failing". For instance, consider these two annotations:
-		 * 
+		 *
 		 *         '@test("int a <- 0; float b <- 100 / a ;")' // when tested, a runtime error will make this test abort
 		 *         '@test("int a <- 0; !is_error(100 / a)")' // when tested, the runtime error will be caught but the
 		 *         test will fail (as the division by zero IS an error)
-		 * 
+		 *
 		 *         An empty value will produce an empty test statement (unless the @test annotation is preceded or
 		 *         followed by other @test annotations)
-		 * 
+		 *
 		 */
 		String value();
 
 		/**
-		 * 
+		 *
 		 * @return the name of the test (see the general comment for the effect of naming tests). It is empty by
 		 *         default.
 		 */
-		String name() default "";
+		String name()
+
+		default "";
 
 		/**
-		 * 
+		 *
 		 * @return whether the test, if false, will fail or simply emit a warning. 'false' by default.
-		 * 
+		 *
 		 *         '@test("10+10 = 100" warning=true) will not be recorded as failing (i.e. it will not break the
 		 *         compilation)
-		 * 
+		 *
 		 *         Note that warning=true has no effect if the value of the test does not contain assertions (and it
 		 *         simply influences the last assertion if there is one)
 		 */
@@ -1350,7 +1387,7 @@ public final class GamlAnnotations {
 		 * The name of this type of files. This name will be used to generate two operators: name+"_file" and
 		 * "is_"+name. The first operator may have variants taking one or several arguments, depending on the @builder
 		 * annotations present on the class.
-		 * 
+		 *
 		 * @return a (human-understandable) string describing this type of files, suitable for use in composed operator
 		 *         names (e.g. "shape", "image"...)
 		 *
@@ -1368,7 +1405,7 @@ public final class GamlAnnotations {
 		 * The list of file extensions allowed for this type of files. These extensions will be used to check the
 		 * validity of the file path, but also to generate the correct type of file when a path is passed to the generic
 		 * "file" operator.
-		 * 
+		 *
 		 * @return an array of extensions (without the '.' delimiter) or an empty array if no specific extensions are
 		 *         associated to this type of files (e.g. ["png","jpg","jpeg"...])
 		 */
@@ -1380,7 +1417,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int buffer_content() default ITypeProvider.NONE;
+		int buffer_content()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return the type of the index of the buffer. Can be directly a type in IType or one of the constants declared
@@ -1388,7 +1427,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int buffer_index() default ITypeProvider.NONE;
+		int buffer_index()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 *
@@ -1397,7 +1438,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int buffer_type() default ITypeProvider.NONE;
+		int buffer_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
