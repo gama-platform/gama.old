@@ -23,7 +23,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.tools.Diagnostic.Kind;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -65,6 +64,8 @@ import msi.gama.precompiler.doc.utils.XMLElements;
 
 public class DocProcessor extends ElementProcessor<doc> {
 
+	public static final String CAST_METHOD = "cast";
+	
 	Messager mes;
 	TypeConverter tc;
 	public Document document;
@@ -294,15 +295,36 @@ public class DocProcessor extends ElementProcessor<doc> {
 			// - name_type: converts the parameter into the type name_type
 			final Operator op_type = new Operator(document, tc.getProperCategory("Types"),
 					e.getAnnotation(type.class).concept(), e.getAnnotation(type.class).name());
+			org.w3c.dom.Element docElt = null;
 		
 			Operands ops = new Operands(document, ((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
 			ops.addOperand(new Operand(document, "val", 0, "any"));
 			op_type.addOperands(ops);
-	//		op.setOperands(((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
-	//		op.addOperand(new Operand(document, "val", 0, "any"));
-			op_type.setDocumentation("Casts the operand into the type " + e.getAnnotation(type.class).name());
+			
+			///////////*****************
+			for( Element elt : ((TypeElement) e).getEnclosedElements()) {
+//				mes.printMessage(Kind.WARNING, ((TypeElement) e).getQualifiedName().toString() + " - " + elt.getSimpleName() + " - " + elt.getSimpleName().toString().equals("staticCast") + " - " + elt.getKind().equals(ElementKind.METHOD));
+				if(elt.getKind().equals(ElementKind.METHOD) &&  elt.getSimpleName().toString().equals(CAST_METHOD) ) {
+					doc docMethod = elt.getAnnotation(doc.class);
+//					mes.printMessage(Kind.WARNING, "--------" + ((TypeElement) e).getQualifiedName().toString() + " - " + elt.getSimpleName() + " " + (docMethod));
+					
+					
+					if (docMethod != null) {
+						docElt = getDocElt(docMethod, document, mes, "Operator " + ((TypeElement) e).getQualifiedName().toString(), tc, (ExecutableElement) elt, null) ;
+					}	
+				}				
+			}
+			
+			////////*****************
 
-			eltOpFromTypes.add(op_type.getElementDOM());
+			// op_type.setDocumentation("Casts the operand into the type " + e.getAnnotation(type.class).name());
+
+			org.w3c.dom.Element elt = op_type.getElementDOM();
+			if(docElt != null) {
+				elt.appendChild(docElt);				
+			}
+			
+			eltOpFromTypes.add(elt);
 		}
 
 		return eltOpFromTypes;
@@ -1081,26 +1103,18 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return getDocElt(docAnnot, doc, null, mes, eltName, tc, e, parentElement);
 	}
 
-	public org.w3c.dom.Element getDocElt(final doc[] docAnnotTab, final Document doc, final Messager mes,
-			final String eltName, final TypeConverter tc, final ExecutableElement e,
-			final org.w3c.dom.Element parentElement) { // e.getSimpleName()
-		if (docAnnotTab == null
-				|| docAnnotTab.length == 0) { return getDocElt(null, doc, null, mes, eltName, tc, e, parentElement); }
-		return getDocElt(docAnnotTab[0], doc, null, mes, eltName, tc, e, parentElement);
-	}
-
 	public org.w3c.dom.Element getDocElt(final doc docAnnot, final Document doc, final org.w3c.dom.Element docElement,
 			final Messager mes, final String eltName, final TypeConverter tc, final ExecutableElement e,
 			final org.w3c.dom.Element parentElement) { // e.getSimpleName()
 		org.w3c.dom.Element docElt = docElement;
-
+	
 		if (docAnnot == null) {
 			// mes.printMessage(Kind.WARNING, "The element __" + eltName + "__ is not documented.");
 		} else {
 			if (docElt == null) {
 				docElt = doc.createElement(XMLElements.DOCUMENTATION);
 			}
-
+	
 			// Parse result
 			final String value = docAnnot.value();
 			final boolean masterDoc = docAnnot.masterDoc();
@@ -1124,7 +1138,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 					docElt.appendChild(resultElt);
 				}
 			}
-
+	
 			// Parse comment
 			final String comment = docAnnot.comment();
 			if (!"".equals(comment)) {
@@ -1137,7 +1151,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 					docElt.appendChild(commentElt);
 				}
 			}
-
+	
 			// Parse: seeAlso
 			org.w3c.dom.Element seeAlsoElt;
 			if (docElt.getElementsByTagName(XMLElements.SEEALSO).getLength() != 0) {
@@ -1164,9 +1178,9 @@ public class DocProcessor extends ElementProcessor<doc> {
 			if (docAnnot.see().length != 0) {
 				docElt.appendChild(seeAlsoElt);
 			}
-
+	
 			// Parse: usages
-
+	
 			org.w3c.dom.Element usagesElt;
 			org.w3c.dom.Element usagesExampleElt;
 			org.w3c.dom.Element usagesNoExampleElt;
@@ -1192,11 +1206,11 @@ public class DocProcessor extends ElementProcessor<doc> {
 			int numberOfUsagesWithoutExample = 0;
 			for (final usage usage : docAnnot.usages()) {
 				final org.w3c.dom.Element usageElt = doc.createElement(XMLElements.USAGE);
-
+	
 				// Among the usages, we consider the ones without value
 				if ("".equals(usage.value())) {
 					numberOfUsagesWithExamplesOnly++;
-
+	
 					final org.w3c.dom.Element examplesUsageElt =
 							getExamplesElt(usage.examples(), doc, e, tc, parentElement);
 					usageElt.appendChild(examplesUsageElt);
@@ -1205,14 +1219,14 @@ public class DocProcessor extends ElementProcessor<doc> {
 				// Among the usages, we consider the ones with only the value
 				else if (usage.examples().length == 0) {
 					numberOfUsagesWithoutExample++;
-
+	
 					usageElt.setAttribute(XMLElements.ATT_USAGE_DESC, usage.value());
 					usagesNoExampleElt.appendChild(usageElt);
 				}
 				// Otherwise, when we have both value and examples
 				else {
 					numberOfUsages++;
-
+	
 					usageElt.setAttribute(XMLElements.ATT_USAGE_DESC, usage.value());
 					final org.w3c.dom.Element examplesUsageElt =
 							getExamplesElt(usage.examples(), doc, e, tc, parentElement);
@@ -1220,21 +1234,21 @@ public class DocProcessor extends ElementProcessor<doc> {
 					usagesElt.appendChild(usageElt);
 				}
 			}
-
+	
 			// Let's continue with examples and special cases
 			// - special cases are equivalent to usage without examples
 			// - examples are equivalent to usage with only examples
 			// Parse examples
 			if (docAnnot.examples().length != 0) {
 				final org.w3c.dom.Element usageExElt = doc.createElement(XMLElements.USAGE);
-
+	
 				final org.w3c.dom.Element examplesElt = getExamplesElt(docAnnot.examples(), doc, e, tc, parentElement);
-
+	
 				numberOfUsagesWithExamplesOnly += docAnnot.examples().length;
 				usageExElt.appendChild(examplesElt);
 				usagesExampleElt.appendChild(usageExElt);
 			}
-
+	
 			// Parse specialCases
 			for (final String cases : docAnnot.special_cases()) {
 				if (!"".equals(cases)) {
@@ -1244,7 +1258,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 					numberOfUsagesWithoutExample++;
 				}
 			}
-
+	
 			if (numberOfUsagesWithExamplesOnly != 0) {
 				docElt.appendChild(usagesExampleElt);
 			}
@@ -1254,9 +1268,17 @@ public class DocProcessor extends ElementProcessor<doc> {
 			if (numberOfUsages != 0) {
 				docElt.appendChild(usagesElt);
 			}
-
+	
 		}
 		return docElt;
+	}
+
+	public org.w3c.dom.Element getDocElt(final doc[] docAnnotTab, final Document doc, final Messager mes,
+			final String eltName, final TypeConverter tc, final ExecutableElement e,
+			final org.w3c.dom.Element parentElement) { // e.getSimpleName()
+		if (docAnnotTab == null
+				|| docAnnotTab.length == 0) { return getDocElt(null, doc, null, mes, eltName, tc, e, parentElement); }
+		return getDocElt(docAnnotTab[0], doc, null, mes, eltName, tc, e, parentElement);
 	}
 
 	public org.w3c.dom.Element getExamplesElt(final example[] examples, final Document doc, final ExecutableElement e,

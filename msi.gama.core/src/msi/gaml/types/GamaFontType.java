@@ -16,7 +16,9 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -44,6 +46,17 @@ public class GamaFontType extends GamaType<GamaFont> {
 					() -> new GamaFont("Helvetica", Font.PLAIN, 12), IType.FONT, true)
 			.in(GamaPreferences.Displays.NAME, GamaPreferences.Displays.DRAWING);
 
+	@doc(value="Cast any object as a font", 
+			usages = {
+				@usage(value = "if the operand is a number, returns with the operand value as font size and the default display font style", 		
+					examples = {
+						@example("font f <- font(12);")
+					}),
+				@usage(value = "if the operand is a string, returns a font with this font name", 		
+					examples = {
+						@example("font f <- font(12);")
+					}),				
+			})
 	@Override
 	public GamaFont cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {

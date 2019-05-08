@@ -122,7 +122,8 @@ public class TypeConverter {
 		
 		hm.put("java.lang.Object", "unknown");
 		hm.put("T", "unknown");		
-		hm.put("?", "unknown");		
+		hm.put("?", "unknown");	
+		hm.put("msi.gaml.types.IType", "any GAML type");
 
 		hm.put("msi.gama.metamodel.agent.IAgent", "agent");
 		hm.put("msi.gama.metamodel.shape.IShape", "geometry");
@@ -156,9 +157,7 @@ public class TypeConverter {
 		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.IShape,java.lang.Double>", "map<agent,float>");
 
 		hm.put("msi.gama.util.GamaFont", "font");
-
 		hm.put("msi.gama.util.GamaRegression", "regression");
-
 		hm.put("msi.gama.util.GamaDate", "date");
 
 		// BDI
@@ -279,7 +278,7 @@ public class TypeConverter {
 			
 			return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";
 		} else {
-			throw new IllegalArgumentException("getProperType has a not appropriate behavior input");
+			throw new IllegalArgumentException("getProperType has a not appropriate input");
 		}	
 
 	}
