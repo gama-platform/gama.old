@@ -34,7 +34,7 @@ global {
 				the_graph <- layout_circle(the_graph, world.shape);
 			}
 			match "Grid" {
-				the_graph <- layout_taillandier(the_graph, world.shape,coeff_nb_places);
+				the_graph <- layout_grid(the_graph, world.shape,coeff_nb_places);
 	 		}
 		}	
 	}
