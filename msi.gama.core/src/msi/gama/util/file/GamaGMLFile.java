@@ -32,6 +32,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -68,26 +69,49 @@ public class GamaGMLFile extends GamaGisFile {
 	 * @param scope
 	 * @param pathName
 	 */
+	@doc (value= "This file constructor allows to read a gml file according to epsg reference (www.opengeospatial.org/)",
+			examples = {
+				@example(value = "file f <- gml_file(\"file\");", isExecutable = false)
+			})
 	public GamaGMLFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
-
+	@doc (value= "This file constructor allows to read a gml file and specifying the coordinates system code, as an int",
+			examples = {
+				@example(value = "file f <- gml_file(\"file\", \"32648\");", isExecutable = false)
+			})
 	public GamaGMLFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
+	@doc (value= "This file constructor allows to read a gml file and specifying the coordinates system code (epg,...,), as a string",
+			examples = {
+				@example(value = "file f <- gml_file(\"file\", \"EPSG:32648\");", isExecutable = false)
+			})	
 
 	public GamaGMLFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
+	@doc (value= "This file constructor allows to read a gml file and take a potential z value (not taken in account by default)",
+			examples = {
+				@example(value = "file f <- gml_file(\"file\", true);", isExecutable = false)
+			})
 
 	public GamaGMLFile(final IScope scope, final String pathName, final boolean with3D) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null, with3D);
 	}
+	@doc (value= "This file constructor allows to read a gml file, specifying the coordinates system code, as an int and take a potential z value (not taken in account by default)",
+			examples = {
+				@example(value = "file f <- gml_file(\"file\", \"32648\", true);", isExecutable = false)
+			})
 
 	public GamaGMLFile(final IScope scope, final String pathName, final Integer code, final boolean with3D)
 			throws GamaRuntimeException {
 		super(scope, pathName, code, with3D);
 	}
+	@doc (value= "This file constructor allows to read a gml file, specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default",
+			examples = {
+				@example(value = "file f <- gml_file(\"file\", \"EPSG:32648\",true);", isExecutable = false)
+			})
 
 	public GamaGMLFile(final IScope scope, final String pathName, final String code, final boolean with3D)
 			throws GamaRuntimeException {
