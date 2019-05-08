@@ -161,6 +161,8 @@ public class Dates {
 					examples = { @example (
 							value = "date('2000-01-02') - date('2000-01-01')",
 							equals = "86400") }))
+	@test ("date('2000-01-02') - date('2000-01-01') = 86400")
+	
 	public static double minusDate(final IScope scope, final GamaDate date1, final GamaDate date2)
 			throws GamaRuntimeException {
 		final Duration duration = Duration.between(date2, date1);
