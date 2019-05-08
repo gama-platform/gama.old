@@ -18,6 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -139,6 +140,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Returns a matrix containing the addition of  the elements of two matrices in argument "))
+	@test("matrix([[1,2],[3,4]]) + matrix([[1,2],[3,4]]) = matrix([[2,4],[6,8]])") 
 	public abstract IMatrix plus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
@@ -148,6 +150,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Multiplies the two matrices operands"))
+	@test("matrix([[1,2],[3,4]]) * matrix([[1,2],[3,4]]) = matrix([[1,4],[9,16]]) ") 
 	public abstract IMatrix times(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
@@ -157,6 +160,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Divides the two matrices operands"))
+	@test("matrix([[1,2],[3,4]]) / matrix([[1,2],[3,4]]) = matrix([[1,1],[1,1]])") 
 	public abstract IMatrix divides(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
@@ -171,6 +175,7 @@ public interface IMatrix<T>
 					examples = @example (
 							value = "matrix([[1,1],[1,2]]) . matrix([[1,1],[1,2]])",
 							equals = "matrix([[2,3],[3,5]])")))
+	@test("matrix([[1,1],[1,2]]) . matrix([[1,1],[1,2]]) = matrix([[2,3],[3,5]])")
 	public abstract IMatrix matrixMultiplication(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
@@ -180,6 +185,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Performs a subtraction between the two matrix operands"))
+	@test("matrix([[1,2],[3,4]]) - matrix([[1,2],[3,4]]) = matrix([[0,0],[0,0]])") 
 	public abstract IMatrix minus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
@@ -189,6 +195,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Performs a multiplication between the matrix operand and the float operand"))
+	@test("matrix([[1,2],[3,4]]) * 2.5 = matrix([[2.5,5.0],[7.5,10]])") 
 	public abstract IMatrix times(Double val) throws GamaRuntimeException;
 
 	@operator (
@@ -198,6 +205,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Performs a multiplication between the two matrix operands"))
+	@test("matrix([[1,2],[3,4]]) * 2 = matrix([[2,4],[6,8]])") 
 	public abstract IMatrix times(Integer val) throws GamaRuntimeException;
 
 	@operator (
@@ -207,8 +215,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Divides all the elements of the matrix operand by the float operand"))
+	@test("matrix([[1,2],[3,4]]) / 2.5 = matrix([[0.4,0.8],[1.2,1.6]])") 
 	public abstract IMatrix divides(Double val) throws GamaRuntimeException;
-
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
@@ -216,6 +224,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Divides all the elements of the matrix operand by the integer operand"))
+	@test("matrix([[1,2],[3,4]]) / 2 = matrix([[0.5,1],[1.5,2]])") 
 	public abstract IMatrix divides(Integer val) throws GamaRuntimeException;
 
 	@operator (
@@ -225,6 +234,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Adds the float operand to all the elements in the matrix"))
+	@test("matrix([[1,2],[3,4]]) + 22.5 = matrix([[23.5,24.5],[25.5,26.5]])") 
 	public abstract IMatrix plus(Double val) throws GamaRuntimeException;
 
 	@operator (
@@ -234,6 +244,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Adds the int operand to all the elements in the matrix"))
+	@test("matrix([[1,2],[3,4]]) + 2 = matrix([[3,4],[5,6]])") 
 	public abstract IMatrix plus(Integer val) throws GamaRuntimeException;
 
 	@operator (
@@ -243,6 +254,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Subtracts the float operand from all the elements in the matrix"))
+	@test("matrix([[1,2],[3,4]]) - 1.5 = matrix([[-0.5,0.5],[1.5,2.5]])") 
 	public abstract IMatrix minus(Double val) throws GamaRuntimeException;
 
 	@operator (
@@ -252,6 +264,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Subtracts the int operand from all the elements in the matrix"))
+	@test("matrix([[1,2],[3,4]]) - 1 = matrix([[0,1],[2,3]])") 
 	public abstract IMatrix minus(Integer val) throws GamaRuntimeException;
 
 	public abstract T get(IScope scope, final int col, final int row);
