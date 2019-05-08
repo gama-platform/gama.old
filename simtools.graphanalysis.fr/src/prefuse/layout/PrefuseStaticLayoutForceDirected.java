@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.layout.PrefuseStaticLayoutCircle.java, in plugin msi.gama.core,
+ * msi.gama.util.graph.layout.PrefuseStaticLayoutForceDirected.java, in plugin msi.gama.core,
  * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
  * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
@@ -8,27 +8,28 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.util.graph.layout;
+package prefuse.layout;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 import msi.gama.runtime.IScope;
-import prefuse.action.layout.CircleLayout;
 import prefuse.action.layout.Layout;
+import prefuse.action.layout.graph.ForceDirectedLayout;
 
 /**
- * @see http://prefuse.org/doc/api/prefuse/action/layout/CircleLayout.html
+ * @see http://prefuse.org/doc/api/prefuse/action/layout/graph/ForceDirectedLayout.html
  * @author Samuel Thiriot
+ *
  */
-public class PrefuseStaticLayoutCircle extends PrefuseStaticLayoutAbstract {
+public class PrefuseStaticLayoutForceDirected extends PrefuseStaticLayoutAbstract {
 
-	public static final String NAME = "circle";
+	public static final String NAME = "forcedirected";
 
 	@Override
 	protected Layout createLayout(final IScope scope, final long timeout, final Map<String, Object> options) {
-		final CircleLayout l = new CircleLayout(PREFUSE_GRAPH);
+		final ForceDirectedLayout l = new ForceDirectedLayout(PREFUSE_GRAPH, true, false);
 		return l;
 	}
 

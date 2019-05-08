@@ -9,5 +9,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/gephi-toolkit.jar"/>
+	<classpathentry kind="lib" path="lib/prefuse 2007-10-21/jars/prefuse.jar" sourcepath="lib/prefuse 2007-10-21/src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

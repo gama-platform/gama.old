@@ -11,7 +11,8 @@ Require-Bundle: msi.gama.ext,
  ummisco.gama.ui.shared,
  ummisco.gama.ui.experiment;bundle-version="1.7.0",
  msi.gama.application;bundle-version="1.7.0",
- com.google.guava
+ com.google.guava,
+ ummisco.gama.annotations
 Bundle-ActivationPolicy: lazy
 Import-Package: com.vividsolutions.jts.geom,
  org.apache.commons.lang;version="2.6.0",

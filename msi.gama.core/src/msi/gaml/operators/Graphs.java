@@ -14,10 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,7 +60,7 @@ import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.GraphAlgorithmsHandmade;
 import msi.gama.util.graph.GraphFromAgentContainerSynchronizer;
 import msi.gama.util.graph.IGraph;
-import msi.gama.util.graph.layout.AvailableGraphLayouts;
+import msi.gama.util.graph.layout.LayoutCircle;
 import msi.gama.util.graph.layout.LayoutForceDirected;
 import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.matrix.GamaFloatMatrix;
@@ -2001,61 +1999,21 @@ public class Graphs {
 		sim.startSimulation(scope);
 		return graph;
 	}
+	
 	@operator (
-			value = "layout",
+			value = "layout_circle",
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	@doc (
-			value = "layouts a GAMA graph.",
-			masterDoc = true)
-	// TODO desc
-	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine,
-			final int timeout, final GamaMap<String, Object> options) {
-
-		// translate Gama options to
-		Map<String, Object> jOptions = null;
-		if (options.isEmpty()) {
-			jOptions = Collections.EMPTY_MAP;
-		} else {
-			jOptions = new HashMap<>(options.size());
-			for (final String key : options.keySet()) {
-				jOptions.put(key, options.get(scope, key));
-			}
-		}
-		AvailableGraphLayouts
-				// retrieve layout for he layout that was selected by the user
-				// (may raise an exception)
-				.getStaticLayout(scope, layoutEngine.trim().toLowerCase())
-				// apply this layout with the options
-				.doLayoutOneShot(scope, graph, timeout, jOptions);
-
+			value = "layouts a Gama graph on a circle with equidistance between nodes. For now there is no optimization on node ordering !",
+			examples = { @example (value = "layout_circule(graph, world.shape);")}
+			)
+	public static IGraph layoutCircle(final IScope scope, final GamaGraph graph, IShape bounds) {
+		LayoutCircle layouter = new LayoutCircle(graph, bounds);
+		layouter.applyLayout(scope);
 		return graph;
-	}
-
-	@operator (
-			value = "layout",
-			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
-
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			value = "layouts a GAMA graph.")
-	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine,
-			final int timeout) {
-		return layoutOneshot(scope, graph, layoutEngine, timeout, GamaMapFactory.create(Types.STRING, Types.NO_TYPE));
-	}
-
-	@operator (
-			value = "layout",
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			value = "layouts a GAMA graph.")
-	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine) {
-		return layoutOneshot(scope, graph, layoutEngine, -1);
 	}
 
 	@operator (
