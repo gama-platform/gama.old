@@ -43,6 +43,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -341,6 +342,7 @@ public class Graphs {
 							value = "road ag <- road(path_followed agent_from_geometry line);",
 							isExecutable = false) },
 			see = "path")
+	@no_test
 	public static IAgent getAgentFromGeom(final IPath path, final IShape geom) {
 		if (path == null) { return null; }
 		return (IAgent) path.getRealObject(geom);
@@ -422,6 +424,8 @@ public class Graphs {
 									value = "graphEpidemio contains_edge (node(0)::node(3))",
 									equals = "true",
 									isExecutable = false) }))
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"(g contains_edge ({10,5}::{20,3})) = true")
 	public static Boolean containsEdge(final IScope scope, final IGraph graph, final GamaPair edge) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the contains_edge operator, the graph should not be null!", scope);
@@ -558,6 +562,7 @@ public class Graphs {
 					equals = "edge1",
 					isExecutable = false) },
 			see = { "out_edges_of", "in_edges_of" })
+	@no_test
 	public static Object EdgeBetween(final IScope scope, final IGraph graph, final GamaPair verticePair) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the edge_between operator, the graph should not be null!", scope);
@@ -583,6 +588,8 @@ public class Graphs {
 							equals = "2",
 							test = false) },
 			see = { "out_degree_of", "degree_of" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"(g in_degree_of ({20,3})) = 1")
 	public static int inDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
@@ -608,6 +615,8 @@ public class Graphs {
 							equals = "3",
 							test = false) },
 			see = "in_edges_of")
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			" list li <- g out_edges_of {10,5};  length(li) = 2")
 	public static IList outEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the out_edges_of operator, the graph should not be null!", scope);
@@ -633,6 +642,7 @@ public class Graphs {
 							equals = "4",
 							test = false) },
 			see = { "in_degree_of", "degree_of" })
+	@no_test
 	public static int outDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
@@ -656,6 +666,8 @@ public class Graphs {
 							equals = "3",
 							test = false) },
 			see = { "in_degree_of", "out_degree_of" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			" (g degree_of ({10,5})) = 3")
 	public static int degreeOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
@@ -679,6 +691,7 @@ public class Graphs {
 							equals = "the list of all the components as list",
 							test = false) },
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
+	@no_test
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
@@ -711,6 +724,7 @@ public class Graphs {
 							equals = "the list of all the components as list",
 							test = false) },
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
+	@no_test
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph, final boolean edge) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
@@ -750,6 +764,7 @@ public class Graphs {
 					equals = "the sub-graph corresponding to the main connected components of the graph",
 					test = false) },
 			see = { "connected_components_of" })
+	@no_test
 	public static IGraph ReduceToMainconnectedComponentOf(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
@@ -792,6 +807,7 @@ public class Graphs {
 							equals = "the list of all the maximal cliques as list",
 							test = false) },
 			see = { "biggest_cliques_of" })
+	@no_test
 	public static IList<IList> getMaximalCliques(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the maximal_cliques_of operator, the graph should not be null!",
@@ -1063,6 +1079,8 @@ public class Graphs {
 							equals = "[{1.0,5.0},{34.0,56.0}]",
 							isExecutable = false) },
 			see = { "predecessors_of", "successors_of" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"g neighbors_of ({10,5}) = [{80.0,35.0,0.0},{20.0,3.0,0.0},{30.0,30.0,0.0}]")	
 	public static IList neighborsOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the neighbors_of operator, the graph should not be null!", scope);
@@ -1094,6 +1112,8 @@ public class Graphs {
 							equals = "[{12;45}]",
 							test = false) },
 			see = { "neighbors_of", "successors_of" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"g predecessors_of ({10,5}) = [{80.0,35.0,0.0}]")	
 	public static IList predecessorsOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph.containsVertex(vertex)) {
 			return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
@@ -1149,6 +1169,7 @@ public class Graphs {
 							equals = "a graph with two edges and three vertices",
 							test = false) }),
 			see = { "as_intersection_graph", "as_distance_graph" })
+	@no_test
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
 
 		final IGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope, Types.GEOMETRY,
@@ -1176,6 +1197,7 @@ public class Graphs {
 							equals = "a graph with two edges and three vertices",
 							test = false) }),
 			see = { "as_intersection_graph", "as_distance_graph" })
+	@no_test
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges, final Double tolerance) {
 
 		final GamaSpatialGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope,
@@ -1206,6 +1228,7 @@ public class Graphs {
 							value = "as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])",
 							equals = "a graph with these three vertices and two edges",
 							test = false)))
+	@no_test
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
 
@@ -1231,6 +1254,7 @@ public class Graphs {
 					value = "list(ant) as_intersection_graph 0.5",
 					isExecutable = false),
 			see = { "as_distance_graph", "as_edge_graph" })
+	@no_test
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance) {
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance),
 				null, scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
@@ -1289,6 +1313,7 @@ public class Graphs {
 					value = "list(ant) as_distance_graph 3.0",
 					isExecutable = false),
 			see = { "as_intersection_graph", "as_edge_graph" })
+	@no_test
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null,
 				scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
@@ -1312,6 +1337,7 @@ public class Graphs {
 					value = "my_cell_graph<-grid_cells_to_graph(cells_list)",
 					isExecutable = false),
 			see = {})
+	@no_test
 	public static IGraph gridCellsToGraph(final IScope scope, final IContainer vertices) {
 		final IGraph graph = new GamaSpatialGraph(vertices, false, false, new GridNeighborsRelation(), null, scope,
 				vertices.getGamlType().getContentType(), Types.GEOMETRY);
@@ -1330,6 +1356,7 @@ public class Graphs {
 	@doc (
 			value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
 			see = { "as_intersection_graph", "as_edge_graph" })
+	@no_test
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
 			final ISpecies edgeSpecies) {
 		final IType edgeType = scope.getType(edgeSpecies.getName());
@@ -1348,6 +1375,7 @@ public class Graphs {
 	@doc (
 			value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
 			see = { "as_intersection_graph", "as_edge_graph" })
+	@no_test
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final GamaMap params) {
 		final Double distance = (Double) params.get("distance");
 		final ISpecies edgeSpecies = (ISpecies) params.get("species");
@@ -1369,6 +1397,7 @@ public class Graphs {
 	@doc (
 			value = "allows to create a spatial graph from a container of vertices, without trying to wire them. The container can be empty. Emits an error if the contents of the container are not geometries, points or agents",
 			see = { "graph" })
+	@no_test
 	public static IGraph spatial_graph(final IScope scope, final IContainer vertices) {
 		return new GamaSpatialGraph(vertices, false, false, null, null, scope, vertices.getGamlType().getContentType(),
 				Types.GEOMETRY);
@@ -1392,6 +1421,7 @@ public class Graphs {
 			value = "if the second operand is true, the operand graph will store in a cache all the previously computed shortest path (the cache be cleared if the graph is modified).",
 			comment = "the operator alters the operand graph, it does not create a new one.",
 			see = { "path_between" })
+	@no_test
 	public static IGraph useCacheForShortestPaths(final IGraph g, final boolean useCache) {
 		return GamaGraphType.useChacheForShortestPath(g, useCache);
 	}
@@ -1406,6 +1436,7 @@ public class Graphs {
 			value = "the operand graph becomes a directed graph.",
 			comment = "the operator alters the operand graph, it does not create a new one.",
 			see = { "undirected" })
+	@no_test
 	public static IGraph asDirectedGraph(final IGraph g) {
 		g.incVersion();
 		return GamaGraphType.asDirectedGraph(g);
@@ -1421,6 +1452,7 @@ public class Graphs {
 			value = "the operand graph becomes an undirected graph.",
 			comment = "the operator alters the operand graph, it does not create a new one.",
 			see = { "directed" })
+	@no_test
 	public static IGraph asUndirectedGraph(final IGraph g) {
 		g.incVersion();
 		return GamaGraphType.asUndirectedGraph(g);
@@ -1441,6 +1473,7 @@ public class Graphs {
 					examples = @example (
 							value = "graph_from_edges (list(ant) as_map each::one_of (list(ant))) with_weights (list(ant) as_map each::each.food)",
 							isExecutable = false)))
+	@no_test
 	public static IGraph withWeights(final IScope scope, final IGraph graph, final GamaMap weights) {
 		// a map of vertex/edge::double to provide weights
 		// Example : graph_from_edges (list ant as_map each::one_of (list ant))
@@ -1463,6 +1496,7 @@ public class Graphs {
 	@doc (
 			usages = @usage ("if the right-hand operand is a list, affects the n elements of the list to the n first edges. "
 					+ "Note that the ordering of edges may change overtime, which can create some problems..."))
+	@no_test
 	public static IGraph withWeights(final IScope scope, final IGraph graph, final IList weights) {
 		// Simply a list of double... and, by default, for edges.However, the
 		// ordering of edges may
@@ -1496,6 +1530,7 @@ public class Graphs {
 					value = "graphEpidemio <- graphEpidemio with_optimizer_type \"static\";",
 					isExecutable = false),
 			see = "set_verbose")
+	@no_test
 	public static IGraph setOptimizeType(final IScope scope, final IGraph graph, final String optimizerType) {
 		final List<String> existingOptimizer = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream()
 				.map(a -> a.toString()).collect(Collectors.toList());
@@ -1522,6 +1557,7 @@ public class Graphs {
 					equals = "the graph with node(0)",
 					isExecutable = false),
 			see = { "add_edge", "graph" })
+	@no_test
 	public static IGraph addNode(final IGraph g, final IShape node) {
 		g.addVertex(node);
 		return g;
@@ -1540,6 +1576,7 @@ public class Graphs {
 					value = "node(0) remove_node_from graphEpidemio",
 					equals = "the graph without node(0)",
 					isExecutable = false))
+	@no_test
 	public static IGraph removeNodeFrom(final IShape node, final IGraph g) {
 		g.removeVertex(node);
 
@@ -1582,6 +1619,7 @@ public class Graphs {
 					value = "graph <- graph add_edge (source::target);",
 					isExecutable = false),
 			see = { "add_node", "graph" })
+	@no_test
 	public static IGraph addEdge(final IGraph g, final GamaPair nodes) {
 		g.addEdge(nodes.first(), nodes.last());
 		g.incVersion();
@@ -1600,6 +1638,7 @@ public class Graphs {
 					value = "path_between (my_graph, ag1, ag2)",
 					equals = "A path between ag1 and ag2",
 					isExecutable = false) })
+	@no_test
 	public static IPath path_between(final IScope scope, final IGraph graph, final IShape source, final IShape target)
 			throws GamaRuntimeException {
 		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
@@ -1624,6 +1663,7 @@ public class Graphs {
 					value = "paths_between(my_graph, ag1:: ag2, 2)",
 					equals = "the 2 shortest paths (ordered by length) between ag1 and ag2",
 					isExecutable = false) })
+	@no_test
 	public static IList<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
 			final GamaPair sourTarg, final int k) throws GamaRuntimeException {
 		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
@@ -1646,6 +1686,7 @@ public class Graphs {
 			examples = { @example (
 					value = "max_flow_between(my_graph, vertice1, vertice2)",
 					isExecutable = false) })
+	@no_test
 	public static GamaMap<Object, Double> maxFlowBetween(final IScope scope, final GamaGraph graph, final Object source,
 			final Object sink) throws GamaRuntimeException {
 		final EdmondsKarpMFImpl ek = new EdmondsKarpMFImpl(graph);
@@ -1667,6 +1708,7 @@ public class Graphs {
 					value = "[road1,road2,road3] as_path my_graph",
 					equals = "a path road1->road2->road3 of my_graph",
 					isExecutable = false) })
+	@no_test
 	public static IPath as_path(final IScope scope, final GamaList<IShape> edgesNodes, final GamaGraph graph)
 			throws GamaRuntimeException {
 		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
@@ -1736,6 +1778,7 @@ public class Graphs {
 					@example (
 							value = "			myEdgeSpecy , true);",
 							isExecutable = false) })
+	@no_test
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename,
 			final ISpecies vertex_specy, final ISpecies edge_specy, final Boolean spatial) throws GamaRuntimeException {
 
@@ -1805,6 +1848,7 @@ public class Graphs {
 							@example (
 									value = "			myEdgeSpecy );",
 									isExecutable = false) }))
+	@no_test
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String filename, final ISpecies vertex_specy,
 			final ISpecies edge_specy) throws GamaRuntimeException {
 
@@ -1963,6 +2007,7 @@ public class Graphs {
 					value = "all_pairs_shortest_paths(my_graph)",
 					equals = "shortest_paths_matrix will contain all pairs of shortest paths",
 					isExecutable = false) })
+	@no_test
 	public static GamaIntMatrix primAllPairShortestPaths(final IScope scope, final GamaGraph graph)
 			throws GamaRuntimeException {
 		if (graph == null) {
@@ -1984,6 +2029,7 @@ public class Graphs {
 					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_force is the coefficien use to compute the force, typical value is 0.4; "
 					+ "cooling rate is the decreasing coefficient of the temperature, typical value is 0.01;  max_iteration is the maximal number of iterations; equilibirum criterion is the maximal"
 					+ "distance of displacement for a vertice to be considered as in equilibrium")
+	@no_test
 	public static IGraph layoutForce(final IScope scope, final GamaGraph graph, IShape bounds, double coeffForce, double coolingRate, int maxIteration, double criterion) {
 		LayoutForceDirected sim = new LayoutForceDirected(graph, bounds, coeffForce, coolingRate, maxIteration,true, criterion);
 		sim.startSimulation(scope);
@@ -2051,6 +2097,7 @@ public class Graphs {
 			concept = {})
 	@doc (
 			value = "adjacency matrix of the given graph.")
+	@no_test
 	public static GamaFloatMatrix adjacencyMatrix(final IScope scope, final GamaGraph graph) {
 		return graph.toMatrix(scope);
 	}
@@ -2061,6 +2108,7 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH, IConcept.EDGE })
 	@doc (
 			value = "retur for each edge, its strahler number")
+	@no_test
 	public static GamaMap strahlerNumber(final IScope scope, final GamaGraph graph) {
 		final GamaMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
 		if (graph == null || graph.isEmpty(scope)) { return results; }
@@ -2110,6 +2158,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The third parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object source, final Object target, final Double weight) {
 		return edge(source, target, null, weight);
 	}
@@ -2122,6 +2171,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The third parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object source, final Object target, final Integer weight) {
 		return edge(source, target, null, weight);
 	}
@@ -2133,6 +2183,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and a third and indicates  they should respectively be considered as the source (key of the pair), the target (value of the pair) and the actual object representing an edge of a graph. The third parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final GamaPair pair, final Object object, final Double weight) {
 		return edge(pair.key, pair.value, object, weight);
 	}
@@ -2144,6 +2195,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and a third and indicates  they should respectively be considered as the source (key of the pair), the target (value of the pair) and the actual object representing an edge of a graph. The third parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final GamaPair pair, final Object object, final Integer weight) {
 		return edge(pair.key, pair.value, object, weight);
 	}
@@ -2156,6 +2208,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph ",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object source, final Object target) {
 		return edge(source, target, null, (Double) null);
 	}
@@ -2167,6 +2220,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps three objects and indicates they should respectively be considered as the source, the target and the actual object representing an edge of a graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object source, final Object target, final Object object) {
 		return edge(source, target, object, (Double) null);
 	}
@@ -2178,6 +2232,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The fourth parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object source, final Object target, final Object object, final Double weight) {
 		return new EdgeToAdd(source, target, object, weight);
 	}
@@ -2189,6 +2244,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The fourth parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object source, final Object target, final Object object, final Integer weight) {
 		return new EdgeToAdd(source, target, object, weight);
 	}
@@ -2200,6 +2256,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph. The second parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object edgeObject, final Double weight) {
 		return edge(null, null, edgeObject, weight);
 	}
@@ -2211,6 +2268,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph. The second parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object edgeObject, final Integer weight) {
 		return edge(null, null, edgeObject, weight);
 	}
@@ -2222,6 +2280,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge. The second parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final GamaPair pair, final Double weight) {
 		return edge(pair.key, pair.value, null, weight);
 	}
@@ -2233,6 +2292,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge. The second parameter indicates which weight this edge should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final GamaPair pair, final Integer weight) {
 		return edge(pair.key, pair.value, null, weight);
 	}
@@ -2244,6 +2304,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final Object object) {
 		return edge(null, null, object, (Double) null);
 	}
@@ -2255,6 +2316,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge of a graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static Object edge(final GamaPair pair) {
 		return edge(pair.key, pair.value, null, (Double) null);
 	}
@@ -2266,6 +2328,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph. The second parameter indicates which weight the node should have in the graph",
 					comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
+	@no_test
 	public static Object node(final Object object, final Double weight) {
 		return new NodeToAdd(object, weight);
 	}
@@ -2277,6 +2340,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph",
 					comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
+	@no_test
 	public static Object node(final Object nodeObject) {
 		return node(nodeObject, null);
 	}
@@ -2288,6 +2352,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as nodes of a graph",
 					comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
+	@no_test
 	public static IContainer nodes(final IScope scope, final IContainer nodes) {
 		return NodesToAdd.from(scope, nodes);
 	}
@@ -2299,6 +2364,7 @@ public class Graphs {
 			doc = @doc (
 					value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as edges of a graph",
 					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@no_test
 	public static IContainer edges(final IScope scope, final IContainer nodes) {
 		return EdgesToAdd.from(scope, nodes);
 	}
