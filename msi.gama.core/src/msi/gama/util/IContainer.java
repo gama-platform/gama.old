@@ -337,6 +337,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 					@usage (
 							value = "if it is a matrix, reverse returns a new matrix containing the transpose of the operand.",
 							examples = { @example (
+									returnType = "matrix<string>",
 									value = "reverse(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))",
 									equals = "matrix([[\"c11\",\"c21\"],[\"c12\",\"c22\"],[\"c13\",\"c23\"]])") }) })
 	public IContainer<?, ?> reverse(IScope scope) throws GamaRuntimeException;
