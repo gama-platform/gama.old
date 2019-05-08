@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.util.graph;
+package prefuse.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +16,9 @@ import java.util.Map;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.graph.GamaGraph;
+import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph._Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 

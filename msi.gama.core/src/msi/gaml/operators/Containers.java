@@ -330,10 +330,10 @@ public class Containers {
 									value = "remove_duplicates([1::3,2::4,3::3,5::7])",
 									equals = "[3,4,7]") }),
 					@usage (
-							value = "if the operand is a matrix, remove_duplicates returns a matrix without duplicated row",
+							value = "if the operand is a matrix, remove_duplicates returns a list containing all the elments with duplicated.",
 							examples = { @example (
 									value = "remove_duplicates([[\"c11\",\"c12\",\"c13\",\"c13\"],[\"c21\",\"c22\",\"c23\",\"c23\"]])",
-									equals = "[[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]", test=false )})
+									equals = "[[\"c11\",\"c12\",\"c13\",\"c21\",\"c22\",\"c23\"]]", test=false )})
 					},
 			examples = { @example (
 					value = "remove_duplicates([3,2,5,1,2,3,5,5,5])",

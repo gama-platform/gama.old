@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.util.graph.layout;
+package prefuse.layout;
 
 import java.util.HashMap;
 import java.util.Map;

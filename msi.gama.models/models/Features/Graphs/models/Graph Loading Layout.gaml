@@ -11,7 +11,7 @@ global {
 	graph the_graph ;
 	string barabasi_file <- "../includes/ProteinSimple.dgs";
 	geometry shape <- rectangle(500,500);
-	string layout_type <- "forcedirected";
+	string layout_type;
 	int layout_time <- 1000;
 	
 	//The operator load_graph_from_file generates the graph from the file, and chose the vertices as agents of node_agent 
@@ -22,7 +22,15 @@ global {
 	
 	//In case the layout type is forcedirected or random, the reflex will change at each step the layout of the graph
 	reflex layout_graph {
-		the_graph <- layout(the_graph, layout_type, layout_time);
+		switch layout_type {
+			match "Forced" {
+				the_graph <- layout_force(the_graph, world.shape, 0.4, 0.01, layout_time);
+			}
+			match "Circular" {
+				the_graph <- layout_circle(the_graph, world.shape);
+			}
+		}
+		
 	}
 }
 
@@ -39,7 +47,7 @@ species node_agent {
 }
 
 experiment loadgraph type: gui {
-	parameter "Layout type" var: layout_type among: [ "forcedirected", "random", "radialtree", "circle"];
+	parameter "Layout type" var: layout_type among:["Forced", "Circular"] init:"Circular";
 	parameter "layout time" var: layout_time min: 1 max: 100000;
 	output {
 		display map type: opengl{

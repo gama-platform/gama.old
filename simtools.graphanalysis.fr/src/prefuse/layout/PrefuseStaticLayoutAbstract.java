@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.util.graph.layout;
+package prefuse.layout;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -30,7 +30,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.GamaGraph;
-import msi.gama.util.graph.GraphUtilsPrefuse;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import prefuse.Display;
@@ -40,6 +39,7 @@ import prefuse.action.layout.Layout;
 import prefuse.activity.Activity;
 import prefuse.data.Graph;
 import prefuse.render.DefaultRendererFactory;
+import prefuse.util.GraphUtilsPrefuse;
 import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTable;
 
