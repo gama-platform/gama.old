@@ -10,7 +10,7 @@
  **********************************************************************************************/
 package msi.gama.headless.job;
 
-import java.awt.Dimension;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,7 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
-import org.eclipse.xtext.serializer.diagnostic.ISerializationDiagnostic.ToString;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

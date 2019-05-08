@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.headless.job;
 
-import java.awt.Dimension;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.descriptions.IDescription;
