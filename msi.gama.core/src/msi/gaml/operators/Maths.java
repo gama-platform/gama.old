@@ -499,7 +499,7 @@ public class Maths {
 			usages = @usage (
 					value = "the operand is casted to a float before being evaluated."),
 			examples = @example (
-					value = "exp (0)",
+					value = "exp (0.0)",
 					equals = "1.0"),
 			see = "ln")
 	public static Double exp(final Double rv) {
@@ -514,6 +514,7 @@ public class Maths {
 	@doc (
 			value = "returns Euler's number e raised to the power of the operand.",
 			special_cases = "the operand is casted to a float before being evaluated.")
+		@test ("exp (0) = 1.0")
 	public static Double exp(final Integer rv) {
 		return FastMath.exp(rv.doubleValue());
 	}
@@ -625,6 +626,7 @@ public class Maths {
 	@doc (
 			value = "If it is used as an unary operator, it returns the opposite of the operand.",
 			masterDoc = true)
+	@test ("-(-90.0) = 90.0")
 	public static Double negate(final Double x) {
 		return -x;
 	}
@@ -678,6 +680,8 @@ public class Maths {
 			concept = {})
 	@doc (
 			special_cases = "if the operand is an int, round returns it")
+	@test ("round (100) = 100")
+	
 	public static Integer round(final Integer v) {
 		return v;
 	}
@@ -828,6 +832,10 @@ public class Maths {
 			value = "Returns the product of the two operands",
 			examples = {},
 			see = "/")
+	@test ("2.0 * 2.0 = 4.0")
+	@test ("1.5 * (- 1.0) = -1.5")
+	@test ("1.5 * 0.0 = 0.0")
+	
 	public static Double opTimes(final Double a, final Double b) {
 		return a * b;
 	}
@@ -840,6 +848,9 @@ public class Maths {
 			value = "Returns the product of the two operands",
 			examples = {},
 			see = "/")
+	@test ("2 * 2.0 = 4.0")
+	@test ("1 * (- 1.0) = -1.0")
+	@test ("1 * 0.0 = 0.0")
 	public static Double opTimes(final Integer a, final Double b) {
 		return Double.valueOf(a * b);
 	}
@@ -854,7 +865,7 @@ public class Maths {
 			usages = { @usage (
 					value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic product of the number with each element of the matrix (results are float if the number is a float.",
 					examples = {
-							@example ("matrix<float> m <- (3.5 * matrix([[2,5],[3,4]]));	//m equals matrix([[7.0,17.5],[10.5,14]])") }) })
+							@example (value = "2 * matrix([[2,5],[3,4]])", equals = "matrix([[4,10],[6,8]])") }) })
 	public static IMatrix opTimes(final Integer a, final IMatrix b) {
 		return b.times(a);
 	}
@@ -866,6 +877,7 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Multiply all the elements in the matrix operand by the first operand"))
+	@test("2.0 * matrix([[2,5],[3,4]]) =  matrix([[4.0,10.0],[6.0,8.0]])")
 	public static IMatrix opTimes(final Double a, final IMatrix b) {
 		return b.times(a);
 	}
@@ -912,6 +924,8 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the sum, union or concatenation of the two operands.")
+	@test ("1.0 + (- 1.0) = 0.0")
+	@test ("1.0 + 1.0 = 2.0")
 	public static Double opPlus(final Double a, final Double b) {
 		return a + b;
 	}
@@ -923,6 +937,8 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the sum, union or concatenation of the two operands.")
+	@test ("1 + (- 1.0) = 0.0")
+	@test ("1 + 1.0 = 2.0")
 	public static Double opPlus(final Integer a, final Double b) {
 		return a + b;
 	}
@@ -954,6 +970,7 @@ public class Maths {
 			value = "Returns the sum of the two operands",
 			examples = {},
 			see = "/")
+	@test ("1.0 + matrix([[5.5,8.5],[6.5,7.5]]) = matrix([[6.5,9.5],[7.5,8.5]])")
 	public static IMatrix opPlus(final Double a, final IMatrix b) {
 		return b.plus(a);
 	}
