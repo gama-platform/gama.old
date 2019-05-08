@@ -78,6 +78,7 @@ openFile
       </win>
    </launcher>
 
+
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
       <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
@@ -303,6 +304,7 @@ openFile
       <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
       <repository location="http://updates.gama-platform.org/experimental/oxygen" enabled="true" />
       <repository location="http://updates.gama-platform.org/graphical_modeling/oxygen" enabled="true" />
+      <repository location="http://https://www.irit.fr/genstar/p2updatesite/" enabled="true" />
    </repositories>
 
    <preferencesInfo>
