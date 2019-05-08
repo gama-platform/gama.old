@@ -57,7 +57,7 @@ global {
 		
 		
 		//We give a fixed color to each group in function of the cluwter's number (i.e. to each dummy agents of the group)
-		int K <- length(clusters_kmeans);
+		K <- length(clusters_kmeans);
 		
 		//list<centroids> the_centroids <- list(centroids) ;
 		

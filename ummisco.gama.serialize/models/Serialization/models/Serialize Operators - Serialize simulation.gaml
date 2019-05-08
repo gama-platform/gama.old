@@ -27,7 +27,7 @@ experiment Model1 type: gui {
 
 	reflex store { 
 		write "================ Serialize simulation " + self + " - " + cycle;
-		write serializeAgent(self.simulation);
+		write serialize_agent(self.simulation);
 		write "================ END Serialize simulation " + self + " - " + cycle;		
 	}
 }
