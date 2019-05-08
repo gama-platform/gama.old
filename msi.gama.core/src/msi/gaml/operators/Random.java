@@ -146,6 +146,7 @@ public class Random {
 	@doc(value = "A value from a random variable following a binomial distribution. The operands represent the number of experiments n and the success probability p.", comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.", examples = {
 			@example(value = "binomial(15,0.6)", equals = "a random positive integer", test = false) }, see = {
 					"poisson", "gauss" })
+	@test("seed <- 1.0; binomial(15,0.6) = 9")
 	public static Integer opBinomial(final IScope scope, final Integer n, final Double p) {
 		return RANDOM(scope).createBinomial(n, p);
 	}
@@ -156,6 +157,7 @@ public class Random {
 			@usage(value = "if the operand is empty, returns an empty list (or string, matrix)") }, examples = {
 					@example(value = "shuffle ([12, 13, 14])", equals = "[14,12,13] (for example)", test = false) }, see = {
 							"reverse" })
+	@test("seed <- 1.0; shuffle ([12, 13, 14]) = [12,13,14]")
 	public static IList opShuffle(final IScope scope, final IContainer target) {
 		if (target == null || target.isEmpty(scope)) {
 			return GamaListFactory.create(target == null ? Types.NO_TYPE : target.getGamlType().getContentType());
@@ -197,6 +199,7 @@ public class Random {
 			@example(value = "rnd (2)", equals = "0, 1 or 2", test = false),
 			@example(value = "rnd (1000) / 1000", returnType = IKeyword.FLOAT, equals = "a float between 0 and 1 with a precision of 0.001", test = false) }, see = {
 					"flip" })
+	@test("seed <- 1.0; rnd(10) = 8")
 	public static Integer opRnd(final IScope scope, final Integer max) {
 		return opRnd(scope, 0, max);
 	}
@@ -204,6 +207,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = { IConcept.RANDOM })
 	@doc(value = "a random integer in the interval [first operand, second operand]", examples = {
 			@example(value = "rnd (2, 4)", equals = "2, 3 or 4", test = false) }, see = {})
+	@test("seed <- 1.0; rnd(1,5) = 4")
 	public static Integer opRnd(final IScope scope, final Integer min, final Integer max) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(min, max);
@@ -212,6 +216,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random integer in the interval [first operand, second operand], constrained by a step given by the last operand", examples = {
 			@example(value = "rnd (2, 12, 4)", equals = "2, 6 or 10", test = false) }, see = {})
+	@test("seed <- 1.0; rnd (2, 12, 4) = 10")
 	public static Integer opRnd(final IScope scope, final Integer min, final Integer max, final Integer step) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(min, max, step);
@@ -220,6 +225,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random float in the interval [first operand, second operand]", examples = {
 			@example(value = "rnd (2.0, 4.0)", equals = "a float number between 2.0 and 4.0", test = false) }, see = {})
+	@test("seed <- 1.0; rnd (2.0, 4.0) = 3.548024306042759")
 	public static Double opRnd(final IScope scope, final Double min, final Double max) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(min, max);
