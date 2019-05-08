@@ -20,7 +20,6 @@ done
 
 passWork=.work$RANDOM
 
-java  -cp ../plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx2048m  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork -validate 
 
 java  -cp ../plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx2048m  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork -validate 
 res=$?
