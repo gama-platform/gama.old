@@ -288,7 +288,7 @@ public class Maths {
 	@doc (
 			value = "the hyperbolic tangent of the operand (which has to be expressed in decimal degrees).")
 	@test ("tanh(100) = 1.0")
-	@test ("tanh(0) = 1.0")
+	@test ("tanh(0) = 0.0")
 	public static Double tanh(final Integer rv) {
 		return FastMath.tanh(rv);
 	}
