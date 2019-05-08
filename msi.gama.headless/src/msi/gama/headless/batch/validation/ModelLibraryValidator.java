@@ -32,7 +32,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		final int[] count = { 0 };
 		final int[] code = { 0 };
 		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithModels();
-		plugins.putAll(GamaBundleLoader.getPluginsWithTests());
+//		plugins.putAll(GamaBundleLoader.getPluginsWithTests());
 		List<URL> allURLs = new ArrayList<>();
 		for (final Bundle bundle : plugins.keySet()) {
 			for (final String entry : plugins.get(bundle)) {
