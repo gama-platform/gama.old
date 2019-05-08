@@ -8,8 +8,11 @@ import org.jgrapht.Graph;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaListFactory;
+import msi.gaml.operators.Containers;
 import msi.gaml.operators.Points;
 import msi.gaml.operators.Spatial.Punctal;
+import msi.gaml.types.Types;
 
 
 public class LayoutForceDirected  {
@@ -93,7 +96,8 @@ public class LayoutForceDirected  {
 	 * Simulates a single step.
 	 */
 	private void simulateStep(IScope scope) {
-		
+		double toleranceCenter = Math.sqrt(area) / 10.0;
+		double distanceMinCenter = Math.sqrt(area) / 3.0;
 		// calculate repulsive forces (from every vertex to every other)
 		for (IShape v : graph.vertexSet()) {
 			// reset displacement vector for new calculation
@@ -153,6 +157,34 @@ public class LayoutForceDirected  {
 			}
 
 		}
+		GamaPoint center = (GamaPoint) Containers.mean(scope, GamaListFactory.createWithoutCasting(Types.POINT, loc.values().toArray()));
+		if (center.distance3D(bounds.getCentroid()) > toleranceCenter) {
+			GamaPoint d = Points.subtract(bounds.getCentroid(), center).toGamaPoint();
+			d.multiplyBy(0.5);
+			for (IShape v : graph.vertexSet()) {
+				GamaPoint l = loc.get(v);
+				l.add(d);
+				if (!bounds.intersects(l)) {
+					loc.put(v, Punctal._closest_point_to(l, bounds).toGamaPoint());
+				}
+			}
+		}
+		double maxDist = graph.vertexSet().stream().mapToDouble(v -> v.euclidianDistanceTo(center)).max().getAsDouble();
+		if (maxDist < distanceMinCenter) {
+			maxDist = (distanceMinCenter - maxDist);
+			for (IShape v : graph.vertexSet()) {
+				GamaPoint l = loc.get(v);
+				GamaPoint d = Points.subtract(l,center).toGamaPoint();
+				double len = d.norm();
+				if (len > 0)
+					d.multiplyBy(maxDist /d.norm());
+				l.add(d);
+				if (!bounds.intersects(l)) {
+					loc.put(v, Punctal._closest_point_to(l, bounds).toGamaPoint());
+				}
+			}
+		}
+		
 		t = Math.max(t * (1 - coolingRate), 1);
 
 		
