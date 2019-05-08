@@ -24,8 +24,8 @@ addons:
       - 51.255.46.42
 script: 
 - bash ./travis/compile.sh		
-- bash ./travis/validate_and_test.sh	
 after_success:
+- bash ./travis/validate_and_test.sh
 - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - export SSHPASS=$USER_PWD 
 - bash ./travis/publish.sh
