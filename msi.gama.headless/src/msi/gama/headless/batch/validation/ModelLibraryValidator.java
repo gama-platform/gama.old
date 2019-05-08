@@ -51,15 +51,15 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
 		allURLs.forEach(u -> validate(count, code, u));
 
-		System.out.println(code[0]);
-		log("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
+		LOGGER.info("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
 				+ " compilation errors found");
+		System.out.println(code[0]);
 		return code[0];
 	}
 
 	private void validate(final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel) {
 		final List<GamlCompilationError> errors = new ArrayList<>();
-		log("Compiling " + pathToModel.getFile());
+		LOGGER.info("Compiling " + pathToModel.getFile());
 		try {
 			GamlModelBuilder.compile(pathToModel, errors);
 		} catch (final Exception ex) {
