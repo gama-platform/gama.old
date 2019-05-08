@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.RandomUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.util.RandomUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -280,6 +280,43 @@ public class RandomUtils {
 		}
 	}
 
+	public <T> void shuffleInPlace(final T[] a) {
+		for (int i = 0; i < a.length; i++) {
+			final int change = between(i, a.length - 1);
+			final T helper = a[i];
+			a[i] = a[change];
+			a[change] = helper;
+		}
+	}
+
+	public void shuffleInPlace(final double[] a) {
+		for (int i = 0; i < a.length; i++) {
+			final int change = between(i, a.length - 1);
+			final double helper = a[i];
+			a[i] = a[change];
+			a[change] = helper;
+		}
+	}
+
+	public void shuffleInPlace(final int[] a) {
+		for (int i = 0; i < a.length; i++) {
+			final int change = between(i, a.length - 1);
+			final int helper = a[i];
+			a[i] = a[change];
+			a[change] = helper;
+		}
+	}
+
+	public void shuffleInPlace(final char[] a) {
+		for (int i = a.length; i > 1; i--) {
+			final int i1 = i - 1;
+			final int j = between(0, i - 1);
+			final char tmp = a[i1];
+			a[i1] = a[j];
+			a[j] = tmp;
+		}
+	}
+
 	public List shuffle(final List list) {
 		for (int i = list.size(); i > 1; i--) {
 			final int i1 = i - 1;
@@ -439,7 +476,7 @@ public class RandomUtils {
 
 		/**
 		 * Creates a bit string of the specified length with all bits initially set to zero (off).
-		 * 
+		 *
 		 * @param length
 		 *            The number of bits.
 		 */
@@ -453,7 +490,7 @@ public class RandomUtils {
 		 * Creates a bit string of the specified length with each bit set randomly (the distribution of bits is uniform
 		 * so long as the output from the provided RNG is also uniform). Using this constructor is more efficient than
 		 * creating a bit string and then randomly setting each bit individually.
-		 * 
+		 *
 		 * @param length
 		 *            The number of bits.
 		 * @param rng
@@ -481,7 +518,7 @@ public class RandomUtils {
 
 		/**
 		 * Initialises the bit string from a character string of 1s and 0s in big-endian order.
-		 * 
+		 *
 		 * @param value
 		 *            A character string of ones and zeros.
 		 */
@@ -490,8 +527,9 @@ public class RandomUtils {
 			for (int i = 0; i < value.length(); i++) {
 				if (value.charAt(i) == '1') {
 					setBit(value.length() - (i + 1), true);
-				} else if (value
-						.charAt(i) != '0') { throw new IllegalArgumentException("Illegal character at position " + i); }
+				} else if (value.charAt(i) != '0') {
+					throw new IllegalArgumentException("Illegal character at position " + i);
+				}
 			}
 		}
 
@@ -504,7 +542,7 @@ public class RandomUtils {
 
 		/**
 		 * Returns the bit at the specified index.
-		 * 
+		 *
 		 * @param index
 		 *            The index of the bit to look-up (0 is the least-significant bit).
 		 * @return A boolean indicating whether the bit is set or not.
@@ -520,7 +558,7 @@ public class RandomUtils {
 
 		/**
 		 * Sets the bit at the specified index.
-		 * 
+		 *
 		 * @param index
 		 *            The index of the bit to set (0 is the least-significant bit).
 		 * @param set
@@ -542,15 +580,16 @@ public class RandomUtils {
 
 		/**
 		 * Helper method to check whether a bit index is valid or not.
-		 * 
+		 *
 		 * @param index
 		 *            The index to check.
 		 * @throws IndexOutOfBoundsException
 		 *             If the index is not valid.
 		 */
 		private void assertValidIndex(final int index) {
-			if (index >= length || index < 0) { throw new IndexOutOfBoundsException(
-					"Invalid index: " + index + " (length: " + length + ")"); }
+			if (index >= length || index < 0) {
+				throw new IndexOutOfBoundsException("Invalid index: " + index + " (length: " + length + ")");
+			}
 		}
 
 		/**

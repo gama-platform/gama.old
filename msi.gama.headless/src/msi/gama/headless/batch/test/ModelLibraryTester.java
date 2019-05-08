@@ -1,6 +1,8 @@
 package msi.gama.headless.batch.test;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.HeadlessListener;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.descriptions.ModelDescription;
@@ -33,11 +36,14 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	final List<GamlCompilationError> errors = new ArrayList<>();
 	private final static String FAILED_PARAMETER = "-failed";
 
+	PrintStream original;
 	private ModelLibraryTester() {}
 
 	@Override
 	public int start(final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
+
+		original = System.out;
 		final int[] count = { 0 };
 		final int[] code = { 0 };
 		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
@@ -82,6 +88,12 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
+			    System.setOut(new PrintStream(new OutputStream() {
+			                public void write(int b) {
+			                    //DO NOTHING
+			                }
+			            }));
+
 				final TestAgent agent = (TestAgent) exp.getAgent();
 				exp.setHeadless(true);
 				exp.getController().getScheduler().paused = false;
@@ -89,6 +101,9 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 				count[0] += agent.getSummary().size();
+			    System.setOut(original);
+				if (code[0] > 0)
+					System.out.println(agent.getSummary().toString());
 			}
 		}
 

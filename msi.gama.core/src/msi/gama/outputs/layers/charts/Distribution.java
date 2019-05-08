@@ -15,7 +15,9 @@ import java.util.Arrays;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
@@ -348,7 +350,7 @@ public class Distribution {
 			value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).",
 			comment = "",
 			examples = { @example (
-					value = "distribution_of([1,1,2,12.5],10)",
+					value = "distribution2d_of([1,1,2,12.5],10)",
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
@@ -388,7 +390,7 @@ public class Distribution {
 			value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).",
 			comment = "",
 			examples = { @example (
-					value = "distribution_of([1,1,2,12.5],10)",
+					value = "distribution2d_of([1,1,2,12.5],10)",
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
@@ -630,7 +632,7 @@ public class Distribution {
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
-
+	@test("distribution_of([1,1,2,12.5],10) = map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])")
 	public static GamaMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars)
 			throws GamaRuntimeException {
 
@@ -664,7 +666,7 @@ public class Distribution {
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
-
+	@test("distribution_of([1,1,2,12.5]) = map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])")
 	public static GamaMap DistributionOf(final IScope scope, final IContainer values) throws GamaRuntimeException {
 
 		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
@@ -696,7 +698,7 @@ public class Distribution {
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
-
+	@no_test
 	public static GamaMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars,
 			final Double startvalue, final Double endvalue) throws GamaRuntimeException {
 
