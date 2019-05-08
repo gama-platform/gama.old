@@ -32,13 +32,6 @@ compile (){
 	mvn_install ummisco.gama.annotations
 	mvn_install msi.gama.processor
 	
-	change=$(git log --pretty=format: --name-only --since="1 hour ago")
-	
-	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
-		mvn_install msi.gama.ext
-		mvn_install ummisco.gama.feature.dependencies
-	fi
-	
 	
 	mvn_install msi.gama.parent
 }
