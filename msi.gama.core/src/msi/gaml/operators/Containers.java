@@ -198,7 +198,7 @@ public class Containers {
 				can_be_const = true)
 		@doc (
 				value = "Allows to build a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value. Passing a step of 0 will result in an exception. Attempting to build infinite ranges (e.g. end > start with a negative step) will similarly not be accepted and yield an exception")
-		@test("range(0,6,2) = [0,2,4,6")
+		@test("range(0,6,2) = [0,2,4,6]")
 		public static IList range(final IScope scope, final Integer start, final Integer end, final Integer step) {
 			if (step == 0) { throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope); }
 			if (start.equals(end)) { return GamaListFactory.createWithoutCasting(Types.INT, start); }
@@ -1242,7 +1242,7 @@ public class Containers {
 			value = "the variance of the right-hand expression evaluated on each of the elements of the left-hand operand",
 			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
 			see = { "min_of", "max_of", "sum_of", "product_of" })
-	@test("list<int> L <-[1,2,3,4,5,6]; L variance_of each = 2.91 with_precision of 2")
+	@test("list<int> L <-[1,2,3,4,5,6];  ( L variance_of each) = (2.91 with_precision 2)")
 	public static Object variance_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return Stats.opVariance(scope, collect(scope, container, filter));
 	}
