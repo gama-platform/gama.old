@@ -18,7 +18,7 @@ global {
 	//Number of ants to create
 	int ants_number <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
 	//Variable to keep information about the food remaining
-	int food_remaining <-10;//->{list(ant_grid) count (each.food > 0) };
+	int food_remaining update: list(ant_grid) count (each.food > 0) <- 10;
 	//Center of the grid that will be considered as the nest of ants
 	point center const: true <- {round(gridsize / 2), round(gridsize / 2)};
 	matrix<int> types <- matrix<int>(pgm_file('../images/environment75x75_scarce.pgm'));
@@ -83,12 +83,12 @@ species ant skills: [moving] {
 	//Reflex to search food when the agent has no food nor pheromon road close
 	reflex looking when: (!hasFood) and (hasRoad) and (place.food = 0) {
 		list<ant_grid> list_places <- place.neighbours;
-		ant_grid goal <- first(list_places);// where(each.food > 0));// first_with (each.food > 0);
+		ant_grid goal <- list_places first_with (each.food > 0);
 		if goal != nil {
 			location <- goal.location;
 		} else {
-			//int min_nest <- (list_places min_of (each.nest));
-			//list_places <- list_places sort ((each.nest = min_nest) ? each.road : 0.0);
+			int min_nest <- (list_places min_of (each.nest));
+			list_places <- list_places sort ((each.nest = min_nest) ? each.road : 0.0);
 			location <- point(last(list_places));
 		}
 
