@@ -297,7 +297,13 @@ public class Maths {
 			value = "Returns the value (in [-1,1]) of the cosinus of the operand (in radians). ",
 			masterDoc = true,
 			special_cases = "Operand values out of the range [0-359] are normalized.",
-			see = { "sin", "tan" })
+			see = { "sin", "tan" },
+			examples = { @example (
+					value = "cos_rad(0.0)",
+					equals = "1.0"),
+					@example (
+							value = "cos_rad(#pi)",
+							equals = "-1.0") })
 	public static Double cos_rad(final Double rv) {
 		return FastMath.cos(rv);
 	}
@@ -311,9 +317,11 @@ public class Maths {
 			value = "Returns the value (in [-1,1]) of the sinus of the operand (in radians). ",
 			masterDoc = true,
 			examples = { @example (
-					value = "sin_rad(#pi)",
-					equals = "0.0",
-					test = false) },
+					value = "sin_rad(0)",
+					equals = "0.0"),
+					@example (
+							value = "sin_rad(#pi/2)",
+							equals = "1.0") },
 			see = { "cos_rad", "tan_rad" })
 	public static Double sin_rad(final Double rv) {
 		return FastMath.sin(rv);
@@ -327,6 +335,9 @@ public class Maths {
 	@doc (
 			value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in radians). ",
 			masterDoc = true,
+					examples = { @example (
+							value = "tan_rad(0)",
+							equals = "0.0") },
 			see = { "cos_rad", "sin_rad" })
 	public static Double tan_rad(final Double v) {
 		return FastMath.tan(v);
@@ -343,6 +354,15 @@ public class Maths {
 			value = "Returns the value (in [-1,1]) of the cosinus of the operand (in decimal degrees).  The argument is casted to an int before being evaluated.",
 			masterDoc = true,
 			special_cases = "Operand values out of the range [0-359] are normalized.",
+					examples = { @example (
+							value = "cos (0.0)",
+							equals = "1.0"),
+							@example (
+									value = "cos(360.0)",
+									equals = "1.0"),
+							@example (
+									value = "cos(-720.0)",
+									equals = "1.0")},
 			see = { "sin", "tan" })
 	public static Double cos(final Double rv) {
 		return FastMath.cos(rv * toRad);
