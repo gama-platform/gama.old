@@ -13,9 +13,10 @@ global
 
 experiment "Different radars" type: gui
 {
-	layout #split;
+
 	output
 	{
+		layout #split;
 		display "nice_radar_chart" synchronized: true
 		{
 			chart "Nice Cumulative Radar Chart" type: radar background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style:

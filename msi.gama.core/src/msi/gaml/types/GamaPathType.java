@@ -15,7 +15,9 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -37,6 +39,15 @@ import msi.gaml.operators.Cast;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPathType extends GamaType<IPath> {
 
+	@doc(value="Cast any object as a path",   
+			usages = {
+				@usage(value = "if the operand is a path, returns this path"), 
+				@usage(value = "if the operand is a geometry of an agent, returns a path from the list of points of the geometry"),
+				@usage(value = "if the operand is a list, cast each element of the list as a point and create a path from these points",
+					examples = {
+						@example("path p <- path([{12,12},{30,30},{50,50}]);")
+					}) 
+			})
 	@Override
 	public IPath cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
@@ -54,7 +65,7 @@ public class GamaPathType extends GamaType<IPath> {
 			IShape shape = ((IShape) obj);
 			return PathFactory.newInstance(scope, (IList<IShape>) shape.getPoints(), false);
 		}
-		
+		 
 		if (obj instanceof List) {
 			// List<ILocation> list = new GamaList();
 			final List<IShape> list = GamaListFactory.create(Types.GEOMETRY);

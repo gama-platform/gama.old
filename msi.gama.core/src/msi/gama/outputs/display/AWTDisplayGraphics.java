@@ -255,7 +255,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			curX = xFromModelUnitsToPixels(attributes.getLocation().getX());
 			curY = yFromModelUnitsToPixels(attributes.getLocation().getY());
 		}
-		currentRenderer.setFont(attributes.font);
+		setFont(attributes.font);
 		final Rectangle2D r = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
 		final float ascent = currentRenderer.getFontMetrics().getLineMetrics(string, currentRenderer).getAscent();
 		final float descent = currentRenderer.getFontMetrics().getLineMetrics(string, currentRenderer).getDescent();
@@ -276,6 +276,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		currentRenderer.setTransform(saved);
 		r.setFrame(curX, curY, r.getWidth(), r.getHeight());
 		return r;
+	}
+	
+	private void setFont(Font f ) {
+		Font font = surface == null ? f : surface.computeFont(f);
+		currentRenderer.setFont(font);
 	}
 
 	@Override
@@ -406,7 +411,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		normalRenderer = g;
 		currentRenderer = g;
 		if (g != null) {
-			g.setFont(defaultFont);
+			setFont(defaultFont);
 		}
 	}
 

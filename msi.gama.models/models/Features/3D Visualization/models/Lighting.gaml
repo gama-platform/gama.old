@@ -31,8 +31,9 @@ species lightMoving skills:[moving] {
 
 experiment Display  type: gui autorun:true{
 	float minimum_cycle_duration<-0.01;
-	layout #split;
+
 	output {
+		layout #split;
 		// display using spot lights
 		// we set the ambient light to 0 to see better the directional lights (as if we were at night time)
 		display SpotLights type:opengl  background:rgb(10,40,55) ambient_light:0 {

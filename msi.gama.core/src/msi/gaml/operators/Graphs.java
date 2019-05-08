@@ -63,6 +63,7 @@ import msi.gama.util.graph.GraphAlgorithmsHandmade;
 import msi.gama.util.graph.GraphFromAgentContainerSynchronizer;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
+import msi.gama.util.graph.layout.LayoutForceDirected;
 import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
@@ -1964,7 +1965,42 @@ public class Graphs {
 		}
 		return graph.saveShortestPaths(scope);
 	}
+	
+	@operator (
+			value = "layout_force",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "layouts a GAMA graph using Force model. usage: layoutForce(graph, bounds, coeff_force, cooling_rate, max_iteration, equilibirum criterion). graph is the graph to which "
+					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_force is the coefficien use to compute the force, typical value is 0.4; "
+					+ "cooling rate is the decreasing coefficient of the temperature, typical value is 0.01;  max_iteration is the maximal number of iterations; equilibirum criterion is the maximal"
+					+ "distance of displacement for a vertice to be considered as in equilibrium")
+	public static IGraph layoutForce(final IScope scope, final GamaGraph graph, IShape bounds, double coeffForce, double coolingRate, int maxIteration, double criterion) {
+		LayoutForceDirected sim = new LayoutForceDirected(graph, bounds, coeffForce, coolingRate, maxIteration,true, criterion);
+		sim.startSimulation(scope);
+		return graph;
+	}
+
+	@operator (
+			value = "layout_force",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "layouts a GAMA graph using Force model. usage: layoutForce(graph, bounds, coeff_force, cooling_rate, max_iteration). graph is the graph to which "
+					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_force is the coefficien use to compute the force, typical value is 0.4; "
+					+ "cooling rate is the decreasing coefficient of the temperature, typical value is 0.01;  max_iteration is the maximal number of iterations"
+					+ "distance of displacement for a vertice to be considered as in equilibrium")
+	public static IGraph layoutForce(final IScope scope, final GamaGraph graph, IShape bounds, double coeffForce, double coolingRate, int maxIteration) {
+		LayoutForceDirected sim = new LayoutForceDirected(graph, bounds, coeffForce, coolingRate, maxIteration,false, 0);
+		sim.startSimulation(scope);
+		return graph;
+	}
 	@operator (
 			value = "layout",
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,

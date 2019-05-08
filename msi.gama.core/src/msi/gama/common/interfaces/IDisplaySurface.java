@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
@@ -189,5 +190,9 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	void draggedTo(int x, int y);
 
 	void selectAgentsAroundMouse();
+
+	default Font computeFont(Font f) {
+		return f;
+	}
 
 }

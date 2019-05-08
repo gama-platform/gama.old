@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.MapComparison.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.MapComparison.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -59,8 +59,7 @@ public class MapComparison {
 							equals = "0.3333333333333334"),
 					@example (
 							value = "kappa([1,1,1,1,5],[1,1,1,1,5],[1,3,5])",
-							equals = "1.0"),
-					})
+							equals = "1.0"), })
 	public static double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
 			final IList<Object> categories) {
 		return kappa(scope, vals1, vals2, categories, null);
@@ -134,7 +133,7 @@ public class MapComparison {
 	@doc (
 			value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8).",
 			examples = { @example (
-					value = "kappa_sim([\"cat1\",\"cat1\",\"cat2\",\"cat2\",\"cat2\"],[\"cat1\",\"cat3\",\"cat2\",\"cat1\",\"cat3\"],[\"cat1\",\"cat3\",\"cat2\",\"cat3\",\"cat1\"],[\"cat1\",\"cat2\",\"cat3\"]",
+					value = "kappa_sim([\"cat1\",\"cat1\",\"cat2\",\"cat2\",\"cat2\"],[\"cat1\",\"cat3\",\"cat2\",\"cat1\",\"cat3\"],[\"cat1\",\"cat3\",\"cat2\",\"cat3\",\"cat1\"],[\"cat1\",\"cat2\",\"cat3\"])",
 					equals = "0.3333333333333335") })
 	public static double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
 			final IList<Object> valsSim, final IList<Object> categories) {
