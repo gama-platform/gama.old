@@ -155,9 +155,9 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	 * @param pathName
 	 * @throws GamaRuntimeException
 	 */
-	@doc (value= "This file constructor allows to read a CSV file with the default separator, no header, and no assumption on the type of data",
+	@doc (value= "This file constructor allows to read a CSV file with the default separator (coma), no header, and no assumption on the type of data",
 		examples = {
-				@example("csv_file f <- csv_file(\"file\");")
+				@example(value = "csv_file f <- csv_file(\"file\");", isExecutable = false)
 		})
 	public GamaCSVFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, (String) null);
@@ -168,6 +168,10 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 		hasHeader = withHeader;
 	}
 
+	@doc (value= "This file constructor allows to read a CSV file with a given separator, no header, and no assumption on the type of data",
+			examples = {
+					@example(value = "csv_file f <- csv_file(\"file\", \";\");" , isExecutable = false)
+			})
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator) {
 		this(scope, pathName, separator, (IType) null);
 	}

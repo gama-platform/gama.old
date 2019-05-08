@@ -29,16 +29,16 @@ experiment ModelUnserialize type: gui {
 	string save_step <- "";
 	
 	reflex save when: (cycle = 1) {
-		save_step <- serializeAgent(self.simulation);
+		save_step <- serialize_agent(self.simulation);
 	}
 	
 	reflex t {
-		write serializeAgent(self.simulation);	
+		write serialize_agent(self.simulation);	
 	}
 	
 	reflex restore when: (cycle = 4) {
 		write "================ restore " + self + " - " + cycle;
-		int serial <- restoreSimulation(save_step);	
+		int serial <- restore_simulation(save_step);	
 		write "================ END restore " + self + " - " + cycle;			
 	}
 
@@ -47,9 +47,9 @@ experiment ModelUnserialize type: gui {
 experiment saveSimu type: gui {
 	reflex store when: cycle = 5 {		
 		write "================ START SAVE + self " + " - " + cycle ;		
-		write "Save of simulation : " + saveSimulation('simpleSimu.gsim');
+		write "Save of simulation : " + save_simulation('simpleSimu.gsim');
 		write "================ RESTORE + self " + " - " + cycle ;		
-		write serializeAgent(simulation);	
+		write serialize_agent(simulation);	
 	}	
 }
 

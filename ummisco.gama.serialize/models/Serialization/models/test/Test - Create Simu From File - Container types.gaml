@@ -57,7 +57,7 @@ species people {
 experiment saveSimu type: gui {
 	reflex store when: cycle = 5 {		
 		write "================ START SAVE + self " + " - " + cycle ;		
-		write "Save of simulation : " + saveSimulation('simpleSimuList.gsim');
+		write "Save of simulation : " + save_simulation('simpleSimuList.gsim');
 		write "================ RESTORE + self " + " - " + cycle ;		
 	}	
 }

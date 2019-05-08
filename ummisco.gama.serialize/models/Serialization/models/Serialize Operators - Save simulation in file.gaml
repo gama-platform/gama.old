@@ -25,7 +25,7 @@ experiment Model3 type: gui {
 	
 	reflex store {
 		write "================ START SAVE + self " + " - " + cycle ;		
-		write "Save of simulation : " + saveSimulation('file.gsim');
+		write "Save of simulation : " + save_simulation('file.gsim');
 		write "================ END SAVE + self " + " - " + cycle ;			
 	}
 }
