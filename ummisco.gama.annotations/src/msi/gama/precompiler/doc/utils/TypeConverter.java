@@ -123,7 +123,9 @@ public class TypeConverter {
 		hm.put("java.lang.Object", "unknown");
 		hm.put("T", "unknown");		
 		hm.put("?", "unknown");	
+		hm.put("msi.gama.util.tree.GamaNode", "unknown");
 		hm.put("msi.gaml.types.IType", "any GAML type");
+		hm.put("msi.gaml.expressions.IExpression", "any expression");
 
 		hm.put("msi.gama.metamodel.agent.IAgent", "agent");
 		hm.put("msi.gama.metamodel.shape.IShape", "geometry");
@@ -136,29 +138,29 @@ public class TypeConverter {
 		hm.put("msi.gama.util.graph.GamaGraph", "graph");
 		hm.put("msi.gama.metamodel.topology.ITopology", "topology");
 		hm.put("msi.gama.util.GamaMap", "map");
-		hm.put("msi.gaml.expressions.IExpression", "any expression");
 		hm.put("msi.gaml.species.ISpecies", "species");
 
 		hm.put("msi.gama.util.IContainer", "container");
-		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container<KeyType,ValueType>");
-		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>", "container<geometry>");
-		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.agent.IAgent>", "container<agent>");
-		hm.put("msi.gama.util.IContainer<?,? extends msi.gama.metamodel.shape.IShape>", "container<agent>");
+//		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container<KeyType,ValueType>");
+//		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>", "container<geometry>");
+//		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.agent.IAgent>", "container<agent>");
+//		hm.put("msi.gama.util.IContainer<?,? extends msi.gama.metamodel.shape.IShape>", "container<agent>");
 		hm.put("msi.gama.util.IContainer<?,java.lang.Double>", "container<float>");
-		hm.put("msi.gama.util.IContainer<?,?>", "container");
+//		hm.put("msi.gama.util.IContainer<?,?>", "container");
 
 		hm.put("java.util.Map", "map");
-		hm.put("msi.gama.util.GamaMap<?,?>", "map");
-		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map<string,unknown>");
-		hm.put("java.util.List<java.util.Map<java.lang.String,java.lang.Object>>", "list<map<string,object>>");
-		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,unknown>");
-		hm.put("msi.gama.util.GamaMap<java.lang.String,msi.gama.util.GamaList>", "map<string,list>");
-		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.GamaPoint,java.lang.Double>", "map<point,float>");
-		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.IShape,java.lang.Double>", "map<agent,float>");
+//		hm.put("msi.gama.util.GamaMap<?,?>", "map");
+//		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map<string,unknown>");
+//		hm.put("java.util.List<java.util.Map<java.lang.String,java.lang.Object>>", "list<map<string,object>>");
+//		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,unknown>");
+//		hm.put("msi.gama.util.GamaMap<java.lang.String,msi.gama.util.GamaList>", "map<string,list>");
+//		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.GamaPoint,java.lang.Double>", "map<point,float>");
+//		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.IShape,java.lang.Double>", "map<agent,float>");
 
 		hm.put("msi.gama.util.GamaFont", "font");
 		hm.put("msi.gama.util.GamaRegression", "regression");
 		hm.put("msi.gama.util.GamaDate", "date");
+		hm.put("msi.gama.util.GamaMaterial", "material");
 
 		// BDI
 		hm.put("msi.gaml.architecture.simplebdi.Predicate", "predicate");
@@ -174,6 +176,7 @@ public class TypeConverter {
 		hm.put("msi.gama.util.path.IPath", "path");
 		hm.put("msi.gama.util.path.GamaSpatialPath", "path");
 
+		hm.put("msi.gama.util.IContainer.Addressable", "container");
 		hm.put("msi.gama.util.IContainer<KeyType,ValueType>.Addressable<KeyType,ValueType>",
 				"container<KeyType,ValueType>");
 		hm.put("msi.gama.util.IAddressableContainer<java.lang.Integer,msi.gama.metamodel.agent.IAgent,java.lang.Integer,msi.gama.metamodel.agent.IAgent>",
@@ -276,12 +279,51 @@ public class TypeConverter {
 			String lastString = splitByLeftBracket[1];
 			splitByLeftBracket[1] = lastString.substring(0, lastString.length() - 1);
 			
-			return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";
+			
+			// Get only the first ","
+			int comaIndex = findCentralComa(splitByLeftBracket[1]);
+			if(comaIndex > 0) {
+				return leftElement + "<" + getProperType(splitByLeftBracket[1].substring(0, comaIndex)) + "," + getProperType(splitByLeftBracket[1].substring(comaIndex+1)) + ">";
+			} else {
+				return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";				
+			}
+			
+			// String[] splitByComa = splitByLeftBracket[1].split(",",2);
+			
+		//	if(splitByComa.length > 1) {
+		//		return leftElement + "<" + getProperType(splitByComa[0]) + "," + getProperType(splitByComa[1]) + ">";
+		//	} else {
+		//		return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";				
+		//	}
+		//	return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";
 		} else {
 			throw new IllegalArgumentException("getProperType has a not appropriate input");
 		}	
 
 	}
+	
+	public static int findCentralComa(String s) {
+		int foundIndex = 0;		
+		
+		if(s.contains(",")) {
+			foundIndex = s.indexOf(",", 0);
+			
+			do {				
+				String sLeft = s.substring(0, foundIndex);
+				
+				if( (sLeft.lastIndexOf("<") == -1) && (sLeft.lastIndexOf(">") == -1) ) {
+					return foundIndex;
+				} else if (sLeft.lastIndexOf(">") > sLeft.lastIndexOf("<") ) {
+					return foundIndex;					
+				}
+				
+				foundIndex = s.indexOf(",", foundIndex + 1);
+						
+			} while (foundIndex >= 0);
+			return -1;
+		}
+		return -1;
+	}	
 
 	public String getProperOperatorName(final String opName) {
 		// if("*".equals(opName)) return "`*`";
