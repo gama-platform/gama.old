@@ -17,6 +17,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -55,6 +56,7 @@ public class Random {
 			@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}") }, examples = {
 					@example(value = "truncated_gauss ({0, 0.3})", equals = "a float between -0.3 and 0.3", test = false) }, see = {
 							"gauss" })
+	@test("seed <- 1.0; TGauss({0,0.3}) = 0.10073201959421514")
 	public static Double opTGauss(final IScope scope, final GamaPoint p) {
 		return opTGauss(scope, GamaListFactory.createWithoutCasting(Types.FLOAT, p.x, p.y));
 	}
@@ -64,6 +66,7 @@ public class Random {
 			@usage(value = "if the operand is a list, only the two first elements are taken into account as [mean, standardDeviation]"),
 			@usage(value = "when truncated_gauss is called with a list of only one element mean, it will always return 0.0") }, examples = {
 					@example(value = "truncated_gauss ([0.5, 0.0])", equals = "0.5") })
+	@test("seed <- 1.0; truncated_gauss ([0.5, 0.2]) = 0.5671546797294768")
 	public static Double opTGauss(final IScope scope, final IList list) {
 		if (list.size() < 2) {
 			return 0d;
@@ -97,6 +100,7 @@ public class Random {
 			@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}")}, examples = {
 					@example(value = "gauss({0,0.3})", equals = "0.22354", test = false) }, 
 			see = { "truncated_gauss","poisson" })
+	@test("seed <- 1.0; gauss({0.5, 0.2}) = 0.6343093594589535")
 	public static Double opGauss(final IScope scope, final GamaPoint point) {
 		final double mean = point.x;
 		final double sd = point.y;
@@ -108,6 +112,7 @@ public class Random {
 			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") }, examples = {
 					@example(value = "gauss(0,0.3)", equals = "0.22354", test = false)}, see = { "skew_gauss", "truncated_gauss",
 							"poisson" })
+	@test("seed <- 1.0; gauss(0.5, 0.2) = 0.6343093594589535")
 	public static Double opGauss(final IScope scope, final double mean, final double sd) {
 		return RANDOM(scope).createGaussian(mean, sd);
 	}
@@ -119,6 +124,7 @@ public class Random {
 	examples = {
 					@example(value = "skew_gauss(0.0, 1.0, 0.7,0.1)", equals = "0.1729218460343077", test = false)}, see = { "gauss", "truncated_gauss",
 							"poisson" })
+	@test("seed <- 1.0; skew_gauss(0.0, 1.0, 0.7,0.1) = 0.7425668006838585")
 	public static Double opGauss(final IScope scope, final double min, final double max, final double skew, final double bias) {
 		double range = max - min;
         double mid = min + range / 2.0;
@@ -131,6 +137,7 @@ public class Random {
 	@doc(value = "A value from a random variable following a Poisson distribution (with the positive expected number of occurence lambda as operand).", comment = "The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time and/or space if these events occur with a known average rate and independently of the time since the last event, cf. Poisson distribution on Wikipedia.", examples = {
 			@example(value = "poisson(3.5)", equals = "a random positive integer", test = false) }, see = { "binomial",
 					"gauss" })
+	@test("seed <- 1.0; poisson(3.5) = 6")
 	public static Integer opPoisson(final IScope scope, final Double mean) {
 		return RANDOM(scope).createPoisson(mean);
 	}
