@@ -300,6 +300,7 @@ public class Containers {
 					value = "grid_cell grid_at {1,2}",
 					equals = "the agent grid_cell with grid_x=1 and grid_y = 2",
 					isExecutable = false) })
+	@no_test
 	public static IAgent grid_at(final IScope scope, final ISpecies s, final GamaPoint val)
 			throws GamaRuntimeException {
 		final ITopology t = scope.getAgent().getPopulationFor(s).getTopology();
@@ -475,7 +476,7 @@ public class Containers {
 			usages = @usage ("if the left operator is a species, returns the index of an agent in a species. "
 					+ "If the argument is not an agent of this species, returns -1. Use int(agent) instead"),
 			masterDoc = true)
-	
+	@no_test
 	public static Integer index_of(final IScope scope, final ISpecies s, final Object o) {
 		if (!(o instanceof IAgent)) { return -1; }
 		if (!((IAgent) o).isInstanceOf(notNull(scope, s), true)) { return -1; }
@@ -555,6 +556,7 @@ public class Containers {
 			value = "the index of the last occurence of the right operand in the left operand container",
 			usages = @usage ("if the left operand is a species, the last index of an agent is the same as its index"),
 			see = { "at", "index_of" })
+	@test("last_index_of([1,2,2,2,5], 2) = 3")
 	public static Integer last_index_of(final IScope scope, final ISpecies c, final Object o) {
 		return index_of(scope, notNull(scope, c), o);
 	}
@@ -729,14 +731,11 @@ public class Containers {
 					value = "if the left operand is a species and the right operand is an agent of the species, "
 							+ IKeyword.MINUS
 							+ " returns a list containing all the agents of the species minus this agent") })
+	@test("([1,2,2,3,5] - 3) = [1,2,2,5] ")
 	public static IList minus(final IScope scope, final ISpecies l1, final IAgent object) {
 		return minus(scope, l1.listValue(scope, scope.getType(l1.getName()), false), object);
 	}
 
-	// PRENDRE EN COMPTE:
-	//
-	// - index_type
-	// - nouvelles valeurs de ITypeProvider
 
 	@operator (
 			value = "of_generic_species",
