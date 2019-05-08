@@ -21,7 +21,9 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
@@ -46,6 +48,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		extensions = { "3ds", "max" },
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY)
+@doc("Autodesk 3DS Max file format: https://en.wikipedia.org/wiki/.3ds")
 public class Gama3DSFile extends Gama3DGeometryFile {
 
 	class Chunk {
@@ -84,9 +87,14 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	private Chunk currentChunk = new Chunk();
 
 	// Constructor
+	@doc (value= "This file constructor allows to read a 3DS Max file. Only loads vertices and faces",
+			examples = {
+				@example(value = "threeds_file f <- threeds_file(\"file\");", isExecutable = false)
+
+			}) 
 	public Gama3DSFile(final IScope scope, final String fileName) {
 		super(scope, fileName);
-	}
+	} 
 
 	// Verified
 	@Override
@@ -115,7 +123,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO are there attributes ?
-		return GamaListFactory.create();
+		return GamaListFactory.create(Types.STRING);
 	}
 
 	// Verified
