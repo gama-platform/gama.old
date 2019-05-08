@@ -361,6 +361,8 @@ public class Dates {
 							@example (
 									value = "every(#day between(date('2000-01-01'), date('2020-02-02'))) ",
 									isExecutable = false) }))
+	
+	
 	public static boolean between(final IScope scope, final GamaDate date, final GamaDate date1, final GamaDate date2) {
 		return date.isGreaterThan(date1, true) && date.isSmallerThan(date2, true);
 	}
@@ -1027,8 +1029,11 @@ public class Dates {
 			usages = @usage (
 					value = "",
 					examples = @example (
-							value = "format(#now, 'yyyy-MM-dd')",
+							value = "string(#now, 'yyyy-MM-dd')",
 							isExecutable = false)))
+	
+	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd') = '2000-janvier-02'")
+	
 	public static String format(final GamaDate time, final String pattern) {
 		return format(time, pattern, null);
 	}
@@ -1039,12 +1044,15 @@ public class Dates {
 			category = { IOperatorCategory.STRING, IOperatorCategory.TIME },
 			concept = { IConcept.STRING, IConcept.CAST, IConcept.TIME })
 	@doc (
-			value = "converts a date to astring following a custom pattern and using a specific locale (e.g.: 'fr', 'en', etc.). The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will return the complete date as defined by the ISO date & time format. The pattern can also follow the pattern definition found here, which gives much more control over the format of the date: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns. Different patterns are available by default as constants: #iso_local, #iso_simple, #iso_offset, #iso_zoned and #custom, which can be changed in the preferences",
+			value = "converts a date to astring following a custom pattern and using a specific locale (e.g.: 'fr', 'en', etc.). The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will return the complete date as defined by the ISO date & time format. "
+					+ "The pattern can also follow the pattern definition found here, which gives much more control over the format of the date: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns. Different patterns are available by default as constants: #iso_local, #iso_simple, #iso_offset, #iso_zoned and #custom, which can be changed in the preferences",
 			usages = @usage (
 					value = "",
 					examples = @example (
-							value = "format(#now, 'yyyy-MM-dd')",
+							value = "string(#now, 'yyyy-MM-dd')",
 							isExecutable = false)))
+	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd','en') = '2000-january-02'")
+	
 	public static String format(final GamaDate time, final String pattern, final String locale) {
 		return time.toString(pattern, locale);
 	}
