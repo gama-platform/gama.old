@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaDate.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.GamaDate.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -180,8 +180,9 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	}
 
 	private static Temporal parse(final IScope scope, final String original, final DateTimeFormatter df) {
-		if (original == null || original.isEmpty()
-				|| original.equals("now")) { return LocalDateTime.now(GamaDateType.DEFAULT_ZONE); }
+		if (original == null || original.isEmpty() || original.equals("now")) {
+			return LocalDateTime.now(GamaDateType.DEFAULT_ZONE);
+		}
 		Temporal result = null;
 
 		if (df != null) {
@@ -193,7 +194,9 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 					if (ta.isSupported(ChronoField.HOUR_OF_DAY)) { return LocalTime.from(ta); }
 				}
 				if (!ta.isSupported(ChronoField.HOUR_OF_DAY) && !ta.isSupported(ChronoField.MINUTE_OF_HOUR)
-						&& !ta.isSupported(ChronoField.SECOND_OF_MINUTE)) { return LocalDate.from(ta); }
+						&& !ta.isSupported(ChronoField.SECOND_OF_MINUTE)) {
+					return LocalDate.from(ta);
+				}
 				return LocalDateTime.from(ta);
 			} catch (final DateTimeParseException e) {
 				e.printStackTrace();
@@ -273,7 +276,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
 	/**
 	 * returns the complete number of seconds since the starting_date of the model (equivalent to a duration)
-	 * 
+	 *
 	 * @param scope
 	 *            the current scope from which the simulation can be obtained
 	 * @return the duration in seconds since this starting date
@@ -447,8 +450,9 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 			// If no offset or time zone is supplied, we assume it is the zone of the modeler
 			return GamaDateType.DEFAULT_OFFSET_IN_SECONDS.getTotalSeconds();
 		}
-		if (field
-				.equals(ChronoField.INSTANT_SECONDS)) { return GamaDateType.EPOCH.until(internal, ChronoUnit.SECONDS); }
+		if (field.equals(ChronoField.INSTANT_SECONDS)) {
+			return GamaDateType.EPOCH.until(internal, ChronoUnit.SECONDS);
+		}
 		return 0l;
 
 	}
@@ -484,17 +488,24 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
 	public boolean isGreaterThan(final GamaDate date2, final boolean strict) {
 		final boolean greater = getLocalDateTime().isAfter(date2.getLocalDateTime());
-		return strict ? greater : greater || internal.equals(date2.internal);
+		return strict ? greater : greater || equals(date2);
 	}
 
 	public boolean isSmallerThan(final GamaDate date2, final boolean strict) {
 		final boolean smaller = getLocalDateTime().isBefore(date2.getLocalDateTime());
-		return strict ? smaller : smaller || internal.equals(date2.internal);
+		return strict ? smaller : smaller || equals(date2);
 	}
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof GamaDate) { return internal.equals(((GamaDate) o).internal); }
+		if (o instanceof GamaDate) {
+			Temporal a = getLocalDateTime();
+			Temporal b = ((GamaDate) o).getLocalDateTime();
+			return a.equals(b);
+		}
+
+		// return getLocalDateTime().equals(((GamaDate) o).getLocalDateTime()); }
+		// return internal.equals(((GamaDate) o).internal); }
 		return false;
 	}
 
