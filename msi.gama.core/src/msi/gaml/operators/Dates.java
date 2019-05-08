@@ -182,6 +182,7 @@ public class Dates {
 					@example (
 							value = "	     else {write \"the cycle number is odd\";}",
 							test = false) })
+	@no_test
 	public static Boolean every(final IScope scope, final Integer period) {
 		final int time = scope.getClock().getCycle();
 		return period > 0 && (time == 0 || time >= period) && time % period == 0;
@@ -201,6 +202,7 @@ public class Dates {
 					@example (
 							value = "state a { transition to: b when: every(2#mn);} state b { transition to: a when: every(30#s);} // This oscillatory behavior will use the starting_date of the model as its starting point in time",
 							isExecutable = false) })
+	@no_test
 	public static Boolean every(final IScope scope, final IExpression period) {
 		return scope.getClock().getStartingDate().isIntervalReached(scope, period);
 	}
@@ -216,6 +218,7 @@ public class Dates {
 			examples = { @example (
 					value = "(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval",
 					isExecutable = false) })
+	@no_test
 	public static IList<GamaDate> every(final IScope scope, final GamaDateInterval interval, final IExpression period) {
 		return interval.step(Cast.asFloat(scope, period.value(scope)));
 	}
@@ -234,6 +237,7 @@ public class Dates {
 					@example (
 							value = "(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval",
 							isExecutable = false) })
+	@no_test
 	public static IList<GamaDate> to(final IScope scope, final GamaDate start, final GamaDate end) {
 		return GamaDateInterval.of(start, end);
 	}
@@ -250,6 +254,7 @@ public class Dates {
 					@example (
 							value = "every(2#days) since (starting_date + 1#day) // the computation will return true 1 day after the starting date and every two days after this reference date",
 							isExecutable = false) })
+	@no_test
 	public static boolean since(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date, false);
 	}
@@ -269,6 +274,7 @@ public class Dates {
 					@example (
 							value = "every(2#days) after (starting_date + 1#day) 	// the computation will return true every two days (using the starting_date of the model as the starting point) only for the dates strictly after this starting_date + 1#day",
 							isExecutable = false) })
+	@no_test
 	public static boolean after(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date, true);
 	}
@@ -282,6 +288,7 @@ public class Dates {
 			examples = { @example (
 					value = "reflex when: before(starting_date) {} 	// this reflex will never be run",
 					isExecutable = false) })
+	@no_test
 	public static boolean before(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isSmallerThan(date, true);
 	}
@@ -295,6 +302,7 @@ public class Dates {
 			examples = { @example (
 					value = "reflex when: until(starting_date) {} 	// This reflex will be run only once at the beginning of the simulation",
 					isExecutable = false) })
+	@no_test
 	public static boolean until(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isSmallerThan(date, false);
 	}

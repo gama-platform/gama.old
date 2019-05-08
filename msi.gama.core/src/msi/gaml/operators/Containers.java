@@ -45,6 +45,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -1317,6 +1318,7 @@ public class Containers {
 							returnType = "list<int>",
 							equals = "2 or 4",
 							test = false) })
+	@no_test
 	public static IList among(final IScope scope, final Integer number, final IContainer c)
 			throws GamaRuntimeException {
 		if (number <= 0) {
