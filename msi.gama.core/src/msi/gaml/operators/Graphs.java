@@ -1773,6 +1773,7 @@ public class Graphs {
 					@example (
 							value = "			myEdgeSpecy);",
 							isExecutable = false) })
+	@no_test
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename,
 			final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {
 
@@ -1835,6 +1836,7 @@ public class Graphs {
 							@example (
 									value = "			myEdgeSpecy );",
 									isExecutable = false) }))
+	@no_test
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile gamaFile,
 			final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {
 		return primLoadGraphFromFile(scope, gamaFile.getPath(scope), vertex_specy, edge_specy);
@@ -1859,6 +1861,7 @@ public class Graphs {
 							@example (
 									value = "			\"example_of_Pajek_file\");",
 									isExecutable = false) }) })
+	@no_test
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename)
 			throws GamaRuntimeException {
 		// AD 29/09/13: Changed the previous code that was triggering an
@@ -1884,6 +1887,7 @@ public class Graphs {
 							@example (
 									value = "			\"example_of_Pajek_file\");",
 									isExecutable = false) }) })
+	@no_test
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile gamaFile)
 			throws GamaRuntimeException {
 		// AD 29/09/13 : Simply called the previous method with the path of the
@@ -1910,6 +1914,7 @@ public class Graphs {
 							@example (
 									value = "			\"example_of_Pajek_file\");",
 									isExecutable = false) }) })
+	@no_test
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String filename) throws GamaRuntimeException {
 		return primLoadGraphFromFile(scope, null, filename);
 	}
@@ -1931,6 +1936,7 @@ public class Graphs {
 					value = "load_shortest_paths(shortest_paths_matrix)",
 					equals = "return my_graph with all the shortest paths computed",
 					isExecutable = false) })
+	@no_test
 	public static IGraph primLoadGraphFromFile(final IScope scope, final GamaGraph graph, final GamaMatrix matrix)
 			throws GamaRuntimeException {
 		if (graph == null) {
