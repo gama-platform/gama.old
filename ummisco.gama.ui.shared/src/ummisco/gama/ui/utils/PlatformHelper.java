@@ -29,10 +29,15 @@ public class PlatformHelper extends DPIUtil {
 	private static boolean isWindows = "win32".equals(platformString);
 	private static boolean isMac = "cocoa".equals(platformString) || "carbon".equals(platformString);
 	private static boolean isLinux = "gtk".equals(platformString);
+	private static boolean isHiDPI = DPIUtil.getDeviceZoom() > 100;
 	
 	private static Boolean isDeveloper;
 
 	private PlatformHelper() {}
+	
+	public static boolean isHiDPI() {
+		return isHiDPI;
+	}
 
 	public static boolean isWindows() {
 		return isWindows;
@@ -64,6 +69,10 @@ public class PlatformHelper extends DPIUtil {
 	
 	public static int scaleDownIfLinux(int size) {
 		return isLinux ? autoScaleDown(size): size;
+	}
+	
+	public static float scaleUpIfWin(float size) {
+		return isWindows ? autoScaleUp(size): size;
 	}
 	
 	public static int scaleUpIfWin(int size) {
@@ -194,5 +203,7 @@ public class PlatformHelper extends DPIUtil {
 	public static int javaVersion(final int major, final int minor, final int micro) {
 		return (major << 16) + (minor << 8) + micro;
 	}
+
+
 
 }
