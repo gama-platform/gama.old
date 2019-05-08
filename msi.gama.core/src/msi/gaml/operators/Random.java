@@ -190,7 +190,7 @@ public class Random {
 	@operator(value = "shuffle", content_type = IType.STRING, category = { IOperatorCategory.RANDOM,
 			IOperatorCategory.STRING }, concept = { IConcept.RANDOM })
 	@doc(examples = { @example(value = "shuffle ('abc')", equals = "'bac' (for example)", test = false) })
-	@test("seed <- 0.0; shuffle ('abc') = 'acb'")
+	@test("seed <- 1.0; shuffle ('abc') = 'abc'")
 	public static String opShuffle(final IScope scope, final String target) {
 		return RANDOM(scope).shuffle(target);
 	}
