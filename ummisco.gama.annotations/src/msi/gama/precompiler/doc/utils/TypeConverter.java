@@ -52,30 +52,32 @@ public class TypeConverter {
 
 	private HashMap<String, String> initProperNameTypeMap() {
 		final HashMap<String, String> hm = new HashMap<String, String>();
-		hm.put("msi.gama.metamodel.shape.IShape", "geometry");
-		hm.put("msi.gama.metamodel.shape.GamaShape", "geometry");
 
-		hm.put("java.lang.Integer", "int");
-		hm.put("java.lang.Double", "float");
-		hm.put("java.lang.Long", "float");
-		hm.put("double", "float");
-		hm.put("boolean", "bool");
+		hm.put("java.lang.Integer", 		"int");
+		hm.put("java.lang.Double", 			"float");
+		hm.put("java.lang.Long", 			"float");
+		hm.put("double", 					"float");
+		hm.put("boolean", 					"bool");
+		hm.put("java.lang.Boolean", 		"bool");		
+		hm.put("msi.gama.util.GamaPair", 	"pair");
+		hm.put("java.lang.String", 			"string");
 
 		// Matrix
-		hm.put("msi.gama.util.matrix.IMatrix<T>", "matrix");
-		hm.put("msi.gama.util.matrix.IMatrix", "matrix");
-		hm.put("msi.gama.util.matrix.GamaMatrix", "matrix");
-		hm.put("msi.gama.util.matrix.GamaIntMatrix", "matrix<int>");
-		hm.put("msi.gama.util.matrix.GamaMatrix<T>", "matrix");
-		hm.put("msi.gama.util.matrix.GamaMatrix<java.lang.Double>", "matrix<float>");
-		hm.put("msi.gama.util.matrix.GamaFloatMatrix", "matrix<float>");
-		hm.put("msi.gama.util.matrix.IMatrix<java.lang.Double>", "matrix<float>");
+		hm.put("msi.gama.util.matrix.IMatrix", 			"matrix");
+		hm.put("msi.gama.util.matrix.GamaMatrix", 		"matrix");
+		hm.put("msi.gama.util.matrix.GamaIntMatrix", 	"matrix<int>");
+		hm.put("msi.gama.util.matrix.GamaFloatMatrix", 	"matrix<float>");
+		
+//		hm.put("msi.gama.util.matrix.IMatrix<T>", "matrix");
+//		hm.put("msi.gama.util.matrix.GamaMatrix<T>", "matrix");
+//		hm.put("msi.gama.util.matrix.GamaMatrix<java.lang.Double>", "matrix<float>");
+//		hm.put("msi.gama.util.matrix.IMatrix<java.lang.Double>", "matrix<float>");
 
 		// Files
-		hm.put("msi.gama.util.file.IGamaFile", "file");
-		hm.put("msi.gama.util.file.GamaFile", "file");
-		hm.put("msi.gama.jogl.files.Gama3DSFile", "file");
-		hm.put("msi.gama.jogl.files.GamaObjFile", "file");
+		hm.put("msi.gama.util.file.IGamaFile", 		"file");
+		hm.put("msi.gama.util.file.GamaFile", 		"file");
+		hm.put("msi.gama.jogl.files.Gama3DSFile", 	"file");
+		hm.put("msi.gama.jogl.files.GamaObjFile", 	"file");
 
 		// Colors
 		hm.put("msi.gama.util.GamaColor", "rgb");
@@ -83,39 +85,52 @@ public class TypeConverter {
 		// List
 		hm.put("msi.gama.util.IList", "list");
 		hm.put("msi.gama.util.GamaList", "list");
+		hm.put("msi.gama.util.IList", "list");		
 		hm.put("java.util.List", "list");
-		hm.put("java.util.List<T>", "list");
-		hm.put("msi.gama.util.IList<T>", "list");
-		hm.put("msi.gama.util.IList<java.lang.Object>", "list");
-		hm.put("java.util.List<java.lang.Object>", "list");
-		hm.put("msi.gama.util.IList<msi.gama.util.IList<T>>", "list<list>");
-		hm.put("msi.gama.util.IList<msi.gama.util.IList>", "list<list>");
-		hm.put("msi.gama.util.IList<msi.gama.util.GamaList>", "list<list>");
-		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList>", "list<list>");
-		hm.put("java.util.List<java.util.List>", "list<list>");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>", "list<point>");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list<agent>");
-		hm.put("java.util.List<java.util.List<msi.gama.metamodel.agent.IAgent>>", "list<list<agent>>");
-		hm.put("msi.gama.util.IList<msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>>", "list<list<agent>>");
-		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.agent.IAgent>", "list<agent>");
-		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
-		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList<msi.gama.metamodel.shape.GamaPoint>>",
-				"list<list<point>>");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.ILocation>", "list<point>");
-		hm.put("java.util.List<msi.gama.util.path.GamaSpatialPath>", "list<path>");
-		hm.put("msi.gama.util.GamaList<java.lang.Double>", "list<float>");
-		hm.put("msi.gama.util.IList<java.lang.Double>", "list<float>");
-		hm.put("msi.gama.util.IList<msi.gama.util.GamaColor>", "list<rgb>");
-		hm.put("msi.gama.util.IList<KeyType>", "list<KeyType>");
+	
+//		hm.put("java.util.List<T>", "list");
+//		hm.put("msi.gama.util.IList<T>", "list");
+//		hm.put("msi.gama.util.IList<java.lang.Object>", "list");
+//		hm.put("java.util.List<java.lang.Object>", "list");
+//		hm.put("msi.gama.util.IList<msi.gama.util.IList<T>>", "list<list>");
+//		hm.put("msi.gama.util.IList<msi.gama.util.IList>", "list<list>");
+//		hm.put("msi.gama.util.IList<msi.gama.util.GamaList>", "list<list>");
+//		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList>", "list<list>");
+//		hm.put("java.util.List<java.util.List>", "list<list>");
+//		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
+//		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>", "list<point>");
+//		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list<agent>");
+//		hm.put("java.util.List<java.util.List<msi.gama.metamodel.agent.IAgent>>", "list<list<agent>>");
+//		hm.put("msi.gama.util.IList<msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>>", "list<list<agent>>");
+//		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.agent.IAgent>", "list<agent>");
+//		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
+//		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList<msi.gama.metamodel.shape.GamaPoint>>",
+//				"list<list<point>>");
+//		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.ILocation>", "list<point>");
+//		hm.put("java.util.List<msi.gama.util.path.GamaSpatialPath>", "list<path>");
+//		hm.put("msi.gama.util.GamaList<java.lang.Double>", "list<float>");
+//		hm.put("msi.gama.util.IList<java.lang.Double>", "list<float>");
+//		hm.put("msi.gama.util.IList<msi.gama.util.GamaColor>", "list<rgb>");
+//		hm.put("msi.gama.util.IList<KeyType>", "list<KeyType>");
+//		hm.put("msi.gama.util.IList<ValueType>", "list<ValueType>");
+//		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
+//		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list<agent>");
+//		hm.put("msi.gama.util.IList<? extends msi.gama.metamodel.shape.IShape>", "list<agent>");
+//		hm.put("msi.gama.util.IList<java.lang.Double>", "list<float>");
+//		hm.put("msi.gama.util.IList<? extends msi.gama.metamodel.shape.IShape>", "list<geometry>");		
+//		hm.put("msi.gama.util.IList<java.lang.String>", "list<string>");
+		
+		hm.put("java.lang.Object", "unknown");
+		hm.put("T", "unknown");		
+		hm.put("?", "unknown");		
 
+		hm.put("msi.gama.metamodel.agent.IAgent", "agent");
+		hm.put("msi.gama.metamodel.shape.IShape", "geometry");
+		hm.put("msi.gama.metamodel.shape.GamaShape", "geometry");		
+		hm.put("? extends msi.gama.metamodel.shape.IShape", "geometry");		
+		
 		hm.put("msi.gama.metamodel.shape.GamaPoint", "point");
 		hm.put("msi.gama.metamodel.shape.ILocation", "point");
-		hm.put("java.lang.Object", "unknown");
-		hm.put("msi.gama.util.GamaPair", "pair");
-		hm.put("java.lang.Boolean", "bool");
-		hm.put("msi.gama.metamodel.agent.IAgent", "agent");
-		hm.put("java.lang.String", "string");
 		hm.put("msi.gama.util.graph.IGraph", "graph");
 		hm.put("msi.gama.util.graph.GamaGraph", "graph");
 		hm.put("msi.gama.metamodel.topology.ITopology", "topology");
@@ -131,14 +146,6 @@ public class TypeConverter {
 		hm.put("msi.gama.util.IContainer<?,java.lang.Double>", "container<float>");
 		hm.put("msi.gama.util.IContainer<?,?>", "container");
 
-		hm.put("msi.gama.util.IList", "list");
-		hm.put("msi.gama.util.IList<ValueType>", "list<ValueType>");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list<agent>");
-		hm.put("msi.gama.util.IList<? extends msi.gama.metamodel.shape.IShape>", "list<agent>");
-		hm.put("msi.gama.util.IList<java.lang.Double>", "list<float>");
-		hm.put("msi.gama.util.IList<? extends msi.gama.metamodel.shape.IShape>", "list<geometry>");
-
 		hm.put("java.util.Map", "map");
 		hm.put("msi.gama.util.GamaMap<?,?>", "map");
 		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map<string,unknown>");
@@ -147,8 +154,6 @@ public class TypeConverter {
 		hm.put("msi.gama.util.GamaMap<java.lang.String,msi.gama.util.GamaList>", "map<string,list>");
 		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.GamaPoint,java.lang.Double>", "map<point,float>");
 		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.IShape,java.lang.Double>", "map<agent,float>");
-
-		hm.put("msi.gama.util.IList<java.lang.String>", "list<string>");
 
 		hm.put("msi.gama.util.GamaFont", "font");
 
@@ -168,6 +173,7 @@ public class TypeConverter {
 
 		hm.put("msi.gama.util.IPath", "path");
 		hm.put("msi.gama.util.path.IPath", "path");
+		hm.put("msi.gama.util.path.GamaSpatialPath", "path");
 
 		hm.put("msi.gama.util.IContainer<KeyType,ValueType>.Addressable<KeyType,ValueType>",
 				"container<KeyType,ValueType>");
@@ -255,11 +261,27 @@ public class TypeConverter {
 	}
 
 	public String getProperType(final String rawName) {
-		if (properNameTypeMap.containsKey(rawName)) {
-			return properNameTypeMap.get(rawName);
+		// Get only the first <
+		String[] splitByLeftBracket = rawName.split("<",2);
+		
+		// Stop criteria: no bracket
+		if(splitByLeftBracket.length == 1) {
+			if (properNameTypeMap.containsKey(splitByLeftBracket[0])) {
+				return properNameTypeMap.get(splitByLeftBracket[0]);
+			} else {
+				return splitByLeftBracket[0];
+			}
+		} else if(splitByLeftBracket.length == 2) {
+			String leftElement = getProperType(splitByLeftBracket[0]);
+			
+			String lastString = splitByLeftBracket[1];
+			splitByLeftBracket[1] = lastString.substring(0, lastString.length() - 1);
+			
+			return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";
 		} else {
-			return rawName;
-		}
+			throw new IllegalArgumentException("getProperType has a not appropriate behavior input");
+		}	
+
 	}
 
 	public String getProperOperatorName(final String opName) {

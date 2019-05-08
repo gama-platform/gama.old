@@ -144,7 +144,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			@Override
 			public Rectangle getClientArea() {
 				// see Issue #2378
-				if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
+				//if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
 				return super.getClientArea();
 			}
 		};

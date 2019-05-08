@@ -76,10 +76,15 @@ public class Operator implements IElement {
 		documentation.addSee(see);
 	}
 	
+	public void addUsage(String descUsage, org.w3c.dom.Element exElt) {
+		documentation.addUsage(descUsage, exElt);
+	}	
+	
 	public void addUsage(String descUsage) {
-		documentation.addUsage(descUsage);
+		this.addUsage(descUsage, null);
 	}
 
+	
 	@Override
 	public Element getElementDOM() {
 		// TODO to finish

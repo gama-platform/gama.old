@@ -889,6 +889,7 @@ public class Containers {
 							value = "[1,3,2,4,5,6,8,5,6] union [0,8]",
 							equals = "[1,3,2,4,5,6,8,0]") },
 			see = { "inter", IKeyword.PLUS })
+	@test("[1,2,3,4,5,6] union [2,4,9] = [1,2,3,4,5,6,9]")
 	public static IList union(final IScope scope, final IContainer c, final IContainer c1) {
 		return (IList) stream(scope, c).append(stream(scope, c1)).distinct().toCollection(listLike(c, c1));
 	}
@@ -924,6 +925,8 @@ public class Containers {
 							equals = "[false::[2, 4], true::[6]]",
 							returnType = "map<bool,list>") },
 			see = { "first_with", "last_with", "where" })
+	@test("[1,2,3,4,5,6,7,8] group_by (each > 3) = [false::[1, 2, 3], true::[4, 5, 6, 7, 8]]")
+	@test("[1::2, 3::4, 5::6] group_by (each > 4) = [false::[2, 4], true::[6]]")
 	public static GamaMap group_by(final IScope scope, final IContainer c, final IExpression e) {
 		final IType ct = notNull(scope, c).getGamlType().getContentType();
 		return (GamaMap) stream(scope, c).groupingTo(with(scope, e), asMapOf(e.getGamlType(), Types.LIST.of(ct)),
@@ -964,6 +967,7 @@ public class Containers {
 							equals = "node3",
 							isExecutable = false) },
 			see = { "group_by", "first_with", "where" })
+	@test("[1,2,3,4,5,6,7,8] last_with (each > 3) = 8")
 	public static Object last_with(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).filter(by(scope, filter)).reduce((a, b) -> b).orElse(null);
 	}
@@ -1003,6 +1007,7 @@ public class Containers {
 							equals = "node2",
 							isExecutable = false) },
 			see = { "group_by", "last_with", "where" })
+	@test("[1,2,3,4,5,6,7,8] first_with (each > 3) = 4")
 	public static Object first_with(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).findFirst(by(scope, filter)).orElse(null);
 	}
@@ -1037,6 +1042,7 @@ public class Containers {
 							equals = "96",
 							isExecutable = false) },
 			see = { "min_of" })
+	@test("[1,2,4,3,5,7,6,8] max_of (each * 100 ) = 800")
 	@validator (ComparableValidator.class)
 	public static Object max_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).map(with(scope, filter)).maxBy(Function.identity()).orElse(null);
@@ -1079,6 +1085,8 @@ public class Containers {
 					@usage (
 							value = "if it is a list of colors: sum will sum them and return the blended resulting color") },
 			see = { "mul" })
+	@test("sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}]) = {20.0,17.0}")
+	@test("sum ([12,10,3]) = 25")
 	public static Object sum(final IScope scope, final IContainer l) {
 		return sum_of(scope, l, null);
 	}
@@ -1114,6 +1122,7 @@ public class Containers {
 					value = "[1,2] sum_of (each * 100 )",
 					equals = "300") },
 			see = { "min_of", "max_of", "product_of", "mean_of" })
+	@test("[1,2] sum_of (each * 100 ) = 300")
 	public static Object sum_of(final IScope scope, final IContainer container, final IExpression filter) {
 		Stream s = stream(scope, container);
 		IType t;
@@ -1158,6 +1167,7 @@ public class Containers {
 					value = "[1,2] product_of (each * 10 )",
 					equals = "200") },
 			see = { "min_of", "max_of", "sum_of", "mean_of" })
+	@test("[3,4] product_of (each *2) = 48")
 	public static Object product_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return Stats.product(scope, collect(scope, container, filter));
 	}
@@ -1178,6 +1188,7 @@ public class Containers {
 					value = "mean ([4.5, 3.5, 5.5, 7.0])",
 					equals = "5.125 ") },
 			see = { "sum" })
+	@test("mean ([4.5, 3.5, 5.5, 7.0]) with_precision 3 = 5.125")
 	public static Object mean(final IScope scope, final IContainer l) throws GamaRuntimeException {
 
 		final Object s = Containers.sum(scope, l);
@@ -1209,6 +1220,7 @@ public class Containers {
 					value = "[1,2] mean_of (each * 10 )",
 					equals = "15") },
 			see = { "min_of", "max_of", "sum_of", "product_of" })
+	@test("[1,2] mean_of (each * 10 ) = 15")
 	public static Object mean_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return mean(scope, collect(scope, container, filter));
 	}
@@ -1256,6 +1268,7 @@ public class Containers {
 							equals = "4",
 							isExecutable = false) },
 			see = { "max_of" })
+	@test("[1,2,4,3,5,7,6,8] min_of (each * 100 ) = 100")
 	@validator (ComparableValidator.class)
 	public static Object min_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).map(with(scope, filter)).minBy(Function.identity()).orElse(null);
@@ -1359,6 +1372,7 @@ public class Containers {
 							value = "[1::2, 5::6, 3::4] sort_by (each)",
 							equals = "[2, 4, 6]") },
 			see = { "group_by" })
+	@test("[1,2,4,3,5,7,6,8] sort_by (each) = [1,2,3,4,5,6,7,8]")
 	@validator (ComparableValidator.class)
 	public static IList sort(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).sortedBy(with(scope, filter)).toCollection(listLike(c));
@@ -1396,6 +1410,7 @@ public class Containers {
 							equals = "[node2, node3]",
 							isExecutable = false) },
 			see = { "first_with", "last_with", "where" })
+	@test("[1,2,3,4,5,6,7,8] where (each > 3) = [4, 5, 6, 7, 8] ")
 	public static IList where(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).filter(by(scope, filter)).toCollection(listLike(c));
 	}
@@ -1429,6 +1444,7 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] with_max_of (each)",
 							equals = "6") },
 			see = { "where", "with_min_of" })
+	@test("[1,2,3,4,5,6,7,8] with_max_of (each ) = 8")
 	@validator (ComparableValidator.class)
 	public static Object with_max_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).maxBy(with(scope, filter)).orElse(null);
@@ -1463,6 +1479,7 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] with_min_of (each)",
 							equals = "2") },
 			see = { "where", "with_max_of" })
+	@test("[1,2,3,4,5,6,7,8] with_min_of (each )  = 1")
 	@validator (ComparableValidator.class)
 	public static Object with_min_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).minBy(with(scope, filter)).orElse(null);
@@ -1491,6 +1508,7 @@ public class Containers {
 							returnType = "list<int>",
 							equals = "[2,4,8]") },
 			see = { "collect" })
+	@test("[1,2,4] accumulate ([2,4]) = [2,4,2,4,2,4]")
 	public static IList accumulate(final IScope scope, final IContainer c, final IExpression filter) {
 		// WARNING TODO The resulting type is not computed
 		final IType type = filter.getGamlType();
@@ -1528,6 +1546,8 @@ public class Containers {
 							equals = "the list of nodes with their x multiplied by 2",
 							isExecutable = false) },
 			see = { "accumulate" })
+	@test("[1,2,4] collect (each *2) = [2,4,8]")
+	@test("[1,2,4] collect ([2,4]) = [[2,4],[2,4],[2,4]]")
 	public static IList collect(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).map(with(scope, filter)).toCollection(listOf(filter.getGamlType()));
 	}

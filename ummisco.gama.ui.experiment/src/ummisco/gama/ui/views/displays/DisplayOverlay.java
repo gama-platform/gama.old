@@ -48,6 +48,7 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -60,6 +61,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
+	
+	static {
+		DEBUG.ON();
+	}
 
 	Label coord, zoom, left, center, right;
 	StringBuilder text = new StringBuilder();
@@ -352,6 +357,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final Point p = referenceComposite.toDisplay(r.x, r.y);
 		final int x = p.x;
 		final int y = p.y + r.height - (createExtraInfo ? 56 : 32);
+		DEBUG.OUT("Location of overlay = " + x + " " + y + " <>  client area dans Display : "  + r);
 		return new Point(x, y);
 	}
 

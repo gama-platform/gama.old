@@ -489,6 +489,7 @@ experiment group_experiment type: gui {
 	parameter 'Create clouds?' var: create_cloud <- false;
 		
 	output {
+		 layout horizontal([vertical([1::5000,0::5000])::5000,2::5000]) tabs:true editors: false;
 		display 'Standard display' {
 			species ball aspect: default transparency: 0.5 ;
 			
@@ -514,7 +515,8 @@ experiment cloud_experiment type: gui {
 	parameter 'Create clouds?' var: create_cloud <- true;
 		
 	output {
-		display 'Standard display' synchronized: true {
+		 layout vertical([horizontal([0::5000,1::5000])::5000,horizontal([2::5000,3::5000])::5000]) tabs:true toolbars:true editors: false;
+		 display 'Standard display' synchronized: true {
 			species ball aspect: default transparency: 0.5 ;
 			
 			species group aspect: default transparency: 0.5 {

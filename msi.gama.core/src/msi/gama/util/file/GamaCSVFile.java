@@ -22,6 +22,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -154,7 +155,10 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	 * @param pathName
 	 * @throws GamaRuntimeException
 	 */
-	@doc ("This file constructor allows to read a CSV file with the default separator, no header, and no assumption on the type of data")
+	@doc (value= "This file constructor allows to read a CSV file with the default separator, no header, and no assumption on the type of data",
+		examples = {
+				@example("csv_file f <- csv_file(\"file\");")
+		})
 	public GamaCSVFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, (String) null);
 	}

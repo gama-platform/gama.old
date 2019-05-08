@@ -16,6 +16,7 @@ experiment "Different series" type: gui
 	
 	
 	layout #split toolbars: false;
+	
 	output
 	{
 

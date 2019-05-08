@@ -374,6 +374,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 			ops_is.addOperand(new Operand(document, "val", 0, "any"));
 			op_is.addOperands(ops_is);
 			
+			
 			////////////////////////////////////////
 			// Operator  name + "_file"
 			final Operator op_file = new Operator(document, tc.getProperCategory("Files"),
@@ -404,8 +405,17 @@ public class DocProcessor extends ElementProcessor<doc> {
 					op_name_usage = op_name_usage.substring(0, op_name_usage.length()-1) + ")";
 					
 					// Create the documentation for each constructor as an usage
+					// when reading a @doc annotation:
+					// - value : becomes a usage name
+					// - examples : become example of THIS usage
 					doc docConstructor = elt.getAnnotation(doc.class) ;
-					op_file.addUsage(op_name_usage + ": " + ( (docConstructor != null) ? docConstructor.value() : "") );
+					
+					org.w3c.dom.Element exElt = null;
+					if (docConstructor != null) {
+						exElt = getExamplesElt(docConstructor.examples(), document, (ExecutableElement) elt, tc, null);					
+					}	
+					op_file.addUsage(op_name_usage + ": " + ( (docConstructor != null) ? docConstructor.value() : ""), exElt );
+					
 				}
 			}
 			
@@ -1281,7 +1291,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 		} else {
 			exampleElt.setAttribute(XMLElements.ATT_EXAMPLE_IS_TESTABLE, "" + example.test());
 		}
-		if (example.isExecutable() && example.test()) {
+		if ( (parentElement != null) && example.isExecutable() && example.test()) {
 			parentElement.setAttribute("HAS_TESTS", "true");
 		}
 		if (!"".equals(example.returnType())) {

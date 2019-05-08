@@ -1275,7 +1275,17 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc (
-				value = "A 3D geometry that represents the box that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,100, 0, 100, 0, 100) is returned")
+				value = "A 3D geometry that represents the box that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,100, 0, 100, 0, 100) is returned",
+				usages = { @usage (
+							value = "This operator is often used to define the environment of simulation") },
+				examples = { @example (
+								value = "file road_shapefile <- file(\"../includes/roads.shp\");", isExecutable = false),
+							@example (
+								value = "geometry shape <- envelope(road_shapefile);", isExecutable = false),
+							@example (
+									value = "// shape is the system variable of  the environment", isExecutable = false)
+						}
+				)
 		public static IShape envelope(final IScope scope, final Object obj) {
 			Envelope3D env = new Envelope3D(GeometryUtils.computeEnvelopeFrom(scope, obj));
 			if (env.isNull()) {
