@@ -41,6 +41,7 @@ import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GamlGri
 import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
@@ -62,6 +63,7 @@ import msi.gama.util.graph.GraphFromAgentContainerSynchronizer;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.layout.LayoutCircle;
 import msi.gama.util.graph.layout.LayoutForceDirected;
+import msi.gama.util.graph.layout.LayoutGrid;
 import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
@@ -1991,9 +1993,10 @@ public class Graphs {
 			concept = { IConcept.GRAPH })
 	@doc (
 			value = "layouts a GAMA graph using Force model. usage: layoutForce(graph, bounds, coeff_force, cooling_rate, max_iteration). graph is the graph to which "
-					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_force is the coefficien use to compute the force, typical value is 0.4; "
+					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_force is the coefficient used to compute the force, typical value is 0.4; "
 					+ "cooling rate is the decreasing coefficient of the temperature, typical value is 0.01;  max_iteration is the maximal number of iterations"
 					+ "distance of displacement for a vertice to be considered as in equilibrium")
+	@no_test
 	public static IGraph layoutForce(final IScope scope, final GamaGraph graph, IShape bounds, double coeffForce, double coolingRate, int maxIteration) {
 		LayoutForceDirected sim = new LayoutForceDirected(graph, bounds, coeffForce, coolingRate, maxIteration,false, 0);
 		sim.startSimulation(scope);
@@ -2010,8 +2013,28 @@ public class Graphs {
 			value = "layouts a Gama graph on a circle with equidistance between nodes. For now there is no optimization on node ordering !",
 			examples = { @example (value = "layout_circle(graph, world.shape);", isExecutable=false)}
 			)
+	@no_test
 	public static IGraph layoutCircle(final IScope scope, final GamaGraph graph, IShape bounds) {
 		LayoutCircle layouter = new LayoutCircle(graph, bounds);
+		layouter.applyLayout(scope);
+		return graph;
+	} 
+	
+	@operator (
+			value = "layout_grid",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "layouts a Gama graph based on a grid latice. usage: layoutForce(graph, bounds, coeff_nb_cells). graph is the graph to which \"\r\n" + 
+					"					+ \"applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_nb_cells"
+					+ "the coefficient for the number of cells to locate the vertices (nb of places = coeff_nb_cells * nb of vertices). ",
+			examples = { @example (value = "layout_grid(graph, world.shape);", isExecutable=false)}
+			)
+	@no_test
+	public static IGraph layoutGrid(final IScope scope, final GamaGraph graph, IShape bounds, double coeffSq) {
+		LayoutGrid layouter = new LayoutGrid(graph, bounds, Math.max(1.0, coeffSq));
 		layouter.applyLayout(scope);
 		return graph;
 	}
