@@ -9,7 +9,7 @@ model DXFAgents
 
 global
 {
-	file house_file <- file("../includes/house.dxf");
+	file house_file <- dxf_file("../includes/house.dxf",#m);
 
 	//compute the environment size from the dxf file envelope
 	geometry shape <- envelope(house_file);
@@ -40,19 +40,17 @@ species house_element
 	rgb color;
 	aspect default
 		{
-		draw shape color: color depth: 40;
+		draw shape color: color width: 2;
 	}
 	init {
 		shape <- polygon(shape.points);
 	}
-
-
 }
 
 experiment DXFAgents type: gui
-{
+{   
 	output
-	{
+	{	layout #split;
 		display map type: opengl
 		{
 			species house_element;
