@@ -18,8 +18,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import org.eclipse.swt.internal.DPIUtil;
-
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.swt.GLCanvas;
@@ -51,7 +49,6 @@ import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -65,7 +62,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRenderer {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	// Helpers
@@ -408,9 +405,20 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 *
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getWidth()
 	 */
+	@SuppressWarnings ("restriction")
 	@Override
 	public final double getWidth() {
-		return canvas.getSurfaceWidth() * surface.getZoomLevel();
+		// DEBUG.OUT(
+		// "Result of getWidth: "
+		// + PlatformHelper.autoScaleDown(canvas.getSurfaceWidth()) * (float) surface.getZoomLevel(),
+		// false);
+		// DEBUG.OUT(" -- Canvas surface width " + canvas.getSurfaceWidth(), false);
+		// DEBUG.OUT("Canvas size " + canvas.getSize().x, false);
+		// DEBUG.OUT(" -- Width of world in pixels computed by OpenGL " + openGL.getPixelWidthAndHeightOfWorld()[0]);
+		// return canvas.getSize().x * surface.getZoomLevel();
+		return openGL.getPixelWidthAndHeightOfWorld()[0] * (float) surface.getZoomLevel();
+		// return PlatformHelper.autoScaleDown(canvas.getSurfaceWidth()) *
+		// PlatformHelper.autoScaleDown(canvas.getSurfaceWidth()) * (float) surface.getZoomLevel();
 	}
 
 	/*
@@ -420,7 +428,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 	@Override
 	public final double getHeight() {
-		return canvas.getSurfaceHeight() * surface.getZoomLevel();
+		return openGL.getPixelWidthAndHeightOfWorld()[1] * (float) surface.getZoomLevel();
+		// return canvas.getSurfaceHeight() * surface.getZoomLevel();
 	}
 
 	/*
