@@ -22,6 +22,7 @@ import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.HeadlessListener;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.descriptions.ModelDescription;
@@ -82,6 +83,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
+				HeadlessListener.is_Test=true;
 				final TestAgent agent = (TestAgent) exp.getAgent();
 				exp.setHeadless(true);
 				exp.getController().getScheduler().paused = false;
@@ -89,6 +91,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 				count[0] += agent.getSummary().size();
+				HeadlessListener.is_Test=false;
 			}
 		}
 
