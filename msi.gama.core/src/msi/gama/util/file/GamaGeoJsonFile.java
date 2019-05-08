@@ -32,6 +32,7 @@ import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -49,8 +50,14 @@ import msi.gaml.types.Types;
 		buffer_index = IType.INT,
 		concept = { IConcept.GIS, IConcept.FILE },
 		doc = @doc ("Represents geospatial files written using the GeoJSON format. The internal representation is a list of geometries"))
-public class GamaGeoJsonFile extends GamaGisFile {
+    public class GamaGeoJsonFile extends GamaGisFile {
+	@doc (value= "This file constructor allows to read a geojson (.geojson) file",
 
+			examples = {
+
+				@example(value = "file f <- geojson_file(\"file\");", isExecutable = false)
+
+			})
 	public GamaGeoJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
