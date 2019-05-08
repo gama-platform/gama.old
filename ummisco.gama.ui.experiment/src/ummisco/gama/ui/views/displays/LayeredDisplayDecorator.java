@@ -2,11 +2,11 @@
  *
  * ummisco.gama.ui.views.displays.LayeredDisplayDecorator.java, in plugin ummisco.gama.ui.experiment, is part of the
  * source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
@@ -149,7 +149,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			toolbar.button(toggleOverlay, SWT.LEFT);
 			toolbar.button(toggleInteractiveConsole, SWT.LEFT);
 			toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
-			toolbar.button(runExperiment, SWT.LEFT);
+			ToolItem item = toolbar.button(runExperiment, SWT.LEFT);
+			if (GAMA.isPaused()) {
+				item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
+			} else {
+				item.setImage(GamaIcons.create("menu.pause4").image());
+			}
 			toolbar.button(stepExperiment, SWT.LEFT);
 			toolbar.control(create(toolbar.getToolbar(SWT.LEFT)), totalWidth(), SWT.LEFT);
 			toolbar.button(relaunchExperiment, SWT.LEFT);
