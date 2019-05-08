@@ -87,8 +87,8 @@ species ant skills: [moving] {
 		if goal != nil {
 			location <- goal.location;
 		} else {
-			int min_nest <- (list_places min_of (each.nest));
-			list_places <- list_places sort ((each.nest = min_nest) ? each.road : 0.0);
+			//int min_nest <- (list_places min_of (each.nest));
+			//list_places <- list_places sort ((each.nest = min_nest) ? each.road : 0.0);
 			location <- point(last(list_places));
 		}
 
