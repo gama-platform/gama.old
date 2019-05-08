@@ -2001,14 +2001,14 @@ public class Graphs {
 	}
 	
 	@operator (
-			value = "layout_circule",
+			value = "layout_circle",
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	@doc (
-			value = "layouts a Gama graph on a circle",
-			examples = { @example (value = "do layout_circule(graph, world.shape);")}
+			value = "layouts a Gama graph on a circle with equidistance between nodes. For now there is no optimization on node ordering !",
+			examples = { @example (value = "layout_circule(graph, world.shape);")}
 			)
 	public static IGraph layoutCircle(final IScope scope, final GamaGraph graph, IShape bounds) {
 		LayoutCircle layouter = new LayoutCircle(graph, bounds);

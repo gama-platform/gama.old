@@ -1,18 +1,8 @@
 package msi.gama.util.graph.layout;
 
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.jgrapht.Graph;
-import org.jgrapht.Graphs;
-
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Spatial;
