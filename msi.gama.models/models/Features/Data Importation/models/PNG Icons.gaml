@@ -77,9 +77,10 @@ species people skills: [moving]
 experiment Icons
 {
 	// We slow down the simulation in order to see something !
-	layout #split;
+
 	output
 	{
+		layout #split;
 		
 		display "Colorful in 3D" type: opengl synchronized: true
 		{

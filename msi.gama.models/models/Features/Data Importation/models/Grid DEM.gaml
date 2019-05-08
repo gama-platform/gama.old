@@ -118,8 +118,9 @@ experiment GridDEMComplete type: gui {
 }
 
 experiment GraphicDEMComplete type: gui {
-	layout #split toolbars: false;
+
 	output {
+		layout #split toolbars: false;
 		display VulcanoTexturedScaled type: opengl draw_env: false {
 			graphics 'GraphicPrimitive' {
 				draw dem(dem, texture, 0.1);
