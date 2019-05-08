@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Stats.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.Stats.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -70,7 +70,7 @@ public class Stats {
 	public static class Instance extends DoublePoint {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 		int id;
@@ -113,7 +113,7 @@ public class Stats {
 
 		/**
 		 * Creates an empty data set with the specified initial capacity.
-		 * 
+		 *
 		 * @param capacity
 		 *            The initial capacity for the data set (this number of values will be able to be added without
 		 *            needing to resize the internal data storage).
@@ -125,7 +125,7 @@ public class Stats {
 
 		/**
 		 * Adds a single value to the data set and updates any statistics that are calculated cumulatively.
-		 * 
+		 *
 		 * @param value
 		 *            The value to add.
 		 */
@@ -152,7 +152,7 @@ public class Stats {
 
 		/**
 		 * Returns the number of values in this data set.
-		 * 
+		 *
 		 * @return The size of the data set.
 		 */
 		public final int getSize() {
@@ -161,7 +161,7 @@ public class Stats {
 
 		/**
 		 * Determines the median value of the data set.
-		 * 
+		 *
 		 * @return If the number of elements is odd, returns the middle element. If the number of elements is even,
 		 *         returns the midpoint of the two middle elements.
 		 * @since 1.0.1
@@ -190,7 +190,7 @@ public class Stats {
 		/**
 		 * The arithemthic mean of an n-element set is the sum of all the elements divided by n. The arithmetic mean is
 		 * often referred to simply as the "mean" or "average" of a data set.
-		 * 
+		 *
 		 * @see #getGeometricMean()
 		 * @return The arithmetic mean of all elements in the data set.
 		 * @throws EmptyDataSetException
@@ -203,7 +203,7 @@ public class Stats {
 		/**
 		 * The geometric mean of an n-element set is the nth-root of the product of all the elements. The geometric mean
 		 * is used for finding the average factor (e.g. an average interest rate).
-		 * 
+		 *
 		 * @see #getArithmeticMean()
 		 * @see #getHarmonicMean()
 		 * @return The geometric mean of all elements in the data set.
@@ -218,7 +218,7 @@ public class Stats {
 		 * The harmonic mean of an n-element set is {@literal n} divided by the sum of the reciprocals of the values
 		 * (where the reciprocal of a value {@literal x} is 1/x). The harmonic mean is used to calculate an average rate
 		 * (e.g. an average speed).
-		 * 
+		 *
 		 * @see #getArithmeticMean()
 		 * @see #getGeometricMean()
 		 * @since 1.1
@@ -233,7 +233,7 @@ public class Stats {
 		/**
 		 * Calculates the mean absolute deviation of the data set. This is the average (absolute) amount that a single
 		 * value deviates from the arithmetic mean.
-		 * 
+		 *
 		 * @see #getArithmeticMean()
 		 * @see #getVariance()
 		 * @see #getStandardDeviation()
@@ -254,7 +254,7 @@ public class Stats {
 		 * Calculates the variance (a measure of statistical dispersion) of the data set. There are different measures
 		 * of variance depending on whether the data set is itself a finite population or is a sample from some larger
 		 * population. For large data sets the difference is negligible. This method calculates the population variance.
-		 * 
+		 *
 		 * @see #getSampleVariance()
 		 * @see #getStandardDeviation()
 		 * @see #getMeanDeviation()
@@ -268,7 +268,7 @@ public class Stats {
 
 		/**
 		 * Helper method for variance calculations.
-		 * 
+		 *
 		 * @return The sum of the squares of the differences between each value and the arithmetic mean.
 		 * @throws EmptyDataSetException
 		 *             If the data set is empty.
@@ -286,7 +286,7 @@ public class Stats {
 		/**
 		 * The standard deviation is the square root of the variance. This method calculates the population standard
 		 * deviation as opposed to the sample standard deviation. For large data sets the difference is negligible.
-		 * 
+		 *
 		 * @see #getSampleStandardDeviation()
 		 * @see #getVariance()
 		 * @see #getMeanDeviation()
@@ -311,7 +311,7 @@ public class Stats {
 		 * Calculates the variance (a measure of statistical dispersion) of the data set. There are different measures
 		 * of variance depending on whether the data set is itself a finite population or is a sample from some larger
 		 * population. For large data sets the difference is negligible. This method calculates the sample variance.
-		 * 
+		 *
 		 * @see #getVariance()
 		 * @see #getSampleStandardDeviation()
 		 * @see #getMeanDeviation()
@@ -326,7 +326,7 @@ public class Stats {
 		/**
 		 * The sample standard deviation is the square root of the sample variance. For large data sets the difference
 		 * between sample standard deviation and population standard deviation is negligible.
-		 * 
+		 *
 		 * @see #getStandardDeviation()
 		 * @see #getSampleVariance()
 		 * @see #getMeanDeviation()
@@ -360,10 +360,10 @@ public class Stats {
 			see = { "split_in", "split_using" },
 			value = "Splits a list of numbers into n=(1+3.3*log10(elements)) bins. The splitting is strict "
 					+ "(i.e. elements are in the ith bin if they are strictly smaller than the ith bound)",
-			examples = {
-					@example(value="split([1.0,2.0,1.0,3.0,1.0,2.0])",
-							equals="[[1.0,1.0,1.0],[2.0,2.0],[3.0]]")
-				
+			examples = { @example (
+					value = "split([1.0,2.0,1.0,3.0,1.0,2.0])",
+					equals = "[[1.0,1.0,1.0],[2.0,2.0],[3.0]]")
+
 			})
 
 	public static <T extends Number> IList<IList<T>> split(final IScope scope, final IList<T> list) {
@@ -383,11 +383,9 @@ public class Stats {
 			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum "
 					+ "and maximum values found in the first argument. The splitting is strict "
 					+ "(i.e. elements are in the ith bin if they are strictly smaller than the ith bound)",
-					examples = {
-							@example("list<float> li <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"),
-									@example(value="split_in(li,3)",
-									equals="[[1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0],[19.9],[35.9,40.0]]")
-					})
+			examples = { @example ("list<float> li <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"), @example (
+					value = "split_in(li,3)",
+					equals = "[[1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0],[19.9],[35.9,40.0]]") })
 
 	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb) {
 		return split_in(scope, list, nb, true);
@@ -405,11 +403,9 @@ public class Stats {
 			value = "Splits a list of numbers into n bins defined by n-1 bounds between the minimum and maximum values"
 					+ " found in the first argument. The boolean argument controls whether or not the splitting is "
 					+ " strict (if true, elements are in the ith bin if they are strictly smaller than the ith bound)",
-					examples = {
-							@example("list<float> l <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"),
-									@example(value="split_in(l,3, true)",
-									equals="[[1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0],[19.9],[35.9,40.0]]")
-					})
+			examples = { @example ("list<float> l <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"), @example (
+					value = "split_in(l,3, true)",
+					equals = "[[1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0],[19.9],[35.9,40.0]]") })
 
 	public static <T extends Number> IList<IList<T>> split_in(final IScope scope, final IList<T> list, final int nb,
 			final boolean strict) {
@@ -435,11 +431,9 @@ public class Stats {
 			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. "
 					+ "The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller "
 					+ "than the ith bound",
-					examples = {
-							@example("list<float> li <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"),
-							@example(value="split_using(li,[1.0,3.0,4.2])",
-							equals="[[],[1.0],[3.1],[5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0]]")
-			}) 
+			examples = { @example ("list<float> li <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"), @example (
+					value = "split_using(li,[1.0,3.0,4.2])",
+					equals = "[[],[1.0],[3.1],[5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0]]") })
 	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
 			final IList<? extends Comparable> stops) {
 		return split_using(scope, list, stops, true);
@@ -457,11 +451,9 @@ public class Stats {
 			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument."
 					+ " The boolean argument controls whether or not the splitting is strict "
 					+ "(if true, elements are in the ith bin if they are strictly smaller than the ith bound",
-					examples = {
-							@example("list<float> l <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"),
-							@example(value="split_using(li,[1.0,3.0,4.2], true)",
-							equals="[[],[1.0],[3.1],[5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0]]")
-			}) 
+			examples = { @example ("list<float> l <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"), @example (
+					value = "split_using(l,[1.0,3.0,4.2], true)",
+					equals = "[[],[1.0],[3.1],[5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0]]") })
 	public static <T extends Number> IList<IList<T>> split_using(final IScope scope, final IList<T> list,
 			final IList<? extends Comparable> stops, final boolean strict) {
 		if (stops.size() == 0) {
@@ -469,8 +461,10 @@ public class Stats {
 			result.add(list);
 			return result;
 		}
-		if (!Ordering.<Comparable> natural().isStrictlyOrdered(stops)) { throw GamaRuntimeException
-				.error("The list " + Cast.toGaml(stops) + " should be ordered and cannot contain duplicates", scope); }
+		if (!Ordering.<Comparable> natural().isStrictlyOrdered(stops)) {
+			throw GamaRuntimeException.error(
+					"The list " + Cast.toGaml(stops) + " should be ordered and cannot contain duplicates", scope);
+		}
 		final DataSet d = from(scope, stops);
 		d.addValue(Double.MAX_VALUE);
 		final IType numberType = list.getGamlType().getContentType();
@@ -690,7 +684,7 @@ public class Stats {
 			value = "the median of all the elements of the operand.",
 			special_cases = {
 					"if the container contains points, the result will be a point. If the container contains rgb values, "
-					+ "the result will be a rgb color" },
+							+ "the result will be a rgb color" },
 			examples = { @example (
 					value = "median ([4.5, 3.5, 5.5, 3.4, 7.0])",
 					equals = "4.5") },
@@ -1022,7 +1016,7 @@ public class Stats {
 			instances.add(new Instance(i, point));
 		}
 		final List<Cluster<DoublePoint>> clusters = dbscan.cluster(instances);
-		
+
 		final GamaList results = (GamaList) GamaListFactory.create();
 		for (final Cluster<DoublePoint> cl : clusters) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
@@ -1251,7 +1245,7 @@ public class Stats {
 		for (int i = 0; i < values.length; i++) {
 			values[i] = Cast.asFloat(scope, data.get(i));
 		}
-		java.lang.System.out.println("KURT: "+k.evaluate(values, 0, values.length));
+		java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
 		return k.evaluate(values);
 	}
 
