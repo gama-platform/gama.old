@@ -35,7 +35,12 @@ experiment TestOne type: test autorun: true {
 		assert{3,7}={3,7};
 		assert [3,4]!=[4,3];
 		assert [3,4] != [9];
-		
+		assert date('2000-01-02') - date('2000-01-01') = 86400;
+		assert string(date('2000-01-02'),'yyyy-MMMM-dd') = '2000-janvier-02';
+		assert string(date('2000-01-31'),'yyyy-MMMM-dd') = '2000-janvier-31';
+		assert string(date('2000-01-02'),'yyyy-MM-dd') = '2000-01-02';
+		assert string(date('2000-01-02'),'yyyy-MMMM-dd','en') = '2000-january-02';
+		 
 	}
 	
 }
