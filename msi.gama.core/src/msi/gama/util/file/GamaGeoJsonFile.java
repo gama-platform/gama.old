@@ -52,31 +52,48 @@ import msi.gaml.types.Types;
 		doc = @doc ("Represents geospatial files written using the GeoJSON format. The internal representation is a list of geometries"))
     public class GamaGeoJsonFile extends GamaGisFile {
 	@doc (value= "This file constructor allows to read a geojson (.geojson) file",
-
 			examples = {
-
 				@example(value = "file f <- geojson_file(\"file\");", isExecutable = false)
-
 			})
 	public GamaGeoJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
-
-	public GamaGeoJsonFile(final IScope scope, final String pathName, final Integer code, final boolean withZ) {
-		super(scope, pathName, code, withZ);
-		// TODO Auto-generated constructor stub
-	}
-
+	@doc (value= "This file constructor allows to read a geojson file and specifying the coordinates system code, as an int, according to epsg reference (http://www.epsg.org/)",
+			examples = {
+				@example(value = "file f <- geojson_file(\"file\", \"32648\");", isExecutable = false)
+			})
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final Integer code) {
 		super(scope, pathName, code);
 		// TODO Auto-generated constructor stub
 	}
-
+	@doc (value= "This file constructor allows to read a geojson file and specifying the coordinates system code (epg,...,), as a string,  according to epsg reference (http://www.epsg.org/)",
+			examples = {
+				@example(value = "file f <- geojson_file(\"file\", \"EPSG:32648\");", isExecutable = false)
+			})	
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final String code) {
 		super(scope, pathName, code);
 		// TODO Auto-generated constructor stub
 	}
-
+	@doc (value= "This file constructor allows to read a geojson (.geojson) file and take a potential z value (not taken in account by default)",
+			examples = {
+				@example(value = "file f <- geojson_file(\"file\", true);", isExecutable = false)
+			})
+	public GamaGeoJsonFile(final IScope scope, final String pathName, final boolean withZ) {
+		super(scope, pathName, (Integer) null, withZ);
+		// TODO Auto-generated constructor stub
+	}
+	@doc (value= "This file constructor allows to read a geojson (.geojson) file and take a potential z value (not taken in account by default)",
+			examples = {
+				@example(value = "file f <- geojson_file(\"file\", \"32648\", true);", isExecutable = false)
+			})
+	public GamaGeoJsonFile(final IScope scope, final String pathName, final Integer code, final boolean withZ) {
+		super(scope, pathName, code, withZ);
+		// TODO Auto-generated constructor stub
+	}
+	@doc (value= "This file constructor allows to read a geojson file and specifying the coordinates system code (epg,...,), as a string,  according to epsg reference (http://www.epsg.org/) and take a potential z value (not taken in account by default",
+			examples = {
+				@example(value = "file f <- geojson_file(\"file\", \"EPSG:32648\",true);", isExecutable = false)
+			})
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final String code, final boolean withZ) {
 		super(scope, pathName, code, withZ);
 		// TODO Auto-generated constructor stub
