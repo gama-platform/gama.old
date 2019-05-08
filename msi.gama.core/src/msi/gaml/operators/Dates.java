@@ -1033,6 +1033,8 @@ public class Dates {
 							isExecutable = false)))
 	
 	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd') = '2000-janvier-02'")
+	@test ("string(date('2000-01-31'),'yyyy-MMMM-dd') = '2000-janvier-31'")
+	@test ("string(date('2000-01-02'),'yyyy-MM-dd') = '2000-01-02'")
 	
 	public static String format(final GamaDate time, final String pattern) {
 		return format(time, pattern, null);
