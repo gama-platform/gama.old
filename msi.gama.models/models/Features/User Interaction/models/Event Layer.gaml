@@ -119,9 +119,9 @@ experiment Displays type: gui
 			species dummy transparency:0.9 ;
 			//event, launches the action change_shape if the event mouse_down (ie. the user clicks on the layer event) is triggered
 			// The block is executed in the context of the experiment, so we have to ask the simulation to do it. 
-			event [mouse_down] action: {ask simulation {do change_shape;}};
-			event [mouse_down] action: {ask simulation {do draw_clicked_area;}};
-			event [mouse_exit] action: {ask simulation {do hide_clicked_area;}};
+			event [mouse_down] action: change_shape;
+			event [mouse_down] action: draw_clicked_area;
+			event [mouse_exit] action: hide_clicked_area;
 		}
 
 	}
