@@ -282,7 +282,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 				return this;
 			}
 		}
-		return new GamaObjectMatrix((int) size.getX(), (int) size.getX(), Arrays.copyOf(matrix, matrix.length),
+		return new GamaObjectMatrix((int) size.getX(), (int) size.getY(), Arrays.copyOf(matrix, matrix.length),
 				getGamlType().getContentType());
 	}
 
@@ -364,7 +364,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	@Override
 	public void shuffleWith(final RandomUtils randomAgent) {
-		setMatrix(randomAgent.shuffle(getMatrix()));
+		randomAgent.shuffleInPlace(getMatrix());
 	}
 
 	@Override
