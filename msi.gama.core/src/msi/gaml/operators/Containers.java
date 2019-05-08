@@ -1223,11 +1223,13 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] mean_of (each)",
 							equals = "4") }) },
-			examples = { @example (
+		 	examples = { @example (
 					value = "[1,2] mean_of (each * 10 )",
 					equals = "15") },
 			see = { "min_of", "max_of", "sum_of", "product_of" })
 	@test("[1,2] mean_of (each * 10 ) = 15")
+	@test("[1,2] mean_of (each * 10 ) = 15")
+	@test("[1,2] mean_of (each * 10 ) = 15")	
 	public static Object mean_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return mean(scope, collect(scope, container, filter));
 	}
@@ -1241,8 +1243,9 @@ public class Containers {
 	@doc (
 			value = "the variance of the right-hand expression evaluated on each of the elements of the left-hand operand",
 			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
-			see = { "min_of", "max_of", "sum_of", "product_of" })
-	@test("list<int> L <-[1,2,3,4,5,6];  ( L variance_of each) = (2.91 with_precision 2)")
+			see = { "min_of", "max_of", "sum_of", "product_of" }
+			)
+	@test("[1,2,3,4,5,6] variance_of each = 2.91 with_precision 2")
 	public static Object variance_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return Stats.opVariance(scope, collect(scope, container, filter));
 	}
