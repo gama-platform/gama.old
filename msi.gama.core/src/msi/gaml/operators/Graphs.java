@@ -2008,7 +2008,7 @@ public class Graphs {
 			concept = { IConcept.GRAPH })
 	@doc (
 			value = "layouts a Gama graph on a circle with equidistance between nodes. For now there is no optimization on node ordering !",
-			examples = { @example (value = "layout_circule(graph, world.shape);")}
+			examples = { @example (value = "layout_circle(graph, world.shape);", isExecutable=false)}
 			)
 	public static IGraph layoutCircle(final IScope scope, final GamaGraph graph, IShape bounds) {
 		LayoutCircle layouter = new LayoutCircle(graph, bounds);
