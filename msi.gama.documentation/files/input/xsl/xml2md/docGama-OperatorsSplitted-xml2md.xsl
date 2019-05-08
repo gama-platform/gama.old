@@ -48,7 +48,7 @@ All of these alternative syntaxes are completely equivalent.
 
 Operators in GAML are purely functional, i.e. they are guaranteed to not have any side effects on their operands. For instance, the `shuffle` operator, which randomizes the positions of elements in a list, does not modify its list operand but returns a new shuffled list.
 
-&lt;br/&gt;
+
 ----
 
 ## Priority between operators

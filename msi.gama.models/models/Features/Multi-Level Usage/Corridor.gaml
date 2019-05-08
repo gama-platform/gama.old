@@ -1,6 +1,6 @@
 /**
 * Name: Corridor Multi-Level Architecture
-* Author: 
+* Author: Vo Duc An; Ngoc Anh; JD Zucker
 * Description: This model shows how to use multi-level architecture. A corridor can capture pedestrians going from left to right side if 
 *	they are inside the corridor. This will result in changing their species from pedestrian to captured_pedestrian which will not be 
 *	displayed. Once they pass enought time to consider they reach the exit of the corridor, they will be released by the corridor agent 
@@ -19,7 +19,7 @@ global {
 	geometry shape <- rectangle(environment_bounds) ;		
 	
 	//Pedestrians parameters
-	float pedestrian_size init: 1.0;
+	float pedestrian_size init: 4.0;
 	geometry pedestrian_shape <- circle (pedestrian_size);
 	rgb pedestrian_color <- #green; 
 	float pedestrian_speed <- 2.0;
@@ -95,9 +95,21 @@ species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall
 		
 		point current_location <- location;
 		
+		//Conditions to know if the agent doesn't move, in this case we take care of it if it is bcause of the walls 
+	
+			if  (location.y <= corridor_wall_height) and (location.x <=  (environment_size / 2)) {
+				do move heading: self towards {(environment_size / 2) - (corridor_width / 2), corridor_wall_height}; 
+			}
+			if (location.y >= environment_size - corridor_wall_height) and (location.x <=  (environment_size / 2))
+			{
+				do move heading: self towards {(environment_size / 2) - (corridor_width / 2), environment_size - corridor_wall_height}; 
+			}
+		
+		
 		do move heading: update_heading ;
 		
-		//Conditions to know if the agent doesn't move, in this case we take care if it is bcause of the walls 
+		 
+		//Conditions to know if the agent doesn't move, in this case we take care of it if it is bcause of the walls 
 		if (current_location = location) {
 			if ( (location.y <= corridor_wall_height) or (location.y >= environment_size - corridor_wall_height) ) {
 				do move heading: self towards {(environment_size / 2) - (corridor_width / 2), environment_size / 2}; 
@@ -178,8 +190,11 @@ species corridor_info_drawer {
 	corridor target;
 	
 	aspect my_aspect {
-		draw  'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 12°px at: {(target.location).x - 480, (target.location).y};
-		draw  'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 12°px at: {(target.location).x - 135, (target.location).y + 100};
+		draw string("Captured pedestrians: " + (string (length (target.members)))) at: {environment_size / 3.9,corridor_wall_height/2} color: #blue font: font("SansSerif", 24, #bold);
+		//draw  'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 32°px at: {(target.location).x - 480, (target.location).y};
+		draw string("Pedestrians: " + (string (length (list (pedestrian))))) at: {environment_size / 3.9,corridor_wall_height/1.1} color: #blue font: font("SansSerif", 24, #bold);
+		
+		//draw  'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 32°px at: {(target.location).x - 135, (target.location).y + 100};
 	}
 }
 
@@ -191,15 +206,18 @@ species corridor_wall_info_drawer {
 	}
 	
 	aspect my_aspect { 
-		draw 'WALL' color: rgb ('green') size: 15°px at: {(location).x - 40, (location).y};
+		draw string("WALL") at: {environment_size / 2 , environment_size - corridor_wall_height/2} color: #black font: font("SansSerif", 36, #bold);
 	}
 }
 
 
 experiment corridor_expr type: gui{
 	output {
+		
+		//layout horizontal([vertical([1::5000,2::5000])::5000,0::5000]) tabs:true editors: false;
+		layout horizontal([vertical([1::5000,2::5000])::2942,0::7058]) tabs:true editors: false;
 		display defaut_display {
-			species pedestrian;
+			species pedestrian aspect: my_aspect;
 			
 			species corridor aspect: my_aspect transparency: 0.8 {
 				species captured_pedestrian;
