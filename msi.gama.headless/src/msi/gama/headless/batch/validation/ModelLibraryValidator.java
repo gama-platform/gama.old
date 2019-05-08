@@ -68,7 +68,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {
 			log("Error in " + e.getURI().lastSegment() + ": " + e);
-			LOGGER.info("Error in " + e.getURI().lastSegment() + ": " + ((GamlCompilationError) e).toString());
+			LOGGER.info("Error in " + e.getURI() + ": " + ((GamlCompilationError) e).toString());
 			returnCode[0]++;
 		});
 	}

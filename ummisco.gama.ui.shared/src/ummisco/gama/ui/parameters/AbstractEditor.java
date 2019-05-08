@@ -793,13 +793,16 @@ public abstract class AbstractEditor<T>
 		modifyValue(val);
 		WorkbenchHelper.asyncRun(() -> {
 			if (!isEditable) {
-				fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val, false));
+				if (!fixedValue.isDisposed())
+					fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val, false));
 			} else if (isCombo) {
-				combo.select(possibleValues.indexOf(val));
+				if (!combo.isDisposed())
+					combo.select(possibleValues.indexOf(val));
 			} else {
 				displayParameterValueAndCheckButtons();
 			}
-			composite.update();
+			if (!composite.isDisposed())
+				composite.update();
 		});
 
 	}
