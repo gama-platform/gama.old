@@ -42,7 +42,7 @@ grid cells width:GRID_SIZE height:GRID_SIZE
 {
 	float height_simplex<-simplex_generator(self.grid_x/GRID_SIZE,self.grid_y/GRID_SIZE,BIAIS)*AMPLITUDE + MINIMUM_HEIGHT;
 	float height_open <- open_simplex_generator(self.grid_x/GRID_SIZE,self.grid_y/GRID_SIZE,BIAIS)*AMPLITUDE + MINIMUM_HEIGHT;
-	rgb color <- #green;
+	rgb color <- rgb(0,255,0,0.5);
 }
 experiment test type:gui
 {

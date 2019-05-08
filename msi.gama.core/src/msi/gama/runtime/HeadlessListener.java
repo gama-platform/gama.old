@@ -57,7 +57,7 @@ public class HeadlessListener implements IGui {
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
 	static Level LEVEL = Level.ALL;
 	final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<>();
-	public static boolean is_Test=false;
+
 	static {
 
 		if (GAMA.isInHeadLessMode()) {
@@ -364,9 +364,7 @@ public class HeadlessListener implements IGui {
 			DEBUG.LOG(s);
 			if (outputWriter.get() != null) {
 				try {
-					if(!is_Test) {
-						outputWriter.get().write(s + Strings.LN);
-					}
+					outputWriter.get().write(s + Strings.LN);
 					// outputWriter.get().flush();
 				} catch (final IOException e) {
 					e.printStackTrace();

@@ -153,7 +153,7 @@ experiment road_traffic type: gui
 	};
 	output
 	{
-		display city_display type: opengl 
+		display city_display type: java2D 
 		{
 			species building aspect: base refresh: true;
 			species road aspect: base ;

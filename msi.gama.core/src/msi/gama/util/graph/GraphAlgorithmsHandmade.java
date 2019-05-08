@@ -73,10 +73,10 @@ public class GraphAlgorithmsHandmade {
 				// rewire this edge
 				final Object from = graph.getEdgeSource(currentEdge);
 
-				System.err.println("removing " + from);
+				//System.err.println("removing " + from);
 
 				final Object toNode = getAnotherRandomNode(scope, graph, from);
-				System.err.println("rewiring " + graph.getEdgeTarget(currentEdge) + " to " + toNode);
+				//System.err.println("rewiring " + graph.getEdgeTarget(currentEdge) + " to " + toNode);
 
 				graph.removeEdge(currentEdge);
 
@@ -111,10 +111,10 @@ public class GraphAlgorithmsHandmade {
 			// rewire this edge
 			final Object from = graph.getEdgeSource(currentEdge);
 
-			System.err.println("removing " + from);
+			//System.err.println("removing " + from);
 
 			final Object toNode = getAnotherRandomNode(scope, graph, from);
-			System.err.println("rewiring " + graph.getEdgeTarget(currentEdge) + " to " + toNode);
+			//System.err.println("rewiring " + graph.getEdgeTarget(currentEdge) + " to " + toNode);
 
 			graph.removeEdge(currentEdge);
 
