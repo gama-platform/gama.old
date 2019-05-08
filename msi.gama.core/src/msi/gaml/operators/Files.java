@@ -20,6 +20,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
@@ -129,6 +130,7 @@ public class Files {
 					value = "file myOSMfile <- osm_file(\"../includes/rouen.osm\", [\"highway\"::[\"primary\",\"motorway\"]]);",
 					test = false) },
 			see = { "file" })
+	@no_test
 	public static IGamaFile loadOSMFileWithFiltering(final IScope scope, final String s,
 			final GamaMap<String, GamaList> filteringOption) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s, filteringOption);
@@ -149,6 +151,7 @@ public class Files {
 					value = "file myOSMfile2 <- osm_file(\"../includes/rouen.osm\",[\"highway\"::[\"primary\",\"motorway\"]], 0);",
 					test = false) },
 			see = { "file" })
+	@no_test
 	public static IGamaFile loadOSMFileWithFiltering(final IScope scope, final String s,
 			final GamaMap<String, GamaList> filteringOption, final Integer code) throws GamaRuntimeException {
 		return new GamaOsmFile(scope, s, filteringOption, code);
@@ -174,6 +177,7 @@ public class Files {
 					@example (
 							value = "				// dirT.contents here contains the list of the names of included files") },
 			see = { "file", "new_folder" })
+	@no_test
 	public static IGamaFile folderFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaFolderFile(scope, s);
 	}
@@ -192,6 +196,7 @@ public class Files {
 					equals = "returns a file in read-only mode",
 					test = false) },
 			see = "file")
+	@no_test
 	public static IGamaFile writable(final IScope scope, final IGamaFile s, final Boolean writable) {
 		if (s == null) { throw GamaRuntimeException.error("Attempt to change the mode of a non-existent file", scope); }
 		final boolean b = writable == null ? false : writable;
@@ -221,6 +226,7 @@ public class Files {
 					value = "read ('name')",
 					equals = "reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. ",
 					test = false) })
+	@no_test
 	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		final Map attributes = scope.peekReadAttributes();
@@ -246,6 +252,7 @@ public class Files {
 					examples = @example (
 							value = "string agent_name <- an_agent get('name');     // reads then 'name' attribute of an_agent then assigns the returned value to the agent_name variable",
 							isExecutable = false)) })
+	@no_test
 	public static Object opRead(final IScope scope, final IAgent g, final String s) throws GamaRuntimeException {
 		if (g == null) { return null; }
 		return g.get(scope, s);
@@ -267,6 +274,7 @@ public class Files {
 					examples = @example (
 							value = "string geom_area <- a_geometry get('area');     // reads then 'area' attribute of 'a_geometry' variable then assigns the returned value to the geom_area variable",
 							isExecutable = false)) })
+	@no_test
 	public static Object opRead(final IScope scope, final IShape g, final String s) throws GamaRuntimeException {
 		if (g == null) { return null; }
 		return ((GamaShape) g.getGeometry()).getAttribute(s);

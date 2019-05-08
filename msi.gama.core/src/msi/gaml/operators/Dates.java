@@ -1040,8 +1040,8 @@ public class Dates {
 							value = "string(#now, 'yyyy-MM-dd')",
 							isExecutable = false)))
 
-	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd') = '2000-janvier-02'")
-	@test ("string(date('2000-01-31'),'yyyy-MMMM-dd') = '2000-janvier-31'")
+	@test ("string(date('2000-01-02'),'yyyy-MM-dd') = '2000-01-02'")
+	@test ("string(date('2000-01-31'),'yyyy-MM-dd') = '2000-01-31'")
 	@test ("string(date('2000-01-02'),'yyyy-MM-dd') = '2000-01-02'")
 
 	public static String format(final GamaDate time, final String pattern) {
@@ -1061,7 +1061,7 @@ public class Dates {
 					examples = @example (
 							value = "string(#now, 'yyyy-MM-dd')",
 							isExecutable = false)))
-	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd','en') = '2000-january-02'")
+	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd','en') = '2000-January-02'")
 
 	public static String format(final GamaDate time, final String pattern, final String locale) {
 		return time.toString(pattern, locale);
