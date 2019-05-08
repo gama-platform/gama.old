@@ -35,6 +35,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
@@ -1325,6 +1326,8 @@ public class Stats {
 			examples = { @example (
 					value = "predict(my_regression, [1,2,3])",
 					isExecutable = false) })
+	
+	
 	public static Double predictFromRegression(final IScope scope, final GamaRegression regression,
 			final GamaList<Double> instance) throws GamaRuntimeException {
 		return regression.predict(scope, instance);
@@ -1339,8 +1342,11 @@ public class Stats {
 					value = "return the Gini Index of the given list of values (list of floats)",
 					examples = { @example (
 							value = "gini([1.0, 0.5, 2.0])",
-							equals = "the gini index computed",
+							equals = "the gini index computed i.e. 0.2857143",
 							test = false) }) })
+	
+	@test ("(gini([1.0, 0.5, 2.0]) with_precision 4) = 0.2857")
+	
 	public static double giniIndex(final IScope scope, final IList<Double> vals) {
 		final int N = vals.size();
 		Double G = 0.0;
