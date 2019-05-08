@@ -21,6 +21,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -268,8 +269,12 @@ public class Cast {
 			concept = { IConcept.CAST, IConcept.CONTAINER })
 	@doc (
 			value = "creates a list with a size provided by the first operand, and filled with the second operand",
-			comment = "Note that the right operand  should be positive, and that the second one is evaluated for each position  in the list.",
-			see = { "list" })
+			comment = "Note that the first operand  should be positive, and that the second one is evaluated for each position  in the list.",
+			see = { "list" },
+			examples = {
+					@example ( value = "list_with(5,2)", equals = "[2,2,2,2,2]")
+			})
+	@test("list_with(5,2) = [2,2,2,2,2]")
 	public static IList list_with(final IScope scope, final Integer size, final IExpression init) {
 		return GamaListFactory.create(scope, init, size);
 	}
