@@ -9,7 +9,10 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
+import msi.gama.precompiler.GamlAnnotations.tests;
 
 public class OperatorProcessor extends ElementProcessor<operator> {
 
@@ -22,6 +25,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			return;
 		}
 		verifyDoc(context, method, op);
+		verifyTests(context, method, op);
 		final Set<Modifier> modifiers = method.getModifiers();
 		if (!modifiers.contains(Modifier.PUBLIC)) {
 			context.emitError("GAML: operators can only be implemented by public (or public static) methods", method);
@@ -150,6 +154,26 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		if (documentation == null && !op.internal()) {
 			context.emitWarning("GAML: operator '" + op.value()[0] + "' is not documented", method);
 		}
+	}
+
+	private void verifyTests(final ProcessorContext context, final Element method, final operator op) {
+		no_test no = method.getAnnotation(no_test.class);
+		// if no tests are necessary, skip the verification
+		if (no != null)
+			return;
+		tests tests = method.getAnnotation(tests.class);
+		if (tests != null)
+			return;
+		test test = method.getAnnotation(test.class);
+		if (test != null)
+			return;
+		doc doc = method.getAnnotation(doc.class);
+		if (doc != null) {
+			boolean hasTests = context.docHasTests(doc);
+			if (hasTests)
+				return;
+		}
+		context.emitWarning("GAML: operator '" + op.value()[0] + "' is not tested", method);
 	}
 
 	@Override
