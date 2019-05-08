@@ -12,6 +12,7 @@ package msi.gama.util.file;
 
 import msi.gama.common.util.ImageUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -31,7 +32,10 @@ public class GamaGifFile extends GamaImageFile {
 
 	// private int averageDelay;
 	// private int frameCount;
-
+	@doc (value= "This file constructor allows to read a gif file",
+			examples = {
+					@example(value = "gif_file f <- gif_file(\"file\");", isExecutable = false)
+			})
 	public GamaGifFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
