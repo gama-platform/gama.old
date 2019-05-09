@@ -49,7 +49,7 @@ species preSI {
 	equation eqSI type: SI vars: [S,I,t] params: [N,beta] ;
 	
 	reflex solving {
-		solve eqSI method: rk4 step: h ;
+		solve eqSI method: rk4 step_size: h ;
 	}
 }
 
@@ -67,7 +67,7 @@ species userSI {
 	}		
 	
 	reflex solving{
-		solve eqSI method: rk4 step: h;
+		solve eqSI method: rk4 step_size: h;
 	}
 }
 
@@ -85,7 +85,7 @@ species preSIS {
 	equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma] ;
 	
 	reflex solving {
-		solve eqSIS method: rk4 step: h;
+		solve eqSIS method: rk4 step_size: h;
 	}
 }
 
@@ -104,7 +104,7 @@ species userSIS {
 	}		
 	
 	reflex solving {	
-		solve eqSIS method: rk4 step: h;
+		solve eqSIS method: rk4 step_size: h;
 	}
 }
 
@@ -123,7 +123,7 @@ species preSIR {
 	equation eqSIR type: SIR vars: [S,I,R,t] params: [N,beta,gamma] ;
 	
 	reflex solving {	
-		solve eqSIR method: rk4 step: h;
+		solve eqSIR method: rk4 step_size: h;
 	}
 }
 
@@ -144,7 +144,7 @@ species userSIR{
 	}		
 	
 	reflex solving {
-		solve eqSIR method: rk4 step: h;
+		solve eqSIR method: rk4 step_size: h;
 	}
 }
 
@@ -165,7 +165,7 @@ species preSIRS {
 	equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu] ;
 	
 	reflex solving {
-		solve eqSIRS method: rk4 step: h;
+		solve eqSIRS method: rk4 step_size: h;
 	}
 }
 
@@ -188,7 +188,7 @@ species userSIRS {
 	}		
 	
 	reflex solving {
-		solve eqSIRS method: rk4 step: h;
+		solve eqSIRS method: rk4 step_size: h;
 	}
 }
 
@@ -210,7 +210,7 @@ species preSEIR {
 	equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu] ;
 	
 	reflex solving {
-		solve eqSEIR method: rk4 step: h;
+		solve eqSEIR method: rk4 step_size: h;
 	}
 }
 
@@ -235,7 +235,7 @@ species userSEIR {
 	}		
 	
 	reflex solving {
-		solve eqSEIR method: rk4 step: h;
+		solve eqSEIR method: rk4 step_size: h;
 	}
 }
 
@@ -254,7 +254,7 @@ species preLV {
 	equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;
 	
 	reflex solving {
-		solve eqLV method: rk4 step: h;
+		solve eqLV method: rk4 step_size: h;
 	}
 }
 
@@ -274,7 +274,7 @@ species userLV {
     }		
     
 	reflex solving {
-		solve eqLV method: rk4 step: h;
+		solve eqLV method: rk4 step_size: h;
 	}
 }
 

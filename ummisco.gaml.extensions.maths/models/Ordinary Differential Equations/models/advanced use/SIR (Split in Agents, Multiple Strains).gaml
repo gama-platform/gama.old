@@ -57,7 +57,7 @@ species S_agt {
 	}
 
 	reflex solving {
-		solve evol method: rk4 step: hKR4 ;
+		solve evol method: rk4 step_size: hKR4 ;
 	}
 }
 
@@ -95,7 +95,7 @@ species my_SIR_maths {
 	}
 
 	reflex solving {
-		solve SIR method: rk4 step: hKR4;
+		solve SIR method: rk4 step_size: hKR4;
 	}
 }
 

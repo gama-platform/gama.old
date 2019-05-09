@@ -32,7 +32,7 @@ species my_SEIR_maths {
 	}
 
 	reflex solving {
-		solve SEIR method: rk4 step: 0.01;
+		solve SEIR method: rk4 step_size: 0.01;
 	}
 }
 

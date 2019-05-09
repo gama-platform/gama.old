@@ -39,7 +39,7 @@ species userSIR {
 	reflex solving {		
 		list i_list;
 		list v_list ;
-		solve eqSIR method: "rk4" step: h integrated_times: i_list integrated_values: v_list;
+		solve eqSIR method: "rk4" step_size: h integrated_times: i_list integrated_values: v_list;
 		write "i_list: " + i_list;
 		write "v_list:" + v_list;
 	}

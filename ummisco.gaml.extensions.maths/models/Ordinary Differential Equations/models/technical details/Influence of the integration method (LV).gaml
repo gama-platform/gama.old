@@ -31,7 +31,7 @@ species LVRK4 {
     }		
     
 	reflex solving {
-		solve eqLV method: rk4 step: h;
+		solve eqLV method: rk4 step_size: h;
 	}
 }
 
@@ -51,7 +51,7 @@ species LVEuler {
     }		
     
 	reflex solving {
-		solve eqLV method: Euler step: h;
+		solve eqLV method: Euler step_size: h;
 	}
 }
 
