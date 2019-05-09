@@ -81,6 +81,7 @@ public class DeprecatedOperators {
 					isExecutable = false) },
 			see = { "around", "circle", "cone", "line", "norm", "point", "polygon", "polyline", "rectangle", "square",
 					"triangle" })
+	@no_test
 	public static IShape link(final IScope scope, final GamaPair points) throws GamaRuntimeException {
 		if (points == null
 				|| points.first() == null && points.last() == null) { return new GamaShape(new GamaPoint(0, 0)); }
@@ -101,6 +102,7 @@ public class DeprecatedOperators {
 					equals = "returns all the agents located at a distance lower or equal to 1 to the agent applying the operator considering its topology.",
 					test = false) },
 			see = { "neighbors_of" })
+	@no_test
 	public static IList neighbours_of_deprecated(final IScope scope, final ITopology t, final IAgent agent) {
 		return Spatial.Queries.neighbors_of(scope, t, agent);
 	}
@@ -119,6 +121,7 @@ public class DeprecatedOperators {
 							value = "topology(self) neighbours_of self::10",
 							equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
 							test = false) }))
+	@no_test
 	public static IList neighbours_of_deprecated(final IScope scope, final ITopology t, final GamaPair pair) {
 		return neighbours_of(scope, t, pair);
 		// TODO We could compute a filter based on the population if it is an
@@ -139,6 +142,7 @@ public class DeprecatedOperators {
 							value = "neighbours_of (topology(self), self,10)",
 							equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
 							test = false) }))
+	@no_test
 	public static IList neighbours_of_deprecated(final IScope scope, final ITopology t, final IShape agent,
 			final Double distance) {
 		return Spatial.Queries.neighbors_of(scope, t, agent, distance);
@@ -158,6 +162,7 @@ public class DeprecatedOperators {
 					equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator.",
 					test = false) },
 			see = { "neighbors_at" })
+	@no_test
 	public static IList neighbours_at_deprecated(final IScope scope, final IShape agent, final Double distance) {
 		return Spatial.Queries.neighbors_at(scope, agent, distance);
 	}
@@ -471,6 +476,7 @@ public class DeprecatedOperators {
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1)
 	@doc (
 			deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
+	@no_test
 	public static IAgent at(final IScope scope, final ISpecies s, final GamaPoint val) throws GamaRuntimeException {
 		return scope.getAgent().getPopulationFor(s).getAgent(scope, val);
 	}
@@ -480,6 +486,7 @@ public class DeprecatedOperators {
 	@doc (
 			deprecated = "use 'is_property' instead")
 	@Deprecated
+	@no_test
 	public static Boolean isProperties(final String f) {
 		return GamaFileType.verifyExtension("property", f);
 	}
@@ -489,6 +496,7 @@ public class DeprecatedOperators {
 	@doc (
 			deprecated = "use 'is_gaml' instead")
 	@Deprecated
+	@no_test
 	public static Boolean isGAML(final String f) {
 		return GamaFileType.verifyExtension("gaml", f);
 	}
@@ -507,6 +515,7 @@ public class DeprecatedOperators {
 							value = "topology(self) neighbors_of self::10",
 							equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
 							test = false) }))
+	@no_test
 	public static IList neighbours_of(final IScope scope, final ITopology t, final GamaPair pair) {
 		if (pair == null) { return GamaListFactory.create(); }
 		final Object agent = pair.key;
@@ -541,6 +550,7 @@ public class DeprecatedOperators {
 			category = { IOperatorCategory.LIST })
 	@doc (
 			deprecated = "Deprecated. Use copy_between(list, int, int) instead")
+	@no_test
 	public static IList copy_between(final IScope scope, final IList l1, final GamaPoint p) {
 		return Containers.Range.copy_between(scope, l1, (int) notNull(scope, p).x, (int) p.y);
 	}
@@ -552,6 +562,7 @@ public class DeprecatedOperators {
 			category = IOperatorCategory.POINT)
 	@doc (
 			deprecated = "Use the standard construction {x,y,z} instead. ")
+	@no_test
 	public static ILocation add_z(final GamaPoint p, final Double z) {
 		return new GamaPoint(p.x, p.y, z);
 	}
@@ -563,6 +574,7 @@ public class DeprecatedOperators {
 			category = IOperatorCategory.POINT)
 	@doc (
 			deprecated = " Use the standard construction {x,y,z} instead. ")
+	@no_test
 	public static ILocation add_z(final GamaPoint p, final Integer z) {
 		return new GamaPoint(p.x, p.y, z);
 	}
@@ -580,6 +592,7 @@ public class DeprecatedOperators {
 					equals = "a random positive integer",
 					test = false) },
 			see = { "poisson", "gauss" })
+	@no_test
 	public static Integer opBinomial(final IScope scope, final GamaPoint point) {
 		final Integer n = (int) point.x;
 		final Double p = point.y;
@@ -689,6 +702,7 @@ public class DeprecatedOperators {
 			category = { IOperatorCategory.STRING })
 	@doc (
 			deprecated = "Deprecated. Use copy_between(string, int, int) instead")
+	@no_test
 	public static String opCopy(final String target, final GamaPoint p) {
 		final int beginIndex = (int) p.x;
 		final int endIndex = (int) p.y;
@@ -712,6 +726,7 @@ public class DeprecatedOperators {
 							equals = "[{1.0,5.0},{34.0,56.0}]",
 							isExecutable = false) },
 			see = { "neighbors_of" })
+	@no_test
 	public static IList neighboursOf_deprecated(final IScope scope, final IGraph graph, final Object vertex) {
 		return Graphs.neighborsOf(scope, graph, vertex);
 	}
@@ -781,6 +796,7 @@ public class DeprecatedOperators {
 					equals = "A path between ag1 and ag2",
 					isExecutable = false) },
 			deprecated = "use 'path_between(graph, geometry, geometry)' instead")
+	@no_test
 	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
 			throws GamaRuntimeException {
 		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
@@ -804,6 +820,7 @@ public class DeprecatedOperators {
 					var = "second_variable",
 					equals = "reads the second variable of agent then assigns the returned value to the 'second_variable' variable. ",
 					test = false) })
+	@no_test
 	public static Object opRead(final IScope scope, final Integer index) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		final Map attributes = scope.peekReadAttributes();
