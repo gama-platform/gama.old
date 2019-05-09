@@ -563,7 +563,8 @@ public class Graphs {
 					equals = "edge1",
 					isExecutable = false) },
 			see = { "out_edges_of", "in_edges_of" })
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"(g edge_between ({10,5}::{20,3})) = g.edges[0]")
 	public static Object EdgeBetween(final IScope scope, final IGraph graph, final GamaPair verticePair) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the edge_between operator, the graph should not be null!", scope);

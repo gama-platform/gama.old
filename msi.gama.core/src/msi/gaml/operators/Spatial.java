@@ -146,6 +146,7 @@ public abstract class Spatial {
 						value = "(agents closest_to self) using topology(world)",
 						equals = "the closest agent to self (the caller) in the continuous topology of the world",
 						test = false) })
+		@no_test
 		public static Object using(final IScope scope, final IExpression expression, final ITopology topology) {
 			final ITopology oldTopo = scope.getTopology();
 			try {
