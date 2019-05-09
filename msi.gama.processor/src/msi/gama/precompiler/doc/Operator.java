@@ -29,6 +29,7 @@ public class Operator implements IElement {
 	List<Operands> combiIO;	
 //	String documentation;
 	Documentation documentation;
+	boolean has_example = false;
 
 	public Operator(final Document _doc) {
 		doc = _doc;
@@ -56,16 +57,6 @@ public class Operator implements IElement {
 	public void setDocumentation(final String d) {
 		documentation.setResult(d);
 	}
-
-//	public void setOperands(final String _classe, final String _content_type, final String _return_type,
-//			final String _type) {
-//		operands = new Operands(doc, _classe, _content_type, _return_type, _type);
-//	}
-	
-//	public void addOperands(final String _classe, final String _content_type, final String _return_type,
-//			final String _type) {
-//		operands = new Operands(doc, _classe, _content_type, _return_type, _type);
-//	}
 	
 	public void addOperands(Operands ops) {
 		combiIO.add(ops);
@@ -76,10 +67,18 @@ public class Operator implements IElement {
 		documentation.addSee(see);
 	}
 	
+	public void addUsage(String descUsage, org.w3c.dom.Element exElt) {
+		if(exElt != null) {
+			has_example = true;
+		}
+		documentation.addUsage(descUsage, exElt);
+	}	
+	
 	public void addUsage(String descUsage) {
-		documentation.addUsage(descUsage);
+		this.addUsage(descUsage, null);
 	}
 
+	
 	@Override
 	public Element getElementDOM() {
 		// TODO to finish
@@ -88,13 +87,17 @@ public class Operator implements IElement {
 		eltOp.setAttribute(XMLElements.ATT_OP_ID, name);
 		eltOp.setAttribute(XMLElements.ATT_OP_NAME, name);
 		eltOp.setAttribute(XMLElements.ATT_ALPHABET_ORDER, Constants.getAlphabetOrder(name));
-
+		if(has_example) {
+			eltOp.setAttribute("HAS_TEST", "true");			
+		}
+			
 		// Categories
 		final org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATOR_CATEGORIES);
 		final org.w3c.dom.Element catElt = doc.createElement(XMLElements.CATEGORY);
 		catElt.setAttribute(XMLElements.ATT_CAT_ID, category);
 		categoriesElt.appendChild(catElt);
-
+		eltOp.appendChild(categoriesElt);
+		
 		// Concepts
 		final org.w3c.dom.Element conceptsElt = doc.createElement(XMLElements.CONCEPTS);
 		for (final String conceptName : concepts) {

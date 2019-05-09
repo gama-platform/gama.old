@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Ordering;
-import com.vividsolutions.jts.geom.Geometry;
+
 
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.preferences.GamaPreferences;

@@ -411,7 +411,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public void shuffleWith(final RandomUtils randomAgent) {
-		matrix = randomAgent.shuffle(matrix);
+		randomAgent.shuffleInPlace(getMatrix());
 	}
 
 	@Override

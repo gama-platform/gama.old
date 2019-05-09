@@ -17,6 +17,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -56,6 +57,7 @@ public class Points {
 			category = IOperatorCategory.POINT,
 			internal = true)
 	@validator (PointValidator.class)
+	@no_test
 	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp) {
 		if (scope != null) {
 			scope.setHorizontalPixelContext();
@@ -74,6 +76,7 @@ public class Points {
 			category = IOperatorCategory.POINT,
 			internal = true)
 	@validator (PointValidator.class)
+	@no_test
 	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp,
 			final IExpression zExp) {
 		if (scope != null) {
@@ -145,7 +148,8 @@ public class Points {
 	@doc (
 			value = "Returns a point with coordinates multiplied by a number.",
 			usages = @usage (
-					value = "if the left-hand operator is a point and the right-hand a number, returns a point with coordinates multiplied by the number",
+					value = "if the left-hand operator is a point and the right-hand a number, "
+							+ "returns a point with coordinates multiplied by the number",
 					examples = { @example (
 							value = "{2,5} * 4",
 							equals = "{8.0, 20.0}"),
@@ -232,10 +236,7 @@ public class Points {
 			value = "Returns a point with coordinate summing of the two operands.",
 			usages = @usage (
 					value = "if the left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.",
-					examples = { @example (
-							value = "{1, 2} + 4",
-							equals = "{5.0, 6.0,4.0}"),
-							@example (
+					examples = {@example (
 									value = "{1, 2} + 4.5",
 									equals = "{5.5, 6.5,4.5}") }))
 	public static ILocation add(final GamaPoint p1, final Double p) {
@@ -249,7 +250,10 @@ public class Points {
 			category = IOperatorCategory.POINT,
 			concept = {})
 	@doc (
-			value = "Returns a point with coordinate summing of the two operands.")
+			value = "Returns a point with coordinate summing of the two operands.",
+			examples = { @example (
+					value = "{1, 2} + 4",
+					equals = "{5.0, 6.0,4.0}")})
 	public static ILocation add(final GamaPoint p1, final Integer p) {
 		if (p1 == null) { return new GamaPoint(p, p, p); }
 		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
@@ -318,7 +322,11 @@ public class Points {
 			category = IOperatorCategory.POINT,
 			concept = {})
 	@doc (
-			value = "Returns a point with coordinate resulting from the first operand minus the second operand.")
+			value = "Returns a point with coordinate resulting from the first operand minus the second operand.",
+			examples = {
+					@example(value="{2.0,3.0,4.0} - 1", equals="{1.0,2.0,3.0}")
+			})
+	@test ("{2.0,3.0,4.0} - 1 = {1.0,2.0,3.0}")
 	public static ILocation subtract(final GamaPoint p1, final Integer p) {
 		if (p1 == null) { return new GamaPoint(-p, -p, -p); }
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
@@ -350,6 +358,7 @@ public class Points {
 					value = "{12345.78943,  12345.78943, 12345.78943} with_precision 2",
 					equals = "{12345.79,12345.79,12345.79}") },
 			see = "round")
+	@test("{12345.78943,  12345.78943, 12345.78943} with_precision 2 = {12345.79,12345.79,12345.79}")
 	public static ILocation round(final ILocation v) {
 		if (v == null) { return null; }
 		return new GamaPoint(Maths.round(v.getX()), Maths.round(v.getY()), Maths.round(v.getZ()));

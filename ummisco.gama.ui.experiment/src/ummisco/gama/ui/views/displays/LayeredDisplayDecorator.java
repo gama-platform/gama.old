@@ -2,11 +2,11 @@
  *
  * ummisco.gama.ui.views.displays.LayeredDisplayDecorator.java, in plugin ummisco.gama.ui.experiment, is part of the
  * source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
@@ -32,6 +32,7 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 
 import msi.gama.application.workbench.PerspectiveHelper;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayData.Changes;
@@ -42,6 +43,7 @@ import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.InteractiveConsoleView;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
@@ -149,7 +151,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			toolbar.button(toggleOverlay, SWT.LEFT);
 			toolbar.button(toggleInteractiveConsole, SWT.LEFT);
 			toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
-			toolbar.button(runExperiment, SWT.LEFT);
+			ToolItem item = toolbar.button(runExperiment, SWT.LEFT);
+			if (GAMA.isPaused()) {
+				item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
+			} else {
+				item.setImage(GamaIcons.create("menu.pause4").image());
+			}
 			toolbar.button(stepExperiment, SWT.LEFT);
 			toolbar.control(create(toolbar.getToolbar(SWT.LEFT)), totalWidth(), SWT.LEFT);
 			toolbar.button(relaunchExperiment, SWT.LEFT);
@@ -237,6 +244,13 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 						overlay.hide();
 					}
 				} else {
+					// Issue #2639
+					if (PlatformHelper.isMac() && !view.isOpenGL()) {
+						IDisplaySurface ds = view.getDisplaySurface();
+						if (ds != null)
+							ds.updateDisplay(true);
+					}
+
 					if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {
 						if (view.getOutput() != null && view.getDisplaySurface() != null) {
 							view.getOutput().setPaused(previousState);
@@ -246,6 +260,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 						overlay.update();
 					}
 				}
+
 			}
 		};
 		WorkbenchHelper.getWindow().addPerspectiveListener(perspectiveListener);

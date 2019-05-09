@@ -36,11 +36,12 @@ experiment main type: gui {
 	
 	//we define a init block to create new simulations
 	init {
-		//we create a second simulation (the first simulation is always created by default) with the given parameters
-		create simulation with: [nb_agents:: 5, agent_speed:: 3.0, agent_color:: #red];
+		//we create a second simulation (the first simulation is always created by default) with the following parameters
+		create simulation with: [nb_agents:: 5, agent_speed:: 5.0, agent_color:: #red];
 		
 	}
 	output {
+		layout horizontal([0::5000,1::4000]) tabs:true editors: false;
 		display map {
 			//we use an overlay to display the speed of the agents in the simulation
 			overlay position: { 5, 5 } size: { 180 #px, 30 #px } background: # black transparency: 0.5 border: #black rounded: true

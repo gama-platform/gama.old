@@ -24,6 +24,7 @@ global {
 	}
 }
 
+// the choices are 4,6 or 8 neighbors
 grid cell height: 10 width: 10 neighbors: 6 horizontal_orientation: orientation = "horizontal";
 
 

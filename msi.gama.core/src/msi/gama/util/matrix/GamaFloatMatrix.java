@@ -393,7 +393,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	@Override
 	public void shuffleWith(final RandomUtils randomAgent) {
-		setMatrix(randomAgent.shuffle(getMatrix()));
+		randomAgent.shuffleInPlace(getMatrix());
 	}
 
 	@Override

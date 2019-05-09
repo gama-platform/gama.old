@@ -9,6 +9,7 @@ import static ummisco.gama.ui.utils.WorkbenchHelper.PLUGIN_NATURE;
 import static ummisco.gama.ui.utils.WorkbenchHelper.TEST_NATURE;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,8 +67,8 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	volatile static boolean BLOCKED = false;
 	private static volatile boolean IN_INITIALIZATION_PHASE = false;
 	private final List<Runnable> postEventActions = new ArrayList<>();
-	private final Set<VirtualContent<?>> toRefresh = new HashSet<>();
-	private final Set<VirtualContent<?>> toUpdate = new HashSet<>();
+	private final Set<VirtualContent<?>> toRefresh = Collections.synchronizedSet(new HashSet<>());
+	private final Set<VirtualContent<?>> toUpdate = Collections.synchronizedSet(new HashSet<>());
 	private volatile Object toReveal = null;
 	private static IStructuredSelection currentSelection;
 
@@ -293,7 +294,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 
 	/**
 	 * Returns the top-level folder in which to paste/drop a project, based on its description and the current selection
-	 * 
+	 *
 	 * @param project
 	 * @return
 	 */
@@ -506,16 +507,20 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 	private void updateResource(final VirtualContent<?> res) {
 		if (res == null) { return; }
 		VirtualContent<?> resource = res;
-		while (resource != null) {
-			toUpdate.add(resource);
-			resource = resource.getParent();
+		synchronized (toUpdate) {
+			while (resource != null) {
+				toUpdate.add(resource);
+				resource = resource.getParent();
+			}
 		}
 	}
 
 	public void refreshResource(final VirtualContent<?> res) {
 		// if (res == null) { return; }
 		// Keep null to refresh all workspace
-		toRefresh.add(res);
+		synchronized (toRefresh) {
+			toRefresh.add(res);
+		}
 	}
 
 	private void invalidateSeverityCache(final IResource resource) {
@@ -569,8 +574,9 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		}
 		switch (child.getType()) {
 			case IResource.FILE:
-				if (FileMetaDataProvider.GAML_CT_ID.equals(getContentTypeId(
-						(IFile) child))) { return new WrappedGamaFile((WrappedContainer<?>) parent, (IFile) child); }
+				if (FileMetaDataProvider.GAML_CT_ID.equals(getContentTypeId((IFile) child))) {
+					return new WrappedGamaFile((WrappedContainer<?>) parent, (IFile) child);
+				}
 				if (child.isLinked()) { return new WrappedLink((WrappedContainer<?>) parent, (IFile) child); }
 				return new WrappedFile((WrappedContainer<?>) parent, (IFile) child);
 			case IResource.FOLDER:

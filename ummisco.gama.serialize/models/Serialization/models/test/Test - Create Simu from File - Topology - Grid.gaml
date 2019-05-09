@@ -13,7 +13,7 @@ experiment saveSimu type: gui {
 		
 	reflex store when: cycle = 5 {		
 		write "================ START SAVE + self " + " - " + cycle ;		
-		write "Save of simulation : " + saveSimulation('grid2Simu.gsim');
+		write "Save of simulation : " + save_simulation('grid2Simu.gsim');
 		write "================ RESTORE + self " + " - " + cycle ;		
 	}	
 	

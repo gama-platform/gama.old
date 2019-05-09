@@ -17,7 +17,9 @@ import cern.jet.stat.Probability;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -62,6 +64,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the auto-correlation of a data sequence given some lag",
@@ -99,6 +102,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the correlation of two data sequences (having the same size)",
@@ -132,6 +136,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the covariance of two data sequences",
@@ -158,6 +163,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Durbin-Watson computation",
@@ -185,6 +191,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the kurtosis (aka excess) of a data sequence",
@@ -216,6 +223,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the kurtosis (aka excess) of a data sequence",
@@ -246,6 +254,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the moment of k-th order with constant c of a data sequence",
@@ -275,6 +284,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the phi-quantile; that is, an element elem for which holds that phi percent of data elements are less than elem. The quantile need not necessarily be contained in the data sequence, it can be a linear interpolation. Note that the container holding the values must be sorted first",
@@ -302,6 +312,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns how many percent of the elements contained in the receiver are <= element. Does linear interpolation if the element is not contained but lies in between two contained elements. Note that the container holding the values must be sorted first",
@@ -330,6 +341,7 @@ public class Stats2 extends Stats {
 				can_be_const = true,
 				type = IType.FLOAT,
 				expected_content_type = { IType.INT, IType.FLOAT },
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the linearly interpolated number of elements in a list less or equal to a given element. The rank is the number of elements <= element. Ranks are of the form {0, 1, 2,..., sortedList.size()}. If no element is <= element, then the rank is zero. If the element lies in between two contained elements, then linear interpolation is used and a non integer value is returned. Note that the container holding the values must be sorted first",
@@ -357,6 +369,7 @@ public class Stats2 extends Stats {
 				value = "rms",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the RMS (Root-Mean-Square) of a data sequence. "
@@ -365,9 +378,9 @@ public class Stats2 extends Stats {
 						+ "the elements of a data sequence.",
 				comment = "",
 				examples = {
-						@example(value=" data_sequence <- [6.0, 7.0, 8.0, 9.0]; "								
-								+ "list<float> squares <- data_sequence collect (each*each); "
-								+ "rms(length(data_sequence),sum(squares)) with_precision(4) ",
+						@example(" list<float> data_sequence <- [6.0, 7.0, 8.0, 9.0]; "),
+						@example(" list<float> squares <- data_sequence collect (each*each); "),
+						@example(value=" rms(length(data_sequence),sum(squares)) with_precision(4) ",
 								equals="7.5829")
 				})
 		public static Double opRms(final IScope scope, final Integer size, final Double sumOfSquares) {
@@ -390,6 +403,7 @@ public class Stats2 extends Stats {
 				value = "skew",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the skew of a data sequence, which is moment(data,3,mean) / standardDeviation3",
@@ -420,6 +434,7 @@ public class Stats2 extends Stats {
 				value = "skew",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the skew of a data sequence.",
@@ -454,11 +469,17 @@ public class Stats2 extends Stats {
 				value = "variance",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the variance from a standard deviation.",
 				comment = "",
-				examples = {})
+				examples = {@example(
+						value="int(variance([1,3,5,6,9,11,12,13]))",
+						equals ="17")
+				})
+		
+		//@test ("int(variance([1,3,5,6,9,11,12,13])) = 17")
 		public static Double opVariance(final IScope scope, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -479,11 +500,20 @@ public class Stats2 extends Stats {
 				value = "variance",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the variance of a data sequence. That is (sumOfSquares - mean*sum) / size with mean = sum/size.",
-				comment = "",
-				examples = {})
+				comment = "In the example we consider variance of [1,3,5,7]. The size is 4, the sum is 1+3+5+7=16 and the sum of squares is 84."
+						+ "The variance is (84- 16^2/4)/4. CQFD.",
+						examples = {@example(
+								value="int(variance(4,16,84))",
+								equals ="5")
+						
+				})
+		
+		
+		
 		public static Double variance(final IScope scope, final Integer size, final Double sum,
 				final Double numOfSquares) {
 
@@ -516,6 +546,7 @@ public class Stats2 extends Stats {
 				value = "pValue_for_fStat",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the P value of F statistic fstat with numerator degrees of freedom dfn and denominator degress of freedom dfd. Uses the incomplete Beta function.",
@@ -550,6 +581,7 @@ public class Stats2 extends Stats {
 				value = "pValue_for_tStat",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the P value of the T statistic tstat with df degrees of freedom. This is a two-tailed test so we just double the right tail which is given by studentT of -|tstat|.",
@@ -584,6 +616,7 @@ public class Stats2 extends Stats {
 				value = "student_area",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the area to the left of x in the Student T distribution with the given degrees of freedom.",
@@ -615,6 +648,7 @@ public class Stats2 extends Stats {
 				value = { "normal_area", "pnorm" },
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the area to the left of x in the normal distribution with the given mean and standard deviation.",
@@ -645,6 +679,7 @@ public class Stats2 extends Stats {
 				value = "student_t_inverse",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the value, t, for which the area under the Student-t probability density function (integrated from minus infinity to t) is equal to x.",
@@ -679,6 +714,7 @@ public class Stats2 extends Stats {
 				value = "normal_inverse",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the x in the normal distribution with the given mean and standard deviation, to the left of which lies the given area. normal.Inverse returns the value in terms of standard deviations from the mean, so we need to adjust it for the given mean and standard deviation.",
@@ -715,6 +751,7 @@ public class Stats2 extends Stats {
 				value = { "normal_density", "dnorm" },
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.",
@@ -742,6 +779,7 @@ public class Stats2 extends Stats {
 				value = "binomial_coeff",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns n choose k as a double. Note the integerization of the double return value.",
@@ -773,6 +811,7 @@ public class Stats2 extends Stats {
 				value = { "binomial_sum", "pbinom" },
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the sum of the terms 0 through k of the Binomial probability density, where n is the number of trials and p is the probability of success in the range 0 to 1.",
@@ -809,6 +848,7 @@ public class Stats2 extends Stats {
 				value = { "gamma_distribution", "pgamma" },
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the integral from zero to x of the gamma probability density function.",
@@ -843,6 +883,7 @@ public class Stats2 extends Stats {
 				value = "gamma_distribution_complemented",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the integral from x to infinity of the gamma probability density function.",
@@ -874,6 +915,7 @@ public class Stats2 extends Stats {
 				value = "binomial_complemented",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the sum of the terms k+1 through n of the Binomial probability density, where n is the number of trials and P is the probability of success in the range 0 to 1.",
@@ -906,6 +948,7 @@ public class Stats2 extends Stats {
 				value = { "chi_square", "pchisq" },
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the area under the left hand tail (from 0 to x) of the Chi square probability density function with df degrees of freedom.",
@@ -937,6 +980,7 @@ public class Stats2 extends Stats {
 				value = "chi_square_complemented",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the area under the right hand tail (from x to infinity) of the Chi square probability density function with df degrees of freedom.",
@@ -970,6 +1014,7 @@ public class Stats2 extends Stats {
 				value = "gamma",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the value of the Gamma function at x.",
@@ -998,6 +1043,7 @@ public class Stats2 extends Stats {
 				value = { "log_gamma", "lgamma" },
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the log of the value of the Gamma function at x.",
@@ -1027,6 +1073,7 @@ public class Stats2 extends Stats {
 				value = "incomplete_gamma",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },				
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = " Returns the regularized integral of the Gamma function with argument a to the integration end point x.",
@@ -1058,6 +1105,7 @@ public class Stats2 extends Stats {
 				value = "incomplete_gamma_complement",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the complemented regularized incomplete Gamma function of the argument a and integration start point x.",
@@ -1088,6 +1136,7 @@ public class Stats2 extends Stats {
 				value = "beta",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the beta function with arguments a, b.",
@@ -1118,6 +1167,7 @@ public class Stats2 extends Stats {
 				value = "incomplete_beta",
 				can_be_const = true,
 				type = IType.FLOAT,
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the regularized integral of the beta function with arguments a and b, from zero to x.",

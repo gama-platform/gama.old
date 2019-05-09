@@ -280,6 +280,8 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		setCurrentValue(evaluateExpression ? expectedType == Types.STRING
 				? StringUtils.toJavaString(GamaStringType.staticCast(scope, currentValue2, false))
 				: expectedType.cast(scope, currentValue2, null, false) : currentValue2);
+		if (text.isDisposed())
+			return;
 		if (expectedType == Types.STRING) {
 			text.setText(currentValue == null ? "" : StringUtils.toJavaString(currentValue.toString()));
 		} else

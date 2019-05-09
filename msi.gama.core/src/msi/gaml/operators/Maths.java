@@ -45,15 +45,8 @@ public class Maths {
 									value = "2 ^ 3",
 									equals = "8.0") }) },
 			see = { "*", "sqrt" })
-	@test ("4.0^2 = 16.0")
-	@test ("4.0^0.5 = 2.0")
 	@test ("8^0 = 1.0")
-	@test ("8.0^0 = 1.0")
-	@test ("8.0^1 = 8.0")
-	@test ("8^1.0 = 8.0")
-	@test ("2^0.5 = sqrt(2)")
-	@test ("8.0^1.0 = 8.0")
-	@test ("16.81^0.5 = sqrt(16.81)")
+	@test ("2^2 = 4.0")
 	public static Double pow(final Integer a, final Integer b) {
 		return pow(a.doubleValue(), b.doubleValue());
 	}
@@ -65,6 +58,9 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "Returns the value (always a float) of the left operand raised to the power of the right operand.")
+			@test ("4.0^2 = 16.0")
+			@test ("8.0^0 = 1.0")
+			@test ("8.0^1 = 8.0")
 	public static Double pow(final Double a, final Integer b) {
 		return pow(a, b.doubleValue());
 	}
@@ -76,6 +72,10 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "Returns the value (always a float) of the left operand raised to the power of the right operand.")
+
+	@test ("2^0.5 = sqrt(2)")
+	@test ("2^0.0 = 1.0")
+	@test ("2^1.0 = 2.0")
 	public static Double pow(final Integer a, final Double b) {
 		return pow(a.doubleValue(), b);
 	}
@@ -92,6 +92,7 @@ public class Maths {
 					examples = { @example (
 							value = "4.84 ^ 0.5",
 							equals = "2.2") }) })
+	@test ("16.81^0.5 = sqrt(16.81)")
 	public static Double pow(final Double a, final Double b) {
 		return FastMath.pow(a, b);
 	}
@@ -241,9 +242,9 @@ public class Maths {
 					value = "atan (1)",
 					equals = "45.0"),
 			see = { "acos", "asin", "tan" })
-	@test ("atan(0) = 0.0")
-	@test ("atan(-1) = -45.0")
-	@test ("atan(1) = 45.0")
+	@test ("atan(0.0) = 0.0")
+	@test ("atan(-1.0) = -45.0")
+	@test ("atan(1.0) = 45.0")
 	public static Double atan(final Double rv) {
 		return FastMath.atan(rv) * toDeg;
 	}
@@ -255,6 +256,9 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the arctan of the operand")
+	@test ("atan(0) = 0.0")
+	@test ("atan(-1) = -45.0")
+	@test ("atan(1) = 45.0")
 	public static Double atan(final Integer rv) {
 		return FastMath.atan(rv) * toDeg;
 	}
@@ -283,6 +287,8 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the hyperbolic tangent of the operand (which has to be expressed in decimal degrees).")
+	@test ("tanh(100) = 1.0")
+	@test ("tanh(0) = 0.0")
 	public static Double tanh(final Integer rv) {
 		return FastMath.tanh(rv);
 	}
@@ -297,7 +303,13 @@ public class Maths {
 			value = "Returns the value (in [-1,1]) of the cosinus of the operand (in radians). ",
 			masterDoc = true,
 			special_cases = "Operand values out of the range [0-359] are normalized.",
-			see = { "sin", "tan" })
+			see = { "sin", "tan" },
+			examples = { @example (
+					value = "cos_rad(0.0)",
+					equals = "1.0"),
+					@example (
+							value = "cos_rad(#pi)",
+							equals = "-1.0") })
 	public static Double cos_rad(final Double rv) {
 		return FastMath.cos(rv);
 	}
@@ -311,9 +323,11 @@ public class Maths {
 			value = "Returns the value (in [-1,1]) of the sinus of the operand (in radians). ",
 			masterDoc = true,
 			examples = { @example (
-					value = "sin_rad(#pi)",
-					equals = "0.0",
-					test = false) },
+					value = "sin_rad(0)",
+					equals = "0.0"),
+					@example (
+							value = "sin_rad(#pi/2)",
+							equals = "1.0") },
 			see = { "cos_rad", "tan_rad" })
 	public static Double sin_rad(final Double rv) {
 		return FastMath.sin(rv);
@@ -327,6 +341,9 @@ public class Maths {
 	@doc (
 			value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in radians). ",
 			masterDoc = true,
+					examples = { @example (
+							value = "tan_rad(0)",
+							equals = "0.0") },
 			see = { "cos_rad", "sin_rad" })
 	public static Double tan_rad(final Double v) {
 		return FastMath.tan(v);
@@ -343,6 +360,15 @@ public class Maths {
 			value = "Returns the value (in [-1,1]) of the cosinus of the operand (in decimal degrees).  The argument is casted to an int before being evaluated.",
 			masterDoc = true,
 			special_cases = "Operand values out of the range [0-359] are normalized.",
+					examples = { @example (
+							value = "cos (0.0)",
+							equals = "1.0"),
+							@example (
+									value = "cos(360.0)",
+									equals = "1.0"),
+							@example (
+									value = "cos(-720.0)",
+									equals = "1.0")},
 			see = { "sin", "tan" })
 	public static Double cos(final Double rv) {
 		return FastMath.cos(rv * toRad);
@@ -417,6 +443,9 @@ public class Maths {
 					@usage (
 							value = "The tangent is only defined for any real number except 90 + k `*` 180 (k an positive or negative integer). Nevertheless notice that tan(90) returns 1.633123935319537E16 (whereas we could except infinity).") },
 			see = { "cos", "sin" })
+	@test ("tan(90.0) = 1.633123935319537E16")
+	@test ("tan(0.0) = 0.0")
+	
 	public static Double tan(final Double v) {
 		return FastMath.tan(toRad * v);
 	}
@@ -470,7 +499,7 @@ public class Maths {
 			usages = @usage (
 					value = "the operand is casted to a float before being evaluated."),
 			examples = @example (
-					value = "exp (0)",
+					value = "exp (0.0)",
 					equals = "1.0"),
 			see = "ln")
 	public static Double exp(final Double rv) {
@@ -485,6 +514,7 @@ public class Maths {
 	@doc (
 			value = "returns Euler's number e raised to the power of the operand.",
 			special_cases = "the operand is casted to a float before being evaluated.")
+		@test ("exp (0) = 1.0")
 	public static Double exp(final Integer rv) {
 		return FastMath.exp(rv.doubleValue());
 	}
@@ -596,6 +626,7 @@ public class Maths {
 	@doc (
 			value = "If it is used as an unary operator, it returns the opposite of the operand.",
 			masterDoc = true)
+	@test ("-(-90.0) = 90.0")
 	public static Double negate(final Double x) {
 		return -x;
 	}
@@ -649,6 +680,8 @@ public class Maths {
 			concept = {})
 	@doc (
 			special_cases = "if the operand is an int, round returns it")
+	@test ("round (100) = 100")
+	
 	public static Integer round(final Integer v) {
 		return v;
 	}
@@ -799,6 +832,10 @@ public class Maths {
 			value = "Returns the product of the two operands",
 			examples = {},
 			see = "/")
+	@test ("2.0 * 2.0 = 4.0")
+	@test ("1.5 * (- 1.0) = -1.5")
+	@test ("1.5 * 0.0 = 0.0")
+	
 	public static Double opTimes(final Double a, final Double b) {
 		return a * b;
 	}
@@ -811,6 +848,9 @@ public class Maths {
 			value = "Returns the product of the two operands",
 			examples = {},
 			see = "/")
+	@test ("2 * 2.0 = 4.0")
+	@test ("1 * (- 1.0) = -1.0")
+	@test ("1 * 0.0 = 0.0")
 	public static Double opTimes(final Integer a, final Double b) {
 		return Double.valueOf(a * b);
 	}
@@ -825,7 +865,7 @@ public class Maths {
 			usages = { @usage (
 					value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic product of the number with each element of the matrix (results are float if the number is a float.",
 					examples = {
-							@example ("matrix<float> m <- (3.5 * matrix([[2,5],[3,4]]));	//m equals matrix([[7.0,17.5],[10.5,14]])") }) })
+							@example (value = "2 * matrix([[2,5],[3,4]])", equals = "matrix([[4,10],[6,8]])") }) })
 	public static IMatrix opTimes(final Integer a, final IMatrix b) {
 		return b.times(a);
 	}
@@ -837,6 +877,7 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Multiply all the elements in the matrix operand by the first operand"))
+	@test("2.0 * matrix([[2,5],[3,4]]) =  matrix([[4.0,10.0],[6.0,8.0]])")
 	public static IMatrix opTimes(final Double a, final IMatrix b) {
 		return b.times(a);
 	}
@@ -883,6 +924,8 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the sum, union or concatenation of the two operands.")
+	@test ("1.0 + (- 1.0) = 0.0")
+	@test ("1.0 + 1.0 = 2.0")
 	public static Double opPlus(final Double a, final Double b) {
 		return a + b;
 	}
@@ -894,6 +937,8 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the sum, union or concatenation of the two operands.")
+	@test ("1 + (- 1.0) = 0.0")
+	@test ("1 + 1.0 = 2.0")
 	public static Double opPlus(final Integer a, final Double b) {
 		return a + b;
 	}
@@ -925,6 +970,7 @@ public class Maths {
 			value = "Returns the sum of the two operands",
 			examples = {},
 			see = "/")
+	@test ("1.0 + matrix([[5.5,8.5],[6.5,7.5]]) = matrix([[6.5,9.5],[7.5,8.5]])")
 	public static IMatrix opPlus(final Double a, final IMatrix b) {
 		return b.plus(a);
 	}
@@ -958,11 +1004,11 @@ public class Maths {
 					value = "1.0 - 1",
 					equals = "0.0"),
 					@example (
-							value = "3.7 - 1.2",
-							equals = "2.5"),
+							value = "3.7 - 1",
+							equals = "2.7"),
 					@example (
-							value = "3 - 1.2",
-							equals = "1.8") })
+							value = "3.0 - 1",
+							equals = "2.0") })
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}
@@ -973,7 +1019,16 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
-			value = "the difference of the two operands")
+			value = "the difference of the two operands",
+			examples = { @example (
+					value = "1.0 - 1.0",
+					equals = "0.0"),
+					@example (
+							value = "3.7 - 1.2",
+							equals = "2.5"),
+					@example (
+							value = "3.0 - 1.2",
+							equals = "1.8") })
 	public static Double opMinus(final Double a, final Double b) {
 		return a - b;
 	}
@@ -984,7 +1039,13 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
-			value = "the difference of the two operands")
+			value = "the difference of the two operands",
+					examples = { @example (
+							value = "1 - 1.0",
+							equals = "0.0"),
+							@example (
+									value = "3 - 1.2",
+									equals = "1.8") })
 	public static Double opMinus(final Integer a, final Double b) {
 		return a - b;
 	}
@@ -1014,7 +1075,10 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
-			value = "the difference of the two operands")
+			value = "the difference of the two operands",
+			examples = { @example (
+							value = "(10.0 - (3.0 as_matrix({2,3})))",
+							equals = "matrix([[7.0,7.0,7.0],[7.0,7.0,7.0]])") })
 	public static IMatrix opMinus(final Double a, final IMatrix b) {
 		return b.times(-1).plus(a);
 	}

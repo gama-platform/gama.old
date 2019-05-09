@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.LayoutStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.LayoutStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -64,7 +64,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("Whether the displays should show their tab or not")) })
 
 @inside (
-		kinds = { ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT })
+		symbols = IKeyword.OUTPUT)
 @doc (
 		value = "Represents the layout of the display views of simulations and experiments",
 		usages = { @usage (

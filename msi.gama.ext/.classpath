@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="lib" path="streamex 0.6.7/streamex-0.6.7.jar" sourcepath="streamex 0.6.7/streamex-src-0.6.7.zip"/>
-	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-ext-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-core-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/core-0.26.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-affine-1.0.9.jar"/>
@@ -162,9 +161,6 @@
 	<classpathentry exported="true" kind="lib" path="trove 3.0.3/jars/trove-3.0.3.jar" sourcepath="trove 3.0.3/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="vecmath 1.5.2/jars/vecmath-1.5.2.jar" sourcepath="/Users/drogoul/.m2/repository/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="kabeja 0.4/jars/kabeja-0.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-algo-1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-core-1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="prefuse 2007-10-21/jars/prefuse.jar"/>
 	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-1.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-impl.jar"/>
@@ -176,5 +172,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-example-1.14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-algo-1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-core-1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

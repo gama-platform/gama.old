@@ -733,5 +733,13 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public boolean isDisposed() {
 		return disposed;
 	}
+	
+	public Font computeFont(Font f) {
+		if (f == null) return null;
+		if (PlatformHelper.isWindows() && PlatformHelper.isHiDPI())
+			return f.deriveFont((float) PlatformHelper.scaleUpIfWin(f.getSize2D()));
+		return f;
+			
+	}
 
 }

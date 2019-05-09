@@ -23,6 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -65,10 +66,8 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 						+ "\"DormandPrince54\", \"GraggBulirschStoer\",  \"HighamHall54\") (default value: \"rk4\")")),
 		@facet(name = "integrated_times", type = IType.LIST, optional = true, doc = @doc(value = "time interval inside integration process")),
 		@facet(name = "integrated_values", type = IType.LIST, optional = true, doc = @doc(value = "list of variables's value inside integration process")),
-		@facet(name = "discretizing_step", type = IType.INT, optional = true, doc = @doc(value = "number of discrete between 2 steps of simulation (default value: 0)")),
 		@facet(name = "time_initial", type = IType.FLOAT, optional = true, doc = @doc(value = "initial time")),
 		@facet(name = "time_final", type = IType.FLOAT, optional = true, doc = @doc(value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
-		@facet(name = "cycle_length", type = IType.INT, optional = true, doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator (default value: 1)")),
 		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc(value = "integration step, use with most integrator methods (default value: 1)")),
 		@facet(name = "min_step", type = IType.FLOAT, optional = true, doc = @doc(value = "minimal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 		@facet(name = "max_step", type = IType.FLOAT, optional = true, doc = @doc(value = "maximal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
@@ -128,8 +127,8 @@ public class SolveStatement extends AbstractStatement {
 
 	final String equationName, solverName;
 	SystemOfEquationsStatement systemOfEquations;
-	final IExpression stepExp, cycleExp, nStepsExp, minStepExp, maxStepExp, absTolerExp, relTolerExp, timeInitExp,
-			timeFinalExp;// ,discretExp,integrationTimesExp,
+	final IExpression stepExp, nStepsExp, minStepExp, maxStepExp, absTolerExp, relTolerExp, timeInitExp,
+			timeFinalExp;// ,discretExp,integrationTimesExp,cycleExp, 
 							// integratedValuesExp;
 
 	public SolveStatement(final IDescription desc) {
@@ -138,10 +137,7 @@ public class SolveStatement extends AbstractStatement {
 		IExpression sn = getFacet(IKeyword.METHOD);
 		solverName = sn == null ? "rk4" : sn.literalValue();
 		sn = getFacet(IKeyword.STEP);
-		stepExp = sn == null ? new ConstantExpression(0.2d) : sn;
-		sn = getFacet("cycle_length");
-		cycleExp = sn == null ? new ConstantExpression(1d) : sn;
-		sn = getFacet("discretizing_step");
+		stepExp = sn == null ? new ConstantExpression(0.2d) : sn; 
 		nStepsExp = getFacet("nSteps");
 		minStepExp = getFacet("min_step");
 		maxStepExp = getFacet("max_step");
@@ -165,6 +161,7 @@ public class SolveStatement extends AbstractStatement {
 	@operator(value = { "internal_integrated_value" }, content_type = IType.FLOAT, category = {
 			IOperatorCategory.CONTAINER }, concept = { IConcept.EQUATION })
 	@doc("For internal use only. Corresponds to the implementation, for agents, of the access to containers with [index]")
+	@test("write list((date('2001-01-01') to date('2001-1-02')) every(#day));write [date ('2001-01-01 00:00:00')]; list((date('2001-01-01') to date('2001-1-02')) every(#day)) = [date ('2001-01-01 00:00:00')]")
 	public static IList internal_integrated_value(final IScope scope, final IExpression agent, final IExpression var)
 			throws GamaRuntimeException {
 		// if agent not null

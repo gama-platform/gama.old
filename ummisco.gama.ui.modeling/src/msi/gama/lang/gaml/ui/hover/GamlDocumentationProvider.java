@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
@@ -74,7 +74,8 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 						return "This workspace " + ext + " file has no metadata associated with it";
 					}
 				} else { // absolute file
-					final IFile file = FileUtils.createLinkToExternalFile(((StringLiteral) o).getOp(), o.eResource().getURI());
+					final IFile file =
+							FileUtils.createLinkToExternalFile(((StringLiteral) o).getOp(), o.eResource().getURI());
 					if (file == null) { return "This file is outside the workspace and cannot be found."; }
 					final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 					if (data != null) {
@@ -124,7 +125,11 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			if (vd != null) {
 				if (vd.eContainer() == null) {
 					final IEObjectDescription desc = BuiltinGlobalScopeProvider.getVar(vd.getName());
-					if (desc != null) { return desc.getUserData("doc"); }
+					if (desc != null) {
+						String userData = desc.getUserData("doc");
+						if (userData != null && !userData.isEmpty())
+							return userData;
+					}
 				}
 			}
 		} else if (o instanceof UnitName) {

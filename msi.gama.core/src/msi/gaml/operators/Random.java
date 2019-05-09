@@ -17,6 +17,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -55,6 +56,7 @@ public class Random {
 			@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}") }, examples = {
 					@example(value = "truncated_gauss ({0, 0.3})", equals = "a float between -0.3 and 0.3", test = false) }, see = {
 							"gauss" })
+	@test("seed <- 1.0; TGauss({0,0.3}) = 0.10073201959421514")
 	public static Double opTGauss(final IScope scope, final GamaPoint p) {
 		return opTGauss(scope, GamaListFactory.createWithoutCasting(Types.FLOAT, p.x, p.y));
 	}
@@ -64,6 +66,7 @@ public class Random {
 			@usage(value = "if the operand is a list, only the two first elements are taken into account as [mean, standardDeviation]"),
 			@usage(value = "when truncated_gauss is called with a list of only one element mean, it will always return 0.0") }, examples = {
 					@example(value = "truncated_gauss ([0.5, 0.0])", equals = "0.5") })
+	@test("seed <- 1.0; truncated_gauss ([0.5, 0.2]) = 0.5671546797294768")
 	public static Double opTGauss(final IScope scope, final IList list) {
 		if (list.size() < 2) {
 			return 0d;
@@ -97,6 +100,7 @@ public class Random {
 			@usage(value = "when the operand is a point, it is read as {mean, standardDeviation}")}, examples = {
 					@example(value = "gauss({0,0.3})", equals = "0.22354", test = false) }, 
 			see = { "truncated_gauss","poisson" })
+	@test("seed <- 1.0; gauss({0.5, 0.2}) = 0.6343093594589535")
 	public static Double opGauss(final IScope scope, final GamaPoint point) {
 		final double mean = point.x;
 		final double sd = point.y;
@@ -108,6 +112,7 @@ public class Random {
 			@usage(value = "when standardDeviation value is 0.0, it always returns the mean value") }, examples = {
 					@example(value = "gauss(0,0.3)", equals = "0.22354", test = false)}, see = { "skew_gauss", "truncated_gauss",
 							"poisson" })
+	@test("seed <- 1.0; gauss(0.5, 0.2) = 0.6343093594589535")
 	public static Double opGauss(final IScope scope, final double mean, final double sd) {
 		return RANDOM(scope).createGaussian(mean, sd);
 	}
@@ -119,6 +124,7 @@ public class Random {
 	examples = {
 					@example(value = "skew_gauss(0.0, 1.0, 0.7,0.1)", equals = "0.1729218460343077", test = false)}, see = { "gauss", "truncated_gauss",
 							"poisson" })
+	@test("seed <- 1.0; skew_gauss(0.0, 1.0, 0.7,0.1) = 0.7425668006838585")
 	public static Double opGauss(final IScope scope, final double min, final double max, final double skew, final double bias) {
 		double range = max - min;
         double mid = min + range / 2.0;
@@ -131,6 +137,7 @@ public class Random {
 	@doc(value = "A value from a random variable following a Poisson distribution (with the positive expected number of occurence lambda as operand).", comment = "The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time and/or space if these events occur with a known average rate and independently of the time since the last event, cf. Poisson distribution on Wikipedia.", examples = {
 			@example(value = "poisson(3.5)", equals = "a random positive integer", test = false) }, see = { "binomial",
 					"gauss" })
+	@test("seed <- 1.0; poisson(3.5) = 6")
 	public static Integer opPoisson(final IScope scope, final Double mean) {
 		return RANDOM(scope).createPoisson(mean);
 	}
@@ -139,6 +146,7 @@ public class Random {
 	@doc(value = "A value from a random variable following a binomial distribution. The operands represent the number of experiments n and the success probability p.", comment = "The binomial distribution is the discrete probability distribution of the number of successes in a sequence of n independent yes/no experiments, each of which yields success with probability p, cf. Binomial distribution on Wikipedia.", examples = {
 			@example(value = "binomial(15,0.6)", equals = "a random positive integer", test = false) }, see = {
 					"poisson", "gauss" })
+	@test("seed <- 1.0; binomial(15,0.6) = 9")
 	public static Integer opBinomial(final IScope scope, final Integer n, final Double p) {
 		return RANDOM(scope).createBinomial(n, p);
 	}
@@ -149,6 +157,7 @@ public class Random {
 			@usage(value = "if the operand is empty, returns an empty list (or string, matrix)") }, examples = {
 					@example(value = "shuffle ([12, 13, 14])", equals = "[14,12,13] (for example)", test = false) }, see = {
 							"reverse" })
+	@test("seed <- 1.0; shuffle ([12, 13, 14]) = [12,13,14]")
 	public static IList opShuffle(final IScope scope, final IContainer target) {
 		if (target == null || target.isEmpty(scope)) {
 			return GamaListFactory.create(target == null ? Types.NO_TYPE : target.getGamlType().getContentType());
@@ -172,6 +181,7 @@ public class Random {
 			IOperatorCategory.MATRIX }, concept = {})
 	@doc(examples = {
 			@example(value = "shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals = "matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]) (for example)", test = false) })
+	@test("seed <- 1.0; shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])) = matrix([[\"c13\",\"c21\",\"c22\"],[\"c11\",\"c23\",\"c12\"]])")
 	public static IMatrix opShuffle(final IScope scope, final IMatrix target) throws GamaRuntimeException {
 		final IMatrix matrix2 = target.copy(scope);
 		matrix2.shuffleWith(RANDOM(scope));
@@ -181,6 +191,7 @@ public class Random {
 	@operator(value = "shuffle", content_type = IType.STRING, category = { IOperatorCategory.RANDOM,
 			IOperatorCategory.STRING }, concept = { IConcept.RANDOM })
 	@doc(examples = { @example(value = "shuffle ('abc')", equals = "'bac' (for example)", test = false) })
+	@test("seed <- 1.0; shuffle ('abc') = 'abc'")
 	public static String opShuffle(final IScope scope, final String target) {
 		return RANDOM(scope).shuffle(target);
 	}
@@ -190,6 +201,7 @@ public class Random {
 			@example(value = "rnd (2)", equals = "0, 1 or 2", test = false),
 			@example(value = "rnd (1000) / 1000", returnType = IKeyword.FLOAT, equals = "a float between 0 and 1 with a precision of 0.001", test = false) }, see = {
 					"flip" })
+	@test("seed <- 1.0; rnd(10) = 8")
 	public static Integer opRnd(final IScope scope, final Integer max) {
 		return opRnd(scope, 0, max);
 	}
@@ -197,6 +209,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = { IConcept.RANDOM })
 	@doc(value = "a random integer in the interval [first operand, second operand]", examples = {
 			@example(value = "rnd (2, 4)", equals = "2, 3 or 4", test = false) }, see = {})
+	@test("seed <- 1.0; rnd(1,5) = 4")
 	public static Integer opRnd(final IScope scope, final Integer min, final Integer max) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(min, max);
@@ -205,6 +218,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random integer in the interval [first operand, second operand], constrained by a step given by the last operand", examples = {
 			@example(value = "rnd (2, 12, 4)", equals = "2, 6 or 10", test = false) }, see = {})
+	@test("seed <- 1.0; rnd (2, 12, 4) = 10")
 	public static Integer opRnd(final IScope scope, final Integer min, final Integer max, final Integer step) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(min, max, step);
@@ -213,6 +227,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random float in the interval [first operand, second operand]", examples = {
 			@example(value = "rnd (2.0, 4.0)", equals = "a float number between 2.0 and 4.0", test = false) }, see = {})
+	@test("seed <- 1.0; rnd (2.0, 4.0) = 3.548024306042759")
 	public static Double opRnd(final IScope scope, final Double min, final Double max) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(min, max);
@@ -221,6 +236,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random float in the interval [first operand, second operand] constrained by the last operand (step)", examples = {
 			@example(value = "rnd (2.0, 4.0, 0.5)", equals = "a float number between 2.0 and 4.0 every 0.5", test = false) }, see = {})
+	@test("seed <- 1.0; rnd (2.0, 4.0, 0.5) = 3.5")
 	public static Double opRnd(final IScope scope, final Double min, final Double max, final Double step) {
 		final RandomUtils r = RANDOM(scope);
 		return r.between(min, max, step);
@@ -229,6 +245,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random point in the interval [first operand, second operand]", examples = {
 			@example(value = "rnd ({2.0, 4.0}, {2.0, 5.0, 10.0})", equals = "a point with x = 2.0, y between 2.0 and 4.0 and z between 0.0 and 10.0", test = false) }, see = {})
+	@test("seed <- 1.0; rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}) = {2.0,4.785039740667429,5.087825199078746}")
 	public static GamaPoint opRnd(final IScope scope, final GamaPoint min, final GamaPoint max) {
 		final double x = opRnd(scope, min.x, max.x);
 		final double y = opRnd(scope, min.y, max.y);
@@ -239,6 +256,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random point in the interval [first operand, second operand], constained by the step provided by the last operand", examples = {
 			@example(value = "rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}, 1)", equals = "a point with x = 2.0, y equal to 2.0, 3.0 or 4.0 and z between 0.0 and 10.0 every 1.0", test = false) }, see = {})
+	@test("seed <- 1.0; rnd ({2.0, 4.0}, {2.0, 5.0, 10.0},1) = {2.0,5.0,5.0}")
 	public static GamaPoint opRnd(final IScope scope, final GamaPoint min, final GamaPoint max, final Double step) {
 		final double x = opRnd(scope, min.x, max.x, step);
 		final double y = opRnd(scope, min.y, max.y, step);
@@ -252,6 +270,7 @@ public class Random {
 	@doc(usages = {
 			@usage(value = "if the operand is a point, returns a point with three random float ordinates, each in the interval [0, ordinate of argument]") }, examples = {
 					@example(value = "rnd ({2.5,3, 0.0})", equals = "{x,y} with x in [0.0,2.0], y in [0.0,3.0], z = 0.0", test = false) })
+	@test("seed <- 1.0; rnd ({2.5,3, 1.0}) = {1.935030382553449,2.3551192220022856,0.5087825199078746}")
 	public static ILocation opRnd(final IScope scope, final GamaPoint max) {
 		return opRnd(scope, NULL_POINT, max);
 	}
@@ -384,6 +403,7 @@ public class Random {
 	@operator(value = "open_simplex_generator", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "take a x, y and a bias parameters and gives a value", examples = {
 			@example(value = "open_simplex_generator(2,3,253)", equals = "10.2", test = false) })
+	@test("seed <- 1.0; open_simplex_generator(2,3,253) = -0.053513655103822125")
 	public static Double open_simplex_generator(final IScope scope, final double x, final double y, final double biais)  
 	{
 		return OpenSimplexNoise.noise(x,y,biais);

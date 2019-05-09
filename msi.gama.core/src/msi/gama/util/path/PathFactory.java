@@ -13,9 +13,7 @@ package msi.gama.util.path;
 import static msi.gama.common.geometry.GeometryUtils.getFirstPointOf;
 import static msi.gama.common.geometry.GeometryUtils.getLastPointOf;
 
-import com.vividsolutions.jts.geom.Coordinate;
 
-import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;

@@ -30,6 +30,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
@@ -301,8 +302,9 @@ public class GraphsGraphstream {
 							@example(value = "		yourEdgeSpecy,", isExecutable = false),
 							@example(value = "		3,", isExecutable = false),
 							@example(value = "		5,", isExecutable = false),
-							@example(value = "		true);", isExecutable = false) }, see = {
-									"generate_watts_strogatz" })
+							@example(value = "		true);", isExecutable = false) }, 
+					see = {"generate_watts_strogatz" })
+	@no_test
 	public static IGraph generateGraphstreamBarabasiAlbert(final IScope scope, final ISpecies vertices_specy,
 			final ISpecies edges_species, final Integer size, final Integer m, final Boolean isSychronized) {
 
@@ -331,9 +333,9 @@ public class GraphsGraphstream {
 							@example(value = "		yourEdgeSpecy,", isExecutable = false),
 							@example(value = "		3,", isExecutable = false),
 							@example(value = "		5,", isExecutable = false),
-							@example(value = "		true);", isExecutable = false) }, see = {
-									"generate_watts_strogatz" })
-
+							@example(value = "		true);", isExecutable = false) }, 
+					see = {"generate_watts_strogatz" })
+	@no_test
 	public static IGraph generateGraphstreamBarabasiAlbert(final IScope scope, final IContainer<?, IAgent> agents,
 			final ISpecies edges_species, final Integer m, final Boolean isSychronized) {
 		if (agents.isEmpty(scope)) {
@@ -364,8 +366,9 @@ public class GraphsGraphstream {
 							@example(value = "			2,", isExecutable = false),
 							@example(value = "			0.3,", isExecutable = false),
 							@example(value = "			2,", isExecutable = false),
-							@example(value = "		true);", isExecutable = false) }, see = {
-									"generate_barabasi_albert" })
+							@example(value = "		true);", isExecutable = false) }, 
+					see = {"generate_barabasi_albert" })
+	@no_test
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, final ISpecies vertices_specy,
 			final ISpecies edges_species, final Integer size, final Double p, final Integer k,
 			final Boolean isSychronized) {
@@ -394,8 +397,9 @@ public class GraphsGraphstream {
 							@example(value = "			myEdgeSpecy,", isExecutable = false),
 							@example(value = "			0.3,", isExecutable = false),
 							@example(value = "			2,", isExecutable = false),
-							@example(value = "		true);", isExecutable = false) }, see = {
-									"generate_barabasi_albert" })
+							@example(value = "		true);", isExecutable = false) }, 
+					see = {"generate_barabasi_albert" })
+	@no_test
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, final IContainer<?, IAgent> agents,
 			final ISpecies edges_species, final Double p, final Integer k, final Boolean isSychronized) {
 		if (agents.isEmpty(scope)) {
@@ -424,8 +428,9 @@ public class GraphsGraphstream {
 					@example(value = "			myVertexSpecy,", isExecutable = false),
 					@example(value = "			myEdgeSpecy,", isExecutable = false),
 					@example(value = "			10, 25,", isExecutable = false),
-					@example(value = "		true);", isExecutable = false) }, see = { "generate_barabasi_albert",
-							"generate_watts_strogatz" })
+					@example(value = "		true);", isExecutable = false) }, 
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
 			final ISpecies edges_species, final Integer size, final double layoutRadius, final Boolean isSychronized) {
 
@@ -455,8 +460,9 @@ public class GraphsGraphstream {
 					@example(value = "			myListOfNodes,", isExecutable = false),
 					@example(value = "			myEdgeSpecy,", isExecutable = false),
 					@example(value = "			25,", isExecutable = false),
-					@example(value = "		true);", isExecutable = false) }, see = { "generate_barabasi_albert",
-							"generate_watts_strogatz" })
+					@example(value = "		true);", isExecutable = false) }, 
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test
 	public static IGraph generateGraphstreamComplete(final IScope scope, final IContainer<?, IAgent> agents,
 			final ISpecies edges_species, final double layoutRadius, final Boolean isSychronized) {
 		if (agents.isEmpty(scope)) {
@@ -491,8 +497,10 @@ public class GraphsGraphstream {
 					@example(value = "			myVertexSpecy,", isExecutable = false),
 					@example(value = "			myEdgeSpecy,", isExecutable = false),
 					@example(value = "			10,", isExecutable = false),
-					@example(value = "		true);", isExecutable = false) }, see = { "generate_barabasi_albert",
+					@example(value = "		true);", isExecutable = false) }, 
+			see = { "generate_barabasi_albert",
 							"generate_watts_strogatz" })
+	@no_test
 	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
 			final ISpecies edges_species, final Integer size, final Boolean isSychronized) {
 
@@ -507,10 +515,11 @@ public class GraphsGraphstream {
 					@example(value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(", isExecutable = false),
 					@example(value = "			myListOfNodes,", isExecutable = false),
 					@example(value = "			myEdgeSpecy,", isExecutable = false),
-					@example(value = "		true);", isExecutable = false) }, see = { "generate_barabasi_albert",
-							"generate_watts_strogatz" })
+					@example(value = "		true);", isExecutable = false) }, 
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test
 	public static IGraph generateGraphstreamComplete(final IScope scope, final IContainer<?, IAgent> agents,
-			final ISpecies edges_species, final Boolean isSychronized) {
+			final ISpecies edges_species, final Boolean isSynchronized) {
 		if (agents.isEmpty(scope)) {
 			return null;
 		}
@@ -518,7 +527,7 @@ public class GraphsGraphstream {
 		nodes.addAll(agents.listValue(scope, Types.AGENT, false));
 
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_species, new FullGenerator(),
-				nodes.size() - 1, isSychronized);
+				nodes.size() - 1, isSynchronized);
 	}
 
 }

@@ -11,6 +11,7 @@
 package msi.gaml.types;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
@@ -47,6 +48,15 @@ public class GamaMetaType extends GamaType<IType<?>> {
 			value = { "type_of" },
 			can_be_const = true,
 			doc = @doc ("Returns the GAML type of the operand"))
+	@doc (
+			value = "Returns the GAML type of the operand",
+			examples = {
+					@example(value = "string(type_of(\"a string\"))", equals="\"string\"", returnType="string"  ),
+					@example(value = "string(type_of([1,2,3,4,5]))", equals="\"list<int>\"", returnType="string" ),
+					@example  ("geometry g0 <- to_GAMA_CRS({121,14}, \"EPSG:4326\"); "),
+					@example(value ="string(type_of(g0))", equals = "\"point\"", returnType="string")
+					
+			})
 	public static IType<?> typeOf(final IScope scope, final Object obj) {
 		return staticCast(obj);
 	}

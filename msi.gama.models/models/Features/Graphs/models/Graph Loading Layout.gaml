@@ -1,18 +1,22 @@
 /**
 * Name: Graph from DGS File and Layout Changed
 * Author: Patrick Taillandier
-* Description: Model which shows how to load a graph from a DGS File, and change is layout. 
+* Description: Model which shows how to load a graph from a DGS File, and change its layout. 
 * Tags: graph, load_file, dgs
 */
 
 model graphloadinglayout
 
 global {
-	graph the_graph ;
+	graph<agent,agent> the_graph ;
 	string barabasi_file <- "../includes/ProteinSimple.dgs";
 	geometry shape <- rectangle(500,500);
-	string layout_type <- "forcedirected";
-	int layout_time <- 1000;
+	string layout_type;
+	int layout_time <- 1000 min: 0 max: 10000 parameter: "Max number of iterations" category: "Force";
+	float coeff_force <- 0.8 min: 0.1 max: 1.0 parameter: "Force coefficient" category: "Force";
+	float cooling_coefficient <- 0.1 min: 0.01 max: 0.5 parameter: "Decreasing coefficient of the temperature" category: "Force"; 
+	float coeff_nb_places <- 1.2 min: 0.0 max: 2.0 parameter: "Coefficient for the number of places to locate the vertices" category: "Grid"; 
+	
 	
 	//The operator load_graph_from_file generates the graph from the file, and chose the vertices as agents of node_agent 
 	//species, and edges as edge_agent agents
@@ -22,7 +26,17 @@ global {
 	
 	//In case the layout type is forcedirected or random, the reflex will change at each step the layout of the graph
 	reflex layout_graph {
-		the_graph <- layout(the_graph, layout_type, layout_time);
+		switch layout_type {
+			match "Force" {
+				the_graph <- layout_force(the_graph, world.shape,coeff_force , cooling_coefficient, layout_time);
+			}
+			match "Circular" {
+				the_graph <- layout_circle(the_graph, world.shape);
+			}
+			match "Grid" {
+				the_graph <- layout_grid(the_graph, world.shape,coeff_nb_places);
+	 		}
+		}	
 	}
 }
 
@@ -39,8 +53,7 @@ species node_agent {
 }
 
 experiment loadgraph type: gui {
-	parameter "Layout type" var: layout_type among: [ "forcedirected", "random", "radialtree", "circle"];
-	parameter "layout time" var: layout_time min: 1 max: 100000;
+	parameter "Layout type" var: layout_type among:["Force", "Circular", "Grid"] init:"Circular";
 	output {
 		display map type: opengl{
 			species edge_agent ;

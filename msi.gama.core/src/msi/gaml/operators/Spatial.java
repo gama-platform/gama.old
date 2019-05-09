@@ -59,6 +59,7 @@ import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
@@ -77,6 +78,7 @@ import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -89,6 +91,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
@@ -1275,7 +1278,17 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION })
 		@doc (
-				value = "A 3D geometry that represents the box that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,100, 0, 100, 0, 100) is returned")
+				value = "A 3D geometry that represents the box that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,100, 0, 100, 0, 100) is returned",
+				usages = { @usage (
+							value = "This operator is often used to define the environment of simulation") },
+				examples = { @example (
+								value = "file road_shapefile <- file(\"../includes/roads.shp\");", isExecutable = false),
+							@example (
+								value = "geometry shape <- envelope(road_shapefile);", isExecutable = false),
+							@example (
+									value = "// shape is the system variable of  the environment", isExecutable = false)
+						}
+				)
 		public static IShape envelope(final IScope scope, final Object obj) {
 			Envelope3D env = new Envelope3D(GeometryUtils.computeEnvelopeFrom(scope, obj));
 			if (env.isNull()) {
@@ -1418,6 +1431,7 @@ public abstract class Spatial {
 								value = "geom1 - geom2",
 								equals = "a geometry corresponding to difference between geom1 and geom2",
 								isExecutable = false)))
+		@no_test
 		public static IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null || g1.getInnerGeometry() == null
 					|| g2.getInnerGeometry() == null) { return g1; }
@@ -2099,17 +2113,59 @@ public abstract class Spatial {
 			if (g1 == null) { return null; }
 			return new GamaShape(g1, null, new AxisAngle(angle), null);
 		}
+		
+		@operator (
+				value = "inverse_rotation",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "The inverse rotation. It is a rotation around the same axes with the opposite angle.",
+				masterDoc = true,
+				examples = { @example (
+						value = "inverse_rotation(38::{1,1,1})",
+						equals = "the inverse rotation  -38::{1,1,1}",
+						test = false) },
+				see = {"rotation_composition"})
+		public static GamaPair<Double, GamaPoint> inverse_rotation(final IScope scope, final GamaPair<Double,  GamaPoint> rotation) {
+			return new GamaPair(-rotation.key,rotation.value,Types.FLOAT, Types.POINT); 
+		}
+		
 
+		
+		@operator (
+				value = "rotation_composition",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "The rotation given by the composition of the rotations in the list, from left to right. Angles are in degrees.",
+				masterDoc = true,
+				examples = { @example (
+						value = "rotation_composition([38::{1,1,1},90::{1,0,0}])",
+						equals = "the result",
+						test = false) },
+				see = {"inverse_rotation"})
+		public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope, final GamaList <GamaPair<Double,  GamaPoint>> rotation_list) {
+			//Rotation3D rotation = new Rotation3D(new GamaPoint(1,0,0), 0.0);
+			Rotation3D rotation = new Rotation3D(new GamaPoint(1,0,0), 0.0);
+			for(GamaPair<Double, GamaPoint> rot: rotation_list){	
+				rotation = rotation.applyTo(new Rotation3D(rot.value, 2*Math.PI / 360 * rot.key));
+			}
+			return new GamaPair(180/Math.PI *rotation.getAngle(), rotation.getAxis(),Types.FLOAT, Types.POINT); 
+		}
+		
+		
 		@operator (
 				value = "rotated_by",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree) along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
+				value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree)"
+						+ " along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
 				masterDoc = true,
 				examples = { @example (
 						value = "rotated_by(pyramid(10),45, {1,0,0})",
-						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of the agent applying the operator.",
+						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
+								+ "the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double rotation,
@@ -2153,10 +2209,12 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A geometry resulting from the application of a rotation and a scaling (right-operand : point {angle(degree), scale factor} of the left-hand operand (geometry, agent, point)",
+				value = "A geometry resulting from the application of a rotation and a scaling (right-operand : "
+						+ "point {angle(degree), scale factor} of the left-hand operand (geometry, agent, point)",
 				examples = { @example (
 						value = "self transformed_by {45, 0.5}",
-						equals = "the geometry resulting from 45 degrees rotation and 50% scaling of the geometry of the agent applying the operator.",
+						equals = "the geometry resulting from 45 degrees rotation and 50% scaling of the geometry "
+								+ "of the agent applying the operator.",
 						test = false) },
 				see = { "rotated_by", "translated_by" })
 		public static IShape transformed_by(final IScope scope, final IShape g, final GamaPoint p) {
@@ -2215,7 +2273,8 @@ public abstract class Spatial {
 				value = "A geometry corresponding to the operand geometry (geometry, agent, point) without its holes",
 				examples = { @example (
 						value = "solid(self)",
-						equals = "the geometry corresponding to the geometry of the agent applying the operator without its holes.",
+						equals = "the geometry corresponding to the geometry of the agent applying the operator without "
+								+ "its holes.",
 						test = false) })
 		public static IShape without_holes(final IScope scope, final IShape g) {
 			if (g == null) { return null; }
@@ -2244,10 +2303,12 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent) with the given tolerance for the clipping and for the triangulation",
+				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry "
+						+ "(geometry, agent) with the given tolerance for the clipping and for the triangulation",
 				examples = { @example (
 						value = "skeletonize(self)",
-						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
+						equals = "the list of geometries corresponding to the skeleton of the geometry of "
+								+ "the agent applying the operator.",
 						test = false) })
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
 				final Double triangulationTolerance) {

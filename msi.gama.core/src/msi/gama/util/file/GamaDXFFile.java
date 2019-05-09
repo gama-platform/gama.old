@@ -36,6 +36,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -70,27 +71,22 @@ public class GamaDXFFile extends GamaGeometryFile {
 	Double unit;
 	double x_t;
 	double y_t;
-
+	@doc (value= "This file constructor allows to read a dxf (.dxf) file",
+			examples = {
+				@example(value = "file f <- dxf_file(\"file\");", isExecutable = false)
+			})
 	public GamaDXFFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
-
+	@doc (value= "This file constructor allows to read a dxf (.dxf) file and specify the unit (meter by default)",
+			examples = {
+				@example(value = "file f <- dxf_file(\"file\",#m);", isExecutable = false)
+			})
 	public GamaDXFFile(final IScope scope, final String pathName, final Double unit) throws GamaRuntimeException {
 		super(scope, pathName);
 		this.unit = unit;
 	}
 
-	public GamaDXFFile(final IScope scope, final String pathName, final Double unit, final GamaPoint size)
-			throws GamaRuntimeException {
-		super(scope, pathName);
-		this.unit = unit;
-		this.size = size;
-	}
-
-	public GamaDXFFile(final IScope scope, final String pathName, final GamaPoint size) throws GamaRuntimeException {
-		super(scope, pathName);
-		this.size = size;
-	}
 
 	@Override
 	protected IShape buildGeometry(final IScope scope) {

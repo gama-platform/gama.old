@@ -32,6 +32,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
@@ -217,12 +218,15 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 	@action (
 			name = "compute_forces",
-			args = @arg (
-					name = "step",
+			args = {@arg (
+					name = "step", 
 					type = IType.FLOAT,
 					optional = true,
-					doc = {}))
-	@doc ("This action allows the world to compute the forces exerted on each agent")
+					doc = @doc("allows to define the time step considered for the physical world agent. "
+							+ "If not defined, the physical world agent will use the step global variable. "))})
+	@doc(value = "This action allows the world to compute the forces exerted on each agent",
+	examples = {@example(value = "do compute_forces step: 1.0;", isExecutable = false)
+		})
 	public Object primComputeForces(final IScope scope) throws GamaRuntimeException {
 
 		final Double timeStep = scope.hasArg("step") ? (Double) scope.getArg("step", IType.FLOAT) : 1.0;

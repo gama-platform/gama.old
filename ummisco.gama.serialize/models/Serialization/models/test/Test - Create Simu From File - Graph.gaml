@@ -12,7 +12,7 @@ import "Test - Memorize Experiment - Topology - Graph.gaml"
 experiment saveSimu type: gui {
 	reflex store when: cycle = 5 {		
 		write "================ START SAVE + self " + " - " + cycle ;		
-		write "Save of simulation : " + saveSimulation('graph2.gsim');
+		write "Save of simulation : " + save_simulation('graph2.gsim');
 		write "================ RESTORE + self " + " - " + cycle ;			
 	}	
 	output {

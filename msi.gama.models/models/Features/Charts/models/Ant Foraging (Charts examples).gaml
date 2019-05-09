@@ -286,7 +286,7 @@ experiment "One chart" type: gui {
 	list<list<int>> xyval<-[[1,1],[2,1],[3,2]];
 
 
-layout horizontal([vertical([0::5000,1::5000])::5000,vertical([2::5000,horizontal([3::5000,4::5000])::5000])::5000]) tabs:true toolbars:true;
+
 	reflex update_charts
 	{
 		ant x<-one_of(world.ant);
@@ -312,6 +312,7 @@ layout horizontal([vertical([0::5000,1::5000])::5000,vertical([2::5000,horizonta
 		write("states"+statesnames);		
 	}
 	output {
+		layout horizontal([vertical([0::5000,1::5000])::5000,vertical([2::5000,horizontal([3::5000,4::5000])::5000])::5000]) tabs:true toolbars:true;
 		display Ants type: opengl {
 			grid ant_grid ;
 			species ant aspect: text ;

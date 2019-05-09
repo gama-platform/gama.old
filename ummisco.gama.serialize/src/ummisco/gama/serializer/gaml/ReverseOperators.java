@@ -54,7 +54,7 @@ public class ReverseOperators {
 	}
 
 	@operator (
-			value = "serializeAgent")
+			value = "serialize_agent")
 	@doc (
 			value = "")
 	public static String serializeAgent(final IScope scope, final IAgent agent) {
@@ -62,7 +62,7 @@ public class ReverseOperators {
 	}
 
 	@operator (
-			value = "restoreSimulationFromFile")
+			value = "restore_simulation_from_file")
 	@doc (
 			value = "restoreSimulationFromFile")
 	public static int unSerializeSimulationFromFile(final IScope scope, final GamaSavedSimulationFile file) {
@@ -70,9 +70,9 @@ public class ReverseOperators {
 	}
 
 	@operator (
-			value = "restoreSimulation")
+			value = "restore_simulation")
 	@doc (
-			value = "restoreSimulation")
+			value = "restore_simulation")
 	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
 		final ConverterScope cScope = new ConverterScope(scope);
 		final XStream xstream = StreamConverter.loadAndBuild(cScope);
@@ -87,7 +87,7 @@ public class ReverseOperators {
 	}
 
 	@operator (
-			value = "saveAgent")
+			value = "save_agent")
 	@doc (
 			value = "")
 	public static int saveAgent(final IScope scope, final IAgent agent, final String pathname) {
@@ -125,7 +125,7 @@ public class ReverseOperators {
 	}
 
 	@operator (
-			value = "saveSimulation")
+			value = "save_simulation")
 	@doc (
 			value = "")
 	public static int saveSimulation(final IScope scope, final String pathname) {
@@ -137,7 +137,7 @@ public class ReverseOperators {
 
 	// TODO to remove when possible
 	@operator (
-			value = "serializeNetwork")
+			value = "serialize_network")
 	@doc (
 			value = "[For network purpose] It serializes any object, i.e. transform it into a string.",
 			deprecated = "Still in alpha version, do not use it.")
@@ -147,7 +147,7 @@ public class ReverseOperators {
 	}
 
 	@operator (
-			value = "unserializeNetwork")
+			value = "unserialize_network")
 	@doc (
 			value = "[For network purpose]",
 			deprecated = "Still in alpha version, do not use it.")

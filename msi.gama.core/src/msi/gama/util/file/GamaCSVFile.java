@@ -22,6 +22,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -154,35 +155,53 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	 * @param pathName
 	 * @throws GamaRuntimeException
 	 */
-	@doc ("This file constructor allows to read a CSV file with the default separator, no header, and no assumption on the type of data")
+	@doc (value= "This file constructor allows to read a CSV file with the default separator (coma), no header, and no assumption on the type of data",
+		examples = {
+				@example(value = "csv_file f <- csv_file(\"file\");", isExecutable = false)
+		})
 	public GamaCSVFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, (String) null);
 	}
-
+	@doc (value= "This file constructor allows to read a CSV file with the default separator (coma), with a header, and no assumption on the type of data",
+			examples = {
+					@example(value = "csv_file f <- csv_file(\"file\",true);", isExecutable = false)
+			})
 	public GamaCSVFile(final IScope scope, final String pathName, final Boolean withHeader) {
 		this(scope, pathName);
 		hasHeader = withHeader;
 	}
 
+	@doc (value= "This file constructor allows to read a CSV file with a given separator, no header, and no assumption on the type of data",
+			examples = {
+					@example(value = "csv_file f <- csv_file(\"file\", \";\");" , isExecutable = false)
+			})
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator) {
 		this(scope, pathName, separator, (IType) null);
 	}
-
+	@doc (value= "This file constructor allows to read a CSV file with a given separator, with a header, and no assumption on the type of data",
+			examples = {
+					@example(value = "csv_file f <- csv_file(\"file\", \";\",true);" , isExecutable = false)
+			})
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final Boolean withHeader) {
 		this(scope, pathName, separator, (IType) null);
 		hasHeader = withHeader;
 	}
-
+	@doc (value= "This file constructor allows to read a CSV file with a given separator, no header, and the type of data",
+			examples = {
+					@example(value = "csv_file f <- csv_file(\"file\", \";\",int);" , isExecutable = false)
+			})
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final IType type) {
 		this(scope, pathName, separator, type, (Boolean) null);
 	}
-
+	@doc (value= "This file constructor allows to read a CSV file with a given separator, the type of data, with a header",
+			examples = {
+					@example(value = "csv_file f <- csv_file(\"file\", \";\",int,true);" , isExecutable = false)
+			})
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final IType type,
 			final Boolean withHeader) {
 		this(scope, pathName, separator, type, (GamaPoint) null);
 		hasHeader = withHeader;
 	}
-
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final IType type,
 			final GamaPoint size) {
 		super(scope, pathName);
@@ -190,7 +209,6 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 		contentsType = type;
 		userSize = size;
 	}
-
 	public GamaCSVFile(final IScope scope, final String pathName, final IMatrix<Object> matrix) {
 		super(scope, pathName, matrix);
 		if (matrix != null) {
