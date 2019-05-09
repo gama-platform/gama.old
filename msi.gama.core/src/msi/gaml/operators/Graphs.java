@@ -1569,7 +1569,9 @@ public class Graphs {
 					equals = "the graph with node(0)",
 					isExecutable = false),
 			see = { "add_edge", "graph" })
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"g <- g add_node {10,40} ;"
+			+ " length(g.vertices) = 7")	
 	public static IGraph addNode(final IGraph g, final IShape node) {
 		g.addVertex(node);
 		return g;
@@ -1588,7 +1590,9 @@ public class Graphs {
 					value = "node(0) remove_node_from graphEpidemio",
 					equals = "the graph without node(0)",
 					isExecutable = false))
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"g <- geometry({10,5}) remove_node_from g; "
+			+ " length(g.vertices) = 5 and length(g.edges) = 2")	
 	public static IGraph removeNodeFrom(final IShape node, final IGraph g) {
 		g.removeVertex(node);
 
@@ -1631,7 +1635,9 @@ public class Graphs {
 					value = "graph <- graph add_edge (source::target);",
 					isExecutable = false),
 			see = { "add_node", "graph" })
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"g <- g add_edge ({40,60}::{50,50}); "
+			+ " length(g.edges) = 6")	
 	public static IGraph addEdge(final IGraph g, final GamaPair nodes) {
 		g.addEdge(nodes.first(), nodes.last());
 		g.incVersion();
@@ -1650,17 +1656,14 @@ public class Graphs {
 					value = "path_between (my_graph, ag1, ag2)",
 					equals = "A path between ag1 and ag2",
 					isExecutable = false) })
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			" length((path_between (g, {10,5}, {50,50}))) = 1 ")
 	public static IPath path_between(final IScope scope, final IGraph graph, final IShape source, final IShape target)
 			throws GamaRuntimeException {
-		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
-		// Cast.asTopology(scope, graph));
 		if (graph instanceof GamaSpatialGraph) {
 			return Cast.asTopology(scope, graph).pathBetween(scope, source, target);
 		}
 		return graph.computeShortestPathBetween(scope, source, target);
-		// return graph.computeShortestPathBetween(sourTarg.key,
-		// sourTarg.value);
 	}
 
 	@operator (
@@ -1675,17 +1678,22 @@ public class Graphs {
 					value = "paths_between(my_graph, ag1:: ag2, 2)",
 					equals = "the 2 shortest paths (ordered by length) between ag1 and ag2",
 					isExecutable = false) })
-	@no_test
+	@test(" graph<geometry, geometry> g <- directed(as_edge_graph([\r\n" + 
+			"								edge({10,5}, {20,3}), \r\n" + 
+			"								edge({10,5}, {30,30}),\r\n" + 
+			"								edge({30,30}, {80,35}),\r\n" + 
+			"								edge({80,35}, {40,60}),\r\n" + 
+			"								edge({80,35}, {10,5}), \r\n" + 
+			"								edge({10,5}, {80,35}),\r\n" + 
+			"								edge({30,30}, {85,25}),\r\n" + 
+			"								edge({85,35}, {80,35}),\r\n" + 
+			"								node ({50,50})\r\n" + 
+			"	])); "
+			+ " length((paths_between(g, {10,5}:: {80,35}, 2))) = 2")
 	public static IList<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
 			final GamaPair sourTarg, final int k) throws GamaRuntimeException {
-		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
-		// Cast.asTopology(scope, graph));
 		return Cast.asTopology(scope, graph).KpathsBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value, k);
-
-		// return graph.computeShortestPathBetween(sourTarg.key,
-		// sourTarg.value);
-
-	}
+		}
 
 	@operator (
 			value = "max_flow_between",
@@ -1723,15 +1731,9 @@ public class Graphs {
 	@no_test
 	public static IPath as_path(final IScope scope, final GamaList<IShape> edgesNodes, final GamaGraph graph)
 			throws GamaRuntimeException {
-		// DEBUG.OUT("Cast.asTopology(scope, graph) : " +
-		// Cast.asTopology(scope, graph));
 		final IPath path = GamaPathType.staticCast(scope, edgesNodes, null, false);
 		path.setGraph(graph);
 		return path;
-
-		// return graph.computeShortestPathBetween(sourTarg.key,
-		// sourTarg.value);
-
 	}
 
 	/**
@@ -1974,11 +1976,6 @@ public class Graphs {
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String filename) throws GamaRuntimeException {
 		return primLoadGraphFromFile(scope, null, filename);
 	}
-
-	/*
-	 * public static IGraph addRandomEdges(final IGraph g, final Double probability) {
-	 * GraphAlgorithmsHandmade.rewireGraph(g, probability); return g; }
-	 */
 
 	@operator (
 			value = "load_shortest_paths",
