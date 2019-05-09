@@ -48,35 +48,32 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		final int[] code = { 0 };
 		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
 		final boolean oldPref = GamaPreferences.Runtime.FAILED_TESTS.getValue();
-		try { 
-			GamaPreferences.Runtime.FAILED_TESTS.set(onlyFailed);
-			final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithTests();
-			for (final Bundle bundle : plugins.keySet()) {
-				for (final String entry : plugins.get(bundle)) {
-					final Enumeration<URL> urls = bundle.findEntries(entry, "*", true);
-					if (urls != null)
-						while (urls.hasMoreElements()) {
-							final URL url = urls.nextElement();
-							if (isTest(url)) {
-								final URL resolvedFileURL = FileLocator.toFileURL(url);
-								test(count, code, resolvedFileURL);
-							}
+		GamaPreferences.Runtime.FAILED_TESTS.set(onlyFailed);
+		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithTests();
+		List<URL> allURLs = new ArrayList<>();
+		for (final Bundle bundle : plugins.keySet()) {
+			for (final String entry : plugins.get(bundle)) {
+				final Enumeration<URL> urls = bundle.findEntries(entry, "*", true);
+				if (urls != null)
+					while (urls.hasMoreElements()) {
+						final URL url = urls.nextElement();
+						if (isTest(url)) {
+							final URL resolvedFileURL = FileLocator.toFileURL(url);
+							allURLs.add(resolvedFileURL);
 						}
-				}
+					}
 			}
-
-		} catch (final URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
-			log("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
-			System.out.println(code[0]);
 		}
+		GamlModelBuilder.loadURLs(allURLs);
+
+		allURLs.forEach(u -> test(count, code, u));
+		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
+		System.out.println("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
+		System.out.println(code[0]);
 		return code[0];
 	}
 
-	public void test(final int[] count, final int[] code, final URL p) throws URISyntaxException {
+	public void test(final int[] count, final int[] code, final URL p) {
 		final IModel model = GamlModelBuilder.compile(p, errors);
 		if (model == null || model.getDescription() == null)
 			return;
