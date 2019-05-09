@@ -344,7 +344,7 @@ public class NetworkSkill extends MessagingSkill {
 					value = "Simulate a step to test the skill. It must be used for Gama-platform test only",
 					returns = "nothing",
 					examples = { @example ("do simulate_step;\n") }))
-	private void fetchMessagesOfAgents(final IScope scope) {
+	public void fetchMessagesOfAgents(final IScope scope) {
 
 		for (final IConnector connection : getRegisteredServers(scope).values()) {
 			final Map<IAgent, LinkedList<ConnectorMessage>> messages = connection.fetchAllMessages();
