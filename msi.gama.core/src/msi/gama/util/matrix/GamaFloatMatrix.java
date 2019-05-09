@@ -592,7 +592,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	protected Double getNthElement(final Integer index) {
+	public Double getNthElement(final Integer index) {
 		if (index == null) { return 0d; }
 		if (index > getMatrix().length) { return 0d; }
 		return getMatrix()[index];

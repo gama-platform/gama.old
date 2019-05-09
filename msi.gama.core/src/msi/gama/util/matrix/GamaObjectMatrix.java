@@ -193,6 +193,8 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		return cprime;
 	}
 
+	
+
 	// @Override
 	// public Double _max(final IScope scope) {
 	// Double max = -Double.MAX_VALUE;
@@ -422,7 +424,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 * @see msi.gama.util.matrix.GamaMatrix#getNthElement(java.lang.Integer)
 	 */
 	@Override
-	protected Object getNthElement(final Integer index) {
+	public Object getNthElement(final Integer index) {
 		if (index == null) { return null; }
 		if (index > getMatrix().length) { return null; }
 		return getMatrix()[index];
