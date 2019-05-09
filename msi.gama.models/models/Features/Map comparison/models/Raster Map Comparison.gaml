@@ -91,6 +91,7 @@ grid cell width: 50 height: 50 {
 
 experiment mapcomparison type: gui {
 	output {
+		layout #split;
 		display map_sim type: opengl{
 			grid cell;
 		}
