@@ -3859,7 +3859,7 @@ public abstract class Spatial {
 				examples = { @example (
 						value = " square(5) points_on(2)",
 						equals = "a list of points belonging to the exterior ring of the square distant from each other of 2.",
-						test = true) },
+						test = false) },
 				see = { "closest_points_with", "farthest_point_to", "points_at" })
 		@test("line({0,0},{0,10}) points_on 5 = [{0.0,0.0,0.0},{0.0,5.0,0.0},{0.0,10.0,0.0}]")
 		public static IList points_on(final IShape geom, final Double distance) {
@@ -3886,7 +3886,7 @@ public abstract class Spatial {
 				examples = { @example (
 						value = " line([{10,10},{80,80}]) points_along ([0.3, 0.5, 0.9])",
 						equals = "the list of following points: [{31.0,31.0,0.0},{45.0,45.0,0.0},{73.0,73.0,0.0}]",
-						test = true) },
+						test = false) },
 				see = { "closest_points_with", "farthest_point_to", "points_at", "points_on" })
 		@test("line({0,0},{0,10}) points_along [0.50, 0.75] = [{0.0,5.0,0.0},{0.0,7.5,0.0}]")
 		public static IList points_along(final IShape geom, final IList<Double> rates) {
