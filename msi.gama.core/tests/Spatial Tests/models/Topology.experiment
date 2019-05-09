@@ -1,0 +1,106 @@
+/***
+* Name: Topology
+* Author: kevinchapuis
+* Description: Model to test topology related spatial operators
+* Tags: Tag1, Tag2, TagN
+***/
+model testTopology
+
+global {
+	
+	graph c_graph4;
+	graph c_graph6;
+	graph c_graph8;
+	
+	int x_cells <- 10;
+	int y_cells <- 10;
+	
+	init {
+		c_graph4 <- grid_cells_to_graph(cell4);
+		c_graph6 <- grid_cells_to_graph(cell6);
+		c_graph8 <- grid_cells_to_graph(cell8);
+		create dummy number:100;
+	}
+	
+}
+
+grid cell4 width: x_cells height: y_cells neighbors: 4 {}
+grid cell6 width: x_cells height: y_cells neighbors: 6 {}
+grid cell8 width: x_cells height: y_cells neighbors: 8 {}
+	
+species dummy { aspect default {draw shape color:#grey;} }
+
+experiment visu type: gui {
+	output {
+		display map4 {
+			grid cell4 lines:#grey;
+			species dummy;
+			graphics the_graph {
+				draw c_graph4 color:#black;
+			}
+		}	
+		display map6 {
+			grid cell6 lines:#grey;
+			graphics the_graph {
+				draw c_graph6 color:#black;
+			}
+		}
+		display map8 {
+			grid cell8 lines:#grey;
+			graphics the_graph {
+				draw c_graph8 color:#black;
+			}
+		}
+	}	
+}
+
+experiment Topology type: test autorun: true {	
+	
+	
+	setup {
+		
+		
+	}
+	
+	test "Distance_to using topology" {
+		
+		float dc4 <- using((cell4[0,0] distance_to cell4[0,1]), topology(cell4));
+		float dc4_bis <- (cell4[0,0] distance_to cell4[0,1]) using topology(cell4);
+		float dc4_ter;
+		using topology(cell4){dc4_ter <- cell4[0,0] distance_to cell4[0,1];}
+		
+		write "distance cell 4 : "+dc4+" or "+dc4_bis+" or "+dc4_ter;
+		assert dc4 = dc4_ter and dc4 = dc4_bis and dc4_bis = dc4_ter;
+		assert dc4 = 1.0;
+		
+		float dw4 <- (cell4[0,0].location distance_to cell4[0,1].location) using topology(world);
+		float dw4_bis;
+		using topology(world){dw4_bis <- cell4[0,0].location distance_to cell4[0,1].location;}
+		
+		write "distance continuous 4 : "+dw4+" or "+dw4_bis;
+		assert dw4 = dw4_bis; 
+		assert dw4 = world.shape.height/10.0;
+		
+		float dg4 <- (cell4[0,0] distance_to cell4[0,1]) using topology(c_graph4);
+		float dg4_bis;
+		using topology(c_graph4){dg4_bis <- cell4[0,0] distance_to cell4[0,1];}
+		
+		write "distance graph 4 : "+dg4+" or "+dg4_bis;
+		assert dg4 = geometry(c_graph4 edge_between (cell4[0,0]::cell4[0,1])).perimeter;
+		
+		float dg6 <- (cell6[0,0] distance_to cell6[0,1]) using topology(c_graph6);
+		float dg6_bis;
+		using topology(c_graph6){dg6_bis <- cell6[0,0] distance_to cell6[0,1];}
+		
+		write "distance graph 6 : "+dg6+" or "+dg6_bis;
+		assert dg6 = geometry(c_graph6 edge_between (cell6[0,0]::cell6[0,1])).perimeter;
+		
+		float dg8 <- (cell8[0,0] distance_to cell8[0,1]) using topology(c_graph8);
+		float dg8_bis;
+		using topology(c_graph8){dg8_bis <- cell8[0,0] distance_to cell8[0,1];}
+		
+		write "distance graph 8 : "+dg8+" or "+dg8_bis;
+		assert dg8 = geometry(c_graph8 edge_between (cell8[0,0]::cell8[0,1])).perimeter;
+	}
+	
+}
