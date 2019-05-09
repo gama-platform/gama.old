@@ -53,6 +53,7 @@ public class Constants {
 
 	// Inputs Folders
 	public static String XSL_XML2WIKI_FOLDER 			= INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2md";
+	public static String XSL_XML2JSON_FOLDER 			= INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2json";
 	public static String XSL_XML2CATALOG_FOLDER 		= INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2catalog";	
 	public static String XSL_XML2TEST_FOLDER 			= INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2test";
 	public static String XSL_XML2KEYWORDS_XML_FOLDER 	= INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2keywordsXml";
