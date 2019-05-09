@@ -146,7 +146,7 @@ public abstract class Spatial {
 						value = "(agents closest_to self) using topology(world)",
 						equals = "the closest agent to self (the caller) in the continuous topology of the world",
 						test = false) })
-		@no_test
+		@no_test // comment="See Topology.experiment in test models"
 		public static Object using(final IScope scope, final IExpression expression, final ITopology topology) {
 			final ITopology oldTopo = scope.getTopology();
 			try {
@@ -178,6 +178,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test // (comment="See Creation.experiment in test models : {Circle tests with tolerance}")
 		public static IShape circle(final IScope scope, final Double radius) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -200,6 +201,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test // (comment="See Creation.experiment in test models : {Circle tests with tolerance}")
 		public static IShape circle(final IScope scope, final Double radius, final GamaPoint position) {
 			ILocation location;
 			location = position;
@@ -222,6 +224,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 						"circle", "squircle", "triangle" })
+		@no_test // (comment="See Creation.experiment in test models : {Ellipse tests}")
 		public static IShape ellipse(final IScope scope, final Double xRadius, final Double yRadius) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
@@ -247,6 +250,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 						"rectangle", "square", "circle", "ellipse", "triangle" })
+		@no_test // Because who cares "du cul"
 		public static IShape squicle(final IScope scope, final Double xRadius, final Double power) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
@@ -270,9 +274,35 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 						"rectangle", "square", "circle", "ellipse", "triangle" })
+		@no_test // (comment="See Creation.experiment in test models : {Arc tests}")
 		public static IShape arc(final IScope scope, final Double xRadius, final Double heading,
 				final Double amplitude) {
 			return arc(scope, xRadius, heading, amplitude, true);
+		}
+		
+		@operator (
+				value = "arc",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+		@doc (
+				value = "An arc, which radius is equal to the first operand, heading to the second, amplitude to the third and a boolean indicating whether to return a linestring or a polygon to the fourth",
+				usages = { @usage (
+						value = "returns a point if the radius operand is lower or equal to 0.") },
+				comment = "the center of the arc is by default the location of the current agent in which has been called this operator.",
+				examples = { @example (
+						value = "arc(4,45,90, false)",
+						equals = "a geometry as an arc of radius 4, in a direction of 45° and an amplitude of 90°, which only contains the points on the arc",
+						test = false) },
+				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
+						"rectangle", "square", "circle", "ellipse", "triangle" })
+		@no_test // (comment="See Creation.experiment in test models : {Arc tests}")
+		public static IShape arc(final IScope scope, final Double xRadius, final Double heading, final Double amplitude,
+				final boolean filled) {
+			GamaPoint location;
+			final IAgent a = scope.getAgent();
+			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			if (xRadius <= 0) { return new GamaShape(location); }
+			return GamaGeometryType.buildArc(xRadius, heading, amplitude, filled, location);
 		}
 
 		@operator (
@@ -287,6 +317,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 						"rectangle", "square", "circle", "ellipse", "triangle" })
+		@no_test // (comment="no idea on how to test a cross")
 		public static IShape cross(final IScope scope, final Double xRadius, final Double width) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
@@ -307,36 +338,13 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 						"rectangle", "square", "circle", "ellipse", "triangle" })
+		@no_test // (comment="no idea on how to test a cross")
 		public static IShape cross(final IScope scope, final Double xRadius) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
 			if (xRadius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildCross(xRadius, null, location);
-		}
-
-		@operator (
-				value = "arc",
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
-				concept = {})
-		@doc (
-				value = "An arc, which radius is equal to the first operand, heading to the second, amplitude to the third and a boolean indicating whether to return a linestring or a polygon to the fourth",
-				usages = { @usage (
-						value = "returns a point if the radius operand is lower or equal to 0.") },
-				comment = "the center of the arc is by default the location of the current agent in which has been called this operator.",
-				examples = { @example (
-						value = "arc(4,45,90, false)",
-						equals = "a geometry as an arc of radius 4, in a direction of 45° and an amplitude of 90°, which only contains the points on the arc",
-						test = false) },
-				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
-						"rectangle", "square", "circle", "ellipse", "triangle" })
-		public static IShape arc(final IScope scope, final Double xRadius, final Double heading, final Double amplitude,
-				final boolean filled) {
-			GamaPoint location;
-			final IAgent a = scope.getAgent();
-			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
-			if (xRadius <= 0) { return new GamaShape(location); }
-			return GamaGeometryType.buildArc(xRadius, heading, amplitude, filled, location);
 		}
 
 		@operator (
@@ -354,6 +362,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape cylinder(final IScope scope, final Double radius, final Double depth) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -377,6 +386,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape sphere(final IScope scope, final Double radius) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -399,6 +409,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape teapot(final IScope scope, final Double size) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
