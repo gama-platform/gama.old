@@ -1026,7 +1026,11 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the value of the Gamma function at x.",
 				comment = "",
-				examples = {})
+				examples = {@example(
+								value="int(gamma(5))",
+								equals ="24")}
+						
+				)
 		public static Double opGamma(final IScope scope, final Double x) {
 
 			// Returns the value of the Gamma function at x.
