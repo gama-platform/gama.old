@@ -157,13 +157,21 @@ public class Reader {
 
 		final String finalStep = getAttributeWithoutCase(e, XmlTAG.FINAL_STEP_TAG);
 		int max;
-		if (finalStep == null || "".equals(finalStep)) {
+		
+		if(finalStep.toUpperCase().equals("INFINITY"))
+		{
 			max = -1;
-		} else {
-			max = Integer.valueOf(finalStep);
 		}
-		if (max < 0) {
-			DEBUG.ERR("WARNING: the headless simulation has no final step!");
+		else
+		{
+			if (finalStep == null || "".equals(finalStep)) {
+				max = -1;
+			} else {
+				max = Integer.valueOf(finalStep);
+			}
+			if (max < 0) {
+				DEBUG.ERR("WARNING: the headless simulation has no final step!");
+			}
 		}
 		// int max = Integer.valueOf(e.getAttribute(XmlTAG.FINAL_STEP_TAG));
 

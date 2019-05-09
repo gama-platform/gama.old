@@ -16,6 +16,9 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -198,6 +201,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			content_type = ITypeProvider.BOTH,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
+	@doc (
+			value = "A matrix resulting from the concatenation of the columns  of the two given matrices. ",
+			masterDoc = true,
+			examples = { @example (
+					value = "matrix([[1,2],[3,4]]) append_vertically matrix([[1,2],[3,4]])",
+					equals = "matrix([[1,2,1,2],[3,4,3,4]])") })
 	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
 		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
 			return ((GamaIntMatrix) this)._opAppendVertically(scope, b);
@@ -240,6 +249,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			content_type = ITypeProvider.BOTH,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
+	@doc (
+			value = "A matrix resulting from the concatenation of the rows of the two given matrices.",
+			masterDoc = true,
+			examples = { @example (
+					value = "matrix([[1.0,2.0],[3.0,4.0]]) append_horizontally matrix([[1,2],[3,4]])",
+					equals = "matrix([[1.0,2.0],[3.0,4.0],[1.0,2.0],[3.0,4.0]])") })
 	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
 		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
 			return ((GamaIntMatrix) this)._opAppendHorizontally(scope, b);

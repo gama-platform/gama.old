@@ -66,6 +66,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -91,7 +92,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
 		concept = { IConcept.OSM, IConcept.FILE },
-		doc = @doc ("Represents files that contain OSM GIS information. The internal representation is a list of geometries"))
+		doc = @doc ("Represents files that contain OSM GIS information. The internal representation is a list of geometries. See https://en.wikipedia.org/wiki/OpenStreetMap for more information"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaOsmFile extends GamaGisFile {
 
@@ -283,28 +284,31 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @param scope
 	 * @param pathName
 	 */
+	@doc (value= "This file constructor allows to read a osm (.osm, .pbf, .bz2, .gz) file (using WGS84 coordinate system for the data)",
+			examples = {
+				@example(value = "file f <- osm_file(\"file\");", isExecutable = false)
+			})
 	public GamaOsmFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
 
-	public GamaOsmFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
-		super(scope, pathName, code);
-	}
-
-	public GamaOsmFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
-		super(scope, pathName, code);
-	}
-
+	@doc (value= "This file constructor allows to read an osm (.osm, .pbf, .bz2, .gz) file (using WGS84 coordinate system for the data)"
+			+ "The map is used to filter the objects in the file according their attributes: for each key (string) of the map, only the objects that have a value for the  attribute "
+			+ "contained in the value set are kept."
+			+ " For an exhaustive list of the attibute of OSM data, see: http://wiki.openstreetmap.org/wiki/Map_Features",
+			
+			examples = {
+				@example(value = "file f <- osm_file(\"file\", map([\"highway\"::[\"primary\", \"secondary\"], \"building\"::[\"yes\"], \"amenity\"::[]]));", 
+						equals = "f will contain all the objects of file that have the attibute 'highway' with the value 'primary' or 'secondary', and the objects that have the attribute 'building' with the value 'yes', "
+								+ "and all the objects that have the attribute 'aminity' (whatever the value).", isExecutable = false)
+			})
+	
 	public GamaOsmFile(final IScope scope, final String pathName, final GamaMap<String, GamaList> filteringOptions) {
 		super(scope, pathName, (Integer) null);
 		this.filteringOptions = filteringOptions;
 	}
+	
 
-	public GamaOsmFile(final IScope scope, final String pathName, final GamaMap<String, GamaList> filteringOption,
-			final Integer code) {
-		super(scope, pathName, code);
-		this.filteringOptions = filteringOption;
-	}
 
 	@Override
 	protected String fetchFromURL(final IScope scope) {
