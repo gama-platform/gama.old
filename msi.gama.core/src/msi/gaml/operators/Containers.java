@@ -1106,6 +1106,7 @@ public class Containers {
 			doc = @doc ("Returns the sum of the weights of the graph nodes"),
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
+	@test("sum(as_edge_graph(line([{10,10},{30,10}]))) = 20.0")
 	public static double sum(final IScope scope, final IGraph g) {
 		if (g == null) { return 0.0; }
 		return g.computeTotalWeight();
