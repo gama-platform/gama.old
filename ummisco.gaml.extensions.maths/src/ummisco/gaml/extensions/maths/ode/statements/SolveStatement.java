@@ -69,7 +69,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 		@facet(name = "integrated_values", type = IType.LIST, optional = true, doc = @doc(value = "list of variables's value inside integration process")),
 		@facet(name = "t0", type = IType.FLOAT, optional = true, doc = @doc(value = "the first bound of the integration interval (defaut value: cycle*step, the time at the begining of the current cycle.)")),
 		@facet(name = "tf", type = IType.FLOAT, optional = true, doc = @doc(value = "the second bound of the integration interval. Can be smaller than t0 for a backward integration (defaut value: cycle*step, the time at the begining of the current cycle.)")),
-		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc(value = "integration step, use with fixed step integrator methods (default value: 0.005*step)")),
+		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc(value = "(deprecated) integration step, use with fixed step integrator methods (default value: 0.005*step)")),
 		@facet(name = "step_size", type = IType.FLOAT, optional = true, doc = @doc(value = "integration step, use with fixed step integrator methods (default value: 0.005*step)")),
 		@facet(name = "min_step", type = IType.FLOAT, optional = true, doc = @doc(value = "minimal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 		@facet(name = "max_step", type = IType.FLOAT, optional = true, doc = @doc(value = "maximal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
