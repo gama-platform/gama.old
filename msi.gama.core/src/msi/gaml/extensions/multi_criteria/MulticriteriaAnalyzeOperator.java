@@ -345,8 +345,13 @@ public class MulticriteriaAnalyzeOperator {
 			category = { MULTICRITERIA },
 			concept = { IConcept.MULTI_CRITERIA })
 	@doc (
+			examples = { @example (
+					value = "evidence_theory_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [[\"name\"::\"utility\", \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true],[\"name\"::\"price\",  \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true]])",
+					equals = "0") },
+			
 			usages = { @usage (
-					value = "if the operator is used with only 2 operands (the candidates and the criteria), the last parameter (use simple method) is set to true") })
+					value = "if the operator is used with only 2 operands (the candidates and the criteria), the last parameter (use simple method) is set to true"),
+					})
 	public static Integer evidenceTheoryDecisionMaking(final IScope scope, final IList<List> cands,
 			final IList<Map<String, Object>> criteriaMap) throws GamaRuntimeException {
 		return evidenceTheoryDecisionMaking(scope, cands, criteriaMap, true);
@@ -361,7 +366,7 @@ public class MulticriteriaAnalyzeOperator {
 			masterDoc = true,
 			special_cases = { "returns -1 is the list of candidates is nil or empty" },
 			examples = { @example (
-					value = "evidence_theory_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [[\"name\"::\"utility\", \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true],[\"name\"::\"price\",  \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true]], true)",
+					value = "evidence_theory_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [[\"name\"::\"utility\", \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true],[\"name\"::\"price\",  \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true]], false)",
 					equals = "0") },
 			see = { "weighted_means_DM", "electre_DM", "electre_DM" })
 	public static Integer evidenceTheoryDecisionMaking(final IScope scope, final IList<List> cands,
