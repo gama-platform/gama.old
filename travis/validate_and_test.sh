@@ -90,48 +90,7 @@ fi
 
 
 
-echo "******************************************************************"
-echo "* GAMA version 1.8                                          *"
-echo "* http://gama-platform.org                                       *"
-echo "* (c) 2007-2019 UMI 209 UMMISCO IRD/UPMC & Partners              *"
-echo "******************************************************************"
-if [ $help = "yes" ]  ;  then
-echo ""
-echo " sh ./gama-headless.sh [Options] [XML Input] [output directory]"
-echo ""
-echo ""
-echo "List of available options:"
-echo "      -help     -- get the help of the command line"
-echo "      -m mem    -- allocate memory (ex 2048m)"
-echo "      -c        -- start the console to write xml parameter file"
-echo "      -hpc core -- set the number of core available for experimentation"
-echo "      -p        -- start piplines to interact with another framework"
-echo ""
-echo ""
-exit 1
-fi
-
-
-
-
-if [ ! -f "$inputFile" ] && [ $console = "no" ] && [ $tunneling = "no" ] ;  then
-echo "The input or output file are not specied. Please check the path of your files and output file."
-echo "Use the help for more information (./gama-headless -help)"
-exit 1
-fi
-
-if   [ -d "$inputFile" ]  && [ $console = "no" ] && [ $tunneling = "no" ] ; then
-    echo "The defined input is not an XML parameter file" 
-    echo "Use the help for more information (./gama-headless -help)"
-    exit 1
-fi
-
-if [ $tunneling = "no" ] && [ -d "$outputFile" ]   ; then
-echo "The output directory already exist. Please check the path of your output directory" 
-echo "Use the help for more information (./gama-headless -help)"
-exit 1
-fi
-
+ 
 # assuming this file is within the gama deployment
 GAMAHOME=$(cd $(dirname $0)/.. && pwd -P)
 
@@ -163,12 +122,7 @@ if [[ $res -gt 0 ]]; then
 fi
 
 
-passWork=/tmp/.work
 
-echo "GAMA is starting..."
-#exec
-
-#GAMA=Gamaq
 exec java -cp $GAMA -Xms512m -Xmx$memory  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork -test -failed   
 res=$?			
 rm -rf $passWork
