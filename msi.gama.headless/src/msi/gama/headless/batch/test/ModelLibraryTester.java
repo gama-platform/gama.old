@@ -42,6 +42,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	@Override
 	public int start(final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
+
 		original = System.out;
 		final int[] count = { 0 };
 		final int[] code = { 0 };
@@ -63,9 +64,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 					}
 			}
 		}
-		for(int i=0; i<100000; i++) {
-			System.out.print("");
-		}
 		GamlModelBuilder.loadURLs(allURLs);
 
 		allURLs.forEach(u -> test(count, code, u));
@@ -76,6 +74,9 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	}
 
 	public void test(final int[] count, final int[] code, final URL p) {
+		if(p.getFile().contains("Maths Tests.experiment")) {
+			System.out.println();
+		}
 		final IModel model = GamlModelBuilder.compile(p, errors);
 		if (model == null || model.getDescription() == null)
 			return;
@@ -87,11 +88,11 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
-			    System.setOut(new PrintStream(new OutputStream() {
-			                public void write(int b) {
-			                    //DO NOTHING
-			                }
-			            }));
+//			    System.setOut(new PrintStream(new OutputStream() {
+//			                public void write(int b) {
+//			                    //DO NOTHING
+//			                }
+//			            }));
 
 				final TestAgent agent = (TestAgent) exp.getAgent();
 				exp.setHeadless(true);
@@ -100,7 +101,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 				count[0] += agent.getSummary().size();
-			    System.setOut(original);
+//			    System.setOut(original);
 				if (code[0] > 0)
 					System.out.println(agent.getSummary().toString());
 			}
