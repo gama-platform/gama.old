@@ -54,6 +54,7 @@ public class Files {
 	@doc (
 			value = "Creates a file in read/write mode, setting its contents to the container passed in parameter",
 			comment = "The type of container to pass will depend on the type of file (see the management of files in the documentation). Can be used to copy files since files are considered as containers. For example: save file('image_copy.png', file('image.png')); will copy image.png to image_copy.png")
+	@no_test
 	public static IGamaFile from(final IScope scope, final String s, final IContainer container) {
 		// WARNING Casting to Modifiable is not safe
 		// TODO: Add a method toModifiableVersion() to IContainer

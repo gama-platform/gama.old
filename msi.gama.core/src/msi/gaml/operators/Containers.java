@@ -266,6 +266,7 @@ public class Containers {
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER, IConcept.GEOMETRY })
 	@doc ("For internal use only. Corresponds to the implementation, for geometries, of the access to containers with [index]")
+	@no_test
 	public static Object internal_at(final IScope scope, final IShape shape, final IList indices)
 			throws GamaRuntimeException {
 		// TODO How to test if the index is correct ?
@@ -281,6 +282,7 @@ public class Containers {
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.SPECIES })
 	@doc ("For internal use only. Corresponds to the implementation, for agents, of the access to containers with [index]")
+	@no_test
 	public static Object internal_at(final IScope scope, final IAgent agent, final IList indices)
 			throws GamaRuntimeException {
 		if (agent == null) { return null; }
@@ -791,6 +793,7 @@ public class Containers {
 							equals = "[test0,test1]",
 							isExecutable = false) },
 			see = { "of_generic_species" })
+	@no_test
 	public static IList of_species(final IScope scope, final IContainer agents, final ISpecies s) {
 		return of_species(scope, notNull(scope, agents), notNull(scope, s), false);
 	}
