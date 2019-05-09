@@ -139,6 +139,7 @@ public class Dates {
 			value = APPROXIMATE_TEMPORAL_QUERY,
 			doc = @doc ("For internal use only"),
 			internal = true)
+	@no_test
 	public static double approximalQuery(final IScope scope, final IExpression left, final IExpression right) {
 		final Double arg = Cast.asFloat(scope, left.value(scope));
 		if (right instanceof TimeUnitConstantExpression) {
@@ -182,6 +183,7 @@ public class Dates {
 					@example (
 							value = "	     else {write \"the cycle number is odd\";}",
 							test = false) })
+	@no_test
 	public static Boolean every(final IScope scope, final Integer period) {
 		final int time = scope.getClock().getCycle();
 		return period > 0 && (time == 0 || time >= period) && time % period == 0;
@@ -201,6 +203,7 @@ public class Dates {
 					@example (
 							value = "state a { transition to: b when: every(2#mn);} state b { transition to: a when: every(30#s);} // This oscillatory behavior will use the starting_date of the model as its starting point in time",
 							isExecutable = false) })
+	@no_test
 	public static Boolean every(final IScope scope, final IExpression period) {
 		return scope.getClock().getStartingDate().isIntervalReached(scope, period);
 	}
@@ -216,6 +219,7 @@ public class Dates {
 			examples = { @example (
 					value = "(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval",
 					isExecutable = false) })
+	@test("list((date('2001-01-01') to date('2001-1-02')) every(#day)) = [date ('2001-01-01 00:00:00')]")
 	public static IList<GamaDate> every(final IScope scope, final GamaDateInterval interval, final IExpression period) {
 		return interval.step(Cast.asFloat(scope, period.value(scope)));
 	}
@@ -234,6 +238,8 @@ public class Dates {
 					@example (
 							value = "(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval",
 							isExecutable = false) })
+	@test("list((date('2001-01-01') to date('2001-4-01')) every(#month)) =\n" + 
+			"		[date ('2001-01-01 00:00:00'),date ('2001-01-31 00:00:00'),date ('2001-03-02 00:00:00')]")
 	public static IList<GamaDate> to(final IScope scope, final GamaDate start, final GamaDate end) {
 		return GamaDateInterval.of(start, end);
 	}
@@ -250,6 +256,9 @@ public class Dates {
 					@example (
 							value = "every(2#days) since (starting_date + 1#day) // the computation will return true 1 day after the starting date and every two days after this reference date",
 							isExecutable = false) })
+	@test("starting_date <- date([2019,5,9]);since(date([2019,5,10])) = false")
+	@test("starting_date <- date([2019,5,9]);since(date([2019,5,9])) = true")
+	@test("starting_date <- date([2019,5,9]);since(date([2019,5,8])) = true")
 	public static boolean since(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date, false);
 	}
@@ -269,6 +278,9 @@ public class Dates {
 					@example (
 							value = "every(2#days) after (starting_date + 1#day) 	// the computation will return true every two days (using the starting_date of the model as the starting point) only for the dates strictly after this starting_date + 1#day",
 							isExecutable = false) })
+	@test("starting_date <- date([2019,5,9]);after(date([2019,5,10])) = false")
+	@test("starting_date <- date([2019,5,9]);after(date([2019,5,9])) = false")
+	@test("starting_date <- date([2019,5,9]);after(date([2019,5,8])) = true")
 	public static boolean after(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date, true);
 	}
@@ -282,6 +294,9 @@ public class Dates {
 			examples = { @example (
 					value = "reflex when: before(starting_date) {} 	// this reflex will never be run",
 					isExecutable = false) })
+	@test("starting_date <- date([2019,5,9]);before(date([2019,5,10])) = true")
+	@test("starting_date <- date([2019,5,9]);before(date([2019,5,9])) = false")
+	@test("starting_date <- date([2019,5,9]);before(date([2019,5,8])) = false")
 	public static boolean before(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isSmallerThan(date, true);
 	}
@@ -295,6 +310,9 @@ public class Dates {
 			examples = { @example (
 					value = "reflex when: until(starting_date) {} 	// This reflex will be run only once at the beginning of the simulation",
 					isExecutable = false) })
+	@test("starting_date <- date([2019,5,9]);until(date([2019,5,10])) = true")
+	@test("starting_date <- date([2019,5,9]);until(date([2019,5,9])) = true")
+	@test("starting_date <- date([2019,5,9]);until(date([2019,5,8])) = false")
 	public static boolean until(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isSmallerThan(date, false);
 	}
@@ -304,6 +322,7 @@ public class Dates {
 			category = { IOperatorCategory.DATE },
 			doc = @doc ("Returns true if the first operand is true and the current date is equal to or after the second operand"),
 			concept = { IConcept.DATE })
+	@no_test
 	public static boolean since(final IScope scope, final IExpression expression, final GamaDate date) {
 		return since(scope, date) && Cast.asBool(scope, expression.value(scope));
 	}
@@ -313,6 +332,7 @@ public class Dates {
 			doc = @doc ("Returns true if the first operand is true and the current date is situated strictly after the second operand"),
 			category = { IOperatorCategory.DATE },
 			concept = { IConcept.DATE })
+	@no_test
 	public static boolean after(final IScope scope, final IExpression expression, final GamaDate date) {
 		return after(scope, date) && Cast.asBool(scope, expression.value(scope));
 	}
@@ -322,6 +342,7 @@ public class Dates {
 			category = { IOperatorCategory.DATE },
 			doc = @doc ("Returns true if the first operand is true and the current date is situated strictly before the second operand"),
 			concept = { IConcept.DATE })
+	@no_test
 	public static boolean before(final IScope scope, final IExpression expression, final GamaDate date) {
 		return before(scope, date) && Cast.asBool(scope, expression.value(scope));
 	}
@@ -331,6 +352,7 @@ public class Dates {
 			doc = @doc ("Returns true if the first operand is true and the current date is equal to or situated before the second operand"),
 			category = { IOperatorCategory.DATE },
 			concept = { IConcept.DATE })
+	@no_test
 	public static boolean until(final IScope scope, final IExpression expression, final GamaDate date) {
 		return until(scope, date) && Cast.asBool(scope, expression.value(scope));
 	}
@@ -340,6 +362,7 @@ public class Dates {
 			category = { IOperatorCategory.DATE },
 			doc = @doc ("Returns true if the first operand is true and the current date is situated strictly after the second operand and before the third one"),
 			concept = { IConcept.DATE })
+	@no_test
 	public static boolean between(final IScope scope, final IExpression expression, final GamaDate start,
 			final GamaDate stop) {
 		return between(scope, scope.getClock().getCurrentDate(), start, stop) && (boolean) expression.value(scope);
@@ -382,6 +405,7 @@ public class Dates {
 							@example (
 									value = "between(date('2000-01-01'), date('2020-02-02'))",
 									isExecutable = false) }))
+	@test("starting_date <- date([2019,5,9]);between((date([2019,5,8])), (date([2019,5,10]))) = true")
 	public static boolean between(final IScope scope, final GamaDate date1, final GamaDate date2) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date1, true)
 				&& scope.getSimulation().getCurrentDate().isSmallerThan(date2, true);
@@ -1014,6 +1038,7 @@ public class Dates {
 					examples = @example (
 							value = "date d <- date(\"1999-january-30\", 'yyyy-MMMM-dd', 'en');",
 							test = false)))
+	@test("date('1999-01-30', 'yyyy-MM-dd', 'en') = date('1999-01-30 00:00:00')")
 	// @test("date('1999-january-30', 'yyyy-MMMM-dd', 'en') = date('1999-01-30 00:00:00')")
 	public static GamaDate date(final IScope scope, final String value, final String pattern, final String locale) {
 		return new GamaDate(scope, value, pattern, locale);
@@ -1032,8 +1057,8 @@ public class Dates {
 							value = "string(#now, 'yyyy-MM-dd')",
 							isExecutable = false)))
 
-	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd') = '2000-janvier-02'")
-	@test ("string(date('2000-01-31'),'yyyy-MMMM-dd') = '2000-janvier-31'")
+	@test ("string(date('2000-01-02'),'yyyy-MM-dd') = '2000-01-02'")
+	@test ("string(date('2000-01-31'),'yyyy-MM-dd') = '2000-01-31'")
 	@test ("string(date('2000-01-02'),'yyyy-MM-dd') = '2000-01-02'")
 
 	public static String format(final GamaDate time, final String pattern) {
@@ -1053,7 +1078,7 @@ public class Dates {
 					examples = @example (
 							value = "string(#now, 'yyyy-MM-dd')",
 							isExecutable = false)))
-	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd','en') = '2000-january-02'")
+	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd','en') = '2000-January-02'")
 
 	public static String format(final GamaDate time, final String pattern, final String locale) {
 		return time.toString(pattern, locale);

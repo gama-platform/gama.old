@@ -32,6 +32,7 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 
 import msi.gama.application.workbench.PerspectiveHelper;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayData.Changes;
@@ -42,6 +43,7 @@ import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.InteractiveConsoleView;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
@@ -242,6 +244,13 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 						overlay.hide();
 					}
 				} else {
+					// Issue #2639
+					if (PlatformHelper.isMac() && !view.isOpenGL()) {
+						IDisplaySurface ds = view.getDisplaySurface();
+						if (ds != null)
+							ds.updateDisplay(true);
+					}
+
 					if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {
 						if (view.getOutput() != null && view.getDisplaySurface() != null) {
 							view.getOutput().setPaused(previousState);
@@ -251,6 +260,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 						overlay.update();
 					}
 				}
+
 			}
 		};
 		WorkbenchHelper.getWindow().addPerspectiveListener(perspectiveListener);

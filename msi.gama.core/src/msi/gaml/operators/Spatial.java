@@ -59,6 +59,7 @@ import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
@@ -77,6 +78,7 @@ import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -89,6 +91,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
@@ -143,6 +146,7 @@ public abstract class Spatial {
 						value = "(agents closest_to self) using topology(world)",
 						equals = "the closest agent to self (the caller) in the continuous topology of the world",
 						test = false) })
+		@no_test
 		public static Object using(final IScope scope, final IExpression expression, final ITopology topology) {
 			final ITopology oldTopo = scope.getTopology();
 			try {
@@ -1428,6 +1432,7 @@ public abstract class Spatial {
 								value = "geom1 - geom2",
 								equals = "a geometry corresponding to difference between geom1 and geom2",
 								isExecutable = false)))
+		@no_test
 		public static IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null || g1.getInnerGeometry() == null
 					|| g2.getInnerGeometry() == null) { return g1; }
@@ -2109,7 +2114,47 @@ public abstract class Spatial {
 			if (g1 == null) { return null; }
 			return new GamaShape(g1, null, new AxisAngle(angle), null);
 		}
+		
+		@operator (
+				value = "inverse_rotation",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "The inverse rotation. It is a rotation around the same axes with the opposite angle.",
+				masterDoc = true,
+				examples = { @example (
+						value = "inverse_rotation(38::{1,1,1})",
+						equals = "the inverse rotation  -38::{1,1,1}",
+						test = false) },
+				see = {"rotation_composition"})
+		public static GamaPair<Double, GamaPoint> inverse_rotation(final IScope scope, final GamaPair<Double,  GamaPoint> rotation) {
+			return new GamaPair(-rotation.key,rotation.value,Types.FLOAT, Types.POINT); 
+		}
+		
 
+		
+		@operator (
+				value = "rotation_composition",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "The rotation given by the composition of the rotations in the list, from left to right. Angles are in degrees.",
+				masterDoc = true,
+				examples = { @example (
+						value = "rotation_composition([38::{1,1,1},90::{1,0,0}])",
+						equals = "the result",
+						test = false) },
+				see = {"inverse_rotation"})
+		public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope, final GamaList <GamaPair<Double,  GamaPoint>> rotation_list) {
+			//Rotation3D rotation = new Rotation3D(new GamaPoint(1,0,0), 0.0);
+			Rotation3D rotation = new Rotation3D(new GamaPoint(1,0,0), 0.0);
+			for(GamaPair<Double, GamaPoint> rot: rotation_list){	
+				rotation = rotation.applyTo(new Rotation3D(rot.value, 2*Math.PI / 360 * rot.key));
+			}
+			return new GamaPair(180/Math.PI *rotation.getAngle(), rotation.getAxis(),Types.FLOAT, Types.POINT); 
+		}
+		
+		
 		@operator (
 				value = "rotated_by",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },

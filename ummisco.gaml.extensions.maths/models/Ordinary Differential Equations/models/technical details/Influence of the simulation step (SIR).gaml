@@ -36,7 +36,7 @@ species userSIR {
 	}		
 	
 	reflex solving {		
-		solve eqSIR method: rk4 step: h ;
+		solve eqSIR method: rk4 step_size: h ;
 	}
 
 }

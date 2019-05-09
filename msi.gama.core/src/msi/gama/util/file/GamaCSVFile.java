@@ -22,6 +22,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -202,6 +203,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 		this(scope, pathName, separator, type, (GamaPoint) null);
 		hasHeader = withHeader;
 	}
+	@no_test
 	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final IType type,
 			final GamaPoint size) {
 		super(scope, pathName);

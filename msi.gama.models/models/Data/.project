@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Articles</name>
+	<name>Data</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,6 +14,6 @@
 	<natures>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>msi.gama.application.gamaNature</nature>
-		<nature>msi.gama.builtin.model</nature>
+		<nature>msi.gama.application.builtinNature</nature>
 	</natures>
 </projectDescription>

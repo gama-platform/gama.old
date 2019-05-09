@@ -240,7 +240,7 @@ species Math_model schedules: [] parent: SIR_model {
 		diff(R, t) = (delta * I);
 	}
 
-	reflex solving {solve SIR method: "rk4" step: 0.01 ;}
+	reflex solving {solve SIR method: "rk4" step_size: 0.01 ;}
 }
 //Species host used by the Individual Based Model which move from one cell to another
 species Host schedules: [] skills: [moving] {
@@ -327,7 +327,7 @@ species my_SIR_maths {
 		diff(R, t) = (alpha * I);
 	}
 	
-	reflex solving {solve SIR method:"rk4" step:0.01;}
+	reflex solving {solve SIR method:"rk4" step_size:0.01;}
 
 }
 

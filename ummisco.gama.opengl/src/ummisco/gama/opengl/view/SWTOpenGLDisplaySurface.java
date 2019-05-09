@@ -10,12 +10,13 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import static ummisco.gama.ui.utils.PlatformHelper.autoScaleUp;
-import static ummisco.gama.ui.utils.PlatformHelper.isLinux;
-import static ummisco.gama.ui.utils.PlatformHelper.isWindows;
+import static ummisco.gama.ui.utils.PlatformHelper.scaleDownIfMac;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,12 +34,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 
 import com.jogamp.opengl.FPSCounter;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.swt.GLCanvas;
-import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
+import com.jogamp.opengl.util.GLBuffers;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -47,7 +50,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -144,7 +146,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			@Override
 			public Rectangle getClientArea() {
 				// see Issue #2378
-				//if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
+				// if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
 				return super.getClientArea();
 			}
 		};
@@ -182,12 +184,55 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if (!current) {
 			glad.getGL().getContext().makeCurrent();
 		}
-		final AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(glad.getGLProfile(), false);
-		final BufferedImage image = glReadBufferUtil.readPixelsToBufferedImage(glad.getGL(), true);
+		BufferedImage image = getImage(glad.getGL().getGL2(), w, h);
+		// final AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(glad.getGLProfile(), false);
+		// final BufferedImage image = glReadBufferUtil.readPixelsToBufferedImage(glad.getGL(), true);
 		if (!current) {
 			glad.getGL().getContext().release();
 		}
-		return ImageUtils.resize(image, w, h);
+		return image;
+		// return ImageUtils.resize(image, w, h);
+	}
+
+	ByteBuffer buffer;
+
+	protected ByteBuffer getBuffer(int w, int h) {
+
+		if (buffer == null || buffer.capacity() != w * h * 4)
+			buffer = GLBuffers.newDirectByteBuffer(w * h * 4);
+		else {
+			buffer.rewind();
+		}
+
+		return buffer;
+	}
+
+	protected BufferedImage getImage(GL2 gl3, int ww, int hh) {
+
+		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
+		int width = scaleDownIfMac(ww);
+		int height = scaleDownIfMac(hh);
+		BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics graphics = screenshot.getGraphics();
+
+		ByteBuffer buffer = getBuffer(width, height);
+		// be sure you are reading from the right fbo (here is supposed to be the default one)
+		// bind the right buffer to read from
+		gl3.glReadBuffer(GL.GL_BACK);
+		// if the width is not multiple of 4, set unpackPixel = 1
+		gl3.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+
+		for (int h = 0; h < height; h++) {
+			for (int w = 0; w < width; w++) {
+				// The color are the three consecutive bytes, it's like referencing
+				// to the next consecutive array elements, so we got red, green, blue..
+				// red, green, blue, and so on..+ ", "
+				graphics.setColor(new Color((buffer.get() & 0xff), (buffer.get() & 0xff), (buffer.get() & 0xff)));
+				buffer.get(); // consume alpha
+				graphics.drawRect(w, height - h - 1, 1, 1); // height - h is for flipping the image
+			}
+		}
+		return screenshot;
 	}
 
 	/**

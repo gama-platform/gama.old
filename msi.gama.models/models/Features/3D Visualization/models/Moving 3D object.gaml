@@ -1,18 +1,16 @@
 /**
 * Name: OBJ File Drawing and Moving
-* Author:  Patrick Taillandier
-* Description: Model which shows how to draw a moving objet as a OBJ File.
+* Author:  Patrick Taillandier, Tri Nguyen-Huu, Arnaud Grignard 
+* Description: Model which shows how to draw a moving objet as a OBJ File and how to apply a 3D rotation to the object
 * Tags:  load_file, 3d, skill, obj, moving, goto
 */
 
-
 model Moving3Dobject
-
 
 global {
 	
 	init { 
-		create boat number: 1;
+		create boat;
 	}  
 } 
 
@@ -25,14 +23,18 @@ species boat skills: [moving]{
 		}	
 	}
 	aspect obj {
-		//we draw an obj file in the aspect, the second argument (90::{-1,0,0}) is used to apply an initial rotation (90° along the {-1,0,0} vector)) to give the boat the right orientation
+		//we draw an obj file in the aspect apply an initial rotation r0 to give the boat the right orientation and apply an composition of rotation (pitch,roll,yaw) and 
 		//the location of a obj file is centroid of the bounding box, so we add with the "at" facet a translated along the z axis to place the boat on the water and not inside
 		//the size represents here the max size of the bounding box
-		//at last, we dynamically apply a rotation to the boat to make it head in direction of the heading of the agents.  
-	    draw obj_file("../includes/boat/fishing-boat.obj", 90+ 5 * cos(cycle*10) ::{-1,0,0}) at: location + {0,0,9} size: 5 rotate: heading + 90;
-		
-	}
+		//at last, we dynamically apply a rotation to the boat to make it head in direction of the heading of the agents. 
+		pair<float,point> r0 <-  -90::{1,0,0};	
+		pair<float,point> pitch <-  5 * cos(cycle*10) ::{1,0,0};
+		pair<float,point> roll <- 20*sin(cycle*3)::{0,1,0};
+		pair<float,point> yaw <- 1*sin(cycle*7)::{0,0,1};
+		draw obj_file("../includes/boat/fishing-boat.obj", rotation_composition(r0,pitch,roll,yaw)) at: location + {0,0,9} size: 5 rotate: heading + 90;			
+	}	
 }	
+
 
 experiment Display  type: gui {
 	output {
@@ -44,3 +46,4 @@ experiment Display  type: gui {
 		}
 	}
 }
+

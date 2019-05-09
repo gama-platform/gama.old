@@ -17,6 +17,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -56,6 +57,7 @@ public class Points {
 			category = IOperatorCategory.POINT,
 			internal = true)
 	@validator (PointValidator.class)
+	@no_test
 	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp) {
 		if (scope != null) {
 			scope.setHorizontalPixelContext();
@@ -74,6 +76,7 @@ public class Points {
 			category = IOperatorCategory.POINT,
 			internal = true)
 	@validator (PointValidator.class)
+	@no_test
 	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp,
 			final IExpression zExp) {
 		if (scope != null) {
@@ -233,10 +236,7 @@ public class Points {
 			value = "Returns a point with coordinate summing of the two operands.",
 			usages = @usage (
 					value = "if the left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.",
-					examples = { @example (
-							value = "{1, 2} + 4",
-							equals = "{5.0, 6.0,4.0}"),
-							@example (
+					examples = {@example (
 									value = "{1, 2} + 4.5",
 									equals = "{5.5, 6.5,4.5}") }))
 	public static ILocation add(final GamaPoint p1, final Double p) {
@@ -250,7 +250,10 @@ public class Points {
 			category = IOperatorCategory.POINT,
 			concept = {})
 	@doc (
-			value = "Returns a point with coordinate summing of the two operands.")
+			value = "Returns a point with coordinate summing of the two operands.",
+			examples = { @example (
+					value = "{1, 2} + 4",
+					equals = "{5.0, 6.0,4.0}")})
 	public static ILocation add(final GamaPoint p1, final Integer p) {
 		if (p1 == null) { return new GamaPoint(p, p, p); }
 		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);

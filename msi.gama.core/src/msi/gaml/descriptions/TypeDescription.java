@@ -78,6 +78,30 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	}
 
+	public String getAttributeDocumentation() {
+		final StringBuilder sb = new StringBuilder(200);
+		sb.append("<b><br/>Attributes :</b><ul>");
+		for (final VariableDescription f : getAttributes()) {
+			sb.append("<li>").append("<b>").append(f.getName()).append("</b>").append(f.getShortDescription());
+			sb.append("</li>");
+		}
+
+		sb.append("</ul>");
+		return sb.toString();
+	}
+
+	public String getActionDocumentation() {
+		final StringBuilder sb = new StringBuilder(200);
+		sb.append("<b><br/>Actions :</b><ul>");
+		for (final ActionDescription f : getActions()) {
+			sb.append("<li>").append("<b>").append(f.getName()).append("</b>").append(f.getShortDescription());
+			sb.append("</li>");
+		}
+
+		sb.append("</ul>");
+		return sb.toString();
+	}
+
 	@Override
 	public String getDefiningPlugin() {
 		if (isBuiltIn()) { return originName; }

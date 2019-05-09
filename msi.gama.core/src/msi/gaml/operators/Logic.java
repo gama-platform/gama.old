@@ -142,7 +142,15 @@ public class Logic {
 			index_type = ITypeProvider.BOTH,
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL, IConcept.TERNARY })
-	@doc (
+	
+			@doc (	value = "It is used in combination with the ? operator. If the left-hand of ? operand evaluates to true,"
+					+ " returns the value of the left-hand operand of the :, "
+					+ "otherwise that of the right-hand operand of the :",
+					examples = { @example (
+							value = "[10, 19, 43, 12, 7, 22] collect ((each > 20) ? 'above' : 'below')",
+							returnType = "list<string>",
+							equals = "['below', 'below', 'above', 'below', 'below', 'above']"),
+							 },
 			see = "?")
 	public static Object then(final IScope scope, final Object a, final Object b) {
 		return null;

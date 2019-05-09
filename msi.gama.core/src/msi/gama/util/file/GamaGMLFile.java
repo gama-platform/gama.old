@@ -56,7 +56,7 @@ import msi.gaml.types.Types;
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
 		concept = { IConcept.GML, IConcept.FILE },
-		doc = @doc ("Represents a Geography Markup Language (GMF) file as defined by the Open Geospatial Consortium"))
+		doc = @doc ("Represents a Geography Markup Language (GMF) file as defined by the Open Geospatial Consortium. See https://en.wikipedia.org/wiki/Geography_Markup_Language for more information."))
 @SuppressWarnings ({ "unchecked" })
 public class GamaGMLFile extends GamaGisFile {
 
@@ -76,7 +76,7 @@ public class GamaGMLFile extends GamaGisFile {
 	public GamaGMLFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
-	@doc (value= "This file constructor allows to read a gml file and specifying the coordinates system code, as an int",
+	@doc (value= "This file constructor allows to read a gml file and specifying the coordinates system code, as an int (epsg code)",
 			examples = {
 				@example(value = "file f <- gml_file(\"file\", \"32648\");", isExecutable = false)
 			})
@@ -99,7 +99,7 @@ public class GamaGMLFile extends GamaGisFile {
 	public GamaGMLFile(final IScope scope, final String pathName, final boolean with3D) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null, with3D);
 	}
-	@doc (value= "This file constructor allows to read a gml file, specifying the coordinates system code, as an int and take a potential z value (not taken in account by default)",
+	@doc (value= "This file constructor allows to read a gml file, specifying the coordinates system code, as an int (epsg code) and take a potential z value (not taken in account by default)",
 			examples = {
 				@example(value = "file f <- gml_file(\"file\", \"32648\", true);", isExecutable = false)
 			})

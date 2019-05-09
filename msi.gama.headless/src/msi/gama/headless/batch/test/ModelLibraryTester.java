@@ -1,6 +1,8 @@
 package msi.gama.headless.batch.test;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.HeadlessListener;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.descriptions.ModelDescription;
@@ -33,44 +36,47 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	final List<GamlCompilationError> errors = new ArrayList<>();
 	private final static String FAILED_PARAMETER = "-failed";
 
+	PrintStream original;
 	private ModelLibraryTester() {}
 
 	@Override
 	public int start(final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
+
+		original = System.out;
 		final int[] count = { 0 };
 		final int[] code = { 0 };
 		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
 		final boolean oldPref = GamaPreferences.Runtime.FAILED_TESTS.getValue();
-		try { 
-			GamaPreferences.Runtime.FAILED_TESTS.set(onlyFailed);
-			final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithTests();
-			for (final Bundle bundle : plugins.keySet()) {
-				for (final String entry : plugins.get(bundle)) {
-					final Enumeration<URL> urls = bundle.findEntries(entry, "*", true);
-					if (urls != null)
-						while (urls.hasMoreElements()) {
-							final URL url = urls.nextElement();
-							if (isTest(url)) {
-								final URL resolvedFileURL = FileLocator.toFileURL(url);
-								test(count, code, resolvedFileURL);
-							}
+		GamaPreferences.Runtime.FAILED_TESTS.set(onlyFailed);
+		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithTests();
+		List<URL> allURLs = new ArrayList<>();
+		for (final Bundle bundle : plugins.keySet()) {
+			for (final String entry : plugins.get(bundle)) {
+				final Enumeration<URL> urls = bundle.findEntries(entry, "*", true);
+				if (urls != null)
+					while (urls.hasMoreElements()) {
+						final URL url = urls.nextElement();
+						if (isTest(url)) {
+							final URL resolvedFileURL = FileLocator.toFileURL(url);
+							allURLs.add(resolvedFileURL);
 						}
-				}
+					}
 			}
-
-		} catch (final URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
-			log("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
-			System.out.println(code[0]);
 		}
+		GamlModelBuilder.loadURLs(allURLs);
+
+		allURLs.forEach(u -> test(count, code, u));
+		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
+		System.out.println("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
+		System.out.println(code[0]);
 		return code[0];
 	}
 
-	public void test(final int[] count, final int[] code, final URL p) throws URISyntaxException {
+	public void test(final int[] count, final int[] code, final URL p) {
+		if(p.getFile().contains("Maths Tests.experiment")) {
+			System.out.println();
+		}
 		final IModel model = GamlModelBuilder.compile(p, errors);
 		if (model == null || model.getDescription() == null)
 			return;
@@ -82,6 +88,12 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
+//			    System.setOut(new PrintStream(new OutputStream() {
+//			                public void write(int b) {
+//			                    //DO NOTHING
+//			                }
+//			            }));
+
 				final TestAgent agent = (TestAgent) exp.getAgent();
 				exp.setHeadless(true);
 				exp.getController().getScheduler().paused = false;
@@ -89,6 +101,9 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 				count[0] += agent.getSummary().size();
+//			    System.setOut(original);
+				if (code[0] > 0)
+					System.out.println(agent.getSummary().toString());
 			}
 		}
 

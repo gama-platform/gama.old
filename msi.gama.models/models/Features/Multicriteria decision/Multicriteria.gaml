@@ -246,6 +246,7 @@ experiment multicriteria type: gui {
 	parameter "max rejection of the distance criterion" var:v2c_distance category: "Evidence Theory";
 	parameter "max rejection of the area criterion" var:v2c_area category: "Evidence Theory";
 	output {
+		layout #split;
 		display Map_Weighted_Means type: opengl{
 			species house aspect: weighted_means_aspect;
 			species people;

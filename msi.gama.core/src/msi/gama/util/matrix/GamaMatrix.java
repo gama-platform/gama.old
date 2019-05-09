@@ -16,6 +16,9 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -198,6 +201,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			content_type = ITypeProvider.BOTH,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
+	@doc (
+			value = "A matrix resulting from the concatenation of the columns  of the two given matrices. ",
+			masterDoc = true,
+			examples = { @example (
+					value = "matrix([[1,2],[3,4]]) append_vertically matrix([[1,2],[3,4]])",
+					equals = "matrix([[1,2,1,2],[3,4,3,4]])") })
 	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
 		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
 			return ((GamaIntMatrix) this)._opAppendVertically(scope, b);
@@ -240,6 +249,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			content_type = ITypeProvider.BOTH,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
+	@doc (
+			value = "A matrix resulting from the concatenation of the rows of the two given matrices.",
+			masterDoc = true,
+			examples = { @example (
+					value = "matrix([[1.0,2.0],[3.0,4.0]]) append_horizontally matrix([[1,2],[3,4]])",
+					equals = "matrix([[1.0,2.0],[3.0,4.0],[1.0,2.0],[3.0,4.0]])") })
 	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
 		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
 			return ((GamaIntMatrix) this)._opAppendHorizontally(scope, b);
@@ -265,8 +280,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public T get(final IScope scope, final ILocation p) {
 		final double px = p.getX();
 		final double py = p.getY();
-		if (px > numCols - 1 || px < 0) { return null; }
-		if (py > numRows - 1 || py < 0) { return null; }
+		if (px > numCols - 1 || px < 0) { 
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + px, scope); 
+		}
+		if (py > numRows - 1 || py < 0) { 
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + py, scope); 
+		}
 		return get(scope, (int) px, (int) py);
 	}
 
@@ -284,8 +303,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		}
 		final int px = Cast.asInt(scope, indices.get(0));
 		final int py = Cast.asInt(scope, indices.get(1));
-		if (px > numCols - 1 || px < 0) { return null; }
-		if (py > numRows - 1 || py < 0) { return null; }
+		if (px > numCols - 1 || px < 0) { 
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + px, scope); 
+		}
+		if (py > numRows - 1 || py < 0)  { 
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + py, scope); 
+		}
 		return get(scope, px, py);
 	}
 

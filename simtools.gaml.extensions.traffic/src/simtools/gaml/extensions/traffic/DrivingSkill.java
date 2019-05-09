@@ -83,8 +83,11 @@ import msi.gaml.types.Types;
 @skill (
 		name = "driving",
 		concept = { IConcept.TRANSPORT, IConcept.SKILL, IConcept.AGENT_MOVEMENT },
-		doc = @doc ("A basic skill for providing agents with some 'driving' capabilities"))
+		doc = @doc (value = "A basic skill for providing agents with some 'driving' capabilities",
+				deprecated = "For agents that simply follow a graph network, use the 'moving' skill instead, "
+						+ "and for agents that follow traffic rules, use the 'advanced driving' skill instead"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
+@Deprecated
 public class DrivingSkill extends MovingSkill {
 
 	public final static String LIVING_SPACE = "living_space";

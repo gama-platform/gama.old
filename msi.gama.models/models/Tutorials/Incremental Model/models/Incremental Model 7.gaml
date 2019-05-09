@@ -156,7 +156,7 @@ species building
 		float I0 <- I;
 		if (I > 0 and S > 0)
 		{
-			solve SI method: "rk4" step: h;
+			solve SI method: "rk4" step_size: h;
 			I_to1 <- I_to1 + (I - I0);
 			int I_int <- min([int(S), int(I_to1)]);
 			I_to1 <- I_to1 - I_int;

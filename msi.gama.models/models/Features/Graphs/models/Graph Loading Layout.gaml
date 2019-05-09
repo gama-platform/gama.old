@@ -15,7 +15,7 @@ global {
 	int layout_time <- 1000 min: 0 max: 10000 parameter: "Max number of iterations" category: "Force";
 	float coeff_force <- 0.8 min: 0.1 max: 1.0 parameter: "Force coefficient" category: "Force";
 	float cooling_coefficient <- 0.1 min: 0.01 max: 0.5 parameter: "Decreasing coefficient of the temperature" category: "Force"; 
-	float coeff_nb_places <- 1.2 min: 0 max: 2.0 parameter: "Coefficient for the number of places to locate the vertices" category: "Grid"; 
+	float coeff_nb_places <- 1.2 min: 0.0 max: 2.0 parameter: "Coefficient for the number of places to locate the vertices" category: "Grid"; 
 	
 	
 	//The operator load_graph_from_file generates the graph from the file, and chose the vertices as agents of node_agent 
@@ -34,7 +34,7 @@ global {
 				the_graph <- layout_circle(the_graph, world.shape);
 			}
 			match "Grid" {
-				the_graph <- layout_taillandier(the_graph, world.shape,coeff_nb_places);
+				the_graph <- layout_grid(the_graph, world.shape,coeff_nb_places);
 	 		}
 		}	
 	}

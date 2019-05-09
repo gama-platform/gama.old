@@ -21,6 +21,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -97,6 +98,7 @@ public class Cast {
 					value = "agentA is_skill 'moving'",
 					equals = "true",
 					isExecutable = false) })
+	@test("simulation is_skill 'moving' = false")
 	public static Boolean isSkill(final IScope scope, final Object a, final String skill) {
 		if (!(a instanceof IAgent)) { return false; }
 		final ISpecies s = ((IAgent) a).getSpecies();
@@ -268,8 +270,12 @@ public class Cast {
 			concept = { IConcept.CAST, IConcept.CONTAINER })
 	@doc (
 			value = "creates a list with a size provided by the first operand, and filled with the second operand",
-			comment = "Note that the right operand  should be positive, and that the second one is evaluated for each position  in the list.",
-			see = { "list" })
+			comment = "Note that the first operand  should be positive, and that the second one is evaluated for each position  in the list.",
+			see = { "list" },
+			examples = {
+					@example ( value = "list_with(5,2)", equals = "[2,2,2,2,2]")
+			})
+	@test("list_with(5,2) = [2,2,2,2,2]")
 	public static IList list_with(final IScope scope, final Integer size, final IExpression init) {
 		return GamaListFactory.create(scope, init, size);
 	}
@@ -288,6 +294,7 @@ public class Cast {
 			value = "creates a matrix with a size provided by the first operand, and filled with the second operand",
 			comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
 			see = { IKeyword.MATRIX, "as_matrix" })
+	@test("{2,2} matrix_with (1) = matrix([1,1],[1,1])")
 	public static IMatrix matrix_with(final IScope scope, final ILocation size, final IExpression init) {
 		if (size == null) { throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope); }
 		return GamaMatrixType.with(scope, init, (GamaPoint) size);
@@ -314,8 +321,10 @@ public class Cast {
 					+ "If the size is to short, some elements will be omitted. Matrix remaining elements will be filled in by nil.",
 			usages = { @usage ("if the right operand is nil, as_matrix is equivalent to the matrix operator") },
 			see = { IKeyword.MATRIX })
+	@test("as_matrix('a', {2,3}) = matrix(['a','a','a'],['a','a','a'])")
+	@test("as_matrix(1.0, {2,2}) = matrix([1.0,1.0],[1.0,1.0])")
 	public static IMatrix asMatrix(final IScope scope, final Object val, final ILocation size)
-			throws GamaRuntimeException {
+			throws GamaRuntimeException { 
 		return GamaMatrixType.staticCast(scope, val, size, Types.NO_TYPE, false);
 	}
 
@@ -346,6 +355,7 @@ public class Cast {
 							value = "species(node1)",
 							equals = "node",
 							isExecutable = false) })
+	@test("species([1,5,9,3]) = nil")
 	public static ISpecies asSpecies(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (ISpecies) Types.SPECIES.cast(scope, val, null, false);
 	}

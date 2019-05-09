@@ -16,6 +16,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -33,6 +34,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new geometry: take the following argument: (kml, geometry,linewidth, linecolor,fillcolor, begin date, end date)",
 			see = { "add_3Dmodel", "add_icon", "add_label"})
+	@no_test
 	public static GamaKmlExport addShape(final IScope scope, final GamaKmlExport kml, final IShape shape,
 			double lineWidth, GamaColor lineColor, GamaColor fillColor, GamaDate begin, GamaDate end) throws GamaRuntimeException {
 		if (kml == null || shape == null) return kml;
@@ -49,6 +51,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new geometry: take the following argument: (kml, geometry,linewidth, linecolor,fillcolor, end date)",
 			see = { "add_3Dmodel", "add_icon", "add_label"})
+	@no_test
 	public static GamaKmlExport addShape(final IScope scope, final GamaKmlExport kml, final IShape shape,
 			double lineWidth, GamaColor lineColor, GamaColor fillColor, GamaDate end) throws GamaRuntimeException {
 		GamaDate begin = scope.getClock().getCurrentDate();
@@ -63,6 +66,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new geometry: take the following argument: (kml, geometry,linewidth, linecolor,fillcolor)",
 			see = { "add_3Dmodel", "add_icon", "add_label"})
+	@no_test
 	public static GamaKmlExport addShape(final IScope scope, final GamaKmlExport kml, final IShape shape,
 			double lineWidth, GamaColor lineColor, GamaColor fillColor) throws GamaRuntimeException {
 		GamaDate begin = scope.getClock().getCurrentDate();
@@ -77,6 +81,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new geometry: take the following argument: (kml, geometry, linecolor,fillcolor)",
 			see = { "add_3Dmodel", "add_icon", "add_label"})
+	@no_test
 	public static GamaKmlExport addShape(final IScope scope, final GamaKmlExport kml, final IShape shape,
 			GamaColor lineColor, GamaColor fillColor) throws GamaRuntimeException {
 		return addShape(scope,kml,shape,1.0,lineColor,fillColor) ;
@@ -90,6 +95,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new geometry: take the following argument: (kml, geometry,linewidth, color)",
 			see = { "add_3Dmodel", "add_icon", "add_label"})
+	@no_test
 	public static GamaKmlExport addShape(final IScope scope, final GamaKmlExport kml, final IShape shape,double lineWidth,
 			GamaColor color) throws GamaRuntimeException {
 		return addShape(scope,kml,shape,lineWidth,color,color) ;
@@ -102,6 +108,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new 3D model: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string), begin date, end date)",
 			see = { "add_geometry", "add_icon", "add_label"})
+	@no_test
 	public static GamaKmlExport add3DModel(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
 			double scale , double orientation, String file, GamaDate begin, GamaDate end) throws GamaRuntimeException {
 		if (kml == null || loc == null || file == null || file.isEmpty()) return kml;
@@ -116,6 +123,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new 3D model: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string))",
 			see = { "add_geometry", "add_icon", "add_label"})
+	@no_test
 	public static GamaKmlExport add3DModel(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
 			double scale , double orientation, String file) throws GamaRuntimeException {
 		GamaDate currentDate = scope.getClock().getCurrentDate();
@@ -130,6 +138,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new icons: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string), begin date, end date)",
 			see = { "add_geometry", "add_icon"})
+	@no_test
 	public static GamaKmlExport addIcon(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
 			double scale, double orientation , String file, GamaDate begin, GamaDate end) throws GamaRuntimeException {
 		if (kml == null || loc == null || file == null || file.isEmpty()) return kml;
@@ -146,6 +155,7 @@ public class KmlOp {
 	@doc (
 			value = "the kml export manager with new icons: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string))",
 			see = { "add_geometry", "add_icon"})
+	@no_test
 	public static GamaKmlExport addIcon(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
 			double scale, double orientation , String file) throws GamaRuntimeException {
 		GamaDate currentDate = scope.getClock().getCurrentDate();

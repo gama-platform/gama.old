@@ -23,6 +23,7 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -221,6 +222,7 @@ public class MapComparison {
 			examples = { @example (
 					value = "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2)",
 					isExecutable = false) })
+	@no_test
 	public static double fuzzyKappa(final IScope scope,
 			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> vals1,
 			final IList<Object> vals2, final IList<Double> similarities, final IList<Object> categories,
@@ -238,6 +240,7 @@ public class MapComparison {
 			examples = { @example (
 					value = "fuzzy_kappa([ag1, ag2, ag3, ag4, ag5],[cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0],[0,1,0],[0,0,1]], 2, [1.0,3.0,2.0,2.0,4.0])",
 					isExecutable = false) })
+	@no_test
 	public static double fuzzyKappa(final IScope scope,
 			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> vals1,
 			final IList<Object> vals2, final IList<Double> similarities, final IList<Object> categories,
@@ -283,6 +286,7 @@ public class MapComparison {
 			examples = { @example (
 					value = "fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2)",
 					isExecutable = false) })
+	@no_test
 	public static double fuzzyKappaSimulation(final IScope scope,
 			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> valsInit,
 			final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,
@@ -302,6 +306,7 @@ public class MapComparison {
 			examples = { @example (
 					value = "fuzzy_kappa_sim([ag1, ag2, ag3, ag4, ag5], [cat1,cat1,cat2,cat3,cat2],[cat2,cat1,cat2,cat1,cat2], similarity_per_agents,[cat1,cat2,cat3],[[1,0,0,0,0,0,0,0,0],[0,1,0,0,0,0,0,0,0],[0,0,1,0,0,0,0,0,0],[0,0,0,1,0,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,1,0,0,0],[0,0,0,0,0,0,1,0,0],[0,0,0,0,0,0,0,1,0],[0,0,0,0,0,0,0,0,1]], 2,[1.0,3.0,2.0,2.0,4.0])",
 					isExecutable = false) })
+	@no_test
 	public static double fuzzyKappaSimulation(final IScope scope,
 			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> valsInit,
 			final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,

@@ -520,7 +520,7 @@ public class EvidenceTheory {
 		public void computeCoeffNorm() {
 			for (final Proposition prop : propositions) {
 				if (prop.hypothese.isEmpty()) {
-					coeffNorm = 1.0 / (1.0 - prop.masseCroyance);
+					coeffNorm = (1.0 == prop.masseCroyance) ? 1.0 :1.0 / (1.0 - prop.masseCroyance);
 					return;
 				}
 			}

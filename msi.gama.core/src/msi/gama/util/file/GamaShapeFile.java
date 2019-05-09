@@ -69,7 +69,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
 		concept = { IConcept.SHAPEFILE, IConcept.FILE },
-		doc = @doc ("Represents a shape file as defined by the ESRI standard"))
+		doc = @doc ("Represents a shape file as defined by the ESRI standard. See https://en.wikipedia.org/wiki/Shapefile for more information."))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaShapeFile extends GamaGisFile {
 
@@ -257,7 +257,7 @@ public class GamaShapeFile extends GamaGisFile {
 		super(scope, pathName, (Integer) null);
 	}
 	
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int",
+	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code)",
 			examples = {
 				@example(value = "file f <- shape_file(\"file\", \"32648\");", isExecutable = false)
 			})
@@ -278,7 +278,7 @@ public class GamaShapeFile extends GamaGisFile {
 	public GamaShapeFile(final IScope scope, final String pathName, final boolean with3D) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null, with3D);
 	}
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int and take a potential z value (not taken in account by default)",
+	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code) and take a potential z value (not taken in account by default)",
 			examples = {
 				@example(value = "file f <- shape_file(\"file\", \"32648\", true);", isExecutable = false)
 			})
@@ -372,16 +372,18 @@ public class GamaShapeFile extends GamaGisFile {
 					final Feature feature = reader.next();
 					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-						if (!g.isValid()) {
+						if (!with3D && !g.isValid()) {
 							g = g.buffer(0.0);
 						}
 						g = gis.transform(g);
+						
 						if (!with3D) {
 							g.apply(ZERO_Z);
 							g.geometryChanged();
 						}
 						g = multiPolygonManagement(g);
 						list.add(new GamaGisGeometry(g, feature));
+						
 					} else if (g == null) {
 						// See Issue 725
 						GAMA.reportError(scope,

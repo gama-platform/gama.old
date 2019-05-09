@@ -96,7 +96,7 @@ species S {
 		 - beta * first(I).Isize * first (S).Ssize / N;
 	}
 	reflex solveEquation{
-		solve evol method: rk4 step: hRK4;
+		solve evol method: rk4 step_size: hRK4;
 	}
 }
 
@@ -134,7 +134,7 @@ species my_SIR_maths_rk4 {
 		diff ( Rm , t ) =   delta * Im;
 	}
 	reflex solveEquation{
-		solve SIR method: rk4 step: numericalIntegrationStep ;
+		solve SIR method: rk4 step_size: numericalIntegrationStep ;
 	}
 	
 	reflex computeContinuousValues {
@@ -159,7 +159,7 @@ species my_SIR_maths_euler {
 		diff ( Rm , t ) =   delta * Im;
 	}
 	reflex solveEquation{
-		solve SIR method: Euler step: numericalIntegrationStep ;
+		solve SIR method: Euler step_size: numericalIntegrationStep ;
 	}
 }
 
@@ -175,7 +175,7 @@ species my_SIR_maths_dp {
 		diff ( Rm , t ) =   delta * Im;
 	}
 	reflex solveEquation {
-		solve SIR method: DormandPrince54  min_step: 7.105427e-16 max_step: 0.0003 step: 0.0001 scalAbsoluteTolerance:10^-7 scalRelativeTolerance: 0.000001;
+		solve SIR method: DormandPrince54  min_step: 7.105427e-16 max_step: 0.0003 step_size: 0.0001 scalAbsoluteTolerance:10^-7 scalRelativeTolerance: 0.000001;
 	}
 }
 

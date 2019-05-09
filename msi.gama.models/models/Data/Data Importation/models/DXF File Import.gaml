@@ -27,11 +27,8 @@ global
 			{
 				color <- col;
 			}
-
 		}
-
 	}
-
 }
 
 species house_element
@@ -40,7 +37,7 @@ species house_element
 	rgb color;
 	aspect default
 		{
-		draw shape color: color width: 2;
+		draw shape color: color;
 	}
 	init {
 		shape <- polygon(shape.points);
