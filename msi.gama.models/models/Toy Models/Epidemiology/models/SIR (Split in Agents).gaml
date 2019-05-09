@@ -122,6 +122,7 @@ experiment Simulation type: gui {
 	parameter 'Delta (I->R)' type: float var: delta <- 0.01 category: "Parameters";
 	
 	output {
+		layout #split;
 		display "split system" {
 			chart 'Susceptible' type: series background: rgb ( 'lightGray' ) {
 				data 'susceptible' value: first ( S_agt ) . Ssize color: rgb ( 'green' ) ;
