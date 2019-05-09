@@ -104,7 +104,7 @@ global
 
 species datapoints
 {
-	rgb color_kmeans <- # grey;
+	rgb color_kmeans <- rgb(225,225,225);
 	centroids mycenter;
 	aspect kmeans_aspect2D
 	{
@@ -113,14 +113,14 @@ species datapoints
 
 	aspect kmeans_aspect3D
 	{
-		draw sphere(2) color: color_kmeans;
+		draw sphere(2) color: color_kmeans ;
 	}
 
 }
 
 species centroids
 {
-	rgb color_kmeans <- # grey;
+	rgb color_kmeans <-  rgb(225,225,225);
 	list<datapoints> mypoints;
 	aspect kmeans_aspect2D
 	{
@@ -145,7 +145,7 @@ species centroids
 experiment clustering2D type: gui
 {
 	parameter "Number of clusters to split the data into" var: k category: "KMEANS";
-	parameter "Number of points to be clustered" var: N init: 5000;
+	parameter "Number of points to be clustered" var: N init: 500;
 	parameter "Number of dimensions" var: dimensions init: 2 min: 2 max: 2;
 	font regular <- font("Helvetica", 14, # bold);
 		
@@ -178,7 +178,7 @@ experiment clustering2D type: gui
 experiment clustering3D type: gui
 {
 	parameter "Number of clusters to split the data into" var: k category: "KMEANS";
-	parameter "Number of points to be clustered" var: N init: 5000;
+	parameter "Number of points to be clustered" var: N init:1000 ;
 	font regular <- font("Helvetica", 14, # bold);
 	point target <- { 20, 95 };
 	parameter "Number of dimensions" var: dimensions init: 3 min: 3 max: 3;
