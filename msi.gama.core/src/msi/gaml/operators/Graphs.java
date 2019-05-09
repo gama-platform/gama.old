@@ -550,7 +550,7 @@ public class Graphs {
 							test = false) },
 			see = "out_edges_of")
 	@test("graph<geometry, geometry> g2 <- directed(as_edge_graph([ edge({10,5}, {30,30}), edge({30,30}, {80,35}), node ({30,30})]));\r\n"
-			+ "first(line({10,5},{30,30})).points = first(res).points")
+			+ "first(link({10,5},{30,30})) = first(g2 in_edges_of {30,30})")
 	public static IList inEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the in_edges_of operator, the graph should not be null!", scope);
