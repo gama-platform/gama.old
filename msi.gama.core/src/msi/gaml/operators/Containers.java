@@ -300,6 +300,7 @@ public class Containers {
 					value = "grid_cell grid_at {1,2}",
 					equals = "the agent grid_cell with grid_x=1 and grid_y = 2",
 					isExecutable = false) })
+	@no_test
 	public static IAgent grid_at(final IScope scope, final ISpecies s, final GamaPoint val)
 			throws GamaRuntimeException {
 		final ITopology t = scope.getAgent().getPopulationFor(s).getTopology();
@@ -475,7 +476,7 @@ public class Containers {
 			usages = @usage ("if the left operator is a species, returns the index of an agent in a species. "
 					+ "If the argument is not an agent of this species, returns -1. Use int(agent) instead"),
 			masterDoc = true)
-	
+	@no_test
 	public static Integer index_of(final IScope scope, final ISpecies s, final Object o) {
 		if (!(o instanceof IAgent)) { return -1; }
 		if (!((IAgent) o).isInstanceOf(notNull(scope, s), true)) { return -1; }
@@ -555,6 +556,7 @@ public class Containers {
 			value = "the index of the last occurence of the right operand in the left operand container",
 			usages = @usage ("if the left operand is a species, the last index of an agent is the same as its index"),
 			see = { "at", "index_of" })
+	@test("last_index_of([1,2,2,2,5], 2) = 3")
 	public static Integer last_index_of(final IScope scope, final ISpecies c, final Object o) {
 		return index_of(scope, notNull(scope, c), o);
 	}
@@ -729,14 +731,11 @@ public class Containers {
 					value = "if the left operand is a species and the right operand is an agent of the species, "
 							+ IKeyword.MINUS
 							+ " returns a list containing all the agents of the species minus this agent") })
+	@test("([1,2,2,3,5] - 3) = [1,2,2,5] ")
 	public static IList minus(final IScope scope, final ISpecies l1, final IAgent object) {
 		return minus(scope, l1.listValue(scope, scope.getType(l1.getName()), false), object);
 	}
 
-	// PRENDRE EN COMPTE:
-	//
-	// - index_type
-	// - nouvelles valeurs de ITypeProvider
 
 	@operator (
 			value = "of_generic_species",
@@ -747,24 +746,24 @@ public class Containers {
 			value = "a list, containing the agents of the left-hand operand whose species is that denoted by the right-hand operand "
 					+ "and whose species extends the right-hand operand species ",
 			examples = { @example (
-					value = "// species test {}"),
+					value = "// species speciesA {}"),
 					@example (
-							value = "// species sous_test parent: test {}"),
+							value = "// species sub_speciesA parent: speciesA {}"),
 					@example (
-							value = "[sous_test(0),sous_test(1),test(2),test(3)] of_generic_species test",
-							equals = "[sous_test0,sous_test1,test2,test3]",
+							value = "[sub_speciesA(0),sub_speciesA(1),speciesA(2),speciesA(3)] of_generic_species speciesA",
+							equals = "[sub_speciesA0,sub_speciesA1,speciesA0,speciesA1]",
 							isExecutable = false),
 					@example (
-							value = "[sous_test(0),sous_test(1),test(2),test(3)] of_generic_species sous_test",
-							equals = "[sous_test0,sous_test1]",
+							value = "[sub_speciesA(0),sub_speciesA(1),speciesA(2),speciesA(3)] of_generic_species sous_test",
+							equals = "[sub_speciesA0,sub_speciesA1]",
 							isExecutable = false),
 					@example (
-							value = "[sous_test(0),sous_test(1),test(2),test(3)] of_species test",
-							equals = "[test2,test3]",
+							value = "[sub_speciesA(0),sub_speciesA(1),speciesA(2),speciesA(3)] of_species speciesA",
+							equals = "[speciesA0,speciesA1]",
 							isExecutable = false),
 					@example (
-							value = "[sous_test(0),sous_test(1),test(2),test(3)] of_species sous_test",
-							equals = "[sous_test0,sous_test1]",
+							value = "[sub_speciesA(0),sub_speciesA(1),speciesA(2),speciesA(3)] of_species sous_test",
+							equals = "[sub_speciesA0,sub_speciesA1]",
 							isExecutable = false) },
 			see = { "of_species" })
 	public static IList of_generic_species(final IScope scope, final IContainer agents, final ISpecies s) {
@@ -813,6 +812,7 @@ public class Containers {
 	@doc (
 			value = "produces a new pair combining the left and the right operands",
 			special_cases = "nil is not acceptable as a key (although it is as a value). If such a case happens, :: will throw an appropriate error")
+	@test("string(1::2) = '1::2'")
 	public static GamaPair pair(final IScope scope, final IExpression a, final IExpression b) {
 		final Object v1 = a.value(scope);
 		final Object v2 = b.value(scope);
@@ -1107,6 +1107,7 @@ public class Containers {
 			doc = @doc ("Returns the sum of the weights of the graph nodes"),
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
+	@test("sum(as_edge_graph(line([{10,10},{30,10}]))) = 20.0")
 	public static double sum(final IScope scope, final IGraph g) {
 		if (g == null) { return 0.0; }
 		return g.computeTotalWeight();

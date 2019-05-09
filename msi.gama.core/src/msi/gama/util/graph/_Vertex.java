@@ -13,7 +13,6 @@ package msi.gama.util.graph;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jgrapht.WeightedGraph;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -34,7 +33,7 @@ public class _Vertex<E, V> extends GraphObject<GamaGraph<E, V>, E, V> {
 	 * @param gamaGraph
 	 */
 	protected _Vertex(final GamaGraph<E, V> gamaGraph) {
-		super(gamaGraph, WeightedGraph.DEFAULT_EDGE_WEIGHT);
+		super(gamaGraph, GamaGraph.DEFAULT_NODE_WEIGHT);
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SpeciesDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.SpeciesDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -142,7 +142,12 @@ public class SpeciesDescription extends TypeDescription {
 				final ListExpression list = (ListExpression) expr;
 				for (final IExpression exp : list.getElements()) {
 					if (exp instanceof SkillConstantExpression) {
-						addSkill(((ISkill) exp.getConstValue()).getDescription());
+						SkillDescription sk = ((ISkill) exp.getConstValue()).getDescription();
+						String dep = sk.getDeprecated();
+						if (dep != null) {
+							warning("Skill " + sk.getName() + " is deprecated: " + dep, IGamlIssue.DEPRECATED, SKILLS);
+						}
+						addSkill(sk);
 					}
 				}
 			}
@@ -501,9 +506,6 @@ public class SpeciesDescription extends TypeDescription {
 		if (hostName != null) {
 			sb.append("<b>Microspecies of:</b> ").append(hostName).append("<br>");
 		}
-		if (getJavaBase() != null) {
-
-		}
 		final Iterable<String> skills = getSkillsNames();
 		if (!Iterables.isEmpty(skills)) {
 			sb.append("<b>Skills:</b> ").append(skills).append("<br>");
@@ -512,30 +514,6 @@ public class SpeciesDescription extends TypeDescription {
 		sb.append("<br/>");
 		sb.append(getActionDocumentation());
 		sb.append("<br/>");
-		return sb.toString();
-	}
-
-	public String getAttributeDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append("<b><br/>Attributes :</b><ul>");
-		for (final VariableDescription f : getAttributes()) {
-			sb.append("<li>").append("<b>").append(f.getName()).append("</b>").append(f.getShortDescription());
-			sb.append("</li>");
-		}
-
-		sb.append("</ul>");
-		return sb.toString();
-	}
-
-	public String getActionDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append("<b><br/>Actions :</b><ul>");
-		for (final ActionDescription f : getActions()) {
-			sb.append("<li>").append("<b>").append(f.getName()).append("</b>").append(f.getShortDescription());
-			sb.append("</li>");
-		}
-
-		sb.append("</ul>");
 		return sb.toString();
 	}
 
@@ -703,8 +681,9 @@ public class SpeciesDescription extends TypeDescription {
 		};
 
 		// recursively finalize the sorted micro-species
-		if (!visitMicroSpecies(visitor)) { return false;
-		// Calling sortAttributes later (in compilation)
+		if (!visitMicroSpecies(visitor)) {
+			return false;
+			// Calling sortAttributes later (in compilation)
 		}
 
 		compact();

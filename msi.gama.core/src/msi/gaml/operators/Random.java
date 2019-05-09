@@ -181,6 +181,7 @@ public class Random {
 			IOperatorCategory.MATRIX }, concept = {})
 	@doc(examples = {
 			@example(value = "shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals = "matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]) (for example)", test = false) })
+	@test("seed <- 1.0; shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])) = matrix([[\"c13\",\"c21\",\"c22\"],[\"c11\",\"c23\",\"c12\"]])")
 	public static IMatrix opShuffle(final IScope scope, final IMatrix target) throws GamaRuntimeException {
 		final IMatrix matrix2 = target.copy(scope);
 		matrix2.shuffleWith(RANDOM(scope));
@@ -244,6 +245,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random point in the interval [first operand, second operand]", examples = {
 			@example(value = "rnd ({2.0, 4.0}, {2.0, 5.0, 10.0})", equals = "a point with x = 2.0, y between 2.0 and 4.0 and z between 0.0 and 10.0", test = false) }, see = {})
+	@test("seed <- 1.0; rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}) = {2.0,4.785039740667429,5.087825199078746}")
 	public static GamaPoint opRnd(final IScope scope, final GamaPoint min, final GamaPoint max) {
 		final double x = opRnd(scope, min.x, max.x);
 		final double y = opRnd(scope, min.y, max.y);
@@ -254,6 +256,7 @@ public class Random {
 	@operator(value = "rnd", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "a random point in the interval [first operand, second operand], constained by the step provided by the last operand", examples = {
 			@example(value = "rnd ({2.0, 4.0}, {2.0, 5.0, 10.0}, 1)", equals = "a point with x = 2.0, y equal to 2.0, 3.0 or 4.0 and z between 0.0 and 10.0 every 1.0", test = false) }, see = {})
+	@test("seed <- 1.0; rnd ({2.0, 4.0}, {2.0, 5.0, 10.0},1) = {2.0,5.0,5.0}")
 	public static GamaPoint opRnd(final IScope scope, final GamaPoint min, final GamaPoint max, final Double step) {
 		final double x = opRnd(scope, min.x, max.x, step);
 		final double y = opRnd(scope, min.y, max.y, step);
@@ -267,6 +270,7 @@ public class Random {
 	@doc(usages = {
 			@usage(value = "if the operand is a point, returns a point with three random float ordinates, each in the interval [0, ordinate of argument]") }, examples = {
 					@example(value = "rnd ({2.5,3, 0.0})", equals = "{x,y} with x in [0.0,2.0], y in [0.0,3.0], z = 0.0", test = false) })
+	@test("seed <- 1.0; rnd ({2.5,3, 1.0}) = {1.935030382553449,2.3551192220022856,0.5087825199078746}")
 	public static ILocation opRnd(final IScope scope, final GamaPoint max) {
 		return opRnd(scope, NULL_POINT, max);
 	}

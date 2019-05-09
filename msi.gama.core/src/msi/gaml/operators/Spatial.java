@@ -78,6 +78,7 @@ import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -1430,6 +1431,7 @@ public abstract class Spatial {
 								value = "geom1 - geom2",
 								equals = "a geometry corresponding to difference between geom1 and geom2",
 								isExecutable = false)))
+		@no_test
 		public static IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null || g1.getInnerGeometry() == null
 					|| g2.getInnerGeometry() == null) { return g1; }

@@ -19,6 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -84,12 +85,14 @@ public class WriteStatement extends AbstractStatement {
 	@operator(value = "sample", doc = {
 			@doc("Returns a string containing the GAML code of the expression passed in parameter, followed by the result of its evaluation") }, category = {
 					IOperatorCategory.STRING })
+	@test("sample('a' in ['a', 'b']) = \"'a' in (['a','b']) -: true\"")
 	public static String sample(final IScope scope, final IExpression expr) {
 		return sample(scope, expr == null ? "nil" : expr.serialize(false), expr);
 	}
 
 	@operator(value = "sample", doc = @doc("Returns a string containing the string passed in parameter, followed by the result of the evaluation of the expression"), category = {
 			IOperatorCategory.STRING })
+	@test("sample(\"result: \",'a' in ['a', 'b']) = \"result: -: true\"")
 	public static String sample(final IScope scope, final String text, final IExpression expr) {
 		return text == null ? "" : text.trim() + " -: " + (expr == null ? "nil" : Cast.toGaml(expr.value(scope)));
 	}

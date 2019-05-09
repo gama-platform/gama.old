@@ -23,6 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -165,6 +166,7 @@ public class SolveStatement extends AbstractStatement {
 	@operator(value = { "internal_integrated_value" }, content_type = IType.FLOAT, category = {
 			IOperatorCategory.CONTAINER }, concept = { IConcept.EQUATION })
 	@doc("For internal use only. Corresponds to the implementation, for agents, of the access to containers with [index]")
+	@test("write list((date('2001-01-01') to date('2001-1-02')) every(#day));write [date ('2001-01-01 00:00:00')]; list((date('2001-01-01') to date('2001-1-02')) every(#day)) = [date ('2001-01-01 00:00:00')]")
 	public static IList internal_integrated_value(final IScope scope, final IExpression agent, final IExpression var)
 			throws GamaRuntimeException {
 		// if agent not null

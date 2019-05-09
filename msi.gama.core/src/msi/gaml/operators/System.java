@@ -25,7 +25,9 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -61,6 +63,7 @@ public class System {
 					value = "dead(agent_A)",
 					equals = "true or false",
 					isExecutable = false))
+	@test("dead(simulation) = false")
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a == null || a.dead();
 	}
@@ -70,6 +73,7 @@ public class System {
 			can_be_const = true,
 			concept = IConcept.TEST)
 	@doc ("Returns whether or not the argument raises an error when evaluated")
+	@test("is_error(\"one\" = 1) = false")
 	public static Boolean is_error(final IScope scope, final IExpression expr) {
 		try {
 			expr.value(scope);
@@ -84,6 +88,7 @@ public class System {
 			can_be_const = true,
 			concept = IConcept.TEST)
 	@doc ("Returns whether or not the argument raises a warning when evaluated")
+	@test("is_warning(\"one\" = 1) = false")
 	public static Boolean is_warning(final IScope scope, final IExpression expr) {
 		try {
 			expr.value(scope);
@@ -98,7 +103,7 @@ public class System {
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
 	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string. The basic form with only one string in argument uses the directory of the model and does not set any environment variables. Two other forms (with a directory and a map<string, string> of environment variables) are available.")
-
+	@no_test
 	public static String console(final IScope scope, final String s) {
 		return console(scope, s, scope.getSimulation().getExperiment().getWorkingPath());
 	}
@@ -108,7 +113,7 @@ public class System {
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
 	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string. The basic form with only one string in argument uses the directory of the model and does not set any environment variables. Two other forms (with a directory and a map<string, string> of environment variables) are available.")
-
+	@no_test 
 	public static String console(final IScope scope, final String s, final String directory) {
 		return console(scope, s, directory, GamaMapFactory.create());
 	}
@@ -118,7 +123,7 @@ public class System {
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
 	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")
-
+	@no_test 
 	public static String console(final IScope scope, final String s, final String directory,
 			final GamaMap<String, String> environment) {
 		if (s == null || s.isEmpty())
@@ -177,6 +182,7 @@ public class System {
 							isExecutable = false),
 					// @example (value = "map(nil).keys", raises = "exception", isTestOnly = false)
 					}))
+	@no_test
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 			throws GamaRuntimeException {
 		if (a == null) {
@@ -206,6 +212,7 @@ public class System {
 			concept = { IConcept.SYSTEM })
 	@doc (
 			value = "returns a copy of the operand.")
+	@no_test
 	public static Object opCopy(final IScope scope, final Object o) throws GamaRuntimeException {
 		if (o instanceof IValue) { return ((IValue) o).copy(scope); }
 		return o;

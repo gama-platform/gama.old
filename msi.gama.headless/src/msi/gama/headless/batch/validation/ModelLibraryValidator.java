@@ -20,9 +20,8 @@ import msi.gaml.compilation.kernel.GamaBundleLoader;
 
 public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
-	private static ModelLibraryValidator instance;
-	public static final Logger LOGGER = Logger.getLogger(ModelLibraryValidator.class.getName());;
-
+	private static ModelLibraryValidator instance; 
+	
 	private ModelLibraryValidator() {
 	}
 
@@ -31,8 +30,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		HeadlessSimulationLoader.preloadGAMA();
 		final int[] count = { 0 };
 		final int[] code = { 0 ,0 };
-		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithModels();
-//		plugins.putAll(GamaBundleLoader.getPluginsWithTests());
+		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithModels(); 
 		List<URL> allURLs = new ArrayList<>();
 		for (final Bundle bundle : plugins.keySet()) {
 			for (final String entry : plugins.get(bundle)) {
@@ -51,7 +49,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
 		allURLs.forEach(u -> validate(count, code, u));
 
-		LOGGER.info("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
+		System.out.println("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
 				+ " compilation errors found");
 		code[1]=code[0];
 		code[0]=0;
@@ -76,7 +74,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		allURLs.forEach(u -> validate(count, code, u));
 		
 		
-		LOGGER.info("" + count[0] + " GAMA tests compiled in built-in library and plugins. " + code[0]
+		System.out.println("" + count[0] + " GAMA tests compiled in built-in library and plugins. " + code[0]
 				+ " compilation errors found");
 		System.out.println(code[0]+code[1]);
 		return code[0]+code[1];
@@ -93,7 +91,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {
 			log("Error in " + e.getURI().lastSegment() + ": " + e);
-			LOGGER.info("Error in " + e.getURI() + ":\n " + ((GamlCompilationError) e).toString()+ " \n "+((GamlCompilationError) e).getStatement().toString()+ "\n");
+			System.out.println("Error in " + e.getURI() + ":\n " + ((GamlCompilationError) e).toString()+ " \n "+((GamlCompilationError) e).getStatement().toString()+ "\n");
 			returnCode[0]++;
 		});
 	}
