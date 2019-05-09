@@ -436,9 +436,19 @@ public class Stats2 extends Stats {
 				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the skew of a data sequence.",
-				comment = "",
-				examples = {})
+				value = "Returns the skew of a data sequence when the 3rd moment has already been computed.",
+				comment = "In R moment(c(1, 3, 5, 6, 9, 11, 12, 13), order=3,center=TRUE) is -10.125 and sd(c(1,3,5,6,9,11,12,13)) = 4.407785"
+						+ "The value of the skewness tested here is different because there are different types of estimator"
+						+ "Joanes and Gill (1998) discuss three methods for estimating skewness:"
+						+ "Type 1: g_1 = m_3 / m_2^(3/2). This is the typical definition used in many older textbooks." 
+						+ "Type 2: G_1 = g_1 * sqrt(n(n-1)) / (n-2). Used in SAS and SPSS." 
+						+ "Type 3: b_1 = m_3 / s^3 = g_1 ((n-1)/n)^(3/2). Used in MINITAB and BMDP."
+						+ "In R skewness(c(1, 3, 5, 6, 9, 11, 12, 13),type=3) is -0.1182316",
+				examples = {
+						@example(value="skew(-10.125,4.407785) with_precision(2)",
+										equals="-0.12")
+				}
+				)
 		public static Double opSkew(final IScope scope, final Double moment3, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -473,7 +483,13 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the variance from a standard deviation.",
 				comment = "",
-				examples = {})
+				examples = {@example(
+						value="int(variance([1,3,5,6,9,11,12,13]))",
+						equals ="17",
+						returnType="int")
+				})
+		
+		//@test ("int(variance([1,3,5,6,9,11,12,13])) = 17")
 		public static Double opVariance(final IScope scope, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -498,8 +514,13 @@ public class Stats2 extends Stats {
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the variance of a data sequence. That is (sumOfSquares - mean*sum) / size with mean = sum/size.",
-				comment = "",
-				examples = {})
+				comment = "In the example we consider variance of [1,3,5,7]. The size is 4, the sum is 1+3+5+7=16 and the sum of squares is 84."
+						+ "The variance is (84- 16^2/4)/4. CQFD.",
+						examples = {@example(
+								value="int(variance(4,16,84))",
+								equals ="5",
+								returnType="int")
+				})
 		public static Double variance(final IScope scope, final Integer size, final Double sum,
 				final Double numOfSquares) {
 
@@ -742,7 +763,13 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.",
 				comment = "",
-				examples = {})
+						examples = {@example(
+								value="int(normal_density(2,1,1)*100)",
+								equals ="24")}
+						)
+		
+		
+		
 		public static Double opNormalDensity(final IScope scope, final Double x, final Double mean, final Double sd) {
 
 			// Returns the probability of x in the normal distribution with the
@@ -1005,7 +1032,11 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the value of the Gamma function at x.",
 				comment = "",
-				examples = {})
+				examples = {@example(
+								value="int(gamma(5))",
+								equals ="24")}
+						
+				)
 		public static Double opGamma(final IScope scope, final Double x) {
 
 			// Returns the value of the Gamma function at x.
@@ -1126,8 +1157,13 @@ public class Stats2 extends Stats {
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the beta function with arguments a, b.",
-				comment = "",
-				examples = {})
+				comment = "Checked on R. beta(4,5)",
+				examples = {@example(
+								value="beta(4,5) with_precision(4)",
+								equals = "0.0036" )
+				}
+				)
+		
 		public static Double opBeta(final IScope scope, final Double a, final Double b) {
 
 			// Returns the beta function with arguments a, b.

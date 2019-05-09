@@ -11,6 +11,7 @@
 package msi.gaml.extensions.fipa;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -22,7 +23,6 @@ import msi.gaml.types.GamaContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings ("unchecked")
 @type (
 		name = ConversationType.CONVERSATION_STR,
 		id = ConversationType.CONV_ID,
@@ -59,6 +59,7 @@ public class ConversationType extends GamaContainerType<Conversation> {
 			doc = @doc ("Converts the operand into a conversation (if applicable) or retrieves the conversation of the message passed. Otherwise returns nil"))
 	// @doc(value = "to be added", comment = "", special_cases = { "" },
 	// examples = { })
+	@no_test
 	public static Conversation asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return ConversationType.staticCast(scope, val, null);
 	}

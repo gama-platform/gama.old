@@ -64,7 +64,7 @@ grid cell width: grid_size height: grid_size neighbors: neighborhood_type optimi
 
 experiment goto_grid type: gui {
 	output {
-		display objects_display type: opengl{
+		display objects_display type: java2D{
 			grid cell lines: #black;
 			graphics "elements" {
 				draw circle(1) color: #green at: source border: #black;

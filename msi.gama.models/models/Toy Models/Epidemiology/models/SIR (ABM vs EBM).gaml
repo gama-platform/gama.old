@@ -115,7 +115,7 @@ species node_agent {
 	float S;
 	float R;
 	equation eqSIR type: SIR vars: [S, I, R, t] params: [N, beta, gamma];
-	reflex solving {solve eqSIR method: rk4 step: 1;}
+	reflex solving {solve eqSIR method: rk4 step_size: 1;}
 	
 }
 

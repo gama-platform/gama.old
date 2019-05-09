@@ -11,10 +11,10 @@ global {
 	string orientation <- "horizontal" among: ["horizontal", "vertical"] parameter: true;	
 	
 	init {
-		ask cell {color <- #grey;}
+		ask cell {color <- #white;}
 	}
 	reflex show_neighborhood {
-		ask cell {color <- #grey;}
+		ask cell {color <- #white;}
 		ask one_of(cell) {
 			color <- #red;
 			ask neighbors {

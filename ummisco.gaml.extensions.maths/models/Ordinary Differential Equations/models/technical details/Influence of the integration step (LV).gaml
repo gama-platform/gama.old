@@ -31,7 +31,7 @@ species userLV {
     }		
     
 	reflex solving {
-		solve eqLV method: rk4 step: h;
+		solve eqLV method: rk4 step_size: h;
 	}
 }
 

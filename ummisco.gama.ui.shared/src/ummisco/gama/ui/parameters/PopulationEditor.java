@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -23,6 +23,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.ValuedDisplayOutputFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
+import msi.gaml.species.ISpecies;
 import ummisco.gama.ui.interfaces.EditorListener;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
@@ -62,7 +63,8 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 	protected void displayParameterValue() {
 		internalModification = true;
 		final String s = currentValue instanceof IPopulation ? ((IPopulation) currentValue).getName()
-				: currentValue == null ? "nil" : currentValue.serialize(true);
+				: currentValue == null ? "nil" : currentValue instanceof ISpecies
+						? currentValue.getGamlType().toString() : currentValue.serialize(true);
 		populationDisplayer.setText(s);
 		populationDisplayer.setToolTipText(s);
 		internalModification = false;

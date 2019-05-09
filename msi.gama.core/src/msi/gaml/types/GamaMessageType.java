@@ -12,6 +12,7 @@ package msi.gaml.types;
 
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -20,7 +21,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-@SuppressWarnings ("unchecked")
+
 @type (
 		name = GamaMessageType.MESSAGE_STR,
 		id = IType.MESSAGE,
@@ -53,6 +54,7 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 			comment = "",
 			special_cases = { "" },
 			examples = {})
+	@no_test
 	public static GamaMessage asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaMessageType.staticCast(scope, val, null);
 	}

@@ -46,7 +46,7 @@ species aSIR {
 	}
                 
     reflex solving {
-    	solve SIR method: rk4 step: h ;
+    	solve SIR method: rk4 step_size: h ;
     }    
 }
 

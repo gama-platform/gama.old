@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
@@ -61,9 +61,9 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
-	
+
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	Label coord, zoom, left, center, right;
@@ -357,7 +357,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final Point p = referenceComposite.toDisplay(r.x, r.y);
 		final int x = p.x;
 		final int y = p.y + r.height - (createExtraInfo ? 56 : 32);
-		DEBUG.OUT("Location of overlay = " + x + " " + y + " <>  client area dans Display : "  + r);
+		// DEBUG.OUT("Location of overlay = " + x + " " + y + " <> client area dans Display : " + r);
 		return new Point(x, y);
 	}
 
@@ -392,7 +392,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	/**
 	 * Method updateWith()
-	 * 
+	 *
 	 * @see msi.gama.gui.swt.controls.IUpdaterTarget#updateWith(java.lang.Object)
 	 */
 	@Override
@@ -423,7 +423,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	/**
 	 * Method getCurrentState()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IUpdaterTarget#getCurrentState()
 	 */
 	@Override
@@ -433,7 +433,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	/**
 	 * Method resume()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IUpdaterTarget#resume()
 	 */
 	@Override

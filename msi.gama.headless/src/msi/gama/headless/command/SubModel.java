@@ -9,6 +9,7 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -32,6 +33,7 @@ public class SubModel {
 	@doc (
 			value = "Load a submodel",
 			comment = "loaded submodel")
+	@no_test
 	public static Integer stepSubModel(final IScope scope, final IExperimentAgent expName) {
 		final Experiment exp = (Experiment) scope.getVarValue(expName.toString());
 		return new Integer((int) exp.step());
@@ -45,6 +47,7 @@ public class SubModel {
 	@doc (
 			value = "Load a submodel",
 			comment = "loaded submodel")
+	@no_test
 	public static Object evaluateSubModel(final IScope scope, final IExperimentAgent expName, final String expression) {
 		final Experiment exp = (Experiment) scope.getVarValue(expName.toString());
 		return exp.evaluateExpression(expression);
@@ -60,6 +63,7 @@ public class SubModel {
 	@doc (
 			value = "Load a submodel",
 			comment = "loaded submodel")
+	@no_test
 	public static IExperimentAgent loadSubModel(final IScope scope, final String expName, final String mdp) {
 		final int seed = 0;
 		String modelPath = mdp;
