@@ -746,24 +746,24 @@ public class Containers {
 			value = "a list, containing the agents of the left-hand operand whose species is that denoted by the right-hand operand "
 					+ "and whose species extends the right-hand operand species ",
 			examples = { @example (
-					value = "// species test {}"),
+					value = "// species speciesA {}"),
 					@example (
-							value = "// species sous_test parent: test {}"),
+							value = "// species sub_speciesA parent: speciesA {}"),
 					@example (
-							value = "[sous_test(0),sous_test(1),test(2),test(3)] of_generic_species test",
-							equals = "[sous_test0,sous_test1,test2,test3]",
+							value = "[sub_speciesA(0),sub_speciesA(1),speciesA(2),speciesA(3)] of_generic_species speciesA",
+							equals = "[sub_speciesA0,sub_speciesA1,speciesA0,speciesA1]",
 							isExecutable = false),
 					@example (
-							value = "[sous_test(0),sous_test(1),test(2),test(3)] of_generic_species sous_test",
-							equals = "[sous_test0,sous_test1]",
+							value = "[sub_speciesA(0),sub_speciesA(1),speciesA(2),speciesA(3)] of_generic_species sous_test",
+							equals = "[sub_speciesA0,sub_speciesA1]",
 							isExecutable = false),
 					@example (
-							value = "[sous_test(0),sous_test(1),test(2),test(3)] of_species test",
-							equals = "[test2,test3]",
+							value = "[sub_speciesA(0),sub_speciesA(1),speciesA(2),speciesA(3)] of_species speciesA",
+							equals = "[speciesA0,speciesA1]",
 							isExecutable = false),
 					@example (
-							value = "[sous_test(0),sous_test(1),test(2),test(3)] of_species sous_test",
-							equals = "[sous_test0,sous_test1]",
+							value = "[sub_speciesA(0),sub_speciesA(1),speciesA(2),speciesA(3)] of_species sous_test",
+							equals = "[sub_speciesA0,sub_speciesA1]",
 							isExecutable = false) },
 			see = { "of_species" })
 	public static IList of_generic_species(final IScope scope, final IContainer agents, final ISpecies s) {
@@ -812,6 +812,7 @@ public class Containers {
 	@doc (
 			value = "produces a new pair combining the left and the right operands",
 			special_cases = "nil is not acceptable as a key (although it is as a value). If such a case happens, :: will throw an appropriate error")
+	@test("string(1::2) = '1::2'")
 	public static GamaPair pair(final IScope scope, final IExpression a, final IExpression b) {
 		final Object v1 = a.value(scope);
 		final Object v2 = b.value(scope);

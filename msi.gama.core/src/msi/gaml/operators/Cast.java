@@ -350,11 +350,12 @@ public class Cast {
 					@example (
 							value = "species([1,5,9,3])",
 							equals = "nil",
-							isExecutable = true),
+							isExecutable = false),
 					@example (
 							value = "species(node1)",
 							equals = "node",
 							isExecutable = false) })
+	@test("species([1,5,9,3]) = nil")
 	public static ISpecies asSpecies(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (ISpecies) Types.SPECIES.cast(scope, val, null, false);
 	}
