@@ -121,6 +121,10 @@ public class Graphs {
 		}
 	};
 
+	
+	
+	
+	
 	// private static class IntersectionRelationLine implements
 	// VertexRelationship<IShape> {
 	//
@@ -140,6 +144,7 @@ public class Graphs {
 	// }
 	//
 	// };
+
 
 	private static class IntersectionRelationLineTriangle implements VertexRelationship<IShape> {
 
@@ -641,7 +646,7 @@ public class Graphs {
 	@no_test
 	public static int outDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
-			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
+			throw GamaRuntimeException.error("In the out_degree_of operator, the graph should not be null!", scope);
 		}
 		if (graph.containsVertex(vertex)) { return graph.outDegreeOf(vertex); }
 		return 0;
@@ -687,7 +692,9 @@ public class Graphs {
 							equals = "the list of all the components as list",
 							test = false) },
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			" list comp <- connected_components_of(g); "
+			+ " length(comp) = 2")
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
@@ -720,7 +727,9 @@ public class Graphs {
 							equals = "the list of all the components as list",
 							test = false) },
 			see = { "alpha_index", "connectivity_index", "nb_cycles" })
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			" list comp <- connected_components_of(g, true); "
+			+ " length(comp) = 2")
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph, final boolean edge) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
@@ -760,7 +769,8 @@ public class Graphs {
 					equals = "the sub-graph corresponding to the main connected components of the graph",
 					test = false) },
 			see = { "connected_components_of" })
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " length(main_connected_component(g)) = 5")
 	public static IGraph ReduceToMainconnectedComponentOf(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
@@ -803,7 +813,8 @@ public class Graphs {
 							equals = "the list of all the maximal cliques as list",
 							test = false) },
 			see = { "biggest_cliques_of" })
-	@no_test
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " maximal_cliques_of(g) = [[{10.0,5.0,0.0},{20.0,3.0,0.0}],[{30.0,30.0,0.0},{10.0,5.0,0.0}],[{20.0,3.0,0.0}],[{30.0,30.0,0.0},{80.0,35.0,0.0}],[{40.0,60.0,0.0},{80.0,35.0,0.0}],[{40.0,60.0,0.0}],[{50.0,50.0,0.0}]]  ")
 	public static IList<IList> getMaximalCliques(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the maximal_cliques_of operator, the graph should not be null!",
@@ -833,6 +844,8 @@ public class Graphs {
 							equals = "the list of the biggest cliques as list",
 							test = false) },
 			see = { "maximal_cliques_of" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " biggest_cliques_of(g) = [[{10.0,5.0,0.0},{20.0,3.0,0.0}],[{30.0,30.0,0.0},{10.0,5.0,0.0}],[{30.0,30.0,0.0},{80.0,35.0,0.0}],[{40.0,60.0,0.0},{80.0,35.0,0.0}]]  ")
 	public static IList<IList> getBiggestCliques(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the biggest_cliques_of operator, the graph should not be null!",
@@ -862,6 +875,8 @@ public class Graphs {
 							equals = "the number of cycles in the graph",
 							test = false) },
 			see = { "alpha_index", "beta_index", "gamma_index", "connectivity_index" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " nb_cycles(g) = 1 ")
 	public static int nbCycles(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the nb_cycles operator, the graph should not be null!", scope);
@@ -886,6 +901,8 @@ public class Graphs {
 							equals = "the alpha index of the graph",
 							test = false) },
 			see = { "beta_index", "gamma_index", "nb_cycles", "connectivity_index" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " alpha_index(g) = 0.14285714285714285 ")
 	public static double alphaIndex(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the alpha_index operator, the graph should not be null!", scope);
@@ -907,6 +924,8 @@ public class Graphs {
 							equals = "the beta index of the graph",
 							test = false) },
 			see = { "alpha_index", "gamma_index", "nb_cycles", "connectivity_index" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " beta_index(g) = 0.8333333333333334 ")
 	public static double betaIndex(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the beta_index operator, the graph should not be null!", scope);
@@ -927,6 +946,8 @@ public class Graphs {
 							equals = "the gamma index of the graph",
 							test = false) },
 			see = { "alpha_index", "beta_index", "nb_cycles", "connectivity_index" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " gamma_index(g) = 0.7142857142857143 ")
 	public static double gammaIndex(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the gamma_index operator, the graph should not be null!", scope);
@@ -947,6 +968,8 @@ public class Graphs {
 							equals = "the connectivity index of the graph",
 							test = false) },
 			see = { "alpha_index", "beta_index", "gamma_index", "nb_cycles" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " connectivity_index(g) = 0.8 ")
 	public static double connectivityIndex(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the connectivity_index operator, the graph should not be null!",
@@ -972,12 +995,13 @@ public class Graphs {
 							equals = "the betweenness centrality index of the graph",
 							test = false) },
 			see = {})
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			 " betweenness_centrality(g) = [{10.0,5.0,0.0}::5,{20.0,3.0,0.0}::0,{30.0,30.0,0.0}::2,{80.0,35.0,0.0}::4,{40.0,60.0,0.0}::0,{50.0,50.0,0.0}::0] ")
 	public static GamaMap betweennessCentrality(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the betweenness_centrality operator, the graph should not be null!",
 					scope);
 		}
-		// DEBUG.OUT("result.getRaw() : " + result.getRaw());
 
 		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
 		final GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
@@ -1027,6 +1051,7 @@ public class Graphs {
 							equals = "the edge betweenness index of the graph",
 							test = false) },
 			see = {})
+	@no_test
 	public static GamaMap edgeBetweenness(final IScope scope, final IGraph graph) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the edge_betweenness operator, the graph should not be null!", scope);
@@ -1135,6 +1160,8 @@ public class Graphs {
 							value = "graphEpidemio successors_of node({34,56})",
 							equals = "[]") },
 			see = { "predecessors_of", "neighbors_of" })
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+			"g successors_of ({10,5}) = [{20.0,3.0,0.0},{30.0,30.0,0.0}]")	
 	public static IList successorsOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph.containsVertex(vertex)) {
 			return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
@@ -1142,12 +1169,6 @@ public class Graphs {
 		}
 		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
-
-	// @operator(value = "graph_from_edges")
-	// public static IGraph fromEdges(final IScope scope, final GamaList edges)
-	// {
-	// return new GamaGraph(edges, true, false);
-	// }
 
 	@operator (
 			value = "as_edge_graph",
@@ -1165,7 +1186,8 @@ public class Graphs {
 							equals = "a graph with two edges and three vertices",
 							test = false) }),
 			see = { "as_intersection_graph", "as_distance_graph" })
-	@no_test
+	@test(" graph<geometry,geometry> comp <- as_edge_graph([line([{1,5},{12,45}]),line([{12,45},{34,56}])]); "
+			+ " ( ({1,5} in comp.vertices) and  ({12,45} in comp.vertices) and  ({34,56} in comp.vertices) ) ")
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
 
 		final IGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope, Types.GEOMETRY,
@@ -1193,7 +1215,8 @@ public class Graphs {
 							equals = "a graph with two edges and three vertices",
 							test = false) }),
 			see = { "as_intersection_graph", "as_distance_graph" })
-	@no_test
+	@test(" graph<geometry,geometry> g <- as_edge_graph([line([{1,5},{12,45}]),line([{13,45},{34,56}])],1); "
+			+ " [{1.0,5.0,0.0},{12.0,45.0,0.0},{34.0,56.0,0.0}] = g.vertices  ")
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges, final Double tolerance) {
 
 		final GamaSpatialGraph createdGraph = new GamaSpatialGraph(edges, true, false, null, null, scope,
@@ -1224,7 +1247,8 @@ public class Graphs {
 							value = "as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])",
 							equals = "a graph with these three vertices and two edges",
 							test = false)))
-	@no_test
+	@test(" graph<geometry,geometry> g <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]); "
+			+ " length(g.vertices) = 3 and length(g.edges) = 2")
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
 
@@ -1391,7 +1415,8 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT })
 	@doc (
-			value = "allows to create a spatial graph from a container of vertices, without trying to wire them. The container can be empty. Emits an error if the contents of the container are not geometries, points or agents",
+			value = "allows to create a spatial graph from a container of vertices, without trying to wire them. "
+					+ "The container can be empty. Emits an error if the contents of the container are not geometries, points or agents",
 			see = { "graph" })
 	@no_test
 	public static IGraph spatial_graph(final IScope scope, final IContainer vertices) {
@@ -1399,16 +1424,7 @@ public class Graphs {
 				Types.GEOMETRY);
 	}
 
-	// @operator(value = "spatialize")
-	// public static IGraph asSpatialGraph(final GamaGraph g) {
-	// return GamaGraphType.asSpatialGraph(g);
-	// }
-
-	// @operator(value = "unspatialize")
-	// public static IGraph asRegularGraph(final GamaGraph g) {
-	// return GamaGraphType.asRegularGraph(g);
-	// }
-
+	
 	@operator (
 			value = "use_cache",
 			category = { IOperatorCategory.GRAPH, IOperatorCategory.PATH },
