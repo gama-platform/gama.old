@@ -39,7 +39,7 @@ species NetworkingAgent skills:[network]{
 	{
 		write "sending message: " + "This message a string" + name;
 		do send to:"sender" contents:"This message a string" + name;
-		do send to:"receiver" contents:"This message a string" + name;		
+		do send to:"receiver" contents:self;		
 	}
 	reflex send2 when: cycle mod 10  = 5
 	{

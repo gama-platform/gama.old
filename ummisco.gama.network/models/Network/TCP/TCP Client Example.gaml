@@ -11,9 +11,10 @@ global
 {
 	init
 	{
-		create Networking_Client
+		create Networking_Client number:1
 		{
 			do connect to: "localhost" protocol: "tcp_client" port: 3001 with_name: "Client";
+			do register_to_group to:"test";
 		}
 
 	}
@@ -36,7 +37,8 @@ species Networking_Client skills: [network]
 	reflex send
 	{
 		write "sending message ";
-		do send to: "send" contents: name + " " + cycle + " sent to server";
+		do send to: "Server0" contents: name + " " + cycle + " sent to server";
+		do send to: "test" contents: name + " broadcast a message ";
 	}
 
 }

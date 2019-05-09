@@ -9,11 +9,15 @@ model Socket_TCP_HelloWorld_Server
 
 global
 {
+	int id <- 0;
 	init
 	{
-		create Networking_Server
+		
+		create Networking_Server number:4
 		{
-			do connect to: "localhost" protocol: "tcp_server" port: 3001 with_name: "Server";
+			do connect to: "localhost" protocol: "tcp_server" port: 3001 with_name: "Server"+id;
+			do register_to_group to:"test";
+			id<-id+1;
 		}
 
 	}
@@ -25,7 +29,8 @@ species Networking_Server skills: [network]
 	string name;
 	string dest;
 	reflex receive
-	{   write "mailbox";
+	{   
+		write "mailbox";
 		if (length(mailbox) > 0)
 		{
 			write mailbox;
@@ -35,10 +40,10 @@ species Networking_Server skills: [network]
 
 	reflex send
 	{
-		loop id over: network_groups
-		{
-			do send to: id contents: "I am Server " + name + " I give order to " + id;
-		}
+		//loop id over: network_groups
+		//{
+			do send to: "Client" contents: ("I am Server " + name + " I give order to Client");
+		//}
 
 	}
 

@@ -11,7 +11,7 @@ global skills:[network]{
 	string RECEIVER <- "receiver" const: true;
 	string SENDER <- "sender" const: true;
 	
-	string simulationName <- RECEIVER;
+	string simulationName <- SENDER;
 	point targetleft <- {0,50};
 	point targetright <- {100,50};
 	
