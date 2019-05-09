@@ -75,13 +75,14 @@ experiment visu type: gui {
 			}
 			graphics arc {
 				draw arc color:#black;
+				draw curve({0,0},{0,10},{10,10}) color:#black;
 			}
 		}
 		display threeD type:opengl {
 			graphics cylinder {
-				draw cylinder(10,10) at:{20,20} color:#deepskyblue;
-				draw sphere(10) at:{20,40} color:#darkturquoise;
-				draw teapot(10) at:{20,60} color:#mediumspringgreen;
+				draw cylinder(10,10) at:{25,25} color:#deepskyblue;
+				draw sphere(10) at:{25,50} color:#darkturquoise;
+				draw teapot(10) at:{25,75} color:#mediumspringgreen;
 			}
 		} 
 	}
