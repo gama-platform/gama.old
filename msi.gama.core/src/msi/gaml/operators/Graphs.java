@@ -288,6 +288,11 @@ public class Graphs {
 
 	public static class NodesToAdd extends GamaList<GraphObjectToAdd> implements GraphObjectToAdd {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public NodesToAdd() {
 			super(0, Types.NO_TYPE);
 		}
@@ -308,6 +313,11 @@ public class Graphs {
 	}
 
 	public static class EdgesToAdd extends GamaList<GraphObjectToAdd> implements GraphObjectToAdd {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		public EdgesToAdd() {
 			super(0, Types.NO_TYPE);
@@ -418,9 +428,6 @@ public class Graphs {
 			usages = @usage (
 					value = "if the right-hand operand is a pair, returns true if it exists an edge between the two elements of the pair in the graph",
 					examples = {
-							// @example(value="graph graphEpidemio <- generate_barabasi_albert(
-							// [\"edges_species\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5]
-							// );",isExecutable=false),
 							@example (
 									value = "graphEpidemio contains_edge (node(0)::node(3))",
 									equals = "true",
@@ -542,6 +549,8 @@ public class Graphs {
 							equals = "[LineString]",
 							test = false) },
 			see = "out_edges_of")
+	@test("graph<geometry, geometry> g2 <- directed(as_edge_graph([ edge({10,5}, {30,30}), edge({30,30}, {80,35}), node ({30,30})]));\r\n"
+			+ "first(line({10,5},{30,30})).points = first(res).points")
 	public static IList inEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the in_edges_of operator, the graph should not be null!", scope);
@@ -563,7 +572,8 @@ public class Graphs {
 					equals = "edge1",
 					isExecutable = false) },
 			see = { "out_edges_of", "in_edges_of" })
-	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
+	@test("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),"
+			+ "edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n" + 
 			"(g edge_between ({10,5}::{20,3})) = g.edges[0]")
 	public static Object EdgeBetween(final IScope scope, final IGraph graph, final GamaPair verticePair) {
 		if (graph == null) {
@@ -644,7 +654,10 @@ public class Graphs {
 							equals = "4",
 							test = false) },
 			see = { "in_degree_of", "degree_of" })
-	@no_test
+	@test ("graph<geometry, geometry> g1 <- directed(as_edge_graph([ edge({10,5}, {30,30}), edge({30,30}, {80,35}), node ({30,30})]));\r\n"
+			+ "g1 out_degree_of {30,30} = 1")
+	@test ("graph<geometry, geometry> g2 <- directed(as_edge_graph([ edge({30,30}, {10,5}), edge({30,30}, {80,35}), node ({30,30})]));\r\n"
+			+ "g2 out_degree_of {30,30} = 2")
 	public static int outDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the out_degree_of operator, the graph should not be null!", scope);
