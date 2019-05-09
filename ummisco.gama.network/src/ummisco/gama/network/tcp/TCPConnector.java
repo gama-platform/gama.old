@@ -60,6 +60,7 @@ public class TCPConnector extends Connector {
 				throw GamaRuntimeException.create(e, agent.getScope());
 			}
 		}
+		
 	}
 
 	public void connectToServerSocket(final IAgent agent) throws GamaRuntimeException {
@@ -70,7 +71,6 @@ public class TCPConnector extends Connector {
 		}
 		if (sock == null) {
 			try {
-
 				String server = this.getConfigurationParameter(SERVER_URL);
 				String port = this.getConfigurationParameter(SERVER_PORT);
 				server = server == null ? DEFAULT_HOST : server;
@@ -85,7 +85,6 @@ public class TCPConnector extends Connector {
 			} catch (final Exception e) {
 				throw GamaRuntimeException.create(e, agent.getScope());
 			}
-
 		}
 	}
 
@@ -164,8 +163,6 @@ public class TCPConnector extends Connector {
 				}
 				m.clear();
 				agt.setAttribute("message" + agt, m);
-				// scope.getAgentScope().setAttribute("messages" +
-				// scope.getAgentScope(), null);
 			}
 		}
 		return super.fetchAllMessages();
@@ -181,6 +178,19 @@ public class TCPConnector extends Connector {
 	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected boolean isAlive(final IAgent agent) throws GamaNetworkException {
+		final String sport = this.getConfigurationParameter(SERVER_PORT);
+		final Integer port = Cast.asInt(agent.getScope(), sport);
+		final Thread sersock = (Thread) agent.getScope().getSimulation().getAttribute(_TCP_SERVER + port);
+		if(sersock != null && sersock.isAlive()) return true;
+		
+		final Thread cSock = (Thread) agent.getScope().getAgent().getAttribute(_TCP_SOCKET);
+		if(sersock != null && cSock.isAlive()) return true;
+		
+		return false;
 	}
 
 	@Override

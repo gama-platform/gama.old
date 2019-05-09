@@ -9,6 +9,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.ConnectorMessage;
+import ummisco.gama.network.common.MessageFactory;
 import ummisco.gama.network.common.NetworkMessage;
 
 public class MultiThreadedUDPSocketServer extends Thread {
@@ -66,7 +67,7 @@ public class MultiThreadedUDPSocketServer extends Thread {
 					this.interrupt();
 				}
 
-				final NetworkMessage msg = new NetworkMessage(myUDPServerSocket.toString(), sentence);
+				final NetworkMessage msg = MessageFactory.buildNetworkMessage(myUDPServerSocket.toString(), sentence);
 				msgs.addValue(myAgent.getScope(), msg);
 
 				myAgent.setAttribute("messages" + myAgent, msgs);

@@ -104,11 +104,11 @@ global
 
 species datapoints
 {
-	rgb color_kmeans <- rgb(225,225,225);
+	rgb color_kmeans <- rgb(225,225,225) 	;
 	centroids mycenter;
 	aspect kmeans_aspect2D
 	{
-		draw circle(2) color: color_kmeans;
+		draw circle(2) color: color_kmeans border:color_kmeans-25;
 	}
 
 	aspect kmeans_aspect3D
@@ -124,20 +124,22 @@ species centroids
 	list<datapoints> mypoints;
 	aspect kmeans_aspect2D
 	{
-		draw cross(3, 0.5) color: color_kmeans border: # black;
+		
 		loop pt over: mypoints
 		{
 			draw line([location, pt]) + 0.1 color: color_kmeans;
 		}
+		draw cross(3, 0.5) color: color_kmeans border:color_kmeans-25;
 	}
 
 	aspect kmeans_aspect3D
 	{
-		draw cube(5) color: color_kmeans border: # black;
 		loop pt over: mypoints
 		{
 			draw line([location, pt], 0.2) color: color_kmeans;
 		}
+		draw cube(5) color: color_kmeans border: # black;
+		
 	}
 
 }
@@ -154,7 +156,7 @@ experiment clustering2D type: gui
 	{
 		display map_kmeans
 		{
-			species datapoints aspect: kmeans_aspect2D;
+			species datapoints aspect: kmeans_aspect2D transparency:0.4;
 			species centroids aspect: kmeans_aspect2D;
 			graphics "Full target"
 			{
@@ -162,9 +164,11 @@ experiment clustering2D type: gui
 				if (not even(cycle))
 				{
 				// the "update step" as maximization step, (a mean is done to recenter)
-					draw "Next step is maximisation step the centroid will move to the means of its points" at: target + { 0, 0 } font: regular color: # red;
+					draw "Current step was an estimation Step (each point is assigned the color of his nearest centroid" at: target + { 0, 15 } font: regular color: # black;
+					draw "Next step is maximisation step the centroid will move to the center of its  associated points" at: target + { 0, 0 } font: regular color: # red;
 				} else
 				{
+					draw "Current step was a maximisation step the centroid moved to the center of its associated points" at: target + { 0, 15 } font: regular color: # black;
 					draw "Next step is estimation Step (each point is assigned the color of his nearest centroid" at: target + { 0, 0 } font: regular color: # green;
 				}
 
@@ -178,18 +182,18 @@ experiment clustering2D type: gui
 experiment clustering3D type: gui
 {
 	parameter "Number of clusters to split the data into" var: k category: "KMEANS";
-	parameter "Number of points to be clustered" var: N init:1000 ;
+	parameter "Number of points to be clustered" var: N init:200 ;
 	font regular <- font("Helvetica", 14, # bold);
 	point target <- { 20, 95 };
 	parameter "Number of dimensions" var: dimensions init: 3 min: 3 max: 3;
 	action _init_ {
-		create MASKMEANS_model with: [dimensions::3, N::5000];
+		create MASKMEANS_model with: [dimensions::3, N::1000];
 	}
 	output
 	{
 		display map_kmeans type: opengl
 		{
-			species datapoints aspect: kmeans_aspect3D;
+			species datapoints aspect: kmeans_aspect3D transparency:0.4;
 			species centroids aspect: kmeans_aspect3D;
 		}
 

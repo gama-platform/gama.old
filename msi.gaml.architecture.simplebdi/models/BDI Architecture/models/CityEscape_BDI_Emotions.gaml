@@ -223,6 +223,7 @@ species catastrophe{
 }
 
 experiment main type: gui {
+	float minimum_cycle_duration <- 0.02;
 	output {
 		display map type: opengl{
 			species shelter refresh: false;

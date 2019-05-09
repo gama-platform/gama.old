@@ -15,22 +15,21 @@ import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.factory.StreamConverter;
 
 public class NetworkMessage implements ConnectorMessage {
-	private static final byte[] keyChain = { 3, 5, 8, 13 };
 	private static final String UNDEFINED = "undefined";
-	private static final int MAX_HEADER_SIZE = 1024;
+	
 	private final String from;
 	private final String to;
 	private final String content;
-	private boolean isPlainMessage = false;
-
-	public NetworkMessage(final String from, final String data) {
+	protected boolean isPlainMessage = false;
+	
+	protected NetworkMessage(final String from, final String data) {
 		this.content = data;
 		this.from = from;
 		this.to = UNDEFINED;
 		isPlainMessage = true;
 	}
 
-	public NetworkMessage(final String from, final String to, final String data) {
+	protected NetworkMessage(final String from, final String to, final String data) {
 		this.from = from;
 		this.to = to;
 		this.content = data;
@@ -47,6 +46,10 @@ public class NetworkMessage implements ConnectorMessage {
 		return to;
 	}
 
+	public String getPlainContents() {
+		return content;
+	}
+	
 	@Override
 	public boolean isPlainMessage() {
 		return isPlainMessage;
@@ -74,23 +77,10 @@ public class NetworkMessage implements ConnectorMessage {
 		return message;
 	}
 
-	public static NetworkMessage unPackMessage(final String sender, final String data) {
-		final String key = new String(keyChain);
-		if (!data.substring(0, keyChain.length).equals(key))
-			return new NetworkMessage(sender, data);
 
-		final int size = MAX_HEADER_SIZE < data.length() ? MAX_HEADER_SIZE : data.length();
-		final String header = data.substring(0, size);
-		final String headSplit[] = header.split(key);
-		final String from = headSplit[1];
-		final String to = headSplit[2];
-		final String content = data.substring(from.length() + to.length() + 3 * key.length());
-		return new NetworkMessage(from, to, content);
+
+	@Override
+	public boolean isCommandMessage() {
+		return false;
 	}
-
-	public static String packMessage(final NetworkMessage msg) {
-		final String mKey = new String(keyChain);
-		return mKey + msg.from + mKey + msg.to + mKey + msg.content;
-	}
-
 }

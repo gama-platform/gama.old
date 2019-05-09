@@ -16,6 +16,8 @@ import msi.gama.runtime.IScope;
 public interface ConnectorMessage {
 	public String getSender();
 	public String getReceiver();
+	public String getPlainContents();
 	public boolean isPlainMessage();
+	public boolean isCommandMessage();
 	public GamaMessage getContents(IScope scope);
 }

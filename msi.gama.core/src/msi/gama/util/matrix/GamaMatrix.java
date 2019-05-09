@@ -18,7 +18,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -316,7 +315,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @param asInt
 	 * @return
 	 */
-	protected abstract T getNthElement(Integer index);
+	public abstract T getNthElement(Integer index);
 
 	@Override
 	public abstract T get(IScope scope, final int col, final int row);

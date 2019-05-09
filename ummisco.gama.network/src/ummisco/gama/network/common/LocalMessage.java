@@ -35,6 +35,11 @@ public class LocalMessage implements ConnectorMessage {
 	public String getReceiver() {
 		return receiver;
 	}
+	
+	@Override
+	public String getPlainContents() {
+		return this.internalMessage.toString();
+	}
 
 	@Override
 	public boolean isPlainMessage() {
@@ -52,6 +57,12 @@ public class LocalMessage implements ConnectorMessage {
 			message = new GamaMessage(scope, sender, receiver, internalMessage);
 		message.hasBeenReceived(scope);
 		return message;
+	}
+
+	@Override
+	public boolean isCommandMessage() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

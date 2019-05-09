@@ -37,6 +37,7 @@ public interface IConnector {
 
 	public final static String SERVER_URL = "SERVER_URL";
 	public final static String SERVER_PORT = "SERVER_PORT";
+	public final static String IS_SERVER = "IS_SERVER";
 	public final static String LOCAL_NAME = "LOCAL_NAME";
 	public final static String LOGIN = "LOGIN";
 	public final static String PASSWORD = "PASSWORD";

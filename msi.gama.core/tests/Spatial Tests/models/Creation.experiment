@@ -1,0 +1,116 @@
+/***
+* Name: Creation
+* Author: kevinchapuis
+* Description: Dummy test for geometry creation / mostly rely on JTS so it is pretty robust
+* Tags: Tag1, Tag2, TagN
+***/
+
+model create_tests
+
+global {
+	
+	float circle_tolerance <- 0.01;
+	
+	geometry circle;
+	geometry inner_circle;
+	list<point> p_circles;
+	geometry c_square;
+	
+	geometry s_ellipse;
+	geometry l_ellipse;
+	
+	geometry squircle;
+	
+	float arc_tolerance <- 0.001;
+	geometry arc;
+	float amplitude;
+	
+	geometry teapot;
+	
+	int m_size <- 20 max:100;
+	
+	init {
+		create dummy with:[location::world.location];
+	}
+	
+	reflex next_test {
+		circle <- circle(m_size, dummy[0].location);
+		ask dummy {
+			p_circles <- 50 points_at m_size;
+		}
+		
+		s_ellipse <- ellipse(rnd(m_size*2),rnd(m_size*2)); 
+		l_ellipse <- ellipse(m_size*2+rnd(100-m_size*2),m_size*2+rnd(100-m_size*2));
+		
+		c_square <- envelope(circle);
+		
+		ask dummy {
+			squircle <- squircle(m_size,2);
+			amplitude <- rnd(360.0);
+			arc <- arc(m_size, rnd(360), amplitude);
+		}
+	}
+}
+
+species dummy {
+	init { inner_circle <- circle(m_size); }
+}
+
+experiment visu type: gui {
+	output {
+		display my_geoms {
+			graphics my_geoms {
+				draw l_ellipse color:#blue;
+				
+				draw buffer(circle,(circle.perimeter/#pi/2)*circle_tolerance) color:rgb(#yellow,0.2);
+				draw circle color:#black;
+				loop p over:p_circles {draw cross(0.5) at:p.location color:#red;}
+				
+				draw s_ellipse color:#grey;
+			}
+		}
+		display curious_about_squircle {
+			graphics other_geoms transparency:0.3 {
+				draw squircle color:#green;
+			}
+			graphics arc {
+				draw arc color:#black;
+			}
+		}
+		display threeD type:opengl {
+			graphics cylinder {
+				draw cylinder(10,10) at:{20,20} color:#deepskyblue;
+				draw sphere(10) at:{20,40} color:#darkturquoise;
+				draw teapot(10) at:{20,60} color:#mediumspringgreen;
+			}
+		} 
+	}
+}
+
+experiment Creation type: test autorun: true {	
+		
+	setup {
+		
+	}
+	
+	test "Circle tests with tolerance" {
+		assert p_circles all_match (each distance_to circle.contour < (each distance_to circle.location * circle_tolerance));
+		assert p_circles all_match (each distance_to inner_circle.contour < (each distance_to inner_circle.location * circle_tolerance));
+		
+		assert c_square covers circle;
+	}
+	
+	test "Elipse test" {
+		assert s_ellipse.area < circle.area;
+		assert circle covers s_ellipse;
+		
+		assert l_ellipse.area > circle.area;
+		assert l_ellipse covers circle;
+	}
+	
+	test "Arc test" {
+		assert circle covers arc;
+		assert arc.area - (circle.area * amplitude / 360) < (circle.area * amplitude / 360 * arc_tolerance);
+	}
+	
+}

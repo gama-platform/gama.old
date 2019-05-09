@@ -163,7 +163,7 @@ global {
 		
 		//Create the physic engine with gravity
 		create physic_world {
-			gravity <- true;
+			gravity <- 9.81;
 			world2 <- self;
 		}
 

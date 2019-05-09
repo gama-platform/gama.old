@@ -58,10 +58,15 @@ import msi.gaml.types.Types;
 		name = "physical_world")
 @doc ("The base species for agents that act as a 3D physical world")
 @vars ({ @variable (
-		name = "gravity",
+		name = "use_gravity",
 		type = IType.BOOL,
 		init = "true",
 		doc = @doc ("Define if the physical world has a gravity or not")),
+		@variable (
+			name = "gravity",
+			type = IType.FLOAT,
+			init = "9.81",
+			doc = @doc ("Define if the value for the gravity")),
 		@variable (
 				name = IKeyword.AGENTS,
 				type = IType.LIST,
@@ -97,23 +102,36 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		}
 		
 	}
-
 	@getter ("gravity")
-	public Boolean getGravity() {
-
-		if (this.getAttribute("gravity") == null) {
-			setGravity(true);
-			return true;
-		} else {
-			return (Boolean) this.getAttribute("gravity");
-		}
+	public Double getGravity() {
+		if (!this.hasAttribute("gravity")) this.setAttribute("gravity", 9.81);
+		return (Double) this.getAttribute("gravity");
 	}
 
 	@setter ("gravity")
-	public void setGravity(final Boolean gravity) {
+	public void setGravity(final Double gravity) {
 		this.setAttribute("gravity", gravity);
-		if (gravity) {
-			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, -9.81f));
+		if (isUseGravity()) {
+			float g = gravity.floatValue() * - 1;
+			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, g));
+		} else {
+			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, 0.0f));
+		}
+
+	}
+	@getter ("use_gravity")
+	public Boolean isUseGravity() {
+		if (!this.hasAttribute("use_gravity")) this.setAttribute("use_gravity", true);
+		
+		return (Boolean) this.getAttribute("use_gravity");
+	}
+
+	@setter ("use_gravity")
+	public void setGravity(final Boolean useGravity) {
+		this.setAttribute("use_gravity", useGravity);
+		if (useGravity) {
+			float gravity = getGravity().floatValue() * - 1;
+			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, gravity));
 		} else {
 			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, 0.0f));
 		}
@@ -143,7 +161,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		// problem if the shape
 		// is not in the z plan it is totally wrong.
 		
-		final GamaList<Double> velocity = (GamaList<Double>) Cast.asList(null, geom.getAttribute("velocity"));
+		final GamaList<Double> velocity = (GamaList<Double>) Cast.asList(GAMA.getRuntimeScope(), geom.getAttribute("velocity"));
 		final Vector3f _velocity =
 				new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
 
@@ -175,7 +193,6 @@ public class Physical3DWorldAgent extends MinimalAgent {
 			} else {
 				shape = defaultCollisionShape(geom);
 			}
-
 		}
 		return world.addCollisionObject(shape, mass.floatValue(), position, _velocity, friction.floatValue(), lin_damping.floatValue(), ang_damping.floatValue(), restitution.floatValue());
 	}

@@ -13,10 +13,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.extensions.messaging.GamaMailbox;
 import msi.gama.extensions.messaging.GamaMessage;
@@ -37,7 +39,8 @@ import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.IConnector;
-import ummisco.gama.network.mqqt.MQTTConnector;
+import ummisco.gama.network.mqtt.MQTTConnector;
+import ummisco.gama.network.tcp.TCPConnection;
 import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
 
@@ -103,7 +106,7 @@ public class NetworkSkill extends MessagingSkill {
 			args = { @arg (
 					name = INetworkSkill.PROTOCOL,
 					type = IType.STRING,
-					doc = @doc ("protocol type (UDP, TCP, MQTT (by default)): the possible value ares '"
+					doc = @doc ("protocol type (MQTT (by default), TCP, UDP): the possible value ares '"
 							+ INetworkSkill.UDP_SERVER + "', '" + INetworkSkill.UDP_CLIENT + "', '"
 							+ INetworkSkill.TCP_SERVER + "', '" + INetworkSkill.TCP_CLIENT
 							+ "', otherwise the MQTT protocol is used.")),
@@ -168,12 +171,12 @@ public class NetworkSkill extends MessagingSkill {
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (protocol != null && protocol.equals(INetworkSkill.TCP_SERVER)) {
 				DEBUG.OUT("create TCP serveur");
-				connector = new TCPConnector(scope, true);
+				connector = new TCPConnection(scope, true);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (protocol != null && protocol.equals(INetworkSkill.TCP_CLIENT)) {
 				DEBUG.OUT("create TCP client");
-				connector = new TCPConnector(scope, false);
+				connector = new TCPConnection(scope, false);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else // if(protocol.equals( INetworkSkill.MQTT))
@@ -183,7 +186,7 @@ public class NetworkSkill extends MessagingSkill {
 				if (serverURL != null) {
 					connector.configure(IConnector.SERVER_URL, serverURL);
 					if (port == 0) {
-						connector.configure(IConnector.SERVER_PORT, "1883");
+						connector.configure(IConnector.SERVER_PORT, "8080");
 					} else {
 						connector.configure(IConnector.SERVER_PORT, port.toString());
 
@@ -213,11 +216,14 @@ public class NetworkSkill extends MessagingSkill {
 
 		connector.connect(agt);
 		serverList.add(serverKey);
-
+		
 		// register connected agent to global groups;
 		for (final String grp : INetworkSkill.DEFAULT_GROUP) {
-			connector.joinAGroup(agt, grp);
+			this.joinAGroup(scope,agt, grp);
+			System.out.println(grp);
+			//connector.joinAGroup(agt, grp);
 		}
+		;
 	}
 
 	private static String createServerKey(final String serverURL, final Integer port) {
@@ -251,36 +257,60 @@ public class NetworkSkill extends MessagingSkill {
 		return !box.isEmpty();
 	}
 
-	/*
-	 * @action(name = INetworkSkill.RESGISTER_TO_GROUP, args = {
-	 *
-	 * @arg(name = INetworkSkill.TO, type = IType.STRING, optional = true, doc = @doc("")) }, doc = @doc(value = "",
-	 * returns = "", examples = {
-	 *
-	 * @example("") })) public void registerToGroup(final IScope scope) { IAgent agent = scope.getAgentScope(); String
-	 * serverName = (String) agent.getAttribute(INetworkSkill.NET_AGENT_SERVER); String groupName =
-	 * (String)scope.getArg(INetworkSkill.TO, IType.STRING); IConnector
-	 * connector=getRegisteredServers(scope).get(serverName); connector.joinAGroup(agent, groupName); }
-	 */
+	
+	  @SuppressWarnings("unchecked")
+	@action(name = INetworkSkill.REGISTER_TO_GROUP, args = {
+	 
+	  @arg(name = INetworkSkill.TO, type = IType.STRING, optional = false, doc = @doc("")) }, doc = @doc(value = "",
+	  returns = "", examples = {
+	 
+	  @example("") })) public void registerToGroup(final IScope scope) { 
+		  IAgent agent = scope.getAgent(); 
+			String groupName = (String)scope.getArg(INetworkSkill.TO, IType.STRING);
+			joinAGroup(scope, agent, groupName);
+	  }
+	  
+	  public void joinAGroup(final IScope scope, final IAgent agent, String groupName) {
+		  ArrayList<String> groups;
+		 Object ogr = agent.getAttribute(INetworkSkill.NET_AGENT_GROUPS); 
+		 if(ogr == null)
+		 {
+			 ogr = new ArrayList<String>();
+			 agent.setAttribute(INetworkSkill.NET_AGENT_GROUPS,ogr);
+		 }
+		 groups = (ArrayList<String>) ogr;	 
+		 groups.add(groupName);
+		 
+		 Collection<IConnector> connectors =getRegisteredServers(scope).values(); 
+		 for(IConnector con:connectors)
+			 con.joinAGroup(agent, groupName); 
+	  }
+	 
 
 	@action (
-			name = INetworkSkill.LEAVE_THE_GROUP,
+			name = INetworkSkill.LEAVE_THE_GROUP, 
 			args = { @arg (
 					name = INetworkSkill.FROM,
 					type = IType.STRING,
-					optional = true,
-					doc = @doc ("name of the group the agent wants to leave")) },
+					optional = false,
+					doc = @doc ("name of the group the agent wants to leave")) }, 
 			doc = @doc (
 					value = "leave a group of agent",
 					returns = "",
 					examples = { @example (" do leave_the_group from: \"my_group\";\n") }))
 	public void leaveTheGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
-		// AD POTENTIAL BUG HERE: NET_AGENT_SERVER SEEMS TO BE A LIST OF STRINGS, NOT A STRING
-		final String serverName = (String) agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		final String groupName = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
-		final IConnector connector = getRegisteredServers(scope).get(serverName);
-		connector.leaveTheGroup(agent, groupName);
+		ArrayList<String> groups = (ArrayList<String>) agent.getAttribute(INetworkSkill.NET_AGENT_GROUPS); 
+		 
+		if(groups.contains(groupName))
+			 groups.remove(groupName);
+		Collection<IConnector> connectors = (getRegisteredServers(scope)).values();
+		for(IConnector con:connectors)
+		{
+			con.leaveTheGroup(agent, groupName);
+		}
+			
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -294,7 +324,6 @@ public class NetworkSkill extends MessagingSkill {
 		String destName = receiver.toString();
 		if (receiver instanceof IAgent && getRegisteredAgents(scope).contains(receiver)) {
 			final IAgent mReceiver = (IAgent) receiver;
-			// AD POTENTIAL BUG HERE: NET_AGENT_SERVER SEEMS TO BE A LIST OF STRINGS, NOT A STRING
 			destName = (String) mReceiver.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		}
 

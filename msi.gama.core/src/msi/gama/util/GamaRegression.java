@@ -11,39 +11,42 @@
 package msi.gama.util;
 
 import org.apache.commons.math3.stat.regression.AbstractMultipleLinearRegression;
-import org.apache.commons.math3.stat.regression.GLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.RegressionResults;
 
 import msi.gama.common.interfaces.IValue;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ @variable(name = "parameters", type = IType.LIST, of = IType.FLOAT), @variable(name = "nb_features", type = IType.INT) })
+@vars({ 
+	@variable(name = "parameters", type = IType.LIST, of = IType.FLOAT,
+			doc = { @doc ("List of regression coefficients (float) - same order as the variable in the input matrix ")}), 
+	@variable(name = "nb_features", type = IType.INT, 
+		doc = { @doc ("number of variables")})
+	})
 public class GamaRegression implements IValue {
 
 	RegressionResults regressionResults;
 	int nbFeatures;
 	double param[];
 
-	public GamaRegression(final IScope scope, final GamaFloatMatrix data, final String method) throws Exception {
-		AbstractMultipleLinearRegression regressionMethod = null;
-		if (method.equals("GLS"))
-			regressionMethod = new GLSMultipleLinearRegression();
-		else
-			regressionMethod = new OLSMultipleLinearRegression();
+	public GamaRegression(final IScope scope, final GamaMatrix<?> data) throws Exception {
+		AbstractMultipleLinearRegression regressionMethod = new OLSMultipleLinearRegression();
 		final int nbFeatures = data.numCols - 1;
 		final int nbInstances = data.numRows;
+		
 		final double[] instances = new double[data.numCols * data.numRows];
+		
 		for (int i = 0; i < data.length(scope); i++) {
-			instances[i] = data.getMatrix()[i];
+			instances[i] = Cast.asFloat(scope, data.getNthElement(i));
 		}
 		regressionMethod.newSampleData(instances, nbInstances, nbFeatures);
 		param = regressionMethod.estimateRegressionParameters();
@@ -56,7 +59,7 @@ public class GamaRegression implements IValue {
 		this.param = param;
 	}
 
-	public Double predict(final IScope scope, final GamaList<Double> instance) {
+	public Double predict(final IScope scope, final GamaList<?> instance) {
 		if (param == null)
 			return null;
 		double val = param[0];
@@ -69,7 +72,7 @@ public class GamaRegression implements IValue {
 	@getter("parameters")
 	public IList<Double> getParameters() {
 		if (param == null)
-			return GamaListFactory.create();
+			return GamaListFactory.create(Types.FLOAT);
 		final IList<Double> vals = GamaListFactory.create(Types.FLOAT);
 		for (int i = 0; i < param.length; i++)
 			vals.add(param[i]);

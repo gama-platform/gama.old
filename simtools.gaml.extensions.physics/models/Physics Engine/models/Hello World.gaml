@@ -45,8 +45,9 @@ global {
 		  world2 <- self;
 		  //Add to the agents that will be used to compute the forces.
 		  ask world2 {agents <-  (ball as list) + (ground as list);}
-		  //Boolean to set gravity 	
-		  world2.gravity <- true;
+		  //set gravity
+		  world2.use_gravity <- true; 	
+		  world2.gravity <- 9.81;
 		}
 	}
 	

@@ -764,8 +764,8 @@ public class Stats2 extends Stats {
 				value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.",
 				comment = "",
 						examples = {@example(
-								value="int(normal_density(2,1,1)*100)",
-								equals ="24")}
+								value="(normal_density(2,1,1)*100) with_precision 2",
+								equals ="24.2")}
 						)
 		
 		
@@ -1033,8 +1033,8 @@ public class Stats2 extends Stats {
 				value = "Returns the value of the Gamma function at x.",
 				comment = "",
 				examples = {@example(
-								value="int(gamma(5))",
-								equals ="24")}
+								value="gamma(5)",
+								equals ="24.0")}
 						
 				)
 		public static Double opGamma(final IScope scope, final Double x) {
