@@ -763,7 +763,13 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.",
 				comment = "",
-				examples = {})
+						examples = {@example(
+								value="int(normal_density(2,1,1)*100)",
+								equals ="24")}
+						)
+		
+		
+		
 		public static Double opNormalDensity(final IScope scope, final Double x, final Double mean, final Double sd) {
 
 			// Returns the probability of x in the normal distribution with the

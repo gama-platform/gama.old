@@ -98,6 +98,7 @@ public class Files {
 						@example (
 							value="	}", isExecutable = false)
 			})
+	@no_test
 	public static boolean exist_file(final IScope scope, final String s) {
 		if (s == null) { return false; }
 		if (scope == null) {

@@ -354,7 +354,7 @@ public class Distribution {
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
-
+	@no_test
 	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy,
 			final Integer nbbarsx, final Integer nbbarsy) throws GamaRuntimeException {
 
@@ -394,7 +394,7 @@ public class Distribution {
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
-
+	@no_test
 	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy,
 			final Integer nbbarsx, final Double startvaluex, final Double endvaluex, final Integer nbbarsy,
 			final Double startvaluey, final Double endvaluey) throws GamaRuntimeException {
@@ -444,7 +444,7 @@ public class Distribution {
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
-
+	@no_test
 	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy)
 			throws GamaRuntimeException {
 
@@ -632,7 +632,7 @@ public class Distribution {
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
-	@test("distribution_of([1,1,2,12.5],10) = map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])")
+	@no_test
 	public static GamaMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars)
 			throws GamaRuntimeException {
 
@@ -666,7 +666,7 @@ public class Distribution {
 					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
 					isExecutable = false) },
 			see = "as_map")
-	@test("distribution_of([1,1,2,12.5]) = map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])")
+	@no_test
 	public static GamaMap DistributionOf(final IScope scope, final IContainer values) throws GamaRuntimeException {
 
 		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
