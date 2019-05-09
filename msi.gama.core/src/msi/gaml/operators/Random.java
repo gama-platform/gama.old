@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
-import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -280,7 +279,7 @@ public class Random {
 	@doc(usages = {
 			@usage(value = "if the operand is a float, returns an uniformly distributed float random number in [0.0, to]") }, examples = {
 					@example(value = "rnd(3.4)", equals = "a random float between 0.0 and 3.4", test = false) })
-	@no_test
+	@test(" seed <- 1.0; rnd(100) = 78")
 	public static Double opRnd(final IScope scope, final Double max) {
 		return opRnd(scope, 0.0, max);
 	}
@@ -290,7 +289,7 @@ public class Random {
 			@usage(value = "flip 0 always returns false, flip 1 true") }, examples = {
 					@example(value = "flip (0.66666)", equals = "2/3 chances to return true.", test = false) }, see = {
 							"rnd" })
-	@no_test
+	@test("flip(0) = false and flip(1) = true")
 	public static Boolean opFlip(final IScope scope, final Double probability) {
 		return probability > RANDOM(scope).between(0., 1.);
 	}
@@ -299,7 +298,7 @@ public class Random {
 	@doc(value = "returns an index of the given list with a probability following the (normalized) distribution described in the list (a form of lottery)", examples = {
 			@example(value = "rnd_choice([0.2,0.5,0.3])", equals = "2/10 chances to return 0, 5/10 chances to return 1, 3/10 chances to return 2", test = false) }, see = {
 					"rnd" })
-	@no_test
+	@test("seed <- 1.0; rnd_choice([0.2,0.5,0.3]) = 2")
 	public static Integer opRndChoice(final IScope scope, final IList distribution) {
 		final IList<Double> normalizedDistribution = GamaListFactory.create(Types.FLOAT);
 		Double sumElt = 0.0;
@@ -337,8 +336,11 @@ public class Random {
 	@operator(value = "sample", type = ITypeProvider.TYPE_AT_INDEX + 1, content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.RANDOM }, concept = { IConcept.RANDOM })
 	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement", examples = {
-			@example(value = "sample([2,10,1],2,false)", equals = "[1,2]", test = false) })
-	@no_test
+			@example(value = "sample([2,10,1],2,false)", equals = "[10,1]", test = false) })
+	@test("seed <- 1.0; "
+			+ "list l1 <- sample([2,10,1],2,false);\r\n" + 
+			"		list l2 <-  [1,10];"
+			+ "l1 = l2")
 	public static IList opSample(final IScope scope, final IList x, final int nb, final boolean replacement) {
 		if (nb < 0.0) {
 			throw GamaRuntimeException
@@ -361,7 +363,10 @@ public class Random {
 			category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "takes a sample of the specified size from the elements of x using either with or without replacement with given weights", examples = {
 			@example(value = "sample([2,10,1],2,false,[0.1,0.7,0.2])", equals = "[10,2]", test = false) })
-	@no_test
+	@test("seed <- 1.0;\r\n" + 
+			"		list l1 <- sample([2,10,1],2,false,[0.1,0.7,0.2]);\r\n" + 
+			"		list l2 <-  [10,1];\r\n" + 
+			"		l1 = l2 ")
 	public static IList opSample(final IScope scope, final IList x, final int nb, final boolean replacement,
 			final IList weights) {
 		if (weights == null) {
@@ -392,8 +397,8 @@ public class Random {
 	
 	@operator(value = "simplex_generator", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "take a x, y and a bias parameters and gives a value", examples = {
-			@example(value = "simplex_generator(2,3,253)", equals = "10.2", test = false) })
-	@no_test
+			@example(value = "simplex_generator(2,3,253)", equals = "0.0976676931220678", test = false) })
+	@test("simplex_generator(2,3,253) = 0.0976676931220678")
 	public static Double simplex_generator(final IScope scope, final double x, final double y, final double biais)  
 	{
 		return SimplexNoise.noise(x,y,biais);
@@ -402,7 +407,6 @@ public class Random {
 	@operator(value = "improved_generator", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "take a x, y, z and a bias parameters and gives a value", examples = {
 			@example(value = "improved_generator(2,3,4,253)", equals = "10.2", test = false) })
-	@no_test
 	public static Double improved_generator(final IScope scope, final double x, final double y, final double z, final double biais)  
 	{
 		return ImprovedNoise.noise(x,y,z,biais);
