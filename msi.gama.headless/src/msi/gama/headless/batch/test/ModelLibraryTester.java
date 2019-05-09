@@ -42,9 +42,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	@Override
 	public int start(final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
-		for(int i=0; i<10000; i++) {
-			System.out.print(".");
-		}
 		original = System.out;
 		final int[] count = { 0 };
 		final int[] code = { 0 };
@@ -65,6 +62,9 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 						}
 					}
 			}
+		}
+		for(int i=0; i<100000; i++) {
+			System.out.print("");
 		}
 		GamlModelBuilder.loadURLs(allURLs);
 
