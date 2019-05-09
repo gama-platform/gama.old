@@ -40,15 +40,21 @@ global
 
 	}
 
-	action draw_clicked_area
+	action draw_clicked_area_in_view_color
 	{
 		pointClicked.location <- #user_location;
-		pointClicked.visible <- true;
+		pointClicked.visibleViewColor <- true;
+	}
+	action draw_clicked_area_in_view_shape
+	{
+		pointClicked.location <- #user_location;
+		pointClicked.visibleViewShape <- true;
 	}
 
 	action hide_clicked_area
 	{
-		pointClicked.visible <- false;
+		pointClicked.visibleViewColor <- false;
+		pointClicked.visibleViewShape <- false;
 	}
 
 
@@ -86,9 +92,15 @@ species cell skills: [moving]
 
 species dummy  {
 	int dummyRadius <- 10;
-	bool visible <- false;
-	aspect default {
-		if visible {draw circle(radius) color: #grey;}
+	bool visibleViewColor <- false;
+	bool visibleViewShape <- false;
+	
+	aspect aspect4ViewChangeColor {
+		if visibleViewColor {draw circle(radius) color: #grey;}
+	}
+	
+	aspect aspect4ViewChangeShape {
+		if visibleViewShape {draw circle(radius) color: #grey;}
 	}
 	
 }
@@ -104,11 +116,11 @@ experiment Displays type: gui
 		display View_change_color
 		{
 			species cell aspect: default;
-			species dummy transparency:0.9 ;
+			species dummy transparency:0.9 aspect: aspect4ViewChangeColor ;
 			// event, launches the action change_color if the event mouse_down (ie. the user clicks on the layer event) is triggered
 			// the action can be either in the experiment or in the global section. If it is defined in both, the one in the experiment will be chosen in priority
 			event [mouse_down] action: change_color;
-			event [mouse_down] action: draw_clicked_area;
+			event [mouse_down] action: draw_clicked_area_in_view_color;
 			event [mouse_exit] action: hide_clicked_area;
 			
 		}
@@ -116,11 +128,11 @@ experiment Displays type: gui
 		display View_change_shape type: opengl
 		{
 			species cell;
-			species dummy transparency:0.9 ;
+			species dummy transparency:0.9 aspect: aspect4ViewChangeShape ;
 			//event, launches the action change_shape if the event mouse_down (ie. the user clicks on the layer event) is triggered
 			// The block is executed in the context of the experiment, so we have to ask the simulation to do it. 
 			event [mouse_down] action: change_shape;
-			event [mouse_down] action: draw_clicked_area;
+			event [mouse_down] action: draw_clicked_area_in_view_shape;
 			event [mouse_exit] action: hide_clicked_area;
 		}
 
