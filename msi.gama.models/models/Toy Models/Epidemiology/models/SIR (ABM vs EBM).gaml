@@ -127,6 +127,7 @@ experiment Simulation_ABM_EBM type: gui {
 	parameter 'Gamma (I->R)' type: float var: gamma <- 0.01 category: "Parameters";
 	parameter 'Size of the neighbours' type: int var: neighbours_size <- 1 min: 1 max: 5 category: "Infection";
 	output {
+		layout #split;
 		display sir_display { 
 			grid sir_grid lines: #black;
 			species Host aspect: basic;	
