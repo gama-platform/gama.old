@@ -30,6 +30,7 @@ if [[ $res -gt 0 ]]; then
 fi
 
 
+passWork=.work$RANDOM
 
 java  -cp ../plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx2048m  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork -test -failed   
 res=$?			
