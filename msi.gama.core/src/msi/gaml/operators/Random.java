@@ -16,6 +16,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -404,9 +405,12 @@ public class Random {
 		return SimplexNoise.noise(x,y,biais);
 	}
 	
+	@Deprecated
 	@operator(value = "improved_generator", category = { IOperatorCategory.RANDOM }, concept = {})
 	@doc(value = "take a x, y, z and a bias parameters and gives a value", examples = {
-			@example(value = "improved_generator(2,3,4,253)", equals = "10.2", test = false) })
+			@example(value = "improved_generator(2,3,4,253)", equals = "10.2", test = false) },
+	deprecated = "Deprecated. Does not work")
+	@no_test
 	public static Double improved_generator(final IScope scope, final double x, final double y, final double z, final double biais)  
 	{
 		return ImprovedNoise.noise(x,y,z,biais);
