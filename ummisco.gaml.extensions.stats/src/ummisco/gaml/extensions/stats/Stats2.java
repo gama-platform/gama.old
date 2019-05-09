@@ -17,6 +17,7 @@ import cern.jet.stat.Probability;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
@@ -473,7 +474,12 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the variance from a standard deviation.",
 				comment = "",
-				examples = {})
+				examples = {@example(
+						value="int(variance([1,3,5,6,9,11,12,13]))",
+						equals ="17")
+				})
+		
+		//@test ("int(variance([1,3,5,6,9,11,12,13])) = 17")
 		public static Double opVariance(final IScope scope, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -498,8 +504,16 @@ public class Stats2 extends Stats {
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the variance of a data sequence. That is (sumOfSquares - mean*sum) / size with mean = sum/size.",
-				comment = "",
-				examples = {})
+				comment = "In the example we consider variance of [1,3,5,7]. The size is 4, the sum is 1+3+5+7=16 and the sum of squares is 84."
+						+ "The variance is (84- 16^2/4)/4. CQFD.",
+						examples = {@example(
+								value="int(variance(4,16,84))",
+								equals ="5")
+						
+				})
+		
+		
+		
 		public static Double variance(final IScope scope, final Integer size, final Double sum,
 				final Double numOfSquares) {
 
