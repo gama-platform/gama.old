@@ -1,17 +1,20 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.EventLayerStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.EventLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -38,7 +41,7 @@ import msi.gaml.types.IType;
 
 /**
  * Written by Marilleau Modified on 16 novembre 2012
- * 
+ *
  * @todo Description
  *
  */
@@ -61,7 +64,6 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.ID,
-						// values = { "mouse_up", "mouse_down", "mouse_drag" },
 						optional = false,
 						doc = @doc ("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_move\", \"mouse_exit\", \"mouse_enter\" or a character")),
 				@facet (
@@ -135,12 +137,19 @@ import msi.gaml.types.IType;
 				IKeyword.OVERLAY, IKeyword.POPULATION, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
-	public static String[] MOUSE_EVENTS = { "mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit" };
+	public static Set<String> EVENTS =
+			new HashSet<>(Arrays.asList("mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit"));
 
 	public static class EventLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
 		public void validate(final StatementDescription description) {
+			String name = description.getLitteral(NAME);
+			if (name.length() > 1 && !EVENTS.contains(name)) {
+				description.error("No event can be triggered for '" + name + "'. Acceptable values are " + EVENTS
+						+ " or a character", IGamlIssue.UNKNOWN_ARGUMENT, NAME);
+				return;
+			}
 			final String actionName = description.getLitteral(ACTION);
 			StatementDescription sd = description.getModelDescription().getAction(actionName);
 			if (sd == null) {
@@ -208,7 +217,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	/**
 	 * Method _step()
-	 * 
+	 *
 	 * @see msi.gama.outputs.layers.AbstractLayerStatement#_step(msi.gama.runtime.IScope)
 	 */
 	@Override
