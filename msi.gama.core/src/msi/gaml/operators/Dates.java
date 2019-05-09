@@ -1038,7 +1038,7 @@ public class Dates {
 					examples = @example (
 							value = "date d <- date(\"1999-january-30\", 'yyyy-MMMM-dd', 'en');",
 							test = false)))
-	// @test("date('1999-january-30', 'yyyy-MMMM-dd', 'en') = date('1999-01-30 00:00:00')")
+	 @test("date('1999-january-30', 'yyyy-MMMM-dd', 'en') = date('1999-01-30 00:00:00')")
 	public static GamaDate date(final IScope scope, final String value, final String pattern, final String locale) {
 		return new GamaDate(scope, value, pattern, locale);
 	}

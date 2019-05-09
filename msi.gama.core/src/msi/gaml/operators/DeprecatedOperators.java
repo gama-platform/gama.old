@@ -25,6 +25,7 @@ import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
@@ -595,6 +596,7 @@ public class DeprecatedOperators {
 					equals = "a random float between 0.0 and 3.0",
 					test = false) },
 			see = { "rnd" })
+	@no_test
 	public static Double opRndFloat(final IScope scope, final Double max) {
 		return Random.opRnd(scope, max);
 	}
