@@ -12,7 +12,7 @@ Export-Package: org.eclipse.paho.client.mqttv3,
    msi.gama.metamodel.agent,
    msi.gama.runtime.exceptions,
    msi.gama.runtime",
- ummisco.gama.network.mqqt;
+ ummisco.gama.network.mqtt;
   uses:="msi.gama.metamodel.agent,
    org.eclipse.paho.client.mqttv3,
    msi.gama.runtime,
