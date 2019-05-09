@@ -88,11 +88,11 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
-			    System.setOut(new PrintStream(new OutputStream() {
-			                public void write(int b) {
-			                    //DO NOTHING
-			                }
-			            }));
+//			    System.setOut(new PrintStream(new OutputStream() {
+//			                public void write(int b) {
+//			                    //DO NOTHING
+//			                }
+//			            }));
 
 				final TestAgent agent = (TestAgent) exp.getAgent();
 				exp.setHeadless(true);
@@ -101,7 +101,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 				count[0] += agent.getSummary().size();
-			    System.setOut(original);
+//			    System.setOut(original);
 				if (code[0] > 0)
 					System.out.println(agent.getSummary().toString());
 			}
