@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -36,7 +37,8 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	private static ModelLibraryTester instance;
 	final List<GamlCompilationError> errors = new ArrayList<>();
 	private final static String FAILED_PARAMETER = "-failed";
- 
+	public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
+
 	private ModelLibraryTester() {
 		SystemLogger.activeDisplay();
 	}
@@ -70,6 +72,8 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		allURLs.forEach(u -> test(count, code, u));
 		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
 
+		LOGGER.info(
+				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		System.out.println(
 				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		System.out.println(code[0]);
@@ -90,10 +94,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
 				final TestAgent agent = (TestAgent) exp.getAgent();
-				if (agent.getSummary().getTitle().equals(
-						"Tests for msi.gama.core in C:\\git\\gama\\msi.gama.core\\gaml\\tests\\Generated From Core\\models\\Core Tests")) {
-					System.out.println(agent.getSummary().getTitle());
-				}
 				exp.setHeadless(true);
 				exp.getController().getScheduler().paused = false;
 				exp.getAgent().step(agent.getScope());
@@ -102,8 +102,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				count[0] += agent.getSummary().size();
 				if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
 						|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0)
-					System.out.println(agent.getSummary().toString());
-				System.gc();
+					LOGGER.info(agent.getSummary().toString()); 
 			}
 		}
 
