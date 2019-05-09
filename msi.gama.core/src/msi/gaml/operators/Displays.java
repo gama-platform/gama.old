@@ -11,6 +11,7 @@
 package msi.gaml.operators;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -71,6 +72,7 @@ public class Displays {
 			expected_content_type = IType.FLOAT,
 			can_be_const = false,
 			doc = @doc ("Creates a horizontal layout node (a sash). Sashes can contain any number (> 1) of other elements: stacks, horizontal or vertical sashes, or display indices. Each element is represented by a pair in the map, where the key is the element and the value its weight within the sash"))
+	@no_test
 	public static GamaNode<String> horizontal(final IScope scope, final GamaMap<Object, Integer> nodes) {
 		return buildSashFromMap(scope, HORIZONTAL, nodes);
 	}
@@ -80,6 +82,7 @@ public class Displays {
 			expected_content_type = IType.FLOAT,
 			can_be_const = false,
 			doc = @doc ("Creates a vertical layout node (a sash). Sashes can contain any number (> 1) of other elements: stacks, horizontal or vertical sashes, or display indices. Each element is represented by a pair in the map, where the key is the element and the value its weight within the sash"))
+	@no_test
 	public static GamaNode<String> vertical(final IScope scope, final GamaMap<Object, Integer> nodes) {
 		return buildSashFromMap(scope, VERTICAL, nodes);
 	}
@@ -88,6 +91,7 @@ public class Displays {
 			value = STACK,
 			can_be_const = false,
 			doc = @doc ("Creates a stack layout node. Stacks can only contain one or several indices of displays (without weight)"))
+	@no_test
 	public static GamaNode<String> stack(final IScope scope, final IList<Integer> nodes) {
 		if (nodes == null) { throw GamaRuntimeException.error("Nodes of a stack cannot be nil", scope); }
 		if (nodes.isEmpty()) { throw GamaRuntimeException.error("At least one display must be defined in the stack",

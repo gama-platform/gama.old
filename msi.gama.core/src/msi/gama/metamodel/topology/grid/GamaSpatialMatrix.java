@@ -2068,7 +2068,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	@Override
-	protected IShape getNthElement(final Integer index) {
+	public IShape getNthElement(final Integer index) {
 		if (index == null) { return null; }
 		if (index > lastCell) { return null; }
 		return matrix[index];

@@ -10,12 +10,12 @@ model SIR_switch
 
 global {
 	// Parameters
-	int initial_S <- 495 ; // The number of susceptible
-	int initial_I <- 5   ; // The number of infected
-	int initial_R <- 0   ; // The number of removed 
+	int initial_S; // The number of susceptible
+	int initial_I; // The number of infected
+	int initial_R; // The number of removed 
 
-	float beta <- 0.1   ; // The parameter Beta 
-	float delta <- 0.01 ; // The parameter Delta	
+	float beta; // The parameter Beta 
+	float delta; // The parameter Delta	
 	
 	int switch_threshold <- 120 ; // threshold for switching models
 	bool local_infection <- true ;
@@ -25,7 +25,7 @@ global {
 	
 	// Global variables
 	int grid_size <- 50;
-geometry shape <- square(grid_size);
+	geometry shape <- square(grid_size);
 	int number_Hosts <- initial_S + initial_I + initial_R; // Total number of individuals
 	SIR_model current_model; // serves as an interface, it is transparent to user if model is maths or IBM
 
@@ -240,7 +240,7 @@ species Math_model schedules: [] parent: SIR_model {
 		diff(R, t) = (delta * I);
 	}
 
-	reflex solving {solve SIR method: "rk4" step: 0.01 ;}
+	reflex solving {solve SIR method: "rk4" step_size: 0.01 ;}
 }
 //Species host used by the Individual Based Model which move from one cell to another
 species Host schedules: [] skills: [moving] {
@@ -327,7 +327,7 @@ species my_SIR_maths {
 		diff(R, t) = (alpha * I);
 	}
 	
-	reflex solving {solve SIR method:"rk4" step:0.01;}
+	reflex solving {solve SIR method:"rk4" step_size:0.01;}
 
 }
 
@@ -338,7 +338,7 @@ experiment mysimulation type: gui {
 	parameter 'Number of Infected'    type: int var: initial_I <- 5   category: "Initial population";
 	parameter 'Number of Removed'     type: int var: initial_R <- 0   category: "Initial population";
 
-	parameter 'Beta (S->I)'  type: float var: beta <- 1.0   category: "Parameters";
+	parameter 'Beta (S->I)'  type: float var: beta <- 0.1   category: "Parameters";
 	parameter 'Delta (I->R)' type: float var: delta <- 0.01 category: "Parameters";	
 	
 	parameter 'Is the infection is computed locally?' type: bool var: local_infection <- true category: "Infection";
@@ -349,6 +349,7 @@ experiment mysimulation type: gui {
 	parameter 'Switch models at' type: int var: switch_threshold <- 120 category: "Model";
 	
 	output {
+		layout #split;
 		display 'sir display' {
 			grid sir_grid lines: #black;
 			species Host aspect: basic;

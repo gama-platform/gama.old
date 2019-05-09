@@ -29,7 +29,7 @@ species agent_with_SIR_dynamic {
                 
     reflex solving {
 //    	write S;
-    	solve SIR method: "rk4" step: h;// cycle_length: 1/h ;
+    	solve SIR method: "rk4" step_size: h;
     }    
 }
 

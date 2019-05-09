@@ -55,6 +55,7 @@ public class Constants {
 	// Inputs Folders
 	public static String PYTHON_TEMPLATE_FOLDER = INPUT_FOLDER + File.separator + "templatePythonGeneration";
 	public static String XSL_XML2WIKI_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2md";
+	public static String XSL_XML2JSON_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2json";
 	public static String XSL_XML2TEST_FOLDER = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2test";
 	public static String XSL_XML2PDF_FILE = INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2pdf"
 			+ File.separator + "xhtml-to-xslfo.xsl";

@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -134,6 +135,7 @@ public class GamaFont extends Font implements IValue {
 	@operator(value = "font", category = { IOperatorCategory.CASTING }, concept = { IConcept.TEXT,
 			IConcept.DISPLAY }, can_be_const = true)
 	@doc(value = "Creates a new font, by specifying its name (either a font face name like 'Lucida Grande Bold' or 'Helvetica', or a logical name like 'Dialog', 'SansSerif', 'Serif', etc.), a size in points and a style, either #bold, #italic or #plain or a combination (addition) of them.", examples = @example(value = "font ('Helvetica Neue',12, #bold + #italic)", equals = "a bold and italic face of the Helvetica Neue family", test = false))
+	@no_test
 	public static GamaFont font(final String name, final Integer size, final Integer style) {
 		return new GamaFont(name, style, size);
 	}

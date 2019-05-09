@@ -146,6 +146,7 @@ experiment Simulation type: gui {
 	parameter "Is the infection is computed locally?" var:local_infection ;
 	parameter "Size of the neighbours" var:neighbours_size ;
  	output { 
+ 		layout #split;
 	    display sir_display {
 	        grid sir_grid lines: #black;
 	        species Host aspect: basic;

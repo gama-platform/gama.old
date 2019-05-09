@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.species.AbstractSpecies.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.species.AbstractSpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.species;
 
@@ -78,6 +78,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		isGrid = getKeyword().equals(IKeyword.GRID);
 		isGraph = AbstractGraphNodeAgent.class.isAssignableFrom(((SpeciesDescription) description).getJavaBase());
 		control = (IArchitecture) getDescription().getControl().createInstance();
+	}
+
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		return getName();
 	}
 
 	@Override
@@ -337,8 +342,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
 		// First we verify the control architecture
-		if (control == null) { throw GamaRuntimeException.error(
-				"The control of species " + description.getName() + " cannot be computed", GAMA.getRuntimeScope()); }
+		if (control == null) {
+			throw GamaRuntimeException.error("The control of species " + description.getName() + " cannot be computed",
+					GAMA.getRuntimeScope());
+		}
 		// Then we classify the children in their categories
 		for (final ISymbol s : children) {
 			if (s instanceof ISpecies) {
@@ -441,7 +448,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	/**
 	 * Method isInitOverriden()
-	 * 
+	 *
 	 * @see msi.gaml.species.ISpecies#isInitOverriden()
 	 */
 	@Override
@@ -451,7 +458,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	/**
 	 * Method isStepOverriden()
-	 * 
+	 *
 	 * @see msi.gaml.species.ISpecies#isStepOverriden()
 	 */
 	@Override

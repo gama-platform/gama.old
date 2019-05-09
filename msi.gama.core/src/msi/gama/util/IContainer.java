@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
@@ -122,6 +123,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		@doc (
 				value = "For internal use only. Corresponds to the implementation of the access to containers with [index]",
 				see = { IKeyword.AT })
+		@no_test
 		public ValueType getFromIndicesList(IScope scope, IList<KeyType> indices) throws GamaRuntimeException;
 
 	}

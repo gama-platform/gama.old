@@ -108,7 +108,7 @@ public class ImageLayer extends AbstractLayer {
 			if (dg.is2D()) {
 				loc = new GamaPoint(env.getMinX(), env.getMinY());
 			} else {
-				loc = new GamaPoint(env.getWidth() / 2, env.getHeight() / 2);
+				loc = new GamaPoint(env.getWidth() / 2+ env.getMinX(), env.getHeight() / 2 + env.getMinY());
 			}
 			attributes.setLocation(loc);
 			attributes.setSize(Scaling3D.of(env.getWidth(), env.getHeight(), 0));

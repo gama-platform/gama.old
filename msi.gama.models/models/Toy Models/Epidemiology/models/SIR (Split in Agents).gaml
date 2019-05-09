@@ -62,7 +62,7 @@ species S_agt {
 			( - beta * first ( S_agt ) . Ssize * first (	I_agt ) . Isize / N ) ;
 	}
 	
-	reflex solving {solve evol method: "rk4" step: 0.01 ;}
+	reflex solving {solve evol method: "rk4" step_size: 0.01 ;}
 }
 //Species which represent the infected agents compartiment
 species I_agt {
@@ -109,7 +109,7 @@ species SIR_agt {
 		diff ( Rm , t ) = ( delta * Im ) ;
 	}
 	
-	reflex solving {solve SIR method: "rk4" step: 0.01 ;}
+	reflex solving {solve SIR method: "rk4" step_size: 0.01 ;}
 }
 
 
@@ -122,6 +122,7 @@ experiment Simulation type: gui {
 	parameter 'Delta (I->R)' type: float var: delta <- 0.01 category: "Parameters";
 	
 	output {
+		layout #split;
 		display "split system" {
 			chart 'Susceptible' type: series background: rgb ( 'lightGray' ) {
 				data 'susceptible' value: first ( S_agt ) . Ssize color: rgb ( 'green' ) ;
