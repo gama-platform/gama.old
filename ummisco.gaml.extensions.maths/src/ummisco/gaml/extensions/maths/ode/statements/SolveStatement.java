@@ -67,10 +67,10 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 						+ "\"DormandPrince54\", \"GraggBulirschStoer\",  \"HighamHall54\") (default value: \"rk4\")")),
 		@facet(name = "integrated_times", type = IType.LIST, optional = true, doc = @doc(value = "time interval inside integration process")),
 		@facet(name = "integrated_values", type = IType.LIST, optional = true, doc = @doc(value = "list of variables's value inside integration process")),
-		@facet(name = "time_initial", type = IType.FLOAT, optional = true, doc = @doc(value = "initial time")),
-		@facet(name = "time_final", type = IType.FLOAT, optional = true, doc = @doc(value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
-		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc(value = "integration step, use with most integrator methods (default value: 1)")),
-		@facet(name = "step_size", type = IType.FLOAT, optional = true, doc = @doc(value = "integration step, use with most integrator methods (default value: 1)")),
+		@facet(name = "t0", type = IType.FLOAT, optional = true, doc = @doc(value = "the first bound of the integration interval (defaut value: cycle*step, the time at the begining of the current cycle.)")),
+		@facet(name = "tf", type = IType.FLOAT, optional = true, doc = @doc(value = "the second bound of the integration interval. Can be smaller than t0 for a backward integration (defaut value: cycle*step, the time at the begining of the current cycle.)")),
+		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc(value = "integration step, use with fixed step integrator methods (default value: 0.005*step)")),
+		@facet(name = "step_size", type = IType.FLOAT, optional = true, doc = @doc(value = "integration step, use with fixed step integrator methods (default value: 0.005*step)")),
 		@facet(name = "min_step", type = IType.FLOAT, optional = true, doc = @doc(value = "minimal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 		@facet(name = "max_step", type = IType.FLOAT, optional = true, doc = @doc(value = "maximal step, (used with dp853 method only), (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this value")),
 		@facet(name = "scalAbsoluteTolerance", type = IType.FLOAT, optional = true, doc = @doc(value = "allowed absolute error (used with dp853 method only)")),
@@ -151,8 +151,8 @@ public class SolveStatement extends AbstractStatement {
 		maxStepExp = getFacet("max_step");
 		absTolerExp = getFacet("scalAbsoluteTolerance");
 		relTolerExp = getFacet("scalRelativeTolerance");
-		timeInitExp = getFacet("time_initial");
-		timeFinalExp = getFacet("time_final");
+		timeInitExp = getFacet("t0");
+		timeFinalExp = getFacet("tf");
 		// discretExp = sn == null ? new ConstantExpression(0) : sn;
 		// integrationTimesExp = getFacet("integrated_times");
 		// integratedValuesExp = getFacet("integrated_values");
