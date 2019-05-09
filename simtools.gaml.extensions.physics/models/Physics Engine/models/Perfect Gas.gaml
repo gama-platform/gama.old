@@ -86,7 +86,7 @@ global {
 		
 		//Create the physic engine without gravity computed
 		create physic_world {
-			gravity <- false;
+			use_gravity <- false;
 			world2 <- self;
 		}
 		

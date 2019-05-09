@@ -83,6 +83,7 @@ public class PhysicsWorldJBullet {
 		final RigidBody body = new RigidBody(rbInfo);
 		// DEBUG.OUT(velocity);
 		// body.applyCentralForce(velocity);
+		
 		body.setLinearVelocity(velocity);
 		body.setFriction(friction);
 		body.setDamping(lin_damping, ang_damping);

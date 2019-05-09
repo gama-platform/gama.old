@@ -81,7 +81,7 @@ global {
 			agents <- (ball as list) + (ground as list) + (wall as list);
 		}
 
-		world2.gravity <- true;
+		world2.gravity <- 9.81;
 	}
 
 	//Reflex to compute the forces at each step
