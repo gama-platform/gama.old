@@ -2171,8 +2171,8 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A geometry resulting from the application of a rotation by the right-hand operand angles (degree)"
-						+ " along the three axis (x,y,z) to the left-hand operand (geometry, agent, point)",
+				value = "A geometry resulting from the application of a rotation by the operand angles (degree)"
+						+ " along the operand axis to the left-hand operand (geometry, agent, point)",
 				masterDoc = true,
 				examples = { @example (
 						value = "rotated_by(pyramid(10),45, {1,0,0})",
@@ -2184,10 +2184,27 @@ public abstract class Spatial {
 				final GamaPoint vector) {
 			if (g1 == null) { return null; }
 			if (vector.x == 0d && vector.y == 0d && vector.z == 0d) { return g1; }
-			// vector.y = -vector.y;// This ugly trick is used to ensure that the
-			// // rotate facet and the rotated_by operator
-			// // are coherent. (A.G 16/05/2016)
 			return new GamaShape(g1, null, new AxisAngle(vector, rotation), g1.getLocation());
+		}
+		
+		@operator (
+				value = "rotated_by",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "A geometry resulting from the application of the right-hand rotation operand (angles in degree)"
+						+ "to the left-hand operand (geometry, agent, point)",
+				masterDoc = true,
+				examples = { @example (
+						value = "rotated_by(pyramid(10),45::{1,0,0})",
+						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
+								+ "the agent applying the operator.",
+						test = false) },
+				see = { "transformed_by", "translated_by" })
+		public static IShape rotated_by(final IScope scope, final IShape g1, final GamaPair<Double,  GamaPoint> rotation) {
+			if (g1 == null) { return null; }
+			//if (vector.x == 0d && vector.y == 0d && vector.z == 0d) { return g1; }
+			return new GamaShape(g1, null, new AxisAngle(rotation.getValue(), rotation.getKey()), g1.getLocation());
 		}
 
 		@operator (

@@ -87,7 +87,7 @@ species miner skills: [moving] control:simple_bdi {
 	// plan that has for goal to fulfill the wander desire	
 	plan letsWander intention:wander 
 	{
-		do wander;
+		do wander amplitude: 60;
 	}
 	
 	//plan that has for goal to fulfill the get gold desire
@@ -159,6 +159,7 @@ species base {
 
 
 experiment GoldBdi type: gui {
+	float minimum_cycle_duration <- 0.05;
 	output {
 		display map background: #lightgray
 		{

@@ -219,7 +219,7 @@ public class Dates {
 			examples = { @example (
 					value = "(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval",
 					isExecutable = false) })
-	@test("list((date('2001-01-01') to date('2001-1-02')) every(#day)) = [date ('2001-01-01 00:00:00')]")
+	@test("list((date('2001-01-01') to date('2001-1-02')) every(#day)) collect each = [date ('2001-01-01 00:00:00')]")
 	public static IList<GamaDate> every(final IScope scope, final GamaDateInterval interval, final IExpression period) {
 		return interval.step(Cast.asFloat(scope, period.value(scope)));
 	}
@@ -238,7 +238,7 @@ public class Dates {
 					@example (
 							value = "(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval",
 							isExecutable = false) })
-	@test("list((date('2001-01-01') to date('2001-4-01')) every(#month)) =\n" + 
+	@test("list((date('2001-01-01') to date('2001-4-01')) every(#month)) collect each =\n" + 
 			"		[date ('2001-01-01 00:00:00'),date ('2001-01-31 00:00:00'),date ('2001-03-02 00:00:00')]")
 	public static IList<GamaDate> to(final IScope scope, final GamaDate start, final GamaDate end) {
 		return GamaDateInterval.of(start, end);
