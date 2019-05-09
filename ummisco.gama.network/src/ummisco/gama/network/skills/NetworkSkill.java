@@ -29,6 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
@@ -140,6 +141,8 @@ public class NetworkSkill extends MessagingSkill {
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
 							@example (" do connect  with_name:\"any_name\";") }))
+	@test("try{ do connect with_name:\"myName\"; assert true;} catch{ assert false;} write 'coucou';")
+	
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER)) {
 			this.startSkill(scope);
@@ -335,15 +338,23 @@ public class NetworkSkill extends MessagingSkill {
 		}
 	}
 
+	@action (
+			name = INetworkSkill.SIMULATE_STEP, 
+			doc = @doc (
+					value = "Simulate a step to test the skill. It must be used for Gama-platform test only",
+					returns = "nothing",
+					examples = { @example ("do simulate_step;\n") }))
 	private void fetchMessagesOfAgents(final IScope scope) {
 
 		for (final IConnector connection : getRegisteredServers(scope).values()) {
 			final Map<IAgent, LinkedList<ConnectorMessage>> messages = connection.fetchAllMessages();
 			for (final IAgent agt : messages.keySet()) {
 				final GamaMailbox mailbox = (GamaMailbox) agt.getAttribute(MAILBOX_ATTRIBUTE);
-				if (!(connection instanceof MQTTConnector)) {
+				
+				//to be check....
+				/*if (!(connection instanceof MQTTConnector)) {
 					mailbox.clear();
-				}
+				}*/
 				for (final ConnectorMessage msg : messages.get(agt)) {
 					mailbox.addMessage(scope, msg.getContents(scope));
 				}
