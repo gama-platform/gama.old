@@ -14,6 +14,7 @@ import com.google.common.collect.Multimap;
 
 import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.runtime.SystemLogger;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
@@ -23,6 +24,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	private static ModelLibraryValidator instance; 
 	
 	private ModelLibraryValidator() {
+		SystemLogger.activeDisplay();
 	}
 
 	@Override

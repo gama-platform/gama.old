@@ -1283,7 +1283,7 @@ public class Stats {
 			examples = { @example (
 					value = "build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]]))",
 					isExecutable = false) })
-	@test("build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0],[5.0,1.0,3.0,5.0],[3.0,4.0,5.0,1.0]])).parameters = [2.0,0.18181818181818182]")
+	@test("build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0],[5.0,1.0,3.0,5.0],[3.0,4.0,5.0,1.0]])).parameters collect (each with_precision 5) = [0.5,2.5,0.0,-1.5]")
 	public static GamaRegression buildRegression(final IScope scope, final GamaMatrix data)
 			throws GamaRuntimeException {
 		try {

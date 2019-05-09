@@ -18,6 +18,7 @@ import com.google.common.collect.Multimap;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.runtime.SystemLogger;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.experiment.TestAgent;
@@ -35,15 +36,15 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	private static ModelLibraryTester instance;
 	final List<GamlCompilationError> errors = new ArrayList<>();
 	private final static String FAILED_PARAMETER = "-failed";
-
-	PrintStream original;
-	private ModelLibraryTester() {}
+ 
+	private ModelLibraryTester() {
+		SystemLogger.activeDisplay();
+	}
 
 	@Override
-	public int start(final List<String> args) throws IOException {
+	public int start(final List<String> args) throws IOException { 
 		HeadlessSimulationLoader.preloadGAMA();
 
-		original = System.out;
 		final int[] count = { 0 };
 		final int[] code = { 0 };
 		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
@@ -68,12 +69,14 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 		allURLs.forEach(u -> test(count, code, u));
 		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
-		System.out.println("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
+
+		System.out.println(
+				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		System.out.println(code[0]);
 		return code[0];
 	}
 
-	public void test(final int[] count, final int[] code, final URL p) {
+	public void test(final int[] count, final int[] code, final URL p) { 
 		final IModel model = GamlModelBuilder.compile(p, errors);
 		if (model == null || model.getDescription() == null)
 			return;
@@ -85,22 +88,23 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
-			    System.setOut(new PrintStream(new OutputStream() {
-			                public void write(int b) {
-			                    //DO NOTHING
-			                }
-			            }));
-
+				SystemLogger.removeDisplay();  
 				final TestAgent agent = (TestAgent) exp.getAgent();
+				if (agent.getSummary().getTitle().equals(
+						"Tests for msi.gama.core in C:\\git\\gama\\msi.gama.core\\gaml\\tests\\Generated From Core\\models\\Core Tests")) {
+					System.out.println(agent.getSummary().getTitle());
+				}
 				exp.setHeadless(true);
 				exp.getController().getScheduler().paused = false;
 				exp.getAgent().step(agent.getScope());
 				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 				count[0] += agent.getSummary().size();
-			    System.setOut(original);
-				if (code[0] > 0)
+				SystemLogger.activeDisplay();
+				if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
+						|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0)
 					System.out.println(agent.getSummary().toString());
+				System.gc();
 			}
 		}
 
