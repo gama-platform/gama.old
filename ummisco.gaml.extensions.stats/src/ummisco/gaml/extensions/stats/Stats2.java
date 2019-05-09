@@ -764,8 +764,8 @@ public class Stats2 extends Stats {
 				value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.",
 				comment = "",
 						examples = {@example(
-								value="normal_density(2,1,1)*100",
-								equals ="24.0")}
+								value="(normal_density(2,1,1)*100) with_precision 2",
+								equals ="24.2")}
 						)
 		
 		
