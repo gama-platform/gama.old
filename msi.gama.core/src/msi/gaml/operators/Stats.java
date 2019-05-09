@@ -33,6 +33,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.test;
@@ -50,6 +51,7 @@ import msi.gama.util.GamaRegression;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
@@ -1282,7 +1284,8 @@ public class Stats {
 			examples = { @example (
 					value = "build(matrix([[1,2,3,4],[2,3,4,2]]),\"GLS\")",
 					isExecutable = false) })
-	public static GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data, final String method)
+	@test("build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]]),\"GLS\").parameters = [2.0,0.18181818181818182]")
+	public static GamaRegression buildRegression(final IScope scope, final GamaMatrix data, final String method)
 			throws GamaRuntimeException {
 		try {
 			return new GamaRegression(scope, data, method);
@@ -1302,12 +1305,12 @@ public class Stats {
 					+ "the last value of each line is the y value) while using the given ordinary "
 					+ "least squares method. Usage: build(data)",
 			examples = { @example (
-					value = "matrix([[1,2,3,4],[2,3,4,2]])",
+					value = "build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]]))",
 					isExecutable = false) })
-	public static GamaRegression buildRegression(final IScope scope, final GamaFloatMatrix data)
+	@test("build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]])).parameters = [2.0,0.18181818181818182]")
+	public static GamaRegression buildRegression(final IScope scope, final GamaMatrix data)
 			throws GamaRuntimeException {
 		try {
-
 			return new GamaRegression(scope, data, "OSL");
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("The GLS operator is not usable for these data", scope);
@@ -1326,10 +1329,9 @@ public class Stats {
 			examples = { @example (
 					value = "predict(my_regression, [1,2,3])",
 					isExecutable = false) })
-	
-	
+	@test("predict(build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]])),[1,2,3] ) = 2.1818181818181817")
 	public static Double predictFromRegression(final IScope scope, final GamaRegression regression,
-			final GamaList<Double> instance) throws GamaRuntimeException {
+			final GamaList instance) throws GamaRuntimeException {
 		return regression.predict(scope, instance);
 	}
 

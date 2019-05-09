@@ -617,7 +617,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	protected Integer getNthElement(final Integer index) {
+	public Integer getNthElement(final Integer index) {
 		if (index == null) { return 0; }
 		if (index > getMatrix().length) { return 0; }
 		return getMatrix()[index];
