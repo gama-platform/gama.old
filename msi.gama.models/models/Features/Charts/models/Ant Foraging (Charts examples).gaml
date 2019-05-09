@@ -127,7 +127,7 @@ species ant skills: [moving] control: fsm {
 		draw circle(1.0) empty: !hasFood color: #orange ; 
 	}
 }
-experiment "Several charts" type: gui {
+experiment "Experiment" type: gui {
 	//Parameters to play with  in the gui
 	parameter 'Number of ants:' var: ants_number category: 'Model' ;
 	parameter 'Evaporation of the signal (unit/cycle):' var: evaporation_per_cycle category: 'Model' ;
@@ -267,72 +267,7 @@ experiment "Several charts" type: gui {
 			}
 		}	
 		}
-	
-	}
-	
-//Experiment with only two display : the grid and the ants, and a chart
-experiment "One chart" type: gui {
-	parameter 'Number of ants:' var: ants_number category: 'Model' ;
-	parameter 'Evaporation of the signal unit/cycle):' var: evaporation_per_cycle category: 'Model' ;
-	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model' ;
-	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
-	parameter 'Display state of agents:' var: display_state category: 'Display' ;
-
-	list<list<int>> nbants<-[[0]];
-	list<string> statesnames<-[""];
-	list<string> categnames<-["empty","carry"];
-	list<list<int>> nbantsbydist<-[[0]];
-	list xytestvallist<-[[[1,1],[2,2],[3,3]],[[1,2],[2,1],[3,4]],[[1,3],[2,3],[0,1]],[[1,4],[2,5],[0,0]]];
-	list<list<int>> xyval<-[[1,1],[2,1],[3,2]];
-
-
-
-	reflex update_charts
-	{
-		ant x<-one_of(world.ant);
-		nbants<-list<list<int>>([]);
-		statesnames<-list<string>([]);
-		loop x over:list(world.ant)
-		{
-			if !(statesnames contains (x.state))
-			{				
-			add [(list(ant) count (each.state=x.state and !each.hasFood)),(list(ant) count (each.state=x.state and each.hasFood))] to: nbants;
-			add (x.state) to:statesnames;				
-			int d<-0;
-			list<int> nl<-list<int>([]);
-			loop d from:0 to:9
-				{
-			add (list(ant) count (each.state=x.state and (((each distance_to center)>gridsize/20*d) and ((each distance_to center)<gridsize/20*(d+1))))) to: nl;
-				}
-			add nl to:nbantsbydist;
-			}
-		}
-		write("nbants"+nbants);
-		write("nbantsbydist"+nbantsbydist);
-		write("states"+statesnames);		
-	}
-	output {
-		layout horizontal([vertical([0::5000,1::5000])::5000,vertical([2::5000,horizontal([3::5000,4::5000])::5000])::5000]) tabs:true toolbars:true;
-		display Ants type: opengl {
-			grid ant_grid ;
-			species ant aspect: text ;
-		}
-
-		display ChartScatter {
-			chart "Distribution2d of the XvsY positions- heatmap"   size: {0.7,0.7} position: {0, 0.3} type:heatmap
-			x_serie_labels: (distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "legendx")
-			y_serie_labels: (distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "legendy")
-			series_label_position:none
-			{
-				data  "XYdistrib"
-					value:(distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "values")
-					color:[#red];
-			}
-			
-			}
-	}
-}
-
+	}	
 
 
 
