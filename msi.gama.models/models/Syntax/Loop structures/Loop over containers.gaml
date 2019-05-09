@@ -1,21 +1,21 @@
 /***
 * Name: Loops
 * Author: Benoit Gaudou
-* Description: This model illustrates the behavior of loop over many kinds of containers.
-* Tags: loop, ask, iterators
+* Description: This model illustrates the behavior of loop over many kinds of container.
+* Tags: loop, container, list, map, matrix, point, population
 ***/
 
 model LoopsOverContainers
 
 global {
-	// GAML contains several container types: they are data structures to contain several elements. Container can be:
+	// GAML contains several container types: they are data structures containing several elements. Containers can be:
 	// list (of a given type of elements):
 	list<string> list_of_string <- ["A","B","C"];
 	// map (a set of pairs key::value):
 	map<string,int> map_of_string_int <- ["A"::1,"B"::2,"C"::3];	
-	// matrix (a 2-dimension vector of elements of a given type)
+	// matrix (a 2-dimensions vector of elements of a given type)
 	matrix<string> matrix_of_string <- matrix([["R1C1","R2C1"],["R1C2","R2C2"],["R1C3","R2C3"]]);
-	// pair (a pair of 2 elements, that can be of different type)
+	// pair (a pair of 2 elements, that can be of different types)
 	pair<string,int> pair_of_string_int <- "B"::2;
 	// graph (a set of nodes and edges between these nodes)
 	graph<point,geometry> graph_of_points <- as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]);		
@@ -29,13 +29,13 @@ global {
 	init {
 		create dummy_species number: 10;
 		
-		// A very convenient way to loop over all the elements of a container is to use th over facet of the loop.
+		// A very convenient way to loop over all the elements of a container is to use the over: facet of the loop.
 		do loop_over;
 		// To be more precise on the loop over a structure we can need to loop using an index value.
 		do loop_using_indices;
-		// Some specificities of the loop over maps
+		// Some specificities of the loop over maps.
 		do loop_map;
-		// Some specificities of the loop over graphs		
+		// Some specificities of the loop over graphs.		
 		do loop_graph;
 	}
 	
@@ -44,7 +44,7 @@ global {
 		write "= Loop over containers and point =";
 		write "==================================";
 		
-		// In the loop over a container, a local variable is used and updated with a current value of the container at each step of the loop.
+		// In the loop over a container, a local variable is used and updated with the current element of the container at each step of the loop.
 		// The type of this variable can be different depending on the container.
 	
 		// When we loop over a list, the local variable elt_of_list has the type of the elments of the list.	
@@ -57,7 +57,8 @@ global {
 			write "  " + sample(lower_case(elt_of_list));
 		}
 		
-		// When we loop over a map, the loop is done over the values. As a consequence the local variable elt_of_map has the type of the values, i.e. int in the following case.
+		// When we loop over a map, the loop is done over the values. 
+		// As a consequence the local variable elt_of_map has the type of the values, i.e. int in the following case.
 		write "----------------------------------";
 		write "Loop over the map: " + map_of_string_int;
 		write "----------------------------------";
@@ -141,10 +142,10 @@ global {
 		write "= Loop using an index =";
 		write "=======================";
 		
-		// The previous example loop over a container using the over: facet and thus getting all the elementsof the loop, 
+		// The previous example loop over a container using the over: facet and thus it iterates over all the elements of the container, 
 		// but without any information on it location in the container.
 		// When we need to know this information, we can loop over a container (in particular list or matrix) through an index value.
-		// Reminder: in GAML, lists and matrices index starts at 0 and ends at length(list) - 1.
+		// Reminder: in GAML, lists and matrices index starts at 0 and ends at (number of elements in the container) - 1.
 
 		write "----------------------------------";
 		write "Loop over the list: " + list_of_string;
@@ -165,12 +166,12 @@ global {
 			}
 		}	
 		write "****************************************";
-		write sample(rows_list(matrix_of_string))	;
+		write sample(matrix_of_string[2,6])	;
 	}
 	
 				
 	// When we loop over a map, the default behavior is to loop over the values (and we thus lose the key in the loop).
-	// To keep it we can loop over the map either through the keys list, the values list or even the pairs key::values list.
+	// To keep it we can loop over the map either through the keys list, the values list or even the pairs key::value list.
 	action loop_map {
 		write "=======================";
 		write "= Loop over maps      =";
@@ -230,4 +231,4 @@ global {
 
 species dummy_species {}
 
-experiment name type: gui {}
+experiment exp type: gui {}

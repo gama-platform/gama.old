@@ -8,8 +8,6 @@
 
 model Lists
 
-/* Insert your model definition here */
-
 species declaring_list_attributes {
 	
 	/**
