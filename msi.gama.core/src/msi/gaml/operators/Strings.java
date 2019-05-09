@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -476,7 +475,10 @@ public class Strings {
 			can_be_const = true,
 			category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
-	@doc ("Converts a (possibly multiline) string by indenting it by a number -- specified by the second operand -- of tabulations to the right")
+	@doc (value = "Converts a (possibly multiline) string by indenting it by a number -- specified by the second operand -- of tabulations to the right",
+			examples = @example (
+					value = "\"my\" + indented_by(\"text\", 1)",
+					equals = "\"my	text\""))
 	static public String indent(final String s, final int nb) {
 		if (nb <= 0) { return s; }
 		final StringBuilder sb = new StringBuilder(nb);
