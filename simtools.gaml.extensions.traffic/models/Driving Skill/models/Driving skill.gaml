@@ -1,23 +1,22 @@
 /**
 * Name: Complex Road Network 
 * Author: Patrick Taillandier
-* Description: Model to show how to use the driving skill to represent the traffic on a road network generated thanks to shapefiles, with intersections 
-* and traffic lights going from red to green to let people move or stop. Two experiments are presented : experiment_2D to display the model in 2D 
-* and which better display the orientation of roads and experiment_3D to display the model in 3D.
+* Description: Model to show how to use the driving skill to represent the traffic on a road network imported from shapefiles (generated, for the city, with 
+* OSM Loading Driving), with intersections and traffic lights going from red to green to let people move or stop. Two experiments are presented : one concerning a 
+* a simple ring network and the other a real city network.
 * Tags: gis, shapefile, graph, agent_movement, skill, transport
 */
 model RoadTrafficComplex
 
 global {
-	bool simple_data <- false;
-
+	bool  display3D<- false;
+	
 	//Check if we use simple data or more complex roads
-	file shape_file_roads <- simple_data ? file("../includes/RoadCircleLanes.shp") : file("../includes/ManhattanRoads.shp");
-	file shape_file_nodes <- simple_data ? file("../includes/NodeCircleLanes.shp") : file("../includes/ManhattanNodes.shp");
-	file shape_file_bounds <- simple_data ? file("../includes/BoundsLaneRoad.shp") : file("../includes/ManhattanRoads.shp");
-	geometry shape <- envelope(shape_file_bounds) + 50.0;
+	file shape_file_roads <-  file("../includes/roads.shp");
+	file shape_file_nodes <- file("../includes/nodes.shp");
+	geometry shape <- envelope(shape_file_roads) + 50.0;
 	graph road_network;
-	int nb_people <- simple_data ? 20 : 200;
+	int nb_people <- 200;
 
 	init {
 	//create the intersection and check if there are traffic lights or not by looking the values inside the type column of the shapefile and linking
@@ -159,21 +158,18 @@ species intersection skills: [skill_road_node] {
 
 	}
 
-	aspect base {
-		if (is_traffic_signal) {
-			draw circle(5) color: color_fire;
-		}
-
+	aspect default {
+		if (display3D) {
+			if (is_traffic_signal) {
+				draw box(1, 1, 10) color: #black;
+				draw sphere(3) at: {location.x, location.y, 10} color: color_fire;
+			}
+		} else {
+			if (is_traffic_signal) {
+				draw circle(5) color: color_fire;
+			}
+		}	
 	}
-
-	aspect base3D {
-		if (is_traffic_signal) {
-			draw box(1, 1, 10) color: #black;
-			draw sphere(3) at: {location.x, location.y, 10} color: color_fire;
-		}
-
-	}
-
 }
 
 //species that will represent the roads, it can be directed or not and uses the skill skill_road
@@ -181,18 +177,19 @@ species road skills: [skill_road] {
 	geometry geom_display;
 	string oneway;
 
-	aspect base {
-		draw shape color: #gray end_arrow: 10;
-	}
-
-	aspect base3D {
-		draw geom_display color: #lightgray;
+	aspect default {
+		if (display3D) {
+			draw geom_display color: #lightgray;
+		} else {
+			draw shape color: #white end_arrow: 5;
+		}
+		
 	}
 
 }
 
-//People species that will move on the graph of roads to a target and using the skill advanced_driving
-species people skills: [advanced_driving] {
+//People species that will move on the graph of roads to a target and using the driving skill
+species people skills: [driving] {
 	rgb color <- rnd_color(255);
 	int counter_stucked <- 0;
 	int threshold_stucked;
@@ -229,17 +226,17 @@ species people skills: [advanced_driving] {
 		}
 	}
 
-	aspect base {
-		draw breakdown ? square(15) : triangle(15) color: color rotate: heading + 90;
-	}
-
-	aspect base3D {
-		point loc <- calcul_loc();
-		draw rectangle(1,vehicle_length) + triangle(1) rotate: heading + 90 depth: 1 color: color at: loc;
-		if (breakdown) {
-			draw circle(1) at: loc color: #red;
+	aspect default {
+		if (display3D) {
+			point loc <- calcul_loc();
+			draw rectangle(1,vehicle_length) + triangle(1) rotate: heading + 90 depth: 1 color: color at: loc;
+			if (breakdown) {
+				draw circle(1) at: loc color: #red;
+			}
+		}else {
+			draw breakdown ? square(8) : triangle(8) color: color rotate: heading + 90;
 		}
-
+		
 	}
 
 	point calcul_loc {
@@ -258,26 +255,41 @@ species people skills: [advanced_driving] {
 
 	} }
 
-experiment experiment_2D type: gui {
-	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS";
+experiment experiment_city type: gui {
+	parameter "if true, 3D display, if false 2D display:" var: display3D category: "GIS";
+	
+	action _init_{
+		create simulation with:[
+			shape_file_roads::file("../includes/roads.shp"), 
+			shape_file_nodes::file("../includes/nodes.shp"),
+			nb_people::200
+		];
+	}
 	output {
-		display city_display {
-			species road aspect: base;
-			species intersection aspect: base;
-			species people aspect: base;
+		display carte_principale type: opengl synchronized: true background: #gray{
+			species road ;
+			species intersection ;
+			species people ;
 		}
-
 	}
 
 }
 
-experiment experiment_3D type: gui {
-	parameter "if true, simple data (simple track), if false complex one (Manhattan):" var: simple_data category: "GIS";
+experiment experiment_ring type: gui {
+	parameter "if true, 3D display, if false 2D display:" var: display3D category: "GIS";
+	
+	action _init_{
+		create simulation with:[
+			shape_file_roads::file("../includes/RoadCircleLanes.shp"), 
+			shape_file_nodes::file("../includes/NodeCircleLanes.shp"),
+			nb_people::20
+		];
+	}
 	output {
 		display carte_principale type: opengl synchronized: true background: #gray{
-			species road aspect: base3D refresh: true;
-			species intersection aspect: base3D;
-			species people aspect: base3D;
+			species road ;
+			species intersection ;
+			species people ;
 		}
 
 	}
