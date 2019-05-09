@@ -143,7 +143,7 @@ species fireArea{
 	}
 	
 	aspect base {
-	  draw circle(size) color: #red;
+	  draw file("../includes/Fire.png") size: 5;
 	}
 }
 
@@ -153,7 +153,7 @@ species waterArea{
 		location <- place.location;
 	}
 	aspect base {
-	  draw square(5) color: #blue;		
+	  draw square(5) color: #blue border: #black;		
 	}
 }
 
@@ -163,6 +163,7 @@ grid grille width: 25 height: 25 neighbors:4 {
 
 
 experiment fight_fire type: gui {
+	float minimum_cycle_duration <- 0.05;
 	output {					
 		display view1 { 
 			grid grille lines: #black;
