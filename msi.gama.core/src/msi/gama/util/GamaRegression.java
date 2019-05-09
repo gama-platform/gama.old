@@ -11,7 +11,6 @@
 package msi.gama.util;
 
 import org.apache.commons.math3.stat.regression.AbstractMultipleLinearRegression;
-import org.apache.commons.math3.stat.regression.GLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.RegressionResults;
 
@@ -39,16 +38,13 @@ public class GamaRegression implements IValue {
 	int nbFeatures;
 	double param[];
 
-	public GamaRegression(final IScope scope, final GamaMatrix data, final String method) throws Exception {
-		AbstractMultipleLinearRegression regressionMethod = null;
-		if (method.equals("GLS"))
-			regressionMethod = new GLSMultipleLinearRegression();
-		else
-			regressionMethod = new OLSMultipleLinearRegression();
+	public GamaRegression(final IScope scope, final GamaMatrix<?> data) throws Exception {
+		AbstractMultipleLinearRegression regressionMethod = new OLSMultipleLinearRegression();
 		final int nbFeatures = data.numCols - 1;
 		final int nbInstances = data.numRows;
 		
 		final double[] instances = new double[data.numCols * data.numRows];
+		
 		for (int i = 0; i < data.length(scope); i++) {
 			instances[i] = Cast.asFloat(scope, data.getNthElement(i));
 		}
@@ -63,7 +59,7 @@ public class GamaRegression implements IValue {
 		this.param = param;
 	}
 
-	public Double predict(final IScope scope, final GamaList instance) {
+	public Double predict(final IScope scope, final GamaList<?> instance) {
 		if (param == null)
 			return null;
 		double val = param[0];
@@ -76,7 +72,7 @@ public class GamaRegression implements IValue {
 	@getter("parameters")
 	public IList<Double> getParameters() {
 		if (param == null)
-			return GamaListFactory.create();
+			return GamaListFactory.create(Types.FLOAT);
 		final IList<Double> vals = GamaListFactory.create(Types.FLOAT);
 		for (int i = 0; i < param.length; i++)
 			vals.add(param[i]);
