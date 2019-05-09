@@ -23,6 +23,7 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.Types;
 import ummisco.gama.network.common.ConnectorMessage;
+import ummisco.gama.network.common.MessageFactory;
 import ummisco.gama.network.common.NetworkMessage;
 
 public class ClientServiceThread extends Thread {
@@ -101,7 +102,7 @@ public class ClientServiceThread extends Thread {
 				// }
 				clientCommand = clientCommand.replaceAll("@n@", "\n");
 				clientCommand = clientCommand.replaceAll("@b@@r@", "\b\r");
-				final ConnectorMessage msg = NetworkMessage.unPackMessage(myClientSocket.toString(), clientCommand);
+				final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(myClientSocket.toString(), clientCommand);
 
 				// NetworkMessage msg=new
 				// NetworkMessage(myClientSocket.toString(), clientCommand);

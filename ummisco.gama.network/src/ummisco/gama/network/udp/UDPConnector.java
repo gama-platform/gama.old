@@ -128,6 +128,17 @@ public class UDPConnector extends Connector {
 	}
 
 	@Override
+	protected boolean isAlive(final IAgent agent) throws GamaNetworkException {
+		final String sport = this.getConfigurationParameter(SERVER_PORT);
+		final Integer port = Cast.asInt(agent.getScope(), sport);
+		final Thread sersock = (Thread) agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port);
+		if(sersock != null && sersock.isAlive()) return true;
+		
+		return false;
+	}
+
+	
+	@Override
 	protected void releaseConnection(final IScope scope) throws GamaNetworkException {
 		final String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(scope, sport);
