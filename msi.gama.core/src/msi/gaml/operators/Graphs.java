@@ -34,11 +34,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GamlGridAgent;
-import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -71,6 +68,7 @@ import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.IPath;
+import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGraphType;
 import msi.gaml.types.GamaPathType;
@@ -113,10 +111,8 @@ public class Graphs {
 
 		@Override
 		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
-			if (!(p1 instanceof GamlGridAgent)) { return false; }
-			final GridTopology topo = (GridTopology) ((GamlGridAgent) p1).getTopology();
-			// ITopology topo = (((IAgent)p1).getScope().getTopology());
-			return topo.getNeighborsOf(scope, p1, 1.0, In.list(scope, ((IAgent) p2).getSpecies())).contains(p2);
+			if (!(p1 instanceof IGridAgent)) { return false; }
+			return ((IGridAgent) p1).getNeighbors(scope).contains(p2);
 		}
 
 		@Override
