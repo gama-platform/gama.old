@@ -10,6 +10,7 @@ import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
@@ -34,6 +35,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\")",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name) throws GamaRuntimeException {
 		return new Predicate(name);
 	}
@@ -48,6 +50,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", people1 )",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final GamaMap values) throws GamaRuntimeException {
 		return new Predicate(name, values);
 	}
@@ -62,6 +65,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"hasWater\", true)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final Boolean ist) throws GamaRuntimeException {
 		return new Predicate(name, ist);
 	}
@@ -81,8 +85,9 @@ public class Operators {
 	@doc (
 			value = "a new predicate with the given is_true (name, lifetime)",
 			examples = @example (
-					value = "predicate(\"hasWater\", 10 ",
+					value = "predicate(\"hasWater\", 10)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final int lifetime) {
 		return new Predicate(name, lifetime);
 	}
@@ -97,6 +102,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", [\"time\"::10], true)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final IAgent agent) throws GamaRuntimeException {
 		return new Predicate(name, agent);
 	}
@@ -119,6 +125,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", [\"time\"::10], true)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final GamaMap values, final Boolean truth)
 			throws GamaRuntimeException {
 		return new Predicate(name, values, truth);
@@ -134,6 +141,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", [\"time\"::10], true)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final GamaMap values, final int lifetime)
 			throws GamaRuntimeException {
 		return new Predicate(name, values, lifetime);
@@ -149,6 +157,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", [\"time\"::10], agentA)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final GamaMap values, final IAgent agent)
 			throws GamaRuntimeException {
 		return new Predicate(name, values, agent);
@@ -190,6 +199,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", [\"time\"::10], true, agentA)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final GamaMap values, final Boolean truth,
 			final IAgent agent) throws GamaRuntimeException {
 		return new Predicate(name, values, truth, agent);
@@ -205,6 +215,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", [\"time\"::10], 10, agentA)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final GamaMap values, final int lifetime,
 			final IAgent agent) throws GamaRuntimeException {
 		return new Predicate(name, values, lifetime, agent);
@@ -220,6 +231,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", [\"time\"::10], 10,true)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final GamaMap values, final int lifetime,
 			final Boolean truth) throws GamaRuntimeException {
 		return new Predicate(name, values, lifetime, truth);
@@ -261,6 +273,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate(\"people to meet\", [\"time\"::10], 10, true, agentA)",
 					isExecutable = false))
+	@no_test
 	public static Predicate newPredicate(final String name, final GamaMap values, final int lifetime,
 			final Boolean truth, final IAgent agent) throws GamaRuntimeException {
 		return new Predicate(name, values, lifetime, truth, agent);
@@ -285,6 +298,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate set_agent_cause agentA",
 					isExecutable = false))
+	@no_test
 	public static Predicate withAgentCause(final Predicate predicate, final IAgent agent) throws GamaRuntimeException {
 		final Predicate temp = predicate.copy();
 		temp.setAgentCause(agent);
@@ -301,6 +315,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate set_truth false",
 					isExecutable = false))
+	@no_test
 	public static Predicate withTruth(final Predicate predicate, final Boolean truth) throws GamaRuntimeException {
 		final Predicate temp = predicate.copy();
 		temp.is_true = truth;
@@ -370,6 +385,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate1 and predicate2",
 					isExecutable = false))
+	@no_test
 	public static Predicate and(final Predicate pred1, final Predicate pred2) {
 		final Predicate tempPred = new Predicate(pred1.getName() + "_and_" + pred2.getName());
 		final List<MentalState> tempList = new ArrayList<MentalState>();
@@ -394,6 +410,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate1 or predicate2",
 					isExecutable = false))
+	@no_test
 	public static Predicate or(final Predicate pred1, final Predicate pred2) {
 		final Predicate tempPred = new Predicate(pred1.getName() + "_or_" + pred2.getName());
 		final List<MentalState> tempList = new ArrayList<MentalState>();
@@ -418,6 +435,7 @@ public class Operators {
 			examples = @example (
 					value = "eval_when(plan1)",
 					isExecutable = false))
+	@no_test
 	public static Boolean evalWhen(final IScope scope, final BDIPlan plan) {
 		return plan.getPlanStatement().getContextExpression() == null
 				|| msi.gaml.operators.Cast.asBool(scope, plan.getPlanStatement().getContextExpression().value(scope));
@@ -450,6 +468,12 @@ public class Operators {
 			can_be_const = true,
 			category = { "BDI" },
 			concept = { IConcept.BDI })
+	@doc (
+			value = "evaluate the truth value of a predicate",
+			examples = @example (
+					value = "get_truth(pred1)",
+					isExecutable = false))
+	@test ("get_truth(new_predicate('test1')) = truth")
 	public static Boolean getTruth(final Predicate pred) {
 		if (pred != null) {
 			return pred.is_true;
@@ -503,6 +527,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\")",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name) throws GamaRuntimeException {
 		return new Emotion(name);
 	}
@@ -517,6 +542,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3)",
 					isExecutable = false))
+	@no_test
 	@test ("get_intensity(new_emotion('joy',12.3)) = 12.3")
 	public static Emotion newEmotion(final String name, final Double intensity) throws GamaRuntimeException {
 		return new Emotion(name, intensity);
@@ -532,6 +558,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",eatFood)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Predicate about) throws GamaRuntimeException {
 		return new Emotion(name, about);
 	}
@@ -546,6 +573,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,eatFood,4)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final IAgent agent) throws GamaRuntimeException {
 		return new Emotion(name, agent);
 	}
@@ -560,6 +588,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,eatFood)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about)
 			throws GamaRuntimeException {
 		return new Emotion(name, intensity, about);
@@ -575,6 +604,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,4)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Double decay)
 			throws GamaRuntimeException {
 		return new Emotion(name, intensity, decay);
@@ -590,6 +620,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,eatFood,4)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Predicate about, final IAgent agent)
 			throws GamaRuntimeException {
 		return new Emotion(name, about, agent);
@@ -605,6 +636,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,eatFood,4)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final IAgent agent)
 			throws GamaRuntimeException {
 		return new Emotion(name, intensity, agent);
@@ -620,6 +652,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,eatFood,4)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about,
 			final Double decay) throws GamaRuntimeException {
 		return new Emotion(name, intensity, about, decay);
@@ -635,6 +668,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,eatFood,4)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Double decay, final IAgent agent)
 			throws GamaRuntimeException {
 		return new Emotion(name, intensity, decay, agent);
@@ -650,6 +684,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,eatFood,4)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about,
 			final IAgent agent) throws GamaRuntimeException {
 		return new Emotion(name, intensity, about, agent);
@@ -665,6 +700,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion(\"joy\",12.3,eatFood,4)",
 					isExecutable = false))
+	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about,
 			final Double decay, final IAgent agent) throws GamaRuntimeException {
 		return new Emotion(name, intensity, about, decay, agent);
@@ -680,6 +716,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion set_agent_cause agentA",
 					isExecutable = false))
+	@no_test
 	public static Emotion withAgentCause(final Emotion emotion, final IAgent agent) throws GamaRuntimeException {
 		emotion.agentCause = agent;
 		return emotion;
@@ -695,6 +732,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion set_intensity 12",
 					isExecutable = false))
+	@no_test
 	public static Emotion setIntensity(final Emotion emotion, final Double intensity) throws GamaRuntimeException {
 		emotion.intensity = intensity;
 		return emotion;
@@ -710,6 +748,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion set_decay 12",
 					isExecutable = false))
+	@no_test
 	public static Emotion setDecay(final Emotion emotion, final Double decay) throws GamaRuntimeException {
 		emotion.decay = decay;
 		return emotion;
@@ -725,6 +764,7 @@ public class Operators {
 			examples = @example (
 					value = "emotion set_about predicate1",
 					isExecutable = false))
+	@no_test
 	public static Emotion setAbout(final Emotion emotion, final Predicate about) throws GamaRuntimeException {
 		emotion.about = about;
 		return emotion;
@@ -821,6 +861,7 @@ public class Operators {
 			examples = @example (
 					value = "new_social_link(agentA)",
 					isExecutable = false))
+	@no_test
 	public static SocialLink newSocialLink(final IAgent agent) throws GamaRuntimeException {
 		return new SocialLink(agent);
 	}
@@ -835,6 +876,7 @@ public class Operators {
 			examples = @example (
 					value = "new_social_link(agentA,0.0,-0.1,0.2,0.1)",
 					isExecutable = false))
+	@no_test
 	public static SocialLink newSocialLink(final IAgent agent, final Double appreciation, final Double dominance,
 			final Double solidarity, final Double familiarity) throws GamaRuntimeException {
 		return new SocialLink(agent, appreciation, dominance, solidarity, familiarity);
@@ -850,6 +892,7 @@ public class Operators {
 			examples = @example (
 					value = "social_link set_agent agentA",
 					isExecutable = false))
+	@no_test
 	public static SocialLink setAgent(final SocialLink social, final IAgent agent) {
 		social.setAgent(agent);
 		return social;
@@ -865,6 +908,7 @@ public class Operators {
 			examples = @example (
 					value = "social_link set_liking 0.4",
 					isExecutable = false))
+	@no_test
 	public static SocialLink setLiking(final SocialLink social, final Double appreciation) throws GamaRuntimeException {
 		if (appreciation >= -1.0 && appreciation <= 1.0) {
 			social.setLiking(appreciation);
@@ -882,6 +926,7 @@ public class Operators {
 			examples = @example (
 					value = "social_link set_dominance 0.4",
 					isExecutable = false))
+	@no_test
 	public static SocialLink setDominance(final SocialLink social, final Double dominance) throws GamaRuntimeException {
 		if (dominance >= -1.0 && dominance < 1.0) {
 			social.setDominance(dominance);
@@ -899,6 +944,7 @@ public class Operators {
 			examples = @example (
 					value = "social_link set_solidarity 0.4",
 					isExecutable = false))
+	@no_test
 	public static SocialLink setSolidarity(final SocialLink social, final Double solidarity)
 			throws GamaRuntimeException {
 		if (solidarity >= 0.0 && solidarity <= 1.0) {
@@ -917,6 +963,7 @@ public class Operators {
 			examples = @example (
 					value = "social_link set_familiarity 0.4",
 					isExecutable = false))
+	@no_test
 	public static SocialLink setFamiliarity(final SocialLink social, final Double familiarity)
 			throws GamaRuntimeException {
 		if (familiarity >= 0.0 && familiarity <= 1.0) {
@@ -935,6 +982,7 @@ public class Operators {
 			examples = @example (
 					value = "social_link set_familiarity 0.4",
 					isExecutable = false))
+	@no_test
 	public static SocialLink setTrust(final SocialLink social, final Double trust)
 			throws GamaRuntimeException {
 		if (trust >= -1.0 && trust <= 1.0) {
@@ -1065,6 +1113,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality) throws GamaRuntimeException {
 		return new MentalState(modality);
 	}
@@ -1079,6 +1128,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred) throws GamaRuntimeException {
 		return new MentalState(modality, pred);
 	}
@@ -1093,6 +1143,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength);
@@ -1108,6 +1159,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final IAgent ag)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, ag);
@@ -1123,6 +1175,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Integer life)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, life);
@@ -1138,6 +1191,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength,
 			final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, ag);
@@ -1153,6 +1207,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength,
 			final Integer life) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, life);
@@ -1168,6 +1223,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Integer life,
 			final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, life, ag);
@@ -1183,6 +1239,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength,
 			final Integer life, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, life, ag);
@@ -1198,6 +1255,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred);
@@ -1213,6 +1271,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength);
@@ -1228,6 +1287,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final IAgent ag)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, ag);
@@ -1243,6 +1303,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Integer life)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, life);
@@ -1258,6 +1319,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength,
 			final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, ag);
@@ -1273,6 +1335,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength,
 			final Integer life) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, life);
@@ -1288,6 +1351,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Integer life,
 			final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, life, ag);
@@ -1303,6 +1367,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength,
 			final Integer life, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, life, ag);
@@ -1319,6 +1384,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred) throws GamaRuntimeException {
 		return new MentalState(modality, pred);
 	}
@@ -1333,6 +1399,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength);
@@ -1348,6 +1415,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final IAgent ag)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, ag);
@@ -1363,6 +1431,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Integer life)
 			throws GamaRuntimeException {
 		return new MentalState(modality, pred, life);
@@ -1378,6 +1447,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength,
 			final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, ag);
@@ -1393,6 +1463,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength,
 			final Integer life) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, life);
@@ -1408,6 +1479,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Integer life,
 			final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, life, ag);
@@ -1423,6 +1495,7 @@ public class Operators {
 			examples = @example (
 					value = "new_mental-state(belief)",
 					isExecutable = false))
+	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength,
 			final Integer life, final IAgent ag) throws GamaRuntimeException {
 		return new MentalState(modality, pred, strength, life, ag);
@@ -1438,6 +1511,7 @@ public class Operators {
 			examples = @example (
 					value = "mental state set_modality belief",
 					isExecutable = false))
+	@no_test
 	public static MentalState setModalitity(final MentalState mental, final String modality) {
 		mental.setModality(modality);
 		return mental;
@@ -1453,6 +1527,7 @@ public class Operators {
 			examples = @example (
 					value = "mental state set_predicate pred1",
 					isExecutable = false))
+	@no_test
 	public static MentalState setPredicate(final MentalState mental, final Predicate predicate) {
 		mental.setPredicate(predicate);
 		return mental;
@@ -1468,6 +1543,7 @@ public class Operators {
 			examples = @example (
 					value = "mental state set_strength 1.0",
 					isExecutable = false))
+	@no_test
 	public static MentalState setStrength(final MentalState mental, final Double strength) {
 		mental.setStrength(strength);
 		return mental;
@@ -1483,6 +1559,7 @@ public class Operators {
 			examples = @example (
 					value = "mental state set_lifetime 1",
 					isExecutable = false))
+	@no_test
 	public static MentalState setLifetime(final MentalState mental, final int life) {
 		mental.setLifeTime(life);
 		return mental;
