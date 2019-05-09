@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.skills.Skill.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.skills.Skill.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.skills;
 
@@ -54,18 +54,13 @@ public class Skill implements ISkill {
 
 	@Override
 	public String getTitle() {
-		return "Skill " + getName() + " (contributed by " + getDefiningPlugin() + ")";
+		return description.getTitle();
 	}
 
 	@Override
 	public String getDefiningPlugin() {
 		return description.getDefiningPlugin();
 	}
-
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// description.collectMetaInformation(meta);
-	// }
 
 	@Override
 	public String getName() {

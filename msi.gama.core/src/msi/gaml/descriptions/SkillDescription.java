@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SkillDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.SkillDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -16,6 +16,7 @@ import java.util.Collections;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.skills.Skill;
 
@@ -104,27 +105,44 @@ public class SkillDescription extends TypeDescription {
 				sb.append(s);
 				sb.append("<br/>");
 			}
-			s = d.deprecated();
-			if (s != null && !s.isEmpty()) {
+			String deprecated = d.deprecated();
+			if (deprecated != null && !deprecated.isEmpty()) {
 				sb.append("<b>Deprecated</b>: ");
 				sb.append("<i>");
-				sb.append(s);
+				sb.append(deprecated);
 				sb.append("</i><br/>");
 			}
 		}
-		sb.append("<b>Attributes:</b> ").append(getAttributeNames()).append("<br>");
-		sb.append("<b>Actions: </b>").append(getActionNames()).append("<br>");
+		sb.append(getAttributeDocumentation());
+		sb.append("<br/>");
+		sb.append(getActionDocumentation());
 		sb.append("<br/>");
 		return sb.toString();
 
 	}
 
 	public doc getDocAnnotation() {
+		skill s = javaBase.getAnnotation(skill.class);
+		doc[] docs = s.doc();
 		doc d = null;
-		if (javaBase.isAnnotationPresent(doc.class)) {
-			d = javaBase.getAnnotation(doc.class);
+		if (docs.length == 0) {
+			if (javaBase.isAnnotationPresent(doc.class)) {
+				d = javaBase.getAnnotation(doc.class);
+			}
+		} else {
+			d = docs[0];
 		}
 		return d;
+	}
+
+	public String getDeprecated() {
+		doc d = getDocAnnotation();
+		if (d == null)
+			return null;
+		String s = d.deprecated();
+		if (s == null || s.isEmpty())
+			return null;
+		return s;
 	}
 
 }

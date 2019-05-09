@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.documentation;
@@ -42,7 +42,6 @@ public class DocumentationNode implements IGamlDescription {
 
 	final byte[] title;
 	final byte[] doc;
-	// final byte[] plugin;
 
 	DocumentationNode(final IGamlDescription desc) throws IOException {
 
@@ -58,7 +57,7 @@ public class DocumentationNode implements IGamlDescription {
 
 	/**
 	 * Method collectMetaInformation()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override
@@ -106,7 +105,7 @@ public class DocumentationNode implements IGamlDescription {
 
 	/**
 	 * Method serialize()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
 	 */
 	@Override
