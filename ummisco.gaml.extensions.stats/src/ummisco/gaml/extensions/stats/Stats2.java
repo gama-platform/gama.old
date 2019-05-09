@@ -436,9 +436,19 @@ public class Stats2 extends Stats {
 				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the skew of a data sequence.",
-				comment = "",
-				examples = {})
+				value = "Returns the skew of a data sequence when the 3rd moment has already been computed.",
+				comment = "In R moment(c(1,3,5,6,9,11,12,13),order=3) is 794.25 and sd(c(1,3,5,6,9,11,12,13)) = 4.407785"
+						+ "The value of the skewness tested here is different because there are different types of estimator"
+						+ "Joanes and Gill (1998) discuss three methods for estimating skewness:"
+						+ "Type 1: g_1 = m_3 / m_2^(3/2). This is the typical definition used in many older textbooks." 
+						+ "Type 2: G_1 = g_1 * sqrt(n(n-1)) / (n-2). Used in SAS and SPSS." 
+						+ "Type 3: b_1 = m_3 / s^3 = g_1 ((n-1)/n)^(3/2). Used in MINITAB and BMDP."
+						+ "In R skewness(c(1, 3, 5, 6, 9, 11, 12, 13),type=3) is -0.1182316",
+				examples = {
+						@example(value="skew(794.25,4.407785) with_precision(2)",
+										equals="-0.12")
+				}
+				)
 		public static Double opSkew(final IScope scope, final Double moment3, final Double standardDeviation) {
 
 			// TODO input parameters validation
