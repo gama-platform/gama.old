@@ -20,8 +20,10 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
@@ -379,7 +381,19 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
-	@doc ("Specialization of the reverse operator for maps. Reverses keys and values")
+	@doc (value = "Specialization of the reverse operator for maps. Reverses keys and values",
+			comment = "",
+			examples = {
+					@example("map<int,int> m <- [1::111,2::222, 3::333, 4::444];"),
+					@example (
+						  value = "reverse(m)", 
+						  equals = "map([111::1,222::2,333::3,444::4])"
+						  )
+		  			}
+			)
+	
+	@test("map<int,int> m <- [1::111,2::222, 3::333, 4::444]; reverse(m) = map([111::1,222::2,333::3,444::4])")
+	
 	@Override
 	public IContainer reverse(final IScope scope) {
 		final GamaMap map = new GamaMap(size(), getGamlType().getContentType(), getGamlType().getKeyType());
