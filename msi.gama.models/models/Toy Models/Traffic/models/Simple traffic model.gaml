@@ -1,7 +1,8 @@
 /**
 * Name: Traffic
 * Author: Patrick Taillandier
-* Description: A simple road network model: the speed on a road depends on the number of people on this road (the highest, the slowest)
+* Description: A simple traffic model with a pollution model: the speed on a road depends on the number of people 
+* on the road (the highest, the slowest), and the people diffuse pollution on the envrionment when moving.
 * Tags: gis, shapefile, graph, skill, transport
 */
 
@@ -41,7 +42,17 @@ global {
 		road_weights <- road as_map (each::each.shape.perimeter / each.speed_coeff);
 		road_network <- road_network with_weights road_weights;
 	}
+	
+	//Reflex to decrease and diffuse the pollution of the environment
+	reflex pollution_evolution{
+		//ask all cells to decrease their level of pollution
+		ask cell {pollution <- pollution * 0.7;}
+		
+		//diffuse the pollutions to neighbor cells
+		diffuse var: pollution on: cell proportion: 0.9 ;
+	}
 }
+
 //Species to represent the people using the skill moving
 species people skills: [moving]{
 	//Target point of the agent
@@ -57,10 +68,20 @@ species people skills: [moving]{
 	}
 	//Reflex to move to the target building moving on the road network
 	reflex move when: target != nil {
-		do goto target: target on: road_network recompute_path: false move_weights: road_weights;
+		//we use the return_path facet to return the path followed
+		path path_followed <- goto (target: target, on: road_network, recompute_path: false, return_path: true, move_weights: road_weights);
+		
+		//if the path followed is not nil (i.e. the agent moved this step), we use it to increase the pollution level of overlapping cell
+		if (path_followed != nil ) {
+			ask (cell overlapping path_followed.shape) {
+				pollution <- pollution + 10.0;
+			}
+		}
+		
 		if (location = target) {
 			target <- nil;
 		}	
+		
 	}
 	
 	aspect default {
@@ -84,8 +105,18 @@ species road {
 	int buffer<-3;
 	aspect default {
 		draw (shape + buffer * speed_coeff) color: #red;
-	}
+	} 
 }
+
+//cell use to compute the pollution in the environment
+grid cell height: 50 width: 50 neighbors: 8{
+	//pollution level
+	float pollution <- 0.0 min: 0.0 max: 100.0;
+	
+	//color updated according to the pollution level (from red - very polluted to green - no pollution)
+	rgb color <- #green update: rgb(255 *(pollution/30.0) , 255 * (1 - (pollution/30.0)), 0.0);
+}
+
 experiment traffic type: gui {
 	float minimum_cycle_duration <- 0.01;
 	output {
@@ -93,6 +124,10 @@ experiment traffic type: gui {
 			species building refresh: false;
 			species road ;
 			species people ;
+			
+			//display the pollution grid in 3D using triangulation.
+			grid cell elevation: pollution * 3.0 triangulation: true transparency: 0.7;
+		
 		}
 	}
 }

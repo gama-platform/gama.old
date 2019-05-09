@@ -45,6 +45,14 @@ public class Strings {
 			category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING },
 			doc = @doc ("Concatenates the two string operands"))
+	@doc (
+			usages = @usage (
+					value = "if the left-hand and right-hand operand are a string, returns the concatenation of the two operands",
+					examples = @example (
+							value =  "\"hello \" + \"World\"",
+							equals = "\"hello World\"")))
+	
+	
 	public static String opPlus(final String a, final String b) {
 		return a + b;
 	}
