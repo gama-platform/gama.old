@@ -17,7 +17,6 @@ import cern.jet.stat.Probability;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
@@ -476,7 +475,8 @@ public class Stats2 extends Stats {
 				comment = "",
 				examples = {@example(
 						value="int(variance([1,3,5,6,9,11,12,13]))",
-						equals ="17")
+						equals ="17",
+						returnType="int")
 				})
 		
 		//@test ("int(variance([1,3,5,6,9,11,12,13])) = 17")
@@ -508,12 +508,9 @@ public class Stats2 extends Stats {
 						+ "The variance is (84- 16^2/4)/4. CQFD.",
 						examples = {@example(
 								value="int(variance(4,16,84))",
-								equals ="5")
-						
+								equals ="5",
+								returnType="int")
 				})
-		
-		
-		
 		public static Double variance(final IScope scope, final Integer size, final Double sum,
 				final Double numOfSquares) {
 
