@@ -280,8 +280,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public T get(final IScope scope, final ILocation p) {
 		final double px = p.getX();
 		final double py = p.getY();
-		if (px > numCols - 1 || px < 0) { return null; }
-		if (py > numRows - 1 || py < 0) { return null; }
+		if (px > numCols - 1 || px < 0) { 
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + px, scope); 
+		}
+		if (py > numRows - 1 || py < 0) { 
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + py, scope); 
+		}
 		return get(scope, (int) px, (int) py);
 	}
 
@@ -299,8 +303,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		}
 		final int px = Cast.asInt(scope, indices.get(0));
 		final int py = Cast.asInt(scope, indices.get(1));
-		if (px > numCols - 1 || px < 0) { return null; }
-		if (py > numRows - 1 || py < 0) { return null; }
+		if (px > numCols - 1 || px < 0) { 
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + px, scope); 
+		}
+		if (py > numRows - 1 || py < 0)  { 
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + py, scope); 
+		}
 		return get(scope, px, py);
 	}
 
