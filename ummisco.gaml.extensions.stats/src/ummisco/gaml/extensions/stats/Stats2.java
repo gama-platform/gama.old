@@ -1061,7 +1061,16 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the area under the right hand tail (from x to infinity) of the Chi square probability density function with df degrees of freedom.",
 				comment = "",
-				examples = {})
+				examples = {
+						
+						@example (
+								value = "chi_square_complemented(2,10) with_precision(3)",
+								equals = "0.996")
+						
+				})
+		
+		
+		
 		public static Double opChiSquareComplemented(final IScope scope, final Double x, final Double df) {
 
 			// Returns the area under the right hand tail (from x to infinity)
