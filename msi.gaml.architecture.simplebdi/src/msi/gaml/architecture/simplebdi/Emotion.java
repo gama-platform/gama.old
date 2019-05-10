@@ -25,7 +25,7 @@ public class Emotion implements IValue {
 	Double decay = 0.0;
 	IAgent agentCause;
 	IAgent owner;
-	private boolean noAgentCause = true;
+	private boolean noAgentCause = true; 
 	private boolean noIntensity = true;
 	private boolean noAbout = true;
 
