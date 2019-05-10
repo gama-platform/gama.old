@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
@@ -34,7 +37,6 @@ import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.gce.geotiff.GeoTiffWriter;
-import org.geotools.gce.image.WorldImageWriter;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.referencing.CRS;
@@ -67,7 +69,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
@@ -99,6 +100,7 @@ import msi.gaml.expressions.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Comparison;
 import msi.gaml.operators.Strings;
+import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.GamaFileType;
@@ -468,39 +470,23 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 				fw.write(val + Strings.LN);
 			}
+			fw.close();
 		} catch (final IOException e) {
 			return;
 		}
 
 	}
 
-	public void saveRasterImage(final ISpecies species, final String path, final IScope scope,
+	public void saveRasterImage(final ISpecies species, String path, final IScope scope,
 			final boolean toGeotiff) {
+		
+		if (!toGeotiff && !path.contains("png")) path += ".png"; 
 		final File f = new File(path);
 		if (f.exists()) {
 			f.delete();
 		}
-		final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
-		final int cols = gp.getNbCols();
-		final int rows = gp.getNbRows();
-
-		final float[][] imagePixelData = new float[rows][cols];
-		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				imagePixelData[row][col] = gp.getGridValue(col, row).floatValue();
-			}
-
-		}
-		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
-		final double x = nullProjection ? 0
-				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX();
-		final double y = nullProjection ? 0
-				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY();
-		final double width = scope.getSimulation().getEnvelope().getWidth();
-		final double height = scope.getSimulation().getEnvelope().getHeight();
-
-		Envelope2D refEnvelope;
 		CoordinateReferenceSystem crs = null;
+		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
 		try {
 			crs = nullProjection ? CRS.decode("EPSG:2154")
 					: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS(scope);
@@ -509,21 +495,69 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} catch (final FactoryException e1) {
 			e1.printStackTrace();
 		}
-		refEnvelope = new Envelope2D(crs, x, y, width, height);
+		try (FileWriter fw = new FileWriter(path.replace(".png", ".prj").replace(".tif", ".prj"))) {
+			fw.write(crs.toString());
+			fw.close();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
+		
+		final int cols = gp.getNbCols();
+		final int rows = gp.getNbRows();
+		double x = nullProjection ? 0
+				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX();
+		double y = nullProjection ? 0
+				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY();
+		
 
-		final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
-		try {
-			if (toGeotiff) {
-				final GeoTiffWriter writer = new GeoTiffWriter(f);
-				writer.write(coverage, null);
-			} else {
-				final WorldImageWriter writer = new WorldImageWriter(f);
-				writer.write(coverage, null);
-
+		if (!toGeotiff) {
+			BufferedImage image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_RGB); 
+			
+			for (Object g : gp.getAgents(scope).iterable(scope)) {
+				IGridAgent ag = (IGridAgent) g;
+				image.setRGB(ag.getX(),rows - 1 - ag.getY(), ag.getColor().getRGB());
+			}
+			 try {
+				 ImageIO.write(image, "png", f);
+				 double cw = gp.getAgent(0).getGeometry().getWidth();
+				 double ch = gp.getAgent(0).getGeometry().getHeight();
+				 x += cw/2;
+				 y += ch/2;
+				FileWriter fw = new FileWriter(path.replace(".png", ".pgw"));
+				fw.write(cw+"\n0.0\n0.0\n"+ch+"\n"+x+"\n"+y);
+				fw.close();
+				
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 
-		} catch (final Exception e) {
-			e.printStackTrace();
+		} else {
+			
+		
+			final float[][] imagePixelData = new float[rows][cols];
+			for (int row = 0; row < rows; row++) {
+				for (int col = 0; col < cols; col++) {
+					imagePixelData[row][col] = gp.getGridValue(col, row).floatValue();
+				}
+	
+			}
+			final double width = scope.getSimulation().getEnvelope().getWidth();
+			final double height = scope.getSimulation().getEnvelope().getHeight();
+	
+			Envelope2D refEnvelope;
+			refEnvelope = new Envelope2D(crs, x, y, width, height);
+	
+			final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+			try {
+				final GeoTiffWriter writer = new GeoTiffWriter(f);
+				writer.write(coverage, null);
+				/*final WorldImageWriter writer = new WorldImageWriter(f);
+					writer.write(coverage, null);
+				*/
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -997,6 +1031,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (crs != null) {
 			try (FileWriter fw = new FileWriter(path.replace(".shp", ".prj"))) {
 				fw.write(crs.toString());
+				fw.close();
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
