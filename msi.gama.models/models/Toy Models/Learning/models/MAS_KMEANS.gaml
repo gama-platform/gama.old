@@ -73,9 +73,11 @@ global
 		{
 			ask pt
 			{
-				mycenter <- centroids with_min_of(each distance_to self);
-				color_kmeans <- mycenter.color_kmeans;
-				add self to: mycenter.mypoints;
+				if not empty(centroids) {
+					mycenter <- centroids closest_to self;
+					color_kmeans <- mycenter.color_kmeans;
+					add self to: mycenter.mypoints;
+				}
 			}
 
 		}
@@ -88,9 +90,9 @@ global
 	// making this algorithm a variant of the generalized expectation-maximization algorithm.
 
 	//We give a random color to each group (i.e. to each datapoints agents of the group)
-		loop center over: centroids
+		ask centroids where (not empty(each.mypoints))
 		{
-			center.location <- mean(center.mypoints collect each.location);
+			location <- mean(mypoints collect each.location);
 		}
 
 	}
