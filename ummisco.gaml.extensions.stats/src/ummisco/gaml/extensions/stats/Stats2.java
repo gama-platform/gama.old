@@ -909,9 +909,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the integral from zero to x of the gamma probability density function.",
 				comment = "incomplete_gamma(a,x) is equal to pgamma(a,1,x).",
-				examples = {})
-		
-		
+				examples = {
+						@example ( value = "gamma_distribution(2,3,0.9) with_precision(3)",
+								   equals = "0.269")
+					})
 		
 		public static Double opGamma(final IScope scope, final Double a, final Double b, final Double x) {
 
@@ -947,7 +948,11 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the integral from x to infinity of the gamma probability density function.",
 				comment = "",
-				examples = {})
+				examples = {
+						@example ( value = "gamma_distribution_complemented(2,3,0.9) with_precision(3)",
+								   equals = "0.731")
+		 })
+		
 		public static Double opGammaComplemented(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the integral from x to infinity of the gamma probability
