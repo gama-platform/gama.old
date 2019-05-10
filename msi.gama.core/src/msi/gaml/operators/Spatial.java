@@ -2338,7 +2338,10 @@ public abstract class Spatial {
 						value = "skeletonize(self)",
 						equals = "the list of geometries corresponding to the skeleton of the geometry of "
 								+ "the agent applying the operator.",
-						test = false) })
+						test = true) })
+		@test(" // applies only to a square \n "
+				+ "length(skeletonize(square(5))) = 1")
+		
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
 				final Double triangulationTolerance) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(),
@@ -2349,7 +2352,7 @@ public abstract class Spatial {
 			}
 			return geoms;
 		}
-
+		
 		@operator (
 				value = "skeletonize",
 				content_type = IType.GEOMETRY,
