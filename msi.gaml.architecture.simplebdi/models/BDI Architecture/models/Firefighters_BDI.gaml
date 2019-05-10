@@ -158,7 +158,7 @@ species waterArea{
 }
 
 grid grille width: 25 height: 25 neighbors:4 {
-	rgb color <- #palegreen;
+	rgb color <- #green;
 }
 
 
@@ -166,7 +166,7 @@ experiment fight_fire type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {					
 		display view1 { 
-			grid grille lines: #black;
+			grid grille lines: #darkgreen;
 			species fireArea aspect:base;
 			species waterArea aspect:base;
 			species firefighter aspect: bdi;

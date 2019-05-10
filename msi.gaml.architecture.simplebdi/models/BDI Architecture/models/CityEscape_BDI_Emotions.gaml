@@ -91,7 +91,6 @@ species people skills: [moving] control: simple_bdi{
 	perceive target:hazard in: hazard_distance when: not escape_mode and flip(proba_detect_hazard){
 		focus id:"catastrophe" is_uncertain: true;
 		ask myself {
-//			do add_uncertainty(catastropheP);
 			if(fearful){
 				do to_escape_mode;
 			}else{
@@ -104,7 +103,6 @@ species people skills: [moving] control: simple_bdi{
 	perceive target:catastrophe in:catastrophe_distance{
 		focus id:"catastrophe";
 		ask myself{
-//			do add_belief(catastropheP);
 			if(not escape_mode){
 				do to_escape_mode;
 			}
@@ -203,13 +201,13 @@ species road {
 
 species shelter {
 	aspect default {
-		draw circle(30) color: #magenta border: #black;
+		draw circle(30) color: rgb(#gamablue,0.8) border: #gamablue depth:10;
 	}
 }
 
 species hazard {
 	aspect default {
-		draw circle(hazard_distance) empty: true color: #red depth:1;
+		draw circle(hazard_distance) color: rgb(#gamaorange,0.3) border:#gamaorange depth:5;
 	}
 }
 
@@ -218,7 +216,7 @@ species catastrophe{
 		location <- first(hazard).location;
 	}
 	aspect default{
-		draw circle(catastrophe_distance) empty: true color: #darkgreen depth:2;
+		draw circle(catastrophe_distance) color: rgb(#gamared,0.4) border:#gamared depth:10;
 	}
 }
 
@@ -227,10 +225,10 @@ experiment main type: gui {
 	output {
 		display map type: opengl{
 			species shelter refresh: false;
-			species catastrophe refresh: false;
-			species hazard refresh: false;
 			species road refresh: false;
 			species people;
+			species catastrophe;
+			species hazard;
 		}
 	}
 }
