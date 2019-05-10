@@ -27,6 +27,7 @@ import org.json.simple.JSONValue;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -52,10 +53,20 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object> {
 
-	// GamaMap<String, Object>, Object, String, Object
+
+	@doc (value= "This file constructor allows to read a json file",
+			examples = {
+					@example(value = "file f <-json_file(\"file.json\");", isExecutable = false)
+			})
+
 	public GamaJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
+
+	@doc (value= "This file constructor allows to  store a map in a image file (it does not save it - just store it in memory)",
+			examples = {
+					@example(value = "file f <-json_file(\"file.json\", map([\"var1\"::1.0, \"var2\"::3.0]));", isExecutable = false)
+			})
 
 	public GamaJsonFile(final IScope scope, final String pathName, final GamaMap<String, Object> container) {
 		super(scope, pathName, container);

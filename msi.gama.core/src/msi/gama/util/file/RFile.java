@@ -18,6 +18,7 @@ import java.util.List;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -50,10 +51,19 @@ public class RFile extends GamaFile<GamaMap, Object> {
 	// GamaMap<String, IList>, IList, String, IList
 	private final IContainer parameters;
 
+	@doc (value= "This file constructor allows to read a R file",
+			examples = {
+					@example(value = "file f <-R_file(\"file.r\");", isExecutable = false)
+			})
 	public RFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 		parameters = null;
 	}
+
+	@doc (value= "This file constructor allows to store a map in a R file (it does not save it - just store it in memory)",
+			examples = {
+					@example(value = "file f <-R_file(\"file.r\",map([\"param1\"::1.0,\"param2\"::10.0 ]));", isExecutable = false)
+			})
 
 	public RFile(final IScope scope, final String pathName, final GamaMap p) {
 		super(scope, pathName, p);

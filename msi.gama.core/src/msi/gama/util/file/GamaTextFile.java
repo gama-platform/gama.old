@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -40,17 +41,25 @@ import msi.gaml.types.Types;
 		doc = @doc ("Represents an arbitrary text file. The internal contents is a list of strings (lines)"))
 public class GamaTextFile extends GamaFile<IList<String>, String> {
 
+	@doc (value= "This file constructor allows to read a text file (.txt, .data, .text)",
+			examples = {
+					@example(value = "file f <-text_file(\"file.txt\");", isExecutable = false)
+			})
 	public GamaTextFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
+	}
+	
+	@doc (value= "This file constructor allows to store a list of string in a text file (it does not save it - just store it in memory)",
+			examples = {
+					@example(value = "file f <-text_file(\"file.txt\", [\"item1\",\"item2\",\"item3\"]);", isExecutable = false)
+			})
+	public GamaTextFile(final IScope scope, final String pathName, final IList<String> text) {
+		super(scope, pathName, text);
 	}
 
 	@Override
 	public IContainerType<?> getGamlType() {
 		return Types.FILE.of(Types.INT, Types.STRING);
-	}
-
-	public GamaTextFile(final IScope scope, final String pathName, final IList<String> text) {
-		super(scope, pathName, text);
 	}
 
 	@Override

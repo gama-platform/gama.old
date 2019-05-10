@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!---->
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
-<xsl:import href="docGama-utils-xml2md.xsl" />
+<xsl:import href="../xml2md/docGama-utils-xml2md.xsl" />
 
 
 <xsl:variable name="fileOperatorsAA" select="'OperatorsAA'" />
@@ -90,7 +90,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <!-- { "tag": ["constant", "colors"], "title" : " -->
 <xsl:for-each select="/doc/constants/constant">
 	<xsl:sort select="@name" />
-	<xsl:text>"tag": "Constant and Colors", "title" : [ "</xsl:text>
+	<xsl:text>{ "tag": "Constant and Colors", "title" : [ "</xsl:text>
 	<xsl:value-of select="@name" />
 	<xsl:text>" </xsl:text>
 	<xsl:if test="@altNames">

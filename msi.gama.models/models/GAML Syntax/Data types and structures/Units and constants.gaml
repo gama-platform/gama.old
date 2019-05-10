@@ -24,8 +24,8 @@ global {
 
 	// #current_error contains the last error that have been thrown during the current execution.
 	action constant_current_err {
-		write "Constant containing the last thrown error";
-		write "=========================================";
+		write "Constant related to system state (e.g. the last thrown error)";
+		write "=============================================================";
 		try {
 			float error <- 1 / 0;
 		} catch {
@@ -36,7 +36,7 @@ global {
 	
 	// Constants include the main mathematical constant (such as pi, e ...)
 	action constant_math {
-		write "Mathematical constances (#e, #pi, #max_float ...)";
+		write "Mathematical constants (#e, #pi, #max_float ...)";
 		write "=================================================";		
 		// #e constant is characterized by the relation ln(#e) = 1
 		write sample(ln(#e));
@@ -57,7 +57,6 @@ global {
 		// Only few computation involving #infinity do not return #infinity 
 		write sample(#infinity / #infinity);
 		write sample(0 / #infinity);
-
 		
 		// #to_deg and #to_rad can be used to convert angle value between radius to degree: 2 * pi rad = 360 degrees.
 		write sample(2 * #pi * #to_deg);
@@ -66,12 +65,18 @@ global {
 	}
 	
 	action constant_graphic {
+		write "Graphic constants (";
+		write "=================================================";	
+				
 		write sample(#bottom_center);
 	}
 	
 	// GAML provides many units. The basic units are meter, gram... 
 	// All the other units are converted to the corresponding basic one.
 	action length_surface_units {
+		write "Units-related constants (length, surface, weight...)";
+		write "=================================================";		
+		write "Numerical ";			
 		write sample(1#m) + "#m";  	// can also be written #meter,#meters
  		write sample(1#km) + "#m";   // can also be written #kilometer,#kilometers
   		write sample(1#dm) + "#m";   // can also be written #decimeter,#decimeters		

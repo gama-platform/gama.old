@@ -1372,6 +1372,7 @@ public abstract class Spatial {
 								value = "geom1 + geom2",
 								equals = "a geometry corresponding to union between geom1 and geom2",
 								isExecutable = false)))
+		@no_test // test already done in Spatial tests Models
 		public static IShape union(final IScope scope, final IShape g1, final IShape g2) {
 			if (g1 == null) {
 				if (g2 == null) { return null; }
@@ -1425,6 +1426,7 @@ public abstract class Spatial {
 						value = "union([geom1, geom2, geom3])",
 						equals = "a geometry corresponding to union between geom1, geom2 and geom3",
 						isExecutable = false) })
+		@no_test // test already done in Spatial tests Models
 		public static IShape union(final IScope scope, final IContainer<?, IShape> elements) {
 			try {
 				return Cast.asGeometry(scope, elements, false);
@@ -1444,7 +1446,7 @@ public abstract class Spatial {
 								value = "geom1 - geom2",
 								equals = "a geometry corresponding to difference between geom1 and geom2",
 								isExecutable = false)))
-		@no_test
+		@no_test // test already done in Spatial tests Models
 		public static IShape minus(final IScope scope, final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null || g1.getInnerGeometry() == null
 					|| g2.getInnerGeometry() == null) { return g1; }
@@ -1956,12 +1958,6 @@ public abstract class Spatial {
 										returnType = "float") }) })
 		public static IShape scaled_by(final IScope scope, final IShape g, final Double coefficient) {
 			return new GamaShape(g, null, null, null, coefficient);
-			// return g1.scaledBy(scope, coefficient);
-			// return new GamaShape(g1.getInnerGeometry()).scaledBy(scope,
-			// coefficient);
-			// return new
-			// GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(),
-			// coefficient));
 		}
 
 		@operator (
@@ -1975,14 +1971,13 @@ public abstract class Spatial {
 								value = "shape * {0.5,0.5,2}",
 								equals = "a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 0.5 in x, 0.5 in y and 2 in z",
 								test = false) }) })
+		@test("geometry g <- cube (2);"
+				+ "float v1 <- g.area * g.height; "
+				+ "g <- g * {5, 5, 5};"
+				+ "float v2 <- g.area * g.height;  "
+				+ "v1 < v2")
 		public static IShape scaled_by(final IScope scope, final IShape g, final GamaPoint coefficients) {
 			return new GamaShape(g, null, null, null, Scaling3D.of(coefficients), false);
-			// return g1.scaledBy(scope, coefficient);
-			// return new GamaShape(g1.getInnerGeometry()).scaledBy(scope,
-			// coefficient);
-			// return new
-			// GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(),
-			// coefficient));
 		}
 
 		@operator (
@@ -1995,13 +1990,13 @@ public abstract class Spatial {
 						value = "shape scaled_to {10,10}",
 						equals = "a geometry corresponding to the geometry of the agent applying the operator scaled so that it fits a square of 10x10",
 						test = false) })
+		@test("geometry g <- cube (2);"
+				+ "float v1 <- g.area * g.height; "
+				+ "g <- g scaled_to {20,20};"
+				+ "float v2 <- g.area * g.height;  "
+				+ "v1 < v2")
 		public static IShape scaled_to(final IScope scope, final IShape g, final GamaPoint bounds) {
 			return new GamaShape(g, null, null, null, Scaling3D.of(bounds), true);
-			// final GamaShape g1 = g.asShapeWithGeometry(scope, null);
-			// return g1.scaledTo(scope, bounds);
-			// return new GamaShape(g1.getInnerGeometry()).scaledTo(scope,
-			// bounds);
-
 		}
 
 		@operator (
@@ -2219,10 +2214,7 @@ public abstract class Spatial {
 			if (angle == null) { return g1.copy(scope); }
 			// if ( g1.isPoint() ) { return g1.copy(scope); }
 			return new GamaShape(g1, null, new AxisAngle(angle.doubleValue()), null);
-			// final GamaShape s = g1.asShapeWithGeometry(scope, null);
-			// return s.rotatedBy(scope, angle);
-			// return new GamaShape(s.getInnerGeometry()).rotatedBy(scope,
-			// angle);
+	
 		}
 
 		/**
@@ -2993,27 +2985,6 @@ public abstract class Spatial {
 				}
 				
 			}
-			/*if (readAttributes) {
-				for (final IShape line : split_lines) {
-					IShape matchingGeom = null;
-						if (matchingGeom == null) {
-						final IList<IShape> shapes = (IList<IShape>) Spatial.Queries.overlapping(scope, geoms, line.getGeometricEnvelope());
-						if (!shapes.isEmpty()) {
-							matchingGeom = Spatial.Queries.closest_to(scope, shapes, line.getLocation());
-						} else {
-							matchingGeom = Spatial.Queries.closest_to(scope, geoms, line.getLocation());
-						}
-						if (matchingGeom == null || matchingGeom.getAttributes() == null) {
-							continue;
-						}
-						for (final String att : matchingGeom.getAttributes().keySet()) {
-							
-							line.setAttribute(att, matchingGeom.getAttribute(att));
-						}
-					}
-					
-				}
-			}*/
 
 			return split_lines;
 		}
@@ -3216,6 +3187,7 @@ public abstract class Spatial {
 						equals = "the direction between ag1 and ag2 and ag3 considering the topology of the agent applying the operator",
 						isExecutable = false) },
 				see = { "distance_between", "distance_to", "direction_between", "path_between", "path_to" })
+		@no_test // Test already done in Spatial tests models
 		public static Double towards(final IScope scope, final IShape agent, final IShape target) {
 			return scope.getTopology().directionInDegreesTo(scope, agent, target);
 		}
@@ -3232,6 +3204,7 @@ public abstract class Spatial {
 						equals = "the distance between ag1, ag2 and ag3 considering the topology my_topology",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_to", "direction_between", "path_between", "path_to" })
+		@no_test // Test already done in Spatial tests models
 		public static Double distance_between(final IScope scope, final ITopology t,
 				final IContainer<?, IShape> geometries) {
 			final int size = geometries.length(scope);
@@ -3283,6 +3256,7 @@ public abstract class Spatial {
 						equals = "A path between ag1 and ag2",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
+		@no_test // Test already done in Spatial Tests Models.
 		public static IPath path_between(final IScope scope, final ITopology graph, final IShape source,
 				final IShape target) throws GamaRuntimeException {
 			return graph.pathBetween(scope, source, target);
@@ -3303,6 +3277,7 @@ public abstract class Spatial {
 						equals = "A path between ag1 and ag2",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
+		@no_test // test already done in Spatial tests models
 		public static IPath path_between(final IScope scope, final ITopology topo, final IContainer<?, IShape> nodes)
 				throws GamaRuntimeException {
 			if (nodes.isEmpty(scope)) { return null; }
@@ -3342,6 +3317,7 @@ public abstract class Spatial {
 						value = "path_between (cell_grid where each.is_free, [ag1, ag2, ag3])",
 						equals = "A path between ag1 and ag2 and ag3 passing through the given cell_grid agents",
 						isExecutable = false) })
+		@no_test // test already done in Spatial tests models
 		public static IPath path_between(final IScope scope, final IList<IAgent> cells,
 				final IContainer<?, IShape> nodes) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
@@ -3399,6 +3375,7 @@ public abstract class Spatial {
 						value = "path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), [ag1, ag2, ag3])",
 						equals = "A path between ag1 and ag2 and ag3 passing through the given cell_grid agents with minimal cost",
 						isExecutable = false) })
+		@no_test // test already done in Spatial tests models
 		public static IPath path_between(final IScope scope, final GamaMap<IAgent, Object> cells,
 				final IContainer<?, IShape> nodes) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
@@ -3457,6 +3434,7 @@ public abstract class Spatial {
 						value = "path_between (cell_grid where each.is_free, ag1, ag2)",
 						equals = "A path between ag1 and ag2 passing through the given cell_grid agents",
 						isExecutable = false) })
+		@no_test // test already done in Spatial tests models
 		public static IPath path_between(final IScope scope, final IList<IAgent> cells, final IShape source,
 				final IShape target) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
@@ -3481,6 +3459,7 @@ public abstract class Spatial {
 						value = "path_between (cell_grid as_map (each::each.is_obstacle ? 9999.0 : 1.0), ag1, ag2)",
 						equals = "A path between ag1 and ag2 passing through the given cell_grid agents with a minimal cost",
 						isExecutable = false) })
+		@no_test // test already done in Spatial tests models
 		public static IPath path_between(final IScope scope, final GamaMap<IAgent, Object> cells, final IShape source,
 				final IShape target) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
@@ -3505,6 +3484,7 @@ public abstract class Spatial {
 						equals = "the distance between ag1 and ag2 considering the topology of the agent applying the operator",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_between", "direction_between", "path_between", "path_to" })
+		@no_test // test already done in Spatial tests models
 		public static Double distance_to(final IScope scope, final IShape source, final IShape target) {
 			return scope.getTopology().distanceBetween(scope, source, target);
 		}
@@ -3516,6 +3496,7 @@ public abstract class Spatial {
 				value = "An Euclidean distance between two points.")
 		// No documentation because it is same same as the previous one (but
 		// optimized for points?)
+		@test(" {20,20} distance_to {30,30} = 14.142135623730951")
 		public static Double distance_to(final IScope scope, final GamaPoint source, final GamaPoint target) {
 			return scope.getTopology().distanceBetween(scope, source, target);
 		}
@@ -3535,6 +3516,7 @@ public abstract class Spatial {
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_between", "direction_between", "path_between",
 						"distance_to" })
+		@no_test // test already done in Spatial tests models
 		public static IPath path_to(final IScope scope, final IShape g, final IShape g1) throws GamaRuntimeException {
 			if (g == null) { return null; }
 			return scope.getTopology().pathBetween(scope, g, g1);
@@ -3549,6 +3531,7 @@ public abstract class Spatial {
 				value = "A shortest path between two points considering the topology of the agent applying the operator.")
 		// No documentation because it is same same as the previous one (but
 		// optimized for points?)
+		@no_test // test already done in Spatial tests models
 		public static IPath path_to(final IScope scope, final GamaPoint g, final GamaPoint g1)
 				throws GamaRuntimeException {
 			if (g == null) { return null; }
@@ -3738,6 +3721,7 @@ public abstract class Spatial {
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches {10,15}",
 								equals = "true") },
 				see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "intersects" })
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}])")
 		public static Boolean touches(final IShape g, final IShape g2) {
 			if (g == null) { return false; }
 			return g2.getInnerGeometry().touches(g.getInnerGeometry());
@@ -3769,6 +3753,7 @@ public abstract class Spatial {
 								value = "polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}])",
 								equals = "true") },
 				see = { "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches" })
+		@test("polyline([{10,10},{20,20}]) crosses polyline([{10,20},{20,10}])")
 		public static Boolean crosses(final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null) { return false; }
 			return g1.crosses(g2);
@@ -3785,21 +3770,12 @@ public abstract class Spatial {
 						value = "square(5) intersects {10,10}",
 						equals = "false") },
 				see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+		@test("square(5) intersects square(2)")
 		public static Boolean intersects(final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null) { return false; }
 			return g1.intersects(g2);
 		}
 
-		// @operator("intersects")
-		// @doc(value = "A boolean, equal to true if the geometry (left operand)
-		// intersects the point (right operand).")
-		// // no documentation because same same as before but optimized for
-		// points.
-		// public static Boolean intersects(final IShape g1, final GamaPoint p)
-		// {
-		// if ( g1 == null || p == null ) { return false; }
-		// return pl.intersects(p, g1.getInnerGeometry());
-		// }
 
 		@operator (
 				value = "covers",
@@ -3812,6 +3788,7 @@ public abstract class Spatial {
 						value = "square(5) covers square(2)",
 						equals = "true") },
 				see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+		@test("square(5) covers square(2)")
 		public static Boolean covers(final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null) { return false; }
 			return g1.covers(g2);
@@ -3833,6 +3810,7 @@ public abstract class Spatial {
 						equals = "the centroid of the square, for example : {50.0,50.0}.",
 						test = false) },
 				see = { "any_location_in", "closest_points_with", "farthest_point_to", "points_at" })
+		@test(" centroid(world) = {50.0, 50.0, 0.0} ")
 		public static ILocation centroidArea(final IScope scope, final IShape g) {
 			if (g == null || g.getInnerGeometry() == null) { return null; }
 			final Centroid cent = new Centroid(g.getInnerGeometry());
@@ -4211,6 +4189,7 @@ public abstract class Spatial {
 								isExecutable = false) },
 				see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 						"agents_overlapping" })
+		@no_test // test already done in Spatial tests models
 		public static IList<? extends IShape> overlapping(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final IShape source) {
 			final IType contentType = list.getGamlType().getContentType();

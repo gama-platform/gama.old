@@ -53,7 +53,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String> {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes to speak of
-		return GamaListFactory.create();
+		return GamaListFactory.create(Types.STRING);
 	}
 
 	/*

@@ -77,6 +77,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	}
 
 	public void test(final int[] count, final int[] code, final URL p) { 
+		System.out.println(p);
 		final IModel model = GamlModelBuilder.compile(p, errors);
 		if (model == null || model.getDescription() == null)
 			return;
@@ -88,7 +89,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
-				SystemLogger.removeDisplay();  
 				final TestAgent agent = (TestAgent) exp.getAgent();
 				if (agent.getSummary().getTitle().equals(
 						"Tests for msi.gama.core in C:\\git\\gama\\msi.gama.core\\gaml\\tests\\Generated From Core\\models\\Core Tests")) {
@@ -100,7 +100,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 				count[0] += agent.getSummary().size();
-				SystemLogger.activeDisplay();
 				if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
 						|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0)
 					System.out.println(agent.getSummary().toString());

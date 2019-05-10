@@ -17,6 +17,7 @@ import java.util.Properties;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -40,10 +41,18 @@ import msi.gaml.types.Types;
 		doc = @doc ("Represents property files"))
 public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String> {
 
+	@doc (value= "This file constructor allows to read a property file (.properties)",
+			examples = {
+					@example(value = "file f <-property_file(\"file.properties\");", isExecutable = false)
+			})
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
+	@doc (value= "This file constructor allows to store a map in a property file (it does not save it - just store it in memory)",
+			examples = {
+					@example(value = "file f <-property_file(\"file.properties\", map([\"param1\"::1.0,\"param3\"::10.0 ]));", isExecutable = false)
+			})
 	public GamaPropertyFile(final IScope scope, final String pathName, final GamaMap<String, String> buffer)
 			throws GamaRuntimeException {
 		super(scope, pathName, buffer);

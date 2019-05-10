@@ -53,6 +53,7 @@ public interface INetworkSkill  {
 	public static String LISTEN = "listen";
 	public static String HAS_MORE_MESSAGE_IN_BOX="has_more_message";
 	public static String BROADCAST_RECEIVER = "all";
+	public static String FORCE_NETWORK_USE = "force_network_use";
 	
 	///// GROUP MANAGEMENT
 	public static String REGISTER_TO_GROUP = "register_to_group";

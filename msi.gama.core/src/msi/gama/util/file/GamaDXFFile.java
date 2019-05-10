@@ -73,14 +73,14 @@ public class GamaDXFFile extends GamaGeometryFile {
 	double y_t;
 	@doc (value= "This file constructor allows to read a dxf (.dxf) file",
 			examples = {
-				@example(value = "file f <- dxf_file(\"file\");", isExecutable = false)
+				@example(value = "file f <- dxf_file(\"file.dxf\");", isExecutable = false)
 			})
 	public GamaDXFFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 	@doc (value= "This file constructor allows to read a dxf (.dxf) file and specify the unit (meter by default)",
 			examples = {
-				@example(value = "file f <- dxf_file(\"file\",#m);", isExecutable = false)
+				@example(value = "file f <- dxf_file(\"file.dxf\",#m);", isExecutable = false)
 			})
 	public GamaDXFFile(final IScope scope, final String pathName, final Double unit) throws GamaRuntimeException {
 		super(scope, pathName);

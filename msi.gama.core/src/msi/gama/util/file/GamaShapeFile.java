@@ -249,9 +249,9 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @param scope
 	 * @param pathName
 	 */
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file according to epsg reference (http://www.epsg.org/)",
+	@doc (value= "This file constructor allows to read a shapefile (.shp) file",
 			examples = {
-				@example(value = "file f <- shape_file(\"file\");", isExecutable = false)
+				@example(value = "file f <- shape_file(\"file.shp\");", isExecutable = false)
 			})
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
@@ -259,28 +259,28 @@ public class GamaShapeFile extends GamaGisFile {
 	
 	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code)",
 			examples = {
-				@example(value = "file f <- shape_file(\"file\", \"32648\");", isExecutable = false)
+				@example(value = "file f <- shape_file(\"file.shp\", \"32648\");", isExecutable = false)
 			})
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
 	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code (epg,...,), as a string",
 			examples = {
-				@example(value = "file f <- shape_file(\"file\", \"EPSG:32648\");", isExecutable = false)
+				@example(value = "file f <- shape_file(\"file.shp\", \"EPSG:32648\");", isExecutable = false)
 			})
 	public GamaShapeFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
 	@doc (value= "This file constructor allows to read a shapefile (.shp) file and take a potential z value (not taken in account by default)",
 			examples = {
-				@example(value = "file f <- shape_file(\"file\", true);", isExecutable = false)
+				@example(value = "file f <- shape_file(\"file.shp\", true);", isExecutable = false)
 			})
 	public GamaShapeFile(final IScope scope, final String pathName, final boolean with3D) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null, with3D);
 	}
 	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code) and take a potential z value (not taken in account by default)",
 			examples = {
-				@example(value = "file f <- shape_file(\"file\", \"32648\", true);", isExecutable = false)
+				@example(value = "file f <- shape_file(\"file.shp\", \"32648\", true);", isExecutable = false)
 			})
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code, final boolean with3D)
 			throws GamaRuntimeException {
@@ -288,7 +288,7 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default)",
 			examples = {
-				@example(value = "file f <- shape_file(\"file\", \"EPSG:32648\",true);", isExecutable = false)
+				@example(value = "file f <- shape_file(\"file.shp\", \"EPSG:32648\",true);", isExecutable = false)
 			})
 	public GamaShapeFile(final IScope scope, final String pathName, final String code, final boolean with3D)
 			throws GamaRuntimeException {

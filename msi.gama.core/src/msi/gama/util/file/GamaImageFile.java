@@ -36,6 +36,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -164,6 +165,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		 * @param pathName
 		 * @throws GamaRuntimeException
 		 */
+		@doc (value= "This file constructor allows to read a pgm file",
+				examples = {
+						@example(value = "file f <-pgm_file(\"file.pgm\");", isExecutable = false)
+				})
+		
 		public GamaPgmFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 			super(scope, pathName);
 		}
@@ -189,10 +195,19 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	// protected BufferedImage image;
 	private boolean isGeoreferenced = false;
 
+	@doc (value= "This file constructor allows to read an image file (tiff, jpg, jpeg, png, pict, bmp)",
+			examples = {
+					@example(value = "file f <-image_file(\"file.png\");", isExecutable = false)
+			})
+
 	public GamaImageFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
+	@doc (value= "This file constructor allows to store a matrix in a image file (it does not save it - just store it in memory)",
+			examples = {
+					@example(value = "file f <-image_file(\"file.png\");", isExecutable = false)
+			})
 	public GamaImageFile(final IScope scope, final String pathName, final IMatrix<Integer> image) {
 		super(scope, pathName, image);
 		ImageUtils.getInstance().clearCache(getPath(scope));
