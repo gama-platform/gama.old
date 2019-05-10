@@ -2088,7 +2088,7 @@ public class Graphs {
 			value = "layouts a Gama graph on a circle with equidistance between nodes. For now there is no optimization on node ordering !\n"
 					+ "Usage: layoutCircle(graph, bound, shuffle) => graph : the graph to layout, bound : the geometry to display the graph within, "
 					+ "shuffle : if true shuffle the nodes, then render same ordering",
-			examples = { @example (value = "layout_circle(graph, world.shape);", isExecutable=false)}
+			examples = { @example (value = "layout_circle(graph, world.shape, false);", isExecutable=false)}
 			)
 	@no_test
 	public static IGraph layoutCircle(final IScope scope, final GamaGraph graph, IShape bounds, boolean shuffle) {
