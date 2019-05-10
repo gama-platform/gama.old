@@ -33,6 +33,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -859,6 +860,8 @@ public class Stats {
 					equals = "the different sizes as keys and the number of agents of this size as values",
 					isExecutable = false) },
 			see = "as_map")
+	
+	
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 			throws GamaRuntimeException {
 		if (original == null) { return GamaMapFactory.create(Types.NO_TYPE, Types.INT); }
@@ -896,6 +899,8 @@ public class Stats {
 							value = "corR(X, Y)",
 							equals = "0.981980506061966",
 							isExecutable = false) })
+	@no_test // because require R to be installed.
+	
 	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
 			throws GamaRuntimeException, ParseException, ExecutionException {
 		if (l1.length(scope) == 0 || l2.length(scope) == 0) { return Double.valueOf(0d); }
@@ -950,14 +955,25 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).",
-			examples = { @example (
+			examples = { 
+					@example (
 					value = "list<int> X <- [2, 3, 1];",
-					isExecutable = false),
+					isExecutable = false
+							),
 					@example (
 							value = "meanR(X)",
 							equals = "2",
 							returnType = IKeyword.INT,
-							isExecutable = false) })
+							isExecutable = false
+							 ),
+					@example (
+							value = "meanR([2, 3, 1])",
+							equals = "2",
+							isExecutable = false
+							) 
+					}	
+		)
+	@no_test
 	public static Object getMeanR(final IScope scope, final IContainer l)
 			throws GamaRuntimeException, ParseException, ExecutionException {
 		if (l.length(scope) == 0) { return Double.valueOf(0d); }
