@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -18,7 +19,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 
 @type(name = "kml", id = IType.KML, wraps = {
-		GamaKmlExport.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE })
+		GamaKmlExport.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE },
+				doc = {@doc(value = "Type of variables that enables to store objects that to export them into a KML (Keyhole Markup Language) file")})
 public class GamaKmlExportType extends GamaType<GamaKmlExport> {
 
 	@Override

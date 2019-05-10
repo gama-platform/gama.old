@@ -28,12 +28,10 @@ global {
 species NetworkingAgent skills:[network] {
 	
 	reflex fetch {	
-		loop while:has_more_message()
-		{
-			message s <- fetch_message();
+		if (length(mailbox) > 0) {
+			message s <- last(mailbox);
 			list coordinates <- string(s.contents) split_with(";");
 			location <- {int(coordinates[0]),int(coordinates[1])};
-	
 		}
 	}
 	
