@@ -745,6 +745,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 		return GamaListFactory.create(scope, getGamlType().getContentType(), GamaPopulation.allLivingAgents(this));
 	}
+	
+	@Override
+	public boolean hasAgentList() {
+		return true;
+	}
+	
 
 	/**
 	 * Method accept()

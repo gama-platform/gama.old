@@ -30,6 +30,11 @@ public interface IAgentFilter {
 		}
 
 		@Override
+		public boolean hasAgentList() {
+			return false;
+		}
+
+		@Override
 		public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 			return GamaListFactory.create();
 		}
@@ -48,6 +53,8 @@ public interface IAgentFilter {
 		}
 	};
 
+	public boolean hasAgentList();
+	
 	public ISpecies getSpecies();
 
 	public IPopulation<? extends IAgent> getPopulation(IScope scope);
