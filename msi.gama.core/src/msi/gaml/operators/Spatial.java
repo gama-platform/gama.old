@@ -1143,10 +1143,21 @@ public abstract class Spatial {
 						value = "if the operand is nil, returns the point geometry {0,0}"),
 						@usage (
 								value = "if the operand is composed of a single point, returns a point geometry.") },
-				examples = { @example (
-						value = "polyline([{0,0}, {0,10}, {10,10}, {10,0}])",
-						equals = "a polyline geometry composed of the 4 points.",
-						test = false) },
+				examples = { 
+				@example (
+						value = "polyline([{0,0}, {0,10}, {10,10}])",
+						equals = "a polyline geometry composed of the 3 points.",
+						test = false),
+						@example (
+						value = "line([{10,10}, {10,0}])",
+						equals = "a line from 2 points.",
+						test = false),
+						@example (
+								value = "string(polyline([{0,0}, {0,10}, {10,10}])+line([{10,10}, {10,0}]))",
+								equals = "\"MULTILINESTRING ((0 0, 0 10, 10 10), (10 10, 10 0))\"", returnType= "string"),
+				}
+				
+				,
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle" })
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points) {
