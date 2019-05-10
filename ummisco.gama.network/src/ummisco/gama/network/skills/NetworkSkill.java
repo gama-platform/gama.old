@@ -130,6 +130,12 @@ public class NetworkSkill extends MessagingSkill {
 							type = IType.STRING,
 							optional = true,
 							doc = @doc ("password associated to the login")),
+					@arg(
+							name = INetworkSkill.FORCE_NETWORK_USE,
+							type = IType.BOOL,
+							optional = true,
+							doc = @doc ("force the use of the network even interaction between local agents")
+							),
 					@arg (
 							name = INetworkSkill.SERVER_URL,
 							type = IType.STRING,
@@ -141,8 +147,6 @@ public class NetworkSkill extends MessagingSkill {
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
 							@example (" do connect  with_name:\"any_name\";") }))
-	@test("try{ do connect with_name:\"myName\"; assert true;} catch{ assert false;} write 'coucou';")
-	
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER)) {
 			this.startSkill(scope);
@@ -153,6 +157,7 @@ public class NetworkSkill extends MessagingSkill {
 		final String password = (String) scope.getArg(INetworkSkill.PASSWORD, IType.STRING);
 		final String networkName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 		final String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
+		final Boolean 	force_local  = (Boolean) scope.getArg(INetworkSkill.FORCE_NETWORK_USE, IType.BOOL);
 		final Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
 
 		// Fix to Issue #2618
@@ -202,6 +207,8 @@ public class NetworkSkill extends MessagingSkill {
 					}
 				}
 			}
+			if(force_local !=null)
+			connector.forceNetworkUse(force_local.booleanValue());
 			// Fix to Issue #2618
 			myConnectors.put(serverKey, connector);
 
