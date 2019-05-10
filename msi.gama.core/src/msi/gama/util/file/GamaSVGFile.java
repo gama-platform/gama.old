@@ -28,6 +28,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -57,10 +58,18 @@ public class GamaSVGFile extends GamaGeometryFile {
 
 	Scaling3D size;
 
+	@doc (value= "This file constructor allows to read a svg file",
+			examples = {
+					@example(value = "file f <-svg_file(\"file.svg\");", isExecutable = false)
+			})
 	public GamaSVGFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
+	@doc (value= "This file constructor allows to read a svg file, specifying the size of the bounding box",
+			examples = {
+					@example(value = "file f <-svg_file(\"file.svg\", {10,10});", isExecutable = false)
+			})
 	public GamaSVGFile(final IScope scope, final String pathName, final GamaPoint size) throws GamaRuntimeException {
 		super(scope, pathName);
 		this.size = Scaling3D.of(size);
@@ -74,7 +83,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO are there attributes ?
-		return GamaListFactory.create();
+		return GamaListFactory.create(Types.STRING);
 	}
 
 	@Override

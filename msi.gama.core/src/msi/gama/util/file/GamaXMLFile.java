@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -57,6 +58,10 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
 	 * @param pathName
 	 * @throws GamaRuntimeException
 	 */
+	@doc (value= "This file constructor allows to read a xml file",
+			examples = {
+					@example(value = "file f <-xml_file(\"file.xml\");", isExecutable = false)
+			})
 	public GamaXMLFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
@@ -82,7 +87,7 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO depends on the contents...
-		return GamaListFactory.create();
+		return GamaListFactory.create(Types.STRING);
 	}
 
 	/**
