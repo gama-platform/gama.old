@@ -977,9 +977,14 @@ public class Stats2 extends Stats {
 				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the sum of the terms k+1 through n of the Binomial probability density, where n is the number of trials and P is the probability of success in the range 0 to 1.",
+				value = "Returns the sum of the terms k+1 through n of the Binomial probability density, "
+						+ "where n is the number of trials and P is the probability of success in the range 0 to 1.",
 				comment = "",
-				examples = {})
+						examples = {@example (
+								value = "binomial_complemented(10,5,0.5) with_precision(2)",
+								equals = "0.38")} )
+		
+		
 		public static Double opBinomialComplemented(final IScope scope, final Integer n, final Integer k,
 				final Double p) {
 
