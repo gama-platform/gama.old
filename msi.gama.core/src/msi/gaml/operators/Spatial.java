@@ -511,9 +511,10 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "square(10)",
 						equals = "a geometry as a square of side size 10.",
-						test = false) },
+						test = true) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"triangle" })
+		@test("square(10).area = 100")
 		public static IShape square(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -2338,9 +2339,8 @@ public abstract class Spatial {
 						value = "skeletonize(self)",
 						equals = "the list of geometries corresponding to the skeleton of the geometry of "
 								+ "the agent applying the operator.",
-						test = true) })
-		@test(" // applies only to a square \n "
-				+ "length(skeletonize(square(5))) = 1")
+						test = false) })
+		
 		
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
 				final Double triangulationTolerance) {
@@ -2407,6 +2407,8 @@ public abstract class Spatial {
 						value = "skeletonize(self)",
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
+		@test(" // applies only to a square \n "
+				+ "length(skeletonize(square(5))) = 1")
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0, 0.0, false);
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
@@ -3866,8 +3868,9 @@ public abstract class Spatial {
 				examples = { @example (
 						value = " square(5) points_on(2)",
 						equals = "a list of points belonging to the exterior ring of the square distant from each other of 2.",
-						test = false) },
+						test = true) },
 				see = { "closest_points_with", "farthest_point_to", "points_at" })
+		@test("line({0,0},{0,10}) points_on 5 = [{0.0,0.0,0.0},{0.0,5.0,0.0},{0.0,10.0,0.0}]")
 		public static IList points_on(final IShape geom, final Double distance) {
 			final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 			if (geom.getInnerGeometry() instanceof GeometryCollection) {
@@ -3892,8 +3895,9 @@ public abstract class Spatial {
 				examples = { @example (
 						value = " line([{10,10},{80,80}]) points_along ([0.3, 0.5, 0.9])",
 						equals = "the list of following points: [{31.0,31.0,0.0},{45.0,45.0,0.0},{73.0,73.0,0.0}]",
-						test = false) },
+						test = true) },
 				see = { "closest_points_with", "farthest_point_to", "points_at", "points_on" })
+		@test("line({0,0},{0,10}) points_along [0.50, 0.75] = [{0.0,5.0,0.0},{0.0,7.5,0.0}]")
 		public static IList points_along(final IShape geom, final IList<Double> rates) {
 			final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 			if (geom.getInnerGeometry() instanceof GeometryCollection) {
