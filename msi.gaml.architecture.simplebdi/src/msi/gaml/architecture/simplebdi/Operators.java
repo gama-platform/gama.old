@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -352,6 +350,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate with_values [\"time\"::10]",
 					isExecutable = false))
+	@no_test
 	public static Predicate withValues(final Predicate predicate, final GamaMap values) throws GamaRuntimeException {
 		final Predicate temp = predicate.copy();
 		temp.setValues(values);
@@ -368,6 +367,7 @@ public class Operators {
 			examples = @example (
 					value = "predicate with_lifetime 10",
 					isExecutable = false))
+	@no_test
 	public static Predicate withValues(final Predicate predicate, final int lifetime) throws GamaRuntimeException {
 		// inutile car dans les états mentaux
 		final Predicate temp = predicate.copy();
@@ -446,6 +446,12 @@ public class Operators {
 			can_be_const = true,
 			category = { "BDI" },
 			concept = { IConcept.BDI })
+	@doc (
+			value = "get the super intention linked to a mental state",
+			examples = @example (
+					value = "get_super_intention(get_belief(pred1))",
+					isExecutable = false))
+	@no_test
 	public static MentalState getSuperIntention(final Predicate pred1) {
 		if (pred1.getSuperIntention() != null) {
 			return pred1.getSuperIntention();
@@ -491,7 +497,7 @@ public class Operators {
 		examples = @example (
 			value = "get_agent_cause(pred1)",
 			isExecutable = false))
-	@test(value = "get_lifetime(new_predicate('test1',10)) = 10")
+	@test(value = "get_lifetime(new_predicate('test1',10) = 10")
 	public static int getLifetime(final Predicate pred) {
 		if (pred != null) {
 			return pred.lifetime;
@@ -612,7 +618,7 @@ public class Operators {
 	@doc (
 			value = "a new emotion with the given properties (name,intensity,decay)",
 			examples = @example (
-					value = "emotion(\"joy\",12.3,4)",
+					value = "emotion(\"joy\",12.3,4.0)",
 					isExecutable = false))
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Double decay)
@@ -788,8 +794,10 @@ public class Operators {
 	@doc (
 			value = "get the intensity value of the given emotion",
 			examples = @example (
-					value = "emotion set_intensity 12",
+					value = "get_intensity(emo1)",
 					isExecutable = false))
+	@test("get_intensity(new_emotion('joy',1.0)=1.0")
+	@test("get_intensity(new_emotion('joy',1.0,0.5)=1.0")
 	public static Double getIntensity(final Emotion emotion) {
 		if (emotion != null) {
 			return emotion.intensity;
@@ -808,6 +816,7 @@ public class Operators {
 			examples = @example (
 					value = "get_decay(emotion)",
 					isExecutable = false))
+	@test("get_decay(new_emotion('joy',1.0,0.5)=0.5")
 	public static Double getDecay(final Emotion emotion) {
 		if (emotion != null) {
 			return emotion.decay;
@@ -826,6 +835,7 @@ public class Operators {
 			examples = @example (
 					value = "get_about(emotion)",
 					isExecutable = false))
+	@no_test
 	public static Predicate getAbout(final Emotion emotion) {
 		if (emotion != null) {
 			return emotion.about;
@@ -844,6 +854,7 @@ public class Operators {
 			examples = @example (
 					value = "get_agent_cause(emotion)",
 					isExecutable = false))
+	@no_test
 	public static IAgent getAgent(final Emotion emotion) {
 		if (emotion != null) {
 			return emotion.getAgentCause();
@@ -1011,6 +1022,7 @@ public class Operators {
 			examples = @example (
 					value = "get_agent(social_link1)",
 					isExecutable = false))
+	@no_test
 	public static IAgent getAgent(final SocialLink social) {
 		if (social != null) {
 			return social.getAgent();
@@ -1029,6 +1041,7 @@ public class Operators {
 			examples = @example (
 					value = "get_liking(social_link1)",
 					isExecutable = false))
+	@no_test
 	public static Double getLikink(final SocialLink social) {
 		if (social != null) {
 			return social.getLiking();
@@ -1047,6 +1060,7 @@ public class Operators {
 			examples = @example (
 					value = "get_dominance(social_link1)",
 					isExecutable = false))
+	@no_test
 	public static Double getDominance(final SocialLink social) {
 		if (social != null) {
 			return social.getDominance();
@@ -1065,6 +1079,7 @@ public class Operators {
 			examples = @example (
 					value = "get_solidarity(social_link1)",
 					isExecutable = false))
+	@no_test
 	public static Double getSolidarity(final SocialLink social) {
 		if (social != null) {
 			return social.getSolidarity();
@@ -1083,6 +1098,7 @@ public class Operators {
 			examples = @example (
 					value = "get_familiarity(social_link1)",
 					isExecutable = false))
+	@no_test
 	public static Double getTrust(final SocialLink social) {
 		if (social != null) {
 			return social.getTrust();
@@ -1101,6 +1117,7 @@ public class Operators {
 			examples = @example (
 					value = "get_familiarity(social_link1)",
 					isExecutable = false))
+	@no_test
 	public static Double getFamiliarity(final SocialLink social) {
 		if (social != null) {
 			return social.getFamiliarity();
@@ -1585,6 +1602,7 @@ public class Operators {
 			examples = @example (
 					value = "get_modality(mental_state1)",
 					isExecutable = false))
+	@test("new_mental_state('Belief',new_predicate('test1')='Belief'")
 	public static String getModality(final MentalState mental) {
 		if (mental != null) {
 			return mental.getModality();
@@ -1603,6 +1621,7 @@ public class Operators {
 			examples = @example (
 					value = "get_predicate(mental_state1)",
 					isExecutable = false))
+	@no_test
 	public static Predicate getPredicate(final MentalState mental) {
 		if (mental != null) {
 			return mental.getPredicate();
@@ -1621,6 +1640,7 @@ public class Operators {
 			examples = @example (
 					value = "get_strength(mental_state1)",
 					isExecutable = false))
+	@test("new_mental_state('Belief',new_predicate('test1'))='Belief'")
 	public static Double getStrength(final MentalState mental) {
 		if (mental != null) {
 			return mental.getStrength();
@@ -1639,6 +1659,7 @@ public class Operators {
 			examples = @example (
 					value = "get_lifetime(mental_state1)",
 					isExecutable = false))
+	@test("new_mental_state('Belief',new_predicate('test1'),4)='4'")
 	public static int getLifetime(final MentalState mental) {
 		if (mental != null) {
 			return mental.getLifeTime();
@@ -1657,6 +1678,7 @@ public class Operators {
 			examples = @example (
 					value = "get_plan_name(agent.current_plan)",
 					isExecutable = false))
+	@no_test
 	public static String getPlanName(final BDIPlan plan) {
 		if (plan != null && plan.getPlanStatement() != null) {
 			return plan.getPlanStatement().getName();
@@ -1676,6 +1698,7 @@ public class Operators {
 					value = "get the list of beliefs in the belief base which predicate has the given name.",
 					returns = "the list of beliefs (mental state).",
 					examples = { @example (value="get_beliefs_with_name_op(self,\"has_water\")", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getBeliefsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -1751,6 +1774,7 @@ public class Operators {
 					value = "get the beliefs in the belief base with the given predicate.",
 					returns = "the list of belief (mental state).",
 					examples = { @example (value="get_beliefs_op(self,predicate(\"has_water\"))", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getBeliefs(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -1776,6 +1800,7 @@ public class Operators {
 					value = "get the list of desires in the desire base which predicate has the given name.",
 					returns = "the list of desires (mental state).",
 					examples = { @example (value="get_desires_with_name_op(self,\"has_water\")", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getDesiresName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -1851,6 +1876,7 @@ public class Operators {
 					value = "get the desires in the desire base with the given predicate.",
 					returns = "the list of desire (mental state).",
 					examples = { @example (value="get_desires_op(self,predicate(\"has_water\"))", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getDesires(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -1876,6 +1902,7 @@ public class Operators {
 					value = "get the list of uncertainties in the uncertainty base which predicate has the given name.",
 					returns = "the list of uncertainties (mental state).",
 					examples = { @example (value="get_uncertainties_with_name_op(self,\"has_water\")", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getUncertaintiesName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -1951,6 +1978,7 @@ public class Operators {
 					value = "get the uncertainties in the uncertainty base with the given predicate.",
 					returns = "the list of uncertainties (mental state).",
 					examples = { @example (value="get_uncertainties_op(self,predicate(\"has_water\"))", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getUncertainties(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -1976,6 +2004,7 @@ public class Operators {
 					value = "get the list of ideals in the ideal base which predicate has the given name.",
 					returns = "the list of ideals (mental state).",
 					examples = { @example (value="get_ideals_with_name_op(self,\"has_water\")", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getIdealsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -2051,6 +2080,7 @@ public class Operators {
 					value = "get the ideal in the ideal base with the given name.",
 					returns = "the list of ideals (mental state).",
 					examples = { @example (value="get_ideals_op(self,predicate(\"has_water\"))", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getIdeals(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -2076,6 +2106,7 @@ public class Operators {
 					value = "get the list of obligations in the obligation base which predicate has the given name.",
 					returns = "the list of obligations (mental state).",
 					examples = { @example (value="get_obligations_with_name_op(self,\"has_water\")", isExecutable = false) })
+	@no_test
 	public static IList<MentalState> getObligationsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -2151,6 +2182,7 @@ public class Operators {
 					value = "get the obligations in the obligation base with the given predicate.",
 					returns = "the list of obligations (mental state).",
 					examples = { @example (value="get_obligations_op(self,predicate(\"has_water\"))", isExecutable=false) })
+	@no_test
 	public static IList<MentalState> getObligations(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -2176,6 +2208,7 @@ public class Operators {
 					value = "get the list of intentions in the intention base which predicate has the given name.",
 					returns = "the list of intentions (mental state).",
 					examples = { @example (value="get_intentions_with_name_op(self,\"has_water\")", isExecutable=false) })
+	@no_test
 	public static IList<MentalState> getIntentionsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -2201,6 +2234,7 @@ public class Operators {
 					value = "get the intention in the intention base with the given name.",
 					returns = "the intention (mental state).",
 					examples = { @example (value="get_intention_with_name_op(self,\"has_water\")", isExecutable = false) })
+	@no_test
 	public static MentalState getIntentionName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
 //		final MentalState predicate = new MentalState("Belief");
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -2226,6 +2260,7 @@ public class Operators {
 					value = "get the intention in the intention base with the given predicate.",
 					returns = "the intention (mental state).",
 					examples = { @example (value="get_intention_op(self,predicate(\"has_water\"))", isExecutable = false) })
+	@no_test
 	public static MentalState getIntention(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
 //		final MentalState predicate = new MentalState("Belief");
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
@@ -2251,6 +2286,7 @@ public class Operators {
 					value = "get the intentions in the intention base with the given predicate.",
 					returns = "the list of intentions (mental state).",
 					examples = { @example (value="get_intentions_op(self,predicate(\"has_water\"))", isExecutable=false) })
+	@no_test
 	public static IList<MentalState> getIntentions(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
 		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
