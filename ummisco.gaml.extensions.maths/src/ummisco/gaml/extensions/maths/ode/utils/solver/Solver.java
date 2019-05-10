@@ -41,7 +41,8 @@ public abstract class Solver {
 			integrator.addStepHandler(new StepHandler() {
 
 				@Override
-				public void init(final double t0, final double[] y0, final double t) {}
+				public void init(final double t0, final double[] y0, final double t) {
+				}
 
 				@Override
 				public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
@@ -56,32 +57,33 @@ public abstract class Solver {
 
 	// Call the integrator, which should call computeDerivatives on the system
 	// of equations;
-	public void solve(final IScope scope, final SystemOfEquationsStatement eq, final double initialTime,
+	public void solve(final IScope scope, final SystemOfEquationsStatement seq, final double initialTime,
 			final double finalTime, final GamaMap<String, IList<Double>> integrationValues) {
 
-		eq.executeInScope(scope, () -> {
-			final Map<Integer, IAgent> equationAgents = eq.getEquationAgents(scope);
+		seq.executeInScope(scope, () -> {
+			final Map<Integer, IAgent> equationAgents = seq.getEquationAgents(scope);
 			/*
-			 * prepare initial value of variables 1. loop through variables expression 2. if its equaAgents != null, it
-			 * mean variable of external equation, set current scope to this agent scope 3. get value 4. return to
-			 * previous scope
+			 * prepare initial value of variables 1. loop through variables expression 2. if
+			 * its equaAgents != null, it mean variable of external equation, set current
+			 * scope to this agent scope 3. get value 4. return to previous scope
 			 */
 
-			final double[] y = new double[eq.variables_diff.size()];
+			final double[] y = new double[seq.variables_diff.size()];
 			// final ArrayList<IExpression> equationValues = new
 			// ArrayList<IExpression>(eq.variables_diff.values());
 			int i = 0;
-			final int n = eq.variables_diff.size();
+			final int n = seq.variables_diff.size();
 			for (i = 0; i < n; i++) {
 				final IAgent a = equationAgents.get(i);
-				final String eqkeyname = a + eq.variables_diff.get(i).toString();
+				final String eqkeyname = a + seq.variables_diff.get(i).toString();
 				if (integrationValues.get(eqkeyname) == null) {
 					integrationValues.put(eqkeyname, GamaListFactory.create(Double.class));
 				}
 				if (!a.dead()) {
 					final boolean pushed = scope.push(a);
 					try {
-						y[i] = Cast.asFloat(scope, eq.variables_diff.get(i).value(scope));
+						y[i] = Cast.asFloat(scope, seq.variables_diff.get(i).value(scope));
+
 						if (Double.isInfinite(y[i])) {
 							GAMA.reportAndThrowIfNeeded(scope,
 									GamaRuntimeException.create(new NotANumberException(), scope), true);
@@ -96,8 +98,8 @@ public abstract class Solver {
 				}
 
 			}
-			if (integrationValues.get(scope.getAgent() + eq.variable_time.getName()) == null) {
-				integrationValues.put(scope.getAgent() + eq.variable_time.getName(),
+			if (integrationValues.get(scope.getAgent() + seq.variable_time.getName()) == null) {
+				integrationValues.put(scope.getAgent() + seq.variable_time.getName(),
 						GamaListFactory.create(Double.class));
 			}
 
@@ -106,12 +108,13 @@ public abstract class Solver {
 			}
 			if (y.length > 0) {
 				try {
-					integrator.integrate(eq, initialTime, y, finalTime, y);
+					integrator.integrate(seq, initialTime, y, finalTime, y);
 				} catch (final Exception ex) {
 					DEBUG.ERR(ex.toString());
 				}
 			}
-			eq.assignValue(scope, finalTime * step, y);
+
+			seq.assignValue(scope, finalTime * step, y);
 			storeValues(finalTime, y, integrationValues);
 		});
 
