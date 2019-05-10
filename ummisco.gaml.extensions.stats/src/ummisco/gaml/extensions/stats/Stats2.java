@@ -666,7 +666,12 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the area to the left of x in the normal distribution with the given mean and standard deviation.",
 				comment = "",
-				examples = {})
+				examples = {@example (
+						value = "normal_area(0.9,0,1) with_precision(3)",
+						equals = "0.816")}
+				)
+		
+		
 		public static Double opNormalArea(final IScope scope, final Double x, final Double mean, final Double sd) {
 
 			// Returns the area to the left of x in the normal distribution
