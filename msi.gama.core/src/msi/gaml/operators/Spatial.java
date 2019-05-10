@@ -3521,6 +3521,7 @@ public abstract class Spatial {
 				value = "An Euclidean distance between two points.")
 		// No documentation because it is same same as the previous one (but
 		// optimized for points?)
+		@test(" {20,20} distance_to {30,30} = 14.142135623730951")
 		public static Double distance_to(final IScope scope, final GamaPoint source, final GamaPoint target) {
 			return scope.getTopology().distanceBetween(scope, source, target);
 		}
@@ -3743,6 +3744,7 @@ public abstract class Spatial {
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches {10,15}",
 								equals = "true") },
 				see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "intersects" })
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}])")
 		public static Boolean touches(final IShape g, final IShape g2) {
 			if (g == null) { return false; }
 			return g2.getInnerGeometry().touches(g.getInnerGeometry());
@@ -3774,6 +3776,7 @@ public abstract class Spatial {
 								value = "polyline([{0,0},{25,25}]) crosses polygon([{10,10},{10,20},{20,20},{20,10}])",
 								equals = "true") },
 				see = { "disjoint_from", "intersects", "overlaps", "partially_overlaps", "touches" })
+		@test("polyline([{10,10},{20,20}]) crosses polyline([{10,20},{20,10}])")
 		public static Boolean crosses(final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null) { return false; }
 			return g1.crosses(g2);
@@ -3790,6 +3793,7 @@ public abstract class Spatial {
 						value = "square(5) intersects {10,10}",
 						equals = "false") },
 				see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+		@test("square(5) intersects square(2)")
 		public static Boolean intersects(final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null) { return false; }
 			return g1.intersects(g2);
@@ -3817,6 +3821,7 @@ public abstract class Spatial {
 						value = "square(5) covers square(2)",
 						equals = "true") },
 				see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "touches" })
+		@test("square(5) covers square(2)")
 		public static Boolean covers(final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null) { return false; }
 			return g1.covers(g2);
@@ -3838,6 +3843,7 @@ public abstract class Spatial {
 						equals = "the centroid of the square, for example : {50.0,50.0}.",
 						test = false) },
 				see = { "any_location_in", "closest_points_with", "farthest_point_to", "points_at" })
+		@test(" centroid(world) = {50.0, 50.0, 0.0} ")
 		public static ILocation centroidArea(final IScope scope, final IShape g) {
 			if (g == null || g.getInnerGeometry() == null) { return null; }
 			final Centroid cent = new Centroid(g.getInnerGeometry());
