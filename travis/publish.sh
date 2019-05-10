@@ -69,7 +69,7 @@ embed_jdk(){
 }
 release(){
 	echo "Upload continuous release to github"		
-	bash ./travis/githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
+	bash ./travis/github-release.sh "$TRAVIS_COMMIT" 
 }
 release_on_demand(){	
 	update_tag continuous
@@ -117,8 +117,7 @@ else
 		commit_io_website_files
 	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
-		embed_jdk
-		release_on_demand 
+		release
 	fi	
 fi
 
