@@ -1,7 +1,7 @@
 /***
 * Name: switchmatch
 * Author: kevinchapuis
-* Description: 
+* Description: Show several way to use the switch ... match ... statement
 * Tags: Tag1, Tag2, TagN
 ***/
 
@@ -24,26 +24,19 @@ global {
 		create rps_bot with:[strategy::[1,1,1]];
 	}
 	
+	/*
+	 * The argument to match can be constructed from any instruction. Switch statement
+	 * accept 3 types of match: (1) match to test the equality (2) match_one for at least one equality
+	 * (2) match_between for a test on a range of numerical value
+	 */
 	reflex play {
 		ask rps_bot {do bot_play;}
 		switch first(rps_bot).bp+"vs"+my_play {
-			match "ROCKvsPAPER" {
+			match_one ["ROCKvsPAPER", "PAPERvsSCISSORS", "SCISSORSvsROCK"] {
 				win_sign <- 1;
 			}
-			match "ROCKvsSCISSORS" {
+			match_one ["ROCKvsSCISSORS", "PAPERvsROCK", "SCISSORSvsPAPER"] {
 				win_sign <- -1;
-			}
-			match "PAPERvsROCK" {
-				win_sign <- -1;
-			}
-			match "PAPERvsSCISSORS" {
-				win_sign <- 1;
-			}
-			match "SCISSORSvsPAPER" {
-				win_sign <- -1;
-			}
-			match "SCISSORSvsROCK" {
-				win_sign <- 1;
 			}
 			default {
 				win_sign <- 0;
@@ -54,12 +47,16 @@ global {
 		write rps_result(win_sign);
 	}
 	
+	/*
+	 * Switch statement can be used with any type of data like int, string, agent. 
+	 * The match will be tested using the main expression type (here is int)
+	 */
 	string rps_result(int res) {
 		switch res {
-			match -1 {
+			match_between [-#infinity,0] {
 				return "You loose";
 			} 
-			match 1 {
+			match_one [1,2,3,4,5] {
 				return "You win";
 			}
 			match 0 {
