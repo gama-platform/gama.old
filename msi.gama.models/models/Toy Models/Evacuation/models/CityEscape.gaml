@@ -320,10 +320,10 @@ experiment my_experiment {
 	parameter "Speed of the flood front" var:flood_front_speed init:10.0 min:5.0 max:50.0 unit:#m/#mn category:"Hazard";
 	parameter "Time before hazard" var:time_before_hazard init:15 min:0 max:120 unit:#mn category:"Hazard";
 	
-	parameter "Number of people" var:nb_of_people init:5000 min:100 max:20000 category:"Initialization";
+	parameter "Number of people" var:nb_of_people init:500 min:100 max:20000 category:"Initialization";
 	
 	output {
-		display my_display { 
+		display my_display type:opengl{ 
 			species road;
 			species hazard;
 			species evacuation_point;
