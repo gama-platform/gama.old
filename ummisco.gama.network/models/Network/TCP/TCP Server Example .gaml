@@ -16,7 +16,7 @@ global
 		create Networking_Server number:4
 		{
 			do connect to: "localhost" protocol: "tcp_server" port: 3001 with_name: "Server"+id;
-			do register_to_group to:"test";
+			do join_group with_name:"test";
 			id<-id+1;
 		}
 
