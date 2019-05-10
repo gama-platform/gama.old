@@ -34,9 +34,9 @@ species declaring_matrix_attributes {
 	// When the casting is not obvious, the default value is used
 	matrix<float> matrix_of_float_with_impossible_casting <- matrix<float>([['A','B'],['C','D']]);   // => [[0.0,0.0],[0.0,0.0]]
 	// matrices can of course contain lists
-	matrix<list> matrix_of_lists <- {5,5} matrix_with [1,2];
+	matrix<list> matrix_of_lists <- matrix<list>({5,5} matrix_with [1,2]);
 	// matrices can of course contain matrices
-	matrix<matrix> matrix_of_matrices <- {5,5} matrix_with matrix([[1],[2]]) ;
+	matrix<matrix> matrix_of_matrices <- matrix<matrix>({5,5} matrix_with matrix([[1],[2]])) ;
 	// untyped matrixs can contain heterogeneous objects
 	matrix untyped_matrix <- matrix([['5',5],[5,true]]);
 	// the casting applies to all elements when a contents type is defined (note the default last value of 0)
