@@ -22,9 +22,10 @@ global {
 	int nb_people <- 500;
 	//Point to evacuate
 	point target_point <- {shape.width, 0};
-	init {  
-		matrix a;
+		matrix<int> a;
 		int spop;
+	init {  
+		write spop - sum(a rows_at 1);
 		free_space <- copy(shape);
 		//Creation of the buildinds
 		create building from: building_shapefile {
@@ -34,7 +35,7 @@ global {
 		//Simplification of the free_space to remove sharp edges
 		free_space <- free_space simplification(1.0);
 		//Creation of the people agents
-		create people number: spop - int(sum(a rows_at 1)) {
+		create people number: people{
 			//People agents are placed randomly among the free space
 			location <- any_location_in(free_space);
 			target_loc <-  target_point;

@@ -4,7 +4,7 @@ echo "zip_withjdk"
 COMMIT=$@
 
 REPO="gama-platform/gama"
-RELEASE="continuous"
+RELEASE="daily"
 thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/Gama1.7"
 
 
