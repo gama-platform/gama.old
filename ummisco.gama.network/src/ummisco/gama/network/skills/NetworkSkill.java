@@ -65,7 +65,7 @@ import ummisco.gama.network.udp.UDPConnector;
 public class NetworkSkill extends MessagingSkill {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	final static String REGISTERED_AGENTS = "registred_agents";
@@ -119,7 +119,7 @@ public class NetworkSkill extends MessagingSkill {
 							name = INetworkSkill.WITHNAME,
 							type = IType.STRING,
 							optional = true,
-							doc = @doc ("name of the agent on the server")),
+							doc = @doc ("ID of the agent (its name) for the simulation")),
 					@arg (
 							name = INetworkSkill.LOGIN,
 							type = IType.STRING,
@@ -144,9 +144,12 @@ public class NetworkSkill extends MessagingSkill {
 			doc = @doc (
 					value = "Action used by a networking agent to connect to a server or as a server.",
 					examples = {
+							@example (" do connect  with_name:\"any_name\";"), 
+							@example (" do connect to:\\\"localhost\\\" port:9876 with_name:\"any_name\";"), 
+							@example (" do connect to:\\\"localhost\\\" protocol:\\\"MQTT\\\" port:9876 with_name:\"any_name\";"), 
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
-							@example (" do connect  with_name:\"any_name\";") }))
+							}))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER)) {
 			this.startSkill(scope);
@@ -244,7 +247,11 @@ public class NetworkSkill extends MessagingSkill {
 			name = INetworkSkill.FETCH_MESSAGE)
 	@doc (
 			value = "Fetch the first message from the mailbox (and remove it from the mailing box). If the mailbox is empty, it returns a nil message.",
-			examples = { @example ("message mess <- fetch_message();") })
+					examples = { @example ("message mess <- fetch_message();"),
+							@example ("loop while:has_more_message(){ \n"
+									+ "	message mess <- fetch_message();"
+									+ "	write message.contents;"
+									+ "}")})
 	public GamaMessage fetchMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox box = getMailbox(agent);
@@ -260,7 +267,11 @@ public class NetworkSkill extends MessagingSkill {
 			name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX)
 	@doc (
 			value = "Check whether the mailbox contains any message.",
-			examples = { @example ("bool mailbox_contain_messages <- has_more_message();") })
+			examples = { @example ("bool mailbox_contain_messages <- has_more_message();"),
+					@example ("loop while:has_more_message(){ \n"
+							+ "	message mess <- fetch_message();"
+							+ "	write message.contents;"
+							+ "}")})
 	public boolean hasMoreMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox box = getMailbox(agent);
@@ -271,10 +282,12 @@ public class NetworkSkill extends MessagingSkill {
 	  @SuppressWarnings("unchecked")
 	@action(name = INetworkSkill.REGISTER_TO_GROUP, args = {
 	 
-	  @arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = false, doc = @doc("")) }, doc = @doc(value = "",
-	  returns = "", examples = {
-	 
-	  @example("") })) public void registerToGroup(final IScope scope) { 
+	  @arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = false, doc = @doc("name of the group")) }, 
+		doc = @doc(value = "allow an agent to join a group of agents in order to broadcast messages to other members"
+				+ "or to receive messages sent by other members. Note that all members of the group called : \"ALL\".", 
+				examples = { @example("do join_group with_name:\"group name\";"),
+						@example("do join_group with_name:\"group name\";"
+								+ "do send to:\"group name\" contents:\"I am new in this group\";")})) public void registerToGroup(final IScope scope) { 
 		  IAgent agent = scope.getAgent(); 
 			String groupName = (String)scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 			if(groupName != null)
@@ -306,9 +319,9 @@ public class NetworkSkill extends MessagingSkill {
 					optional = false,
 					doc = @doc ("name of the group the agent wants to leave")) }, 
 			doc = @doc (
-					value = "leave a group of agent",
-					returns = "",
-					examples = { @example (" do leave_the_group from: \"my_group\";\n") }))
+					value = "leave a group of agents. The leaving agent will not receive any "
+							+ "message from the group. Overwhise, it can send messages to the left group",
+					examples = { @example (" do leave_group with_name:\"my_group\";\n") }))
 	public void leaveTheGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final String groupName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
