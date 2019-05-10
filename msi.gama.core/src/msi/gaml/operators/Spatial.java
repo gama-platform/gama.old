@@ -4069,6 +4069,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "neighbors_at", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 						"agent_closest_to" })
+		@no_test // already done in Spatial tests Models
 		public static IList neighbors_of(final IScope scope, final ITopology t, final IAgent agent) {
 			return _neighbors(scope, In.list(scope, agent.getPopulation()), agent, 1.0, t);
 			// TODO We could compute a filter based on the population if it is
@@ -4088,6 +4089,7 @@ public abstract class Spatial {
 								value = "neighbors_of (topology(self), self,10)",
 								equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.",
 								test = false) }))
+		@no_test // already done in Spatial tests Models
 		public static IList neighbors_of(final IScope scope, final ITopology t, final IShape agent,
 				final Double distance) {
 			return _neighbors(scope,
@@ -4112,6 +4114,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 						"agent_closest_to", "at_distance" })
+		@no_test // already done in Spatial tests Models
 		public static IList neighbors_at(final IScope scope, final IShape agent, final Double distance) {
 			return _neighbors(scope,
 					agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation()) : Different.with(),
@@ -4132,6 +4135,7 @@ public abstract class Spatial {
 						isExecutable = false) },
 				see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 						"overlapping" })
+		@no_test // already done in Spatial tests Models
 		public static IList<? extends IShape> at_distance(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final Double distance) {
 			if (GamaPreferences.External.AT_DISTANCE_OPTIMIZATION.getValue()) {
@@ -4195,6 +4199,7 @@ public abstract class Spatial {
 								isExecutable = false) },
 				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping",
 						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
 		public static IList<? extends IShape> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
 			final IType contentType = list.getGamlType().getContentType();
@@ -4270,6 +4275,7 @@ public abstract class Spatial {
 								isExecutable = false) },
 				see = { "neighbors_at", "neighbors_of", "inside", "overlapping", "agents_overlapping", "agents_inside",
 						"agent_closest_to" })
+		@no_test // already done in Spatial tests Models
 		public static IShape closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
 			if (list == null) { return null; }
@@ -4299,6 +4305,7 @@ public abstract class Spatial {
 								isExecutable = false) },
 				see = { "neighbors_at", "neighbors_of", "inside", "overlapping", "agents_overlapping", "agents_inside",
 						"agent_closest_to" })
+		@no_test // already done in Spatial tests Models
 		public static IList<IShape> closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source, final int number) {
 			if (list == null || list.isEmpty(scope)) { return GamaListFactory.create(); }
@@ -4329,6 +4336,7 @@ public abstract class Spatial {
 								isExecutable = false) },
 				see = { "neighbors_at", "neighbors_of", "neighbors_at", "inside", "overlapping", "agents_overlapping",
 						"agents_inside", "agent_closest_to", "closest_to", "agent_farthest_to" })
+		@no_test // already done in Spacial tests Models
 		public static IShape farthest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
 			final IType contentType = list.getGamlType().getContentType();
@@ -4398,6 +4406,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "neighbors_at", "neighbors_of", "agents_inside", "agents_overlapping", "closest_to", "inside",
 						"overlapping" })
+		@no_test // already done in Spatial tests Models
 		public static IAgent agent_closest_to(final IScope scope, final Object source) {
 			return _closest(scope, Different.with(), source);
 		}
@@ -4434,6 +4443,7 @@ public abstract class Spatial {
 						equals = "the agents that are covered by the shape of the agent applying the operator.",
 						test = false) },
 				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
 		public static IList<IAgent> agents_inside(final IScope scope, final Object source) {
 			return _gather(scope, Different.with(), source, true);
 		}
@@ -4452,6 +4462,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 						"overlapping", "at_distance" })
+		@no_test // already done in Spatial tests Models
 		public static IList<IAgent> agents_overlapping(final IScope scope, final Object source) {
 			return _gather(scope, Different.with(), source, false);
 		}

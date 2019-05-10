@@ -61,6 +61,69 @@ experiment QueryTests type: test {
 		assert empty(neighborhood - cell(40).neighbors);
 	}
 	
+	test "neighbors_of" {
+		list<agent> cl;
+		using topology(world) {
+			cl <-  topology(cell(73)) neighbors_of cell(73);
+		}
+		write cl contains_all [cell(72),cell(83),cell(63),cell(74)] ;
+		assert cl contains_all [cell(72),cell(83),cell(63),cell(74)];
+	} 
+	
+	test "agent_closest_to" {
+		agent cl;
+		using topology(world) {
+			cl <-  (agent_closest_to (dummy(8)));
+		}
+		write cl;
+		assert cl = dummy(4);
+	}
+	
+	/* 
+	test "agent_farthest_to" {
+		dummy farthest_dummy;
+		agent cl;
+		using topology(world) {
+			cl <- ( world agent_farthest_to (cell(73)));
+		}
+		write "-+++-> "+cl;
+		assert cl = dummy(4);
+	}
+	*/
+
+	test "agents_inside" {
+		list<agent> cl;
+		using topology(world) {
+			cl <- ( agents_inside (cell(73)));
+		}
+		assert cl[0] = dummy(8);
+		
+		using topology(world) {
+			cl <- (  agents_inside (cell(73)));
+		}
+		assert cl[0] = dummy(8);
+	}
+	
+	test "agents_overlapping" {
+		list<agent> cl;
+		agent cel <- cell(73);
+		using topology(world) {
+			cl <- (agents_overlapping (dummy(8)));
+		}
+		assert cl[0] = cel;
+	}
+	
+	/* 
+	test "agents_at_distance" {
+		list<agent> cl;
+		using topology(world) {
+			cl <- (agents_at_distance(20));
+		}
+		write "++--> "+cl;
+		//assert cl = ??;
+	}
+	*/
+	
 	test "farthest_to with continuous topology"{
 		dummy farthest_dummy;
 		using topology(world) {
