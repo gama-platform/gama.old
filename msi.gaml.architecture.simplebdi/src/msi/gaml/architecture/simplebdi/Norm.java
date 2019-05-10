@@ -24,24 +24,16 @@ import msi.gaml.types.Types;
 				doc = @doc ("A string representing the current obligation of this Norm")),
 		@variable (
 				name = SimpleBdiArchitecture.FINISHEDWHEN,
-				type = IType.STRING),
+				type = IType.STRING,
+				doc = @doc("represents the condition whena norm is finished")),
 		@variable (
 				name = SimpleBdiArchitecture.INSTANTANEAOUS,
-				type = IType.STRING),
+				type = IType.STRING,
+				doc = @doc("indicates if the norm is instantaneous")),
 		@variable (
 				name = NormStatement.LIFETIME,
-				type = IType.INT)
-//				doc = @doc ("A string representing the current intention of this BDI plan"))
-		/*
-		 * @var(name = "value", type = IType.NONE),
-		 * 
-		 * @var(name = "parameters", type = IType.MAP),
-		 */
-		// @var(name = "values", type = IType.MAP), @var(name = "priority", type
-		// = IType.FLOAT),
-		// @var(name = "date", type = IType.FLOAT), @var(name = "subintentions",
-		// type = IType.LIST),
-		// @var(name = "on_hold_until", type = IType.NONE)
+				type = IType.INT,
+				doc = @doc("the lifetim during which the norm is considered violated when it has been violated"))
 })
 
 //Classe qui permet de définir les normes comme type, contenant le norm statement, sur l'exemple des plans

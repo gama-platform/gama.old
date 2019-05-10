@@ -2,6 +2,7 @@ package msi.gaml.architecture.simplebdi;
 
 import java.util.Map;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -11,6 +12,7 @@ import msi.gaml.types.IType;
 
 @SuppressWarnings("unchecked")
 @type(name = "predicate", id = PredicateType.id, wraps = { Predicate.class }, concept = { IConcept.TYPE, IConcept.BDI })
+@doc("represents a predicate")
 public class PredicateType extends GamaType<Predicate> {
 
 	public final static int id = IType.AVAILABLE_TYPES + 546654;
@@ -22,6 +24,7 @@ public class PredicateType extends GamaType<Predicate> {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
+	@doc("cast an object as a predicate")
 	public Predicate cast(final IScope scope, final Object obj, final Object val, final boolean copy)
 			throws GamaRuntimeException {
 		if (obj instanceof Predicate) {

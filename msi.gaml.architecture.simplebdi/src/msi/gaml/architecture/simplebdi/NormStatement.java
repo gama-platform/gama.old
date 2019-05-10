@@ -3,6 +3,7 @@ package msi.gaml.architecture.simplebdi;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -18,18 +19,17 @@ import msi.gaml.types.IType;
 @symbol(name = { NormStatement.NORM }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, concept = {
 		IConcept.BDI })
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
-@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
-		@facet(name = SimpleBdiArchitecture.FINISHEDWHEN, type = IType.BOOL, optional = true),
-		@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
-		@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
-		@facet(name = NormStatement.INTENTION, type = PredicateType.id, optional = true),
-		@facet(name = NormStatement.OBLIGATION, type = PredicateType.id, optional = true),
-		@facet(name = NormStatement.THRESHOLD, type = IType.FLOAT, optional = true),
-		@facet(name = NormStatement.LIFETIME, type = IType.INT, optional = true),
-		@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("the boolean condition when the norm is active")),
+		@facet(name = SimpleBdiArchitecture.FINISHEDWHEN, type = IType.BOOL, optional = true, doc = @doc("the boolean condition when the norm is finished")),
+		@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true, doc = @doc("the priority value of the norm")),
+		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the name of the norm")),
+		@facet(name = NormStatement.INTENTION, type = PredicateType.id, optional = true, doc = @doc("the intention triggering the norm")),
+		@facet(name = NormStatement.OBLIGATION, type = PredicateType.id, optional = true, doc = @doc("the obligation triggering of the norm")),
+		@facet(name = NormStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("the threshold to trigger the norm")),
+		@facet(name = NormStatement.LIFETIME, type = IType.INT, optional = true, doc = @doc("the lifetime of the norm")),
+		@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true, doc = @doc("indicates if the norm is instananeous")) }, omissible = IKeyword.NAME)
+@doc("a norm indicates what action the agent has to do in a certain context and with and obedience value higher than the threshold")
 
-
-//Statement pour définir une norme ssur le même principe qu'un plan
 public class NormStatement extends AbstractStatementSequence{
 
 	public static final String NORM = "norm";

@@ -18,6 +18,7 @@ import java.util.Set;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -26,11 +27,14 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ @variable(name = "name", type = IType.STRING), @variable(name = "is_true", type = IType.BOOL),
-		@variable(name = "values", type = IType.MAP), /*@var(name = "priority", type = IType.FLOAT),*/
-		@variable(name = "date", type = IType.FLOAT), @variable(name = "subintentions", type = IType.LIST),
-		@variable(name = "on_hold_until", type = IType.NONE), @variable(name = "super_intention", type = IType.NONE),
-		/*@var(name = "praiseworthiness", type = IType.FLOAT),*/@variable(name = "agentCause", type = IType.AGENT) })
+@vars({ @variable(name = "name", type = IType.STRING, doc = @doc("the name of the predicate")), 
+		@variable(name = "is_true", type = IType.BOOL, doc = @doc("the truth value of the predicate")),
+		@variable(name = "values", type = IType.MAP, doc = @doc("the values attached to the predicate")),
+		@variable(name = "date", type = IType.FLOAT, doc = @doc("the date of the predicate")),
+		@variable(name = "subintentions", type = IType.LIST, doc = @doc("the subintentions of the predicate")),
+		@variable(name = "on_hold_until", type = IType.NONE, doc = @doc("the list of intention that must be fullfiled before resuming to an intention related to this predicate")),
+		@variable(name = "super_intention", type = IType.NONE, doc = @doc("the super-intention of the predicate")),
+		@variable(name = "agentCause", type = IType.AGENT, doc = @doc("the agent causing the predicate")) })
 public class Predicate implements IValue {
 
 	String name;

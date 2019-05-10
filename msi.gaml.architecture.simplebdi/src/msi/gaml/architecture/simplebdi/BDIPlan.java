@@ -26,17 +26,20 @@ import msi.gaml.types.Types;
 		doc = @doc ("The name of this BDI plan")),
 		@variable (
 				name = "todo",
-				type = IType.STRING),
+				type = IType.STRING,
+				doc = @doc("represent the when facet of a plan")),
 		@variable (
 				name = SimpleBdiPlanStatement.INTENTION,
 				type = MentalStateType.id,
 				doc = @doc ("A string representing the current intention of this BDI plan")),
 		@variable (
 				name = SimpleBdiArchitecture.FINISHEDWHEN,
-				type = IType.STRING),
+				type = IType.STRING,
+				doc = @doc("a string representing the finished condition of this plan")),
 		@variable (
 				name = SimpleBdiArchitecture.INSTANTANEAOUS,
-				type = IType.STRING)
+				type = IType.STRING, 
+				doc = @doc("indicates if the plan is instantaneous"))
 		/*
 		 * @var(name = "value", type = IType.NONE),
 		 * 

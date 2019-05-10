@@ -13,29 +13,9 @@ import msi.gaml.types.Types;
 @vars ({ @variable (
 		name = "name",
 		type = IType.STRING,
-		doc = @doc ("The name of this BDI plan")),
-//		@var (
-//				name = SimpleBdiPlanStatement.INTENTION,
-//				type = IType.NONE,
-//				doc = @doc ("A string representing the current intention of this BDI plan")),
-//		@var (
-//				name = SimpleBdiArchitecture.FINISHEDWHEN,
-//				type = IType.STRING),
-//		@var (
-//				name = SimpleBdiArchitecture.INSTANTANEAOUS,
-//				type = IType.STRING)
-		/*
-		 * @var(name = "value", type = IType.NONE),
-		 * 
-		 * @var(name = "parameters", type = IType.MAP),
-		 */
-		// @var(name = "values", type = IType.MAP), @var(name = "priority", type
-		// = IType.FLOAT),
-		// @var(name = "date", type = IType.FLOAT), @var(name = "subintentions",
-		// type = IType.LIST),
-		// @var(name = "on_hold_until", type = IType.NONE)
+		doc = @doc ("The name of this sanction")),
+
 })
-//classe définissant le type sanction, sur le plan de la définition des types plans ou des normes
 public class Sanction implements IValue{
 
 	private SanctionStatement sanctionStatement;
