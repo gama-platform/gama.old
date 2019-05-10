@@ -79,9 +79,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Architectures", "title" : "</xsl:text>
 	<xsl:value-of select="@name" />
-	<xsl:text>", "url": "</xsl:text>
-	<xsl:value-of select="$fileControl" />
-	<xsl:text>#</xsl:text>
+	<xsl:text>", "url": "BuiltInArchitectures#</xsl:text>
 	<xsl:value-of select="@name" />
 	<xsl:text>" }, </xsl:text>
 </xsl:for-each>
