@@ -179,30 +179,35 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		bool a4;
 		
 		bool p1 <- true;
+		
+		//travis send a message to Spice Girl group which contain nobody
 		ask Person where(each.name = "Travis") {
 				do send to:grp contents:"Travis is the best tester of the World and of the Universe";
 		}
 		float mtime <- machine_time;
 		loop while: ((mtime+2000) > machine_time){ }
+
+		//nobody receive the message
 		ask Person where(each.myGroup = grp)
 		{
 			do simulate_step;
 			p1 <- p1 and length(mailbox)=0;
 	
 		}
-		write p1;
+		//create the Spice Girl group
 		ask Person where(each.myGroup = grp)
 		{
 			do join_group with_name:grp;
 		}
+		//travis send message to Spice Girl
 		ask Person where(each.name = "Travis") {
 				do send to:grp contents:"Travis is the best tester of the World and of the Universe";
 		}
 		
+		//check if Spice Girls recieve the message with a good quality
 		ask Person where(each.myGroup = grp)
 		{
 			do simulate_step;
-			write mailbox;
 			a1 <- length(mailbox)=1;
 			a2 <- has_more_message();
 			a3 <- first(mailbox) = fetch_message();
@@ -210,24 +215,36 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 			p1 <- p1 and (a1 and a2 and a3 and a4);
 	
 		}
+		
+		//but Travis don't receive the message
+		ask Person where(each.name = "Travis")
+		{
+			do simulate_step;
+			a1 <- length(mailbox)=0;
+			p1 <- p1 and (a1);
+		}
+		
+		//leave the spice girls group
 		ask Person where(each.myGroup = grp)
 		{
 			do leave_group with_name:grp;
 		}
 		
-		
-		ask Person where(each.name = "Travis")
-		{
-			do simulate_step;
-			write mailbox;
-			a1 <- length(mailbox)=0;
-			p1 <- p1 and (a1);
+		//Travis send again a message to spice girl group
+		ask Person where(each.name = "Travis") {
+				do send to:grp contents:"Travis is the best tester of the World and of the Universe";
 		}
 		
-		write "network group spice girls -- done!";
+		//nobody receive the message because they leave the group
+		ask Person where(each.myGroup = grp)
+		{
+			do simulate_step;
+			p1 <- p1 and length(mailbox)=0;
+	
+		}
+		
+		write "network group Spice Girls -- done!";
 		assert (p1);
 	}
-	
-	
 	
 }
