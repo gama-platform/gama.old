@@ -828,7 +828,13 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns n choose k as a double. Note the integerization of the double return value.",
 				comment = "",
-				examples = {})
+				examples = {@example (
+								value = "binomial_coeff(10,2)",
+								equals = "45")}
+)
+		
+		
+		
 		public static Double opBinomialCoeff(final IScope scope, final Integer n, final Integer k) {
 
 			// Returns "n choose k" as a double. Note the "integerization" of
@@ -858,9 +864,15 @@ public class Stats2 extends Stats {
 				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the sum of the terms 0 through k of the Binomial probability density, where n is the number of trials and p is the probability of success in the range 0 to 1.",
+				value = "Returns the sum of the terms 0 through k of the Binomial probability density, where "
+						+ "n is the number of trials and p is the probability of success in the range 0 to 1.",
 				comment = "",
-				examples = {})
+						examples = {@example (
+								value = "binomial_sum(5,10,0.5) with_precision(2)",
+								equals = "0.62")})
+		
+		
+		
 		public static Double opBinomialSum(final IScope scope, final Integer k, final Integer n, final Double p) {
 
 			// Returns the sum of the terms 0 through k of the Binomial
