@@ -3,12 +3,13 @@ package msi.gaml.architecture.simplebdi;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
-//classe liée à la classe Sanction
 @type(name = "Sanction", id = SanctionType.id, wraps = { Sanction.class }, concept = { IConcept.TYPE, IConcept.BDI })
+@doc("represents a sanction")
 public class SanctionType extends GamaType<Sanction>{
 //
 	public final static int id = IType.AVAILABLE_TYPES + 546661;
@@ -19,6 +20,7 @@ public class SanctionType extends GamaType<Sanction>{
 	}
 
 	@Override
+	@doc("cast an object as a sanction, if it is an instance of a sanction")
 	public Sanction cast(IScope scope, Object obj, Object param, boolean copy) throws GamaRuntimeException {
 		if (obj instanceof Sanction) {
 			return (Sanction) obj;

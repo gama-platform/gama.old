@@ -2,6 +2,7 @@ package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -10,10 +11,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ /* @var(name = "name", type = IType.STRING), */@variable(name = "agent", type = IType.AGENT),
-		@variable(name = "liking", type = IType.FLOAT), @variable(name = "dominance", type = IType.FLOAT),
-		@variable(name = "solidarity", type = IType.FLOAT), @variable(name = "familiarity", type = IType.FLOAT),
-		@variable(name = "trust", type = IType.FLOAT)})
+@vars({ @variable(name = "agent", type = IType.AGENT, doc = @doc("the agent with who there is a social link")),
+		@variable(name = "liking", type = IType.FLOAT, doc = @doc("the liking value of the link")),
+		@variable(name = "dominance", type = IType.FLOAT, doc = @doc("the dominance value of the link")),
+		@variable(name = "solidarity", type = IType.FLOAT, doc = @doc("the solidarity value of the link")),
+		@variable(name = "familiarity", type = IType.FLOAT, doc = @doc("the familiarity value of the link")),
+		@variable(name = "trust", type = IType.FLOAT, doc = @doc("the trust value of the link"))})
 
 public class SocialLink implements IValue {
 

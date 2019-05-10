@@ -5,6 +5,7 @@ import java.util.Set;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -13,13 +14,13 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({@variable(name = "modality", type = IType.STRING),
-	@variable(name = "predicate", type = PredicateType.id),
-	@variable(name = "mental_state", type = MentalStateType.id),
-	@variable(name = "emotion", type= EmotionType.id),
-	@variable(name = "owner", type = IType.AGENT),
-	@variable(name = "strength", type = IType.FLOAT),
-	@variable(name = "lifetime", type = IType.INT)})
+@vars({@variable(name = "modality", type = IType.STRING, doc = @doc("the modality of the mental state")),
+	@variable(name = "predicate", type = PredicateType.id, doc = @doc("the predicate about which is the mental state")),
+	@variable(name = "mental_state", type = MentalStateType.id, doc = @doc("the mental state about which is the mental state")),
+	@variable(name = "emotion", type= EmotionType.id, doc = @doc("the emotion about which is the mental state")),
+	@variable(name = "owner", type = IType.AGENT, doc = @doc("the owner of the mental state")),
+	@variable(name = "strength", type = IType.FLOAT, doc = @doc("the strength value related to the mental state")),
+	@variable(name = "lifetime", type = IType.INT, doc = @doc("the lifetime of the mental state"))})
 public class MentalState implements IValue {
 
 	String modality;
