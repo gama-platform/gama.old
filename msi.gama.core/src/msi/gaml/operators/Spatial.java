@@ -2130,6 +2130,7 @@ public abstract class Spatial {
 								value = "shape - 5",
 								equals = "a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5",
 								test = false) }) })
+		@test("(square(20) - 5) = polygon ([{45,55},{55,55},{55,45},{45,45},{45,55}])")
 		public static IShape reduced_by(final IScope scope, final IShape g, final Double size) {
 			if (g == null) { return null; }
 			return enlarged_by(scope, g, -size);
@@ -2155,6 +2156,7 @@ public abstract class Spatial {
 						equals = "the geometry resulting from a 45 degrees rotation to the geometry of the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
+		@test("( square(5) rotated_by 45 =  polygon([{46.46446609406726,50},{50,53.53553390593274},{53.53553390593274,50},{50,46.46446609406726},{46.46446609406726,50}]))")
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double angle) {
 			if (g1 == null) { return null; }
 			return new GamaShape(g1, null, new AxisAngle(angle), null);
