@@ -60,23 +60,30 @@ global control: fsm {
 
 
 	init {
-		ask (list(background) every 8) {
+		ask (list(background) every 16) {
 			create runner with: (location: location);
 		} }
 
 	state phase0 initial: true {
 		enter {
 			ask runner {
-				my_shape <- square(size / 3.1);
+				my_shape <- cube(rnd(size, size * 2));
+				depth <- rnd(size * 2);
 			}
-
 		}
-
+        ask runner {
+				my_shape <- cube(rnd(size, size * 2));
+				depth <- rnd(size * 2);
+		}
 		transition to: phase1 when: cycle = 10;
 	}
 
-	state phase1 {
+	state phase1{
 		enter {
+			ask runner {
+				my_shape <- cube(rnd(size, size * 2));
+				depth <- rnd(size * 2);
+			}
 			do load_image("../includes/logo.png");
 		}
 
@@ -115,7 +122,7 @@ global control: fsm {
 	state phase4 {
 		enter {
 			ask (runner) {
-				if (flip(0.8)) {
+				if (flip(0.2)) {
 					do die;
 				}
 			}
@@ -140,22 +147,20 @@ global control: fsm {
 			}
 
 		}
-
 		runners <- runners select (each.location != each.target.location);
-	
-	} }
+	} 	
+	}
 
 grid background width: 297 height: 297;
 
 species roads skills: [moving] {
 	geometry target <- one_of(road_file.contents);
-	geometry my_shape <- cube(size *2) ;
+	geometry my_shape <- cube(rnd(size, size * 2));
 
 	reflex go when: target != nil {
 		do goto target: target speed: 2 * size / #s;
 		if (location = target.location) {
-			my_shape <- target + size / 2;
-			target <- nil;
+			my_shape <- target + size / 8;
 		}
 	}
 
@@ -167,12 +172,21 @@ species roads skills: [moving] {
 
 species people skills: [moving] {
 	
-	reflex move  {
-		do wander on: the_graph speed: 2 * size / #s;
+	init{
+		target<-one_of(road_file.contents);
 	}
-
+	geometry target;
+	rgb color;
+	
+	reflex move when:target != nil {
+		do goto on: the_graph target: target speed: 2 * size / #s;
+		if (location = target.location) {
+			target<-one_of(road_file.contents);
+		}
+	}
+	
 	aspect default {
-		draw circle(size / 2) color: yellow at: location + {0, 0, size};
+		draw circle(size / 4) color: yellow at: location + {0, 0, size};
 	}
 
 }
@@ -184,9 +198,9 @@ species runner skills: [moving] {
 	float depth;
 }
 
-experiment "Run me !" type: gui  autorun: true {
+experiment "Run me !" type: gui  {
 	output {
-		display "1.8" type: opengl fullscreen: true background: #black draw_env: false synchronized: true camera_pos: {1298.0375, 3277.2938, 2177.5545} camera_look_pos:
+		display "1.8" autosave:true type: opengl fullscreen: false background: #black draw_env: false synchronized: true camera_pos: {1298.0375, 3277.2938, 2177.5545} camera_look_pos:
 		{1261.3366, 1174.7007, 0.0} camera_up_vector: {-0.0126, 0.7192, 0.6947}{
 			species roads;
 			species runner {
