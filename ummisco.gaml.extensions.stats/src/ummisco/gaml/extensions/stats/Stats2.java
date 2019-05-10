@@ -1158,7 +1158,15 @@ public class Stats2 extends Stats {
 		@doc (
 				value = " Returns the regularized integral of the Gamma function with argument a to the integration end point x.",
 				comment = "",
-				examples = {})
+				examples = {
+						@example (
+								value = "incomplete_gamma(1,5.3) with_precision(3)",
+								equals = "0.995")
+						
+				})
+		
+		
+		
 		public static Double opIncompleteGamma(final IScope scope, final Double a, final Double x) {
 
 			// Returns the regularized integral of the Gamma function with
