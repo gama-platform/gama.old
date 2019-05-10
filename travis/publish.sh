@@ -37,6 +37,23 @@ commit_io_website_files() {
 	git push origin HEAD:master
 }
 
+function update_tag() {
+	echo "update tag " $1 
+	git config --global user.email "hqnghi88@gmail.com"
+	git config --global user.name "Travis CI"
+	git remote rm origin
+	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.git
+	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+	git fetch
+	git checkout master
+	git pull origin master
+	git push origin :refs/tags/$1
+	git tag -d $1
+	git tag -fa $1 -m "$1"
+	git push --tags -f
+	git ls-remote --tags origin
+	git show-ref --tags
+}
 
 clean(){
 	echo "Clean p2 update site"		
@@ -52,17 +69,19 @@ release(){
 	echo "Upload continuous release to github"		
 	bash ./travis/githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
 }
-JDKrelease(){
-	echo "Upload continuous release to github"		
-	bash ./travis/update_tag.sh 
-
+release_on_demand(){	
+	update_tag continuous
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
+}
+release_daily(){	
+	update_tag daily
 
-	bash ./travis/github_release_alpha_withjdk.sh "$TRAVIS_COMMIT" 
+	bash ./travis/github_release_daily_withjdk.sh "$TRAVIS_COMMIT" 
+}
+release_monthly(){	
+	update_tag monthly
 
-	if [[ $(date +%d) =~ 0[1-1] ]]; then
-	    bash ./travis/github_release_alpha_withjdk.sh "$TRAVIS_COMMIT" 
-	fi
+	bash ./travis/github_release_monthly_withjdk.sh "$TRAVIS_COMMIT" 
 }
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
@@ -78,7 +97,7 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then
 			MSG+=" ci ext "
 	fi
 	deploy
-	JDKrelease 
+	release_daily 
 	commit_wiki_files
 	commit_io_website_files
 else
@@ -95,10 +114,13 @@ else
 		commit_io_website_files
 	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
-		release 
+		release_on_demand 
+		release_daily 
+		release_monthly
 	fi	
-	if  [[ ${MESSAGE} == *"ci JDKrelease"* ]] || [[ $MSG == *"ci JDKrelease"* ]]; then	
-		JDKrelease 
-	fi	
+fi
+
+if [[ $(date +%d) =~ 0[1-1] ]]; then
+    release_monthly 
 fi
 
