@@ -697,6 +697,28 @@ public abstract class Spatial {
 			if (side_size <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
+		
+		@operator (
+				value = "triangle",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+		@doc (
+				value = "A triangle geometry which the base and height size are given by the operand.",
+				usages = { @usage ("returns nil if one of the operand is nil.") },
+				comment = "the center of the triangle is by default the location of the current agent in which has been called this operator.",
+				examples = { @example (
+						value = "triangle(5, 10)",
+						equals = "a geometry as a triangle with a base of 5m and a height of 10m.",
+						test = false) },
+				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+						"square" })
+		public static IShape triangle(final IScope scope, final Double base, final Double height) {
+			ILocation location;
+			final IAgent a = scope.getAgent();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ((base <= 0) || (height <= 0)) { return new GamaShape(location); }
+			return GamaGeometryType.buildTriangle(base, height, location);
+		}
 
 		@operator (
 				value = "pyramid",
@@ -2340,7 +2362,10 @@ public abstract class Spatial {
 						value = "solid(self)",
 						equals = "the geometry corresponding to the geometry of the agent applying the operator without "
 								+ "its holes.",
-						test = false) })
+						test = false),
+						@example (
+								value = "without_holes(polygon([{0,50}, {0,0}, {50,0}, {50,50}, {0,50}]) - square(10) at_location {10,10}).area",
+								equals="2500.0",returnType="float") })
 		public static IShape without_holes(final IScope scope, final IShape g) {
 			if (g == null) { return null; }
 			final Geometry geom = g.getInnerGeometry();
