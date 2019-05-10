@@ -16,12 +16,14 @@ import msi.gama.precompiler.IOperatorCategory;
 public class TypeConverter {
 
 	HashMap<String, String> properNameTypeMap;
+	HashMap<String, String> specialCasesProperNameTypeMap;	
 	HashMap<String, String> properCategoryNameMap;
 	HashMap<Integer, String> typeStringFromIType;
 	HashMap<Integer, String> symbolKindStringFromISymbolKind;
 
 	public TypeConverter() {
 		properNameTypeMap = initProperNameTypeMap();
+		specialCasesProperNameTypeMap = initSpecialCasesProperNameTypeMap();		
 		properCategoryNameMap = initProperNameCategoriesMap();
 		typeStringFromIType = initNameTypeFromIType();
 		symbolKindStringFromISymbolKind = initSymbolKindStringFromISymbolKind();
@@ -87,6 +89,7 @@ public class TypeConverter {
 		hm.put("msi.gama.util.GamaList", "list");
 		hm.put("msi.gama.util.IList", "list");		
 		hm.put("java.util.List", "list");
+		hm.put("msi.gama.util.GamaDateInterval", "list");
 	
 //		hm.put("java.util.List<T>", "list");
 //		hm.put("msi.gama.util.IList<T>", "list");
@@ -128,6 +131,7 @@ public class TypeConverter {
 		hm.put("msi.gaml.expressions.IExpression", "any expression");
 
 		hm.put("msi.gama.metamodel.agent.IAgent", "agent");
+		hm.put("msi.gama.kernel.experiment.IExperimentAgent", "agent");
 		hm.put("msi.gama.metamodel.shape.IShape", "geometry");
 		hm.put("msi.gama.metamodel.shape.GamaShape", "geometry");		
 		hm.put("? extends msi.gama.metamodel.shape.IShape", "geometry");		
@@ -167,6 +171,7 @@ public class TypeConverter {
 		hm.put("msi.gaml.architecture.simplebdi.BDIPlan", "BDIPlan");
 		hm.put("msi.gaml.architecture.simplebdi.Emotion", "emotion");
 		hm.put("msi.gaml.architecture.simplebdi.MentalState", "mental_state");
+		hm.put("msi.gaml.architecture.simplebdi.SocialLink", "social_link");
 		
 		// FIPA
 		hm.put("msi.gaml.extensions.fipa.Conversation", "conversation");
@@ -177,15 +182,24 @@ public class TypeConverter {
 		hm.put("msi.gama.util.path.GamaSpatialPath", "path");
 
 		hm.put("msi.gama.util.IContainer.Addressable", "container");
-		hm.put("msi.gama.util.IContainer<KeyType,ValueType>.Addressable<KeyType,ValueType>",
-				"container<KeyType,ValueType>");
-		hm.put("msi.gama.util.IAddressableContainer<java.lang.Integer,msi.gama.metamodel.agent.IAgent,java.lang.Integer,msi.gama.metamodel.agent.IAgent>",
-				"list<agent>");
+
+		
 		// msi.gama.util.GamaRegression ??????
 		// msi.gama.util.GamaFont ????
+		
+		hm.put("msi.gaml.types.GamaKmlExport", "kml");
 		return hm;
 	}
-
+	
+	private HashMap<String, String> initSpecialCasesProperNameTypeMap() {
+		final HashMap<String, String> sphm = new HashMap<String, String>();
+		sphm.put("msi.gama.util.IAddressableContainer<java.lang.Integer,msi.gama.metamodel.agent.IAgent,java.lang.Integer,msi.gama.metamodel.agent.IAgent>",
+				"list<agent>");
+		sphm.put("msi.gama.util.IContainer<KeyType,ValueType>.Addressable<KeyType,ValueType>",
+				"container<KeyType,ValueType>");	
+		return sphm;
+	}
+	
 	// FROM IType.java
 	private HashMap<Integer, String> initNameTypeFromIType() {
 		final HashMap<Integer, String> hm = new HashMap<Integer, String>();
@@ -263,6 +277,10 @@ public class TypeConverter {
 	}
 
 	public String getProperType(final String rawName) {
+		if (specialCasesProperNameTypeMap.containsKey(rawName)) {
+			return specialCasesProperNameTypeMap.get(rawName);
+		} 	
+		
 		// Get only the first <
 		String[] splitByLeftBracket = rawName.split("<",2);
 		
