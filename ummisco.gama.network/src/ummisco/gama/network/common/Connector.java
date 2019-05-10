@@ -48,6 +48,8 @@ public abstract class Connector implements IConnector {
 	protected boolean isConnected = false;
 
 	Object lockGroupManagment = new Object();
+	
+	boolean forceNetworkUse = false;
 
 	protected Connector() {
 		super();
@@ -56,8 +58,15 @@ public abstract class Connector implements IConnector {
 		connectionParameter = new HashMap<>();
 		receivedMessage = new HashMap<>();
 		localMemberNames = new HashMap<String,IAgent>();
+		forceNetworkUse = false;
 	}
 
+	@Override
+	public void forceNetworkUse(boolean b)
+	{
+		this.forceNetworkUse = b;
+	}
+	
 	@Override
 	public void configure(final String parameterName, final String value) {
 		this.connectionParameter.put(parameterName, value);
@@ -114,14 +123,14 @@ public abstract class Connector implements IConnector {
 
 	@Override
 	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
-		if (this.boxFollower.containsKey(receiver)) {
+		if (!(this.forceNetworkUse)&&this.boxFollower.containsKey(receiver)) {
 			List<IAgent> dests = boxFollower.get(receiver);
 			for(IAgent dest:dests)
 				this.receivedMessage.get(dest).push(
 						new LocalMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content));
 		}
 		
-		if (!this.localMemberNames.containsKey(receiver))
+		if ((this.forceNetworkUse)||!this.localMemberNames.containsKey(receiver))
 		{
 			final CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(), content);
 			if (cmsg.getSender() instanceof IAgent) {

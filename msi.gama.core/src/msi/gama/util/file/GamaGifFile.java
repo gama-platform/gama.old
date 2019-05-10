@@ -34,12 +34,17 @@ public class GamaGifFile extends GamaImageFile {
 	// private int frameCount;
 	@doc (value= "This file constructor allows to read a gif file",
 			examples = {
-					@example(value = "gif_file f <- gif_file(\"file\");", isExecutable = false)
+					@example(value = "gif_file f <- gif_file(\"file.gif\");", isExecutable = false)
 			})
 	public GamaGifFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
+	@doc (value= "This file constructor allows to store a matrix in a gif file (it does not save it - just store it in memory)",
+			examples = {
+					@example(value = "gif_file f <- gif_file(\"file.gif\",matrix([10,10],[10,10]));", isExecutable = false)
+			})
+	
 	public GamaGifFile(final IScope scope, final String pathName, final IMatrix<Integer> image) {
 		super(scope, pathName, image);
 

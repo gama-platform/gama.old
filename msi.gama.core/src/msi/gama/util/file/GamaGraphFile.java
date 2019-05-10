@@ -34,10 +34,8 @@ public class GamaGraphFile extends GamaFile<IGraph<?, ?>, Object> {
 		return null;
 	}
 
-	@SuppressWarnings ("unchecked")
 	@Override
-	public IContainerType getGamlType() {
-		// TODO Auto-generated method stub
+	public IContainerType<?> getGamlType() {
 		return null;
 	}
 
