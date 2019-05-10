@@ -186,16 +186,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 ----
 
 ## Types
-[bool](DataTypes#bool), [float](DataTypes#float), [int](DataTypes#int),
-[string](DataTypes#string), [agent](DataTypes#agent),
-[container](DataTypes#container)
-, [file](DataTypes#file), [geometry](DataTypes#geometry),
-[graph](DataTypes#graph), [list](DataTypes#list),
-[map](DataTypes#map), [matrix](DataTypes#matrix)
-, [pair](DataTypes#pair), [path](DataTypes#path),
-[point](DataTypes#point), [rgb](DataTypes#rgb),
-[color](DataTypes#rgb), [species](DataTypes#species),
-[topology](DataTypes#topology)
+<xsl:for-each select="/doc/types/type">
+	<xsl:sort select="@name" />
+	<xsl:text>[</xsl:text>
+	<xsl:value-of select="@name" />
+	<xsl:text>](DataTypes#</xsl:text><xsl:value-of select="@name" />
+	<xsl:text>), </xsl:text>	
+</xsl:for-each>
 
 ----
 
