@@ -497,7 +497,7 @@ public class Operators {
 		examples = @example (
 			value = "get_agent_cause(pred1)",
 			isExecutable = false))
-	@test(value = "get_lifetime(new_predicate('test1',10) = 10")
+	@test(value = "get_lifetime(new_predicate('test1',10)) = 10")
 	public static int getLifetime(final Predicate pred) {
 		if (pred != null) {
 			return pred.lifetime;
@@ -796,8 +796,8 @@ public class Operators {
 			examples = @example (
 					value = "get_intensity(emo1)",
 					isExecutable = false))
-	@test("get_intensity(new_emotion('joy',1.0)=1.0")
-	@test("get_intensity(new_emotion('joy',1.0,0.5)=1.0")
+	@test("get_intensity(new_emotion('joy',1.0))=1.0")
+	@test("get_intensity(new_emotion('joy',1.0,0.5))=1.0")
 	public static Double getIntensity(final Emotion emotion) {
 		if (emotion != null) {
 			return emotion.intensity;
@@ -816,7 +816,7 @@ public class Operators {
 			examples = @example (
 					value = "get_decay(emotion)",
 					isExecutable = false))
-	@test("get_decay(new_emotion('joy',1.0,0.5)=0.5")
+	@test("get_decay(new_emotion('joy',1.0,0.5))=0.5")
 	public static Double getDecay(final Emotion emotion) {
 		if (emotion != null) {
 			return emotion.decay;
@@ -1602,7 +1602,7 @@ public class Operators {
 			examples = @example (
 					value = "get_modality(mental_state1)",
 					isExecutable = false))
-	@test("new_mental_state('Belief',new_predicate('test1')='Belief'")
+	@test("get_modality(new_mental_state('Belief',new_predicate('test1')))='Belief'")
 	public static String getModality(final MentalState mental) {
 		if (mental != null) {
 			return mental.getModality();
@@ -1640,7 +1640,7 @@ public class Operators {
 			examples = @example (
 					value = "get_strength(mental_state1)",
 					isExecutable = false))
-	@test("new_mental_state('Belief',new_predicate('test1'))='Belief'")
+	@test("get_strength(new_mental_state('Belief',new_predicate('test1')))=1.0")
 	public static Double getStrength(final MentalState mental) {
 		if (mental != null) {
 			return mental.getStrength();
@@ -1659,7 +1659,7 @@ public class Operators {
 			examples = @example (
 					value = "get_lifetime(mental_state1)",
 					isExecutable = false))
-	@test("new_mental_state('Belief',new_predicate('test1'),4)='4'")
+	@test("get_lifetime(new_mental_state('Belief',new_predicate('test1'),4))=4")
 	public static int getLifetime(final MentalState mental) {
 		if (mental != null) {
 			return mental.getLifeTime();
