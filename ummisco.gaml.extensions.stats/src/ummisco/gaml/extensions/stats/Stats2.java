@@ -1085,7 +1085,12 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the log of the value of the Gamma function at x.",
 				comment = "",
-				examples = {})
+				examples = {@example (
+								value = "log_gamma(0.6) with_precision(4)",
+								equals = "0.3982")}
+				)
+		
+		
 		public static Double opLogGamma(final IScope scope, final Double x) {
 
 			// Returns the log of the value of the Gamma function at x.
