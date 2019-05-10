@@ -1272,7 +1272,15 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the regularized integral of the beta function with arguments a and b, from zero to x.",
 				comment = "",
-				examples = {})
+				examples = {
+						@example (
+								value = "incomplete_beta(2,3,0.9) with_precision(3)",
+								equals = "0.996")
+				})
+		
+		
+		
+		
 		public static Double opIncompleteBeta(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the regularized integral of the beta function with
