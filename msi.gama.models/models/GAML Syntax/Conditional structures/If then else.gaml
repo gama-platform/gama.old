@@ -28,59 +28,67 @@ global {
 		
 	}
 	
-	action hello_world {
-		write "Hello world !";
-	}
-	
 	action condional_hello_world {
 		write "------------------------";
 		write "Test : if condition1 is true then print 'hello world'";
+		string result;
 		if(condition1){
-			do hello_world;
+			result <- "Hello world !";
 		}
+		write "Result : "+result;
 	}
 		
 	action bi_conditional_hello_world {
 		write "------------------------";
 		write "Test : if condition1 and condition2 are true then print 'hello world'";
+		string result;
 		if(condition1 and condition2){
-			do hello_world;
+			result <- "Hello world !";
 		}
+		write "Result : "+result;
 	}
 	
 	action if_then_hello_world_else_goodbye {
 		write "------------------------";
 		write "Test : if condition1 is true then print 'hello world' else print 'Goodbye'";
+		string result;
 		if(condition1) {
-			do hello_world;
+			result <- "Hello world !";
 		} else {
-			write "Goodbye";
+			result <- "Goodbye";
 		}
+		write "Result : "+result;
 	}
 	
 	action if_then_tic_elseif_then_tac_else_toc {
 		write "------------------------";
 		write "Test : if condition1 is true then print 'tic !' else if condition2 is true then print 'tac !' else print 'toc !'";
+		string result;
 		if(condition1) {
-			write "tic !";
+			result <- "tic !";
 		} else if (condition2) {
-			write "tac !";
+			result <- "tac !";
 		} else {
-			write "toc !";
+			result <- "toc !";
 		}
+		write "Result : "+result;
 	}
 	
 	action tertiary_hello_world {
 		write "------------------------";
 		write "Test tertiary operator (condition ? then : else)";
 		write "If condition1 true print 'Hello world !'";
-		write condition1 ? "Hello world !" : "";
+		string result1 <- condition1 ? "Hello world !" : "";
+		write "Result : "+result1;
 		write "If condition1 and condition2 are true print 'Hello world !'";
-		write condition1 and condition2 ? "Hello world !" : "";
+		string result2 <- condition1 and condition2 ? "Hello world !" : ""; 
+		write "Result : "+result2;
 		write "If condition1 true print 'Hello world !' else print 'Goodbye'";
-		write condition1 ? "Hello world !" : "Goodbye";
+		string result3 <- condition1 ? "Hello world !" : "Goodbye"; 
+		write "Result : "+result3;
 		write "If condition1 true print 'tic !' else if condition2 is true print 'tac !' else print 'toc !'";
-		write condition1 ? "tic !" : (condition2 ? "tac !" : "toc !");
+		string result4 <- condition1 ? "tic !" : (condition2 ? "tac !" : "toc !");
+		write "Result : "+result4;
 	}
 		
 }
