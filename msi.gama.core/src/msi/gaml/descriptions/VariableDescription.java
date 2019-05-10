@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.VariableDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.VariableDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -53,7 +53,7 @@ public class VariableDescription extends SymbolDescription {
 
 	private static Map<String, Collection<String>> dependencies = new THashMap<>();
 	public static Set<String> INIT_DEPENDENCIES_FACETS =
-			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE).build();
+			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE, AMONG).build();
 	public static Set<String> UPDATE_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX).build();
 	public static Set<String> FUNCTION_DEPENDENCIES_FACETS = ImmutableSet.<String> builder().add(FUNCTION).build();
@@ -142,7 +142,7 @@ public class VariableDescription extends SymbolDescription {
 	/**
 	 * A variable is said to be contextual if its type or contents type depends on the species context. For example,
 	 * 'simulation' in experiments. If so, it has to be copied in subspecies
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isContextualType() {
@@ -157,7 +157,7 @@ public class VariableDescription extends SymbolDescription {
 	/**
 	 * Returns the type denoted by this string. This is a contextual retrieval, as the string can contain the value of
 	 * one of the ITypeProvider constants. Method getTypeNamed()
-	 * 
+	 *
 	 * @see msi.gaml.descriptions.SymbolDescription#getTypeNamed(java.lang.String)
 	 */
 	@Override
@@ -313,8 +313,9 @@ public class VariableDescription extends SymbolDescription {
 		if (getEnclosingDescription() instanceof SpeciesDescription) {
 			final SpeciesDescription td = (SpeciesDescription) getEnclosingDescription();
 			if (td.isBuiltIn()) { return this; }
-			if (td.getParent() != null && td.getParent()
-					.hasAttribute(name)) { return td.getParent().getAttribute(name).getBuiltInAncestor(); }
+			if (td.getParent() != null && td.getParent().hasAttribute(name)) {
+				return td.getParent().getAttribute(name).getBuiltInAncestor();
+			}
 		}
 		return null;
 	}

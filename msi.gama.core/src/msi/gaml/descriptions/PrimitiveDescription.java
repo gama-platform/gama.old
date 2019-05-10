@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.PrimitiveDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.PrimitiveDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -69,11 +69,19 @@ public class PrimitiveDescription extends ActionDescription {
 			if (d.deprecated().isEmpty()) {
 				documentation = d.value() + Strings.LN;
 			} else {
-				documentation = d.deprecated() + Strings.LN;
+				documentation = d.value() + Strings.LN + Strings.LN + d.deprecated() + Strings.LN;
 			}
 		}
 		// Only arguments
 		return documentation + super.getArgDocumentation();
+	}
+
+	public String getDeprecated() {
+		final doc d = getDocAnnotation();
+		if (d == null) { return null; }
+		String deprecated = d.deprecated();
+		if (deprecated.isEmpty()) { return null; }
+		return deprecated;
 	}
 
 	public doc getDocAnnotation() {

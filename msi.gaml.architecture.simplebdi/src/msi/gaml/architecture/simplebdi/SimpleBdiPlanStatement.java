@@ -13,6 +13,7 @@ package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -45,6 +46,7 @@ import msi.gaml.types.IType;
 		@facet(name = SimpleBdiPlanStatement.THRESHOLD, type = IType.FLOAT, optional = true),
 		@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 @validator(SimpleBdiPlanValidator.class)
+@doc("define an action plan performed by an agent using the BDI engine")
 public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 
 	public static class SimpleBdiPlanValidator implements IDescriptionValidator<StatementDescription> {

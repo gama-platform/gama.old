@@ -9,7 +9,6 @@ model switchmatch
 
 global {
 	
-	list RPS <- ["ROCK","PAPER","SCISSORS"];
 	 
 	string my_play;// parameter:true init:"ROCK" among:RPS;
 	
@@ -88,13 +87,13 @@ species rps_bot {
 	string bp;
 	
 	action bot_play {
-		bp <- RPS[rnd_choice(strategy)];
+		bp <- ["ROCK","PAPER","SCISSORS"][rnd_choice(strategy)];
 	}
 	
 }
 
 experiment rock_paper_scissors type:gui {
-	parameter "My play" var:my_play among:RPS init:any(RPS);
+	parameter "My play" var:my_play among:["ROCK","PAPER","SCISSORS"] init:any(["ROCK","PAPER","SCISSORS"]);
 	output {
 		display my_display {
 			image my_image size:point(0.2) position:{10,40};

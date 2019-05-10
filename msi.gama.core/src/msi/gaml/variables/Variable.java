@@ -266,10 +266,16 @@ public class Variable extends Symbol implements IVariable {
 			// final IType type = null;
 			// final String firstValueFacet = null;
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
-			if (amongExpression != null && !vType.isAssignableFrom(amongExpression.getGamlType().getContentType())) {
-				vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among "
-						+ amongExpression.serialize(false), IGamlIssue.NOT_AMONG, AMONG);
-				return;
+			if (amongExpression != null) {
+				if (!vType.isAssignableFrom(amongExpression.getGamlType().getContentType())) {
+					vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among "
+							+ amongExpression.serialize(false), IGamlIssue.NOT_AMONG, AMONG);
+					return;
+				}
+				if (!amongExpression.isContextIndependant()) {
+					vd.error("Facet 'among:' can only accept a constant list for its definition ", IGamlIssue.NOT_CONST,
+							AMONG);
+				}
 			}
 		}
 
@@ -583,7 +589,7 @@ public class Variable extends Symbol implements IVariable {
 		// return null;
 		// }
 		try {
-			return GamaListType.staticCast(scope, amongExpression.value(scope), null, false);
+			return GamaListType.staticCast(scope, amongExpression.value(scope), getType(), false);
 			// return Cast.as(amongExpression, IList.class, false);
 		} catch (final GamaRuntimeException e) {
 			return null;

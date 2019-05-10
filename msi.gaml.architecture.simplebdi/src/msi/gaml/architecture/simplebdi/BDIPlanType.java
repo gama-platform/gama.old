@@ -1,5 +1,6 @@
 package msi.gaml.architecture.simplebdi;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -9,6 +10,7 @@ import msi.gaml.types.IType;
 
 @SuppressWarnings("unchecked")
 @type(name = "BDIPlan", id = BDIPlanType.id, wraps = { BDIPlan.class }, concept = { IConcept.TYPE, IConcept.BDI })
+@doc("a type representing a plan for the BDI engine")
 public class BDIPlanType extends GamaType<BDIPlan> {
 
 	public final static int id = IType.AVAILABLE_TYPES + 546655;
@@ -19,6 +21,7 @@ public class BDIPlanType extends GamaType<BDIPlan> {
 	}
 
 	@Override
+	@doc("cast an object into a BDIPlan if it is an instance of a BDIPlan")
 	public BDIPlan cast(final IScope scope, final Object obj, final Object val, final boolean copy)
 			throws GamaRuntimeException {
 		if (obj instanceof BDIPlan) {

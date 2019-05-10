@@ -14,6 +14,7 @@ import java.util.List;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -31,6 +32,7 @@ import msi.gaml.statements.IStatement;
 @skill (
 		name = "parallel_bdi",
 		concept = { IConcept.BDI, IConcept.ARCHITECTURE })
+@doc("compute the bdi architecture in parallel")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 
