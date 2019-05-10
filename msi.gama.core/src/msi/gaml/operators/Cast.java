@@ -286,7 +286,7 @@ public class Cast {
 
 	@operator (
 			value = "matrix_with",
-			content_type = ITypeProvider.SECOND_CONTENT_TYPE_OR_TYPE,
+			content_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST, IConcept.CONTAINER })
