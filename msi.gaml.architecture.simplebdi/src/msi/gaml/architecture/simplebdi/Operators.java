@@ -491,7 +491,7 @@ public class Operators {
 		examples = @example (
 			value = "get_agent_cause(pred1)",
 			isExecutable = false))
-	@test(value = "get_lifetime(new_predicate('test1',10) = 10")
+	@test(value = "get_lifetime(new_predicate('test1',10)) = 10")
 	public static int getLifetime(final Predicate pred) {
 		if (pred != null) {
 			return pred.lifetime;
