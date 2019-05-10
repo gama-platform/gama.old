@@ -67,6 +67,7 @@ public class OverlayLayer extends GraphicLayer {
 
 	@Override
 	public void draw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+		if (scope == null) return;
 		getData().compute(scope, g);
 		g.beginDrawingLayer(this);
 		g.setOpacity(getData().getTransparency(scope));
