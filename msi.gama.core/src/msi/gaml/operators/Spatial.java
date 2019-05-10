@@ -508,12 +508,14 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
 				comment = "the centre of the square is by default the location of the current agent in which has been called this operator.",
-				examples = { @example (
+				examples = {  @example (
 						value = "square(10)",
-						equals = "a geometry as a square of side size 10.",
-						test = false) },
+						equals = "a geometry as a square of side size 10.",test=false),
+				@example( value ="var0.area",equals="100.0",returnType="float")
+						},
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"triangle" })
+		@test("square(10).area = 100")
 		public static IShape square(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -555,10 +557,12 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
 				comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
-				examples = { @example (
-						value = "rectangle({10, 5})",
-						equals = "a geometry as a rectangle with width = 10 and height = 5.",
-						test = false) },
+						examples = { @example (
+								value = "rectangle({10, 5})",
+								equals = "a geometry as a rectangle with width = 10 and height = 5.",
+								test = false),
+								@example( value ="rectangle({10, 5}).area",equals="50.0",returnType="float")
+								},
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint p) {
@@ -577,10 +581,14 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
 				comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
-				examples = { @example (
-						value = "rectangle(10, 5)",
-						equals = "a geometry as a rectangle with width = 10 and height = 5.",
-						test = false) },
+						examples = { @example (
+								value = "rectangle(10, 5)",
+								equals = "a geometry as a rectangle with width = 10 and height = 5.",
+								test = false),
+							@example( 
+								value ="rectangle(10, 5).area",
+								equals="50.0",
+								returnType="float") },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final double x, final double y) {
@@ -598,10 +606,16 @@ public abstract class Spatial {
 				value = "A rectangle geometry which upper-left and lower-right corners are defined as points.",
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
-				examples = { @example (
-						value = "rectangle({2.0,6.0}, {6.0,20.0})",
-						equals = "a geometry as a rectangle with {2.0,6.0} as the upper-left corner, {6.0,20.0} as the lower-right corner.",
-						test = false) },
+						examples = { 
+								@example (
+										value = "rectangle({0.0,0.0}, {10.0,10.0})",
+										equals = "a geometry as a rectangle with {1.0,1.0} as the upper-left corner, {10.0,10.0} as the lower-right corner.",
+										test = false) ,
+								@example( 
+										value ="rectangle({0.0,0.0}, {10.0,10.0}).area",
+										equals="100.0",
+										returnType="float")
+						},
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint upperLeftCorner,
@@ -2331,6 +2345,8 @@ public abstract class Spatial {
 						equals = "the list of geometries corresponding to the skeleton of the geometry of "
 								+ "the agent applying the operator.",
 						test = false) })
+		
+		
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
 				final Double triangulationTolerance) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(),
@@ -2341,7 +2357,7 @@ public abstract class Spatial {
 			}
 			return geoms;
 		}
-
+		
 		@operator (
 				value = "skeletonize",
 				content_type = IType.GEOMETRY,
@@ -2396,6 +2412,8 @@ public abstract class Spatial {
 						value = "skeletonize(self)",
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
 						test = false) })
+		@test(" // applies only to a square \n "
+				+ "length(skeletonize(square(5))) = 1")
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0, 0.0, false);
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
@@ -3841,8 +3859,9 @@ public abstract class Spatial {
 				examples = { @example (
 						value = " square(5) points_on(2)",
 						equals = "a list of points belonging to the exterior ring of the square distant from each other of 2.",
-						test = false) },
+						test = true) },
 				see = { "closest_points_with", "farthest_point_to", "points_at" })
+		@test("line({0,0},{0,10}) points_on 5 = [{0.0,0.0,0.0},{0.0,5.0,0.0},{0.0,10.0,0.0}]")
 		public static IList points_on(final IShape geom, final Double distance) {
 			final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 			if (geom.getInnerGeometry() instanceof GeometryCollection) {
@@ -3867,8 +3886,9 @@ public abstract class Spatial {
 				examples = { @example (
 						value = " line([{10,10},{80,80}]) points_along ([0.3, 0.5, 0.9])",
 						equals = "the list of following points: [{31.0,31.0,0.0},{45.0,45.0,0.0},{73.0,73.0,0.0}]",
-						test = false) },
+						test = true) },
 				see = { "closest_points_with", "farthest_point_to", "points_at", "points_on" })
+		@test("line({0,0},{0,10}) points_along [0.50, 0.75] = [{0.0,5.0,0.0},{0.0,7.5,0.0}]")
 		public static IList points_along(final IShape geom, final IList<Double> rates) {
 			final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 			if (geom.getInnerGeometry() instanceof GeometryCollection) {

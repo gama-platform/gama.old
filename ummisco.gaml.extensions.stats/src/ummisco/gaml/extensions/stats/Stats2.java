@@ -689,9 +689,14 @@ public class Stats2 extends Stats {
 				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the value, t, for which the area under the Student-t probability density function (integrated from minus infinity to t) is equal to x.",
+				value = "Returns the value, t, for which the area under the Student-t probability density function "
+						+ "(integrated from minus infinity to t) is equal to x.",
 				comment = "",
-				examples = {})
+				
+		examples = {@example (
+				value = "student_t_inverse(0.9,3) with_precision(2)",
+				equals = "1.64")})
+
 		public static Double opStudentTInverse(final IScope scope, final Double x, final Integer df) {
 
 			// Returns the value, t, for which the area under the Student-t
