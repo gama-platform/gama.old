@@ -4729,7 +4729,7 @@ public abstract class Spatial {
 						value = "IDW([ag1, ag2, ag3, ag4, ag5],[{10,10}::25.0, {10,80}::10.0, {100,10}::15.0], 2)",
 						equals = "for example, can return [ag1::12.0, ag2::23.0,ag3::12.0,ag4::14.0,ag5::17.0]",
 						isExecutable = false) })
-		@test("map<point, float> mapLocationPoints <- [{0,0}::10,{0,10}::-3];\r\n" + 
+		@test("map<point, float> mapLocationPoints <- [{0,0}::10.0,{0,10}::-3.0];\r\n" + 
 				"		list<point> queryPoint <- [{0,5}];\r\n" + 
 				"		float((IDW(list(geometry(queryPoint)),mapLocationPoints,1)).pairs[0].value) with_precision 1 = 3.5")
 		public static GamaMap<IShape, Double> primIDW(final IScope scope,

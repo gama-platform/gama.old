@@ -74,8 +74,8 @@ species declaring_matrix_attributes {
 		create test_species number:5;
 		matrix<test_species> matrix_my_agents <- matrix(test_species);
 		write sample(matrix_my_agents);
-		matrix<test_species> matrix_my_agents_2_2 <- test_species as_matrix {2,2};
-		write sample(matrix_my_agents_2_2);
+//		matrix<test_species> matrix_my_agents_2_2 <- test_species as_matrix {2,2};
+//		write sample(matrix_my_agents_2_2);
 		// A matrix can also been get from a csv_file (more specifically from its contents)		
 		file my_csv_file <- csv_file("includes/iris_small.csv",",",float,true);
 		matrix<float> matrix_from_csv_file <- matrix<float>(my_csv_file.contents);
