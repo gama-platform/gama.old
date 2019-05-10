@@ -136,8 +136,8 @@ species miner skills: [moving] control:simple_bdi {
 	}
 
 	aspect default {
-	  draw circle(2) color: mycolor;
-	  draw circle(viewdist) empty: true color: mycolor;		
+	  draw circle(2) color: mycolor border:mycolor-50;
+	  draw circle(viewdist) color:rgb(mycolor,0.5);		
 	}
 }
 
@@ -145,7 +145,7 @@ species miner skills: [moving] control:simple_bdi {
 species gold {
 	aspect default
 	{
-	  draw triangle(5) color: #yellow;	
+	  draw triangle(5) color:rgb(#yellow,0.8) border:#yellow;	
 	}
 }
 
@@ -161,12 +161,11 @@ species base {
 experiment GoldBdi type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
-		display map background: #lightgray
+		display map background:#gamablue type:opengl
 		{
 			species base ;
+			species miner aspect:default;
 			species gold ;
-			species miner;
-			
 		}
 	}
 }

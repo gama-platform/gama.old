@@ -1,8 +1,8 @@
 /***
 * Name: IfthenelseNewModel
 * Author: ben
-* Description: 
-* Tags: Tag1, Tag2, TagN
+* Description: gives several examples of if then else statements. Also show how to use tertiary operator: 'condition ? then : else'
+* Tags: if, else, ?
 ***/
 
 model IfthenelseNewModel
@@ -19,6 +19,8 @@ global {
 		do condional_hello_world;
 		
 		do bi_conditional_hello_world;
+		
+		do or_conditional_hello_world;
 		
 		do if_then_hello_world_else_goodbye;
 		
@@ -43,6 +45,16 @@ global {
 		write "Test : if condition1 and condition2 are true then print 'hello world'";
 		string result;
 		if(condition1 and condition2){
+			result <- "Hello world !";
+		}
+		write "Result : "+result;
+	}
+	
+	action or_conditional_hello_world {
+		write "------------------------";
+		write "Test : if condition1 or condition2 are true then print 'hello world'";
+		string result;
+		if(condition1 or condition2){
 			result <- "Hello world !";
 		}
 		write "Result : "+result;

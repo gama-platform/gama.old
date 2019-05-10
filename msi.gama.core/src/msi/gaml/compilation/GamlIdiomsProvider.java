@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.GamlIdiomsProvider.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.GamlIdiomsProvider.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gaml.compilation;
@@ -42,38 +42,40 @@ import msi.gaml.types.Types;
 public class GamlIdiomsProvider<T extends IGamlDescription> {
 
 	public final static GamlIdiomsProvider<SpeciesDescription> SPECIES =
-			new GamlIdiomsProvider<SpeciesDescription>(IKeyword.SPECIES, "Built-in species", Types.getBuiltInSpecies())
-					.with((each) -> each.getDocumentationWithoutMeta());
+			new GamlIdiomsProvider<SpeciesDescription>("species", IKeyword.SPECIES, "Built-in species",
+					Types.getBuiltInSpecies()).with((each) -> each.getDocumentationWithoutMeta());
 	public final static GamlIdiomsProvider<VariableDescription> SPECIES_ATTRIBUTES = new GamlIdiomsProvider<>(
-			"species_attribute", "Built-in species attribute",
+			"variables", "species_attribute", "Built-in species attribute",
 			Iterables.concat(Iterables.transform(Types.getBuiltInSpecies(), (each) -> each.getOwnAttributes())));
 	public final static GamlIdiomsProvider<ActionDescription> SPECIES_ACTIONS =
-			new GamlIdiomsProvider<>("species_action", "Built-in species action",
+			new GamlIdiomsProvider<>("actions", "species_action", "Built-in species action",
 					Iterables.concat(Iterables.transform(Types.getBuiltInSpecies(), (each) -> each.getOwnActions())));
-	public final static GamlIdiomsProvider<SkillDescription> SKILLS =
-			new GamlIdiomsProvider<>(IKeyword.SKILL, "Skill", GamaSkillRegistry.INSTANCE.getRegisteredSkills());
-	public final static GamlIdiomsProvider<VariableDescription> SKILLS_ATTRIBUTES = new GamlIdiomsProvider<>(
-			"skill_attribute", "Skill Attribute", GamaSkillRegistry.INSTANCE.getRegisteredSkillsAttributes());
-	public final static GamlIdiomsProvider<ActionDescription> SKILLS_ACTIONS = new GamlIdiomsProvider<>("skill_action",
-			"Skill Action", GamaSkillRegistry.INSTANCE.getRegisteredSkillsActions());
+	public final static GamlIdiomsProvider<SkillDescription> SKILLS = new GamlIdiomsProvider<>("skills", IKeyword.SKILL,
+			"Skill", GamaSkillRegistry.INSTANCE.getRegisteredSkills());
+	public final static GamlIdiomsProvider<VariableDescription> SKILLS_ATTRIBUTES =
+			new GamlIdiomsProvider<>("variables", "skill_attribute", "Skill Attribute",
+					GamaSkillRegistry.INSTANCE.getRegisteredSkillsAttributes());
+	public final static GamlIdiomsProvider<ActionDescription> SKILLS_ACTIONS = new GamlIdiomsProvider<>("actions",
+			"skill_action", "Skill Action", GamaSkillRegistry.INSTANCE.getRegisteredSkillsActions());
 	public final static GamlIdiomsProvider<SymbolProto> STATEMENTS =
-			new GamlIdiomsProvider<>("statement", "Statements", DescriptionFactory.getStatementProtos());
+			new GamlIdiomsProvider<>("statements", "statement", "Statements", DescriptionFactory.getStatementProtos());
 	public final static GamlIdiomsProvider<UnitConstantExpression> CONSTANTS =
-			new GamlIdiomsProvider<>(IKeyword.CONST, "Constant & Units", IUnits.UNITS_EXPR.values());
-	public final static GamlIdiomsProvider<OperatorProto> OPERATORS = new GamlIdiomsProvider<>("operator", "Operators",
+			new GamlIdiomsProvider<>("constant", IKeyword.CONST, "Constant & Units", IUnits.UNITS_EXPR.values());
+	public final static GamlIdiomsProvider<OperatorProto> OPERATORS = new GamlIdiomsProvider<>("operators", "operator",
+			"Operators",
 			Iterables.concat(Iterables.transform(IExpressionCompiler.OPERATORS.values(), (each) -> each.values())));
 	public final static GamlIdiomsProvider<IType<?>> TYPES =
-			new GamlIdiomsProvider<>("type", "Types", Types.builtInTypes.getAllTypes());
+			new GamlIdiomsProvider<>("types", "type", "Types", Types.builtInTypes.getAllTypes());
 	public final static GamlIdiomsProvider<FacetProto> FACETS =
-			new GamlIdiomsProvider<>("facet", "Facets", DescriptionFactory.getFacetsProtos());
+			new GamlIdiomsProvider<>("facets", "facet", "Facets", DescriptionFactory.getFacetsProtos());
 	public final static GamlIdiomsProvider<OperatorProto> FIELDS =
-			new GamlIdiomsProvider<>("field", "Fields", Types.getAllFields());
+			new GamlIdiomsProvider<>("attributes", "field", "Fields", Types.getAllFields());
 
 	public final static List<GamlIdiomsProvider<?>> PROVIDERS =
 			Arrays.asList(SPECIES, SPECIES_ATTRIBUTES, SPECIES_ACTIONS, SKILLS, SKILLS_ATTRIBUTES, SKILLS_ACTIONS,
 					STATEMENTS, CONSTANTS, OPERATORS, TYPES, FACETS, FIELDS);
 
-	public final String id, name;
+	public final String id, name, search;
 	public final Iterable<? extends T> elements;
 	public final Map<T, String> titles;
 	public IGamlDescription[] sortedElements;
@@ -81,12 +83,14 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	// default
 	public Function<T, String> documenter = (each) -> each.getDocumentation();
 
-	public GamlIdiomsProvider(final String id, final String name, final Iterable<? extends T> elmts) {
-		this(id, name, elmts, null);
+	public GamlIdiomsProvider(final String search, final String id, final String name,
+			final Iterable<? extends T> elmts) {
+		this(search, id, name, elmts, null);
 	}
 
-	public GamlIdiomsProvider(final String id, final String name, final Iterable<? extends T> elmts,
-			final Map<T, String> titles) {
+	public GamlIdiomsProvider(final String search, final String id, final String name,
+			final Iterable<? extends T> elmts, final Map<T, String> titles) {
+		this.search = search;
 		this.id = id;
 		this.name = name;
 		this.elements = elmts;
@@ -101,6 +105,10 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	public GamlIdiomsProvider<T> with(final Function<T, String> doc) {
 		documenter = doc;
 		return this;
+	}
+
+	public String getSearchCategory() {
+		return search;
 	}
 
 	public Collection<? extends T> get(final String name) {

@@ -45,6 +45,12 @@ public class DifferentList implements IAgentFilter {
 	public ISpecies getSpecies() {
 		return null;
 	}
+	
+	@Override
+	public boolean hasAgentList() {
+		return false;
+	}
+
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {

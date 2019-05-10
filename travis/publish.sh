@@ -64,10 +64,12 @@ deploy(){
 	echo "Deploy to p2 update site"	
 	bash ./travis/deploy.sh
 }
-
+embed_jdk(){
+	bash ./travis/zip_withjdk.sh "$TRAVIS_COMMIT" 
+}
 release(){
 	echo "Upload continuous release to github"		
-	bash ./travis/githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
+	bash ./travis/github-release.sh "$TRAVIS_COMMIT" 
 }
 release_on_demand(){	
 	update_tag continuous
@@ -97,6 +99,7 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then
 			MSG+=" ci ext "
 	fi
 	deploy
+	embed_jdk
 	release_daily 
 	commit_wiki_files
 	commit_io_website_files
@@ -113,12 +116,14 @@ else
 		commit_wiki_files
 		commit_io_website_files
 	fi	
-	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
-		release_on_demand 
+	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
+		embed_jdk
+		release
 	fi	
 fi
 
 if [[ $(date +%d) =~ 0[1-1] ]]; then
-    release_monthly 
+	embed_jdk
+	release_monthly 
 fi
 

@@ -364,6 +364,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		return getEdges();
 	}
 
+	@Override
+	public boolean hasAgentList() {
+		return true;
+	}
+
 	/**
 	 * Method accept()
 	 * 

@@ -642,7 +642,9 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "box({10, 5 , 5})",
 						equals = "a geometry as a rectangle with width = 10, height = 5 depth= 5.",
-						test = false) },
+						test = false),
+						@example (value=" (box({10, 10 , 5}) at_location point(50,50,0)).location.y",equals="50.0",returnType="float")
+				},
 				see = { "around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 						"square", "cube", "triangle" })
 		public static IShape box(final IScope scope, final GamaPoint p) {
@@ -2128,6 +2130,7 @@ public abstract class Spatial {
 								value = "shape - 5",
 								equals = "a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5",
 								test = false) }) })
+		@test("(square(20) - 5) = polygon ([{45,55},{55,55},{55,45},{45,45},{45,55}])")
 		public static IShape reduced_by(final IScope scope, final IShape g, final Double size) {
 			if (g == null) { return null; }
 			return enlarged_by(scope, g, -size);
@@ -2153,6 +2156,7 @@ public abstract class Spatial {
 						equals = "the geometry resulting from a 45 degrees rotation to the geometry of the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
+		@test("( square(5) rotated_by 45 =  polygon([{46.46446609406726,50},{50,53.53553390593274},{53.53553390593274,50},{50,46.46446609406726},{46.46446609406726,50}]))")
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double angle) {
 			if (g1 == null) { return null; }
 			return new GamaShape(g1, null, new AxisAngle(angle), null);
@@ -2315,7 +2319,10 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "self at_location {10, 20}",
 						equals = "the geometry resulting from a translation to the location {10, 20} of the left-hand geometry (or agent).",
-						test = false) })
+						test = false),
+					@example (value=" (box({10, 10 , 5}) at_location point(50,50,0)).location.x",
+						equals="50.0",returnType="float")
+				})
 		public static IShape at_location(final IScope scope, final IShape g, final ILocation p)
 				throws GamaRuntimeException {
 			if (g == null) { return null; }
@@ -4739,7 +4746,7 @@ public abstract class Spatial {
 						value = "return the Moran Index of the given list of interest points (list of floats) and the weight matrix (matrix of float)",
 						examples = { @example (
 								value = "moran([1.0, 0.5, 2.0], weight_matrix)",
-								equals = "the Moran index computed",
+								equals = "the Moran index is computed",
 								test = false,
 								isExecutable = false) }) })
 		public static double moranIndex(final IScope scope, final IList<Double> vals, final IMatrix<Double> mat) {

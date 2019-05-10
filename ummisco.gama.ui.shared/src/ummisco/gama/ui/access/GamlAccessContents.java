@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.access;
@@ -230,9 +230,11 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		index = combinedLabel.toLowerCase().indexOf(filter);
 		if (index != -1) {
 			final int lengthOfElementMatch = index + filter.length() - providerForMatching.name.length() - 1;
-			if (lengthOfElementMatch > 0) { return new GamlAccessEntry(element, providerForMatching,
-					new int[][] { { 0, lengthOfElementMatch - 1 } },
-					new int[][] { { index, index + filter.length() - 1 } }, GamlAccessEntry.MATCH_GOOD); }
+			if (lengthOfElementMatch > 0) {
+				return new GamlAccessEntry(element, providerForMatching,
+						new int[][] { { 0, lengthOfElementMatch - 1 } },
+						new int[][] { { index, index + filter.length() - 1 } }, GamlAccessEntry.MATCH_GOOD);
+			}
 			return new GamlAccessEntry(element, providerForMatching, EMPTY_INDICES,
 					new int[][] { { index, index + filter.length() - 1 } }, GamlAccessEntry.MATCH_GOOD);
 		}
@@ -259,19 +261,22 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		return "org.eclipse.ui.internal.QuickAccess"; //$NON-NLS-1$
 	}
 
-	protected abstract void handleElementSelected(String text, Object selectedElement);
+	protected abstract void handleElementSelected(String text, GamlAccessEntry selectedElement);
+
+	private void handleClick() {
+
+	}
 
 	private void handleSelection() {
-		IGamlDescription selectedElement = null;
 		final String text = filterText.getText().toLowerCase();
 		if (table.getSelectionCount() == 1) {
-			final GamlAccessEntry entry = (GamlAccessEntry) table.getSelection()[0].getData();
-			selectedElement = entry == null ? null : entry.element;
+			GamlAccessEntry entry = (GamlAccessEntry) table.getSelection()[0].getData();
+			if (entry != null) {
+				doClose();
+				handleElementSelected(text, entry);
+			}
 		}
-		if (selectedElement != null) {
-			doClose();
-			handleElementSelected(text, selectedElement);
-		}
+
 	}
 
 	/**
@@ -281,7 +286,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 
 	/**
 	 * Allows the dialog contents to interact correctly with the text box used to open it
-	 * 
+	 *
 	 * @param filterText
 	 *            text box to hook up
 	 */
@@ -340,7 +345,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		table = new Table(tableComposite, SWT.None | SWT.FULL_SELECTION );
+		table = new Table(tableComposite, SWT.None | SWT.FULL_SELECTION);
 		table.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		table.setLinesVisible(true);
 		textLayout = new TextLayout(table.getDisplay());
@@ -399,6 +404,23 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			}
 		});
 		table.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDown(MouseEvent e) {
+
+				if (table.getSelectionCount() < 1) { return; }
+
+				if (e.button != 1) { return; }
+
+				if (table.equals(e.getSource())) {
+					final Object o = table.getItem(new Point(e.x, e.y));
+					final TableItem selection = table.getSelection()[0];
+					if (selection.equals(o)) {
+						handleClick();
+					}
+				}
+			}
+
 			@Override
 			public void mouseUp(final MouseEvent e) {
 
@@ -423,9 +445,9 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			public void mouseMove(final MouseEvent e) {
 				if (table.equals(e.getSource())) {
 					final Object o = table.getItem(new Point(e.x, e.y));
-//					if (lastItem == null ^ o == null) {
-//						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
-//					}
+					// if (lastItem == null ^ o == null) {
+					// table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+					// }
 					if (o instanceof TableItem) {
 						if (!o.equals(lastItem)) {
 							lastItem = (TableItem) o;
@@ -438,7 +460,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 				}
 			}
 		});
-		
+
 		table.addMouseTrackListener(new MouseTrackListener() {
 			TableItem lastItem = null;
 
@@ -464,13 +486,13 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			@Override
 			public void mouseEnter(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void mouseExit(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 

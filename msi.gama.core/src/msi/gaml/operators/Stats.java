@@ -856,10 +856,10 @@ public class Stats {
 					+ "and values equal to the frequency of this key (i.e. how many times it has been obtained)",
 			comment = "",
 			examples = { @example (
-					value = "[ag1, ag2, ag3, ag4] frequency_of each.size",
-					equals = "the different sizes as keys and the number of agents of this size as values",
-					isExecutable = false) },
-			see = "as_map")
+					value = "[1, 2, 3, 3, 4, 4, 5, 3, 3, 4] frequency_of each",
+					equals = "map([1::1,2::1,3::4,4::3,5::1])")
+						}
+				)
 	
 	
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)

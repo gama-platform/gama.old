@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
+echo "github_release_daily_withjdk"		
 COMMIT=$@
 
 REPO="gama-platform/gama"
-RELEASE="latest"
+RELEASE="daily"
 thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/Gama1.7"
 
 
@@ -30,27 +31,31 @@ echo $SUFFIX
 
 
 n=0
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86.zip"
-NEWFILES[$n]='GAMA1.7_Linux_32'$SUFFIX
-n=1
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.7_Linux_64'$SUFFIX
-n=2
+NEWFILES[$n]='GAMA1.9_Daily_Linux_64bits'$SUFFIX 
+n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.7_Mac_64'$SUFFIX
-n=3
-RELEASEFILES[$n]="$thePATH-win32.win32.x86.zip"
-NEWFILES[$n]='GAMA1.7_Win_32'$SUFFIX
-n=4
+NEWFILES[$n]='GAMA1.9_Daily_Mac_64bits'$SUFFIX
+n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.7_Win_64'$SUFFIX
+NEWFILES[$n]='GAMA1.9_Daily_Win_64bits'$SUFFIX
+n=3
+RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
+NEWFILES[$n]='GAMA1.9_Daily_EmbeddedJDK_Linux_64bits'$SUFFIX
+n=4
+RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
+NEWFILES[$n]='GAMA1.9_Daily_EmbeddedJDK_Win_64bits'$SUFFIX
+n=5
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
+NEWFILES[$n]='GAMA1.9_Daily_EmbeddedJDK_MacOS'$SUFFIX
+
 
 i=0
-for (( i=0; i<5; i++ ))
+for (( i=0; i<6; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
-	echo $FILE
+	ls -sh $FILE
 	echo $NFILE
 done
 
@@ -88,7 +93,7 @@ echo $RELEASEID
 
 check=${#RESULT}
 
-if [ $check -ge 5 ]; then
+if [ $check -ge 3 ]; then
 	echo 
 	echo "Remove old files..."
 	echo
@@ -117,7 +122,7 @@ echo
 echo "Upload new files..."
 echo
 
-for (( i=0; i<5; i++ ))
+for (( i=0; i<6; i++ ))
 do     
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"

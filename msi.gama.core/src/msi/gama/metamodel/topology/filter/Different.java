@@ -50,6 +50,12 @@ public class Different implements IAgentFilter {
 	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
 		return null;
 	}
+	
+	@Override
+	public boolean hasAgentList() {
+		return false;
+	}
+
 
 	/**
 	 * Method filter()

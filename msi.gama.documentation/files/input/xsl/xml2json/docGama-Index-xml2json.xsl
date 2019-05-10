@@ -79,9 +79,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Architectures", "title" : "</xsl:text>
 	<xsl:value-of select="@name" />
-	<xsl:text>", "url": "</xsl:text>
-	<xsl:value-of select="$fileControl" />
-	<xsl:text>#</xsl:text>
+	<xsl:text>", "url": "BuiltInArchitectures#</xsl:text>
 	<xsl:value-of select="@name" />
 	<xsl:text>" }, </xsl:text>
 </xsl:for-each>
@@ -176,8 +174,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 {"tag":"Pseudo-Variables","title":"self","url":"PseudoVariables#self"},{"tag":"Pseudo-Variables","title":"myself","url":"PseudoVariables#myself"},{"tag":"Pseudo-Variables","title":"each","url":"PseudoVariables#each"},
 
 <!-- Types -->
-
-{"tag":"Types","title":"bool","url":"DataTypes#bool"},{"tag":"Types","title":"float","url":"DataTypes#float"},{"tag":"Types","title":"string","url":"DataTypes#string"},{"tag":"Types","title":"agent","url":"DataTypes#agent"},{"tag":"Types","title":"container","url":"DataTypes#container"},{"tag":"Types","title":"file","url":"DataTypes#file"},{"tag":"Types","title":"geometry","url":"DataTypes#geometry"},{"tag":"Types","title":"graph","url":"DataTypes#graph"},{"tag":"Types","title":"list","url":"DataTypes#list"},{"tag":"Types","title":"map","url":"DataTypes#map"},{"tag":"Types","title":"matrix","url":"DataTypes#matrix"},{"tag":"Types","title":"pair","url":"DataTypes#pair"},{"tag":"Types","title":"path","url":"DataTypes#path"},{"tag":"Types","title":"point","url":"DataTypes#point"},{"tag":"Types","title":"rgb","url":"DataTypes#rgb"},{"tag":"Types","title":"color","url":"DataTypes#color"},{"tag":"Types","title":"species","url":"DataTypes#species"},{"tag":"Types","title":"topology","url":"DataTypes#topology"},
+<xsl:for-each select="/doc/types/type">
+	<xsl:sort select="@name" />
+	<xsl:text>{ "tag": "Types", "title" : "</xsl:text>
+	<xsl:value-of select="@name" /> <xsl:text>", "url": "DataTypes#</xsl:text>
+	<xsl:value-of select="@name" /><xsl:text>" }, </xsl:text>
+</xsl:for-each>
 
 <!-- Global Species -->
 
