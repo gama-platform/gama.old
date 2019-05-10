@@ -42,7 +42,7 @@ species Networking_Server skills: [network]
 	{
 		//loop id over: network_groups
 		//{
-			do send to: "Client" contents: ("I am Server " + name + " I give order to Client");
+			do send to: "test" contents: ("I am Server " + name + " I give order to Client");
 		//}
 
 	}
