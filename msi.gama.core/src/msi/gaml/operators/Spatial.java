@@ -4690,7 +4690,7 @@ public abstract class Spatial {
 						equals = "for example, can return [ag1::12.0, ag2::23.0,ag3::12.0,ag4::14.0,ag5::17.0]",
 						isExecutable = false) })
 		public static GamaMap<IShape, Double> primIDW(final IScope scope,
-				final IContainer<?, ? extends IShape> geometries, final GamaMap<GamaPoint, Double> points,
+				final IContainer<?, ? extends IShape> geometries, final GamaMap points,
 				final int power) {
 			final GamaMap<IShape, Double> results = GamaMapFactory.create(Types.GEOMETRY, Types.FLOAT);
 			if (points == null || points.isEmpty()) { return null; }
@@ -4700,16 +4700,17 @@ public abstract class Spatial {
 				double weight = 0;
 				double sumNull = 0;
 				int nbNull = 0;
-				for (final GamaPoint pt : points.keySet()) {
+				for (final Object obj : points.keySet()) {
+					GamaPoint pt = (GamaPoint) Cast.asPoint(scope, obj);
 					final double dist = scope.getTopology().distanceBetween(scope, geom, pt);
 					if (dist == 0) {
 						nbNull++;
-						sumNull += points.get(pt);
+						sumNull += Cast.asFloat(scope, points.get(pt));
 					}
 					if (nbNull == 0) {
 						final double w = 1 / FastMath.pow(dist, power);
 						weight += w;
-						sum += w * points.get(pt);
+						sum += w * Cast.asFloat(scope, points.get(pt));
 					}
 				}
 				if (nbNull > 0) {
