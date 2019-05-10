@@ -3301,6 +3301,7 @@ public abstract class Spatial {
 						equals = "the direction between ag1 and ag2 considering the topology my_topology",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_to", "distance_between", "path_between", "path_to" })
+		@test("topology(world) direction_between([{0,0},{50,50}]) = 45.0")
 		public static Double direction_between(final IScope scope, final ITopology t,
 				final IContainer<?, IShape> geometries) throws GamaRuntimeException {
 			final int size = geometries.length(scope);
