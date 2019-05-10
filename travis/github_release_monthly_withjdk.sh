@@ -49,32 +49,7 @@ n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
 NEWFILES[$n]='GAMA1.8_Monthly_EmbeddedJDK_MacOS'$SUFFIX
  
-	
-cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-
-sudo zip -qr "${RELEASEFILES[3]}" . && echo "compressed ${RELEASEFILES[3]}" || echo "compress fail ${RELEASEFILES[3]}"
-
-cd ../../../../../../../
-
-
-
-
-cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-
-sudo zip -qr "${RELEASEFILES[4]}" . && echo "compressed ${RELEASEFILES[4]}" || echo "compress fail ${RELEASEFILES[4]}"
-
-cd ../../../../../../../
-
-
-
-
-
-cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
-
-sudo zip -qyr "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
-
-cd ../../../../../../../
-
+	 
 
 i=0
 for (( i=0; i<6; i++ ))
@@ -87,6 +62,21 @@ done
 
 
 
+
+
+echo
+echo "Creating release from $RELEASE tag..."
+echo 
+LK="https://api.github.com/repos/gama-platform/gama/releases"
+
+  RESULT=` curl -s -X GET \
+  -H "X-Parse-Application-Id: sensitive" \
+  -H "X-Parse-REST-API-Key: sensitive" \
+  -H "Authorization: token $HQN_TOKEN"   \
+  -H "Content-Type: application/json" \
+  -d '{"tag_name": "$RELEASE", "name":"$RELEASE","body":"this is a $RELEASE release"}' \
+    "$LK"`
+echo $RESULT	
 
 
 
