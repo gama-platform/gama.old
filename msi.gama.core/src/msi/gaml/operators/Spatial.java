@@ -508,10 +508,11 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
 				comment = "the centre of the square is by default the location of the current agent in which has been called this operator.",
-				examples = { @example (
+				examples = {  @example (
 						value = "square(10)",
-						equals = "a geometry as a square of side size 10.",
-						test = true) },
+						equals = "a geometry as a square of side size 10.",test=false),
+				@example( value ="var0.area",equals="100.0",returnType="float")
+						},
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"triangle" })
 		@test("square(10).area = 100")
@@ -556,10 +557,12 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
 				comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
-				examples = { @example (
-						value = "rectangle({10, 5})",
-						equals = "a geometry as a rectangle with width = 10 and height = 5.",
-						test = false) },
+						examples = { @example (
+								value = "rectangle({10, 5})",
+								equals = "a geometry as a rectangle with width = 10 and height = 5.",
+								test = false),
+								@example( value ="rectangle({10, 5}).area",equals="50.0",returnType="float")
+								},
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint p) {
@@ -578,10 +581,14 @@ public abstract class Spatial {
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
 				comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
-				examples = { @example (
-						value = "rectangle(10, 5)",
-						equals = "a geometry as a rectangle with width = 10 and height = 5.",
-						test = false) },
+						examples = { @example (
+								value = "rectangle(10, 5)",
+								equals = "a geometry as a rectangle with width = 10 and height = 5.",
+								test = false),
+							@example( 
+								value ="rectangle(10, 5).area",
+								equals="50.0",
+								returnType="float") },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final double x, final double y) {
@@ -599,10 +606,16 @@ public abstract class Spatial {
 				value = "A rectangle geometry which upper-left and lower-right corners are defined as points.",
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
-				examples = { @example (
-						value = "rectangle({2.0,6.0}, {6.0,20.0})",
-						equals = "a geometry as a rectangle with {2.0,6.0} as the upper-left corner, {6.0,20.0} as the lower-right corner.",
-						test = false) },
+						examples = { 
+								@example (
+										value = "rectangle({0.0,0.0}, {10.0,10.0})",
+										equals = "a geometry as a rectangle with {1.0,1.0} as the upper-left corner, {10.0,10.0} as the lower-right corner.",
+										test = false) ,
+								@example( 
+										value ="rectangle({0.0,0.0}, {10.0,10.0}).area",
+										equals="100.0",
+										returnType="float")
+						},
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint upperLeftCorner,
