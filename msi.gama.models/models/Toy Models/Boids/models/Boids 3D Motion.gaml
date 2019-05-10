@@ -149,7 +149,7 @@ species boids skills: [moving3D] {
 
 
 experiment boids_3D type: gui {
-	
+	float minimum_cycle_duration <- 0.03;
 	
 	output {
 		

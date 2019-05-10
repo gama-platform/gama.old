@@ -1192,8 +1192,6 @@ public abstract class Spatial {
 				,
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle" })
-		@test("points_along(line({0,0},{0,10}),[0.5])[0] = point({0,5})")
-
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points) {
 			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -2957,7 +2955,6 @@ public abstract class Spatial {
 						value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
 						equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
 						test = false) })
-		@test("split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])]) = [line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) , line([{10,10}, {10,20}])]")
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
@@ -4965,46 +4962,6 @@ public abstract class Spatial {
 				graphics.drawFile(demFile, attributes);
 			}
 			return null;
-		}
-
-		@operator (
-				value = "rgb_to_xyz",
-				type = IType.LIST,
-				content_type = IType.POINT,
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.COLOR })
-		@doc (
-				value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z)",
-				deprecated = "Not used anymore",
-				examples = { @example (
-						value = "rgb_to_xyz(texture)",
-						equals = "a list of points",
-						isExecutable = false) },
-				see = {})
-		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile file) {
-
-			final IList<ILocation> points = GamaListFactory.create(Types.POINT);
-			BufferedImage texture = null;
-			int rows, cols, x, y;
-
-			if (file instanceof GamaImageFile) {
-				texture = ((GamaImageFile) file).getImage(scope, true);
-			} else {
-				if (file == null) { throw error("File is null in rgb_to_xyz", scope); }
-				throw error("Impossible to read points from " + file.getPath(scope), scope);
-			}
-			if (texture == null) { return points; }
-			rows = texture.getHeight() - 1;
-			cols = texture.getWidth() - 1;
-
-			for (y = 0; y < rows; y++) {
-				for (x = 0; x <= cols; x++) {
-					final Color c = new Color(texture.getRGB(cols - x, y));
-					points.add(new GamaPoint(c.getRed(), c.getGreen(), c.getBlue()));
-				}
-			}
-
-			return points;
 		}
 
 		@operator (

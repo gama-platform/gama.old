@@ -49,7 +49,6 @@ species  clock {
 		float nb_hours<-0.0 update:((timeElapsed mod 86400#s))/3600#s;
 		float nb_days <- 0.0 update:((timeElapsed mod 31536000#s))/86400#s;
 		reflex update {
-			write string(nb_hours)+" : "+nb_minutes;
 			if (cycle = alarmCycle) 
 			{
 				 write "Time to leave" ; 
@@ -74,7 +73,7 @@ species  clock {
 }
 
 experiment Display type: gui {
-	float minimum_cycle_duration <- 0.1#s;
+	float minimum_cycle_duration <- 0.01#s;
 	parameter 'Zoom: ' var: zoom category: 'Init' ;
 	parameter 'Milliseconds/cycle' var: stepDuration category: 'Init';
 	parameter 'alarm Day' var: alarm_days;
@@ -83,7 +82,7 @@ experiment Display type: gui {
 	parameter 'alarm Minutes' var: alarm_minutes;
 	parameter 'alarm Seconds' var: alarm_seconds;
 	output {
-		display ClockView type: opengl { 
+		display ClockView  { 
 			graphics "c" refresh: false {draw clock_normal size: 10*zoom at:{world.shape.width/5,world.shape.height/5} ;}
 			species clock ;
 		}
