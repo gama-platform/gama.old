@@ -45,6 +45,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -316,7 +317,29 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public Double getVolume() {
-		return getEnvelope().getVolume();
+		Double d = getDepth();
+		if(d==0) {
+			return 0d;
+		} else {
+			Type shapeType = Type.valueOf(getAttribute(IShape.TYPE_ATTRIBUTE).toString()); 
+			switch (shapeType) {
+			case SPHERE:
+				return 4/3 * Maths.PI * Maths.pow(getWidth()/2.0,3);
+			case CONE: 
+				return 1/3 * Maths.PI * Maths.pow(getWidth()/2.0,2) * d;
+			case PYRAMID:
+				return (Maths.pow(getWidth(),2) * d) / 3;
+			case ROUNDED:
+			case ENVIRONMENT:
+			case TEAPOT:
+			case LINECYLINDER:
+				return Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume();
+			case NULL:
+				return 0d;	
+			default:
+				return getArea() * d;
+			}
+		}
 	}
 
 	@Override

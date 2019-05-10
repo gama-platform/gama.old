@@ -1974,6 +1974,11 @@ public abstract class Spatial {
 								value = "shape * {0.5,0.5,2}",
 								equals = "a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 0.5 in x, 0.5 in y and 2 in z",
 								test = false) }) })
+		@test("geometry g <- cube (2);"
+				+ "float v1 <- g.area * g.height; "
+				+ "g <- g * {5, 5, 5};"
+				+ "float v2 <- g.area * g.height;  "
+				+ "v1 < v2")
 		public static IShape scaled_by(final IScope scope, final IShape g, final GamaPoint coefficients) {
 			return new GamaShape(g, null, null, null, Scaling3D.of(coefficients), false);
 			// return g1.scaledBy(scope, coefficient);
@@ -1994,6 +1999,11 @@ public abstract class Spatial {
 						value = "shape scaled_to {10,10}",
 						equals = "a geometry corresponding to the geometry of the agent applying the operator scaled so that it fits a square of 10x10",
 						test = false) })
+		@test("geometry g <- cube (2);"
+				+ "float v1 <- g.area * g.height; "
+				+ "g <- g scaled_to {20,20};"
+				+ "float v2 <- g.area * g.height;  "
+				+ "v1 < v2")
 		public static IShape scaled_to(final IScope scope, final IShape g, final GamaPoint bounds) {
 			return new GamaShape(g, null, null, null, Scaling3D.of(bounds), true);
 			// final GamaShape g1 = g.asShapeWithGeometry(scope, null);

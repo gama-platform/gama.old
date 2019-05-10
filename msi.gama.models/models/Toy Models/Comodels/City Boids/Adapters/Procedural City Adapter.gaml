@@ -6,8 +6,7 @@
 */
 model city_adapter
 
-import "../../../../Features/3D Visualization/models/Procedural City.gaml"
-
+import "../../../../Visualization and User Interaction/Visualization/3D Visualization/models/Procedural City.gaml"
 
 experiment "Adapter" type:gui  {
 	
