@@ -2362,7 +2362,10 @@ public abstract class Spatial {
 						value = "solid(self)",
 						equals = "the geometry corresponding to the geometry of the agent applying the operator without "
 								+ "its holes.",
-						test = false) })
+						test = false),
+						@example (
+								value = "without_holes(polygon([{0,50}, {0,0}, {50,0}, {50,50}, {0,50}]) - square(10) at_location {10,10}).area",
+								equals="2500.0",returnType="float") })
 		public static IShape without_holes(final IScope scope, final IShape g) {
 			if (g == null) { return null; }
 			final Geometry geom = g.getInnerGeometry();
