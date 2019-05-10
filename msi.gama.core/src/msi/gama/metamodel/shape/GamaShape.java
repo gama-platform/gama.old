@@ -321,7 +321,8 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if(d==0) {
 			return 0d;
 		} else {
-			Type shapeType = Type.valueOf(getAttribute(IShape.TYPE_ATTRIBUTE).toString()); 
+			Type shapeType = Type.valueOf(getAttribute(IShape.TYPE_ATTRIBUTE).toString());
+			// TODO : should put any specific shape volume calculation here !!!
 			switch (shapeType) {
 			case SPHERE:
 				return 4/3 * Maths.PI * Maths.pow(getWidth()/2.0,3);
@@ -329,13 +330,10 @@ public class GamaShape implements IShape /* , IContainer */ {
 				return 1/3 * Maths.PI * Maths.pow(getWidth()/2.0,2) * d;
 			case PYRAMID:
 				return (Maths.pow(getWidth(),2) * d) / 3;
-			case ROUNDED:
-			case ENVIRONMENT:
-			case TEAPOT:
-			case LINECYLINDER:
-				return Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume();
+			case THREED_FILE:
 			case NULL:
-				return 0d;	
+				Envelope3D env3D = getEnvelope();
+				return env3D == null ? Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume() : env3D.getVolume();	
 			default:
 				return getArea() * d;
 			}
