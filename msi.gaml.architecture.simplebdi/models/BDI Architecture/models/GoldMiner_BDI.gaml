@@ -87,7 +87,7 @@ species miner skills: [moving] control:simple_bdi {
 	// plan that has for goal to fulfill the wander desire	
 	plan letsWander intention:wander 
 	{
-		do wander amplitude: 60;
+		do wander amplitude: 60.0;
 	}
 	
 	//plan that has for goal to fulfill the get gold desire
