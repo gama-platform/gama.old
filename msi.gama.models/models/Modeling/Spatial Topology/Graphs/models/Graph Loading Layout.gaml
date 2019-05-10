@@ -31,7 +31,7 @@ global {
 				the_graph <- layout_force(the_graph, world.shape,coeff_force , cooling_coefficient, layout_time);
 			}
 			match "Circular" {
-				the_graph <- layout_circle(the_graph, world.shape);
+				the_graph <- layout_circle(the_graph, world.shape, false);
 			}
 			match "Grid" {
 				the_graph <- layout_grid(the_graph, world.shape,coeff_nb_places);
