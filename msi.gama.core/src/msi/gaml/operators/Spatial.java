@@ -1192,6 +1192,8 @@ public abstract class Spatial {
 				,
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle" })
+		@test("points_along(line({0,0},{0,10}),[0.5])[0] = point({0,5})")
+
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points) {
 			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -2955,6 +2957,7 @@ public abstract class Spatial {
 						value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
 						equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
 						test = false) })
+		@test("split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])]) = [line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) , line([{10,10}, {10,20}])]")
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
