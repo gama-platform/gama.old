@@ -2085,13 +2085,15 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	@doc (
-			value = "layouts a Gama graph on a circle with equidistance between nodes. For now there is no optimization on node ordering !",
+			value = "layouts a Gama graph on a circle with equidistance between nodes. For now there is no optimization on node ordering !\n"
+					+ "Usage: layoutCircle(graph, bound, shuffle) => graph : the graph to layout, bound : the geometry to display the graph within, "
+					+ "shuffle : if true shuffle the nodes, then render same ordering",
 			examples = { @example (value = "layout_circle(graph, world.shape);", isExecutable=false)}
 			)
 	@no_test
-	public static IGraph layoutCircle(final IScope scope, final GamaGraph graph, IShape bounds) {
+	public static IGraph layoutCircle(final IScope scope, final GamaGraph graph, IShape bounds, boolean shuffle) {
 		LayoutCircle layouter = new LayoutCircle(graph, bounds);
-		layouter.applyLayout(scope);
+		layouter.applyLayout(scope, shuffle);
 		return graph;
 	} 
 	

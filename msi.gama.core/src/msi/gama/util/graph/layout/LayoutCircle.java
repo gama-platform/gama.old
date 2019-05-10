@@ -21,13 +21,13 @@ public class LayoutCircle {
 		this.envelopeGeometry = envelopeGeometry;
 	}
 
-	public void applyLayout(IScope scope) {
+	public void applyLayout(IScope scope, boolean shuffle) {
         
         double radius = envelopeGeometry.getCentroid().euclidianDistanceTo(
         		Spatial.Punctal._closest_point_to(envelopeGeometry.getCentroid(), envelopeGeometry.getExteriorRing(scope))); 
         
         // Optimize node ordering
-        List<IShape> orderedNodes = this.minimizeEdgeLength(graph);
+        List<IShape> orderedNodes = this.minimizeEdgeLength(graph, shuffle);
         
         int i = 0;
         for (IShape v : orderedNodes) {
@@ -39,7 +39,7 @@ public class LayoutCircle {
 
 	}
 	
-	private List<IShape> minimizeEdgeLength(IGraph<IShape,IShape> graph) {
+	private List<IShape> minimizeEdgeLength(IGraph<IShape,IShape> graph, boolean shuffle) {
 		/*
 		List<IShape> orderedNode = graph.vertexSet().stream().sorted((v1,v2) -> 
 			graph.degreeOf(v1) < graph.degreeOf(v2) ? 1 : 
@@ -50,7 +50,9 @@ public class LayoutCircle {
 		// Not find a simple to implement algorithm
 		
 		List<IShape> nodes = graph.getVertices();
-		Collections.shuffle(nodes);
+		if(shuffle) {
+			Collections.shuffle(nodes);
+		}
 		return nodes;
 	}
 	
