@@ -64,7 +64,20 @@ deploy(){
 	echo "Deploy to p2 update site"	
 	bash ./travis/deploy.sh
 }
+embed_jdk(){
+git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
 
+
+sudo cp -R jdk/linux/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+sudo cp jdk/linux/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+
+sudo cp -R jdk/win/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+sudo cp jdk/win/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+
+sudo cp -R jdk/mac/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents
+sudo cp jdk/mac/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
+	
+}
 release(){
 	echo "Upload continuous release to github"		
 	bash ./travis/githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
@@ -97,6 +110,7 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then
 			MSG+=" ci ext "
 	fi
 	deploy
+	embed_jdk
 	release_daily 
 	commit_wiki_files
 	commit_io_website_files
@@ -113,7 +127,8 @@ else
 		commit_wiki_files
 		commit_io_website_files
 	fi	
-	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
+	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
+		embed_jdk
 		release_on_demand 
 		release_daily 
 		release_monthly
@@ -121,6 +136,7 @@ else
 fi
 
 if [[ $(date +%d) =~ 0[1-1] ]]; then
-    release_monthly 
+	embed_jdk
+	release_monthly 
 fi
 

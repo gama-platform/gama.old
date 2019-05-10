@@ -380,6 +380,13 @@ public class GamlSpecies extends AbstractSpecies {
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 		return this;
 	}
+	
+	
+
+	@Override
+	public boolean hasAgentList() {
+		return true;
+	}
 
 	/**
 	 * Method accept()

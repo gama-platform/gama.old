@@ -63,6 +63,11 @@ public abstract class In implements IAgentFilter {
 		}
 
 		@Override
+		public boolean hasAgentList() {
+			return true;
+		}
+
+		@Override
 		public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 			return GamaListFactory.createWithoutCasting(Types.AGENT, Iterables.filter(agents, IAgent.class));
 		}

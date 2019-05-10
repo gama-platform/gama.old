@@ -380,7 +380,7 @@ public abstract class AbstractTopology implements ITopology {
 			return getSpatialIndex().firstAtDistance(scope, source, 0, filter, number, GamaListFactory.create());
 		}
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
-		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
+		final Map<Geometry, IAgent> agents = getTororoidalAgents(source, scope, filter);
 		agents.remove(g0);
 		if (agents.keySet().size() <= number)
 			return agents.values();
@@ -400,7 +400,7 @@ public abstract class AbstractTopology implements ITopology {
 		if (!isTorus()) { return getSpatialIndex().firstAtDistance(scope, source, 0, filter); }
 		IAgent result = null;
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
-		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
+		final Map<Geometry, IAgent> agents = getTororoidalAgents(source, scope, filter);
 
 		double distMin = Double.MAX_VALUE;
 		for (final Geometry g1 : agents.keySet()) {
@@ -422,7 +422,8 @@ public abstract class AbstractTopology implements ITopology {
 		if (!isTorus()) {
 			IAgent result = null;
 			double distMax = Double.MIN_VALUE;
-			final IContainer<?, ? extends IShape> agents = getFilteredAgents(scope, filter);
+			final IContainer<?, ? extends IShape> agents = getFilteredAgents(source, scope, filter);
+			System.out.println("agent:  " + agents);
 			for (final IShape s : agents.iterable(scope)) {
 				if (s instanceof IAgent) {
 					final double dist = this.distanceBetween(scope, source, s);
@@ -436,7 +437,7 @@ public abstract class AbstractTopology implements ITopology {
 		}
 		IAgent result = null;
 		final Geometry g0 = returnToroidalGeom(source);
-		final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
+		final Map<Geometry, IAgent> agents = getTororoidalAgents(source, scope, filter);
 		double distMax = Double.MIN_VALUE;
 		for (final Geometry g1 : agents.keySet()) {
 			final IAgent ag = agents.get(g1);
@@ -452,14 +453,19 @@ public abstract class AbstractTopology implements ITopology {
 		return result;
 	}
 
-	public Map<Geometry, IAgent> getTororoidalAgents(final IScope scope, final IAgentFilter filter) {
-		return toroidalGeoms(scope, getFilteredAgents(scope, filter));
+	public Map<Geometry, IAgent> getTororoidalAgents(final IShape source, final IScope scope, final IAgentFilter filter) {
+		return toroidalGeoms(scope, getFilteredAgents(source, scope, filter));
 	}
 
-	public static IContainer<?, ? extends IShape> getFilteredAgents(final IScope scope, final IAgentFilter filter) {
+	public static IContainer<?, ? extends IShape> getFilteredAgents(final IShape source, final IScope scope, final IAgentFilter filter) {
 		IContainer<?, ? extends IShape> shps;
 		if (filter != null) {
-			shps = filter.getAgents(scope);
+			if (filter.hasAgentList())
+				shps = filter.getAgents(scope);
+			else {
+				shps = scope.getSimulation().getAgents(scope);
+				filter.filter(scope, source, (Collection<? extends IShape>) shps);
+			}
 		} else {
 			shps = scope.getSimulation().getAgents(scope);
 		}
@@ -477,7 +483,7 @@ public abstract class AbstractTopology implements ITopology {
 
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Set<IAgent> agents = new THashSet<>();
-		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, filter);
+		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(source,scope, filter);
 		final IAgent sourceAgent = source.getAgent();
 		for (final Geometry g1 : agentsMap.keySet()) {
 			final IAgent ag = agentsMap.get(g1);
@@ -532,7 +538,7 @@ public abstract class AbstractTopology implements ITopology {
 		for (final IShape sourceSub : source.getGeometries()) {
 			final Geometry sourceTo = returnToroidalGeom(sourceSub);
 			final PreparedGeometry pg = pgFact.create(sourceTo);
-			final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, f);
+			final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(source,scope, f);
 			for (final Geometry sh : agentsMap.keySet()) {
 				final IAgent ag = agentsMap.get(sh);
 				if (ag != null && !ag.dead()) {

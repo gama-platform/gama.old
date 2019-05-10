@@ -37,14 +37,15 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	private static ModelLibraryTester instance;
 	final List<GamlCompilationError> errors = new ArrayList<>();
 	private final static String FAILED_PARAMETER = "-failed";
-	public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
+//	public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
 
 	private ModelLibraryTester() {
-		SystemLogger.activeDisplay();
 	}
 
 	@Override
 	public int start(final List<String> args) throws IOException { 
+
+		SystemLogger.activeDisplay();
 		HeadlessSimulationLoader.preloadGAMA();
 
 		final int[] count = { 0 };
@@ -72,8 +73,8 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		allURLs.forEach(u -> test(count, code, u));
 		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
 
-		LOGGER.info(
-				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
+//		LOGGER.info(
+//				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		System.out.println(
 				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		System.out.println(code[0]);
@@ -102,7 +103,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				count[0] += agent.getSummary().size();
 				if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
 						|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0)
-					LOGGER.info(agent.getSummary().toString()); 
+					System.out.println(agent.getSummary().toString()); 
 			}
 		}
 

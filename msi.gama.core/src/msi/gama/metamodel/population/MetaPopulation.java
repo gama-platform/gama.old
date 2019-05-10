@@ -81,6 +81,11 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	public IContainerType getGamlType() {
 		return type;
 	}
+	
+	@Override
+	public boolean hasAgentList() {
+		return true;
+	}
 
 	/**
 	 * Method getAgents()
