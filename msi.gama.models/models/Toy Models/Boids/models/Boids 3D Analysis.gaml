@@ -164,7 +164,7 @@ species flock
 			{
 				if  dead(o) 
 				{
-					do write message: 'in ' + name + ' agent with others contains death agents'; 
+					 write  'in ' + name + ' agent with others contains death agents'; 
 				} 
 			}
 		 

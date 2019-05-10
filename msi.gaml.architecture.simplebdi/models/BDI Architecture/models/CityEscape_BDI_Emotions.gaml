@@ -185,7 +185,7 @@ species people skills: [moving] control: simple_bdi{
 	
 	
 	aspect default {
-		draw triangle(20) rotate: heading + 90 color: color;
+		draw triangle(30) rotate: heading + 90 color: color;
 	}
 }
 

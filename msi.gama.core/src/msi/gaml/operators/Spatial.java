@@ -2154,7 +2154,7 @@ public abstract class Spatial {
 								value = "shape - 5",
 								equals = "a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5",
 								test = false) }) })
-		@test("(square(20) - 5) = polygon ([{45,55},{55,55},{55,45},{45,45},{45,55}])")
+		@test("(square(20) - 5).area = 100.0")
 		public static IShape reduced_by(final IScope scope, final IShape g, final Double size) {
 			if (g == null) { return null; }
 			return enlarged_by(scope, g, -size);
@@ -2180,7 +2180,7 @@ public abstract class Spatial {
 						equals = "the geometry resulting from a 45 degrees rotation to the geometry of the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
-		@test("( square(5) rotated_by 45 =  polygon([{46.46446609406726,50},{50,53.53553390593274},{53.53553390593274,50},{50,46.46446609406726},{46.46446609406726,50}]))")
+		@test("(( square(5) rotated_by 45).width with_precision 2 = 7.07)")
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double angle) {
 			if (g1 == null) { return null; }
 			return new GamaShape(g1, null, new AxisAngle(angle), null);
@@ -2957,7 +2957,7 @@ public abstract class Spatial {
 						value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
 						equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
 						test = false) })
-		@test("split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])]) = [line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) , line([{10,10}, {10,20}])]")
+		@test("split_lines([line([{0,10}, {20,10}]), line([{10,0}, {10,20}])]) = [line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) , line([{10,10}, {10,20}])]")
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
@@ -4729,7 +4729,7 @@ public abstract class Spatial {
 						value = "IDW([ag1, ag2, ag3, ag4, ag5],[{10,10}::25.0, {10,80}::10.0, {100,10}::15.0], 2)",
 						equals = "for example, can return [ag1::12.0, ag2::23.0,ag3::12.0,ag4::14.0,ag5::17.0]",
 						isExecutable = false) })
-		@test("map<point, float> mapLocationPoints <- [{0,0}::10,{0,10}::-3];\r\n" + 
+		@test("map<point, float> mapLocationPoints <- [{0,0}::10.0,{0,10}::-3.0];\r\n" + 
 				"		list<point> queryPoint <- [{0,5}];\r\n" + 
 				"		float((IDW(list(geometry(queryPoint)),mapLocationPoints,1)).pairs[0].value) with_precision 1 = 3.5")
 		public static GamaMap<IShape, Double> primIDW(final IScope scope,
