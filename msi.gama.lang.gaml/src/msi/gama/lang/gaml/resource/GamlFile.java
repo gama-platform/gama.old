@@ -17,6 +17,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.outputs.IOutput;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -60,6 +61,11 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 
 	private final String aliasName;
 
+
+	@doc (value= "This file constructor allows to read a gaml file (.gaml)",
+			examples = {
+					@example(value = "file f <- gaml_file(\"file.gaml\");", isExecutable = false)
+			})
 	public GamlFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 		experimentName = "";
@@ -72,6 +78,10 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 		return Types.FILE.of(Types.INT, Types.SPECIES);
 	}
 
+	@doc (value= "This file constructor allows to compile a gaml file and run an experiment",
+			examples = {
+					@example(value = "file f <- gaml_file(\"file.gaml\", \"my_experiment\", \"my_model\");", isExecutable = false)
+			})
 	public GamlFile(final IScope scope, final String pathName, final String expName, final String cName)
 			throws GamaRuntimeException {
 		super(scope, pathName);
