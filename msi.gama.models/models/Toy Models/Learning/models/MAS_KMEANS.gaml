@@ -16,14 +16,14 @@ global
 {
 // the number of classes to create (kmeans)
 // It corresponds to the centroids
-	int k <- 4;
+	int k <- 0;
 	// the number of points
-	int N ;
+	int N <- 0;
 	//number of dimensions
 	int dimensions;
 	init
 	{
-	//create datapoints agents
+		//create datapoints agents
 		create datapoints number: N
 		{
 			if (dimensions = 3)
@@ -52,23 +52,18 @@ global
 			}
 
 		}
-
-		//give a random color to each centroid (i.e. to each datapoints agents of the group)
-		loop c over: centroids
-		{
-			rgb col <- rnd_color(255);
-			ask c
-			{
-				color_kmeans <- col;
-			}
-
-		}
-
+		int K <- length(centroids);
+		if (K > 0) {loop i from:0 to: K-1 { ask centroids[i] { color_kmeans  <- hsb(i/K,1,1); }}}
+					
+					
+			//give a random color to each centroid (i.e. to each datapoints agents of the group)
+			//		loop c over: centroids { rgb col <- rnd_color(255); ask c { color_kmeans <- col;}}
+		
+	
 	}
-
 	reflex assign_points_to_centroid when: even(cycle)
 	{
-	// The "assignment" step is also referred to as expectation step,
+	    // The "assignment" step is also referred to as expectation step,
 		ask centroids
 		{
 			mypoints <- list<datapoints> ([]);
@@ -146,7 +141,7 @@ species centroids
 
 experiment clustering2D type: gui
 {
-	parameter "Number of clusters to split the data into" var: k category: "KMEANS";
+	parameter "Number of clusters to split the data into" var: k init:4 category: "KMEANS";
 	parameter "Number of points to be clustered" var: N init: 500;
 	parameter "Number of dimensions" var: dimensions init: 2 min: 2 max: 2;
 	font regular <- font("Helvetica", 14, # bold);
@@ -181,7 +176,7 @@ experiment clustering2D type: gui
 
 experiment clustering3D type: gui
 {
-	parameter "Number of clusters to split the data into" var: k category: "KMEANS";
+	parameter "Number of clusters to split the data into" var: k init:4 category: "KMEANS";
 	parameter "Number of points to be clustered" var: N init:200 ;
 	font regular <- font("Helvetica", 14, # bold);
 	point target <- { 20, 95 };
