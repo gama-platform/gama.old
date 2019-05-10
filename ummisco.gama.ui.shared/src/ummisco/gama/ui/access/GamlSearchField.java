@@ -52,12 +52,18 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.common.interfaces.IGamlDescription;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamlSearchField {
+
+	static {
+		DEBUG.ON();
+	}
 
 	Shell shell;
 	protected Text text;
@@ -172,8 +178,16 @@ public class GamlSearchField {
 			}
 
 			@Override
-			protected void handleElementSelected(final String text, final Object selectedElement) {
-				// TODO Auto-generated method stub
+			protected void handleElementSelected(String text, GamlAccessEntry entry) {
+				if (entry == null)
+					return;
+				final IGamlDescription element = entry.element;
+				String cat = entry.getSearchCategory();
+				String name = element.getName();
+				String search = "https://roiarthurb.github.io/BC2019-Gama-Site/search?tag=" + cat + "&title=" + name;
+				// String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
+				DEBUG.OUT("Search phrase: " + search);
+				WebHelper.openPage(search);
 
 			}
 

@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 
@@ -114,6 +114,10 @@ public class GamlAccessEntry {
 	// }
 	// return image;
 	// }
+
+	public String getSearchCategory() {
+		return provider.getSearchCategory();
+	}
 
 	public void measure(final Event event, final TextLayout textLayout) {
 		// final Table table = ((TableItem) event.item).getParent();
