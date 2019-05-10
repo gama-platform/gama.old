@@ -356,10 +356,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		if (scene == null) { return null; }
 		// Multiline: Issue #780
 		if (string.contains("\n")) {
+			int i = 0;
+			double shift = attributes.font.getSize() / this.getyRatioBetweenPixelsAndModelUnits();
 			for (final String s : string.split("\n")) {
-				attributes.getLocation().setY(attributes.getLocation().getY()
-						+ attributes.font.getSize() * this.getyRatioBetweenPixelsAndModelUnits());
-				drawString(s, attributes);
+				// DEBUG.OUT("Attributes Font Size: " + attributes.font.getSize());
+				// DEBUG.OUT("Get Y Ratio: " + getyRatioBetweenPixelsAndModelUnits());
+				drawString(s, attributes.copyTranslatedBy(new GamaPoint(0, shift * i++)));
 			}
 			return null;
 		}
