@@ -79,17 +79,14 @@ experiment QueryTests type: test {
 		assert cl = dummy(4);
 	}
 	
-	/* 
 	test "agent_farthest_to" {
 		dummy farthest_dummy;
 		agent cl;
 		using topology(world) {
-			cl <- ( world agent_farthest_to (cell(73)));
+			cl <- ( agent_farthest_to (cell(73)));
 		}
-		write "-+++-> "+cl;
-		assert cl = dummy(4);
+		assert cl = cell(9);
 	}
-	*/
 
 	test "agents_inside" {
 		list<agent> cl;
