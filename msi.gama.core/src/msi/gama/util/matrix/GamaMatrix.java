@@ -179,8 +179,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			numRows = 1;
 			numCols = objects.size();
 		} else {
-			numCols = objects.size();
-			numRows = ((List) objects.get(0)).size();
+			try {
+				numCols = objects.size();
+				numRows = ((List) objects.get(0)).size();
+			} catch(Exception e) {
+				throw GamaRuntimeException.error("" +  objects.get(0) + " cannot be casted to a List (in matrix creation)", scope);
+			}
 		}
 		this.type = Types.MATRIX.of(contentsType);
 	}
