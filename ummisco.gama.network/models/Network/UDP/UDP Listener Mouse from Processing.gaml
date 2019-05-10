@@ -29,7 +29,6 @@ species NetworkingAgent skills:[network] {
 	
 	reflex fetch {	
 		if (length(mailbox) > 0) {
-			write mailbox;
 			message s <- last(mailbox);
 			list coordinates <- string(s.contents) split_with(";");
 			location <- {int(coordinates[0]),int(coordinates[1])};
