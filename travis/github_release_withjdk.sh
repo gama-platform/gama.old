@@ -66,9 +66,19 @@ done
 echo
 echo "Creating release from $RELEASE tag..."
 echo 
+ 
 
+LK="https://api.github.com/repos/gama-platform/gama/releases"
 
-curl -X POST -H "Authorization: token $HQN_TOKEN" -d '{"tag_name": "$RELEASE", "name":"$RELEASE","body":"this is a $RELEASE release"}'  https://api.github.com/repos/gama-platform/gama/releases 
+  RESULT=` curl -s -X POST \
+  -H "X-Parse-Application-Id: sensitive" \
+  -H "X-Parse-REST-API-Key: sensitive" \
+  -H "Authorization: token $HQN_TOKEN_18"   \
+  -H "Content-Type: application/json" \
+  -d '{"tag_name": "$RELEASE", "name":"$RELEASE","body":"this is a $RELEASE release"}' \
+    "$LK"`
+echo $RESULT	
+
 
 
 echo
@@ -79,7 +89,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
   RESULT=` curl -s -X GET \
   -H "X-Parse-Application-Id: sensitive" \
   -H "X-Parse-REST-API-Key: sensitive" \
-  -H "Authorization: token $HQN_TOKEN"   \
+  -H "Authorization: token $HQN_TOKEN_18"   \
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
@@ -93,7 +103,7 @@ echo $RELEASEID
   RESULT=` curl -s -X GET \
   -H "X-Parse-Application-Id: sensitive" \
   -H "X-Parse-REST-API-Key: sensitive" \
-  -H "Authorization: token $HQN_TOKEN"   \
+  -H "Authorization: token $HQN_TOKEN_18"   \
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
@@ -117,7 +127,7 @@ if [ $check -ge 3 ]; then
 		  
 			echo   "Deleting $LK1...  "
 		  RESULT1=`curl  -s -X  "DELETE"                \
-			-H "Authorization: token $HQN_TOKEN"   \
+			-H "Authorization: token $HQN_TOKEN_18"   \
 			"$LK1"`	
 			echo $RESULT1
 		fi
@@ -139,7 +149,7 @@ do
   LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$NFILE"
   
   RESULT=`curl -s -w  "\n%{http_code}\n"                   \
-    -H "Authorization: token $HQN_TOKEN"                \
+    -H "Authorization: token $HQN_TOKEN_18"                \
     -H "Accept: application/vnd.github.manifold-preview"  \
     -H "Content-Type: application/zip"                    \
     --data-binary "@$FILE"                                \
