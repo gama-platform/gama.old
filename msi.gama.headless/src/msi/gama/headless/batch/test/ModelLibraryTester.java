@@ -103,7 +103,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 				count[0] += agent.getSummary().size();
 				if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
 						|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0)
-					LOGGER.info(agent.getSummary().toString()); 
+					System.out.println(agent.getSummary().toString()); 
 			}
 		}
 
