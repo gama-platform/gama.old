@@ -558,12 +558,17 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the P value of F statistic fstat with numerator degrees of freedom dfn and denominator degress of freedom dfd. Uses the incomplete Beta function.",
 				comment = "",
-				examples = {})
+				examples = {@example (
+								value = "pValue_for_fStat(1.9,10,12) with_precision(3)",
+								equals = "0.145")}
+				)
+		
+		
 		public static Double opPvalueForFstat(final IScope scope, final Double fstat, final Integer dfn,
 				final Integer dfd) { // see Spatial.Punctual.angle_between
 
 			// Returns the P value of F statistic fstat with numerator degrees
-			// of freedom dfn and denominator degress of freedom dfd.
+			// of freedom dfn and denominator degrees of freedom dfd.
 			// Uses the incomplete Beta function.
 
 			final double x = dfd / (dfd + dfn * fstat);
@@ -591,9 +596,15 @@ public class Stats2 extends Stats {
 				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the P value of the T statistic tstat with df degrees of freedom. This is a two-tailed test so we just double the right tail which is given by studentT of -|tstat|.",
+				value = "Returns the P value of the T statistic tstat with df degrees of freedom. "
+						+ "This is a two-tailed test so we just double the right tail which is given by studentT of -|tstat|.",
 				comment = "",
-				examples = {})
+				examples = {@example (
+								value = "pValue_for_tStat(0.9,10) with_precision(3)",
+								equals = "0.389")}
+				)
+		
+		
 		public static Double opPvalueForTstat(final IScope scope, final Double tstat, final Integer df) {
 
 			// Returns the P value of the T statistic tstat with df degrees of
@@ -887,6 +898,9 @@ public class Stats2 extends Stats {
 				value = "Returns the integral from zero to x of the gamma probability density function.",
 				comment = "incomplete_gamma(a,x) is equal to pgamma(a,1,x).",
 				examples = {})
+		
+		
+		
 		public static Double opGamma(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the integral from zero to x of the gamma probability
@@ -986,7 +1000,14 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the area under the left hand tail (from 0 to x) of the Chi square probability density function with df degrees of freedom.",
 				comment = "",
-				examples = {})
+				examples = {@example (
+						value = "chi_square(20.0,10) with_precision(3)",
+						equals = "0.971")}
+				
+				)
+		
+		
+		
 		public static Double opChiSquare(final IScope scope, final Double x, final Double df) {
 
 			// Returns the area under the left hand tail (from 0 to x) of the
