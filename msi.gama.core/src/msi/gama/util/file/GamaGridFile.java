@@ -39,6 +39,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
@@ -292,14 +293,27 @@ public class GamaGridFile extends GamaGisFile {
 
 	}
 
+	@doc (value= "This file constructor allows to read a asc file or a tif (geotif) file",
+			examples = {
+				@example(value = "file f <- grid_file(\"file.asc\");", isExecutable = false)
+			})
+	
 	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
 
+	@doc (value= "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code, as an int (epsg code)",
+			examples = {
+				@example(value = "file f <- grid_file(\"file.asc\", 32648);", isExecutable = false)
+			})
 	public GamaGridFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
 
+	@doc (value= "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code (epg,...,), as a string ",
+			examples = {
+				@example(value = "file f <- grid_file(\"file.asc\",\"EPSG:32648\");", isExecutable = false)
+			})
 	public GamaGridFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}

@@ -26,6 +26,7 @@ import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -78,19 +79,40 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	 * @param pathName
 	 * @throws GamaRuntimeException
 	 */
+	@doc (value= "This file constructor allows to read an obj file. The associated mlt file have to have the same name as the file to be read.",
+			examples = {
+				@example(value = "file f <- obj_file(\"file.obj\");", isExecutable = false)
+			})
+	
 	public GamaObjFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, (GamaPair<Double, GamaPoint>) null);
 	}
 
+	@doc (value= "This file constructor allows to read an obj file and apply an init rotation to it. The rotation"
+			+ "is a pair angle::rotation vector. The associated mlt file have to have the same name as the file to be read.",
+			examples = {
+				@example(value = "file f <- obj_file(\"file.obj\", 90.0::{-1,0,0});", isExecutable = false)
+			})
+	
 	public GamaObjFile(final IScope scope, final String pathName, final GamaPair<Double, GamaPoint> initRotation)
 			throws GamaRuntimeException {
 		this(scope, pathName, pathName.replace(".obj", ".mtl"), initRotation);
 	}
 
+	@doc (value= "This file constructor allows to read an obj file, using a specific mlt file",
+			examples = {
+				@example(value = "file f <- obj_file(\"file.obj\",\"file.mlt\");", isExecutable = false)
+			})
 	public GamaObjFile(final IScope scope, final String pathName, final String mtlPath) {
 		this(scope, pathName, mtlPath, null);
 	}
 
+	@doc (value= "This file constructor allows to read an obj file, using a specific mlt file, and apply an init rotation to it. The rotation"
+			+ "is a pair angle::rotation vector",
+			examples = {
+				@example(value = "file f <- obj_file(\"file.obj\",\"file.mlt\", 90.0::{-1,0,0});", isExecutable = false)
+			})
+	
 	public GamaObjFile(final IScope scope, final String pathName, final String mtlPath,
 			final GamaPair<Double, GamaPoint> initRotation) {
 		super(scope, pathName, initRotation);
