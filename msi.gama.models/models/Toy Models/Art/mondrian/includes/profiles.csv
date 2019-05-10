@@ -1,0 +1,7 @@
+typo;proportionS;proportionM;proportionL;max_dist_walk;max_dist_bike;max_dist_pev
+young poor;0.4;0.2;0.1;2000;20000;30000
+young rich;0.1;0.2;0.1;1000;5000;10000
+adult poor;0.4;0.2;0.2;1000;3000;5000
+adult rich;0.1;0.1;0.3;500;2000;6000
+old poor;0.2;0.2;0.1;500;1000;2000
+old rich;0.1;0.1;0.3;200;250;500

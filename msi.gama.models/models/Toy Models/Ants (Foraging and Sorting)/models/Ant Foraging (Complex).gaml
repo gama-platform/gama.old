@@ -141,9 +141,38 @@ species ant skills: [moving] control: fsm {
 
 	aspect default {
 		draw square(1) empty: !has_food color: #blue rotate: my heading;
-	} 
-}
+	} }
+	//Simple experiment to display the ants
+experiment Displays type: gui {
+	point quadrant_size <- {0.5, 0.5};
+	float inc <- 0.001;
+	float pos <- 0.0;
 
+	reflex moving_quadrant {
+		pos <- pos + inc;
+		if (pos > 0.5 or pos <= 0) {
+			inc <- -inc;
+		}
+
+	}
+
+	output {
+		display Ants background: #white type: opengl {
+			image '../images/soil.jpg' position: {pos, pos} size: quadrant_size refresh: true;
+			agents "agents" transparency: 0.5 position: {pos, pos} size: quadrant_size value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
+			species ant position: {pos, pos} size: quadrant_size aspect: icon;
+			grid ant_grid lines: #darkgray position: {0.5 - pos, pos} size: quadrant_size;
+			species ant position: {0.5 - pos, pos} size: quadrant_size aspect: info;
+			chart "Proportions carrying: Pie" size: quadrant_size position: {pos, 0.5 - pos} type: pie {
+				data "empty_ants" value: (list(ant) count (!each.has_food)) color: °red;
+				data "carry_food_ants" value: (list(ant) count (each.has_food)) color: °green;
+			}
+
+		}
+
+	}
+
+}
 //Complete experiment that will inspect all ants in a table
 experiment Complete type: gui {
 	parameter 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population';
@@ -179,6 +208,45 @@ experiment Complete type: gui {
 		}
 
 		inspect "All ants" type: table value: ant attributes: ['name', 'location', 'heading', 'state'];
+	}
+
+}
+//Batch experiment to find the best way to maximize the food gathered using exhaustive method
+experiment Batch type: batch repeat: 4 keep_seed: true until: (food_gathered = food_placed) or (time > 1000) {
+	parameter 'Size of the grid:' var: gridsize init: 75 unit: 'width and height';
+	parameter 'Number:' var: ants_number <- 10 among: [10, 20, 50] unit: 'ants';
+	parameter 'Evaporation:' var: evaporation_per_cycle <- 0.1 among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
+	parameter 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.2;
+	method exhaustive maximize: food_gathered;
+	permanent {
+		display Comparison background: #white {
+			chart "Food Gathered" type: series {
+				data "Min" value: min(ants_model collect each.food_gathered) style: spline color: #darkgreen;
+				data "Max" value: max(ants_model collect each.food_gathered) style: spline color: #red;
+			}
+
+		}
+
+	}
+
+}
+
+//Batch experiment to find the best way to maximize the food gathered using genetic method
+experiment Genetic type: batch repeat: 2 keep_seed: true until: (food_gathered = food_placed) or (time > 1000) {
+	parameter 'Size of the grid:' var: gridsize init: 75 unit: '(width and height)';
+	parameter 'Number:' var: ants_number <- 10 among: [10, 20, 50] unit: 'ants';
+	parameter 'Evaporation:' var: evaporation_per_cycle <- 0.1 among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
+	parameter 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.2;
+	method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20;
+	permanent {
+		display Comparison background: #white {
+			chart "Food Gathered" type: series {
+				data "Min" value: min(ants_model collect each.food_gathered) style: spline color: #darkgreen;
+				data "Max" value: max(ants_model collect each.food_gathered) style: spline color: #red;
+			}
+
+		}
+
 	}
 
 }

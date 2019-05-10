@@ -14,8 +14,8 @@ global {
 	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 ;
 	//Diffusion rate for the pheromon diffused among the grid
 	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 ;
-	bool use_icons <- true parameter: true;
-	bool display_state <- false parameter: true;
+	bool use_icons <- true ;
+	bool display_state <- true;
 	//Size of the grid
 	int gridsize <- 75 ;
 	//Center of the grid that will be used as a nest for the ants
