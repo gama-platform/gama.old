@@ -115,6 +115,8 @@ else
 	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then	
 		release_on_demand 
+		release_daily 
+		release_monthly
 	fi	
 fi
 
