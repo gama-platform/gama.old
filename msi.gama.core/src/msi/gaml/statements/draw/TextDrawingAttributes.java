@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.TextDrawingAttributes.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.draw.TextDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -20,7 +20,7 @@ import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class TextDrawingAttributes extends DrawingAttributes {
+public class TextDrawingAttributes extends DrawingAttributes implements Cloneable {
 
 	public final GamaFont font;
 	public final boolean perspective;
@@ -35,9 +35,23 @@ public class TextDrawingAttributes extends DrawingAttributes {
 		this.perspective = perspective == null ? true : perspective.booleanValue();
 	}
 
+	public TextDrawingAttributes copyTranslatedBy(GamaPoint p) {
+		try {
+			TextDrawingAttributes copy = (TextDrawingAttributes) super.clone();
+			copy.geometryProperties = copy.geometryProperties.copy();
+			// GamaPoint p1 = copy.geometryProperties.location;
+			copy.geometryProperties.location = copy.geometryProperties.location.plus(p);
+			// GamaPoint p2 = copy.geometryProperties.location;
+			// DEBUG.OUT("" + p1 + " " + p2);
+			return copy;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
+
 	/**
 	 * Method getMaterial()
-	 * 
+	 *
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
 	 */
 	@Override

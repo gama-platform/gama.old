@@ -24,8 +24,8 @@ public class NetworkMessage implements ConnectorMessage {
 	
 	protected NetworkMessage(final String from, final String data) {
 		this.content = data;
-		this.from = from;
-		this.to = UNDEFINED;
+		this.from = UNDEFINED;
+		this.to = from;
 		isPlainMessage = true;
 	}
 
