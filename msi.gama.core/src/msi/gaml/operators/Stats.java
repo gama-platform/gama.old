@@ -1197,8 +1197,10 @@ public class Stats {
 	@doc (
 			value = "returns a random value from a gamma distribution with specified values of the shape and scale parameters",
 			examples = { @example (
-					value = "gamma_rnd(10.0,5.0)",
-					isExecutable = false) })
+					value = "gamma_distribution_complemented(2,3,0.9) with_precision(3)",
+					equals = "0.731")}
+	)
+	
 	public static Double OpGammaDist(final IScope scope, final Double shape, final Double scale)
 			throws GamaRuntimeException {
 		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(), shape, scale,

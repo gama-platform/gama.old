@@ -1331,8 +1331,12 @@ public abstract class Spatial {
 							@example (
 								value = "geometry shape <- envelope(road_shapefile);", isExecutable = false),
 							@example (
-									value = "// shape is the system variable of  the environment", isExecutable = false)
+								value = "// shape is the system variable of  the environment", isExecutable = false),
+							@example ( 
+								value = "polygon([{0,0}, {20,0}, {10,10}, {10,0}])", equals="create a polygon to get the envolpe", test=false),
+							@example ( value="envelope(polygon([{0,0}, {20,0}, {10,10}, {10,0}])).area",equals="200.0", returnType="float")
 						}
+				
 				)
 		public static IShape envelope(final IScope scope, final Object obj) {
 			Envelope3D env = new Envelope3D(GeometryUtils.computeEnvelopeFrom(scope, obj));

@@ -1,0 +1,250 @@
+/***
+* Name: network test
+* Author: Nicolas Marilleau
+* Description: 
+* Tags: Network
+***/
+
+model networktest
+
+species Person skills:[network]
+{
+	string myGroup;
+	init
+	{
+		do connect with_name:name;
+	}
+}
+
+experiment "Tests for ummisco.gama.network" type: test skills:[network] {
+	bool already_build <- false;
+	string group_spice <- "spice girls";
+	list<string> girls <- ["Victoria","Mel","Melanie","Geri","Emma"];
+	setup
+	{
+		if(!already_build)
+		{
+			create Person with:[name::"Travis", myGroup::"manager"];
+			
+			loop nm over:girls
+			{
+				create Person with:[name::nm, myGroup::group_spice];
+			}
+			already_build <- true;	
+		}
+		ask Person
+		{
+			loop while:self.has_more_message()
+			{
+				message mm<- fetch_message();	
+			}
+		}
+	}
+
+	test "Message sending" {
+		bool test <- false;
+		try{ 
+			ask Person where(each.name = "Travis") {
+				do send to:"Victoria" contents:"Travis is the best tester of the World and of the Universe";
+				 test<-true;
+			}
+		} catch {
+			 test<-false;
+		} 
+		write "Message sending -- done!";
+		assert test;
+	}
+	
+	test "Message receiving" {
+		bool test <- false;
+		ask Person where(each.name = "Travis") {
+				do send to:"Mel" contents:"Travis is the best tester of the World and of the Universe";
+				 test<-true;
+			}
+		float mtime <- machine_time;
+		loop while: ((mtime+1000) > machine_time){ }
+		ask Person where(each.name = "Mel")
+		{
+			do simulate_step;
+			if(length(mailbox)>0) {test<-true;}
+				else {test<-false;}
+		}
+		write "Message receiving -- done!";
+		assert test;	 
+	}
+
+	test "Message contents" {
+		bool test <- false;
+		ask Person where(each.name = "Travis") {
+				do send to:"Melanie" contents:"Travis is the best tester of the World and of the Universe";
+			}
+		float mtime <- machine_time;
+		loop while: ((mtime+1000) > machine_time){ }
+		ask Person where(each.name = "Melanie")
+		{
+			do simulate_step;
+			list<message> msg <- mailbox;
+			if(first(msg).contents = "Travis is the best tester of the World and of the Universe") {
+				
+				test<-true;
+			}
+				else {test<-false;}
+		}
+		write "Message contents -- done!";
+		assert test;	 
+	}
+	
+	test "has_more_element and fetch_message action" {
+		bool a1; 
+		bool a2;
+		bool a3;
+		bool a4;
+		ask Person where(each.name = "Travis") {
+				do send to:"Geri" contents:"Travis is the best tester of the World and of the Universe";
+			}
+		float mtime <- machine_time;
+		loop while: ((mtime+2000) > machine_time){ }
+		ask Person where(each.name = "Geri")
+		{
+			do simulate_step;
+			a1 <- length(mailbox)=1;
+			a2 <- has_more_message();
+			a3 <- first(mailbox) = fetch_message();
+			a4 <- nil = fetch_message();
+		}
+		
+		write "has_more_element and fetch_message action -- done!";
+		assert (a1 and a2 and a3 and a4);
+	}
+	
+	test "network group - broadcast to ALL" {
+		bool a1; 
+		bool a2;
+		bool a3;
+		bool a4;
+		
+		bool p1;
+		bool p2;
+		bool p3;
+		bool p4;
+		ask Person where(each.name = "Travis") {
+				do send to:"ALL" contents:"Travis is the best tester of the World and of the Universe";
+			}
+		float mtime <- machine_time;
+		loop while: ((mtime+2000) > machine_time){ }
+		ask Person where(each.name = "Victoria")
+		{
+			do simulate_step;
+			a1 <- length(mailbox)=1;
+			a2 <- has_more_message();
+			a3 <- first(mailbox) = fetch_message();
+			a4 <- nil = fetch_message();
+		}
+		p1 <- (a1 and a2 and a3 and a4);
+		ask Person where(each.name = "Mel")
+		{
+			a1 <- length(mailbox)=1;
+			a2 <- has_more_message();
+			a3 <- first(mailbox) = fetch_message();
+			a4 <- nil = fetch_message();
+		}
+		p2 <- (a1 and a2 and a3 and a4);
+		ask Person where(each.name = "Geri")
+		{
+			a1 <- length(mailbox)=1;
+			a2 <- has_more_message();
+			a3 <- first(mailbox) = fetch_message();
+			a4 <- nil = fetch_message();
+		}
+		p3 <- (a1 and a2 and a3 and a4);
+		ask Person where(each.name = "Travis")
+		{
+			do simulate_step;
+			a1 <- length(mailbox)=1;
+			a2 <- has_more_message();
+			a3 <- first(mailbox) = fetch_message();
+			a4 <- nil = fetch_message();
+		}
+		p4 <- (a1 and a2 and a3 and a4);
+		write "network group -- done!";
+		assert (p1 and p2 and p3 and p4);
+	}
+
+	test "network group - broadcast to group Spice girl" {
+		
+		string grp<- group_spice;
+		bool a1; 
+		bool a2;
+		bool a3;
+		bool a4;
+		
+		bool p1 <- true;
+		
+		//travis send a message to Spice Girl group which contain nobody
+		ask Person where(each.name = "Travis") {
+				do send to:grp contents:"Travis is the best tester of the World and of the Universe";
+		}
+		float mtime <- machine_time;
+		loop while: ((mtime+2000) > machine_time){ }
+
+		//nobody receive the message
+		ask Person where(each.myGroup = grp)
+		{
+			do simulate_step;
+			p1 <- p1 and length(mailbox)=0;
+	
+		}
+		//create the Spice Girl group
+		ask Person where(each.myGroup = grp)
+		{
+			do join_group with_name:grp;
+		}
+		//travis send message to Spice Girl
+		ask Person where(each.name = "Travis") {
+				do send to:grp contents:"Travis is the best tester of the World and of the Universe";
+		}
+		
+		//check if Spice Girls recieve the message with a good quality
+		ask Person where(each.myGroup = grp)
+		{
+			do simulate_step;
+			a1 <- length(mailbox)=1;
+			a2 <- has_more_message();
+			a3 <- first(mailbox) = fetch_message();
+			a4 <- nil = fetch_message();
+			p1 <- p1 and (a1 and a2 and a3 and a4);
+	
+		}
+		
+		//but Travis don't receive the message
+		ask Person where(each.name = "Travis")
+		{
+			do simulate_step;
+			a1 <- length(mailbox)=0;
+			p1 <- p1 and (a1);
+		}
+		
+		//leave the spice girls group
+		ask Person where(each.myGroup = grp)
+		{
+			do leave_group with_name:grp;
+		}
+		
+		//Travis send again a message to spice girl group
+		ask Person where(each.name = "Travis") {
+				do send to:grp contents:"Travis is the best tester of the World and of the Universe";
+		}
+		
+		//nobody receive the message because they leave the group
+		ask Person where(each.myGroup = grp)
+		{
+			do simulate_step;
+			p1 <- p1 and length(mailbox)=0;
+	
+		}
+		
+		write "network group Spice Girls -- done!";
+		assert (p1);
+	}
+	
+}
