@@ -90,7 +90,8 @@ public abstract class Connector implements IConnector {
 	protected void storeMessage(final String topic, final String content) throws GamaNetworkException {
 		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
 		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(topic, content);
-		pushAndFetchthreadSafe(Connector.PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, msg.getReceiver(), msg);
+		if(!this.localMemberNames.containsKey(msg.getSender()))
+			pushAndFetchthreadSafe(Connector.PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, msg.getReceiver(), msg);
 	}
 
 	private Map<IAgent, LinkedList<ConnectorMessage>> pushAndFetchthreadSafe(final int action, final String groupName,
@@ -123,20 +124,17 @@ public abstract class Connector implements IConnector {
 
 	@Override
 	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
-		if (!(this.forceNetworkUse)&&this.boxFollower.containsKey(receiver)) {
-			List<IAgent> dests = boxFollower.get(receiver);
-			for(IAgent dest:dests)
-				this.receivedMessage.get(dest).push(
-						new LocalMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content));
+		if ( !(this.forceNetworkUse)&& this.boxFollower.containsKey(receiver)) {
+			ConnectorMessage msg =new LocalMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content);
+			this.pushAndFetchthreadSafe(PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, receiver, msg);
 		}
 		
-		if ((this.forceNetworkUse)||!this.localMemberNames.containsKey(receiver))
+		if (!this.localMemberNames.containsKey(receiver))
 		{
 			final CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(), content);
 			if (cmsg.getSender() instanceof IAgent) {
 				cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
 			}
-			// final String mss = StreamConverter.convertObjectToStream(sender.getScope(), cmsg);
 			final NetworkMessage msg = MessageFactory.buildNetworkMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME),
 					receiver, StreamConverter.convertObjectToStream(sender.getScope(), cmsg));
 			this.sendMessage(sender, receiver, MessageFactory.packMessage(msg));
@@ -150,7 +148,6 @@ public abstract class Connector implements IConnector {
 
 	@Override
 	public void close(final IScope scope) throws GamaNetworkException {
-		System.out.println("close connexion ");
 		releaseConnection(scope);
 		topicSuscribingPending.clear();
 		boxFollower.clear();
@@ -190,7 +187,7 @@ public abstract class Connector implements IConnector {
 	@Override
 	public void connect(final IAgent agent) throws GamaNetworkException {
 		final String netAgent = (String) agent.getAttribute(INetworkSkill.NET_AGENT_NAME);
-		if(!(this.localMemberNames.containsKey(netAgent)))
+		if(!this.forceNetworkUse&&!(this.localMemberNames.containsKey(netAgent)))
 		{
 			this.localMemberNames.put(netAgent,agent);
 		}
