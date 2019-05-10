@@ -1331,8 +1331,12 @@ public abstract class Spatial {
 							@example (
 								value = "geometry shape <- envelope(road_shapefile);", isExecutable = false),
 							@example (
-									value = "// shape is the system variable of  the environment", isExecutable = false)
+								value = "// shape is the system variable of  the environment", isExecutable = false),
+							@example ( 
+								value = "polygon([{0,0}, {20,0}, {10,10}, {10,0}])", equals="create a polygon to get the envolpe", test=false),
+							@example ( value="envelope(polygon([{0,0}, {20,0}, {10,10}, {10,0}])).area",equals="200.0", returnType="float")
 						}
+				
 				)
 		public static IShape envelope(final IScope scope, final Object obj) {
 			Envelope3D env = new Envelope3D(GeometryUtils.computeEnvelopeFrom(scope, obj));
@@ -4688,7 +4692,10 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "IDW([ag1, ag2, ag3, ag4, ag5],[{10,10}::25.0, {10,80}::10.0, {100,10}::15.0], 2)",
 						equals = "for example, can return [ag1::12.0, ag2::23.0,ag3::12.0,ag4::14.0,ag5::17.0]",
-						isExecutable = false) })
+						isExecutable = true) })
+		@test("map<point, float> mapLocationPoints <- [{0,0}::10,{0,10}::-3];\r\n" + 
+				"		list<point> queryPoint <- [{0,5}];\r\n" + 
+				"		float((IDW(list(geometry(queryPoint)),mapLocationPoints,1)).pairs[0].value) with_precision 1 = 3.5")
 		public static GamaMap<IShape, Double> primIDW(final IScope scope,
 				final IContainer<?, ? extends IShape> geometries, final GamaMap points,
 				final int power) {
