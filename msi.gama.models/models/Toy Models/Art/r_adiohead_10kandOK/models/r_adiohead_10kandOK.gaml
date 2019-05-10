@@ -4,7 +4,7 @@
 * Description: Forked from agrignard/r_adiohead_10kandOK forked from dataarts/radiohead) implemented on GAMA 1.8
 * Tags: art
 */
-model hail_to_the_gam_ashapedthom_10K_comp
+model in_hail_to_the_gam_ashapedthom_10K_comp
 
 global{
   bool m_ight_be_wrong <- true;
@@ -12,16 +12,16 @@ global{
   float no_surprises <- 1.0;
   point the_bend <-{1,1,1}; 
   point everything_in_its_right_place <-{0,0,0};
-  matrix<float,float> idioteque;
+  matrix<float> idioteque;
   init {
-    idioteque <- matrix(csv_file("../includes/ok_computer.csv",""));
+    idioteque <- matrix<float>(csv_file("../includes/ok_computer.csv",""));
     everything_in_its_right_place<-{min(column_at (idioteque , 0)),min(column_at (idioteque , 1)),min(column_at (idioteque , 2))};
     shape<- box(max(column_at (idioteque , 0))-min(column_at (idioteque , 0)),max(column_at (idioteque , 1))-min(column_at (idioteque , 1)),max(column_at (idioteque , 2))-(min(column_at (idioteque , 2)))) 
     at_location {(max(column_at (idioteque , 0))-min(column_at (idioteque , 0)))/2,(max(column_at (idioteque , 1))-min(column_at (idioteque , 1)))/2,min(column_at (idioteque , 2))};
 	loop i from: 1 to: idioteque.rows -1{
 	  create inCloud{		
-	    location<-{-everything_in_its_right_place.x+float(idioteque[0,i]),-everything_in_its_right_place.y+float(idioteque[1,i]),(float(idioteque[2,i]))-everything_in_its_right_place.z};	
-		myxomatosis<-float(idioteque[3,i]);
+	    location<-{-everything_in_its_right_place.x+idioteque[0,i],-everything_in_its_right_place.y+idioteque[1,i],(idioteque[2,i])-everything_in_its_right_place.z};	
+		myxomatosis<-idioteque[3,i];
       }	  
 	}
   }
