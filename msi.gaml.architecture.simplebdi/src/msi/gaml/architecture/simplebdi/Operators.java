@@ -473,7 +473,7 @@ public class Operators {
 			examples = @example (
 					value = "get_truth(pred1)",
 					isExecutable = false))
-	@test ("get_truth(new_predicate('test1')) = true")
+	@test ("get_truth(new_predicate('test1')).equals(true)")
 	public static Boolean getTruth(final Predicate pred) {
 		if (pred != null) {
 			return pred.is_true;
