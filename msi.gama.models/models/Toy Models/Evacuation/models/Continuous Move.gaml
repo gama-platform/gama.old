@@ -22,8 +22,9 @@ global {
 	int nb_people <- 500;
 	//Point to evacuate
 	point target_point <- {shape.width, 0};
-	init { 
-		
+	init {  
+		matrix a;
+		int spop;
 		free_space <- copy(shape);
 		//Creation of the buildinds
 		create building from: building_shapefile {
@@ -33,7 +34,7 @@ global {
 		//Simplification of the free_space to remove sharp edges
 		free_space <- free_space simplification(1.0);
 		//Creation of the people agents
-		create people number: nb_people {
+		create people number: spop - int(sum(a rows_at 1)) {
 			//People agents are placed randomly among the free space
 			location <- any_location_in(free_space);
 			target_loc <-  target_point;
@@ -42,6 +43,7 @@ global {
 }
 //Species which represent the building 
 species building {
+	int pop;
 	//Height of the buildings
 	float height <- 3.0 + rnd(5);
 	aspect default {

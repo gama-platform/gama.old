@@ -117,6 +117,7 @@ else
 		commit_io_website_files
 	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
+		embed_jdk
 		release
 	fi	
 fi
