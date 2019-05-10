@@ -628,7 +628,13 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the area to the left of x in the Student T distribution with the given degrees of freedom.",
 				comment = "",
-				examples = {})
+				examples = {@example (
+						value = "student_area(1.64,3) with_precision(2)",
+						equals = "0.9")}
+				)
+		
+		
+		
 		public static Double opStudentArea(final IScope scope, final Double x, final Integer df) {
 
 			// Returns the area to the left of x in the Student T distribution
