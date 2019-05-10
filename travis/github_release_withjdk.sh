@@ -69,9 +69,7 @@ echo "Creating release from $RELEASE tag..."
 echo 
 LK="https://api.github.com/repos/gama-platform/gama/releases"
 
-  RESULT=` curl -s -X GET \
-  -H "X-Parse-Application-Id: sensitive" \
-  -H "X-Parse-REST-API-Key: sensitive" \
+  RESULT=` curl -s \ 
   -H "Authorization: token $HQN_TOKEN"   \
   -H "Content-Type: application/json" \
   -d '{"tag_name": "$RELEASE", "name":"$RELEASE","body":"this is a $RELEASE release"}' \
