@@ -1,5 +1,5 @@
 /***
-* Name: ToolsPanel
+* Name: MASKmeansInteractive
 * Author: Jean-Daniel Zucker
 * Description: Model which shows how to use the event layer to place points and initial centroids
 * to see the impact of choosing. 
@@ -60,9 +60,21 @@ global {
 		
 				
 			match 2 {
-				list<agent> close_ag <- agents overlapping (circle(1) at_location #user_location);
+				list<agent> close_ag <- agents overlapping (circle(5) at_location #user_location);
 				if not empty(close_ag) {
-					ask close_ag closest_to #user_location {do die;}
+					ask close_ag closest_to #user_location {
+						if (species(self) = datapoints ) {
+							ask datapoints(self).mycenter {
+								mypoints >> myself;
+							}
+						} else {
+							ask centroids(self).mypoints {
+								mycenter <- nil;
+								color_kmeans <- rgb(225,225,225) ;
+							}
+						}
+						do die;
+					}
 				}
 				
 			}
