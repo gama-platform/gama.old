@@ -22,10 +22,10 @@ public class NetworkMessage implements ConnectorMessage {
 	private final String content;
 	protected boolean isPlainMessage = false;
 	
-	protected NetworkMessage(final String from, final String data) {
+	protected NetworkMessage(final String to, final String data) {
 		this.content = data;
 		this.from = UNDEFINED;
-		this.to = from;
+		this.to = to;
 		isPlainMessage = true;
 	}
 
