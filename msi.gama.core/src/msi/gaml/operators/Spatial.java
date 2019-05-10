@@ -4739,7 +4739,7 @@ public abstract class Spatial {
 						value = "return the Moran Index of the given list of interest points (list of floats) and the weight matrix (matrix of float)",
 						examples = { @example (
 								value = "moran([1.0, 0.5, 2.0], weight_matrix)",
-								equals = "the Moran index computed",
+								equals = "the Moran index is computed",
 								test = false,
 								isExecutable = false) }) })
 		public static double moranIndex(final IScope scope, final IList<Double> vals, final IMatrix<Double> mat) {
