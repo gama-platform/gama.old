@@ -2130,6 +2130,7 @@ public abstract class Spatial {
 								value = "shape - 5",
 								equals = "a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5",
 								test = false) }) })
+		@test(" square(20) reduced_by square(10) = polygon([{40,60},{60,60},{60,40},{40,40},{40,60},{45,55}, {55,55}, {55,45}, {45,45}, {45,55}])")
 		public static IShape reduced_by(final IScope scope, final IShape g, final Double size) {
 			if (g == null) { return null; }
 			return enlarged_by(scope, g, -size);
