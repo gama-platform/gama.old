@@ -742,7 +742,11 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the x in the normal distribution with the given mean and standard deviation, to the left of which lies the given area. normal.Inverse returns the value in terms of standard deviations from the mean, so we need to adjust it for the given mean and standard deviation.",
 				comment = "",
-				examples = {})
+				examples = {@example (
+						value = "normal_inverse(0.98,0,1) with_precision(2)",
+						equals = "2.05")}
+				
+				)
 		public static Double opNormalInverse(final IScope scope, final Double area, final Double mean,
 				final Double sd) {
 
