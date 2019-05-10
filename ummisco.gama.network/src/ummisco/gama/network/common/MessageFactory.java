@@ -47,10 +47,10 @@ public final class MessageFactory {
 	}
 	
 	
-	public static NetworkMessage unPackNetworkMessage(final String sender, final String data) {
+	public static NetworkMessage unPackNetworkMessage(final String reciever, final String data) {
 		final String key = new String(keyChain);
 		if (!data.substring(0, keyChain.length).equals(key))
-			return new NetworkMessage(sender, data);
+			return new NetworkMessage(reciever, data);
 
 		final int size = MAX_HEADER_SIZE < data.length() ? MAX_HEADER_SIZE : data.length();
 		final String header = data.substring(0, size);
