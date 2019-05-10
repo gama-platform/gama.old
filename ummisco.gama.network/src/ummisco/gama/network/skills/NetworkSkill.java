@@ -271,13 +271,14 @@ public class NetworkSkill extends MessagingSkill {
 	  @SuppressWarnings("unchecked")
 	@action(name = INetworkSkill.REGISTER_TO_GROUP, args = {
 	 
-	  @arg(name = INetworkSkill.TO, type = IType.STRING, optional = false, doc = @doc("")) }, doc = @doc(value = "",
+	  @arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = false, doc = @doc("")) }, doc = @doc(value = "",
 	  returns = "", examples = {
 	 
 	  @example("") })) public void registerToGroup(final IScope scope) { 
 		  IAgent agent = scope.getAgent(); 
-			String groupName = (String)scope.getArg(INetworkSkill.TO, IType.STRING);
-			joinAGroup(scope, agent, groupName);
+			String groupName = (String)scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
+			if(groupName != null)
+				joinAGroup(scope, agent, groupName);
 	  }
 	  
 	  public void joinAGroup(final IScope scope, final IAgent agent, String groupName) {
@@ -300,7 +301,7 @@ public class NetworkSkill extends MessagingSkill {
 	@action (
 			name = INetworkSkill.LEAVE_THE_GROUP, 
 			args = { @arg (
-					name = INetworkSkill.FROM,
+					name = INetworkSkill.WITHNAME,
 					type = IType.STRING,
 					optional = false,
 					doc = @doc ("name of the group the agent wants to leave")) }, 
@@ -310,7 +311,9 @@ public class NetworkSkill extends MessagingSkill {
 					examples = { @example (" do leave_the_group from: \"my_group\";\n") }))
 	public void leaveTheGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
-		final String groupName = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
+		final String groupName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
+		if(groupName == null)
+			return;
 		ArrayList<String> groups = (ArrayList<String>) agent.getAttribute(INetworkSkill.NET_AGENT_GROUPS); 
 		 
 		if(groups.contains(groupName))
