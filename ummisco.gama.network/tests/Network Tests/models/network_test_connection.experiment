@@ -9,11 +9,13 @@ model networktest
 
 experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 	test "Action connect to the MQTT server" {
+		bool res <- false;
 		try{ 
 			do connect with_name:"Travis";
-			 assert true;
+			 res <- true;
 		} catch {
-			 assert false;
+			  res <- false;
 		} 
+		assert res;
 	}
 }
