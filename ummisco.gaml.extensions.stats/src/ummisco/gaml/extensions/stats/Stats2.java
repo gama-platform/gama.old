@@ -1197,8 +1197,15 @@ public class Stats2 extends Stats {
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = "Returns the complemented regularized incomplete Gamma function of the argument a and integration start point x.",
-				comment = "",
-				examples = {})
+				comment = "Is the complement to 1 of incomplete_gamma.",
+				examples = {@example (
+						value = "incomplete_gamma_complement(1,5.3) with_precision(3)",
+						equals = "0.005")
+				
+		})
+		
+		
+		
 		public static Double opIncompleteGammaComplement(final IScope scope, final Double a, final Double x) {
 			// Returns the complemented regularized incomplete Gamma function of
 			// the
