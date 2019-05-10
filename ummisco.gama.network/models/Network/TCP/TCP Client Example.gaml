@@ -11,7 +11,7 @@ global
 {
 	init
 	{
-		create Networking_Client number:1
+		create Networking_Client number:3
 		{
 			do connect to: "localhost" protocol: "tcp_client" port: 3001 with_name: "Client";
 			do join_group with_name:"test";
@@ -27,18 +27,20 @@ species Networking_Client skills: [network]
 	string dest;
 	reflex receive
 	{
-		if (length(mailbox) > 0)
-		{
-			write mailbox;
-		}
-
+			write "** name ********************";
+			loop while:has_more_message()
+			{
+				message mm <- fetch_message();
+				write mm.contents;
+			}
+			write "** name ********************";
+		
 	}
 
 	reflex send
 	{
-		write "sending message ";
-		do send to: "Server0" contents: name + " " + cycle + " sent to server";
-		do send to: "test" contents: name + " broadcast a message ";
+		//do send to: "Server0" contents: name + " " + cycle + " sent to server";
+		//do send to: "test" contents: name + " broadcast a message ";
 	}
 
 }
