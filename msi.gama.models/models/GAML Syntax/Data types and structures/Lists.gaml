@@ -61,9 +61,6 @@ species declaring_list_attributes {
 		write sample(untyped_list);
 		write sample(recasted_list_with_int);
 		write "";
-		// Declaring temporary variables of type list follows the same pattern
-		// but there are fewer facets available (notably, "size:" or "fill_with:").
-		list<string> list_of_string <- ['A','B','C'];
 		// lists are not always declared litterally and can be obtained from various elements
 		// by using the casting 'list()' operator
 		// for instance, list(species_name) will return a list of all the instances of species_name

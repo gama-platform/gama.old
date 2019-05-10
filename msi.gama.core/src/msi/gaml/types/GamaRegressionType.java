@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -17,9 +18,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaRegression;
 
-@SuppressWarnings("unchecked")
+
 @type(name = "regression", id = IType.REGRESSION, wraps = {
-		GamaRegression.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE })
+		GamaRegression.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE },
+				doc = {@doc(value = "Type of variables that enables to learn a regression function and to use it to predict new values")})
 public class GamaRegressionType extends GamaType<GamaRegression> {
 
 	@Override

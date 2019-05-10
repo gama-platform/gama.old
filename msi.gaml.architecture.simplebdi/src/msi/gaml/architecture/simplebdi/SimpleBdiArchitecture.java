@@ -50,132 +50,162 @@ import msi.gaml.types.Types;
 		@variable (
 				name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE,
 				type = IType.BOOL,
-				init = "false"),
+				init = "false",
+		doc = @doc ("indicates if the choice is deterministic or probabilistic")),
 		@variable (
 				name = SimpleBdiArchitecture.USE_EMOTIONS_ARCHITECTURE,
 				type = IType.BOOL,
-				init = "false"),
+				init = "false",
+				doc = @doc ("indicates if emotions are automaticaly computed")),
 		@variable (
 				name = SimpleBdiArchitecture.USE_SOCIAL_ARCHITECTURE,
 				type = IType.BOOL,
-				init = "false"),
+				init = "false",
+				doc = @doc ("indicates if social relations are automaticaly computed")),
 		@variable (
 				name = SimpleBdiArchitecture.USE_PERSONALITY,
 				type = IType.BOOL,
-				init = "false"),
+				init = "false",
+				doc = @doc("indicates if the personnality is used")),
 		@variable (
 				name = SimpleBdiArchitecture.USE_NORMS,
 				type = IType.BOOL,
-				init = "false"),
+				init = "false",
+				doc = @doc("indicates if the normative engine is used")),
 		@variable (
 				name = SimpleBdiArchitecture.USE_PERSISTENCE,
 				type = IType.BOOL,
-				init = "false"),
+				init = "false", 
+				doc = @doc("indicates if the persistence coefficient is computed with personality (false) or with the value given by the modeler")),
 		@variable (
 				name = SimpleBdiArchitecture.OBEDIENCE,
 				type = IType.FLOAT,
-				init = "1.0"),
+				init = "1.0",
+				doc = @doc("an obedience value. By default, it is computed with personality")),
 		@variable (
 				name = SimpleBdiArchitecture.CHARISMA,
 				type = IType.FLOAT,
-				init = "1.0"),
+				init = "1.0",
+				doc = @doc("a charisma value. By default, it is computed with personality")),
 		@variable (
 				name = SimpleBdiArchitecture.RECEPTIVITY,
 				type = IType.FLOAT,
-				init = "1.0"),
+				init = "1.0",
+				doc = @doc("a receptivity value. By default, it is computed with personality")),
 		@variable (
 				name = SimpleBdiArchitecture.OPENNESS,
 				type = IType.FLOAT,
-				init = "0.5"),
+				init = "0.5",
+				doc = @doc("an openness value for the personality")),
 		@variable (
 				name = SimpleBdiArchitecture.CONSCIENTIOUSNESS,
 				type = IType.FLOAT,
-				init = "0.5"),
+				init = "0.5",
+				doc = @doc("a conscientiousness value for the personality")),
 		@variable (
 				name = SimpleBdiArchitecture.EXTRAVERSION,
 				type = IType.FLOAT,
-				init = "0.5"),
+				init = "0.5",
+				doc = @doc("an extraversion value for the personality")),
 		@variable (
 				name = SimpleBdiArchitecture.AGREEABLENESS,
 				type = IType.FLOAT,
-				init = "0.5"),
+				init = "0.5",
+				doc = @doc("an agreeableness value for the personality")),
 		@variable (
 				name = SimpleBdiArchitecture.NEUROTISM,
 				type = IType.FLOAT,
-				init = "0.5"),
+				init = "0.5",
+				doc = @doc("a neurotism value for the personality")),
 		@variable (
 				name = SimpleBdiArchitecture.BELIEF_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the belief base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.LAST_THOUGHTS,
 				type = IType.LIST,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the list of the last thoughts of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.INTENTION_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
-				init = "[]"),
+				init = "[]",
+						doc = @doc("the intention base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.EMOTION_BASE,
 				type = IType.LIST,
 				of = EmotionType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the emotion base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.DESIRE_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the desire base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.OBLIGATION_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the obligation base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.UNCERTAINTY_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the uncertainty base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.IDEAL_BASE,
 				type = IType.LIST,
 				of = MentalStateType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the ideal base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.LAW_BASE,
 				type = IType.LIST,
 				of = IType.NONE,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the law base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.PLAN_BASE,
 				type = IType.LIST,
 				of = BDIPlanType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the plan base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.NORM_BASE,
 				type = IType.LIST,
 				of = NormType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the norm base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.SANCTION_BASE,
 				type = IType.LIST,
 				of = SanctionType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the sanction base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.SOCIALLINK_BASE,
 				type = IType.LIST,
 				of = SocialLinkType.id,
-				init = "[]"),
+				init = "[]",
+				doc = @doc("the social link base of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.CURRENT_PLAN,
-				type = IType.NONE/* BDIPlanType.id */),
+				type = IType.NONE/* BDIPlanType.id */,
+				doc = @doc("thecurrent plan of the agent")),
 		@variable (
 				name = SimpleBdiArchitecture.CURRENT_NORM,
-				type = IType.NONE/* NormType.id */) })
+				type = IType.NONE/* NormType.id */,
+				doc = @doc("the current norm of the agent")) })
 @skill (
 		name = SimpleBdiArchitecture.SIMPLE_BDI,
 		concept = { IConcept.BDI, IConcept.ARCHITECTURE })
+@doc("this arcitecture enables to define a behaviour using BDI. It is an implementation of the BEN architecture (Behaviour with Emotions and Norms)")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SimpleBdiArchitecture extends ReflexArchitecture {
 

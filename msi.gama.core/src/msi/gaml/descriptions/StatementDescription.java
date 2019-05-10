@@ -303,7 +303,12 @@ public class StatementDescription extends SymbolDescription {
 			} else if (hasFacet(OVER)) {
 				final IExpression expr = getFacetExpr(OVER);
 				if (expr != null) {
-					t = expr.getGamlType().getContentType();
+					// If of type pair, find the common supertype of key and contents
+					if (Types.PAIR.isAssignableFrom(expr.getGamlType()))
+						t = GamaType.findCommonType(expr.getGamlType().getContentType(),
+								expr.getGamlType().getKeyType());
+					else
+						t = expr.getGamlType().getContentType();
 				}
 			} else if (hasFacet(FROM) && hasFacet(TO)) {
 				final IExpression expr = getFacetExpr(FROM);

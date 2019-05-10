@@ -3,6 +3,7 @@ package msi.gaml.architecture.simplebdi;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -10,8 +11,6 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
@@ -20,8 +19,7 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
-
-//classe définissant le statement sanction, sur le modèle du statement norm ou plan
+@doc("declare the actions an agent execute when enforcing norms of others during a perception")
 public class SanctionStatement extends AbstractStatementSequence{
 
 	public static final String SANCTION = "sanction";

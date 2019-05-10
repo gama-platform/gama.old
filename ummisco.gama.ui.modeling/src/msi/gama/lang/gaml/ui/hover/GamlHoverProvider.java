@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
@@ -44,11 +44,14 @@ import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_Do;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
+import msi.gama.lang.gaml.gaml.VarDefinition;
+import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
@@ -237,9 +240,20 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		}
 		if (o instanceof S_Global) { return "Global definitions of " + getFirstLine(o.eContainer().eContainer()); }
 		final Statement s = EGaml.getStatement(o);
-		if (o instanceof TypeRef && s instanceof S_Definition
-				&& ((S_Definition) s).getTkey() == o) { return getFirstLine(s); }
-
+		if (o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
+			return getFirstLine(s);
+		}
+		// Case of do xxx;
+		if (o instanceof VariableRef && o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
+			VarDefinition vd = ((VariableRef) o).getRef();
+			final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
+			if (description != null) {
+				String result = description.getTitle();
+				if (result == null || result.isEmpty()) { return ""; }
+				result = "<b>" + result + "</b>";
+				return result;
+			}
+		}
 		if (o instanceof Function) {
 			final ActionRef ref = getActionFrom((Function) o);
 			if (ref != null) {

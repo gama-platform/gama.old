@@ -697,6 +697,28 @@ public abstract class Spatial {
 			if (side_size <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
+		
+		@operator (
+				value = "triangle",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
+		@doc (
+				value = "A triangle geometry which the base and height size are given by the operand.",
+				usages = { @usage ("returns nil if one of the operand is nil.") },
+				comment = "the center of the triangle is by default the location of the current agent in which has been called this operator.",
+				examples = { @example (
+						value = "triangle(5, 10)",
+						equals = "a geometry as a triangle with a base of 5m and a height of 10m.",
+						test = false) },
+				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
+						"square" })
+		public static IShape triangle(final IScope scope, final Double base, final Double height) {
+			ILocation location;
+			final IAgent a = scope.getAgent();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ((base <= 0) || (height <= 0)) { return new GamaShape(location); }
+			return GamaGeometryType.buildTriangle(base, height, location);
+		}
 
 		@operator (
 				value = "pyramid",
@@ -1170,6 +1192,8 @@ public abstract class Spatial {
 				,
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle" })
+		@test("points_along(line({0,0},{0,10}),[0.5])[0] = point({0,5})")
+
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points) {
 			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -2340,7 +2364,10 @@ public abstract class Spatial {
 						value = "solid(self)",
 						equals = "the geometry corresponding to the geometry of the agent applying the operator without "
 								+ "its holes.",
-						test = false) })
+						test = false),
+						@example (
+								value = "without_holes(polygon([{0,50}, {0,0}, {50,0}, {50,50}, {0,50}]) - square(10) at_location {10,10}).area",
+								equals="2500.0",returnType="float") })
 		public static IShape without_holes(final IScope scope, final IShape g) {
 			if (g == null) { return null; }
 			final Geometry geom = g.getInnerGeometry();
@@ -2930,6 +2957,7 @@ public abstract class Spatial {
 						value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
 						equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
 						test = false) })
+		@test("split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])]) = [line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) , line([{10,10}, {10,20}])]")
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms)
 				throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
@@ -3276,6 +3304,7 @@ public abstract class Spatial {
 						equals = "the direction between ag1 and ag2 considering the topology my_topology",
 						isExecutable = false) },
 				see = { "towards", "direction_to", "distance_to", "distance_between", "path_between", "path_to" })
+		@test("topology(world) direction_between([{0,0},{50,50}]) = 45.0")
 		public static Double direction_between(final IScope scope, final ITopology t,
 				final IContainer<?, IShape> geometries) throws GamaRuntimeException {
 			final int size = geometries.length(scope);
@@ -4700,7 +4729,7 @@ public abstract class Spatial {
 						value = "IDW([ag1, ag2, ag3, ag4, ag5],[{10,10}::25.0, {10,80}::10.0, {100,10}::15.0], 2)",
 						equals = "for example, can return [ag1::12.0, ag2::23.0,ag3::12.0,ag4::14.0,ag5::17.0]",
 						isExecutable = false) })
-		@test("map<point, float> mapLocationPoints <- [{0,0}::10,{0,10}::-3];\r\n" + 
+		@test("map<point, float> mapLocationPoints <- [{0,0}::10.0,{0,10}::-3.0];\r\n" + 
 				"		list<point> queryPoint <- [{0,5}];\r\n" + 
 				"		float((IDW(list(geometry(queryPoint)),mapLocationPoints,1)).pairs[0].value) with_precision 1 = 3.5")
 		public static GamaMap<IShape, Double> primIDW(final IScope scope,

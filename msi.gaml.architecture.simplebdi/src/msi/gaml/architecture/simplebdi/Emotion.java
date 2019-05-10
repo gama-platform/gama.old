@@ -2,6 +2,7 @@ package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -10,9 +11,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ @variable(name = "name", type = IType.STRING), @variable(name = "intensity", type = IType.FLOAT),
-		@variable(name = "about", type = PredicateType.id), @variable(name = "decay", type = IType.FLOAT),
-		@variable(name = "agentCause", type = IType.AGENT), @variable(name = "owner", type = IType.AGENT)})
+@vars({ @variable(name = "name", type = IType.STRING, doc = @doc("the name of the emotion")), 
+		@variable(name = "intensity", type = IType.FLOAT, doc = @doc("the intensity of the emotion")),
+		@variable(name = "about", type = PredicateType.id, doc = @doc("the predicate about which is the emotion")),
+		@variable(name = "decay", type = IType.FLOAT, doc = @doc("the decay value of the emotion")),
+		@variable(name = "agentCause", type = IType.AGENT, doc = @doc("the agent causing the emotion")),
+		@variable(name = "owner", type = IType.AGENT, doc = @doc("the agent owning the emotion"))})
 public class Emotion implements IValue {
 
 	String name;
@@ -21,7 +25,7 @@ public class Emotion implements IValue {
 	Double decay = 0.0;
 	IAgent agentCause;
 	IAgent owner;
-	private boolean noAgentCause = true;
+	private boolean noAgentCause = true; 
 	private boolean noIntensity = true;
 	private boolean noAbout = true;
 

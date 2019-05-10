@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.GeometricProperties.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.draw.GeometricProperties.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -14,7 +14,7 @@ import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 
-public class GeometricProperties {
+public class GeometricProperties implements Cloneable {
 
 	GamaPoint location;
 	Scaling3D size;
@@ -146,6 +146,10 @@ public class GeometricProperties {
 		Double getHeight() {
 			return depth;
 		}
+	}
+
+	public GeometricProperties copy() throws CloneNotSupportedException {
+		return (GeometricProperties) super.clone();
 	}
 
 }

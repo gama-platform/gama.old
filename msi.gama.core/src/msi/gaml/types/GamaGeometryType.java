@@ -234,20 +234,37 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(m.buffer(0.0));
 	}
 
-	// Maybe a bit overkill, but the list of points is created *and* validated
-	// by the call to buildPolygon()
+	public static IShape buildTriangle(final double base, final double height, final ILocation location) {
+		final Coordinate[] points = new Coordinate[4];
+		double z = location == null ? 0.0 : location.getZ();
+		points[0] = (new GamaPoint(-base/2.0, height/2, z));
+		points[1] = (new GamaPoint(0 ,- height/2, z));
+		points[2] = (new GamaPoint(base/2.0, height/2, z));
+		points[3] = points[0];
+		final CoordinateSequenceFactory fact = GamaGeometryFactory.COORDINATES_FACTORY;
+		final CoordinateSequence cs = fact.create(points);
+		final LinearRing geom = GeometryUtils.GEOMETRY_FACTORY.createLinearRing(cs);
+		final Polygon p = GeometryUtils.GEOMETRY_FACTORY.createPolygon(geom, null);
+		IShape s = new GamaShape(p);
+		if (location != null)s.setLocation(location);
+		return s;
+	}
+	
 	public static IShape buildTriangle(final double side_size, final ILocation location) {
-		final double sqrt2 = FastMath.sqrt(2.0);
+		double h = FastMath.sqrt(3)/2 *side_size;
+		final Coordinate[] points = new Coordinate[4];
 		final double x = location == null ? 0 : location.getX();
 		final double y = location == null ? 0 : location.getY();
 		final double z = location == null ? 0 : location.getZ();
-		final List<IShape> points = new ArrayList(4);
-		points.add(new GamaPoint(x, y - side_size / sqrt2, z));
-		points.add(new GamaPoint(x + side_size / sqrt2, y + side_size / sqrt2, z));
-		points.add(new GamaPoint(x - side_size / sqrt2, y + side_size / sqrt2, z));
-		points.add(new GamaPoint(x, y - side_size / sqrt2, z));
-
-		return buildPolygon(points);
+		points[0] = (new GamaPoint(x- side_size/2.0, y + h/3, z));
+		points[1] = (new GamaPoint(x , y - 2* h/3, z));
+		points[2] = (new GamaPoint(x + side_size/2.0, y +  h/3, z));
+		points[3] = points[0];
+		final CoordinateSequenceFactory fact = GamaGeometryFactory.COORDINATES_FACTORY;
+		final CoordinateSequence cs = fact.create(points);
+		final LinearRing geom = GeometryUtils.GEOMETRY_FACTORY.createLinearRing(cs);
+		final Polygon p = GeometryUtils.GEOMETRY_FACTORY.createPolygon(geom, null);
+		return new GamaShape(p);
 	}
 
 	public static IShape buildRectangle(final double width, final double height, final ILocation location) {
