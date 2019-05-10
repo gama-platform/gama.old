@@ -90,7 +90,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <!-- { "tag": ["constant", "colors"], "title" : " -->
 <xsl:for-each select="/doc/constants/constant">
 	<xsl:sort select="@name" />
-	<xsl:text>"tag": "Constant and Colors", "title" : [ "</xsl:text>
+	<xsl:text>{ "tag": "Constant and Colors", "title" : [ "</xsl:text>
 	<xsl:value-of select="@name" />
 	<xsl:text>" </xsl:text>
 	<xsl:if test="@altNames">
