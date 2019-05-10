@@ -21,8 +21,8 @@ global {
 	//Zoom to take in consideration the zoom in the display, to better write the cycle values
 	int zoom <- 4 min:2 max:10;
 	//Postion of the clock
-	float clock_x <- world.shape.width/5;
-	float clock_y <- world.shape.height/5;
+	float clock_x <- world.shape.width/2;
+	float clock_y <- world.shape.height/2;
 	
 	//Alarm parameters
 	int alarm_days <- 0 min:0 max:365;
@@ -60,6 +60,7 @@ species  clock {
 			}
 		}
 		aspect default {
+			draw clock_normal size: 10*zoom;
 			draw string(" " + cycle + " cycles")  size:zoom/2 font:"times" color:°black at:{clock_x-5,clock_y+5};
 			draw clock_big_hand rotate: nb_minutes*(360/60)  + 90  size: {7 * zoom, 2} at:location + {0,0,0.1}; //Modulo with the representation of a minute in ms and divided by 10000 to get the degree of rotation
 			draw clock_small_hand rotate: nb_hours*(360/12)  + 90  size:{5*zoom, 2} at:location + {0,0,0.1};			
@@ -73,8 +74,8 @@ species  clock {
  
 }
 
-experiment Display type: gui {
-	float minimum_cycle_duration <- 0.1#s;
+experiment Display type: gui autorun:true{
+	float minimum_cycle_duration <- 0.001#s;
 	parameter 'Zoom: ' var: zoom category: 'Init' ;
 	parameter 'Milliseconds/cycle' var: stepDuration category: 'Init';
 	parameter 'alarm Day' var: alarm_days;
@@ -84,7 +85,6 @@ experiment Display type: gui {
 	parameter 'alarm Seconds' var: alarm_seconds;
 	output {
 		display ClockView type: opengl { 
-			graphics "c" refresh: false {draw clock_normal size: 10*zoom at:{world.shape.width/5,world.shape.height/5} ;}
 			species clock ;
 		}
 	}
