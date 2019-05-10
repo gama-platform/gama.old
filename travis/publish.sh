@@ -53,8 +53,16 @@ release(){
 	bash ./travis/githubReleaseOxygen.sh "$TRAVIS_COMMIT" 
 }
 JDKrelease(){
-	echo "Upload continuous release to github with JRE"		
+	echo "Upload continuous release to github"		
+	bash ./travis/update_tag.sh 
+
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
+
+	bash ./travis/github_release_alpha_withjdk.sh "$TRAVIS_COMMIT" 
+
+	if [[ $(date +%d) =~ 0[1-1] ]]; then
+	    bash ./travis/github_release_alpha_withjdk.sh "$TRAVIS_COMMIT" 
+	fi
 }
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
@@ -93,3 +101,4 @@ else
 		JDKrelease 
 	fi	
 fi
+

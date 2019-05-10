@@ -804,7 +804,15 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "polygon([{0,0}, {0,10}, {10,10}, {10,0}])",
 						equals = "a polygon geometry composed of the 4 points.",
-						test = false) },
+						test = false),
+				@example( 
+						value ="polygon([{0,0}, {0,10}, {10,10}, {10,0}]).area",
+						equals="100.0",
+						returnType="float"),
+				@example( 
+						value ="polygon([{0,0}, {0,10}, {10,10}, {10,0}]).location",
+						equals="point(5.0,5.0,0.0)",
+						returnType="point")},
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square",
 						"triangle" })
 		public static IShape polygon(final IScope scope, final IContainer<?, ? extends IShape> points) {
