@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SymbolProto.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.SymbolProto.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -23,6 +23,9 @@ import com.google.common.collect.Iterables;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.ISymbolConstructor;
@@ -165,6 +168,26 @@ public class SymbolProto extends AbstractProto {
 		return isVar ? ISymbolKind.Variable.KINDS_AS_STRING.get(kind) + " declaration" : "statement " + getName();
 	}
 
+	@Override
+	public doc getDocAnnotation() {
+		if (support == null)
+			return null;
+		doc d = super.getDocAnnotation();
+		if (d == null) {
+			if (support.isAnnotationPresent(action.class)) {
+				doc[] docs = support.getAnnotation(action.class).doc();
+				if (docs.length > 0)
+					d = docs[0];
+			} else if (support.isAnnotationPresent(symbol.class)) {
+				doc[] docs = support.getAnnotation(symbol.class).doc();
+				if (docs.length > 0)
+					d = docs[0];
+			}
+		}
+
+		return d;
+	}
+
 	/**
 	 * @return
 	 */
@@ -257,7 +280,7 @@ public class SymbolProto extends AbstractProto {
 
 	/**
 	 * Method serialize()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
 	 */
 	@Override

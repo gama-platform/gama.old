@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.DoStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.DoStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -29,8 +29,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.PrimitiveDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
@@ -192,7 +194,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -209,6 +211,17 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 			if (!sd.hasAction(action, false)) {
 				desc.error("Action " + action + " does not exist in " + sd.getName(), IGamlIssue.UNKNOWN_ACTION, ACTION,
 						action, sd.getName());
+			}
+			ActionDescription ad = sd.getAction(action);
+			// if (ad.getName().equals("halt")) {
+			// DEBUG.OUT("");
+			// }
+			if (ad instanceof PrimitiveDescription) {
+				PrimitiveDescription pd = (PrimitiveDescription) ad;
+				String dep = pd.getDeprecated();
+				if (dep != null) {
+					desc.warning("Action " + action + " is deprecated: " + dep, IGamlIssue.DEPRECATED, ACTION);
+				}
 			}
 		}
 
