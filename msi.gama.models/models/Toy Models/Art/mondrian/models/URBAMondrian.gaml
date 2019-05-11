@@ -1,30 +1,32 @@
 /***
-* Name: Urbam
-* Author: Arno, Pat et Tri
+* Name: URBAMondrian
+* Author: Arnaud Grignard, Tri Nguyen-Huu and Patrick Taillandier 
 * Description: 
-* Tags: Tag1, Tag2, TagN
+* Tags: art, interaction, mobitily
 ***/
 
-model Urbam
+model URBAMondrian
 
 
 global{
 	//PARAMETERS
 	
-	float weight_car parameter: 'weight car' category: "Mobility" step: 0.1 min:0.1 max:1.0 <- 0.75 ;
-	float weight_bike parameter: 'weight bike' category: "Mobility" step: 0.1 min:0.1 max:1.0 <- 0.5 ;
-	float weight_pev  step: 0.1 min: 0.0 max: 1.0 parameter: "weight pev" category: "Mobility" <- 0.1;
+	float weight_car parameter: 'blue weight'  step: 0.1 min:0.1 max:1.0 <- 0.75 ;
+	float weight_bike parameter: 'yellow weight' step: 0.1 min:0.1 max:1.0 <- 0.5 ;
+	float weight_pev  step: 0.1 min: 0.0 max: 1.0 parameter: "pink weight" <- 0.1;
 	
-	int population_level <- 40 parameter: 'Population level' min: 0 max: 300 category: "General";
+	int population_level <- 40 parameter: 'Population level' min: 0 max: 100;
 	
-	string road_aspect parameter: 'Roads aspect:' category: 'Road Aspect' <-"split (5)" among:["default", "default (car)", "hide","road type","edge color","split (3)", "split (5)"];
-	float spacing parameter: 'Spacing ' category: 'Road Aspect' <- 0.75 min:0.0 max: 1.5;
-	float line_width parameter: 'Line width' category: 'Road Aspect' <- 0.65 min:0.0 max: 3.0;
-	bool dynamical_width parameter: 'Dynamical width' category: 'Road Aspect' <- true;
+	string road_aspect <- "split (5)";
+	float spacing <- 0.75;
+	float line_width <- 0.65;
+	bool dynamical_width <- true;
 	
-	float building_scale parameter: 'Building scale:' category: 'Building Aspect' <- 0.65 min: 0.2 max: 1.0; 
-	bool show_cells parameter: 'Show cells:' category: 'Aspect' <- false;
-	bool show_building parameter: 'Show Building:' category: 'Aspect' <- true;
+	float building_scale <- 0.65; 
+	bool show_cells <- false;
+	bool show_building <- true;
+	bool show_road <- true;
+	bool show_agent <- true;
 	
 	
 	//SPATIAL PARAMETERS  
@@ -34,12 +36,8 @@ global{
 	float environment_width <- 5000.0;
 	int global_people_size <-50;
 
-	bool blackMirror parameter: 'Dark Room' category: 'Aspect' <- true;
-	
-	
-	string people_aspect parameter: 'People aspect:' category: 'People Aspect' <-"mode" among:["mode", "profile","dynamic_abstract","dynamic_abstract (car)","hide"];
-	
-	
+	bool blackMirror <- true;
+	string people_aspect <-"mode";
 	
 	bool load_grid_file_from_cityIO <-false; //parameter: 'Online Grid:' category: 'Simulation' <- false;
 	bool load_grid_file <- false;// parameter: 'Offline Grid:' category: 'Simulation'; 
@@ -57,9 +55,7 @@ global{
 	bool show_cells_prev <- show_cells update: show_cells ;
 	bool on_modification_bds <- false update: false;
 	
-	
-	//ORIGINAL map<string,int> max_traffic_per_mode <- ["car"::90, "bike"::10, "walk"::50];
-	
+		
 	map<string,int> max_traffic_per_mode <- ["car"::50, "bike"::50, "walk"::50];
 	map<string,int> mode_order <- ["car"::0, "bike"::1, "walk"::2]; // order from 0 to n write only the modes that have to be drawn
 	map<string,rgb> color_per_mode <- ["car"::rgb(52,152,219), "bike"::rgb(192,57,43), "walk"::rgb(161,196,90), "pev"::#magenta];
@@ -85,8 +81,6 @@ global{
 	list<building> residentials;
 	map<building, float> offices;
 	string imageFolder <- "../images/flat/";
-	string profile_file <- "../includes/profiles.csv"; 
-	map<string,map<profile,float>> proportions_per_bd_type;
 	int action_type;
 	
 
@@ -95,7 +89,7 @@ global{
 	map<string,graph> graph_per_mode;
 	
 	float road_capacity <- 10.0;
-	bool traffic_jam <- true parameter: true;
+	//bool traffic_jam <-true;
 	
 	//geometry shape <- envelope(nyc_bounds0_shape_file);
 	geometry shape<-rectangle(environment_width, environment_height); // one edge is 5000(m)
@@ -124,7 +118,6 @@ global{
 		}
 		do update_graphs;
 		do init_buttons; 
-		do load_profiles;
 		block_size <- min([first(cell).shape.width,first(cell).shape.height]);
 		if(udpScannerReader){
 			create NetworkingAgent number: 1 {
@@ -139,20 +132,7 @@ global{
 		    }	   
 		}
 	}
-		
-	action load_profiles {
-		create profile from: csv_file(profile_file,";", true) with: [proportionS::float(get("proportionS")),proportionM::float(get("proportionM")),proportionL::float(get("proportionL")),
-			name::string(get("typo")), max_dist_walk::float(get("max_dist_walk")),max_dist_bike::float(get("max_dist_bike")),max_dist_pev::float(get("max_dist_pev"))
-		];
-		ask profile {
-			map<profile, float> prof_pro1 <- proportions_per_bd_type["S"];
-			prof_pro1[self] <- proportionS; proportions_per_bd_type["S"] <- prof_pro1;
-			map<profile, float> prof_pro2 <- proportions_per_bd_type["M"];
-			prof_pro2[self] <- proportionM; proportions_per_bd_type["M"] <- prof_pro2;
-			map<profile, float> prof_pro3 <- proportions_per_bd_type["L"];
-			prof_pro3[self] <- proportionL; proportions_per_bd_type["L"] <- prof_pro3;
-		}
-	}
+	
 	action update_graphs {
 		loop mode over: ["walk", "car", "bike"] {
 			graph_per_mode[mode] <- directed(as_edge_graph(road where (mode in each.allowed_mobility)));
@@ -195,20 +175,10 @@ global{
 		
 	}
 		
-	reflex test_load_file when: load_grid_file and every(100#cycle){
-		do load_matrix("../includes/6x6_" +file_cpt+".csv");
-		file_cpt <- (file_cpt+ 1) mod 5;
-	}
-	
 	reflex randomGridUpdate when:!udpScannerReader and !editionMode and every(1000#cycle){
 		do randomGrid;
 	} 
 		
-	reflex update_graph when: every(3 #cycle) {
-		map<road,float> weights <- traffic_jam ? road as_map (each::(each.shape.perimeter)) : road as_map (each::(each.shape.perimeter * (min([10,1/exp(-each.nb_people/road_capacity)]))));
-		graph_per_mode["car"] <- graph_per_mode["car"] with_weights weights;
-	}
-	
 
 	reflex compute_traffic_density{
 		ask road {traffic_density <- ["car"::[0::0,1::0], "bike"::[0::0,1::0], "walk"::[0::0,1::0], "pev"::[0::0,1::0]];}
@@ -225,14 +195,8 @@ global{
 	reflex precalculate_display_variables{
 		road_width <- block_size * 2/3 * (1-building_scale);
 		switch road_aspect {
-			match  "split (3)" {
-				computed_line_width <- line_width * road_width/6;
-			}
 			match  "split (5)" {
 				computed_line_width <- line_width * road_width/10;
-			}
-			default{
-				computed_line_width <- 0.5*line_width*road_width;
 			}
 		}
 		
@@ -316,25 +280,6 @@ global{
 			}
 		}
 	} 
-	action load_matrix(string path_to_file) {
-		file my_csv_file <- csv_file(path_to_file,",");
-		matrix data <- matrix(my_csv_file);
-		loop i from: 0 to: data.rows - 1 {
-			loop j from: 0 to: data.columns - 1 {
-					int id <- int(data[j, i]);
-					if (id > 0) {
-                     do createCell(id, j, i);
-					}
-					cell current_cell <- cell[j,i];
-					current_cell.is_active <- id<0?false:true;
-					if (id<=0){					
-						ask current_cell{ do erase_building;}
-					}
-			}
-		}
-	}
-	
-	
 	
    action randomGrid{
    	int id;
@@ -356,59 +301,7 @@ global{
 					}
 			}
 		}
-   }
-	
-	action load_cityIO_matrix_v1(string cityIOUrl_) {
-		map<string, unknown> cityMatrixData;
-	    list<map<string, int>> cityMatrixCell;	
-		try {
-			cityMatrixData <- json_file(cityIOUrl_).contents;
-		} catch {
-			cityMatrixData <- json_file("../includes/cityIO_Kendall.json").contents;
-			//write #current_error + "Connection to Internet lost or cityIO is offline - CityMatrix is a local version from cityIO_Kendall.json";
-		}
-		cityMatrixCell <- cityMatrixData["grid"];	
-		loop l over: cityMatrixCell { 
-      	  int id <-int(l["type"]);
-      	  if(id!=-2 and id !=-1 and id!=6 ){
-      	  	do createCell(id+1, l["x"], l["y"]);	
-      	  } 
-      	  if (id=-1){
-		    cell current_cell <- cell[l["x"],l["y"]];
-			ask current_cell{ do erase_building;}
-		  }     
-        }	
-	}
-	
-	
-	action load_cityIO_matrix_v2(string cityIOUrl_) {
-		map<string, unknown> cityMatrixData;
-	    list<map<string, int>> cityMatrixCell;	
-		try {
-			cityMatrixData <- json_file(cityIOUrl_).contents;
-		} catch {
-			cityMatrixData <- json_file("../includes/cityIO_gama.json").contents;
-			write #current_error + "Connection to Internet lost or cityIO is offline - CityMatrix is a local version from cityIO_gama.json";
-		}
-		int nbCols <- int(cityMatrixData["header"]["spatial"]["ncols"]);
-		int nbRows <- int(cityMatrixData["header"]["spatial"]["nrows"]);
-		//cityMatrixCell <- cityMatrixData["grid"];
-		//write 	cityMatrixCell;
-		loop i from: 0 to: nbCols-1 {
-			loop j from: 0 to: nbRows -1{
-				int id <-int(cityMatrixData["grid"][j*nbCols+i][0]);
-				//write id;
-      	  		if(id!=-2 and id !=-1 and id!=6 ){
-      	  			do createCell(id+1, i, j);	
-      	  		} 
-      	  		if (id=-1){
-		    		cell current_cell <- cell[i,j];
-					ask current_cell{ do erase_building;}
-		  		}   
-			}
-        } 	
-	}
-		
+   }		
 }
 
 
@@ -441,8 +334,6 @@ species building {
 				origin.inhabitants << self;
 				
 				do reinit_destination;
-				map<profile, float> prof_pro <- proportions_per_bd_type[origin.size];
-				my_profile <- prof_pro.keys[rnd_choice(prof_pro.values)];
 			}
 		}
 		if length(inhabitants) > pop{
@@ -472,8 +363,6 @@ species building {
 		color <- color_per_id[type+size];
 	}
 	aspect default {
-		//if show_building {draw shape scaled_by building_scale color: color;}
-		//if show_building {draw shape scaled_by 0.5 color: rgb(100,100,100);}
 		if show_building {draw shape scaled_by building_scale*1.1 empty:true color: color;}
 	}
 }
@@ -502,59 +391,8 @@ species road {
 	}
 
 	aspect default {
-		switch road_aspect {
-			match "default" {
-				if total_traffic() > 0 {
-					float scale <- min([1,total_traffic() / max_traffic_per_mode["car"]]);
-					if dynamical_width{
-						draw shape + computed_line_width * scale color: color_per_mode["car"];	
-					}else{
-						draw shape + computed_line_width color: color_map(color_per_mode["car"],scale);	
-					}
-				}	
-			}
-			match "default (car)" {
-				if total_traffic_per_mode('car') > 0 {
-					float scale <- min([1,total_traffic_per_mode('car') / max_traffic_per_mode["car"]]);
-					if dynamical_width{
-						draw shape + computed_line_width * scale color: color_per_mode["car"];	
-					}else{
-						draw shape + computed_line_width color: color_map(color_per_mode["car"],scale);	
-					}
-				}	
-			}
-			match "road type" {
-				if ("car" in allowed_mobility) {
-					draw shape + computed_line_width color:color_per_mode["car"];
-				}
-				if ("bike" in allowed_mobility) {
-					draw shape + 0.5*computed_line_width color:color_per_mode["bike"];
-				}
-				if ("walk" in allowed_mobility) {
-					draw shape + 0.2*computed_line_width color:color_per_mode["walk"];
-				}
-			}
-			match "edge color"{		
-				int traffic <-total_traffic() ; 
-				if traffic > 0 {
-					float scale <- min([1,traffic / 100])^2;
-					draw shape + computed_line_width color: colormap_per_mode["car"][int(4*scale)];
-				}	
-			}
-			match "split (3)"{
-				loop t over: mode_order.keys{
-					float scale <- min([1,total_traffic_per_mode(t) / max_traffic_per_mode[t]]);		
-					if scale > 0 {
-						if dynamical_width{
-							draw shape + computed_line_width * scale color: color_per_mode[t] at: self.location+offsets[t];	
-						}else{
-							draw shape + computed_line_width color: color_map(color_per_mode[t],scale) at: self.location+offsets[t];	
-						}
-					}
-				}
-			}	
-			match "split (5)"{
-				loop t over: mode_order.keys{
+		if(show_road){
+			loop t over: mode_order.keys{
 					float scale <- min([1,traffic_density[t][0] / max_traffic_per_mode[t]]);	
 					if dynamical_width{
 						if scale > 0 {draw shape + computed_line_width * scale color: color_per_mode[t] at: self.location+offsets[t];}
@@ -566,20 +404,13 @@ species road {
 						if scale > 0 {draw shape + computed_line_width color: color_map(color_per_mode[t],scale) at: self.location-offsets[t];}
 					}
 				}
-			}		
-		}	
+			
+		}
+				
+
 	}
 }
 
-
-species profile {
-	float proportionS;
-	float proportionM;
-	float proportionL;
-	float max_dist_walk;
-	float max_dist_bike;
-	float max_dist_pev;
-}
 species people skills: [moving]{
 
 	int heading_index <- 0;
@@ -589,18 +420,20 @@ species people skills: [moving]{
 	building dest;
 	bool to_destination <- true;
 	point target;
-	profile my_profile;
 	bool know_pev <- false;
 	bool has_car <- flip(weight_car);
 	bool has_bike <- flip(weight_bike);
+	float max_dist_walk <- 1000.0;
+	float max_dist_bike <- 3000.0;
+	float max_dist_pev <- 5000.0;
 	action choose_mobility {
-		if (origin != nil and dest != nil and my_profile != nil) {
+		if (origin != nil and dest != nil) {
 			float dist <- manhattan_distance(origin.location, dest.location);
-			if (dist <= my_profile.max_dist_walk ) {
+			if (dist <= max_dist_walk ) {
 					mobility_mode <- "walk";
-			} else if (has_bike and dist <= my_profile.max_dist_bike ) {
+			} else if (has_bike and dist <= max_dist_bike ) {
 					mobility_mode <- "bike";
-			} else if (know_pev and (dist <= my_profile.max_dist_pev )) {
+			} else if (know_pev and (dist <= max_dist_pev )) {
 					mobility_mode <- "pev";
 			} else if has_car {
 					mobility_mode <- "car";
@@ -661,59 +494,31 @@ species people skills: [moving]{
 		}
 	}
 	
-	
 	reflex wander when: dest = nil and origin != nil {
 		do wander bounds: origin.bounds;
 	}
 
 	
 	aspect default{
+		if(show_agent){
 		point offset <- {0,0};
 		if self.current_edge != nil {
-			if road_aspect = "split (3)"{
-				offset <- offsets[mobility_mode];
-			}
-			if road_aspect = "split (5)"{
-				offset <- offsets[mobility_mode]*(heading_index > 0 ? (-1): 1);
-			}			
-				
+		  offset <- offsets[mobility_mode]*(heading_index > 0 ? (-1): 1);	
 		}
-		switch people_aspect {
-		   match "mode" {	
-				if (target != nil or dest = nil) {
-					if(mobility_mode ="car"){
-					  draw copy(shape_per_mode[mobility_mode])  color: color_per_mode[mobility_mode] border:color_per_mode[mobility_mode] rotate:heading +90 at: location+offset;
-					}else{
-					  draw copy(shape_per_mode[mobility_mode])  color: color_per_mode[mobility_mode] rotate:heading +90 at: location+offset;	
-					}
-				}	
-			}	
-			match "profile" {
-				if (target != nil or dest = nil) {
-					if(mobility_mode ="car"){
-					  draw copy(shape_per_mode[mobility_mode])  empty:true border:color_per_profile[my_profile.name] rotate:heading +90 at: location+offset;
-					}else{
-					  draw copy(shape_per_mode[mobility_mode])  color: color_per_profile[my_profile.name] rotate:heading +90 at: location+offset;	
-					}
-				}
+		if (target != nil or dest = nil) {
+			if(mobility_mode ="car"){
+			  draw copy(shape_per_mode[mobility_mode])  color: color_per_mode[mobility_mode] border:color_per_mode[mobility_mode] rotate:heading +90 at: location+offset;
+			}else{
+			  draw copy(shape_per_mode[mobility_mode])  color: color_per_mode[mobility_mode] rotate:heading +90 at: location+offset;	
 			}
-			match "dynamic_abstract"{		
-				float scale <- min([1,road(current_edge).total_traffic() / 100])^2;
-				if (target != nil or dest = nil) {draw square(display_size) color: colormap_per_mode["car"][int(4*scale)] at: location+offset;}
-			}		
-			match "dynamic_abstract (car)"{		
-				float scale <- min([1,road(current_edge).total_traffic_per_mode('car') / 100])^2;
-				if (target != nil or dest = nil) {draw square(display_size) color: colormap_per_mode["car"][int(4*scale)] at: location+offset;}
-			}		
-		}
-		
+		}	
+	  }
 	}
 }
 
-grid cell width: grid_width height: grid_height { // height: 16{
+grid cell width: grid_width height: grid_height { 
 	building my_building;
 	bool is_active <- true;
-	//rgb color <- #white;
 	action new_residential(string the_size) {
 		if (my_building != nil and (my_building.type = "residential") and (my_building.size = the_size)) {
 			return;
@@ -743,7 +548,6 @@ grid cell width: grid_width height: grid_height { // height: 16{
 	}
 	
 	aspect default{
-		//if show_cells {draw shape scaled_by (building_scale+(1-building_scale)/3) color: rgb(100,100,100) ;}
 		if show_cells {draw shape scaled_by (0.5) color: rgb(100,100,100) ;}
 	}
 
@@ -803,98 +607,17 @@ species NetworkingAgent skills:[network] {
 	}
 }
 
-
-experiment cityScienceScreenEditionMode type: gui autorun: true{
-	init{
-		editionMode<-true;
-	}
-	float minimum_cycle_duration <- 1.0;
-	output {
-		layout #split;
-		display map synchronized:true background:blackMirror ? #black :#white toolbar:false type:opengl  draw_env:false 
-		camera_pos: {2160.3206,1631.7982,12043.0275} camera_look_pos: {2160.3206,1631.588,0.0151} camera_up_vector: {0.0,1.0,0.0}{
-		//camera_pos: {2428.2049,2969.8873,11644.0583} camera_look_pos: {2428.2049,2969.684,-0.0081} camera_up_vector: {0.0,1.0,0.0}{
-			species cell aspect:default;// refresh: on_modification_cells;
-			species road ;
-			species people;
-			species building;// refresh: on_modification_bds;
-			event mouse_down action:infrastructure_management;
-			
-			event["1"] action: {action_type<-9;};
-			event["2"] action: {action_type<-3;};
-			event["3"] action: {action_type<-6;};
-			event["4"] action: {action_type<-4;};
-			event["5"] action: {action_type<-7;};
-			event["6"] action: {action_type<-10;};
-			event["7"] action: {action_type<-5;};
-			event["8"] action: {action_type<-8;}; 
-			
-			event["h"] action: {road_aspect<-"hide";};
-			event["r"] action: {road_aspect<-"default";};
-			event["s"] action: {road_aspect<-"split (5)";};
-			event["c"] action: {road_aspect<-"edge color";}; 
-			
-			event["n"] action: {people_aspect<-"hide";};
-			event["m"] action: {people_aspect<-"mode";};
-			//event["p"] action: {people_aspect<-"profile";};
-			event["a"] action: {people_aspect<-"dynamic_abstract";};
-		
-			event["w"] action: {blackMirror<-!blackMirror;};
-			event["b"] action: {show_building<-!show_building;};
-			 
-			event["g"] action: {show_cells<-!show_cells;}; 
-			
-			event["o"] action: {weight_car<-weight_car-0.1;}; 
-			event["p"] action: {weight_car<-weight_car+0.1;};
-			
-			event["u"] action: {weight_bike<-weight_bike-0.1;}; 
-			event["i"] action: {weight_bike<-weight_bike+0.1;};
-			
-			event["t"] action: {weight_pev<-weight_pev-0.1;}; 
-			event["y"] action: {weight_pev<-weight_pev+0.1;};
-			
-			
-			graphics "mobilityMode" {
-				    draw circle(world.shape.width * 0.01) color: color_per_mode["walk"] at: {world.shape.width * 0.2, world.shape.height};
-					draw "walk" color: color_per_mode["walk"]  at: {world.shape.width * 0.2+world.shape.width * 0.02, world.shape.height * 1.005} font:font("Helvetica", 6 , #bold);
-					
-					draw circle(world.shape.width * 0.01) color: color_per_mode["bike"] at: {world.shape.width * 0.4, world.shape.height};
-					draw "bike" color: color_per_mode["bike"]  at: {world.shape.width * 0.4 + world.shape.width * 0.02, world.shape.height * 1.005} font:font("Helvetica", 6 , #bold);
-					
-					draw circle(world.shape.width * 0.01) color: color_per_mode["car"] at: {world.shape.width * 0.6, world.shape.height};
-					draw "car" color: color_per_mode["car"]  at: {world.shape.width * 0.6 + world.shape.width * 0.02, world.shape.height * 1.005} font:font("Helvetica", 6 , #bold);
-					
-					draw circle(world.shape.width * 0.01) color: color_per_mode["pev"] at: {world.shape.width * 0.8, world.shape.height};
-					draw "pev" color: color_per_mode["pev"]  at: {world.shape.width * 0.8 + world.shape.width * 0.02, world.shape.height * 1.005} font:font("Helvetica", 6 , #bold);
-			}
-			
-			graphics "landuse" {
-					point hpos <- {world.shape.width * 1.1, world.shape.height * 1.1};
-					float barH <- world.shape.width * 0.01;
-					float factor <-  world.shape.width * 0.1;
-					loop i from:0 to:length(color_per_id)-1{
-						draw square(world.shape.width*0.02) empty:true color: color_per_id.values[i] at: {i*world.shape.width*0.175, -50};
-						draw fivefoods[i] color: color_per_id.values[i] at: {i*world.shape.width*0.175+world.shape.width*0.025, -40} perspective: true font:font("Helvetica", 8 , #bold);
-					}
-			}
-		}
-				
-	    //Bouton d'action
-		display action_buton background:#black name:"Actions possibles" ambient_light:100 	{
-			species button aspect:normal ;
-			event mouse_down action:activate_act;    
-		}	
-	}
-}
-
-experiment cityScienceDemo type: gui autorun: true{
+experiment URBAMondrian type: gui autorun: true{
 	float minimum_cycle_duration <- 0.05;
 	output {
-		display map synchronized:true background:blackMirror ? #black :#white toolbar:false type:opengl  draw_env:false fullscreen:0{
-			species cell aspect:default;// refresh: on_modification_cells;
+		display map synchronized:true background:blackMirror ? #black :#white toolbar:false type:opengl  draw_env:false fullscreen:false{
+			species cell aspect:default;
 			species road ;
 			species people;
-			species building;// refresh: on_modification_bds;
+			species building;
+			event["a"] action: {show_agent<-!show_agent;};
+			event["r"] action: {show_road<-!show_road;};
+			event["b"] action: {show_building<-!show_building;};			  	
 		}		
 	}
 }
