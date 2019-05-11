@@ -76,7 +76,7 @@ species people skills: [moving]{
 		}
 	}
 	aspect default {
-		draw pyramid(2) color: color;
+		draw pyramid(2.5) color: color;
 		draw sphere(1) at: {location.x,location.y,2} color: color;
 	}
 }
