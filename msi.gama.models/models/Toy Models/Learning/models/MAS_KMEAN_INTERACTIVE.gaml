@@ -26,8 +26,6 @@ global {
 		
 	]; 
 	
-	init { }
-	
 	
 	action activate_act {
 		button selected_but <- first(button overlapping (circle(1) at_location #user_location));
@@ -96,6 +94,8 @@ grid button width:2 height:2
 	}
 }
 
+experiment clustering2D type: gui virtual: true;
+experiment clustering3D type: gui virtual: true;
 
 experiment SelectPoints2Cluster2D type: gui {
 	output {
