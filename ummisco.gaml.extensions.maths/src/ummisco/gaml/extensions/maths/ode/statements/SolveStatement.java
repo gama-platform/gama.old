@@ -187,11 +187,7 @@ public class SolveStatement extends AbstractStatement {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if (!initSystemOfEquations(scope))
 			return null;
-		if(null!=scope.getAgent().getAttribute("__is_solved") && scope.getAgent().getAttribute("__is_solved").toString().equals("true")) {
-			return null;
-		}
-//		System.out.println("solving "+scope.getAgent());
-		
+
 		double simStepDurationFromUnit = scope.getSimulation().getTimeStep(scope);
 		// final double cycleLength = Cast.asFloat(scope,
 		// cycleExp.value(scope));

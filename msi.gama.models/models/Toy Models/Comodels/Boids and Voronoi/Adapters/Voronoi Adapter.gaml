@@ -6,7 +6,7 @@
 */
 model voronoi_adapter
 
-import "../../../../Toy Models/Voronoi/Voronoi.gaml"
+import "../../../../Toy Models/Art/Voronoi/Voronoi.gaml"
 
 
 experiment "Adapter 2" type:gui  {

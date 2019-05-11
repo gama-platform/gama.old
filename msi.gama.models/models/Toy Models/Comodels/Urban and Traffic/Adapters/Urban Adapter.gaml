@@ -6,7 +6,7 @@
 */
 model urban_adapter
 
-import "../../../../Toy Models/Urban Growth/models/raster model.gaml"
+import "../../../../Toy Models/Urban Growth/models/Raster Urban Growth.gaml"
 experiment "Adapter" type: gui 
 {
 	action transform{
