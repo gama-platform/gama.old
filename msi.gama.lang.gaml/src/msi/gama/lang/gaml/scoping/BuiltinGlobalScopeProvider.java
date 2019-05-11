@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 // (c) Vincent Simonet, 2011
@@ -76,6 +76,10 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider implements IUnits {
 
+	static {
+		DEBUG.ON();
+	}
+
 	static final THashMap EMPTY_MAP = new THashMap<>();
 	private static THashMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = new THashMap<>();
 	private static THashSet<QualifiedName> allNames;
@@ -95,7 +99,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method size()
-		 * 
+		 *
 		 * @see java.util.Map#size()
 		 */
 		@Override
@@ -105,7 +109,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method isEmpty()
-		 * 
+		 *
 		 * @see java.util.Map#isEmpty()
 		 */
 		@Override
@@ -115,7 +119,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method containsKey()
-		 * 
+		 *
 		 * @see java.util.Map#containsKey(java.lang.Object)
 		 */
 		@Override
@@ -129,7 +133,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method containsValue()
-		 * 
+		 *
 		 * @see java.util.Map#containsValue(java.lang.Object)
 		 */
 		@Override
@@ -144,7 +148,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method get()
-		 * 
+		 *
 		 * @see java.util.Map#get(java.lang.Object)
 		 */
 		@Override
@@ -159,7 +163,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method put()
-		 * 
+		 *
 		 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
 		 */
 		@Override
@@ -180,7 +184,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method remove()
-		 * 
+		 *
 		 * @see java.util.Map#remove(java.lang.Object)
 		 */
 		@Override
@@ -191,7 +195,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method putAll()
-		 * 
+		 *
 		 * @see java.util.Map#putAll(java.util.Map)
 		 */
 		@Override
@@ -203,7 +207,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method clear()
-		 * 
+		 *
 		 * @see java.util.Map#clear()
 		 */
 		@Override
@@ -211,7 +215,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method keySet()
-		 * 
+		 *
 		 * @see java.util.Map#keySet()
 		 */
 		@Override
@@ -225,7 +229,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method values()
-		 * 
+		 *
 		 * @see java.util.Map#values()
 		 */
 		@Override
@@ -239,7 +243,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		/**
 		 * Method entrySet()
-		 * 
+		 *
 		 * @see java.util.Map#entrySet()
 		 */
 		@Override
@@ -364,7 +368,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		resources.get(eClass).getContents().add(stub);
 		final IGamlDescription d =
 				GAMA.isInHeadLessMode() ? null : GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(stub, o, false);
+		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(stub, o, false, true);
 		Map<String, String> doc;
 		if (d != null) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "action");
@@ -452,9 +456,8 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 			}
 			for (final IDescription t : AbstractGamlAdditions.getAllActions()) {
 				addAction(eAction, t.getName(), t);
-
 				final GamlDefinition def = add(eVar, t.getName());
-				GamlResourceServices.getResourceDocumenter().setGamlDocumentation(def, t, true);
+				GamlResourceServices.getResourceDocumenter().setGamlDocumentation(def, t, true, true);
 			}
 			final OperatorProto[] p = new OperatorProto[1];
 			IExpressionCompiler.OPERATORS.forEachEntry((a, b) -> {

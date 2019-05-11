@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.documentation;
@@ -25,8 +25,8 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
-import ummisco.gama.dev.utils.DEBUG;
 import msi.gaml.descriptions.ModelDescription;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class GamlResourceDocManager.
@@ -74,8 +74,9 @@ public class GamlResourceDocumenter implements IDocManager {
 	}
 
 	@Override
-	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace) {
-		if (!shouldDocument(object)) { return; }
+	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace,
+			final boolean force) {
+		if (!force && !shouldDocument(object)) { return; }
 		documentationQueue.add(new DocumentationTask(object, description, this));
 		documentationJob.schedule(50);
 	}

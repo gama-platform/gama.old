@@ -231,7 +231,6 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	@Override
 	protected String getFirstLine(final EObject o) {
-		if (o == null) { return ""; }
 		if (o instanceof Import) {
 			String uri = ((Import) o).getImportURI();
 			uri = uri.substring(uri.lastIndexOf('/') + 1);

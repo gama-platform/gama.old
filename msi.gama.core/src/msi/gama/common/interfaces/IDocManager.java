@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.IDocManager.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.interfaces.IDocManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -34,14 +34,13 @@ public interface IDocManager {
 		}
 
 		@Override
-		public void setGamlDocumentation(final EObject object, final IGamlDescription description,
-				final boolean replace) {}
+		public void addCleanupTask(final ModelDescription model) {}
 
 		@Override
-		public void addCleanupTask(final ModelDescription model) {}
-	}
+		public void setGamlDocumentation(EObject object, IGamlDescription description, boolean replace,
+				boolean force) {}
 
-	public static final IDocManager NULL = new NullImpl();
+	}
 
 	public static final String KEY = "Doc";
 
@@ -51,8 +50,15 @@ public interface IDocManager {
 
 	public IGamlDescription getGamlDocumentation(IGamlDescription o);
 
-	public void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace);
+	public void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace,
+			boolean force);
+
+	default void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace) {
+		setGamlDocumentation(object, description, replace, false);
+	}
 
 	public void addCleanupTask(ModelDescription model);
+
+	public static final IDocManager NULL = new NullImpl();
 
 }

@@ -26,6 +26,7 @@ import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_Do;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -121,6 +122,17 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 				if (!temp.contains("No documentation")) { return temp; }
 			}
 		} else if (o instanceof VariableRef) {
+			// Case of do xxx;
+			if (o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
+				VarDefinition vd = ((VariableRef) o).getRef();
+				final IGamlDescription description =
+						GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
+				if (description != null) {
+					String result = description.getDocumentation();
+					if (result == null) { return ""; }
+					return result;
+				}
+			}
 			final VarDefinition vd = ((VariableRef) o).getRef();
 			if (vd != null) {
 				if (vd.eContainer() == null) {
