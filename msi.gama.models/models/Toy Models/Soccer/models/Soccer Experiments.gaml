@@ -16,8 +16,8 @@
 model soccerexpe
 
 // import the 2 strategies
-import "./team1_strategy.gaml"
-import "./team2_strategy.gaml"
+import "Team1 Strategy.gaml"
+import "Team2 Strategy.gaml"
 
 global {
 	// set the size of the environment
