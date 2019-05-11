@@ -64,13 +64,13 @@ public abstract class ServerService extends Thread implements SocketService {
 				currentSocket = this.serverSocket.accept();
 				String msg ="";
 				do {
-					System.out.println("wait message ...........");
+					DEBUG.OUT("wait message ...........");
 					receiver = new BufferedReader( new InputStreamReader(currentSocket.getInputStream()));
 					msg = receiver.readLine();
 					msg = msg.replaceAll("@n@", "\n");
 					msg = msg.replaceAll("@b@@r@", "\b\r");
 					receivedMessage(this.currentSocket.getInetAddress()+":"+this.port,msg);
-					System.out.println("fin traitement message ..." + this.isOnline);		
+					DEBUG.OUT("fin traitement message ..." + this.isOnline);		
 				}while(isOnline);
 			
 			} catch(SocketTimeoutException e)
