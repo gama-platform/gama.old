@@ -17,6 +17,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.file.GamaShapeFile;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class GamaShapeFileConverter implements Converter {
 	private final static String TAG = "GamaShapeFile";
@@ -39,7 +40,8 @@ public class GamaShapeFileConverter implements Converter {
 		writer.startNode(TAG);
 		writer.setValue(shpFile.getFile(scope.scope).getAbsolutePath());
 		writer.endNode();
-		System.out.println("===========END ConvertAnother : GamaShapeFile");
+	//	System.out.println("===========END ConvertAnother : GamaShapeFile");
+		DEBUG.OUT("===========END ConvertAnother : GamaShapeFile");
 	}
 
 	@Override

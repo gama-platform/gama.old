@@ -22,6 +22,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaMatrixReducer;
 
 @SuppressWarnings({ "rawtypes" })
@@ -48,9 +49,11 @@ public class GamaMatrixConverter implements Converter {
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final GamaMatrix mat = (GamaMatrix) arg0;
 
-		System.out.println("ConvertAnother : GamaMatrix " + mat.getClass());
+	//	System.out.println("ConvertAnother : GamaMatrix " + mat.getClass());
+		DEBUG.OUT("ConvertAnother : GamaMatrix " + mat.getClass());
 		context.convertAnother(new GamaMatrixReducer(convertScope.getScope(), mat));
-		System.out.println("END --- ConvertAnother : GamaMatrix ");
+	//	System.out.println("END --- ConvertAnother : GamaMatrix ");
+		DEBUG.OUT("END --- ConvertAnother : GamaMatrix ");
 
 	}
 

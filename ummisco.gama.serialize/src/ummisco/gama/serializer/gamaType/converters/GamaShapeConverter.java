@@ -11,6 +11,7 @@
 package ummisco.gama.serializer.gamaType.converters;
 
 import msi.gama.metamodel.shape.GamaShape;
+import ummisco.gama.dev.utils.DEBUG;
 
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.*;
@@ -25,9 +26,11 @@ public class GamaShapeConverter implements Converter {
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		GamaShape agt = (GamaShape) arg0;		
-		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());		
+	//	System.out.println("ConvertAnother : AgentConverter " + agt.getClass());		
+		DEBUG.OUT("ConvertAnother : AgentConverter " + agt.getClass());		
 	// 	context.convertAnother(agt);
-		System.out.println("===========END ConvertAnother : GamaShape");		
+	//	System.out.println("===========END ConvertAnother : GamaShape");		
+		DEBUG.OUT("===========END ConvertAnother : GamaShape");		
 	}
 
 	@Override

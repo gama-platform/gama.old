@@ -16,11 +16,14 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import ummisco.gama.dev.utils.DEBUG;
+
 public class LogConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class arg0) {
-		System.out.println("LOG Converter: "+arg0 + " super " + arg0.getSuperclass());		
+	//	System.out.println("LOG Converter: "+arg0 + " super " + arg0.getSuperclass());		
+		DEBUG.OUT("LOG Converter: "+arg0 + " super " + arg0.getSuperclass());		
 		return false;
 	}
 

@@ -10,20 +10,17 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
-import java.util.List;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.agent.SavedAgent;
-import msi.gama.metamodel.population.IPopulation;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class GamaAgentConverterNetwork implements Converter {
 
@@ -50,7 +47,8 @@ public class GamaAgentConverterNetwork implements Converter {
 		final IAgent agt = (IAgent) arg0;
 	//	writer.startNode("save_agent network");
 		context.convertAnother(new SavedAgent(convertScope.getScope(), agt));
-		System.out.println("===========END ConvertAnother : GamaAgent Network");
+		DEBUG.OUT("===========END ConvertAnother : GamaAgent Network");
+	//	System.out.println("===========END ConvertAnother : GamaAgent Network");
 	//	writer.endNode();
 	}
 

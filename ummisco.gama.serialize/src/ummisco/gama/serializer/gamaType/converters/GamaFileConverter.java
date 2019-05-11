@@ -21,6 +21,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.file.IGamaFile;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaFileReducer;
 
 public class GamaFileConverter implements Converter {
@@ -49,13 +50,14 @@ public class GamaFileConverter implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		System.out.println("ConvertAnother : GamaFileConverter " + arg0.getClass());
-
+		// System.out.println("ConvertAnother : GamaFileConverter " + arg0.getClass());
+		DEBUG.OUT("ConvertAnother : GamaFileConverter " + arg0.getClass());
+		
 		@SuppressWarnings("rawtypes")
 		final IGamaFile gamaFile = (IGamaFile) arg0;
 		context.convertAnother(new GamaFileReducer(convertScope.getScope(), gamaFile));
-		System.out.println("===========END ConvertAnother : GamaFile");
-
+		// System.out.println("===========END ConvertAnother : GamaFile");
+		DEBUG.OUT("===========END ConvertAnother : GamaFile");
 	}
 
 	@Override
