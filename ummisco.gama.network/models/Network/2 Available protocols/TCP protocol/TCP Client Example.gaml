@@ -13,7 +13,7 @@ global
 	{
 		create Networking_Client number:3
 		{
-			do connect to: "localhost" protocol: "tcp_client" port: 3001 with_name: "Client";
+			do connect to: "192.168.15.111" protocol: "tcp_client" port: 3001 with_name: "Client";
 			do join_group with_name:"test";
 		}
 
@@ -37,10 +37,9 @@ species Networking_Client skills: [network]
 		
 	}
 
-	reflex send
+	reflex send when:every(4)
 	{
-		//do send to: "Server0" contents: name + " " + cycle + " sent to server";
-		//do send to: "test" contents: name + " broadcast a message ";
+		do send to: "Server0" contents: name + " at " + cycle + " sent to Server a message";
 	}
 
 }

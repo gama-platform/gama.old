@@ -38,13 +38,9 @@ species Networking_Server skills: [network]
 
 	}
 
-	reflex send
+	reflex send when: every(3.0)
 	{
-		//loop id over: network_groups
-		//{
-			do send to: "test" contents: ("I am Server " + name + " I give order to Client");
-		//}
-
+		do send to: "test" contents: ("I am Server " + name + " I give order to Client");
 	}
 
 }
