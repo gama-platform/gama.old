@@ -10,8 +10,9 @@ model Socket_TCP_HelloWorld_Client
 global {
 	init {
 		create Networking_Client number:3 {
-			do connect to: "192.168.15.111" protocol: "tcp_client" port: 3001 with_name: "Client";
-			do join_group with_name:"Clients_group";
+			// replace the "localhost" address by the IP address of the other computer 
+			do connect to: "localhost" protocol: "tcp_client" port: 3001 with_name: "Client";
+			do join_group with_name:"client_group";
 		}
 	}
 
@@ -26,7 +27,7 @@ species Networking_Client skills: [network] {
 	}
 
 	reflex send when:every(4#cycle) { 
-		do send to: "Server0" contents: name + " at " + cycle + " sent to Server a message";
+		do send to: "server_group" contents: name + " at " + cycle + " sent to Server a message";
 	}
 }
 
