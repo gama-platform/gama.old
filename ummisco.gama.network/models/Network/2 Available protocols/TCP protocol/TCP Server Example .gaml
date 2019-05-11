@@ -15,7 +15,7 @@ global
 		
 		create Networking_Server number:4
 		{
-			do connect to: "localhost" protocol: "tcp_server" port: 3001 with_name: "Server"+id;
+			do connect protocol: "tcp_server" port: 3001 with_name: "Server"+id;
 			do join_group with_name:"test";
 			id<-id+1;
 		}
@@ -26,19 +26,18 @@ global
 
 species Networking_Server skills: [network]
 {
-	string name;
 	string dest;
-	reflex receive
+	reflex receive when:has_more_message()
 	{   
-		write "mailbox";
-		if (length(mailbox) > 0)
+		loop while:has_more_message()
 		{
-			write mailbox;
+			message mm <- fetch_message();
+			write mm.contents;
 		}
 
 	}
 
-	reflex send when: every(3.0)
+	reflex send when: every(3#cycle)
 	{
 		do send to: "test" contents: ("I am Server " + name + " I give order to Client");
 	}
