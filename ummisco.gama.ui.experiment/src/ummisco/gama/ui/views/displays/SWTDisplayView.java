@@ -47,7 +47,8 @@ public abstract class SWTDisplayView extends LayeredDisplayView {
 				if (getDisplaySurface() != null) {
 					getDisplaySurface().dispose();
 				}
-				getSite().getPage().hideView(SWTDisplayView.this);
+				if (getSite() != null && getSite().getPage() != null)
+					getSite().getPage().hideView(SWTDisplayView.this);
 			} catch (final Exception e) {
 				// e.printStackTrace();
 			}

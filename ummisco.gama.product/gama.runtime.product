@@ -56,8 +56,8 @@ openFile
 
    <splash
       location="msi.gama.application"
-      startupProgressRect="23,500,527,12"
-      startupMessageRect="200,482,541,16"
+      startupProgressRect="71,515,500,12"
+      startupMessageRect="230,490,500,16"
       startupForegroundColor="165E93" />
    <launcher name="Gama">
       <linux icon="launcher_icons/icon.xpm"/>
