@@ -57,7 +57,8 @@ public abstract class ClientService extends Thread implements SocketService {
 		if(sender!=null)
 		   sender.close();
 	        try {
-				receiver.close();
+	        	if(receiver!=null)
+	        		receiver.close();
 		        socket.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
