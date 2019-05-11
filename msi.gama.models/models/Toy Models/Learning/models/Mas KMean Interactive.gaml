@@ -26,7 +26,7 @@ global {
 		
 	]; 
 	
-	reflex pauseAtConvergence when: converged { }
+	//reflex pauseAtConvergence when: converged { } bug
 	action activate_act {
 		button selected_but <- first(button overlapping (circle(1) at_location #user_location));
 		if(selected_but != nil) {
