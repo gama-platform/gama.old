@@ -15,7 +15,7 @@ import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.factory.StreamConverter;
 
 public class NetworkMessage implements ConnectorMessage {
-	private static final String UNDEFINED = "undefined";
+	public static final String UNDEFINED = "undefined";
 	
 	private final String from;
 	private final String to;

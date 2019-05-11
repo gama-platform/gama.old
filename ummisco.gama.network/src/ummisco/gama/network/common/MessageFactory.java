@@ -49,7 +49,11 @@ public final class MessageFactory {
 	
 	public static NetworkMessage unPackNetworkMessage(final String reciever, final String data) {
 		final String key = new String(keyChain);
-		if (!data.substring(0, keyChain.length).equals(key))
+		MessageType ctype = identifyMessageType(data);
+		
+		if (ctype == MessageType.COMMAND_MESSAGE)
+			return null;
+		if (ctype==MessageType.PLAIN_MESSAGE)
 			return new NetworkMessage(reciever, data);
 
 		final int size = MAX_HEADER_SIZE < data.length() ? MAX_HEADER_SIZE : data.length();
@@ -74,6 +78,28 @@ public final class MessageFactory {
 		final int command = Integer.valueOf(headSplit[4]).intValue();
 		final String content = data.substring(from.length() + to.length()+headSplit[4].length() + 5 * key.length());
 		return new CommandMessage(from, to,CommandType.values()[command], content);
+	}
+	
+	
+	public static String unpackReceiverName(final String data)
+	{
+		final String key = new String(keyChain);
+		String start  ="";
+		MessageType ctype = identifyMessageType(data);
+		
+		if(ctype == MessageType.COMMAND_MESSAGE)
+			start = key + key;
+		
+		if (ctype == MessageType.NETWORK_MESSAGE)
+			start = key ;
+		
+		if (ctype==MessageType.PLAIN_MESSAGE)
+			return NetworkMessage.UNDEFINED;
+		
+		String sbcontent = data.substring(start.length());
+		return sbcontent.split(key)[1];
+
+
 	}
 
 
