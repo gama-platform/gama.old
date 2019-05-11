@@ -40,9 +40,6 @@ public class TCPConnection extends Connector {
 		
 		if(mm.getCommand().equals(CommandType.REMOVE_GROUP))
 			this.remoteBoxName.remove(sttr);
-		
-			//String str = (mm.getContents(this.simulationScope).getContents(this.simulationScope);
-			//this.remoteBoxName.add();
 	}
 	
 	@Override
@@ -60,7 +57,10 @@ public class TCPConnection extends Connector {
 						extractAndApplyCommand(sender,message);
 					}
 					else
-						storeMessage(sender, message);
+					{
+						String r = MessageFactory.unpackReceiverName(message);
+						storeMessage(r, message);
+					}
 				}
 			};
 			else
@@ -71,10 +71,12 @@ public class TCPConnection extends Connector {
 						if(mte.equals(MessageType.COMMAND_MESSAGE)){
 							extractAndApplyCommand(sender,message);
 						}
-						else
-							storeMessage(sender, message);
+						else {
+							String rer = MessageFactory.unpackReceiverName(message);
+							storeMessage(rer, message);
+						}
 					}
-				};
+			};
 			try {
 				socket.startService();
 			} catch (IOException e) {
