@@ -34,7 +34,11 @@ public class LayoutGrid {
 
 	public void applyLayout(IScope scope) {
         
-	    IList<IShape> places = Spatial.Transformations.toSquares(scope, envelopeGeometry, Maths.round(graph.getVertices().size() * coeffSq), false);
+	    IList<IShape> places = null;
+	    do {
+	    	places = Spatial.Transformations.toSquares(scope, envelopeGeometry, Maths.round(graph.getVertices().size() * coeffSq), false);
+	    } while (places.size() < graph.getVertices().size());
+	    
 	    IShape currentV = null; int dmax = -1;
 	    Map<IShape, Integer> degrees = new IdentityHashMap<>();
 	    int nbV = graph.getVertices().size();

@@ -220,7 +220,7 @@ global {
 		write "Homemade grid based layout : distributes nodes over a grid to minimize edge crossing";
 		g_graph <- layout_grid(g_graph, 
 			world.shape, // The geometry to spatialize nodes in
-			0.5 // The ratio of possible grid position over the total number of nodes
+			1.5 // The ratio of possible grid position over the total number of nodes (should be higher than 1.0 )
 		);
 		
 		write "\n====================";

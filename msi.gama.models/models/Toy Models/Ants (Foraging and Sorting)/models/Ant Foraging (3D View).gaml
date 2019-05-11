@@ -39,7 +39,6 @@ global {
 		float min <- min(grid_values);
 		float max <- max(grid_values);
 		float range <- (max - min) / 2.5;
-		write "" + min + " " + max + " " + range;
 		loop i from: 0 to: gridsize -1 {
 			loop j from: 0 to: gridsize - 1 {
 				grid_values[i, j] <- (grid_values[i, j] - min) / range ;
