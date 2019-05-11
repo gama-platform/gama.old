@@ -23,7 +23,7 @@ global
 	int dimensions <- 2;
 	float globalIntraDistance <- 0.0;
 	bool converged <- false;
-	
+	font regular <- font("Helvetica", 14, # bold);
 	init
 	{
 		//create datapoints agents
@@ -156,7 +156,7 @@ experiment clustering2D type: gui
 {
 	parameter "Number of clusters to split the data into" var: k init:4 category: "KMEANS";
 	parameter "Number of points to be clustered" var: N init: 500;
-	font regular <- font("Helvetica", 14, # bold);
+	
 		
 	point target <- { 20, 95 };
 	output
