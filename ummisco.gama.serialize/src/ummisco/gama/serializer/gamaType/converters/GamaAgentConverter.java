@@ -14,6 +14,7 @@ import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reference.ReferenceAgent;
 
 import java.util.List;
@@ -66,14 +67,16 @@ public class GamaAgentConverter implements Converter {
 		AbstractAgent agt = (AbstractAgent) arg0;
 		
 		writer.startNode("agentReference");
-		System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
+		DEBUG.OUT("ConvertAnother : AgentConverter " + agt.getClass());
+	//	System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
 		
 		//ReferenceSavedAgent refAft = new ReferenceSavedAgent(agt, null, (ReferenceToAgent) null);
 		ReferenceAgent refAft = new ReferenceAgent(null, null, agt);		
 		context.convertAnother(refAft);
 		
 		//writer.setValue(agt.getName());
-		System.out.println("===========END ConvertAnother : GamaAgent truc youpi");
+		DEBUG.OUT("===========END ConvertAnother : GamaAgent");
+		// System.out.println("===========END ConvertAnother : GamaAgent");
 		
 		writer.endNode();
 	}

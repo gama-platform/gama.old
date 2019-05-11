@@ -21,6 +21,7 @@ import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.util.GamaList;
 import msi.gaml.species.AbstractSpecies;
 import msi.gaml.species.GamlSpecies;
+import ummisco.gama.dev.utils.DEBUG;
 
 @SuppressWarnings({ "unchecked" })
 public class GamaSpeciesConverter implements Converter {
@@ -37,7 +38,8 @@ public class GamaSpeciesConverter implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		System.out.println("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
+	//	System.out.println("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
+		DEBUG.OUT("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
 		final AbstractSpecies spec = (AbstractSpecies) arg0;
 		final GamaPopulation<? extends IAgent> pop = (GamaPopulation<? extends IAgent>) spec
 				.getPopulation(convertScope.getScope());
@@ -46,7 +48,8 @@ public class GamaSpeciesConverter implements Converter {
 		context.convertAnother(pop.getAgents(convertScope.getScope()));
 		writer.endNode();
 
-		System.out.println("===========END ConvertAnother : ConvertGamaSpecies");
+	//	System.out.println("===========END ConvertAnother : ConvertGamaSpecies");
+		DEBUG.OUT("===========END ConvertAnother : ConvertGamaSpecies");
 	}
 
 	@Override

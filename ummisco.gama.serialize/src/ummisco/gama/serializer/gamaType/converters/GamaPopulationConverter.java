@@ -18,6 +18,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.util.GamaList;
+import ummisco.gama.dev.utils.DEBUG;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaPopulationConverter implements Converter {
@@ -62,7 +63,8 @@ public class GamaPopulationConverter implements Converter {
 		context.convertAnother(pop.getAgents(convertScope.getScope()));
 		writer.endNode();
 
-		System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");
+	//	System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");
+		DEBUG.OUT("===========END ConvertAnother : GamaSavedAgentConverter");
 	}
 
 	@Override

@@ -8,7 +8,7 @@
 
 model team1strategy
 
-import "./soccer_base.gaml"
+import "Soccer Base.gaml"
 
 species player_intelligentTeam parent:base_player {
 	// READ ONLY ATTRIBUTES :

@@ -1,8 +1,10 @@
 package msi.gama.util.graph.layout;
 
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -34,7 +36,11 @@ public class LayoutGrid {
 
 	public void applyLayout(IScope scope) {
         
-	    IList<IShape> places = Spatial.Transformations.toSquares(scope, envelopeGeometry, Maths.round(graph.getVertices().size() * coeffSq), false);
+	    IList<IShape> places = null;
+	    do {
+	    	places = Spatial.Transformations.toSquares(scope, envelopeGeometry, Maths.round(graph.getVertices().size() * coeffSq), false);
+	    } while (places.size() < graph.getVertices().size());
+	    
 	    IShape currentV = null; int dmax = -1;
 	    Map<IShape, Integer> degrees = new IdentityHashMap<>();
 	    int nbV = graph.getVertices().size();
@@ -53,10 +59,12 @@ public class LayoutGrid {
 	       
 	    List<IShape> close = new IdentityArrayList();
 	    close.add(currentV);
-	    while (close.size() < nbV) {
+
+    	  while (close.size() < nbV) {
 	    	IList<IShape> neigh = Graphs.predecessorsOf(scope, graph, currentV);
-	    	neigh.addAll(Graphs.predecessorsOf(scope, graph, currentV));
+	    	neigh.addAll(Graphs.successorsOf(scope, graph, currentV));
 	    	neigh = Random.opShuffle(scope, neigh);
+	    	
 	    	for(IShape n : neigh) {
 	    		if (remaining.contains(n)) {
 		    		 center = Queries.closest_to(scope, places, currentV.getLocation());
@@ -77,7 +85,7 @@ public class LayoutGrid {
 	    	close.add(currentV);
 	    	if (open.isEmpty()) {
 	    		IShape nV = null;
-		    	dmax = 0;
+		    	dmax = -1;
 		    	java.util.Collections.shuffle(remaining, scope.getRandom().getGenerator());
 		    	
 		    	for (IShape v : remaining) {
@@ -86,21 +94,23 @@ public class LayoutGrid {
 			    }
 		    	remaining.remove(nV);
 		    	open.add(nV);
-		    	List<IShape> neigh2 = Graphs.predecessorsOf(scope, graph, nV);
-		    	neigh2.addAll(Graphs.predecessorsOf(scope, graph, nV));
+		    	Set<IShape> neigh2 = new HashSet(Graphs.predecessorsOf(scope, graph, nV));
+		    	neigh2.addAll(Graphs.successorsOf(scope, graph, nV));
+		    	
 		    	neigh2.removeAll(close);
 		    	neigh2.removeAll(open);
 		    	if (! neigh2.isEmpty()) {
 		    		IList<GamaPoint> pts = GamaListFactory.create(Types.POINT);
 			    	for (IShape n : neigh2) pts.add(n.getCentroid());
 			    	GamaPoint targetLoc = (GamaPoint) msi.gaml.operators.Containers.mean(scope, pts);
-			    	 center = Queries.closest_to(scope, places, targetLoc.getLocation());
+			    	 center = places.size() > 0 ? Queries.closest_to(scope, places, targetLoc.getLocation()) : nV.getLocation();
 			    }
 		    	else {
-		    		center = places.anyValue(scope);	
+		    		
+		    		center = places.size() > 0 ? places.anyValue(scope) : nV.getLocation() ;	
 		    	}
 		    	places.remove(center);
-	    		nV.setLocation(center.getLocation());
+		    	nV.setLocation(center.getLocation());
 	    		
 		    	
 	    	}

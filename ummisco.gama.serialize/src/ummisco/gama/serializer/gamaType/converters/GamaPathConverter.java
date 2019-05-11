@@ -11,6 +11,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.path.GamaPath;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaPathReducer;
 
 @SuppressWarnings({ "rawtypes" , "unchecked" })
@@ -40,9 +41,11 @@ public class GamaPathConverter implements Converter {
 	@Override
 	public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
 		final GamaPath path = (GamaPath) source;
-		System.out.println("ConvertAnother : GamaPath " + path.getClass());
+	//	System.out.println("ConvertAnother : GamaPath " + path.getClass());
+		DEBUG.OUT("ConvertAnother : GamaPath " + path.getClass());
 		context.convertAnother(new GamaPathReducer(path));
-		System.out.println("END -- ConvertAnother : GamaPath " + path.getClass());		
+	//	System.out.println("END -- ConvertAnother : GamaPath " + path.getClass());		
+		DEBUG.OUT("END -- ConvertAnother : GamaPath " + path.getClass());		
 	}
 
 	@Override

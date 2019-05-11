@@ -17,6 +17,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.GamaPair;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaPairReducer;
 
 @SuppressWarnings({ "rawtypes" })
@@ -39,9 +40,11 @@ public class GamaPairConverter implements Converter {
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter arg1, final MarshallingContext arg2) {
 		final GamaPair mp = (GamaPair) arg0;
-		System.out.println("ConvertAnother : GamaPair " + mp.getClass());
+	//	System.out.println("ConvertAnother : GamaPair " + mp.getClass());
+		DEBUG.OUT("ConvertAnother : GamaPair " + mp.getClass());
 		arg2.convertAnother(new GamaPairReducer(mp));
-		System.out.println("END -- ConvertAnother : GamaPair " + mp.getClass());
+	//	System.out.println("END -- ConvertAnother : GamaPair " + mp.getClass());
+		DEBUG.OUT("END -- ConvertAnother : GamaPair " + mp.getClass());
 	}
 
 	@Override

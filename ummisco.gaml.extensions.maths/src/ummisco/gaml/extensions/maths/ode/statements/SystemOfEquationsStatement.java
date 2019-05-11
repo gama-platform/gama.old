@@ -370,9 +370,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void addEquationsOf(final IAgent remoteAgent) {
-		if(remoteAgent.getAttribute("__SoE")==null) return;
-		final SystemOfEquationsStatement ses = (SystemOfEquationsStatement) remoteAgent.getAttribute("__SoE");
-
+		final SystemOfEquationsStatement ses = remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class,
+				getName());
 		if (ses != null) {
 			for (int i = 0, n = ses.equations.size(); i < n; i++) {
 				getEquationAgents(currentScope).put(getEquationAgents(currentScope).size(), remoteAgent);
@@ -392,9 +391,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void removeEquationsOf(final IAgent remoteAgent) {
-		if(remoteAgent.getAttribute("__SoE")==null) return;
-		final SystemOfEquationsStatement ses = (SystemOfEquationsStatement) remoteAgent.getAttribute("__SoE");
-
+		final SystemOfEquationsStatement ses = remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class,
+				getName());
 		if (ses != null) {
 			// final int n = equations.size();
 			for (final SingleEquationStatement e : ses.equations.values()) {
@@ -415,12 +413,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 			addExternalAgents(scope, ((IExpression) toAdd).value(scope), externalAgents);
 		} else if (toAdd instanceof IAgent && !toAdd.equals(scope.getAgent()) && !((IAgent) toAdd).dead()) {
 			externalAgents.add((IAgent) toAdd);
-			final SystemOfEquationsStatement ses = ((IAgent) toAdd).getSpecies()
-					.getStatement(SystemOfEquationsStatement.class, getName());
-			final SystemOfEquationsStatement ss=new SystemOfEquationsStatement(ses.getDescription());
-				((IAgent) toAdd).setAttribute("__SoE", ss);
-//				System.out.println(scope.getAgent()+" add "+toAdd);
-//				((IAgent) toAdd).setAttribute("__is_solved","true")
 		} else if (toAdd instanceof GamlSpecies) {
 			addExternalAgents(scope, ((GamlSpecies) toAdd).getPopulation(scope), externalAgents);
 		} else if (toAdd instanceof IList) {

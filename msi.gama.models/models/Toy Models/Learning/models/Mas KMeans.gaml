@@ -16,11 +16,11 @@ global
 {
 // the number of classes to create (kmeans)
 // It corresponds to the centroids
-	int k ;
+	int k <- 0;
 	// the number of points
-	int N ;
+	int N <- 0;
 	//number of dimensions
-	int dimensions <- 2;
+	int dimensions;
 	init
 	{
 		//create datapoints agents
@@ -37,6 +37,7 @@ global
 			}
 
 		}
+
 		//create centroid agents
 		create centroids number: k
 		{
@@ -144,6 +145,7 @@ experiment clustering2D type: gui
 {
 	parameter "Number of clusters to split the data into" var: k init:4 category: "KMEANS";
 	parameter "Number of points to be clustered" var: N init: 500;
+	parameter "Number of dimensions" var: dimensions init: 2 min: 2 max: 2;
 	font regular <- font("Helvetica", 14, # bold);
 		
 	point target <- { 20, 95 };
@@ -176,12 +178,14 @@ experiment clustering2D type: gui
 
 experiment clustering3D type: gui
 {
-	parameter "Number of clusters to split the data into" var: k init:4 min: 0 max: 10 category: "KMEANS";
-	parameter "Number of points to be clustered" var: N init:1000 ;
-	parameter "Number of dimensions (2D or 3D)" var: dimensions init: 3 min: 2 max: 3;
+	parameter "Number of clusters to split the data into" var: k init:4 category: "KMEANS";
+	parameter "Number of points to be clustered" var: N init:200 ;
 	font regular <- font("Helvetica", 14, # bold);
 	point target <- { 20, 95 };
-	
+	parameter "Number of dimensions" var: dimensions init: 3 min: 3 max: 3;
+	action _init_ {
+		create MASKMEANS_model with: [dimensions::3, N::1000];
+	}
 	output
 	{
 		display map_kmeans type: opengl

@@ -11,7 +11,7 @@
 ***/
 
 model MASKmeansInteractive
-import "MAS_KMEANS.gaml"
+import "Mas KMeans.gaml"
 
 global {
 
@@ -25,6 +25,8 @@ global {
 		file("../images/eraser.png")
 		
 	]; 
+	
+	init { }
 	
 	
 	action activate_act {
@@ -94,8 +96,6 @@ grid button width:2 height:2
 	}
 }
 
-experiment clustering2D type: gui virtual: true;
-experiment clustering3D type: gui virtual: true;
 
 experiment SelectPoints2Cluster2D type: gui {
 	output {

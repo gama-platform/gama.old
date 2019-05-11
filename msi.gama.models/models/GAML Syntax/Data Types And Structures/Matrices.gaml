@@ -34,9 +34,9 @@ species declaring_matrix_attributes {
 	// When the casting is not obvious, the default value is used
 	matrix<float> matrix_of_float_with_impossible_casting <- matrix<float>([['A','B'],['C','D']]);   // => [[0.0,0.0],[0.0,0.0]]
 	// matrices can of course contain lists
-	matrix<list> matrix_of_lists <- {5,5} matrix_with [1,2];
+	matrix<list> matrix_of_lists <- matrix<list>({5,5} matrix_with [1,2]);
 	// matrices can of course contain matrices
-	matrix<matrix> matrix_of_matrices <- {5,5} matrix_with matrix([[1],[2]]) ;
+	matrix<matrix> matrix_of_matrices <- matrix<matrix>({5,5} matrix_with matrix([[1],[2]])) ;
 	// untyped matrixs can contain heterogeneous objects
 	matrix untyped_matrix <- matrix([['5',5],[5,true]]);
 	// the casting applies to all elements when a contents type is defined (note the default last value of 0)
@@ -89,6 +89,7 @@ species test_species {}
 species accessing_matrix_elements {
 	matrix<int> m1 <- matrix([[1,2,3,4],[5,6,7,8]]);
 	matrix<string> m2 <- ['this','is','a','matrix', 'of','strings'] as_matrix {3,2};
+	matrix<int> m_square <- matrix([[1,2,8],[4,12,6],[7,8,9]]);	
 	
 	init {
 		write "";
@@ -135,10 +136,18 @@ species accessing_matrix_elements {
 		
 		// Rows (resp. columns) can also be accessed
 		write sample(columns_list(m1));
-		write sample(rows_list(m1));
-		
+		write sample(rows_list(m1));		
 		write sample(m1 row_at 1);
 		write sample(m1 column_at 1);
+		
+		// Some classical operators of matrix computation have been introduced
+		write sample(det(m_square));
+		write sample(determinant(m_square));
+		write sample(eigenvalues(m_square));
+		write sample(inverse(m_square));
+		write sample(trace(m_square)); 
+		write sample(transpose(m_square));
+		
 	}
 }
 
@@ -148,22 +157,39 @@ species combining_matrices {
 	
 	init {
 		write "";
-		write "== COMBINING LISTS ==";
+		write "== COMBINING MATRICES ==";
 		write "";
 		write sample(m1);
+		write sample(rows_list(m1));
 		write sample(m2);
+		write sample(rows_list(m2));		
 		write sample(m1 + m1);
 		write sample(m2 - m2);
 		// inter between 2 matrices returns the list of all the elements part of both matrices.
 		write sample(m1 inter m2);
 		// union between 2 matrices returns the list of all the elements part at least in one of the two matrices.
 		write sample(m1 union m2);
-		write sample(interleave ([m1,m2]));
+		write sample(interleave ([m1,m1]));
 		matrix<string> m3 <- matrix<string>(m1 + m1);
 		write "matrix<string> m3 <- m1 + m2; " + sample(m3);
 		write sample(m1 as list<float>);
+		write sample(2 * m1);
+		write sample(2 + m1);
 		
-		// Some combinaison of matrices are not possible
+		write sample(m1 * m1);
+		write sample(m1 / m1);
+		
+		write sample(m1 append_horizontally m1);			
+		// Notice that when the 2 matrices do not have the same number of rows, m2 is considered as being 3x3.
+		// The matrix is completed by 0 and thus becomes matrix<int>([[1,9,0],[7,5,0],[3,11,0]])
+		write sample(m1 append_horizontally m2);
+		// m1 dimension is set to the m2 dimension
+		write sample(m2 append_horizontally m1);		
+		write sample(m1 append_vertically m1);
+		write sample(m1 append_vertically m2);
+
+		
+		// Some combinations of matrices are not possible
 		write "Following computations have errors due to incompatible sizes";
 		try {
 			write sample(m1 + m2);			
@@ -173,9 +199,68 @@ species combining_matrices {
 	}
 }
 
+species looping_on_matrices {
+	init {
+		write "";
+		write "== LOOPING ON MATRICES ==";
+		write "";
+		// Besides iterator operators (like "collect", "where", etc.), which provide 
+		// functional iterations (i.e. filters), one can loop over matrices using the imperative
+		// statement 'loop'
+	    matrix<string> matrix_of_strings <- matrix([["A","matrix"],["of","strings"]]);
+		write sample(matrix_of_strings);
+		
+		int i <- 0;
+		// Here, the value of 's' will be that added to each element of the matrix
+		loop s over: matrix_of_strings {
+			i <- i + 1;
+			write "Word #" + i + ": " + s;
+		}
+
+		// 'loop' can also directly use two integer indices (remember matrices have a zero-based index)
+		loop index_row from: 0 to: matrix_of_strings.rows - 1 {
+			loop index_column from: 0 to: matrix_of_strings.columns - 1 {
+				write "The element at row: " + (index_row+1) + " and column: " + (index_column+1) + " of the matrix is: " + matrix_of_strings[index_column,index_row];				
+			}
+		}		
+	}
+}
+
+species modifying_matrices {
+	init {
+		write "";
+		write "== MODIFYING LISTS ==";
+		write "";
+		trace {
+			// Besides assigning a new value to a matrix, matrices can be manipulated using
+			// the "put statements. 
+			// Notice that they have a fix size (number of elements). 
+			// As a consequence, add and remove cannot be used on a matrix.
+		    matrix<string> matrix_of_strings <- matrix([["A","matrix"],["of","strings"]]);
+			write sample(matrix_of_strings);
+			put "Two" in: matrix_of_strings at: {0,0};	
+			put "matrices" in: matrix_of_strings at: {0,1};			
+			write sample(matrix_of_strings);
+			
+			// The two previous put called can be replaced bby an assignement 
+			// Let revert the previous modifications
+			matrix_of_strings[{0,0}] <- "A";	
+			matrix_of_strings[{0,1}] <- "matrix";	
+			
+			write sample(matrix_of_strings);
+			
+			// All the values can also be replaced
+			// Let set all the values in the matrix to empty string
+			put "" in: matrix_of_strings all: true;
+			write sample(matrix_of_strings);
+		}
+	}
+}
+
 experiment Matrices type: gui {
 	user_command "Declaring matrices" {create declaring_matrix_attributes;}	
 	user_command "Accessing matrix elements " {create accessing_matrix_elements;}	
-	user_command "Combining Matrices " {create combining_matrices;}
-	
+	user_command "Combining Matrices " {create combining_matrices;}	
+	user_command "Modifying Matrices" {create modifying_matrices;}
+	user_command "Looping on Matrices " {create looping_on_matrices;}
 }

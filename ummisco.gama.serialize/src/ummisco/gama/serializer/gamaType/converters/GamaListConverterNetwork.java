@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.GamaList;
-import ummisco.gama.serializer.gamaType.reduced.GamaListReducer;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaListReducerNetwork;
 
 @SuppressWarnings({ "rawtypes" })
@@ -47,10 +47,11 @@ public class GamaListConverterNetwork implements Converter {
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
 		final GamaList list = (GamaList) arg0;
 
-		System.out.println("ConvertAnother : GamaList " + list.getClass()+ " "+list.getGamlType().getContentType());
+	//	System.out.println("ConvertAnother : GamaList " + list.getClass()+ " "+list.getGamlType().getContentType());
+		DEBUG.OUT("ConvertAnother : GamaList " + list.getClass()+ " "+list.getGamlType().getContentType());
 		arg2.convertAnother(new GamaListReducerNetwork(list));
-		System.out.println("END --- ConvertAnother : GamaList ");
-
+	//	System.out.println("END --- ConvertAnother : GamaList ");
+		DEBUG.OUT("END --- ConvertAnother : GamaList ");
 	}
 
 	@Override

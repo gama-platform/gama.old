@@ -22,6 +22,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.IGraph;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaGraphReducer;
 
 @SuppressWarnings({ "rawtypes" })
@@ -48,10 +49,11 @@ public class GamaGraphConverter implements Converter {
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
 		final GamaGraph graph = (GamaGraph) arg0;
 
-		System.out.println("ConvertAnother : GamaList " + graph.getClass());
+	//	System.out.println("ConvertAnother : GamaList " + graph.getClass());
+		DEBUG.OUT("ConvertAnother : GamaList " + graph.getClass());
 		arg2.convertAnother(new GamaGraphReducer(convertScope.getScope(), graph));
-		System.out.println("END --- ConvertAnother : GamaList ");
-
+	//	System.out.println("END --- ConvertAnother : GamaList ");
+		DEBUG.OUT("END --- ConvertAnother : GamaList ");
 	}
 
 	@Override

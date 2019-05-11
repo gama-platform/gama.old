@@ -11,16 +11,10 @@
 package ummisco.gama.serializer.gamaType.converters;
 
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.experiment.IExperimentAgent;
-import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaMap;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.variables.IVariable;
-
-import java.util.Collection;
+import ummisco.gama.dev.utils.DEBUG;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -64,7 +58,8 @@ public class GamaScopeConverter implements Converter {
 		for(IAgent agt : expAgt.getSimulationPopulation()){
 			// Each simulation 			
 			SimulationAgent simAgt = (SimulationAgent) agt;
-			System.out.println("ConvertAnother : ScopeConverter " + agt.getClass());
+	//		System.out.println("ConvertAnother : ScopeConverter " + agt.getClass());
+			DEBUG.OUT("ConvertAnother : ScopeConverter " + agt.getClass());
     		context.convertAnother(agt);
 		}
 		

@@ -94,7 +94,7 @@ species people {
 	
 	aspect default {
 		draw pyramid(size) color: color;
-		draw sphere(size/3) at: {location.x,location.y,size} color: color;
+		draw sphere(size/3) at: {location.x,location.y,size*0.75} color: color;
 	}
 }
 //Grid species to discretize space

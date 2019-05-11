@@ -22,6 +22,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class GamaBasicTypeConverter implements Converter {
 
@@ -55,7 +56,8 @@ public class GamaBasicTypeConverter implements Converter {
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
 		final GamaType<?> type = (GamaType<?>) arg0;
-		System.out.println("==GamaType  " + arg0);
+		DEBUG.OUT("==GamaType  " + arg0);
+	//	System.out.println("==GamaType  " + arg0);
 		writer.startNode(TAG);
 		writer.setValue("" + type.getName());
 		// writer.setValue(""+arg0.getClass());

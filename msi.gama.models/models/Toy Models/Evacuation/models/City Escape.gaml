@@ -310,15 +310,16 @@ species building {
 }
 
 experiment my_experiment {
-	
-	parameter "Alert Strategy" var:the_alert_strategy init:"NONE" among:["NONE","STAGED","SPATIAL","EVERYONE"] category:"Alert";
+	float minimum_cycle_duration <- 0.1;
+		
+	parameter "Alert Strategy" var:the_alert_strategy init:"STAGED" among:["NONE","STAGED","SPATIAL","EVERYONE"] category:"Alert";
 	parameter "Number of stages" var:nb_stages init:6 category:"Alert";
 	parameter "Time alert buffer before hazard" var:time_after_last_stage init:5 unit:#mn category:"Alert";
 	
 	parameter "Road density index" var:road_density init:6.0 min:0.1 max:10.0 category:"Congestion";
 	
-	parameter "Speed of the flood front" var:flood_front_speed init:10.0 min:5.0 max:50.0 unit:#m/#mn category:"Hazard";
-	parameter "Time before hazard" var:time_before_hazard init:15 min:0 max:120 unit:#mn category:"Hazard";
+	parameter "Speed of the flood front" var:flood_front_speed init:5.0 min:1.0 max:30.0 unit:#m/#mn category:"Hazard";
+	parameter "Time before hazard" var:time_before_hazard init:5 min:0 max:10 unit:#mn category:"Hazard";
 	
 	parameter "Number of people" var:nb_of_people init:500 min:100 max:20000 category:"Initialization";
 	
