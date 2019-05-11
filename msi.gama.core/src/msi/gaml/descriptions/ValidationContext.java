@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.ValidationContext.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.ValidationContext.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -110,7 +110,7 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 
 	/**
 	 * Method iterator()
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -154,8 +154,9 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	}
 
 	@Override
-	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace) {
-		docDelegate.setGamlDocumentation(object, description, replace);
+	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace,
+			final boolean force) {
+		docDelegate.setGamlDocumentation(object, description, replace, force);
 	}
 
 	@Override
