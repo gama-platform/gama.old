@@ -94,9 +94,11 @@ public class Containers {
 
 		private final Queue<Iterator> queue = new ArrayDeque<>();
 
-		public InterleavingIterator(final Object... objects) {
+		public InterleavingIterator(IScope scope, final Object... objects) {
 			for (final Object object : objects) {
-				if (object instanceof Iterator) {
+				if (object instanceof IContainer) {
+					queue.add(((IContainer) object).iterable(scope).iterator());
+				} else if (object instanceof Iterator) {
 					queue.add((Iterator) object);
 				} else if (object instanceof Iterable) {
 					queue.add(((Iterable) object).iterator());
@@ -185,8 +187,10 @@ public class Containers {
 		@doc (
 				value = "Allows to build a list of int representing all contiguous values from the first to the second argument. The range can be increasing or decreasing. "
 						+ "Passing the same value for both will return a singleton list with this value",
-						examples = {@example(value="range(0,2)", equals="[0,1,2]")})
-		@test("range(0,2) = [0,1,2]") 
+				examples = { @example (
+						value = "range(0,2)",
+						equals = "[0,1,2]") })
+		@test ("range(0,2) = [0,1,2]")
 		public static IList range(final IScope scope, final Integer start, final Integer end) {
 			final Integer step = start > end ? -1 : 1;
 			return range(scope, start, end, step);
@@ -199,7 +203,7 @@ public class Containers {
 				can_be_const = true)
 		@doc (
 				value = "Allows to build a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value. Passing a step of 0 will result in an exception. Attempting to build infinite ranges (e.g. end > start with a negative step) will similarly not be accepted and yield an exception")
-		@test("range(0,6,2) = [0,2,4,6]")
+		@test ("range(0,6,2) = [0,2,4,6]")
 		public static IList range(final IScope scope, final Integer start, final Integer end, final Integer step) {
 			if (step == 0) { throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope); }
 			if (start.equals(end)) { return GamaListFactory.createWithoutCasting(Types.INT, start); }
@@ -223,7 +227,7 @@ public class Containers {
 				can_be_const = true)
 		@doc (
 				value = "Retrieves elements from the first argument every `step` (second argument) elements. Raises an error if the step is negative or equal to zero")
-		@test("[1,2,3,4,5] every 2 = [1,3,5]")
+		@test ("[1,2,3,4,5] every 2 = [1,3,5]")
 		public static IList every(final IScope scope, final IList source, final Integer step) {
 			if (step <= 0) {
 				throw GamaRuntimeException.error("The step value in `every` should be strictly positive", scope);
@@ -246,7 +250,7 @@ public class Containers {
 				usages = { @usage ("If the first operand is empty, returns an empty object of the same type"),
 						@usage ("If the second operand is greater than or equal to the third operand, return an empty object of the same type"),
 						@usage ("If the first operand is nil, raises an error") })
-		@test("copy_between ([4, 1, 6, 9 ,7], 1, 3) = [1,6]")
+		@test ("copy_between ([4, 1, 6, 9 ,7], 1, 3) = [1,6]")
 		public static IList copy_between(final IScope scope, final IList l1, final Integer begin, final Integer end) {
 			final int beginIndex = begin < 0 ? 0 : begin;
 			final int size = notNull(scope, l1).size();
@@ -324,9 +328,10 @@ public class Containers {
 	@doc (
 			value = "produces a set from the elements of the operand (i.e. a list without duplicated elements)",
 			usages = { @usage (
-						value = "if the operand is nil, remove_duplicates returns nil",
-						examples = { @example (
-										value ="remove_duplicates([])", equals="[]")}),
+					value = "if the operand is nil, remove_duplicates returns nil",
+					examples = { @example (
+							value = "remove_duplicates([])",
+							equals = "[]") }),
 					@usage (
 							value = "if the operand is a graph, remove_duplicates returns the set of nodes"),
 					@usage (
@@ -338,12 +343,12 @@ public class Containers {
 							value = "if the operand is a matrix, remove_duplicates returns a list containing all the elments with duplicated.",
 							examples = { @example (
 									value = "remove_duplicates([[\"c11\",\"c12\",\"c13\",\"c13\"],[\"c21\",\"c22\",\"c23\",\"c23\"]])",
-									equals = "[[\"c11\",\"c12\",\"c13\",\"c21\",\"c22\",\"c23\"]]", test=false )})
-					},
+									equals = "[[\"c11\",\"c12\",\"c13\",\"c21\",\"c22\",\"c23\"]]",
+									test = false) }) },
 			examples = { @example (
 					value = "remove_duplicates([3,2,5,1,2,3,5,5,5])",
 					equals = "[3,2,5,1]") })
-	@test("remove_duplicates([3,2,5,1,2,3,5,5,5]) = [3,2,5,1]")
+	@test ("remove_duplicates([3,2,5,1,2,3,5,5,5]) = [3,2,5,1]")
 	public static IList remove_duplicates(final IScope scope, final IContainer c) {
 		return (IList) stream(scope, c).distinct().toCollection(listLike(c));
 	}
@@ -370,9 +375,9 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] contains_all [2,4]",
 							equals = "true") },
 			see = { "contains", "contains_any" })
-	@test("[1,2,3,4,5,6] contains_all [2,8] = false")
-	@test("[1::2, 3::4, 5::6] contains_all [1,3] = false")
-	@test("[1::2, 3::4, 5::6] contains_all [2,4] = true")
+	@test ("[1,2,3,4,5,6] contains_all [2,8] = false")
+	@test ("[1::2, 3::4, 5::6] contains_all [1,3] = false")
+	@test ("[1::2, 3::4, 5::6] contains_all [2,4] = true")
 	public static Boolean contains_all(final IScope scope, final IContainer c, final IContainer c2) {
 		return stream(scope, c2).allMatch(inContainer(scope, c));
 	}
@@ -399,9 +404,9 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] contains_any [2,4]",
 							equals = "true") },
 			see = { "contains", "contains_all" })
-	@test("[1,2,3,4,5,6] contains_any [2,4] = true")
-	@test("[1,2,3,4,5,6] contains_any [2,8] = true")
-	@test("[1::2, 3::4, 5::6] contains_any [2,4] = true")
+	@test ("[1,2,3,4,5,6] contains_any [2,4] = true")
+	@test ("[1,2,3,4,5,6] contains_any [2,8] = true")
+	@test ("[1::2, 3::4, 5::6] contains_any [2,4] = true")
 	public static Boolean contains_any(final IScope scope, final IContainer c, final IContainer c1) {
 		return stream(scope, c1).anyMatch(inContainer(scope, c));
 	}
@@ -414,10 +419,10 @@ public class Containers {
 			concept = { IConcept.CONTAINER })
 	@doc (
 			value = "Returns the nth first elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
-	@test("first(3, [1,2,3,4,5,6]) = [1,2,3]")
-	@test("first(0,[1,2,3,4,5,6]) = []")
-	@test("first_of(3, [1,2,3,4,5,6]) = [1,2,3]")
-	@test("first_of(0,[1,2,3,4,5,6]) = []")
+	@test ("first(3, [1,2,3,4,5,6]) = [1,2,3]")
+	@test ("first(0,[1,2,3,4,5,6]) = []")
+	@test ("first_of(3, [1,2,3,4,5,6]) = [1,2,3]")
+	@test ("first_of(0,[1,2,3,4,5,6]) = []")
 	public static IList first(final IScope scope, final Integer number, final IContainer c) {
 		return (IList) stream(scope, c).limit(number < 0 ? 0 : number).toCollection(listLike(c));
 	}
@@ -430,9 +435,9 @@ public class Containers {
 			concept = { IConcept.CONTAINER })
 	@doc (
 			value = "Returns the nth last elements of the container. If n is greater than the list size,  returns the container cast as a list. If it is equal or less than zero, returns an empty list")
-	@test("last(3, [1,2,3,4,5,6]) = [4,5,6]")
-	@test("last(0,[1,2,3,4,5,6]) = []")
-	@test("last(10,[1::2, 3::4]) is list")
+	@test ("last(3, [1,2,3,4,5,6]) = [4,5,6]")
+	@test ("last(0,[1,2,3,4,5,6]) = []")
+	@test ("last(10,[1::2, 3::4]) is list")
 	public static IList last(final IScope scope, final Integer number, final IContainer c) {
 		final IList result = GamaListFactory.create(scope, c.getGamlType().getContentType(), Iterables.limit(
 				Lists.reverse(notNull(scope, c).listValue(scope, Types.NO_TYPE, false)), number < 0 ? 0 : number));
@@ -461,9 +466,9 @@ public class Containers {
 							value = "6 in [1::2, 3::4, 5::6]",
 							equals = "true") },
 			see = { "contains" })
-	@test("2 in [1,2,3,4,5,6] = true")
-	@test("3 in [1::2, 3::4, 5::6] = false")
-	
+	@test ("2 in [1,2,3,4,5,6] = true")
+	@test ("3 in [1::2, 3::4, 5::6] = false")
+
 	public static Boolean in(final IScope scope, final Object o, final IContainer c) throws GamaRuntimeException {
 		return notNull(scope, c).contains(scope, o);
 	}
@@ -503,7 +508,7 @@ public class Containers {
 									value = "[4,2,3,4,5,4] index_of 4",
 									equals = "0") }),
 			see = { "at", "last_index_of" })
-	@test("[1,2,3,1,2,1,4,5] index_of 4 = 6")
+	@test ("[1,2,3,1,2,1,4,5] index_of 4 = 6")
 	public static Integer index_of(final IScope scope, final IList c, final Object o) {
 		return notNull(scope, c).indexOf(o);
 	}
@@ -519,7 +524,7 @@ public class Containers {
 			examples = { @example (
 					value = "[1::2, 3::4, 5::6] index_of 4",
 					equals = "3") })
-	@test("[1::2, 3::4, 5::6] index_of 4 = 3")
+	@test ("[1::2, 3::4, 5::6] index_of 4 = 3")
 	public static Object index_of(final IScope scope, final GamaMap<?, ?> c, final Object o) {
 		for (final Map.Entry<?, ?> k : notNull(scope, c).entrySet()) {
 			if (k.getValue().equals(o)) { return k.getKey(); }
@@ -539,7 +544,7 @@ public class Containers {
 					examples = { @example (
 							value = "matrix([[1,2,3],[4,5,6]]) index_of 4",
 							equals = "{1.0,0.0}") }))
-	@test("matrix([[1,2,3],[4,5,6]]) index_of 4 = {1.0,0.0}")
+	@test ("matrix([[1,2,3],[4,5,6]]) index_of 4 = {1.0,0.0}")
 	public static ILocation index_of(final IScope scope, final IMatrix c, final Object o) {
 		for (int i = 0; i < notNull(scope, c).getCols(scope); i++) {
 			for (int j = 0; j < c.getRows(scope); j++) {
@@ -558,7 +563,7 @@ public class Containers {
 			value = "the index of the last occurence of the right operand in the left operand container",
 			usages = @usage ("if the left operand is a species, the last index of an agent is the same as its index"),
 			see = { "at", "index_of" })
-	@test("last_index_of([1,2,2,2,5], 2) = 3")
+	@test ("last_index_of([1,2,2,2,5], 2) = 3")
 	public static Integer last_index_of(final IScope scope, final ISpecies c, final Object o) {
 		return index_of(scope, notNull(scope, c), o);
 	}
@@ -581,7 +586,7 @@ public class Containers {
 									value = "[4,2,3,4,5,4] last_index_of 4",
 									equals = "5") }) },
 			see = { "at", "last_index_of" })
-	@test("[4,2,3,4,5,4] last_index_of 4 = 5")
+	@test ("[4,2,3,4,5,4] last_index_of 4 = 5")
 	public static Integer last_index_of(final IScope scope, final IList c, final Object o) {
 		return notNull(scope, c).lastIndexOf(o);
 	}
@@ -598,7 +603,7 @@ public class Containers {
 					examples = { @example (
 							value = "matrix([[1,2,3],[4,5,4]]) last_index_of 4",
 							equals = "{1.0,2.0}") }))
-	@test("matrix([[1,2,3],[4,5,4]]) last_index_of 4 = {1.0,2.0}")
+	@test ("matrix([[1,2,3],[4,5,4]]) last_index_of 4 = {1.0,2.0}")
 	public static ILocation last_index_of(final IScope scope, final IMatrix c, final Object o) {
 		for (int i = notNull(scope, c).getCols(scope) - 1; i > -1; i--) {
 			for (int j = c.getRows(scope) - 1; j > -1; j--) {
@@ -621,7 +626,7 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::4] last_index_of 4",
 							equals = "5") }))
-	@test("[1::2, 3::4, 5::4] last_index_of 4 = 5")
+	@test ("[1::2, 3::4, 5::4] last_index_of 4 = 5")
 	public static Object last_index_of(final IScope scope, final GamaMap<?, ?> c, final Object o) {
 		for (final Map.Entry<?, ?> k : Lists.reverse(new ArrayList<>(notNull(scope, c).entrySet()))) {
 			if (k.getValue().equals(o)) { return k.getKey(); }
@@ -660,7 +665,7 @@ public class Containers {
 							value = "[1,2,3,4,5,6] inter [0,8]",
 							equals = "[]") },
 			see = { "remove_duplicates" })
-	@test("[1,2,3,4,5,6] inter [0,8] = []")
+	@test ("[1,2,3,4,5,6] inter [0,8] = []")
 	public static IList inter(final IScope scope, final IContainer c, final IContainer c1) {
 		return (IList) stream(scope, c).filter(inContainer(scope, c1)).distinct().toCollection(listLike(c, c1));
 	}
@@ -688,7 +693,7 @@ public class Containers {
 											returnType = "list<int>",
 											equals = "[1,2,3,4,5,6]") }) },
 			see = { "" + IKeyword.PLUS })
-	@test("[1,2,3,4,5,6] - [0,8] = [1,2,3,4,5,6]")
+	@test ("[1,2,3,4,5,6] - [0,8] = [1,2,3,4,5,6]")
 	public static IList minus(final IScope scope, final IContainer source, final IContainer l) {
 		final IList result = (IList) notNull(scope, source)
 				.listValue(scope, source.getGamlType().getContentType(), false).copy(scope);
@@ -715,7 +720,7 @@ public class Containers {
 									value = "[1,2,3,4,5,6] - 0",
 									returnType = "list<int>",
 									equals = "[1,2,3,4,5,6]") }) })
-	@test("[1,2,3,4,5,6] - 0 = [1,2,3,4,5,6]")
+	@test ("[1,2,3,4,5,6] - 0 = [1,2,3,4,5,6]")
 	public static IList minus(final IScope scope, final IList l1, final Object object) {
 		final IList result = (IList) notNull(scope, l1).copy(scope);
 		result.remove(object);
@@ -733,11 +738,10 @@ public class Containers {
 					value = "if the left operand is a species and the right operand is an agent of the species, "
 							+ IKeyword.MINUS
 							+ " returns a list containing all the agents of the species minus this agent") })
-	@test("([1,2,2,3,5] - 3) = [1,2,2,5] ")
+	@test ("([1,2,2,3,5] - 3) = [1,2,2,5] ")
 	public static IList minus(final IScope scope, final ISpecies l1, final IAgent object) {
 		return minus(scope, l1.listValue(scope, scope.getType(l1.getName()), false), object);
 	}
-
 
 	@operator (
 			value = "of_generic_species",
@@ -815,7 +819,7 @@ public class Containers {
 	@doc (
 			value = "produces a new pair combining the left and the right operands",
 			special_cases = "nil is not acceptable as a key (although it is as a value). If such a case happens, :: will throw an appropriate error")
-	@test("string(1::2) = '1::2'")
+	@test ("string(1::2) = '1::2'")
 	public static GamaPair pair(final IScope scope, final IExpression a, final IExpression b) {
 		final Object v1 = a.value(scope);
 		final Object v2 = b.value(scope);
@@ -847,7 +851,7 @@ public class Containers {
 											returnType = "list<int>",
 											equals = "[1,2,3,4,5,6,0,8]") }) },
 			see = { "" + IKeyword.MINUS })
-	@test("[1,2,3,4,5,6] + [2,4,9] = [1,2,3,4,5,6,2,4,9]")
+	@test ("[1,2,3,4,5,6] + [2,4,9] = [1,2,3,4,5,6,2,4,9]")
 	public static IContainer plus(final IScope scope, final IContainer c1, final IContainer c2) {
 		// special case for the addition of two populations or meta-populations
 		if (c1 instanceof IPopulationSet && c2 instanceof IPopulationSet) {
@@ -874,7 +878,7 @@ public class Containers {
 									value = "[1,2,3,4,5,6] + 0",
 									returnType = "list<int>",
 									equals = "[1,2,3,4,5,6,0]") }))
-	@test("[1,2,3,4,5,6] + 2 = [1,2,3,4,5,6,2]")
+	@test ("[1,2,3,4,5,6] + 2 = [1,2,3,4,5,6,2]")
 	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
 		final IList result = (IList) notNull(scope, l1).listValue(scope, Types.NO_TYPE, false).copy(scope);
 		result.add(l);
@@ -901,7 +905,7 @@ public class Containers {
 							value = "[1,3,2,4,5,6,8,5,6] union [0,8]",
 							equals = "[1,3,2,4,5,6,8,0]") },
 			see = { "inter", IKeyword.PLUS })
-	@test("[1,2,3,4,5,6] union [2,4,9] = [1,2,3,4,5,6,9]")
+	@test ("[1,2,3,4,5,6] union [2,4,9] = [1,2,3,4,5,6,9]")
 	public static IList union(final IScope scope, final IContainer c, final IContainer c1) {
 		return (IList) stream(scope, c).append(stream(scope, c1)).distinct().toCollection(listLike(c, c1));
 	}
@@ -937,8 +941,8 @@ public class Containers {
 							equals = "[false::[2, 4], true::[6]]",
 							returnType = "map<bool,list>") },
 			see = { "first_with", "last_with", "where" })
-	@test("[1,2,3,4,5,6,7,8] group_by (each > 3) = [false::[1, 2, 3], true::[4, 5, 6, 7, 8]]")
-	@test("[1::2, 3::4, 5::6] group_by (each > 4) = [false::[2, 4], true::[6]]")
+	@test ("[1,2,3,4,5,6,7,8] group_by (each > 3) = [false::[1, 2, 3], true::[4, 5, 6, 7, 8]]")
+	@test ("[1::2, 3::4, 5::6] group_by (each > 4) = [false::[2, 4], true::[6]]")
 	public static GamaMap group_by(final IScope scope, final IContainer c, final IExpression e) {
 		final IType ct = notNull(scope, c).getGamlType().getContentType();
 		return (GamaMap) stream(scope, c).groupingTo(with(scope, e), asMapOf(e.getGamlType(), Types.LIST.of(ct)),
@@ -979,7 +983,7 @@ public class Containers {
 							equals = "node3",
 							isExecutable = false) },
 			see = { "group_by", "first_with", "where" })
-	@test("[1,2,3,4,5,6,7,8] last_with (each > 3) = 8")
+	@test ("[1,2,3,4,5,6,7,8] last_with (each > 3) = 8")
 	public static Object last_with(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).filter(by(scope, filter)).reduce((a, b) -> b).orElse(null);
 	}
@@ -1019,7 +1023,7 @@ public class Containers {
 							equals = "node2",
 							isExecutable = false) },
 			see = { "group_by", "last_with", "where" })
-	@test("[1,2,3,4,5,6,7,8] first_with (each > 3) = 4")
+	@test ("[1,2,3,4,5,6,7,8] first_with (each > 3) = 4")
 	public static Object first_with(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).findFirst(by(scope, filter)).orElse(null);
 	}
@@ -1054,7 +1058,7 @@ public class Containers {
 							equals = "96",
 							isExecutable = false) },
 			see = { "min_of" })
-	@test("[1,2,4,3,5,7,6,8] max_of (each * 100 ) = 800")
+	@test ("[1,2,4,3,5,7,6,8] max_of (each * 100 ) = 800")
 	@validator (ComparableValidator.class)
 	public static Object max_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).map(with(scope, filter)).maxBy(Function.identity()).orElse(null);
@@ -1097,8 +1101,8 @@ public class Containers {
 					@usage (
 							value = "if it is a list of colors: sum will sum them and return the blended resulting color") },
 			see = { "mul" })
-	@test("sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}]) = {20.0,17.0}")
-	@test("sum ([12,10,3]) = 25")
+	@test ("sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}]) = {20.0,17.0}")
+	@test ("sum ([12,10,3]) = 25")
 	public static Object sum(final IScope scope, final IContainer l) {
 		return sum_of(scope, l, null);
 	}
@@ -1110,7 +1114,7 @@ public class Containers {
 			doc = @doc ("Returns the sum of the weights of the graph nodes"),
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
-	@test("sum(as_edge_graph(line([{10,10},{30,10}]))) = 20.0")
+	@test ("sum(as_edge_graph(line([{10,10},{30,10}]))) = 20.0")
 	public static double sum(final IScope scope, final IGraph g) {
 		if (g == null) { return 0.0; }
 		return g.computeTotalWeight();
@@ -1135,7 +1139,7 @@ public class Containers {
 					value = "[1,2] sum_of (each * 100 )",
 					equals = "300") },
 			see = { "min_of", "max_of", "product_of", "mean_of" })
-	@test("[1,2] sum_of (each * 100 ) = 300")
+	@test ("[1,2] sum_of (each * 100 ) = 300")
 	public static Object sum_of(final IScope scope, final IContainer container, final IExpression filter) {
 		Stream s = stream(scope, container);
 		IType t;
@@ -1180,7 +1184,7 @@ public class Containers {
 					value = "[1,2] product_of (each * 10 )",
 					equals = "200") },
 			see = { "min_of", "max_of", "sum_of", "mean_of" })
-	@test("[3,4] product_of (each *2) = 48")
+	@test ("[3,4] product_of (each *2) = 48")
 	public static Object product_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return Stats.product(scope, collect(scope, container, filter));
 	}
@@ -1201,7 +1205,7 @@ public class Containers {
 					value = "mean ([4.5, 3.5, 5.5, 7.0])",
 					equals = "5.125 ") },
 			see = { "sum" })
-	@test("mean ([4.5, 3.5, 5.5, 7.0]) with_precision 3 = 5.125")
+	@test ("mean ([4.5, 3.5, 5.5, 7.0]) with_precision 3 = 5.125")
 	public static Object mean(final IScope scope, final IContainer l) throws GamaRuntimeException {
 
 		final Object s = Containers.sum(scope, l);
@@ -1229,13 +1233,13 @@ public class Containers {
 					examples = { @example (
 							value = "[1::2, 3::4, 5::6] mean_of (each)",
 							equals = "4") }) },
-		 	examples = { @example (
+			examples = { @example (
 					value = "[1,2] mean_of (each * 10 )",
 					equals = "15") },
 			see = { "min_of", "max_of", "sum_of", "product_of" })
-	@test("[1,2] mean_of (each * 10 ) = 15")
-	@test("[1,2] mean_of (each * 10 ) = 15")
-	@test("[1,2] mean_of (each * 10 ) = 15")	
+	@test ("[1,2] mean_of (each * 10 ) = 15")
+	@test ("[1,2] mean_of (each * 10 ) = 15")
+	@test ("[1,2] mean_of (each * 10 ) = 15")
 	public static Object mean_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return mean(scope, collect(scope, container, filter));
 	}
@@ -1250,12 +1254,12 @@ public class Containers {
 			value = "the variance of the right-hand expression evaluated on each of the elements of the left-hand operand",
 			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
 			see = { "min_of", "max_of", "sum_of", "product_of" },
-			examples = {
-					@example (value = "[1,2,3,4,5,6] variance_of each with_precision 2", equals = "2.92", returnType="float")
-			}
-			)
-	
-	@test("[1,2,3,4,5,6] variance_of each with_precision 2 = 2.92")
+			examples = { @example (
+					value = "[1,2,3,4,5,6] variance_of each with_precision 2",
+					equals = "2.92",
+					returnType = "float") })
+
+	@test ("[1,2,3,4,5,6] variance_of each with_precision 2 = 2.92")
 	public static Object variance_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return Stats.opVariance(scope, collect(scope, container, filter));
 	}
@@ -1289,7 +1293,7 @@ public class Containers {
 							equals = "4",
 							isExecutable = false) },
 			see = { "max_of" })
-	@test("[1,2,4,3,5,7,6,8] min_of (each * 100 ) = 100")
+	@test ("[1,2,4,3,5,7,6,8] min_of (each * 100 ) = 100")
 	@validator (ComparableValidator.class)
 	public static Object min_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).map(with(scope, filter)).minBy(Function.identity()).orElse(null);
@@ -1394,7 +1398,7 @@ public class Containers {
 							value = "[1::2, 5::6, 3::4] sort_by (each)",
 							equals = "[2, 4, 6]") },
 			see = { "group_by" })
-	@test("[1,2,4,3,5,7,6,8] sort_by (each) = [1,2,3,4,5,6,7,8]")
+	@test ("[1,2,4,3,5,7,6,8] sort_by (each) = [1,2,3,4,5,6,7,8]")
 	@validator (ComparableValidator.class)
 	public static IList sort(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).sortedBy(with(scope, filter)).toCollection(listLike(c));
@@ -1432,7 +1436,7 @@ public class Containers {
 							equals = "[node2, node3]",
 							isExecutable = false) },
 			see = { "first_with", "last_with", "where" })
-	@test("[1,2,3,4,5,6,7,8] where (each > 3) = [4, 5, 6, 7, 8] ")
+	@test ("[1,2,3,4,5,6,7,8] where (each > 3) = [4, 5, 6, 7, 8] ")
 	public static IList where(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).filter(by(scope, filter)).toCollection(listLike(c));
 	}
@@ -1466,7 +1470,7 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] with_max_of (each)",
 							equals = "6") },
 			see = { "where", "with_min_of" })
-	@test("[1,2,3,4,5,6,7,8] with_max_of (each ) = 8")
+	@test ("[1,2,3,4,5,6,7,8] with_max_of (each ) = 8")
 	@validator (ComparableValidator.class)
 	public static Object with_max_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).maxBy(with(scope, filter)).orElse(null);
@@ -1501,7 +1505,7 @@ public class Containers {
 							value = "[1::2, 3::4, 5::6] with_min_of (each)",
 							equals = "2") },
 			see = { "where", "with_max_of" })
-	@test("[1,2,3,4,5,6,7,8] with_min_of (each )  = 1")
+	@test ("[1,2,3,4,5,6,7,8] with_min_of (each )  = 1")
 	@validator (ComparableValidator.class)
 	public static Object with_min_of(final IScope scope, final IContainer c, final IExpression filter) {
 		return stream(scope, c).minBy(with(scope, filter)).orElse(null);
@@ -1530,7 +1534,7 @@ public class Containers {
 							returnType = "list<int>",
 							equals = "[2,4,8]") },
 			see = { "collect" })
-	@test("[1,2,4] accumulate ([2,4]) = [2,4,2,4,2,4]")
+	@test ("[1,2,4] accumulate ([2,4]) = [2,4,2,4,2,4]")
 	public static IList accumulate(final IScope scope, final IContainer c, final IExpression filter) {
 		// WARNING TODO The resulting type is not computed
 		final IType type = filter.getGamlType();
@@ -1568,8 +1572,8 @@ public class Containers {
 							equals = "the list of nodes with their x multiplied by 2",
 							isExecutable = false) },
 			see = { "accumulate" })
-	@test("[1,2,4] collect (each *2) = [2,4,8]")
-	@test("[1,2,4] collect ([2,4]) = [[2,4],[2,4],[2,4]]")
+	@test ("[1,2,4] collect (each *2) = [2,4,8]")
+	@test ("[1,2,4] collect ([2,4]) = [[2,4],[2,4],[2,4]]")
 	public static IList collect(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).map(with(scope, filter)).toCollection(listOf(filter.getGamlType()));
 	}
@@ -1580,7 +1584,7 @@ public class Containers {
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
 	@doc (
-			value = "a new list containing the interleaved elements of the containers contained in the operand",
+			value = "Returns a new list containing the interleaved elements of the containers contained in the operand",
 			comment = "the operand should be a list of lists of elements. The result is a list of elements. ",
 			examples = { @example (
 					value = "interleave([1,2,4,3,5,7,6,8])",
@@ -1594,7 +1598,7 @@ public class Containers {
 		if (type.isContainer()) {
 			type = type.getContentType();
 		}
-		final Iterator it = new InterleavingIterator(toArray(iterable, Object.class));
+		final Iterator it = new InterleavingIterator(scope, toArray(iterable, Object.class));
 		return GamaListFactory.create(scope, type, it);
 	}
 
