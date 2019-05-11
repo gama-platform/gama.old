@@ -37,7 +37,7 @@ species Networking_Client skills: [network]
 		
 	}
 
-	reflex send when:every(4)
+	reflex send when:every(4 #cycle)
 	{
 		do send to: "Server0" contents: name + " at " + cycle + " sent to Server a message";
 	}
