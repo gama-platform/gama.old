@@ -119,6 +119,10 @@ else
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
 		release
 	fi	
+	if  [[ ${MESSAGE} == *"ci daily"* ]] || [[ $MSG == *"ci daily"* ]]; then
+		embed_jdk
+		release_daily
+	fi	
 fi
 
 if [[ $(date +%d) =~ 0[1-1] ]]; then

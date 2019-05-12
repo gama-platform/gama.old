@@ -63,9 +63,36 @@ done
 
 
 
-echo
-echo "Creating release from $RELEASE tag..."
-echo 
+LK1="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
+
+echo   "Getting info of release daily...  "
+RESULT1=`curl  -s -X GET \
+-H "Authorization: token $HQN_TOKEN"   \
+"$LK1"`	
+echo $RESULT1
+
+	json=$RESULT1
+	prop='id'
+	
+    temp=`echo $json | sed 's/\\\\\//\//g' | sed 's/[{}]//g' | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed 's/\"\:\"/\|/g' | sed 's/[\,]/ /g' | sed 's/\"//g' | grep -w $prop`
+    
+	assets=`echo ${temp##*|}`
+
+	for theid in $assets; do
+		if [ "$theid" != "id:" ]; then
+	LK1="https://api.github.com/repos/gama-platform/gama/releases/$theid"
+
+	echo   "Deleting release daily...  "
+	RESULT1=`curl  -s -X DELETE \
+	-H "Authorization: token $HQN_TOKEN"   \
+	"$LK1"`	
+	echo $RESULT1
+	break
+		fi
+	done 
+
+
+	#update_tag daily
 LK="https://api.github.com/repos/gama-platform/gama/releases"
 
   RESULT=` curl -s -X POST \
@@ -73,9 +100,23 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $HQN_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "$RELEASE", "name":"$RELEASE","body":"this is a $RELEASE release"}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"'$RELEASE'","body":"this is a daily '$RELEASE'","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
