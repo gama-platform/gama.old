@@ -1,12 +1,12 @@
 /*********************************************************************************************
- * 
+ *
  *
  * 'XmlToTestGAML.java', in plugin 'msi.gama.documentation', is part of the source code of the GAMA modeling and
  * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.precompiler.tests;
 
@@ -120,10 +120,18 @@ public class ExamplesToTests implements XMLElements {
 
 			for (final org.w3c.dom.Element operatorElement : operators) {
 				if (operatorElement.hasAttribute("HAS_TESTS")) {
-					list(operatorElement.getElementsByTagName(CATEGORY)).stream()
-							.filter(o -> o.getAttribute("id").equals(category))
-                            .map(o -> tempDocument.importNode(operatorElement.cloneNode(true), true))
-							.forEach(o -> rootOperators.appendChild(o));
+					// OPTION 1 - PRODUCE ALL TESTS, EVEN IF THERE ARE DUPLICATES IN SOME CATEGORIES
+//					list(operatorElement.getElementsByTagName(CATEGORY)).stream()
+//							.filter(o -> o.getAttribute("id").equals(category))
+//							.map(o -> tempDocument.importNode(operatorElement.cloneNode(true), true))
+//							.forEach(o -> rootOperators.appendChild(o));
+					// OPTION 2 - PRODUCE EACH TEST ONLY ONCE IN ITS FIRST CATEGORY
+					 list(operatorElement.getElementsByTagName(CATEGORY)).stream()
+					 .filter(o -> o.getAttribute("id").equals(category)).map(o ->
+					 tempDocument.importNode(operatorElement.cloneNode(true), true)).forEach(each -> {
+					 rootOperators.appendChild(each);
+					 operatorElement.removeAttribute("HAS_TESTS");
+					 });
 				}
 			}
 			root.appendChild(rootOperators);

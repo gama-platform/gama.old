@@ -18,26 +18,10 @@ global  {
 	int number_of_objects_around  <- 5 min: 0 max: 8;
 	int width_and_height_of_grid <- 128 max: 400 min: 10 ;  
 	int ants <- 20 min: 1 ;
-	
-	//Action to kill all the ants
-	action kill_all {
-		ask ant {do die;}
-	}
-	
-	//Action to create all the ants
-	action create_all {
-		create ant number: ants;
-	}
+	list<rgb> colors <- [#yellow,#red, #orange, #blue, #green,#cyan, #gray,#pink,#magenta] ;
 
-	rgb black <- #black  ;	
-	list<rgb> colors const: true <- [#yellow,#red, #orange, #blue, #green,#cyan, #gray,#pink,#magenta] ;
-	//Action to write the description of the model
-	action description {
-		write "\n Description. \n This model is loosely based on the behavior of ants sorting different elements in their nest. \n A of mobile agents - the ants - is placed on a grid. The grid itself contains cells of different colors. Each step, the agents move randomly. If they enter a colored cell, they pick this color if its density in the neighbourhood is less than *number_of_objects_around*. If they have picked a color, they drop it on a black cell if they have encountered at least *number_of_objects_in_history* cells with the same color.\n After a while, colors begin to be aggregated. " ;	
-	}  
 	init { 
-		do description ;
-		do create_all;
+		create ant number: ants;
 	} 
 }
 //Species ant that will move and follow a final state machine
@@ -51,9 +35,9 @@ species ant skills: [ moving ] control: fsm {
 	}
 	//Initial state that will change to full
 	state empty initial: true {
-		transition to: full when: (place.color != black) and ( (place.neighbors count (each.color = place.color)) < (rnd(number_of_objects_around))) {
+		transition to: full when: (place.color != #black) and ( (place.neighbors count (each.color = place.color)) < (rnd(number_of_objects_around))) {
 			color <- place.color ;
-			place.color <- black ; 
+			place.color <- #black ; 
 		}
 	}
 	//State full that will change to black if the place color is empty and drop the color inside it
@@ -64,14 +48,10 @@ species ant skills: [ moving ] control: fsm {
 		if place.color = color { 
 			encountered <- encountered + 1 ;
 		}
-		transition to: empty when: (place.color = black) and (encountered > number_of_objects_in_history) {
+		transition to: empty when: (place.color = #black) and (encountered > number_of_objects_in_history) {
 			place.color <- color ;
-			color <- black ;
+			color <- #black ;
 		}
-	}
-	aspect default {
-		draw file("../images/ant_normal.svg") size:5 color: color rotate: heading - 90;
-		draw circle(5) empty: true color: color;
 	}
 }
 //Grid that will use the density to determine the color
@@ -81,7 +61,7 @@ grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid n
 
 
 	
-experiment sort type: gui{
+experiment "Color sort" type: gui{
 	parameter "Number of colors:" var: number_of_different_colors category: "Environment" ;
 	parameter "Density of colors:" var: density_percent category: "Environment" ;
 	parameter "Number of similar colors in memory necessary to put down:" var: number_of_objects_in_history category: "Agents" ;
@@ -92,7 +72,9 @@ experiment sort type: gui{
 	output {
 		display OpenGL type: opengl  {
 			grid ant_grid ;
-			species ant transparency: 0.2 ;
+			species ant transparency: 0.2 {
+				draw circle(5) empty: true color: color;
+			}
 		}
 	}
 }

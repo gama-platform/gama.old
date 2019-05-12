@@ -6,7 +6,7 @@
 */
 model ants_coupling
 
-import "../../../Toy Models/Ants (Foraging and Sorting)/models/Ant Foraging (Complex).gaml"
+import "../../../Toy Models/Ants (Foraging and Sorting)/models/Ant Foraging.gaml"
 
 //this is the experiment that supposed to uses
 experiment Base type: gui 

@@ -63,7 +63,7 @@ global {
 	 	list<rgb> sky_color_list <- [rgb(238,238,238),rgb(129,207,224),rgb(25,181,254),rgb(254,224,144)];
 		list<rgb> leaf_color_list <- [rgb(150,40,27),rgb(134,174,83),rgb(30,130,76),rgb(192,57,43)];
 		list<rgb> ground_color_list <- [rgb(236,240,241),rgb(46,204,113),rgb(38,166,91),rgb(95,104,40)];
-		list<rgb> branch_color_list <- [rgb(70,120,120),rgb(90,139,140),rgb(90,139,140),rgb(90,139,140)];
+		list<rgb> branch_color_list <- [#sienna,#sienna,#sienna, #sienna];
 		list<rgb> fruit_color_list <- [rgb(102,62,81),rgb(200,247,197),rgb(135,211,124),rgb(211,84,0)];
 		
 
