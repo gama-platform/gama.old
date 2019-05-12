@@ -125,13 +125,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $HQN_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"Built once a day or with \"ci release\" \n # The release file names are composed with a number of segments separated by `_` : \n
-_ the version of the release, (e.g., `GAMA1.8`)  \n
-_ the name of the OS: either `Linux`, `Mac` or `Win`  \n
-_ the number of bits: 64bits or 32 bits  \n
-_ the day it has been produced (e.g., `07.03.18` for the 3rd of July, 2018)  \n
-_ the hashcode of the corresponding commit (e.g., `bbe2b68` that can be retrieved at https://github.com/gama-platform/gama/commits/master)
-","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"Built once a day or with \"ci release\" \n # The release file names are composed with a number of segments separated by \`_\` : \n_ the version of the release, (e.g., \`GAMA1.8\`)  \n_ the name of the OS: either \`Linux\`, \`Mac\` or \`Win\`  \n_ the number of bits: 64bits or 32 bits  \n_ the day it has been produced (e.g., \`07.03.18\` for the 3rd of July, 2018)  \n_ the hashcode of the corresponding commit (e.g., \`bbe2b68\` that can be retrieved at https://github.com/gama-platform/gama/commits/master)","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
