@@ -38,10 +38,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.usage;
-
 public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment, Constants {
 	private final static boolean PRODUCES_DOC = true;
 	public static final Charset CHARSET = Charset.forName("UTF-8");
@@ -354,25 +350,6 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 
 	public List<String> getRoots() {
 		return roots;
-	}
-
-	public boolean docHasTests(doc doc) {
-		if (doc == null)
-			return false;
-		if (examplesHaveTests(doc.examples()))
-			return true;
-		for (usage us : doc.usages()) {
-			if (examplesHaveTests(us.examples()))
-				return true;
-		}
-		return false;
-	}
-
-	public boolean examplesHaveTests(example[] examples) {
-		for (example ex : examples) {
-			if (ex.isTestOnly() || ex.isExecutable() && ex.test()) { return true; }
-		}
-		return false;
 	}
 
 }

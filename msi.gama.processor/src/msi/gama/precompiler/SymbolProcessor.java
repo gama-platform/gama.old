@@ -2,7 +2,6 @@ package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -14,7 +13,8 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
 			final symbol symbol) {
 		final String clazz = rawNameOf(context, e.asType());
-		verifyDoc(context, e, symbol);
+		String name = symbol.name().length == 0 ? e.getSimpleName().toString() : symbol.name()[0];
+		verifyDoc(context, e, "symbol " + name, symbol);
 		final StringBuilder constants = new StringBuilder();
 
 		sb.append(in).append("_symbol(");
@@ -49,12 +49,7 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 				}
 				toArrayOfStrings(values, sb).append(',').append(toBoolean(child.optional())).append(',')
 						.append(toBoolean(child.internal()));
-				final doc[] d = child.doc();
-				if (d == null || d.length == 0) {
-					if (!child.internal()) {
-						UNDOCUMENTED.add(child.name());
-					}
-				} else {}
+				verifyDoc(context, e, "facet " + child.name(), child);
 				sb.append(')');
 			}
 			sb.append(')');
@@ -66,13 +61,6 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			sb.append(ln).append("_constants(").append(constants).append(");");
 		}
 
-	}
-
-	private void verifyDoc(final ProcessorContext context, final Element e, final symbol symbol) {
-		final doc d = e.getAnnotation(doc.class);
-		if (d == null && !symbol.internal()) {
-			context.emitWarning("GAML: symbol '" + symbol.name()[0] + "' is not documented", e);
-		}
 	}
 
 	@Override
