@@ -67,22 +67,15 @@ deploy(){
 embed_jdk(){
 	bash ./travis/zip_withjdk.sh "$TRAVIS_COMMIT" 
 }
-release(){
-	echo "Upload continuous release to github"		
+release(){	
 	bash ./travis/github-release.sh "$TRAVIS_COMMIT" 
 }
-release_on_demand(){	
-	update_tag continuous
+release_continuous(){	
+	echo "Upload continuous/on-demand release to github"	
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
 }
-release_daily(){	
-	#update_tag daily
-
-	bash ./travis/github_release_daily_withjdk.sh "$TRAVIS_COMMIT" 
-}
 release_monthly(){	
-	update_tag monthly
-
+	echo "Upload monthly release to github"	
 	bash ./travis/github_release_monthly_withjdk.sh "$TRAVIS_COMMIT" 
 }
 
@@ -99,8 +92,8 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then
 			MSG+=" ci ext "
 	fi
 	deploy
-	
-	release
+	embed_jdk
+	release_continuous
 	commit_wiki_files
 	commit_io_website_files
 else
@@ -121,7 +114,8 @@ else
 	fi	
 	if  [[ ${MESSAGE} == *"ci daily"* ]] || [[ $MSG == *"ci daily"* ]]; then
 		embed_jdk
-		release_daily
+		release_continuous
+		release_monthly 
 	fi	
 fi
 
