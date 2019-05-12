@@ -76,7 +76,7 @@ release_on_demand(){
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
 }
 release_daily(){	
-	update_tag daily
+	#update_tag daily
 
 	bash ./travis/github_release_daily_withjdk.sh "$TRAVIS_COMMIT" 
 }
