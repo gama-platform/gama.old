@@ -1272,7 +1272,10 @@ public final class GamlAnnotations {
 	 *
 	 */
 	@Retention (RetentionPolicy.SOURCE)
-	public static @interface no_test {}
+	public static @interface no_test {
+
+		Reason value() default Reason.NONE;
+	}
 
 	/***
 	 * The test annotation is intended to provide a simpler syntax than @example for producing tests. It allows to write

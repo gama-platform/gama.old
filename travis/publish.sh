@@ -99,8 +99,8 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then
 			MSG+=" ci ext "
 	fi
 	deploy
-	embed_jdk
-	release_daily 
+	
+	release
 	commit_wiki_files
 	commit_io_website_files
 else

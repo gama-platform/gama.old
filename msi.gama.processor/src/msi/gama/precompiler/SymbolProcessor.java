@@ -19,7 +19,6 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 
 		sb.append(in).append("_symbol(");
 		toArrayOfStrings(symbol.name(), sb).append(',').append(toClassObject(clazz));
-		// sb.append(',').append(getValidator(context, e)).append(',').append(getSerializer(context, e));
 		sb.append(",").append(symbol.kind()).append(',').append(toBoolean(symbol.remote_context())).append(',')
 				.append(toBoolean(symbol.with_args())).append(',').append(toBoolean(symbol.with_scope())).append(',');
 		sb.append(toBoolean(symbol.with_sequence())).append(',').append(toBoolean(symbol.unique_in_context()))
@@ -75,64 +74,6 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			context.emitWarning("GAML: symbol '" + symbol.name()[0] + "' is not documented", e);
 		}
 	}
-
-	// public String getValidator(final ProcessorContext context, final Element e) {
-	// validator validator = e.getAnnotation(validator.class);
-	// TypeMirror sup = ((TypeElement) e).getSuperclass();
-	// // Workaround for bug
-	// // https://bugs.eclipse.org/bugs/show_bug.cgi?id=419944
-	// // Effectively inherits from a given validator
-	// while (validator == null && sup != null) {
-	// if (sup.getKind().equals(TypeKind.NONE)) {
-	// sup = null;
-	// continue;
-	// }
-	// final TypeElement te = (TypeElement) context.getTypeUtils().asElement(sup);
-	// validator = te.getAnnotation(validator.class);
-	// sup = te.getSuperclass();
-	// }
-	// TypeMirror type_validator = null;
-	// // getting the class present in validator
-	// try {
-	// if (validator != null) {
-	// validator.value();
-	// }
-	// } catch (final MirroredTypeException e1) {
-	// type_validator = e1.getTypeMirror();
-	// } catch (final MirroredTypesException e1) {
-	// type_validator = e1.getTypeMirrors().get(0);
-	// }
-	// if (type_validator != null) { return "new " + rawNameOf(context, type_validator) + "()"; }
-	// return "null";
-	// }
-
-	// public String getSerializer(final ProcessorContext context, final Element e) {
-	// TypeMirror sup;
-	// sup = ((TypeElement) e).getSuperclass();
-	// serializer serializer = e.getAnnotation(serializer.class);
-	// while (serializer == null && sup != null) {
-	// if (sup.getKind().equals(TypeKind.NONE)) {
-	// sup = null;
-	// continue;
-	// }
-	// final TypeElement te = (TypeElement) context.getTypeUtils().asElement(sup);
-	// serializer = te.getAnnotation(serializer.class);
-	// sup = te.getSuperclass();
-	// }
-	// TypeMirror type_serializer = null;
-	// // getting the class present in serializer
-	// try {
-	// if (serializer != null) {
-	// serializer.value();
-	// }
-	// } catch (final MirroredTypeException e1) {
-	// type_serializer = e1.getTypeMirror();
-	// } catch (final MirroredTypesException e1) {
-	// type_serializer = e1.getTypeMirrors().get(0);
-	// }
-	// if (type_serializer != null) { return "new " + rawNameOf(context, type_serializer) + "()"; }
-	// return "null";
-	// }
 
 	@Override
 	protected Class<symbol> getAnnotationClass() {
