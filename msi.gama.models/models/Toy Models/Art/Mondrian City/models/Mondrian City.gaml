@@ -1,23 +1,21 @@
 /***
 * Name: URBAMondrian
 * Author: Arnaud Grignard, Tri Nguyen-Huu and Patrick Taillandier 
-* Description: 
+* Description: An abstract Mobilty Model represented in a Mondrian World. 
 * Tags: art, interaction, mobitily
 ***/
 
-model URBAMondrian
+model Mondrian_City
 
 
 global{
-	//PARAMETERS
 	
-	float weight_car parameter: 'blue weight'  step: 0.1 min:0.1 max:1.0 <- 0.75 ;
-	float weight_bike parameter: 'yellow weight' step: 0.1 min:0.1 max:1.0 <- 0.5 ;
-	float weight_pev  step: 0.1 min: 0.0 max: 1.0 parameter: "pink weight" <- 0.1;
+	float weight_car parameter: 'car weight'  step: 0.1 min:0.1 max:1.0 <- 0.75 ;
+	float weight_bike parameter: 'bike weight' step: 0.1 min:0.1 max:1.0 <- 0.5 ;
+	float weight_pev  step: 0.1 min: 0.0 max: 1.0 parameter: "pev weight" <- 0.1;
 	
 	int population_level <- 40 parameter: 'Population level' min: 0 max: 100;
 	
-	string road_aspect <- "split (5)";
 	float spacing <- 0.75;
 	float line_width <- 0.65;
 	bool dynamical_width <- true;
@@ -27,9 +25,7 @@ global{
 	bool show_building <- true;
 	bool show_road <- true;
 	bool show_agent <- true;
-	
-	
-	//SPATIAL PARAMETERS  
+		 
 	int grid_height <- 6;
 	int grid_width <- 6;
 	float environment_height <- 5000.0;
@@ -39,31 +35,24 @@ global{
 	bool blackMirror <- true;
 	string people_aspect <-"mode";
 	
-	bool load_grid_file_from_cityIO <-false; //parameter: 'Online Grid:' category: 'Simulation' <- false;
-	bool load_grid_file <- false;// parameter: 'Offline Grid:' category: 'Simulation'; 
-	bool udpScannerReader <- false; 
+
 	bool udpSliderReader <- true; 
 	bool editionMode <-false;
 		
 	float computed_line_width;
 	float road_width;
 	float block_size;
-
 	
 	bool on_modification_cells <- false update: show_cells != show_cells_prev;
-	
 	bool show_cells_prev <- show_cells update: show_cells ;
-	bool on_modification_bds <- false update: false;
-	
+	bool on_modification_bds <- false update: false;	
 		
 	map<string,int> max_traffic_per_mode <- ["car"::50, "bike"::50, "walk"::50];
-	map<string,int> mode_order <- ["car"::0, "bike"::1, "walk"::2]; // order from 0 to n write only the modes that have to be drawn
+	map<string,int> mode_order <- ["car"::0, "bike"::1, "walk"::2]; 
 	map<string,rgb> color_per_mode <- ["car"::rgb(52,152,219), "bike"::rgb(192,57,43), "walk"::rgb(161,196,90), "pev"::#magenta];
-	//map<string,rgb> color_per_mode <- ["car"::rgb(255,0,0), "bike"::rgb(0,255,0), "walk"::rgb(0,0,255), "pev"::#magenta];
 	map<string,geometry> shape_per_mode <- ["car"::circle(global_people_size*0.225), "bike"::circle(global_people_size*0.21), "walk"::circle(global_people_size*0.2), "pev"::circle(global_people_size*0.21)];
 	
 	map<string,point> offsets <- ["car"::{0,0}, "bike"::{0,0}, "walk"::{0,0}];
-	map<string,rgb> color_per_profile <- ["young poor"::#deepskyblue, "young rich"::#darkturquoise, "adult poor"::#orangered , "adult rich"::#coral,"old poor"::#darkslategrey,"old rich"::#lightseagreen];
 	map<string,list<rgb>> colormap_per_mode <- ["car"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)], "bike"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)], "walk"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)]];
 	map<string,rgb> color_per_type <- ["residential"::#gray, "office"::#orange];
 	map<string,rgb> color_per_id <- ["residentialS"::#blue,"residentialM"::#white,"residentialL"::#cyan,"officeS"::#yellow,"officeM"::#red,"officeL"::#green];
@@ -72,36 +61,19 @@ global{
 	map<int, list<string>> id_to_building_type <- [1::["residential","S"],2::["residential","M"],3::["residential","L"],4::["office","S"],5::["office","M"],6::["office","L"]];
 	list fivefoods<-["Residential","Retail","Hotel","Office","Industrial","Park"];
 		
-
-
 	float weight_car_prev <- weight_car;
 	float weight_bike_prev <- weight_bike;
 	float weight_pev_prev <- weight_pev;
 	
 	list<building> residentials;
 	map<building, float> offices;
-	string imageFolder <- "../images/flat/";
-	int action_type;
-	
-
-	int file_cpt <- 1;
 
 	map<string,graph> graph_per_mode;
-	
 	float road_capacity <- 10.0;
-	//bool traffic_jam <-true;
-	
-	//geometry shape <- envelope(nyc_bounds0_shape_file);
-	geometry shape<-rectangle(environment_width, environment_height); // one edge is 5000(m)
-	//geometry shape<-rectangle(8000, 5000);
+	geometry shape<-rectangle(environment_width, environment_height);
 	float step <- sqrt(shape.area) /2000.0 ;
 	
 	map<string,list<float>> speed_per_mobility <- ["car"::[20.0,40.0], "bike"::[5.0,15.0], "walk"::[3.0,7.0], "pev"::[15.0,30.0]];
-		
-	// Network
-	int scaningUDPPort <- 9877;
-	int interfaceUDPPort <- 9878;
-	string url <- "localhost";
 	
 	init {
 		list<geometry> lines;
@@ -117,20 +89,7 @@ global{
 			create road with: [shape:: line(reverse(shape.points))];
 		}
 		do update_graphs;
-		do init_buttons; 
 		block_size <- min([first(cell).shape.width,first(cell).shape.height]);
-		if(udpScannerReader){
-			create NetworkingAgent number: 1 {
-			 type <-"scanner";	
-		     do connect to: url protocol: "udp_server" port: scaningUDPPort ;
-		    }
-		}
-		if(udpSliderReader){
-			create NetworkingAgent number: 1 {
-			 type <-"interface";	
-		     do connect to: url protocol: "udp_server" port: interfaceUDPPort ;
-		    }	   
-		}
 	}
 	
 	action update_graphs {
@@ -138,25 +97,6 @@ global{
 			graph_per_mode[mode] <- directed(as_edge_graph(road where (mode in each.allowed_mobility)));
 		}
 	}
-	
-	action init_buttons	{
-		int inc<-0;
-		ask button {
-			action_nb<-inc;
-			inc<-inc+1;
-		}
-	}
-	
-	
-	action activate_act {
-		button selected_but <- first(button overlapping (circle(1) at_location #user_location));
-		ask selected_but {
-			ask button {bord_col<-#black;}
-			action_type<-action_nb;
-			bord_col<-#red;
-		}
-	}
-
 	
 	reflex update_mobility  {
 		if(weight_car_prev != weight_car) or (weight_bike_prev != weight_bike) or (weight_pev_prev != weight_pev) {
@@ -175,11 +115,10 @@ global{
 		
 	}
 		
-	reflex randomGridUpdate when:!udpScannerReader and !editionMode and every(1000#cycle){
+	reflex randomGridUpdate when:every(1000#cycle){
 		do randomGrid;
 	} 
 		
-
 	reflex compute_traffic_density{
 		ask road {traffic_density <- ["car"::[0::0,1::0], "bike"::[0::0,1::0], "walk"::[0::0,1::0], "pev"::[0::0,1::0]];}
 
@@ -194,28 +133,12 @@ global{
 	
 	reflex precalculate_display_variables{
 		road_width <- block_size * 2/3 * (1-building_scale);
-		switch road_aspect {
-			match  "split (5)" {
-				computed_line_width <- line_width * road_width/10;
-			}
-		}
-		
+		computed_line_width <- line_width * road_width/10;
 		loop t over: mode_order.keys{
-			if road_aspect = "split (3)" {offsets[t] <- {0.5*road_width*spacing*(mode_order[t]-1),0.5*road_width*spacing*(mode_order[t]-1)};}
-			if road_aspect = "split (5)" {offsets[t] <- {0.5*road_width*spacing*(mode_order[t]+0.5)/(length(mode_order)-0.5),0.5*road_width*spacing*(mode_order[t]+0.5)/(length(mode_order)-0.5)};}
+			offsets[t] <- {0.5*road_width*spacing*(mode_order[t]+0.5)/(length(mode_order)-0.5),0.5*road_width*spacing*(mode_order[t]+0.5)/(length(mode_order)-0.5)};
 		}		
 	}
 		
-	action infrastructure_management {
-		if (action_type = 8) {
-			do manage_road;
-		} else {
-			do build_buildings;
-		}
-		
-	}
-	
-	
 	action manage_road{
 		road selected_road <- first(road overlapping (circle(sqrt(shape.area)/100.0) at_location #user_location));
 		if (selected_road != nil) {
@@ -243,23 +166,7 @@ global{
 				reverse_road.allowed_mobility <-  selected_road.allowed_mobility;
 			}
 			do update_graphs;
-		}
-		
-		
-	}
-	
-	action build_buildings {
-		cell selected_cell <- first(cell overlapping (circle(sqrt(shape.area)/100.0) at_location #user_location));
-		if (selected_cell != nil) and (selected_cell.is_active) {
-			if (action_type = 3) {ask selected_cell {do new_residential("S");}} 
-			if (action_type = 4) {ask selected_cell {do new_office("S");}} 
-			if (action_type = 5) {ask selected_cell {do erase_building;}} 
-			if (action_type = 6) {ask selected_cell {do new_residential("M");}} 
-			if (action_type = 7) {ask selected_cell {do new_office("M");}} 
-			if (action_type = 9) {ask selected_cell {do new_residential("L");}} 
-			if (action_type = 10) {ask selected_cell {do new_office("L");}} 
-		}
-		on_modification_bds <- true;
+		}	
 	}
 	
 	action createCell(int id, int x, int y){
@@ -284,23 +191,23 @@ global{
    action randomGrid{
    	int id;
    	loop i from: 0 to: 5 {
-			loop j from: 0 to: 5 {
-				    if (flip(0.5)){
-				        id <- 1+rnd(5);	
-				    }else{
-				    	id<--1;
-				    }
-					
-					if (id > 0) {
-                     do createCell(id, j, i);
-					}
-					cell current_cell <- cell[j,i];
-					current_cell.is_active <- id<0?false:true;
-					if (id<=0){					
-						ask current_cell{ do erase_building;}
-					}
+		loop j from: 0 to: 5 {
+		    if (flip(0.5)){
+		        id <- 1+rnd(5);	
+		    }else{
+		    	id<--1;
+		    }
+			
+			if (id > 0) {
+             do createCell(id, j, i);
+			}
+			cell current_cell <- cell[j,i];
+			current_cell.is_active <- id<0?false:true;
+			if (id<=0){					
+				ask current_cell{ do erase_building;}
 			}
 		}
+	}
    }		
 }
 
@@ -359,7 +266,6 @@ species building {
 		
 	}
 	action define_color {
-		//color <- rgb(color_per_type[type], size = "S" ? 50 : (size = "M" ? 100: 255)  );
 		color <- color_per_id[type+size];
 	}
 	aspect default {
@@ -549,61 +455,6 @@ grid cell width: grid_width height: grid_height {
 	
 	aspect default{
 		if show_cells {draw shape scaled_by (0.5) color: rgb(100,100,100) ;}
-	}
-
-}
-
-grid button width:3 height:4 
-{
-	int action_nb;
-	rgb bord_col<-#black;
-	aspect normal {
-		if (action_nb > 2 and not (action_nb in [11])) {draw rectangle(shape.width * 0.8,shape.height * 0.8).contour + (shape.height * 0.01) color: bord_col;}
-		if (action_nb = 0) {draw "Residential"  color:#black font:font("SansSerif", 16, #bold) at: location - {15,-10.0,0};}
-		else if (action_nb = 1) {draw "Office"  color:#black font:font("SansSerif", 16, #bold) at: location - {12,-10.0,0};}
-		else if (action_nb = 2) {draw "Tools"  color:#black font:font("SansSerif", 16, #bold) at: location - {12,-10.0,0};}
-		else {
-			draw square(shape.width * 0.5) ;
-		}
-	}
-}
-
-species NetworkingAgent skills:[network] {
-	string type;
-	string previousMess <-"";
-	reflex fetch {	
-		if (length(mailbox) > 0) {
-			message s <- last(mailbox);
-			if(s.contents !=previousMess){	
-			  previousMess<-s.contents;
-			  if(type="scanner"){
-			  	list gridlist <- string(s.contents) split_with(";");
-			  	int nrows <- 12;
-			  	int ncols <- 12;
-			  	int x;
-			  	int y;
-			  	int id;
-			  	loop i from:0 to: (length(gridlist)-2){ 
-			    	if((i mod nrows) mod 2 = 0 and int(i/ncols) mod 2 = 0){   
-			      		x<- int((i mod nrows)/2);
-			      		y<-int((int(i/ncols))/2);
-			      		id<-int(gridlist[i]);
-			      	if(id!=-2 and id !=-1 and id!=6 ){
-	      	  	    	ask world{do createCell(id+1, x, y);}	
-	      	      	} 
-	      	      	if (id=-1){
-			        	cell current_cell <- cell[x,y];
-				    	ask current_cell{ do erase_building;}
-			      	}	   
-			    	} 		
-	          	}
-			  }
-			  if(type="interface"){
-			  	weight_car<-float(previousMess)/5.0;
-			  	write weight_car;
-			  }
-			}	
-	    }
 	}
 }
 
