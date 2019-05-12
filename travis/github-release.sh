@@ -88,7 +88,7 @@ done
 
 LK1="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
 
-echo   "Getting info of release Continuous...  "
+echo   "Getting info of release ...  "
 RESULT1=`curl  -s -X GET \
 -H "Authorization: token $HQN_TOKEN"   \
 "$LK1"`	
@@ -105,7 +105,7 @@ echo $RESULT1
 		if [ "$theid" != "id:" ]; then
 	LK1="https://api.github.com/repos/gama-platform/gama/releases/$theid"
 
-	echo   "Deleting release Continuous...  "
+	echo   "Deleting release ...  "
 	RESULT1=`curl  -s -X DELETE \
 	-H "Authorization: token $HQN_TOKEN"   \
 	"$LK1"`	
@@ -115,9 +115,9 @@ echo $RESULT1
 	done 
 
 
-	update_tag continuous
+	update_tag $RELEASE
 
-	echo   "Creating release Continuous...  "
+	echo   "Creating release ...  "
 LK="https://api.github.com/repos/gama-platform/gama/releases"
 
   RESULT=` curl -s -X POST \
