@@ -125,7 +125,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $HQN_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"GAMA 1.8","body":"Official Release","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"GAMA 1.8","body":"to be official Released on 17 May","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
