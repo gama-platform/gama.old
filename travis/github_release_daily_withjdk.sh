@@ -108,7 +108,7 @@ echo $RELEASEID
 
 check=${#RESULT}
 
-if [ $check -ge 3 ]; then
+if [ $check -ge 4 ]; then
 	echo 
 	echo "Remove old files..."
 	echo
