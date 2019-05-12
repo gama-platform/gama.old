@@ -1,5 +1,29 @@
 #!/bin/bash
+
+
+
+
+function update_tag() {
+	echo "update tag " $1 
+	git config --global user.email "hqnghi88@gmail.com"
+	git config --global user.name "Travis CI"
+	git remote rm origin
+	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.git
+	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+	git fetch
+	git checkout master
+	git pull origin master
+	git push origin :refs/tags/$1
+	git tag -d $1
+	git tag -fa $1 -m "$1"
+	git push --tags -f
+	git ls-remote --tags origin
+	git show-ref --tags
+}
+
+
 set -e
+echo "github_release_withjdk"		
 COMMIT=$@
 
 REPO="gama-platform/gama"
@@ -31,61 +55,23 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Linux_64bits' 
+NEWFILES[$n]='GAMA1.8_Official_Linux_64bits' 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Mac_64bits'
+NEWFILES[$n]='GAMA1.8_Official_Mac_64bits'
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.8_Win_64bits'
+NEWFILES[$n]='GAMA1.8_Official_Win_64bits'
 n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8__withJDK_Linux_64bits'
+NEWFILES[$n]='GAMA1.8_Official_withJDK_Linux_64bits'
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.8__withJDK_Win_64bits'
+NEWFILES[$n]='GAMA1.8_Official_withJDK_Win_64bits'
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8__withJDK_MacOS'
-
-
-git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
-
-sudo cp -R jdk/linux/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-sudo cp jdk/linux/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-
-sudo cp -R jdk/win/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-sudo cp jdk/win/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-
-sudo cp -R jdk/mac/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents
-sudo cp jdk/mac/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
-	
-	
-cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-
-sudo zip -qr "${RELEASEFILES[3]}" . && echo "compressed ${RELEASEFILES[3]}" || echo "compress fail ${RELEASEFILES[3]}"
-
-cd ../../../../../../../
-
-
-
-
-cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-
-sudo zip -qr "${RELEASEFILES[4]}" . && echo "compressed ${RELEASEFILES[4]}" || echo "compress fail ${RELEASEFILES[4]}"
-
-cd ../../../../../../../
-
-
-
-
-
-cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
-
-sudo zip -qyr "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
-
-cd ../../../../../../../
-
+NEWFILES[$n]='GAMA1.8_Official_withJDK_MacOS'
+ 
 
 i=0
 for (( i=0; i<6; i++ ))
@@ -95,6 +81,64 @@ do
 	ls -sh $FILE
 	echo $NFILE
 done
+
+
+
+
+
+LK1="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
+
+echo   "Getting info of release Continuous...  "
+RESULT1=`curl  -s -X GET \
+-H "Authorization: token $HQN_TOKEN"   \
+"$LK1"`	
+echo $RESULT1
+
+	json=$RESULT1
+	prop='id'
+	
+    temp=`echo $json | sed 's/\\\\\//\//g' | sed 's/[{}]//g' | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed 's/\"\:\"/\|/g' | sed 's/[\,]/ /g' | sed 's/\"//g' | grep -w $prop`
+    
+	assets=`echo ${temp##*|}`
+
+	for theid in $assets; do
+		if [ "$theid" != "id:" ]; then
+	LK1="https://api.github.com/repos/gama-platform/gama/releases/$theid"
+
+	echo   "Deleting release Continuous...  "
+	RESULT1=`curl  -s -X DELETE \
+	-H "Authorization: token $HQN_TOKEN"   \
+	"$LK1"`	
+	echo $RESULT1
+	break
+		fi
+	done 
+
+
+	update_tag continuous
+
+	echo   "Creating release Continuous...  "
+LK="https://api.github.com/repos/gama-platform/gama/releases"
+
+  RESULT=` curl -s -X POST \
+  -H "X-Parse-Application-Id: sensitive" \
+  -H "X-Parse-REST-API-Key: sensitive" \
+  -H "Authorization: token $HQN_TOKEN"   \
+  -H "Content-Type: application/json" \
+  -d '{"tag_name": "'$RELEASE'", "name":"GAMA 1.8","body":"Official Release","draft": false,"prerelease": true}' \
+    "$LK"`
+echo $RESULT	
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -116,43 +160,6 @@ LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
 echo $RESULT	
 RELEASEID=`echo "$RESULT" | sed -ne 's/^  "id": \(.*\),$/\1/p'`
 echo $RELEASEID
-
-
-  LK="https://api.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets"
-  
-  RESULT=` curl -s -X GET \
-  -H "X-Parse-Application-Id: sensitive" \
-  -H "X-Parse-REST-API-Key: sensitive" \
-  -H "Authorization: token $HQN_TOKEN"   \
-  -H "Content-Type: application/json" \
-  -d '{"name":"value"}' \
-    "$LK"`
-
-check=${#RESULT}
-
-if [ $check -ge 3 ]; then
-	echo 
-	echo "Remove old files..."
-	echo
-	json=$RESULT
-	prop='id'
-	
-    temp=`echo $json | sed 's/\\\\\//\//g' | sed 's/[{}]//g' | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed 's/\"\:\"/\|/g' | sed 's/[\,]/ /g' | sed 's/\"//g' | grep -w $prop`
-    
-	assets=`echo ${temp##*|}`
-
-	for theid in $assets; do
-		if [ "$theid" != "id:" ]; then
-		  LK1="https://api.github.com/repos/gama-platform/gama/releases/assets/$theid"
-		  
-			echo   "Deleting $LK1...  "
-		  RESULT1=`curl  -s -X  "DELETE"                \
-			-H "Authorization: token $HQN_TOKEN"   \
-			"$LK1"`	
-			echo $RESULT1
-		fi
-	done 
-fi
 
 
 echo 
@@ -178,4 +185,3 @@ do
 done 
 
 echo DONE
-
