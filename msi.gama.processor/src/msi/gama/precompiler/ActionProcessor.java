@@ -11,7 +11,6 @@ import javax.lang.model.type.TypeMirror;
 
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
 
 public class ActionProcessor extends ElementProcessor<action> {
 
@@ -49,14 +48,11 @@ public class ActionProcessor extends ElementProcessor<action> {
 			}
 			final String argName = arg.name();
 			if (RESERVED_FACETS.contains(argName)) {
-				context.emitWarning("Argument '" + argName
+				context.emitWarning("GAML: Argument '" + argName
 						+ "' prevents this action to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
 						e);
 			}
-			final doc[] docs = arg.doc();
-			if (docs.length == 0) {
-				context.emitWarning("GAML: argument '" + arg.name() + "' is not documented", e);
-			}
+			verifyDoc(context, e, "argument " + arg.name(), arg);
 			sb.append("desc(ARG,NAME,").append(toJavaString(argName)).append(",TYPE,")
 					.append(toJavaString(String.valueOf(arg.type()))).append(",\"optional\",")
 					.append(toJavaString(String.valueOf(arg.optional()))).append(')');
