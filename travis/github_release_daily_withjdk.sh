@@ -1,4 +1,27 @@
 #!/bin/bash
+
+
+
+
+function update_tag() {
+	echo "update tag " $1 
+	git config --global user.email "hqnghi88@gmail.com"
+	git config --global user.name "Travis CI"
+	git remote rm origin
+	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.git
+	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+	git fetch
+	git checkout master
+	git pull origin master
+	git push origin :refs/tags/$1
+	git tag -d $1
+	git tag -fa $1 -m "$1"
+	git push --tags -f
+	git ls-remote --tags origin
+	git show-ref --tags
+}
+
+
 set -e
 echo "github_release_daily_withjdk"		
 COMMIT=$@
@@ -32,22 +55,22 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.9_Daily_Linux_64bits'$SUFFIX 
+NEWFILES[$n]='GAMA1.8_Daily_Linux_64bits'$SUFFIX 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.9_Daily_Mac_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Daily_Mac_64bits'$SUFFIX
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.9_Daily_Win_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Daily_Win_64bits'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.9_Daily_EmbeddedJDK_Linux_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Daily_EmbeddedJDK_Linux_64bits'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.9_Daily_EmbeddedJDK_Win_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Daily_EmbeddedJDK_Win_64bits'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.9_Daily_EmbeddedJDK_MacOS'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Daily_EmbeddedJDK_MacOS'$SUFFIX
  
 
 i=0
@@ -92,7 +115,8 @@ echo $RESULT1
 	done 
 
 
-	#update_tag daily
+	update_tag daily
+
 LK="https://api.github.com/repos/gama-platform/gama/releases"
 
   RESULT=` curl -s -X POST \
