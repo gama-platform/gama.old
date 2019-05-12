@@ -182,15 +182,17 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 	}
 
 	protected static StringBuilder buildNAry(final StringBuilder sb, final String[] classes, final String name,
-			final String retClass, final boolean stat, final boolean scope) {
+			final String retClass, final boolean isStatic, final boolean scope) {
 		final String ret = checkPrim(retClass);
-		final int start = stat ? 0 : 1;
+		final int start = isStatic ? 0 : 1;
 		final String firstArg = scope ? "s" : "";
-		if (stat) {
+		if (isStatic) {
 			sb.append(name).append('(').append(firstArg);
 		} else {
-			sb.append("o[0]==null?").append(returnWhenNull(ret)).append(":((").append(classes[0]).append(")o[0]).")
-					.append(name).append('(').append(firstArg);
+			// AD: REMOVE THE DEFAULT BEHAVIOR WHEN NULL IS PASSED (which was wrong, see #2713)
+			sb.append("((").append(classes[0]).append(")o[0]).").append(name).append('(').append(firstArg);
+			// sb.append("o[0]==null?").append(returnWhenNull(ret)).append(":((").append(classes[0]).append(")o[0]).")
+			// .append(name).append('(').append(firstArg);
 		}
 		if (start < classes.length) {
 			if (scope) {
