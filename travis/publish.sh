@@ -76,7 +76,7 @@ release_on_demand(){
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
 }
 release_daily(){	
-	update_tag daily
+	#update_tag daily
 
 	bash ./travis/github_release_daily_withjdk.sh "$TRAVIS_COMMIT" 
 }
@@ -118,6 +118,10 @@ else
 	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
 		release
+	fi	
+	if  [[ ${MESSAGE} == *"ci daily"* ]] || [[ $MSG == *"ci daily"* ]]; then
+		embed_jdk
+		release_daily
 	fi	
 fi
 
