@@ -7,7 +7,7 @@ package msi.gama.precompiler;
  * @author drogoul
  *
  */
-enum Reason {
+public enum Reason {
 	/**
 	 * The test on this specific artefact are actually made somewhere else, usually in custom test files written by hand
 	 */
@@ -18,7 +18,16 @@ enum Reason {
 	 */
 	IMPOSSIBLE_TO_TEST,
 	/**
+	 * This artifact is deprecated
+	 */
+	DEPRECATED,
+	/**
+	 * This artifact is internal and not exposed to users
+	 */
+	INTERNAL,
+	/**
 	 * No reason provided (the default for @no_test)
 	 */
+
 	NONE
 }

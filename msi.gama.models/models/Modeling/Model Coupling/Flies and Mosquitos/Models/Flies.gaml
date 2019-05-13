@@ -10,7 +10,7 @@ model Flies
 global
 {
 	geometry shape<-square(100);
-	file icon<-file("../img/fly.gif");
+	file icon<-file("./img/fly.gif");
 	int n <- 1;
 	init
 	{

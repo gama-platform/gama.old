@@ -2,16 +2,33 @@ package msi.gama.precompiler;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+
+import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.constant;
+import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.experiment;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.no_test;
+import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.test;
+import msi.gama.precompiler.GamlAnnotations.tests;
+import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.variable;
 
 public abstract class ElementProcessor<T extends Annotation> implements IProcessor<T>, Constants {
 
@@ -21,9 +38,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	static final Pattern CLASS_PARAM = Pattern.compile("<.*?>");
 	static final Pattern SINGLE_QUOTE = Pattern.compile("\"");
 	static final String QUOTE_MATCHER = Matcher.quoteReplacement("\\\"");
-	// final static StringBuilder DOC_BUILDER = new StringBuilder();
 	protected String initializationMethodName;
-	final static Set<String> UNDOCUMENTED = new HashSet<>();
 
 	public ElementProcessor() {}
 
@@ -52,7 +67,9 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 				try {
 					createElement(sb, context, e, e.getAnnotation(a));
 				} catch (final Exception exception) {
-					context.emitError("Exception in processor: " + exception.getMessage(), e);
+
+					context.emitError("Exception in processor: " + exception.getMessage(), exception, e);
+
 				}
 
 			}
@@ -60,6 +77,121 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 				opIndex.put(entry.getKey(), sb);
 			}
 		}
+	}
+
+	static final doc[] NULL_DOCS = new doc[0];
+
+	protected boolean isInternal(Element main, Annotation a) {
+		boolean internal = false;
+		if (a instanceof species) {
+			internal = ((species) a).internal();
+		} else if (a instanceof symbol) {
+			internal = ((symbol) a).internal();
+		} else if (a instanceof operator) {
+			internal = ((operator) a).internal();
+		} else if (a instanceof skill) {
+			internal = ((skill) a).internal();
+		} else if (a instanceof facet) {
+			internal = ((facet) a).internal();
+		} else if (a instanceof type) {
+			internal = ((type) a).internal();
+		} else if (a instanceof variable) {
+			internal = ((variable) a).internal();
+		}
+		return internal;
+	}
+
+	protected doc getDocAnnotation(Element main, Annotation a) {
+		doc[] docs = NULL_DOCS;
+		if (a instanceof species) {
+			docs = ((species) a).doc();
+		} else if (a instanceof symbol) {
+			docs = ((symbol) a).doc();
+		} else if (a instanceof arg) {
+			docs = ((arg) a).doc();
+		} else if (a instanceof display) {
+			// nothing
+		} else if (a instanceof experiment) {
+			// nothing
+		} else if (a instanceof constant) {
+			docs = ((constant) a).doc();
+		} else if (a instanceof operator) {
+			docs = ((operator) a).doc();
+		} else if (a instanceof skill) {
+			docs = ((skill) a).doc();
+		} else if (a instanceof facet) {
+			docs = ((facet) a).doc();
+		} else if (a instanceof type) {
+			docs = ((type) a).doc();
+		} else if (a instanceof file) {
+			docs = ((file) a).doc();
+		} else if (a instanceof variable) {
+			docs = ((variable) a).doc();
+		}
+		doc d = null;
+		if (docs.length == 0) {
+			d = main.getAnnotation(doc.class);
+		} else {
+			d = docs[0];
+		}
+		return d;
+	}
+
+	protected boolean isDeprecated(Element e, Annotation a) {
+		doc d = getDocAnnotation(e, a);
+		if (d == null)
+			return false;
+		return d.deprecated().length() > 0;
+	}
+
+	public boolean hasTests(example[] examples) {
+		for (example ex : examples) {
+			if (ex.isTestOnly() || ex.isExecutable() && ex.test()) { return true; }
+		}
+		return false;
+	}
+
+	public boolean hasTests(Element e, Annotation a) {
+		// if the artifact is internal, skip the verification
+		if (isInternal(e, a))
+			return true;
+		no_test no = e.getAnnotation(no_test.class);
+		// if no tests are necessary, skip the verification
+		if (no != null)
+			return true;
+		tests tests = e.getAnnotation(tests.class);
+		if (tests != null)
+			return true;
+		test test = e.getAnnotation(test.class);
+		if (test != null)
+			return true;
+		doc doc = getDocAnnotation(e, a);
+		if (doc == null)
+			return false;
+		if (hasTests(doc.examples()))
+			return true;
+		for (usage us : doc.usages()) {
+			if (hasTests(us.examples()))
+				return true;
+		}
+		return doc.deprecated().length() > 0;
+	}
+
+	protected void verifyDoc(ProcessorContext context, final Element e, String displayedName, final Annotation a) {
+		if (isInternal(e, a))
+			return;
+		doc d = getDocAnnotation(e, a);
+		boolean docMissing = d == null;
+		if (!docMissing) {
+			if (d.value().length() == 0 && d.deprecated().length() == 0 && d.usages().length == 0
+					&& d.special_cases().length == 0 && d.examples().length == 0) {
+				docMissing = true;
+			}
+		}
+		if (docMissing) {
+			context.emitWarning("GAML: documentation missing for " + displayedName, e);
+		}
+
 	}
 
 	@Override

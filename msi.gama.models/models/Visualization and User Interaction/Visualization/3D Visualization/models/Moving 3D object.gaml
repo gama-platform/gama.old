@@ -41,7 +41,7 @@ experiment Display  type: gui {
 		display ComplexObject type: opengl ambient_light: 100 background: #black synchronized: true{
 			species boat aspect:obj;	
 			graphics world transparency: 0.4{ 
-				draw world depth: 5  texture:("../images/water2.gif") ;
+				draw world depth: 5  texture:("../images/water.gif") ;
 			}			
 		}
 	}

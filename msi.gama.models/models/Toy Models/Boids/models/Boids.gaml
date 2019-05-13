@@ -10,7 +10,7 @@
 model boids 
 global torus: torus_environment{ 
 	//Number of boids that will be created
-	int number_of_agents <- 50 min: 1 max: 1000000;
+	int number_of_agents <- 50 min: 1 max: 500;
 	//Number of obstacles for the boids movement to represent
 	int number_of_obstacles <- 0 min: 0;
 	//Maximal speed of the boids

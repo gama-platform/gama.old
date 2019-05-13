@@ -700,9 +700,7 @@ public final class GamlAnnotations {
 		 * @return Indicates if the statement (usually a sequence) defines its own scope. Otherwise, all the temporary
 		 *         variables defined in it are actually defined in the super-scope
 		 */
-		boolean with_scope()
-
-		default true;
+		boolean with_scope() default true;
 
 		/**
 		 * WithSequence.
@@ -716,9 +714,7 @@ public final class GamlAnnotations {
 		 *
 		 * @return Indicates wether or not the symbol denoted by this class will accept arguments
 		 */
-		boolean with_args()
-
-		default false;
+		boolean with_args() default false;
 
 		/**
 		 * RemoteContext.
@@ -728,9 +724,7 @@ public final class GamlAnnotations {
 		 *         passed on as if the statement was executed in the current context.
 		 */
 
-		boolean remote_context()
-
-		default false;
+		boolean remote_context() default false;
 
 		/**
 		 * Doc.
@@ -745,26 +739,20 @@ public final class GamlAnnotations {
 		 *
 		 * @return whether this symbol is for internal use only.
 		 */
-		boolean internal()
-
-		default false;
+		boolean internal() default false;
 
 		/**
 		 *
 		 * @return Indicates that this statement must be unique in its super context (for example, only one return is
 		 *         allowed in the body of an action).
 		 */
-		boolean unique_in_context()
-
-		default false;
+		boolean unique_in_context() default false;
 
 		/**
 		 *
 		 * @return Indicates that only one statement with the same name should be allowed in the same super context
 		 */
-		boolean unique_name()
-
-		default false;
+		boolean unique_name() default false;
 
 		/**
 		 * @return an array of strings, each representing a category in which this constant can be classified (for
@@ -811,17 +799,13 @@ public final class GamlAnnotations {
 		 * @see WorldSkill
 		 */
 
-		boolean iterator()
-
-		default false;
+		boolean iterator() default false;
 
 		/**
 		 * @return whether or not the operator can be evaluated as a constant if its child (resp. children) is (resp.
 		 *         are) constant.
 		 */
-		boolean can_be_const()
-
-		default false;
+		boolean can_be_const() default false;
 
 		/**
 		 * @return the type of the content if the returned value is a container. Can be directly a type in IType or one
@@ -830,9 +814,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type()
-
-		default ITypeProvider.NONE;
+		int content_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return the content type of the content if the returned value is a container of container (ex. a list of
@@ -841,9 +823,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type_content_type()
-
-		default ITypeProvider.NONE;
+		int content_type_content_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return the type of the index if the returned value is a container. Can be directly a type in IType or one of
@@ -852,9 +832,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int index_type()
-
-		default ITypeProvider.NONE;
+		int index_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return if the argument is a container, return the types expected for its contents. Should be an array of
@@ -872,18 +850,14 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int type()
-
-		default ITypeProvider.NONE;
+		int type() default ITypeProvider.NONE;
 
 		/**
 		 * internal.
 		 *
 		 * @return whether this operator is for internal use only.
 		 */
-		boolean internal()
-
-		default false;
+		boolean internal() default false;
 
 		/**
 		 * Doc.

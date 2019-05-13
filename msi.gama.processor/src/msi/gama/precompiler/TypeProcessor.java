@@ -11,7 +11,6 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 
 public class TypeProcessor extends ElementProcessor<type> {
@@ -29,33 +28,18 @@ public class TypeProcessor extends ElementProcessor<type> {
 				types = Arrays.asList(ex2.getTypeMirror());
 			}
 		}
-		verifyDoc(context, e, t);
+		verifyDoc(context, e, "type " + t.name(), t);
 		for (final Element m : e.getEnclosedElements()) {
 			if (m.getKind() == ElementKind.METHOD && m.getSimpleName().contentEquals("cast")) {
 				ExecutableElement ee = (ExecutableElement) m;
 				if (ee.getParameters().size() == 4)
-					verifyDoc(context, m, t.name());
+					verifyDoc(context, m, "the casting operator of " + t.name(), null);
 			}
 		}
 		sb.append(in).append("_type(").append(toJavaString(t.name())).append(",new ")
 				.append(rawNameOf(context, e.asType())).append("(),").append(t.id()).append(',').append(t.kind());
 		types.stream().map((ty) -> rawNameOf(context, ty)).forEach(s -> sb.append(',').append(toClassObject(s)));
 		sb.append(");");
-	}
-
-	private void verifyDoc(final ProcessorContext context, final Element e, final type t) {
-		final doc[] docs = t.doc();
-		final doc d = docs.length == 0 ? e.getAnnotation(doc.class) : docs[0];
-		if (d == null && !t.internal()) {
-			context.emitWarning("GAML: type '" + t.name() + "' is not documented", e);
-		}
-	}
-
-	private void verifyDoc(final ProcessorContext context, final Element e, final String type) {
-		final doc d = e.getAnnotation(doc.class);
-		if (d == null) {
-			context.emitWarning("GAML: this casting operator into " + type + " is not documented", e);
-		}
 	}
 
 	@Override

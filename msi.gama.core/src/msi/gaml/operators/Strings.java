@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Strings.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.Strings.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -16,6 +16,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -48,10 +49,12 @@ public class Strings {
 			usages = @usage (
 					value = "if the left-hand and right-hand operand are a string, returns the concatenation of the two operands",
 					examples = @example (
-							value =  "\"hello \" + \"World\"",
+							value = "\"hello \" + \"World\"",
 							equals = "\"hello World\"")))
-	
-	
+
+	@test ("'a'+'b'='ab'")
+	@test ("''+'' = ''")
+	@test ("string a <- 'a'; a + '' = a")
 	public static String opPlus(final String a, final String b) {
 		return a + b;
 	}
@@ -194,7 +197,7 @@ public class Strings {
 					value = "'to be or not to be,that is the question' split_with ' ,'",
 					equals = "['to','be','or','not','to','be','that','is','the','question']"))
 	public static IList opTokenize(final IScope scope, final String target, final String pattern) {
-		return opTokenize(scope,target,pattern,false);
+		return opTokenize(scope, target, pattern, false);
 	}
 
 	@operator (
@@ -209,10 +212,9 @@ public class Strings {
 			examples = @example (
 					value = "'aa::bb:cc' split_with ('::', true)",
 					equals = "['aa','bb:cc']"))
-	public static IList opTokenize(final IScope scope, final String target, final String pattern, final Boolean completeSep) {
-		if (completeSep) {
-			return GamaListFactory.create(scope, Types.STRING,target.split(pattern));
-		}
+	public static IList opTokenize(final IScope scope, final String target, final String pattern,
+			final Boolean completeSep) {
+		if (completeSep) { return GamaListFactory.create(scope, Types.STRING, target.split(pattern)); }
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return GamaListFactory.create(scope, Types.STRING, st);
 	}
@@ -290,7 +292,8 @@ public class Strings {
 		if (sz > start + 1) {
 			if (s.charAt(start) == '#') {
 				int i = start + 1;
-				if (i == sz) { return false; // str == "#"
+				if (i == sz) {
+					return false; // str == "#"
 				}
 				// Checking hex (it can't be anything else)
 				for (; i < length; i++) {
@@ -351,7 +354,8 @@ public class Strings {
 			final char c = s.charAt(i);
 			if (c >= '0' && c <= '9') {
 				return true; // No type qualifier, OK
-			} else if (c == 'e' || c == 'E') { return false; // can't have an E at the last byte
+			} else if (c == 'e' || c == 'E') {
+				return false; // can't have an E at the last byte
 			}
 		}
 
@@ -475,7 +479,8 @@ public class Strings {
 			can_be_const = true,
 			category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
-	@doc (value = "Converts a (possibly multiline) string by indenting it by a number -- specified by the second operand -- of tabulations to the right",
+	@doc (
+			value = "Converts a (possibly multiline) string by indenting it by a number -- specified by the second operand -- of tabulations to the right",
 			examples = @example (
 					value = "\"my\" + indented_by(\"text\", 1)",
 					equals = "\"my	text\""))

@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'SingleEquationStatement.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SingleEquationStatement.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
@@ -56,36 +55,65 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 
 /**
  *
- * The class SingleEquationStatement. Implements an Equation in the form
- * function(n, t) = expression; The left function is only here as a placeholder
- * for enabling a simpler syntax and grabbing the variable as its left member.
- * 
- * @comment later, the order will be used as it will require a different
- *          integrator to solve the equation. For the moment, it is just here to
- *          show how to compute it from the function used
+ * The class SingleEquationStatement. Implements an Equation in the form function(n, t) = expression; The left function
+ * is only here as a placeholder for enabling a simpler syntax and grabbing the variable as its left member.
+ *
+ * @comment later, the order will be used as it will require a different integrator to solve the equation. For the
+ *          moment, it is just here to show how to compute it from the function used
  *
  * @author Alexis Drogoul, Huynh Quang Nghi
  * @since 26 janv. 2013
  *
  */
 
-@symbol(name = { EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
-		IConcept.EQUATION, IConcept.MATH })
-@facets(value = {
-		@facet(name = EQUATION_LEFT, type = IType.NONE, optional = false, doc = @doc("the left part of the equation (it should be a variable or a call to the diff() or diff2() operators) ")),
-		@facet(name = EQUATION_RIGHT, type = IType.FLOAT, optional = false, doc = @doc("the right part of the equation (it is mandatory that it can be evaluated as a float")) }, omissible = EQUATION_RIGHT)
-@inside(symbols = EQUATION)
-@validator(SingleEquationValidator.class)
-@serializer(SIngleEquationSerializer.class)
-@doc(value = "Allows to implement an equation in the form function(n, t) = expression. The left function is only here as a placeholder for enabling a simpler syntax and grabbing the variable as its left member.", usages = {
-		@usage(value = "The syntax of the = statement is a bit different from the other statements. It has to be used as follows (in an equation):", examples = {
-				@example(value = "float t;", isExecutable = false), @example(value = "float S;", isExecutable = false),
-				@example(value = "float I;", isExecutable = false),
-				@example(value = "equation SI { ", isExecutable = false),
-				@example(value = "   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable = false),
-				@example(value = "   diff(I,t) = (0.3 * S * I / 100);", isExecutable = false),
-				@example(value = "} ", isExecutable = false) }) }, see = { EQUATION, SOLVE })
-@SuppressWarnings({ "rawtypes" })
+@symbol (
+		name = { EQUATION_OP },
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		with_sequence = false,
+		concept = { IConcept.EQUATION, IConcept.MATH })
+@facets (
+		value = { @facet (
+				name = EQUATION_LEFT,
+				type = IType.NONE,
+				optional = false,
+				doc = @doc ("the left part of the equation (it should be a variable or a call to the diff() or diff2() operators) ")),
+				@facet (
+						name = EQUATION_RIGHT,
+						type = IType.FLOAT,
+						optional = false,
+						doc = @doc ("the right part of the equation (it is mandatory that it can be evaluated as a float")) },
+		omissible = EQUATION_RIGHT)
+@inside (
+		symbols = EQUATION)
+@validator (SingleEquationValidator.class)
+@serializer (SIngleEquationSerializer.class)
+@doc (
+		value = "Allows to implement an equation in the form function(n, t) = expression. The left function is only here as a placeholder for enabling a simpler syntax and grabbing the variable as its left member.",
+		usages = { @usage (
+				value = "The syntax of the = statement is a bit different from the other statements. It has to be used as follows (in an equation):",
+				examples = { @example (
+						value = "float t;",
+						isExecutable = false),
+						@example (
+								value = "float S;",
+								isExecutable = false),
+						@example (
+								value = "float I;",
+								isExecutable = false),
+						@example (
+								value = "equation SI { ",
+								isExecutable = false),
+						@example (
+								value = "   diff(S,t) = (- 0.3 * S * I / 100);",
+								isExecutable = false),
+						@example (
+								value = "   diff(I,t) = (0.3 * S * I / 100);",
+								isExecutable = false),
+						@example (
+								value = "} ",
+								isExecutable = false) }) },
+		see = { EQUATION, SOLVE })
+@SuppressWarnings ({ "rawtypes" })
 public class SingleEquationStatement extends AbstractStatement {
 
 	public static final Map<String, Integer> orderNames = new TOrderedHashMap<>();
@@ -188,9 +216,7 @@ public class SingleEquationStatement extends AbstractStatement {
 	}
 
 	public void establishVar() {
-		if (getOrder() == 0) {
-			return;
-		}
+		if (getOrder() == 0) { return; }
 		int i = 0;
 		for (i = 0; i < ((AbstractNAryOperator) function).numArg() - 1; i++) {
 			final IExpression tmp = ((AbstractNAryOperator) function).arg(i);
@@ -200,12 +226,10 @@ public class SingleEquationStatement extends AbstractStatement {
 	}
 
 	/**
-	 * This method is normally called by the system of equations to which this
-	 * equation belongs. It simply computes the expression that represents the
-	 * equation and returns it. The storage of the new values is realized in
-	 * SystemOfEquationsStatement, in order not to generate side effects (e.g.
-	 * the value of a shared variable changing between the integrations of two
-	 * equations)
+	 * This method is normally called by the system of equations to which this equation belongs. It simply computes the
+	 * expression that represents the equation and returns it. The storage of the new values is realized in
+	 * SystemOfEquationsStatement, in order not to generate side effects (e.g. the value of a shared variable changing
+	 * between the integrations of two equations)
 	 *
 	 * @see msi.gaml.statements.AbstractStatement#privateExecuteIn(msi.gama.runtime.IScope)
 	 */
@@ -221,6 +245,7 @@ public class SingleEquationStatement extends AbstractStatement {
 		return expression.value(scope);// super.executeOn(scope);
 	}
 
+	@Override
 	public int getOrder() {
 		return orderNames.get(function.getName());
 	}
@@ -233,32 +258,39 @@ public class SingleEquationStatement extends AbstractStatement {
 	// the var or var_t,
 	// whenever they are called.
 
-	@operator(value = DIFF, concept = { IConcept.EQUATION,
-			IConcept.MATH })
-	@doc(value = "A placeholder function for expressing equations")
+	@operator (
+			value = DIFF,
+			concept = { IConcept.EQUATION, IConcept.MATH })
+	@doc (
+			value = "A placeholder function for expressing equations")
 	public static Double diff(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
 	}
 
-	@operator(value = DIF2, concept = { IConcept.EQUATION,
-			IConcept.MATH })
-	@doc(value = "A placeholder function for expressing equations")
+	@operator (
+			value = DIF2,
+			concept = { IConcept.EQUATION, IConcept.MATH })
+	@doc (
+			value = "A placeholder function for expressing equations")
 	public static Double diff2(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
 	}
 
 	/**
-	 * Placeholder for zero-order equations. The expression on the right allows
-	 * to pass the variable directly (maybe useful one day).
-	 * 
+	 * Placeholder for zero-order equations. The expression on the right allows to pass the variable directly (maybe
+	 * useful one day).
+	 *
 	 * @param scope
 	 * @param var
 	 * @param time
 	 * @return
 	 */
-	@operator(value = ZERO, concept = { IConcept.EQUATION,
-			IConcept.MATH })
-	@doc(value = "An internal placeholder function")
+	@operator (
+			value = ZERO,
+			concept = { IConcept.EQUATION, IConcept.MATH },
+			internal = true)
+	@doc (
+			value = "An internal placeholder function")
 	public static Double f(final IScope scope, final IExpression var) {
 		return Double.NaN;
 	}
