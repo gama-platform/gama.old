@@ -2,11 +2,11 @@
  *
  * ummisco.gama.ui.controls.SimulationSpeedContributionItem.java, in plugin ummisco.gama.ui.experiment, is part of the
  * source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
@@ -26,9 +26,7 @@ import msi.gaml.operators.Maths;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class SimulationSpeedContributionItem.
@@ -73,7 +71,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 
 	/**
 	 * v between 0 and 1. Retuns a value in milliseconds
-	 * 
+	 *
 	 * @param v
 	 * @return
 	 */
@@ -106,8 +104,8 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = widthSize;
 		data.minimumWidth = widthSize;
-		final SimpleSlider slider = new SimpleSlider(composite, sliderColor.color(), sliderColor.color(),
-				GamaIcons.create(IGamaIcons.TOOLBAR_KNOB).image());
+		final SimpleSlider slider =
+				new SimpleSlider(composite, sliderColor.color(), sliderColor.color(), IGamaColors.BLUE.color());
 		slider.setTooltipInterperter(TOOLTIP_PROVIDER);
 		slider.setLayoutData(data);
 		slider.setSize(widthSize, heightSize);

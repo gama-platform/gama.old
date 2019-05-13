@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -25,12 +25,11 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.controls.SimpleSlider;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * A slider for choosing values between a max and a min, with an optional step
- * 
+ *
  * @author drogoul
  *
  */
@@ -121,7 +120,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 	protected Control createCustomParameterControl(final Composite comp) throws GamaRuntimeException {
 
 		slider = new SimpleSlider(comp, IGamaColors.OK.color(), IGamaColors.GRAY_LABEL.lighter(),
-				GamaIcons.create("small.slider2").image(), false) {};
+				IGamaColors.OK.color(), false) {};
 
 		if (stepValue != null) {
 			final Double realStep = stepValue.doubleValue() / (maxValue.doubleValue() - minValue.doubleValue());
