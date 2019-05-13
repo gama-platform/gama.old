@@ -55,22 +55,22 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Official_Linux_64bits' 
+NEWFILES[$n]='GAMA1.8_Official_Linux_64bits.zip' 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Official_Mac_64bits'
+NEWFILES[$n]='GAMA1.8_Official_Mac_64bits.zip'
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.8_Official_Win_64bits'
+NEWFILES[$n]='GAMA1.8_Official_Win_64bits.zip'
 n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Official_withJDK_Linux_64bits'
+NEWFILES[$n]='GAMA1.8_Official_withJDK_Linux_64bits.zip'
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.8_Official_withJDK_Win_64bits'
+NEWFILES[$n]='GAMA1.8_Official_withJDK_Win_64bits.zip'
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Official_withJDK_MacOS'
+NEWFILES[$n]='GAMA1.8_Official_withJDK_MacOS.zip'
  
 
 i=0
