@@ -90,7 +90,7 @@ LK1="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
 
 echo   "Getting info of release ...  "
 RESULT1=`curl  -s -X GET \
--H "Authorization: token $HQN_TOKEN"   \
+-H "Authorization: token $BOT_TOKEN"   \
 "$LK1"`	
 echo $RESULT1
 
@@ -107,7 +107,7 @@ echo $RESULT1
 
 	echo   "Deleting release ...  "
 	RESULT1=`curl  -s -X DELETE \
-	-H "Authorization: token $HQN_TOKEN"   \
+	-H "Authorization: token $BOT_TOKEN"   \
 	"$LK1"`	
 	echo $RESULT1
 	break
@@ -123,7 +123,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   RESULT=` curl -s -X POST \
   -H "X-Parse-Application-Id: sensitive" \
   -H "X-Parse-REST-API-Key: sensitive" \
-  -H "Authorization: token $HQN_TOKEN"   \
+  -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
   -d '{"tag_name": "'$RELEASE'", "name":"GAMA 1.8","body":"to be official Released on 17 May","draft": false,"prerelease": true}' \
     "$LK"`
@@ -153,7 +153,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
   RESULT=` curl -s -X GET \
   -H "X-Parse-Application-Id: sensitive" \
   -H "X-Parse-REST-API-Key: sensitive" \
-  -H "Authorization: token $HQN_TOKEN"   \
+  -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
@@ -176,7 +176,7 @@ do
   LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$NFILE"
   
   RESULT=`curl -s -w  "\n%{http_code}\n"                   \
-    -H "Authorization: token $HQN_TOKEN"                \
+    -H "Authorization: token $BOT_TOKEN"                \
     -H "Accept: application/vnd.github.manifold-preview"  \
     -H "Content-Type: application/zip"                    \
     --data-binary "@$FILE"                                \

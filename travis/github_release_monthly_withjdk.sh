@@ -5,10 +5,10 @@
 
 function update_tag() {
 	echo "update tag " $1 
-	git config --global user.email "hqnghi88@gmail.com"
+	git config --global user.email "my@gmail.com"
 	git config --global user.name "Travis CI"
 	git remote rm origin
-	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.git
+	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama.git
 	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 	git fetch
 	git checkout master
@@ -90,7 +90,7 @@ LK1="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
 
 echo   "Getting info of release Monthly...  "
 RESULT1=`curl  -s -X GET \
--H "Authorization: token $HQN_TOKEN"   \
+-H "Authorization: token $BOT_TOKEN"   \
 "$LK1"`	
 echo $RESULT1
 
@@ -107,7 +107,7 @@ echo $RESULT1
 
 	echo   "Deleting release Monthly...  "
 	RESULT1=`curl  -s -X DELETE \
-	-H "Authorization: token $HQN_TOKEN"   \
+	-H "Authorization: token $BOT_TOKEN"   \
 	"$LK1"`	
 	echo $RESULT1
 	break
@@ -123,7 +123,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   RESULT=` curl -s -X POST \
   -H "X-Parse-Application-Id: sensitive" \
   -H "X-Parse-REST-API-Key: sensitive" \
-  -H "Authorization: token $HQN_TOKEN"   \
+  -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
   -d '{"tag_name": "'$RELEASE'", "name":"Monthly build","body":"Built once a month","draft": false,"prerelease": true}' \
     "$LK"`
@@ -153,7 +153,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
   RESULT=` curl -s -X GET \
   -H "X-Parse-Application-Id: sensitive" \
   -H "X-Parse-REST-API-Key: sensitive" \
-  -H "Authorization: token $HQN_TOKEN"   \
+  -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
@@ -176,7 +176,7 @@ do
   LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$NFILE"
   
   RESULT=`curl -s -w  "\n%{http_code}\n"                   \
-    -H "Authorization: token $HQN_TOKEN"                \
+    -H "Authorization: token $BOT_TOKEN"                \
     -H "Accept: application/vnd.github.manifold-preview"  \
     -H "Content-Type: application/zip"                    \
     --data-binary "@$FILE"                                \
