@@ -5,10 +5,10 @@
 
 function update_tag() {
 	echo "update tag " $1 
-	git config --global user.email "hqnghi88@gmail.com"
-	git config --global user.name "Travis CI"
+	git config --global user.email "my.gama.bot@gmail.com"
+	git config --global user.name "GAMA Bot"
 	git remote rm origin
-	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.git
+	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama.git
 	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 	git fetch
 	git checkout master
