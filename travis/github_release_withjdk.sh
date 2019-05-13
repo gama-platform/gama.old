@@ -13,6 +13,7 @@ function update_tag() {
 	git fetch
 	git checkout master
 	git pull origin master
+	git status
 	git push origin :refs/tags/$1
 	git tag -d $1
 	git tag -fa $1 -m "$1"
