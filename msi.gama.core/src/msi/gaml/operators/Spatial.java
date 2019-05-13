@@ -2269,13 +2269,17 @@ public abstract class Spatial {
 								+ "the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
-		public static IShape rotated_by(final IScope scope, final IShape g1,
-				final GamaPair<Double, GamaPoint> rotation) {
+		public static IShape rotated_by(final IScope scope, final IShape g1, final GamaPair rotation) {
+			Object o = rotation.getKey();
+			Double val = null;
+			if (o instanceof Number) {
+				val = ((Number) o).doubleValue();
+			}
 			if (g1 == null) { return null; }
 			// if (vector.x == 0d && vector.y == 0d && vector.z == 0d) { return g1; }
-			return new GamaShape(g1, null, new AxisAngle(rotation.getValue(), rotation.getKey()), g1.getLocation());
+			return new GamaShape(g1, null, new AxisAngle((GamaPoint) rotation.getValue(), val), g1.getLocation());
 		}
-
+		
 		@operator (
 				value = "rotated_by",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
