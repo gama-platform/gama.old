@@ -1,7 +1,7 @@
 /***
 * Name: Mondrian City
 * Author: Arnaud Grignard, Tri Nguyen-Huu and Patrick Taillandier 
-* Description: An abstract Mobilty Model represented in a Mondrian World. 
+* Description: An abstract mobilty Model represented in a Mondrian World. 
 * Tags: art, interaction, mobitily
 ***/
 
@@ -10,11 +10,10 @@ model Mondrian_City
 
 global{
 	
-	float weight_car parameter: 'car weight'  step: 0.1 min:0.1 max:1.0 <- 0.75 ;
-	float weight_bike parameter: 'bike weight' step: 0.1 min:0.1 max:1.0 <- 0.5 ;
-	float weight_pev  step: 0.1 min: 0.0 max: 1.0 parameter: "pev weight" <- 0.1;
-	
-	int population_level <- 40 parameter: 'Population level' min: 0 max: 100;
+	float weight_mobility1 parameter: 'mobility1 level'  step: 0.1 min:0.1 max:1.0 <- 0.5 ;
+	float weight_mobility2 parameter: 'mobility2 level' step: 0.1 min:0.1 max:1.0 <- 0.5 ;
+	float weight_mobility3  step: 0.1 min: 0.1 max: 1.0 parameter: "mobility3 level" <- 0.5;
+	int population_level <- 50 parameter: 'Population level' min: 0 max: 100;
 	
 	float spacing <- 0.75;
 	float line_width <- 0.65;
@@ -31,14 +30,7 @@ global{
 	float environment_height <- 5000.0;
 	float environment_width <- 5000.0;
 	int global_people_size <-50;
-
-	bool blackMirror <- true;
-	string people_aspect <-"mode";
-	
-
-	bool udpSliderReader <- true; 
-	bool editionMode <-false;
-		
+			
 	float computed_line_width;
 	float road_width;
 	float block_size;
@@ -47,23 +39,21 @@ global{
 	bool show_cells_prev <- show_cells update: show_cells ;
 	bool on_modification_bds <- false update: false;	
 		
-	map<string,int> max_traffic_per_mode <- ["car"::50, "bike"::50, "walk"::50];
-	map<string,int> mode_order <- ["car"::0, "bike"::1, "walk"::2]; 
-	map<string,rgb> color_per_mode <- ["car"::rgb(52,152,219), "bike"::rgb(192,57,43), "walk"::rgb(161,196,90), "pev"::#magenta];
-	map<string,geometry> shape_per_mode <- ["car"::circle(global_people_size*0.225), "bike"::circle(global_people_size*0.21), "walk"::circle(global_people_size*0.2), "pev"::circle(global_people_size*0.21)];
+	map<string,int> max_traffic_per_mode <- ["mobility1"::50, "mobility2"::50, "walk"::50];
+	map<string,int> mode_order <- ["mobility1"::0, "mobility2"::1, "walk"::2]; 
+	map<string,rgb> color_per_mode <- ["mobility1"::rgb(52,152,219), "mobility2"::rgb(192,57,43), "walk"::rgb(161,196,90), "mobility3"::#magenta];
+	map<string,geometry> shape_per_mode <- ["mobility1"::circle(global_people_size*0.225), "mobility2"::circle(global_people_size*0.21), "walk"::circle(global_people_size*0.2), "mobility3"::circle(global_people_size*0.21)];
 	
-	map<string,point> offsets <- ["car"::{0,0}, "bike"::{0,0}, "walk"::{0,0}];
-	map<string,list<rgb>> colormap_per_mode <- ["car"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)], "bike"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)], "walk"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)]];
-	map<string,rgb> color_per_type <- ["residential"::#gray, "office"::#orange];
+	map<string,point> offsets <- ["mobility1"::{0,0}, "mobility2"::{0,0}, "walk"::{0,0}];
+	map<string,list<rgb>> colormap_per_mode <- ["mobility1"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)], "mobility2"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)], "walk"::[rgb(107,213,225),rgb(255,217,142),rgb(255,182,119),rgb(255,131,100),rgb(192,57,43)]];
 	map<string,rgb> color_per_id <- ["residentialS"::#blue,"residentialM"::#white,"residentialL"::#cyan,"officeS"::#yellow,"officeM"::#red,"officeL"::#green];
 	map<string,float> nb_people_per_size <- ["S"::10.0, "M"::50.0, "L"::100.0];
 	map<string,float> proba_choose_per_size <- ["S"::0.1, "M"::0.5, "L"::1.0];
 	map<int, list<string>> id_to_building_type <- [1::["residential","S"],2::["residential","M"],3::["residential","L"],4::["office","S"],5::["office","M"],6::["office","L"]];
-	list fivefoods<-["Residential","Retail","Hotel","Office","Industrial","Park"];
 		
-	float weight_car_prev <- weight_car;
-	float weight_bike_prev <- weight_bike;
-	float weight_pev_prev <- weight_pev;
+	float weight_mobility1_prev <- weight_mobility1;
+	float weight_mobility2_prev <- weight_mobility2;
+	float weight_mobility3_prev <- weight_mobility3;
 	
 	list<building> residentials;
 	map<building, float> offices;
@@ -73,7 +63,7 @@ global{
 	geometry shape<-rectangle(environment_width, environment_height);
 	float step <- sqrt(shape.area) /2000.0 ;
 	
-	map<string,list<float>> speed_per_mobility <- ["car"::[20.0,40.0], "bike"::[5.0,15.0], "walk"::[3.0,7.0], "pev"::[15.0,30.0]];
+	map<string,list<float>> speed_per_mobility <- ["mobility1"::[20.0,40.0], "mobility2"::[5.0,15.0], "walk"::[3.0,7.0], "mobility3"::[15.0,30.0]];
 	
 	init {
 		list<geometry> lines;
@@ -93,25 +83,25 @@ global{
 	}
 	
 	action update_graphs {
-		loop mode over: ["walk", "car", "bike"] {
+		loop mode over: ["walk", "mobility1", "mobility2"] {
 			graph_per_mode[mode] <- directed(as_edge_graph(road where (mode in each.allowed_mobility)));
 		}
 	}
 	
 	reflex update_mobility  {
-		if(weight_car_prev != weight_car) or (weight_bike_prev != weight_bike) or (weight_pev_prev != weight_pev) {
+		if(weight_mobility1_prev != weight_mobility1) or (weight_mobility2_prev != weight_mobility2) or (weight_mobility3_prev != weight_mobility3) {
 			ask people {
-				know_pev <- flip(weight_pev);
-				has_car <- flip(weight_car);
-				has_bike <- flip(weight_bike);
+				know_mobility3 <- flip(weight_mobility3);
+				has_mobility1 <- flip(weight_mobility1);
+				has_mobility2 <- flip(weight_mobility2);
 				
 				do choose_mobility;
 				do mobility;
 			}
 		}
-		weight_car_prev <- weight_car;
-		weight_bike_prev <- weight_bike;
-		weight_pev_prev <-weight_pev;
+		weight_mobility1_prev <- weight_mobility1;
+		weight_mobility2_prev <- weight_mobility2;
+		weight_mobility3_prev <-weight_mobility3;
 		
 	}
 		
@@ -120,7 +110,7 @@ global{
 	} 
 		
 	reflex compute_traffic_density{
-		ask road {traffic_density <- ["car"::[0::0,1::0], "bike"::[0::0,1::0], "walk"::[0::0,1::0], "pev"::[0::0,1::0]];}
+		ask road {traffic_density <- ["mobility1"::[0::0,1::0], "mobility2"::[0::0,1::0], "walk"::[0::0,1::0], "mobility3"::[0::0,1::0]];}
 
 		ask people{
 			if current_path != nil and current_path.edges != nil{
@@ -142,18 +132,18 @@ global{
 	action manage_road{
 		road selected_road <- first(road overlapping (circle(sqrt(shape.area)/100.0) at_location #user_location));
 		if (selected_road != nil) {
-			bool with_car <- "car" in selected_road.allowed_mobility;
-			bool with_bike <- "bike" in selected_road.allowed_mobility;
+			bool with_mobility1 <- "mobility1" in selected_road.allowed_mobility;
+			bool with_mobility2 <- "mobility2" in selected_road.allowed_mobility;
 			bool with_pedestrian <- "walk" in selected_road.allowed_mobility;
-			map input_values <- user_input(["car allowed"::with_car,"bike allowed"::with_bike,"pedestrian allowed"::with_pedestrian]);
-			if (with_car != input_values["car allowed"]) {
-				if (with_car) {selected_road.allowed_mobility >> "car";}
-				else {selected_road.allowed_mobility << "car";}
+			map input_values <- user_input(["mobility1 allowed"::with_mobility1,"mobility2 allowed"::with_mobility2,"pedestrian allowed"::with_pedestrian]);
+			if (with_mobility1 != input_values["mobility1 allowed"]) {
+				if (with_mobility1) {selected_road.allowed_mobility >> "mobility1";}
+				else {selected_road.allowed_mobility << "mobility1";}
 				
 			}
-			if (with_bike != input_values["bike allowed"]) {
-				if (with_bike) {selected_road.allowed_mobility >> "bike";}
-				else {selected_road.allowed_mobility << "bike";}
+			if (with_mobility2 != input_values["mobility2 allowed"]) {
+				if (with_mobility2) {selected_road.allowed_mobility >> "mobility2";}
+				else {selected_road.allowed_mobility << "mobility2";}
 			}
 			if (with_pedestrian != input_values["pedestrian allowed"]) {
 				if (with_pedestrian) {selected_road.allowed_mobility >> "walk";}
@@ -196,8 +186,7 @@ global{
 		        id <- 1+rnd(5);	
 		    }else{
 		    	id<--1;
-		    }
-			
+		    }			
 			if (id > 0) {
              do createCell(id, j, i);
 			}
@@ -275,9 +264,9 @@ species building {
 
 species road {
 	int nb_people;
-	map<string,map<int,int>> traffic_density <- ["car"::[0::0,1::0], "bike"::[0::0,1::0], "walk"::[0::0,1::0], "pev"::[0::0,1::0]];
+	map<string,map<int,int>> traffic_density <- ["mobility1"::[0::0,1::0], "mobility2"::[0::0,1::0], "walk"::[0::0,1::0], "mobility3"::[0::0,1::0]];
 	rgb color <- rnd_color(255);
-	list<string> allowed_mobility <- ["walk","bike","car"];
+	list<string> allowed_mobility <- ["walk","mobility2","mobility1"];
 
 	init {
 	}
@@ -326,23 +315,23 @@ species people skills: [moving]{
 	building dest;
 	bool to_destination <- true;
 	point target;
-	bool know_pev <- false;
-	bool has_car <- flip(weight_car);
-	bool has_bike <- flip(weight_bike);
+	bool know_mobility3 <- false;
+	bool has_mobility1 <- flip(weight_mobility1);
+	bool has_mobility2 <- flip(weight_mobility2);
 	float max_dist_walk <- 1000.0;
-	float max_dist_bike <- 3000.0;
-	float max_dist_pev <- 5000.0;
+	float max_dist_mobility2 <- 3000.0;
+	float max_dist_mobility3 <- 5000.0;
 	action choose_mobility {
 		if (origin != nil and dest != nil) {
 			float dist <- manhattan_distance(origin.location, dest.location);
 			if (dist <= max_dist_walk ) {
 					mobility_mode <- "walk";
-			} else if (has_bike and dist <= max_dist_bike ) {
-					mobility_mode <- "bike";
-			} else if (know_pev and (dist <= max_dist_pev )) {
-					mobility_mode <- "pev";
-			} else if has_car {
-					mobility_mode <- "car";
+			} else if (has_mobility2 and dist <= max_dist_mobility2 ) {
+					mobility_mode <- "mobility2";
+			} else if (know_mobility3 and (dist <= max_dist_mobility3 )) {
+					mobility_mode <- "mobility3";
+			} else if has_mobility1 {
+					mobility_mode <- "mobility1";
 			} else {
 					mobility_mode <- "walk";
 			}
@@ -367,7 +356,7 @@ species people skills: [moving]{
 	
 	action mobility {
 		do unregister;
-		do goto target: target on: graph_per_mode[(mobility_mode = "pev") ? "bike" : mobility_mode] recompute_path: false ;
+		do goto target: target on: graph_per_mode[(mobility_mode = "mobility3") ? "mobility2" : mobility_mode] recompute_path: false ;
 		do register;
 	}
 	action update_target {
@@ -378,12 +367,12 @@ species people skills: [moving]{
 	}
 	
 	action register {
-		if ((mobility_mode = "car") and current_edge != nil) {
+		if ((mobility_mode = "mobility1") and current_edge != nil) {
 			road(current_edge).nb_people <- road(current_edge).nb_people + 1;
 		}
 	}
 	action unregister {
-		if ((mobility_mode = "car") and current_edge != nil) {
+		if ((mobility_mode = "mobility1") and current_edge != nil) {
 			road(current_edge).nb_people <- road(current_edge).nb_people - 1;
 		}
 	}
@@ -412,7 +401,7 @@ species people skills: [moving]{
 		  offset <- offsets[mobility_mode]*(heading_index > 0 ? (-1): 1);	
 		}
 		if (target != nil or dest = nil) {
-			if(mobility_mode ="car"){
+			if(mobility_mode ="mobility1"){
 			  draw copy(shape_per_mode[mobility_mode])  color: color_per_mode[mobility_mode] border:color_per_mode[mobility_mode] rotate:heading +90 at: location+offset;
 			}else{
 			  draw copy(shape_per_mode[mobility_mode])  color: color_per_mode[mobility_mode] rotate:heading +90 at: location+offset;	
@@ -458,10 +447,10 @@ grid cell width: grid_width height: grid_height {
 	}
 }
 
-experiment URBAMondrian type: gui autorun: true{
+experiment MondrianCity type: gui autorun: true{
 	float minimum_cycle_duration <- 0.05;
 	output {
-		display map synchronized:true background:blackMirror ? #black :#white toolbar:false type:opengl  draw_env:false fullscreen:false{
+		display map synchronized:true background:#black toolbar:false type:opengl  draw_env:false fullscreen:false{
 			species cell aspect:default;
 			species road ;
 			species people;
