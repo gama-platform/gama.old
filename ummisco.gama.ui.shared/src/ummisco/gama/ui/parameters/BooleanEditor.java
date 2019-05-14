@@ -4,23 +4,29 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.SwitchButton;
 import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.IGamaColors;
 
 public class BooleanEditor extends AbstractEditor<Boolean> {
 
@@ -82,7 +88,17 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
-		button = new SwitchButton(comp, SWT.CHECK);
+		List<GamaColor> colors = getParam().getColor(getScope());
+		Color left = IGamaColors.OK.color();
+		Color right = IGamaColors.ERROR.color();
+		if (colors != null)
+			if (colors.size() == 1) {
+				left = right = GamaColors.get(colors.get(0)).color();
+			} else if (colors.size() >= 2) {
+				left = GamaColors.get(colors.get(0)).color();
+				right = GamaColors.get(colors.get(1)).color();
+			}
+		button = new SwitchButton(comp, SWT.CHECK, left, right);
 		button.addSelectionListener(this);
 		return button;
 	}
