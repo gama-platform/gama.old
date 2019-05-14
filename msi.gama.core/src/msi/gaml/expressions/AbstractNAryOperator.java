@@ -12,6 +12,7 @@ package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.ALL;
 import static msi.gama.precompiler.ITypeProvider.CONTENT_TYPE_AT_INDEX;
+import static msi.gama.precompiler.ITypeProvider.DENOTED_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE;
 import static msi.gama.precompiler.ITypeProvider.FLOAT_IN_CASE_OF_INT;
 import static msi.gama.precompiler.ITypeProvider.INDEXED_TYPES;
@@ -122,6 +123,9 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 						} else if (typeProvider > CONTENT_TYPE_AT_INDEX) {
 							index = typeProvider - CONTENT_TYPE_AT_INDEX - 1;
 							kindOfIndex = GamaType.CONTENT;
+						} else if (typeProvider > DENOTED_TYPE_AT_INDEX) {
+							index = typeProvider - DENOTED_TYPE_AT_INDEX - 1;
+							kindOfIndex = GamaType.DENOTED;
 						} else if (typeProvider > KEY_TYPE_AT_INDEX) {
 							index = typeProvider - KEY_TYPE_AT_INDEX - 1;
 							kindOfIndex = GamaType.KEY;
@@ -137,6 +141,9 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 									break;
 								case GamaType.KEY:
 									result = expr.getGamlType().getKeyType();
+									break;
+								case GamaType.DENOTED:
+									result = expr.getDenotedType();
 									break;
 							}
 						}
