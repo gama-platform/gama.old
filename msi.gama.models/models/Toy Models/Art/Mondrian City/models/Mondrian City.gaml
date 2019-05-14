@@ -10,10 +10,11 @@ model Mondrian_City
 
 global{
 	
-	float weight_mobility1 parameter: 'mobility1 level'  step: 0.1 min:0.1 max:1.0 <- 0.5 ;
-	float weight_mobility2 parameter: 'mobility2 level' step: 0.1 min:0.1 max:1.0 <- 0.5 ;
-	float weight_mobility3  step: 0.1 min: 0.1 max: 1.0 parameter: "mobility3 level" <- 0.5;
-	int population_level <- 50 parameter: 'Population level' min: 0 max: 100;
+	float weight_mobility1;
+	float weight_mobility2;
+	float weight_mobility3;
+	int population_level;
+
 	
 	float spacing <- 0.75;
 	float line_width <- 0.65;
@@ -449,6 +450,11 @@ grid cell width: grid_width height: grid_height {
 
 experiment MondrianCity type: gui autorun: true{
 	float minimum_cycle_duration <- 0.05;
+	parameter "mobility1 level" var: weight_mobility1 min: 0.1 max: 1.0 step: 0.1 colors: [#gamablue] <-0.5;
+	parameter "mobility2 level" var: weight_mobility2 min: 0.1 max: 1.0 step: 0.1 colors: [#gamablue] <-0.5;
+	parameter "mobility3 level" var: weight_mobility3 min: 0.1 max: 1.0 step: 0.1 colors: [#gamablue] <-0.5;
+	parameter "Population level" var: population_level min: 0 max: 100 step: 1 colors: [#gamablue] <-50;
+
 	output {
 		display map synchronized:true background:#black toolbar:false type:opengl  draw_env:false fullscreen:false{
 			species cell aspect:default;

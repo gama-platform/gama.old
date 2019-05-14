@@ -11,6 +11,7 @@
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.CONTENT_TYPE_AT_INDEX;
+import static msi.gama.precompiler.ITypeProvider.DENOTED_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE;
 import static msi.gama.precompiler.ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE;
 import static msi.gama.precompiler.ITypeProvider.FLOAT_IN_CASE_OF_INT;
@@ -163,9 +164,10 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			} else
 				result = t2;
 		} else
-			result = t == TYPE_AT_INDEX + 1 ? child.getGamlType() : t == CONTENT_TYPE_AT_INDEX + 1
-					? child.getGamlType().getContentType()
-					: t == KEY_TYPE_AT_INDEX + 1 ? child.getGamlType().getKeyType() : t >= 0 ? Types.get(t) : def;
+			result = t == TYPE_AT_INDEX + 1 ? child.getGamlType()
+					: t == CONTENT_TYPE_AT_INDEX + 1 ? child.getGamlType().getContentType() : t == KEY_TYPE_AT_INDEX + 1
+							? child.getGamlType().getKeyType()
+							: t >= 0 ? Types.get(t) : t == DENOTED_TYPE_AT_INDEX + 1 ? child.getDenotedType() : def;
 		if (returnFloatsInsteadOfInts && result == Types.INT)
 			return Types.FLOAT;
 		return result;

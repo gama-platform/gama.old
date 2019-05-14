@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ExperimentParameter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.ExperimentParameter.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -29,6 +29,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.compilation.annotations.validator;
@@ -107,6 +108,12 @@ import msi.gaml.variables.Variable;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. If no max or min value is defined, setting this facet to true will have no effect")),
+				@facet (
+						name = "colors",
+						type = IType.LIST,
+						of = IType.COLOR,
+						optional = true,
+						doc = @doc ("The colors of the control in the UI. An empty list has no effects. Only used for sliders and switches so far. For sliders, 3 colors will allow to specify the color of the left section, the thumb and the right section (in this order); 2 colors will define the left and right sections only (thumb will be dark green); 1 color will define the left section and the thumb. For switches, 2 colors will define the background for respectively the left 'true' and right 'false' sections. 1 color will define both backgrounds")),
 				@facet (
 						name = IKeyword.STEP,
 						type = IType.FLOAT,
@@ -267,6 +274,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if (title == null) {
 			title = name2;
 		}
+	}
+
+	@Override
+	public List<GamaColor> getColor(final IScope scope) {
+		final IExpression exp = getFacet("colors");
+		if (exp == null) { return null; }
+		List<GamaColor> colors =
+				(List<GamaColor>) Types.LIST.cast(scope, exp.value(scope), null, Types.INT, Types.COLOR, false);
+		return colors;
 	}
 
 	@Override

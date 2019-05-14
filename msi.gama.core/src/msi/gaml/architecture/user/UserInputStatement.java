@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.user.UserInputStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.architecture.user.UserInputStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.user;
 
@@ -25,6 +25,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -211,7 +212,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	/**
 	 * Method setUnitLabel()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IParameter#setUnitLabel(java.lang.String)
 	 */
 	@Override
@@ -219,7 +220,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	/**
 	 * Method isDefined()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IParameter#isDefined()
 	 */
 	@Override
@@ -229,7 +230,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	/**
 	 * Method setDefined()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IParameter#setDefined(boolean)
 	 */
 	@Override
@@ -240,6 +241,11 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		if (slider == null)
 			return true;
 		return Cast.asBool(scope, slider.value(scope));
+	}
+
+	@Override
+	public List<GamaColor> getColor(IScope scope) {
+		return null;
 	}
 
 }

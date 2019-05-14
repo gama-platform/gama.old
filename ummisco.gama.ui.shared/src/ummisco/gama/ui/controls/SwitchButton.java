@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
@@ -144,13 +144,14 @@ public class SwitchButton extends Canvas {
 	 */
 	public SwitchButton(final Composite parent, final int style, final String trueText, final String falseText,
 			final String text) {
-		this(parent, style);
+		this(parent, style, IGamaColors.OK.color(), IGamaColors.ERROR.color());
 		this.textForSelect = trueText;
 		this.textForUnselect = falseText;
 		this.text = text;
 	}
 
-	public SwitchButton(final Composite parent, final int style) {
+	public SwitchButton(final Composite parent, final int style, Color selectedBackgroundColor,
+			Color unselectedBackgroundColor) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
 		this.textForSelect = " True ";
 		this.textForUnselect = " False ";
@@ -158,8 +159,8 @@ public class SwitchButton extends Canvas {
 		this.round = true;
 		this.borderColor = null;
 		this.focusColor = null;
-		this.selectedBackgroundColor = IGamaColors.OK.color();
-		this.unselectedBackgroundColor = IGamaColors.ERROR.color();
+		this.selectedBackgroundColor = selectedBackgroundColor;
+		this.unselectedBackgroundColor = unselectedBackgroundColor;
 		this.buttonBorderColor = IGamaColors.NEUTRAL.color();
 		setFont(GamaFonts.getSmallFont());
 

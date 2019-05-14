@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.IParameter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.IParameter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -15,13 +15,14 @@ import java.util.Set;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 4 juin 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface IParameter extends IExperimentDisplayable {
 
@@ -40,6 +41,7 @@ public interface IParameter extends IExperimentDisplayable {
 	@SuppressWarnings ("rawtypes")
 	public abstract IType getType();
 
+	@Override
 	public String serialize(boolean includingBuiltIn);
 
 	public abstract Object getInitialValue(IScope scope);
@@ -52,6 +54,8 @@ public interface IParameter extends IExperimentDisplayable {
 	public abstract List getAmongValue(IScope scope);
 
 	public abstract boolean isEditable();
+
+	public List<GamaColor> getColor(final IScope scope);
 
 	public abstract boolean acceptsSlider(IScope scope);
 

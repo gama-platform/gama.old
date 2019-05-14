@@ -110,6 +110,7 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -2220,7 +2221,7 @@ public abstract class Spatial {
 				value = "The rotation given by the composition of the rotations in the list, from left to right. Angles are in degrees.",
 				masterDoc = true,
 				examples = { @example (
-						value = "rotation_composition([38::{1,1,1},90::{1,0,0}])",
+						value = "rotation_composition([38.0::{1,1,1},90.0::{1,0,0}])",
 						equals = "the result",
 						test = false) },
 				see = { "inverse_rotation" })
@@ -2243,7 +2244,7 @@ public abstract class Spatial {
 						+ " along the operand axis to the left-hand operand (geometry, agent, point)",
 				masterDoc = true,
 				examples = { @example (
-						value = "rotated_by(pyramid(10),45, {1,0,0})",
+						value = "rotated_by(pyramid(10),45.0, {1,0,0})",
 						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
 								+ "the agent applying the operator.",
 						test = false) },
@@ -2261,25 +2262,21 @@ public abstract class Spatial {
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
 				value = "A geometry resulting from the application of the right-hand rotation operand (angles in degree)"
-						+ "to the left-hand operand (geometry, agent, point)",
+						+ " to the left-hand operand (geometry, agent, point)",
 				masterDoc = true,
 				examples = { @example (
-						value = "rotated_by(pyramid(10),45::{1,0,0})",
+						value = "rotated_by(pyramid(10),45.0::{1,0,0})",
 						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
 								+ "the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
 		public static IShape rotated_by(final IScope scope, final IShape g1, final GamaPair rotation) {
-			Object o = rotation.getKey();
-			Double val = null;
-			if (o instanceof Number) {
-				val = ((Number) o).doubleValue();
-			}
-			if (g1 == null) { return null; }
-			// if (vector.x == 0d && vector.y == 0d && vector.z == 0d) { return g1; }
-			return new GamaShape(g1, null, new AxisAngle((GamaPoint) rotation.getValue(), val), g1.getLocation());
+			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
+			if (g1 == null || rot == null) { return null; }
+			return new GamaShape(g1, null, new AxisAngle(rot.getValue(), rot.getKey()), g1.getLocation());
 		}
-		
+
 		@operator (
 				value = "rotated_by",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },

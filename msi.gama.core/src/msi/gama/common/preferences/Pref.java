@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.preferences.Pref.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.preferences.Pref.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.preferences;
 
@@ -22,6 +22,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -317,6 +318,11 @@ public class Pref<T> implements IParameter {
 
 	public boolean inGaml() {
 		return inGaml;
+	}
+
+	@Override
+	public List<GamaColor> getColor(IScope scope) {
+		return null;
 	}
 
 }
