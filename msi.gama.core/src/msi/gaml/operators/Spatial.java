@@ -2220,7 +2220,7 @@ public abstract class Spatial {
 				value = "The rotation given by the composition of the rotations in the list, from left to right. Angles are in degrees.",
 				masterDoc = true,
 				examples = { @example (
-						value = "rotation_composition([38::{1,1,1},90::{1,0,0}])",
+						value = "rotation_composition([38.0::{1,1,1},90.0::{1,0,0}])",
 						equals = "the result",
 						test = false) },
 				see = { "inverse_rotation" })
@@ -2243,7 +2243,7 @@ public abstract class Spatial {
 						+ " along the operand axis to the left-hand operand (geometry, agent, point)",
 				masterDoc = true,
 				examples = { @example (
-						value = "rotated_by(pyramid(10),45, {1,0,0})",
+						value = "rotated_by(pyramid(10),45.0, {1,0,0})",
 						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
 								+ "the agent applying the operator.",
 						test = false) },
@@ -2261,10 +2261,10 @@ public abstract class Spatial {
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
 				value = "A geometry resulting from the application of the right-hand rotation operand (angles in degree)"
-						+ "to the left-hand operand (geometry, agent, point)",
+						+ " to the left-hand operand (geometry, agent, point)",
 				masterDoc = true,
 				examples = { @example (
-						value = "rotated_by(pyramid(10),45::{1,0,0})",
+						value = "rotated_by(pyramid(10),45.0::{1,0,0})",
 						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
 								+ "the agent applying the operator.",
 						test = false) },
