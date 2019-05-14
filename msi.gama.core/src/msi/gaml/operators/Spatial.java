@@ -110,6 +110,7 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -2270,16 +2271,12 @@ public abstract class Spatial {
 						test = false) },
 				see = { "transformed_by", "translated_by" })
 		public static IShape rotated_by(final IScope scope, final IShape g1, final GamaPair rotation) {
-			Object o = rotation.getKey();
-			Double val = null;
-			if (o instanceof Number) {
-				val = ((Number) o).doubleValue();
-			}
-			if (g1 == null) { return null; }
-			// if (vector.x == 0d && vector.y == 0d && vector.z == 0d) { return g1; }
-			return new GamaShape(g1, null, new AxisAngle((GamaPoint) rotation.getValue(), val), g1.getLocation());
+			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
+			if (g1 == null || rot == null) { return null; }
+			return new GamaShape(g1, null, new AxisAngle(rot.getValue(), rot.getKey()), g1.getLocation());
 		}
-		
+
 		@operator (
 				value = "rotated_by",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
