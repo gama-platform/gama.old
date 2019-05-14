@@ -282,7 +282,8 @@ public class ExperimentJob implements IExperimentJob {
 		play();
 		dispose();
 		final long endDate = Calendar.getInstance().getTimeInMillis();
-		DEBUG.LOG("\nSimulation duration: " + (endDate - startDate) + "ms");
+		System.out.println("\nSimulation duration: " + (endDate - startDate) + "ms");
+		DEBUG.OUT("\nSimulation duration: " + (endDate - startDate) + "ms");
 	}
 
 	@Override
@@ -290,7 +291,8 @@ public class ExperimentJob implements IExperimentJob {
 		if (this.outputFile != null) {
 			this.outputFile.writeSimulationHeader(this);
 		}
-		DEBUG.LOG("Simulation is running...", false);
+		//DEBUG.LOG("Simulation is running...", false);
+		System.out.println("Simulation is running...");
 		// final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
 
@@ -301,7 +303,8 @@ public class ExperimentJob implements IExperimentJob {
 			while (!Cast.asBool(scope, endCondition.value(scope)) && (finalStep >= 0 ? step < finalStep : true)) {
 				if (step % affDelay == 0) {
 					DEBUG.LOG(".", false);
-				}
+					System.out.print(".");
+								}
 				if (simulator.isInterrupted()) {
 					break;
 				}
@@ -311,6 +314,7 @@ public class ExperimentJob implements IExperimentJob {
 			}
 		} catch (final GamaRuntimeException e) {
 			DEBUG.ERR("\n The simulation has stopped before the end due to the following exception: ");
+			System.out.println("\n The simulation has stopped before the end due to the following exception: ");
 			e.printStackTrace();
 		}
 	}

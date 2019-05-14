@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
@@ -32,6 +34,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
+
+import com.vividsolutions.jts.util.Debug;
 
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
 import msi.gama.headless.batch.test.ModelLibraryTester;
@@ -51,9 +55,6 @@ import ummisco.gama.dev.utils.DEBUG;
 
 public class Application implements IApplication {
 
-	static {
-		DEBUG.ON();
-	}
 
 	final public static String CONSOLE_PARAMETER = "-c";
 	final public static String GAMA_VERSION = "-version";
@@ -169,6 +170,7 @@ public class Application implements IApplication {
 
 	private static boolean showError(final int errorCode, final String path) {
 		SystemLogger.activeDisplay();
+		System.out.println(HeadLessErrors.getError(errorCode, path));
 		DEBUG.ERR(HeadLessErrors.getError(errorCode, path));
 		SystemLogger.removeDisplay();
 
@@ -177,12 +179,21 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+
+//		Logger.getRootLogger().setLevel(Level.WARN); 
 		SystemLogger.removeDisplay();
+		
+		
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 		if(args.contains(GAMA_VERSION)) {
 			
 		} else if (args.contains(HELP_PARAMETER)) {
+			//DEBUG.LOG(showHelp());
+			SystemLogger.activeDisplay();
+			System.out.println(showHelp());
+			SystemLogger.removeDisplay();
+			
 			DEBUG.LOG(showHelp());
 		} else if (args.contains(VALIDATE_LIBRARY_PARAMETER)) {
 			return ModelLibraryValidator.getInstance().start(args);
@@ -211,10 +222,15 @@ public class Application implements IApplication {
 		verbose = arg.contains(VERBOSE_PARAMETER);
 		if (this.verbose) {
 			SystemLogger.activeDisplay();
+			System.out.println("active display");
 		}
 
 		if (arg.size() < 3) {
 			SystemLogger.activeDisplay();
+
+			System.out.println("Check your parameters!");
+			System.out.println(showHelp());
+
 			DEBUG.ERR("Check your parameters!");
 			DEBUG.ERR(showHelp());
 			return;
@@ -237,6 +253,7 @@ public class Application implements IApplication {
 		final StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
 		SystemLogger.activeDisplay();
+		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
 		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
 	}
 
@@ -261,6 +278,7 @@ public class Application implements IApplication {
 		final StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
 		SystemLogger.activeDisplay();
+		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
 		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
 	}
 
@@ -289,6 +307,7 @@ public class Application implements IApplication {
 		verbose = args.contains(VERBOSE_PARAMETER);
 		if (verbose) {
 			SystemLogger.activeDisplay();
+			
 		}
 		HeadlessSimulationLoader.preloadGAMA();
 		this.tunnelingMode = args.contains(TUNNELING_PARAMETER);
