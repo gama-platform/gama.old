@@ -30,6 +30,8 @@ global {
 		int id <- 0;
 		create Pong number:10{
 			name <- "Pong_"+id;
+			myColor <- rnd_color(255);
+		
 		}
 		create Buffer with:[zone::0];
 		create Buffer with:[zone::1];
@@ -74,14 +76,12 @@ species Buffer skills:[network]
 		}
 	}
 	
-	
-	
 	reflex retrieve_agent when: has_more_message() {
 		loop while:has_more_message()
 		{
 			message msg <- fetch_message();
 			map<string, unknown> details <- map(msg.contents);
-			create Pong with:[name::details["name"],myColor::details["color"],location::details["location"]]
+			create Pong with:[name::details["name"],myColor::details["mcolor"],location::details["location"]]
 			{
 				location <- {myself.location.x,location.y};
 				last_zone <- myself.zone;
@@ -98,9 +98,6 @@ species Pong
 {
 	rgb myColor;
 	int last_zone <- -1;
-	init {
-		myColor <- rnd_color(255);
-	}
 	
 	reflex pongMove
 	{
