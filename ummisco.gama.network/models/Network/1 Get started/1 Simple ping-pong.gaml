@@ -24,7 +24,7 @@ global {
 		write "To connect to your local/remote server, change the parameters of the connect statement" color: #blue;
 		//create Ping agent
 		create PING_PONG with:[name::"ping",dest::"pong"]{
-			do connect with_name:name ;
+			do connect with_name:name;
 		}
 		//create Pong agent
 		create PING_PONG with:[name::"pong",dest::"ping"]{

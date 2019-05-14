@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.AbstractGamlAdditions.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.AbstractGamlAdditions.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -263,21 +263,20 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			final int[] expectedContentTypes, final Class ret, final boolean c, final String typeAlias,
 			final GamaGetter helper) {
 		final ParametricFileType fileType = GamaFileType.getTypeFromAlias(typeAlias);
-		this._operator(keywords, method, classes, expectedContentTypes, fileType, c, ITypeProvider.NONE,
-				ITypeProvider.NONE, ITypeProvider.NONE, ITypeProvider.NONE, helper);
+		int indexOfIType = -1;
+		for (int i = 0; i < classes.length; i++) {
+			Class cl = classes[i];
+			if (IType.class.isAssignableFrom(cl)) {
+				indexOfIType = i;
+			}
+		}
+		int content = indexOfIType == -1 ? ITypeProvider.NONE : ITypeProvider.DENOTED_TYPE_AT_INDEX + indexOfIType + 1;
+		this._operator(keywords, method, classes, expectedContentTypes, fileType, c, ITypeProvider.NONE, content,
+				ITypeProvider.NONE, ITypeProvider.NONE, helper);
 	}
-
-	// protected void _populationsLinker(final String name, final Class clazz,
-	// final IGamaPopulationsLinkerConstructor helper) {
-	// final IGamaPopulationsLinker linker = helper.newInstance();
-	// if (POPULATIONS_LINKERS.get(name) != null) {} // TODO inform duplication
-	// POPULATIONS_LINKERS.put(name, linker);
-	// }
 
 	private void add(final Class clazz, final IDescription desc) {
 		ADDITIONS.put(clazz, desc);
-
-		// final mettre documentation ?
 	}
 
 	protected void _var(final Class clazz, final IDescription desc, final IGamaHelper get, final IGamaHelper init,
@@ -328,7 +327,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	/**
 	 * Creates a VariableDescription
-	 * 
+	 *
 	 * @param keyword
 	 * @param facets
 	 * @return

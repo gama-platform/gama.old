@@ -70,6 +70,9 @@ public class NetworkSkill extends MessagingSkill {
 
 	final static String REGISTERED_AGENTS = "registred_agents";
 	final static String REGISTRED_SERVER = "registred_servers";
+	
+	static Map<String, IConnector> REGISTERED_CONNECTORS_MAP = new HashMap<String, IConnector>();
+	static ArrayList<IAgent> REGISTRED_AGENTS_LIST = new ArrayList<IAgent>();
 
 	@action (
 			name = "execute",
@@ -151,7 +154,7 @@ public class NetworkSkill extends MessagingSkill {
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
 							}))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
-		if (!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER)) {
+		if (!scope.getExperiment().getAttributes().keySet().contains(REGISTRED_SERVER)) {
 			this.startSkill(scope);
 		}
 		final IAgent agt = scope.getAgent();
@@ -226,8 +229,10 @@ public class NetworkSkill extends MessagingSkill {
 			serverList = new ArrayList<>();
 			agt.setAttribute(INetworkSkill.NET_AGENT_SERVER, serverList);
 		}
-
+		System.out.println("connector "+connector);
 		connector.connect(agt);
+		
+		
 		serverList.add(serverKey);
 		
 		// register connected agent to global groups;
@@ -387,7 +392,7 @@ public class NetworkSkill extends MessagingSkill {
 
 	@SuppressWarnings ("unchecked")
 	protected List<IAgent> getRegisteredAgents(final IScope scope) {
-		return (List<IAgent>) scope.getSimulation().getAttribute(REGISTERED_AGENTS);
+		return (List<IAgent>) scope.getExperiment().getAttribute(REGISTERED_AGENTS);
 	}
 
 	private void registeredAgent(final IScope scope, final IAgent agt) {
@@ -396,12 +401,13 @@ public class NetworkSkill extends MessagingSkill {
 
 	@SuppressWarnings ("unchecked")
 	protected Map<String, IConnector> getRegisteredServers(final IScope scope) {
-		return (Map<String, IConnector>) scope.getSimulation().getAttribute(REGISTRED_SERVER);
+		return (Map<String, IConnector>) scope.getExperiment().getAttribute(REGISTRED_SERVER);
 	}
 
 	private void initialize(final IScope scope) {
-		scope.getSimulation().setAttribute(REGISTRED_SERVER, new HashMap<String, IConnector>());
-		scope.getSimulation().setAttribute(REGISTERED_AGENTS, new ArrayList<IAgent>());
+	
+		scope.getExperiment().setAttribute(REGISTERED_AGENTS, new ArrayList<IAgent>());
+		scope.getExperiment().setAttribute(REGISTRED_SERVER, new HashMap<String, IConnector>());
 	}
 
 	protected void startSkill(final IScope scope) {

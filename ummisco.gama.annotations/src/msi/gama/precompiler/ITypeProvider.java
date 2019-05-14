@@ -33,6 +33,12 @@ public interface ITypeProvider {
 	 */
 	static final int CONTENT_TYPE_AT_INDEX = -300;
 	/**
+	 * The type returned is the type denoted by the argument at index 1...n (i.e., 1 for the first element, 2 for the
+	 * second, etc.) so that, for instance, DENOTED_TYPE_AT_INDEX + 2 represents the type denoted by the SECOND argument
+	 * (equivalent to SECOND_TYPE). Musth be followed by "+ n" with n>0 to be significant.
+	 */
+	static final int DENOTED_TYPE_AT_INDEX = -350;
+	/**
 	 * The type returned is the key type of the argument at index 1...n (i.e., 1 for the first element, 2 for the
 	 * second, etc.) so that, for instance, KEY_TYPE_AT_INDEX + 3 represents the key type of the THIRD argument. Musth
 	 * be followed by "+ n" with n>0 to be significant.

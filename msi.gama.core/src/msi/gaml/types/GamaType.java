@@ -411,6 +411,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public static final int TYPE = 0;
 	public static final int CONTENT = 1;
 	public static final int KEY = 2;
+	public static final int DENOTED = 3;
 
 	public static IType<?> findCommonType(final IExpression[] elements, final int kind) {
 		final IType<?> result = Types.NO_TYPE;

@@ -16,7 +16,11 @@ global {
 	int an_integer_without_limits <- 0;
 	int an_integer <-0;
 	float a_float_variable <- 0.0;
+	float another <- 10.0;
 	bool a_boolean_variable <- true;
+	bool a_boolean_variable2 <- true;
+	bool a_boolean_variable3 <- true;
+	
 	string a_string ;
 	rgb a_color <- #yellow;
 	file a_fil <- shape_file("../../Data/Data Importation/includes/test.shp");
@@ -47,8 +51,11 @@ experiment GUIinteractiveelements type: gui {
 	// Without these facets, the parameter value chooser appears only as a textfield. 	
 	parameter "An integer without limit" category:"Various types" var: an_integer ;
 	parameter "Slider of a float" category:"Various types" var: a_float_variable min: 0.0 max: 100.0 step: 0.5;
+	parameter "Slider of a float with a color" category:"Various types" var: another min: 0.0 max: 100.0 step: 0.5 colors: [#red, #purple, #blue];
 	// When a variable of type boolean is a parameter, its input chooser appears as a check box.
 	parameter "Boolean variable" category:"Various types" var: a_boolean_variable;
+	parameter "Boolean variable with different colors" category:"Various types" var: a_boolean_variable2 colors: [#blue, #lightskyblue];
+		parameter "Boolean variable with the same colors" category:"Various types" var: a_boolean_variable3 colors: [#orange];
 	// A color parameter can be modified using a color chooser.
 	parameter "A color" category:"Various types" var: a_color;
 	// For any parameter, if the possible values are described using the among: facet, a ComboBox is used to choose the parameter value.
