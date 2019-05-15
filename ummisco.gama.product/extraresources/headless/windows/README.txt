@@ -7,7 +7,7 @@
 How to start GAMA in headless mode with script file
 
    command:
-	 sh gama-headless.sh [opt] xmlInputFile outputDirectory
+	gama-headless.bat [opt] xmlInputFile outputDirectory
 
    option:
 	-m to define the memory allocated by the simulation"
