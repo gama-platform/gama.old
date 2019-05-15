@@ -11,7 +11,7 @@ import "Adapters/Procedural City Adapter.gaml" as City
 
 global
 {
-	int width_and_height_of_environment<-1000;
+	int width_and_height_of_environment<-500;
 	// set the bound of the environment
 	geometry shape <- envelope(width_and_height_of_environment);
 	
@@ -22,12 +22,12 @@ global
 			shape::square(width_and_height_of_environment), 
 			width_and_height_of_environment::width_and_height_of_environment, 
 			z_max::100,
-			number_of_agents::200
+			number_of_agents::50
 		];
 		//create experiment form micro-model Procedural City
 		create City."Adapter" 
 		with:[
-			 number_of_building::Boids."Adapter of Boids"[0].simulation.number_of_agents,
+			 number_of_building::Boids."Adapter of Boids"[0].simulation.number_of_agents*2,
 			width_and_height_of_environment::width_and_height_of_environment
 		];
 	}
@@ -52,8 +52,11 @@ global
 		}
 		
 		
-		//tell myBoids to step a cycle
+		//tell the Boids to step a cycle
 		ask (Boids."Adapter of Boids" collect each.simulation){ do _step_;}
+		
+		//tell the City to step a cycle
+		ask (City."Adapter" collect each.simulation){ do _step_;}
 	}
 
 }
@@ -62,7 +65,7 @@ experiment main type: gui
 {
 	output
 	{
-		display "Comodel Display"  
+		display "Comodel Display"  synchronized: true
 		type:opengl
 		{
 			agents "Building" value: (City."Adapter" accumulate each.get_building()) aspect:textured;		
