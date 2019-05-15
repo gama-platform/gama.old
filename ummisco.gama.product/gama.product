@@ -49,7 +49,7 @@ openFile
 -Xms256m -Xmx2048m
          <argsX86>-d32</argsX86>
       </vmArgsMac>
-      <vmArgsWin>
+      <vmArgsWin>-Dfile.encoding=UTF-8
          <argsX86>-Xms256m -Xmx1024m</argsX86>
          <argsX86_64>-Xms256m -Xmx2048m</argsX86_64>
       </vmArgsWin>

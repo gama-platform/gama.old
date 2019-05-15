@@ -369,6 +369,7 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
