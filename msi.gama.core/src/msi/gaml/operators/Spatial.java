@@ -3071,6 +3071,7 @@ public abstract class Spatial {
 						value = "clean(self)",
 						equals = "returns the geometry resulting from the cleaning of the geometry of the agent applying the operator.",
 						test = false) })
+		@no_test
 		public static IShape clean(final IScope scope, final IShape g) {
 
 			if (g == null || g.getInnerGeometry() == null) { return g; }
@@ -3104,6 +3105,7 @@ public abstract class Spatial {
 						value = "clean_network(my_road_shapefile.contents, 1.0, true, false)",
 						equals = "returns the list of polulines resulting from the cleaning of the geometry of the agent applying the operator with a tolerance of 1m, and splitting the lines at their intersections.",
 						isExecutable = false) })
+		@no_test
 		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, final double tolerance,
 				final boolean splitlines, final boolean keepMainGraph) {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }

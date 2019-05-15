@@ -99,12 +99,12 @@ import ummisco.gama.dev.utils.DEBUG;
 				init = "[]",
 				doc = @doc ("the current list of points that the agent has to reach (path)")),
 		@variable (
-				name = "security_distance_coeff",
+				name = "safety_distance_coeff",
 				type = IType.FLOAT,
 				init = "1.0",
-				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance =max(min_security_distance, security_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
+				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - safety_distance =max(min_safety_distance, safety_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
 		@variable (
-				name = "min_security_distance",
+				name = "min_safety_distance",
 				type = IType.FLOAT,
 				init = "0.5",
 				doc = @doc ("the minimal distance to another driver")),
@@ -199,7 +199,7 @@ public class DrivingSkill extends MovingSkill {
 		DEBUG.OFF();
 	}
 
-	public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
+	public final static String SAFETY_DISTANCE_COEFF = "safety_distance_coeff";
 	public final static String CURRENT_ROAD = "current_road";
 	public final static String CURRENT_LANE = "current_lane";
 	public final static String DISTANCE_TO_GOAL = "distance_to_goal";
@@ -221,7 +221,7 @@ public class DrivingSkill extends MovingSkill {
 	public final static String SPEED_COEFF = "speed_coeff";
 	public final static String MAX_SPEED = "max_speed";
 	public final static String SEGMENT_INDEX = "segment_index_on_road";
-	public final static String MIN_SECURITY_DISTANCE = "min_security_distance";
+	public final static String MIN_SAFETY_DISTANCE = "min_safety_distance";
 
 	@getter (ACCELERATION_MAX)
 	public double getAccelerationMax(final IAgent agent) {
@@ -395,14 +395,14 @@ public class DrivingSkill extends MovingSkill {
 		agent.setAttribute(RIGHT_SIDE_DRIVING, isRight);
 	}
 
-	@getter (SECURITY_DISTANCE_COEFF)
-	public double getSecurityDistanceCoeff(final IAgent agent) {
-		return (Double) agent.getAttribute(SECURITY_DISTANCE_COEFF);
+	@getter (SAFETY_DISTANCE_COEFF)
+	public double getSafetyDistanceCoeff(final IAgent agent) {
+		return (Double) agent.getAttribute(SAFETY_DISTANCE_COEFF);
 	}
 
-	@setter (SECURITY_DISTANCE_COEFF)
-	public void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
-		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
+	@setter (SAFETY_DISTANCE_COEFF)
+	public void setSafetyDistanceCoeff(final IAgent agent, final double ls) {
+		agent.setAttribute(SAFETY_DISTANCE_COEFF, ls);
 	}
 
 	@getter (CURRENT_ROAD)
@@ -425,14 +425,14 @@ public class DrivingSkill extends MovingSkill {
 		return (Double) agent.getAttribute(DISTANCE_TO_GOAL);
 	}
 
-	@getter (MIN_SECURITY_DISTANCE)
-	public double getMinSecDistance(final IAgent agent) {
-		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
+	@getter (MIN_SAFETY_DISTANCE)
+	public double getMinSafetyDistance(final IAgent agent) {
+		return (Double) agent.getAttribute(MIN_SAFETY_DISTANCE);
 	}
 
-	@setter (MIN_SECURITY_DISTANCE)
-	public void setMinSecDistance(final IAgent agent, final double msd) {
-		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
+	@setter (MIN_SAFETY_DISTANCE)
+	public void setMinSafetyDistance(final IAgent agent, final double msd) {
+		agent.setAttribute(MIN_SAFETY_DISTANCE, msd);
 	}
 
 	@setter (DISTANCE_TO_GOAL)
@@ -442,7 +442,7 @@ public class DrivingSkill extends MovingSkill {
 
 	public Double primAdvancedFollow(final IScope scope, final IAgent agent, final double s, final double t,
 			final IPath path, final GamaPoint target) throws GamaRuntimeException {
-		final double security_distance_coeff = getSecurityDistanceCoeff(agent);
+		final double safety_distance_coeff = getSafetyDistanceCoeff(agent);
 		final int currentLane = getCurrentLane(agent);
 		final Double probaChangeLaneUp = getProbaLaneChangeUp(agent);
 		final Double probaChangeLaneDown = getProbaLaneChangeDown(agent);
@@ -457,7 +457,7 @@ public class DrivingSkill extends MovingSkill {
 		// if (path != null && !path.getEdgeList().isEmpty()) {
 		double tps = 0;
 		// if ( onLinkedRoad ) {
-		tps = t * moveToNextLocAlongPathOSM(scope, agent, path, target, maxDist, security_distance_coeff, currentLane,
+		tps = t * moveToNextLocAlongPathOSM(scope, agent, path, target, maxDist, safety_distance_coeff, currentLane,
 				currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown, probaProbaUseLinkedRoad, rightSide);
 		// }
 		// else {
@@ -537,7 +537,7 @@ public class DrivingSkill extends MovingSkill {
 		final Integer lane = (Integer) scope.getArg("lane", IType.INT);
 		final IAgent driver = getCurrentAgent(scope);
 		final double vL = getVehiculeLength(driver);
-		final double secDistCoeff = getSecurityDistanceCoeff(driver);
+		final double secDistCoeff = getSafetyDistanceCoeff(driver);
 		final double probaBlock = getProbaBlockNode(driver);
 		final boolean testBlockNode = Random.opFlip(scope, probaBlock);
 		final IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
@@ -1054,7 +1054,7 @@ public class DrivingSkill extends MovingSkill {
 		final boolean onLinkedRoad = getOnLinkedRoad(driver);
 		final IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
 		final double vL = getVehiculeLength(driver);
-		final double secDistCoeff = getSecurityDistanceCoeff(driver);
+		final double secDistCoeff = getSafetyDistanceCoeff(driver);
 		final double probaBlock = getProbaBlockNode(driver);
 		final boolean testBlockNode = Random.opFlip(scope, probaBlock);
 		final Map<IAgent, List<IAgent>> block = (Map<IAgent, List<IAgent>>) node.getAttribute(RoadNodeSkill.BLOCK);
@@ -1208,13 +1208,13 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	private double avoidCollision(final IScope scope, final IAgent agent, final double distance,
-			final double security_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane,
+			final double safety_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane,
 			final int segmentIndex, final boolean onLinkedRoad, final IAgent currentRoad, final boolean changeLane) {
 		// long t = java.lang.System.currentTimeMillis();
 		// DEBUG.OUT(agent + " agents: " + agents);
 		final double distanceToGoal = getDistanceToGoal(agent);
 		final boolean nextSegment = distanceToGoal < distance;
-		final double min_security_distance = getMinSecDistance(agent);
+		final double min_safety_distance = getMinSafetyDistance(agent);
 		// final IAgent theRoad = onLinkedRoad ?
 		// RoadSkill.getLinkedRoad(currentRoad) : currentRoad;
 		final int segment =
@@ -1348,17 +1348,17 @@ public class DrivingSkill extends MovingSkill {
 		}
 		double secDistance = 0.0;
 		if (getOnLinkedRoad(nextAgent) == getOnLinkedRoad(agent)) {
-			secDistance = FastMath.max(min_security_distance,
-					security_distance * FastMath.min(getRealSpeed(agent), getRealSpeed(nextAgent)));
+			secDistance = FastMath.max(min_safety_distance,
+					safety_distance * FastMath.min(getRealSpeed(agent), getRealSpeed(nextAgent)));
 		} else {
-			secDistance = FastMath.max(min_security_distance,
-					security_distance * FastMath.max(getRealSpeed(agent), getRealSpeed(nextAgent)));
+			secDistance = FastMath.max(min_safety_distance,
+					safety_distance * FastMath.max(getRealSpeed(agent), getRealSpeed(nextAgent)));
 		}
 		double realDist = FastMath.min(distance, minDiff - secDistance - 0.5 * vL - 0.5 * getVehiculeLength(nextAgent));
 		// t345+= java.lang.System.currentTimeMillis() - t;
 
 		if (changeLane && realDist < vL) { return 0; }
-		realDist = FastMath.max(0.0, (int) (min_security_distance + realDist * 1000) / 1000.0);
+		realDist = FastMath.max(0.0, (int) (min_safety_distance + realDist * 1000) / 1000.0);
 		// DEBUG.OUT("realDist" + realDist + " secDistance: "
 		// + secDistance);
 
@@ -1412,7 +1412,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	private double avoidCollisionLinkedRoad(final IScope scope, final IAgent agent, final double distance,
-			final double security_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane,
+			final double safety_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane,
 			final int segment, final IAgent currentRoad, final IAgent linkedRoad, final Double probaChangeLaneUp,
 			final Double probaChangeLaneDown, final Double probaUseLinkedRoad, final Boolean rightSide) {
 		double distMax = 0;
@@ -1427,7 +1427,7 @@ public class DrivingSkill extends MovingSkill {
 		if (scope.getRandom().next() < probaChangeLaneDown) {
 			if (lane < nbLinkedLanes - 1) {
 
-				final double val = avoidCollision(scope, agent, distance, security_distance, currentLocation, target,
+				final double val = avoidCollision(scope, agent, distance, safety_distance, currentLocation, target,
 						lane + 1, segment, true, currentRoad, true);
 				if (val == distance) {
 					newLane = lane + 1;
@@ -1439,7 +1439,7 @@ public class DrivingSkill extends MovingSkill {
 					distMax = val;
 				}
 			} else {
-				final double val = avoidCollision(scope, agent, distance, security_distance, currentLocation, target,
+				final double val = avoidCollision(scope, agent, distance, safety_distance, currentLocation, target,
 						nbLanes - 1, segment, false, currentRoad, true);
 				if (val == distance) {
 					newLane = nbLanes - 1;
@@ -1455,7 +1455,7 @@ public class DrivingSkill extends MovingSkill {
 				}
 			}
 		}
-		double val = avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane, segment,
+		double val = avoidCollision(scope, agent, distance, safety_distance, currentLocation, target, lane, segment,
 				true, currentRoad, false);
 		if (val == distance) {
 			changeLaneReverse(scope, agent, lane, lane, segment, agentOnLinkedRoad, agentOnLinkedRoad);
@@ -1469,7 +1469,7 @@ public class DrivingSkill extends MovingSkill {
 			onLinkedRoad = true;
 		}
 		if (lane > 0 && scope.getRandom().next() < probaChangeLaneUp) {
-			val = avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane - 1, segment,
+			val = avoidCollision(scope, agent, distance, safety_distance, currentLocation, target, lane - 1, segment,
 					true, currentRoad, true);
 			if (val > distMax && val > 0) {
 				distMax = val;
@@ -1493,7 +1493,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	private double avoidCollision(final IScope scope, final IAgent agent, final double distance,
-			final double security_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane,
+			final double safety_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane,
 			final int segment, final IAgent currentRoad, final IAgent linkedRoad, final Double probaChangeLaneUp,
 			final Double probaChangeLaneDown, final Double probaUseLinkedRoad, final Boolean rightSide) {
 
@@ -1505,7 +1505,7 @@ public class DrivingSkill extends MovingSkill {
 		// boolean changeLane = false;
 
 		if (lane > 0 && scope.getRandom().next() < probaChangeLaneDown) {
-			final double val = avoidCollision(scope, agent, distance, security_distance, currentLocation, target,
+			final double val = avoidCollision(scope, agent, distance, safety_distance, currentLocation, target,
 					lane - 1, segment, false, currentRoad, true);
 			if (val == distance) {
 				newLane = lane - 1;
@@ -1520,7 +1520,7 @@ public class DrivingSkill extends MovingSkill {
 			}
 		}
 
-		double val = avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane, segment,
+		double val = avoidCollision(scope, agent, distance, safety_distance, currentLocation, target, lane, segment,
 				false, currentRoad, false);
 		if (val == distance) {
 			changeLane(scope, agent, lane, lane, segment, agentOn, agentOn);
@@ -1533,7 +1533,7 @@ public class DrivingSkill extends MovingSkill {
 		}
 		if (lane < (Integer) currentRoad.getAttribute(RoadSkill.LANES) - 1
 				&& scope.getRandom().next() < probaChangeLaneUp) {
-			val = avoidCollision(scope, agent, distance, security_distance, currentLocation, target, lane + 1, segment,
+			val = avoidCollision(scope, agent, distance, safety_distance, currentLocation, target, lane + 1, segment,
 					false, currentRoad, true);
 			if (val > distMax && val > vl) {
 				distMax = val;
@@ -1544,7 +1544,7 @@ public class DrivingSkill extends MovingSkill {
 		boolean onLinkedRoad = false;
 		if (linkedRoad != null && scope.getRandom().next() < probaUseLinkedRoad) {
 			final int nbLinkedLanes = (Integer) linkedRoad.getAttribute(RoadSkill.LANES);
-			val = avoidCollision(scope, agent, distance, security_distance, currentLocation, target, nbLinkedLanes - 1,
+			val = avoidCollision(scope, agent, distance, safety_distance, currentLocation, target, nbLinkedLanes - 1,
 					segment, true, currentRoad, true);
 
 			if (val > distMax && val > vl) {
@@ -1567,7 +1567,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	private double moveToNextLocAlongPathOSM(final IScope scope, final IAgent agent, final IPath path,
-			final GamaPoint target, final double _distance, final double security_distance, final int lane,
+			final GamaPoint target, final double _distance, final double safety_distance, final int lane,
 			final IAgent currentRoad, final IAgent linkedRoad, final Double probaChangeLaneUp,
 			final Double probaChangeLaneDown, final Double probaUseLinkedRoad, final Boolean rightSide) {
 		int currentLane = lane;
@@ -1616,11 +1616,11 @@ public class DrivingSkill extends MovingSkill {
 			// t33 += java.lang.System.currentTimeMillis() - t;
 			// t = java.lang.System.currentTimeMillis();
 			if (onLinkedRoad) {
-				distance = avoidCollisionLinkedRoad(scope, agent, distance, security_distance, currentLocation,
+				distance = avoidCollisionLinkedRoad(scope, agent, distance, safety_distance, currentLocation,
 						falseTarget, currentLane, indexSegment, currentRoad, linkedRoad, probaChangeLaneUp,
 						probaChangeLaneDown, probaUseLinkedRoad, rightSide);
 			} else {
-				distance = avoidCollision(scope, agent, distance, security_distance, currentLocation, falseTarget,
+				distance = avoidCollision(scope, agent, distance, safety_distance, currentLocation, falseTarget,
 						currentLane, indexSegment, currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown,
 						probaUseLinkedRoad, rightSide);
 			}
