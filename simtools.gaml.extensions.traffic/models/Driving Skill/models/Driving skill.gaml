@@ -66,7 +66,7 @@ global {
 			proba_lane_change_up <- 0.1 + (rnd(500) / 500);
 			proba_lane_change_down <- 0.5 + (rnd(500) / 500);
 			location <- one_of(intersection where empty(each.stop)).location;
-			security_distance_coeff <- 5 / 9 * 3.6 * (1.5 - rnd(1000) / 1000);
+			safety_distance_coeff <- 5 / 9 * 3.6 * (1.5 - rnd(1000) / 1000);
 			proba_respect_priorities <- 1.0 - rnd(200 / 1000);
 			proba_respect_stops <- [1.0];
 			proba_block_node <- 0.0;
