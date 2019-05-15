@@ -29,7 +29,7 @@ GOTO TOP
 echo ******************************************************************
 echo * GAMA version 1.8.0                                             *
 echo * http://gama-platform.googlecode.com                            *
-echo * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC and Partners            *
+echo * (c) 2007-2019 UMI 209 UMMISCO IRD/SU and Partners              *
 echo ******************************************************************
 rem @echo off
 set FILENAME=..\plugins\org.eclipse.equinox.launcher_*.jar
