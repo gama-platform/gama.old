@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 /**
  * A simple and generic debugging/logging class that can be turned on / off on a class basis.
- * 
+ *
  * @author A. Drogoul
  * @since August 2018
  */
@@ -17,7 +17,7 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
-	private static final boolean GLOBAL_OFF = false;
+	private static final boolean GLOBAL_OFF = true;
 	private static final boolean GLOBAL_ON = false;
 
 	static {
@@ -34,7 +34,7 @@ public class DEBUG {
 	/**
 	 * Uses the stack trace to find the calling class. Use of reflection would be faster, but more prone to Oracle
 	 * evolutions. StackWalker in Java 9 will be interesting to use for that
-	 * 
+	 *
 	 * @return the name of the class that has called the method that has called this method
 	 */
 	private static String findCallingClassName() {
@@ -44,7 +44,7 @@ public class DEBUG {
 	/**
 	 * Returns an automatically incremented integer count if the calling class is registered. -1 otherwise. Useful for
 	 * counting a number of invocations, etc. without having to define a static number on the class
-	 * 
+	 *
 	 * @return -1 if the class is not registered, 0 if it is the first call, otherwise an incremented integer
 	 */
 	public static Integer COUNT() {
@@ -64,7 +64,7 @@ public class DEBUG {
 
 	/**
 	 * Resets the number previously used by COUNT() so that the next call to COUNT() returns 0;
-	 * 
+	 *
 	 */
 	public static void RESET() {
 		final String s = findCallingClassName();
@@ -79,9 +79,9 @@ public class DEBUG {
 	 * Simple timing utility to measure and output the number of ms taken by a runnable. If the class is registered,
 	 * outputs the title provided and the time taken once the runnable is finished, otherwise simply runs the runnable
 	 * (the overhead is minimal compared to simply executing the contents of the runnable).
-	 * 
+	 *
 	 * Usage: DEBUG.TIMER("Important task", ()-> importantTask(...)); Output: Important Taks: 100ms
-	 * 
+	 *
 	 * @param title
 	 *            a string that will prefix the number of ms in the output
 	 * @param supplier
@@ -103,17 +103,17 @@ public class DEBUG {
 	 * the timer accepting a runnable, this one returns a result. If the class is registered, outputs the title provided
 	 * and the time taken once the supplier is finished and returns its result, otherwise simply returns the result of
 	 * the supplier (the overhead is minimal compared to simply executing the contents of the provider)
-	 * 
+	 *
 	 * Usage: Integer i = DEBUG.TIMER("My important integer computation", ()->myIntegerComputation()); // provided
 	 * myIntegerComputation() returns an Integer.
-	 * 
+	 *
 	 * Output: My important integer computation: 100ms
-	 * 
+	 *
 	 * @param title
 	 *            a string that will prefix the number of ms
 	 * @param supplier
 	 *            an object that encapsulates the computation to measure
-	 * 
+	 *
 	 * @return The result of the supplier passed in argument
 	 */
 
@@ -149,7 +149,7 @@ public class DEBUG {
 	/**
 	 * Whether DEBUG is active for the calling class. Returns false if GLOBAL_OFF is true, and true if GLOBAL_ON is
 	 * true.
-	 * 
+	 *
 	 * @return whether DEBUG is active for this class
 	 */
 	public static boolean IS_ON() {
@@ -159,7 +159,7 @@ public class DEBUG {
 
 	/**
 	 * Unconditional output to System.err except if GLOBAL_OFF is true
-	 * 
+	 *
 	 * @param string
 	 */
 	public static final void ERR(final Object s) {
@@ -170,7 +170,7 @@ public class DEBUG {
 
 	/**
 	 * Unconditional output to System.out except if GLOBAL_OFF is true.
-	 * 
+	 *
 	 * @param string
 	 */
 	public static void LOG(final Object string) {
@@ -182,7 +182,7 @@ public class DEBUG {
 	/**
 	 * Will always output to System.out (using print if 'ln' is false) except if GLOBAL_OFF is true. Takes care of
 	 * arrays so as to output their contents (and not their identity)
-	 * 
+	 *
 	 * @param object
 	 *            the message to output
 	 * @param newLine
@@ -201,7 +201,7 @@ public class DEBUG {
 	/**
 	 * Tries to obtain a correct string representation of the object, including when it is an array (or an array of
 	 * arrays). Made public to be used outside the debug sessions
-	 * 
+	 *
 	 * @param object
 	 *            any object
 	 * @return its string representation
@@ -233,7 +233,7 @@ public class DEBUG {
 
 	/**
 	 * Outputs a debug message to System.out if DEBUG is turned on for this class
-	 * 
+	 *
 	 * @param s
 	 *            the message to output
 	 */
@@ -246,7 +246,7 @@ public class DEBUG {
 
 	/**
 	 * Outputs a debug message to System.out if DEBUG is turned on for this class, followed or not by a new line
-	 * 
+	 *
 	 * @param s
 	 *            the message to output
 	 * @param newLine
@@ -261,7 +261,7 @@ public class DEBUG {
 
 	/**
 	 * Outputs a debug message to System.out if DEBUG is turned on for this class
-	 * 
+	 *
 	 * @param title
 	 *            the first string to output
 	 * @param pad
@@ -286,7 +286,7 @@ public class DEBUG {
 
 	/**
 	 * A utility method to output a "section" (i.e. a title padded with dashes between two lines of 80 chars
-	 * 
+	 *
 	 */
 	public static final void SECTION(final String s) {
 		if (s == null) { return; }
@@ -297,7 +297,7 @@ public class DEBUG {
 
 	/**
 	 * A utility method for padding a string with spaces in order to obtain a length of "minLength"
-	 * 
+	 *
 	 * @param string
 	 *            the string to pad
 	 * @param minLength
@@ -310,7 +310,7 @@ public class DEBUG {
 
 	/**
 	 * A utility method for padding a string with any character in order to obtain a length of "minLength"
-	 * 
+	 *
 	 * @param string
 	 *            the string to pad
 	 * @param minLength

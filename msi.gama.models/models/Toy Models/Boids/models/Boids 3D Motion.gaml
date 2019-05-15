@@ -9,7 +9,7 @@
 model boids_3D 
 global torus: torus_environment{ 
 	//Number of boids to create
-	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
+	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 500;
 	//Number of obstacles to create
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
 	//Size of the boids

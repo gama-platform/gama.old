@@ -10,7 +10,7 @@ model Mosquitos
 global
 {
 	geometry shape<-square(100);
-	file icon<-file("../img/mosquito.png");
+	file icon<-file("./img/mosquito.png");
 	int n <- 1;
 	init
 	{

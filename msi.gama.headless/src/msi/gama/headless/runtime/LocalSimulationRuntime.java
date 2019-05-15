@@ -53,6 +53,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	private static int getAvailableCores(final int asked) {
 		final int max = Runtime.getRuntime().availableProcessors();
 		final int cpus = Math.max(1, Math.min(max, asked));
+		System.out.println("Number of cpus used:" + cpus + " (available: " + max + ")");
 		DEBUG.LOG("Number of cpus used:" + cpus + " (available: " + max + ")");
 		return cpus;
 	}
@@ -208,19 +209,25 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 
 			} catch (final InstantiationException e) {
 				noErrorFound = false;
-				e.printStackTrace();
+				System.out.println(e.toString());
+				DEBUG.ERR(e);
 			} catch (final IllegalAccessException e) {
 				noErrorFound = false;
-				e.printStackTrace();
+				System.out.println(e.toString());
+				DEBUG.ERR(e);
 			} catch (final ClassNotFoundException e) {
 				noErrorFound = false;
-				e.printStackTrace();
+				System.out.println(e.toString());
+				DEBUG.ERR(e);
 			} catch (final IOException e) {
 				noErrorFound = false;
-				e.printStackTrace();
+				System.out.println(e.toString());
+				DEBUG.ERR(e);
 			} catch (final GamaHeadlessException e) {
 				noErrorFound = false;
-				e.printStackTrace();
+				//e.printStackTrace();
+				System.out.println(e.toString());
+				DEBUG.ERR(e);
 			}
 			if(noErrorFound)
 				si.playAndDispose();

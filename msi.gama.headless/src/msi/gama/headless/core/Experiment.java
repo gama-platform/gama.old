@@ -26,10 +26,6 @@ import ummisco.gama.dev.utils.DEBUG;
 
 public class Experiment implements IExperiment {
 
-	static {
-		DEBUG.OFF();
-	}
-
 	public static final double DEFAULT_SEED_VALUE = 0;
 
 	protected IExperimentPlan currentExperiment;
@@ -80,7 +76,6 @@ public class Experiment implements IExperiment {
 		this.currentStep = 0;
 		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
 		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
-		// this.currentExperiment.isHeadless()
 		this.currentExperiment.setHeadless(true);
 	}
 
@@ -160,7 +155,7 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public IExpression compileExpression(final String expression) {
-		DEBUG.OUT("expression " + expression);
+		System.out.println("expression " + expression);
 		return GAML.compileExpression(expression, this.getSimulation(), false);
 	}
 

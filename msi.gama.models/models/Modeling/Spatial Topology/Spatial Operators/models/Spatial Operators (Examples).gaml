@@ -80,7 +80,7 @@ species object topology: topology(shape_file_name_init) {
 	}
 	
 	aspect geometry {
-		draw shape color: color;
+		draw shape color: color border:color-20;
 	}
 }
 
@@ -103,9 +103,6 @@ experiment example_spatial_operators type: gui {
 
 	output {
 		display space_display {
-			graphics "background" {
-				draw world.shape color: rgb ([ 255 , 240 , 240 ]);
-			}
 			species object aspect: geometry;
 		}
 	}

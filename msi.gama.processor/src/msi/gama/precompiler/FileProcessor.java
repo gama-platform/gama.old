@@ -7,7 +7,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 
 public class FileProcessor extends ElementProcessor<file> {
@@ -16,7 +15,7 @@ public class FileProcessor extends ElementProcessor<file> {
 
 	@Override
 	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e, final file f) {
-		verifyDoc(context, e, f);
+		verifyDoc(context, e, "file declaration " + f.name(), f);
 		final String clazz = rawNameOf(context, e.asType());
 		sb.append(in).append("_file(").append(toJavaString(f.name())).append(',').append(toClassObject(clazz))
 				.append(',');
@@ -39,33 +38,13 @@ public class FileProcessor extends ElementProcessor<file> {
 				if (!scope.contains("IScope")) {
 					continue;
 				}
-				verifyDoc(context, m, f.name());
+				verifyDoc(context, m, "constructor of " + f.name(), null);
 				final String[] args = new String[n - 1];
 				for (int i = 1; i < n; i++) {
 					args[i - 1] = rawNameOf(context, argParams.get(i).asType());
 				}
 				writeCreateFileOperator(context, sb, f.name(), clazz, args, f.buffer_content(), f.buffer_index());
 			}
-		}
-	}
-
-	private void verifyDoc(final ProcessorContext context, final Element e, final file f) {
-		final doc[] docs = f.doc();
-		doc d;
-		if (docs.length == 0) {
-			d = e.getAnnotation(doc.class);
-		} else {
-			d = docs[0];
-		}
-		if (d == null) {
-			context.emitWarning("GAML: file declaration '" + f.name() + "' is not documented", e);
-		}
-	}
-
-	private void verifyDoc(final ProcessorContext context, final Element e, final String fileName) {
-		final doc d = e.getAnnotation(doc.class);
-		if (d == null) {
-			context.emitWarning("GAML: this constructor of " + fileName + "_files is not documented", e);
 		}
 	}
 

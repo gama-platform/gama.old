@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -13,6 +13,7 @@ import java.util.List;
 
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -105,6 +106,11 @@ public class InputParameter extends ParameterAdapter {
 	@Override
 	public boolean isEditable() {
 		return true;
+	}
+
+	@Override
+	public List<GamaColor> getColor(IScope scope) {
+		return null;
 	}
 
 }

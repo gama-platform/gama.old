@@ -30,6 +30,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.compilation.ISymbol;
@@ -660,6 +661,12 @@ public class Variable extends Symbol implements IVariable {
 		final VariableDescription desc = getDescription();
 		if (desc == null) { return false; }
 		return desc.isSyntheticSpeciesContainer();
+	}
+
+	@Override
+	public List<GamaColor> getColor(IScope scope) {
+		// No facet available to describe a potential color
+		return null;
 	}
 
 }

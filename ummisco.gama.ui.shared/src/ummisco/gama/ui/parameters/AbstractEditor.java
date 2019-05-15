@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
+import static ummisco.gama.ui.utils.PreferencesHelper.CORE_EDITORS_HIGHLIGHT;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -725,10 +727,11 @@ public abstract class AbstractEditor<T>
 		if (!isValueDifferent(val)) { return; }
 		currentValue = val;
 		WorkbenchHelper.asyncRun(() -> {
-			if (titleLabel != null && !titleLabel.isDisposed()) {
-				titleLabel.setBackground(
-						isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
-			}
+			if (CORE_EDITORS_HIGHLIGHT.getValue())
+				if (titleLabel != null && !titleLabel.isDisposed()) {
+					titleLabel.setBackground(
+							isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
+				}
 		});
 
 		if (!internalModification) {

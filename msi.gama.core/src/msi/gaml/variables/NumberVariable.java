@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.variables.NumberVariable.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.variables.NumberVariable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.variables;
 
@@ -17,6 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -106,7 +107,7 @@ import msi.gaml.types.IType;
 @symbol (
 		kind = ISymbolKind.Variable.NUMBER,
 		with_sequence = false,
-		concept = {})
+		concept = { IConcept.ATTRIBUTE, IConcept.ARITHMETIC })
 @inside (
 		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc ("Allows to declare an attribute of a species or experiment")

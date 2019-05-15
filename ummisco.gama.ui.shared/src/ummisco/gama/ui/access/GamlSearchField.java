@@ -184,7 +184,7 @@ public class GamlSearchField {
 				final IGamlDescription element = entry.element;
 				String cat = entry.getSearchCategory();
 				String name = element.getName();
-				String search = "https://roiarthurb.github.io/BC2019-Gama-Site/search?tag=" + cat + "&title=" + name;
+				String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
 				// String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
 				DEBUG.OUT("Search phrase: " + search);
 				WebHelper.openPage(search);

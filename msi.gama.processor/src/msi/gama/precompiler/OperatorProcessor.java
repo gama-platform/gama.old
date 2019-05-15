@@ -8,11 +8,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.VariableElement;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.test;
-import msi.gama.precompiler.GamlAnnotations.tests;
 
 public class OperatorProcessor extends ElementProcessor<operator> {
 
@@ -24,7 +20,8 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			context.emitError("GAML operators need to have at least one name", method);
 			return;
 		}
-		verifyDoc(context, method, op);
+		String name = op.value().length == 0 ? method.getSimpleName().toString() : op.value()[0];
+		verifyDoc(context, method, "operator " + name, op);
 		verifyTests(context, method, op);
 		final Set<Modifier> modifiers = method.getModifiers();
 		if (!modifiers.contains(Modifier.PUBLIC)) {
@@ -142,38 +139,9 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 	}
 
-	private void verifyDoc(final ProcessorContext context, final Element method, final operator op) {
-		doc documentation = method.getAnnotation(doc.class);
-		if (documentation == null) {
-			final doc[] docs = op.doc();
-			if (docs.length > 0) {
-				documentation = op.doc()[0];
-			}
-		}
-
-		if (documentation == null && !op.internal()) {
-			context.emitWarning("GAML: operator '" + op.value()[0] + "' is not documented", method);
-		}
-	}
-
 	private void verifyTests(final ProcessorContext context, final Element method, final operator op) {
-		no_test no = method.getAnnotation(no_test.class);
-		// if no tests are necessary, skip the verification
-		if (no != null)
-			return;
-		tests tests = method.getAnnotation(tests.class);
-		if (tests != null)
-			return;
-		test test = method.getAnnotation(test.class);
-		if (test != null)
-			return;
-		doc doc = method.getAnnotation(doc.class);
-		if (doc != null) {
-			boolean hasTests = context.docHasTests(doc);
-			if (hasTests)
-				return;
-		}
-		context.emitWarning("GAML: operator '" + op.value()[0] + "' is not tested", method);
+		if (!hasTests(method, op))
+			context.emitWarning("GAML: operator '" + op.value()[0] + "' is not tested", method);
 	}
 
 	@Override
@@ -182,15 +150,17 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 	}
 
 	protected static StringBuilder buildNAry(final StringBuilder sb, final String[] classes, final String name,
-			final String retClass, final boolean stat, final boolean scope) {
+			final String retClass, final boolean isStatic, final boolean scope) {
 		final String ret = checkPrim(retClass);
-		final int start = stat ? 0 : 1;
+		final int start = isStatic ? 0 : 1;
 		final String firstArg = scope ? "s" : "";
-		if (stat) {
+		if (isStatic) {
 			sb.append(name).append('(').append(firstArg);
 		} else {
-			sb.append("o[0]==null?").append(returnWhenNull(ret)).append(":((").append(classes[0]).append(")o[0]).")
-					.append(name).append('(').append(firstArg);
+			// AD: REMOVE THE DEFAULT BEHAVIOR WHEN NULL IS PASSED (which was wrong, see #2713)
+			sb.append("((").append(classes[0]).append(")o[0]).").append(name).append('(').append(firstArg);
+			// sb.append("o[0]==null?").append(returnWhenNull(ret)).append(":((").append(classes[0]).append(")o[0]).")
+			// .append(name).append('(').append(firstArg);
 		}
 		if (start < classes.length) {
 			if (scope) {

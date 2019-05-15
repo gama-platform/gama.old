@@ -4,16 +4,18 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -23,14 +25,15 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import ummisco.gama.ui.controls.SimpleSlider;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * A slider for choosing values between a max and a min, with an optional step
- * 
+ *
  * @author drogoul
  *
  */
@@ -119,9 +122,22 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 
 	@Override
 	protected Control createCustomParameterControl(final Composite comp) throws GamaRuntimeException {
-
-		slider = new SimpleSlider(comp, IGamaColors.OK.color(), IGamaColors.GRAY_LABEL.lighter(),
-				GamaIcons.create("small.slider2").image(), false) {};
+		List<GamaColor> colors = getParam().getColor(getScope());
+		Color left = IGamaColors.OK.color();
+		Color right = IGamaColors.GRAY_LABEL.lighter();
+		Color thumb = left;
+		if (colors != null)
+			if (colors.size() == 1) {
+				left = thumb = GamaColors.get(colors.get(0)).color();
+			} else if (colors.size() == 2) {
+				left = GamaColors.get(colors.get(0)).color();
+				right = GamaColors.get(colors.get(1)).color();
+			} else if (colors.size() >= 3) {
+				left = GamaColors.get(colors.get(0)).color();
+				thumb = GamaColors.get(colors.get(1)).color();
+				right = GamaColors.get(colors.get(2)).color();
+			}
+		slider = new SimpleSlider(comp, left, right, thumb, false) {};
 
 		if (stepValue != null) {
 			final Double realStep = stepValue.doubleValue() / (maxValue.doubleValue() - minValue.doubleValue());

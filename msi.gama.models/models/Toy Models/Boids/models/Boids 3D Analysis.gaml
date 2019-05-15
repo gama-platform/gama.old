@@ -12,7 +12,7 @@ model boids
 
 global torus: torus_environment{ 
 	//Number of boids to represent
-	int number_of_agents parameter: 'Number of agents' <- 10 min: 1 max: 1000000;
+	int number_of_agents parameter: 'Number of agents' <- 10 min: 1 max: 500;
 	//Number of obstacles to represent
 	int number_of_obstacles parameter: 'Number of obstacles' <- 4 min: 0;
 	//Size of the boids

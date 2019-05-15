@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
@@ -24,7 +24,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -43,27 +42,27 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		DEBUG.OFF();
 	}
 
+	final int thumbWidth = 6;
 	final Composite parent;
-
-	final Panel rightRegion;
 	final Thumb thumb;
-	final Panel leftRegion;
+
+	final Panel leftRegion, rightRegion;
 	boolean mouseDown = false;
 	private int sliderHeight;
 	private Double step = null;
 
 	public class Thumb extends Canvas implements PaintListener {
 
-		final Image image;
+		final Color color;
 
-		public Thumb(final Composite parent, final Image image) {
+		public Thumb(final Composite parent, Color thumbColor) {
 			super(parent, SWT.NO_BACKGROUND);
-			this.image = image;
+			color = thumbColor;
 			addPaintListener(this);
 			final GridData d = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-			d.minimumHeight = image.getBounds().height;
-			d.minimumWidth = image.getBounds().width;
-			d.widthHint = image.getBounds().width;
+			d.minimumHeight = 13;
+			d.minimumWidth = thumbWidth;
+			d.widthHint = thumbWidth;
 			setLayoutData(d);
 		}
 
@@ -74,19 +73,14 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 		@Override
 		public Rectangle getBounds() {
-			return image.getBounds();
+			return new Rectangle(0, 0, thumbWidth, 13);
 		}
 
 		@Override
 		public Point computeSize(final int w, final int h) {
-			return new Point(image.getBounds().width, image.getBounds().height);
+			return new Point(6, 13);
 		}
 
-		/**
-		 * Method paintControl()
-		 * 
-		 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-		 */
 		@Override
 		public void paintControl(final PaintEvent e) {
 			final GC gc = e.gc;
@@ -94,18 +88,14 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			gc.setBackground(getParent().getBackground());
 			gc.fillRectangle(r);
 			final int height = parent.getSize().y;
-			final double y = (height - (double) image.getBounds().height) / 2;
-			gc.drawImage(image, 0, (int) y);
+			final double y = (height - 13d) / 2;
+			gc.setBackground(color);
+			gc.fillRoundRectangle(0, (int) y, thumbWidth, 13, 3, 3);
 		}
 
 	}
 
-	/**
-	 * The class implementing this interface will be asked to give a user understandable <code>String</code> to the
-	 * slider's current position
-	 */
 	private IToolTipProvider toolTipInterperter;
-	/** A list of position changed listeners */
 	private final List<IPositionChangeListener> positionChangedListeners = new ArrayList<>();
 	/**
 	 * stores the previous position that was sent out to the position changed listeners
@@ -114,21 +104,19 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	GamaUIColor popupColor = IGamaColors.GRAY_LABEL;
 	Popup2 popup = null;
-	int thumbWidth = 0;
 	private boolean notify = true;
 	private final IPositionChangeListener popupListener = (slider, position) -> popup.display();
 
-	public SimpleSlider(final Composite parent, final Color color, final Image thumbImageNormal) {
-		this(parent, color, color, thumbImageNormal);
+	public SimpleSlider(final Composite parent, final Color color) {
+		this(parent, color, color, color);
 	}
 
-	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor,
-			final Image thumbImageNormal) {
-		this(parent, leftColor, rightColor, thumbImageNormal, true);
+	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor, final Color thumbColor) {
+		this(parent, leftColor, rightColor, thumbColor, true);
 	}
 
-	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor,
-			final Image thumbImageNormal, final boolean withPopup) {
+	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor, final Color thumbColor,
+			final boolean withPopup) {
 		super(parent, SWT.DOUBLE_BUFFERED);
 		this.parent = parent;
 		final GridLayout gl = new GridLayout(3, false);
@@ -157,8 +145,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 				moveThumbHorizontally(e.x - thumbWidth / 2);
 			}
 		});
-		thumb = new Thumb(this, thumbImageNormal);
-		thumbWidth = thumb.computeSize(0, 0).x;
+		thumb = new Thumb(this, thumbColor);
 		thumb.addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -287,12 +274,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		public Panel(final Composite parent, final Color color) {
 			this(parent, color, false);
 		}
-		//
-		// @Override
-		// public void setBackground(final Color color) {
-		// // super.setBackground(color);
-		// this.color = color;
-		// }
 
 		public Panel(final Composite parent, final Color color, final boolean lastFillerRegion) {
 			super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
@@ -310,7 +291,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 		/**
 		 * Method paintControl()
-		 * 
+		 *
 		 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
 		 */
 		@Override

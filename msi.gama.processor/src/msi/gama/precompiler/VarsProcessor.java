@@ -12,7 +12,6 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.variable;
@@ -56,15 +55,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				&& !context.getTypeUtils().isAssignable(typeClass, context.getIAgent());
 
 		for (final variable node : vars.value()) {
-			final doc[] docs = node.doc();
-			// String d = "";
-			if (docs.length == 0) {
-				if (!node.internal()) {
-					UNDOCUMENTED.add(node.name());
-				}
-			} else if (!isField) { // documentation of fields is not used
-				// d = docs[0].value();
-			}
+			verifyDoc(context, e, "attribute " + node.name(), node);
 			final String clazz = rawNameOf(context, e.asType());
 			final String clazzObject = toClassObject(clazz);
 
@@ -86,14 +77,11 @@ public class VarsProcessor extends ElementProcessor<vars> {
 			}
 			sb.append(");");
 		}
-		if (!UNDOCUMENTED.isEmpty()) {
-			context.emitWarning("GAML: vars '" + UNDOCUMENTED + "' are not documented", e);
-		}
-		UNDOCUMENTED.clear();
+
 	}
 
-	private void writeHelpers(final StringBuilder sb, final ProcessorContext context, final variable var, final String clazz,
-			final Element e, final boolean isField, final boolean onlyGetter) {
+	private void writeHelpers(final StringBuilder sb, final ProcessorContext context, final variable var,
+			final String clazz, final Element e, final boolean isField, final boolean onlyGetter) {
 		String getterHelper = null;
 		String initerHelper = null;
 		String setterHelper = null;
@@ -142,8 +130,10 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				final boolean dynamic = !scope && n > 0 || scope && n > 1;
 
 				if (isField) {
-					getterHelper = concat("(s, v)->(v==null||v.length==0)?", returnWhenNull(checkPrim(returns)), ":((",
-							clazz, ")v[0]).", method, scope ? "(s)" : "()");
+					// AD: REMOVE THE DEFAULT BEHAVIOR WHEN NULL IS PASSED (which was wrong, see #2713)
+					// getterHelper = concat("(s, v)->(v==null||v.length==0)?", returnWhenNull(checkPrim(returns)),
+					// ":((", clazz, ")v[0]).", method, scope ? "(s)" : "()");
+					getterHelper = concat("(s, v)->((", clazz, ")v[0]).", method, scope ? "(s)" : "()");
 				} else {
 					getterHelper = concat("(s,a,t,v)->t==null?", returnWhenNull(checkPrim(returns)), ":((", clazz,
 							")t).", method, "(", scope ? "s" : "", dynamic ? (scope ? "," : "") + "a)" : ")");

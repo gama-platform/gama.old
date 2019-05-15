@@ -26,8 +26,7 @@ global {
 		
 	]; 
 	
-	init { }
-	
+	reflex pauseAtConvergence when: converged { }
 	
 	action activate_act {
 		button selected_but <- first(button overlapping (circle(1) at_location #user_location));
@@ -96,6 +95,9 @@ grid button width:2 height:2
 	}
 }
 
+// To avoid displaying experiments coming from the inherited model MAS_KMEANS
+experiment clustering2D type: gui virtual: true;
+experiment clustering3D type: gui virtual: true;
 
 experiment SelectPoints2Cluster2D type: gui {
 	output {
@@ -103,13 +105,21 @@ experiment SelectPoints2Cluster2D type: gui {
 		
 		display map  {
 			
-			event mouse_down action:cell_management;
-			species datapoints aspect: kmeans_aspect2D transparency:0.4;
-			species centroids aspect: kmeans_aspect2D;
 			
+			event mouse_down action:cell_management;
+			species datapoints aspect: kmeans_aspect2D transparency:0.5;
+			species centroids aspect: kmeans_aspect2D;
+			graphics "Full target"
+			{
+			if ! (globalIntraDistance = 0) {
+						draw "Current sum of cluster intra-distance " + globalIntraDistance with_precision(1)  at:{ 12, 4 } font: regular color: # black;
+						}
+			
+			if converged {draw "Algorithm has converged !" + " at cycle "+ cycle at: { 60, 4 } font: regular color: # red; }
+			}
 		}
 		//display the action buttons
-		display action_buton background:#grey name:"Tools panel"  	{
+		display action_buton background:#white name:"Tools panel"  	{
 			species button aspect:normal ;
 			event mouse_down action:activate_act;    
 		}

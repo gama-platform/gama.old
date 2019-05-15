@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ParameterAdapter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.ParameterAdapter.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -16,6 +16,7 @@ import java.util.Set;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -172,7 +173,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 
 	/**
 	 * Method setUnitLabel()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IParameter#setUnitLabel(java.lang.String)
 	 */
 	@Override
@@ -191,6 +192,11 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	@Override
 	public boolean acceptsSlider(final IScope scope) {
 		return false;
+	}
+
+	@Override
+	public List<GamaColor> getColor(IScope scope) {
+		return null;
 	}
 
 }

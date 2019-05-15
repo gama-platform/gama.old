@@ -78,6 +78,7 @@ public final class MQTTConnector extends Connector {
 	protected void sendMessage(final IAgent sender, final String receiver, final String content) {
 		final MqttMessage mm = new MqttMessage(content.getBytes());
 		try {
+			System.out.println("is connected "+sendConnection.isConnected());
 			sendConnection.publish(receiver, mm);
 		} catch (final MqttException e) {
 			DEBUG.OUT(GamaNetworkException.cannotSendMessage(sender.getScope(), receiver));
@@ -88,6 +89,7 @@ public final class MQTTConnector extends Connector {
 	@Override
 	protected void subscribeToGroup(final IAgent agt, final String boxName) {
 		try {
+		
 			sendConnection.subscribe(boxName);
 		} catch (final MqttException e) {
 			e.printStackTrace();
@@ -125,7 +127,7 @@ public final class MQTTConnector extends Connector {
 			password = password == null ? DEFAULT_PASSWORD : userName;
 			localName = localName == null ? DEFAULT_LOCAL_NAME + server : localName;
 
-			System.out.println("url "+ "tcp://" + server + ":" + port);
+			DEBUG.OUT("url "+ "tcp://" + server + ":" + port);
 			
 			try {
 				sendConnection = new MqttClient("tcp://" + server + ":" + port, localName, new MemoryPersistence());
@@ -137,6 +139,8 @@ public final class MQTTConnector extends Connector {
 				connOpts.setUserName(userName);
 				connOpts.setPassword(password.toCharArray());
 				sendConnection.connect(connOpts);
+				System.out.println("is connected  start "+sendConnection.isConnected());
+				
 			} catch (final MqttException e) {
 				throw GamaNetworkException.cannotBeConnectedFailure(simulationScope);
 			}
