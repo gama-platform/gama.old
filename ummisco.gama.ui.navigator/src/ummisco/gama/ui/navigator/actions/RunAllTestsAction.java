@@ -26,7 +26,8 @@ public class RunAllTestsAction extends WorkspaceAction {
 
 	@Override
 	public void run() {
-		ResourceManager.setLastTestResults(TestsRunner.start());
+		TestsRunner.start();
+		ResourceManager.finishTests();
 	}
 
 }

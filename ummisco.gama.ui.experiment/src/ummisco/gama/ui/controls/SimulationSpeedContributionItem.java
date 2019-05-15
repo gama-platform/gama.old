@@ -45,7 +45,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 
 	private static SimulationSpeedContributionItem instance;
 	static double max = 1000;
-	protected final static GamaUIColor popupColor = IGamaColors.OK;
+	protected final static GamaUIColor popupColor = IGamaColors.BLUE;
 	protected final static GamaUIColor sliderColor = IGamaColors.GRAY_LABEL;
 	public final static int widthSize = 100;
 	public final static int marginWidth = 16;

@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views;
@@ -280,7 +280,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 
 	/**
 	 * Method handleMenu()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object)
 	 */
 	@Override
@@ -296,6 +296,17 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	@Override
 	protected boolean needsOutput() {
 		return false;
+	}
+
+	@Override
+	public void displayProgress(int number, int total) {
+		WorkbenchHelper.asyncRun(() -> {
+			if (toolbar != null) {
+				toolbar.status(null, "Executing test models: " + number + " on " + total, null, IGamaColors.NEUTRAL,
+						SWT.LEFT);
+			}
+		});
+
 	}
 
 }

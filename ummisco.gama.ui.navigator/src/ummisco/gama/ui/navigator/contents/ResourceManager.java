@@ -47,7 +47,6 @@ import msi.gama.common.GamlFileExtension;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.statements.test.CompoundSummary;
-import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
@@ -100,7 +99,7 @@ public class ResourceManager implements IResourceChangeListener, IResourceDeltaV
 		return INSTANCE;
 	}
 
-	public static void setLastTestResults(final CompoundSummary<TestExperimentSummary, ?> last) {
+	public static void finishTests() {
 		INSTANCE.refreshResource(NavigatorRoot.getInstance().getTestFolder());
 	}
 

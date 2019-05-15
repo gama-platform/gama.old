@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.IGamaView.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.interfaces.IGamaView.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -23,7 +23,7 @@ import msi.gaml.statements.test.CompoundSummary;
 /**
  * An abstract representation of the 'views', in a UI sense, that are used to display outputs or present information to
  * the user. A view can display one or several outputs (for instance, several monitors)
- * 
+ *
  * @author drogoul
  */
 public interface IGamaView {
@@ -52,6 +52,8 @@ public interface IGamaView {
 		public void addTestResult(final CompoundSummary<?, ?> summary);
 
 		public void startNewTestSequence(boolean all);
+
+		public void displayProgress(int number, int total);
 
 		public void finishTestSequence();
 

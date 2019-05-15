@@ -9,7 +9,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.jobs.Job;
 
+import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
@@ -24,36 +26,54 @@ public class TestsRunner {
 
 	public static CompoundSummary<TestExperimentSummary, ?> LAST_RUN;
 
-	public static CompoundSummary<TestExperimentSummary, ?> start() {
+	public static void start() {
 		if (SwtGui.ALL_TESTS_RUNNING)
-			return null;
-		final CompoundSummary<TestExperimentSummary, ?> summaries = new CompoundSummary<>();
+			return;
+
+		LAST_RUN = new CompoundSummary<>();
 
 		final IGui gui = GAMA.getRegularGui();
 		final IScope scope = GAMA.getRuntimeScope();
+		IGamaView.Test testView = gui.openTestView(scope, true);
+		final List<IFile> testFiles;
 		try {
+			testFiles = findTestModels();
+		} catch (CoreException e) {
+			return;
+		}
+		int size = testFiles.size();
+		int[] i = { 1 };
+		// WorkbenchHelper.asyncRun(() -> {});
 
-			List<IFile> testFiles = null;
-			try {
-				testFiles = findTestModels();
-				gui.openTestView(scope, true);
-				for (final IFile file : testFiles) {
-					final List<TestExperimentSummary> list = gui.runHeadlessTests(file);
-					if (list != null) {
-						summaries.addSummaries(list);
-					}
+		Job.createSystem("All tests", (m) -> {
+			for (final IFile file : testFiles) {
+				if (testView != null) {
+					testView.displayProgress(i[0]++, size);
 				}
-			} catch (final Exception e) {
-				e.printStackTrace();
+				final List<TestExperimentSummary> list = gui.runHeadlessTests(file);
+				if (list != null) {
+					LAST_RUN.addSummaries(list);
+				}
 			}
-		} finally {
-			LAST_RUN = summaries;
-			gui.displayTestsResults(scope, summaries);
+			gui.displayTestsResults(scope, LAST_RUN);
 			SwtGui.ALL_TESTS_RUNNING = false;
 			gui.endTestDisplay();
+		}).schedule();
 
-		}
-		return summaries;
+		// new Thread(() -> {
+		// for (final IFile file : testFiles) {
+		// if (testView != null) {
+		// testView.displayProgress(i[0]++, size);
+		// }
+		// final List<TestExperimentSummary> list = gui.runHeadlessTests(file);
+		// if (list != null) {
+		// LAST_RUN.addSummaries(list);
+		// }
+		// }
+		// gui.displayTestsResults(scope, LAST_RUN);
+		// SwtGui.ALL_TESTS_RUNNING = false;
+		// gui.endTestDisplay();
+		// }).start();
 
 	}
 
