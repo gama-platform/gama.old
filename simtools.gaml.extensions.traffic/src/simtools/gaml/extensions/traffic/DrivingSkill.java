@@ -100,11 +100,32 @@ import ummisco.gama.dev.utils.DEBUG;
 				doc = @doc ("the current list of points that the agent has to reach (path)")),
 		@variable (
 				name = "security_distance_coeff",
+<<<<<<< HEAD
+=======
+				type = IType.FLOAT,
+				init = "1.0",
+				doc = @doc (
+						deprecated = "use safety_distance_coeff instead",
+						value = "the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - safety_distance =max(min_safety_distance, safety_distance_coeff `*` min(self.real_speed, other.real_speed) )")
+				),
+		@variable (
+				name = "safety_distance_coeff",
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance =max(min_security_distance, security_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
 		@variable (
 				name = "min_security_distance",
+<<<<<<< HEAD
+=======
+				type = IType.FLOAT,
+				init = "0.5",
+				doc = @doc (
+						deprecated="use min_safety_distance instead",
+						value="the minimal distance to another driver")),
+		@variable (
+				name = "min_safety_distance",
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 				type = IType.FLOAT,
 				init = "0.5",
 				doc = @doc ("the minimal distance to another driver")),
@@ -199,7 +220,16 @@ public class DrivingSkill extends MovingSkill {
 		DEBUG.OFF();
 	}
 
+<<<<<<< HEAD
 	public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
+=======
+	@Deprecated
+	public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
+	@Deprecated
+	public final static String MIN_SECURITY_DISTANCE = "min_security_distance";
+	
+	public final static String SAFETY_DISTANCE_COEFF = "safety_distance_coeff";
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 	public final static String CURRENT_ROAD = "current_road";
 	public final static String CURRENT_LANE = "current_lane";
 	public final static String DISTANCE_TO_GOAL = "distance_to_goal";
@@ -394,7 +424,14 @@ public class DrivingSkill extends MovingSkill {
 	public void setRightSideDriving(final IAgent agent, final Boolean isRight) {
 		agent.setAttribute(RIGHT_SIDE_DRIVING, isRight);
 	}
+	
+	@Deprecated
+	@getter (SECURITY_DISTANCE_COEFF)
+	public double getSecurityDistanceCoeff(final IAgent agent) {
+		return (Double) agent.getAttribute(SECURITY_DISTANCE_COEFF);
+	}
 
+<<<<<<< HEAD
 	@getter (SECURITY_DISTANCE_COEFF)
 	public double getSecurityDistanceCoeff(final IAgent agent) {
 		return (Double) agent.getAttribute(SECURITY_DISTANCE_COEFF);
@@ -403,6 +440,22 @@ public class DrivingSkill extends MovingSkill {
 	@setter (SECURITY_DISTANCE_COEFF)
 	public void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
 		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
+=======
+	@Deprecated
+	@getter (SECURITY_DISTANCE_COEFF)
+	public void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
+		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
+	}
+	
+	@getter (SAFETY_DISTANCE_COEFF)
+	public double getSafetyDistanceCoeff(final IAgent agent) {
+		return (Double) agent.getAttribute(SAFETY_DISTANCE_COEFF);
+	}
+	
+	@setter (SAFETY_DISTANCE_COEFF)
+	public void setSafetyDistanceCoeff(final IAgent agent, final double ls) {
+		agent.setAttribute(SAFETY_DISTANCE_COEFF, ls);
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 	}
 
 	@getter (CURRENT_ROAD)
@@ -424,10 +477,25 @@ public class DrivingSkill extends MovingSkill {
 	public double getDistanceToGoal(final IAgent agent) {
 		return (Double) agent.getAttribute(DISTANCE_TO_GOAL);
 	}
+	
+	@getter (MIN_SECURITY_DISTANCE)
+	public double getMinSecurityDistance(final IAgent agent) {
+		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
+	}
 
 	@getter (MIN_SECURITY_DISTANCE)
+<<<<<<< HEAD
 	public double getMinSecDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
+=======
+	public void setMinSecurityDistance(final IAgent agent, final double msd) {
+		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
+	}
+	
+	@getter (MIN_SAFETY_DISTANCE)
+	public double getMinSafetyDistance(final IAgent agent) {
+		return (Double) agent.getAttribute(MIN_SAFETY_DISTANCE);
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 	}
 
 	@setter (MIN_SECURITY_DISTANCE)
@@ -442,7 +510,11 @@ public class DrivingSkill extends MovingSkill {
 
 	public Double primAdvancedFollow(final IScope scope, final IAgent agent, final double s, final double t,
 			final IPath path, final GamaPoint target) throws GamaRuntimeException {
+<<<<<<< HEAD
 		final double security_distance_coeff = getSecurityDistanceCoeff(agent);
+=======
+		final double safety_distance_coeff = agent.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(agent) : getSecurityDistanceCoeff(agent);
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 		final int currentLane = getCurrentLane(agent);
 		final Double probaChangeLaneUp = getProbaLaneChangeUp(agent);
 		final Double probaChangeLaneDown = getProbaLaneChangeDown(agent);
@@ -537,7 +609,11 @@ public class DrivingSkill extends MovingSkill {
 		final Integer lane = (Integer) scope.getArg("lane", IType.INT);
 		final IAgent driver = getCurrentAgent(scope);
 		final double vL = getVehiculeLength(driver);
+<<<<<<< HEAD
 		final double secDistCoeff = getSecurityDistanceCoeff(driver);
+=======
+		final double secDistCoeff = driver.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(driver) : getSecurityDistanceCoeff(driver);
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 		final double probaBlock = getProbaBlockNode(driver);
 		final boolean testBlockNode = Random.opFlip(scope, probaBlock);
 		final IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
@@ -1054,7 +1130,11 @@ public class DrivingSkill extends MovingSkill {
 		final boolean onLinkedRoad = getOnLinkedRoad(driver);
 		final IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
 		final double vL = getVehiculeLength(driver);
+<<<<<<< HEAD
 		final double secDistCoeff = getSecurityDistanceCoeff(driver);
+=======
+		final double secDistCoeff = driver.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(driver) : getSecurityDistanceCoeff(driver);
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 		final double probaBlock = getProbaBlockNode(driver);
 		final boolean testBlockNode = Random.opFlip(scope, probaBlock);
 		final Map<IAgent, List<IAgent>> block = (Map<IAgent, List<IAgent>>) node.getAttribute(RoadNodeSkill.BLOCK);
@@ -1214,7 +1294,11 @@ public class DrivingSkill extends MovingSkill {
 		// DEBUG.OUT(agent + " agents: " + agents);
 		final double distanceToGoal = getDistanceToGoal(agent);
 		final boolean nextSegment = distanceToGoal < distance;
+<<<<<<< HEAD
 		final double min_security_distance = getMinSecDistance(agent);
+=======
+		final double min_safety_distance = agent.hasAttribute(MIN_SAFETY_DISTANCE) ? getMinSafetyDistance(agent) : getMinSecurityDistance(agent);
+>>>>>>> 03c8af78f... re-introduce security_distance with deprecated tag
 		// final IAgent theRoad = onLinkedRoad ?
 		// RoadSkill.getLinkedRoad(currentRoad) : currentRoad;
 		final int segment =
