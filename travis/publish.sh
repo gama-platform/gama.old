@@ -23,26 +23,26 @@ commit_wiki_files() {
 
 commit_io_website_files() {
 
-	git config --global user.email "travis@travis-ci.org"
-	git config --global user.name "Travis CI"
+	git config --global user.email "my.gama.bot@gmail.com"
+	git config --global user.name "GAMA Bot"
 	git config --global push.default simple		
-	git clone --depth=50 --branch=master https://github.com/gama-platform/gama-platform.github.io.git /home/travis/build/gama-platform/gama-platform.github.io
+	git clone --depth=50 --branch=sources https://github.com/gama-platform/gama-platform.github.io.git /home/travis/build/gama-platform/gama-platform.github.io
 	cd /home/travis/build/gama-platform/gama-platform.github.io
 	git remote rm origin
-	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama-platform.github.io.git
+	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama-platform.github.io.git
 	echo "Travis build trigger from gama core at $(date)" > log.txt
 	git status
 	git add -A		
 	git commit -m "Trigger to generate docs - $(date)"
-	git push origin HEAD:master
+	git push origin HEAD:sources
 }
 
 function update_tag() {
 	echo "update tag " $1 
-	git config --global user.email "hqnghi88@gmail.com"
-	git config --global user.name "Travis CI"
+	git config --global user.email "my.gama.bot@gmail.com"
+	git config --global user.name "GAMA Bot"
 	git remote rm origin
-	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.git
+	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama.git
 	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 	git fetch
 	git checkout master
