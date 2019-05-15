@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.kernel.GamaBundleLoader.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.kernel.GamaBundleLoader.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.kernel;
 
@@ -32,7 +32,6 @@ import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gaml.compilation.IGamlAdditions;
 import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
@@ -45,6 +44,10 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  */
 public class GamaBundleLoader {
+
+	static {
+		DEBUG.ON();
+	}
 
 	public static void ERROR(final Exception e) {
 		ERRORED = true;
@@ -79,189 +82,187 @@ public class GamaBundleLoader {
 	private static Multimap<Bundle, String> TEST_PLUGINS = ArrayListMultimap.create();
 	public static Set<String> HANDLED_FILE_EXTENSIONS = new HashSet<>();
 
-	public static void preBuildContributions() {
-		final long start = System.currentTimeMillis();
-		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		// We retrieve the elements declared as extensions to the GAML language,
-		// either with the new or the deprecated extension
-		final Set<IExtension> extensions = new HashSet<>();
-		try {
-			IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
-			extensions.addAll(Arrays.asList(p.getExtensions()));
-			p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
-			extensions.addAll(Arrays.asList(p.getExtensions()));
-		} catch (final InvalidRegistryObjectException e) {
-			ERROR(e);
-		}
-
-		// We retrieve their contributor plugin and add them to the
-		// GAMA_PLUGINS. In addition, we verify if they declare a folder called
-		// `models` or `tests` or if they have generated tests
-		// TEST_PLUGINS.put(CORE_MODELS, REGULAR_TESTS_LAYOUT);
-		MODEL_PLUGINS.put(CORE_MODELS, REGULAR_MODELS_LAYOUT);
-		for (final IExtension e : extensions) {
-			final IContributor plugin = e.getContributor();
-			final Bundle bundle = Platform.getBundle(plugin.getName());
-
-			GAMA_PLUGINS.add(bundle);
-			if (bundle.getEntry(REGULAR_MODELS_LAYOUT) != null) {
-				MODEL_PLUGINS.put(bundle, REGULAR_MODELS_LAYOUT);
-			}
-			if (bundle.getEntry(REGULAR_TESTS_LAYOUT) != null) {
-				TEST_PLUGINS.put(bundle, REGULAR_TESTS_LAYOUT);
-			}
-			if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null) {
-				TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT);
-			}
-		}
-		// LOG(">GAMA plugins with language additions: "
-		// + StreamEx.of(GAMA_PLUGINS).map(e -> e.getSymbolicName()).toSet());
-		// LOG(">GAMA plugins with models: " + StreamEx.of(MODEL_PLUGINS.keySet()).map(e
-		// ->
-		// e.getSymbolicName()).toSet());
-		// LOG(">GAMA plugins with tests: " + StreamEx.of(TEST_PLUGINS.keySet()).map(e
-		// -> e.getSymbolicName()).toSet());
-
-		// We remove the core plugin, in order to build it first (important)
-		GAMA_PLUGINS.remove(CORE_PLUGIN);
-		try {
-			preBuild(CORE_PLUGIN);
-		} catch (final Exception e2) {
-			System.err.println(ERROR_MESSAGE);
-			System.err.println("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
-			System.exit(0);
-			return;
-		}
-		// We then build the other extensions to the language
-		for (final Bundle addition : GAMA_PLUGINS) {
-			CURRENT_PLUGIN_NAME = addition.getSymbolicName();
+	public static void preBuildContributions() throws Exception {
+		DEBUG.TIMER("> GAMA total load time ", () -> {
+			final IExtensionRegistry registry = Platform.getExtensionRegistry();
+			// We retrieve the elements declared as extensions to the GAML language,
+			// either with the new or the deprecated extension
+			final Set<IExtension> extensions = new HashSet<>();
 			try {
-				preBuild(addition);
-			} catch (final Exception e1) {
-				System.err.println(ERROR_MESSAGE);
-				System.err.println("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e1.getMessage());
-				System.exit(0);
-				return;
+				IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
+				extensions.addAll(Arrays.asList(p.getExtensions()));
+				p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
+				extensions.addAll(Arrays.asList(p.getExtensions()));
+			} catch (final InvalidRegistryObjectException e) {
+				ERROR(e);
 			}
-		}
-		CURRENT_PLUGIN_NAME = null;
-		// We gather all the extensions to the `create` statement and add them
-		// as delegates to CreateStatement. If an exception occurs, we discard it
-		for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
-			ICreateDelegate cd = null;
-			try {
-				// TODO Add the defining plug-in
-				cd = (ICreateDelegate) e.createExecutableExtension("class");
-				if (cd != null) {
-					CreateStatement.addDelegate(cd);
+
+			// We retrieve their contributor plugin and add them to the
+			// GAMA_PLUGINS. In addition, we verify if they declare a folder called
+			// `models` or `tests` or if they have generated tests
+			// TEST_PLUGINS.put(CORE_MODELS, REGULAR_TESTS_LAYOUT);
+			MODEL_PLUGINS.put(CORE_MODELS, REGULAR_MODELS_LAYOUT);
+			for (final IExtension e : extensions) {
+				final IContributor plugin = e.getContributor();
+				final Bundle bundle = Platform.getBundle(plugin.getName());
+
+				GAMA_PLUGINS.add(bundle);
+				if (bundle.getEntry(REGULAR_MODELS_LAYOUT) != null) {
+					MODEL_PLUGINS.put(bundle, REGULAR_MODELS_LAYOUT);
 				}
-			} catch (final Exception e1) {
-				System.err.println(ERROR_MESSAGE);
-				System.err.println("Error in loading CreateStatement delegate : " + e1.getMessage());
-				System.exit(0);
-				return;
-
-			}
-		}
-		
-		// We gather all the extensions to the `create` statement and add them
-		// as delegates to EventLayerStatement
-		for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
-			try {
-				// TODO Add the defining plug-in
-				EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
-			} catch (final CoreException e1) {
-
-				System.err.println(ERROR_MESSAGE);
-				System.err.println("Error in loading EventLayerStatement delegate : " + e1.getMessage());
-				System.exit(0);
-				return;
-
-			}
-		}
-
-		// We gather all the GAMA_PLUGINS that explicitly declare models using
-		// the non-default scheme (plugin > models ...).
-		for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
-			MODEL_PLUGINS.put(Platform.getBundle(e.getContributor().getName()), e.getAttribute("name"));
-		}
-		// CRUCIAL INITIALIZATIONS
-		LOADED = true;
-		GamaMetaModel.INSTANCE.build();
-		Types.init();
-
-		// We gather all the content types extensions defined in GAMA plugins
-		// (not in the other ones)
-		final IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
-		final Set<IExtension> contentExtensions = new HashSet<>();
-		contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
-		for (final IExtension ext : contentExtensions) {
-			final IConfigurationElement[] configs = ext.getConfigurationElements();
-			for (final IConfigurationElement config : configs) {
-				final String s = config.getAttribute("file-extensions");
-				if (s != null) {
-					HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(",")));
+				if (bundle.getEntry(REGULAR_TESTS_LAYOUT) != null) {
+					TEST_PLUGINS.put(bundle, REGULAR_TESTS_LAYOUT);
+				}
+				if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null) {
+					TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT);
 				}
 			}
-		}
+			// LOG(">GAMA plugins with language additions: "
+			// + StreamEx.of(GAMA_PLUGINS).map(e -> e.getSymbolicName()).toSet());
+			// LOG(">GAMA plugins with models: " + StreamEx.of(MODEL_PLUGINS.keySet()).map(e
+			// ->
+			// e.getSymbolicName()).toSet());
+			// LOG(">GAMA plugins with tests: " + StreamEx.of(TEST_PLUGINS.keySet()).map(e
+			// -> e.getSymbolicName()).toSet());
 
-		// We reinit the type hierarchy to gather additional types
-		Types.init();
-		performStaticInitializations();
-		//
-		DEBUG.LOG(">GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+			// We remove the core plugin, in order to build it first (important)
+			GAMA_PLUGINS.remove(CORE_PLUGIN);
+			try {
+				preBuild(CORE_PLUGIN);
+			} catch (final Exception e2) {
+				DEBUG.ERR(ERROR_MESSAGE);
+				DEBUG.ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
+				System.exit(0);
+				return;
+			}
+			// We then build the other extensions to the language
+			for (final Bundle addition : GAMA_PLUGINS) {
+				CURRENT_PLUGIN_NAME = addition.getSymbolicName();
+				try {
+					preBuild(addition);
+				} catch (final Exception e1) {
+					DEBUG.ERR(ERROR_MESSAGE);
+					DEBUG.ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e1.getMessage());
+					System.exit(0);
+					return;
+				}
+			}
+			CURRENT_PLUGIN_NAME = null;
+			// We gather all the extensions to the `create` statement and add them
+			// as delegates to CreateStatement. If an exception occurs, we discard it
+			for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
+				ICreateDelegate cd = null;
+				try {
+					// TODO Add the defining plug-in
+					cd = (ICreateDelegate) e.createExecutableExtension("class");
+					if (cd != null) {
+						CreateStatement.addDelegate(cd);
+					}
+				} catch (final Exception e1) {
+					DEBUG.ERR(ERROR_MESSAGE);
+					DEBUG.ERR("Error in loading CreateStatement delegate : " + e1.getMessage());
+					System.exit(0);
+					return;
+
+				}
+			}
+
+			// We gather all the extensions to the `create` statement and add them
+			// as delegates to EventLayerStatement
+			for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
+				try {
+					// TODO Add the defining plug-in
+					EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
+				} catch (final CoreException e1) {
+
+					DEBUG.ERR(ERROR_MESSAGE);
+					DEBUG.ERR("Error in loading EventLayerStatement delegate : " + e1.getMessage());
+					System.exit(0);
+					return;
+
+				}
+			}
+
+			// We gather all the GAMA_PLUGINS that explicitly declare models using
+			// the non-default scheme (plugin > models ...).
+			for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
+				MODEL_PLUGINS.put(Platform.getBundle(e.getContributor().getName()), e.getAttribute("name"));
+			}
+			// CRUCIAL INITIALIZATIONS
+			LOADED = true;
+			GamaMetaModel.INSTANCE.build();
+			Types.init();
+
+			// We gather all the content types extensions defined in GAMA plugins
+			// (not in the other ones)
+			final IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
+			final Set<IExtension> contentExtensions = new HashSet<>();
+			contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
+			for (final IExtension ext : contentExtensions) {
+				final IConfigurationElement[] configs = ext.getConfigurationElements();
+				for (final IConfigurationElement config : configs) {
+					final String s = config.getAttribute("file-extensions");
+					if (s != null) {
+						HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(",")));
+					}
+				}
+			}
+
+			// We reinit the type hierarchy to gather additional types
+			Types.init();
+			performStaticInitializations();
+			//
+		});
 	}
 
 	private static void performStaticInitializations() {
-		// new Thread(() -> {
-		// final long start = System.currentTimeMillis();
 		IExpressionCompiler.OPERATORS.forEachValue(object -> {
 			object.compact();
 			return true;
 		});
 		IExpressionCompiler.OPERATORS.compact();
-		// }).start();
 
 	}
 
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
-		GamaClassLoader.getInstance().addBundle(bundle);
+		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: " + bundle.getSymbolicName(), 45) + " loaded in ", () -> {
+			GamaClassLoader.getInstance().addBundle(bundle);
+			Class<IGamlAdditions> gamlAdditions = null;
+			try {
+				gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
+			} catch (final ClassNotFoundException e1) {
+				DEBUG.ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
+				throw e1;
 
-		final long start = System.currentTimeMillis();
-		Class<IGamlAdditions> gamlAdditions = null;
-		try {
-			gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
-		} catch (final ClassNotFoundException e1) {
-			DEBUG.ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
-			throw e1;
-		}
-		IGamlAdditions add = null;
-		try {
-			add = gamlAdditions.newInstance();
-		} catch (final InstantiationException e) {
-			DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
-			throw e;
-		} catch (final IllegalAccessException e) {
-			DEBUG.ERR(">> Impossible to access additions from " + bundle);
-			throw e;
-		}
-		try {
-			add.initialize();
-		} catch (final SecurityException e) {
-			DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
-			throw e;
-		} catch (final NoSuchMethodException e) {
-			DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
-			throw e;
-		}
-		DEBUG.LOG(">GAMA plugin loaded in " + (System.currentTimeMillis() - start) + " ms: " + Strings.TAB + bundle);
+			}
 
+			IGamlAdditions add = null;
+			try {
+				add = gamlAdditions.newInstance();
+			} catch (final InstantiationException e) {
+				DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
+				throw e;
+			} catch (final IllegalAccessException e) {
+				DEBUG.ERR(">> Impossible to access additions from " + bundle);
+				throw e;
+			}
+			try {
+				add.initialize();
+			} catch (final SecurityException e) {
+				DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
+				throw e;
+			} catch (final NoSuchMethodException e) {
+				DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
+				throw e;
+			}
+
+		});
 	}
 
 	/**
 	 * The list of GAMA_PLUGINS declaring models, together with the inner path to the folder containing model projects
-	 * 
+	 *
 	 * @return
 	 */
 	public static Multimap<Bundle, String> getPluginsWithModels() {
