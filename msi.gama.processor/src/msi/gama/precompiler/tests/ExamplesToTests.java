@@ -113,7 +113,9 @@ public class ExamplesToTests implements XMLElements {
 			final String category = categoryElement.getAttribute(ATT_CAT_ID);
 			final String nameFileSpecies = categoryElement.getAttribute("id");
 			final Document tempDocument = context.getBuilder().newDocument();
-			documents.put(nameFileSpecies + ".experiment", tempDocument);
+			String fileName = nameFileSpecies + ".experiment";
+			context.emitWarning(fileName);
+			documents.put(fileName, tempDocument);
 			final org.w3c.dom.Element root = tempDocument.createElement(DOC);
 			root.setAttribute(ATT_NAME_FILE, nameFileSpecies);
 			final org.w3c.dom.Element rootOperators = tempDocument.createElement(OPERATORS);
@@ -121,21 +123,26 @@ public class ExamplesToTests implements XMLElements {
 			for (final org.w3c.dom.Element operatorElement : operators) {
 				if (operatorElement.hasAttribute("HAS_TESTS")) {
 					// OPTION 1 - PRODUCE ALL TESTS, EVEN IF THERE ARE DUPLICATES IN SOME CATEGORIES
-//					list(operatorElement.getElementsByTagName(CATEGORY)).stream()
-//							.filter(o -> o.getAttribute("id").equals(category))
-//							.map(o -> tempDocument.importNode(operatorElement.cloneNode(true), true))
-//							.forEach(o -> rootOperators.appendChild(o));
+					// list(operatorElement.getElementsByTagName(CATEGORY)).stream()
+					// .filter(o -> o.getAttribute("id").equals(category))
+					// .map(o -> tempDocument.importNode(operatorElement.cloneNode(true), true))
+					// .forEach(o -> rootOperators.appendChild(o));
 					// OPTION 2 - PRODUCE EACH TEST ONLY ONCE IN ITS FIRST CATEGORY
-					 list(operatorElement.getElementsByTagName(CATEGORY)).stream()
-					 .filter(o -> o.getAttribute("id").equals(category)).map(o ->
-					 tempDocument.importNode(operatorElement.cloneNode(true), true)).forEach(each -> {
-					 rootOperators.appendChild(each);
-					 operatorElement.removeAttribute("HAS_TESTS");
-					 });
+					list(operatorElement.getElementsByTagName(CATEGORY)).stream()
+							.filter(o -> o.getAttribute("id").equals(category))
+							.map(o -> tempDocument.importNode(operatorElement.cloneNode(true), true)).forEach(each -> {
+								rootOperators.appendChild(each);
+								operatorElement.removeAttribute("HAS_TESTS");
+							});
 				}
 			}
-			root.appendChild(rootOperators);
-			tempDocument.appendChild(root);
+			if (rootOperators.hasChildNodes()) {
+				root.appendChild(rootOperators);
+				tempDocument.appendChild(root);
+			} else {
+				context.emitWarning("No tests found. Removing :" + fileName);
+				documents.remove(fileName);
+			}
 		}
 		transformDocuments(context, xsl);
 
