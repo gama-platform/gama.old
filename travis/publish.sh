@@ -35,9 +35,9 @@ commit_io_website_files() {
 	#git branch --set-upstream-to=origin/sources sources
 	echo "pulling"
 	git pull
-	echo "Travis build trigger from gama core at $(date)" > log.txt
+	echo "Travis build trigger from gama core at $(date)" > log.gaml
 	git status
-	git add log.txt	
+	git add log.gaml	
 	git commit -m "Trigger to generate docs - $(date)"
 	git push
 }
