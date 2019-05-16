@@ -37,7 +37,7 @@ commit_io_website_files() {
 	git pull
 	echo "Travis build trigger from gama core at $(date)" > log.txt
 	git status
-	git add -A		
+	git add log.txt	
 	git commit -m "Trigger to generate docs - $(date)"
 	git push
 }
