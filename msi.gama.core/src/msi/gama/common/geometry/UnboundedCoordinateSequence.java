@@ -2,17 +2,18 @@
  *
  * msi.gama.common.geometry.UnboundedCoordinateSequence.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
 import static com.google.common.collect.Iterators.forArray;
 import static com.google.common.collect.Iterators.limit;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -22,18 +23,33 @@ import msi.gama.metamodel.shape.GamaPoint;
 
 public class UnboundedCoordinateSequence implements ICoordinates {
 
-	final static int MAX_SIZE = 20000;
-	final GamaPoint[] points = new GamaPoint[MAX_SIZE];
-	int nbPoints = 0;
+	final static int INITIAL_SIZE = 1000;
+	GamaPoint[] points = null;
+	int nbPoints;
 	final GamaPoint temp = new GamaPoint();
 
-	{
-		for (int i = 0; i < points.length; i++) {
+	private void fillFrom(int begin) {
+		for (int i = begin; i < points.length; i++) {
 			points[i] = new GamaPoint();
 		}
 	}
 
-	public UnboundedCoordinateSequence() {}
+	public UnboundedCoordinateSequence() {
+		growTo(INITIAL_SIZE);
+	}
+
+	private void growTo(int size) {
+		int begin = 0;
+		if (points == null) {
+			points = new GamaPoint[size];
+		} else {
+			if (size <= points.length)
+				return;
+			begin = points.length;
+			points = Arrays.copyOf(points, Math.max(size, begin + begin / 2));
+		}
+		fillFrom(begin);
+	}
 
 	@Override
 	public int getDimension() {
@@ -41,6 +57,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	UnboundedCoordinateSequence(final boolean copy, final int size, final GamaPoint[] points2) {
+		growTo(size);
 		nbPoints = size;
 		for (int i = 0; i < size; i++) {
 			points[i].setLocation(points2[i]);
@@ -238,6 +255,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public ICoordinates setTo(final GamaPoint... points2) {
+		growTo(points2.length);
 		nbPoints = points2.length;
 		for (int i = 0; i < nbPoints; i++) {
 			points[i].setLocation(points2[i]);
@@ -247,6 +265,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public ICoordinates setTo(final double... points2) {
+		growTo(points2.length / 3);
 		nbPoints = points2.length / 3;
 		for (int i = 0; i < nbPoints; i++) {
 			points[i].setLocation(points2[i * 3], points2[i * 3 + 1], points2[i * 3 + 2]);
@@ -363,6 +382,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	public void setToYNegated(final ICoordinates other) {
+		growTo(other.size());
 		nbPoints = other.size();
 		int i = 0;
 		for (final GamaPoint p : other) {
@@ -374,6 +394,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	public void setTo(final ICoordinates other) {
+		growTo(other.size());
 		nbPoints = other.size();
 		int i = 0;
 		for (final GamaPoint p : other) {
