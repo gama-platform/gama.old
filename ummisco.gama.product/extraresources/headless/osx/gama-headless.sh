@@ -90,55 +90,52 @@ fi
 
 
 echo "******************************************************************"
-echo "* GAMA version 1.8    	                                       *"
+echo "* GAMA version 1.8                                               *"
 echo "* http://gama-platform.org                                       *"
 echo "* (c) 2007-2019 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
 if [ $help = "yes" ]  ;  then
 echo ""
-echo " sh ./gama-headless.sh [Options] [XML Input] [output directory]"
 echo ""
 echo ""
-echo "List of available options:"
-echo "		final String res = " Welcome to Gama-platform.org version "+GAMA.VERSION
+echo "sh ./gama-headless.sh [Options] [XML Input] [output directory]"
 echo "	"
-echo "				sh ./gama-headless.sh [Options] [XML Input] [output directory]"
-echo "				List of available options:"
-echo "				      -help     				-- get the help of the command line"
-echo "				      -version     				-- get the the version of gama"
-echo "				      -m [mem]    				-- allocate memory (ex 2048m)"
-echo "				      -c        				-- start the console to write xml parameter file"
-echo "				      -v 						-- verbose mode"
-echo "				      -hpc [core] 				-- set the number of core available for experimentation"
-echo "				      -socket [socketPort] 		-- start socket pipeline to interact with another framework"  
-echo "				      -p        				-- start pipeline to interact with another framework" 
-echo "				      -validate [directory]    	-- invokes GAMA to validate the models present in the directory passed as argument"
-echo "				      -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
-echo "				      -failed		   			-- only display the failed and aborted test results"
-echo "				      -xml	[experimentName] [modelFile.gaml] [xmlOutputFile.xml]"	
-echo "												--  build an xml parameter file from a model"
+echo "List of available options:"
+echo " -help     				-- get the help of the command line"
+echo " -version     				-- get the the version of gama"
+echo " -m [mem]    				-- allocate memory, eg. 2048m"
+echo " -c        				-- start the console to write xml parameter file"
+echo " -v 					-- verbose mode"
+echo " -hpc [core] 				-- set the number of core available for experimentation"
+echo " -socket [socketPort] 			-- start socket pipeline to interact with another framework"  
+echo " -p                                     -- start pipeline to interact with another framework" 
+echo " -validate [directory]                  -- invokes GAMA to validate the models present in the directory passed as argument"
+echo " -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
+echo " -failed		      	        -- only display the failed and aborted test results"
+echo " -xml	[experimentName] [modelFile.gaml] [xmlOutputFile.xml]"	
+echo "				        --  build an xml parameter file from a model"
 echo ""
 echo ""
 exit 1
 fi
 if [ ! -f "$inputFile" ] && [ $console = "no" ] && [ $tunneling = "no" ] ;  then
 echo "The input or output file are not specied. Please check the path of your files and output file."
-echo "Use the help for more information (./gama-headless -help)"
+echo "Use the help for more information: ./gama-headless -help"
 exit 1
 fi
 if   [ -d "$inputFile" ]  && [ $console = "no" ] && [ $tunneling = "no" ] ; then
     echo "The defined input is not an XML parameter file" 
-    echo "Use the help for more information (./gama-headless -help)"
+    echo "Use the help for more information: ./gama-headless -help"
     exit 1
 fi
 if [ $tunneling = "no" ] && [ -d "$outputFile" ]   ; then
 echo "The output directory already exist. Please check the path of your output directory" 
-echo "Use the help for more information (./gama-headless -help)"
+echo "Use the help for more information: ./gama-headless -help"
 exit 1
 fi
 # assuming this file is within the gama deployment
 GAMAHOME=$(cd $(dirname $0)/.. && pwd -P)
-gamaDirectory=$(cd $GAMAHOME/plugins && pwd)
+gamaDirectory=$(cd $GAMAHOME/Eclipse/plugins && pwd)
 DUMPLIST=$(ls  $gamaDirectory/*.jar )
 for fic in $DUMPLIST; do
 GAMA=$GAMA:$fic
