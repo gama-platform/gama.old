@@ -12,7 +12,7 @@ commit_wiki_files() {
 
 	cd /home/travis/build/gama-platform/gama.wiki
 	git remote rm origin
-	git remote add origin https://hqnghi88:$HQN_KEY@github.com/gama-platform/gama.wiki.git
+	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama.wiki.git
 	git status
 	git add -A		
 	git commit -m "Regenerate operators artifacts on wiki  - $(date)"
@@ -22,14 +22,15 @@ commit_wiki_files() {
 }
 
 commit_io_website_files() {
-
+	echo "Trigger to githubio"
 	git config --global user.email "my.gama.bot@gmail.com"
 	git config --global user.name "GAMA Bot"
 	git config --global push.default simple		
-	git clone --depth=50 --branch=sources https://github.com/gama-platform/gama-platform.github.io.git /home/travis/build/gama-platform/gama-platform.github.io
+	git clone --depth=50 --branch=master https://github.com/gama-platform/gama-platform.github.io.git /home/travis/build/gama-platform/gama-platform.github.io
 	cd /home/travis/build/gama-platform/gama-platform.github.io
 	git remote rm origin
 	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama-platform.github.io.git
+	git checkout -b sources
 	echo "Travis build trigger from gama core at $(date)" > log.txt
 	git status
 	git add -A		
