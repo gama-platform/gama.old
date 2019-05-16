@@ -15,7 +15,6 @@ import static msi.gaml.operators.IUnits.vertical;
 import static one.util.streamex.StreamEx.of;
 import static ummisco.gama.ui.commands.ArrangeDisplayViews.DISPLAY_INDEX_KEY;
 import static ummisco.gama.ui.commands.ArrangeDisplayViews.getDisplaysPlaceholder;
-import static ummisco.gama.ui.utils.SwtGui.allDisplaySurfaces;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,12 +30,14 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import one.util.streamex.IntStreamEx;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class LayoutTreeConverter {
 
 	public GamaTree<String> convert(final int layout) {
 		if (layout < 0 || layout >= GamaPreferences.Displays.LAYOUTS.size()) { return null; }
-		final int[] indices = of(allDisplaySurfaces()).mapToInt((s) -> s.getOutput().getIndex()).toArray();
+		ArrangeDisplayViews.listDisplayViews();
+		final int[] indices = of(WorkbenchHelper.getDisplayViews()).mapToInt((s) -> s.getIndex()).toArray();
 		if (indices.length <= 1) { return null; }
 		Arrays.sort(indices);
 		final GamaTree<String> result = newLayoutTree();
@@ -136,8 +137,9 @@ public class LayoutTreeConverter {
 	}
 
 	private boolean isEmpty(final MUIElement element, final List<MPlaceholder> holders) {
-		if (element instanceof MElementContainer) { return of(((MElementContainer<?>) element).getChildren())
-				.allMatch(e -> isEmpty(e, holders)); }
+		if (element instanceof MElementContainer) {
+			return of(((MElementContainer<?>) element).getChildren()).allMatch(e -> isEmpty(e, holders));
+		}
 		return !(holders.contains(element));
 	}
 

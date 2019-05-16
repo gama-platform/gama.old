@@ -252,8 +252,11 @@ experiment "4 Simulations" type: gui {
 			}
 		}
 	}
+	
+	
 
 	output {
+		layout #split editors: false;
 		display Ants background: #white type: opengl{
 			image terrain position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));

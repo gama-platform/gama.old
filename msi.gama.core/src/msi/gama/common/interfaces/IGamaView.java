@@ -83,10 +83,14 @@ public interface IGamaView {
 
 		LayeredDisplayOutput getOutput();
 
-		default int getIndex() {
-			final LayeredDisplayOutput output = getOutput();
-			return output == null ? 0 : output.getIndex();
-		}
+		public int getIndex();
+		// {
+		// final LayeredDisplayOutput output = getOutput();
+		// return output == null ? 0 : output.getIndex();
+		// }
+
+		public void setIndex(int i);
+		// {}
 	}
 
 	public interface Error {

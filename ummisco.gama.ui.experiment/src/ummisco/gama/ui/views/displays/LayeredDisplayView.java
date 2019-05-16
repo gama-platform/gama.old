@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
@@ -49,12 +49,23 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public abstract class LayeredDisplayView extends GamaViewPart
 		implements IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable, IGamaView.Display {
 
+	protected int realIndex = -1;
 	protected SashForm form;
 	public Composite surfaceComposite;
 	public final LayeredDisplayDecorator decorator;
 	protected volatile boolean disposed, realized;
 	Thread updateThread;
 	private volatile boolean lockAcquired = false;
+
+	@Override
+	public void setIndex(int index) {
+		realIndex = index;
+	}
+
+	@Override
+	public int getIndex() {
+		return realIndex;
+	}
 
 	public LayeredDisplayView() {
 		decorator = new LayeredDisplayDecorator(this);

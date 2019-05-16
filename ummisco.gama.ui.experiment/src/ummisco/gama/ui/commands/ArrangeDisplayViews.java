@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.commands.ArrangeDisplayViews.java, in plugin ummisco.gama.ui.experiment,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * ummisco.gama.ui.commands.ArrangeDisplayViews.java, in plugin ummisco.gama.ui.experiment, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
@@ -38,11 +38,16 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.WorkaroundForIssue1353;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public static final String LAYOUT_KEY = "msi.gama.displays.layout";
 
@@ -58,6 +63,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	@SuppressWarnings ("unchecked")
 	public static void execute(final Object layout) {
+		listDisplayViews();
 		if (layout instanceof Integer) {
 			execute(((Integer) layout).intValue());
 		} else if (layout instanceof GamaTree) {
@@ -86,7 +92,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	public static void execute(final GamaTree<String> tree) {
-
+		listDisplayViews();
 		final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
 		if (!WorkaroundForIssue1353.isInstalled()
 				&& StreamEx.of(displays).anyMatch((d) -> !d.getOutput().getData().isOpenGL())) {
@@ -94,8 +100,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		}
 
 		if (tree != null) {
-			// DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
-			// + tree.getRoot().getChildren().get(0).getWeight());
+			DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
+					+ tree.getRoot().getChildren().get(0).getWeight());
 			if (tree.getRoot().getChildren().get(0).getWeight() == null) {
 				tree.getRoot().getChildren().get(0).setWeight(5000);
 			}
@@ -119,7 +125,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static MPartStack getDisplaysPlaceholder() {
 		final Object displayStack = getModelService().find("displays", getApplication());
-		// DEBUG.OUT("Element displays found : " + displayStack);
+		DEBUG.OUT("Element displays found : " + displayStack);
 		return displayStack instanceof MPartStack ? (MPartStack) displayStack : null;
 	}
 
@@ -178,6 +184,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			final List<MPlaceholder> holders) {
 		final String data = treeRoot.getData();
 		final String weight = String.valueOf(treeRoot.getWeight());
+		DEBUG.OUT("Processing " + data + " with weight " + weight);
 		final Boolean dir = !data.equals(HORIZONTAL) && !data.equals(VERTICAL) ? null : data.equals(HORIZONTAL);
 		final MPlaceholder holder = StreamEx.of(holders)
 				.findFirst(h -> h.getTransientData().get(DISPLAY_INDEX_KEY).equals(data)).orElse(null);
@@ -197,8 +204,22 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	static final List<MPlaceholder> listDisplayViews() {
 		final List<MPlaceholder> holders = getModelService().findElements(getApplication(), MPlaceholder.class,
 				IN_ACTIVE_PERSPECTIVE, e -> WorkbenchHelper.isDisplay(e.getElementId()));
-		holders.forEach(h -> h.getTransientData().put(DISPLAY_INDEX_KEY,
-				String.valueOf(findDisplay(h.getElementId()).getIndex())));
+		DEBUG.OUT("Displays found: " + holders.size());
+		/// Issue #2680
+		int currentIndex = 0;
+		for (MPlaceholder h : holders) {
+			IGamaView.Display display = findDisplay(h.getElementId());
+			if (display != null) {
+				display.setIndex(currentIndex++);
+				h.getTransientData().put(DISPLAY_INDEX_KEY, String.valueOf(currentIndex - 1));
+			}
+		}
+
+		// holders.forEach(h -> h.getTransientData().put(DISPLAY_INDEX_KEY,
+		// String.valueOf(findDisplay(h.getElementId()).getIndex())));
+		holders.forEach(h -> {
+			DEBUG.OUT("Holder " + h.getElementId() + " for display #" + h.getTransientData().get(DISPLAY_INDEX_KEY));
+		});
 		return holders;
 	}
 

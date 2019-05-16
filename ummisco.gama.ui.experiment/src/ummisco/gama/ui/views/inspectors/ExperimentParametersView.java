@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
@@ -24,6 +24,8 @@ import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.GAMA;
+import msi.gaml.operators.IUnits;
+import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -113,8 +115,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					}
 				}, SWT.RIGHT);
 		tb.button("menu.add2", "Add simulation",
-				"Add a new simulation (with the current parameters) to this experiment",
-				e -> GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true), SWT.RIGHT);
+				"Add a new simulation (with the current parameters) to this experiment", e -> {
+					GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
+					ArrangeDisplayViews.execute(IUnits.split);
+				}, SWT.RIGHT);
 
 	}
 
@@ -145,7 +149,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	/**
 	 * Method handleMenu()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override
