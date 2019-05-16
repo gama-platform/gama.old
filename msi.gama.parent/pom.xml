@@ -103,13 +103,13 @@
 			<layout>p2</layout>
 		</repository-->
 		<repository>
-			<id>eclipse-1812</id>
-			<url>http://download.eclipse.org/releases/2018-12</url>
+			<id>eclipse-1903</id>
+			<url>http://download.eclipse.org/releases/2019-03</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>xtext</id>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.16.0/</url>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.17.0/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
