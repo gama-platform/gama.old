@@ -26,12 +26,12 @@ commit_io_website_files() {
 	git config --global user.email "my.gama.bot@gmail.com"
 	git config --global user.name "GAMA Bot"
 	git config --global push.default simple		
-	git clone --depth=50 --branch=master https://github.com/gama-platform/gama-platform.github.io.git /home/travis/build/gama-platform/gama-platform.github.io
+	git clone https://github.com/gama-platform/gama-platform.github.io.git /home/travis/build/gama-platform/gama-platform.github.io
 	cd /home/travis/build/gama-platform/gama-platform.github.io
 	git remote rm origin
 	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama-platform.github.io.git
-	git fetch
-	git checkout sources
+	git fetch origin
+	git checkout --track origin/sources
 	#git branch --set-upstream-to=origin/sources sources
 	echo "pulling"
 	git pull
@@ -39,7 +39,7 @@ commit_io_website_files() {
 	git status
 	git add -A		
 	git commit -m "Trigger to generate docs - $(date)"
-	git push origin HEAD:sources
+	git push
 }
 
 function update_tag() {
