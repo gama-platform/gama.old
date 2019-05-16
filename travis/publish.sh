@@ -31,9 +31,9 @@ commit_io_website_files() {
 	git remote rm origin
 	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama-platform.github.io.git
 	git checkout -b sources
-	git branch --set-upstream-to=origin/sources sources
+	#git branch --set-upstream-to=origin/sources sources
 	echo "pulling"
-	git pull
+	git pull origin sources
 	echo "Travis build trigger from gama core at $(date)" > log.txt
 	git status
 	git add -A		
