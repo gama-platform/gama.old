@@ -31,7 +31,7 @@ global{
 	bool with_t0_tf <- false;
 
 
-	int final_cycle <- 20;
+	int final_cycle <- 19;
 	file data_rk4_file <- csv_file("../includes/data_rk4.csv","\t", float, false);
 	file data_euler_file <- csv_file("../includes/data_euler.csv","\t", float, false);
 	file data_dp_file <- csv_file("../includes/data_dp.csv","\t", float, false);
