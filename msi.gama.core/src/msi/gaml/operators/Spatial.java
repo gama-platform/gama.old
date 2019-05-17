@@ -2250,10 +2250,11 @@ public abstract class Spatial {
 				masterDoc = true,
 				examples = { @example (
 						value = "normalized_rotation(-38.0::{1,1,1})",
-						equals = "38.0::{-0.5773502691896258,-0.5773502691896258,-0.5773502691896258}"
+						equals = "38.0::{-0.5773502691896258,-0.5773502691896258,-0.5773502691896258}",
+						test = false
 						) },
 				see = { "rotation_composition, inverse_rotation" })
-//		@test ("normalized_rotation(-38::{1,1,1})=(38.0::{-0.5773502691896258,-0.5773502691896258,-0.5773502691896258})")
+		@test ("normalized_rotation(-38::{1,1,1})=(38.0::{-0.5773502691896258,-0.5773502691896258,-0.5773502691896258})")
 		public static GamaPair<Double, GamaPoint> normalized_rotation(final IScope scope,
 				final GamaPair rotation) {
 			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
