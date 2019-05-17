@@ -115,7 +115,10 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 	 */
 	@Override
 	public IType fromFacetType() {
-		return Types.LIST.of(Types.LIST);
+		// TODO revert the modif when the returned type of actions has been improved
+		// linked with the type of select action of AgentDB
+		// return Types.LIST.of(Types.LIST);
+		return Types.LIST;		
 	}
 
 }
