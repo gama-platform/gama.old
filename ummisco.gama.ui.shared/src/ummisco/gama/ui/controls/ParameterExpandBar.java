@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
@@ -46,7 +46,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	/**
 	 * Method setFocus()
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Composite#setFocus()
 	 */
 	@Override
@@ -691,6 +691,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		final int width = Math.max(0, rect.width - spacing * 2);
 		for (int i = 0; i < itemCount; i++) {
 			final ParameterExpandItem item = items[i];
+			if (item.getControl() != null)
+				item.setHeight(item.getControl().computeSize(width, SWT.DEFAULT).y);
 			item.setBounds(0, 0, width, item.height, false, true);
 		}
 		setScrollbar();

@@ -195,6 +195,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		((AbstractEditor<?>) ed).createComposite(compo);
 	}
 
+	@SuppressWarnings ("synthetic-access")
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
