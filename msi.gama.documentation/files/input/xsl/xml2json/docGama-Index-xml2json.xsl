@@ -218,7 +218,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 					<xsl:otherwise>
 						<xsl:value-of select="$fileOperatorsSZ" />
 					</xsl:otherwise>
-				</xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)"/><xsl:text>}, 
+				</xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)"/><xsl:text>" }, 
 				</xsl:text> 	
 			</xsl:if>
 		</xsl:for-each>
