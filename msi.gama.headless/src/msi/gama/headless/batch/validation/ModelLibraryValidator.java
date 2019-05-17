@@ -31,7 +31,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	public int start(final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
 		try {
-			Thread.sleep(50000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,7 +61,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 				+ " compilation errors found");
 
 		try {
-			Thread.sleep(50000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
