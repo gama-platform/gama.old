@@ -308,7 +308,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		<xsl:for-each select="concepts/concept">
 			<xsl:variable name="conceptTytpe" select="@id"/>
 			<xsl:if test="$conceptTytpe = $conceptName "> 
-				<xsl:text>{ "tag": " Concept </xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>{ "tag": "Concept </xsl:text> <xsl:value-of select="$conceptName" />
 				<xsl:text>", "subcat": "Type", "title": "</xsl:text> <xsl:value-of select="$nameType" />
 				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileTypes" /><xsl:text>#</xsl:text><xsl:value-of select="$nameType" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
