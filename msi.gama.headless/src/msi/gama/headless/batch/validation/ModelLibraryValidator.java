@@ -2,6 +2,8 @@ package msi.gama.headless.batch.validation;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -36,6 +38,10 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		Files.find(Paths.get("/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/configuration/org.eclipse.osgi"),
+		           Integer.MAX_VALUE,
+		           (filePath, fileAttr) -> fileAttr.isRegularFile())
+		        .forEach(System.out::println);
 		final int[] count = { 0 };
 		final int[] code = { 0 ,0 };
 		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithModels(); 
