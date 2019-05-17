@@ -2,11 +2,11 @@
  *
  * msi.gama.runtime.HeadlessListener.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -88,6 +88,11 @@ public class HeadlessListener implements IGui {
 		final BufferedWriter res = this.outputWriter.get();
 		this.outputWriter.remove();
 		return res;
+	}
+
+	@Override
+	public boolean copyToClipboard(String text) {
+		return false;
 	}
 
 	@Override
@@ -187,7 +192,7 @@ public class HeadlessListener implements IGui {
 
 	/**
 	 * Method updateSpeedDisplay()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
 	 */
 	@Override
@@ -195,7 +200,7 @@ public class HeadlessListener implements IGui {
 
 	/**
 	 * Method getMetaDataProvider()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#getMetaDataProvider()
 	 */
 	@Override
@@ -253,7 +258,7 @@ public class HeadlessListener implements IGui {
 
 	/**
 	 * Method closeSimulationViews()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#closeSimulationViews(boolean)
 	 */
 	@Override
@@ -262,7 +267,7 @@ public class HeadlessListener implements IGui {
 
 	/**
 	 * Method getDisplayDescriptionFor()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#getDisplayDescriptionFor(java.lang.String)
 	 */
 	@Override
@@ -272,7 +277,7 @@ public class HeadlessListener implements IGui {
 
 	/**
 	 * Method getFrontmostSimulationState()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#getExperimentState()
 	 */
 	@Override
@@ -282,7 +287,7 @@ public class HeadlessListener implements IGui {
 
 	/**
 	 * Method updateSimulationState()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#updateExperimentState(java.lang.String)
 	 */
 	@Override
@@ -290,7 +295,7 @@ public class HeadlessListener implements IGui {
 
 	/**
 	 * Method updateSimulationState()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#updateExperimentState()
 	 */
 	@Override

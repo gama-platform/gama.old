@@ -2,11 +2,11 @@
  *
  * msi.gama.common.interfaces.IGui.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -95,6 +95,8 @@ public interface IGui {
 
 	boolean confirmClose(IExperimentPlan experiment);
 
+	boolean copyToClipboard(String text);
+
 	boolean openSimulationPerspective(IModel model, String experimentId);
 
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
@@ -172,7 +174,7 @@ public interface IGui {
 
 	/**
 	 * Tries to put the frontmost display in full screen mode or in normal view mode if it is already in full screen
-	 * 
+	 *
 	 * @return true if the toggle has succeeded
 	 */
 	boolean toggleFullScreenMode();

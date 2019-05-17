@@ -2,11 +2,11 @@
  *
  * ummisco.gama.ui.utils.SwtGui.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -196,6 +199,19 @@ public class SwtGui implements IGui {
 			}
 		});
 		return result[0];
+	}
+
+	@Override
+	public boolean copyToClipboard(String text) {
+		WorkbenchHelper.asyncRun(() -> {
+			Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
+			TextTransfer textTransfer = TextTransfer.getInstance();
+			Transfer[] transfers = new Transfer[] { textTransfer };
+			Object[] data = new Object[] { text };
+			clipboard.setContents(data, transfers);
+			clipboard.dispose();
+		});
+		return true;
 	}
 
 	public static boolean isInternetReachable() {
@@ -380,7 +396,7 @@ public class SwtGui implements IGui {
 
 	/**
 	 * Method setSelectedAgent()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#setSelectedAgent(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -417,7 +433,7 @@ public class SwtGui implements IGui {
 
 	/**
 	 * Method cleanAfterExperiment()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentPlan)
 	 */
 	@Override
@@ -458,7 +474,7 @@ public class SwtGui implements IGui {
 
 	/**
 	 * Method updateSpeedDisplay()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
 	 */
 	@Override
@@ -472,7 +488,7 @@ public class SwtGui implements IGui {
 
 	/**
 	 * Method getMetaDataProvider()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGui#getMetaDataProvider()
 	 */
 	@Override

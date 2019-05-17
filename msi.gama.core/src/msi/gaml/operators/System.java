@@ -63,7 +63,7 @@ public class System {
 					value = "dead(agent_A)",
 					equals = "true or false",
 					isExecutable = false))
-	@test("dead(simulation) = false")
+	@test ("dead(simulation) = false")
 	public static Boolean opDead(final IScope scope, final IAgent a) {
 		return a == null || a.dead();
 	}
@@ -73,7 +73,7 @@ public class System {
 			can_be_const = true,
 			concept = IConcept.TEST)
 	@doc ("Returns whether or not the argument raises an error when evaluated")
-	@test("is_error(\"one\" = 1) = false")
+	@test ("is_error(\"one\" = 1) = false")
 	public static Boolean is_error(final IScope scope, final IExpression expr) {
 		try {
 			expr.value(scope);
@@ -88,7 +88,7 @@ public class System {
 			can_be_const = true,
 			concept = IConcept.TEST)
 	@doc ("Returns whether or not the argument raises a warning when evaluated")
-	@test("is_warning(\"one\" = 1) = false")
+	@test ("is_warning(\"one\" = 1) = false")
 	public static Boolean is_warning(final IScope scope, final IExpression expr) {
 		try {
 			expr.value(scope);
@@ -113,7 +113,7 @@ public class System {
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
 	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string. The basic form with only one string in argument uses the directory of the model and does not set any environment variables. Two other forms (with a directory and a map<string, string> of environment variables) are available.")
-	@no_test 
+	@no_test
 	public static String console(final IScope scope, final String s, final String directory) {
 		return console(scope, s, directory, GamaMapFactory.create());
 	}
@@ -123,7 +123,7 @@ public class System {
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
 	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")
-	@no_test 
+	@no_test
 	public static String console(final IScope scope, final String s, final String directory,
 			final GamaMap<String, String> environment) {
 		if (s == null || s.isEmpty())
@@ -307,6 +307,18 @@ public class System {
 
 	}
 
+	@operator (
+			value = "copy_to_clipboard",
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM })
+	@doc (
+			examples = @example ("bool copied  <- copy_to_clipboard('text to copy')"),
+			value = "Tries to copy the text in parameter to the clipboard and returns whether it has been correctly copied or not (for instance it might be impossible in a headless environment)")
+	@no_test ()
+	public static Boolean copyToClipboard(final IScope scope, final String text) {
+		return scope.getGui().copyToClipboard(text);
+	}
 	// @operator(value = "eval_java", can_be_const = false)
 	// @doc(value = "evaluates the given java code string.", deprecated = "Does
 	// not work", see = { "eval_gaml",
