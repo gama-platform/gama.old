@@ -12,6 +12,7 @@ model syntax
  * The global section can now sport skills and control, just like other agents. 
  * The example below shows a potentially moving world that can be controlled by a finite state machine.
  */
+// TODO ToDo comments can know be added; they appear in the Validation view.
 global skills: [moving] control: fsm {
 
 /**
@@ -186,7 +187,7 @@ global skills: [moving] control: fsm {
 
 	}
 
-	// TODO Species can now be written within the "global" section (to enforce the idea that the top-level species are indeed contained in the world)
+	// Species can now be written within the "global" section (to enforce the idea that the top-level species are indeed contained in the world)
 	species inside_global {
 	}
 
@@ -236,7 +237,7 @@ global skills: [moving] control: fsm {
  	 	 *  As a summary, the syntaxes kept for future developments of models will likely be: 
  	 	 */
 
-// CALLING WITH NAMED ARGUMENTS + OPTIONAL DOTTED SYNTAX IN EXPRESSIONS + IMPLICIT CALLEE IN CASE OF SELF
+		// CALLING WITH NAMED ARGUMENTS + OPTIONAL DOTTED SYNTAX IN EXPRESSIONS + IMPLICIT CALLEE IN CASE OF SELF
 		// This method is convenient as it allows to pass only some arguments (if defaults are defined, which is implicitely the case in primitives), 
 		// but also to pass them in any order
 		do wander(speed: 100, amplitude: 10);
