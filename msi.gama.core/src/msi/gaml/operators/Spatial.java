@@ -2233,9 +2233,11 @@ public abstract class Spatial {
 				masterDoc = true,
 				examples = { @example (
 						value = "inverse_rotation(38.0::{1,1,1})",
-						equals = "-38.0::{1,1,1}"
+						equals = "-38.0::{1,1,1}",
+						test = false
 						) },
 				see = { "rotation_composition, normalized_rotation" })
+		@test("inverse_rotation(38.0::{1,1,1}) = (-38.0::{1,1,1})")
 		public static GamaPair<Double, GamaPoint> inverse_rotation(final IScope scope,
 				final GamaPair<Double, GamaPoint> rotation) {
 			return new GamaPair(-rotation.key, rotation.value, Types.FLOAT, Types.POINT);
@@ -2313,11 +2315,30 @@ public abstract class Spatial {
 								+ "the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
+		@no_test // hard to compare geometries
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double rotation,
 				final GamaPoint vector) {
 			if (g1 == null) { return null; }
 			if (vector.x == 0d && vector.y == 0d && vector.z == 0d) { return g1; }
 			return new GamaShape(g1, null, new AxisAngle(vector, rotation), g1.getLocation());
+		}
+		
+		@operator (
+				value = "rotated_by",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = {})
+		@doc (  
+				value = "A point resulting from the application of the right-hand rotation operand (angles in degree)"
+				+ " to the left-hand operand point",
+				comment = "return a vector that results from ")
+		@no_test // hard to compare geometries
+		public static GamaPoint rotated_by(final IScope scope, final GamaPoint p1, final GamaPair rotation) {
+			if (p1 == null) { return null; }
+			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
+			GamaPoint p2 = new GamaPoint(p1);
+			new Rotation3D(rot.getValue(), 2 * Math.PI / 360 * rot.getKey()).applyTo(p2);
+			return p2;
 		}
 
 		@operator (
@@ -2334,6 +2355,7 @@ public abstract class Spatial {
 								+ "the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
+		@no_test // hard to compare geometries
 		public static IShape rotated_by(final IScope scope, final IShape g1, final GamaPair rotation) {
 			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
 					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
@@ -2347,6 +2369,7 @@ public abstract class Spatial {
 				concept = {})
 		@doc (
 				comment = "the right-hand operand can be a float or a int")
+		@no_test // hard to compare geometries
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Integer angle) {
 			if (g1 == null) { return null; }
 			if (angle == null) { return g1.copy(scope); }
@@ -2354,6 +2377,8 @@ public abstract class Spatial {
 			return new GamaShape(g1, null, new AxisAngle(angle.doubleValue()), null);
 
 		}
+		
+
 
 		/**
 		 * @throws GamaRuntimeException
