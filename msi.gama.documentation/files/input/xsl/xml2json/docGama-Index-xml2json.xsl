@@ -3,6 +3,8 @@
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:import href="../xml2md/docGama-utils-xml2md.xsl" />
 
+<xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
+<xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
 
 <xsl:variable name="fileOperatorsAA" select="'OperatorsAA'" />
 <xsl:variable name="fileOperatorsBC" select="'OperatorsBC'" />
@@ -13,8 +15,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:variable name="fileStatements" select="'Statements'" />
 <xsl:variable name="fileUnitsConstants" select="'UnitsAndConstants'" />
 <xsl:variable name="fileControl" select="'BuiltInControlArchitectures'" />
+<xsl:variable name="fileArchi" select="'BuiltInArchitectures'" />
 <xsl:variable name="fileSpecies" select="'BuiltInSpecies'" />
 <xsl:variable name="fileSkills" select="'BuiltInSkills'" />
+<xsl:variable name="fileTypes" select="'DataTypes'" />
 
 <!--
 
@@ -79,7 +83,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Architectures", "title" : "</xsl:text>
 	<xsl:value-of select="@name" />
-	<xsl:text>", "url": "BuiltInArchitectures#</xsl:text>
+	<xsl:text>", "url": "</xsl:text>
+	<xsl:value-of select="$fileArchi" />
+	<xsl:text>#</xsl:text>
 	<xsl:value-of select="@name" />
 	<xsl:text>" }, </xsl:text>
 </xsl:for-each>
@@ -124,11 +130,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	<xsl:value-of select="@name" />
 	<xsl:text>" }, </xsl:text>
 </xsl:for-each>
-{
-	"tag": "species",
-	"title": "world",
-	"url": "BuiltInSpecies#model"
-},
+{"tag": "species", "title": "world", "url": "BuiltInSpecies#model"},
 
 <!-- Actions -->
 <xsl:for-each select="/doc/speciess/species">
@@ -177,8 +179,141 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:for-each select="/doc/types/type">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Types", "title" : "</xsl:text>
-	<xsl:value-of select="@name" /> <xsl:text>", "url": "DataTypes#</xsl:text>
+	<xsl:value-of select="@name" /> <xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileTypes"/><xsl:text>#</xsl:text>
 	<xsl:value-of select="@name" /><xsl:text>" }, </xsl:text>
+</xsl:for-each>
+
+<!-- Concepts -->
+<xsl:for-each select="/doc/conceptList/concept[not(@id = (preceding-sibling::*/@id))]">
+	<xsl:sort select="@id" />
+	<xsl:variable name="conceptName" select="@id"/>
+<!-- Concepts for operators-->
+	<xsl:for-each select="/doc/operators/operator"> 
+	<!--  [not(@id = (preceding-sibling::*/@id))]  -->
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameOp" select="@name"/>
+		<xsl:variable name="alphabet" select="@alphabetOrder"/>						
+		<xsl:for-each select="concepts/concept">
+			<xsl:variable name="conceptOperator" select="@id"/>
+			<xsl:if test="$conceptOperator = $conceptName "> 
+				<xsl:text>{ "tag": "</xsl:text><xsl:value-of select="$conceptOperator" />
+				<xsl:text>", "title" : "</xsl:text><xsl:value-of select="$nameOp" />
+				<xsl:text>", "url": "</xsl:text>
+				<xsl:choose>
+					<xsl:when test="$alphabet = 'aa'">
+						<xsl:value-of select="$fileOperatorsAA" />
+					</xsl:when>
+					<xsl:when test="$alphabet = 'bc'">
+						<xsl:value-of select="$fileOperatorsBC" />
+					</xsl:when>
+					<xsl:when test="$alphabet = 'dh'">
+						<xsl:value-of select="$fileOperatorsDH" />
+					</xsl:when>
+					<xsl:when test="$alphabet = 'im'">
+						<xsl:value-of select="$fileOperatorsIM" />
+					</xsl:when>
+					<xsl:when test="$alphabet = 'nr'">
+						<xsl:value-of select="$fileOperatorsNR" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$fileOperatorsSZ" />
+					</xsl:otherwise>
+				</xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)"/><xsl:text>}, 
+				</xsl:text> 	
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+<!-- Concepts for statements-->
+	<xsl:for-each select="/doc/statements/statement"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameStatement" select="@name"/>
+		<xsl:for-each select="concepts/concept">
+			<xsl:variable name="conceptStatement" select="@id"/>
+			<xsl:if test="$conceptStatement = $conceptName "> 
+				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameStatement" />
+				<xsl:text>", "url": "</xsl:text> <xsl:value-of select="$fileStatements" /><xsl:text>#</xsl:text><xsl:value-of select="translate($nameStatement, $uppercase, $smallcase)" /><xsl:text>" }, </xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+<!-- Concepts for constants-->
+	<xsl:for-each select="/doc/constants/constant"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameConstant" select="@name"/>
+		<xsl:for-each select="concepts/concept">
+			<xsl:variable name="conceptConstant" select="@id"/>
+			<xsl:if test="$conceptConstant = $conceptName "> 
+				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameConstant" />
+				<xsl:text>", "url": "</xsl:text> <xsl:value-of select="$fileUnitsConstants" /><xsl:text>" }, </xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+<!-- Concepts for skills-->
+	<xsl:for-each select="/doc/skills/skill"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameSkill" select="@name"/>
+		<xsl:for-each select="concepts/concept">
+			<xsl:variable name="conceptSkill" select="@id"/>
+			<xsl:if test="$conceptSkill = $conceptName "> 
+				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameSkill" />
+				<xsl:text>", "url": "</xsl:text> <xsl:value-of select="$fileSkills" /><xsl:text>#</xsl:text><xsl:value-of select="$nameSkill" /><xsl:text>" }, </xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>	
+<!-- Concepts for architectures-->
+	<xsl:for-each select="/doc/architectures/architecture"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameArchi" select="@name"/>
+		<xsl:for-each select="concepts/concept">
+			<xsl:variable name="conceptArchi" select="@id"/>
+			<xsl:if test="$conceptArchi = $conceptName "> 
+				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameArchi" />
+				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileArchi" /><xsl:text>#</xsl:text><xsl:value-of select="$nameArchi" /><xsl:text>" }, </xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>	
+<!-- Concepts for species-->
+	<xsl:for-each select="/doc/speciess/species"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameSpecies" select="@name"/>
+		<xsl:for-each select="concepts/concept">
+			<xsl:variable name="conceptSpecies" select="@id"/>
+			<xsl:if test="$conceptSpecies = $conceptName "> 
+				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameSpecies" />
+				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileSpecies" /><xsl:text>#</xsl:text><xsl:value-of select="$nameSpecies" /><xsl:text>" }, </xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>	
+<!-- Concepts for file-->
+<!-- <xsl:for-each select="/doc/files/file"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameFile" select="@name"/>
+		<xsl:for-each select="concepts/concept">
+			<xsl:variable name="conceptFile" select="@id"/>
+			<xsl:if test="$conceptFile = $conceptName "> 
+				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameFile" />
+				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileFile" /><xsl:text>#</xsl:text><xsl:value-of select="$nameSpecies" /><xsl:text>" }, </xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>		-->
+<!-- Concepts for types-->
+	<xsl:for-each select="/doc/types/type"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameType" select="@name"/>
+		<xsl:for-each select="concepts/concept">
+			<xsl:variable name="conceptTytpe" select="@id"/>
+			<xsl:if test="$conceptTytpe = $conceptName "> 
+				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameType" />
+				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileTypes" /><xsl:text>#</xsl:text><xsl:value-of select="$nameType" /><xsl:text>" }, </xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>		
 </xsl:for-each>
 
 <!-- Global Species -->
