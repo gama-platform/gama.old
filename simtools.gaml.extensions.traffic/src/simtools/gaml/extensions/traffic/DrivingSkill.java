@@ -423,7 +423,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@Deprecated
-	@getter (SECURITY_DISTANCE_COEFF)
+	@setter (SECURITY_DISTANCE_COEFF)
 	public void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
 		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
 	}
