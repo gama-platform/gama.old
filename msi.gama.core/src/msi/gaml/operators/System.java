@@ -313,7 +313,7 @@ public class System {
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM })
 	@doc (
-			examples = @example ("bool copied  <- copy_to_clipboard('text to copy')"),
+			examples = @example ("bool copied  <- copy_to_clipboard('text to copy');"),
 			value = "Tries to copy the text in parameter to the clipboard and returns whether it has been correctly copied or not (for instance it might be impossible in a headless environment)")
 	@no_test ()
 	public static Boolean copyToClipboard(final IScope scope, final String text) {
