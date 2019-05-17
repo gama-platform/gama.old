@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.SetStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.SetStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -26,6 +26,7 @@ import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
@@ -37,9 +38,9 @@ import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 6 févr. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 
 @facets (
@@ -92,7 +93,7 @@ public class SetStatement extends AbstractStatement {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -104,15 +105,25 @@ public class SetStatement extends AbstractStatement {
 				cd.error("The expression " + cd.getLitteral(NAME) + " is not a reference to a variable ", NAME);
 				return;
 			}
+			IVarExpression var = (IVarExpression) expr;
 			final IExpressionDescription assigned = cd.getFacet(VALUE);
 			if (assigned != null) {
 				Assert.typesAreCompatibleForAssignment(cd, Cast.toGaml(expr), expr.getGamlType(), assigned);
 			}
 
 			// AD 19/1/13: test of the constants
-			if (((IVarExpression) expr).getVar().isNotModifiable()) {
+			if (var.getVar().isNotModifiable()) {
 				cd.error("The variable " + expr.serialize(false)
 						+ " is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
+			}
+
+			if (var.getName().equals(IKeyword.SHAPE)) {
+				if (cd.getSpeciesContext() instanceof ModelDescription) {
+					cd.warning(
+							"Dynamically changing the shape of the world can lead to unexpected results. It is advised to redefine the attribute instead (e.g. 'geometry shape <- "
+									+ (assigned == null ? "..." : assigned.serialize(false)) + "')",
+							IKeyword.NAME);
+				}
 			}
 
 		}

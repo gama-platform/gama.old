@@ -14,12 +14,13 @@ global {
 	int numberOfSimulation <- 3;
 	int simulation_id <- 0;
 	string prefixName <- "SIMULATION_";
+	geometry shape <- rectangle(200,100);
 	
 	
 	init
 	{
 		name <- prefixName+simulation_id;
-		shape <- rectangle(200,100);
+		
 		int id <- 0;
 		create Pong number:10{
 			name <- "Pong_"+id;

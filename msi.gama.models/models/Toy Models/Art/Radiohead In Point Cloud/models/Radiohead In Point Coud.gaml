@@ -9,18 +9,18 @@ model hail_to_pablo_the_king_of_the_amnesiac_kid_in_a_computer_shaped_thom
 
 global{
 	
-  matrix<float> idioteque;	
+  matrix<float> idioteque <-  matrix<float>(csv_file("../includes/ok_computer.csv",""));
   float no_surprises <- 1.0;
   bool it_might_be_wrong <- true;
   bool pyramid_song <- false;
   point the_bend <-{1,1,1}; 
   point everything_in_its_right_place <-{0,0,0};
+  geometry shape<- box(max(column_at (idioteque , 0))-min(column_at (idioteque , 0)),max(column_at (idioteque , 1))-min(column_at (idioteque , 1)),max(column_at (idioteque , 2))-(min(column_at (idioteque , 2)))) 
+    at_location {(max(column_at (idioteque , 0))-min(column_at (idioteque , 0)))/2,(max(column_at (idioteque , 1))-min(column_at (idioteque , 1)))/2,min(column_at (idioteque , 2))};
+  
  
   init {
-    idioteque <- matrix<float>(csv_file("../includes/ok_computer.csv",""));
     everything_in_its_right_place<-{min(column_at (idioteque , 0)),min(column_at (idioteque , 1)),min(column_at (idioteque , 2))};
-    shape<- box(max(column_at (idioteque , 0))-min(column_at (idioteque , 0)),max(column_at (idioteque , 1))-min(column_at (idioteque , 1)),max(column_at (idioteque , 2))-(min(column_at (idioteque , 2)))) 
-    at_location {(max(column_at (idioteque , 0))-min(column_at (idioteque , 0)))/2,(max(column_at (idioteque , 1))-min(column_at (idioteque , 1)))/2,min(column_at (idioteque , 2))};
 	loop i from: 1 to: idioteque.rows -1{
 	  create paranoid_android with:[the_numbers::idioteque[3,i]]{		
 	    location<-{-everything_in_its_right_place.x+idioteque[0,i],-everything_in_its_right_place.y+idioteque[1,i],(idioteque[2,i])-everything_in_its_right_place.z};	
