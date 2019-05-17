@@ -10,9 +10,9 @@ function update_tag() {
 	git remote rm origin
 	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama.git
 	git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-	git fetch
-	git checkout master
-	git pull origin master
+	git fetch origin
+	git checkout --track origin/master
+	git pull
 	git status
 	git push origin :refs/tags/$1
 	git tag -d $1
@@ -116,7 +116,7 @@ echo $RESULT1
 	done 
 
 
-	update_tag $RELEASE
+	#update_tag $RELEASE
 
 	echo   "Creating release Continuous...  "
 LK="https://api.github.com/repos/gama-platform/gama/releases"

@@ -30,6 +30,12 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	@Override
 	public int start(final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
+		try {
+			Thread.sleep(50000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		final int[] count = { 0 };
 		final int[] code = { 0 ,0 };
 		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithModels(); 
@@ -53,6 +59,13 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
 		System.out.println("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
 				+ " compilation errors found");
+
+		try {
+			Thread.sleep(50000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		code[1]=code[0];
 		code[0]=0;
 		count[0]=0;
@@ -85,10 +98,11 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	private void validate(final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel) {
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		log("Compiling " + pathToModel.getFile());
+		System.out.println("Compiling " + pathToModel.getFile());
 		try {
 			GamlModelBuilder.compile(pathToModel, errors);
 		} catch (final Exception ex) {
-			log(ex.getMessage());
+			System.out.println(ex.getMessage());
 		}
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {

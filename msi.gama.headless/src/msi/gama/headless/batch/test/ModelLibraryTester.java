@@ -35,11 +35,11 @@ import msi.gaml.statements.test.TestState;
 public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	private static ModelLibraryTester instance;
-	final List<GamlCompilationError> errors = new ArrayList<>();
 	private final static String FAILED_PARAMETER = "-failed";
 //	public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
 
 	private ModelLibraryTester() {
+		SystemLogger.activeDisplay();
 	}
 
 	@Override
@@ -82,29 +82,34 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	}
 
 	public void test(final int[] count, final int[] code, final URL p) { 
-		System.out.println(p);
-		final IModel model = GamlModelBuilder.compile(p, errors);
-		if (model == null || model.getDescription() == null)
-			return;
-		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
-				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
+//		System.out.println(p);
+		final List<GamlCompilationError> errors = new ArrayList<>();
+		try {
+			final IModel model = GamlModelBuilder.compile(p, errors);
+			if (model == null || model.getDescription() == null)
+				return;
+			final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
+					.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
 
-		if (testExpNames.isEmpty())
-			return;
-		for (final String expName : testExpNames) {
-			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
-			if (exp != null) {
-				final TestAgent agent = (TestAgent) exp.getAgent();
-				exp.setHeadless(true);
-				exp.getController().getScheduler().paused = false;
-				exp.getAgent().step(agent.getScope());
-				code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
-				code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
-				count[0] += agent.getSummary().size();
-				if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
-						|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0)
-					System.out.println(agent.getSummary().toString()); 
+			if (testExpNames.isEmpty())
+				return;
+			for (final String expName : testExpNames) {
+				final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
+				if (exp != null) {
+					final TestAgent agent = (TestAgent) exp.getAgent();
+					exp.setHeadless(true);
+					exp.getController().getScheduler().paused = false;
+					exp.getAgent().step(agent.getScope());
+					code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
+					code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
+					count[0] += agent.getSummary().size();
+					if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
+							|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0)
+						System.out.println(agent.getSummary().toString()); 
+				}
 			}
+		} catch (final Exception ex) {
+			System.out.println(ex.getMessage());
 		}
 
 	}

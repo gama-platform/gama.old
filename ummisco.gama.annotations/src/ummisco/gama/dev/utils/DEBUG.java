@@ -17,7 +17,7 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
-	private static final boolean GLOBAL_OFF = true;
+	private static final boolean GLOBAL_OFF = false;
 	private static final boolean GLOBAL_ON = false;
 
 	static {
@@ -75,6 +75,10 @@ public class DEBUG {
 		}
 	}
 
+	public static interface RunnableWithException {
+		public void run() throws Exception;
+	}
+
 	/**
 	 * Simple timing utility to measure and output the number of ms taken by a runnable. If the class is registered,
 	 * outputs the title provided and the time taken once the runnable is finished, otherwise simply runs the runnable
@@ -86,9 +90,21 @@ public class DEBUG {
 	 *            a string that will prefix the number of ms in the output
 	 * @param supplier
 	 *            an object that encapsulates the computation to measure
+	 * @throws Exception
 	 */
 
 	public static void TIMER(final String title, final Runnable runnable) {
+		final String s = findCallingClassName();
+		if (!REGISTERED.containsKey(s)) {
+			runnable.run();
+		}
+		final long start = System.currentTimeMillis();
+		runnable.run();
+		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
+	}
+
+	public static void TIMER_WITH_EXCEPTIONS(final String title, final RunnableWithException runnable)
+			throws Exception {
 		final String s = findCallingClassName();
 		if (!REGISTERED.containsKey(s)) {
 			runnable.run();
