@@ -45,13 +45,6 @@
       </implementation>
    </extension>
    <extension
-         point="gama.create">
-      <implementation
-            class="msi.gaml.statements.CreateFromGenstarDelegate"
-            description="Create agents from CSV Genstar files">
-      </implementation>
-   </extension>
-   <extension
          point="gaml.extension">
    </extension>
    <extension
