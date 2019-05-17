@@ -37,16 +37,6 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		final int[] count = { 0 };
 		final int[] code = { 0, 0 };
 		try {
-			System.out.println("GamaBundleLoader.preBuildContributions in headless.modellibraryvalidator");
-
-			GamaBundleLoader.preBuildContributions();
-			GamaExecutorService.startUp();
-			Dates.initialize();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
 			Thread.sleep(15000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
