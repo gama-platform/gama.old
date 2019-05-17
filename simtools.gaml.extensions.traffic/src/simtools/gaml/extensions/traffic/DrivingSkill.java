@@ -462,19 +462,19 @@ public class DrivingSkill extends MovingSkill {
 	public double getMinSecurityDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
 	}
-
-	public void setMinSecurityDistance(final IAgent agent, final double msd) {
+	
+	@setter (MIN_SECURITY_DISTANCE)
+	public void setMinSecDistance(final IAgent agent, final double msd) {
 		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
+	}
+
+	public void setMinSafetyDistance(final IAgent agent, final double msd) {
+		agent.setAttribute(MIN_SAFETY_DISTANCE, msd);
 	}
 	
 	@getter (MIN_SAFETY_DISTANCE)
 	public double getMinSafetyDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SAFETY_DISTANCE);
-	}
-
-	@setter (MIN_SECURITY_DISTANCE)
-	public void setMinSecDistance(final IAgent agent, final double msd) {
-		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
 	}
 
 	@setter (DISTANCE_TO_GOAL)
