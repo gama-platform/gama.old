@@ -19,7 +19,7 @@ import msi.gama.doc.util.UnifyDoc;
 
 public class MainGenerateWiki {
 
-	public static void main(final String[] args) {
+	public static void main(final String[] args) { 
 		try {
 			// build the file keywords.xml
 			GenerateCategoryXML.GenerateKeywordsXML();
