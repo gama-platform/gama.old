@@ -23,6 +23,7 @@ public class Activator implements BundleActivator {
 	public void start(final BundleContext context) throws Exception {
 		/* Early build of the contributions made by plugins to GAMA */
 //		new Thread(() -> {
+		System.out.println("GamaBundleLoader.preBuildContributions in gama.core.activator");
 			GamaBundleLoader.preBuildContributions();
 			GamaExecutorService.startUp();
 			Dates.initialize();

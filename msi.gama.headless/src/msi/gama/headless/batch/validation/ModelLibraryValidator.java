@@ -18,13 +18,15 @@ import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.runtime.SystemLogger;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
+import msi.gaml.operators.Dates;
 
 public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
-	private static ModelLibraryValidator instance; 
-	
+	private static ModelLibraryValidator instance;
+
 	private ModelLibraryValidator() {
 		SystemLogger.activeDisplay();
 	}
@@ -33,18 +35,34 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	public int start(final List<String> args) throws IOException {
 		HeadlessSimulationLoader.preloadGAMA();
 		final int[] count = { 0 };
-		final int[] code = { 0 ,0 };
-		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithModels(); 
+		final int[] code = { 0, 0 };
+		try {
+			System.out.println("GamaBundleLoader.preBuildContributions in headless.modellibraryvalidator");
+
+			GamaBundleLoader.preBuildContributions();
+			GamaExecutorService.startUp();
+			Dates.initialize();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			Thread.sleep(15000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Files.find(Paths.get("/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/configuration/org.eclipse.osgi"),
-				Integer.MAX_VALUE,
-				(filePath, fileAttr) -> fileAttr.isRegularFile())
-		.forEach(System.out::println);
+		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithModels();
+		try {
+			Thread.sleep(15000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Files.find(Paths.get(
+				"/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/configuration/org.eclipse.osgi"),
+				Integer.MAX_VALUE, (filePath, fileAttr) -> filePath.getFileName().toString().endsWith("gaml"))
+				.forEach(System.out::println);
 		List<URL> allURLs = new ArrayList<>();
 		for (final Bundle bundle : plugins.keySet()) {
 			for (final String entry : plugins.get(bundle)) {
@@ -66,10 +84,10 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		System.out.println("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
 				+ " compilation errors found");
 
-		code[1]=code[0];
-		code[0]=0;
-		count[0]=0;
-		final Multimap<Bundle, String> tests = GamaBundleLoader.getPluginsWithTests(); 
+		code[1] = code[0];
+		code[0] = 0;
+		count[0] = 0;
+		final Multimap<Bundle, String> tests = GamaBundleLoader.getPluginsWithTests();
 		try {
 			Thread.sleep(15000);
 		} catch (InterruptedException e) {
@@ -93,12 +111,11 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		GamlModelBuilder.loadURLs(allURLs);
 
 		allURLs.forEach(u -> validate(count, code, u));
-		
-		
+
 		System.out.println("" + count[0] + " GAMA tests compiled in built-in library and plugins. " + code[0]
 				+ " compilation errors found");
-		System.out.println(code[0]+code[1]);
-		return code[0]+code[1];
+		System.out.println(code[0] + code[1]);
+		return code[0] + code[1];
 	}
 
 	private void validate(final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel) {
@@ -113,7 +130,8 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {
 			log("Error in " + e.getURI().lastSegment() + ": " + e);
-			System.out.println("Error in " + e.getURI() + ":\n " + ((GamlCompilationError) e).toString()+ " \n "+((GamlCompilationError) e).getStatement().toString()+ "\n");
+			System.out.println("Error in " + e.getURI() + ":\n " + ((GamlCompilationError) e).toString() + " \n "
+					+ ((GamlCompilationError) e).getStatement().toString() + "\n");
 			returnCode[0]++;
 		});
 	}
