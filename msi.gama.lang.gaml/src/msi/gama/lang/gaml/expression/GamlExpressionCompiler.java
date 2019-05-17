@@ -56,7 +56,6 @@ import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
-import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.Expression;
@@ -1052,17 +1051,17 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 
 	}
-
-	@Override
-	public IExpression caseColorLiteral(final ColorLiteral object) {
-		try {
-			final Integer val = Integer.parseInt(EGaml.getKeyOf(object).substring(1), 16);
-			return getFactory().createConst(val, Types.INT);
-		} catch (final NumberFormatException e) {
-			getContext().error("Malformed integer: " + EGaml.getKeyOf(object), IGamlIssue.UNKNOWN_NUMBER, object);
-			return null;
-		}
-	}
+	//
+	// @Override
+	// public IExpression caseColorLiteral(final ColorLiteral object) {
+	// try {
+	// final Integer val = Integer.parseInt(EGaml.getKeyOf(object).substring(1), 16);
+	// return getFactory().createConst(val, Types.INT);
+	// } catch (final NumberFormatException e) {
+	// getContext().error("Malformed integer: " + EGaml.getKeyOf(object), IGamlIssue.UNKNOWN_NUMBER, object);
+	// return null;
+	// }
+	// }
 
 	@Override
 	public IExpression caseStringLiteral(final StringLiteral object) {

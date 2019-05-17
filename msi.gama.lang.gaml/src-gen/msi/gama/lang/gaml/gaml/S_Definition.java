@@ -26,10 +26,6 @@ public interface S_Definition extends S_Declaration, ActionDefinition
   /**
    * Returns the value of the '<em><b>Tkey</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Tkey</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Tkey</em>' containment reference.
    * @see #setTkey(Expression)
@@ -52,10 +48,6 @@ public interface S_Definition extends S_Declaration, ActionDefinition
   /**
    * Returns the value of the '<em><b>Args</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Args</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Args</em>' containment reference.
    * @see #setArgs(ActionArguments)

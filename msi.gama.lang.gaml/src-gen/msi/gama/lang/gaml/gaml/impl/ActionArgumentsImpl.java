@@ -72,6 +72,7 @@ public class ActionArgumentsImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<ArgumentDefinition> getArgs()
   {
     if (args == null)

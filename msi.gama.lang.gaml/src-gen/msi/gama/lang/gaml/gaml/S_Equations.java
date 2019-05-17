@@ -27,10 +27,6 @@ public interface S_Equations extends Statement, EquationDefinition
    * Returns the value of the '<em><b>Equations</b></em>' containment reference list.
    * The list contents are of type {@link msi.gama.lang.gaml.gaml.S_Assignment}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Equations</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Equations</em>' containment reference list.
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getS_Equations_Equations()

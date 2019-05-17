@@ -636,15 +636,6 @@ public interface GamlFactory extends EFactory
   DoubleLiteral createDoubleLiteral();
 
   /**
-   * Returns a new object of class '<em>Color Literal</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Color Literal</em>'.
-   * @generated
-   */
-  ColorLiteral createColorLiteral();
-
-  /**
    * Returns a new object of class '<em>Boolean Literal</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

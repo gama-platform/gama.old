@@ -66,6 +66,7 @@ public class S_IfImpl extends StatementImpl implements S_If
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EObject getElse()
   {
     return else_;
@@ -93,6 +94,7 @@ public class S_IfImpl extends StatementImpl implements S_If
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setElse(EObject newElse)
   {
     if (newElse != else_)

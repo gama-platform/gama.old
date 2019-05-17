@@ -238,7 +238,6 @@ public class GamlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getTerminalExpressionAccess().getGroup_2(), "rule__TerminalExpression__Group_2__0");
 			builder.put(grammarAccess.getTerminalExpressionAccess().getGroup_3(), "rule__TerminalExpression__Group_3__0");
 			builder.put(grammarAccess.getTerminalExpressionAccess().getGroup_4(), "rule__TerminalExpression__Group_4__0");
-			builder.put(grammarAccess.getTerminalExpressionAccess().getGroup_5(), "rule__TerminalExpression__Group_5__0");
 			builder.put(grammarAccess.getStandaloneBlockAccess().getBlockAssignment_1(), "rule__StandaloneBlock__BlockAssignment_1");
 			builder.put(grammarAccess.getStringEvaluatorAccess().getTotoAssignment_0(), "rule__StringEvaluator__TotoAssignment_0");
 			builder.put(grammarAccess.getStringEvaluatorAccess().getExprAssignment_2(), "rule__StringEvaluator__ExprAssignment_2");
@@ -441,7 +440,6 @@ public class GamlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getTerminalExpressionAccess().getOpAssignment_2_1(), "rule__TerminalExpression__OpAssignment_2_1");
 			builder.put(grammarAccess.getTerminalExpressionAccess().getOpAssignment_3_1(), "rule__TerminalExpression__OpAssignment_3_1");
 			builder.put(grammarAccess.getTerminalExpressionAccess().getOpAssignment_4_1(), "rule__TerminalExpression__OpAssignment_4_1");
-			builder.put(grammarAccess.getTerminalExpressionAccess().getOpAssignment_5_1(), "rule__TerminalExpression__OpAssignment_5_1");
 			builder.put(grammarAccess.getStringLiteralAccess().getOpAssignment(), "rule__StringLiteral__OpAssignment");
 		}
 	}

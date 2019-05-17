@@ -14,7 +14,6 @@ import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
-import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.Entry;
 import msi.gama.lang.gaml.gaml.EquationDefinition;
@@ -573,13 +572,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass colorLiteralEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass booleanLiteralEClass = null;
 
   /**
@@ -618,7 +610,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
   /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-   * 
+   *
    * <p>This method is used to initialize {@link GamlPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
@@ -633,7 +625,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     if (isInited) return (GamlPackage)EPackage.Registry.INSTANCE.getEPackage(GamlPackage.eNS_URI);
 
     // Obtain or create and register package
-    GamlPackageImpl theGamlPackage = (GamlPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof GamlPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new GamlPackageImpl());
+    Object registeredGamlPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+    GamlPackageImpl theGamlPackage = registeredGamlPackage instanceof GamlPackageImpl ? (GamlPackageImpl)registeredGamlPackage : new GamlPackageImpl();
 
     isInited = true;
 
@@ -646,7 +639,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     // Mark meta-data to indicate it can't be changed
     theGamlPackage.freeze();
 
-  
     // Update the registry and return the package
     EPackage.Registry.INSTANCE.put(GamlPackage.eNS_URI, theGamlPackage);
     return theGamlPackage;
@@ -657,6 +649,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getEntry()
   {
     return entryEClass;
@@ -667,6 +660,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getStandaloneBlock()
   {
     return standaloneBlockEClass;
@@ -677,6 +671,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getStandaloneBlock_Block()
   {
     return (EReference)standaloneBlockEClass.getEStructuralFeatures().get(0);
@@ -687,6 +682,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getStringEvaluator()
   {
     return stringEvaluatorEClass;
@@ -697,6 +693,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getStringEvaluator_Toto()
   {
     return (EAttribute)stringEvaluatorEClass.getEStructuralFeatures().get(0);
@@ -707,6 +704,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getStringEvaluator_Expr()
   {
     return (EReference)stringEvaluatorEClass.getEStructuralFeatures().get(1);
@@ -717,6 +715,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getModel()
   {
     return modelEClass;
@@ -727,6 +726,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getModel_Pragmas()
   {
     return (EReference)modelEClass.getEStructuralFeatures().get(0);
@@ -737,6 +737,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getModel_Imports()
   {
     return (EReference)modelEClass.getEStructuralFeatures().get(1);
@@ -747,6 +748,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getModel_Block()
   {
     return (EReference)modelEClass.getEStructuralFeatures().get(2);
@@ -757,6 +759,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getBlock()
   {
     return blockEClass;
@@ -767,6 +770,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getBlock_Statements()
   {
     return (EReference)blockEClass.getEStructuralFeatures().get(0);
@@ -777,6 +781,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getImport()
   {
     return importEClass;
@@ -787,6 +792,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getImport_ImportURI()
   {
     return (EAttribute)importEClass.getEStructuralFeatures().get(0);
@@ -797,6 +803,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getPragma()
   {
     return pragmaEClass;
@@ -807,6 +814,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getPragma_Name()
   {
     return (EAttribute)pragmaEClass.getEStructuralFeatures().get(0);
@@ -817,6 +825,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getExperimentFileStructure()
   {
     return experimentFileStructureEClass;
@@ -827,6 +836,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getExperimentFileStructure_Exp()
   {
     return (EReference)experimentFileStructureEClass.getEStructuralFeatures().get(0);
@@ -837,6 +847,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getHeadlessExperiment()
   {
     return headlessExperimentEClass;
@@ -847,6 +858,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getHeadlessExperiment_Key()
   {
     return (EAttribute)headlessExperimentEClass.getEStructuralFeatures().get(0);
@@ -857,6 +869,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getHeadlessExperiment_FirstFacet()
   {
     return (EAttribute)headlessExperimentEClass.getEStructuralFeatures().get(1);
@@ -867,6 +880,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getHeadlessExperiment_Name()
   {
     return (EAttribute)headlessExperimentEClass.getEStructuralFeatures().get(2);
@@ -877,6 +891,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getHeadlessExperiment_ImportURI()
   {
     return (EAttribute)headlessExperimentEClass.getEStructuralFeatures().get(3);
@@ -887,6 +902,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getHeadlessExperiment_Facets()
   {
     return (EReference)headlessExperimentEClass.getEStructuralFeatures().get(4);
@@ -897,6 +913,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getHeadlessExperiment_Block()
   {
     return (EReference)headlessExperimentEClass.getEStructuralFeatures().get(5);
@@ -907,6 +924,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getStatement()
   {
     return statementEClass;
@@ -917,6 +935,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getStatement_Key()
   {
     return (EAttribute)statementEClass.getEStructuralFeatures().get(0);
@@ -927,6 +946,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getStatement_FirstFacet()
   {
     return (EAttribute)statementEClass.getEStructuralFeatures().get(1);
@@ -937,6 +957,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getStatement_Expr()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(2);
@@ -947,6 +968,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getStatement_Facets()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(3);
@@ -957,6 +979,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getStatement_Block()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(4);
@@ -967,6 +990,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Global()
   {
     return s_GlobalEClass;
@@ -977,6 +1001,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Species()
   {
     return s_SpeciesEClass;
@@ -987,6 +1012,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Experiment()
   {
     return s_ExperimentEClass;
@@ -997,6 +1023,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Do()
   {
     return s_DoEClass;
@@ -1007,6 +1034,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Loop()
   {
     return s_LoopEClass;
@@ -1017,6 +1045,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_If()
   {
     return s_IfEClass;
@@ -1027,6 +1056,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getS_If_Else()
   {
     return (EReference)s_IfEClass.getEStructuralFeatures().get(0);
@@ -1037,6 +1067,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Try()
   {
     return s_TryEClass;
@@ -1047,6 +1078,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getS_Try_Catch()
   {
     return (EReference)s_TryEClass.getEStructuralFeatures().get(0);
@@ -1057,6 +1089,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Other()
   {
     return s_OtherEClass;
@@ -1067,6 +1100,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Return()
   {
     return s_ReturnEClass;
@@ -1077,6 +1111,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Declaration()
   {
     return s_DeclarationEClass;
@@ -1087,6 +1122,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Reflex()
   {
     return s_ReflexEClass;
@@ -1097,6 +1133,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Definition()
   {
     return s_DefinitionEClass;
@@ -1107,6 +1144,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getS_Definition_Tkey()
   {
     return (EReference)s_DefinitionEClass.getEStructuralFeatures().get(0);
@@ -1117,6 +1155,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getS_Definition_Args()
   {
     return (EReference)s_DefinitionEClass.getEStructuralFeatures().get(1);
@@ -1127,6 +1166,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Assignment()
   {
     return s_AssignmentEClass;
@@ -1137,6 +1177,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getS_Assignment_Value()
   {
     return (EReference)s_AssignmentEClass.getEStructuralFeatures().get(0);
@@ -1147,6 +1188,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_DirectAssignment()
   {
     return s_DirectAssignmentEClass;
@@ -1157,6 +1199,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Set()
   {
     return s_SetEClass;
@@ -1167,6 +1210,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Equations()
   {
     return s_EquationsEClass;
@@ -1177,6 +1221,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getS_Equations_Equations()
   {
     return (EReference)s_EquationsEClass.getEStructuralFeatures().get(0);
@@ -1187,6 +1232,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Solve()
   {
     return s_SolveEClass;
@@ -1197,6 +1243,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Display()
   {
     return s_DisplayEClass;
@@ -1207,6 +1254,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getS_Display_Name()
   {
     return (EAttribute)s_DisplayEClass.getEStructuralFeatures().get(0);
@@ -1217,6 +1265,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getspeciesOrGridDisplayStatement()
   {
     return speciesOrGridDisplayStatementEClass;
@@ -1227,6 +1276,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getActionArguments()
   {
     return actionArgumentsEClass;
@@ -1237,6 +1287,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getActionArguments_Args()
   {
     return (EReference)actionArgumentsEClass.getEStructuralFeatures().get(0);
@@ -1247,6 +1298,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getArgumentDefinition()
   {
     return argumentDefinitionEClass;
@@ -1257,6 +1309,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getArgumentDefinition_Type()
   {
     return (EReference)argumentDefinitionEClass.getEStructuralFeatures().get(0);
@@ -1267,6 +1320,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getArgumentDefinition_Default()
   {
     return (EReference)argumentDefinitionEClass.getEStructuralFeatures().get(1);
@@ -1277,6 +1331,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getFacet()
   {
     return facetEClass;
@@ -1287,6 +1342,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getFacet_Key()
   {
     return (EAttribute)facetEClass.getEStructuralFeatures().get(0);
@@ -1297,6 +1353,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getFacet_Expr()
   {
     return (EReference)facetEClass.getEStructuralFeatures().get(1);
@@ -1307,6 +1364,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getFacet_Block()
   {
     return (EReference)facetEClass.getEStructuralFeatures().get(2);
@@ -1317,6 +1375,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getExpression()
   {
     return expressionEClass;
@@ -1327,6 +1386,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getArgumentPair()
   {
     return argumentPairEClass;
@@ -1337,6 +1397,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getArgumentPair_Op()
   {
     return (EAttribute)argumentPairEClass.getEStructuralFeatures().get(0);
@@ -1347,6 +1408,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getArgumentPair_Right()
   {
     return (EReference)argumentPairEClass.getEStructuralFeatures().get(1);
@@ -1357,6 +1419,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getExpressionList()
   {
     return expressionListEClass;
@@ -1367,6 +1430,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getExpressionList_Exprs()
   {
     return (EReference)expressionListEClass.getEStructuralFeatures().get(0);
@@ -1377,6 +1441,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getVariableRef()
   {
     return variableRefEClass;
@@ -1387,6 +1452,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getVariableRef_Ref()
   {
     return (EReference)variableRefEClass.getEStructuralFeatures().get(0);
@@ -1397,6 +1463,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getTypeInfo()
   {
     return typeInfoEClass;
@@ -1407,6 +1474,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getTypeInfo_First()
   {
     return (EReference)typeInfoEClass.getEStructuralFeatures().get(0);
@@ -1417,6 +1485,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getTypeInfo_Second()
   {
     return (EReference)typeInfoEClass.getEStructuralFeatures().get(1);
@@ -1427,6 +1496,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getGamlDefinition()
   {
     return gamlDefinitionEClass;
@@ -1437,6 +1507,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getGamlDefinition_Name()
   {
     return (EAttribute)gamlDefinitionEClass.getEStructuralFeatures().get(0);
@@ -1447,6 +1518,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getEquationDefinition()
   {
     return equationDefinitionEClass;
@@ -1457,6 +1529,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getTypeDefinition()
   {
     return typeDefinitionEClass;
@@ -1467,6 +1540,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getVarDefinition()
   {
     return varDefinitionEClass;
@@ -1477,6 +1551,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getActionDefinition()
   {
     return actionDefinitionEClass;
@@ -1487,6 +1562,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getUnitFakeDefinition()
   {
     return unitFakeDefinitionEClass;
@@ -1497,6 +1573,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getTypeFakeDefinition()
   {
     return typeFakeDefinitionEClass;
@@ -1507,6 +1584,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getActionFakeDefinition()
   {
     return actionFakeDefinitionEClass;
@@ -1517,6 +1595,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getSkillFakeDefinition()
   {
     return skillFakeDefinitionEClass;
@@ -1527,6 +1606,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getVarFakeDefinition()
   {
     return varFakeDefinitionEClass;
@@ -1537,6 +1617,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getEquationFakeDefinition()
   {
     return equationFakeDefinitionEClass;
@@ -1547,6 +1628,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getTerminalExpression()
   {
     return terminalExpressionEClass;
@@ -1557,6 +1639,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getTerminalExpression_Op()
   {
     return (EAttribute)terminalExpressionEClass.getEStructuralFeatures().get(0);
@@ -1567,6 +1650,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getStringLiteral()
   {
     return stringLiteralEClass;
@@ -1577,6 +1661,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Action()
   {
     return s_ActionEClass;
@@ -1587,6 +1672,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getS_Var()
   {
     return s_VarEClass;
@@ -1597,6 +1683,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getBinaryOperator()
   {
     return binaryOperatorEClass;
@@ -1607,6 +1694,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getBinaryOperator_Left()
   {
     return (EReference)binaryOperatorEClass.getEStructuralFeatures().get(0);
@@ -1617,6 +1705,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getBinaryOperator_Op()
   {
     return (EAttribute)binaryOperatorEClass.getEStructuralFeatures().get(1);
@@ -1627,6 +1716,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getBinaryOperator_Right()
   {
     return (EReference)binaryOperatorEClass.getEStructuralFeatures().get(2);
@@ -1637,6 +1727,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getIf()
   {
     return ifEClass;
@@ -1647,6 +1738,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getIf_Left()
   {
     return (EReference)ifEClass.getEStructuralFeatures().get(0);
@@ -1657,6 +1749,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getIf_Op()
   {
     return (EAttribute)ifEClass.getEStructuralFeatures().get(1);
@@ -1667,6 +1760,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getIf_Right()
   {
     return (EReference)ifEClass.getEStructuralFeatures().get(2);
@@ -1677,6 +1771,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getIf_IfFalse()
   {
     return (EReference)ifEClass.getEStructuralFeatures().get(3);
@@ -1687,6 +1782,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getUnit()
   {
     return unitEClass;
@@ -1697,6 +1793,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getUnit_Left()
   {
     return (EReference)unitEClass.getEStructuralFeatures().get(0);
@@ -1707,6 +1804,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getUnit_Op()
   {
     return (EAttribute)unitEClass.getEStructuralFeatures().get(1);
@@ -1717,6 +1815,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getUnit_Right()
   {
     return (EReference)unitEClass.getEStructuralFeatures().get(2);
@@ -1727,6 +1826,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getUnary()
   {
     return unaryEClass;
@@ -1737,6 +1837,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getUnary_Op()
   {
     return (EAttribute)unaryEClass.getEStructuralFeatures().get(0);
@@ -1747,6 +1848,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getUnary_Right()
   {
     return (EReference)unaryEClass.getEStructuralFeatures().get(1);
@@ -1757,6 +1859,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getAccess()
   {
     return accessEClass;
@@ -1767,6 +1870,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getAccess_Left()
   {
     return (EReference)accessEClass.getEStructuralFeatures().get(0);
@@ -1777,6 +1881,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getAccess_Op()
   {
     return (EAttribute)accessEClass.getEStructuralFeatures().get(1);
@@ -1787,6 +1892,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getAccess_Right()
   {
     return (EReference)accessEClass.getEStructuralFeatures().get(2);
@@ -1797,6 +1903,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getArray()
   {
     return arrayEClass;
@@ -1807,6 +1914,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getArray_Exprs()
   {
     return (EReference)arrayEClass.getEStructuralFeatures().get(0);
@@ -1817,6 +1925,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getPoint()
   {
     return pointEClass;
@@ -1827,6 +1936,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getPoint_Left()
   {
     return (EReference)pointEClass.getEStructuralFeatures().get(0);
@@ -1837,6 +1947,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getPoint_Op()
   {
     return (EAttribute)pointEClass.getEStructuralFeatures().get(1);
@@ -1847,6 +1958,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getPoint_Right()
   {
     return (EReference)pointEClass.getEStructuralFeatures().get(2);
@@ -1857,6 +1969,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getPoint_Z()
   {
     return (EReference)pointEClass.getEStructuralFeatures().get(3);
@@ -1867,6 +1980,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getFunction()
   {
     return functionEClass;
@@ -1877,6 +1991,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getFunction_Left()
   {
     return (EReference)functionEClass.getEStructuralFeatures().get(0);
@@ -1887,6 +2002,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getFunction_Type()
   {
     return (EReference)functionEClass.getEStructuralFeatures().get(1);
@@ -1897,6 +2013,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getFunction_Right()
   {
     return (EReference)functionEClass.getEStructuralFeatures().get(2);
@@ -1907,6 +2024,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getParameter()
   {
     return parameterEClass;
@@ -1917,6 +2035,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getParameter_BuiltInFacetKey()
   {
     return (EAttribute)parameterEClass.getEStructuralFeatures().get(0);
@@ -1927,6 +2046,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getParameter_Left()
   {
     return (EReference)parameterEClass.getEStructuralFeatures().get(1);
@@ -1937,6 +2057,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getParameter_Right()
   {
     return (EReference)parameterEClass.getEStructuralFeatures().get(2);
@@ -1947,6 +2068,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getUnitName()
   {
     return unitNameEClass;
@@ -1957,6 +2079,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getUnitName_Ref()
   {
     return (EReference)unitNameEClass.getEStructuralFeatures().get(0);
@@ -1967,6 +2090,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getTypeRef()
   {
     return typeRefEClass;
@@ -1977,6 +2101,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getTypeRef_Ref()
   {
     return (EReference)typeRefEClass.getEStructuralFeatures().get(0);
@@ -1987,6 +2112,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getTypeRef_Parameter()
   {
     return (EReference)typeRefEClass.getEStructuralFeatures().get(1);
@@ -1997,6 +2123,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getSkillRef()
   {
     return skillRefEClass;
@@ -2007,6 +2134,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getSkillRef_Ref()
   {
     return (EReference)skillRefEClass.getEStructuralFeatures().get(0);
@@ -2017,6 +2145,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getActionRef()
   {
     return actionRefEClass;
@@ -2027,6 +2156,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getActionRef_Ref()
   {
     return (EReference)actionRefEClass.getEStructuralFeatures().get(0);
@@ -2037,6 +2167,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getEquationRef()
   {
     return equationRefEClass;
@@ -2047,6 +2178,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getEquationRef_Ref()
   {
     return (EReference)equationRefEClass.getEStructuralFeatures().get(0);
@@ -2057,6 +2189,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getIntLiteral()
   {
     return intLiteralEClass;
@@ -2067,6 +2200,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getDoubleLiteral()
   {
     return doubleLiteralEClass;
@@ -2077,16 +2211,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getColorLiteral()
-  {
-    return colorLiteralEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
+  @Override
   public EClass getBooleanLiteral()
   {
     return booleanLiteralEClass;
@@ -2097,6 +2222,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getReservedLiteral()
   {
     return reservedLiteralEClass;
@@ -2107,6 +2233,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public GamlFactory getGamlFactory()
   {
     return (GamlFactory)getEFactoryInstance();
@@ -2342,8 +2469,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     doubleLiteralEClass = createEClass(DOUBLE_LITERAL);
 
-    colorLiteralEClass = createEClass(COLOR_LITERAL);
-
     booleanLiteralEClass = createEClass(BOOLEAN_LITERAL);
 
     reservedLiteralEClass = createEClass(RESERVED_LITERAL);
@@ -2445,7 +2570,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     equationRefEClass.getESuperTypes().add(this.getExpression());
     intLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
     doubleLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
-    colorLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
     booleanLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
     reservedLiteralEClass.getESuperTypes().add(this.getTerminalExpression());
 
@@ -2659,8 +2783,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEClass(intLiteralEClass, IntLiteral.class, "IntLiteral", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(doubleLiteralEClass, DoubleLiteral.class, "DoubleLiteral", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(colorLiteralEClass, ColorLiteral.class, "ColorLiteral", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(booleanLiteralEClass, BooleanLiteral.class, "BooleanLiteral", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

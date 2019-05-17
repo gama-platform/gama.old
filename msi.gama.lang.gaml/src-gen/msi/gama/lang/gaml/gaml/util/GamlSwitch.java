@@ -655,15 +655,6 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.COLOR_LITERAL:
-      {
-        ColorLiteral colorLiteral = (ColorLiteral)theEObject;
-        T result = caseColorLiteral(colorLiteral);
-        if (result == null) result = caseTerminalExpression(colorLiteral);
-        if (result == null) result = caseExpression(colorLiteral);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case GamlPackage.BOOLEAN_LITERAL:
       {
         BooleanLiteral booleanLiteral = (BooleanLiteral)theEObject;
@@ -1770,22 +1761,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseDoubleLiteral(DoubleLiteral object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Color Literal</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Color Literal</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseColorLiteral(ColorLiteral object)
   {
     return null;
   }

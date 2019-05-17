@@ -26,10 +26,6 @@ public interface TypeRef extends Expression
   /**
    * Returns the value of the '<em><b>Ref</b></em>' reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Ref</em>' reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Ref</em>' reference.
    * @see #setRef(TypeDefinition)
@@ -52,10 +48,6 @@ public interface TypeRef extends Expression
   /**
    * Returns the value of the '<em><b>Parameter</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Parameter</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Parameter</em>' containment reference.
    * @see #setParameter(TypeInfo)

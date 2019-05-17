@@ -183,7 +183,7 @@ global{
 					}
 				}
 				match "euler" {solve SIR method: "Euler" ;}
-				match "dp" {solve SIR method: DormandPrince54  min_step: 7.105427e-16 max_step: 0.03 scalAbsoluteTolerance:10^-7 scalRelativeTolerance: 0.000001;}
+				match "dp" {solve SIR method: #DormandPrince54  min_step: 7.105427e-16 max_step: 0.03 scalAbsoluteTolerance:10^-7 scalRelativeTolerance: 0.000001;}
 			}
 			
 		}

@@ -4528,27 +4528,23 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cOpAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
 		private final RuleCall cOpDOUBLETerminalRuleCall_2_1_0 = (RuleCall)cOpAssignment_2_1.eContents().get(0);
 		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Action cColorLiteralAction_3_0 = (Action)cGroup_3.eContents().get(0);
+		private final Action cBooleanLiteralAction_3_0 = (Action)cGroup_3.eContents().get(0);
 		private final Assignment cOpAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cOpCOLORTerminalRuleCall_3_1_0 = (RuleCall)cOpAssignment_3_1.eContents().get(0);
+		private final RuleCall cOpBOOLEANTerminalRuleCall_3_1_0 = (RuleCall)cOpAssignment_3_1.eContents().get(0);
 		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
-		private final Action cBooleanLiteralAction_4_0 = (Action)cGroup_4.eContents().get(0);
+		private final Action cReservedLiteralAction_4_0 = (Action)cGroup_4.eContents().get(0);
 		private final Assignment cOpAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cOpBOOLEANTerminalRuleCall_4_1_0 = (RuleCall)cOpAssignment_4_1.eContents().get(0);
-		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
-		private final Action cReservedLiteralAction_5_0 = (Action)cGroup_5.eContents().get(0);
-		private final Assignment cOpAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
-		private final RuleCall cOpKEYWORDTerminalRuleCall_5_1_0 = (RuleCall)cOpAssignment_5_1.eContents().get(0);
+		private final RuleCall cOpKEYWORDTerminalRuleCall_4_1_0 = (RuleCall)cOpAssignment_4_1.eContents().get(0);
 		
 		///**
 		// * Terminals
 		// */ TerminalExpression:
-		//	StringLiteral | {IntLiteral} op=INTEGER | {DoubleLiteral} op=DOUBLE | {ColorLiteral} op=COLOR | {BooleanLiteral}
-		//	op=BOOLEAN | {ReservedLiteral} op=KEYWORD;
+		//	StringLiteral | {IntLiteral} op=INTEGER | {DoubleLiteral} op=DOUBLE | {BooleanLiteral} op=BOOLEAN | {ReservedLiteral}
+		//	op=KEYWORD;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//StringLiteral | {IntLiteral} op=INTEGER | {DoubleLiteral} op=DOUBLE | {ColorLiteral} op=COLOR | {BooleanLiteral}
-		//op=BOOLEAN | {ReservedLiteral} op=KEYWORD
+		//StringLiteral | {IntLiteral} op=INTEGER | {DoubleLiteral} op=DOUBLE | {BooleanLiteral} op=BOOLEAN | {ReservedLiteral}
+		//op=KEYWORD
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//StringLiteral
@@ -4578,41 +4574,29 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//DOUBLE
 		public RuleCall getOpDOUBLETerminalRuleCall_2_1_0() { return cOpDOUBLETerminalRuleCall_2_1_0; }
 		
-		//{ColorLiteral} op=COLOR
+		//{BooleanLiteral} op=BOOLEAN
 		public Group getGroup_3() { return cGroup_3; }
 		
-		//{ColorLiteral}
-		public Action getColorLiteralAction_3_0() { return cColorLiteralAction_3_0; }
-		
-		//op=COLOR
-		public Assignment getOpAssignment_3_1() { return cOpAssignment_3_1; }
-		
-		//COLOR
-		public RuleCall getOpCOLORTerminalRuleCall_3_1_0() { return cOpCOLORTerminalRuleCall_3_1_0; }
-		
-		//{BooleanLiteral} op=BOOLEAN
-		public Group getGroup_4() { return cGroup_4; }
-		
 		//{BooleanLiteral}
-		public Action getBooleanLiteralAction_4_0() { return cBooleanLiteralAction_4_0; }
+		public Action getBooleanLiteralAction_3_0() { return cBooleanLiteralAction_3_0; }
 		
 		//op=BOOLEAN
-		public Assignment getOpAssignment_4_1() { return cOpAssignment_4_1; }
+		public Assignment getOpAssignment_3_1() { return cOpAssignment_3_1; }
 		
 		//BOOLEAN
-		public RuleCall getOpBOOLEANTerminalRuleCall_4_1_0() { return cOpBOOLEANTerminalRuleCall_4_1_0; }
+		public RuleCall getOpBOOLEANTerminalRuleCall_3_1_0() { return cOpBOOLEANTerminalRuleCall_3_1_0; }
 		
 		//{ReservedLiteral} op=KEYWORD
-		public Group getGroup_5() { return cGroup_5; }
+		public Group getGroup_4() { return cGroup_4; }
 		
 		//{ReservedLiteral}
-		public Action getReservedLiteralAction_5_0() { return cReservedLiteralAction_5_0; }
+		public Action getReservedLiteralAction_4_0() { return cReservedLiteralAction_4_0; }
 		
 		//op=KEYWORD
-		public Assignment getOpAssignment_5_1() { return cOpAssignment_5_1; }
+		public Assignment getOpAssignment_4_1() { return cOpAssignment_4_1; }
 		
 		//KEYWORD
-		public RuleCall getOpKEYWORDTerminalRuleCall_5_1_0() { return cOpKEYWORDTerminalRuleCall_5_1_0; }
+		public RuleCall getOpKEYWORDTerminalRuleCall_4_1_0() { return cOpKEYWORDTerminalRuleCall_4_1_0; }
 	}
 	public class StringLiteralElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.StringLiteral");
@@ -4740,7 +4724,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private final TerminalRule tINTEGER;
 	private final TerminalRule tBOOLEAN;
 	private final TerminalRule tID;
-	private final TerminalRule tCOLOR;
 	private final TerminalRule tDOUBLE;
 	private final TerminalRule tSTRING;
 	private final TerminalRule tML_COMMENT;
@@ -4862,7 +4845,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		this.tINTEGER = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.INTEGER");
 		this.tBOOLEAN = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.BOOLEAN");
 		this.tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.ID");
-		this.tCOLOR = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.COLOR");
 		this.tDOUBLE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.DOUBLE");
 		this.tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.STRING");
 		this.tML_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.ML_COMMENT");
@@ -5973,8 +5955,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	///**
 	// * Terminals
 	// */ TerminalExpression:
-	//	StringLiteral | {IntLiteral} op=INTEGER | {DoubleLiteral} op=DOUBLE | {ColorLiteral} op=COLOR | {BooleanLiteral}
-	//	op=BOOLEAN | {ReservedLiteral} op=KEYWORD;
+	//	StringLiteral | {IntLiteral} op=INTEGER | {DoubleLiteral} op=DOUBLE | {BooleanLiteral} op=BOOLEAN | {ReservedLiteral}
+	//	op=KEYWORD;
 	public TerminalExpressionElements getTerminalExpressionAccess() {
 		return pTerminalExpression;
 	}
@@ -6015,12 +5997,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	//	('a'..'z' | 'A'..'Z' | '_' | '$') ('a'..'z' | 'A'..'Z' | '_' | '$' | '0'..'9')*;
 	public TerminalRule getIDRule() {
 		return tID;
-	}
-	
-	//terminal COLOR:
-	//	'#' ('0'..'9' | 'A'..'F')+;
-	public TerminalRule getCOLORRule() {
-		return tCOLOR;
 	}
 	
 	//terminal DOUBLE:

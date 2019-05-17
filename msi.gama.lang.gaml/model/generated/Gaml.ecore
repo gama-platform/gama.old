@@ -228,7 +228,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IntLiteral" eSuperTypes="#//TerminalExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="DoubleLiteral" eSuperTypes="#//TerminalExpression"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ColorLiteral" eSuperTypes="#//TerminalExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="BooleanLiteral" eSuperTypes="#//TerminalExpression"/>
   <eClassifiers xsi:type="ecore:EClass" name="ReservedLiteral" eSuperTypes="#//TerminalExpression"/>
 </ecore:EPackage>

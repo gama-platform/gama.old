@@ -14,7 +14,6 @@ import msi.gama.lang.gaml.ui.labeling.GamlDescriptionLabelProvider;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
 import msi.gama.lang.gaml.ui.quickfix.GamlQuickfixProvider;
-import msi.gama.lang.gaml.validation.GamlValidatorConfigurationBlock;
 import org.eclipse.compare.IViewerCreator;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -77,7 +76,6 @@ import org.eclipse.xtext.ui.refactoring.ui.IRenameSupport;
 import org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferences;
 import org.eclipse.xtext.ui.resource.ResourceServiceDescriptionLabelProvider;
 import org.eclipse.xtext.ui.shared.Access;
-import org.eclipse.xtext.ui.validation.AbstractValidatorConfigurationBlock;
 
 /**
  * Manual modifications go to {@link GamlUiModule}.
@@ -133,11 +131,6 @@ public abstract class AbstractGamlUiModule extends DefaultUiModule {
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
 	public void configureContentAssistLexerProvider(Binder binder) {
 		binder.bind(InternalGamlLexer.class).toProvider(LexerProvider.create(InternalGamlLexer.class));
-	}
-	
-	// contributed by org.eclipse.xtext.xtext.generator.validation.ValidatorFragment2
-	public Class<? extends AbstractValidatorConfigurationBlock> bindAbstractValidatorConfigurationBlock() {
-		return GamlValidatorConfigurationBlock.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.exporting.QualifiedNamesFragment2

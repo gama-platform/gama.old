@@ -65,6 +65,7 @@ public class VariableRefImpl extends ExpressionImpl implements VariableRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public VarDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
@@ -95,6 +96,7 @@ public class VariableRefImpl extends ExpressionImpl implements VariableRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRef(VarDefinition newRef)
   {
     VarDefinition oldRef = ref;

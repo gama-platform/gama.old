@@ -35,7 +35,7 @@ species agent_with_SIR_dynamic {
 	}
                 
     reflex solving {
-    	solve SIR method: rk4  ;
+    	solve SIR method: "rk4"  ;
     }    
 }
 

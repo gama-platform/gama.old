@@ -120,6 +120,7 @@ public class ModelImpl extends EntryImpl implements Model
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getName()
   {
     return name;
@@ -130,6 +131,7 @@ public class ModelImpl extends EntryImpl implements Model
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setName(String newName)
   {
     String oldName = name;
@@ -143,6 +145,7 @@ public class ModelImpl extends EntryImpl implements Model
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<Pragma> getPragmas()
   {
     if (pragmas == null)
@@ -157,6 +160,7 @@ public class ModelImpl extends EntryImpl implements Model
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<Import> getImports()
   {
     if (imports == null)
@@ -171,6 +175,7 @@ public class ModelImpl extends EntryImpl implements Model
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Block getBlock()
   {
     return block;
@@ -198,6 +203,7 @@ public class ModelImpl extends EntryImpl implements Model
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setBlock(Block newBlock)
   {
     if (newBlock != block)
@@ -395,7 +401,7 @@ public class ModelImpl extends EntryImpl implements Model
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (name: ");
     result.append(name);
     result.append(')');

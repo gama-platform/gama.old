@@ -78,6 +78,7 @@ public class S_DefinitionImpl extends S_DeclarationImpl implements S_Definition
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getTkey()
   {
     return tkey;
@@ -105,6 +106,7 @@ public class S_DefinitionImpl extends S_DeclarationImpl implements S_Definition
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setTkey(Expression newTkey)
   {
     if (newTkey != tkey)
@@ -126,6 +128,7 @@ public class S_DefinitionImpl extends S_DeclarationImpl implements S_Definition
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ActionArguments getArgs()
   {
     return args;
@@ -153,6 +156,7 @@ public class S_DefinitionImpl extends S_DeclarationImpl implements S_Definition
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setArgs(ActionArguments newArgs)
   {
     if (newArgs != args)

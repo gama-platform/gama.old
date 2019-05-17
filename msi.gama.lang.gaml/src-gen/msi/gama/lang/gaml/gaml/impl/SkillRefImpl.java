@@ -65,6 +65,7 @@ public class SkillRefImpl extends ExpressionImpl implements SkillRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public SkillFakeDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
@@ -95,6 +96,7 @@ public class SkillRefImpl extends ExpressionImpl implements SkillRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRef(SkillFakeDefinition newRef)
   {
     SkillFakeDefinition oldRef = ref;

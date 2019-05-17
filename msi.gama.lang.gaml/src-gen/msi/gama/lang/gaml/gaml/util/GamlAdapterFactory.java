@@ -416,11 +416,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createDoubleLiteralAdapter();
       }
       @Override
-      public Adapter caseColorLiteral(ColorLiteral object)
-      {
-        return createColorLiteralAdapter();
-      }
-      @Override
       public Adapter caseBooleanLiteral(BooleanLiteral object)
       {
         return createBooleanLiteralAdapter();
@@ -1468,21 +1463,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createDoubleLiteralAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ColorLiteral <em>Color Literal</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.ColorLiteral
-   * @generated
-   */
-  public Adapter createColorLiteralAdapter()
   {
     return null;
   }

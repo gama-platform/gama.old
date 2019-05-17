@@ -421,7 +421,7 @@ TerminalExpression:
 	StringLiteral |
 	{IntLiteral} op=INTEGER |
 	{DoubleLiteral} op=DOUBLE |
-	{ColorLiteral} op=COLOR |
+	/*{ColorLiteral} op=COLOR |*/
 	{BooleanLiteral} op=BOOLEAN |
 	{ReservedLiteral} op=KEYWORD;
 	
@@ -441,8 +441,8 @@ terminal BOOLEAN:
 terminal ID:
 	('a'..'z' | 'A'..'Z' | '_' | '$') ('a'..'z' | 'A'..'Z' | '_' | '$' | '0'..'9')*;
 
-terminal COLOR:
-	'#' ('0'..'9' | 'A'..'F')+;
+//terminal COLOR:
+//	'#' ('0'..'9' | 'A'..'F')+;
 
 terminal DOUBLE:
 	'1'..'9' ('0'..'9')* ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? | '0' ('.' '0'..'9'+)? (('E' | 'e') ('+' |

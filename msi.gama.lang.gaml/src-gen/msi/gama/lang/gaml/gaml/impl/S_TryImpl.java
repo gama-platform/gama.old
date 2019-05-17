@@ -66,6 +66,7 @@ public class S_TryImpl extends StatementImpl implements S_Try
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Block getCatch()
   {
     return catch_;
@@ -93,6 +94,7 @@ public class S_TryImpl extends StatementImpl implements S_Try
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setCatch(Block newCatch)
   {
     if (newCatch != catch_)

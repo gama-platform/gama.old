@@ -90,6 +90,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getLeft()
   {
     return left;
@@ -117,6 +118,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setLeft(Expression newLeft)
   {
     if (newLeft != left)
@@ -138,6 +140,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public TypeInfo getType()
   {
     return type;
@@ -165,6 +168,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setType(TypeInfo newType)
   {
     if (newType != type)
@@ -186,6 +190,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ExpressionList getRight()
   {
     return right;
@@ -213,6 +218,7 @@ public class FunctionImpl extends ExpressionImpl implements Function
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRight(ExpressionList newRight)
   {
     if (newRight != right)

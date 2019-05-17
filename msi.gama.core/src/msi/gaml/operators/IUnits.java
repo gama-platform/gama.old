@@ -33,6 +33,78 @@ import msi.gaml.types.Types;
 public interface IUnits {
 
 	/**
+	 * Solver constants (see bug in ISolvers and why they need to be here)
+	 */
+	@constant (
+			value = "rk4",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("rk4 solver")) public final static String rk4 = "rk4";
+
+	@constant (
+			value = "Euler",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("Euler solver")) public final static String Euler = "Euler";
+
+	@constant (
+			value = "ThreeEighthes",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("ThreeEighthes solver")) public final static String ThreeEighthes = "ThreeEighthes";
+
+	@constant (
+			value = "Midpoint",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("Midpoint solver")) public final static String Midpoint = "Midpoint";
+	@constant (
+			value = "Gill",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("Gill solver")) public final static String Gill = "Gill";
+
+	@constant (
+			value = "Luther",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("Luther solver")) public final static String Luther = "Luther";
+
+	@constant (
+			value = "dp853",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("dp853 solver")) public final static String dp853 = "dp853";
+	@constant (
+			value = "AdamsBashforth",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("AdamsBashforth solver")) public final static String AdamsBashforth = "AdamsBashforth";
+
+	@constant (
+			value = "AdamsMoulton",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("AdamsMoulton solver")) public final static String AdamsMoulton = "AdamsMoulton";
+
+	@constant (
+			value = "DormandPrince54",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("DormandPrince54 solver")) public final static String DormandPrince54 = "DormandPrince54";
+	@constant (
+			value = "GraggBulirschStoer",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("GraggBulirschStoer solver")) public final static String GraggBulirschStoer =
+					"GraggBulirschStoer";
+	@constant (
+			value = "HighamHall54",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("HighamHall54 solver")) public final static String HighamHall54 = "HighamHall54";
+
+	/**
 	 * Buffer constants
 	 */
 	@constant (

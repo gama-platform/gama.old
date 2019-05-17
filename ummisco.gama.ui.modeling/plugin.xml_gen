@@ -262,15 +262,6 @@
 		<super type="org.eclipse.xtext.ui.check.expensive"/>
 		<persistent value="true"/>
 	</extension>
-	<extension point="org.eclipse.ui.preferencePages">
-		<page
-			category="msi.gama.lang.gaml.Gaml"
-			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.validation.ValidatorPreferencePage"
-			id="msi.gama.lang.gaml.Gaml.validator.preferencePage"
-			name="Errors/Warnings">
-			<keywordReference id="msi.gama.lang.gaml.ui.keyword_Gaml"/>
-		</page>
-	</extension>
 	<extension point="org.eclipse.xtext.builder.participant">
 		<participant
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"

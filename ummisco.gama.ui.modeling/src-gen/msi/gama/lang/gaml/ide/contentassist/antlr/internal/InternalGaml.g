@@ -4815,12 +4815,6 @@ rule__TerminalExpression__Alternatives
 		(rule__TerminalExpression__Group_4__0)
 		{ after(grammarAccess.getTerminalExpressionAccess().getGroup_4()); }
 	)
-	|
-	(
-		{ before(grammarAccess.getTerminalExpressionAccess().getGroup_5()); }
-		(rule__TerminalExpression__Group_5__0)
-		{ after(grammarAccess.getTerminalExpressionAccess().getGroup_5()); }
-	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -14294,9 +14288,9 @@ rule__TerminalExpression__Group_3__0__Impl
 	}
 :
 (
-	{ before(grammarAccess.getTerminalExpressionAccess().getColorLiteralAction_3_0()); }
+	{ before(grammarAccess.getTerminalExpressionAccess().getBooleanLiteralAction_3_0()); }
 	()
-	{ after(grammarAccess.getTerminalExpressionAccess().getColorLiteralAction_3_0()); }
+	{ after(grammarAccess.getTerminalExpressionAccess().getBooleanLiteralAction_3_0()); }
 )
 ;
 finally {
@@ -14348,9 +14342,9 @@ rule__TerminalExpression__Group_4__0__Impl
 	}
 :
 (
-	{ before(grammarAccess.getTerminalExpressionAccess().getBooleanLiteralAction_4_0()); }
+	{ before(grammarAccess.getTerminalExpressionAccess().getReservedLiteralAction_4_0()); }
 	()
-	{ after(grammarAccess.getTerminalExpressionAccess().getBooleanLiteralAction_4_0()); }
+	{ after(grammarAccess.getTerminalExpressionAccess().getReservedLiteralAction_4_0()); }
 )
 ;
 finally {
@@ -14377,60 +14371,6 @@ rule__TerminalExpression__Group_4__1__Impl
 	{ before(grammarAccess.getTerminalExpressionAccess().getOpAssignment_4_1()); }
 	(rule__TerminalExpression__OpAssignment_4_1)
 	{ after(grammarAccess.getTerminalExpressionAccess().getOpAssignment_4_1()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-
-rule__TerminalExpression__Group_5__0
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__TerminalExpression__Group_5__0__Impl
-	rule__TerminalExpression__Group_5__1
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__TerminalExpression__Group_5__0__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getTerminalExpressionAccess().getReservedLiteralAction_5_0()); }
-	()
-	{ after(grammarAccess.getTerminalExpressionAccess().getReservedLiteralAction_5_0()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__TerminalExpression__Group_5__1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__TerminalExpression__Group_5__1__Impl
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__TerminalExpression__Group_5__1__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getTerminalExpressionAccess().getOpAssignment_5_1()); }
-	(rule__TerminalExpression__OpAssignment_5_1)
-	{ after(grammarAccess.getTerminalExpressionAccess().getOpAssignment_5_1()); }
 )
 ;
 finally {
@@ -17577,9 +17517,9 @@ rule__TerminalExpression__OpAssignment_3_1
 	}
 :
 	(
-		{ before(grammarAccess.getTerminalExpressionAccess().getOpCOLORTerminalRuleCall_3_1_0()); }
-		RULE_COLOR
-		{ after(grammarAccess.getTerminalExpressionAccess().getOpCOLORTerminalRuleCall_3_1_0()); }
+		{ before(grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_3_1_0()); }
+		RULE_BOOLEAN
+		{ after(grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_3_1_0()); }
 	)
 ;
 finally {
@@ -17592,24 +17532,9 @@ rule__TerminalExpression__OpAssignment_4_1
 	}
 :
 	(
-		{ before(grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_4_1_0()); }
-		RULE_BOOLEAN
-		{ after(grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_4_1_0()); }
-	)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__TerminalExpression__OpAssignment_5_1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	(
-		{ before(grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_5_1_0()); }
+		{ before(grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_4_1_0()); }
 		RULE_KEYWORD
-		{ after(grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_5_1_0()); }
+		{ after(grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_4_1_0()); }
 	)
 ;
 finally {
@@ -17638,8 +17563,6 @@ RULE_INTEGER : ('0'|'1'..'9' ('0'..'9')*);
 RULE_BOOLEAN : ('true'|'false');
 
 RULE_ID : ('a'..'z'|'A'..'Z'|'_'|'$') ('a'..'z'|'A'..'Z'|'_'|'$'|'0'..'9')*;
-
-RULE_COLOR : '#' ('0'..'9'|'A'..'F')+;
 
 RULE_DOUBLE : ('1'..'9' ('0'..'9')* ('.' ('0'..'9')+)? (('E'|'e') ('+'|'-')? ('0'..'9')+)?|'0' ('.' ('0'..'9')+)? (('E'|'e') ('+'|'-')? ('0'..'9')+)?);
 

@@ -98,6 +98,7 @@ public class BinaryOperatorImpl extends ExpressionImpl implements BinaryOperator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getLeft()
   {
     return left;
@@ -125,6 +126,7 @@ public class BinaryOperatorImpl extends ExpressionImpl implements BinaryOperator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setLeft(Expression newLeft)
   {
     if (newLeft != left)
@@ -146,6 +148,7 @@ public class BinaryOperatorImpl extends ExpressionImpl implements BinaryOperator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getOp()
   {
     return op;
@@ -156,6 +159,7 @@ public class BinaryOperatorImpl extends ExpressionImpl implements BinaryOperator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setOp(String newOp)
   {
     String oldOp = op;
@@ -169,6 +173,7 @@ public class BinaryOperatorImpl extends ExpressionImpl implements BinaryOperator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getRight()
   {
     return right;
@@ -196,6 +201,7 @@ public class BinaryOperatorImpl extends ExpressionImpl implements BinaryOperator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRight(Expression newRight)
   {
     if (newRight != right)
@@ -326,7 +332,7 @@ public class BinaryOperatorImpl extends ExpressionImpl implements BinaryOperator
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (op: ");
     result.append(op);
     result.append(')');

@@ -31,9 +31,9 @@ global {
 	point center const: true <- {round(gridsize / 2), round(gridsize / 2)};
 	int food_gathered <- 1;
 	int food_placed <- 1;
-	rgb background const: true <- rgb(#99CC66);
-	rgb food_color const: true <- rgb(#312200);
-	rgb nest_color const: true <- rgb(#000000);
+	rgb background const: true <- rgb(99, 200,66);
+	rgb food_color const: true <- rgb(31,22,0);
+	rgb nest_color const: true <- rgb(0,0,0);
 	geometry shape <- square(gridsize);
 	image_file terrain <- image_file("../images/soil.jpg");
 	matrix<float> grid_values <- matrix<float>(as_matrix(terrain, {gridsize, gridsize}));
@@ -76,8 +76,8 @@ global {
 grid ant_grid width: gridsize height: gridsize neighbors: 8 frequency: grid_frequency use_regular_agents: false use_individual_shapes: false {
 	bool is_nest const: true <- (topology(ant_grid) distance_between [self, center]) < 4;
 	float road <- 0.0 max: 240.0 update: (road <= evaporation_per_cycle) ? 0.0 : road - evaporation_per_cycle;
-	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
-	food_color : ((road < 0.001) ? background : rgb(#009900) + int(road * 5)));
+	rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((road < 0.001) ? background : rgb(0,99,0) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
+	food_color : ((road < 0.001) ? background : rgb(0,99,0) + int(road * 5)));
 	int food <- 0;
 }
 //Species ant that will move and follow a final state machine

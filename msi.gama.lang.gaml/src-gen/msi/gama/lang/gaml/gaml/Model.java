@@ -29,10 +29,6 @@ public interface Model extends Entry, VarDefinition
    * Returns the value of the '<em><b>Pragmas</b></em>' containment reference list.
    * The list contents are of type {@link msi.gama.lang.gaml.gaml.Pragma}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Pragmas</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Pragmas</em>' containment reference list.
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel_Pragmas()
@@ -45,10 +41,6 @@ public interface Model extends Entry, VarDefinition
    * Returns the value of the '<em><b>Imports</b></em>' containment reference list.
    * The list contents are of type {@link msi.gama.lang.gaml.gaml.Import}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Imports</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Imports</em>' containment reference list.
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel_Imports()
@@ -60,10 +52,6 @@ public interface Model extends Entry, VarDefinition
   /**
    * Returns the value of the '<em><b>Block</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Block</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Block</em>' containment reference.
    * @see #setBlock(Block)

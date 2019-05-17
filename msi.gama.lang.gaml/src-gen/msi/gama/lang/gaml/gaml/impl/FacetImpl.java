@@ -99,6 +99,7 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getKey()
   {
     return key;
@@ -109,6 +110,7 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setKey(String newKey)
   {
     String oldKey = key;
@@ -122,6 +124,7 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getExpr()
   {
     return expr;
@@ -149,6 +152,7 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setExpr(Expression newExpr)
   {
     if (newExpr != expr)
@@ -170,6 +174,7 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Block getBlock()
   {
     return block;
@@ -197,6 +202,7 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setBlock(Block newBlock)
   {
     if (newBlock != block)
@@ -327,7 +333,7 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (key: ");
     result.append(key);
     result.append(')');

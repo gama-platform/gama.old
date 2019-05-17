@@ -15,7 +15,6 @@ import msi.gama.lang.gaml.scoping.GamlScopeProvider;
 import msi.gama.lang.gaml.serializer.GamlSemanticSequencer;
 import msi.gama.lang.gaml.serializer.GamlSyntacticSequencer;
 import msi.gama.lang.gaml.services.GamlGrammarAccess;
-import msi.gama.lang.gaml.validation.GamlConfigurableIssueCodesProvider;
 import msi.gama.lang.gaml.validation.GamlValidator;
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.IGrammarAccess;
@@ -50,7 +49,6 @@ import org.eclipse.xtext.serializer.sequencer.ISemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.ISyntacticSequencer;
 import org.eclipse.xtext.service.DefaultRuntimeModule;
 import org.eclipse.xtext.service.SingletonBinding;
-import org.eclipse.xtext.validation.ConfigurableIssueCodesProvider;
 
 /**
  * Manual modifications go to {@link GamlRuntimeModule}.
@@ -141,11 +139,6 @@ public abstract class AbstractGamlRuntimeModule extends DefaultRuntimeModule {
 	@SingletonBinding(eager=true)
 	public Class<? extends GamlValidator> bindGamlValidator() {
 		return GamlValidator.class;
-	}
-	
-	// contributed by org.eclipse.xtext.xtext.generator.validation.ValidatorFragment2
-	public Class<? extends ConfigurableIssueCodesProvider> bindConfigurableIssueCodesProvider() {
-		return GamlConfigurableIssueCodesProvider.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.scoping.ImportNamespacesScopingFragment2

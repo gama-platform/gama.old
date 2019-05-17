@@ -8059,15 +8059,15 @@ ruleTerminalExpression returns [EObject current=null]
 			(
 				{
 					$current = forceCreateModelElement(
-						grammarAccess.getTerminalExpressionAccess().getColorLiteralAction_3_0(),
+						grammarAccess.getTerminalExpressionAccess().getBooleanLiteralAction_3_0(),
 						$current);
 				}
 			)
 			(
 				(
-					lv_op_6_0=RULE_COLOR
+					lv_op_6_0=RULE_BOOLEAN
 					{
-						newLeafNode(lv_op_6_0, grammarAccess.getTerminalExpressionAccess().getOpCOLORTerminalRuleCall_3_1_0());
+						newLeafNode(lv_op_6_0, grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_3_1_0());
 					}
 					{
 						if ($current==null) {
@@ -8077,34 +8077,6 @@ ruleTerminalExpression returns [EObject current=null]
 							$current,
 							"op",
 							lv_op_6_0,
-							"msi.gama.lang.gaml.Gaml.COLOR");
-					}
-				)
-			)
-		)
-		    |
-		(
-			(
-				{
-					$current = forceCreateModelElement(
-						grammarAccess.getTerminalExpressionAccess().getBooleanLiteralAction_4_0(),
-						$current);
-				}
-			)
-			(
-				(
-					lv_op_8_0=RULE_BOOLEAN
-					{
-						newLeafNode(lv_op_8_0, grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_4_1_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getTerminalExpressionRule());
-						}
-						setWithLastConsumed(
-							$current,
-							"op",
-							lv_op_8_0,
 							"msi.gama.lang.gaml.Gaml.BOOLEAN");
 					}
 				)
@@ -8115,15 +8087,15 @@ ruleTerminalExpression returns [EObject current=null]
 			(
 				{
 					$current = forceCreateModelElement(
-						grammarAccess.getTerminalExpressionAccess().getReservedLiteralAction_5_0(),
+						grammarAccess.getTerminalExpressionAccess().getReservedLiteralAction_4_0(),
 						$current);
 				}
 			)
 			(
 				(
-					lv_op_10_0=RULE_KEYWORD
+					lv_op_8_0=RULE_KEYWORD
 					{
-						newLeafNode(lv_op_10_0, grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_5_1_0());
+						newLeafNode(lv_op_8_0, grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_4_1_0());
 					}
 					{
 						if ($current==null) {
@@ -8132,7 +8104,7 @@ ruleTerminalExpression returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"op",
-							lv_op_10_0,
+							lv_op_8_0,
 							"msi.gama.lang.gaml.Gaml.KEYWORD");
 					}
 				)
@@ -8183,8 +8155,6 @@ RULE_INTEGER : ('0'|'1'..'9' ('0'..'9')*);
 RULE_BOOLEAN : ('true'|'false');
 
 RULE_ID : ('a'..'z'|'A'..'Z'|'_'|'$') ('a'..'z'|'A'..'Z'|'_'|'$'|'0'..'9')*;
-
-RULE_COLOR : '#' ('0'..'9'|'A'..'F')+;
 
 RULE_DOUBLE : ('1'..'9' ('0'..'9')* ('.' ('0'..'9')+)? (('E'|'e') ('+'|'-')? ('0'..'9')+)?|'0' ('.' ('0'..'9')+)? (('E'|'e') ('+'|'-')? ('0'..'9')+)?);
 

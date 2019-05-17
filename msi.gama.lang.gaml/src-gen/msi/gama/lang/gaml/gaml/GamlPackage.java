@@ -3249,34 +3249,6 @@ public interface GamlPackage extends EPackage
   int DOUBLE_LITERAL_FEATURE_COUNT = TERMINAL_EXPRESSION_FEATURE_COUNT + 0;
 
   /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ColorLiteralImpl <em>Color Literal</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.ColorLiteralImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getColorLiteral()
-   * @generated
-   */
-  int COLOR_LITERAL = 68;
-
-  /**
-   * The feature id for the '<em><b>Op</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COLOR_LITERAL__OP = TERMINAL_EXPRESSION__OP;
-
-  /**
-   * The number of structural features of the '<em>Color Literal</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COLOR_LITERAL_FEATURE_COUNT = TERMINAL_EXPRESSION_FEATURE_COUNT + 0;
-
-  /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.BooleanLiteralImpl <em>Boolean Literal</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3284,7 +3256,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getBooleanLiteral()
    * @generated
    */
-  int BOOLEAN_LITERAL = 69;
+  int BOOLEAN_LITERAL = 68;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute.
@@ -3312,7 +3284,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getReservedLiteral()
    * @generated
    */
-  int RESERVED_LITERAL = 70;
+  int RESERVED_LITERAL = 69;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' attribute.
@@ -4828,16 +4800,6 @@ public interface GamlPackage extends EPackage
   EClass getDoubleLiteral();
 
   /**
-   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.ColorLiteral <em>Color Literal</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Color Literal</em>'.
-   * @see msi.gama.lang.gaml.gaml.ColorLiteral
-   * @generated
-   */
-  EClass getColorLiteral();
-
-  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.BooleanLiteral <em>Boolean Literal</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6151,16 +6113,6 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass DOUBLE_LITERAL = eINSTANCE.getDoubleLiteral();
-
-    /**
-     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ColorLiteralImpl <em>Color Literal</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see msi.gama.lang.gaml.gaml.impl.ColorLiteralImpl
-     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getColorLiteral()
-     * @generated
-     */
-    EClass COLOR_LITERAL = eINSTANCE.getColorLiteral();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.BooleanLiteralImpl <em>Boolean Literal</em>}' class.

@@ -32,11 +32,12 @@ species predefined_ODE_SIR_agent {
    	float gamma <- 0.01; 
    		
    	float h <- 0.1;
+   	string mm <- "Euler";
 
 	// Parameters must follow exact order S, I, R, t  and N,beta,gamma		
 	equation eqSIR type:SIR vars: [S,I,R,t] params: [N,beta,gamma] ;
 
-	reflex solving {solve eqSIR method:rk4 step_size:h ;}//cycle_length:int(1/h);}
+	reflex solving {solve eqSIR method: mm step_size:h ;}//cycle_length:int(1/h);}
 }
 
 

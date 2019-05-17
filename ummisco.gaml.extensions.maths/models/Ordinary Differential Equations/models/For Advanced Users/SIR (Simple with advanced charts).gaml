@@ -9,6 +9,8 @@ model simple_ODE_SIR
 
 global {
 	
+	 	string mm <- "rk4";
+	
 	list S_3d -> aSIR collect each.S;
 	list I_3d -> aSIR collect each.I;
 	list R_3d -> aSIR collect each.R;	
@@ -36,7 +38,7 @@ species aSIR {
 	
 	float alpha <- 0.2 min: 0.0 max: 1.0;
 	float beta <- 0.8  min: 0.0 max: 1.0;
-
+ 
 	float h <- 0.1;
    
 	equation SIR { 
@@ -46,7 +48,7 @@ species aSIR {
 	}
                 
     reflex solving {
-    	solve SIR method: rk4 step_size: h ;
+     	solve SIR method: #rk4 step_size: h ;
     }    
 }
 

@@ -4,7 +4,7 @@
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml;
@@ -100,8 +100,9 @@ public class EGaml {
 	 */
 	public static List<Expression> getExprsOf(final EObject o) {
 		if (o instanceof ExpressionList) {
-			if (((ExpressionListImpl) o)
-					.eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS)) { return ((ExpressionList) o).getExprs(); }
+			if (((ExpressionListImpl) o).eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS)) {
+				return ((ExpressionList) o).getExprs();
+			}
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -222,8 +223,9 @@ public class EGaml {
 	 * @return the statements of
 	 */
 	public static List<? extends Statement> getStatementsOf(final Block block) {
-		if (block != null
-				&& ((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS)) { return block.getStatements(); }
+		if (block != null && ((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS)) {
+			return block.getStatements();
+		}
 		return Collections.EMPTY_LIST;
 	}
 
@@ -326,7 +328,7 @@ public class EGaml {
 			case GamlPackage.INT_LITERAL:
 			case GamlPackage.STRING_LITERAL:
 			case GamlPackage.DOUBLE_LITERAL:
-			case GamlPackage.COLOR_LITERAL:
+				// case GamlPackage.COLOR_LITERAL:
 			case GamlPackage.RESERVED_LITERAL:
 			case GamlPackage.BOOLEAN_LITERAL:
 			case GamlPackage.TERMINAL_EXPRESSION:
@@ -523,7 +525,9 @@ public class EGaml {
 	public static Statement getStatement(final EObject o) {
 		if (o instanceof Statement) { return (Statement) o; }
 		if (o instanceof TypeRef && o.eContainer() instanceof S_Definition
-				&& ((S_Definition) o.eContainer()).getTkey() == o) { return (Statement) o.eContainer(); }
+				&& ((S_Definition) o.eContainer()).getTkey() == o) {
+			return (Statement) o.eContainer();
+		}
 		return null;
 
 	}

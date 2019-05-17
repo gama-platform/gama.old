@@ -32,10 +32,6 @@ public interface Statement extends EObject
   /**
    * Returns the value of the '<em><b>Key</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Key</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Key</em>' attribute.
    * @see #setKey(String)
@@ -58,10 +54,6 @@ public interface Statement extends EObject
   /**
    * Returns the value of the '<em><b>First Facet</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>First Facet</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>First Facet</em>' attribute.
    * @see #setFirstFacet(String)
@@ -84,10 +76,6 @@ public interface Statement extends EObject
   /**
    * Returns the value of the '<em><b>Expr</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Expr</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Expr</em>' containment reference.
    * @see #setExpr(Expression)
@@ -111,10 +99,6 @@ public interface Statement extends EObject
    * Returns the value of the '<em><b>Facets</b></em>' containment reference list.
    * The list contents are of type {@link msi.gama.lang.gaml.gaml.Facet}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Facets</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Facets</em>' containment reference list.
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Facets()
@@ -126,10 +110,6 @@ public interface Statement extends EObject
   /**
    * Returns the value of the '<em><b>Block</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Block</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Block</em>' containment reference.
    * @see #setBlock(Block)

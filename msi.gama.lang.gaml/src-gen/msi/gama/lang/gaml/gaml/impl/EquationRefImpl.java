@@ -65,6 +65,7 @@ public class EquationRefImpl extends ExpressionImpl implements EquationRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EquationDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
@@ -95,6 +96,7 @@ public class EquationRefImpl extends ExpressionImpl implements EquationRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRef(EquationDefinition newRef)
   {
     EquationDefinition oldRef = ref;

@@ -87,6 +87,7 @@ public class StringEvaluatorImpl extends EntryImpl implements StringEvaluator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getToto()
   {
     return toto;
@@ -97,6 +98,7 @@ public class StringEvaluatorImpl extends EntryImpl implements StringEvaluator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setToto(String newToto)
   {
     String oldToto = toto;
@@ -110,6 +112,7 @@ public class StringEvaluatorImpl extends EntryImpl implements StringEvaluator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getExpr()
   {
     return expr;
@@ -137,6 +140,7 @@ public class StringEvaluatorImpl extends EntryImpl implements StringEvaluator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setExpr(Expression newExpr)
   {
     if (newExpr != expr)
@@ -255,7 +259,7 @@ public class StringEvaluatorImpl extends EntryImpl implements StringEvaluator
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (toto: ");
     result.append(toto);
     result.append(')');

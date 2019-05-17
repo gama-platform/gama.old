@@ -77,6 +77,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getType()
   {
     return type;
@@ -104,6 +105,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setType(Expression newType)
   {
     if (newType != type)
@@ -125,6 +127,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getDefault()
   {
     return default_;
@@ -152,6 +155,7 @@ public class ArgumentDefinitionImpl extends VarDefinitionImpl implements Argumen
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDefault(Expression newDefault)
   {
     if (newDefault != default_)

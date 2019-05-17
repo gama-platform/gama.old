@@ -133,7 +133,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.EQUATION_REF: return createEquationRef();
       case GamlPackage.INT_LITERAL: return createIntLiteral();
       case GamlPackage.DOUBLE_LITERAL: return createDoubleLiteral();
-      case GamlPackage.COLOR_LITERAL: return createColorLiteral();
       case GamlPackage.BOOLEAN_LITERAL: return createBooleanLiteral();
       case GamlPackage.RESERVED_LITERAL: return createReservedLiteral();
       default:
@@ -146,6 +145,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Entry createEntry()
   {
     EntryImpl entry = new EntryImpl();
@@ -157,6 +157,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public StandaloneBlock createStandaloneBlock()
   {
     StandaloneBlockImpl standaloneBlock = new StandaloneBlockImpl();
@@ -168,6 +169,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public StringEvaluator createStringEvaluator()
   {
     StringEvaluatorImpl stringEvaluator = new StringEvaluatorImpl();
@@ -179,6 +181,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Model createModel()
   {
     ModelImpl model = new ModelImpl();
@@ -190,6 +193,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Block createBlock()
   {
     BlockImpl block = new BlockImpl();
@@ -201,6 +205,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Import createImport()
   {
     ImportImpl import_ = new ImportImpl();
@@ -212,6 +217,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Pragma createPragma()
   {
     PragmaImpl pragma = new PragmaImpl();
@@ -223,6 +229,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ExperimentFileStructure createExperimentFileStructure()
   {
     ExperimentFileStructureImpl experimentFileStructure = new ExperimentFileStructureImpl();
@@ -234,6 +241,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public HeadlessExperiment createHeadlessExperiment()
   {
     HeadlessExperimentImpl headlessExperiment = new HeadlessExperimentImpl();
@@ -245,6 +253,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Statement createStatement()
   {
     StatementImpl statement = new StatementImpl();
@@ -256,6 +265,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Global createS_Global()
   {
     S_GlobalImpl s_Global = new S_GlobalImpl();
@@ -267,6 +277,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Species createS_Species()
   {
     S_SpeciesImpl s_Species = new S_SpeciesImpl();
@@ -278,6 +289,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Experiment createS_Experiment()
   {
     S_ExperimentImpl s_Experiment = new S_ExperimentImpl();
@@ -289,6 +301,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Do createS_Do()
   {
     S_DoImpl s_Do = new S_DoImpl();
@@ -300,6 +313,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Loop createS_Loop()
   {
     S_LoopImpl s_Loop = new S_LoopImpl();
@@ -311,6 +325,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_If createS_If()
   {
     S_IfImpl s_If = new S_IfImpl();
@@ -322,6 +337,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Try createS_Try()
   {
     S_TryImpl s_Try = new S_TryImpl();
@@ -333,6 +349,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Other createS_Other()
   {
     S_OtherImpl s_Other = new S_OtherImpl();
@@ -344,6 +361,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Return createS_Return()
   {
     S_ReturnImpl s_Return = new S_ReturnImpl();
@@ -355,6 +373,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Declaration createS_Declaration()
   {
     S_DeclarationImpl s_Declaration = new S_DeclarationImpl();
@@ -366,6 +385,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Reflex createS_Reflex()
   {
     S_ReflexImpl s_Reflex = new S_ReflexImpl();
@@ -377,6 +397,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Definition createS_Definition()
   {
     S_DefinitionImpl s_Definition = new S_DefinitionImpl();
@@ -388,6 +409,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Assignment createS_Assignment()
   {
     S_AssignmentImpl s_Assignment = new S_AssignmentImpl();
@@ -399,6 +421,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_DirectAssignment createS_DirectAssignment()
   {
     S_DirectAssignmentImpl s_DirectAssignment = new S_DirectAssignmentImpl();
@@ -410,6 +433,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Set createS_Set()
   {
     S_SetImpl s_Set = new S_SetImpl();
@@ -421,6 +445,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Equations createS_Equations()
   {
     S_EquationsImpl s_Equations = new S_EquationsImpl();
@@ -432,6 +457,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Solve createS_Solve()
   {
     S_SolveImpl s_Solve = new S_SolveImpl();
@@ -443,6 +469,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Display createS_Display()
   {
     S_DisplayImpl s_Display = new S_DisplayImpl();
@@ -454,6 +481,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public speciesOrGridDisplayStatement createspeciesOrGridDisplayStatement()
   {
     speciesOrGridDisplayStatementImpl speciesOrGridDisplayStatement = new speciesOrGridDisplayStatementImpl();
@@ -465,6 +493,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ActionArguments createActionArguments()
   {
     ActionArgumentsImpl actionArguments = new ActionArgumentsImpl();
@@ -476,6 +505,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ArgumentDefinition createArgumentDefinition()
   {
     ArgumentDefinitionImpl argumentDefinition = new ArgumentDefinitionImpl();
@@ -487,6 +517,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Facet createFacet()
   {
     FacetImpl facet = new FacetImpl();
@@ -498,6 +529,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression createExpression()
   {
     ExpressionImpl expression = new ExpressionImpl();
@@ -509,6 +541,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ArgumentPair createArgumentPair()
   {
     ArgumentPairImpl argumentPair = new ArgumentPairImpl();
@@ -520,6 +553,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ExpressionList createExpressionList()
   {
     ExpressionListImpl expressionList = new ExpressionListImpl();
@@ -531,6 +565,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public VariableRef createVariableRef()
   {
     VariableRefImpl variableRef = new VariableRefImpl();
@@ -542,6 +577,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public TypeInfo createTypeInfo()
   {
     TypeInfoImpl typeInfo = new TypeInfoImpl();
@@ -553,6 +589,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public GamlDefinition createGamlDefinition()
   {
     GamlDefinitionImpl gamlDefinition = new GamlDefinitionImpl();
@@ -564,6 +601,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EquationDefinition createEquationDefinition()
   {
     EquationDefinitionImpl equationDefinition = new EquationDefinitionImpl();
@@ -575,6 +613,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public TypeDefinition createTypeDefinition()
   {
     TypeDefinitionImpl typeDefinition = new TypeDefinitionImpl();
@@ -586,6 +625,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public VarDefinition createVarDefinition()
   {
     VarDefinitionImpl varDefinition = new VarDefinitionImpl();
@@ -597,6 +637,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ActionDefinition createActionDefinition()
   {
     ActionDefinitionImpl actionDefinition = new ActionDefinitionImpl();
@@ -608,6 +649,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public UnitFakeDefinition createUnitFakeDefinition()
   {
     UnitFakeDefinitionImpl unitFakeDefinition = new UnitFakeDefinitionImpl();
@@ -619,6 +661,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public TypeFakeDefinition createTypeFakeDefinition()
   {
     TypeFakeDefinitionImpl typeFakeDefinition = new TypeFakeDefinitionImpl();
@@ -630,6 +673,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ActionFakeDefinition createActionFakeDefinition()
   {
     ActionFakeDefinitionImpl actionFakeDefinition = new ActionFakeDefinitionImpl();
@@ -641,6 +685,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public SkillFakeDefinition createSkillFakeDefinition()
   {
     SkillFakeDefinitionImpl skillFakeDefinition = new SkillFakeDefinitionImpl();
@@ -652,6 +697,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public VarFakeDefinition createVarFakeDefinition()
   {
     VarFakeDefinitionImpl varFakeDefinition = new VarFakeDefinitionImpl();
@@ -663,6 +709,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EquationFakeDefinition createEquationFakeDefinition()
   {
     EquationFakeDefinitionImpl equationFakeDefinition = new EquationFakeDefinitionImpl();
@@ -674,6 +721,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public TerminalExpression createTerminalExpression()
   {
     TerminalExpressionImpl terminalExpression = new TerminalExpressionImpl();
@@ -685,6 +733,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public StringLiteral createStringLiteral()
   {
     StringLiteralImpl stringLiteral = new StringLiteralImpl();
@@ -696,6 +745,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Action createS_Action()
   {
     S_ActionImpl s_Action = new S_ActionImpl();
@@ -707,6 +757,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public S_Var createS_Var()
   {
     S_VarImpl s_Var = new S_VarImpl();
@@ -718,6 +769,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public BinaryOperator createBinaryOperator()
   {
     BinaryOperatorImpl binaryOperator = new BinaryOperatorImpl();
@@ -729,6 +781,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public If createIf()
   {
     IfImpl if_ = new IfImpl();
@@ -740,6 +793,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Unit createUnit()
   {
     UnitImpl unit = new UnitImpl();
@@ -751,6 +805,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Unary createUnary()
   {
     UnaryImpl unary = new UnaryImpl();
@@ -762,6 +817,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Access createAccess()
   {
     AccessImpl access = new AccessImpl();
@@ -773,6 +829,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Array createArray()
   {
     ArrayImpl array = new ArrayImpl();
@@ -784,6 +841,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Point createPoint()
   {
     PointImpl point = new PointImpl();
@@ -795,6 +853,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Function createFunction()
   {
     FunctionImpl function = new FunctionImpl();
@@ -806,6 +865,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Parameter createParameter()
   {
     ParameterImpl parameter = new ParameterImpl();
@@ -817,6 +877,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public UnitName createUnitName()
   {
     UnitNameImpl unitName = new UnitNameImpl();
@@ -828,6 +889,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public TypeRef createTypeRef()
   {
     TypeRefImpl typeRef = new TypeRefImpl();
@@ -839,6 +901,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public SkillRef createSkillRef()
   {
     SkillRefImpl skillRef = new SkillRefImpl();
@@ -850,6 +913,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ActionRef createActionRef()
   {
     ActionRefImpl actionRef = new ActionRefImpl();
@@ -861,6 +925,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EquationRef createEquationRef()
   {
     EquationRefImpl equationRef = new EquationRefImpl();
@@ -872,6 +937,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public IntLiteral createIntLiteral()
   {
     IntLiteralImpl intLiteral = new IntLiteralImpl();
@@ -883,6 +949,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public DoubleLiteral createDoubleLiteral()
   {
     DoubleLiteralImpl doubleLiteral = new DoubleLiteralImpl();
@@ -894,17 +961,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ColorLiteral createColorLiteral()
-  {
-    ColorLiteralImpl colorLiteral = new ColorLiteralImpl();
-    return colorLiteral;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
+  @Override
   public BooleanLiteral createBooleanLiteral()
   {
     BooleanLiteralImpl booleanLiteral = new BooleanLiteralImpl();
@@ -916,6 +973,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ReservedLiteral createReservedLiteral()
   {
     ReservedLiteralImpl reservedLiteral = new ReservedLiteralImpl();
@@ -927,6 +985,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public GamlPackage getGamlPackage()
   {
     return (GamlPackage)getEPackage();

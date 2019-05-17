@@ -65,6 +65,7 @@ public class ActionRefImpl extends ExpressionImpl implements ActionRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ActionDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
@@ -95,6 +96,7 @@ public class ActionRefImpl extends ExpressionImpl implements ActionRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRef(ActionDefinition newRef)
   {
     ActionDefinition oldRef = ref;

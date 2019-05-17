@@ -66,6 +66,7 @@ public class StandaloneBlockImpl extends EntryImpl implements StandaloneBlock
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Block getBlock()
   {
     return block;
@@ -93,6 +94,7 @@ public class StandaloneBlockImpl extends EntryImpl implements StandaloneBlock
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setBlock(Block newBlock)
   {
     if (newBlock != block)

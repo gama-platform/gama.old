@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.naming;
@@ -24,7 +24,6 @@ import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
-import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.Entry;
 import msi.gama.lang.gaml.gaml.EquationDefinition;
@@ -86,7 +85,7 @@ import msi.gaml.descriptions.ModelDescription;
 
 /**
  * GAML Qualified Name provider.
- * 
+ *
  */
 public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractImpl {
 
@@ -423,11 +422,11 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 		public String caseDoubleLiteral(final DoubleLiteral object) {
 			return NULL;
 		}
-
-		@Override
-		public String caseColorLiteral(final ColorLiteral object) {
-			return NULL;
-		}
+		//
+		// @Override
+		// public String caseColorLiteral(final ColorLiteral object) {
+		// return NULL;
+		// }
 
 		@Override
 		public String caseStringLiteral(final StringLiteral object) {

@@ -15,7 +15,6 @@ import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
-import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.EquationFakeDefinition;
 import msi.gama.lang.gaml.gaml.EquationRef;
@@ -180,9 +179,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				else break;
 			case GamlPackage.BOOLEAN_LITERAL:
 				sequence_TerminalExpression(context, (BooleanLiteral) semanticObject); 
-				return; 
-			case GamlPackage.COLOR_LITERAL:
-				sequence_TerminalExpression(context, (ColorLiteral) semanticObject); 
 				return; 
 			case GamlPackage.DOUBLE_LITERAL:
 				sequence_TerminalExpression(context, (DoubleLiteral) semanticObject); 
@@ -1642,53 +1638,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_4_1_0(), semanticObject.getOp());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Expression returns ColorLiteral
-	 *     BinaryOperator returns ColorLiteral
-	 *     Pair returns ColorLiteral
-	 *     Pair.BinaryOperator_1_0 returns ColorLiteral
-	 *     If returns ColorLiteral
-	 *     If.If_1_0 returns ColorLiteral
-	 *     Or returns ColorLiteral
-	 *     Or.BinaryOperator_1_0 returns ColorLiteral
-	 *     And returns ColorLiteral
-	 *     And.BinaryOperator_1_0 returns ColorLiteral
-	 *     Cast returns ColorLiteral
-	 *     Cast.BinaryOperator_1_0_0 returns ColorLiteral
-	 *     Comparison returns ColorLiteral
-	 *     Comparison.BinaryOperator_1_0_0 returns ColorLiteral
-	 *     Addition returns ColorLiteral
-	 *     Addition.BinaryOperator_1_0_0 returns ColorLiteral
-	 *     Multiplication returns ColorLiteral
-	 *     Multiplication.BinaryOperator_1_0_0 returns ColorLiteral
-	 *     Exponentiation returns ColorLiteral
-	 *     Exponentiation.BinaryOperator_1_0_0 returns ColorLiteral
-	 *     Binary returns ColorLiteral
-	 *     Binary.BinaryOperator_1_0_0 returns ColorLiteral
-	 *     Unit returns ColorLiteral
-	 *     Unit.Unit_1_0_0 returns ColorLiteral
-	 *     Unary returns ColorLiteral
-	 *     Access returns ColorLiteral
-	 *     Access.Access_1_0 returns ColorLiteral
-	 *     Primary returns ColorLiteral
-	 *     TerminalExpression returns ColorLiteral
-	 *
-	 * Constraint:
-	 *     op=COLOR
-	 */
-	protected void sequence_TerminalExpression(ISerializationContext context, ColorLiteral semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpCOLORTerminalRuleCall_3_1_0(), semanticObject.getOp());
+		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpBOOLEANTerminalRuleCall_3_1_0(), semanticObject.getOp());
 		feeder.finish();
 	}
 	
@@ -1826,7 +1776,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.TERMINAL_EXPRESSION__OP));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_5_1_0(), semanticObject.getOp());
+		feeder.accept(grammarAccess.getTerminalExpressionAccess().getOpKEYWORDTerminalRuleCall_4_1_0(), semanticObject.getOp());
 		feeder.finish();
 	}
 	

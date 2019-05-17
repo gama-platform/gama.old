@@ -170,6 +170,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getKey()
   {
     return key;
@@ -180,6 +181,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setKey(String newKey)
   {
     String oldKey = key;
@@ -193,6 +195,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getFirstFacet()
   {
     return firstFacet;
@@ -203,6 +206,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setFirstFacet(String newFirstFacet)
   {
     String oldFirstFacet = firstFacet;
@@ -216,6 +220,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getName()
   {
     return name;
@@ -226,6 +231,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setName(String newName)
   {
     String oldName = name;
@@ -239,6 +245,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getImportURI()
   {
     return importURI;
@@ -249,6 +256,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setImportURI(String newImportURI)
   {
     String oldImportURI = importURI;
@@ -262,6 +270,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<Facet> getFacets()
   {
     if (facets == null)
@@ -276,6 +285,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Block getBlock()
   {
     return block;
@@ -303,6 +313,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setBlock(Block newBlock)
   {
     if (newBlock != block)
@@ -465,7 +476,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (key: ");
     result.append(key);
     result.append(", firstFacet: ");

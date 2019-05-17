@@ -66,6 +66,7 @@ public class S_AssignmentImpl extends StatementImpl implements S_Assignment
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getValue()
   {
     return value;
@@ -93,6 +94,7 @@ public class S_AssignmentImpl extends StatementImpl implements S_Assignment
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setValue(Expression newValue)
   {
     if (newValue != value)

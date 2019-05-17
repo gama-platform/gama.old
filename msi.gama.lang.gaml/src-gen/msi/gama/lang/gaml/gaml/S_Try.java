@@ -25,10 +25,6 @@ public interface S_Try extends Statement
   /**
    * Returns the value of the '<em><b>Catch</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Catch</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Catch</em>' containment reference.
    * @see #setCatch(Block)

@@ -78,6 +78,7 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getFirst()
   {
     return first;
@@ -105,6 +106,7 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setFirst(Expression newFirst)
   {
     if (newFirst != first)
@@ -126,6 +128,7 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getSecond()
   {
     return second;
@@ -153,6 +156,7 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setSecond(Expression newSecond)
   {
     if (newSecond != second)

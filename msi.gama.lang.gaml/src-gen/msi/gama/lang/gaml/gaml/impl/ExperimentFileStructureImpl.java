@@ -66,6 +66,7 @@ public class ExperimentFileStructureImpl extends EntryImpl implements Experiment
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public HeadlessExperiment getExp()
   {
     return exp;
@@ -93,6 +94,7 @@ public class ExperimentFileStructureImpl extends EntryImpl implements Experiment
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setExp(HeadlessExperiment newExp)
   {
     if (newExp != exp)

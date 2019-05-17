@@ -72,6 +72,7 @@ public class BlockImpl extends MinimalEObjectImpl.Container implements Block
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<Statement> getStatements()
   {
     if (statements == null)

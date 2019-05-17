@@ -65,6 +65,7 @@ public class UnitNameImpl extends ExpressionImpl implements UnitName
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public UnitFakeDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
@@ -95,6 +96,7 @@ public class UnitNameImpl extends ExpressionImpl implements UnitName
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRef(UnitFakeDefinition newRef)
   {
     UnitFakeDefinition oldRef = ref;

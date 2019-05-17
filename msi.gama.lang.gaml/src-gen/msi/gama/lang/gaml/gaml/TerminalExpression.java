@@ -25,10 +25,6 @@ public interface TerminalExpression extends Expression
   /**
    * Returns the value of the '<em><b>Op</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Op</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Op</em>' attribute.
    * @see #setOp(String)

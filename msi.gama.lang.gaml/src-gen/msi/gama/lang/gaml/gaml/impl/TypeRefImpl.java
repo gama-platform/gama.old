@@ -78,6 +78,7 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public TypeDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
@@ -108,6 +109,7 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRef(TypeDefinition newRef)
   {
     TypeDefinition oldRef = ref;
@@ -121,6 +123,7 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public TypeInfo getParameter()
   {
     return parameter;
@@ -148,6 +151,7 @@ public class TypeRefImpl extends ExpressionImpl implements TypeRef
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setParameter(TypeInfo newParameter)
   {
     if (newParameter != parameter)

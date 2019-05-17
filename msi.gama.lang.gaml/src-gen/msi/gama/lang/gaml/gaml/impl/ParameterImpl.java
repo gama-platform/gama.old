@@ -99,6 +99,7 @@ public class ParameterImpl extends ExpressionImpl implements Parameter
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getBuiltInFacetKey()
   {
     return builtInFacetKey;
@@ -109,6 +110,7 @@ public class ParameterImpl extends ExpressionImpl implements Parameter
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setBuiltInFacetKey(String newBuiltInFacetKey)
   {
     String oldBuiltInFacetKey = builtInFacetKey;
@@ -122,6 +124,7 @@ public class ParameterImpl extends ExpressionImpl implements Parameter
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public VariableRef getLeft()
   {
     return left;
@@ -149,6 +152,7 @@ public class ParameterImpl extends ExpressionImpl implements Parameter
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setLeft(VariableRef newLeft)
   {
     if (newLeft != left)
@@ -170,6 +174,7 @@ public class ParameterImpl extends ExpressionImpl implements Parameter
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getRight()
   {
     return right;
@@ -197,6 +202,7 @@ public class ParameterImpl extends ExpressionImpl implements Parameter
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setRight(Expression newRight)
   {
     if (newRight != right)
@@ -327,7 +333,7 @@ public class ParameterImpl extends ExpressionImpl implements Parameter
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (builtInFacetKey: ");
     result.append(builtInFacetKey);
     result.append(')');

@@ -140,6 +140,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getKey()
   {
     return key;
@@ -150,6 +151,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setKey(String newKey)
   {
     String oldKey = key;
@@ -163,6 +165,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getFirstFacet()
   {
     return firstFacet;
@@ -173,6 +176,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setFirstFacet(String newFirstFacet)
   {
     String oldFirstFacet = firstFacet;
@@ -186,6 +190,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Expression getExpr()
   {
     return expr;
@@ -213,6 +218,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setExpr(Expression newExpr)
   {
     if (newExpr != expr)
@@ -234,6 +240,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<Facet> getFacets()
   {
     if (facets == null)
@@ -248,6 +255,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public Block getBlock()
   {
     return block;
@@ -275,6 +283,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setBlock(Block newBlock)
   {
     if (newBlock != block)
@@ -429,7 +438,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (key: ");
     result.append(key);
     result.append(", firstFacet: ");

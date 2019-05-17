@@ -21,7 +21,6 @@ species to_int {
 		write sample(int({0,0,0}));
 		write sample(int(0::0));
 		write sample(int([0::0]));
-		write sample(int(#AABBCC));
 		write sample(int(°meter));				
 	}
 }
@@ -41,7 +40,6 @@ species to_float{
 		write sample(float(0::0));
 		write sample(float([0::0]));
 		write sample(float({0,0,0}));
-		write sample(float(#AABBCC));
 		write sample(float(°meter));				
 	}
 }
@@ -59,7 +57,6 @@ species to_string{
 		write sample(string([]));
 		write sample(string([0]));
 		write sample(string({0,0,0}));
-		write sample(string(#AABBCC));
 		write sample(string(°meter));				
 	}
 }
@@ -78,7 +75,6 @@ species to_point{
 		write sample(point(0::0));
 		write sample(point([0::0]));
 		write sample(point({0,0,0}));
-		write sample(point(#AABBCC));
 		write sample(point(°meter));				
 	}
 }
@@ -96,7 +92,6 @@ species to_list{
 		write sample(list(0::0));
 		write sample(list([0::0]));	
 		write sample(list({0,0,0}));
-		write sample(list(#AABBCC));
 		write sample(list(°meter));				
 	}
 }
@@ -114,7 +109,6 @@ species to_pair{
 		write sample(pair(0::0));
 		write sample(pair([0::0]));
 		write sample(pair({0,0,0}));
-		write sample(pair(#AABBCC));
 		write sample(pair(°meter));				
 	}
 }
@@ -133,7 +127,6 @@ species to_map{
 		write sample(map(0::0));
 		write sample(map([0::0]));
 		write sample(map({0,0,0}));
-		write sample(map(#AABBCC));
 		write sample(map<int,string>(1));				
 	}
 }

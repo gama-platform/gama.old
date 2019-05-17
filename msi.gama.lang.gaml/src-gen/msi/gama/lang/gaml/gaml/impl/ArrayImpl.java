@@ -66,6 +66,7 @@ public class ArrayImpl extends ExpressionImpl implements Array
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public ExpressionList getExprs()
   {
     return exprs;
@@ -93,6 +94,7 @@ public class ArrayImpl extends ExpressionImpl implements Array
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setExprs(ExpressionList newExprs)
   {
     if (newExprs != exprs)
