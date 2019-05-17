@@ -51,7 +51,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		}
 		System.out.println("getPluginsWithModels");
 		Files.find(Paths.get(
-				"/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/configuration/org.eclipse.osgi/15/0/.cp/models/"),
+				"/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/configuration/org.eclipse.osgi"),
 				Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
 				.forEach(System.out::println);
 		List<URL> allURLs = new ArrayList<>();
@@ -68,9 +68,13 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 					}
 			}
 		}
-		System.out.println("loadURLs");
 		GamlModelBuilder.loadURLs(allURLs);
 
+		System.out.println("loadURLs");
+		Files.find(Paths.get(
+				"/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/configuration/org.eclipse.osgi"),
+				Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
+				.forEach(System.out::println);
 		allURLs.forEach(u -> validate(count, code, u));
 
 		System.out.println("" + count[0] + " GAMA models compiled in built-in library and plugins. " + code[0]
