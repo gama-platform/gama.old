@@ -22,12 +22,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public abstract class Solver {
@@ -65,30 +62,27 @@ public abstract class Solver {
 
 		seq.executeInScope(scope, () -> {
 			final Map<Integer, IAgent> equationAgents = seq.getEquationAgents(scope);
-
-			GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = seq.getEquations(scope.getAgent());
-			GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = seq.getVariableDiff(scope.getAgent());
 			/*
 			 * prepare initial value of variables 1. loop through variables expression 2. if
 			 * its equaAgents != null, it mean variable of external equation, set current
 			 * scope to this agent scope 3. get value 4. return to previous scope
 			 */
 
-			final double[] y = new double[myVar.size()];
+			final double[] y = new double[seq.variables_diff.size()];
 			// final ArrayList<IExpression> equationValues = new
 			// ArrayList<IExpression>(eq.variables_diff.values());
 			int i = 0;
-			final int n = myVar.size();
+			final int n = seq.variables_diff.size();
 			for (i = 0; i < n; i++) {
 				final IAgent a = equationAgents.get(i);
-				final String eqkeyname = a + myVar.get(i).getValue().toString();
+				final String eqkeyname = a + seq.variables_diff.get(i).toString();
 				if (integrationValues.get(eqkeyname) == null) {
 					integrationValues.put(eqkeyname, GamaListFactory.create(Double.class));
 				}
 				if (!a.dead()) {
 					final boolean pushed = scope.push(a);
 					try {
-						y[i] = Cast.asFloat(scope, myVar.get(i).getValue().value(scope));
+						y[i] = Cast.asFloat(scope, seq.variables_diff.get(i).value(scope));
 
 						if (Double.isInfinite(y[i])) {
 							GAMA.reportAndThrowIfNeeded(scope,
