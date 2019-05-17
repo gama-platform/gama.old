@@ -40,6 +40,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 //	public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
 
 	private ModelLibraryTester() {
+		SystemLogger.activeDisplay();
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	}
 
 	public void test(final int[] count, final int[] code, final URL p) { 
-		System.out.println(p);
+//		System.out.println(p);
 		final IModel model = GamlModelBuilder.compile(p, errors);
 		if (model == null || model.getDescription() == null)
 			return;
