@@ -81,7 +81,7 @@ import msi.gaml.types.Types;
 				init = "1.0",
 				doc = @doc ("the speed of the agent (in meter/second)")) })
 @skill (
-		name = "old_driving",
+		name = "driving",
 		concept = { IConcept.TRANSPORT, IConcept.SKILL, IConcept.AGENT_MOVEMENT },
 		doc = @doc (value = "A basic skill for providing agents with some 'driving' capabilities",
 				deprecated = "For agents that simply follow a graph network, use the 'moving' skill instead, "
