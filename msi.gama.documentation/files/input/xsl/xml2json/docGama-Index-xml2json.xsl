@@ -122,7 +122,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <!-- Species -->
 <xsl:for-each select="/doc/speciess/species">
 	<xsl:sort select="@name" />
-	<xsl:text>{ "tag": "Species", "title" : "</xsl:text>
+	<xsl:text>{ "tag": "Built-in Species", "title" : "</xsl:text>
 	<xsl:value-of select="@name" />
 	<xsl:text>", "url": "</xsl:text>
 	<xsl:value-of select="$fileSpecies" />
@@ -136,7 +136,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:for-each select="/doc/speciess/species">
 	<xsl:sort select="@name" />
 	<xsl:for-each select="actions/action">
-		<xsl:text>{ "tag": "Actions", "title" : "</xsl:text>
+		<xsl:text>{ "tag": "Actions of species", "title" : "</xsl:text>
 		<xsl:value-of select="@name" />
 		<xsl:text>", "url": "</xsl:text>
 		<xsl:value-of select="$fileSpecies" />
@@ -149,7 +149,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:for-each select="/doc/skills/skill">
 	<xsl:sort select="@name" />
 	<xsl:for-each select="actions/action">
-		<xsl:text>{ "tag": "Actions", "title" : "</xsl:text>
+		<xsl:text>{ "tag": "Actions of skills", "title" : "</xsl:text>
 		<xsl:value-of select="@name" />
 		<xsl:text>", "url": "</xsl:text>
 		<xsl:value-of select="$fileSkills" />
@@ -163,7 +163,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:for-each select="/doc/skills/skill">
 	<xsl:sort select="@name" />
 	<xsl:for-each select="vars/var">
-		<xsl:text>{ "tag": "Variables", "title" : "</xsl:text>
+		<xsl:text>{ "tag": "Variables of skills", "title" : "</xsl:text>
 		<xsl:value-of select="@name" />
 		<xsl:text>", "url": "</xsl:text>
 		<xsl:value-of select="$fileSkills" />
@@ -196,8 +196,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		<xsl:for-each select="concepts/concept">
 			<xsl:variable name="conceptOperator" select="@id"/>
 			<xsl:if test="$conceptOperator = $conceptName "> 
-				<xsl:text>{ "tag": "</xsl:text><xsl:value-of select="$conceptOperator" />
-				<xsl:text>", "title" : "</xsl:text><xsl:value-of select="$nameOp" />
+				<xsl:text>{ "tag": "Concept </xsl:text><xsl:value-of select="$conceptOperator" />
+				<xsl:text>", "subcat": "Operator", "title" : "</xsl:text><xsl:value-of select="$nameOp" />
 				<xsl:text>", "url": "</xsl:text>
 				<xsl:choose>
 					<xsl:when test="$alphabet = 'aa'">
@@ -230,8 +230,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		<xsl:for-each select="concepts/concept">
 			<xsl:variable name="conceptStatement" select="@id"/>
 			<xsl:if test="$conceptStatement = $conceptName "> 
-				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
-				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameStatement" />
+				<xsl:text>{ "tag": "Concept </xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "subcat": "Statement", "title" : "</xsl:text> <xsl:value-of select="$nameStatement" />
 				<xsl:text>", "url": "</xsl:text> <xsl:value-of select="$fileStatements" /><xsl:text>#</xsl:text><xsl:value-of select="translate($nameStatement, $uppercase, $smallcase)" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
@@ -243,8 +243,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		<xsl:for-each select="concepts/concept">
 			<xsl:variable name="conceptConstant" select="@id"/>
 			<xsl:if test="$conceptConstant = $conceptName "> 
-				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
-				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameConstant" />
+				<xsl:text>{ "tag": "Concept </xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "subcat": "Constant", "title": "</xsl:text> <xsl:value-of select="$nameConstant" />
 				<xsl:text>", "url": "</xsl:text> <xsl:value-of select="$fileUnitsConstants" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
@@ -256,8 +256,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		<xsl:for-each select="concepts/concept">
 			<xsl:variable name="conceptSkill" select="@id"/>
 			<xsl:if test="$conceptSkill = $conceptName "> 
-				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
-				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameSkill" />
+				<xsl:text>{ "tag": "Concept </xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "subcat": "Skill", "title": "</xsl:text> <xsl:value-of select="$nameSkill" />
 				<xsl:text>", "url": "</xsl:text> <xsl:value-of select="$fileSkills" /><xsl:text>#</xsl:text><xsl:value-of select="$nameSkill" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
@@ -269,8 +269,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		<xsl:for-each select="concepts/concept">
 			<xsl:variable name="conceptArchi" select="@id"/>
 			<xsl:if test="$conceptArchi = $conceptName "> 
-				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
-				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameArchi" />
+				<xsl:text>{ "tag": "Concept </xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "subcat": "Architecture", "title": "</xsl:text> <xsl:value-of select="$nameArchi" />
 				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileArchi" /><xsl:text>#</xsl:text><xsl:value-of select="$nameArchi" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
@@ -282,8 +282,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		<xsl:for-each select="concepts/concept">
 			<xsl:variable name="conceptSpecies" select="@id"/>
 			<xsl:if test="$conceptSpecies = $conceptName "> 
-				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
-				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameSpecies" />
+				<xsl:text>{ "tag": "Concept </xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "subcat": "Built-In Species", "title": "</xsl:text> <xsl:value-of select="$nameSpecies" />
 				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileSpecies" /><xsl:text>#</xsl:text><xsl:value-of select="$nameSpecies" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
@@ -296,7 +296,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 			<xsl:variable name="conceptFile" select="@id"/>
 			<xsl:if test="$conceptFile = $conceptName "> 
 				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
-				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameFile" />
+				<xsl:text>", "subcat": "Type", "title": "</xsl:text> <xsl:value-of select="$nameFile" />
 				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileFile" /><xsl:text>#</xsl:text><xsl:value-of select="$nameSpecies" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
@@ -308,13 +308,73 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		<xsl:for-each select="concepts/concept">
 			<xsl:variable name="conceptTytpe" select="@id"/>
 			<xsl:if test="$conceptTytpe = $conceptName "> 
-				<xsl:text>{ "tag": "</xsl:text> <xsl:value-of select="$conceptName" />
-				<xsl:text>", "title" : "</xsl:text> <xsl:value-of select="$nameType" />
+				<xsl:text>{ "tag": " Concept </xsl:text> <xsl:value-of select="$conceptName" />
+				<xsl:text>", "subcat": "Type", "title": "</xsl:text> <xsl:value-of select="$nameType" />
 				<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileTypes" /><xsl:text>#</xsl:text><xsl:value-of select="$nameType" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:for-each>		
 </xsl:for-each>
+
+<!-- Categories for operators -->
+<xsl:for-each select="/doc/operatorsCategories/category[not(@id = (preceding-sibling::*/@id))]">
+	<xsl:sort select="@id" />
+	<xsl:variable name="catName" select="@id"/>
+	<xsl:for-each select="/doc/operators/operator"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameOp" select="@name"/>
+		<xsl:variable name="alphabet" select="@alphabetOrder"/>						
+		<xsl:for-each select="operatorCategories/category">
+			<xsl:variable name="catOperator" select="@id"/>
+			<xsl:if test="$catOperator = $catName "> 
+				<xsl:text>{ "tag": "Category </xsl:text><xsl:value-of select="$catOperator" />
+				<xsl:text>", "subcat": "Operator", "title" : "</xsl:text><xsl:value-of select="$nameOp" />
+				<xsl:text>", "url": "</xsl:text>
+				<xsl:choose>
+					<xsl:when test="$alphabet = 'aa'">
+						<xsl:value-of select="$fileOperatorsAA" />
+					</xsl:when>
+					<xsl:when test="$alphabet = 'bc'">
+						<xsl:value-of select="$fileOperatorsBC" />
+					</xsl:when>
+					<xsl:when test="$alphabet = 'dh'">
+						<xsl:value-of select="$fileOperatorsDH" />
+					</xsl:when>
+					<xsl:when test="$alphabet = 'im'">
+						<xsl:value-of select="$fileOperatorsIM" />
+					</xsl:when>
+					<xsl:when test="$alphabet = 'nr'">
+						<xsl:value-of select="$fileOperatorsNR" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$fileOperatorsSZ" />
+					</xsl:otherwise>
+				</xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)"/><xsl:text>" }, 
+				</xsl:text> 	
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+</xsl:for-each>
+
+<!-- Categories for constants -->
+<xsl:for-each select="/doc/constantsCategories/category[not(@id = (preceding-sibling::*/@id))]">
+	<xsl:sort select="@id" />
+	<xsl:variable name="catName" select="@id"/>
+
+	<xsl:for-each select="/doc/constants/constant"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameConstant" select="@name"/>
+		<xsl:for-each select="categories/category">
+			<xsl:variable name="catConstant" select="@id"/>
+			<xsl:if test="$catConstant = $catName "> 
+				<xsl:text>{ "tag": "Category </xsl:text> <xsl:value-of select="$catName" />
+				<xsl:text>", "subcat": "Constant", "title": "</xsl:text> <xsl:value-of select="$nameConstant" />
+				<xsl:text>", "url": "</xsl:text> <xsl:value-of select="$fileUnitsConstants" /><xsl:text>" }, </xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:for-each>
+</xsl:for-each>
+
 
 <!-- Global Species -->
 
