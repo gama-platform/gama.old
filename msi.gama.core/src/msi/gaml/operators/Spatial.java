@@ -434,6 +434,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"square", "triangle" })
+		@no_test // no idea how to test a cone
 		@depends_on (IKeyword.SHAPE)
 		public static IShape cone(final IScope scope, final Integer p1, final Integer p2) {
 			if (p1 == null || p2 == null) { return null; }
@@ -457,9 +458,8 @@ public abstract class Spatial {
 			final ILocation maxPoint = new GamaPoint(max_point_x, max_point_y);
 
 			return polygon(scope, GamaListFactory.createWithoutCasting(Types.POINT, origin, minPoint, maxPoint));
-
 		}
-
+		
 		@operator (
 				value = "cone",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
@@ -474,6 +474,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"square", "triangle" })
+		@no_test // no idea how to test a cone
 		public static IShape cone(final IScope scope, final GamaPoint p) {
 			if (p == null) { return null; }
 			return cone(scope, (int) p.x, (int) p.y);
@@ -493,6 +494,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test
 		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -544,6 +546,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"triangle" })
+		@test ("cube(10).volume = 1000")
 		public static IShape cube(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -676,6 +679,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 						"square", "cube", "triangle" })
+		@test ("box(10,5,5).volume = 250")
 		public static IShape box(final IScope scope, final double x, final double y, final double z) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -697,6 +701,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"square" })
+		@no_test
 		public static IShape triangle(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -719,6 +724,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"square" })
+		@no_test
 		public static IShape triangle(final IScope scope, final Double base, final Double height) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -742,6 +748,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"square" })
+		@no_test
 		public static IShape pyramid(final IScope scope, final Double side_size) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -765,6 +772,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"triangle" })
+		@no_test
 		public static IShape hexagon(final IScope scope, final Double size) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -787,6 +795,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"triangle" })
+		@no_test
 		public static IShape hexagon(final IScope scope, final GamaPoint size) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -811,6 +820,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 						"triangle" })
+		@no_test
 		public static IShape hexagon(final IScope scope, final Double width, final Double height) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -846,6 +856,7 @@ public abstract class Spatial {
 								returnType = "point") },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test
 		public static IShape polygon(final IScope scope, final IContainer<?, ? extends IShape> points) {
 			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now
@@ -880,6 +891,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test
 		public static IShape polyhedron(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
 			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now
@@ -911,6 +923,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final GamaPoint P2) {
 			if (P0 == null || P1 == null || P2 == null) { return null; }
@@ -934,6 +947,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
 				final int nbPoints) {
 			if (P0 == null || P1 == null || P2 == null || nbPoints < 2) { return null; }
@@ -955,6 +969,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
 				final GamaPoint P3) {
 			if (P0 == null || P1 == null || P2 == null || P3 == null) { return null; }
@@ -976,6 +991,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient) {
 			return BezierCurve(scope, P0, P1, coefficient, true, 10, 0.5);
@@ -996,6 +1012,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient, final boolean right) {
 			return BezierCurve(scope, P0, P1, coefficient, right, 10, 0.5);
@@ -1016,6 +1033,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient, final boolean right, final int nbPoints) {
 			return BezierCurve(scope, P0, P1, coefficient, right, nbPoints, 0.5);
@@ -1036,6 +1054,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient, final boolean right, final int nbPoints, final double proportion) {
 			if (P0 == null || P1 == null) { return null; }
@@ -1063,6 +1082,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient, final int nbPoints, final double proportion, final double angle) {
 			IShape shape = BezierCurve(scope, P0, P1, coefficient, false, nbPoints, proportion);
@@ -1089,6 +1109,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient, final int nbPoints, final double angle) {
 			return BezierCurve(scope, P0, P1, coefficient, nbPoints, 0.5, angle);
@@ -1109,6 +1130,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient, final double angle) {
 			return BezierCurve(scope, P0, P1, coefficient, 10, 0.5, angle);
@@ -1131,6 +1153,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
 				final GamaPoint P3, final int nbPoints) {
 			if (P0 == null || P1 == null || P2 == null || P3 == null || nbPoints < 2) { return null; }
@@ -1254,6 +1277,7 @@ public abstract class Spatial {
 										test = false) }) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle" })
+		@no_test
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points, final double radius) {
 			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -1280,6 +1304,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle" })
+		@no_test
 		public static IShape plan(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
 			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -1305,6 +1330,7 @@ public abstract class Spatial {
 						isExecutable = false) },
 				see = { "around", "circle", "cone", "line", "norm", "point", "polygon", "polyline", "rectangle",
 						"square", "triangle" })
+		@no_test
 		public static IShape link(final IScope scope, final IShape source, final IShape target)
 				throws GamaRuntimeException {
 			if (source == null) {
@@ -1332,6 +1358,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
 						"triangle" })
+		@no_test
 		public static IShape around(final IScope scope, final Double width, final Object toBeCastedIntoGeometry)
 				throws GamaRuntimeException {
 			final IShape g = Cast.asGeometry(scope, toBeCastedIntoGeometry, false);
@@ -2005,6 +2032,7 @@ public abstract class Spatial {
 						value = "convex_hull(self)",
 						equals = "the convex hull of the geometry of the agent applying the operator",
 						test = false) })
+		@no_test
 		public static IShape convex_hull(final IScope scope, final IShape g) {
 			return new GamaShape(g, g.getInnerGeometry().convexHull());
 		}
@@ -2201,16 +2229,41 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "The inverse rotation. It is a rotation around the same axes with the opposite angle.",
+				value = "The inverse rotation. It is a rotation around the same axis with the opposite angle.",
 				masterDoc = true,
 				examples = { @example (
-						value = "inverse_rotation(38::{1,1,1})",
-						equals = "the inverse rotation  -38::{1,1,1}",
-						test = false) },
-				see = { "rotation_composition" })
+						value = "inverse_rotation(38.0::{1,1,1})",
+						equals = "-38.0::{1,1,1}"
+						) },
+				see = { "rotation_composition, normalized_rotation" })
 		public static GamaPair<Double, GamaPoint> inverse_rotation(final IScope scope,
 				final GamaPair<Double, GamaPoint> rotation) {
 			return new GamaPair(-rotation.key, rotation.value, Types.FLOAT, Types.POINT);
+		}
+		
+		@operator (
+				value = "normalized_rotation",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
+		@doc (
+				value = "The rotation normalized according to Euler formalism with a positive angle, such that each rotation has a unique set of parameters (positive angle, normalize axis rotation).",
+				masterDoc = true,
+				examples = { @example (
+						value = "normalized_rotation(-38.0::{1,1,1})",
+						equals = "38.0::{-0.5773502691896258,-0.5773502691896258,-0.5773502691896258}"
+						) },
+				see = { "rotation_composition, inverse_rotation" })
+//		@test ("normalized_rotation(-38::{1,1,1})=(38.0::{-0.5773502691896258,-0.5773502691896258,-0.5773502691896258})")
+		public static GamaPair<Double, GamaPoint> normalized_rotation(final IScope scope,
+				final GamaPair rotation) {
+			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
+			GamaPoint axis = rot.getValue();
+			double norm = Math.sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+			axis.x = Math.signum(rot.getKey()) * axis.x / norm;
+			axis.y = Math.signum(rot.getKey()) * axis.y / norm;
+			axis.z = Math.signum(rot.getKey()) * axis.z / norm;
+			return new GamaPair(Math.signum(rot.getKey())*rot.getKey(), axis, Types.FLOAT, Types.POINT);
 		}
 
 		@operator (
@@ -2218,18 +2271,28 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "The rotation given by the composition of the rotations in the list, from left to right. Angles are in degrees.",
+				value = "The rotation resulting from the composition of the rotations in the list, from left to right. Angles are in degrees.",
 				masterDoc = true,
 				examples = { @example (
 						value = "rotation_composition([38.0::{1,1,1},90.0::{1,0,0}])",
-						equals = "the result",
+						equals = "115.22128507898108::{0.9491582126366207,0.31479943993669307,-0.0}",
 						test = false) },
 				see = { "inverse_rotation" })
+//		public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope,
+//				final GamaList<GamaPair<Double, GamaPoint>> rotation_list) {
+//			Rotation3D rotation = new Rotation3D(new GamaPoint(1, 0, 0), 0.0);
+//			for (GamaPair<Double, GamaPoint> rot : rotation_list) {
+//				rotation = rotation.applyTo(new Rotation3D(rot.value, 2 * Math.PI / 360 * rot.key));
+//			}
+//			return new GamaPair(180 / Math.PI * rotation.getAngle(), rotation.getAxis(), Types.FLOAT, Types.POINT);
+//		}
+		@test ("normalized_rotation(rotation_composition(38.0::{1,1,1},90.0::{1,0,0}))=normalized_rotation(115.22128507898108::{0.9491582126366207,0.31479943993669307,-0.0})")
 		public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope,
-				final GamaList<GamaPair<Double, GamaPoint>> rotation_list) {
-			// Rotation3D rotation = new Rotation3D(new GamaPoint(1,0,0), 0.0);
+				final GamaList<GamaPair> rotation_list) {
 			Rotation3D rotation = new Rotation3D(new GamaPoint(1, 0, 0), 0.0);
-			for (GamaPair<Double, GamaPoint> rot : rotation_list) {
+			for (GamaPair element : rotation_list) {
+				GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, element, null, false);
 				rotation = rotation.applyTo(new Rotation3D(rot.value, 2 * Math.PI / 360 * rot.key));
 			}
 			return new GamaPair(180 / Math.PI * rotation.getAngle(), rotation.getAxis(), Types.FLOAT, Types.POINT);
@@ -3922,6 +3985,7 @@ public abstract class Spatial {
 						equals = "a point in the square, for example : {3,4.6}.",
 						test = false) },
 				see = { "closest_points_with", "farthest_point_to", "points_at" })
+		@no_test
 		public static ILocation any_location_in(final IScope scope, final IShape g) {
 			final ILocation p = GeometryUtils.pointInGeom(g, scope.getRandom());
 			return p;
@@ -5164,6 +5228,7 @@ public abstract class Spatial {
 								value = "to_GAMA_CRS({121,14}, \"EPSG:4326\")",
 								equals = "a geometry corresponding to the agent geometry transformed into the GAMA CRS",
 								test = false) }) })
+		@no_test
 		public static IShape to_GAMA_CRS(final IScope scope, final IShape g, final String code) {
 			IProjection gis;
 			try {
@@ -5190,6 +5255,7 @@ public abstract class Spatial {
 								value = "shape CRS_transform(\"EPSG:4326\")",
 								equals = "a geometry corresponding to the agent geometry transformed into the EPSG:4326 CRS",
 								test = false) }) })
+		@no_test
 		public static IShape transform_CRS(final IScope scope, final IShape g, final String code) {
 			IProjection gis;
 			try {
