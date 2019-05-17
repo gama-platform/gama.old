@@ -203,6 +203,11 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		super.setChildren(others);
 	}
 
+
+//	static {
+//		DEBUG.ON();
+//	}
+
 	public void assignValue(final IScope scope, final double time, final double[] y) {
 		// final List<SingleEquationStatement> equationValues = new
 		// ArrayList<SingleEquationStatement>(equations.values());
@@ -319,6 +324,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private Set<IAgent> getExternalAgents(final IScope scope) {
+		if(scope.getAgent()==null) return new HashSet();
 		Set<IAgent> result = (Set<IAgent>) scope.getAgent().getAttribute("__externalAgents");
 		if (result == null) {
 			result = new HashSet();
@@ -328,6 +334,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	public GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> getEquations(IAgent agt) {
+		if(agt==null) return  GamaMapFactory.create();
 		GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> result = (GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>>) agt
 				.getAttribute(___equations);
 		if (result == null) {
@@ -338,10 +345,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	public void setEquations(IAgent agt, GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> eqs) {
+		if(agt==null) return;
 		agt.setAttribute(___equations, eqs);
 	}
 
 	public GamaMap<Integer, GamaPair<IAgent, IExpression>> getVariableDiff(IAgent agt) {
+		if(agt==null) return  GamaMapFactory.create();
 		GamaMap<Integer, GamaPair<IAgent, IExpression>> result = (GamaMap<Integer, GamaPair<IAgent, IExpression>>) agt
 				.getAttribute(___variables_diff);
 		if (result == null) {
@@ -352,10 +361,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	public void setVariableDiff(IAgent agt, GamaMap<Integer, GamaPair<IAgent, IExpression>> var) {
+		if(agt==null) return;
 		agt.setAttribute(___variables_diff, var);
 	}
 
 	public Map<Integer, IAgent> getEquationAgents(final IScope scope) {
+		if(scope.getAgent()==null) return new HashMap();
 		Map<Integer, IAgent> result = (Map<Integer, IAgent>) scope.getAgent().getAttribute("__equationAgents");
 		if (result == null) {
 			result = new HashMap();
@@ -415,6 +426,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void removeExternalEquations(final IScope scope) {
+		if(scope.getAgent()==null) return;
 		final GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) scope.getAgent()
 				.getAttribute("__integrated_values");
 		for (final IAgent remoteAgent : getExternalAgents(scope)) {

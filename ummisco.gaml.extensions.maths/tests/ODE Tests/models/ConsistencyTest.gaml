@@ -24,7 +24,8 @@ global{
 	float step <- 1.0 ;
 	bool with_viz <- false;
 
-	list methods<-["Euler", "ThreeEighthes","Midpoint", "Gill", "Luther", "rk4", "dp853", "AdamsBashforth", "AdamsMoulton","DormandPrince54", "GraggBulirschStoer", "HighamHall54"];
+//	list methods<-["dp853", "AdamsBashforth", "AdamsMoulton","DormandPrince54", "GraggBulirschStoer", "HighamHall54"];
+	list methods<-["Euler", "ThreeEighthes","Midpoint", "Gill", "Luther", "rk4"];//, "dp853", "AdamsBashforth", "AdamsMoulton","DormandPrince54", "GraggBulirschStoer", "HighamHall54"
 	list<rgb> color_list<-list<rgb>(brewer_colors("Paired"));
 
 // model parameters
@@ -32,7 +33,7 @@ global{
 	float delta <- 0.3 ; 
 
 // numerical integration parameters	
-	float stepsize <- 0.005;
+	float stepsize <- 0.5;
 	float min_step <- 7.105427e-16;
 	float abs_tol <- 10^-7;
 	float rel_tol <- 0.000001;
@@ -46,7 +47,7 @@ global{
 		
 		loop i from: 0 to: length(methods)-1{
 			create EDO_model{
-				name <- methods[i];
+				my_method <- methods[i];
 				color <- color_list[i];
 			}
 		}
@@ -65,7 +66,7 @@ global{
 	
 	action compute_diff{
 		diff1 <- max([diff1,max(EDO_model collect each.Im)-min(EDO_model collect each.Im)]);
-		diff2 <- max([diff2,max((EDO_model where (each.name !="Euler")) collect each.Im)-min((EDO_model where (each.name !="Euler")) collect each.Im)]);
+		diff2 <- max([diff2,max((EDO_model where (each.my_method !="Euler")) collect each.Im)-min((EDO_model where (each.my_method !="Euler")) collect each.Im)]);
 	}
 	
 	reflex endSim when:  (cycle >= final_cycle) {
@@ -77,6 +78,7 @@ global{
 }
 
 	species EDO_model {
+		string my_method;
 		float t ;
 		float Sm <- 495.0;
 		float Im <- 5.0;
@@ -95,19 +97,19 @@ global{
 		}
 				
 		action solveEquation{
-			switch name{
-				match "rk4" {solve SIR method: "rk4" step_size: stepsize ;}
-				match "Euler" {solve SIR method: "Euler" step_size: 0.1*stepsize ;}
-				match "ThreeEighthes" {solve SIR method: "ThreeEighthes" step_size: stepsize;}
-				match "Midpoint" {solve SIR method: "Midpoint" step_size: stepsize;}
-				match "Gill" {solve SIR method: "Gill" step_size: stepsize;}
-				match "Luther" {solve SIR method: "Luther" step_size: stepsize;}
-				match "dp853" {solve SIR method:  "dp853" min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
-				match "AdamsBashforth" {solve SIR method: "AdamsBashforth" min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
-				match "AdamsMoulton" {solve SIR method: "AdamsMoulton" min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
-				match "DormandPrince54" {solve SIR method: "DormandPrince54" min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
-				match "GraggBulirschStoer" {solve SIR method: "GraggBulirschStoer" min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
-				match "HighamHall54" {solve SIR method: "HighamHall54" min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
+			switch my_method{
+				match "rk4" {solve SIR method: #rk4 step_size: stepsize ;}
+				match "Euler" {solve SIR method: #Euler step_size: 0.1*stepsize ;}
+				match "ThreeEighthes" {solve SIR method: #ThreeEighthes step_size: stepsize;}
+				match "Midpoint" {solve SIR method: #Midpoint step_size: stepsize;}
+				match "Gill" {solve SIR method: #Gill step_size: stepsize;}
+				match "Luther" {solve SIR method: #Luther step_size: stepsize;}
+				match "dp853" {solve SIR method:  #dp853 min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
+				match "AdamsBashforth" {solve SIR method: #AdamsBashforth min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
+				match "AdamsMoulton" {solve SIR method: #AdamsMoulton min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
+				match "DormandPrince54" {solve SIR method: #DormandPrince54 min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
+				match "GraggBulirschStoer" {solve SIR method: #GraggBulirschStoer min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
+				match "HighamHall54" {solve SIR method: #HighamHall54 min_step: min_step max_step: 0.0003 scalAbsoluteTolerance:abs_tol scalRelativeTolerance: rel_tol;}
 			}
 		}
 	}
@@ -128,7 +130,7 @@ experiment with_visualization type: gui {
 		display "Numerical solutions" refresh: every(1 #cycle) {
 			chart 'Comparision between the numerical solutions provided by EDO solbers' type: series background:  #white  { 
 				loop m over: EDO_model{
-					data m.name value: m.Im color: m.color marker: false;
+					data m.my_method value: m.Im color: m.color marker: false;
 				}		
 			}	
 		}
