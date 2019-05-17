@@ -189,7 +189,7 @@ species road skills: [skill_road] {
 }
 
 //People species that will move on the graph of roads to a target and using the driving skill
-species people skills: [driving] {
+species people skills: [advanced_driving] {
 	rgb color <- rnd_color(255);
 	int counter_stucked <- 0;
 	int threshold_stucked;
