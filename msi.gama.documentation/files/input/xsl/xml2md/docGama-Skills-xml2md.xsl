@@ -79,7 +79,7 @@ if speed = 5 {
 	<xsl:with-param name="category" select="'skill'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
 </xsl:call-template>
-## <xsl:value-of select="@name"/><xsl:text>
+## `<xsl:value-of select="@name"/>`<xsl:text>
 </xsl:text><xsl:value-of select="documentation/result"/> <xsl:text>
 </xsl:text>
 		<xsl:call-template name="buildVariables"/>
@@ -87,40 +87,5 @@ if speed = 5 {
 	</xsl:for-each>
 </xsl:template>
 
-    
- 	<xsl:template name="buildVariables"> 
-### Variables
-	<xsl:for-each select="vars/var">		
-	<xsl:sort select="@name" />   
-  * **`<xsl:value-of select="@name"/>`** (`<xsl:value-of select="@type"/>`): <xsl:value-of select="documentation/result"/> 
-		</xsl:for-each>
-	</xsl:template>
-
- 	<xsl:template name="buildActions"> 
- 	
-### Actions
-	<xsl:for-each select="actions/action">		
-	<xsl:sort select="@name" />  
-	 
-#### **`<xsl:value-of select="@name"/>`**
-<xsl:value-of select="documentation/result"/><xsl:text>
-</xsl:text>
-* returns: <xsl:value-of select="@returnType"/>
-  			<xsl:for-each select="args/arg"> 			
-* **`<xsl:value-of select="@name"/>`** (<xsl:value-of select="@type"/>): <xsl:value-of select="documentation/result"/> 
-  			</xsl:for-each>
-		
-<xsl:if test="documentation/examples[node()]">
-
-```
-<xsl:for-each select="documentation/examples/example" >
-<xsl:if test="@code != ''"><xsl:value-of select="@code"/><xsl:text>
-</xsl:text>
-</xsl:if>
-</xsl:for-each>```
-</xsl:if>	
-		
-		</xsl:for-each>	
-	</xsl:template>
   
 </xsl:stylesheet>

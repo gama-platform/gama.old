@@ -48,7 +48,6 @@ float one_cubic_inch &lt;- 1 °sqin * 1 °inch;
 
 
 ## Table of Contents
-&lt;wiki:toc max_depth="3" /&gt;
 
 	</xsl:text>
 
