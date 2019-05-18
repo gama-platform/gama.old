@@ -14,7 +14,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 <xsl:variable name="fileOperatorsSZ" select="'OperatorsSZ'" />
 <xsl:variable name="fileStatements" select="'Statements'" />
 <xsl:variable name="fileUnitsConstants" select="'UnitsAndConstants'" />
-<xsl:variable name="fileControl" select="'BuiltInControlArchitectures'" />
+<xsl:variable name="fileControl" select="'BuiltInArchitectures'" />
 <xsl:variable name="fileArchi" select="'BuiltInArchitectures'" />
 <xsl:variable name="fileSpecies" select="'BuiltInSpecies'" />
 <xsl:variable name="fileSkills" select="'BuiltInSkills'" />
@@ -67,6 +67,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 
 
 <!-- Statements -->
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/statements/statement">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Statements", "title" : "</xsl:text>
@@ -79,6 +81,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 </xsl:for-each>
 
 <!-- Architectures -->
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/architectures/architecture">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Architectures", "title" : "</xsl:text>
@@ -92,6 +96,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 
 <!-- Constants and colors -->
 <!-- { "tag": ["constant", "colors"], "title" : " -->
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/constants/constant">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Constant and Colors", "title" : [ "</xsl:text>
@@ -108,6 +114,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 </xsl:for-each>
 
 <!-- Skills -->
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/skills/skill">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Skills", "title" : "</xsl:text>
@@ -120,6 +128,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 </xsl:for-each>
 
 <!-- Species -->
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/speciess/species">
 	<xsl:sort select="@name" />
 	<xsl:text>{ "tag": "Built-in Species", "title" : "</xsl:text>
@@ -133,6 +143,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 {"tag": "species", "title": "world", "url": "BuiltInSpecies#model"},
 
 <!-- Actions -->
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/speciess/species">
 	<xsl:sort select="@name" />
 	<xsl:for-each select="actions/action">
@@ -146,6 +158,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	</xsl:for-each>
 </xsl:for-each>
 
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/skills/skill">
 	<xsl:sort select="@name" />
 	<xsl:for-each select="actions/action">
@@ -159,14 +173,53 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	</xsl:for-each>
 </xsl:for-each>
 
-<!-- Variables -->
+<!-- Variables of skills -->
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/skills/skill">
 	<xsl:sort select="@name" />
+	<xsl:variable name="skillName" select="@name"/>
 	<xsl:for-each select="vars/var">
 		<xsl:text>{ "tag": "Variables of skills", "title" : "</xsl:text>
 		<xsl:value-of select="@name" />
 		<xsl:text>", "url": "</xsl:text>
 		<xsl:value-of select="$fileSkills" />
+		<xsl:text>#</xsl:text>
+		<xsl:value-of select="$skillName" />		
+		<xsl:text>" }, </xsl:text>
+	</xsl:for-each>
+</xsl:for-each>
+
+<!-- Variables of architectures -->
+<xsl:text>
+</xsl:text>
+<xsl:for-each select="/doc/architectures/architecture">
+	<xsl:sort select="@name" />
+	<xsl:variable name="archiName" select="@name"/>	
+	<xsl:for-each select="vars/var">
+		<xsl:text>{ "tag": "Variables of architecture", "title" : "</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>", "url": "</xsl:text>
+		<xsl:value-of select="$fileControl" />
+		<xsl:text>#</xsl:text>
+		<xsl:value-of select="$archiName" />		
+		<xsl:text>" }, </xsl:text>
+	</xsl:for-each>
+</xsl:for-each>
+
+<!-- Variables of species -->
+<xsl:text>
+</xsl:text>
+<xsl:for-each select="/doc/speciess/species">
+	<xsl:sort select="@name" />
+	<xsl:variable name="speciesName" select="@name"/>	
+	<xsl:for-each select="vars/var">
+		<xsl:text>{ "tag": "Variables of species", "title" : "</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>", "url": "</xsl:text>
+		<xsl:value-of select="$fileSpecies" />
+		<xsl:text>#</xsl:text>
+		<xsl:value-of select="$speciesName" />		
 		<xsl:text>" }, </xsl:text>
 	</xsl:for-each>
 </xsl:for-each>
@@ -184,6 +237,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 </xsl:for-each>
 
 <!-- Concepts -->
+<xsl:text>
+</xsl:text>
 <xsl:for-each select="/doc/conceptList/concept[not(@id = (preceding-sibling::*/@id))]">
 	<xsl:sort select="@id" />
 	<xsl:variable name="conceptName" select="@id"/>
