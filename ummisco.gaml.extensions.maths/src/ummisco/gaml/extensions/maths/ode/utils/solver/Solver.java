@@ -116,7 +116,7 @@ public abstract class Solver {
 				try {
 					integrator.integrate(seq, initialTime, y, finalTime, y);
 				} catch (final Exception ex) {
-					DEBUG.ERR(ex.toString());
+					System.out.println(ex.toString());
 				}
 			}
 

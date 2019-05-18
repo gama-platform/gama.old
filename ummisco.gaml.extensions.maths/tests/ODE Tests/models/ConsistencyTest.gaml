@@ -24,8 +24,7 @@ global{
 	float step <- 1.0 ;
 	bool with_viz <- false;
 
-//	list methods<-["dp853", "AdamsBashforth", "AdamsMoulton","DormandPrince54", "GraggBulirschStoer", "HighamHall54"];
-	list methods<-["Euler", "ThreeEighthes","Midpoint", "Gill", "Luther", "rk4"];//, "dp853", "AdamsBashforth", "AdamsMoulton","DormandPrince54", "GraggBulirschStoer", "HighamHall54"
+	list methods<-["Euler", "ThreeEighthes","Midpoint", "Gill", "Luther", "rk4", "dp853", "AdamsBashforth", "AdamsMoulton","DormandPrince54", "GraggBulirschStoer", "HighamHall54"];
 	list<rgb> color_list<-list<rgb>(brewer_colors("Paired"));
 
 // model parameters
@@ -33,7 +32,7 @@ global{
 	float delta <- 0.3 ; 
 
 // numerical integration parameters	
-	float stepsize <- 0.5;
+	float stepsize <- 0.05;
 	float min_step <- 7.105427e-16;
 	float abs_tol <- 10^-7;
 	float rel_tol <- 0.000001;

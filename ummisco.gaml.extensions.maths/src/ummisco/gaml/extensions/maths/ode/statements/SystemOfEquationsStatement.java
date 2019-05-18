@@ -55,8 +55,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
+import msi.gaml.types.Types; 
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement.SystemOfEquationsValidator;
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSEIREquations;
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIEquations;
@@ -287,8 +286,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 						((IVarExpression) s.getValue().getVarTime()).setVal(scope, time, false);
 					}
 					if (myVar.get(i).getValue() instanceof IVarExpression) {
-						if (OWN_DEBUG)
-							DEBUG.LOG(remoteAgent + " assign " + myVar.get(i).getValue() + " " + y[i]);
+//						if (OWN_DEBUG)
+//							DEBUG.LOG(remoteAgent + " assign " + myVar.get(i).getValue() + " " + y[i]);
 						((IVarExpression) myVar.get(i).getValue()).setVal(scope, y[i], false);
 					}
 				} catch (final Throwable ex1) {
@@ -506,8 +505,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		for (final GamaPair<IAgent, SingleEquationStatement> e : myEQ.values()) {
 			if (e.getKey().equals(remoteAgent)) { return; }
 		}
-		if (OWN_DEBUG)
-			DEBUG.LOG(currentScope.getAgent() + " addEquationsOf " + remoteAgent);
+//		if (OWN_DEBUG)
+//			DEBUG.LOG(currentScope.getAgent() + " addEquationsOf " + remoteAgent);
 		final SystemOfEquationsStatement ses =
 				remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class, getName());
 		if (ses != null) {
@@ -519,8 +518,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 			for (final GamaPair<IAgent, SingleEquationStatement> s : ses.equations.values()) {
 				// final String name = remoteAgent.getName() + s.getKey();
 				final SingleEquationStatement eq = s.getValue();
-				if (OWN_DEBUG)
-					DEBUG.LOG("eq " + eq);
+//				if (OWN_DEBUG)
+//					DEBUG.LOG("eq " + eq);
 				GamaPair p1 =
 						new GamaPair<IAgent, SingleEquationStatement>(remoteAgent, eq, Types.AGENT, Types.NO_TYPE);
 				myEQ.put(myEQ.size(), p1);
@@ -528,8 +527,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 			for (final GamaPair<IAgent, IExpression> s : ses.variables_diff.values()) {
 				// final String name = remoteAgent.getName() + s.getKey();
 				final IExpression v = s.getValue();
-				if (OWN_DEBUG)
-					DEBUG.LOG("v " + v);
+//				if (OWN_DEBUG)
+//					DEBUG.LOG("v " + v);
 				GamaPair p1 = new GamaPair<IAgent, IExpression>(remoteAgent, v, Types.AGENT, Types.NO_TYPE);
 				myVar.put(myVar.size(), p1);
 			}
@@ -576,14 +575,14 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		// remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class,
 		// getName());
 
-		DEBUG.LOG("removeEquationsOf " + remoteAgent);
+//		DEBUG.LOG("removeEquationsOf " + remoteAgent);
 		// GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> ses = getEquations(remoteAgent);
 		// GamaMap<Integer, GamaPair<IAgent, IExpression>> sesVar = getVariableDiff(remoteAgent);
 		if (myEQ != null) {
 			// final int n = equations.size();
 			for (final GamaPair<IAgent, SingleEquationStatement> e : myEQ.values()) {
 				if (e.getKey().equals(remoteAgent)) {
-					myVar.values().remove(remoteAgent);
+//					myVar.values().remove(remoteAgent);
 					// for (final IExpression eV : e.getValue().getVars()) {
 					// DEBUG.OUT(eV);
 					// GamaPair p1 = new GamaPair<IAgent, IExpression>(remoteAgent, eV, Types.AGENT, Types.NO_TYPE);
