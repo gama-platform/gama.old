@@ -1,15 +1,14 @@
 /*********************************************************************************************
- * 
- * 
+ *
+ *
  * 'Simulation.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and simulation
  * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.headless.job;
-
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
-
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -61,14 +59,15 @@ public class ExperimentJob implements IExperimentJob {
 
 	public static class ListenedVariable {
 
-		public class NA{
-			private NA(){}
-			
+		public class NA {
+			private NA() {}
+
 			@Override
-			public String toString(){
+			public String toString() {
 				return "NA";
 			}
 		}
+
 		String name;
 		public int width;
 		public int height;
@@ -79,14 +78,15 @@ public class ExperimentJob implements IExperimentJob {
 		long step;
 		String path;
 		private boolean isNa;
+
 		private Object setNaValue() {
 			this.value = new NA();
 			this.isNa = true;
 			return this.value;
 		}
-		
-		public ListenedVariable(final String name, final int width, final int height, final int frameRate, final OutputType type,
-				final String outputPath) {
+
+		public ListenedVariable(final String name, final int width, final int height, final int frameRate,
+				final OutputType type, final String outputPath) {
 			this.name = name;
 			this.width = width;
 			this.height = height;
@@ -101,15 +101,15 @@ public class ExperimentJob implements IExperimentJob {
 		}
 
 		public void setValue(final Object obj, final long st, final DataType typ) {
-			this.isNa = false; 
-			value = obj == null? setNaValue():obj;
+			this.isNa = false;
+			value = obj == null ? setNaValue() : obj;
 			this.step = st;
 			this.dataType = typ;
 		}
+
 		public void setValue(final Object obj, final long st) {
 			setValue(obj, st, this.dataType);
 		}
-
 
 		public Object getValue() {
 			return value;
@@ -249,8 +249,8 @@ public class ExperimentJob implements IExperimentJob {
 		simulator.setup(experimentName, this.seed);
 		for (int i = 0; i < outputs.size(); i++) {
 			final Output temp = outputs.get(i);
-			this.listenedVariables[i] = new ListenedVariable(temp.getName(), temp.getWidth(), temp.getHeight(), temp.getFrameRate(),
-					simulator.getTypeOf(temp.getName()), temp.getOutputPath());
+			this.listenedVariables[i] = new ListenedVariable(temp.getName(), temp.getWidth(), temp.getHeight(),
+					temp.getFrameRate(), simulator.getTypeOf(temp.getName()), temp.getOutputPath());
 		}
 
 		// Initialize the enCondition
@@ -259,8 +259,10 @@ public class ExperimentJob implements IExperimentJob {
 		} else {
 			endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);
 		}
-		if (endCondition.getGamlType() != Types.BOOL) { throw GamaRuntimeException.error(
-				"The until condition of the experiment should be a boolean", simulator.getSimulation().getScope()); }
+		if (endCondition.getGamlType() != Types.BOOL) {
+			throw GamaRuntimeException.error("The until condition of the experiment should be a boolean",
+					simulator.getSimulation().getScope());
+		}
 	}
 
 	public void load(final RuntimeContext ctx) throws InstantiationException, IllegalAccessException,
@@ -283,7 +285,7 @@ public class ExperimentJob implements IExperimentJob {
 		dispose();
 		final long endDate = Calendar.getInstance().getTimeInMillis();
 		System.out.println("\nSimulation duration: " + (endDate - startDate) + "ms");
-		DEBUG.OUT("\nSimulation duration: " + (endDate - startDate) + "ms");
+		// DEBUG.OUT("\nSimulation duration: " + (endDate - startDate) + "ms");
 	}
 
 	@Override
@@ -291,8 +293,8 @@ public class ExperimentJob implements IExperimentJob {
 		if (this.outputFile != null) {
 			this.outputFile.writeSimulationHeader(this);
 		}
-		//DEBUG.LOG("Simulation is running...", false);
-		System.out.println("Simulation is running...");
+		// DEBUG.LOG("Simulation is running...", false);
+		// System.out.println("Simulation is running...");
 		// final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
 
@@ -304,7 +306,7 @@ public class ExperimentJob implements IExperimentJob {
 				if (step % affDelay == 0) {
 					DEBUG.LOG(".", false);
 					System.out.print(".");
-								}
+				}
 				if (simulator.isInterrupted()) {
 					break;
 				}
@@ -313,7 +315,7 @@ public class ExperimentJob implements IExperimentJob {
 				step++;
 			}
 		} catch (final GamaRuntimeException e) {
-			DEBUG.ERR("\n The simulation has stopped before the end due to the following exception: ");
+			// DEBUG.ERR("\n The simulation has stopped before the end due to the following exception: ");
 			System.out.println("\n The simulation has stopped before the end due to the following exception: ");
 			e.printStackTrace();
 		}
@@ -351,15 +353,13 @@ public class ExperimentJob implements IExperimentJob {
 			final ListenedVariable v = this.listenedVariables[i];
 			if (this.step % v.frameRate == 0) {
 				final RichOutput out = simulator.getRichOutput(v);
-				if (out == null || out.getValue() == null) {
-				} else if (out.getValue() instanceof BufferedImage) {
+				if (out == null || out.getValue() == null) {} else if (out.getValue() instanceof BufferedImage) {
 					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step,
 							out.getType());
 				} else {
 					v.setValue(out.getValue(), out.getStep(), out.getType());
 				}
-			}
-			else
+			} else
 				v.setValue(null, this.step);
 		}
 		if (this.outputFile != null) {

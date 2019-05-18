@@ -265,7 +265,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		while (!GamaMetaModel.INSTANCE.isInitialized) {
 			try {
 				Thread.sleep(100);
-				DEBUG.OUT("> GAMA: Waiting for GAML artefacts to build");
+				// DEBUG.OUT("> GAMA: Waiting for GAML artefacts to build");
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}

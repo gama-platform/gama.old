@@ -63,7 +63,7 @@ public class OpenGLDisplayView extends SWTDisplayView {
 
 	@Override
 	public void fullScreenSet() {
-		DEBUG.OUT("Invoking explicit reshape + display");
+		// DEBUG.OUT("Invoking explicit reshape + display");
 		getDisplaySurface().renderer.getCanvas().invoke(false,
 				new GLDrawableUtil.ReshapeGLEventListener(getDisplaySurface().renderer, true));
 	}

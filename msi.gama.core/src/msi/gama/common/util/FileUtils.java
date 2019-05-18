@@ -2,11 +2,11 @@
  *
  * msi.gama.common.util.FileUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -118,7 +118,7 @@ public class FileUtils {
 			}
 			final String file = findOutsideWorkspace(fp, modelBase, mustExist);
 			if (file != null) {
-				DEBUG.OUT("Hit with EFS-based search: " + file);
+				// DEBUG.OUT("Hit with EFS-based search: " + file);
 				return file;
 			}
 		}
@@ -126,7 +126,7 @@ public class FileUtils {
 			final IExperimentAgent a = scope.getExperiment();
 			// No need to search more if the experiment is null
 			if (a == null) { return fp; }
-			if(!a.isHeadless()) {
+			if (!a.isHeadless()) {
 				// Necessary to ask the workspace for the containers as projects might be linked
 				final List<IContainer> paths = a.getWorkingPaths().stream()
 						.map(s -> ROOT.findContainersForLocation(new Path(s))[0]).collect(toList());
@@ -202,7 +202,7 @@ public class FileUtils {
 	/**
 	 * Returns a best guess URI based on the target string and an optional URI specifying from where the relative URI
 	 * should be run. If existingResource is null, then the root of the workspace is used as the relative URI
-	 * 
+	 *
 	 * @param target
 	 *            a String giving the path
 	 * @param existingResource

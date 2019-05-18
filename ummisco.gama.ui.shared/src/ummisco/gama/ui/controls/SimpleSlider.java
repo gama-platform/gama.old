@@ -209,9 +209,9 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		} else {
 			popup = null;
 		}
-		if (DEBUG.IS_ON()) {
-			addPositionChangeListener((slider, position) -> DEBUG.OUT("Position changed to : " + position));
-		}
+		// if (DEBUG.IS_ON()) {
+		// addPositionChangeListener((slider, position) -> DEBUG.OUT("Position changed to : " + position));
+		// }
 	}
 
 	public void removePositionChangeListener(final IPositionChangeListener listener) {

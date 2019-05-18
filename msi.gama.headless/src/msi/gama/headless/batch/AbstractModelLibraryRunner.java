@@ -13,7 +13,7 @@ public abstract class AbstractModelLibraryRunner {
 	}
 
 	public static void log(final String s) {
-		DEBUG.OUT(s); // Use a logger ?
+		DEBUG.LOG(s); // Use a logger ?
 	}
 
 	protected boolean isModel(final URL url) {

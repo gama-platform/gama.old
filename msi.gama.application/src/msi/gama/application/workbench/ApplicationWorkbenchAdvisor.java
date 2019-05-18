@@ -5,7 +5,7 @@
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.application.workbench;
@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -90,8 +89,12 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		super.postStartup();
 		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
-		DEBUG.OUT("Arguments received by GAMA : " + Arrays.toString(args));
-		if ( args.length > 0 && args[0].contains("launcher.defaultAction") && !args[0].contains("--launcher.defaultAction") ) { return; }
+		if ( false )
+			DEBUG.LOG("Arguments received by GAMA : " + Arrays.toString(args));
+		if ( args.length > 0 && args[0].contains("launcher.defaultAction") &&
+			!args[0].contains("--launcher.defaultAction") ) {
+			return;
+		}
 		if ( args.length >= 1 ) {
 
 			if ( args[args.length - 1].endsWith(".gamr") ) {
@@ -100,7 +103,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 						delegate.createFrom(null, args[args.length - 1], null);
 					}
 				}
-			}else {
+			} else {
 				WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 			}
 		}
@@ -199,7 +202,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		return super.preShutdown();
 
 	}
-	
 
 	@Override
 	public void postShutdown() {

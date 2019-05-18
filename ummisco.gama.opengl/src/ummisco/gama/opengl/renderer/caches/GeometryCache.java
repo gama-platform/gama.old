@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.renderer.caches.GeometryCache.java, in plugin ummisco.gama.opengl, is part of the source code of
  * the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
@@ -46,7 +46,6 @@ import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGeometryFile;
-import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.files.GamaObjFile;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -144,7 +143,7 @@ public class GeometryCache {
 	}
 
 	private Integer buildList(final OpenGL gl, final String name) {
-		DEBUG.OUT("Bulding OpenGL list for " + name);
+		// DEBUG.OUT("Bulding OpenGL list for " + name);
 		final GamaGeometryFile file = fileMap.get(name);
 		// We generate the list first
 

@@ -54,7 +54,6 @@ import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaFontType;
 import msi.gaml.types.IType;
 import one.util.streamex.StreamEx;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class GamaPreferencesView.
@@ -602,9 +601,9 @@ public class GamaPreferences {
 
 	public static <T> Pref<T> create(final String key, final String title, final T value, final int type,
 			final boolean inGaml) {
-		if (key.contains(".") || key.contains(" ")) {
-			DEBUG.OUT("WARNING. Preference " + key + " cannot be used as a variable");
-		}
+		// if (key.contains(".") || key.contains(" ")) {
+		// DEBUG.OUT("WARNING. Preference " + key + " cannot be used as a variable");
+		// }
 		final Pref<T> e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(value);
 		register(e);
 		return e;
@@ -621,9 +620,9 @@ public class GamaPreferences {
 	 */
 	public static <T> Pref<T> create(final String key, final String title, final ValueProvider<T> provider,
 			final int type, final boolean inGaml) {
-		if (key.contains(".") || key.contains(" ")) {
-			DEBUG.OUT("WARNING. Preference " + key + " cannot be used as a variable");
-		}
+		// if (key.contains(".") || key.contains(" ")) {
+		// DEBUG.OUT("WARNING. Preference " + key + " cannot be used as a variable");
+		// }
 		final Pref<T> e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(provider);
 		register(e);
 		return e;

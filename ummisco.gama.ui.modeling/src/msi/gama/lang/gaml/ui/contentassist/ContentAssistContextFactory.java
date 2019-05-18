@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'ContentAssistContextFactory.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ContentAssistContextFactory.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.contentassist;
@@ -21,8 +20,6 @@ import org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistC
 
 import com.google.common.collect.Multimap;
 
-import msi.gama.runtime.GAMA;
-
 /**
  * The class ContentAssistContextFactory.
  *
@@ -36,17 +33,13 @@ public class ContentAssistContextFactory extends PartialStatefulFactory {
 	boolean stop = false;
 
 	/**
-	 * AD 08/13 : Workaround for a bug manifesting itself as an infinite
-	 * recursion over an AlternativesImpl element. The choice here is to allow
-	 * for 10 occurrences of the element to be computed and then fall back to
-	 * the caller.
+	 * AD 08/13 : Workaround for a bug manifesting itself as an infinite recursion over an AlternativesImpl element. The
+	 * choice here is to allow for 10 occurrences of the element to be computed and then fall back to the caller.
 	 */
 	@Override
 	protected void computeFollowElements(final FollowElementCalculator calculator, final FollowElement element,
 			final Multimap<Integer, List<AbstractElement>> visited) {
-		if (stop) {
-			return;
-		}
+		if (stop) { return; }
 		final AbstractElement e = element.getGrammarElement();
 		if (!recurse.containsKey(e)) {
 			recurse.put(e, 1);
@@ -54,7 +47,7 @@ public class ContentAssistContextFactory extends PartialStatefulFactory {
 			recurse.put(e, recurse.get(e) + 1);
 		}
 		if (recurse.get(e) > 3) {
-			GAMA.getGui().debug("Infinite recursion detected in completion proposal for " + e);
+			// GAMA.getGui().debug("Infinite recursion detected in completion proposal for " + e);
 			stop = true;
 			recurse.clear();
 			return;

@@ -186,7 +186,7 @@ public class GamlSearchField {
 				String name = element.getName();
 				String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
 				// String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
-				DEBUG.OUT("Search phrase: " + search);
+				// DEBUG.OUT("Search phrase: " + search);
 				WebHelper.openPage(search);
 
 			}

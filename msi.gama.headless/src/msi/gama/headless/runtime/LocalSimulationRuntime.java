@@ -147,7 +147,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		IModel mdl;
 		final String key = fl.getAbsolutePath();
 		ArrayList<IModel> arr = availableLoadedModels.get(fl.getAbsolutePath());
-		DEBUG.OUT(fl.getAbsolutePath());
+		// DEBUG.OUT(fl.getAbsolutePath());
 		if (arr == null) {
 			arr = new ArrayList<>();
 			availableLoadedModels.put(key, arr);
@@ -166,8 +166,8 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	@Override
 	public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
 		// return lockUnLock( fl,null, null) ; //lockModel(fl); //
-		List<GamlCompilationError> errors= new ArrayList<GamlCompilationError>();
-		return HeadlessSimulationLoader.loadModel(fl,errors); // lockModel(fl); //mdl.c;
+		List<GamlCompilationError> errors = new ArrayList<GamlCompilationError>();
+		return HeadlessSimulationLoader.loadModel(fl, errors); // lockModel(fl); //mdl.c;
 	}
 
 	@Override
@@ -204,7 +204,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 				noErrorFound = false;
 			}
 			try {
-				if(noErrorFound)
+				if (noErrorFound)
 					si.loadAndBuild(this.runtime);
 
 			} catch (final InstantiationException e) {
@@ -225,11 +225,11 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 				DEBUG.ERR(e);
 			} catch (final GamaHeadlessException e) {
 				noErrorFound = false;
-				//e.printStackTrace();
+				// e.printStackTrace();
 				System.out.println(e.toString());
 				DEBUG.ERR(e);
 			}
-			if(noErrorFound)
+			if (noErrorFound)
 				si.playAndDispose();
 			((HeadlessListener) GAMA.getHeadlessGui()).leaveJob();
 			runtime.closeSimulation(this);

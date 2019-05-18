@@ -509,12 +509,12 @@ public abstract class MdxConnection {
 				// DEBUG.LOG("Hierarchy");
 				int n = hierarchy.size();
 				for (int j = 0; j < n; ++j) {
-					DEBUG.OUT(hierarchy.get(j).getName() + Strings.TAB, false);
+					DEBUG.LOG(hierarchy.get(j).getName() + Strings.TAB, false);
 				}
 				// DEBUG.LOG("\n Properties");
 				n = property.size();
 				for (int j = 0; j < n; ++j) {
-					DEBUG.OUT(property.get(j).getName() + Strings.TAB, false);
+					DEBUG.LOG(property.get(j).getName() + Strings.TAB, false);
 				}
 
 			}

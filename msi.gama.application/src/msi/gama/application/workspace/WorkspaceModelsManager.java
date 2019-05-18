@@ -5,7 +5,7 @@
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.application.workspace;
@@ -18,7 +18,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,15 +46,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
-import msi.gama.common.interfaces.IEventLayerDelegate;
-import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
@@ -79,8 +75,8 @@ public class WorkspaceModelsManager {
 	// private static String BUILTIN_VERSION = null;
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
- 
-	public void openModelPassedAsArgument(final String modelPath) { 
+
+	public void openModelPassedAsArgument(final String modelPath) {
 		// printAllGuaranteedProperties();
 
 		String filePath = modelPath;
@@ -102,37 +98,36 @@ public class WorkspaceModelsManager {
 		final IFile file = findAndLoadIFile(filePath);
 		if ( file != null ) {
 			final String en = expName;
-//			final Runnable run = () -> {
+			// final Runnable run = () -> {
+			try {
+				// DEBUG.OUT(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
+				// Force the project to rebuild itself in order to load the various XText plugins.
+				file.touch(null);
+				file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
+			} catch (final CoreException e1) {
+				DEBUG.OUT(Thread.currentThread().getName() + ": File " + file.getFullPath() + " cannot be built");
+				return;
+			}
+			while (GAMA.getRegularGui() == null) {
 				try {
-					// DEBUG.OUT(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
-					// Force the project to rebuild itself in order to load the various XText plugins.
-					file.touch(null);
-					file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
-				} catch (final CoreException e1) {
-					DEBUG.OUT(Thread.currentThread().getName() + ": File " + file.getFullPath() + " cannot be built");
-					return;
+					Thread.sleep(100);
+					System.out.println(Thread.currentThread().getName() + ": waiting for the GUI to become available");
+				} catch (final InterruptedException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
 				}
-				while (GAMA.getRegularGui() == null) {
-					try {
-						Thread.sleep(100);
-						System.out
-							.println(Thread.currentThread().getName() + ": waiting for the GUI to become available");
-					} catch (final InterruptedException e2) {
-						// TODO Auto-generated catch block
-						e2.printStackTrace();
-					}
-				}
-				if ( en == null ) {
-					// System.out
-					// .println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
-					GAMA.getGui().editModel(null, file);
-				} else {
-					// DEBUG.OUT(Thread.currentThread().getName() + ": Trying to run experiment " + en);
-					GAMA.getGui().runModel(file, en);
-				}
+			}
+			if ( en == null ) {
+				// System.out
+				// .println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
+				GAMA.getGui().editModel(null, file);
+			} else {
+				// DEBUG.OUT(Thread.currentThread().getName() + ": Trying to run experiment " + en);
+				GAMA.getGui().runModel(file, en);
+			}
 
-//			};
-//			new Thread(run, "Automatic opening of " + filePath).start();
+			// };
+			// new Thread(run, "Automatic opening of " + filePath).start();
 
 		}
 	}
@@ -153,9 +148,9 @@ public class WorkspaceModelsManager {
 		// 2nd case: the path is outside the workspace
 		result = findOutsideWorkspace(path);
 		if ( result != null ) { return result; }
-		DEBUG.OUT(
-			"File " + filePath + " cannot be located. Please check its name and location. Arguments provided were : " +
-				Arrays.toString(CommandLineArgs.getApplicationArgs()));
+		// DEBUG.OUT(
+		// "File " + filePath + " cannot be located. Please check its name and location. Arguments provided were : " +
+		// Arrays.toString(CommandLineArgs.getApplicationArgs()));
 		return null;
 	}
 
@@ -396,7 +391,7 @@ public class WorkspaceModelsManager {
 
 			@Override
 			public IStatus runInWorkspace(final IProgressMonitor monitor) {
-				DEBUG.OUT("Asynchronous link of models library...");
+				// DEBUG.OUT("Asynchronous link of models library...");
 				GAMA.getGui().refreshNavigator();
 				return GamaBundleLoader.ERRORED ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
@@ -411,14 +406,14 @@ public class WorkspaceModelsManager {
 		while (!GamaBundleLoader.LOADED && !GamaBundleLoader.ERRORED) {
 			try {
 				Thread.sleep(100);
-				DEBUG.OUT("Waiting for GAML subsystem to load...");
+				// DEBUG.OUT("Waiting for GAML subsystem to load...");
 			} catch (final InterruptedException e) {}
 		}
 		if ( GamaBundleLoader.ERRORED ) {
 			GAMA.getGui().tell("Error in loading GAML language subsystem. Please consult the logs");
 			return;
 		}
-		DEBUG.OUT("Synchronous link of models library...");
+		// DEBUG.OUT("Synchronous link of models library...");
 		final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
 		for ( final Bundle plugin : pluginsWithModels.keySet() ) {
 			for ( final String entry : pluginsWithModels.get(plugin) ) {
@@ -438,7 +433,7 @@ public class WorkspaceModelsManager {
 	 */
 
 	private static void linkModelsToWorkspace(final Bundle bundle, final String path, final boolean tests) {
-		DEBUG.OUT("Linking library from bundle " + bundle.getSymbolicName() + " at path " + path);
+		// DEBUG.OUT("Linking library from bundle " + bundle.getSymbolicName() + " at path " + path);
 		final boolean core = bundle.equals(GamaBundleLoader.CORE_MODELS);
 		final URL fileURL = bundle.getEntry(path);
 		File modelsRep = null;

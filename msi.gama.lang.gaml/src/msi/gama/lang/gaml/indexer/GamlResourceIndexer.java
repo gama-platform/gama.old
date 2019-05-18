@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.indexer;
@@ -43,7 +43,6 @@ import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.util.TOrderedHashMap;
-import ummisco.gama.dev.utils.DEBUG;
 
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -280,7 +279,8 @@ public class GamlResourceIndexer {
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#allImportsOf(org.eclipse.emf.common.util.URI)
 	 */
 	public static Iterator<URI> allImportsOf(final URI uri) {
-		if (!indexes(uri)) { return Iterators.singletonIterator(uri);// .emptyIterator();
+		if (!indexes(uri)) {
+			return Iterators.singletonIterator(uri);// .emptyIterator();
 		}
 		final Iterator<URI> result = new BreadthFirstIterator(index, GamlResourceServices.properlyEncodedURI(uri));
 		result.next(); // to eliminate the uri
@@ -298,7 +298,7 @@ public class GamlResourceIndexer {
 	}
 
 	public static void eraseIndex() {
-		DEBUG.OUT("Erasing GAML indexer index");
+		// DEBUG.OUT("Erasing GAML indexer index");
 		index = new SimpleDirectedGraph(Edge.class);
 	}
 

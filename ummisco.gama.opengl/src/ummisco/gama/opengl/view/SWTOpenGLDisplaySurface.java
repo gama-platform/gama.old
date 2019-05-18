@@ -713,9 +713,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				break;
 			case SPLIT_LAYER:
 				final double gap = (Double) value;
-				if (DEBUG.IS_ON()) {
-					DEBUG.OUT("Value received by SWTOpenGLDisplaySurface= " + value);
-				}
+				// if (DEBUG.IS_ON()) {
+				// DEBUG.OUT("Value received by SWTOpenGLDisplaySurface= " + value);
+				// }
 				double currentElevation = 0;
 
 				for (final ILayer layer : this.getManager().getItems()) {

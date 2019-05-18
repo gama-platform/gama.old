@@ -108,7 +108,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		DEBUG.OUT("ExperimentOutputManager init");
+		// DEBUG.OUT("ExperimentOutputManager init");
 		final Symbol layoutDefinition = layout == null ? this : layout;
 		final String definitionFacet = layout == null ? LAYOUT : IKeyword.VALUE;
 		final Object layoutObject =

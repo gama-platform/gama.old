@@ -13,6 +13,17 @@ import java.util.function.Supplier;
  */
 public class DEBUG {
 
+	/**
+	 * A custom security manager that exposes the getClassContext() information
+	 */
+	static class MySecurityManager extends SecurityManager {
+		public String getCallerClassName(int callStackDepth) {
+			return getClassContext()[callStackDepth].getName();
+		}
+	}
+
+	private final static MySecurityManager SECURITY_MANAGER = new MySecurityManager();
+
 	// AD 08/18: Changes to ConcurrentHashMap for multi-threaded DEBUG operations
 	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
@@ -32,12 +43,21 @@ public class DEBUG {
 	}
 
 	/**
-	 * Uses the stack trace to find the calling class. Use of reflection would be faster, but more prone to Oracle
-	 * evolutions. StackWalker in Java 9 will be interesting to use for that
+	 * Uses a custom security manager to get the caller class name. Use of reflection would be faster, but more prone to
+	 * Oracle evolutions. StackWalker in Java 9 will be interesting to use for that
 	 *
 	 * @return the name of the class that has called the method that has called this method
 	 */
 	private static String findCallingClassName() {
+		return SECURITY_MANAGER.getCallerClassName(3);
+	}
+
+	/**
+	 * Uses the stack trace to find the calling class. This one is 10x slower on average...
+	 *
+	 * @return
+	 */
+	private static String findCallingClassNameOld() {
 		return Thread.currentThread().getStackTrace()[3].getClassName();
 	}
 
@@ -75,8 +95,8 @@ public class DEBUG {
 		}
 	}
 
-	public static interface RunnableWithException {
-		public void run() throws Exception;
+	public static interface RunnableWithException<T extends Throwable> {
+		public void run() throws T;
 	}
 
 	/**
@@ -103,8 +123,8 @@ public class DEBUG {
 		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
 	}
 
-	public static void TIMER_WITH_EXCEPTIONS(final String title, final RunnableWithException runnable)
-			throws Exception {
+	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String title,
+			final RunnableWithException<T> runnable) throws T {
 		if (GLOBAL_OFF || !REGISTERED.containsKey(findCallingClassName())) {
 			runnable.run();
 			return;

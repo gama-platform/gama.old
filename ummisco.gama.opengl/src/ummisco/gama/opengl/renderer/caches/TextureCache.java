@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.renderer.caches.TextureCache.java, in plugin ummisco.gama.opengl, is part of the source code of
  * the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
@@ -61,7 +61,7 @@ public class TextureCache implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#initialize()
 	 */
 	@Override
@@ -74,13 +74,13 @@ public class TextureCache implements ITextureCache {
 				AWTTextureIO.setTexRectEnabled(newValue);
 			});
 			AWTTextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
-			DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
+			// DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#deleteVolatileTextures()
 	 */
 	@Override
@@ -94,7 +94,7 @@ public class TextureCache implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#dispose()
 	 */
 	@Override
@@ -109,7 +109,7 @@ public class TextureCache implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#processs(java.io.File)
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class TextureCache implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#processUnloaded()
 	 */
 	@Override
@@ -133,7 +133,7 @@ public class TextureCache implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#getTexture(java.awt.image.BufferedImage)
 	 */
 	@Override
@@ -162,7 +162,7 @@ public class TextureCache implements ITextureCache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#getTexture(java.io.File, boolean, boolean)
 	 */
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.GAMA.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.GAMA.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -16,7 +16,6 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -73,15 +72,15 @@ public class GAMA {
 
 	/**
 	 * Create a GUI experiment that replaces the current one (if any)
-	 * 
+	 *
 	 * @param id
 	 * @param model
 	 */
 	public static void runGuiExperiment(final String id, final IModel model) {
-		DEBUG.OUT("Launching experiment " + id + " of model " + model.getFilePath());
+		// DEBUG.OUT("Launching experiment " + id + " of model " + model.getFilePath());
 		final IExperimentPlan newExperiment = model.getExperiment(id);
 		if (newExperiment == null) {
-			DEBUG.OUT("No experiment " + id + " in model " + model.getFilePath());
+			// DEBUG.OUT("No experiment " + id + " in model " + model.getFilePath());
 			return;
 		}
 		IExperimentController controller = getFrontmostController();
@@ -124,7 +123,7 @@ public class GAMA {
 
 	/**
 	 * Add an experiment
-	 * 
+	 *
 	 * @param id
 	 * @param model
 	 */
@@ -133,8 +132,9 @@ public class GAMA {
 
 		final ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
 
-		if (currentExperiment == null) { throw GamaRuntimeException
-				.error("Experiment " + expName + " cannot be created", getRuntimeScope()); }
+		if (currentExperiment == null) {
+			throw GamaRuntimeException.error("Experiment " + expName + " cannot be created", getRuntimeScope());
+		}
 		currentExperiment.setHeadless(true);
 		for (final Map.Entry<String, Object> entry : params.entrySet()) {
 
@@ -201,8 +201,9 @@ public class GAMA {
 
 	public static IModel getModel() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null
-				|| controller.getExperiment() == null) { return GamaMetaModel.INSTANCE.getAbstractModelSpecies(); }
+		if (controller == null || controller.getExperiment() == null) {
+			return GamaMetaModel.INSTANCE.getAbstractModelSpecies();
+		}
 		return controller.getExperiment().getModel();
 	}
 
@@ -216,7 +217,9 @@ public class GAMA {
 			final boolean shouldStopSimulation) {
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null || controller.isDisposing()
-				|| controller.getExperiment().getAgent() == null) { return false; }
+				|| controller.getExperiment().getAgent() == null) {
+			return false;
+		}
 		// Returns whether or not to continue
 		if (!(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors()) {
 			// AD: we still throw exceptions related to files (Issue #1281)
@@ -368,7 +371,7 @@ public class GAMA {
 
 	/**
 	 * Allows to update all outputs after running an experiment
-	 * 
+	 *
 	 * @param r
 	 */
 	public static final void runAndUpdateAll(final Runnable r) {
@@ -427,7 +430,7 @@ public class GAMA {
 
 	/**
 	 * Access to the one and only 'gama' agent
-	 * 
+	 *
 	 * @return the platform agent, or creates it if it doesn't exist
 	 */
 	public static PlatformAgent getPlatformAgent() {

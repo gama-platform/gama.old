@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.utils;
@@ -44,6 +44,7 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.statements.test.WithTestSummary;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.modeling.internal.ModelingActivator;
 import ummisco.gama.ui.navigator.contents.WrappedGamaFile;
@@ -74,7 +75,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 		} else if (eObject instanceof IFile) {
 			final IFile file = (IFile) eObject;
 			if (!file.exists()) {
-				GAMA.getGui().debug("File " + file.getFullPath().toString() + " does not exist in the workspace");
+				DEBUG.LOG("File " + file.getFullPath().toString() + " does not exist in the workspace");
 				return;
 			}
 			try {

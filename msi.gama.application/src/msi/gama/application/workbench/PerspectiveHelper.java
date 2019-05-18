@@ -2,11 +2,11 @@
  *
  * msi.gama.application.workbench.PerspectiveHelper.java, in plugin msi.gama.application,
  * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
@@ -61,19 +61,19 @@ public class PerspectiveHelper {
 		final List<PerspectiveImpl> perspectives = e.findElements(a, PerspectiveImpl.class, EModelService.ANYWHERE,
 			element -> matches(element.getElementId()));
 		for ( final PerspectiveImpl p : perspectives ) {
-			DEBUG.OUT("Dirty perspective implementation found and removed: " + p.getElementId());
+			// DEBUG.OUT("Dirty perspective implementation found and removed: " + p.getElementId());
 			p.getParent().getChildren().remove(p);
 		}
 
 		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
 			if ( matches(desc.getId()) ) {
-				DEBUG.OUT("Dirty perspective descriptor found and removed: " + desc.getId());
+				// DEBUG.OUT("Dirty perspective descriptor found and removed: " + desc.getId());
 				reg.deletePerspective(desc);
 			}
 		}
 
-		DEBUG.OUT("Current perspectives: " + listCurrentPerspectives());
+		// DEBUG.OUT("Current perspectives: " + listCurrentPerspectives());
 	}
 
 	public static void deletePerspectiveFromApplication(final IPerspectiveDescriptor d) {
@@ -82,7 +82,7 @@ public class PerspectiveHelper {
 		final List<PerspectiveImpl> perspectives = e.findElements(a, PerspectiveImpl.class, EModelService.ANYWHERE,
 			element -> element.getElementId().contains(d.getId()));
 		for ( final PerspectiveImpl p : perspectives ) {
-			DEBUG.OUT("Dirty perspective implementation found and removed: " + p.getElementId());
+			// DEBUG.OUT("Dirty perspective implementation found and removed: " + p.getElementId());
 			p.getParent().getChildren().remove(p);
 		}
 	}
@@ -146,8 +146,9 @@ public class PerspectiveHelper {
 	}
 
 	private static IPerspectiveDescriptor findOrBuildPerspectiveWithId(final String id) {
-		if ( currentSimulationPerspective != null &&
-			currentSimulationPerspective.getId().equals(id) ) { return currentSimulationPerspective; }
+		if ( currentSimulationPerspective != null && currentSimulationPerspective.getId().equals(id) ) {
+			return currentSimulationPerspective;
+		}
 		final PerspectiveRegistry pr = (PerspectiveRegistry) getPerspectiveRegistry();
 		IPerspectiveDescriptor tempDescriptor = pr.findPerspectiveWithId(id);
 		if ( tempDescriptor == null ) {
@@ -217,7 +218,7 @@ public class PerspectiveHelper {
 			}
 			activateAutoSave(withAutoSave);
 			if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
-				DEBUG.OUT("Destroying perspective " + oldDescriptor.getId());
+				// DEBUG.OUT("Destroying perspective " + oldDescriptor.getId());
 				page.closePerspective(oldDescriptor, false, false);
 				getPerspectiveRegistry().deletePerspective(oldDescriptor);
 			}
@@ -230,7 +231,7 @@ public class PerspectiveHelper {
 				currentSimulationPerspective = descriptor;
 			}
 			applyActiveEditor(page);
-			DEBUG.OUT("Perspective " + perspectiveId + " opened ");
+			// DEBUG.OUT("Perspective " + perspectiveId + " opened ");
 		};
 		if ( immediately ) {
 			Display.getDefault().syncExec(r);
@@ -245,7 +246,7 @@ public class PerspectiveHelper {
 		final IEditorPart part = page.findEditor(activeEditor);
 		if ( part != null ) {
 			page.activate(part);
-			DEBUG.OUT("Applying memorized editor = " + activeEditor.getName());
+			// DEBUG.OUT("Applying memorized editor = " + activeEditor.getName());
 			// page.bringToTop(part);
 		}
 
@@ -255,7 +256,7 @@ public class PerspectiveHelper {
 		final IEditorPart part = page.getActiveEditor();
 		if ( part == null ) { return; }
 		activeEditor = part.getEditorInput();
-		DEBUG.OUT("Memorized editor = " + activeEditor.getName());
+		// DEBUG.OUT("Memorized editor = " + activeEditor.getName());
 
 	}
 

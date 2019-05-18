@@ -125,7 +125,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static MPartStack getDisplaysPlaceholder() {
 		final Object displayStack = getModelService().find("displays", getApplication());
-		DEBUG.OUT("Element displays found : " + displayStack);
+		// DEBUG.OUT("Element displays found : " + displayStack);
 		return displayStack instanceof MPartStack ? (MPartStack) displayStack : null;
 	}
 
@@ -184,7 +184,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			final List<MPlaceholder> holders) {
 		final String data = treeRoot.getData();
 		final String weight = String.valueOf(treeRoot.getWeight());
-		DEBUG.OUT("Processing " + data + " with weight " + weight);
+		// DEBUG.OUT("Processing " + data + " with weight " + weight);
 		final Boolean dir = !data.equals(HORIZONTAL) && !data.equals(VERTICAL) ? null : data.equals(HORIZONTAL);
 		final MPlaceholder holder = StreamEx.of(holders)
 				.findFirst(h -> h.getTransientData().get(DISPLAY_INDEX_KEY).equals(data)).orElse(null);
@@ -204,7 +204,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	static final List<MPlaceholder> listDisplayViews() {
 		final List<MPlaceholder> holders = getModelService().findElements(getApplication(), MPlaceholder.class,
 				IN_ACTIVE_PERSPECTIVE, e -> WorkbenchHelper.isDisplay(e.getElementId()));
-		DEBUG.OUT("Displays found: " + holders.size());
+		// DEBUG.OUT("Displays found: " + holders.size());
 		/// Issue #2680
 		int currentIndex = 0;
 		for (MPlaceholder h : holders) {
@@ -217,9 +217,9 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 		// holders.forEach(h -> h.getTransientData().put(DISPLAY_INDEX_KEY,
 		// String.valueOf(findDisplay(h.getElementId()).getIndex())));
-		holders.forEach(h -> {
-			DEBUG.OUT("Holder " + h.getElementId() + " for display #" + h.getTransientData().get(DISPLAY_INDEX_KEY));
-		});
+		// holders.forEach(h -> {
+		// DEBUG.OUT("Holder " + h.getElementId() + " for display #" + h.getTransientData().get(DISPLAY_INDEX_KEY));
+		// });
 		return holders;
 	}
 

@@ -117,7 +117,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		slider.setBackground(parent.getBackground());
 		slider.addDisposeListener(e -> {
 			sliders.remove(slider);
-			DEBUG.OUT("Slider " + slider + " is disposed");
+			// DEBUG.OUT("Slider " + slider + " is disposed");
 		});
 		sliders.add(slider);
 		return composite;
@@ -161,7 +161,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 			position -> "Minimum duration of a cycle " + Maths.opTruncate(valueFromPosition(position) / 1000, 3) + " s";
 
 	static IPositionChangeListener POSITION_LISTENER = (s, position) -> {
-		DEBUG.OUT("Position changed to " + position + " affects sliders: " + sliders);
+		// DEBUG.OUT("Position changed to " + position + " affects sliders: " + sliders);
 		GAMA.getExperiment().getAgent().setMinimumDurationExternal(valueFromPosition(position) / 1000);
 		for (final SimpleSlider slider2 : sliders) {
 			if (slider2 == s) {

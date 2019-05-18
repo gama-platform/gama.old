@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.metadata;
@@ -48,12 +48,12 @@ import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
-import ummisco.gama.dev.utils.DEBUG;
 // BEN import ummisco.gama.serializer.gaml.GamaSavedSimulationFile;
 // BEN import ummisco.gama.serializer.gaml.GamaSavedSimulationFile.SavedSimulationInfo;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class FileMetaDataProvider.
@@ -252,7 +252,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 					put(OSM_CT_ID, OSMInfo.class);
 					put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
 					put("project", ProjectInfo.class);
-// BEN					put(GSIM_CT_ID, SavedSimulationInfo.class);
+					// BEN put(GSIM_CT_ID, SavedSimulationInfo.class);
 				}
 			};
 
@@ -282,7 +282,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	/**
 	 * Method getMetaData()
-	 * 
+	 *
 	 * @see msi.gama.gui.navigator.IFileMetaDataProvider#getMetaData(org.eclipse.core.resources.IFile)
 	 */
 	@Override
@@ -341,9 +341,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							case SHAPEFILE_SUPPORT_CT_ID:
 								data[0] = createShapeFileSupportMetaData(theFile);
 								break;
-// BEN							case GSIM_CT_ID:
-// BEN								data[0] = createSacedSimulationFileMetaData(theFile);
-// BEN								break;
+							// BEN case GSIM_CT_ID:
+							// BEN data[0] = createSacedSimulationFileMetaData(theFile);
+							// BEN break;
 						}
 						// Last chance: we generate a generic info
 						if (data[0] == null) {
@@ -512,9 +512,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
 	}
 
-// BEN	private GamaSavedSimulationFile.SavedSimulationInfo createSacedSimulationFileMetaData(final IFile file) {
-// BEN		return new SavedSimulationInfo(file.getLocation().toOSString(), file.getModificationStamp());
-// BEN	}
+	// BEN private GamaSavedSimulationFile.SavedSimulationInfo createSacedSimulationFileMetaData(final IFile file) {
+	// BEN return new SavedSimulationInfo(file.getLocation().toOSString(), file.getModificationStamp());
+	// BEN }
 
 	public static String getContentTypeId(final IFile p) {
 		final IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
@@ -553,19 +553,19 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	private void startup() {
 		if (started) { return; }
 		started = true;
-		final long ms = System.currentTimeMillis();
-		try {
-			ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
-				if (resource.isAccessible()) {
-					resource.setSessionProperty(CACHE_KEY, resource.getPersistentProperty(CACHE_KEY));
-				}
-				return true;
-			});
-		} catch (final CoreException e) {
-			// Nothing
-		} finally {
-			DEBUG.OUT("Reading workspace metadata " + "in " + (System.currentTimeMillis() - ms) + "ms");
-		}
+		DEBUG.TIMER("Reading workspace metadata in ", () -> {
+			try {
+				ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
+					if (resource.isAccessible()) {
+						resource.setSessionProperty(CACHE_KEY, resource.getPersistentProperty(CACHE_KEY));
+					}
+					return true;
+				});
+			} catch (final CoreException e) {
+				// Nothing
+			}
+		});
+
 		try {
 			ResourcesPlugin.getWorkspace().addSaveParticipant("ummisco.gama.ui.modeling", getSaveParticipant());
 		} catch (final CoreException e) {
@@ -579,9 +579,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			@Override
 			public void saving(final ISaveContext context) throws CoreException {
 				if (context.getKind() != ISaveContext.FULL_SAVE) { return; }
-				final long ms = System.currentTimeMillis();
 				final String[] toSave = new String[1];
-				try {
+				DEBUG.TIMER_WITH_EXCEPTIONS("Saving workspace metadata in ", () -> {
 					ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
 
 						try {
@@ -599,9 +598,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 						}
 
 					});
-				} finally {
-					DEBUG.OUT("Saving workspace metadata " + "in " + (System.currentTimeMillis() - ms) + "ms");
-				}
+				});
 
 			}
 

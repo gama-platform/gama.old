@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.test.AbstractSummary.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.test.AbstractSummary.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.test;
 
@@ -17,7 +17,6 @@ import org.eclipse.emf.common.util.URI;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaColor;
 import one.util.streamex.StreamEx;
-import ummisco.gama.dev.utils.DEBUG;
 
 public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	private static int COUNT = 0;
@@ -80,7 +79,9 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	public final String toString() {
 		final TestState state = getState();
 		if (GamaPreferences.Runtime.FAILED_TESTS.getValue() && state != TestState.FAILED
-				&& state != TestState.ABORTED) { return ""; }
+				&& state != TestState.ABORTED) {
+			return "";
+		}
 		final StringBuilder sb = new StringBuilder();
 		printHeader(sb);
 		sb.append(state).append(": ").append(getTitle()).append(" ");
@@ -103,9 +104,9 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> {
 	protected void printHeader(final StringBuilder sb) {}
 
 	public AbstractSummary<?> getSummaryOf(final URI uri) {
-		if (this.uri != null) {
-			DEBUG.OUT("Comparing " + this.uri + " to " + uri);
-		}
+		// if (this.uri != null) {
+		// DEBUG.OUT("Comparing " + this.uri + " to " + uri);
+		// }
 		if (uri.equals(this.uri)) { return this; }
 		return StreamEx.ofValues(getSummaries()).findFirst(s -> s.getSummaryOf(uri) != null).orElse(null);
 	}

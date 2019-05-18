@@ -1,12 +1,12 @@
 /*********************************************************************************************
- * 
+ *
  *
  * 'HeadlessStatement.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and
  * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.headless.command;
 
@@ -27,7 +27,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import ummisco.gama.dev.utils.DEBUG;
 
 @symbol (
 		name = IKeywords.RUNSIMULARTION,
@@ -107,7 +106,7 @@ public class HeadlessStatement extends AbstractStatement {
 
 		final long lseed = seed;
 
-		DEBUG.OUT("chemin du fichier" + new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath());
+		// DEBUG.OUT("chemin du fichier" + new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath());
 
 		final ExperimentJob sim = new ExperimentJob(this.getSimulationId(), modelPath, expName, 1000, "", lseed);
 

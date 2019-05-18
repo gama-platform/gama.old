@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.solver;
@@ -44,8 +44,7 @@ public abstract class Solver {
 			integrator.addStepHandler(new StepHandler() {
 
 				@Override
-				public void init(final double t0, final double[] y0, final double t) {
-				}
+				public void init(final double t0, final double[] y0, final double t) {}
 
 				@Override
 				public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
@@ -69,9 +68,9 @@ public abstract class Solver {
 			GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = seq.getEquations(scope.getAgent());
 			GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = seq.getVariableDiff(scope.getAgent());
 			/*
-			 * prepare initial value of variables 1. loop through variables expression 2. if
-			 * its equaAgents != null, it mean variable of external equation, set current
-			 * scope to this agent scope 3. get value 4. return to previous scope
+			 * prepare initial value of variables 1. loop through variables expression 2. if its equaAgents != null, it
+			 * mean variable of external equation, set current scope to this agent scope 3. get value 4. return to
+			 * previous scope
 			 */
 
 			final double[] y = new double[myVar.size()];
@@ -95,7 +94,7 @@ public abstract class Solver {
 									GamaRuntimeException.create(new NotANumberException(), scope), true);
 						}
 					} catch (final Exception ex1) {
-						scope.getGui().debug(ex1.getMessage());
+						DEBUG.OUT(ex1.getMessage());
 					} finally {
 						if (pushed) {
 							scope.pop(a);
@@ -116,7 +115,7 @@ public abstract class Solver {
 				try {
 					integrator.integrate(seq, initialTime, y, finalTime, y);
 				} catch (final Exception ex) {
-					System.out.println(ex.toString());
+					DEBUG.OUT(ex.toString());
 				}
 			}
 

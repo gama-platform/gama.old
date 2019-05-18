@@ -72,7 +72,7 @@ public class TextureCache2 implements ITextureCache {
 				AWTTextureIO.setTexRectEnabled(newValue);
 			});
 			AWTTextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
-			DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
+			// DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
 		}
 	}
 
@@ -150,7 +150,7 @@ public class TextureCache2 implements ITextureCache {
 		} else {
 			try {
 				texture = staticTextures.get(file.getAbsolutePath(), () -> {
-					DEBUG.OUT("Loading static texture : " + file.getName());
+					// DEBUG.OUT("Loading static texture : " + file.getName());
 					return buildTexture(gl.getGL(), file);
 				});
 			} catch (final ExecutionException e) {
