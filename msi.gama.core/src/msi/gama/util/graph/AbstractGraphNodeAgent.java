@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.AbstractGraphNodeAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.graph.AbstractGraphNodeAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -31,6 +31,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 // FIXME: Add all the necessary variables (degree, neighbors, edges)
 @species (
@@ -89,7 +90,7 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 					optional = false,
 					type = IType.AGENT) })
 	public Boolean relatedTo(final IScope scope) {
-		scope.getGui().debug("Should never be called !");
+		DEBUG.LOG("Should never be called !");
 		return false;
 	}
 

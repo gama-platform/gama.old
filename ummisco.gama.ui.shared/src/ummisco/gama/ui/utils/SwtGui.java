@@ -101,11 +101,6 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void debug(final String msg) {
-		DEBUG.OUT(msg);
-	}
-
-	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
 		if (exp == null || !GamaPreferences.Runtime.CORE_ASK_CLOSING.getValue()) { return true; }
 		PerspectiveHelper.openSimulationPerspective();

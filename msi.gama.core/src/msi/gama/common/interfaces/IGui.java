@@ -87,8 +87,6 @@ public interface IGui {
 
 	void showParameterView(IScope scope, IExperimentPlan exp);
 
-	void debug(String string);
-
 	void clearErrors(IScope scope);
 
 	void runtimeError(final IScope scope, GamaRuntimeException g);

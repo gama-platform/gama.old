@@ -28,6 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import ummisco.gama.dev.utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
@@ -38,8 +39,6 @@ import msi.gama.util.IList;
  */
 public class MySqlConnection extends SqlConnection {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for
-												// release version
 	private static final String WKT2GEO = "GeomFromText";
 	private static final String PREFIX_TIMESTAMP = "cast('";
 	private static final String MID_TIMESTAMP = "' as ";
@@ -221,8 +220,9 @@ public class MySqlConnection extends SqlConnection {
 		String colStr = "";
 		String valueStr = "";
 		// Check size of parameters
-		if (values.size() != col_no) { throw new IndexOutOfBoundsException(
-				"Size of columns list and values list are not equal"); }
+		if (values.size() != col_no) {
+			throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+		}
 		// Get column name
 		for (int i = 0; i < col_no; i++) {
 			if (i == col_no - 1) {
@@ -234,8 +234,8 @@ public class MySqlConnection extends SqlConnection {
 		// create SELECT statement string
 		selectStr = selectStr + colStr + " FROM " + table_name + " LIMIT 1 ;";
 
-		if (DEBUG) {
-			scope.getGui().debug("MySqlConnection.getInsertString.select command:" + selectStr);
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("MySqlConnection.getInsertString.select command:" + selectStr);
 		}
 
 		try {
@@ -246,9 +246,9 @@ public class MySqlConnection extends SqlConnection {
 			final IList<Object> col_Names = getColumnName(rsmd);
 			final IList<Object> col_Types = getColumnTypeName(rsmd);
 
-			if (DEBUG) {
-				scope.getGui().debug("list of column Name:" + col_Names);
-				scope.getGui().debug("list of column type:" + col_Types);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("list of column Name:" + col_Names);
+				DEBUG.OUT("list of column type:" + col_Types);
 			}
 			// Insert command
 			// set parameter value
@@ -320,8 +320,8 @@ public class MySqlConnection extends SqlConnection {
 			}
 			insertStr = insertStr + table_name + "(" + colStr + ") " + "VALUES(" + valueStr + ")";
 
-			if (DEBUG) {
-				scope.getGui().debug("MySqlConection.getInsertString:" + insertStr);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("MySqlConection.getInsertString:" + insertStr);
 			}
 
 		} catch (final SQLException e) {
@@ -349,8 +349,8 @@ public class MySqlConnection extends SqlConnection {
 		// Get column name
 		// create SELECT statement string
 		selectStr = selectStr + " * " + " FROM " + table_name + " LIMIT 1 ;";
-		if (DEBUG) {
-			scope.getGui().debug("MySqlConnection.getInsertString.select command:" + selectStr);
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("MySqlConnection.getInsertString.select command:" + selectStr);
 		}
 
 		try {
@@ -362,12 +362,13 @@ public class MySqlConnection extends SqlConnection {
 			final IList<Object> col_Types = getColumnTypeName(rsmd);
 			final int col_no = col_Names.size();
 			// Check size of parameters
-			if (values.size() != col_Names.size()) { throw new IndexOutOfBoundsException(
-					"Size of columns list and values list are not equal"); }
+			if (values.size() != col_Names.size()) {
+				throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+			}
 
-			if (DEBUG) {
-				scope.getGui().debug("list of column Name:" + col_Names);
-				scope.getGui().debug("list of column type:" + col_Types);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("list of column Name:" + col_Names);
+				DEBUG.OUT("list of column type:" + col_Types);
 			}
 			// Insert command
 			// set parameter value
@@ -445,8 +446,8 @@ public class MySqlConnection extends SqlConnection {
 
 			insertStr = insertStr + table_name + "(" + colStr + ") " + "VALUES(" + valueStr + ")";
 
-			if (DEBUG) {
-				scope.getGui().debug("MySqlConection.getInsertString:" + insertStr);
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("MySqlConection.getInsertString:" + insertStr);
 			}
 
 		} catch (final SQLException e) {

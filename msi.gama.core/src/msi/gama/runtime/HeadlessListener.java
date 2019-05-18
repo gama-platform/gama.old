@@ -128,11 +128,6 @@ public class HeadlessListener implements IGui {
 	public void showParameterView(final IScope scope, final IExperimentPlan exp) {}
 
 	@Override
-	public void debug(final String string) {
-		log("Debug: " + string);
-	}
-
-	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
 		log("Runtime error: " + g.getMessage());
 	}
@@ -351,12 +346,12 @@ public class HeadlessListener implements IGui {
 
 		@Override
 		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
-			debug(s);
+			informConsole(s, root);
 		}
 
 		@Override
 		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
-			debug(s);
+			informConsole(s, root);
 		}
 
 		@Override

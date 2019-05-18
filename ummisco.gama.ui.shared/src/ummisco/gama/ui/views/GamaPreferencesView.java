@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views;
@@ -47,6 +47,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.dialogs.Messages;
@@ -287,7 +288,7 @@ public class GamaPreferencesView {
 	 */
 	protected void showError(final String string) {
 		// TODO make it a proper component of the view
-		GAMA.getGui().debug("Error in preferences : " + string);
+		DEBUG.LOG("Error in preferences : " + string);
 	}
 
 	private void buildButtons() {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ExperimentScheduler.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.ExperimentScheduler.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -21,6 +21,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class ExperimentScheduler implements Runnable {
 
@@ -64,7 +65,7 @@ public class ExperimentScheduler implements Runnable {
 				e.printStackTrace();
 				final GamaRuntimeException ee = GamaRuntimeException.create(e, experiment.getExperimentScope());
 				ee.addContext("Error in front end scheduler. Reloading thread, but it would be safer to reload GAMA");
-				experiment.getExperimentScope().getGui().debug(ee.getMessage());
+				DEBUG.LOG(ee.getMessage());
 				executionThread = new Thread(null, this, "Front end scheduler");
 				executionThread.start();
 			}

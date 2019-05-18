@@ -48,10 +48,9 @@ public class MdxUtils {
 			}
 
 			if (DEBUG.IS_ON()) {
-				scope.getGui()
-						.debug("MdxlUtils.createConnectionObject.catalog.Mondrian:" + olaptype + " - " + dbtype + " - "
-								+ " - " + host + " - " + port + " - " + database + " - " + catalog + " - " + user
-								+ " - " + passwd + " - ");
+				DEBUG.OUT("MdxlUtils.createConnectionObject.catalog.Mondrian:" + olaptype + " - " + dbtype + " - "
+						+ " - " + host + " - " + port + " - " + database + " - " + catalog + " - " + user + " - "
+						+ passwd + " - ");
 			}
 
 			mdxConn = new MondrianConnection(olaptype, dbtype, host, port, database, catalog, user, passwd);
@@ -61,10 +60,9 @@ public class MdxUtils {
 
 		} else if (olaptype.equalsIgnoreCase(MdxConnection.MONDRIANXMLA)) {
 			if (DEBUG.IS_ON()) {
-				scope.getGui()
-						.debug("MdxlUtils.createConnectionObject.catalog.MondrianXMLA:" + olaptype + " - " + dbtype
-								+ " - " + " - " + host + " - " + port + " - " + database + " - " + catalog + " - "
-								+ user + " - " + passwd + " - ");
+				DEBUG.OUT("MdxlUtils.createConnectionObject.catalog.MondrianXMLA:" + olaptype + " - " + dbtype + " - "
+						+ " - " + host + " - " + port + " - " + database + " - " + catalog + " - " + user + " - "
+						+ passwd + " - ");
 			}
 
 			mdxConn = new MondrianXmlaConnection(olaptype, dbtype, host, port, database, catalog, user, passwd);
