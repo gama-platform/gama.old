@@ -84,12 +84,12 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		code[0] = 0;
 		count[0] = 0;
 		final Multimap<Bundle, String> tests = GamaBundleLoader.getPluginsWithTests();
-		try {
-			Thread.sleep(15000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(15000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		allURLs = new ArrayList<>();
 		for (final Bundle bundle : tests.keySet()) {
 			for (final String entry : tests.get(bundle)) {

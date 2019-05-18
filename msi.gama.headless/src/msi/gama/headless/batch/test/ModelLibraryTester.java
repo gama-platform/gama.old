@@ -38,15 +38,23 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	private final static String FAILED_PARAMETER = "-failed";
 //	public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
 
+	PrintStream original;
+	PrintStream nullStream;
 	private ModelLibraryTester() {
 	}
 
 	@Override
 	public int start(final List<String> args) throws IOException { 
 
+
 		SystemLogger.activeDisplay();
 		HeadlessSimulationLoader.preloadGAMA();
-
+		original = System.out;
+		nullStream=new PrintStream(new OutputStream() {
+            public void write(int b) {
+                //DO NOTHING
+            }
+        });
 		final int[] count = { 0 };
 		final int[] code = { 0 };
 		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
@@ -95,6 +103,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 			for (final String expName : testExpNames) {
 				final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 				if (exp != null) {
+					System.setOut(nullStream);
 					final TestAgent agent = (TestAgent) exp.getAgent();
 					exp.setHeadless(true);
 					exp.getController().getScheduler().paused = false;
@@ -102,12 +111,12 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 					code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 					code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 					count[0] += agent.getSummary().size();
+
+				    System.setOut(original);
 					if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
 							|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0) {
-
-						SystemLogger.activeDisplay();						
-						System.out.println(agent.getSummary().toString());
-						SystemLogger.removeDisplay();
+			
+						System.out.println(agent.getSummary().toString()); 
 					}
 				}
 			}
