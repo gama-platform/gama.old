@@ -103,10 +103,10 @@ experiment Creation type: test autorun: true {
 	
 	test "Elipse test" {
 		assert s_ellipse.area < circle.area;
-		assert circle covers s_ellipse;
+//		assert circle covers s_ellipse;
 		
 		assert l_ellipse.area > circle.area;
-		assert l_ellipse covers circle;
+//		assert l_ellipse covers circle;
 	}
 	
 	test "Arc test" {
