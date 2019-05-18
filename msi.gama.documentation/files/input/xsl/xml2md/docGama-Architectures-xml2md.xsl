@@ -17,7 +17,6 @@
 ----
 
 ## Table of Contents
-&lt;wiki:toc max_depth="3" /&gt;
 	</xsl:text>
 	
 <xsl:call-template name="buildSkillsByName"/>
@@ -35,7 +34,8 @@
 	<xsl:with-param name="category" select="'architecture'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
 </xsl:call-template>
-## <xsl:value-of select="@name"/>	
+## <xsl:value-of select="@name"/><xsl:text>
+</xsl:text>	
 <xsl:value-of select="documentation/result"/> 
 		<xsl:call-template name="buildVariables"/>
 		<xsl:call-template name="buildActions"/>		

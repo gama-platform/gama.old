@@ -205,7 +205,7 @@ import msi.gaml.types.Types;
 @skill (
 		name = SimpleBdiArchitecture.SIMPLE_BDI,
 		concept = { IConcept.BDI, IConcept.ARCHITECTURE })
-@doc("this arcitecture enables to define a behaviour using BDI. It is an implementation of the BEN architecture (Behaviour with Emotions and Norms)")
+@doc("this architecture enables to define a behaviour using BDI. It is an implementation of the BEN architecture (Behaviour with Emotions and Norms)")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SimpleBdiArchitecture extends ReflexArchitecture {
 
