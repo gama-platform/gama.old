@@ -23,6 +23,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -145,13 +146,15 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators Categories
-		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperatorsCategories =
+		@SuppressWarnings ("unchecked") 
+		final Set<? extends ExecutableElement> setOperatorsCategories =
 				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLCategories(setOperatorsCategories, XMLElements.OPERATORS_CATEGORIES));
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Operators
-		@SuppressWarnings ("unchecked") final Set<? extends ExecutableElement> setOperators =
+		@SuppressWarnings ("unchecked") 
+		final Set<? extends ExecutableElement> setOperators =
 				(Set<? extends ExecutableElement>) context.getElementsAnnotatedWith(operator.class);
 		root.appendChild(this.processDocXMLOperators(setOperators));
 
@@ -167,7 +170,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 
 		// ////////////////////////////////////////////////
 		// /// Parsing of Species
-		final Set<? extends Element> setSpecies = context.getElementsAnnotatedWith(species.class);
+		@SuppressWarnings ("unchecked") 		
+		final Set<? extends TypeElement> setSpecies = (Set<? extends TypeElement>) context.getElementsAnnotatedWith(species.class);
 		root.appendChild(this.processDocXMLSpecies(setSpecies));
 
 		// ////////////////////////////////////////////////
@@ -852,10 +856,10 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return skills;
 	}
 
-	private org.w3c.dom.Element processDocXMLSpecies(final Set<? extends Element> setSpecies) {
+	private org.w3c.dom.Element processDocXMLSpecies(final Set<? extends TypeElement> setSpecies) {
 		final org.w3c.dom.Element species = document.createElement(XMLElements.SPECIESS);
 
-		for (final Element e : setSpecies) {
+		for (final TypeElement e : setSpecies) {
 			if (e.getAnnotation(species.class).internal() == true
 					|| e.getAnnotation(doc.class) != null && !"".equals(e.getAnnotation(doc.class).deprecated())) {
 				// Just omit it
@@ -892,10 +896,20 @@ public class DocProcessor extends ElementProcessor<doc> {
 				spec.appendChild(skillsElt);
 
 				// Parsing of vars
-				final org.w3c.dom.Element varsElt =
+				org.w3c.dom.Element varsElt =
 						getVarsElt(e.getAnnotation(vars.class), document, mes, spec.getAttribute("name"), tc);
 				if (varsElt != null) {
 					spec.appendChild(varsElt);
+				} else { 
+					// When no attribute is defined in a species, it gets the vars of the closest parent with @vars annotation
+					// This is particularly useful for the agent species.
+					varsElt =
+							getVarsElt(ElementTypeUtils.getFirstImplementingInterfacesWithVars(e, mes).getAnnotation(vars.class), document, mes, spec.getAttribute("name"), tc);
+					if (varsElt != null) {
+						spec.appendChild(varsElt);
+					} else {
+						mes.printMessage(Kind.WARNING, "GAML Processor of @species: even parents do not have attributes...");
+					}			
 				}
 
 				// Parsing of concept
@@ -1380,7 +1394,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 				varsElt.appendChild(varElt);
 			}
 			return varsElt;
-		}
+		} 
 		return null;
 	}
 
