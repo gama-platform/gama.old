@@ -317,7 +317,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 </xsl:for-each>
 
 <!-- Categories for operators -->
-<xsl:for-each select="/doc/operatorsCategories/category[not(@id = (preceding-sibling::*/@id))]">
+<!-- <xsl:for-each select="/doc/operatorsCategories/category[not(@id = (preceding-sibling::*/@id))]">
 	<xsl:sort select="@id" />
 	<xsl:variable name="catName" select="@id"/>
 	<xsl:for-each select="/doc/operators/operator"> 
@@ -355,7 +355,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 		</xsl:for-each>
 	</xsl:for-each>
 </xsl:for-each>
-
+-->
+ 
 <!-- Categories for constants -->
 <xsl:for-each select="/doc/constantsCategories/category[not(@id = (preceding-sibling::*/@id))]">
 	<xsl:sort select="@id" />
@@ -372,6 +373,21 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 				<xsl:text>", "url": "</xsl:text> <xsl:value-of select="$fileUnitsConstants" /><xsl:text>" }, </xsl:text>
 			</xsl:if>
 		</xsl:for-each>
+	</xsl:for-each>
+</xsl:for-each>
+
+<!-- Facets -->
+<xsl:text>
+</xsl:text>
+<xsl:for-each select="/doc/statements/statement[not(@id = (preceding-sibling::*/@id))]">
+	<xsl:sort select="@id" />
+	<xsl:variable name="statName" select="@id"/>
+	<xsl:for-each select="facets/facet"> 
+		<xsl:sort select="@name" />
+		<xsl:variable name="nameConstant" select="@name"/>
+		<xsl:text>{ "tag": "Facet", "subcat": "</xsl:text><xsl:value-of select="$statName"/>
+		<xsl:text>", "title": "</xsl:text> <xsl:value-of select="@name" />
+		<xsl:text>", "url": "</xsl:text><xsl:value-of select="$fileStatements" /><xsl:text>#</xsl:text><xsl:value-of select="$statName" /><xsl:text>" }, </xsl:text>
 	</xsl:for-each>
 </xsl:for-each>
 
