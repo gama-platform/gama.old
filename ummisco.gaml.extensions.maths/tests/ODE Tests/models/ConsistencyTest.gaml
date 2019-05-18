@@ -32,7 +32,7 @@ global{
 	float delta <- 0.3 ; 
 
 // numerical integration parameters	
-	float stepsize <- 0.05;
+	float stepsize <- 0.005;
 	float min_step <- 7.105427e-16;
 	float abs_tol <- 10^-7;
 	float rel_tol <- 0.000001;

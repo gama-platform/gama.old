@@ -39,7 +39,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 //	public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
 
 	private ModelLibraryTester() {
-		SystemLogger.activeDisplay();
 	}
 
 	@Override
@@ -104,8 +103,12 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 					code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 					count[0] += agent.getSummary().size();
 					if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
-							|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0)
-						System.out.println(agent.getSummary().toString()); 
+							|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0) {
+
+						SystemLogger.activeDisplay();						
+						System.out.println(agent.getSummary().toString());
+						SystemLogger.removeDisplay();
+					}
 				}
 			}
 		} catch (final Exception ex) {
