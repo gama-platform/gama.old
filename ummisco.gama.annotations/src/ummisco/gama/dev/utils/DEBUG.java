@@ -94,9 +94,9 @@ public class DEBUG {
 	 */
 
 	public static void TIMER(final String title, final Runnable runnable) {
-		final String s = findCallingClassName();
-		if (!REGISTERED.containsKey(s)) {
+		if (GLOBAL_OFF || !REGISTERED.containsKey(findCallingClassName())) {
 			runnable.run();
+			return;
 		}
 		final long start = System.currentTimeMillis();
 		runnable.run();
@@ -105,9 +105,9 @@ public class DEBUG {
 
 	public static void TIMER_WITH_EXCEPTIONS(final String title, final RunnableWithException runnable)
 			throws Exception {
-		final String s = findCallingClassName();
-		if (!REGISTERED.containsKey(s)) {
+		if (GLOBAL_OFF || !REGISTERED.containsKey(findCallingClassName())) {
 			runnable.run();
+			return;
 		}
 		final long start = System.currentTimeMillis();
 		runnable.run();
