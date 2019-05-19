@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
@@ -61,16 +61,16 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 
 	private final String aliasName;
 
-
-	@doc (value= "This file constructor allows to read a gaml file (.gaml)",
-			examples = {
-					@example(value = "file f <- gaml_file(\"file.gaml\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a gaml file (.gaml)",
+			examples = { @example (
+					value = "file f <- gaml_file(\"file.gaml\");",
+					isExecutable = false) })
 	public GamlFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 		experimentName = "";
 		aliasName = "";
-		mymodel = GamlModelBuilder.compile(URI.createURI(getPath(scope), false), null);
+		mymodel = GamlModelBuilder.getDefaultInstance().compile(URI.createURI(getPath(scope), false), null);
 	}
 
 	@Override
@@ -78,16 +78,17 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 		return Types.FILE.of(Types.INT, Types.SPECIES);
 	}
 
-	@doc (value= "This file constructor allows to compile a gaml file and run an experiment",
-			examples = {
-					@example(value = "file f <- gaml_file(\"file.gaml\", \"my_experiment\", \"my_model\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to compile a gaml file and run an experiment",
+			examples = { @example (
+					value = "file f <- gaml_file(\"file.gaml\", \"my_experiment\", \"my_model\");",
+					isExecutable = false) })
 	public GamlFile(final IScope scope, final String pathName, final String expName, final String cName)
 			throws GamaRuntimeException {
 		super(scope, pathName);
 		experimentName = expName;
 		aliasName = cName;
-		mymodel = GamlModelBuilder.compile(URI.createURI(getPath(scope), false), null);
+		mymodel = GamlModelBuilder.getDefaultInstance().compile(URI.createURI(getPath(scope), false), null);
 		((ModelDescription) mymodel.getDescription()).setAlias(aliasName);
 	}
 

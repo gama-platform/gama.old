@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 
+import com.google.inject.Injector;
+
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
@@ -36,7 +38,7 @@ public class HeadlessSimulationLoader {
 
 	/**
 	 * Load in headless mode a specified model and create an experiment
-	 * 
+	 *
 	 * @param fileName
 	 *            model to load
 	 * @param params
@@ -50,14 +52,14 @@ public class HeadlessSimulationLoader {
 		GAMA.setHeadLessMode();
 	}
 
-	public static void preloadGAMA() {
+	public static Injector preloadGAMA() {
 		LOG("GAMA configuring and loading...");
 		configureHeadLessSimulation();
 		GAMA.setHeadlessGui(new HeadlessListener());
-
+		Injector injector;
 		try {
 			// We initialize XText and Gaml.
-			GamlStandaloneSetup.doSetup();
+			injector = GamlStandaloneSetup.doSetup();
 		} catch (final Exception e1) {
 			throw GamaRuntimeException.create(e1, GAMA.getRuntimeScope());
 		}
@@ -65,11 +67,12 @@ public class HeadlessSimulationLoader {
 		GamaPreferences.External.CORE_SEED_DEFINED.set(true);
 		GamaPreferences.External.CORE_SEED.set(1.0);
 		// SEED HACK
+		return injector;
 	}
 
 	/**
 	 * Compiles a file to a GAMA model ready to be experimented
-	 * 
+	 *
 	 * @param myFile
 	 *            the main model file
 	 * @return a compiled model
@@ -86,7 +89,7 @@ public class HeadlessSimulationLoader {
 
 	/**
 	 * Compiles a file to a GAMA model ready to be experimented
-	 * 
+	 *
 	 * @param myFile
 	 *            the main model file
 	 * @param errors
@@ -104,7 +107,7 @@ public class HeadlessSimulationLoader {
 
 	/**
 	 * Compiles a file to a GAMA model ready to be experimented
-	 * 
+	 *
 	 * @param myFile
 	 *            the main model file
 	 * @param errors
@@ -124,12 +127,14 @@ public class HeadlessSimulationLoader {
 		final String fileName = myFile.getAbsolutePath();
 		if (!myFile.exists()) { throw new IOException("Model file does not exist: " + fileName); }
 		LOG(fileName + " model is being compiled...");
-		
-		final IModel model = GamlModelBuilder.compile(URI.createFileURI(fileName), errors);
-		if (model == null) { 
+
+		final IModel model = GamlModelBuilder.getDefaultInstance().compile(URI.createFileURI(fileName), errors);
+		if (model == null) {
 			LOG("Model compiled with following indications: \n"
-					+ (errors == null ? "" : StreamEx.of(errors).joining("\n")));	
-			throw new GamaHeadlessException("Model cannot be compiled. See list of attached errors \n"+StreamEx.of(errors).joining("\n")); }
+					+ (errors == null ? "" : StreamEx.of(errors).joining("\n")));
+			throw new GamaHeadlessException(
+					"Model cannot be compiled. See list of attached errors \n" + StreamEx.of(errors).joining("\n"));
+		}
 		// if (metaProperties != null)
 		// model.getDescription().collectMetaInformation(metaProperties);
 		return model;

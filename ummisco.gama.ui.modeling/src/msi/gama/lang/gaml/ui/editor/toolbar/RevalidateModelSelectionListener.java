@@ -4,7 +4,7 @@
  * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
@@ -30,7 +30,7 @@ public class RevalidateModelSelectionListener implements Selector {
 	GamlEditor editor;
 
 	/**
-	 * 
+	 *
 	 */
 	public RevalidateModelSelectionListener(final GamlEditor editor) {
 		this.editor = editor;
@@ -46,7 +46,7 @@ public class RevalidateModelSelectionListener implements Selector {
 
 			@Override
 			public Object exec(final XtextResource state, final CancelIndicator c) throws Exception {
-				return GamlModelBuilder.compile(state.getURI(), null);
+				return GamlModelBuilder.getDefaultInstance().compile(state.getURI(), null);
 			}
 		});
 

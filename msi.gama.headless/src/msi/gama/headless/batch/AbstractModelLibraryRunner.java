@@ -4,9 +4,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import com.google.inject.Injector;
+
+import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import ummisco.gama.dev.utils.DEBUG;
 
 public abstract class AbstractModelLibraryRunner {
+
+	protected GamlModelBuilder createBuilder(Injector injector) {
+		GamlModelBuilder builder = new GamlModelBuilder(injector);
+		return builder;
+	}
 
 	static {
 		DEBUG.OFF();

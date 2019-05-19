@@ -140,7 +140,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 		if (object instanceof URI) {
 			final URI uri = (URI) object;
 			final List<GamlCompilationError> errors = new ArrayList<>();
-			final IModel model = GamlModelBuilder.compile(uri, errors);
+			final IModel model = GamlModelBuilder.getDefaultInstance().compile(uri, errors);
 			if (model == null) {
 				GAMA.getGui().error("File " + uri.lastSegment() + " cannot be built because of " + errors.size()
 						+ " compilation errors");
@@ -151,7 +151,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			final IXtextDocument doc = (IXtextDocument) object;
 			IModel model = null;
 			try {
-				model = doc.readOnly(state -> GamlModelBuilder.compile(state.getURI(), null));
+				model = doc.readOnly(state -> GamlModelBuilder.getDefaultInstance().compile(state.getURI(), null));
 			} catch (final GamaRuntimeException ex) {
 				GAMA.getGui()
 						.error("Experiment cannot be instantiated because of the following error: " + ex.getMessage());

@@ -3,18 +3,17 @@ package msi.gama.headless.batch.test;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 
 import com.google.common.collect.Multimap;
+import com.google.inject.Injector;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.headless.batch.AbstractModelLibraryRunner;
@@ -26,7 +25,6 @@ import msi.gama.kernel.experiment.TestAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.HeadlessListener;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.descriptions.ModelDescription;
@@ -36,25 +34,26 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	private static ModelLibraryTester instance;
 	private final static String FAILED_PARAMETER = "-failed";
-//	public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
+	// public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
 
 	PrintStream original;
 	PrintStream nullStream;
-	private ModelLibraryTester() {
-	}
+
+	private ModelLibraryTester() {}
 
 	@Override
-	public int start(final List<String> args) throws IOException { 
-
-
+	public int start(final List<String> args) throws IOException {
 		SystemLogger.activeDisplay();
-		HeadlessSimulationLoader.preloadGAMA();
+		Injector injector = HeadlessSimulationLoader.preloadGAMA();
+		GamlModelBuilder builder = createBuilder(injector);
+
 		original = System.out;
-		nullStream=new PrintStream(new OutputStream() {
-            public void write(int b) {
-                //DO NOTHING
-            }
-        });
+		nullStream = new PrintStream(new OutputStream() {
+			@Override
+			public void write(int b) {
+				// DO NOTHING
+			}
+		});
 		final int[] count = { 0 };
 		final int[] code = { 0 };
 		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
@@ -75,24 +74,24 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 					}
 			}
 		}
-		GamlModelBuilder.loadURLs(allURLs);
+		builder.loadURLs(allURLs);
 
-		allURLs.forEach(u -> test(count, code, u));
+		allURLs.forEach(u -> test(builder, count, code, u));
 		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
 
-//		LOGGER.info(
-//				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
+		// LOGGER.info(
+		// "" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		System.out.println(
 				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		System.out.println(code[0]);
 		return code[0];
 	}
 
-	public void test(final int[] count, final int[] code, final URL p) { 
-//		System.out.println(p);
+	public void test(GamlModelBuilder builder, final int[] count, final int[] code, final URL p) {
+		// System.out.println(p);
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		try {
-			final IModel model = GamlModelBuilder.compile(p, errors);
+			final IModel model = builder.compile(p, errors);
 			if (model == null || model.getDescription() == null)
 				return;
 			final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
@@ -112,11 +111,11 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 					code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);
 					count[0] += agent.getSummary().size();
 
-				    System.setOut(original);
+					System.setOut(original);
 					if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
 							|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0) {
-			
-						System.out.println(agent.getSummary().toString()); 
+
+						System.out.println(agent.getSummary().toString());
 					}
 				}
 			}
