@@ -101,8 +101,8 @@ species people {
 	// font: facet is expecting a font obbject composed by the name of the font, its size and #bold/#italic/#plain/#bold+#italic.	
 	aspect simple_text {
 		// perspective: facet specifies whether to render the text in perspective or facing the user.		
-		draw "Agent: " + name + "(rotate!)" at: location + {0,8,0} color: #green font: font("Arial",10,#bold) perspective: false anchor: #bottom_center;
-		draw "Agent: " + name at: location + {0,6,0} color: #blue font: font("SansSerif",15,#italic) perspective: true anchor: #bottom_center;		
+		draw "Agent: " + name + "(rotate!)" at: location + {0,8,0} color: #green font: font("Arial",10,#bold) perspective: false ;
+		draw "Agent: " + name at: location + {0,6,0} color: #blue font: font("SansSerif",15,#italic) perspective: true ;		
 	}
 
 	// When a line is drawn, it could be interesting to also draw an arrow at one of the extremities of the line
@@ -119,7 +119,7 @@ species people {
 	// They can also be rotated.		
 	aspect locate_geometry {
 		draw square(1.0) color: #silver border: #black at: world.location rotate: 45;
-		draw "Agent in center" color: #green font: font("Arial",15,#bold) perspective: false at: world.location + {0.0,2.0,0.0} anchor: #bottom_center;
+		draw "Agent in center" color: #green font: font("Arial",15,#bold) at: world.location + {0.0,2.0,0.0} anchor: #bottom_center;
 	}
 
 	// In an OpenGL display, the various geometries can be displayed in 3d, or more specifically with a depth (facet depth:).
