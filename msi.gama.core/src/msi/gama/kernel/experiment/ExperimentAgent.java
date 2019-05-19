@@ -695,7 +695,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			if (sim != null && !sim.dead()) { return sim.getScope().getGlobalVarValue(varName); }
 			// Third case, the simulation is null but the model defines this variable (see #2044). We then grab its
 			// initial value if possible
+			// However, if the experiment is defined with keep_simulations: false, we should not give access to the
+			// value, as no simulations can be made available (see #2727)
 			if (this.getModel().getSpecies().hasVar(varName)) {
+				if (!getExperiment().getSpecies().keepsSimulations())
+					throw GamaRuntimeException.error("This experiment does not keep its simulations. " + varName
+							+ " cannot be retrieved in this context", this);
 				return getModel().getSpecies().getVar(varName).getInitialValue(this);
 			}
 			// Fourth case: this is a parameter, so we get it from the species
