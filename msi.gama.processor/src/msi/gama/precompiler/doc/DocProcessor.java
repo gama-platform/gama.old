@@ -1446,27 +1446,30 @@ public class DocProcessor extends ElementProcessor<doc> {
 		final org.w3c.dom.Element facetsElt = doc.createElement(XMLElements.FACETS);
 
 		for (final facet f : facetsAnnot.value()) {
-			final org.w3c.dom.Element facetElt = doc.createElement(XMLElements.FACET);
-			facetElt.setAttribute(XMLElements.ATT_FACET_NAME, f.name());
-			facetElt.setAttribute(XMLElements.ATT_FACET_TYPE, tc.getTypeString(f.type()));
-			facetElt.setAttribute(XMLElements.ATT_FACET_OPTIONAL, "" + f.optional());
-			if (f.values().length != 0) {
-				String valuesTaken = ", takes values in: {" + f.values()[0];
-				for (int i = 1; i < f.values().length; i++) {
-					valuesTaken += ", " + f.values()[i];
+			// if the facet is deprecated, it is not get in the docGAMA.mxl
+			if( ! ((f.doc() != null) && (f.doc().length > 0) && (!"".equals(f.doc()[0].deprecated()))) ) {
+				final org.w3c.dom.Element facetElt = doc.createElement(XMLElements.FACET);
+				facetElt.setAttribute(XMLElements.ATT_FACET_NAME, f.name());
+				facetElt.setAttribute(XMLElements.ATT_FACET_TYPE, tc.getTypeString(f.type()));
+				facetElt.setAttribute(XMLElements.ATT_FACET_OPTIONAL, "" + f.optional());
+				if (f.values().length != 0) {
+					String valuesTaken = ", takes values in: {" + f.values()[0];
+					for (int i = 1; i < f.values().length; i++) {
+						valuesTaken += ", " + f.values()[i];
+					}
+					valuesTaken += "}";
+					facetElt.setAttribute(XMLElements.ATT_FACET_VALUES, valuesTaken);
 				}
-				valuesTaken += "}";
-				facetElt.setAttribute(XMLElements.ATT_FACET_VALUES, valuesTaken);
+				facetElt.setAttribute(XMLElements.ATT_FACET_OMISSIBLE,
+						f.name().equals(facetsAnnot.omissible()) ? "true" : "false");
+				final org.w3c.dom.Element docFacetElt = getDocElt(f.doc(), doc, mes,
+						"Facet " + f.name() + " from Statement" + statName, tc, null, facetElt);
+				if (docFacetElt != null) {
+					facetElt.appendChild(docFacetElt);
+				}
+	
+				facetsElt.appendChild(facetElt);
 			}
-			facetElt.setAttribute(XMLElements.ATT_FACET_OMISSIBLE,
-					f.name().equals(facetsAnnot.omissible()) ? "true" : "false");
-			final org.w3c.dom.Element docFacetElt = getDocElt(f.doc(), doc, mes,
-					"Facet " + f.name() + " from Statement" + statName, tc, null, facetElt);
-			if (docFacetElt != null) {
-				facetElt.appendChild(docFacetElt);
-			}
-
-			facetsElt.appendChild(facetElt);
 		}
 		return facetsElt;
 	}
