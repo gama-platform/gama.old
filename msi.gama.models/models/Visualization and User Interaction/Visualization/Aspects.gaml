@@ -7,14 +7,16 @@
 * 2. how to display them in 3D ? with texture ? taken into account the light ?
 * 3. how to display the link between 2 agents ?
 * 4. how to deal with transparency in agents ?
-* Tags: aspect, 3D, draw, transparency
+* 5. how to focus on some agents ?
+* 
+* Tags: aspect, 3D, draw, transparency, focus
 ***/
 
 model Aspects
 
 global {	
 
-	image_file wood0_image_file <- image_file("../includes/wood.jpg");
+	image_file wood0_image_file <- image_file("3D Visualization/includes/wood.jpg");
 
 
 	init {
@@ -62,6 +64,12 @@ global {
 		//
 		// In the following, all the people agent have the attribute color_transparency, a color with a transparency depending on the agent
 		// and the aspect big_circle_with_transparency that draws all of them with a big circle with a transparency depending on the agent.
+	}
+	
+	// In addition, every 100 cycles, the camera will focus on one specific random agent.
+	reflex focus when: every(100 #cycles) and (cycle > 0){
+		write "Change the focus";
+		focus_on one_of(agents);
 	}
 }
 
@@ -147,6 +155,8 @@ species people {
 }
 
 experiment Aspects type: gui {
+	float minimum_cycle_duration <- 0.01;
+	
 	output {
 		layout #split;
 		display displ_openGL type: opengl {
