@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.ColorProperties.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.draw.ColorProperties.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -33,8 +33,12 @@ public class ColorProperties {
 		if (fill == null) {
 			if (colors != null) { return colors[0]; }
 			if (textures != null) { return TEXTURED_COLOR; }
-			if (border == null) { return GamaPreferences.Displays.CORE_COLOR.getValue(); }
-			return null;
+			// if (border == null) {
+			// Always returns the color as we are solid; so null cannot be an option
+			// see issue #2724
+			return GamaPreferences.Displays.CORE_COLOR.getValue();
+			// }
+			// return null;
 		}
 		return fill;
 	}
