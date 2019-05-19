@@ -44,7 +44,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
 	static Cache<Integer, ParametricType> CACHE2 =
 			newBuilder().expireAfterAccess(1, MINUTES).weakValues()./* recordStats(). */ build();
-	static boolean USE_CACHE = false;
+	static boolean USE_CACHE = true;
 
 	public static ParametricType createParametricType(final IContainerType<IContainer<?, ?>> t, final IType<?> kt,
 			final IType<?> ct) {
