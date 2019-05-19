@@ -116,7 +116,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
 	private void validate(final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel) {
 		final List<GamlCompilationError> errors = new ArrayList<>();
-		log("Compiling " + pathToModel.getFile());
+//		log("Compiling " + pathToModel.getFile());
 //		System.out.println("Compiling " + pathToModel.getFile());
 //		try {
 			GamlModelBuilder.compile(pathToModel, errors);
@@ -125,7 +125,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 //		}
 		countOfModelsValidated[0]++;
 		errors.stream().filter(e -> e.isError()).forEach(e -> {
-			log("Error in " + e.getURI().lastSegment() + ": " + e);
+//			log("Error in " + e.getURI().lastSegment() + ": " + e);
 			System.out.println("Error in " + e.getURI() + ":\n " + ((GamlCompilationError) e).toString() + " \n "
 					+ ((GamlCompilationError) e).getStatement().toString() + "\n");
 			returnCode[0]++;
