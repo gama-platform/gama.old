@@ -2,7 +2,7 @@
 * Name: Mondrian City
 * Author: Arnaud Grignard, Tri Nguyen-Huu and Patrick Taillandier 
 * Description: An abstract mobilty Model represented in a Mondrian World. 
-* Tags: art, interaction, mobitily
+* Tags: art, interaction, mobility
 ***/
 
 model Mondrian_City

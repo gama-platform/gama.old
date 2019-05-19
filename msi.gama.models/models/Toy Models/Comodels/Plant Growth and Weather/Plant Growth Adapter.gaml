@@ -2,12 +2,12 @@
 * Name: plantGrowAdapter
 * Author: ben
 * Description: 
-* Tags: Tag1, Tag2, TagN
+* Tags: comodel
 */
 
 model plantGrowAdapter
 
-import "plantGrow.gaml"
+import "Plant Growth.gaml"
 
 experiment Adapter type: gui
 {

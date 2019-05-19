@@ -8,8 +8,8 @@
 
 model coModel
 
-import "weather.gaml" as weather
-import "plantGrow.gaml" as plantGrow
+import "Weather.gaml" as weather
+import "Plant Growth.gaml" as plantGrow
 
 
 global {
@@ -18,11 +18,11 @@ global {
 	plantGrow plantGrow_simu;
 		
 	init {
-		create weather.weather_coModeling with: [grid_size::20,write_in_console_step::false];
-		weather_simu <- first(weather.weather_coModeling).simulation; 
+		create weather."Weather Co-Modeling" with: [grid_size::20,write_in_console_step::false];
+		weather_simu <- first(weather."Weather Co-Modeling").simulation; 
 		
-		create plantGrow.plantGrow_coModeling with: [grid_size::40];
-		plantGrow_simu <- first(plantGrow.plantGrow_coModeling).simulation; 		
+		create plantGrow."Plant Growth Co-Modeling" with: [grid_size::40];
+		plantGrow_simu <- first(plantGrow."Plant Growth Co-Modeling").simulation; 		
 	}
 
 	reflex simulate_micro_models_weather {
@@ -51,7 +51,7 @@ global {
 	}
 }
 
-experiment coModel type: gui {
+experiment "CoModel" type: gui {
 	output {
 		display w {
 			agents "weather" value: weather_simu.plotWeather ;

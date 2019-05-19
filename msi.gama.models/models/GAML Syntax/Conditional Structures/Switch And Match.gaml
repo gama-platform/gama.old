@@ -2,16 +2,14 @@
 * Name: switchmatch
 * Author: kevinchapuis
 * Description: Show several way to use the switch ... match ... statement
-* Tags: Tag1, Tag2, TagN
+* Tags: switch, match, match_one
+* 
 ***/
 
 model switchmatch
-
+ 
 global {
-	
-	 
-	string my_play;// parameter:true init:"ROCK" among:RPS;
-	
+	string my_play; // parameter:true init:"ROCK" among:RPS;
 	file my_image;
 	file bot_image;
 	
@@ -79,7 +77,7 @@ global {
 	}
 	
 }
-
+ 
 species rps_bot {
 	
 	list<float> strategy;
@@ -92,7 +90,7 @@ species rps_bot {
 	
 }
 
-experiment rock_paper_scissors type:gui {
+experiment "Rock Paper Scissors" type:gui {
 	parameter "My play" var:my_play among:["ROCK","PAPER","SCISSORS"] init:any(["ROCK","PAPER","SCISSORS"]);
 	output {
 		display my_display {

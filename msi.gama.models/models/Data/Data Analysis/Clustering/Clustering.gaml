@@ -3,7 +3,7 @@
 * Author:  Patrick Taillandier et J.-D. Zucker
 * Description: A model to show how to use clustering operators and two methods of clustering (K Means and DBScan) 
 *              with the goal of grouping agents into clusters
-* Tags: clustering, statistic
+* Tags: clustering, statistic, spatial
 */
 
 model clustering

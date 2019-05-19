@@ -1,8 +1,8 @@
 /***
 * Name: Creation
-* Author: kevinchapuis
+* Author: Kevin Chapuis
 * Description: Dummy test for geometry creation / mostly rely on JTS so it is pretty robust
-* Tags: Tag1, Tag2, TagN
+* Tags: spatial, geometry, display
 ***/
 
 model create_tests

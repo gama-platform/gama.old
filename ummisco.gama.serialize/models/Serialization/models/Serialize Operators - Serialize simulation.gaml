@@ -1,8 +1,8 @@
 /**
 * Name: Model1
 * Author: Benoit Gaudou
-* Description: 
-* Tags: Tag1, Tag2, TagN
+* Description: Describes the serialization of a simulation
+* Tags: serialization
 */
 
 model Model1

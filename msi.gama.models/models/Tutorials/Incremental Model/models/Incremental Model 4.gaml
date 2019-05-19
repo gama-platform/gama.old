@@ -2,7 +2,7 @@
 * Name: Movement on Graph
 * Author: GAMA team
 * Description: 4th part of the tutorial : Incremental Model
-* Tags: Tutorial, Chart, Graph
+* Tags: tutorial, chart, graph, gis
 */
  
 model model4 

@@ -2,7 +2,7 @@
 * Name: Integration of GIS Data
 * Author:
 * Description: third part of the tutorial : Incremental Model
-* Tags: gis
+* Tags: gis, chart, tutorial
 */
 
 model model3 

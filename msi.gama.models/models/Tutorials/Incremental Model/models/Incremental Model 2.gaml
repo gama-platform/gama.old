@@ -2,7 +2,7 @@
 * Name: Charts
 * Author: GAMA team
 * Description: Second part of the tutorial : Incremental Model
-* Tags: Chart, Tutorial
+* Tags: chart, tutorial
 */
 model SI_city
 

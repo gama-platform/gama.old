@@ -1,8 +1,8 @@
 /**
 * Name: Model1
-* Author: ben
-* Description: 
-* Tags: Tag1, Tag2, TagN
+* Author: Benoit Gaudou
+* Description: Save a simulation to file
+* Tags: serialization, save_file
 */
 
 model Model3

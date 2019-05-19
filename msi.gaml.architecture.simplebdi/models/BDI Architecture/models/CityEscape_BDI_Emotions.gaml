@@ -4,9 +4,9 @@
 * Description:  Example model concerning the  use of the simpleBDI plug-in  with emotions. 
 * A technological accident is simulated in one of the buildings of the city center.
 
-* Tag : simple_bdi, emotion, evacuation
+* Tags: simple_bdi, emotion, evacuation
 */
-
+ 
 model City_Evacuation
 
 global {

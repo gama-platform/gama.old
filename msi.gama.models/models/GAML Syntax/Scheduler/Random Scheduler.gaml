@@ -3,7 +3,7 @@
 * Author: damienphilippon
 * Description: To randomize the way agents of a same species are executed, it is possible to use the operator shuffle in the schedules facet. In this case, agents
 			will write their number, but they are executed in a random way
-* Tags: Tag1, Tag2, TagN
+* Tags: scheduling, execution, random
 */
 
 model randomscheduler
@@ -38,7 +38,7 @@ species no_scheduler schedules:shuffle(no_scheduler)
 	}
 }
 
-experiment example_no_scheduler type:gui
+experiment "Schedule" type:gui
 {
 	
 }

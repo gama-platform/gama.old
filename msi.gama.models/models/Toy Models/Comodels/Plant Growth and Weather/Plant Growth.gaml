@@ -1,8 +1,8 @@
 /**
 * Name: plantGrow
-* Author: ben
-* Description: Describe here the model and its experiments
-* Tags: Tag1, Tag2, TagN
+* Author: Benoit Gaudou
+* Description: A simple model of plant growth
+* Tags: ecology, 
 */
 
 model plantGrow
@@ -38,7 +38,7 @@ grid plotGrow height: grid_size width: grid_size neighbors: 8 {
 
 }
 
-experiment plantGrow type: gui {
+experiment "Plant Growth" type: gui {
 	output {
 		display d {
 			grid plotGrow lines: #black;
@@ -52,6 +52,6 @@ experiment plantGrow type: gui {
 	}
 }
 
-experiment plantGrow_coModeling type: gui {
+experiment "Plant Growth Co-Modeling" type: gui {
 }
 

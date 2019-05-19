@@ -2,9 +2,9 @@
 * Name: overlapping
 * Author: Truong Chi Quang
 * Description: This wizard creates a new test experiment
-* Tags: Tag1, Tag2, TagN
+* Tags: geometry, spatial, test
 */
-model TestOvelapping
+model TestOverlapping
 global {
 	geometry shape <- envelope(square(100));
 	init {
@@ -27,11 +27,11 @@ species polygon_square {
 	} 	
 }
 
-experiment overlapping type: test {
+experiment "Overlapping" type: test {
 	
 	/** Insert the global definitions, variables and actions here */
 	
-	test "test overlapping" {
+	test "Overlapping Test" {
 		list<cell> ovelapped_cell;
 		using topology(world) {
 			ovelapped_cell <-cell overlapping (first(polygon_square)) ;
@@ -40,7 +40,7 @@ experiment overlapping type: test {
 	}
 }
 
-experiment with_visualization type: gui {
+experiment "With Visualization" type: gui {
 	output {
 		display map {
 			

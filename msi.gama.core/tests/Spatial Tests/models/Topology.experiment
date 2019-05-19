@@ -1,8 +1,8 @@
 /***
 * Name: Topology
-* Author: kevinchapuis
+* Author: Kevin Chapuis
 * Description: Model to test topology related spatial operators
-* Tags: Tag1, Tag2, TagN
+* Tags: spatial, topology, grid, graph
 ***/
 model testTopology
 

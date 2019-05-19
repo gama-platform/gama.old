@@ -3,12 +3,11 @@
 * Author: damienphilippon
 * Description: With an empty list given inside the schedules facet of the species, it will not be executed 
 				so, nothing will be written inside the console
-* Tags: Tag1, Tag2, TagN
+* Tags: scheduling, execution 
 */
 
 model schedullingagents
 
-/* Insert your model definition here */
 global
 {
 	init
@@ -32,7 +31,7 @@ species no_scheduler schedules:[]
 	}
 }
 
-experiment example_no_scheduler type:gui
+experiment "No Scheduling" type:gui
 {
 	
 }

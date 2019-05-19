@@ -2,7 +2,7 @@
 * Name: Differential Equation
 * Author: GAMA Team
 * Description: 7th part of the tutorial : Incremental Model
-* Tags: Tutorial, Chart, Graphe, 3d, Light, Multi-Level, Equation
+* Tags: tutorial, chart, graph, 3d, light, multi-Level, equation
 */
 model model7
 

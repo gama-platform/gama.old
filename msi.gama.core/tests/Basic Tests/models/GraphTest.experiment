@@ -1,8 +1,8 @@
 /**
 * Name: GraphTest
 * Author: Minh Thu
-* Description: This wizard creates a new test experiment
-* Tags: Tag1, Tag2, TagN
+* Description: Tests common graph operations
+* Tags: graph, test
 */
 
 model classicgraphgeneration
@@ -52,25 +52,14 @@ experiment loadgraph type: gui {
 
 experiment GraphTest type: test autorun: true {
 	
-	/** Insert the global definitions, variables and actions here */
 			
 	setup {
 		/** Insert any initialization to run before each of the tests */
 	}
 	
 	test "My Graph Test" {
-	/** Insert here any assertion you need to test */
-//	int i<-0;
-//	create node_agent number:5
-//	{
-//		location<-{i,-i};
-//		i<-i+1;
-//	}
-//	the_graph <- as_distance_graph(node_agent, 2.0);
 
 		write the_graph;
-//		write first(node_agent);
-
 		write (node_agent[2]);
 		
 		write ("Degrees");

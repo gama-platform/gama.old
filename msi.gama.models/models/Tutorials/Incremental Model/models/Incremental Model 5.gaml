@@ -2,7 +2,7 @@
 * Name: 3D visualization
 * Author: GAMA team
 * Description: 5th part of the tutorial : Incremental Model
-* Tags: Tutorial, Chart, Graphe, 3d, Light
+* Tags: tutorial, chart, graph, 3d, light
 */
 
 model model5 

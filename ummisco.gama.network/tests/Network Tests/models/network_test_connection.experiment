@@ -1,8 +1,8 @@
 /***
 * Name: networktest
-* Author: nicolas
-* Description: 
-* Tags: Tag1, Tag2, TagN
+* Author: Nicolas Marilleau
+* Description: Test MQQT connections 
+* Tags: network, test
 ***/
 
 model networktest

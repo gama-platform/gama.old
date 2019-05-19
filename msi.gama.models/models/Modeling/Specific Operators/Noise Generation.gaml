@@ -1,13 +1,12 @@
 /**
 * Name: simplexnoiseexample
 * Author: damienphilippon
-* Description: 
-* Tags: Tag1, Tag2, TagN
+* Description: Shows how to generate a random landscape
+* Tags: spatial, random
 */
 
 model simplexnoiseexample
 
-/* Insert your model definition here */
 
 
 global
@@ -44,7 +43,7 @@ grid cells width:GRID_SIZE height:GRID_SIZE
 	float height_open <- open_simplex_generator(self.grid_x/GRID_SIZE,self.grid_y/GRID_SIZE,BIAIS)*AMPLITUDE + MINIMUM_HEIGHT;
 	rgb color <- rgb(0,255,0,0.5);
 }
-experiment test type:gui
+experiment "Generate" type:gui
 {
 	output
 	{

@@ -2,10 +2,10 @@
 * Name: MathTest
 * Author: Minh 
 * Description: This wizard creates a new test experiment
-* Tags: Tag1, Tag2, TagN
+* Tags: math, arithmetic
 */
 
-experiment MathTest type: test autorun: true {
+experiment MathsTest type: test autorun: true {
 	
 	/** Insert the global definitions, variables and actions here */
 		

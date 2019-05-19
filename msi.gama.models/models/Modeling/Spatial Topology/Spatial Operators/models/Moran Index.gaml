@@ -1,8 +1,8 @@
 /**
 * Name: moran_Index
 * Author: Patrick Taillandier
-* Description: Describe here the model and its experiments
-* Tags: Tag1, Tag2, TagN
+* Description: Computes the moran index of geometries
+* Tags: spatial, distance
 */
 
 model moranIndex
@@ -52,7 +52,7 @@ global {
 }
 grid cell width: grid_size height: grid_size neighbors: 8;
 
-experiment xp_moran type: gui {
+experiment "Moran" type: gui {
 	parameter "grid size: " var: grid_size min: 2 max: 100;
 	parameter "Type of spatial Initialization of grid value: " var: grid_spatial_init;
 	parameter "Weight type used for the computation: " var: weight_type ;

@@ -3,7 +3,7 @@
 * Author: kevinchapuis
 * Description: An evacuation model of a theoretical city with different alert communication strategies. Hazard is a very simple flood
 * and we make the hypothesis that people die when they are in the flood (e.g. Tsunami). The flooding start x time after the beginning
-* of the simulation. People escape when they perceive the flood or when they are alerted. There is 3 communication strategies: 
+* of the simulation. People escape when they perceive the flood or when they are alerted. There are 3 communication strategies: 
 * - 'EVERYONE' = to alert everyone at the start of the simulation
 * - 'STAGED' = to alert nb_people/nb_stages random people every (time_of_hazard-buffer_time)/nb_stages minutes
 * - 'SPATIAL' = to alert nb_people/nb_stages closest people to exits every (time_of_hazard-buffer_time)/nb_stages minutes
@@ -11,7 +11,7 @@
 * - Time before hazard = time_of_hazard
 * - Time alert buffer before hazard = buffer_time
 * - Number of stages = nb_stages
-* Tags: Tag1, Tag2, TagN
+* Tags: evacuation, traffic, hazard, gis, water
 ***/
 model CityEscape
 

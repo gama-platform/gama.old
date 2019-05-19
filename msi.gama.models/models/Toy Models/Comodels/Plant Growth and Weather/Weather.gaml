@@ -24,7 +24,7 @@ grid plotWeather height: grid_size width: grid_size {
 	rgb color <- rgb(0,0,rain) update: rgb(0,0,rain);
 }
 
-experiment weather type: gui {
+experiment "Weather" type: gui {
 	output {
 		display d {
 			grid plotWeather lines: #black;
@@ -32,6 +32,6 @@ experiment weather type: gui {
 	}
 }
 
-experiment weather_coModeling type:gui {
+experiment "Weather Co-Modeling" type:gui {
 	parameter "check execution step" var: write_in_console_step <- true;
 }

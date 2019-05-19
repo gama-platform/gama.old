@@ -2,7 +2,7 @@
 * Name: Casting Syntax
 * Author: A. Drogoul & P. Taillandier
 * Description: different ways of transforming objects and agents in GAML.
-* Tags: cast
+* Tags: cast, type
 */
 
 model Casting

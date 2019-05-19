@@ -1,8 +1,8 @@
 /**
 * Name: testPredicates
-* Author: admin_ptaillandie
+* Author: Patrick Taillandier
 * Description: This wizard creates a new test experiment
-* Tags: Tag1, Tag2, TagN
+* Tags: bdi, test, predicate
 */
 
 model bdi_test

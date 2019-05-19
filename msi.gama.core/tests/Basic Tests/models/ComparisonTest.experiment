@@ -1,14 +1,11 @@
 /**
 * Name: TestOne
-* Author: MinhThu
-* Description: This wizard creates a new test experiment
-* Tags: Tag1, Tag2, TagN
+* Author: Minh Thu
+* Description: Tests common comparisons
+* Tags: comparison, test
 */
 
 experiment TestOne type: test autorun: true {
-	
-	/** Insert the global definitions, variables and actions here */
-		
 		
 		
 	setup {

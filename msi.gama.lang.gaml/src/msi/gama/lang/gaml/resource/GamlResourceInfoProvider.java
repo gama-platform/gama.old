@@ -4,11 +4,22 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang.StringUtils.deleteWhitespace;
+import static org.apache.commons.lang.StringUtils.split;
+import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.uncapitalize;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -43,15 +54,33 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
 	private XtextResourceSet resourceSet;
 
-	public GamlFileInfo getInfo(final Resource r, final long stamp) {
+	public GamlFileInfo getInfo(final URI originalURI, final Resource r, final long stamp) {
 
 		Set<String> imports = null;
-		final Set<URI> uris = GamlResourceIndexer.directImportsOf(r.getURI());
+		final Set<URI> uris = GamlResourceIndexer.directImportsOf(originalURI);
 		for (final URI u : uris) {
 			if (imports == null) {
 				imports = new TLinkedHashSet();
 			}
-			imports.add(u.deresolve(r.getURI()).toString());
+			imports.add(u.deresolve(originalURI).toString());
+		}
+
+		Set<String> tags = null;
+		String str = "";
+		try (InputStream is = resourceSet.getURIConverter().createInputStream(originalURI);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+			if (is != null) {
+				boolean tagsFound = false;
+				while (!tagsFound && (str = reader.readLine()) != null) {
+					tagsFound = str.contains("Tags: ");
+				}
+				if (tagsFound) {
+					tags = new HashSet<>(
+							asList(split(uncapitalize(deleteWhitespace(substringAfter(str, "Tags: "))), ',')));
+				}
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 
 		Set<String> uses = null;
@@ -100,7 +129,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 			}
 		}
 
-		return new GamlFileInfo(stamp, imports, uses, exps);
+		return new GamlFileInfo(stamp, imports, uses, exps, tags);
 
 	}
 
@@ -109,7 +138,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		try {
 
 			final GamlResource r = (GamlResource) getResourceSet().getResource(uri, true);
-			return getInfo(r, stamp);
+			return getInfo(uri, r, stamp);
 		} finally {
 			clearResourceSet(getResourceSet());
 		}

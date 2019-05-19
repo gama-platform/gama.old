@@ -28,7 +28,7 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
-	private static final boolean GLOBAL_OFF = true;
+	private static final boolean GLOBAL_OFF = false;
 	private static final boolean GLOBAL_ON = false;
 
 	static {
@@ -48,7 +48,7 @@ public class DEBUG {
 	 *
 	 * @return the name of the class that has called the method that has called this method
 	 */
-	private static String findCallingClassName() {
+	static String findCallingClassName() {
 		return SECURITY_MANAGER.getCallerClassName(3);
 	}
 
@@ -57,7 +57,7 @@ public class DEBUG {
 	 *
 	 * @return
 	 */
-	private static String findCallingClassNameOld() {
+	static String findCallingClassNameOld() {
 		return Thread.currentThread().getStackTrace()[3].getClassName();
 	}
 

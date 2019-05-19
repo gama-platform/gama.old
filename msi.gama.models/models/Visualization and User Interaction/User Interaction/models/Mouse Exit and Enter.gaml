@@ -2,12 +2,11 @@
 * Name: MouseExitandEnter
 * Author: A. Drogoul
 * Description:  Shows the use of the two mouse events : mouse_exit and mouse_enter. The display shows two eyes. When the mouse enters it, the eyes open and follow its movement. When the mouse exits the screen, they close.
-* Tags: Tag1, Tag2, TagN
+* Tags: user, mouse, interaction
 ***/
 
 model MouseExitandEnter
 
-/* Insert your model definition here */
 
 global {
 	bool closed <- false;

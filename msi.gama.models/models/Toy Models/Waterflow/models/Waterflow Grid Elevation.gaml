@@ -2,7 +2,7 @@
 * Name: Waterflowgridelevation
 * Author: ben
 * Description: 
-* Tags: Tag1, Tag2, TagN
+* Tags: water, dem, grid
 ***/
 
 /***

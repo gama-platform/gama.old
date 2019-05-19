@@ -9,7 +9,7 @@
 
 model coModel
 
-import "weather.gaml" as weather
+import "Weather.gaml" as weather
 
 
 global {
@@ -17,8 +17,8 @@ global {
 	weather weather_simu ;
 		
 	init {
-		create weather.weather_coModeling ;
-		weather_simu <- first(weather.weather_coModeling).simulation; 
+		create weather."Weather Co-Modeling" ;
+		weather_simu <- first(weather."Weather Co-Modeling").simulation; 
 	}
 
 	reflex simulate_micro_models

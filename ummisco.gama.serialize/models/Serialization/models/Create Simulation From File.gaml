@@ -1,8 +1,8 @@
 /***
 * Name: CreateSimuGraph2
 * Author: Benoit Gaudou
-* Description: 
-* Tags: Tag1, Tag2, TagN
+* Description: Loads a simulation from a file
+* Tags: serialization, load_file
 ***/
 
 model CreateSimuGraph2

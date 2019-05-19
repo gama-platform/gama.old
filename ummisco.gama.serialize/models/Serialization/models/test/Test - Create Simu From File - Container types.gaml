@@ -1,8 +1,8 @@
 /***
 * Name: CreateSimuFromFileSimu
-* Author: ben
-* Description: 
-* Tags: Tag1, Tag2, TagN
+* Author: Benoit Gaudou
+* Description: Loads a simulation from a file
+* Tags: serialization, load_file
 ***/
 
 model CreateSimuFromFileSimu

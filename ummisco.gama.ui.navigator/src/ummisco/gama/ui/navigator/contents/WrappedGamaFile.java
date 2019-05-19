@@ -90,6 +90,18 @@ public class WrappedGamaFile extends WrappedFile {
 		isExperiment = isExperiment(f.getName());
 	}
 
+	public boolean hasTag(String tag) {
+		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
+		// DEBUG.LOG("Tags of " + getName() + ": " + ((GamlFileInfo) metaData).getTags());
+		if (metaData instanceof GamlFileInfo) {
+			for (String t : ((GamlFileInfo) metaData).getTags()) {
+				if (t.contains(tag))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public Object[] getFileChildren() {
 		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
@@ -112,6 +124,12 @@ public class WrappedGamaFile extends WrappedFile {
 			}
 			if (!info.getUses().isEmpty()) {
 				final Category wf = new Category(this, info.getUses(), "Uses");
+				if (wf.getNavigatorChildren().length > 0) {
+					l.add(wf);
+				}
+			}
+			if (!info.getTags().isEmpty()) {
+				final Tags wf = new Tags(this, info.getTags(), "Tags");
 				if (wf.getNavigatorChildren().length > 0) {
 					l.add(wf);
 				}

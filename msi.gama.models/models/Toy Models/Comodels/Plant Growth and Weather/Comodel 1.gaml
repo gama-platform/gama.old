@@ -11,7 +11,7 @@
 
 model coModel
 
-import "weather.gaml" as weather
+import "Weather.gaml" as weather
 
 
 global {
@@ -19,8 +19,8 @@ global {
 	weather weather_simu ;
 		
 	init {
-		create weather.weather_coModeling with: [grid_size::30,write_in_console_step::false];
-		weather_simu <- first(weather.weather_coModeling).simulation; 
+		create weather."Weather Co-Modeling" with: [grid_size::30,write_in_console_step::false];
+		weather_simu <- first(weather."Weather Co-Modeling").simulation; 
 	}
 
 	reflex simulate_micro_models
@@ -32,7 +32,7 @@ global {
 	}
 }
 
-experiment coModel type: gui {
+experiment "CoModel" type: gui {
 	output {
 		display d {
 			agents "weather" value: weather_simu.plotWeather ;

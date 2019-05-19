@@ -8,6 +8,21 @@
  *******************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
+import static msi.gama.common.interfaces.IGui.NAVIGATOR_VIEW_ID;
+import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
+import static org.eclipse.core.resources.IResource.PROJECT;
+import static org.eclipse.core.resources.IResource.ROOT;
+import static org.eclipse.core.runtime.Status.OK_STATUS;
+import static org.eclipse.jface.dialogs.IDialogConstants.NO_LABEL;
+import static org.eclipse.jface.dialogs.IDialogConstants.YES_LABEL;
+import static org.eclipse.jface.dialogs.MessageDialog.QUESTION;
+import static org.eclipse.jface.viewers.StructuredSelection.EMPTY;
+import static org.eclipse.swt.SWT.SHEET;
+import static org.eclipse.ui.PlatformUI.PLUGIN_ID;
+import static org.eclipse.ui.internal.ide.IIDEHelpContextIds.REFRESH_ACTION;
+import static ummisco.gama.ui.navigator.contents.ResourceManager.getInstance;
+import static ummisco.gama.ui.utils.WorkbenchHelper.runInUI;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,24 +37,23 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 import ummisco.gama.ui.interfaces.IRefreshHandler;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
+import ummisco.gama.ui.navigator.GamaNavigator;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -56,10 +70,22 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class RefreshAction extends WorkspaceAction {
 
+	GamaNavigator navigator;
+
+	private GamaNavigator getNavigator() {
+		if (navigator == null) {
+			final IWorkbenchPage page = WorkbenchHelper.getPage();
+			if (page != null) {
+				navigator = (GamaNavigator) page.findView(NAVIGATOR_VIEW_ID);
+			}
+		}
+		return navigator;
+	}
+
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".RefreshAction";//$NON-NLS-1$
+	public static final String ID = PLUGIN_ID + ".RefreshAction";//$NON-NLS-1$
 
 	public List<? extends IResource> resources;
 
@@ -81,7 +107,7 @@ public class RefreshAction extends WorkspaceAction {
 	private void initAction() {
 		setToolTipText(IDEWorkbenchMessages.RefreshAction_toolTip);
 		setId(ID);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.REFRESH_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, REFRESH_ACTION);
 	}
 
 	/**
@@ -95,14 +121,14 @@ public class RefreshAction extends WorkspaceAction {
 			final String message = NLS.bind(IDEWorkbenchMessages.RefreshAction_locationDeletedMessage,
 					project.getName(), location.toString());
 
-			final MessageDialog dialog = new MessageDialog(WorkbenchHelper.getShell(),
-					IDEWorkbenchMessages.RefreshAction_dialogTitle, null, message, MessageDialog.QUESTION,
-					new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0) {
-				@Override
-				protected int getShellStyle() {
-					return super.getShellStyle() | SWT.SHEET;
-				}
-			};
+			final MessageDialog dialog =
+					new MessageDialog(WorkbenchHelper.getShell(), IDEWorkbenchMessages.RefreshAction_dialogTitle, null,
+							message, QUESTION, new String[] { YES_LABEL, NO_LABEL }, 0) {
+						@Override
+						protected int getShellStyle() {
+							return super.getShellStyle() | SHEET;
+						}
+					};
 			WorkbenchHelper.run(() -> dialog.open());
 
 			// Do the deletion back in the operation thread
@@ -172,44 +198,10 @@ public class RefreshAction extends WorkspaceAction {
 	 */
 	final public void refreshAll() {
 		final IStructuredSelection currentSelection = getStructuredSelection();
-		selectionChanged(StructuredSelection.EMPTY);
+		selectionChanged(EMPTY);
 		run();
 		selectionChanged(currentSelection);
 	}
-
-	/**
-	 * Returns whether the given resource is a descendent of any of the resources in the given list.
-	 *
-	 * @param resources1
-	 *            the list of resources (element type: <code>IResource</code>)
-	 * @param child
-	 *            the resource to check
-	 * @return <code>true</code> if <code>child</code> is a descendent of any of the elements of <code>resources</code>
-	 */
-	// private boolean isDescendent2(final List<IResource> resources1, final IResource child) {
-	// final IResource parent = child.getParent();
-	// return parent != null && (resources1.contains(parent) || isDescendent2(resources1, parent));
-	// }
-
-	/**
-	 * Performs pruning on the given list of resources, as described in <code>shouldPerformResourcePruning</code>.
-	 *
-	 * @param resourceCollection
-	 *            the list of resources (element type: <code>IResource</code>)
-	 * @return the list of resources (element type: <code>IResource</code>) after pruning.
-	 * @see #shouldPerformResourcePruning
-	 */
-	// private List<IResource> pruneResources2(final List<? extends IResource> resourceCollection) {
-	// final List<IResource> prunedList = new ArrayList<>(resourceCollection);
-	// final Iterator<IResource> elementsEnum = prunedList.iterator();
-	// while (elementsEnum.hasNext()) {
-	// final IResource currentResource = elementsEnum.next();
-	// if (isDescendent2(prunedList, currentResource)) {
-	// elementsEnum.remove(); // Removes currentResource
-	// }
-	// }
-	// return prunedList;
-	// }
 
 	@Override
 	final protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
@@ -260,32 +252,44 @@ public class RefreshAction extends WorkspaceAction {
 	 * @since 3.4
 	 */
 	protected void refreshResource(final IResource resource, final IProgressMonitor monitor) throws CoreException {
-		if (resource.getType() == IResource.PROJECT) {
+		if (resource.getType() == PROJECT) {
 			checkLocationDeleted((IProject) resource);
-		} else if (resource.getType() == IResource.ROOT) {
+		} else if (resource.getType() == ROOT) {
 			final IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
 			for (final IProject project : projects) {
 				checkLocationDeleted(project);
 			}
 		}
-		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+		resource.refreshLocal(DEPTH_INFINITE, monitor);
+		resource.getParent().refreshLocal(DEPTH_INFINITE, monitor);
+
+		runInUI("Refreshing " + resource.getName(), 0, (m) -> {
+
+			FileMetaDataProvider.getInstance().storeMetaData(resource, null, true);
+			FileMetaDataProvider.getInstance().getMetaData(resource, false, true);
+			getNavigator().getCommonViewer().refresh(getInstance().findWrappedInstanceOf(resource), true);
+		});
+
 	}
 
 	@Override
 	public void run() {
-		final WorkspaceJob job = new WorkspaceJob("Refreshing the GAMA Workspace") {
+		if (super.getSelectedResources().isEmpty()) {
+			final WorkspaceJob job = new WorkspaceJob("Refreshing the GAMA Workspace") {
 
-			@Override
-			public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
-				final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
-				if (refresh != null) {
-					refresh.completeRefresh(resources);
-				}
-				return Status.OK_STATUS;
+				@Override
+				public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+					final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
+					if (refresh != null) {
+						refresh.completeRefresh(resources);
+					}
+					return OK_STATUS;
+				};
 			};
-		};
-		job.setUser(true);
-		job.schedule();
+			job.setUser(true);
+			job.schedule();
+		} else
+			super.run();
 	}
 
 }

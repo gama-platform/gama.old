@@ -2,7 +2,7 @@
 * Name: Multi-level
 * Author: GAMA team
 * Description: 6th part of the tutorial : Incremental Model
-* Tags: Tutorial, Chart, Graphe, 3d, Light, Multi-Level
+* Tags: tutorial, chart, graph, 3d, light, multi-Level
 */
 
 model model6 

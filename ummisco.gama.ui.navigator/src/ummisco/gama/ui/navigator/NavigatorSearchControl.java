@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
@@ -34,8 +34,7 @@ import org.eclipse.ui.swt.IFocusService;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
-import ummisco.gama.ui.navigator.contents.VirtualContent.VirtualContentType;
-import ummisco.gama.ui.navigator.contents.WrappedFile;
+import ummisco.gama.ui.navigator.contents.WrappedGamaFile;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
@@ -49,14 +48,23 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
  */
 public class NavigatorSearchControl {
 
+	boolean shouldSelect(Object o) {
+		if (!(o instanceof WrappedGamaFile))
+			return false;
+		WrappedGamaFile file = (WrappedGamaFile) o;
+		if (file.getName().toLowerCase().contains(pattern))
+			return true;
+		if (file.hasTag(pattern))
+			return true;
+		return false;
+	}
+
 	protected class NamePatternFilter extends ViewerFilter {
 
 		@SuppressWarnings ("rawtypes") Set alreadySelected = new HashSet<>();
 
 		public void reset() {
-			alreadySelected =
-					StreamEx.ofValues(ResourceManager.cache.asMap()).filter(r -> r.getType() == VirtualContentType.FILE
-							&& ((WrappedFile) r).isGamaFile() && r.getName().toLowerCase().contains(pattern)).toSet();
+			alreadySelected = StreamEx.ofValues(ResourceManager.cache.asMap()).filter(r -> shouldSelect(r)).toSet();
 		}
 
 		public NamePatternFilter() {}
@@ -82,7 +90,7 @@ public class NavigatorSearchControl {
 				return true;
 			switch (element.getType()) {
 				case FILE:
-					return ((WrappedFile) element).isGamaFile() && element.getName().toLowerCase().contains(pattern);
+					return shouldSelect(element);
 				case CATEGORY:
 				case FILE_REFERENCE:
 				case GAML_ELEMENT:
@@ -101,6 +109,7 @@ public class NavigatorSearchControl {
 		}
 	}
 
+	Text find;
 	private static final String EMPTY = "Find model..."; //$NON-NLS-1$
 	private String pattern;
 	GamaNavigator navigator;
@@ -127,7 +136,7 @@ public class NavigatorSearchControl {
 			parent.setLayout(layout);
 		}
 
-		final Text find = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
+		find = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
 		final IFocusService focusService = navigator.getSite().getService(IFocusService.class);
 		focusService.addFocusTracker(find, "search");
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -137,7 +146,7 @@ public class NavigatorSearchControl {
 		find.setBackground(IGamaColors.WHITE.color());
 		find.setForeground(IGamaColors.BLACK.color());
 		find.setMessage(EMPTY);
-		toolbar.control(parent == toolbar ? find: parent, 100);
+		toolbar.control(parent == toolbar ? find : parent, 100);
 		find.addModifyListener(modifyListener);
 		find.addKeyListener(new KeyListener() {
 
@@ -205,6 +214,13 @@ public class NavigatorSearchControl {
 		else
 			treeViewer.refresh(false);
 		treeViewer.getControl().setRedraw(true);
+	}
+
+	public void searchFor(String name) {
+		find.setText(name);
+		pattern = name;
+		doSearch();
+
 	}
 
 }

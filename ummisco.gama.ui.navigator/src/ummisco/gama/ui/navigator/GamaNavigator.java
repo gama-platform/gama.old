@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.navigator.GamaNavigator.java, in plugin ummisco.gama.ui.navigator,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * ummisco.gama.ui.navigator.GamaNavigator.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
@@ -48,6 +48,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 
 import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
+import ummisco.gama.ui.navigator.contents.Tag;
 import ummisco.gama.ui.navigator.contents.TopLevelFolder;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
 import ummisco.gama.ui.navigator.contents.WrappedContainer;
@@ -221,7 +222,11 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final IStructuredSelection selection = (IStructuredSelection) anEvent.getSelection();
 		final Object element = selection.getFirstElement();
 		if (element instanceof VirtualContent && ((VirtualContent<?>) element).handleDoubleClick()) {
-			// return;
+			if (element instanceof Tag) {
+				Tag t = (Tag) element;
+				findControl.searchFor(t.getName());
+				return;
+			}
 		} else {
 			super.handleDoubleClick(anEvent);
 		}
@@ -268,7 +273,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	/**
 	 * Method createToolItem()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
 	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
@@ -289,7 +294,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	/**
 	 * Method selectionChanged()
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	@Override

@@ -2,7 +2,7 @@
 * Name: Simple definition of time property in a model
 * Author: Patrick Taillandier
 * Description: Show how the time is managed is GAMA.
-* Tags: Date
+* Tags: date, time
 */
 @no_warning
 model SimpleTimedefinition

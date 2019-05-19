@@ -1,22 +1,18 @@
 /**
 * Name: StringTest
 * Author: Minh Thu
-* Description: This wizard creates a new test experiment
-* Tags: Tag1, Tag2, TagN
+* Description: Tests common properties of strings
+* Tags: string, test
 */
 
 experiment StringTest type: test autorun: true {
 	
-	/** Insert the global definitions, variables and actions here */
-		
-		
 		
 	setup {
 		/** Insert any initialization to run before each of the tests */
 	}
 	
 	test "My First Test" {
-	/** Insert here any assertion you need to test */		
 		assert "ce" in "abcede" = true;
 		assert "ac" in "abcede" = false;
 		assert 'abcded' contains 'bd' = false;
