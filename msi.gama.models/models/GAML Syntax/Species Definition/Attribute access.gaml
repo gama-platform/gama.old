@@ -11,7 +11,8 @@ model AttributeAccess
 
 global {
 
-	shape_file buildings_simple0_shape_file <- shape_file("../../Data/Data Importation/includes/buildings_simple.shp");
+	shape_file buildings_simple0_shape_file <- shape_file("../includes/buildings_simple.shp");
+
 	people my_people;
 	people_moving my_moving_people;
 		
