@@ -40,10 +40,10 @@ create cluster_builder returns: clusterer;
     	<xsl:sort select="@name" />
     	
 ----
-<xsl:call-template name="keyword">    
-	<xsl:with-param name="category" select="'species'"/>
-	<xsl:with-param name="nameGAMLElement" select="@name"/>
-</xsl:call-template>
+<!-- <xsl:call-template name="keyword">     -->
+<!-- 	<xsl:with-param name="category" select="'species'"/> -->
+<!-- 	<xsl:with-param name="nameGAMLElement" select="@name"/> -->
+<!-- </xsl:call-template> -->
 
 ## `<xsl:value-of select="@name"/>`	<xsl:text>
 </xsl:text><xsl:value-of select="documentation/result"/> <xsl:text>

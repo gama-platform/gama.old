@@ -190,10 +190,11 @@ Note that due to the fact that actions are written by modelers, the general func
     	<xsl:variable name="operatorName" select="@name"/>
     	
 ----
-<xsl:call-template name="keyword">    
-	<xsl:with-param name="category" select="'operator'"/>
-	<xsl:with-param name="nameGAMLElement" select="@name"/>
-</xsl:call-template>
+
+<!-- <xsl:call-template name="keyword">     -->
+<!-- 	<xsl:with-param name="category" select="'operator'"/> -->
+<!-- 	<xsl:with-param name="nameGAMLElement" select="@name"/> -->
+<!-- </xsl:call-template> -->
 ### <xsl:call-template name="checkName"/> 
   	<xsl:if test="@alternativeNameOf">
   		<xsl:variable name="nameOpAlt" select="@alternativeNameOf"/>  	
