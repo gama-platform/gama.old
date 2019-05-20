@@ -13,7 +13,6 @@ package msi.gama.headless.core;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 
@@ -25,37 +24,17 @@ import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.HeadlessListener;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class HeadlessSimulationLoader {
 
-	private static void LOG(final String message) {
-		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(message);
-	}
-
-	/**
-	 * Load in headless mode a specified model and create an experiment
-	 *
-	 * @param fileName
-	 *            model to load
-	 * @param params
-	 *            parameters of the experiment
-	 * @return the loaded experiment
-	 * @throws GamaRuntimeException
-	 * @throws InterruptedException
-	 */
-	private static void configureHeadLessSimulation() {
+	public static Injector preloadGAMA() {
+		DEBUG.LOG("GAMA configuring and loading...");
 		System.setProperty("java.awt.headless", "true");
 		GAMA.setHeadLessMode();
-	}
-
-	public static Injector preloadGAMA() {
-		LOG("GAMA configuring and loading...");
-		configureHeadLessSimulation();
-		GAMA.setHeadlessGui(new HeadlessListener());
 		Injector injector;
 		try {
 			// We initialize XText and Gaml.
@@ -126,11 +105,11 @@ public class HeadlessSimulationLoader {
 		if (myFile == null) { throw new IOException("Model file is null"); }
 		final String fileName = myFile.getAbsolutePath();
 		if (!myFile.exists()) { throw new IOException("Model file does not exist: " + fileName); }
-		LOG(fileName + " model is being compiled...");
+		DEBUG.LOG(fileName + " model is being compiled...");
 
 		final IModel model = GamlModelBuilder.getDefaultInstance().compile(URI.createFileURI(fileName), errors);
 		if (model == null) {
-			LOG("Model compiled with following indications: \n"
+			DEBUG.LOG("Model compiled with following indications: \n"
 					+ (errors == null ? "" : StreamEx.of(errors).joining("\n")));
 			throw new GamaHeadlessException(
 					"Model cannot be compiled. See list of attached errors \n" + StreamEx.of(errors).joining("\n"));

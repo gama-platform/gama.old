@@ -1,19 +1,20 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaPair.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.GamaPair.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
+
+import static java.util.Objects.hash;
 
 import java.util.Map;
 import java.util.Objects;
 
-import gnu.trove.impl.HashFunctions;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -33,11 +34,15 @@ import msi.gaml.types.Types;
 /**
  * The Class GamaPair.
  */
-@vars({ @variable(name = GamaPair.KEY, type = ITypeProvider.KEY_TYPE_AT_INDEX + 1, doc = {
-		@doc("Returns the key of this pair (can be nil)") }),
-		@variable(name = GamaPair.VALUE, type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, doc = {
-				@doc("Returns the value of this pair (can be nil)") }) })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@vars ({ @variable (
+		name = GamaPair.KEY,
+		type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+		doc = { @doc ("Returns the key of this pair (can be nil)") }),
+		@variable (
+				name = GamaPair.VALUE,
+				type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				doc = { @doc ("Returns the value of this pair (can be nil)") }) })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPair<K, V>
 		implements IContainer<Integer, Object>, IContainer.Addressable<Integer, Object>, Map.Entry<K, V> {
 
@@ -76,17 +81,13 @@ public class GamaPair<K, V>
 
 	@Override
 	public int hashCode() {
-		return HashFunctions.hash(key) + 1024 * HashFunctions.hash(value);
+		return hash(key, value);
 	}
 
 	@Override
 	public boolean equals(final Object a) {
-		if (a == null) {
-			return false;
-		}
-		if (a instanceof GamaPair) {
-			return equals((GamaPair) a);
-		}
+		if (a == null) { return false; }
+		if (a instanceof GamaPair) { return equals((GamaPair) a); }
 		return false;
 	}
 
@@ -96,7 +97,7 @@ public class GamaPair<K, V>
 	}
 
 	@Override
-	@getter(KEY)
+	@getter (KEY)
 	public K getKey() {
 		return key;
 	}
@@ -107,7 +108,7 @@ public class GamaPair<K, V>
 	}
 
 	@Override
-	@getter(VALUE)
+	@getter (VALUE)
 	public V getValue() {
 		return value;
 	}
@@ -145,9 +146,8 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method get()
-	 * 
-	 * @see msi.gama.util.IContainer#get(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
+	 *
+	 * @see msi.gama.util.IContainer#get(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
 	public Object get(final IScope scope, final Integer index) throws GamaRuntimeException {
@@ -156,9 +156,8 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method getFromIndicesList()
-	 * 
-	 * @see msi.gama.util.IContainer#getFromIndicesList(msi.gama.runtime.IScope,
-	 *      msi.gama.util.IList)
+	 *
+	 * @see msi.gama.util.IContainer#getFromIndicesList(msi.gama.runtime.IScope, msi.gama.util.IList)
 	 */
 	@Override
 	public Object getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
@@ -167,9 +166,8 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method contains()
-	 * 
-	 * @see msi.gama.util.IContainer#contains(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
+	 *
+	 * @see msi.gama.util.IContainer#contains(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
 	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
@@ -178,7 +176,7 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method firstValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#firstValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -188,7 +186,7 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method lastValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#lastValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -198,7 +196,7 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method length()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#length(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -208,7 +206,7 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method isEmpty()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#isEmpty(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -218,7 +216,7 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method reverse()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#reverse(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -228,7 +226,7 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method anyValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#anyValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -239,9 +237,8 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method listValue()
-	 * 
-	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope,
-	 *      msi.gaml.types.IType)
+	 *
+	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope, msi.gaml.types.IType)
 	 */
 	@Override
 	public IList listValue(final IScope scope, final IType contentType, final boolean copy) {
@@ -251,9 +248,8 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method matrixValue()
-	 * 
-	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope,
-	 *      msi.gaml.types.IType)
+	 *
+	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gaml.types.IType)
 	 */
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType contentType, final boolean copy) {
@@ -262,9 +258,9 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method matrixValue()
-	 * 
-	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope,
-	 *      msi.gaml.types.IType, msi.gama.metamodel.shape.ILocation)
+	 *
+	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gaml.types.IType,
+	 *      msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType contentType, final ILocation size, final boolean copy) {
@@ -273,9 +269,8 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method mapValue()
-	 * 
-	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope,
-	 *      msi.gaml.types.IType, msi.gaml.types.IType)
+	 *
+	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope, msi.gaml.types.IType, msi.gaml.types.IType)
 	 */
 	@Override
 	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentType, final boolean copy) {
@@ -286,7 +281,7 @@ public class GamaPair<K, V>
 
 	/**
 	 * Method iterable()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#iterable(msi.gama.runtime.IScope)
 	 */
 	@Override

@@ -418,8 +418,11 @@ public class GAMA {
 	/**
 	 *
 	 */
-	public static void setHeadLessMode() {
+	public static IGui setHeadLessMode() {
 		isInHeadlessMode = true;
+		IGui gui = new HeadlessListener();
+		setHeadlessGui(gui);
+		return gui;
 	}
 
 	public static void relaunchFrontmostExperiment() {

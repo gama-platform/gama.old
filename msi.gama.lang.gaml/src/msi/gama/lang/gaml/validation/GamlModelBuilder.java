@@ -52,7 +52,7 @@ public class GamlModelBuilder {
 		buildResourceSet = injector.getInstance(ResourceSet.class);
 	}
 
-	public GamlModelBuilder() {
+	private GamlModelBuilder() {
 		buildResourceSet = new SynchronizedXtextResourceSet();
 	}
 
@@ -73,10 +73,6 @@ public class GamlModelBuilder {
 		// And compile it before returning it, unless it is null.
 		return model == null ? null : (IModel) model.compile();
 	}
-
-	// public static IModel compile(final Path path, final List<GamlCompilationError> errors) {
-	// return compile(URI.createFileURI(path.toString()), errors);
-	// }
 
 	private ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
 		try {
@@ -120,30 +116,8 @@ public class GamlModelBuilder {
 				final URI resolvedURI = URI.createURI(uri.toString());
 				final GamlResource r = (GamlResource) buildResourceSet.getResource(resolvedURI, true);
 			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	//
-	// private static ModelDescription buildModelDescription(final GamlResource r,
-	// final List<GamlCompilationError> errors) {
-	// try {
-	//
-	// // Syntactic errors detected, we cannot build the resource
-	// if (r.hasErrors()) {
-	// if (errors != null)
-	// errors.add(new GamlCompilationError("Syntax errors ", IGamlIssue.GENERAL, r.getContents().get(0),
-	// false, false));
-	// return null;
-	// } else {
-	// // We build the description
-	// final ModelDescription model = r.buildCompleteDescription();
-	// if (errors != null)
-	// Iterables.addAll(errors, r.getValidationContext());
-	// return model;
-	// }
-	// } finally {}
-	// }
-
 }
