@@ -327,7 +327,7 @@ species base_team {
 	list<base_player> players; // all the players of the team.
 	soccer_game game;
 	
-	base_player closest_player_to_ball <- first(players) update: first( players where (each distance_to each.ball = min (players collect (each distance_to each.ball) ) ) );
+	base_player closest_player_to_ball <- first(players) update: first( players with_min_of (each.distance_to_ball ) );
 	base_player called_player;
 	bool possess_ball <- false;// update: ! empty ( players where (each.possess_ball=true) );
 	base_player player_with_ball <- nil;// update: first(players where (each.possess_ball = true));

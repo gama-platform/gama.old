@@ -2,7 +2,7 @@
 * Name: Errors
 * Author: Alexis Drogoul
 * Description: A model that demonstrates basic features of error throwing / error handling in GAML
-* Tags: GAML
+* Tags: gaml, syntax, error
 */
 model Errors
 
