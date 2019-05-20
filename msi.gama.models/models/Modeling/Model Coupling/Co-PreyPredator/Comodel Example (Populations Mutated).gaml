@@ -90,9 +90,11 @@ experiment main type: gui
 
             graphics "Prey of prey" {
                 loop pr over:Organism.Simple accumulate each.simulation.lstPrey {
-                    string n <- "PR"+int(pr.host.host);
-                    write n;
-                    draw "PREY" at:pr.location+{1,1,1} color:#green;
+                    if(!dead(pr)){
+	                    string n <- "PR"+int(pr.host.host);	                    	
+	                    write n;
+	                    draw "PREY" at:pr.location+{1,1,1} color:#green;
+                    }
                 }
             }
 
