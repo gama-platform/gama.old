@@ -115,7 +115,7 @@ echo $RESULT1
 	done 
 
 
-	#update_tag $RELEASE
+	#update_tag $RELEASE 
 
 	echo   "Creating release ...  "
 LK="https://api.github.com/repos/gama-platform/gama/releases"
