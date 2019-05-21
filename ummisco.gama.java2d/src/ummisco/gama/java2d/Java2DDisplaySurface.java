@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.java2d;
@@ -18,6 +18,8 @@ package ummisco.gama.java2d;
  *
  *
  **********************************************************************************************/
+
+import static ummisco.gama.ui.utils.PlatformHelper.scaleUpIfWin;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,7 +44,6 @@ import java.util.Set;
 import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.internal.DPIUtil;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -69,6 +70,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
@@ -79,6 +81,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	private static final long serialVersionUID = 1L;
 
 	static {
+		DEBUG.ON();
 		GamaPreferences.Displays.DISPLAY_NO_ACCELERATION.onChange(newValue -> {
 			System.setProperty("sun.java2d.noddraw", newValue ? "true" : "false");
 			System.setProperty("sun.awt.noerasebackground", "true");
@@ -167,8 +170,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void setMousePosition(final int xm, final int ym) {
-		int x = PlatformHelper.scaleUpIfWin(xm);
-		int y = PlatformHelper.scaleUpIfWin(ym);
+		int x = scaleUpIfWin(xm);
+		int y = scaleUpIfWin(ym);
 		if (mousePosition == null) {
 			mousePosition = new Point(x, y);
 		} else {
@@ -179,7 +182,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void draggedTo(final int x, final int y) {
 		final Point origin = getOrigin();
-		setOrigin(origin.x + PlatformHelper.scaleUpIfWin(x) - getMousePosition().x, origin.y + PlatformHelper.scaleUpIfWin(y) - getMousePosition().y);
+		setOrigin(origin.x + scaleUpIfWin(x) - getMousePosition().x, origin.y + scaleUpIfWin(y) - getMousePosition().y);
+		DEBUG.OUT("Translation on X : " + (scaleUpIfWin(x) - getMousePosition().x) + " | on Y : "
+				+ (scaleUpIfWin(y) - getMousePosition().y));
+		DEBUG.OUT("Old Origin = " + origin + " | New Origin = " + getOrigin());
 		setMousePosition(x, y);
 		updateDisplay(true);
 	}
@@ -305,7 +311,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	void setOrigin(final int x, final int y) {
-		final int inset = 1;
+		// Temporarily reverts the changes introduced for #2367
+		final int inset = 0;
 		viewPort.setLocation(x - inset, y - inset);
 	}
 
@@ -517,7 +524,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 	}
 
-
 	private int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		if (!layerManager.stayProportional()) { return new int[] { vwidth, vheight }; }
 		final int[] dim = new int[2];
@@ -606,7 +612,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	/**
 	 * Method followAgent()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -690,7 +696,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	/**
 	 * Method changed()
-	 * 
+	 *
 	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(int, boolean)
 	 */
 	@Override
@@ -708,7 +714,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	/**
 	 * Method getZoomIncrement()
-	 * 
+	 *
 	 * @see msi.gama.gui.displays.awt.IJava2DDisplaySurface#getZoomIncrement()
 	 */
 	double getZoomIncrement() {
@@ -733,13 +739,15 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public boolean isDisposed() {
 		return disposed;
 	}
-	
+
+	@Override
 	public Font computeFont(Font f) {
-		if (f == null) return null;
+		if (f == null)
+			return null;
 		if (PlatformHelper.isWindows() && PlatformHelper.isHiDPI())
-			return f.deriveFont((float) PlatformHelper.scaleUpIfWin(f.getSize2D()));
+			return f.deriveFont(PlatformHelper.scaleUpIfWin(f.getSize2D()));
 		return f;
-			
+
 	}
 
 }
