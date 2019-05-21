@@ -204,6 +204,12 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 			SpeciesDescription sd = desc.getSpeciesContext();
 			if (sd != null && isSuperInvocation) {
 				sd = sd.getParent();
+				if (sd != null && sd.isBuiltIn()) {
+					desc.error("Action " + action + " cannot be invoked on " + sd.getName(), IGamlIssue.UNKNOWN_ACTION,
+							ACTION, action, sd.getName());
+					return;
+				}
+
 			}
 			if (sd == null) { return; }
 			// TODO What about actions defined in a macro species (not the
