@@ -25,6 +25,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GamaCoordinateSequenceFactory;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -100,16 +101,12 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	protected Geometry multiPolygonManagement(Geometry geom) {
 		if (geom instanceof MultiPolygon) {
-				GamaCoordinateSequenceFactory f = new GamaCoordinateSequenceFactory();
 				Polygon gs[] = new Polygon[geom.getNumGeometries()];
 				for (int i = 0; i < geom.getNumGeometries(); i++ ) {
 					Polygon p = (Polygon) geom.getGeometryN(i);
-					ICoordinates coords = f.create(p.getCoordinates());
-					Coordinate[] coord = new Coordinate[coords.size()+1];
-					for (int j = 0; j < coords.size();j++) coord[j] = coords.getCoordinate(j);
-					coord[coords.size()] = coord[0];
-					LinearRing lr = GEOMETRY_FACTORY.createLinearRing(coord);
-
+					ICoordinates coords = GeometryUtils.getContourCoordinates(p);
+					LinearRing lr = GEOMETRY_FACTORY.createLinearRing(coords.toCoordinateArray());
+				
 					List<LinearRing> holes = new ArrayList<>();
 					for (int j = 0; j < p.getNumInteriorRing(); j++) {
 						LinearRing h = (LinearRing) p.getInteriorRingN(j);
