@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.species.GamlSpecies.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.species.GamlSpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.species;
 
@@ -26,7 +26,10 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
@@ -231,7 +234,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -337,7 +340,27 @@ public class GamlSpecies extends AbstractSpecies {
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
 		concurrency = this.getFacet(IKeyword.PARALLEL);
-		schedule = this.getFacet(IKeyword.SCHEDULES);
+		if (((SpeciesDescription) desc).isMirror() && !hasFacet(IKeyword.SCHEDULES)) {
+			// See Issue #2731 -- mirror species have a default scheduling rule
+			schedule = new IExpression() {
+
+				@Override
+				public Object value(IScope scope) throws GamaRuntimeException {
+					IList<IAgent> agents = GamaListFactory.create();
+					for (IAgent agent : getPopulation(scope)) {
+						Object obj = agent.getDirectVarValue(scope, IKeyword.TARGET);
+						if (obj instanceof IAgent) {
+							IAgent target = (IAgent) obj;
+							if (!target.dead())
+								agents.add(agent);
+						}
+
+					}
+					return agents;
+				}
+			};
+		} else
+			schedule = this.getFacet(IKeyword.SCHEDULES);
 		frequency = this.getFacet(IKeyword.FREQUENCY);
 	}
 
@@ -363,7 +386,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 	/**
 	 * Method getSpecies()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSpecies()
 	 */
 	@Override
@@ -373,15 +396,13 @@ public class GamlSpecies extends AbstractSpecies {
 
 	/**
 	 * Method getAgents()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 		return this;
 	}
-	
-	
 
 	@Override
 	public boolean hasAgentList() {
@@ -390,7 +411,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 	/**
 	 * Method accept()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
 	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
 	 */
@@ -406,7 +427,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 	/**
 	 * Method filter()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
 	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
 	 */
@@ -417,7 +438,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 	/**
 	 * Method getType()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#getGamlType()
 	 */
 	@Override
