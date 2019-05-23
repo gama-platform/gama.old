@@ -70,7 +70,7 @@ public abstract class SymbolDescription implements IDescription {
 			originName = superDesc.getName();
 		}
 		setEnclosingDescription(superDesc);
-		proto = DescriptionFactory.getProto(getKeyword(), getModelDescription());
+		proto = DescriptionFactory.getProto(getKeyword(), getSpeciesContext());
 	}
 
 	@Override

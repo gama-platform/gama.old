@@ -23,6 +23,7 @@ import java.util.function.BiConsumer;
 
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -52,8 +53,12 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DescriptionFactory {
 
+	static {
+		// DEBUG.ON();
+	}
+
 	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
-	static Map<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = new HashMap();
+	static ArrayListMultimap<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = ArrayListMultimap.create();
 	static Map<String, SymbolProto> VAR_KEYWORDS_PROTOS = new HashMap();
 	static TIntObjectHashMap<SymbolProto> KINDS_PROTOS = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
 
@@ -74,14 +79,27 @@ public class DescriptionFactory {
 	}
 
 	public final static SymbolProto getProto(final String keyword, final IDescription superDesc) {
-		final SymbolProto p = getStatementProto(keyword);
+		final SymbolProto p =
+				getStatementProto(keyword, superDesc == null ? null : superDesc.getSpeciesContext().getControlName());
 		// If not a statement, we try to find a var declaration prototype
 		if (p == null) { return getVarProto(keyword, superDesc); }
 		return p;
 	}
 
-	public final static SymbolProto getStatementProto(final String keyword) {
-		return STATEMENT_KEYWORDS_PROTOS.get(keyword);
+	public final static SymbolProto getStatementProto(final String keyword, String control) {
+		List<SymbolProto> protos = STATEMENT_KEYWORDS_PROTOS.get(keyword);
+		if (protos == null || protos.isEmpty())
+			return null;
+		if (protos.size() == 1)
+			return protos.get(0);
+		if (control == null)
+			return protos.get(protos.size() - 1);
+		// DEBUG.OUT("Duplicate keyword: " + keyword + " ; looking for the one defined in " + control);
+		for (SymbolProto proto : protos) {
+			if (proto.shouldBeDefinedIn(control))
+				return proto;
+		}
+		return null;
 	}
 
 	public final static SymbolProto getVarProto(final String keyword, final IDescription superDesc) {
@@ -134,12 +152,8 @@ public class DescriptionFactory {
 				VAR_KEYWORDS_PROTOS.putIfAbsent(s, md);
 			}
 		} else {
-			// if ( !ISymbolKind.Variable.KINDS.contains(kind) ) {
-			// SymbolProto.nonTypeStatements.addAll(names);
-			// }
 			for (final String s : names) {
-				// scope.getGui().debug("DescriptionFactory.addProto " + s);
-				STATEMENT_KEYWORDS_PROTOS.putIfAbsent(s, md);
+				STATEMENT_KEYWORDS_PROTOS.put(s, md);
 			}
 		}
 		KINDS_PROTOS.put(kind, md);

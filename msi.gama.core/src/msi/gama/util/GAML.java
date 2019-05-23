@@ -1,17 +1,15 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GAML.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.GAML.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,9 +18,7 @@ import org.eclipse.emf.common.util.URI;
 
 import com.google.common.collect.Multimap;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
@@ -33,29 +29,15 @@ import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.GamlIdiomsProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.kernel.GamaSkillRegistry;
-import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.descriptions.OperatorProto;
-import msi.gaml.descriptions.SkillDescription;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.SymbolProto;
-import msi.gaml.descriptions.TypeDescription;
-import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.IExpressionFactory;
-import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.ModelFactory;
-import msi.gaml.operators.IUnits;
 import msi.gaml.operators.Strings;
-import msi.gaml.types.IType;
-import msi.gaml.types.Signature;
-import msi.gaml.types.Types;
 
 /**
  * Class GAML. Static support for various GAML constructs and functions
@@ -106,7 +88,7 @@ public class GAML {
 
 	/**
 	 * Version of lastIndexOf that uses regular expressions for searching. By Tomer Godinger.
-	 * 
+	 *
 	 * @param str
 	 *            String in which to search for the pattern.
 	 * @param toFind
@@ -131,7 +113,7 @@ public class GAML {
 	/**
 	 * Finds the last index of the given regular expression pattern in the given string, starting from the given index
 	 * (and conceptually going backwards). By Tomer Godinger.
-	 * 
+	 *
 	 * @param str
 	 *            String in which to search for the pattern.
 	 * @param toFind
@@ -148,7 +130,7 @@ public class GAML {
 	/**
 	 * Breaks the given string into lines as best possible, each of which no longer than <code>maxLength</code>
 	 * characters. By Tomer Godinger.
-	 * 
+	 *
 	 * @param str
 	 *            The string to break into lines.
 	 * @param maxLength
@@ -213,109 +195,11 @@ public class GAML {
 		//
 	}
 
-	public static String getDocumentationOn2(final String query) {
-		final String keyword = StringUtils.removeEnd(StringUtils.removeStart(query.trim(), "#"), ":");
-		final THashMap<String, String> results = new THashMap<>();
-		// Statements
-		final SymbolProto p = DescriptionFactory.getStatementProto(keyword);
-		if (p != null) {
-			results.put("Statement", p.getDocumentation());
-		}
-		DescriptionFactory.visitStatementProtos((name, proto) -> {
-			if (proto.getFacet(keyword) != null) {
-				results.put("Facet of statement " + name, proto.getFacet(keyword).getDocumentation());
-			}
-		});
-		final Set<String> types = new HashSet<>();
-		final String[] facetDoc = { "" };
-		DescriptionFactory.visitVarProtos((name, proto) -> {
-			if (proto.getFacet(keyword) != null && types.size() < 4) {
-				if (!Types.get(name).isAgentType() || name.equals(IKeyword.AGENT)) {
-					types.add(name);
-				}
-				facetDoc[0] = proto.getFacet(keyword).getDocumentation();
-			}
-		});
-		if (!types.isEmpty()) {
-			results.put("Facet of attribute declarations with types " + types + (types.size() == 4 ? " ..." : ""),
-					facetDoc[0]);
-		}
-		// Operators
-		final THashMap<Signature, OperatorProto> ops = IExpressionCompiler.OPERATORS.get(keyword);
-		if (ops != null) {
-			ops.forEachEntry((sig, proto) -> {
-				results.put("Operator on " + sig.toString(), proto.getDocumentation());
-				return true;
-			});
-		}
-		// Built-in skills
-		final SkillDescription sd = GamaSkillRegistry.INSTANCE.get(keyword);
-		if (sd != null) {
-			results.put("Skill", sd.getDocumentation());
-		}
-		GamaSkillRegistry.INSTANCE.visitSkills(desc -> {
-			final SkillDescription sd1 = (SkillDescription) desc;
-			final VariableDescription var = sd1.getAttribute(keyword);
-			if (var != null) {
-				results.put("Attribute of skill " + desc.getName(), var.getDocumentation());
-			}
-			final ActionDescription action = sd1.getAction(keyword);
-			if (action != null) {
-				results.put("Primitive of skill " + desc.getName(),
-						action.getDocumentation().isEmpty() ? "" : ":" + action.getDocumentation());
-			}
-			return true;
-		});
-		// Types
-		final IType<?> t = Types.builtInTypes.containsType(keyword) ? Types.get(keyword) : null;
-		if (t != null) {
-			String tt = t.getDocumentation();
-			if (tt == null) {
-				tt = "type " + keyword;
-			}
-			results.put("Type", tt);
-		}
-		// Built-in species
-		for (final TypeDescription td : Types.getBuiltInSpecies()) {
-			if (td.getName().equals(keyword)) {
-				results.put("Built-in species", ((SpeciesDescription) td).getDocumentationWithoutMeta());
-			}
-			final IDescription var = td.getOwnAttribute(keyword);
-			if (var != null) {
-				results.put("Attribute of built-in species " + td.getName(), var.getDocumentation());
-			}
-			final ActionDescription action = td.getOwnAction(keyword);
-			if (action != null) {
-				results.put("Primitive of built-in species " + td.getName(),
-						action.getDocumentation().isEmpty() ? "" : ":" + action.getDocumentation());
-			}
-		}
-		// Constants
-		final UnitConstantExpression exp = IUnits.UNITS_EXPR.get(keyword);
-		if (exp != null) {
-			results.put("Constant", exp.getDocumentation());
-		}
-		if (results.isEmpty()) { return "No result found"; }
-		final StringBuilder sb = new StringBuilder();
-		final int max = results.keySet().stream().mapToInt(each -> each.length()).max().getAsInt();
-		final String separator = StringUtils.repeat("—", max + 6).concat(Strings.LN);
-		results.forEachEntry((sig, doc) -> {
-			sb.append("").append(separator).append("|| ");
-			sb.append(StringUtils.rightPad(sig, max));
-			sb.append(" ||").append(Strings.LN).append(separator);
-			sb.append(toText(doc)).append(Strings.LN);
-			return true;
-		});
-
-		return sb.toString();
-
-		//
-	}
-
 	@SuppressWarnings ("rawtypes")
 	public static <T extends IContainer> T emptyCheck(final IScope scope, final T container) {
-		if (notNull(scope, container)
-				.isEmpty(scope)) { throw GamaRuntimeException.error("Error: the container is empty", scope); }
+		if (notNull(scope, container).isEmpty(scope)) {
+			throw GamaRuntimeException.error("Error: the container is empty", scope);
+		}
 		return container;
 	}
 
@@ -341,8 +225,9 @@ public class GAML {
 
 	public static Object evaluateExpression(final String expression, final IAgent a) throws GamaRuntimeException {
 		if (a == null) { return null; }
-		if (expression == null
-				|| expression.isEmpty()) { throw GamaRuntimeException.error("Enter a valid expression", a.getScope()); }
+		if (expression == null || expression.isEmpty()) {
+			throw GamaRuntimeException.error("Enter a valid expression", a.getScope());
+		}
 		final IExpression expr = compileExpression(expression, a, true);
 		if (expr == null) { return null; }
 		final IScope scope = a.getScope().copy("in temporary expression evaluator");

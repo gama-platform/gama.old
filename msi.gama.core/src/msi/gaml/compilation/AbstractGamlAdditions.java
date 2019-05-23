@@ -412,8 +412,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public static Collection<SymbolProto> getStatementsForSkill(final String s) {
 		final Set<SymbolProto> result = new LinkedHashSet();
 		for (final String p : DescriptionFactory.getStatementProtoNames()) {
-			final SymbolProto proto = DescriptionFactory.getStatementProto(p);
-			if (proto.shouldBeDefinedIn(s)) {
+			final SymbolProto proto = DescriptionFactory.getStatementProto(p, s);
+			if (proto != null && proto.shouldBeDefinedIn(s)) {
 				result.add(proto);
 			}
 		}

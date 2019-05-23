@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.outline;
@@ -139,7 +139,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 		final String key = EGaml.getKeyOf(s);
 		if (IKeyword.ACTION.equals(key)) { return false; }
 		// if (s.getBlock() != null && s.getBlock().getFunction() == null) { return false; }
-		final SymbolProto p = DescriptionFactory.getStatementProto(key);
+		final SymbolProto p = DescriptionFactory.getStatementProto(key, null);
 		if (p != null && p.getKind() == ISymbolKind.BATCH_METHOD) { return false; }
 		return true;
 	}
@@ -148,7 +148,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 		if (!(s instanceof S_Definition)) { return false; }
 		if (s instanceof S_Action) { return true; }
 		final String key = EGaml.getKeyOf(s);
-		final SymbolProto p = DescriptionFactory.getStatementProto(key);
+		final SymbolProto p = DescriptionFactory.getStatementProto(key, null);
 		if (p != null && p.isTopLevel()) { return false; }
 		if (s.getKey() == null) { return true; }
 		return false;
