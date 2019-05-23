@@ -74,7 +74,7 @@ public class Experiment implements IExperiment {
 	private synchronized void loadCurrentExperiment(final String expName) {
 		this.experimentName = expName;
 		this.currentStep = 0;
-		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
+		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, new Double(seed));
 		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
 		this.currentExperiment.setHeadless(true);
 	}

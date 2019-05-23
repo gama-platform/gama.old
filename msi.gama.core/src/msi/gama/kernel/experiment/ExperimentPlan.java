@@ -385,6 +385,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
+		Double seed_temp;
 		List<Map<String, Object>> params =
 				seed == null ? Collections.EMPTY_LIST : Arrays.asList(new HashMap<String, Object>() {
 					{

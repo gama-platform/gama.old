@@ -138,7 +138,7 @@ public class ExperimentJob implements IExperimentJob {
 	private String sourcePath;
 	private String experimentName;
 	private String modelName;
-	private long seed;
+	private double seed;
 
 	/**
 	 * simulator to be loaded
@@ -212,12 +212,12 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	public ExperimentJob(final String sourcePath, final String exp, final long max, final String untilCond,
-			final long s) {
+			final double s) {
 		this(sourcePath, new Long(ExperimentJob.generateID()).toString(), exp, max, untilCond, s);
 	}
 
 	public ExperimentJob(final String sourcePath, final String expId, final String exp, final long max,
-			final String untilCond, final long s) {
+			final String untilCond, final double s) {
 		this();
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
@@ -403,12 +403,12 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	@Override
-	public void setSeed(final long s) {
+	public void setSeed(final double s) {
 		this.seed = s;
 	}
 
 	@Override
-	public long getSeed() {
+	public double getSeed() {
 		return this.seed;
 	}
 
@@ -429,7 +429,7 @@ public class ExperimentJob implements IExperimentJob {
 		simulation.setAttributeNode(attr2);
 
 		final Attr attr5 = doc.createAttribute(XmlTAG.SEED_TAG);
-		attr5.setValue(new Long(this.seed).toString());
+		attr5.setValue(new Float(this.seed).toString());
 		simulation.setAttributeNode(attr5);
 
 		final Attr attr4 = doc.createAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
@@ -486,9 +486,10 @@ public class ExperimentJob implements IExperimentJob {
 			final IModel model) {
 		final String expName = expD.getName();
 		final IExpressionDescription seedDescription = expD.getFacet(IKeyword.SEED);
-		long mseed = 0l;
+		double mseed = 0.0;
 		if (seedDescription != null) {
-			mseed = Long.valueOf(seedDescription.getExpression().literalValue()).longValue();
+			mseed = Double.valueOf(seedDescription.getExpression().literalValue()).doubleValue();
+			System.out.println("seed "+ mseed);
 		}
 		final IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
 		final ExperimentJob expJob =

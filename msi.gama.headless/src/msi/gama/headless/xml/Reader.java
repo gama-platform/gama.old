@@ -181,7 +181,7 @@ public class Reader {
 		String sourcePath = getAttributeWithoutCase(e, XmlTAG.SOURCE_PATH_TAG);
 		final String experimentName = getAttributeWithoutCase(e, XmlTAG.EXPERIMENT_NAME_TAG);
 		final String seed = getAttributeWithoutCase(e, XmlTAG.SEED_TAG);
-		final long selectedSeed = seed == null || seed.length() == 0 ? 0l : Long.valueOf(seed).longValue();
+		final double selectedSeed = seed == null || seed.length() == 0 ? 0l : Double.valueOf(seed).doubleValue();
 		if (sourcePath.charAt(0) != '/' && sourcePath.charAt(0) != '\\') {
 			String pr;
 			if (fileName != null) {

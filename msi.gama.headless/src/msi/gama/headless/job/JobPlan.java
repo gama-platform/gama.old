@@ -44,12 +44,12 @@ public class JobPlan {
 
 	Map<String, List<IExperimentJob>> availableExperimentations;
 	Map<JobPlanExperimentID, IExperimentJob> originalJobs;
-	List<Long> choosenSeed;
+	List<Double> choosenSeed;
 	IModel model = null;
 
 	public JobPlan() {
 		this.availableExperimentations = new HashMap<String, List<IExperimentJob>>();
-		this.choosenSeed = new ArrayList<Long>();
+		this.choosenSeed = new ArrayList<Double>();
 		this.originalJobs = new HashMap<JobPlanExperimentID, IExperimentJob>();
 	}
 

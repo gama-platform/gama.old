@@ -33,9 +33,9 @@ public interface IExperimentJob {
 
 	public void setParameterValueOf(final String name, final Object val);
 
-	public void setSeed(final long s);
+	public void setSeed(final double s);
 
-	public long getSeed();
+	public double getSeed();
 
 	public long getStep();
 
