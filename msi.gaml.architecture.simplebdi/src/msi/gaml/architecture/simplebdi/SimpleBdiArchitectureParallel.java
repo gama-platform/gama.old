@@ -28,87 +28,94 @@ import msi.gaml.operators.Maths;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.statements.IStatement;
 
-
 @skill (
-		name = "parallel_bdi",
+		name = SimpleBdiArchitectureParallel.PARALLEL_BDI,
 		concept = { IConcept.BDI, IConcept.ARCHITECTURE })
-@doc("compute the bdi architecture in parallel")
+@doc ("compute the bdi architecture in parallel")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 
+	public static final String PARALLEL_BDI = "parallel_bdi";
 	IExpression parallel = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
-	
+
 	public class UpdateEmotions extends AbstractStatement {
 
 		public UpdateEmotions(IDescription desc) {
 			super(desc);
 		}
 
+		@Override
 		protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-//			computeEmotions(scope);
+			// computeEmotions(scope);
 			return null;
 		}
-		
+
 	}
-	
+
 	public class UpdateSocialLinks extends AbstractStatement {
 
 		public UpdateSocialLinks(IDescription desc) {
 			super(desc);
 		}
 
+		@Override
 		protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 			updateSocialLinks(scope);
 			return null;
 		}
-		
+
 	}
-	
+
 	public class UpdateEmotionsIntensity extends AbstractStatement {
 
 		public UpdateEmotionsIntensity(IDescription desc) {
 			super(desc);
 		}
 
+		@Override
 		protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 			updateEmotionsIntensity(scope);
 			return null;
 		}
-		
+
 	}
-	
+
 	public class UpdateLifeTimePredicates extends AbstractStatement {
 
 		public UpdateLifeTimePredicates(IDescription desc) {
 			super(desc);
 		}
 
+		@Override
 		protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 			updateLifeTimePredicates(scope);
 			return null;
 		}
-		
+
 	}
-	public void preStep(final IScope scope, IPopulation<? extends IAgent> gamaPopulation){
+
+	@Override
+	public void preStep(final IScope scope, IPopulation<? extends IAgent> gamaPopulation) {
 		final IExpression schedule = gamaPopulation.getSpecies().getSchedule();
-		final List<? extends IAgent> agents = schedule == null ? gamaPopulation : Cast.asList(scope, schedule.value(scope));
-		
-		GamaExecutorService.execute(scope, new UpdateLifeTimePredicates(null), agents,parallel) ;
-		GamaExecutorService.execute(scope, new UpdateEmotionsIntensity(null), agents,parallel) ;
-		
+		final List<? extends IAgent> agents =
+				schedule == null ? gamaPopulation : Cast.asList(scope, schedule.value(scope));
+
+		GamaExecutorService.execute(scope, new UpdateLifeTimePredicates(null), agents, parallel);
+		GamaExecutorService.execute(scope, new UpdateEmotionsIntensity(null), agents, parallel);
+
 		if (_reflexes != null)
 			for (final IStatement r : _reflexes) {
 				if (!scope.interrupted()) {
-					GamaExecutorService.execute(scope, r, agents,ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION) ;
+					GamaExecutorService.execute(scope, r, agents, ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION);
 				}
 			}
-			
+
 		if (_perceptionNumber > 0) {
 			for (int i = 0; i < _perceptionNumber; i++) {
 				if (!scope.interrupted()) {
 					PerceiveStatement statement = _perceptions.get(i);
 					IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
-					GamaExecutorService.execute(scope, statement, agents,par) ;
+					GamaExecutorService.execute(scope, statement, agents, par);
 				}
 			}
 		}
@@ -116,50 +123,50 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 			for (int i = 0; i < _rulesNumber; i++) {
 				RuleStatement statement = _rules.get(i);
 				IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
-				GamaExecutorService.execute(scope, statement, agents,par) ;
+				GamaExecutorService.execute(scope, statement, agents, par);
 			}
 		}
-		
+
 		if (_lawsNumber > 0) {
 			for (int i = 0; i < _lawsNumber; i++) {
 				LawStatement statement = _laws.get(i);
 				IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
-				GamaExecutorService.execute(scope, statement, agents,par) ;
+				GamaExecutorService.execute(scope, statement, agents, par);
 			}
 		}
-		
-//		GamaExecutorService.execute(scope, new UpdateEmotions(null), agents,parallel) ;
-		GamaExecutorService.execute(scope, new UpdateSocialLinks(null), agents,parallel) ;
+
+		// GamaExecutorService.execute(scope, new UpdateEmotions(null), agents,parallel) ;
+		GamaExecutorService.execute(scope, new UpdateSocialLinks(null), agents, parallel);
 	}
-	
+
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		final Boolean use_personality = scope.hasArg(USE_PERSONALITY)
-				? scope.getBoolArg(USE_PERSONALITY) : (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
-		if(use_personality){
+		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
+				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
+		if (use_personality) {
 			Double expressivity = (Double) scope.getAgent().getAttribute(EXTRAVERSION);
 			Double neurotisme = (Double) scope.getAgent().getAttribute(NEUROTISM);
 			Double conscience = (Double) scope.getAgent().getAttribute(CONSCIENTIOUSNESS);
 			Double agreeableness = (Double) scope.getAgent().getAttribute(AGREEABLENESS);
 			scope.getAgent().setAttribute(CHARISMA, expressivity);
-			scope.getAgent().setAttribute(RECEPTIVITY, 1-neurotisme);
+			scope.getAgent().setAttribute(RECEPTIVITY, 1 - neurotisme);
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_PLANS, Maths.sqrt(scope, conscience));
 			scope.getAgent().setAttribute(PERSISTENCE_COEFFICIENT_INTENTIONS, Maths.sqrt(scope, conscience));
-			scope.getAgent().setAttribute(OBEDIENCE, Maths.sqrt(scope, (conscience+agreeableness)*0.5));
+			scope.getAgent().setAttribute(OBEDIENCE, Maths.sqrt(scope, (conscience + agreeableness) * 0.5));
 		}
-//		return executePlans(scope);
+		// return executePlans(scope);
 		Object result = executePlans(scope);
-		if(!scope.getAgent().dead()){
-			//Activer la violation des normes
+		if (!scope.getAgent().dead()) {
+			// Activer la violation des normes
 			updateNormViolation(scope);
-			//Mettre à jour le temps de vie des normes
+			// Mettre à jour le temps de vie des normes
 			updateNormLifetime(scope);
-			
-				// Part that manage the lifetime of predicates
-//			if(result!=null){
-//				updateLifeTimePredicates(scope);
-//				updateEmotionsIntensity(scope);
-//			}
+
+			// Part that manage the lifetime of predicates
+			// if(result!=null){
+			// updateLifeTimePredicates(scope);
+			// updateEmotionsIntensity(scope);
+			// }
 		}
 		return result;
 	}
