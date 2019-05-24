@@ -77,9 +77,9 @@ public class WrappedGamaFile extends WrappedFile {
 	protected void computeFileImage() {
 		// final IFile f = getResource();
 		if (isExperiment) {
-			image = GamaIcons.create("file.experiment2").image();
+			image = GamaIcons.create("navigator/file.experiment2").image();
 		} else {
-			image = GamaIcons.create("file.icon2").image();
+			image = GamaIcons.create("navigator/file.icon2").image();
 		}
 
 	}

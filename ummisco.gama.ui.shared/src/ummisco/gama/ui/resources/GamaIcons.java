@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
@@ -88,8 +88,6 @@ public class GamaIcons implements IIconProvider {
 		final String name = SIZER_PREFIX + width + "x" + height + color.hashCode();
 		GamaIcon sizer = getInstance().getIcon(name);
 		if (sizer == null) {
-			// RGB c = new RGB(color.getRed(), color.getGreen(),
-			// color.getBlue());
 			final Image sizerImage = new Image(WorkbenchHelper.getDisplay(), width, height);
 			final GC gc = new GC(sizerImage);
 			gc.setBackground(color);
@@ -145,7 +143,7 @@ public class GamaIcons implements IIconProvider {
 
 	/**
 	 * Creates an icon that needs to be disposed afterwards
-	 * 
+	 *
 	 * @param gcolor
 	 * @param width
 	 * @param height

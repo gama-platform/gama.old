@@ -42,12 +42,12 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		final IFile f = getResource();
 		if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(f.getFileExtension())) {
 			if (isShapeFileSupport) {
-				image = GamaIcons.create("file.shapesupport2").image();
+				image = GamaIcons.create("navigator/file.shapesupport2").image();
 			} else {
 				image = DEFAULT_LABEL_PROVIDER.getImage(f);
 			}
 		} else {
-			image = GamaIcons.create("file.text2").image();
+			image = GamaIcons.create("navigator/file.text2").image();
 		}
 
 	}

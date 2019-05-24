@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
@@ -18,6 +18,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamaIcon {
 
+	static {
+		DEBUG.ON();
+	}
+
 	final String code;
 	final String path;
 	final String plugin;
@@ -25,7 +29,7 @@ public class GamaIcon {
 
 	/**
 	 * Constructor for dynamic icons
-	 * 
+	 *
 	 * @param c
 	 *            the code
 	 */
@@ -35,7 +39,7 @@ public class GamaIcon {
 
 	/**
 	 * Constructor for images loaded from the main application plugin
-	 * 
+	 *
 	 * @param c
 	 *            the code
 	 * @param p
@@ -47,7 +51,7 @@ public class GamaIcon {
 
 	/**
 	 * Constructor for images loaded from a plugin
-	 * 
+	 *
 	 * @param c
 	 *            the code
 	 * @param p

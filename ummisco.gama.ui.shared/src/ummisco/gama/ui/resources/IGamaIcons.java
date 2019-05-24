@@ -63,20 +63,20 @@ public interface IGamaIcons {
 
 	// Preferences tabs. 24x24
 
-	public static final String PREFS_GENERAL = "prefs.general2";
-	public static final String PREFS_DISPLAY = "prefs.display2";
-	public static final String PREFS_EDITOR = "prefs.editor2";
-	public static final String PREFS_LIBS = "prefs.libraries2";
+	public static final String PREFS_GENERAL = "prefs/prefs.general2";
+	public static final String PREFS_DISPLAY = "prefs/prefs.display2";
+	public static final String PREFS_EDITOR = "prefs/prefs.editor2";
+	public static final String PREFS_LIBS = "prefs/prefs.libraries2";
 
 	// Navigator
 
 	public static final String FOLDER_BUILTIN = "navigator/folder.library2";
 	public static final String FOLDER_PLUGIN = "navigator/folder.plugin2";
 	public static final String FOLDER_TEST = "navigator/folder.test2";
-	public static final String FOLDER_PROJECT = "folder.user2";
-	public static final String FOLDER_MODEL = "folder.model3";
-	public static final String FOLDER_RESOURCES = "folder.resources2";
-	public static final String FILE_ICON = "file.icon2";
+	public static final String FOLDER_PROJECT = "navigator/folder.user2";
+	public static final String FOLDER_MODEL = "navigator/folder.model3";
+	public static final String FOLDER_RESOURCES = "navigator/folder.resources2";
+	public static final String FILE_ICON = "navigator/file.icon2";
 	public static final String FOLDER_USER = "navigator/folder.user";
 
 	// Editor specific
@@ -97,7 +97,7 @@ public interface IGamaIcons {
 
 	// Overlays
 
-	public static final String OVERLAY_OK = "overlay.ok2";
+	public static final String OVERLAY_OK = "navigator/overlay.ok2";
 
 	// Viewers
 
