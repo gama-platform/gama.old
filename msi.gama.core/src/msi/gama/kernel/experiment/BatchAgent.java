@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.BatchAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.BatchAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -26,6 +26,7 @@ import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.FileOutput;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -44,6 +45,7 @@ import msi.gaml.variables.IVariable;
  */
 
 @experiment (IKeyword.BATCH)
+@doc ("Experiments supporting the execution of several simulations in order to explore parameters or reach a specific state")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class BatchAgent extends ExperimentAgent {
 
@@ -151,7 +153,7 @@ public class BatchAgent extends ExperimentAgent {
 	/**
 	 *
 	 * Method step()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.agent.GamlAgent#step(msi.gama.runtime.IScope) This method, called once by the front
 	 *      controller, actually serves as "launching" the batch process (entirely piloted by the exploration algorithm)
 	 */
