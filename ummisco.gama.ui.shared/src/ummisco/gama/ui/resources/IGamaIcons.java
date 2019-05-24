@@ -27,12 +27,11 @@ public interface IGamaIcons {
 	public static final String DISPLAY_TOOLBAR_CSVEXPORT = "menu.saveas2";
 	public static final String DISPLAY_TOOLBAR_ZOOMOUT = "display.zoomout2";
 	public static final String DISPLAY_TOOLBAR_ZOOMFIT = "display.zoomfit2";
-	public static final String DISPLAY_TOOLBAR_AGENTS = "display.agents2";
 
 	// Menus
 
 	public static final String MENU_BROWSE = "menu.browse2";;
-	public static final String MENU_POPULATION = DISPLAY_TOOLBAR_AGENTS;
+	public static final String MENU_POPULATION = "display.agents2";
 	public static final String MENU_AGENT = "menu.agent2";
 	public static final String MENU_INSPECT = "menu.inspect2";;
 	public static final String MENU_HIGHLIGHT = "menu.highlight2";
