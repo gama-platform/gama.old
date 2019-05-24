@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
@@ -21,8 +21,6 @@ public interface IGamaIcons {
 	// Display toolbar
 
 	public static final String DISPLAY_TOOLBAR_PAUSE = "display.pause3";
-	public static final String DISPLAY_TOOLBAR_KNOB = "display.knob2";
-	public static final String DISPLAY_TOOLBAR_SLIDER = "display.slider2";
 	public static final String DISPLAY_TOOLBAR_SYNC = "display.sync3";
 	public static final String DISPLAY_TOOLBAR_SNAPSHOT = "display.snapshot2";
 	public static final String DISPLAY_TOOLBAR_ZOOMIN = "display.zoomin2";
@@ -30,11 +28,6 @@ public interface IGamaIcons {
 	public static final String DISPLAY_TOOLBAR_ZOOMOUT = "display.zoomout2";
 	public static final String DISPLAY_TOOLBAR_ZOOMFIT = "display.zoomfit2";
 	public static final String DISPLAY_TOOLBAR_AGENTS = "display.agents2";
-	public static final String DISPLAY_TOOLBAR_OPENGL = "display.opengl2";
-	public static final String DISPLAY_TOOLBAR_CAMERA = "display.camera2";
-	public static final String DISPLAY_TOOLBAR_ROTATE = "display.rotate2";
-	public static final String DISPLAY_TOOLBAR_SPLIT = "display.split2";
-	public static final String DISPLAY_TOOLBAR_TRIANGULATE = "display.triangulate2";
 
 	// Menus
 
@@ -55,7 +48,6 @@ public interface IGamaIcons {
 	public static final String LAYER_SPECIES = "layer.species2";
 	public static final String LAYER_AGENTS = "layer.agents2";
 	public static final String LAYER_GRAPHICS = "layer.graphics2";
-	public static final String LAYER_TEXT = "layer.text2";
 	public static final String LAYER_IMAGE = "layer.image2";
 	public static final String LAYER_CHART = "layer.chart2";
 
@@ -63,10 +55,6 @@ public interface IGamaIcons {
 
 	public static final String ACTION_REVERT = "action.revert2";
 	public static final String ACTION_CLEAR = "action.clear2";
-
-	// General toolbar
-
-	public static final String TOOLBAR_KNOB = "toolbar.knob2";
 
 	// User Panels
 
