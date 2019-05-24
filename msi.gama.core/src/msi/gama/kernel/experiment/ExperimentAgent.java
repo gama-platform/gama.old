@@ -134,7 +134,9 @@ import msi.gaml.types.Types;
 				doc = @doc (
 						value = "Contains the absolute path to the project in which the current model is located",
 						comment = "Always terminated with a trailing separator")) })
-@experiment (IKeyword.GUI_)
+@experiment (
+		value = IKeyword.GUI_)
+@doc ("Experiments that declare a graphical user interface")
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public static final String MODEL_PATH = "model_path";
