@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.TestAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.TestAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -19,6 +19,7 @@ import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -31,6 +32,7 @@ import msi.gaml.statements.test.WithTestSummary;
 import msi.gaml.types.IType;
 
 @experiment (IKeyword.TEST)
+@doc ("Experiments supporting the collection of success or failure of tests. Can be used in GUI or headless")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class TestAgent extends BatchAgent implements WithTestSummary<TestExperimentSummary> {
 
