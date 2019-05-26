@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.StringBasedExpressionDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.StringBasedExpressionDescription.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -27,7 +27,7 @@ import msi.gaml.types.Types;
  * @since 31 mars 2012
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class StringBasedExpressionDescription extends BasicExpressionDescription {
 
 	String string;
@@ -59,17 +59,17 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 		final StringBuilder b = new StringBuilder();
 		for (final char c : string.toCharArray()) {
 			switch (c) {
-			case '[':
-			case ' ':
-				break;
-			case ']':
-			case ',': {
-				result.add(b.toString());
-				b.setLength(0);
-				break;
-			}
-			default:
-				b.append(c);
+				case '[':
+				case ' ':
+					break;
+				case ']':
+				case ',': {
+					result.add(b.toString());
+					b.setLength(0);
+					break;
+				}
+				default:
+					b.append(c);
 			}
 		}
 		return result;
@@ -83,27 +83,17 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 	}
 
 	public static IExpressionDescription create(final String string) {
-		if (string == null) {
-			return null;
-		}
+		if (string == null) { return null; }
 		final String s = string.trim();
-		if (s.equals(IKeyword.NULL)) {
-			return ConstantExpressionDescription.create((Object) null);
-		}
-		if (s.equals(IKeyword.FALSE)) {
-			return ConstantExpressionDescription.create(false);
-		}
-		if (s.equals(IKeyword.TRUE)) {
-			return ConstantExpressionDescription.create(true);
-		}
-		if (StringUtils.isGamaString(s)) {
-			return LabelExpressionDescription.create(StringUtils.toJavaString(s));
-		}
+		if (s.equals(IKeyword.NULL)) { return ConstantExpressionDescription.create((Object) null); }
+		if (s.equals(IKeyword.FALSE)) { return ConstantExpressionDescription.create(false); }
+		if (s.equals(IKeyword.TRUE)) { return ConstantExpressionDescription.create(true); }
+		if (StringUtils.isGamaString(s)) { return LabelExpressionDescription.create(StringUtils.toJavaString(s)); }
 		return new StringBasedExpressionDescription(string);
 	}
 
 	@Override
-	public IType getDenotedType(final IDescription context) {
+	public IType<?> getDenotedType(final IDescription context) {
 		IType type = context.getTypeNamed(string);
 		if (type == Types.NO_TYPE) {
 			type = super.getDenotedType(context);

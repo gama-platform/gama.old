@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.UnitConstantExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.UnitConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -174,7 +174,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
-	public IType getDenotedType(final IDescription context) {
+	public IType<?> getDenotedType(final IDescription context) {
 		return Types.NO_TYPE;
 	}
 

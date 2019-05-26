@@ -11,12 +11,30 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ @variable(name = "name", type = IType.STRING, doc = @doc("the name of the emotion")), 
-		@variable(name = "intensity", type = IType.FLOAT, doc = @doc("the intensity of the emotion")),
-		@variable(name = "about", type = PredicateType.id, doc = @doc("the predicate about which is the emotion")),
-		@variable(name = "decay", type = IType.FLOAT, doc = @doc("the decay value of the emotion")),
-		@variable(name = "agentCause", type = IType.AGENT, doc = @doc("the agent causing the emotion")),
-		@variable(name = "owner", type = IType.AGENT, doc = @doc("the agent owning the emotion"))})
+@vars ({ @variable (
+		name = "name",
+		type = IType.STRING,
+		doc = @doc ("the name of the emotion")),
+		@variable (
+				name = "intensity",
+				type = IType.FLOAT,
+				doc = @doc ("the intensity of the emotion")),
+		@variable (
+				name = "about",
+				type = PredicateType.id,
+				doc = @doc ("the predicate about which is the emotion")),
+		@variable (
+				name = "decay",
+				type = IType.FLOAT,
+				doc = @doc ("the decay value of the emotion")),
+		@variable (
+				name = "agentCause",
+				type = IType.AGENT,
+				doc = @doc ("the agent causing the emotion")),
+		@variable (
+				name = "owner",
+				type = IType.AGENT,
+				doc = @doc ("the agent owning the emotion")) })
 public class Emotion implements IValue {
 
 	String name;
@@ -25,40 +43,40 @@ public class Emotion implements IValue {
 	Double decay = 0.0;
 	IAgent agentCause;
 	IAgent owner;
-	private boolean noAgentCause = true; 
+	private boolean noAgentCause = true;
 	private boolean noIntensity = true;
 	private boolean noAbout = true;
 
-	@getter("name")
+	@getter ("name")
 	public String getName() {
 		return name;
 	}
 
-	@getter("intensity")
+	@getter ("intensity")
 	public Double getIntensity() {
 		return intensity;
 	}
 
-	@getter("about")
+	@getter ("about")
 	public Predicate getAbout() {
 		return about;
 	}
 
-	@getter("decay")
+	@getter ("decay")
 	public Double getDecay() {
 		return decay;
 	}
 
-	@getter("agentCause")
+	@getter ("agentCause")
 	public IAgent getAgentCause() {
 		return agentCause;
 	}
 
-	@getter("owner")
-	public IAgent getOwner(){
+	@getter ("owner")
+	public IAgent getOwner() {
 		return owner;
 	}
-	
+
 	public boolean getNoIntensity() {
 		return this.noIntensity;
 	}
@@ -86,10 +104,10 @@ public class Emotion implements IValue {
 		this.noAgentCause = false;
 	}
 
-	public void setOwner(final IAgent own){
+	public void setOwner(final IAgent own) {
 		this.owner = own;
 	}
-	
+
 	public Emotion() {
 		this.name = "";
 		this.about = null;
@@ -226,7 +244,8 @@ public class Emotion implements IValue {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		if (intensity > 0) {
-			return "emotion(" + name + "," + intensity + "," + about + "," + decay + "," + agentCause + "," + owner + ")";
+			return "emotion(" + name + "," + intensity + "," + about + "," + decay + "," + agentCause + "," + owner
+					+ ")";
 		}
 		return "emotion(" + name + "," + about + "," + decay + "," + agentCause + "," + owner + ")";
 	}
@@ -243,46 +262,35 @@ public class Emotion implements IValue {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
+		if (this == obj) { return true; }
+		if (obj == null) { return false; }
+		if (getClass() != obj.getClass()) { return false; }
 		final Emotion other = (Emotion) obj;
 		if (name == null) {
-			if (other.name != null) {
-				return false;
-			}
-		} else if (!name.equals(other.name)) {
-			return false;
-		}
-		if (noAbout && noAgentCause || other.noAbout && other.noAgentCause) {
-			return true;
-		}
+			if (other.name != null) { return false; }
+		} else if (!name.equals(other.name)) { return false; }
+		if (noAbout && noAgentCause || other.noAbout && other.noAgentCause) { return true; }
 		/*
 		 * if(about==null){ if(other.about!=null){return false;} }else
-		 */if (about != null && other.about != null && !about.equalsEmotions(other.about)) {
-			return false;
-		}
+		 */if (about != null && other.about != null && !about.equalsEmotions(other.about)) { return false; }
 		/*
 		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
 		 */
-		 /*if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
-			return false;
-		}*/
-		 if(owner!=null && other.owner!=null && !owner.equals(other.owner)){
-			 return false;
-		 }
+		/*
+		 * if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) { return false; }
+		 */
+		if (owner != null && other.owner != null && !owner.equals(other.owner)) { return false; }
 		return true;
 	}
 
 	@Override
 	public IType<?> getGamlType() {
 		return Types.get(EmotionType.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
 }

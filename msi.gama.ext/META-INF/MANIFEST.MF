@@ -887,3 +887,4 @@ Bundle-ClassPath: .,
  kml/jars/jaxb-core.jar,
  jts 1.14/jars/jts-example-1.14.0.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: msi.gama.ext

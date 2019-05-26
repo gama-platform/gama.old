@@ -2,17 +2,18 @@
  *
  * msi.gama.util.path.GamaSpatialPath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.path;
 
 import static java.lang.Math.min;
 import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
 import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
+import static msi.gama.common.geometry.GeometryUtils.getLastPointOf;
 import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
 import static msi.gama.common.geometry.GeometryUtils.split_at;
 import static msi.gaml.operators.Spatial.Punctal._closest_point_to;
@@ -99,20 +100,25 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		}
 		if (firstLine != null && _edges != null && pt0 != null && pt1 != null) {
 			if (_edges.size() > 1) {
-				double Z = pt0.z;
-				for (IShape e : _edges) {
-					for (GamaPoint p : GeometryUtils.getPointsOf(e)) {
+				final double Z = pt0.z;
+				for (final IShape e : _edges) {
+					for (final GamaPoint p : GeometryUtils.getPointsOf(e)) {
 						if (p.z != Z) {
-							threeD = true; break;
+							threeD = true;
+							break;
 						}
-						if(threeD) break;
+						if (threeD) {
+							break;
+						}
 					}
 				}
 				final IShape secondLine = _edges.get(1).getGeometry();
-				if (threeD) pt = source.euclidianDistanceTo(pt0) < source.euclidianDistanceTo(pt1) ? pt0 : pt1;
-				
-				else pt = pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0 : pt1;
-				
+				if (threeD) {
+					pt = source.euclidianDistanceTo(pt0) < source.euclidianDistanceTo(pt1) ? pt0 : pt1;
+				} else {
+					pt = pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0 : pt1;
+				}
+
 			} else {
 				final IShape lineEnd = edges.get(edges.size() - 1);
 				final GamaPoint falseTarget = (GamaPoint) _closest_point_to(getEndVertex().getLocation(), lineEnd);
@@ -142,9 +148,9 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					geom2 = GEOMETRY_FACTORY.createLineString(cc);
 					// geom2 = geom.reverse();
 					edge2 = new GamaShape(geom2);
-					if (!threeD ) {
-							
-						if (cpt == 0 && !source.equals(pt) ) {
+					if (!threeD) {
+
+						if (cpt == 0 && !source.equals(pt)) {
 							GamaPoint falseSource = source.getLocation().toGamaPoint();
 							if (source.euclidianDistanceTo(edge2) > min(0.01, edge2.getPerimeter() / 1000)) {
 								falseSource = (GamaPoint) _closest_point_to(source, edge2);
@@ -152,12 +158,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 							}
 							edge2 = split_at(edge2, falseSource).get(1);
 						}
-						if (cpt == _edges.size() - 1 && !target.equals(
-								edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry().getNumPoints() - 1])) {
-	
+						if (cpt == _edges.size() - 1 && !target.equals(getLastPointOf(edge2))) {
 							GamaPoint falseTarget = target.getLocation().toGamaPoint();
-							if (target.euclidianDistanceTo(edge2) > Math.min(0.01, edge2.getPerimeter() / 1000)) {
-								falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
+							if (target.euclidianDistanceTo(edge2) > min(0.01, edge2.getPerimeter() / 1000)) {
+								falseTarget = (GamaPoint) _closest_point_to(target, edge2);
 								falseTarget.z = zVal(falseTarget, edge2);
 							}
 							edge2 = split_at(edge2, falseTarget).get(0);
@@ -176,7 +180,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				cpt++;
 				// segmentsInGraph.put(agents, agents);
 			}
-			
+
 		}
 	}
 
@@ -515,6 +519,5 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	public boolean isThreeD() {
 		return threeD;
 	}
-	
-	
+
 }

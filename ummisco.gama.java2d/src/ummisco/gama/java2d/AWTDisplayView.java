@@ -4,13 +4,12 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.java2d;
 
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,11 +19,9 @@ import javax.swing.JComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.java2d.swing.SwingControl;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -59,18 +56,16 @@ public class AWTDisplayView extends LayeredDisplayView {
 				});
 
 			}
-			
-			
 
 			@Override
 			public Rectangle getClientArea() {
-			//	if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getClientArea());
+				// if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getClientArea());
 				return super.getClientArea();
 			}
 
 			@Override
 			public Point getSize() {
-				//if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getSize());
+				// if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getSize());
 				return super.getSize();
 			}
 
@@ -99,90 +94,84 @@ public class AWTDisplayView extends LayeredDisplayView {
 		};
 		surfaceComposite.setEnabled(false);
 		WorkaroundForIssue1594.installOn(AWTDisplayView.this, parent, surfaceComposite, getDisplaySurface());
-		((SwingControl)surfaceComposite).awtview=this;
+		((SwingControl) surfaceComposite).awtview = this;
 		return surfaceComposite;
 	}
-	
-	
 
-	volatile boolean inMenu=false;
-	public void addEvent(JApplet a) {
-		IToolbarDecoratedView.Zoomable s =((IToolbarDecoratedView.Zoomable )this);  
-		a.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-			
-			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (e.getPreciseWheelRotation()> 0) {
-					s.zoomOut();
-				} else {
-					s.zoomIn();
-				}				
-				
+	volatile boolean inMenu = false;
+
+	public void addEvent(final JApplet a) {
+		final IToolbarDecoratedView.Zoomable s = this;
+		a.addMouseWheelListener(e -> {
+			if (e.getPreciseWheelRotation() > 0) {
+				s.zoomOut();
+			} else {
+				s.zoomIn();
 			}
-		});  
+
+		});
 		a.addMouseMotionListener(new MouseMotionListener() {
-			
+
 			@Override
-			public void mouseMoved(java.awt.event.MouseEvent e) {
-				getDisplaySurface().setMousePosition(e.getX(), e.getY());  
- 
-//				getDisplaySurface().dispatchMouseEvent(SWT.MouseMove);
+			public void mouseMoved(final java.awt.event.MouseEvent e) {
+				getDisplaySurface().setMousePosition(e.getX(), e.getY());
+
+				// getDisplaySurface().dispatchMouseEvent(SWT.MouseMove);
 
 			}
-			
+
 			@Override
-			public void mouseDragged(java.awt.event.MouseEvent e) { 
-					getDisplaySurface().draggedTo(e.getX(), e.getY());  
-				
+			public void mouseDragged(final java.awt.event.MouseEvent e) {
+				getDisplaySurface().draggedTo(e.getX(), e.getY());
+
 			}
 		});
 		a.addMouseListener(new java.awt.event.MouseListener() {
-			
+
 			@Override
-			public void mouseReleased(java.awt.event.MouseEvent e) {
+			public void mouseReleased(final java.awt.event.MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void mousePressed(java.awt.event.MouseEvent e) {
+			public void mousePressed(final java.awt.event.MouseEvent e) {
 				// TODO Auto-generated method stub
-				inMenu=false;
+				inMenu = false;
 			}
-			
+
 			@Override
-			public void mouseExited(java.awt.event.MouseEvent e) {
+			public void mouseExited(final java.awt.event.MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void mouseEntered(java.awt.event.MouseEvent e) {
+			public void mouseEntered(final java.awt.event.MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void mouseClicked(java.awt.event.MouseEvent e) {
-			    if(e.getClickCount() == 2) {
-			    	s.zoomFit();
-			    }
-			    if(e.getButton()==3 && !inMenu) {
+			public void mouseClicked(final java.awt.event.MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					s.zoomFit();
+				}
+				if (e.getButton() == 3 && !inMenu) {
 					// DEBUG.LOG("Menu detected on " + view.getPartName());
 					inMenu = true;
 					getDisplaySurface().setMousePosition(e.getX(), e.getY());
 					getDisplaySurface().selectAgentsAroundMouse();
-			    }
+				}
 			}
 		});
 	}
-
 
 	/**
 	 * Wait for the AWT environment to be initialized, preventing a thread lock when two views want to open at the same
 	 * time. Must not be called in neither the AWT or the SWT thread. A configurable timeout is applied, so that other
 	 * views are not blocked. It remains to be seen what to do if this times out, as we should normally cancel the view.
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
 	 */
 	//

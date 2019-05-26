@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
@@ -44,8 +44,8 @@ public class Popup2 extends PopupDialog {
 
 	Composite parent, contents;
 
-	private final Listener hide = event -> hide();
-	private final Runnable display = () -> WorkbenchHelper.asyncRun(() -> display());
+	final Listener hide = event -> hide();
+	final Runnable display = () -> WorkbenchHelper.asyncRun(() -> display());
 
 	private final MouseTrackListener mtl = new MouseTrackListener() {
 
@@ -96,8 +96,9 @@ public class Popup2 extends PopupDialog {
 	@Override
 	protected Control createContents(final Composite parent) {
 		this.parent = parent;
-		if (contents == null)
+		if (contents == null) {
 			this.contents = (Composite) super.createDialogArea(parent);
+		}
 		// We then grab the text and hide if it is null or empty
 		final PopupText s = provider.getPopupText();
 		if (s == null || s.isEmpty()) {
@@ -105,7 +106,7 @@ public class Popup2 extends PopupDialog {
 			return null;
 		}
 		final Control[] array = contents.getChildren();
-		final List<Control> labels = new ArrayList<Control>(Arrays.asList(array));
+		final List<Control> labels = new ArrayList<>(Arrays.asList(array));
 		final int labelsSize = s.size();
 
 		final int controlsSize = array.length;
@@ -170,8 +171,9 @@ public class Popup2 extends PopupDialog {
 	@Override
 	protected Point getDefaultSize() {
 		int width = provider.getPopupWidth();
-		if (width <= 0)
+		if (width <= 0) {
 			width = SWT.DEFAULT;
+		}
 		return getShell().computeSize(width, SWT.DEFAULT, true);
 
 	}
@@ -198,14 +200,14 @@ public class Popup2 extends PopupDialog {
 			updateContents();
 			adjustSize();
 			getShell().setVisible(true);
-		}
-
-		else
+		} else {
 			open();
+		}
 	}
 
 	public void hide() {
-		if (getShell() != null && !getShell().isDisposed())
+		if (getShell() != null && !getShell().isDisposed()) {
 			getShell().setVisible(false);
+		}
 	}
 }

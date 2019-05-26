@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'SwtMapPane.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SwtMapPane.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools;
@@ -67,12 +66,10 @@ import ummisco.gama.ui.viewers.gis.geotools.tool.MapToolManager;
 import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
 
 /**
- * A map display pane that works with a GTRenderer and MapContext to display
- * features. It supports the use of tool classes to implement, for example,
- * mouse-controlled zooming and panning.
+ * A map display pane that works with a GTRenderer and MapContext to display features. It supports the use of tool
+ * classes to implement, for example, mouse-controlled zooming and panning.
  * <p>
- * Rendering is performed on a background thread and is managed by the
- * {@linkplain RenderingExecutor} class.
+ * Rendering is performed on a background thread and is managed by the {@linkplain RenderingExecutor} class.
  * <p>
  * Adapted from original code by Ian Turton.
  *
@@ -91,8 +88,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	/** RGB value to use as transparent color */
 	private static final int TRANSPARENT_COLOR = 0x123456;
 	/**
-	 * Default delay (milliseconds) before the map will be redrawn when resizing
-	 * the pane. This is to avoid flickering while drag-resizing.
+	 * Default delay (milliseconds) before the map will be redrawn when resizing the pane. This is to avoid flickering
+	 * while drag-resizing.
 	 */
 	public static final int DEFAULT_RESIZING_PAINT_DELAY = 500; // delay in
 																// milliseconds
@@ -105,15 +102,15 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	 */
 	private ReferencedEnvelope fullExtent;
 
-	private MapContent content;
+	MapContent content;
 	private GTRenderer renderer;
 	private LabelCache labelCache;
 	private final MapToolManager toolManager;
 	private MapLayerComposite layerTable;
-	private final Set<MapPaneListener> listeners = new HashSet<MapPaneListener>();
+	private final Set<MapPaneListener> listeners = new HashSet<>();
 	private AffineTransform worldToScreen;
 	private AffineTransform screenToWorld;
-	private Rectangle curPaintArea;
+	Rectangle curPaintArea;
 	private BufferedImage baseImage;
 	private final Point imageOrigin;
 	private boolean redrawBaseImage;
@@ -150,16 +147,14 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	private int cursorToolLineStyle;
 
 	/**
-	 * Constructor - creates an instance of JMapPane with no map context or
-	 * renderer initially
+	 * Constructor - creates an instance of JMapPane with no map context or renderer initially
 	 */
 	public SwtMapPane(final Composite parent, final int style) {
 		this(parent, style, null, null);
 	}
 
 	/**
-	 * Constructor - creates an instance of JMapPane with the given renderer and
-	 * map context.
+	 * Constructor - creates an instance of JMapPane with the given renderer and map context.
 	 *
 	 * @param renderer
 	 *            a renderer object
@@ -191,17 +186,17 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		this.addMouseWheelListener(toolManager);
 
 		/*
-		 * Listen for mouse entered events to (re-)set the current tool cursor,
-		 * otherwise the cursor seems to default to the standard cursor
-		 * sometimes (at least on OSX)
+		 * Listen for mouse entered events to (re-)set the current tool cursor, otherwise the cursor seems to default to
+		 * the standard cursor sometimes (at least on OSX)
 		 */
 		this.addMouseMoveListener(event -> {
 			if (mouseDown) {
 				endX = event.x;
 				endY = event.y;
 				isDragging = true;
-				if (!isDisposed())
+				if (!isDisposed()) {
 					redraw();
+				}
 			}
 		});
 
@@ -238,8 +233,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Register an object that wishes to receive {@code MapMouseEvent}s such as
-	 * a {@linkplain org.geotools.swing.StatusBar}
+	 * Register an object that wishes to receive {@code MapMouseEvent}s such as a
+	 * {@linkplain org.geotools.swing.StatusBar}
 	 *
 	 * @param listener
 	 *            an object that implements {@code MapMouseListener}
@@ -287,9 +282,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Register a {@linkplain MapLayerComposite} object to be receive layer
-	 * change events from this map pane and to control layer ordering,
-	 * visibility and selection.
+	 * Register a {@linkplain MapLayerComposite} object to be receive layer change events from this map pane and to
+	 * control layer ordering, visibility and selection.
 	 *
 	 * @param layerTable
 	 *            an instance of MapLayerTable
@@ -326,7 +320,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			if (renderer instanceof StreamingRenderer) {
 				hints = renderer.getRendererHints();
 				if (hints == null) {
-					hints = new HashMap<Object, Object>();
+					hints = new HashMap<>();
 				}
 				if (hints.containsKey(StreamingRenderer.LABEL_CACHE_KEY)) {
 					labelCache = (LabelCache) hints.get(StreamingRenderer.LABEL_CACHE_KEY);
@@ -348,7 +342,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 	/**
 	 * Get the map content associated with this map pane
-	 * 
+	 *
 	 * @return a live reference to the current map context
 	 */
 	public MapContent getMapContent() {
@@ -357,7 +351,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 	/**
 	 * Set the map context for this map pane to display
-	 * 
+	 *
 	 * @param content
 	 *            the map context
 	 */
@@ -402,15 +396,12 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	/**
 	 * Return a (copy of) the currently displayed map area.
 	 * <p>
-	 * Note, this will not always be the same as the envelope returned by
-	 * {@code MapContext.getAreaOfInterest()}. For example, when the map is
-	 * displayed at the full extent of all layers
-	 * {@code MapContext.getAreaOfInterest()} will return the union of the layer
-	 * bounds while this method will return an evnelope that can included extra
-	 * space beyond the bounds of the layers.
+	 * Note, this will not always be the same as the envelope returned by {@code MapContext.getAreaOfInterest()}. For
+	 * example, when the map is displayed at the full extent of all layers {@code MapContext.getAreaOfInterest()} will
+	 * return the union of the layer bounds while this method will return an evnelope that can included extra space
+	 * beyond the bounds of the layers.
 	 *
-	 * @return the display area in world coordinates as a new
-	 *         {@code ReferencedEnvelope}
+	 * @return the display area in world coordinates as a new {@code ReferencedEnvelope}
 	 */
 	public ReferencedEnvelope getDisplayArea() {
 		ReferencedEnvelope aoi = null;
@@ -456,23 +447,17 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Sets the area to display by calling the
-	 * {@linkplain MapContext#setAreaOfInterest} method of this pane's map
-	 * context. Does nothing if the MapContext has not been set. If neither the
-	 * context or the envelope have coordinate reference systems defined this
-	 * method does nothing.
+	 * Sets the area to display by calling the {@linkplain MapContext#setAreaOfInterest} method of this pane's map
+	 * context. Does nothing if the MapContext has not been set. If neither the context or the envelope have coordinate
+	 * reference systems defined this method does nothing.
 	 * <p>
-	 * The map area that ends up being displayed will often be larger than the
-	 * requested display area. For instance, if the square area is requested,
-	 * but the map pane's screen area is a rectangle with width greater than
-	 * height, then the displayed area will be centred on the requested square
-	 * but include additional area on each side.
+	 * The map area that ends up being displayed will often be larger than the requested display area. For instance, if
+	 * the square area is requested, but the map pane's screen area is a rectangle with width greater than height, then
+	 * the displayed area will be centred on the requested square but include additional area on each side.
 	 * <p>
-	 * You can pass any GeoAPI Envelope implementation to this method such as
-	 * ReferenedEnvelope or Envelope2D.
+	 * You can pass any GeoAPI Envelope implementation to this method such as ReferenedEnvelope or Envelope2D.
 	 * <p>
-	 * Note: This method does <b>not</b> check that the requested area overlaps
-	 * the bounds of the current map layers.
+	 * Note: This method does <b>not</b> check that the requested area overlaps the bounds of the current map layers.
 	 *
 	 * @param envelope
 	 *            the bounds of the map to display
@@ -487,8 +472,9 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			} else {
 				doSetDisplayArea(envelope);
 				clearLabelCache = true;
-				if (!isDisposed())
+				if (!isDisposed()) {
 					redraw();
+				}
 			}
 
 		} else {
@@ -497,14 +483,13 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Helper method for {@linkplain #setDisplayArea} which is also called by
-	 * other methods that want to set the display area without provoking
-	 * repainting of the display
+	 * Helper method for {@linkplain #setDisplayArea} which is also called by other methods that want to set the display
+	 * area without provoking repainting of the display
 	 *
 	 * @param envelope
 	 *            requested display area
 	 */
-	private void doSetDisplayArea(final Envelope envelope) {
+	void doSetDisplayArea(final Envelope envelope) {
 		assert content != null && curPaintArea != null && !curPaintArea.isEmpty();
 
 		if (equalsFullExtent(envelope)) {
@@ -520,36 +505,26 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Check if the envelope corresponds to full extent. It will probably not
-	 * equal the full extent envelope because of slack space in the display
-	 * area, so we check that at least one pair of opposite edges are equal to
-	 * the full extent envelope, allowing for slack space on the other two
-	 * sides.
+	 * Check if the envelope corresponds to full extent. It will probably not equal the full extent envelope because of
+	 * slack space in the display area, so we check that at least one pair of opposite edges are equal to the full
+	 * extent envelope, allowing for slack space on the other two sides.
 	 * <p>
-	 * Note: this method returns {@code false} if the full extent envelope is
-	 * wholly within the requested envelope (e.g. user has zoomed out from full
-	 * extent), only touches one edge, or touches two adjacent edges. In all
-	 * these cases we assume that the user wants to maintain the slack space in
-	 * the display.
+	 * Note: this method returns {@code false} if the full extent envelope is wholly within the requested envelope (e.g.
+	 * user has zoomed out from full extent), only touches one edge, or touches two adjacent edges. In all these cases
+	 * we assume that the user wants to maintain the slack space in the display.
 	 * <p>
-	 * This method is part of the work-around that the map pane needs because of
-	 * the differences in how raster and vector layers are treated by the
-	 * renderer classes.
+	 * This method is part of the work-around that the map pane needs because of the differences in how raster and
+	 * vector layers are treated by the renderer classes.
 	 *
 	 * @param envelope
-	 *            a pending display envelope to compare to the full extent
-	 *            envelope
+	 *            a pending display envelope to compare to the full extent envelope
 	 *
-	 * @return true if the envelope is coincident with the full extent evenlope
-	 *         on at least two edges; false otherwise
+	 * @return true if the envelope is coincident with the full extent evenlope on at least two edges; false otherwise
 	 *
-	 * @todo My logic here seems overly complex - I'm sure there must be a
-	 *       simpler way for the map pane to handle this.
+	 * @todo My logic here seems overly complex - I'm sure there must be a simpler way for the map pane to handle this.
 	 */
 	private boolean equalsFullExtent(final Envelope envelope) {
-		if (fullExtent == null || envelope == null) {
-			return false;
-		}
+		if (fullExtent == null || envelope == null) { return false; }
 
 		final double TOL = 1.0e-6d * (fullExtent.getWidth() + fullExtent.getHeight());
 
@@ -558,25 +533,20 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			touch = true;
 		}
 		if (Math.abs(envelope.getMaximum(0) - fullExtent.getMaximum(0)) < TOL) {
-			if (touch) {
-				return true;
-			}
+			if (touch) { return true; }
 		}
 		if (Math.abs(envelope.getMinimum(1) - fullExtent.getMinimum(1)) < TOL) {
 			touch = true;
 		}
 		if (Math.abs(envelope.getMaximum(1) - fullExtent.getMaximum(1)) < TOL) {
-			if (touch) {
-				return true;
-			}
+			if (touch) { return true; }
 		}
 
 		return false;
 	}
 
 	/**
-	 * Reset the map area to include the full extent of all layers and redraw
-	 * the display
+	 * Reset the map area to include the full extent of all layers and redraw the display
 	 */
 	public void reset() {
 		if (fullExtent == null) {
@@ -591,11 +561,10 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Specify whether the map pane should defer its normal repainting
-	 * behaviour.
+	 * Specify whether the map pane should defer its normal repainting behaviour.
 	 * <p>
 	 * Typical use:
-	 * 
+	 *
 	 * <pre>
 	 * {@code
 	 * myMapPane.setRepaint(false);
@@ -609,8 +578,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	 * </pre>
 	 *
 	 * @param repaint
-	 *            if true, paint requests will be handled normally; if false,
-	 *            paint requests will be deferred.
+	 *            if true, paint requests will be handled normally; if false, paint requests will be deferred.
 	 *
 	 * @see #isAcceptingRepaints()
 	 */
@@ -619,11 +587,10 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Query whether the map pane is currently accepting or ignoring repaint
-	 * requests from other GUI components and the system.
+	 * Query whether the map pane is currently accepting or ignoring repaint requests from other GUI components and the
+	 * system.
 	 *
-	 * @return true if the pane is currently accepting repaint requests; false
-	 *         if it is ignoring them
+	 * @return true if the pane is currently accepting repaint requests; false if it is ignoring them
 	 *
 	 * @see #setRepaint(boolean)
 	 */
@@ -634,14 +601,11 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	/**
 	 * Retrieve the map pane's current base image.
 	 * <p>
-	 * The map pane caches the most recent rendering of map layers as an image
-	 * to avoid time-consuming rendering requests whenever possible. The base
-	 * image will be re-drawn whenever there is a change to map layer data,
-	 * style or visibility; and it will be replaced by a new image when the pane
-	 * is resized.
+	 * The map pane caches the most recent rendering of map layers as an image to avoid time-consuming rendering
+	 * requests whenever possible. The base image will be re-drawn whenever there is a change to map layer data, style
+	 * or visibility; and it will be replaced by a new image when the pane is resized.
 	 * <p>
-	 * This method returns a <b>live</b> reference to the current base image.
-	 * Use with caution.
+	 * This method returns a <b>live</b> reference to the current base image. Use with caution.
 	 *
 	 * @return a live reference to the current base image
 	 */
@@ -650,11 +614,10 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Get the length of the delay period between the pane being resized and the
-	 * next repaint.
+	 * Get the length of the delay period between the pane being resized and the next repaint.
 	 * <p>
-	 * The map pane imposes a delay between resize events and repainting to
-	 * avoid flickering of the display during drag-resizing.
+	 * The map pane imposes a delay between resize events and repainting to avoid flickering of the display during
+	 * drag-resizing.
 	 *
 	 * @return delay in milliseconds
 	 */
@@ -663,15 +626,13 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Set the length of the delay period between the pane being resized and the
-	 * next repaint.
+	 * Set the length of the delay period between the pane being resized and the next repaint.
 	 * <p>
-	 * The map pane imposes a delay between resize events and repainting to
-	 * avoid flickering of the display during drag-resizing.
+	 * The map pane imposes a delay between resize events and repainting to avoid flickering of the display during
+	 * drag-resizing.
 	 *
 	 * @param delay
-	 *            the delay in milliseconds; if {@code <} 0 the default delay
-	 *            period will be set
+	 *            the delay in milliseconds; if {@code <} 0 the default delay period will be set
 	 */
 	public void setResizeDelay(final int delay) {
 		if (delay < 0) {
@@ -682,8 +643,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Get a (copy of) the screen to world coordinate transform being used by
-	 * this map pane.
+	 * Get a (copy of) the screen to world coordinate transform being used by this map pane.
 	 *
 	 * @return a copy of the screen to world coordinate transform
 	 */
@@ -696,18 +656,16 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Get a (copy of) the world to screen coordinate transform being used by
-	 * this map pane. This method can be used to determine the current drawing
-	 * scale...
-	 * 
+	 * Get a (copy of) the world to screen coordinate transform being used by this map pane. This method can be used to
+	 * determine the current drawing scale...
+	 *
 	 * <pre>
-	 * 
+	 *
 	 * {
-	 * 	&#64;code
-	 * 	double scale = mapPane.getWorldToScreenTransform().getScaleX();
+	 * 	&#64;code double scale = mapPane.getWorldToScreenTransform().getScaleX();
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @return a copy of the world to screen coordinate transform
 	 */
 	public AffineTransform getWorldToScreenTransform() {
@@ -719,10 +677,9 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Move the image currently displayed by the map pane from its current
-	 * origin (x,y) to (x+dx, y+dy). This method allows dragging the map without
-	 * the overhead of redrawing the features during the drag. For example, it
-	 * is used by {@link org.geotools.swing.tool.PanTool}.
+	 * Move the image currently displayed by the map pane from its current origin (x,y) to (x+dx, y+dy). This method
+	 * allows dragging the map without the overhead of redrawing the features during the drag. For example, it is used
+	 * by {@link org.geotools.swing.tool.PanTool}.
 	 *
 	 * @param dx
 	 *            the x offset in pixels
@@ -732,14 +689,14 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	public void moveImage(final int dx, final int dy) {
 		imageOrigin.translate(dx, dy);
 		redrawBaseImage = false;
-		if (!isDisposed())
+		if (!isDisposed()) {
 			redraw();
+		}
 	}
 
 	/**
-	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering has
-	 * been completed Publishes a {@linkplain MapPaneEvent} of type
-	 * {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
+	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering has been completed Publishes a
+	 * {@linkplain MapPaneEvent} of type {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
 	 *
 	 * @see MapPaneListener#onRenderingStopped(org.geotools.swing.event.MapPaneEvent)
 	 */
@@ -763,9 +720,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering was
-	 * cancelled. Publishes a {@linkplain MapPaneEvent} of type
-	 * {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
+	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering was cancelled. Publishes a
+	 * {@linkplain MapPaneEvent} of type {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
 	 *
 	 * @see MapPaneListener#onRenderingStopped(org.geotools.swing.event.MapPaneEvent)
 	 */
@@ -775,9 +731,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering
-	 * failed. Publishes a {@linkplain MapPaneEvent} of type
-	 * {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
+	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering failed. Publishes a {@linkplain MapPaneEvent}
+	 * of type {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
 	 *
 	 * @see MapPaneListener#onRenderingStopped(org.geotools.swing.event.MapPaneEvent)
 	 */
@@ -787,29 +742,25 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Called when a rendering request has been rejected. This will be common,
-	 * such as when the user pauses during drag-resizing fo the map pane. The
-	 * base implementation does nothing. It is provided for sub-classes to
-	 * override if required.
+	 * Called when a rendering request has been rejected. This will be common, such as when the user pauses during
+	 * drag-resizing fo the map pane. The base implementation does nothing. It is provided for sub-classes to override
+	 * if required.
 	 */
 	public void onRenderingRejected() {
 		// do nothing
 	}
 
 	/**
-	 * Called after the base image has been dragged. Sets the new map area and
-	 * transforms
-	 * 
+	 * Called after the base image has been dragged. Sets the new map area and transforms
+	 *
 	 * @param env
-	 *            the display area (world coordinates) prior to the image being
-	 *            moved
+	 *            the display area (world coordinates) prior to the image being moved
 	 * @param paintArea
 	 *            the current drawing area (screen units)
 	 */
 	private void afterImageMove() {
 		final ReferencedEnvelope env = content.getViewport().getBounds();
-		if (env == null)
-			return;
+		if (env == null) { return; }
 		final int dx = imageOrigin.x;
 		final int dy = imageOrigin.y;
 		final DirectPosition2D newPos = new DirectPosition2D(dx, dy);
@@ -822,9 +773,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Called when a new map layer has been added. Sets the layer as selected
-	 * (for queries) and, if the layer table is being used, adds the new layer
-	 * to the table.
+	 * Called when a new map layer has been added. Sets the layer as selected (for queries) and, if the layer table is
+	 * being used, adds the new layer to the table.
 	 */
 	@Override
 	public void layerAdded(final MapLayerListEvent event) {
@@ -844,8 +794,9 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				return;
 			}
 		}
-		if (!isDisposed())
+		if (!isDisposed()) {
 			redraw();
+		}
 	}
 
 	/**
@@ -864,13 +815,13 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		} else {
 			setFullExtent();
 		}
-		if (!isDisposed())
+		if (!isDisposed()) {
 			redraw();
+		}
 	}
 
 	/**
-	 * Called when a map layer has changed, e.g. features added to a displayed
-	 * feature collection
+	 * Called when a map layer has changed, e.g. features added to a displayed feature collection
 	 */
 	@Override
 	public void layerChanged(final MapLayerListEvent event) {
@@ -886,8 +837,9 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		}
 
 		if (reason != MapLayerEvent.SELECTION_CHANGED) {
-			if (!isDisposed())
+			if (!isDisposed()) {
 				redraw();
+			}
 		}
 	}
 
@@ -897,14 +849,14 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	@Override
 	public void layerMoved(final MapLayerListEvent event) {
 		redrawBaseImage = true;
-		if (!isDisposed())
+		if (!isDisposed()) {
 			redraw();
+		}
 	}
 
 	/**
-	 * Called by the map context when its bounds have changed. Used here to
-	 * watch for a changed CRS, in which case the map is redisplayed at (new)
-	 * full extent.
+	 * Called by the map context when its bounds have changed. Used here to watch for a changed CRS, in which case the
+	 * map is redisplayed at (new) full extent.
 	 */
 	@Override
 	public void mapBoundsChanged(final MapBoundsEvent event) {
@@ -912,9 +864,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		final int type = event.getType();
 		if ((type & MapBoundsEvent.COORDINATE_SYSTEM_MASK) != 0) {
 			/*
-			 * The coordinate reference system has changed. Set the map to
-			 * display the full extent of layer bounds to avoid the effect of a
-			 * shrinking map
+			 * The coordinate reference system has changed. Set the map to display the full extent of layer bounds to
+			 * avoid the effect of a shrinking map
 			 */
 			setFullExtent();
 			reset();
@@ -922,8 +873,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Gets the full extent of map context's layers. The only reason this method
-	 * is defined is to avoid having try-catch blocks all through other methods.
+	 * Gets the full extent of map context's layers. The only reason this method is defined is to avoid having try-catch
+	 * blocks all through other methods.
 	 */
 	private void setFullExtent() {
 		if (content != null && content.layers().size() > 0) {
@@ -932,8 +883,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				fullExtent = content.getMaxBounds();
 
 				/*
-				 * Guard agains degenerate envelopes (e.g. empty map layer or
-				 * single point feature)
+				 * Guard agains degenerate envelopes (e.g. empty map layer or single point feature)
 				 */
 				if (fullExtent == null) {
 					// set arbitrary bounds centred on 0,0
@@ -975,12 +925,10 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Calculate the affine transforms used to convert between world and pixel
-	 * coordinates. The calculations here are very basic and assume a cartesian
-	 * reference system.
+	 * Calculate the affine transforms used to convert between world and pixel coordinates. The calculations here are
+	 * very basic and assume a cartesian reference system.
 	 * <p>
-	 * Tne transform is calculated such that {@code envelope} will be centred in
-	 * the display
+	 * Tne transform is calculated such that {@code envelope} will be centred in the display
 	 *
 	 * @param envelope
 	 *            the current map extent (world coordinates)
@@ -1029,33 +977,33 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	private void publishEvent(final MapPaneEvent ev) {
 		for (final MapPaneListener listener : listeners) {
 			switch (ev.getType()) {
-			case NEW_CONTEXT:
-				listener.onNewContext(ev);
-				break;
+				case NEW_CONTEXT:
+					listener.onNewContext(ev);
+					break;
 
-			case NEW_RENDERER:
-				listener.onNewRenderer(ev);
-				break;
+				case NEW_RENDERER:
+					listener.onNewRenderer(ev);
+					break;
 
-			case PANE_RESIZED:
-				listener.onResized(ev);
-				break;
+				case PANE_RESIZED:
+					listener.onResized(ev);
+					break;
 
-			case DISPLAY_AREA_CHANGED:
-				listener.onDisplayAreaChanged(ev);
-				break;
+				case DISPLAY_AREA_CHANGED:
+					listener.onDisplayAreaChanged(ev);
+					break;
 
-			case RENDERING_STARTED:
-				listener.onRenderingStarted(ev);
-				break;
+				case RENDERING_STARTED:
+					listener.onRenderingStarted(ev);
+					break;
 
-			case RENDERING_STOPPED:
-				listener.onRenderingStopped(ev);
-				break;
+				case RENDERING_STOPPED:
+					listener.onRenderingStopped(ev);
+					break;
 
-			case RENDERING_PROGRESS:
-				listener.onRenderingProgress(ev);
-				break;
+				case RENDERING_PROGRESS:
+					listener.onRenderingProgress(ev);
+					break;
 			}
 		}
 	}
@@ -1075,10 +1023,10 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 	/**
 	 * Define an image that has to be set as overlay.
-	 * 
+	 *
 	 * <p>
 	 * The image will be scaled to fit into the supplied envelope.
-	 * 
+	 *
 	 * @param overlayImage
 	 *            the image to overlay.
 	 * @param overlayEnvelope
@@ -1088,8 +1036,9 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	 */
 	public void setOverlay(final Image overlayImage, final ReferencedEnvelope overlayEnvelope,
 			final boolean overlayDoXor, final boolean boundsChanged) {
-		if (this.overlayImage != null)
+		if (this.overlayImage != null) {
 			this.overlayImage.dispose();
+		}
 		this.overlayImage = overlayImage;
 		this.overlayEnvelope = overlayEnvelope;
 		this.overlayDoXor = overlayDoXor;
@@ -1099,13 +1048,14 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		} else {
 			redrawBaseImage = false;
 		}
-		if (!isDisposed())
+		if (!isDisposed()) {
 			redraw();
+		}
 	}
 
 	/**
 	 * Sets the transparency value for the base image (overlays not considered).
-	 * 
+	 *
 	 * @param alpha
 	 *            the transparency value (0 - 255).
 	 */
@@ -1114,7 +1064,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings ("deprecation")
 	public void handleEvent(final Event event) {
 
 		curPaintArea = getVisibleRect();
@@ -1148,19 +1098,16 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				// redrawBaseImage);
 
 				/*
-				 * if the mouse is dragging and the current tool can move the
-				 * map we just draw what we already have on white background. At
-				 * the end of the moving we will take care of adding the missing
-				 * pieces.
+				 * if the mouse is dragging and the current tool can move the map we just draw what we already have on
+				 * white background. At the end of the moving we will take care of adding the missing pieces.
 				 */
 				if (toolCanMove && isDragging) {
 					// DEBUG.LOG("toolCanMove && isDragging");
 					if (gc != null && !gc.isDisposed() && swtImage != null) {
 						/*
-						 * double buffer necessary, since the SWT.NO_BACKGROUND
-						 * needed by the canvas to properly draw background,
-						 * doesn't clean the parts outside the bounds of the
-						 * moving panned image, giving a spilling image effect.
+						 * double buffer necessary, since the SWT.NO_BACKGROUND needed by the canvas to properly draw
+						 * background, doesn't clean the parts outside the bounds of the moving panned image, giving a
+						 * spilling image effect.
 						 */
 						final Image tmpImage = new Image(getDisplay(), curPaintArea.width, curPaintArea.height);
 						final GC tmpGc = new GC(tmpImage);
@@ -1174,9 +1121,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				}
 
 				/*
-				 * if the mouse is dragging and the current tool can draw a
-				 * boundingbox while dragging, we draw the box keeping the
-				 * current drawn image
+				 * if the mouse is dragging and the current tool can draw a boundingbox while dragging, we draw the box
+				 * keeping the current drawn image
 				 */
 				if (toolCanDraw && toolManager.getCursorTool().isDrawing() && isDragging) {
 					// DEBUG.LOG("draw box: " + startX + "/" + startY +
@@ -1198,13 +1144,9 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 					return;
 				}
 
-				if (!toolCanDraw && !toolCanMove && isDragging) {
-					return;
-				}
+				if (!toolCanDraw && !toolCanMove && isDragging) { return; }
 
-				if (curPaintArea == null || content == null || renderer == null) {
-					return;
-				}
+				if (curPaintArea == null || content == null || renderer == null) { return; }
 
 				if (content.layers().size() == 0) {
 					// if no layers available, return only if there are also no
@@ -1212,14 +1154,11 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 					gc.setForeground(yellow);
 					gc.fillRectangle(0, 0, curPaintArea.width + 1, curPaintArea.height + 1);
-					if (overlayImage == null)
-						return;
+					if (overlayImage == null) { return; }
 				}
 
 				final ReferencedEnvelope mapAOI = content.getViewport().getBounds();
-				if (mapAOI == null) {
-					return;
-				}
+				if (mapAOI == null) { return; }
 
 				if (redrawBaseImage) {
 					final MapPaneEvent ev = new MapPaneEvent(this, MapPaneEvent.Type.RENDERING_STARTED);
@@ -1271,13 +1210,11 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			// set the alpha to the new image
 			tmpGc.setAlpha(alpha);
 			/*
-			 * draw the background image into it (this means everything but the
-			 * overlay image)
+			 * draw the background image into it (this means everything but the overlay image)
 			 */
 			tmpGc.drawImage(swtImage, imageOrigin.x, imageOrigin.y);
 			/*
-			 * set the alpha back to opaque so it doesn't influence the overlay
-			 * image
+			 * set the alpha back to opaque so it doesn't influence the overlay image
 			 */
 			tmpGc.setAlpha(255);
 		}
@@ -1286,8 +1223,9 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			doOverlayImage(tmpGc);
 		}
 		// draw the created new image on the pane
-		if (gc != null && !gc.isDisposed())
+		if (gc != null && !gc.isDisposed()) {
 			gc.drawImage(tmpImage, imageOrigin.x, imageOrigin.y);
+		}
 
 		if (!tmpImage.isDisposed()) {
 			tmpImage.dispose();
@@ -1299,7 +1237,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings ("deprecation")
 	private void doOverlayImage(final GC gc) {
 		final Point2D lowerLeft = new Point2D.Double(overlayEnvelope.getMinX(), overlayEnvelope.getMinY());
 		worldToScreen.transform(lowerLeft, lowerLeft);
@@ -1329,7 +1267,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 	/**
 	 * Transform a java2d bufferedimage to a swt image.
-	 * 
+	 *
 	 * @param bufferedImage
 	 *            the image to trasform.
 	 * @param width
@@ -1364,8 +1302,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Returns the colour which is used to draw the bounding box of the
-	 * currently active cursor tool. The bounding box is drawn in xor mode.
+	 * Returns the colour which is used to draw the bounding box of the currently active cursor tool. The bounding box
+	 * is drawn in xor mode.
 	 *
 	 * @return the colour used for the tool's bounding box
 	 */
@@ -1374,8 +1312,8 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Sets the colour which is used to draw the bounding box of the currently
-	 * active cursor tool. The bounding box is drawn in xor mode.
+	 * Sets the colour which is used to draw the bounding box of the currently active cursor tool. The bounding box is
+	 * drawn in xor mode.
 	 *
 	 * @param color
 	 *            the colour used for the tool's bounding box
@@ -1385,8 +1323,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Returns the line width of the bounding box of the currently active cursor
-	 * tool.
+	 * Returns the line width of the bounding box of the currently active cursor tool.
 	 *
 	 * @return line width
 	 */
@@ -1395,8 +1332,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Sets the line width of the bounding box of the currently active cursor
-	 * tool.
+	 * Sets the line width of the bounding box of the currently active cursor tool.
 	 *
 	 * @param lineWidth
 	 *            line width
@@ -1406,8 +1342,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Returns the line style of the bounding box of the currently active cursor
-	 * tool.
+	 * Returns the line style of the bounding box of the currently active cursor tool.
 	 *
 	 * @return line style
 	 */
@@ -1416,8 +1351,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Sets the line style of the bounding box of the currently active cursor
-	 * tool.
+	 * Sets the line style of the bounding box of the currently active cursor tool.
 	 *
 	 * @param lineStyle
 	 *            line style

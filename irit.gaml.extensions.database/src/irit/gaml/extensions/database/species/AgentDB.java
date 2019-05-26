@@ -80,8 +80,10 @@ public class AgentDB extends GamlAgent {
 			// e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.close error:" + e.toString(), scope);
 		} catch (final NullPointerException npe) {
-			if (conn == null) { throw GamaRuntimeException
-					.error("AgentDB.close error: cannot close a database connection that does not exist.", scope); }
+			if (conn == null) {
+				throw GamaRuntimeException
+						.error("AgentDB.close error: cannot close a database connection that does not exist.", scope);
+			}
 		}
 		return null;
 
@@ -123,11 +125,14 @@ public class AgentDB extends GamlAgent {
 		final String dbtype = params.get("dbtype");
 
 		// SqlConnection sqlConn;
-		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) { throw GamaRuntimeException.error(
-				"AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).",
-				scope); }
-		if (isConnection) { throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened",
-				scope); }
+		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) {
+			throw GamaRuntimeException.error(
+					"AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).",
+					scope);
+		}
+		if (isConnection) {
+			throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened", scope);
+		}
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			conn = sqlConn.connectDB();
@@ -156,8 +161,7 @@ public class AgentDB extends GamlAgent {
 		try {
 			SqlConnection sqlConn;
 			sqlConn = SqlUtils.createConnectionObject(scope);
-			final Connection conn = sqlConn.connectDB();
-			conn.close();
+			try (final Connection conn = sqlConn.connectDB();) {}
 		} catch (final Exception e) {
 			return false;
 		}
@@ -193,8 +197,9 @@ public class AgentDB extends GamlAgent {
 			})
 	public IList select(final IScope scope) throws GamaRuntimeException {
 
-		if (!isConnection) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",
-				scope); }
+		if (!isConnection) {
+			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
+		}
 		final String selectComm = (String) scope.getArg("select", IType.STRING);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		// Boolean transform = scope.hasArg("transform") ? (Boolean)
@@ -245,8 +250,9 @@ public class AgentDB extends GamlAgent {
 			})
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 
-		if (!isConnection) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",
-				scope); }
+		if (!isConnection) {
+			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
+		}
 		final String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		final GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
 
@@ -332,8 +338,9 @@ public class AgentDB extends GamlAgent {
 			})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
-		if (!isConnection) { throw GamaRuntimeException.error("AgentDB.select: Connection was not established ",
-				scope); }
+		if (!isConnection) {
+			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
+		}
 		final String table_name = (String) scope.getArg("into", IType.STRING);
 		final GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
 		final GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);

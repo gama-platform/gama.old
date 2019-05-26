@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.network.common;
@@ -48,7 +48,7 @@ public abstract class Connector implements IConnector {
 	protected boolean isConnected = false;
 
 	Object lockGroupManagment = new Object();
-	
+
 	boolean forceNetworkUse = false;
 
 	protected Connector() {
@@ -57,16 +57,15 @@ public abstract class Connector implements IConnector {
 		topicSuscribingPending = Collections.synchronizedList(new ArrayList<String>());
 		connectionParameter = new HashMap<>();
 		receivedMessage = new HashMap<>();
-		localMemberNames = new HashMap<String,IAgent>();
+		localMemberNames = new HashMap<>();
 		forceNetworkUse = false;
 	}
 
 	@Override
-	public void forceNetworkUse(boolean b)
-	{
+	public void forceNetworkUse(final boolean b) {
 		this.forceNetworkUse = b;
 	}
-	
+
 	@Override
 	public void configure(final String parameterName, final String value) {
 		this.connectionParameter.put(parameterName, value);
@@ -87,11 +86,12 @@ public abstract class Connector implements IConnector {
 		return currentMessage;
 	}
 
-	protected void storeMessage(final String topic, final String content) throws GamaNetworkException {
+	public void storeMessage(final String topic, final String content) throws GamaNetworkException {
 		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
 		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(topic, content);
-		if(!this.localMemberNames.containsKey(msg.getSender()))
+		if (!this.localMemberNames.containsKey(msg.getSender())) {
 			pushAndFetchthreadSafe(Connector.PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, msg.getReceiver(), msg);
+		}
 	}
 
 	private Map<IAgent, LinkedList<ConnectorMessage>> pushAndFetchthreadSafe(final int action, final String groupName,
@@ -124,19 +124,20 @@ public abstract class Connector implements IConnector {
 
 	@Override
 	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
-		if ( !(this.forceNetworkUse)&& this.boxFollower.containsKey(receiver)) {
-			ConnectorMessage msg =new LocalMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content);
+		if (!this.forceNetworkUse && this.boxFollower.containsKey(receiver)) {
+			final ConnectorMessage msg =
+					new LocalMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content);
 			this.pushAndFetchthreadSafe(PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, receiver, msg);
 		}
-		
-		if (!this.localMemberNames.containsKey(receiver))
-		{
+
+		if (!this.localMemberNames.containsKey(receiver)) {
 			final CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(), content);
 			if (cmsg.getSender() instanceof IAgent) {
 				cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
 			}
-			final NetworkMessage msg = MessageFactory.buildNetworkMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME),
-					receiver, StreamConverter.convertObjectToStream(sender.getScope(), cmsg));
+			final NetworkMessage msg =
+					MessageFactory.buildNetworkMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME),
+							receiver, StreamConverter.convertObjectToStream(sender.getScope(), cmsg));
 			this.sendMessage(sender, receiver, MessageFactory.packMessage(msg));
 		}
 	}
@@ -158,11 +159,13 @@ public abstract class Connector implements IConnector {
 	@Override
 	public void leaveTheGroup(final IAgent agt, final String groupName) {
 		this.unsubscribeGroup(agt, groupName);
-		ArrayList<IAgent> members = this.boxFollower.get(groupName);
-		if(members != null)
+		final ArrayList<IAgent> members = this.boxFollower.get(groupName);
+		if (members != null) {
 			members.remove(agt);
-		if(members.size()==0)
-			this.boxFollower.remove(groupName);
+			if (members.size() == 0) {
+				this.boxFollower.remove(groupName);
+			}
+		}
 	}
 
 	@Override
@@ -187,15 +190,16 @@ public abstract class Connector implements IConnector {
 	@Override
 	public void connect(final IAgent agent) throws GamaNetworkException {
 		final String netAgent = (String) agent.getAttribute(INetworkSkill.NET_AGENT_NAME);
-		if(!this.forceNetworkUse&&!(this.localMemberNames.containsKey(netAgent)))
-		{
-			this.localMemberNames.put(netAgent,agent);
+		if (!this.forceNetworkUse && !this.localMemberNames.containsKey(netAgent)) {
+			this.localMemberNames.put(netAgent, agent);
 		}
-		if (!this.isConnected) 
+		if (!this.isConnected) {
 			connectToServer(agent);
-		
-		if (this.receivedMessage.get(agent) == null)
+		}
+
+		if (this.receivedMessage.get(agent) == null) {
 			joinAGroup(agent, netAgent);
+		}
 	}
 
 	protected abstract void connectToServer(IAgent agent) throws GamaNetworkException;

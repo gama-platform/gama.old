@@ -280,7 +280,7 @@ public abstract class SqlConnection {
 	public IList<? super IList<? super IList>> selectDB(final IScope scope, final Connection conn,
 			final String selectComm) {
 		;
-		ResultSet rs;
+		// ResultSet rs;
 		IList<? super IList<? super IList>> result =
 				GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
 		// GamaList<? extends GamaList<? super GamaList>> result = new
@@ -288,9 +288,7 @@ public abstract class SqlConnection {
 
 		// GamaList<Object> rowList = new GamaList<Object>();
 		IList repRequest = GamaListFactory.create(msi.gaml.types.Types.NO_TYPE);
-		try {
-			final Statement st = conn.createStatement();
-			rs = st.executeQuery(selectComm);
+		try (final Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(selectComm);) {
 
 			final ResultSetMetaData rsmd = rs.getMetaData();
 			if (DEBUG.IS_ON()) {
@@ -392,18 +390,11 @@ public abstract class SqlConnection {
 	public int executeUpdateDB(final IScope scope, final Connection conn, final String updateComm)
 			throws GamaRuntimeException {
 		int n = 0;
-		try {
-			// if ( DEBUG ) {
-			// DEBUG.OUT("Update Command:" + updateComm);
-			// }
-			final Statement st = conn.createStatement();
+		try (final Statement st = conn.createStatement();) {
 			n = st.executeUpdate(updateComm);
-			st.close();
+		} catch (
 
-			// if ( DEBUG ) {
-			// DEBUG.OUT("Updated records :" + n);
-			// }
-		} catch (final SQLException e) {
+		final SQLException e) {
 			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString(), scope);
 		}
 
@@ -514,11 +505,10 @@ public abstract class SqlConnection {
 	public int insertDB(final IScope scope, final Connection conn, final String table_name, final GamaList<Object> cols,
 			final GamaList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
-		if (values.size() != cols
-				.size()) { throw new IndexOutOfBoundsException("Size of columns list and values list are not equal"); }
-		try {
-			// Get Insert command
-			final Statement st = conn.createStatement();
+		if (values.size() != cols.size()) {
+			throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+		}
+		try (final Statement st = conn.createStatement();) {
 			// String sqlStr = getInsertString(gis, conn, table_name, cols,
 			// values);
 			final String sqlStr = getInsertString(scope, conn, table_name, cols, values);
@@ -528,7 +518,6 @@ public abstract class SqlConnection {
 			// rec_no = st.executeUpdate(getInsertString(scope, conn,
 			// table_name, cols, values));
 			rec_no = st.executeUpdate(sqlStr);
-			st.close();
 			// st=null;
 			// System.gc();
 
@@ -748,11 +737,8 @@ public abstract class SqlConnection {
 	public IList<Object> executeQueryDB(final IScope scope, final String queryStr, final IList<Object> condition_values)
 			throws GamaRuntimeException {
 		IList<Object> result = GamaListFactory.create();
-		Connection conn;
-		try {
-			conn = connectDB();
+		try (Connection conn = connectDB();) {
 			result = executeQueryDB(scope, conn, queryStr, condition_values);
-			conn.close();
 			// set value for each condition
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.executeQuery: " + e.toString(), scope);
@@ -780,11 +766,9 @@ public abstract class SqlConnection {
 	 */
 	public int executeUpdateDB(final IScope scope, final Connection conn, final String queryStr,
 			final GamaList<Object> condition_values) throws GamaRuntimeException {
-		PreparedStatement pstmt = null;
 		int row_count = -1;
 		final int condition_count = condition_values.size();
-		try {
-			pstmt = conn.prepareStatement(queryStr);
+		try (final PreparedStatement pstmt = conn.prepareStatement(queryStr);) {
 			// set value for each condition
 			// if ( DEBUG ) {
 			// DEBUG.OUT("SqlConnection.ExecuteUpdateDB.values.size:"
@@ -797,8 +781,6 @@ public abstract class SqlConnection {
 				pstmt.setObject(i + 1, condition_values.get(i));
 			}
 			row_count = pstmt.executeUpdate();
-
-			pstmt.close();
 
 		} catch (final SQLException e) {
 			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
@@ -824,13 +806,13 @@ public abstract class SqlConnection {
 	public int executeUpdateDB(final IScope scope, final String queryStr, final GamaList<Object> condition_values)
 			throws GamaRuntimeException {
 		int row_count = -1;
-		Connection conn;
-		try {
-			conn = connectDB();
+		try (Connection conn = connectDB();) {
 			row_count = executeUpdateDB(scope, conn, queryStr, condition_values);
-			conn.close();
+
 			// set value for each condition
-		} catch (final Exception e) {
+		} catch (
+
+		final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString(), scope);
 		}
 		return row_count;

@@ -418,3 +418,4 @@ Bundle-ClassPath: schema/,
  .
 Bundle-Activator: msi.gama.common.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: msi.gama.core

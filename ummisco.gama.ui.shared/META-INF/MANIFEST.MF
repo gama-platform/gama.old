@@ -38,3 +38,4 @@ Export-Package: ummisco.gama.ui.access,
  ummisco.gama.ui.views,
  ummisco.gama.ui.views.toolbar
 Bundle-Activator: ummisco.gama.ui.Activator
+Automatic-Module-Name: ummisco.gama.ui.shared

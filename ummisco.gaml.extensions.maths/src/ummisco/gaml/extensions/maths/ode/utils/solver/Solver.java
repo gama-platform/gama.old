@@ -27,7 +27,6 @@ import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public abstract class Solver {
@@ -65,8 +64,8 @@ public abstract class Solver {
 		seq.executeInScope(scope, () -> {
 			final Map<Integer, IAgent> equationAgents = seq.getEquationAgents(scope);
 
-			GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = seq.getEquations(scope.getAgent());
-			GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = seq.getVariableDiff(scope.getAgent());
+			// GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = seq.getEquations(scope.getAgent());
+			final GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = seq.getVariableDiff(scope.getAgent());
 			/*
 			 * prepare initial value of variables 1. loop through variables expression 2. if its equaAgents != null, it
 			 * mean variable of external equation, set current scope to this agent scope 3. get value 4. return to
@@ -125,8 +124,7 @@ public abstract class Solver {
 
 	}
 
-	private void storeValues(final double time, final double[] y,
-			final GamaMap<String, IList<Double>> integrationValues) {
+	void storeValues(final double time, final double[] y, final GamaMap<String, IList<Double>> integrationValues) {
 		if (integrationValues != null) {
 			for (int i = 0; i < y.length; i++) {
 				integrationValues.valueAt(i).add(y[i]);

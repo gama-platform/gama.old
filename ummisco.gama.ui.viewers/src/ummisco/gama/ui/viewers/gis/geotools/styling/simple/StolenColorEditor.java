@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
@@ -35,12 +35,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public class StolenColorEditor {
 
-	private final Point fExtent;
-	private Image fImage;
-	private RGB fColorValue;
-	private Color fColor;
-	private final Button fButton;
-	private SelectionListener listener;
+	final Point fExtent;
+	Image fImage;
+	RGB fColorValue;
+	Color fColor;
+	final Button fButton;
+	SelectionListener listener;
 
 	public StolenColorEditor(final Composite parent) {
 		this(parent, null);
@@ -88,7 +88,7 @@ public class StolenColorEditor {
 		listener = newListener;
 	}
 
-	private void notifyParent(final SelectionEvent event) {
+	void notifyParent(final SelectionEvent event) {
 		if (listener != null) {
 			listener.widgetSelected(event);
 		}

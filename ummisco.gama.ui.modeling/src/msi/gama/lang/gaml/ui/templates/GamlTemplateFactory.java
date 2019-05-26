@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'GamlTemplateFactory.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlTemplateFactory.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
@@ -15,7 +14,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.templates.Template;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import org.eclipse.text.templates.TemplatePersistenceData;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -106,9 +105,7 @@ public class GamlTemplateFactory {
 				// }
 			}
 		}
-		if (pattern.isEmpty()) {
-			return null;
-		}
+		if (pattern.isEmpty()) { return null; }
 		pattern += Strings.LN;
 		String[] path = u.path();
 		if (path.length == 0) {
@@ -227,9 +224,9 @@ public class GamlTemplateFactory {
 			sb.setLength(length - 2);
 		}
 		sb.append(")");
-		final Template t = new Template("A call to action " + name,
-				"A call to action " + name + " will all its arguments", getContextId(),
-				"do " + name + sb.toString() + ";" + Strings.LN, true);
+		final Template t =
+				new Template("A call to action " + name, "A call to action " + name + " will all its arguments",
+						getContextId(), "do " + name + sb.toString() + ";" + Strings.LN, true);
 		return t;
 	}
 

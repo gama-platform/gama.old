@@ -263,14 +263,14 @@ public abstract class GamlAccessContents implements IPopupProvider {
 
 	protected abstract void handleElementSelected(String text, GamlAccessEntry selectedElement);
 
-	private void handleClick() {
+	void handleClick() {
 
 	}
 
-	private void handleSelection() {
+	void handleSelection() {
 		final String text = filterText.getText().toLowerCase();
 		if (table.getSelectionCount() == 1) {
-			GamlAccessEntry entry = (GamlAccessEntry) table.getSelection()[0].getData();
+			final GamlAccessEntry entry = (GamlAccessEntry) table.getSelection()[0].getData();
 			if (entry != null) {
 				doClose();
 				handleElementSelected(text, entry);
@@ -406,7 +406,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		table.addMouseListener(new MouseAdapter() {
 
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void mouseDown(final MouseEvent e) {
 
 				if (table.getSelectionCount() < 1) { return; }
 
@@ -484,13 +484,13 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			}
 
 			@Override
-			public void mouseEnter(MouseEvent e) {
+			public void mouseEnter(final MouseEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void mouseExit(MouseEvent e) {
+			public void mouseExit(final MouseEvent e) {
 				// TODO Auto-generated method stub
 
 			}

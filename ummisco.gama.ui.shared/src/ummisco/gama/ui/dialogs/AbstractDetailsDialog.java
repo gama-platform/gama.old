@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.dialogs;
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 public abstract class AbstractDetailsDialog extends Dialog {
 
 	/** The title. */
-	protected String title;
+	public final String title;
 
 	/** The message. */
 	private final String message;
@@ -67,7 +67,7 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	/**
 	 * Construct a new instance with the specified elements. Note that the window will have no visual representation (no
 	 * widgets) until it is told to open. By default, <code>open</code> blocks for dialogs.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell provider (not <code>null</code>)
 	 * @param title
@@ -91,7 +91,7 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	/**
 	 * Configures the given shell in preparation for opening this window in it. In our case, we set the title if one was
 	 * provided.
-	 * 
+	 *
 	 * @param shell
 	 *            the shell
 	 */
@@ -106,10 +106,10 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	/**
 	 * Creates and returns the contents of the upper part of this dialog (above the button bar). This includes an image,
 	 * if specified, and a message.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite to contain the dialog area
-	 * 
+	 *
 	 * @return the dialog area control
 	 */
 	@Override
@@ -137,7 +137,7 @@ public abstract class AbstractDetailsDialog extends Dialog {
 
 	/**
 	 * Adds OK and Details buttons to this dialog's button bar.
-	 * 
+	 *
 	 * @param parent
 	 *            the button bar composite
 	 */
@@ -150,7 +150,7 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	/**
 	 * The buttonPressed() method is called when either the OK or Details buttons is pressed. We override this method to
 	 * alternately show or hide the details area if the Details button is pressed.
-	 * 
+	 *
 	 * @param id
 	 *            the id
 	 */
@@ -210,10 +210,10 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	/**
 	 * subclasses must implement createDetailsArea to provide content for the area of the dialog made visible when the
 	 * Details button is clicked.
-	 * 
+	 *
 	 * @param parent
 	 *            the details area parent
-	 * 
+	 *
 	 * @return the details area
 	 */
 	protected abstract Control createDetailsArea(Composite parent);

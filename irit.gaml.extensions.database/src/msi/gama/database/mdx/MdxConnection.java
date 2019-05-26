@@ -260,11 +260,8 @@ public abstract class MdxConnection {
 
 	public CellSet select(final IScope scope, final String selectComm) {
 		CellSet resultCellSet = null;
-		OlapConnection oConn = null;
-		try {
-			oConn = connectMDB(scope);
+		try (OlapConnection oConn = connectMDB(scope);) {
 			resultCellSet = select(scope, oConn, selectComm);
-			oConn.close();
 		} catch (final SQLException e) {
 
 		}
@@ -273,13 +270,9 @@ public abstract class MdxConnection {
 
 	public CellSet select(final IScope scope, final String selectComm, final IList<Object> condition_values) {
 		CellSet resultCellSet = null;
-		OlapConnection oConn = null;
-		try {
-			// Connection conn = connectMDB();
+		try (OlapConnection oConn = connectMDB(scope);) {
 			final String mdxStr = parseMdx(selectComm, condition_values);
-			oConn = connectMDB(scope);
 			resultCellSet = select(scope, oConn, mdxStr);
-			oConn.close();
 		} catch (final SQLException e) {
 
 		}
@@ -289,13 +282,9 @@ public abstract class MdxConnection {
 	public CellSet select(final IScope scope, final OlapConnection connection, final String selectComm)
 			throws GamaRuntimeException {
 		CellSet resultCellSet = null;
-		OlapStatement statement;
-		try {
-			statement = connection.createStatement();
+		try (OlapStatement statement = connection.createStatement();) {
 			resultCellSet = statement.executeOlapQuery(selectComm);
 
-			statement.close();
-			// connection.close();
 		} catch (final OlapException e) {
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString(), scope);

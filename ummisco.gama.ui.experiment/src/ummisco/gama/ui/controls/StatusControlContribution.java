@@ -4,7 +4,7 @@
  * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
@@ -122,7 +122,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		return label.isDisposed();
 	}
 
-	private ITopLevelAgent getStatusAgent() {
+	ITopLevelAgent getStatusAgent() {
 		if (agentIndex < 0) {
 			agentIndex = 0;
 		}
@@ -218,7 +218,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	/**
 	 * Method updateWith()
-	 * 
+	 *
 	 * @see msi.gama.gui.swt.controls.ThreadedUpdater.IUpdaterTarget#updateWith(java.lang.Object)
 	 */
 	@Override
@@ -325,7 +325,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	/**
 	 * Method resume()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IUpdaterTarget#resume()
 	 */
 	@Override

@@ -24,207 +24,205 @@ import msi.gama.precompiler.doc.utils.XMLUtils;
 public class TOCManager {
 
 	String tocFile;
-	
-	public TOCManager(String toc){
+
+	public TOCManager(final String toc) {
 		tocFile = toc;
 	}
-	
-	public void createPartFiles() 
-			throws ParserConfigurationException, SAXException, IOException{
-		Document doc = XMLUtils.createDoc(tocFile);
-		NodeList nl = doc.getElementsByTagName("part");		
-		
-		for(int i = 0; i<nl.getLength(); i++){
-			String partName = ((Element)nl.item(i)).getAttribute("name");
-			File partFile = new File(Constants.TOC_GEN_FOLDER + File.separator + partName.replaceAll(" ", "_") + ".md");
 
-			FileWriter fw=new FileWriter(partFile);
-			BufferedWriter partBw= new BufferedWriter(fw);
-			
-			partBw.newLine();
-			partBw.write("\\part{"+partName+"}");		
-			partBw.newLine();
-			partBw.close();
+	public void createPartFiles() throws ParserConfigurationException, SAXException, IOException {
+		final Document doc = XMLUtils.createDoc(tocFile);
+		final NodeList nl = doc.getElementsByTagName("part");
+
+		for (int i = 0; i < nl.getLength(); i++) {
+			final String partName = ((Element) nl.item(i)).getAttribute("name");
+			final File partFile =
+					new File(Constants.TOC_GEN_FOLDER + File.separator + partName.replaceAll(" ", "_") + ".md");
+
+			try (final FileWriter fw = new FileWriter(partFile);
+					final BufferedWriter partBw = new BufferedWriter(fw);) {
+
+				partBw.newLine();
+				partBw.write("\\part{" + partName + "}");
+				partBw.newLine();
+			}
 		}
 	}
-	
-	public void createSubpartFiles() 
-			throws ParserConfigurationException, SAXException, IOException{
-		Document doc = XMLUtils.createDoc(tocFile);
-		NodeList nl = doc.getElementsByTagName("subpart");		
-		
-		for(int i = 0; i<nl.getLength(); i++){
-			String subpartName = ((Element)nl.item(i)).getAttribute("name");
-			File subpartFile = new File(Constants.TOC_GEN_FOLDER + File.separator + subpartName.replaceAll(" ", "_") + ".md");
-			
+
+	public void createSubpartFiles() throws ParserConfigurationException, SAXException, IOException {
+		final Document doc = XMLUtils.createDoc(tocFile);
+		final NodeList nl = doc.getElementsByTagName("subpart");
+
+		for (int i = 0; i < nl.getLength(); i++) {
+			final String subpartName = ((Element) nl.item(i)).getAttribute("name");
+			final File subpartFile =
+					new File(Constants.TOC_GEN_FOLDER + File.separator + subpartName.replaceAll(" ", "_") + ".md");
+
 			// copy the content of the wiki file in the new file.
-			String wikiPagePath = Constants.WIKI_FOLDER+File.separatorChar+((Element)nl.item(i)).getAttribute("file")+".md";
-			File wikiFile = new File(wikiPagePath);
-			
-			BufferedReader br = new BufferedReader(new FileReader(wikiFile));
-			
-			FileWriter fw=new FileWriter(subpartFile);
-			BufferedWriter partBw= new BufferedWriter(fw);
-			
-			String line = null;
-			boolean titleWritten=false;
-			while ((line = br.readLine()) != null) {
-				// change the title of the page (# Title) to the correct latex title
-				if (line.startsWith("#") && !titleWritten) {
-					// write latex content to make the content bigger.
-					partBw.write("\\begingroup\n");
-					partBw.write("\\newpage\n");
-					partBw.write("\\fontsize{28}{34}\\selectfont\n");
-					partBw.write("\\textbf{"+subpartName+"}\n");
-					partBw.write("\\endgroup\n");
-					partBw.write("\\vspace{20mm}\n");
-					titleWritten = true;
+			final String wikiPagePath =
+					Constants.WIKI_FOLDER + File.separatorChar + ((Element) nl.item(i)).getAttribute("file") + ".md";
+			final File wikiFile = new File(wikiPagePath);
+
+			try (BufferedReader br = new BufferedReader(new FileReader(wikiFile));
+
+					FileWriter fw = new FileWriter(subpartFile);
+					BufferedWriter partBw = new BufferedWriter(fw);) {
+
+				String line = null;
+				boolean titleWritten = false;
+				while ((line = br.readLine()) != null) {
+					// change the title of the page (# Title) to the correct latex title
+					if (line.startsWith("#") && !titleWritten) {
+						// write latex content to make the content bigger.
+						partBw.write("\\begingroup\n");
+						partBw.write("\\newpage\n");
+						partBw.write("\\fontsize{28}{34}\\selectfont\n");
+						partBw.write("\\textbf{" + subpartName + "}\n");
+						partBw.write("\\endgroup\n");
+						partBw.write("\\vspace{20mm}\n");
+						titleWritten = true;
+					} else {
+						partBw.write(line);
+						partBw.newLine();
+					}
 				}
-				else {
-					partBw.write(line);
-					partBw.newLine();
+
+			}
+		}
+	}
+
+	public List<String> getTocFilesList() throws ParserConfigurationException, SAXException, IOException {
+		final List<String> lFile = new ArrayList<>();
+		final Document doc = XMLUtils.createDoc(tocFile);
+
+		final NodeList nlPart = doc.getElementsByTagName("part");
+		for (int i = 0; i < nlPart.getLength(); i++) {
+			Element eltPart = (Element) nlPart.item(i);
+			File fPart = new File(Constants.TOC_GEN_FOLDER + File.separator
+					+ eltPart.getAttribute("name").replaceAll(" ", "_") + ".md");
+			lFile.add(fPart.getAbsolutePath());
+
+			final NodeList nlSubpart = eltPart.getElementsByTagName("subpart");
+			for (int j = 0; j < nlSubpart.getLength(); j++) {
+				eltPart = (Element) nlSubpart.item(j);
+				fPart = new File(Constants.TOC_GEN_FOLDER + File.separator
+						+ eltPart.getAttribute("name").replaceAll(" ", "_") + ".md");
+				lFile.add(fPart.getAbsolutePath());
+				final NodeList chapterList = eltPart.getElementsByTagName("chapter");
+				for (int k = 0; k < chapterList.getLength(); k++) {
+					final File f = new File(Constants.WIKI_FOLDER + File.separator
+							+ ((Element) chapterList.item(k)).getAttribute("file") + ".md");
+					lFile.add(f.getAbsolutePath());
 				}
 			}
-			
-			br.close();			
-			partBw.close();
-		}
-	}
-	
-	public List<String> getTocFilesList() 
-			throws ParserConfigurationException, SAXException, IOException{
-		List<String> lFile = new ArrayList<String>();
-		Document doc = XMLUtils.createDoc(tocFile);
-		
-		NodeList nlPart = doc.getElementsByTagName("part");		
-		for(int i = 0; i<nlPart.getLength(); i++){
-			Element eltPart = (Element)nlPart.item(i);
-			File fPart = new File(Constants.TOC_GEN_FOLDER + File.separator +eltPart.getAttribute("name").replaceAll(" ", "_") + ".md");
-			lFile.add( fPart.getAbsolutePath() );			
-			
-			NodeList nlSubpart = eltPart.getElementsByTagName("subpart");
-			for(int j = 0; j<nlSubpart.getLength(); j++){
-				eltPart = (Element)nlSubpart.item(j);
-				fPart = new File(Constants.TOC_GEN_FOLDER + File.separator +eltPart.getAttribute("name").replaceAll(" ", "_") + ".md");
-				lFile.add(fPart.getAbsolutePath());
-				NodeList chapterList = eltPart.getElementsByTagName("chapter");
-				for(int k = 0; k<chapterList.getLength(); k++){
-					File f = new File(Constants.WIKI_FOLDER + File.separator + ((Element)chapterList.item(k)).getAttribute("file") + ".md");
-					lFile.add( f.getAbsolutePath());
-				}	
-			}		
 		}
 
 		return lFile;
-	}	
-	
-	public String getTocFilesString() 
-			throws ParserConfigurationException, SAXException, IOException {
-		List<String> lf = getTocFilesList();
-		File blankPage = new File(Constants.MD_BLANK_PAGE);
+	}
+
+	public String getTocFilesString() throws ParserConfigurationException, SAXException, IOException {
+		final List<String> lf = getTocFilesList();
+		final File blankPage = new File(Constants.MD_BLANK_PAGE);
 		String files = "";
-		
+
 		// the files have to be in relative, otherwise it does not work (for some obscure reason...)
-		for(String f : lf){
-			files = files + getRelativePathFromWiki(f)+" "+blankPage + " ";
+		for (final String f : lf) {
+			files = files + getRelativePathFromWiki(f) + " " + blankPage + " ";
 		}
 		return files;
 	}
-	
-    public static String getRelativePathFromWiki(String targetPath/*, String basePath, String pathSeparator*/) {
-    	
-    	File tmp = new File(Constants.WIKI_FOLDER);
-    	String basePath = tmp.getAbsolutePath();
-    	String pathSeparator = "/";
 
-        // Normalize the paths
-        String normalizedTargetPath = FilenameUtils.normalizeNoEndSeparator(targetPath);
-        String normalizedBasePath = FilenameUtils.normalizeNoEndSeparator(basePath);
+	public static String getRelativePathFromWiki(final String targetPath/* , String basePath, String pathSeparator */) {
 
-        // Undo the changes to the separators made by normalization
-        if (pathSeparator.equals("/")) {
-            normalizedTargetPath = FilenameUtils.separatorsToUnix(normalizedTargetPath);
-            normalizedBasePath = FilenameUtils.separatorsToUnix(normalizedBasePath);
+		final File tmp = new File(Constants.WIKI_FOLDER);
+		final String basePath = tmp.getAbsolutePath();
+		final String pathSeparator = "/";
 
-        } else if (pathSeparator.equals("\\")) {
-            normalizedTargetPath = FilenameUtils.separatorsToWindows(normalizedTargetPath);
-            normalizedBasePath = FilenameUtils.separatorsToWindows(normalizedBasePath);
+		// Normalize the paths
+		String normalizedTargetPath = FilenameUtils.normalizeNoEndSeparator(targetPath);
+		String normalizedBasePath = FilenameUtils.normalizeNoEndSeparator(basePath);
 
-        } else {
-            throw new IllegalArgumentException("Unrecognised dir separator '" + pathSeparator + "'");
-        }
+		// Undo the changes to the separators made by normalization
+		if (pathSeparator.equals("/")) {
+			normalizedTargetPath = FilenameUtils.separatorsToUnix(normalizedTargetPath);
+			normalizedBasePath = FilenameUtils.separatorsToUnix(normalizedBasePath);
 
-        String[] base = normalizedBasePath.split(Pattern.quote(pathSeparator));
-        String[] target = normalizedTargetPath.split(Pattern.quote(pathSeparator));
+		} else if (pathSeparator.equals("\\")) {
+			normalizedTargetPath = FilenameUtils.separatorsToWindows(normalizedTargetPath);
+			normalizedBasePath = FilenameUtils.separatorsToWindows(normalizedBasePath);
 
-        // First get all the common elements. Store them as a string,
-        // and also count how many of them there are.
-        StringBuffer common = new StringBuffer();
+		} else {
+			throw new IllegalArgumentException("Unrecognised dir separator '" + pathSeparator + "'");
+		}
 
-        int commonIndex = 0;
-        while (commonIndex < target.length && commonIndex < base.length
-                && target[commonIndex].equals(base[commonIndex])) {
-            common.append(target[commonIndex] + pathSeparator);
-            commonIndex++;
-        }
+		final String[] base = normalizedBasePath.split(Pattern.quote(pathSeparator));
+		final String[] target = normalizedTargetPath.split(Pattern.quote(pathSeparator));
 
-        if (commonIndex == 0) {
-            // No single common path element. This most
-            // likely indicates differing drive letters, like C: and D:.
-            // These paths cannot be relativized.
-            throw new PathResolutionException("No common path element found for '" + normalizedTargetPath + "' and '" + normalizedBasePath
-                    + "'");
-        }   
+		// First get all the common elements. Store them as a string,
+		// and also count how many of them there are.
+		final StringBuffer common = new StringBuffer();
 
-        // The number of directories we have to backtrack depends on whether the base is a file or a dir
-        // For example, the relative path from
-        //
-        // /foo/bar/baz/gg/ff to /foo/bar/baz
-        // 
-        // ".." if ff is a file
-        // "../.." if ff is a directory
-        //
-        // The following is a heuristic to figure out if the base refers to a file or dir. It's not perfect, because
-        // the resource referred to by this path may not actually exist, but it's the best I can do
-        boolean baseIsFile = true;
+		int commonIndex = 0;
+		while (commonIndex < target.length && commonIndex < base.length
+				&& target[commonIndex].equals(base[commonIndex])) {
+			common.append(target[commonIndex] + pathSeparator);
+			commonIndex++;
+		}
 
-        File baseResource = new File(normalizedBasePath);
+		if (commonIndex == 0) {
+			// No single common path element. This most
+			// likely indicates differing drive letters, like C: and D:.
+			// These paths cannot be relativized.
+			throw new PathResolutionException(
+					"No common path element found for '" + normalizedTargetPath + "' and '" + normalizedBasePath + "'");
+		}
 
-        if (baseResource.exists()) {
-            baseIsFile = baseResource.isFile();
+		// The number of directories we have to backtrack depends on whether the base is a file or a dir
+		// For example, the relative path from
+		//
+		// /foo/bar/baz/gg/ff to /foo/bar/baz
+		//
+		// ".." if ff is a file
+		// "../.." if ff is a directory
+		//
+		// The following is a heuristic to figure out if the base refers to a file or dir. It's not perfect, because
+		// the resource referred to by this path may not actually exist, but it's the best I can do
+		boolean baseIsFile = true;
 
-        } else if (basePath.endsWith(pathSeparator)) {
-            baseIsFile = false;
-        }
+		final File baseResource = new File(normalizedBasePath);
 
-        StringBuffer relative = new StringBuffer();
+		if (baseResource.exists()) {
+			baseIsFile = baseResource.isFile();
 
-        if (base.length != commonIndex) {
-            int numDirsUp = baseIsFile ? base.length - commonIndex - 1 : base.length - commonIndex;
+		} else if (basePath.endsWith(pathSeparator)) {
+			baseIsFile = false;
+		}
 
-            for (int i = 0; i < numDirsUp; i++) {
-                relative.append(".." + pathSeparator);
-            }
-        }
-        relative.append(normalizedTargetPath.substring(common.length()));
-        return relative.toString();
-    }
+		final StringBuffer relative = new StringBuffer();
 
+		if (base.length != commonIndex) {
+			final int numDirsUp = baseIsFile ? base.length - commonIndex - 1 : base.length - commonIndex;
 
-    static class PathResolutionException extends RuntimeException {
+			for (int i = 0; i < numDirsUp; i++) {
+				relative.append(".." + pathSeparator);
+			}
+		}
+		relative.append(normalizedTargetPath.substring(common.length()));
+		return relative.toString();
+	}
+
+	static class PathResolutionException extends RuntimeException {
 
 		private static final long serialVersionUID = 1L;
 
-		PathResolutionException(String msg) {
-            super(msg);
-        }
-    }
-	
-	
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
-		TOCManager t = new TOCManager(Constants.TOC_FILE);
+		PathResolutionException(final String msg) {
+			super(msg);
+		}
+	}
+
+	public static void main(final String[] args) throws ParserConfigurationException, SAXException, IOException {
+		final TOCManager t = new TOCManager(Constants.TOC_FILE);
 		System.out.println(t.getTocFilesString());
-		
+
 		// t.createPartFiles();
 		System.out.println(t.getTocFilesString());
 	}

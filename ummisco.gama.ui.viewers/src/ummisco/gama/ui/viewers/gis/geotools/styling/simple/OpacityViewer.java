@@ -1,16 +1,16 @@
 /*********************************************************************************************
  *
- * 'OpacityViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'OpacityViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
 
 import java.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -27,7 +27,7 @@ import org.geotools.styling.StyleBuilder;
  * Allows editing/viewing of Opacity Element.
  * <p>
  * Here is the pretty picture:
- * 
+ *
  * <pre>
  * <code>
  *          +----------------+
@@ -52,6 +52,7 @@ import org.geotools.styling.StyleBuilder;
  * <li>get( StyleBuilder ) - construct based on fields
  * </ul>
  * </p>
+ *
  * @author Emily Gouge (Refractions Research, Inc.)
  * @since 1.0.0
  *
@@ -63,10 +64,10 @@ public class OpacityViewer {
 
 	double opacity = Double.NaN;
 
-	private Combo percent;
-	private SelectionListener listener;
+	Combo percent;
+	SelectionListener listener;
 
-	private class Listener implements ModifyListener {
+	class Listener implements ModifyListener {
 
 		@Override
 		public void modifyText(final ModifyEvent e) {
@@ -77,13 +78,13 @@ public class OpacityViewer {
 			try {
 				try {
 					String ptext = OpacityViewer.this.percent.getText();
-					if ( ptext.endsWith("%") ) { //$NON-NLS-1$
+					if (ptext.endsWith("%")) { //$NON-NLS-1$
 						ptext = ptext.substring(0, ptext.length() - 1);
 						OpacityViewer.this.opacity = Double.parseDouble(ptext);
 						OpacityViewer.this.opacity /= 100.0;
 					} else {
 						OpacityViewer.this.opacity = Double.parseDouble(ptext);
-						if ( OpacityViewer.this.opacity > 1 ) {
+						if (OpacityViewer.this.opacity > 1) {
 							OpacityViewer.this.opacity /= 100.0;
 						}
 					}
@@ -100,7 +101,7 @@ public class OpacityViewer {
 
 	/**
 	 * TODO summary sentence for createControl ...
-	 * 
+	 *
 	 * @param parent
 	 * @param listener1
 	 * @return Generated composite
@@ -117,7 +118,7 @@ public class OpacityViewer {
 	}
 
 	void listen(final boolean listen) {
-		if ( listen ) {
+		if (listen) {
 			this.percent.addModifyListener(this.sync);
 		} else {
 			this.percent.removeModifyListener(this.sync);
@@ -126,6 +127,7 @@ public class OpacityViewer {
 
 	/**
 	 * Accepts a listener that will be notified when content changes.
+	 *
 	 * @param listener1
 	 */
 	public void addListener(final SelectionListener listener1) {
@@ -134,26 +136,28 @@ public class OpacityViewer {
 
 	/**
 	 * Remove listener.
+	 *
 	 * @param listener1
 	 */
 	public void removeListener(final SelectionListener listener1) {
-		if ( this.listener == listener1 )
+		if (this.listener == listener1) {
 			this.listener = null;
+		}
 	}
 
 	/**
 	 * TODO summary sentence for fire ...
-	 * 
+	 *
 	 * @param event
 	 */
 	protected void fire(final SelectionEvent event) {
-		if ( this.listener == null )
-			return;
+		if (this.listener == null) { return; }
 		this.listener.widgetSelected(event);
 	}
 
 	/**
 	 * Called to set up this "viewer" based on the provided symbolizer
+	 *
 	 * @param sym
 	 */
 	public void set(final RasterSymbolizer sym2) {
@@ -161,7 +165,7 @@ public class OpacityViewer {
 		try {
 			final RasterSymbolizer sym = sym2;
 
-			if ( sym == null ) {
+			if (sym == null) {
 				this.opacity = 1.0;
 			} else {
 				this.opacity = SLD.rasterOpacity(sym);
@@ -177,8 +181,9 @@ public class OpacityViewer {
 
 	/**
 	 * TODO summary sentence for getStroke ...
+	 *
 	 * @param build
-	 * 
+	 *
 	 * @return Stroke defined by this model
 	 */
 	public RasterSymbolizer get(final StyleBuilder build) {

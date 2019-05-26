@@ -75,10 +75,10 @@ public class GeoSQL {
 		bds.setUrl("jdbc:sqlserver://localhost");
 		bds.setUsername("sa");
 		bds.setPassword("tmt");
-		final Connection connection = bds.getConnection();
+		try (final Connection connection = bds.getConnection();) {
 
-		// DEBUG.ERR("3.1Connection: " + connection);
-		connection.close();
+			// DEBUG.ERR("3.1Connection: " + connection);
+		}
 
 	}
 

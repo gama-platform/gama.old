@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'DeleteColumnPage.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DeleteColumnPage.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.csv;
@@ -32,66 +31,64 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class DeleteColumnPage extends Dialog {
 
-    private String[] columnTitle;
-    private ArrayList<String> selectedColumn;
+	String[] columnTitle;
+	ArrayList<String> selectedColumn;
 
-    /**
-     * @param parentShell
-     * @param columns
-     */
-    public DeleteColumnPage (
-            Shell parentShell,
-            String[] columns) {
-        super(parentShell);
-        this.columnTitle = columns;
-        this.selectedColumn = new ArrayList<String>(columnTitle.length);
-    }
+	/**
+	 * @param parentShell
+	 * @param columns
+	 */
+	public DeleteColumnPage(final Shell parentShell, final String[] columns) {
+		super(parentShell);
+		this.columnTitle = columns;
+		this.selectedColumn = new ArrayList<>(columnTitle.length);
+	}
 
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	protected Control createDialogArea(final Composite parent) {
+		final Composite container = (Composite) super.createDialogArea(parent);
+		final GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		container.setLayout(gridLayout);
+		final Label filterLabel = new Label(container, SWT.NONE);
+		filterLabel.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+		filterLabel.setText("Select the column that you want to delete:");
 
-    /**
-     * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-     */
-    protected Control createDialogArea (Composite parent) {
-        Composite container = (Composite) super.createDialogArea(parent);
-        final GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 2;
-        container.setLayout(gridLayout);
-        final Label filterLabel = new Label(container, SWT.NONE);
-        filterLabel.setLayoutData(new GridData(GridData.BEGINNING,
-                GridData.BEGINNING, false, false, 2, 1));
-        filterLabel.setText("Select the column that you want to delete:");
+		final Label nameLabel = new Label(container, SWT.NONE);
+		nameLabel.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
+		nameLabel.setText("Column:");
 
-        final Label nameLabel = new Label(container, SWT.NONE);
-        nameLabel.setLayoutData(new GridData(GridData.END,
-                GridData.CENTER, false, false));
-        nameLabel.setText("Column:");
+		final List columnList = new List(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		columnList.setBounds(40, 20, 220, 100);
+		columnList.setItems(columnTitle);
 
-        final List columnList = new List(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
-        columnList.setBounds(40, 20, 220, 100);
-        columnList.setItems(columnTitle);
+		columnList.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				selectedColumn.clear();
+				selectedColumn.addAll(Arrays.asList(columnList.getSelection()));
+			}
+		});
 
-        columnList.addSelectionListener(
-                new SelectionAdapter() {
-                    public void widgetSelected (SelectionEvent e) {
-                        selectedColumn.clear();
-                        selectedColumn.addAll(Arrays.asList(columnList.getSelection()));
-                    }});
+		return container;
+	}
 
-        return container;
-    }
+	/**
+	 * @return
+	 */
+	public String[] getColumnSelected() {
+		return selectedColumn.toArray(new String[selectedColumn.size()]);
+	}
 
-    /**
-     * @return
-     */
-    public String[] getColumnSelected () {
-        return selectedColumn.toArray(new String[selectedColumn.size()]);
-    }
-
-    /**
-     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-     */
-    protected void configureShell (Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText("Delete Column");
-    }
+	/**
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	@Override
+	protected void configureShell(final Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText("Delete Column");
+	}
 }

@@ -38,9 +38,9 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceDocumenter implements IDocManager {
 
-	private final ConcurrentLinkedQueue<ModelDescription> cleanupTasks = new ConcurrentLinkedQueue();
-	private final ConcurrentLinkedQueue<DocumentationTask> documentationQueue = new ConcurrentLinkedQueue();
-	private final Job documentationJob = new Job("Documentation") {
+	final ConcurrentLinkedQueue<ModelDescription> cleanupTasks = new ConcurrentLinkedQueue();
+	final ConcurrentLinkedQueue<DocumentationTask> documentationQueue = new ConcurrentLinkedQueue();
+	final Job documentationJob = new Job("Documentation") {
 		{
 			setUser(false);
 			setPriority(Job.SHORT);

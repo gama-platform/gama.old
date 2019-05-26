@@ -85,9 +85,12 @@ public class Reader {
 		final String name = getAttributeWithoutCase(e, XmlTAG.NAME_TAG);
 		final String id = getAttributeWithoutCase(e, XmlTAG.ID_TAG);
 		final String path = getAttributeWithoutCase(e, XmlTAG.OUTPUT_PATH);
-		final int width = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.WIDTH_TAG)!=null?getAttributeWithoutCase(e, XmlTAG.WIDTH_TAG):"500");
-		final int height = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.HEIGHT_TAG)!=null?getAttributeWithoutCase(e, XmlTAG.HEIGHT_TAG):"500");
-		final int framerate = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.FRAMERATE_TAG)!=null?getAttributeWithoutCase(e, XmlTAG.FRAMERATE_TAG):"1");
+		final int width = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.WIDTH_TAG) != null
+				? getAttributeWithoutCase(e, XmlTAG.WIDTH_TAG) : "500");
+		final int height = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.HEIGHT_TAG) != null
+				? getAttributeWithoutCase(e, XmlTAG.HEIGHT_TAG) : "500");
+		final int framerate = Integer.valueOf(getAttributeWithoutCase(e, XmlTAG.FRAMERATE_TAG) != null
+				? getAttributeWithoutCase(e, XmlTAG.FRAMERATE_TAG) : "1");
 		return new Output(name, width, height, framerate, id, path);
 	}
 
@@ -157,18 +160,11 @@ public class Reader {
 
 		final String finalStep = getAttributeWithoutCase(e, XmlTAG.FINAL_STEP_TAG);
 		int max;
-		
-		if(finalStep.toUpperCase().equals("INFINITY"))
-		{
+
+		if (finalStep == null || "".equals(finalStep) || finalStep.toUpperCase().equals("INFINITY")) {
 			max = -1;
-		}
-		else
-		{
-			if (finalStep == null || "".equals(finalStep)) {
-				max = -1;
-			} else {
-				max = Integer.valueOf(finalStep);
-			}
+		} else {
+			max = Integer.valueOf(finalStep);
 			if (max < 0) {
 				DEBUG.ERR("WARNING: the headless simulation has no final step!");
 			}

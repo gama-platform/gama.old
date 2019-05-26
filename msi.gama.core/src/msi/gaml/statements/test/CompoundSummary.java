@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.test.CompoundSummary.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.test.CompoundSummary.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.test;
 
@@ -25,15 +25,15 @@ import one.util.streamex.StreamEx;
 
 /**
  * A summary composed of other summaries (for instance, a TestStatement summary is composed of AsserStatement summaries)
- * 
+ *
  * @author drogoul
  *
  * @param <S>
  *            the type of the statement represented by this summary
- * 
+ *
  * @param <T>
  *            the type of the sub-summaries
- * 
+ *
  */
 public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSummary<?>> extends AbstractSummary<S> {
 
@@ -115,6 +115,11 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 	public boolean equals(final Object o) {
 		if (!getClass().isInstance(o)) { return false; }
 		return Objects.equal(((AbstractSummary<?>) o).getTitle(), getTitle());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getTitle());
 	}
 
 	@Override

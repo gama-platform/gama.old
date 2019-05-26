@@ -48,7 +48,7 @@ public class GamlModelBuilder {
 	 *
 	 * @param injector
 	 */
-	public GamlModelBuilder(Injector injector) {
+	public GamlModelBuilder(final Injector injector) {
 		buildResourceSet = injector.getInstance(ResourceSet.class);
 	}
 
@@ -80,8 +80,8 @@ public class GamlModelBuilder {
 			// Syntactic errors detected, we cannot build the resource
 			if (r.hasErrors()) {
 				if (errors != null) {
-					String err_ =
-							r.getErrors() != null && r.getErrors().size() > 0 ? (r.getErrors().get(0).toString()) : "";
+					final String err_ =
+							r.getErrors() != null && r.getErrors().size() > 0 ? r.getErrors().get(0).toString() : "";
 					errors.add(new GamlCompilationError("Syntax errors: " + err_, IGamlIssue.GENERAL,
 							r.getContents().get(0), false, false));
 				}
@@ -89,12 +89,13 @@ public class GamlModelBuilder {
 			} else {
 				// We build the description
 				final ModelDescription model = r.buildCompleteDescription();
-				if (model != null)
+				if (model != null) {
 					model.validate();
-				if (errors != null)
+				}
+				if (errors != null) {
 					Iterables.addAll(errors, r.getValidationContext());
-				if (r.getValidationContext().hasErrors())
-					return null;
+				}
+				if (r.getValidationContext().hasErrors()) { return null; }
 				return model;
 			}
 		} finally {
@@ -108,14 +109,14 @@ public class GamlModelBuilder {
 		}
 	}
 
-	public void loadURLs(List<URL> URLs) {
-		for (URL url : URLs) {
+	public void loadURLs(final List<URL> URLs) {
+		for (final URL url : URLs) {
 			java.net.URI uri;
 			try {
 				uri = new java.net.URI(url.getProtocol(), url.getPath(), null).normalize();
 				final URI resolvedURI = URI.createURI(uri.toString());
-				final GamlResource r = (GamlResource) buildResourceSet.getResource(resolvedURI, true);
-			} catch (URISyntaxException e) {
+				buildResourceSet.getResource(resolvedURI, true);
+			} catch (final URISyntaxException e) {
 				e.printStackTrace();
 			}
 		}

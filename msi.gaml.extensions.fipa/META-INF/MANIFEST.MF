@@ -10,4 +10,5 @@ Export-Package:
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: msi.gaml.extensions.fipa
 

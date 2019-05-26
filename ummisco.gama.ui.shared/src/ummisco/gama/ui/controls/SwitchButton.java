@@ -45,7 +45,7 @@ public class SwitchButton extends Canvas {
 	/**
 	 * Selection
 	 */
-	private boolean selection;
+	boolean selection;
 
 	/**
 	 * Text displayed for the selected value (default = "True")
@@ -150,8 +150,8 @@ public class SwitchButton extends Canvas {
 		this.text = text;
 	}
 
-	public SwitchButton(final Composite parent, final int style, Color selectedBackgroundColor,
-			Color unselectedBackgroundColor) {
+	public SwitchButton(final Composite parent, final int style, final Color selectedBackgroundColor,
+			final Color unselectedBackgroundColor) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
 		this.textForSelect = " True ";
 		this.textForUnselect = " False ";
@@ -166,7 +166,7 @@ public class SwitchButton extends Canvas {
 
 		this.gap = 10;
 
-		this.listOfSelectionListeners = new HashSet<SelectionListener>();
+		this.listOfSelectionListeners = new HashSet<>();
 
 		this.addPaintListener(event -> SwitchButton.this.onPaint(event));
 
@@ -199,8 +199,9 @@ public class SwitchButton extends Canvas {
 		this.gc = event.gc;
 		final Point buttonSize = this.computeButtonSize();
 		this.drawSwitchButton(buttonSize);
-		if (text != null && !text.isEmpty())
+		if (text != null && !text.isEmpty()) {
 			this.drawText(buttonSize);
+		}
 
 	}
 
@@ -228,10 +229,11 @@ public class SwitchButton extends Canvas {
 		} else {
 			this.gc.drawRectangle(2, 2, buttonSize.x, buttonSize.y);
 		}
-		if (selection)
+		if (selection) {
 			this.drawRightPart(buttonSize);
-		else
+		} else {
 			this.drawLeftPart(buttonSize);
+		}
 		this.drawToggleButton(buttonSize);
 	}
 
@@ -299,7 +301,7 @@ public class SwitchButton extends Canvas {
 	/**
 	 * @return the button size
 	 */
-	private Point computeButtonSize() {
+	Point computeButtonSize() {
 		// Compute size for the left part
 		gc.setFont(getFont());
 		final Point sizeForLeftPart = this.gc.stringExtent(this.textForSelect);
@@ -317,7 +319,7 @@ public class SwitchButton extends Canvas {
 	 * @param buttonSize
 	 *            whole size of the button
 	 */
-	private void drawText(final Point buttonSize) {
+	void drawText(final Point buttonSize) {
 		this.gc.setForeground(this.selection ? this.selectedBackgroundColor : this.unselectedBackgroundColor);
 		this.gc.setBackground(IGamaColors.WHITE.color());
 
@@ -334,7 +336,7 @@ public class SwitchButton extends Canvas {
 	 *            mouse event
 	 * @return true if the selection could be changed, false otherwise
 	 */
-	private boolean fireSelectionListeners(final MouseEvent mouseEvent) {
+	boolean fireSelectionListeners(final MouseEvent mouseEvent) {
 		for (final SelectionListener listener : this.listOfSelectionListeners) {
 			final Event event = new Event();
 			event.button = mouseEvent.button;

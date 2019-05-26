@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'ScaleViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ScaleViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
@@ -24,11 +23,11 @@ import org.eclipse.swt.widgets.Composite;
  * Allows editing/viewing of a scale. Used to build the min/max scale editors for a rule.
  * <p>
  * Here is the pretty picture:
- * 
+ *
  * <pre>
  * <code>
- *          +-+ +-------------+             
- *    Scale:|x| | 90%       \/| 
+ *          +-+ +-------------+
+ *    Scale:|x| | 90%       \/|
  *          +-+ +-------------+
  * </code>
  * </pre>
@@ -49,6 +48,7 @@ import org.eclipse.swt.widgets.Composite;
  * <li>getScale( ) - returns the specified scale
  * </ul>
  * </p>
+ * 
  * @author Andrea Aime
  * @since 1.1
  *
@@ -68,7 +68,7 @@ public class ScaleViewer {
 	Button on;
 	Combo scaleEditor;
 
-	private class Listener implements SelectionListener, ModifyListener {
+	class Listener implements SelectionListener, ModifyListener {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -104,14 +104,16 @@ public class ScaleViewer {
 	private SelectionListener listener;
 
 	public ScaleViewer(final int type) {
-		if ( type != MIN && type != MAX )
+		if (type != MIN && type != MAX) {
 			throw new IllegalArgumentException("Type should be either MIN or MAX"); //$NON-NLS-1$
+		}
 		this.type = type;
 		this.scale = type == MIN ? 0 : Double.MAX_VALUE;
 	}
 
 	/**
 	 * Accepts a listener that will be notified when content changes.
+	 * 
 	 * @param listener1
 	 */
 	public void addListener(final SelectionListener listener1) {
@@ -120,27 +122,28 @@ public class ScaleViewer {
 
 	/**
 	 * Remove listener.
+	 * 
 	 * @param listener1
 	 */
 	public void removeListener(final SelectionListener listener1) {
-		if ( this.listener == listener1 )
+		if (this.listener == listener1) {
 			this.listener = null;
+		}
 	}
 
 	/**
 	 * TODO summary sentence for fire ...
-	 * 
+	 *
 	 * @param event
 	 */
 	protected void fire(final SelectionEvent event) {
-		if ( this.listener == null )
-			return;
+		if (this.listener == null) { return; }
 		this.listener.widgetSelected(event);
 	}
 
 	/**
 	 * TODO summary sentence for createControl ...
-	 * 
+	 *
 	 * @param parent
 	 * @param kListener
 	 * @return Generated composite
@@ -162,20 +165,24 @@ public class ScaleViewer {
 	}
 
 	/**
-	 * Gets the scale denominator chosen by the user, or the default value for this type if none was selected.
-	 * Default values are 0 for MIN type, {@linkplain Double#MAX_VALUE} for the MAX type
-	 * @param build
+	 * Gets the scale denominator chosen by the user, or the default value for this type if none was selected. Default
+	 * values are 0 for MIN type, {@linkplain Double#MAX_VALUE} for the MAX type
 	 * 
+	 * @param build
+	 *
 	 * @return Fill defined by this model
 	 */
 	public double getScale() {
-		if ( !this.enabled )
+		if (!this.enabled) {
 			return type == MIN ? 0 : Double.MAX_VALUE;
-		else return scale;
+		} else {
+			return scale;
+		}
 	}
 
 	/**
 	 * Sets the scale denominator, or disables the component if the provided scale is not a positive number
+	 * 
 	 * @param scale
 	 */
 	public void setScale(final double scale2, final long defaultScale) {
@@ -183,8 +190,7 @@ public class ScaleViewer {
 
 		this.scale = scale2;
 		this.enabled = true;
-		if ( Double.isNaN(scale) || Double.isInfinite(scale) || scale <= Double.MIN_VALUE ||
-			scale >= Double.MAX_VALUE ) {
+		if (Double.isNaN(scale) || Double.isInfinite(scale) || scale <= Double.MIN_VALUE || scale >= Double.MAX_VALUE) {
 			this.scale = defaultScale;
 			this.enabled = false;
 		}
@@ -196,7 +202,7 @@ public class ScaleViewer {
 	}
 
 	void listen(final boolean listen) {
-		if ( listen ) {
+		if (listen) {
 			this.on.addSelectionListener(this.sync);
 			this.scaleEditor.addSelectionListener(this.sync);
 			this.scaleEditor.addModifyListener(this.sync);

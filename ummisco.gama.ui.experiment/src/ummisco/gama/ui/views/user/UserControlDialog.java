@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.user;
@@ -74,7 +74,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	private static PreviousDialog previous = null;
 
 	private final List<IStatement> userCommands;
-	private final IScope scope;
+	final IScope scope;
 
 	public UserControlDialog(final IScope scope, final UserPanelStatement panel) {
 		super((Shell) null, "[" + scope.getAgent().getName() + "] " + panel.getName(), null, null);

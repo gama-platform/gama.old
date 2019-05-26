@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'GamaFileConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaFileConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
@@ -25,9 +24,9 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaFileReducer;
 
 public class GamaFileConverter implements Converter {
-	private final static String TAG = "GamaFile";
-	private final static String TAG_PATH = "path";
-	private final static String TAG_ATTRIBUTES = "attributes";
+	// private final static String TAG = "GamaFile";
+	// private final static String TAG_PATH = "path";
+	// private final static String TAG_ATTRIBUTES = "attributes";
 
 	private final ConverterScope convertScope;
 
@@ -40,8 +39,7 @@ public class GamaFileConverter implements Converter {
 		final List<Class<?>> allInterfaceApa = ClassUtils.getAllInterfaces(arg0);
 
 		for (final Object i : allInterfaceApa) {
-			if (i.equals(IGamaFile.class))
-				return true;
+			if (i.equals(IGamaFile.class)) { return true; }
 		}
 		return false;
 
@@ -52,9 +50,8 @@ public class GamaFileConverter implements Converter {
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		// System.out.println("ConvertAnother : GamaFileConverter " + arg0.getClass());
 		DEBUG.OUT("ConvertAnother : GamaFileConverter " + arg0.getClass());
-		
-		@SuppressWarnings("rawtypes")
-		final IGamaFile gamaFile = (IGamaFile) arg0;
+
+		@SuppressWarnings ("rawtypes") final IGamaFile gamaFile = (IGamaFile) arg0;
 		context.convertAnother(new GamaFileReducer(convertScope.getScope(), gamaFile));
 		// System.out.println("===========END ConvertAnother : GamaFile");
 		DEBUG.OUT("===========END ConvertAnother : GamaFile");

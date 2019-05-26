@@ -29,3 +29,4 @@ Export-Package: ummisco.gama.ui.commands,
  ummisco.gama.ui.navigator,
  ummisco.gama.ui.navigator.contents
 Import-Package: org.eclipse.core.filesystem
+Automatic-Module-Name: ummisco.gama.ui.navigator

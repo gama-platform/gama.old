@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.wizards;
@@ -30,9 +30,9 @@ import msi.gaml.operators.Strings;
 
 public class NewFileWizardPage extends AbstractNewModelWizardPage {
 
-	private Text descriptionText;
-	private Button yesButton;
-	private String typeOfModel = AbstractNewModelWizard.EMPTY;
+	Text descriptionText;
+	Button yesButton;
+	String typeOfModel = AbstractNewModelWizard.EMPTY;
 
 	public NewFileWizardPage(final ISelection selection) {
 		super(selection);

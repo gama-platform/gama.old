@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 
@@ -36,7 +36,7 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
 
 /**
  * A cursor tool to retrieve information about features that the user clicks on with the mouse.
- * 
+ *
  * <p>
  * It works with {@code InfoToolHelper} objects which do the work of querying feature data. The primary reason for this
  * design is to shield this class from the grid coverage classes so that users who are working purely with vector data
@@ -169,10 +169,9 @@ public class InfoTool extends CursorTool {
 					}
 
 					if (info != null) {
-						FeatureIterator<? extends Feature> iter = null;
 						final SimpleFeatureCollection selectedFeatures = (SimpleFeatureCollection) info;
-						try {
-							iter = selectedFeatures.features();
+						try (FeatureIterator<? extends Feature> iter = selectedFeatures.features();) {
+
 							while (iter.hasNext()) {
 								report(layerName, iter.next());
 							}
@@ -180,10 +179,6 @@ public class InfoTool extends CursorTool {
 						} catch (final Exception ex) {
 							throw new IllegalStateException(ex);
 
-						} finally {
-							if (iter != null) {
-								iter.close();
-							}
 						}
 					}
 

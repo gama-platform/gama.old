@@ -2,11 +2,11 @@
  *
  * msi.gaml.skills.MovingSkill.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.skills;
 
@@ -484,7 +484,7 @@ public class MovingSkill extends Skill {
 				if (pathFollowed == null) {
 					// scope.setStatus(ExecutionStatus.failure);
 					notMoving(agent);
-					
+
 					return null;
 				}
 				// scope.setStatus(ExecutionStatus.success);
@@ -495,7 +495,7 @@ public class MovingSkill extends Skill {
 			return null;
 		}
 		notMoving(agent);
-		
+
 		// scope.setStatus(ExecutionStatus.failure);
 		return null;
 	}
@@ -573,14 +573,16 @@ public class MovingSkill extends Skill {
 		final ITopology topo = rt instanceof ITopology ? (ITopology) rt : scope.getTopology();
 		if (goal == null) {
 			notMoving(agent);
-			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(),
-					false); }
+			if (returnPath) {
+				return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(), false);
+			}
 			return null;
 		}
 		if (topo == null) {
 			notMoving(agent);
-			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(),
-					false); }
+			if (returnPath) {
+				return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(), false);
+			}
 			return null;
 		}
 		if (topo instanceof GridTopology) {
@@ -590,9 +592,10 @@ public class MovingSkill extends Skill {
 		}
 		if (source.equals(goal.getLocation())) {
 			notMoving(agent);
-			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(),
-					false); }
-		
+			if (returnPath) {
+				return PathFactory.newInstance(scope, topo, source, source, GamaListFactory.create(), false);
+			}
+
 			return null;
 		}
 
@@ -606,8 +609,9 @@ public class MovingSkill extends Skill {
 			path = null;
 		}
 		if (path == null || path.getTopology(scope) != null && !path.getTopology(scope).equals(topo)
-				|| !((IShape)path.getEndVertex()).getLocation().equals(goal.getLocation()) || !((IShape)path.getStartVertex()).getLocation().equals(source.getLocation())) {
-			
+				|| !((IShape) path.getEndVertex()).getLocation().equals(goal.getLocation())
+				|| !((IShape) path.getStartVertex()).getLocation().equals(source.getLocation())) {
+
 			if (edge != null) {
 				final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 				edges.add(edge);
@@ -635,16 +639,20 @@ public class MovingSkill extends Skill {
 		}
 		if (path == null) {
 			notMoving(agent);
-			if (returnPath) { return PathFactory.newInstance(scope, topo, source, source,
-					GamaListFactory.<IShape> create(Types.GEOMETRY), false); }
+			if (returnPath) {
+				return PathFactory.newInstance(scope, topo, source, source,
+						GamaListFactory.<IShape> create(Types.GEOMETRY), false);
+			}
 			return null;
 		}
-		
+
 		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
 		if (returnPath) {
 			final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, maxDist, weigths);
-			if (pathFollowed == null) { return PathFactory.newInstance(scope, topo, source, source,
-					GamaListFactory.<IShape> create(Types.GEOMETRY), false); }
+			if (pathFollowed == null) {
+				return PathFactory.newInstance(scope, topo, source, source,
+						GamaListFactory.<IShape> create(Types.GEOMETRY), false);
+			}
 			// scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
@@ -652,9 +660,8 @@ public class MovingSkill extends Skill {
 		// scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
-	
-	
-	private void notMoving(IAgent agent) {
+
+	private void notMoving(final IAgent agent) {
 		setRealSpeed(agent, 0.0);
 		agent.setAttribute("current_edge", null);
 		agent.setAttribute("current_path", null);
@@ -674,11 +681,11 @@ public class MovingSkill extends Skill {
 	 *            max displacement distance
 	 * @return the next location
 	 */
-	
+
 	protected IList initMoveAlongPath3D(final IAgent agent, final IPath path, final GamaPoint cl) {
 		GamaPoint currentLocation = cl.copy(GAMA.getRuntimeScope());
 		final IList initVals = GamaListFactory.create();
-		
+
 		Integer index = 0;
 		Integer indexSegment = 1;
 		Integer endIndexSegment = 1;
@@ -687,44 +694,50 @@ public class MovingSkill extends Skill {
 		if (path.isVisitor(agent)) {
 			index = path.indexOf(agent);
 			indexSegment = path.indexSegmentOf(agent);
-			
+
 		} else {
 			if (edges.isEmpty()) { return null; }
 			path.acceptVisitor(agent);
-			
+
 			double dist = Double.MAX_VALUE;
 			int i = 0;
-			for(IShape e : edges) {
+			for (final IShape e : edges) {
 				final GamaPoint[] points = getPointsOf(e);
 				int j = 0;
-				for (GamaPoint pt : points) {
-					double d = pt.euclidianDistanceTo(cl);
+				for (final GamaPoint pt : points) {
+					final double d = pt.euclidianDistanceTo(cl);
 					if (d < dist) {
 						currentLocation = pt;
 						dist = d;
 						index = i;
-						indexSegment = j+1;
-						if (dist == 0.0) break;
+						indexSegment = j + 1;
+						if (dist == 0.0) {
+							break;
+						}
 					}
 					j++;
 				}
-	
-				if (dist == 0.0) break;
+
+				if (dist == 0.0) {
+					break;
+				}
 				i++;
 			}
-		} 
+		}
 		final GamaPoint[] points = getPointsOf(edges.lastValue(GAMA.getRuntimeScope()));
 		int j = 0;
 		double dist = Double.MAX_VALUE;
 		final ILocation end = ((IShape) path.getEndVertex()).getLocation();
-		for (GamaPoint pt : points) {
-			double d = pt.euclidianDistanceTo(end);
+		for (final GamaPoint pt : points) {
+			final double d = pt.euclidianDistanceTo(end);
 			if (d < dist) {
 				dist = d;
 				endIndexSegment = j;
 				falseTarget = pt;
-				if (dist == 0.0) break;
-				
+				if (dist == 0.0) {
+					break;
+				}
+
 			}
 			j++;
 		}
@@ -824,8 +837,8 @@ public class MovingSkill extends Skill {
 				} else {
 					final ILocation c0 = points[0];
 					final ILocation c1 = points[1];
-					falseTarget.z = c0.getZ()
-							+ (c1.getZ() - c0.getZ()) * falseTarget.distance3D((Coordinate) c0) / lineEnd.getPerimeter();
+					falseTarget.z = c0.getZ() + (c1.getZ() - c0.getZ()) * falseTarget.distance3D((Coordinate) c0)
+							/ lineEnd.getPerimeter();
 				}
 			}
 		}
@@ -837,6 +850,7 @@ public class MovingSkill extends Skill {
 		return initVals;
 	}
 
+	@SuppressWarnings ("null")
 	protected IList initMoveAlongPath(final IScope scope, final IAgent agent, final GamaSpatialGraph graph,
 			final GamaPoint currentLoc) {
 		GamaPoint currentLocation = currentLoc;
@@ -954,7 +968,7 @@ public class MovingSkill extends Skill {
 				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
 				computedHeading = Spatial.Relations.towards(scope, currentLocation, pt);
-				
+
 				if (distance < dist) {
 					final double ratio = distance / dist;
 					travelledDist += dis * ratio;
@@ -1039,7 +1053,8 @@ public class MovingSkill extends Skill {
 	private void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final IPath path,
 			final double d, final GamaMap weigths) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final IList indexVals = ((GamaSpatialPath) path).isThreeD()? initMoveAlongPath3D(agent,path,currentLocation) : initMoveAlongPath(agent, path, currentLocation);
+		final IList indexVals = ((GamaSpatialPath) path).isThreeD() ? initMoveAlongPath3D(agent, path, currentLocation)
+				: initMoveAlongPath(agent, path, currentLocation);
 		if (indexVals == null) { return; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -1075,7 +1090,7 @@ public class MovingSkill extends Skill {
 				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
 				computedHeading = Spatial.Relations.towards(scope, currentLocation, pt);
-				
+
 				if (distance < dist) {
 					final double ratio = distance / dist;
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
@@ -1129,7 +1144,6 @@ public class MovingSkill extends Skill {
 		setLocation(agent, currentLocation);
 		setHeading(agent, computedHeading);
 		path.setSource(currentLocation/* .copy(scope) */);
-		
 
 	}
 
@@ -1144,7 +1158,8 @@ public class MovingSkill extends Skill {
 		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
 
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final IList indexVals = ((GamaSpatialPath) path).isThreeD() ? initMoveAlongPath3D(agent,path,currentLocation) : initMoveAlongPath(agent, path, currentLocation);
+		final IList indexVals = ((GamaSpatialPath) path).isThreeD() ? initMoveAlongPath3D(agent, path, currentLocation)
+				: initMoveAlongPath(agent, path, currentLocation);
 		if (indexVals == null) { return null; }
 		final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 		final THashMap agents = new THashMap<>();
@@ -1183,8 +1198,7 @@ public class MovingSkill extends Skill {
 				final double dis = pt.distance3D(currentLocation);
 				final double dist = weight * dis;
 				computedHeading = Spatial.Relations.towards(scope, currentLocation, pt);
-				
-				
+
 				if (distance < dist) {
 					final GamaPoint pto = currentLocation.copy(scope);
 

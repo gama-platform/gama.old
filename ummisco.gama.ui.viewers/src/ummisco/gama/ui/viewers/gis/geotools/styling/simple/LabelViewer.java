@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'LabelViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LabelViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
@@ -13,6 +12,7 @@ package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -41,7 +41,7 @@ import org.opengis.filter.expression.Expression;
  * Allows editing/viewing of a Style Layer Descriptor "TextSymbolizer".
  * <p>
  * Here is the pretty picture:
- * 
+ *
  * <pre>
  * <code>
  *          +-+ +------------+ +------+ +------+
@@ -70,6 +70,7 @@ import org.opengis.filter.expression.Expression;
  * <li>get( StyleBuilder ) - construct based on fields
  * </ul>
  * </p>
+ * 
  * @author Jody Garnett
  * @since 1.0.0
  *
@@ -102,7 +103,7 @@ public class LabelViewer {
 	Combo place2;
 	Combo place3;
 
-	private class Listener implements SelectionListener, ModifyListener {
+	class Listener implements SelectionListener, ModifyListener {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -131,13 +132,13 @@ public class LabelViewer {
 				LabelViewer.this.field.setEnabled(LabelViewer.this.enabled);
 				LabelViewer.this.fonter.setEnabled(LabelViewer.this.enabled);
 				LabelViewer.this.place.setEnabled(LabelViewer.this.enabled);
-				if ( LabelViewer.this.pointPlacement ) {
+				if (LabelViewer.this.pointPlacement) {
 					LabelViewer.this.place2.setEnabled(LabelViewer.this.enabled);
 					LabelViewer.this.place2.setVisible(true);
 					LabelViewer.this.place3.setEnabled(LabelViewer.this.enabled);
 					LabelViewer.this.place3.setVisible(true);
 				} else {
-					if ( LabelViewer.this.place2 != null ) {
+					if (LabelViewer.this.place2 != null) {
 						LabelViewer.this.place2.setVisible(false);
 					}
 				}
@@ -152,6 +153,7 @@ public class LabelViewer {
 
 	/**
 	 * Accepts a listener that will be notified when content changes.
+	 * 
 	 * @param listener1
 	 */
 	public void addListener(final SelectionListener listener1) {
@@ -160,29 +162,31 @@ public class LabelViewer {
 
 	/**
 	 * Remove listener.
+	 * 
 	 * @param listener1
 	 */
 	public void removeListener(final SelectionListener listener1) {
-		if ( this.listener == listener1 )
+		if (this.listener == listener1) {
 			this.listener = null;
+		}
 	}
 
 	protected void fire(final SelectionEvent event) {
-		if ( this.listener == null )
-			return;
+		if (this.listener == null) { return; }
 		this.listener.widgetSelected(event);
 	}
 
 	/**
 	 * Constructs a TextSymbolizer from the inputs
-	 * @param build
 	 * 
+	 * @param build
+	 *
 	 * @return TextSymbolizer defined by this model
 	 */
 	public TextSymbolizer get(final StyleBuilder build) {
-		if ( !this.enabled ) { return null; }
-		if ( this.font == null || this.font.length == 0 ) { return null; }
-		if ( this.labelType == null || "".equals(this.labelType) ) { //$NON-NLS-1$
+		if (!this.enabled) { return null; }
+		if (this.font == null || this.font.length == 0) { return null; }
+		if (this.labelType == null || "".equals(this.labelType)) { //$NON-NLS-1$
 			return null;
 		}
 
@@ -194,10 +198,10 @@ public class LabelViewer {
 		final Fill fill = build.createFill(this.colour);
 
 		LabelPlacement placement;
-		if ( pointPlacement ) {
+		if (pointPlacement) {
 			// PointPlacement
 			double horiz;
-			if ( this.place.getSelectionIndex() < 3 ) {
+			if (this.place.getSelectionIndex() < 3) {
 				switch (this.place.getSelectionIndex()) {
 					case 0:
 						horiz = SLDs.ALIGN_LEFT;
@@ -218,7 +222,7 @@ public class LabelViewer {
 			}
 
 			double vert;
-			if ( this.place2.getSelectionIndex() < 3 ) {
+			if (this.place2.getSelectionIndex() < 3) {
 				switch (this.place2.getSelectionIndex()) {
 					case 0:
 						vert = SLDs.ALIGN_BOTTOM;
@@ -249,9 +253,9 @@ public class LabelViewer {
 		this.labelPlacement = placement;
 
 		final Expression exp =
-			CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints()).property(this.labelType);
+				CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints()).property(this.labelType);
 		final TextSymbolizer text = build.createTextSymbolizer(fill, new Font[] { gtFont }, null, exp, placement, null);
-		if ( SLDs.isLine(this.schema) ) {
+		if (SLDs.isLine(this.schema)) {
 			text.getOptions().put("group", "yes"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		text.getOptions().put("spaceAround", "2"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -260,7 +264,7 @@ public class LabelViewer {
 
 	/**
 	 * Start editing the provided symbolizer.
-	 * 
+	 *
 	 * @param schema
 	 * @param sym
 	 * @param mode
@@ -272,12 +276,12 @@ public class LabelViewer {
 			this.enabled = mode != Mode.NONE && sym != null;
 
 			this.font = SLDs.textFont(sym);
-			if ( this.font == null || this.font.length == 0 ) {
+			if (this.font == null || this.font.length == 0) {
 				this.font = new FontData[] { new FontData("Arial", 12, SWT.NORMAL) }; //$NON-NLS-1$
 			}
 			this.labelType = SLDs.textLabelString(sym);
 			this.colour = SLDs.textFontFill(sym);
-			if ( this.colour == null ) {
+			if (this.colour == null) {
 				this.colour = Color.BLACK;
 			}
 
@@ -285,21 +289,21 @@ public class LabelViewer {
 			this.fonter.setColorValue(this.colour);
 			this.fonter.setFontList(this.font);
 
-			if ( schema != null ) {
+			if (schema != null) {
 				final AttributeDescriptor[] attrs =
-					schema.getAttributeDescriptors().toArray(new AttributeDescriptor[0]);
-				final List<String> list = new ArrayList<String>();
-				for ( int i = 0; i < attrs.length; i++ ) {
-					final Class<?> cls = attrs[i].getType().getBinding();
-					if ( String.class.isAssignableFrom(cls) ) {
-						list.add(attrs[i].getName().getLocalPart());
-					} else if ( Number.class.isAssignableFrom(cls) ) {
-						list.add(attrs[i].getName().getLocalPart());
+						schema.getAttributeDescriptors().toArray(new AttributeDescriptor[0]);
+				final List<String> list = new ArrayList<>();
+				for (final AttributeDescriptor attr : attrs) {
+					final Class<?> cls = attr.getType().getBinding();
+					if (String.class.isAssignableFrom(cls)) {
+						list.add(attr.getName().getLocalPart());
+					} else if (Number.class.isAssignableFrom(cls)) {
+						list.add(attr.getName().getLocalPart());
 					}
 				}
 				this.field.removeAll();
 				this.field.setItems(list.toArray(new String[0]));
-				if ( this.labelType == null ) {
+				if (this.labelType == null) {
 					this.field.select(0);
 				} else {
 					this.field.setText(this.labelType);
@@ -310,22 +314,22 @@ public class LabelViewer {
 			this.field.setEnabled(this.enabled);
 			this.fonter.setEnabled(this.enabled);
 
-			if ( schema != null && (SLDs.isLine(schema) == pointPlacement || this.place == null) ) {
+			if (schema != null && (SLDs.isLine(schema) == pointPlacement || this.place == null)) {
 				pointPlacement = !SLDs.isLine(schema);
-				if ( pointPlacement ) {
+				if (pointPlacement) {
 					initPlacementContentsPoint();
 				} else {
 					initPlacementContentsLine();
 				}
 			}
 			this.place.setEnabled(this.enabled);
-			if ( pointPlacement ) {
+			if (pointPlacement) {
 				// PointPlacement
 				this.place2.setEnabled(this.enabled);
 				this.place3.setEnabled(this.enabled);
-				if ( this.labelPlacement == null || !(this.labelPlacement instanceof PointPlacement) ) {
+				if (this.labelPlacement == null || !(this.labelPlacement instanceof PointPlacement)) {
 					// defaults
-					if ( mode == Mode.POINT ) {
+					if (mode == Mode.POINT) {
 						// don't cover the point!
 						this.place.select(2); // top
 						this.place2.select(2); // right
@@ -339,20 +343,20 @@ public class LabelViewer {
 					final String anchorX = anchor.getAnchorPointX().toString();
 					final String anchorY = anchor.getAnchorPointY().toString();
 					// use labels if 0, 0.5, or 1, otherwise use value for align
-					if ( anchorX.equals(Double.toString(SLDs.ALIGN_LEFT)) ) {
+					if (anchorX.equals(Double.toString(SLDs.ALIGN_LEFT))) {
 						this.place2.select(0);
-					} else if ( anchorX.equals(Double.toString(SLDs.ALIGN_CENTER)) ) {
+					} else if (anchorX.equals(Double.toString(SLDs.ALIGN_CENTER))) {
 						this.place2.select(1);
-					} else if ( anchorX.equals(Double.toString(SLDs.ALIGN_RIGHT)) ) {
+					} else if (anchorX.equals(Double.toString(SLDs.ALIGN_RIGHT))) {
 						this.place2.select(2);
 					} else {
 						this.place2.setText(anchorX);
 					}
-					if ( anchorY.equals(Double.toString(SLDs.ALIGN_BOTTOM)) ) {
+					if (anchorY.equals(Double.toString(SLDs.ALIGN_BOTTOM))) {
 						this.place.select(0);
-					} else if ( anchorY.equals(Double.toString(SLDs.ALIGN_MIDDLE)) ) {
+					} else if (anchorY.equals(Double.toString(SLDs.ALIGN_MIDDLE))) {
 						this.place.select(1);
-					} else if ( anchorY.equals(Double.toString(SLDs.ALIGN_TOP)) ) {
+					} else if (anchorY.equals(Double.toString(SLDs.ALIGN_TOP))) {
 						this.place.select(2);
 					} else {
 						this.place.setText(anchorY);
@@ -362,7 +366,7 @@ public class LabelViewer {
 				}
 			} else {
 				// LinePlacement
-				if ( this.labelPlacement == null || !(this.labelPlacement instanceof LinePlacement) ) {
+				if (this.labelPlacement == null || !(this.labelPlacement instanceof LinePlacement)) {
 					// defaults
 					this.place.setText("0");
 				} else {
@@ -377,20 +381,20 @@ public class LabelViewer {
 	}
 
 	public void listen(final boolean listen) {
-		if ( listen ) {
+		if (listen) {
 			this.on.addSelectionListener(this.sync);
 			this.field.addSelectionListener(this.sync);
 			this.field.addModifyListener(this.sync);
 			this.fonter.setListener(this.sync);
-			if ( this.place != null ) {
+			if (this.place != null) {
 				this.place.addSelectionListener(this.sync);
 				this.place.addModifyListener(this.sync);
 			}
-			if ( this.place2 != null ) {
+			if (this.place2 != null) {
 				this.place2.addSelectionListener(this.sync);
 				this.place2.addModifyListener(this.sync);
 			}
-			if ( this.place3 != null ) {
+			if (this.place3 != null) {
 				this.place3.addSelectionListener(this.sync);
 				this.place3.addModifyListener(this.sync);
 			}
@@ -399,15 +403,15 @@ public class LabelViewer {
 			this.field.removeSelectionListener(this.sync);
 			this.field.removeModifyListener(this.sync);
 			this.fonter.clearListener();
-			if ( this.place != null ) {
+			if (this.place != null) {
 				this.place.removeSelectionListener(this.sync);
 				this.place.removeModifyListener(this.sync);
 			}
-			if ( this.place2 != null ) {
+			if (this.place2 != null) {
 				this.place2.removeSelectionListener(this.sync);
 				this.place2.removeModifyListener(this.sync);
 			}
-			if ( this.place3 != null ) {
+			if (this.place3 != null) {
 				this.place3.removeSelectionListener(this.sync);
 				this.place3.removeModifyListener(this.sync);
 			}
@@ -422,10 +426,10 @@ public class LabelViewer {
 
 		this.field = new Combo(part, SWT.DROP_DOWN | SWT.READ_ONLY);
 		this.field.addKeyListener(klisten);
-		if ( this.schema != null ) {
+		if (this.schema != null) {
 			final List<AttributeDescriptor> types = this.schema.getAttributeDescriptors();
-			final List<String> typeStrings = new ArrayList<String>();
-			for ( final AttributeDescriptor attributeDescriptor : types ) {
+			final List<String> typeStrings = new ArrayList<>();
+			for (final AttributeDescriptor attributeDescriptor : types) {
 				typeStrings.add(attributeDescriptor.getLocalName());
 			}
 			this.field.setItems(typeStrings.toArray(new String[0]));
@@ -435,13 +439,13 @@ public class LabelViewer {
 		this.fonter = new FontEditor(part);
 
 		// determine which placement to use
-		if ( schema != null ) {
-			if ( SLDs.isLine(schema) ) {
+		if (schema != null) {
+			if (SLDs.isLine(schema)) {
 				pointPlacement = false;
 			} else {
 				pointPlacement = true;
 			}
-			if ( pointPlacement ) {
+			if (pointPlacement) {
 				// point placement (3 combos: AnchorPoint (Horiz, Vert) + Rotation)
 				initPlacementContentsPoint();
 			} else {
@@ -456,7 +460,7 @@ public class LabelViewer {
 	}
 
 	private void initPlacementContentsLine() {
-		if ( this.place == null ) {
+		if (this.place == null) {
 			this.place = new Combo(part, SWT.DROP_DOWN);
 			this.place.addKeyListener(klisten);
 		}
@@ -465,10 +469,10 @@ public class LabelViewer {
 		final String[] itemsO = new String[] { "0", "5", "10", "15", "20" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		this.place.setItems(itemsO);
 
-		if ( this.place2 != null ) {
+		if (this.place2 != null) {
 			this.place2.setVisible(false);
 		}
-		if ( this.place3 != null ) {
+		if (this.place3 != null) {
 			this.place3.setVisible(false);
 		}
 	}
@@ -478,14 +482,14 @@ public class LabelViewer {
 		final String[] itemsV = new String[] { "Bottom", "Middle", "Top" };
 		final String[] itemsR = new String[] { "0", "45", "90", "135", "180", "225", "270", "315", "360" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 
-		if ( this.place == null ) {
+		if (this.place == null) {
 			this.place = new Combo(part, SWT.DROP_DOWN);
 			this.place.addKeyListener(klisten);
 		}
 		this.place.setToolTipText("Vertical alignment");
 		this.place.setItems(itemsV);
 
-		if ( this.place2 == null ) {
+		if (this.place2 == null) {
 			this.place2 = new Combo(part, SWT.DROP_DOWN);
 			this.place2.addKeyListener(klisten);
 		}
@@ -493,7 +497,7 @@ public class LabelViewer {
 		this.place2.setItems(itemsH);
 		this.place2.setVisible(true);
 
-		if ( this.place3 == null ) {
+		if (this.place3 == null) {
 			this.place3 = new Combo(part, SWT.DROP_DOWN);
 			this.place3.addKeyListener(klisten);
 		}

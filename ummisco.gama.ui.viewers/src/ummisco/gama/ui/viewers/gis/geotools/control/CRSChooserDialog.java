@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'CRSChooserDialog.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CRSChooserDialog.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.control;
@@ -18,9 +17,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class CRSChooserDialog extends Dialog {
 
-	private final CRSChooser chooser = new CRSChooser();
-	private final CoordinateReferenceSystem initialValue;
-	private CoordinateReferenceSystem result;
+	final CRSChooser chooser = new CRSChooser();
+	final CoordinateReferenceSystem initialValue;
+	CoordinateReferenceSystem result;
 
 	public CRSChooserDialog(final Shell parentShell, final CoordinateReferenceSystem initialValue) {
 		super(parentShell);

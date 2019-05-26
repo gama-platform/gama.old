@@ -27,33 +27,35 @@ public class Utils {
 	}
 
 	public static ArrayList<File> filterFilesByExtensions(final List<File> inputList, final String... exts) {
-		final ArrayList<File> result = new ArrayList<File>();
+		final ArrayList<File> result = new ArrayList<>();
 		for (int i = 0; i < inputList.size(); i++) {
-			for (final String ext : exts)
-				if (inputList.get(i).getName().endsWith(ext))
+			for (final String ext : exts) {
+				if (inputList.get(i).getName().endsWith(ext)) {
 					result.add(inputList.get(i));
+				}
+			}
 		}
 		return result;
 	}
 
 	public static ArrayList<String> getConceptKeywords(final File file) throws IOException {
 		// returns the list of concept keywords
-		final ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<>();
 		String concept = "";
 
-		final FileInputStream fis = new FileInputStream(file);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		try (final FileInputStream fis = new FileInputStream(file);
+				final BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
 
-		String line = null;
+			String line = null;
 
-		while ((line = br.readLine()) != null) {
-			concept = Utils.findAndReturnRegex(line, "\\[//\\]: # \\(keyword\\|concept_(.*)\\)");
-			if (concept != "") {
-				result.add(concept);
-				concept = "";
+			while ((line = br.readLine()) != null) {
+				concept = Utils.findAndReturnRegex(line, "\\[//\\]: # \\(keyword\\|concept_(.*)\\)");
+				if (concept != "") {
+					result.add(concept);
+					concept = "";
+				}
 			}
 		}
-		br.close();
 
 		return result;
 	}

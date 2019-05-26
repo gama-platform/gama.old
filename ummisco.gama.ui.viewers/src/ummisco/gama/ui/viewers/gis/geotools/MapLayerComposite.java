@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'MapLayerComposite.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MapLayerComposite.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 
@@ -30,14 +29,12 @@ import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.control.MaplayerTableViewer;
 
 /**
- * Displays a list of the map layers in an associated {@linkplain JMapPane} and
- * provides controls to set the visibility, selection and style of each layer.
+ * Displays a list of the map layers in an associated {@linkplain JMapPane} and provides controls to set the visibility,
+ * selection and style of each layer.
  * <p>
- * Implementation note: DefaultMapContext stores its list of MapLayer objects in
- * rendering order, ie. the layer at index 0 is rendererd first, followed by
- * index 1 etc. MapLayerTable stores its layers in the reverse order since it is
- * more intuitive for the user to think of a layer being 'on top' of other
- * layers.
+ * Implementation note: DefaultMapContext stores its list of MapLayer objects in rendering order, ie. the layer at index
+ * 0 is rendererd first, followed by index 1 etc. MapLayerTable stores its layers in the reverse order since it is more
+ * intuitive for the user to think of a layer being 'on top' of other layers.
  *
  * @author Andrea Antonello (www.hydrologis.com)
  * @author Michael Bedward
@@ -52,8 +49,7 @@ public class MapLayerComposite extends Composite {
 	protected MaplayerTableViewer mapLayerTableViewer;
 
 	/**
-	 * Default constructor. A subsequent call to {@linkplain #setMapPane} will
-	 * be required.
+	 * Default constructor. A subsequent call to {@linkplain #setMapPane} will be required.
 	 */
 	public MapLayerComposite(final Composite parent, final int style) {
 		super(parent, style);
@@ -82,9 +78,8 @@ public class MapLayerComposite extends Composite {
 	}
 
 	/**
-	 * Add a new layer to those listed in the table. This method will be called
-	 * by the associated map pane automatically as part of the event sequence
-	 * when a new MapLayer is added to the pane's MapContext.
+	 * Add a new layer to those listed in the table. This method will be called by the associated map pane automatically
+	 * as part of the event sequence when a new MapLayer is added to the pane's MapContext.
 	 *
 	 * @param layer
 	 *            the map layer
@@ -94,9 +89,8 @@ public class MapLayerComposite extends Composite {
 	}
 
 	/**
-	 * Remove a layer from those listed in the table. This method will be called
-	 * by the associated map pane automatically as part of the event sequence
-	 * when a new MapLayer is removed from the pane's MapContext.
+	 * Remove a layer from those listed in the table. This method will be called by the associated map pane
+	 * automatically as part of the event sequence when a new MapLayer is removed from the pane's MapContext.
 	 *
 	 * @param layer
 	 *            the map layer
@@ -116,8 +110,8 @@ public class MapLayerComposite extends Composite {
 	}
 
 	/**
-	 * Called by the constructor. This method lays out the components that make
-	 * up the MapLayerTable and registers a mouse listener.
+	 * Called by the constructor. This method lays out the components that make up the MapLayerTable and registers a
+	 * mouse listener.
 	 */
 	private void init() {
 		setLayout(new GridLayout(1, false));
@@ -185,17 +179,15 @@ public class MapLayerComposite extends Composite {
 	}
 
 	/**
-	 * Handle a ListDataEvent signallying a drag-reordering of the map layers.
-	 * The event is published by the list model after the layers have been
-	 * reordered there.
+	 * Handle a ListDataEvent signallying a drag-reordering of the map layers. The event is published by the list model
+	 * after the layers have been reordered there.
 	 *
 	 * @param ev
 	 *            the event
 	 */
-	private void moveLayer(final int delta) {
+	void moveLayer(final int delta) {
 		final Layer selectedMapLayer = mapLayerTableViewer.getSelectedMapLayer();
-		if (selectedMapLayer == null)
-			return;
+		if (selectedMapLayer == null) { return; }
 		final List<Layer> layersList = mapLayerTableViewer.getLayersList();
 		final MapContent mapContent = pane.getMapContent();
 
@@ -203,18 +195,14 @@ public class MapLayerComposite extends Composite {
 
 		final int viewerIndex = layersList.indexOf(selectedMapLayer);
 		final int newViewerIndex = viewerIndex + delta;
-		if (newViewerIndex < 0 || newViewerIndex > layersList.size() - 1) {
-			return;
-		}
+		if (newViewerIndex < 0 || newViewerIndex > layersList.size() - 1) { return; }
 
 		/*
-		 * MapLayerTable stores layers in the reverse order to DefaultMapContext
-		 * (see comment in javadocs for this class)
+		 * MapLayerTable stores layers in the reverse order to DefaultMapContext (see comment in javadocs for this
+		 * class)
 		 */
 		final int newContextIndex = contextIndex - delta;
-		if (newContextIndex < 0 || newContextIndex > mapContent.layers().size() - 1) {
-			return;
-		}
+		if (newContextIndex < 0 || newContextIndex > mapContent.layers().size() - 1) { return; }
 
 		if (contextIndex != newContextIndex) {
 			mapContent.moveLayer(contextIndex, newContextIndex);
@@ -225,7 +213,7 @@ public class MapLayerComposite extends Composite {
 
 	}
 
-	private void onShowAllLayers() {
+	void onShowAllLayers() {
 		if (pane != null && pane.getMapContent() != null) {
 			for (final Layer layer : pane.getMapContent().layers()) {
 				if (!layer.isVisible()) {
@@ -237,7 +225,7 @@ public class MapLayerComposite extends Composite {
 		}
 	}
 
-	private void onHideAllLayers() {
+	void onHideAllLayers() {
 		if (pane != null && pane.getMapContent() != null) {
 			for (final Layer layer : pane.getMapContent().layers()) {
 				if (layer.isVisible()) {

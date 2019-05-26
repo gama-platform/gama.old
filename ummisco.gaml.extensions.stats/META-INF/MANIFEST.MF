@@ -11,3 +11,4 @@ Bundle-ClassPath: .,
  lib/colt.jar,
  lib/concurrent.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: ummisco.gaml.extensions.stats

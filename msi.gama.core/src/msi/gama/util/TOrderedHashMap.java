@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.TOrderedHashMap.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.TOrderedHashMap.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -48,7 +48,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	/**
 	 * Creates a new <code>THashMap</code> instance with a prime capacity equal to or greater than
 	 * <tt>initialCapacity</tt> and with the default load factor.
-	 * 
+	 *
 	 * @param initialCapacity
 	 *            an <code>int</code> value
 	 */
@@ -59,7 +59,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	/**
 	 * Creates a new <code>THashMap</code> instance with a prime capacity equal to or greater than
 	 * <tt>initialCapacity</tt> and with the specified load factor.
-	 * 
+	 *
 	 * @param initialCapacity
 	 *            an <code>int</code> value
 	 * @param loadFactor
@@ -71,7 +71,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	/**
 	 * Creates a new <code>THashMap</code> instance which contains the key/value pairs in <tt>map</tt>.
-	 * 
+	 *
 	 * @param map
 	 *            a <code>Map</code> value
 	 */
@@ -98,7 +98,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	/**
 	 * initializes the Object set of this hash table.
-	 * 
+	 *
 	 * @param initialCapacity
 	 *            an <code>int</code> value
 	 * @return an <code>int</code> value
@@ -216,8 +216,9 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			if (index == EMPTY) {
 				continue;
 			}
-			if (keys[index] != FREE && keys[index] != REMOVED
-					&& !procedure.execute((K) keys[index], values[index])) { return false; }
+			if (keys[index] != FREE && keys[index] != REMOVED && !procedure.execute((K) keys[index], values[index])) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -247,7 +248,8 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	@Override
 	public void clear() {
-		if (size() == 0) { return; // optimization
+		if (size() == 0) {
+			return; // optimization
 		}
 		super.clear();
 		Arrays.fill(_indicesByInsertOrder, EMPTY);
@@ -257,7 +259,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	/**
 	 * Inserts a key/value pair into the map.
-	 * 
+	 *
 	 * @param key
 	 *            an <code>Object</code> value
 	 * @param value
@@ -272,7 +274,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	/**
 	 * Inserts a key/value pair into the map if the specified key is not already associated with a value.
-	 * 
+	 *
 	 * @param key
 	 *            an <code>Object</code> value
 	 * @param value
@@ -288,7 +290,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	/**
 	 * Returns a Set view on the entries of the map.
-	 * 
+	 *
 	 * @return a <code>Set</code> value
 	 */
 	@Override
@@ -299,7 +301,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	/**
 	 * Returns a view on the values of the map.
-	 * 
+	 *
 	 * @return a <code>Collection</code> value
 	 */
 	@Override
@@ -310,7 +312,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	/**
 	 * returns a Set view on the keys of the map.
-	 * 
+	 *
 	 * @return a <code>Set</code> value
 	 */
 	@Override
@@ -386,7 +388,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			}
 
 			@Override
-			@SuppressWarnings ("unchecked")
+			@SuppressWarnings ({ "unchecked", "synthetic-access" })
 			public Entry objectAtIndex(final int index) {
 				return new Entry((K) _set[index], _values[index], index);
 			}
@@ -431,7 +433,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		}
 	}
 
-	private abstract class MapBackedView<E> extends AbstractSet<E> {
+	abstract class MapBackedView<E> extends AbstractSet<E> {
 
 		@Override
 		public abstract Iterator<E> iterator();
@@ -589,6 +591,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			return val;
 		}
 
+		@SuppressWarnings ("synthetic-access")
 		@Override
 		public V setValue(final V o) {
 			if (_values[index] != val) { throw new ConcurrentModificationException(); }
@@ -637,7 +640,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 		@Override
 		public boolean removeElement(final V value) {
-			final Object[] values = _values;
+			@SuppressWarnings ("synthetic-access") final Object[] values = _values;
 			final Object[] set = _set;
 
 			for (int i = values.length; i-- > 0;) {
@@ -653,19 +656,19 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		}
 	}
 
-	private abstract class THashIterator<T> implements Iterator<T> {
+	abstract class THashIterator<T> implements Iterator<T> {
 
 		/**
 		 * Create an instance of THashIterator over the values of the TObjectHash
 		 */
-		private THashIterator() {
+		THashIterator() {
 			_expectedSize = TOrderedHashMap.this.size();
 			_index = -1;
 		}
 
 		/**
 		 * Moves the iterator to the next Object and returns it.
-		 * 
+		 *
 		 * @return an <code>Object</code> value
 		 * @exception ConcurrentModificationException
 		 *                if the structure was changed using a method that isn't on this iterator.
@@ -682,7 +685,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 		/**
 		 * Returns the index of the next value in the data structure or a negative value if the iterator is exhausted.
-		 * 
+		 *
 		 * @return an <code>int</code> value
 		 * @exception ConcurrentModificationException
 		 *                if the underlying collection's size has been modified since the iterator was created.
@@ -709,7 +712,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 		/**
 		 * Returns true if the iterator can be advanced past its current location.
-		 * 
+		 *
 		 * @return a <code>boolean</code> value
 		 */
 		@Override

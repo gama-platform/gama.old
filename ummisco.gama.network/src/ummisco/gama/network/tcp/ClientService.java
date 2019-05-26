@@ -17,95 +17,92 @@ import ummisco.gama.network.common.socket.SocketService;
 
 public abstract class ClientService extends Thread implements SocketService {
 	private Socket socket;
-    private String server;
-    private int port;
-    private BufferedReader receiver;
-    private PrintWriter sender;
-    private boolean isAlive;
-    private IConnector modelConnector;
-	
-	
-    public ClientService(String server, int port, IConnector connector)
-    {
-    	this.modelConnector = connector;
-    	this.port = port;
-    	this.server = server;
-    }
-    public String getRemoteAddress()
-    {
-    	if(socket==null) return null;
-    	return this.socket.getInetAddress()+":"+this.port;
-    }
-    public String getLocalAddress()
-    {
-    	if(socket==null) return null;
-    	return this.socket.getLocalAddress()+":"+this.port;
-    }
-	
-	public void startService() throws UnknownHostException, IOException
-	{
-		socket = new Socket(this.server, this.port);
-		
-		isAlive = true;
-		
-		this.start();
-		
+	private final String server;
+	private final int port;
+	private BufferedReader receiver;
+	private PrintWriter sender;
+	private boolean isAlive;
+	// private IConnector modelConnector;
+
+	public ClientService(final String server, final int port, final IConnector connector) {
+		// this.modelConnector = connector;
+		this.port = port;
+		this.server = server;
 	}
-	
+
+	@Override
+	public String getRemoteAddress() {
+		if (socket == null) { return null; }
+		return this.socket.getInetAddress() + ":" + this.port;
+	}
+
+	@Override
+	public String getLocalAddress() {
+		if (socket == null) { return null; }
+		return this.socket.getLocalAddress() + ":" + this.port;
+	}
+
+	@Override
+	public void startService() throws UnknownHostException, IOException {
+		socket = new Socket(this.server, this.port);
+
+		isAlive = true;
+
+		this.start();
+
+	}
+
+	@Override
 	public void stopService() {
 		this.isAlive = false;
-		if(sender!=null)
-		   sender.close();
-	        try {
-	        	if(receiver!=null)
-	        		receiver.close();
-		        socket.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (sender != null) {
+			sender.close();
+		}
+		try {
+			if (receiver != null) {
+				receiver.close();
 			}
+			socket.close();
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
+
+	@Override
 	public boolean isOnline() {
 		return isAlive;
 	}
-	
-	@SuppressWarnings("unchecked")
+
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void run() {
 		try {
-			while(this.isAlive) {
-				String msg="";
+			while (this.isAlive) {
+				String msg = "";
 				receiver = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				msg = receiver.readLine();
 				msg = msg.replaceAll("@n@", "\n");
 				msg = msg.replaceAll("@b@@r@", "\b\r");
-				receivedMessage(this.socket.getInetAddress()+":"+this.port,  msg);
+				receivedMessage(this.socket.getInetAddress() + ":" + this.port, msg);
 			}
-		} catch(SocketTimeoutException e)
-		{
+		} catch (final SocketTimeoutException e) {
 			DEBUG.LOG("Socket timeout");
-		}catch(SocketException e)
-		{
+		} catch (final SocketException e) {
 			DEBUG.LOG("Socket closed");
-		} catch (IOException e1) {
-			DEBUG.LOG("Socket error"+e1);
+		} catch (final IOException e1) {
+			DEBUG.LOG("Socket error" + e1);
 		}
-
-     
 
 	}
 
 	@Override
-	public void sendMessage(String message) throws IOException {
-		if(socket == null ||!isOnline()) return;
-		sender = new PrintWriter(
-	              new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);	
-		message = message.replaceAll("\n", "@n@" );
-		message = message.replaceAll("\b\r", "@b@@r@" );
-		sender.println(message+"\n"); 
+	public void sendMessage(final String message) throws IOException {
+		if (socket == null || !isOnline()) { return; }
+		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+		final String msg = message.replaceAll("\n", "@n@").replaceAll("\b\r", "@b@@r@");
+		sender.println(msg + "\n");
 		sender.flush();
 	}
-	
-	
+
 }

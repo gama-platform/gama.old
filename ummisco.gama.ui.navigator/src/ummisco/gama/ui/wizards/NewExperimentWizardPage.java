@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.wizards;
@@ -35,8 +35,8 @@ import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 
 public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 
-	private Text modelChooser;
-	private String typeOfExperiment = AbstractNewModelWizard.GUI;
+	Text modelChooser;
+	String typeOfExperiment = AbstractNewModelWizard.GUI;
 
 	public NewExperimentWizardPage(final ISelection selection) {
 		super(selection);
@@ -118,10 +118,10 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 
 	/**
 	 * Uses the standard container selection dialog to choose the new value for the container field.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
-	private void handleBrowse() {
+	void handleBrowse() {
 		final IContainer p = ResourcesPlugin.getWorkspace().getRoot();
 		dialog = new FilteredResourcesSelectionDialog(getShell(), false, p, Resource.FILE);
 		dialog.setInitialPattern("*.gaml");

@@ -20,7 +20,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			context.emitError("GAML operators need to have at least one name", method);
 			return;
 		}
-		String name = op.value().length == 0 ? method.getSimpleName().toString() : op.value()[0];
+		final String name = op.value().length == 0 ? method.getSimpleName().toString() : op.value()[0];
 		verifyDoc(context, method, "operator " + name, op);
 		verifyTests(context, method, op);
 		final Set<Modifier> modifiers = method.getModifiers();
@@ -140,8 +140,9 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 	}
 
 	private void verifyTests(final ProcessorContext context, final Element method, final operator op) {
-		if (!hasTests(method, op))
+		if (!hasTests(method, op)) {
 			context.emitWarning("GAML: operator '" + op.value()[0] + "' is not tested", method);
+		}
 	}
 
 	@Override
@@ -151,7 +152,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 	protected static StringBuilder buildNAry(final StringBuilder sb, final String[] classes, final String name,
 			final String retClass, final boolean isStatic, final boolean scope) {
-		final String ret = checkPrim(retClass);
+		// final String ret = checkPrim(retClass);
 		final int start = isStatic ? 0 : 1;
 		final String firstArg = scope ? "s" : "";
 		if (isStatic) {

@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'JFileImageChooser.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JFileImageChooser.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 
@@ -24,9 +23,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A file chooser dialog for common raster image format files. It provides
- * static methods to display the dialog for opening or saving an image file with
- * basic validation of user input.
+ * A file chooser dialog for common raster image format files. It provides static methods to display the dialog for
+ * opening or saving an image file with basic validation of user input.
  *
  * <pre>
  * <code>
@@ -44,8 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  * </code>
  * </pre>
  *
- * The file formats offered by the dialog are a subset of those supported by
- * {@code ImageIO} on the host system.
+ * The file formats offered by the dialog are a subset of those supported by {@code ImageIO} on the host system.
  * <p>
  *
  * @see JFileDataStoreChooser
@@ -61,17 +58,17 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class JFileImageChooser {
 
-	private static enum FormatSpecifier {
+	enum FormatSpecifier {
 		TIF("tif", "TIFF image", "*.tif", "*.tiff"), //
 		BMP("bmp", "BMP image", "*.bmp"), //
 		GIF("gif", "GIF image", "*.gif"), //
 		JPG("jpg", "JPEG image", "*.jpg", "*.jpeg"), //
 		PNG("png", "PNG image", "*.png");
 
-		private String id;
-		private String[] suffixes;
+		String id;
+		String[] suffixes;
 
-		private FormatSpecifier(final String id, final String desc, final String... suffixes) {
+		FormatSpecifier(final String id, final String desc, final String... suffixes) {
 			this.id = id;
 			this.suffixes = new String[suffixes.length];
 			for (int i = 0; i < suffixes.length; i++) {
@@ -80,8 +77,8 @@ public class JFileImageChooser {
 		}
 	};
 
-	private static final Set<FormatSpecifier> supportedReaders = new TreeSet<FormatSpecifier>();
-	private static final Set<FormatSpecifier> supportedWriters = new TreeSet<FormatSpecifier>();
+	private static final Set<FormatSpecifier> supportedReaders = new TreeSet<>();
+	private static final Set<FormatSpecifier> supportedWriters = new TreeSet<>();
 	static {
 		for (final FormatSpecifier format : FormatSpecifier.values()) {
 			if (ImageIO.getImageReadersBySuffix(format.id).hasNext()) {
@@ -96,7 +93,7 @@ public class JFileImageChooser {
 
 	private final FileDialog fileDialog;
 
-	private final List<String> extentionsList = new ArrayList<String>();
+	private final List<String> extentionsList = new ArrayList<>();
 
 	/*
 	 * Create a new image file chooser
@@ -113,13 +110,13 @@ public class JFileImageChooser {
 	 */
 	public JFileImageChooser(final Shell parent, final int style, final File workingDir) {
 		fileDialog = new FileDialog(parent, style);
-		if (workingDir != null)
+		if (workingDir != null) {
 			fileDialog.setFilterPath(workingDir.getAbsolutePath());
+		}
 	}
 
 	/**
-	 * Set the file filters. This is a helper for the static showXXXXFile
-	 * methods.
+	 * Set the file filters. This is a helper for the static showXXXXFile methods.
 	 *
 	 * @param supportedFormats
 	 *            the set of file formats that will be offered

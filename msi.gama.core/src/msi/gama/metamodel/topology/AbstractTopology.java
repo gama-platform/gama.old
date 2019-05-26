@@ -351,21 +351,21 @@ public abstract class AbstractTopology implements ITopology {
 		return places;
 	}
 
-	protected void insertSpecies(IScope scope, ISpecies species) {
+	protected void insertSpecies(final IScope scope, final ISpecies species) {
 		if (!this.speciesInserted.contains(species)) {
 			this.speciesInserted.add(species);
-			for (IAgent ag : species.getPopulation(scope)) {
+			for (final IAgent ag : species.getPopulation(scope)) {
 				getSpatialIndex().insert(ag);
 			}
 		}
 	}
 
-	protected void insertAgents(IScope scope, final IAgentFilter filter) {
+	protected void insertAgents(final IScope scope, final IAgentFilter filter) {
 		if (GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
-			if (filter.getSpecies() != null)
+			if (filter.getSpecies() != null) {
 				insertSpecies(scope, filter.getSpecies());
-			else {
-				for (IAgent ag : filter.getPopulation(scope)) {
+			} else {
+				for (final IAgent ag : filter.getPopulation(scope)) {
 					insertSpecies(scope, ag.getSpecies());
 				}
 			}
@@ -382,13 +382,12 @@ public abstract class AbstractTopology implements ITopology {
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Map<Geometry, IAgent> agents = getTororoidalAgents(source, scope, filter);
 		agents.remove(g0);
-		if (agents.keySet().size() <= number)
-			return agents.values();
-		List<Geometry> ggs = new ArrayList<>(agents.keySet());
+		if (agents.keySet().size() <= number) { return agents.values(); }
+		final List<Geometry> ggs = new ArrayList<>(agents.keySet());
 		scope.getRandom().shuffle(ggs);
 		final Ordering<Geometry> ordering = Ordering.natural().onResultOf(input -> g0.distance(input));
-		IList<IAgent> shapes = GamaListFactory.create(Types.AGENT);
-		for (Geometry g : ordering.leastOf(ggs, number)) {
+		final IList<IAgent> shapes = GamaListFactory.create(Types.AGENT);
+		for (final Geometry g : ordering.leastOf(ggs, number)) {
 			shapes.add(agents.get(g));
 		}
 		return shapes;
@@ -453,16 +452,19 @@ public abstract class AbstractTopology implements ITopology {
 		return result;
 	}
 
-	public Map<Geometry, IAgent> getTororoidalAgents(final IShape source, final IScope scope, final IAgentFilter filter) {
+	public Map<Geometry, IAgent> getTororoidalAgents(final IShape source, final IScope scope,
+			final IAgentFilter filter) {
 		return toroidalGeoms(scope, getFilteredAgents(source, scope, filter));
 	}
 
-	public static IContainer<?, ? extends IShape> getFilteredAgents(final IShape source, final IScope scope, final IAgentFilter filter) {
+	@SuppressWarnings ("unchecked")
+	public static IContainer<?, ? extends IShape> getFilteredAgents(final IShape source, final IScope scope,
+			final IAgentFilter filter) {
 		IContainer<?, ? extends IShape> shps;
 		if (filter != null) {
-			if (filter.hasAgentList())
+			if (filter.hasAgentList()) {
 				shps = filter.getAgents(scope);
-			else {
+			} else {
 				shps = scope.getSimulation().getAgents(scope);
 				filter.filter(scope, source, (Collection<? extends IShape>) shps);
 			}
@@ -483,7 +485,7 @@ public abstract class AbstractTopology implements ITopology {
 
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Set<IAgent> agents = new THashSet<>();
-		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(source,scope, filter);
+		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(source, scope, filter);
 		final IAgent sourceAgent = source.getAgent();
 		for (final Geometry g1 : agentsMap.keySet()) {
 			final IAgent ag = agentsMap.get(g1);
@@ -538,7 +540,7 @@ public abstract class AbstractTopology implements ITopology {
 		for (final IShape sourceSub : source.getGeometries()) {
 			final Geometry sourceTo = returnToroidalGeom(sourceSub);
 			final PreparedGeometry pg = pgFact.create(sourceTo);
-			final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(source,scope, f);
+			final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(source, scope, f);
 			for (final Geometry sh : agentsMap.keySet()) {
 				final IAgent ag = agentsMap.get(sh);
 				if (ag != null && !ag.dead()) {
@@ -567,8 +569,9 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	protected double[][] getAdjustedXYVector() {
-		if (adjustedXYVector == null)
+		if (adjustedXYVector == null) {
 			createVirtualEnvironments();
+		}
 		return adjustedXYVector;
 	}
 
