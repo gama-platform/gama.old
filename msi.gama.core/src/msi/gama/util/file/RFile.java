@@ -1,18 +1,19 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.RFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.RFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -51,19 +52,21 @@ public class RFile extends GamaFile<GamaMap, Object> {
 	// GamaMap<String, IList>, IList, String, IList
 	private final IContainer parameters;
 
-	@doc (value= "This file constructor allows to read a R file",
-			examples = {
-					@example(value = "file f <-R_file(\"file.r\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a R file",
+			examples = { @example (
+					value = "file f <-R_file(\"file.r\");",
+					isExecutable = false) })
 	public RFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 		parameters = null;
 	}
 
-	@doc (value= "This file constructor allows to store a map in a R file (it does not save it - just store it in memory)",
-			examples = {
-					@example(value = "file f <-R_file(\"file.r\",map([\"param1\"::1.0,\"param2\"::10.0 ]));", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to store a map in a R file (it does not save it - just store it in memory)",
+			examples = { @example (
+					value = "file f <-R_file(\"file.r\",map([\"param1\"::1.0,\"param2\"::10.0 ]));",
+					isExecutable = false) })
 
 	public RFile(final IScope scope, final String pathName, final GamaMap p) {
 		super(scope, pathName, p);
@@ -85,7 +88,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
@@ -131,7 +134,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 											// true);
 			if (DEBUG.IS_ON()) {
 				DEBUG.OUT("Stats.R_compute_param.RScript:" + RPath);
-				DEBUG.OUT("Stats.R_compute_param.Param:" + vectorParam.toString());
+				DEBUG.OUT("Stats.R_compute_param.Param:" + Arrays.toString(vectorParam));
 				DEBUG.OUT("Stats.R_compute_param.RFile:" + RFile);
 				DEBUG.OUT("Stats.R_compute_param.fullPath:" + fullPath);
 			}
@@ -168,7 +171,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 				// DEBUG.OUT("Name: '" + name + "'");
 				if (DEBUG.IS_ON()) {
 					DEBUG.OUT("Stats.R_compute_param.caller.Name: '" + name + "' length: " + results.length
-							+ " - Value: " + results.toString());
+							+ " - Value: " + Arrays.toString(results));
 				}
 
 				result.put(name, GamaListFactory.create(scope, Types.NO_TYPE, results));
@@ -241,7 +244,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 				// }
 				if (DEBUG.IS_ON()) {
 					DEBUG.OUT("Stats.R_compute_param.caller.Name: '" + name + "' length: " + results.length
-							+ " - Value: " + results.toString());
+							+ " - Value: " + Arrays.toString(results));
 				}
 				result.put(name, GamaListFactory.createWithoutCasting(Types.NO_TYPE, results));
 			}
@@ -269,7 +272,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 
 	/**
 	 * Method getType()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#getGamlType()
 	 */
 	@Override

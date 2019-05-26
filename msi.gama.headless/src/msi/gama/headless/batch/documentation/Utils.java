@@ -50,7 +50,7 @@ public class Utils {
 
 			while ((line = br.readLine()) != null) {
 				concept = Utils.findAndReturnRegex(line, "\\[//\\]: # \\(keyword\\|concept_(.*)\\)");
-				if (concept != "") {
+				if (!"".equals(concept)) {
 					result.add(concept);
 					concept = "";
 				}

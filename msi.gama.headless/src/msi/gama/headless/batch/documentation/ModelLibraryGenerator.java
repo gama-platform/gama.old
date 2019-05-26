@@ -794,7 +794,7 @@ public class ModelLibraryGenerator {
 			// search for a line that starts with "import"
 			while (line != null) {
 				final String regexMatch = Utils.findAndReturnRegex(line, "import \"(.*[^\"])\"");
-				if (regexMatch != "") {
+				if (!"".equals(regexMatch)) {
 					results2.add(0, file.getParentFile().getAbsolutePath().replace("\\", "/") + "/" + regexMatch);
 					results2 = searchInputListRecursive(
 							new File(file.getParentFile().getAbsolutePath().replace("\\", "/") + "/" + regexMatch),

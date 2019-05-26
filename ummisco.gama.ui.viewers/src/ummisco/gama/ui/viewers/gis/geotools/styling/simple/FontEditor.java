@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
@@ -16,7 +16,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -27,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * A "button" with an icon/text that pops up the font window.
  * </p>
- * 
+ *
  * @author aalam
  * @since 0.6.0
  *
@@ -37,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class FontEditor {
 
-	Image fImage = null;
+	// Image fImage = null;
 	RGB fColorValue;
 	Color fColor[] = null;
 	Font fFont[] = null;
@@ -69,7 +68,7 @@ public class FontEditor {
 		labelFontDialog = new FontDialog(new Shell());
 		labelFontDialog.setText("Choose a Font"); //$NON-NLS-1$
 
-		fButton.setImage(fImage);
+		// fButton.setImage(fImage);
 		fButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -102,10 +101,10 @@ public class FontEditor {
 		});
 
 		fButton.addDisposeListener(event -> {
-			if (fImage != null) {
-				fImage.dispose();
-				fImage = null;
-			}
+			// if (fImage != null) {
+			// fImage.dispose();
+			// fImage = null;
+			// }
 			if (fColor != null) {
 				if (fColor[0] != null) {
 					fColor[0].dispose();
@@ -147,7 +146,7 @@ public class FontEditor {
 
 	/**
 	 * Returns the currently selected font object
-	 * 
+	 *
 	 * @return Font
 	 */
 	public Font getFont() {

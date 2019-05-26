@@ -69,17 +69,14 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		String str = "";
 		try (InputStream is = resourceSet.getURIConverter().createInputStream(originalURI);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-			if (is != null) {
-				boolean tagsFound = false;
-				while (!tagsFound && (str = reader.readLine()) != null) {
-					tagsFound = str.contains("Tags: ");
-				}
-				if (tagsFound) {
-					tags = new HashSet<>(
-							asList(split(uncapitalize(deleteWhitespace(substringAfter(str, "Tags: "))), ',')));
-				}
+			boolean tagsFound = false;
+			while (!tagsFound && (str = reader.readLine()) != null) {
+				tagsFound = str.contains("Tags: ");
 			}
-		} catch (IOException e1) {
+			if (tagsFound) {
+				tags = new HashSet<>(asList(split(uncapitalize(deleteWhitespace(substringAfter(str, "Tags: "))), ',')));
+			}
+		} catch (final IOException e1) {
 			e1.printStackTrace();
 		}
 

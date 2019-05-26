@@ -938,6 +938,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		if (is_probabilistic_choice) {
 			if (!temp_plan.isEmpty()) {
+				/**
+				 * TODO AD BUG: Casting impossible. temp_plan contient des BDIPlan, pas des SimpleBdiPlanStatement
+				 */
 				for (final Object statement : temp_plan) {
 					if (((SimpleBdiPlanStatement) statement).hasFacet(PRIORITY)) {
 						priorities.add(msi.gaml.operators.Cast.asFloat(scope,
@@ -1046,6 +1049,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (is_probabilistic_choice) {
 			if (!temp_norm.isEmpty()) {
 				for (final Object statement : temp_norm) {
+					/**
+					 * TODO AD BUG: temp_norm contient des Norm, pas des NormStatement ou des SimpleBdiStatement.. .
+					 * Casting IMPOSSIBLE
+					 */
 					if (((NormStatement) statement).hasFacet(PRIORITY)) {
 						priorities.add(msi.gaml.operators.Cast.asFloat(scope,
 								((SimpleBdiPlanStatement) statement).getPriorityExpression().value(scope)));
@@ -2605,6 +2612,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Predicate) (scope.hasArg("old_predicate") ? scope.getArg("old_predicate", PredicateType.id) : null);
 		boolean ok = true;
 		if (oldPredicate != null) {
+			/**
+			 * TODO AD BUG: ATTENTION !! Predicate is incompatible with expected argument type MentalState
+			 */
 			ok = getBase(scope, BELIEF_BASE).remove(oldPredicate);
 		} else {
 			ok = false;
@@ -2614,6 +2624,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (newPredicate != null) {
 			final MentalState temp = new MentalState("Belief", newPredicate);
 			// Predicate current_intention = currentIntention(scope);
+			/**
+			 * TODO AD BUG: ATTENTION !! Predicate is incompatible with expected argument type MentalState
+			 */
 			if (getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(newPredicate)) {
 				removeFromBase(scope, temp, DESIRE_BASE);
 				removeFromBase(scope, temp, INTENTION_BASE);

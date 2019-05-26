@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'JDataStorePage.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JDataStorePage.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.control;
@@ -27,7 +26,7 @@ import org.geotools.data.Parameter;
 
 /**
  * Data store wizard page for the {@link JDataStoreWizard data store wizard}.
- * 
+ *
  * @author Andrea Antonello (www.hydrologis.com)
  *
  *
@@ -43,7 +42,7 @@ public class JDataStorePage extends WizardPage {
 	protected DataStoreFactorySpi format;
 
 	/** Map of user interface ParamFields displayed to the user */
-	private final Map<Param, ParamField> fields = new HashMap<Param, ParamField>();
+	private final Map<Param, ParamField> fields = new HashMap<>();
 
 	/** Connection params for datastore */
 	protected Map<String, Object> connectionParameters;
@@ -55,8 +54,10 @@ public class JDataStorePage extends WizardPage {
 		this(format, null);
 	}
 
-	public JDataStorePage(final DataStoreFactorySpi format, Map<String, Object> params) {
+	public JDataStorePage(final DataStoreFactorySpi format, final Map<String, Object> prms) {
+
 		super(ID);
+		Map<String, Object> params = prms;
 		if (format != null) {
 			setTitle(format.getDisplayName());
 			setDescription(format.getDescription());
@@ -64,7 +65,7 @@ public class JDataStorePage extends WizardPage {
 
 		this.format = format;
 		if (params == null) {
-			params = new HashMap<String, Object>();
+			params = new HashMap<>();
 			if (format != null) {
 				for (final Param param : format.getParametersInfo()) {
 					params.put(param.key, param.sample);
@@ -138,8 +139,7 @@ public class JDataStorePage extends WizardPage {
 			Object value = null;
 			try {
 				value = param.lookUp(connectionParameters);
-			} catch (final IOException e) {
-			}
+			} catch (final IOException e) {}
 			if (value == null && param.required) {
 				value = param.sample;
 			}

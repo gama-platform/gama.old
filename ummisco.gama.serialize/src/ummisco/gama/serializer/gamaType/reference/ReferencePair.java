@@ -8,22 +8,24 @@ import msi.gama.util.IReference;
 import msi.gaml.types.Types;
 import ummisco.gama.serializer.gamaType.reduced.GamaPairReducer;
 
-public class ReferencePair extends GamaPair implements IReference {
+public class ReferencePair extends GamaPair<Object, Object> implements IReference {
 
 	ArrayList<AgentAttribute> agtAttr;
-	
+
 	GamaPairReducer pairReducer;
 
-	public ReferencePair(GamaPairReducer p) {
+	public ReferencePair(final GamaPairReducer p) {
 		super(null, null, Types.NO_TYPE, Types.NO_TYPE);
-		agtAttr = new ArrayList<AgentAttribute>();
+		agtAttr = new ArrayList<>();
 		pairReducer = p;
-	}	
-	
-	public GamaPairReducer getPairReducer() {return pairReducer;}
-		
+	}
+
+	public GamaPairReducer getPairReducer() {
+		return pairReducer;
+	}
+
 	@Override
-	public Object constructReferencedObject(SimulationAgent sim) {
+	public Object constructReferencedObject(final SimulationAgent sim) {
 		pairReducer.unreferenceReducer(sim);
 		return pairReducer.constructObject();
 	}
@@ -33,10 +35,12 @@ public class ReferencePair extends GamaPair implements IReference {
 		return agtAttr;
 	}
 
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        else
-        	return false;
-    }
+	@Override
+	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

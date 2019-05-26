@@ -27,6 +27,9 @@ Bundle-ActivationPolicy: lazy
 Export-Package: ummisco.gama.ui.commands,
  ummisco.gama.ui.metadata,
  ummisco.gama.ui.navigator,
- ummisco.gama.ui.navigator.contents
+ ummisco.gama.ui.navigator.actions,
+ ummisco.gama.ui.navigator.contents,
+ ummisco.gama.ui.navigator.properties,
+ ummisco.gama.ui.wizards
 Import-Package: org.eclipse.core.filesystem
 Automatic-Module-Name: ummisco.gama.ui.navigator

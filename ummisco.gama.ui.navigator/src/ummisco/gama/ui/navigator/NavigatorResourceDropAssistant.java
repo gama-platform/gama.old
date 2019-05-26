@@ -70,13 +70,19 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	public IStatus validateDrop(final Object target, final int aDropOperation, final TransferData transferType) {
 		final IResource resource = ResourceManager.getResource(target);
 		if (!(target instanceof TopLevelFolder)) {
-			if (resource == null) { return WorkbenchNavigatorPlugin.createStatus(IStatus.INFO, 0,
-					WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource, null); }
-			if (!resource.isAccessible()) { return WorkbenchNavigatorPlugin.createErrorStatus(0,
-					WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject, null); }
+			if (resource == null) {
+				return WorkbenchNavigatorPlugin.createStatus(IStatus.INFO, 0,
+						WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource, null);
+			}
+			if (!resource.isAccessible()) {
+				return WorkbenchNavigatorPlugin.createErrorStatus(0,
+						WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject, null);
+			}
 			final IContainer destination = getActualTarget(resource);
-			if (destination.getType() == IResource.ROOT) { return WorkbenchNavigatorPlugin.createErrorStatus(0,
-					WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings, null); }
+			if (destination.getType() == IResource.ROOT) {
+				return WorkbenchNavigatorPlugin.createErrorStatus(0,
+						WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings, null);
+			}
 		}
 		String message = null;
 		// drag within Eclipse?
@@ -99,9 +105,9 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 						operation = new MoveFilesAndFoldersOperation(getShell());
 					}
 					final IContainer destination = getActualTarget(resource);
-					if (destination == null)
+					if (destination == null) {
 						message = "Not permitted";
-					else if (operation.validateDestination(destination, selectedResources) != null) {
+					} else if (operation.validateDestination(destination, selectedResources) != null) {
 						operation.setVirtualFolders(true);
 						message = operation.validateDestination(destination, selectedResources);
 					}
@@ -118,31 +124,28 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 			}
 			final CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
 			final IContainer destination = getActualTarget(resource);
-			if (destination == null)
+			if (destination == null) {
 				message = "Not permitted";
-			else
+			} else {
 				message = copyOperation.validateImportDestination(destination, sourceNames);
+			}
 		}
 		if (message != null) { return WorkbenchNavigatorPlugin.createErrorStatus(0, message, null); }
 		return Status.OK_STATUS;
 	}
 
 	private boolean allProjects(final IResource[] res) {
-		if (res == null || res.length == 0)
-			return false;
-		for (int i = 0; i < res.length; i++) {
-			if (res[i].getType() != IResource.PROJECT)
-				return false;
+		if (res == null || res.length == 0) { return false; }
+		for (final IResource re : res) {
+			if (re.getType() != IResource.PROJECT) { return false; }
 		}
 		return true;
 	}
 
 	private boolean anyProjects(final IResource[] res) {
-		if (res == null || res.length == 0)
-			return false;
-		for (int i = 0; i < res.length; i++) {
-			if (res[i].getType() == IResource.PROJECT)
-				return true;
+		if (res == null || res.length == 0) { return false; }
+		for (final IResource re : res) {
+			if (re.getType() == IResource.PROJECT) { return true; }
 		}
 		return false;
 	}
@@ -191,23 +194,29 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	private IStatus performProjectCopy(final CommonDropAdapter aDropAdapter, final Shell shell,
 			final IResource[] resources) {
 		ResourceManager.setSelectedFolder(aDropAdapter.getCurrentTarget());
-		for (int i = 0; i < resources.length; i++) {
+		for (final IResource resource : resources) {
 			final CopyProjectOperation operation = new CopyProjectOperation(shell);
-			operation.copyProject((IProject) resources[i]);
+			operation.copyProject((IProject) resource);
 		}
 		return null;
 	}
 
 	@Override
 	public IStatus validatePluginTransferDrop(final IStructuredSelection aDragSelection, final Object aDropTarget) {
-		if (!ResourceManager.isResource(aDropTarget)) { return WorkbenchNavigatorPlugin.createStatus(IStatus.INFO, 0,
-				WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource, null); }
+		if (!ResourceManager.isResource(aDropTarget)) {
+			return WorkbenchNavigatorPlugin.createStatus(IStatus.INFO, 0,
+					WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource, null);
+		}
 		final IResource resource = ResourceManager.getResource(aDropTarget);
-		if (!resource.isAccessible()) { return WorkbenchNavigatorPlugin.createErrorStatus(0,
-				WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject, null); }
+		if (!resource.isAccessible()) {
+			return WorkbenchNavigatorPlugin.createErrorStatus(0,
+					WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject, null);
+		}
 		final IContainer destination = getActualTarget(resource);
-		if (destination.getType() == IResource.ROOT) { return WorkbenchNavigatorPlugin.createErrorStatus(0,
-				WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings, null); }
+		if (destination.getType() == IResource.ROOT) {
+			return WorkbenchNavigatorPlugin.createErrorStatus(0,
+					WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings, null);
+		}
 
 		final IResource[] selectedResources = getSelectedResources(aDragSelection);
 
@@ -247,8 +256,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	 * enabled, the target is also the parent.
 	 */
 	private IContainer getActualTarget(final IResource mouseTarget) {
-		if (mouseTarget == null)
-			return null;
+		if (mouseTarget == null) { return null; }
 		/* if cursor is on a file, return the parent */
 		if (mouseTarget.getType() == IResource.FILE) { return mouseTarget.getParent(); }
 		/* otherwise the mouseTarget is the real target */
@@ -263,8 +271,9 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	private IResource[] getSelectedResources() {
 
 		final ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-		if (selection instanceof IStructuredSelection) { return getSelectedResources(
-				(IStructuredSelection) selection); }
+		if (selection instanceof IStructuredSelection) {
+			return getSelectedResources((IStructuredSelection) selection);
+		}
 		return NO_RESOURCES;
 	}
 
@@ -274,7 +283,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources(final IStructuredSelection selection) {
-		final ArrayList<IResource> selectedResources = new ArrayList<IResource>();
+		final ArrayList<IResource> selectedResources = new ArrayList<>();
 
 		for (final Iterator<?> i = selection.iterator(); i.hasNext();) {
 			final IResource r = ResourceManager.getResource(i.next());
@@ -300,8 +309,8 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 		boolean shouldLinkAutomatically = false;
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
-			for (int i = 0; i < sources.length; i++) {
-				if (sources[i].getType() != IResource.FILE && sources[i].getLocation() != null) {
+			for (final IResource source : sources) {
+				if (source.getType() != IResource.FILE && source.getLocation() != null) {
 					// If the source is a folder, but the location is null (a
 					// broken link, for example),
 					// we still generate a link automatically (the best option).
@@ -319,8 +328,8 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 			operation.copyResources(sources, target);
 		} else {
 			boolean allSourceAreLinksOrVirtualFolders = true;
-			for (int i = 0; i < sources.length; i++) {
-				if (!sources[i].isVirtual() && !sources[i].isLinked()) {
+			for (final IResource source : sources) {
+				if (!source.isVirtual() && !source.isLinked()) {
 					allSourceAreLinksOrVirtualFolders = false;
 					break;
 				}
@@ -338,19 +347,25 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 							new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
 					dialog.setResource(target);
 					if (dialog.open() == Window.OK) {
-						if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
+						if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS) {
 							operation.setVirtualFolders(true);
-						if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
+						}
+						if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK) {
 							operation.setCreateLinks(true);
-						if (dialog.getVariable() != null)
+						}
+						if (dialog.getVariable() != null) {
 							operation.setRelativeVariable(dialog.getVariable());
+						}
 						operation.copyResources(sources, target);
-					} else
+					} else {
 						return problems;
-				} else
+					}
+				} else {
 					operation.copyResources(sources, target);
-			} else
+				}
+			} else {
 				operation.copyResources(sources, target);
+			}
 		}
 
 		return problems;
@@ -359,7 +374,8 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	/**
 	 * Performs a resource move
 	 */
-	private IStatus performResourceMove(final CommonDropAdapter dropAdapter, IResource[] sources) {
+	private IStatus performResourceMove(final CommonDropAdapter dropAdapter, final IResource[] src) {
+		IResource[] sources = src;
 		final MultiStatus problems =
 				new MultiStatus(PlatformUI.PLUGIN_ID, 1, WorkbenchNavigatorMessages.DropAdapter_problemsMoving, null);
 		mergeStatus(problems, validateTarget(dropAdapter.getCurrentTarget(), dropAdapter.getCurrentTransfer(),
@@ -370,8 +386,8 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 		boolean shouldLinkAutomatically = false;
 		if (target.isVirtual()) {
 			shouldLinkAutomatically = true;
-			for (int i = 0; i < sources.length; i++) {
-				if (sources[i].isVirtual() || sources[i].isLinked()) {
+			for (final IResource source : sources) {
+				if (source.isVirtual() || source.isLinked()) {
 					shouldLinkAutomatically = false;
 					break;
 				}
@@ -406,8 +422,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 					}
 				};
 
-				if (returnStatus != null)
-					return returnStatus;
+				if (returnStatus != null) { return returnStatus; }
 
 				try {
 					PlatformUI.getWorkbench().getProgressService().run(false, false, checkOp);
@@ -421,8 +436,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 					final Dialog dialog = RefactoringUI.createLightWeightStatusDialog(refactoringStatus, getShell(),
 							WorkbenchNavigatorMessages.MoveResourceAction_title);
 					final int result = dialog.open();
-					if (result != IStatus.OK)
-						return Status.CANCEL_STATUS;
+					if (result != IStatus.OK) { return Status.CANCEL_STATUS; }
 				}
 
 				final PerformRefactoringOperation op =
@@ -440,8 +454,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 					}
 				};
 
-				if (returnStatus != null)
-					return returnStatus;
+				if (returnStatus != null) { return returnStatus; }
 
 				try {
 					PlatformUI.getWorkbench().getProgressService().run(false, false, refactorOp);
@@ -485,14 +498,20 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	 * Ensures that the drop target meets certain criteria
 	 */
 	private IStatus validateTarget(final Object target, final TransferData transferType, final int dropOperation) {
-		if (!ResourceManager.isResource(target)) { return WorkbenchNavigatorPlugin
-				.createInfoStatus(WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource); }
+		if (!ResourceManager.isResource(target)) {
+			return WorkbenchNavigatorPlugin
+					.createInfoStatus(WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource);
+		}
 		final IResource resource = ResourceManager.getResource(target);
-		if (!resource.isAccessible()) { return WorkbenchNavigatorPlugin
-				.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject); }
+		if (!resource.isAccessible()) {
+			return WorkbenchNavigatorPlugin
+					.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject);
+		}
 		final IContainer destination = getActualTarget(resource);
-		if (destination.getType() == IResource.ROOT) { return WorkbenchNavigatorPlugin
-				.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings); }
+		if (destination.getType() == IResource.ROOT) {
+			return WorkbenchNavigatorPlugin
+					.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings);
+		}
 		String message = null;
 		// drag within Eclipse?
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {

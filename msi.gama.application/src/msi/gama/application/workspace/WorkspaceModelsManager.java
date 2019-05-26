@@ -468,7 +468,7 @@ public class WorkspaceModelsManager {
 		if ( dotFile.length == 0 ) { // no .project file
 			final File[] files = folder.listFiles();
 			if ( files != null ) {
-				for ( final File f : folder.listFiles() ) {
+				for ( final File f : files ) {
 					findProjects(f, found);
 				}
 			}
@@ -631,12 +631,15 @@ public class WorkspaceModelsManager {
 	}
 
 	public boolean isGamaProject(final File f) throws CoreException {
-		for ( final String s : f.list() ) {
-			if ( s.equals(".project") ) {
-				IPath p = new Path(f.getAbsolutePath());
-				p = p.append(".project");
-				final IProjectDescription pd = ResourcesPlugin.getWorkspace().loadProjectDescription(p);
-				if ( pd.hasNature(this.GAMA_NATURE) ) { return true; }
+		final String[] list = f.list();
+		if ( list != null ) {
+			for ( final String s : list ) {
+				if ( s.equals(".project") ) {
+					IPath p = new Path(f.getAbsolutePath());
+					p = p.append(".project");
+					final IProjectDescription pd = ResourcesPlugin.getWorkspace().loadProjectDescription(p);
+					if ( pd.hasNature(this.GAMA_NATURE) ) { return true; }
+				}
 			}
 		}
 		return false;

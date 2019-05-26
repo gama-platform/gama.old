@@ -175,24 +175,24 @@ public abstract class GamlAccessContents implements IPopupProvider {
 					while (j < sortedElements.length) {
 						final IGamlDescription element = sortedElements[j];
 						GamlAccessEntry entry = null;
-						if (filter.length() == 0) {
-							if (i == 0) {
-								entry = new GamlAccessEntry(element, provider, new int[0][0], new int[0][0],
-										GamlAccessEntry.MATCH_PERFECT);
+						// if (filter.length() == 0) {
+						// if (i == 0) {
+						// entry = new GamlAccessEntry(element, provider, new int[0][0], new int[0][0],
+						// GamlAccessEntry.MATCH_PERFECT);
+						// }
+						// } else {
+						final GamlAccessEntry possibleMatch = match(element, filter, provider);
+						// We only have limited space so only display
+						// excellent filter matches (Bug 398455)
+						if (possibleMatch != null) {
+							if (possibleMatch.getMatchQuality() <= GamlAccessEntry.MATCH_EXCELLENT) {
+								entry = possibleMatch;
+							} else {
+								poorFilterMatches.add(possibleMatch);
 							}
-						} else {
-							final GamlAccessEntry possibleMatch = match(element, filter, provider);
-							// We only have limited space so only display
-							// excellent filter matches (Bug 398455)
-							if (possibleMatch != null) {
-								if (possibleMatch.getMatchQuality() <= GamlAccessEntry.MATCH_EXCELLENT) {
-									entry = possibleMatch;
-								} else {
-									poorFilterMatches.add(possibleMatch);
-								}
-							}
-
 						}
+
+						// }
 						if (entryEnabled(provider, entry)) {
 							entries[i].add(entry);
 						}

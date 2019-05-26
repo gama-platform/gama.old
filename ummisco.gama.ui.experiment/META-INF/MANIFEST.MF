@@ -21,9 +21,18 @@ Require-Bundle: msi.gama.application;bundle-version="1.7.0",
  org.eclipse.ui,
  org.eclipse.core.expressions,
  org.eclipse.core.commands
-Export-Package: ummisco.gama.ui.menus,
+Export-Package: ummisco.gama.ui.activator,
+ ummisco.gama.ui.commands,
+ ummisco.gama.ui.controls,
+ ummisco.gama.ui.experiment.parameters,
+ ummisco.gama.ui.factories,
+ ummisco.gama.ui.menus,
+ ummisco.gama.ui.perspective,
  ummisco.gama.ui.views,
- ummisco.gama.ui.views.displays
+ ummisco.gama.ui.views.console,
+ ummisco.gama.ui.views.displays,
+ ummisco.gama.ui.views.inspectors,
+ ummisco.gama.ui.views.user
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ummisco.gama.ui.activator.ExperimentUIActivator
 Automatic-Module-Name: ummisco.gama.ui.experiment

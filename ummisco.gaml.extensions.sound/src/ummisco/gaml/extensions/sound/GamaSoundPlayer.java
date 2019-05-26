@@ -68,7 +68,7 @@ public class GamaSoundPlayer {
 	Boolean repeat = false;
 
 	// assure that we don't repeat playing a music file on an already dead agent
-	Boolean agentDiedOrSimDisposed = false;
+	volatile boolean agentDiedOrSimDisposed = false;
 
 	Boolean endOfMedia = false;
 	Boolean playerStopped = false;
@@ -79,13 +79,12 @@ public class GamaSoundPlayer {
 	}
 
 	void repeatSound(final IScope scope) {
-		synchronized (agentDiedOrSimDisposed) {
-			if (!agentDiedOrSimDisposed) {
-				try {
-					basicPlayer.play();
-				} catch (final BasicPlayerException e) {
-					throw GamaRuntimeException.error("Failed to replay sound", scope);
-				}
+
+		if (!agentDiedOrSimDisposed) {
+			try {
+				basicPlayer.play();
+			} catch (final BasicPlayerException e) {
+				throw GamaRuntimeException.error("Failed to replay sound", scope);
 			}
 		}
 	}
@@ -117,17 +116,17 @@ public class GamaSoundPlayer {
 	}
 
 	public void stop(final IScope scope, final boolean agentDiedOrSimDisposed) throws GamaRuntimeException {
-		synchronized (this.agentDiedOrSimDisposed) {
-			this.agentDiedOrSimDisposed = agentDiedOrSimDisposed;
 
-			try {
-				endOfMedia = true;
-				basicPlayer.stop();
-			} catch (final BasicPlayerException e) {
-				e.printStackTrace();
-				throw GamaRuntimeException.error("Failed to stop sound player", scope);
-			}
+		this.agentDiedOrSimDisposed = agentDiedOrSimDisposed;
+
+		try {
+			endOfMedia = true;
+			basicPlayer.stop();
+		} catch (final BasicPlayerException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error("Failed to stop sound player", scope);
 		}
+
 	}
 
 	public void pause(final IScope scope) throws GamaRuntimeException {

@@ -5,7 +5,7 @@
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.application.workspace;
@@ -114,7 +114,7 @@ public class WorkspacePreferences {
 	/**
 	 * Ensures a workspace directory is OK in regards of reading/writing, etc.
 	 * This method will get called externally as well.
-	 * 
+	 *
 	 * @param parentShell
 	 *            Shell parent shell
 	 * @param workspaceLocation
@@ -226,18 +226,23 @@ public class WorkspacePreferences {
 	public static boolean testWorkspaceSanity(final File workspace) {
 		DEBUG.OUT("[GAMA] Checking for workspace sanity");
 		File[] files = workspace.listFiles((FileFilter) file -> file.getName().equals(".metadata"));
-		if ( files.length == 0 ) { return true; }
+		if ( files == null || files.length == 0 ) { return true; }
 		final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
-		for ( final File log : logs ) {
-			log.delete();
+		if ( logs != null ) {
+			for ( final File log : logs ) {
+				log.delete();
+			}
 		}
 		files = files[0].listFiles((FileFilter) file -> file.getName().equals(".plugins"));
+		if ( files == null ) { return false; }
 		if ( files.length == 0 ) { return true; }
 		files = files[0].listFiles((FileFilter) file -> file.getName().equals("org.eclipse.core.resources"));
+		if ( files == null ) { return false; }
 		if ( files.length == 0 ) { return true; }
 		files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
-		if ( files.length == 0 ) { return true; }
+		if ( files == null ) { return false; }
 		DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
+		if ( files.length == 0 ) { return true; }
 		if ( MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
 			"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ? Once it is done, the platform will restart to complete the cleaning process.") ) {
 			for ( final File file : files ) {

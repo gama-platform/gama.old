@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.concurrent.GamaExecutorService.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.concurrent.GamaExecutorService.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
@@ -60,8 +60,8 @@ public abstract class GamaExecutorService {
 
 	};
 
-	public static ForkJoinPool AGENT_PARALLEL_EXECUTOR;
-	public static ExecutorService SIMULATION_PARALLEL_EXECUTOR;
+	public static volatile ForkJoinPool AGENT_PARALLEL_EXECUTOR;
+	public static volatile ExecutorService SIMULATION_PARALLEL_EXECUTOR;
 	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.newDirectExecutorService();// sameThreadExecutor();
 
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
@@ -134,13 +134,13 @@ public abstract class GamaExecutorService {
 				};
 	}
 
-	public static enum Caller {
+	public enum Caller {
 		SPECIES, GRID, NONE, SIMULATION
 	}
 
 	/**
 	 * Returns the level of parallelism from the expression passed and the preferences
-	 * 
+	 *
 	 * @param concurrency
 	 *            The facet passed to the statement or species
 	 * @param forSpecies

@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.sound;
@@ -30,9 +30,9 @@ public class SoundPlayerBroker {
 			Collections.synchronizedList(new ArrayList<GamaSoundPlayer>(MAX_NB_OF_MUSIC_PLAYERS));
 
 	private static Map<SimulationAgent, Map<IAgent, GamaSoundPlayer>> soundPlayerOfAgents =
-			new HashMap<SimulationAgent, Map<IAgent, GamaSoundPlayer>>();
+			new HashMap<>();
 
-	private static SoundPlayerBroker broker = null;
+	private static volatile SoundPlayerBroker broker = null;
 
 	public static SoundPlayerBroker getInstance() {
 
@@ -63,7 +63,7 @@ public class SoundPlayerBroker {
 
 			Map<IAgent, GamaSoundPlayer> soundPlayersOfSimulation = soundPlayerOfAgents.get(simulation);
 			if (soundPlayersOfSimulation == null) {
-				soundPlayersOfSimulation = new HashMap<IAgent, GamaSoundPlayer>();
+				soundPlayersOfSimulation = new HashMap<>();
 				soundPlayerOfAgents.put(simulation, soundPlayersOfSimulation);
 
 				simulation.postEndAction(scope1 -> {
@@ -99,7 +99,7 @@ public class SoundPlayerBroker {
 		final Map<IAgent, GamaSoundPlayer> soundPlayersOfSimulation = soundPlayerOfAgents.get(simulation);
 
 		// remove music players of dead agents
-		final List<IAgent> deadAgents = new ArrayList<IAgent>();
+		final List<IAgent> deadAgents = new ArrayList<>();
 		for (final IAgent a : soundPlayersOfSimulation.keySet()) {
 			if (a.dead()) {
 				deadAgents.add(a);
@@ -118,7 +118,7 @@ public class SoundPlayerBroker {
 
 		// remove music players already finished playing
 		synchronized (soundPlayerOfAgents) {
-			final List<IAgent> agentsToBeRemoved = new ArrayList<IAgent>();
+			final List<IAgent> agentsToBeRemoved = new ArrayList<>();
 			for (final IAgent a : soundPlayersOfSimulation.keySet()) {
 
 				soundPlayer = soundPlayersOfSimulation.get(a);

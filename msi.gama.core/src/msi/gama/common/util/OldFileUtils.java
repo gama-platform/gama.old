@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.OldFileUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.util.OldFileUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -42,8 +42,9 @@ public class OldFileUtils {
 	private static String removeRoot(final String absoluteFilePath) {
 		final File[] roots = File.listRoots();
 		for (final File root : roots) {
-			if (absoluteFilePath.startsWith(root.getAbsolutePath())) { return absoluteFilePath
-					.substring(root.getAbsolutePath().length(), absoluteFilePath.length()); }
+			if (absoluteFilePath.startsWith(root.getAbsolutePath())) {
+				return absoluteFilePath.substring(root.getAbsolutePath().length(), absoluteFilePath.length());
+			}
 		}
 		return absoluteFilePath;
 	}
@@ -63,6 +64,7 @@ public class OldFileUtils {
 	 */
 	static public String constructAbsoluteFilePathAlternate(final IScope scope, final String fp,
 			final boolean mustExist) throws GamaRuntimeException {
+		if (scope == null) { return fp; }
 		String filePath = null;
 		Iterable<String> baseDirectories = null;
 		final IExperimentAgent a = scope.getExperiment();

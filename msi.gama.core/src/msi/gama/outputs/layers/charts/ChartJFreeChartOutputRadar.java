@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputRadar.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartJFreeChartOutputRadar.java, in plugin msi.gama.core, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -113,8 +113,9 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 			// plot.setDataset(i, null);
 			// plot.setRenderer(i, null);
 		}
-		if (jfreedataset.size() > 0)
+		if (jfreedataset.size() > 0) {
 			((DefaultCategoryDataset) jfreedataset.get(0)).clear();
+		}
 		jfreedataset.clear();
 		jfreedataset.add(0, new DefaultCategoryDataset());
 		plot.setDataset((DefaultCategoryDataset) jfreedataset.get(0));
@@ -171,15 +172,17 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		// DefaultCategoryDataset serie=((DefaultCategoryDataset)
 		// jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope))));
 		final DefaultCategoryDataset serie = (DefaultCategoryDataset) jfreedataset.get(0);
-		if (serie.getRowKeys().contains(serieid))
+		if (serie.getRowKeys().contains(serieid)) {
 			serie.removeRow(serieid);
+		}
 		final ArrayList<String> CValues = dataserie.getCValues(scope);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);
 		if (CValues.size() > 0) {
 			int deb = 0;
-			if (this.usexrangeinterval && CValues.size() > this.xrangeinterval)
+			if (this.usexrangeinterval && CValues.size() > this.xrangeinterval) {
 				deb = CValues.size() - (int) this.xrangeinterval;
+			}
 			for (int i = deb; i < CValues.size(); i++) {
 				serie.addValue(YValues.get(i), serieid, CValues.get(i - deb));
 				// ((ExtendedCategoryAxis)domainAxis).addSubLabel(CValues.get(i),
@@ -197,9 +200,8 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	@Override
 	public void resetAxes(final IScope scope) {
-		if (this.series_label_position.equals("none")) 
-		{
-			(this.chart).getLegend().setVisible(false);
+		if (this.series_label_position.equals("none")) {
+			this.chart.getLegend().setVisible(false);
 		}
 
 	}
@@ -250,7 +252,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 			pp.setLabelPaint(textColor);
 		}
 
-		if (ylabel != null && ylabel != "") {}
+		// if (ylabel != null && ylabel != "") {}
 		if (this.series_label_position.equals("yaxis")) {
 			// pp.getRangeAxis().setLabel(this.getChartdataset().getDataSeriesIds(scope).iterator().next());
 			chart.getLegend().setVisible(false);
@@ -261,8 +263,9 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 			// pp.getDomainAxis().setLabel(xlabel);
 		}
 
-		if (this.series_label_position.equals("none"))
+		if (this.series_label_position.equals("none")) {
 			pp.setLabelPaint(this.backgroundColor);
+		}
 
 	}
 
