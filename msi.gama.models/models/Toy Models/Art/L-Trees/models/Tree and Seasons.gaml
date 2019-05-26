@@ -86,9 +86,7 @@ global {
 			do change_color;
 		}
 		
-		reflex change_season when: (current_day = 0){
-			write current_season;
-		}
+
 	}
 	
 	species tree_part{
@@ -424,7 +422,7 @@ global {
 
 experiment random_tree type: gui autorun: true{ 
  	output { 
-		display 'Arbre' type:opengl background: season.sky_color ambient_light:150 draw_env: false toolbar: false 
+		display 'Arbre' type:opengl background: season.sky_color ambient_light:150 draw_env: false toolbar: false fullscreen: true
 		camera_pos: {-66.4803,275.5971,235.9631} camera_look_pos: {68.2571,22.1928,56.6337} camera_up_vector: {0.2488,0.4679,0.8481}{
 	        species branch aspect: default;
 	        species leaf aspect: default;
