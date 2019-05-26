@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaOsmFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaOsmFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -149,15 +149,15 @@ public class GamaOsmFile extends GamaGisFile {
 			super(propertiesString);
 			if (!hasFailed) {
 				final String[] segments = split(propertiesString);
-				itemNumber = Integer.valueOf(segments[1]);
+				itemNumber = Integer.parseInt(segments[1]);
 				final String crsString = segments[2];
 				if ("null".equals(crsString)) {
 					crs = null;
 				} else {
 					crs = CRS.parseWKT(crsString);
 				}
-				width = Double.valueOf(segments[3]);
-				height = Double.valueOf(segments[4]);
+				width = Double.parseDouble(segments[3]);
+				height = Double.parseDouble(segments[4]);
 				if (segments.length > 5) {
 					final String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
 					final String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
@@ -175,7 +175,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 		/**
 		 * Method getSuffix()
-		 * 
+		 *
 		 * @see msi.gama.util.file.GamaFileMetaInformation#getSuffix()
 		 */
 		@Override
@@ -284,31 +284,31 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @param scope
 	 * @param pathName
 	 */
-	@doc (value= "This file constructor allows to read a osm (.osm, .pbf, .bz2, .gz) file (using WGS84 coordinate system for the data)",
-			examples = {
-				@example(value = "file f <- osm_file(\"file\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a osm (.osm, .pbf, .bz2, .gz) file (using WGS84 coordinate system for the data)",
+			examples = { @example (
+					value = "file f <- osm_file(\"file\");",
+					isExecutable = false) })
 	public GamaOsmFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
 
-	@doc (value= "This file constructor allows to read an osm (.osm, .pbf, .bz2, .gz) file (using WGS84 coordinate system for the data)"
-			+ "The map is used to filter the objects in the file according their attributes: for each key (string) of the map, only the objects that have a value for the  attribute "
-			+ "contained in the value set are kept."
-			+ " For an exhaustive list of the attibute of OSM data, see: http://wiki.openstreetmap.org/wiki/Map_Features",
-			
-			examples = {
-				@example(value = "file f <- osm_file(\"file\", map([\"highway\"::[\"primary\", \"secondary\"], \"building\"::[\"yes\"], \"amenity\"::[]]));", 
-						equals = "f will contain all the objects of file that have the attibute 'highway' with the value 'primary' or 'secondary', and the objects that have the attribute 'building' with the value 'yes', "
-								+ "and all the objects that have the attribute 'aminity' (whatever the value).", isExecutable = false)
-			})
-	
+	@doc (
+			value = "This file constructor allows to read an osm (.osm, .pbf, .bz2, .gz) file (using WGS84 coordinate system for the data)"
+					+ "The map is used to filter the objects in the file according their attributes: for each key (string) of the map, only the objects that have a value for the  attribute "
+					+ "contained in the value set are kept."
+					+ " For an exhaustive list of the attibute of OSM data, see: http://wiki.openstreetmap.org/wiki/Map_Features",
+
+			examples = { @example (
+					value = "file f <- osm_file(\"file\", map([\"highway\"::[\"primary\", \"secondary\"], \"building\"::[\"yes\"], \"amenity\"::[]]));",
+					equals = "f will contain all the objects of file that have the attibute 'highway' with the value 'primary' or 'secondary', and the objects that have the attribute 'building' with the value 'yes', "
+							+ "and all the objects that have the attribute 'aminity' (whatever the value).",
+					isExecutable = false) })
+
 	public GamaOsmFile(final IScope scope, final String pathName, final GamaMap<String, GamaList> filteringOptions) {
 		super(scope, pathName, (Integer) null);
 		this.filteringOptions = filteringOptions;
 	}
-	
-
 
 	@Override
 	protected String fetchFromURL(final IScope scope) {
@@ -728,7 +728,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 	/**
 	 * Method getExistingCRS()
-	 * 
+	 *
 	 * @see msi.gama.util.file.GamaGisFile#getExistingCRS()
 	 */
 	@Override

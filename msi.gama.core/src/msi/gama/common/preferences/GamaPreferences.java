@@ -318,7 +318,7 @@ public class GamaPreferences {
 		public static final List<String> LAYOUTS = Arrays.asList("None", "Stacked", "Split", "Horizontal", "Vertical");
 		public static final Pref<String> CORE_DISPLAY_LAYOUT =
 				create("pref_display_view_layout", "Default layout of display views", "None", IType.STRING, true)
-						.among(LAYOUTS.toArray(new String[0])).in(NAME, PRESENTATION);
+						.among(LAYOUTS.toArray(new String[LAYOUTS.size()])).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
 				"Stack displays in the order defined in the model", true, IType.BOOL, true).in(NAME, PRESENTATION);
 		// public static final Pref<Integer> CORE_OUTPUT_DELAY = create("pref_display_delay_views",

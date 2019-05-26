@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaGeoJsonFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaGeoJsonFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -31,8 +31,8 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -50,50 +50,61 @@ import msi.gaml.types.Types;
 		buffer_index = IType.INT,
 		concept = { IConcept.GIS, IConcept.FILE },
 		doc = @doc ("Represents geospatial files written using the GeoJSON format. The internal representation is a list of geometries"))
-    public class GamaGeoJsonFile extends GamaGisFile {
-	@doc (value= "This file constructor allows to read a geojson file (https://geojson.org/)",
-			examples = {
-				@example(value = "file f <- geojson_file(\"file.json\");", isExecutable = false)
-			})
+public class GamaGeoJsonFile extends GamaGisFile {
+	@doc (
+			value = "This file constructor allows to read a geojson file (https://geojson.org/)",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\");",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
-	@doc (value= "This file constructor allows to read a geojson file and specifying the coordinates system code, as an int",
-			examples = {
-				@example(value = "file f <- geojson_file(\"file.json\", 32648);", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a geojson file and specifying the coordinates system code, as an int",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\", 32648);",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final Integer code) {
 		super(scope, pathName, code);
 		// TODO Auto-generated constructor stub
 	}
-	@doc (value= "This file constructor allows to read a geojson file and specifying the coordinates system code (epg,...,), as a string",
-			examples = {
-				@example(value = "file f <- geojson_file(\"file.json\", \"EPSG:32648\");", isExecutable = false)
-			})	
+
+	@doc (
+			value = "This file constructor allows to read a geojson file and specifying the coordinates system code (epg,...,), as a string",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\", \"EPSG:32648\");",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final String code) {
 		super(scope, pathName, code);
 		// TODO Auto-generated constructor stub
 	}
-	@doc (value= "This file constructor allows to read a geojson file and take a potential z value (not taken in account by default)",
-			examples = {
-				@example(value = "file f <- geojson_file(\"file.json\", true);", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a geojson file and take a potential z value (not taken in account by default)",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\", true);",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final boolean withZ) {
 		super(scope, pathName, (Integer) null, withZ);
 		// TODO Auto-generated constructor stub
 	}
-	@doc (value= "This file constructor allows to read a geojson file, specifying the coordinates system code, as an int and take a potential z value (not taken in account by default)",
-			examples = {
-				@example(value = "file f <- geojson_file(\"file.json\",32648, true);", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a geojson file, specifying the coordinates system code, as an int and take a potential z value (not taken in account by default)",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\",32648, true);",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final Integer code, final boolean withZ) {
 		super(scope, pathName, code, withZ);
 		// TODO Auto-generated constructor stub
 	}
-	@doc (value= "This file constructor allows to read a geojson file, specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default",
-			examples = {
-				@example(value = "file f <- geojson_file(\"file.json\", \"EPSG:32648\",true);", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a geojson file, specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\", \"EPSG:32648\",true);",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final String code, final boolean withZ) {
 		super(scope, pathName, code, withZ);
 		// TODO Auto-generated constructor stub
@@ -146,8 +157,7 @@ import msi.gaml.types.Types;
 		final IList<IShape> list = getBuffer();
 		int size = 0;
 		final SimpleFeatureCollection fc = getFeatureCollection(scope);
-		if (fc == null)
-			return;
+		if (fc == null) { return; }
 		final Envelope3D env = Envelope3D.of(fc.getBounds());
 		size = fc.size();
 		int index = 0;
@@ -155,8 +165,9 @@ import msi.gaml.types.Types;
 		try (SimpleFeatureIterator reader = fc.features()) {
 			while (reader.hasNext()) {
 				index++;
-				if (index % 20 == 0)
-					scope.getGui().getStatus(scope).setSubStatusCompletion(index / size);
+				if (index % 20 == 0) {
+					scope.getGui().getStatus(scope).setSubStatusCompletion(index / (double) size);
+				}
 				final SimpleFeature feature = reader.next();
 				Geometry g = (Geometry) feature.getDefaultGeometry();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
@@ -186,8 +197,7 @@ import msi.gaml.types.Types;
 	public Envelope3D computeEnvelope(final IScope scope) {
 		if (gis == null) {
 			final SimpleFeatureCollection store = getFeatureCollection(scope);
-			if (store == null)
-				return new Envelope3D();
+			if (store == null) { return new Envelope3D(); }
 			final Envelope3D env = Envelope3D.of(store.getBounds());
 			computeProjection(scope, env);
 		}

@@ -12,8 +12,6 @@ package msi.gaml.descriptions;
 
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EObject;
-
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
@@ -84,10 +82,10 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 		return value.equals(o);
 	}
 
-	@Override
-	public void setTarget(final EObject newTarget) {
-		super.setTarget(newTarget);
-	}
+	// @Override
+	// public void setTarget(final EObject newTarget) {
+	// super.setTarget(newTarget);
+	// }
 
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {

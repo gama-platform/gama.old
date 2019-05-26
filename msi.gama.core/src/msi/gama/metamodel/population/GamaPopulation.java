@@ -80,7 +80,6 @@ import msi.gaml.types.GamaTopologyType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
-import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 6 sept. 2010
@@ -197,10 +196,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return GamaExecutorService.step(scope, this, getSpecies());
 	}
 
-	@Override
-	public StreamEx<T> stream(final IScope scope) {
-		return super.stream(scope);
-	}
+	// @Override
+	// public StreamEx<T> stream(final IScope scope) {
+	// return super.stream(scope);
+	// }
 
 	/**
 	 * Take copy into account and always creates a list (necessary for #2254)
@@ -579,11 +578,11 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public IMacroAgent getHost() {
 		return host;
 	}
-
-	@Override
-	public Iterator<T> iterator() {
-		return super.iterator();
-	}
+	//
+	// @Override
+	// public Iterator<T> iterator() {
+	// return super.iterator();
+	// }
 
 	@Override
 	public final boolean equals(final Object o) {

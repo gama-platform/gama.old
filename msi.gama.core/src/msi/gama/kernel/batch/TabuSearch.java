@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.TabuSearch.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.batch.TabuSearch.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.batch;
 
@@ -110,7 +110,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		final List<ParametersSet> tabuList = new ArrayList<>();
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		tabuList.add(bestSolutionAlgo);
-		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
+		final double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
 		testedSolutions.put(bestSolutionAlgo, currentFitness);
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
@@ -143,7 +143,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				}
 				Double neighborFitness = testedSolutions.get(neighborSol);
 				if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
-					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
+					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
 					nbIt++;
 				} else {
 					continue;
@@ -169,7 +169,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				if (tabuList.size() > tabuListSize) {
 					tabuList.remove(0);
 				}
-				currentFitness = bestFitnessAlgo;
+				// currentFitness = bestFitnessAlgo;
 			} else {
 				break;
 			}
@@ -182,12 +182,12 @@ public class TabuSearch extends LocalSearchAlgorithm {
 	}
 
 	int iterMax = 50;
-
-	@Override
-	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
-		super.initializeFor(scope, agent);
-
-	}
+	//
+	// @Override
+	// public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
+	// super.initializeFor(scope, agent);
+	//
+	// }
 
 	@Override
 	public void initParams(final IScope scope) {

@@ -155,7 +155,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 
 			final GamaMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
 
-			final String var = computeVariable(R_statements.get(R_statements.size() - 1).toString());
+			final String var = computeVariable(R_statements.get(R_statements.size() - 1));
 			caller.runAndReturnResult(var);
 
 			// DEBUG:
@@ -234,7 +234,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 
 			final GamaMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
 
-			final String var = computeVariable(R_statements.get(R_statements.size() - 1).toString());
+			final String var = computeVariable(R_statements.get(R_statements.size() - 1));
 			caller.runAndReturnResult(var);
 			for (final String name : caller.getParser().getNames()) {
 				Object[] results = null;

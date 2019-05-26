@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.FacetProto.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.FacetProto.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -89,7 +89,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 
 	/**
 	 * Method getTitle()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
@@ -110,8 +110,6 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 					s.append("a label");
 					break;
 				case IType.NEW_TEMP_ID:
-					s.append("a new identifier");
-					break;
 				case IType.NEW_VAR_ID:
 					s.append("a new identifier");
 					break;
@@ -138,7 +136,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 
 	/**
 	 * Method getDocumentation()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
@@ -163,7 +161,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 
 	/**
 	 * Method getName()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#getName()
 	 */
 	@Override
@@ -178,7 +176,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 
 	/**
 	 * Method compareTo()
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -188,7 +186,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 
 	/**
 	 * Method serialize()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
 	 */
 	@Override
@@ -201,7 +199,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 
 	/**
 	 * Method collectPlugins()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override

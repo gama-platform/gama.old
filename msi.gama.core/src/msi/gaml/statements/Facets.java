@@ -1,17 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.Facets.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.Facets.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
 import java.util.Map;
-import java.util.Set;
 
 import gnu.trove.function.TObjectFunction;
 import gnu.trove.map.hash.THashMap;
@@ -30,9 +29,9 @@ import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 27 ao�t 2010
- * 
+ *
  * Represents a Map of Facet objects. From there, text, tokens and values of facets can be retrieved.
- * 
+ *
  */
 public class Facets extends THashMap<String, IExpressionDescription> implements IGamlable {
 
@@ -135,7 +134,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 
 	/**
 	 * Adds the facet without performing any check, assuming it is not present in the map
-	 * 
+	 *
 	 * @param key
 	 * @param expr
 	 * @return
@@ -179,10 +178,10 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 		forEachValue(dispose);
 		clear();
 	}
-
-	@Override
-	public Set<Map.Entry<String, IExpressionDescription>> entrySet() {
-		return super.entrySet();
-	}
+	//
+	// @Override
+	// public Set<Map.Entry<String, IExpressionDescription>> entrySet() {
+	// return super.entrySet();
+	// }
 
 }

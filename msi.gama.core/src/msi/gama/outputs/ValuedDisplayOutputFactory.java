@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.ValuedDisplayOutputFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.ValuedDisplayOutputFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -30,7 +30,6 @@ public class ValuedDisplayOutputFactory {
 		IMacroAgent root = null;
 		if (agents instanceof IPopulation) {
 			pop = (IPopulation<? extends IAgent>) agents;
-			root = pop.getHost();
 			browse(pop.getHost(), pop.getSpecies());
 		} else {
 			for (final IAgent agent : agents) {
@@ -89,8 +88,8 @@ public class ValuedDisplayOutputFactory {
 	}
 
 	public static void browse(final IMacroAgent root, final IExpression expr) {
-		final SpeciesDescription species = expr.getGamlType().isContainer() ? expr.getGamlType().getContentType().getSpecies()
-				: expr.getGamlType().getSpecies();
+		final SpeciesDescription species = expr.getGamlType().isContainer()
+				? expr.getGamlType().getContentType().getSpecies() : expr.getGamlType().getSpecies();
 		if (species == null) {
 			GamaRuntimeException.error("Expression '" + expr.serialize(true) + "' does not reference agents",
 					root.getScope());

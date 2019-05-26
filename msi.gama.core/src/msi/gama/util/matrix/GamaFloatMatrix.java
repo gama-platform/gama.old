@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
+import static com.vividsolutions.jts.index.quadtree.IntervalSize.isZeroWidth;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -348,7 +350,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	private boolean remove(final double o) {
 		for (int i = 0; i < getMatrix().length; i++) {
-			if (new Double(getMatrix()[i]).equals(new Double(o))) {
+			if (isZeroWidth(getMatrix()[i], o)) {
 				getMatrix()[i] = 0d;
 				return true;
 			}
@@ -373,7 +375,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	private boolean removeAll(final double o) {
 		boolean removed = false;
 		for (int i = 0; i < getMatrix().length; i++) {
-			if (new Double(getMatrix()[i]).equals(new Double(o))) {
+			if (isZeroWidth(getMatrix()[i], o)) {
 				getMatrix()[i] = 0d;
 				removed = true;
 			}

@@ -200,7 +200,7 @@ public abstract class GamaExecutorService {
 		final List<? extends IAgent> agents = schedule == null ? pop : Cast.asList(scope, schedule.value(scope));
 		final int threshold =
 				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
-		return doStep(scope, agents.toArray(new IAgent[0]), threshold, species);
+		return doStep(scope, agents.toArray(new IAgent[agents.size()]), threshold, species);
 	}
 
 	public static <A extends IShape> Boolean step(final IScope scope, final A[] array, final ISpecies species)
@@ -211,7 +211,7 @@ public abstract class GamaExecutorService {
 			scheduledAgents = array;
 		} else {
 			final List<IShape> agents = Cast.asList(scope, schedule.value(scope));
-			scheduledAgents = agents.toArray(new IShape[0]);
+			scheduledAgents = agents.toArray(new IShape[agents.size()]);
 		}
 		final int threshold =
 				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
@@ -269,7 +269,7 @@ public abstract class GamaExecutorService {
 
 	public static void execute(final IScope scope, final IExecutable executable, final List<? extends IAgent> list,
 			final IExpression parallel) throws GamaRuntimeException {
-		execute(scope, executable, list.toArray(new IAgent[0]), parallel);
+		execute(scope, executable, list.toArray(new IAgent[list.size()]), parallel);
 	}
 
 }

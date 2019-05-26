@@ -68,12 +68,12 @@ public abstract class SqlConnection {
 	public static final String TIME = "TIME"; // MySQL ('00:00:00')
 	public static final String NULLVALUE = "NULL";
 
-	static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
+	static final String MYSQLDriver = "com.mysql.jdbc.Driver";
 	// static final String MSSQLDriver = new
 	// String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-	static final String MSSQLDriver = new String("net.sourceforge.jtds.jdbc.Driver");
-	static final String SQLITEDriver = new String("org.sqlite.JDBC");
-	static final String POSTGRESDriver = new String("org.postgresql.Driver");
+	static final String MSSQLDriver = "net.sourceforge.jtds.jdbc.Driver";
+	static final String SQLITEDriver = "org.sqlite.JDBC";
+	static final String POSTGRESDriver = "org.postgresql.Driver";
 
 	protected String vender = "";
 	protected String dbtype = "";
@@ -259,16 +259,12 @@ public abstract class SqlConnection {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	public IList<? super IList<? super IList>> selectDB(final IScope scope, final String selectComm) {
-		IList<? super IList<? super IList>> result =
-				GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
 		try (Connection conn = connectDB();) {
-			result = selectDB(scope, conn, selectComm);
+			return selectDB(scope, conn, selectComm);
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
 		}
 
-		// return repRequest;
-		return result;
 	}
 
 	/*
@@ -287,7 +283,7 @@ public abstract class SqlConnection {
 		// GamaList();
 
 		// GamaList<Object> rowList = new GamaList<Object>();
-		IList repRequest = GamaListFactory.create(msi.gaml.types.Types.NO_TYPE);
+		IList repRequest;
 		try (final Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(selectComm);) {
 
 			final ResultSetMetaData rsmd = rs.getMetaData();
@@ -643,7 +639,7 @@ public abstract class SqlConnection {
 			final IList<Object> condition_values) throws GamaRuntimeException {
 
 		IList<Object> result = GamaListFactory.create();
-		IList repRequest = GamaListFactory.create();
+		IList repRequest;
 		final int condition_count = condition_values.size();
 		try (PreparedStatement pstmt = conn.prepareStatement(queryStr);) {
 
@@ -736,7 +732,7 @@ public abstract class SqlConnection {
 	 */
 	public IList<Object> executeQueryDB(final IScope scope, final String queryStr, final IList<Object> condition_values)
 			throws GamaRuntimeException {
-		IList<Object> result = GamaListFactory.create();
+		IList<Object> result;
 		try (Connection conn = connectDB();) {
 			result = executeQueryDB(scope, conn, queryStr, condition_values);
 			// set value for each condition

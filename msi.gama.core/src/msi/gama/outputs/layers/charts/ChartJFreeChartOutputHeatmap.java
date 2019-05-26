@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputHeatmap.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartJFreeChartOutputHeatmap.java, in plugin msi.gama.core, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -64,8 +64,9 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
 		jfreedataset.add(0, new MatrixSeriesCollection());
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
-		if (reverse_axes)
+		if (reverse_axes) {
 			orientation = PlotOrientation.HORIZONTAL;
+		}
 
 		chart = ChartFactory.createXYLineChart(getName(), "", "", (MatrixSeriesCollection) jfreedataset.get(0),
 				orientation, true, false, false);
@@ -115,7 +116,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 	@Override
 	protected AbstractRenderer createRenderer(final IScope scope, final String serieid) {
 		final String style = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
-		AbstractRenderer newr = new XYBlockRenderer();
+		AbstractRenderer newr;
 		switch (style) {
 			case IKeyword.SPLINE:
 			case IKeyword.STEP:
@@ -138,12 +139,10 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
 	protected static final LookupPaintScale createLUT(final int ncol, final float vmin, final float vmax,
 			final Color start, final Color med, final Color end) {
-		final float[][] colors =
-				new float[][] {
-						{ start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f,
-								start.getAlpha() / 255f },
-						{ med.getRed() / 255f, med.getGreen() / 255f, med.getBlue() / 255f, med.getAlpha() / 255f },
-						{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
+		final float[][] colors = new float[][] {
+				{ start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f, start.getAlpha() / 255f },
+				{ med.getRed() / 255f, med.getGreen() / 255f, med.getBlue() / 255f, med.getAlpha() / 255f },
+				{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
 		final float[] limits = new float[] { 0, 0.5f, 1 };
 		final LookupPaintScale lut = new LookupPaintScale(vmin, vmax, med);
 		float val;
@@ -168,11 +167,9 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
 	protected static final LookupPaintScale createLUT(final int ncol, final float vmin, final float vmax,
 			final Color start, final Color end) {
-		final float[][] colors =
-				new float[][] {
-						{ start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f,
-								start.getAlpha() / 255f },
-						{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
+		final float[][] colors = new float[][] {
+				{ start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f, start.getAlpha() / 255f },
+				{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
 		final float[] limits = new float[] { 0, 1 };
 		final LookupPaintScale lut = new LookupPaintScale(vmin, vmax, start);
 		float val;
@@ -202,15 +199,18 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			final double maxval = Collections.max(myserie.getSValues(scope));
 			final double minval = Collections.min(myserie.getSValues(scope));
 			Color cdeb = new Color(0, 0, 0, 0);
-			if (myserie.getMyMincolor() != null)
+			if (myserie.getMyMincolor() != null) {
 				cdeb = myserie.getMyMincolor();
+			}
 			Color cend = new Color(0.9f, 0.9f, 0.9f, 1.0f);
-			if (myserie.getMycolor() != null)
+			if (myserie.getMycolor() != null) {
 				cend = myserie.getMycolor();
+			}
 
 			LookupPaintScale paintscale = createLUT(100, (float) minval, (float) maxval, cdeb, cend);
-			if (myserie.getMyMedcolor() != null)
+			if (myserie.getMyMedcolor() != null) {
 				paintscale = createLUT(100, (float) minval, (float) maxval, cdeb, myserie.getMyMedcolor(), cend);
+			}
 
 			newr.setPaintScale(paintscale);
 
@@ -225,11 +225,10 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 				scaleAxis.setLabelPaint(textColor);
 				scaleAxis.setTickLabelPaint(textColor);
 			}
-			if (!this.getXTickValueVisible(scope))
-			{
+			if (!this.getXTickValueVisible(scope)) {
 				scaleAxis.setTickMarksVisible(false);
 				scaleAxis.setTickLabelsVisible(false);
-				
+
 			}
 
 			final PaintScaleLegend legend = new PaintScaleLegend(paintscale, scaleAxis);
@@ -245,8 +244,9 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			// ArrayList<PaintScaleLegend>();
 			// caxe.add(legend);
 			// chart.setSubtitles(caxe);
-			if (!this.series_label_position.equals("none"))
+			if (!this.series_label_position.equals("none")) {
 				chart.addSubtitle(legend);
+			}
 
 		}
 	}
@@ -307,7 +307,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 	@Override
 	public void preResetSeries(final IScope scope) {
 		this.clearDataSet(scope);
-		final ArrayList<PaintScaleLegend> caxe = new ArrayList<PaintScaleLegend>();
+		final ArrayList<PaintScaleLegend> caxe = new ArrayList<>();
 		chart.setSubtitles(caxe);
 
 	}
@@ -323,54 +323,46 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);
 		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-		if (XValues.size()==0)
-		{
-			if (!usexrangeinterval && !usexrangeminmax) 
-			{
+		if (XValues.size() == 0) {
+			if (!usexrangeinterval && !usexrangeminmax) {
 				domainAxis.setAutoRange(false);
-				domainAxis.setRange(-0.5,XValues.size()+0.5);				
+				domainAxis.setRange(-0.5, XValues.size() + 0.5);
 			}
-			
+
 		}
 		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
-		if (YValues.size()==0)
-		{
-			if (!useyrangeinterval && !useyrangeminmax) 
-			{
+		if (YValues.size() == 0) {
+			if (!useyrangeinterval && !useyrangeminmax) {
 				rangeAxis.setAutoRange(false);
-				rangeAxis.setRange(-0.5,YValues.size()+0.5);				
+				rangeAxis.setRange(-0.5, YValues.size() + 0.5);
 			}
-			
+
 		}
-//		final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-//		final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
+		// final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+		// final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 
 		if (XValues.size() > 0) {
 			domainAxis.setAutoRange(false);
 			rangeAxis.setAutoRange(false);
-				domainAxis.setTickLabelsVisible(this.getXTickValueVisible(scope));
-				domainAxis.setTickMarksVisible(this.getXTickValueVisible(scope));
-				rangeAxis.setTickLabelsVisible(this.getYTickValueVisible(scope));
-				rangeAxis.setTickMarksVisible(this.getYTickValueVisible(scope));
+			domainAxis.setTickLabelsVisible(this.getXTickValueVisible(scope));
+			domainAxis.setTickMarksVisible(this.getXTickValueVisible(scope));
+			rangeAxis.setTickLabelsVisible(this.getYTickValueVisible(scope));
+			rangeAxis.setTickMarksVisible(this.getYTickValueVisible(scope));
 			for (int i = 0; i < XValues.size(); i++) {
 
-				if (XValues.get(i)>domainAxis.getUpperBound())
-				{
-					if (!usexrangeinterval && !usexrangeminmax) 
-					{
+				if (XValues.get(i) > domainAxis.getUpperBound()) {
+					if (!usexrangeinterval && !usexrangeminmax) {
 						domainAxis.setAutoRange(false);
-						domainAxis.setRange(-0.5,YValues.get(i)+0.5);				
+						domainAxis.setRange(-0.5, YValues.get(i) + 0.5);
 					}
-					
+
 				}
-				if (YValues.get(i)>rangeAxis.getUpperBound())
-				{
-					if (!useyrangeinterval && !useyrangeminmax) 
-					{
+				if (YValues.get(i) > rangeAxis.getUpperBound()) {
+					if (!useyrangeinterval && !useyrangeminmax) {
 						rangeAxis.setAutoRange(false);
-						rangeAxis.setRange(-0.5,YValues.get(i)+0.5);				
+						rangeAxis.setRange(-0.5, YValues.get(i) + 0.5);
 					}
-					
+
 				}
 
 				serie.update(YValues.get(i).intValue(), XValues.get(i).intValue(), SValues.get(i).doubleValue());
@@ -382,26 +374,24 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
 	@Override
 	public void resetAxes(final IScope scope) {
-		 NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-		 NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
+		NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+		NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
 
-		if (getX_LogScale(scope)) 
-		{
-		 LogarithmicAxis logAxis = new LogarithmicAxis(domainAxis.getLabel());
+		if (getX_LogScale(scope)) {
+			final LogarithmicAxis logAxis = new LogarithmicAxis(domainAxis.getLabel());
 			logAxis.setAllowNegativesFlag(true);
-		((XYPlot) this.chart.getPlot()).setDomainAxis(logAxis);
-		domainAxis=logAxis;
+			((XYPlot) this.chart.getPlot()).setDomainAxis(logAxis);
+			domainAxis = logAxis;
 		}
-		if (getY_LogScale(scope)) 
-		{
-			LogarithmicAxis logAxis = new LogarithmicAxis(rangeAxis.getLabel());
+		if (getY_LogScale(scope)) {
+			final LogarithmicAxis logAxis = new LogarithmicAxis(rangeAxis.getLabel());
 			logAxis.setAllowNegativesFlag(true);
-		((XYPlot) this.chart.getPlot()).setRangeAxis(logAxis);
-		rangeAxis=logAxis;
+			((XYPlot) this.chart.getPlot()).setRangeAxis(logAxis);
+			rangeAxis = logAxis;
 		}
 		if (!usexrangeinterval && !usexrangeminmax) {
-//			domainAxis.setAutoRangeMinimumSize(0.5);
-//			domainAxis.setAutoRange(true);
+			// domainAxis.setAutoRangeMinimumSize(0.5);
+			// domainAxis.setAutoRange(true);
 		}
 
 		if (this.usexrangeinterval) {
@@ -414,8 +404,8 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		}
 
 		if (!useyrangeinterval && !useyrangeminmax) {
-	//		rangeAxis.setAutoRangeMinimumSize(0.5);
-	//		rangeAxis.setAutoRange(true);
+			// rangeAxis.setAutoRangeMinimumSize(0.5);
+			// rangeAxis.setAutoRange(true);
 		}
 
 		if (this.useyrangeinterval) {
@@ -426,22 +416,20 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		if (this.useyrangeminmax) {
 			rangeAxis.setRange(yrangemin, yrangemax);
 		}
-		if (this.series_label_position.equals("none")) 
-		{
-			if ((this.chart).getLegend()!=null)
-			(this.chart).getLegend().setVisible(false);
+		if (this.series_label_position.equals("none")) {
+			if (this.chart.getLegend() != null) {
+				this.chart.getLegend().setVisible(false);
+			}
 		}
-		if (!this.getXTickLineVisible(scope))
-		{
+		if (!this.getXTickLineVisible(scope)) {
 			((XYPlot) this.chart.getPlot()).setDomainGridlinesVisible(false);
-			
+
 		}
-		if (!this.getYTickLineVisible(scope))
-		{
+		if (!this.getYTickLineVisible(scope)) {
 			((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(false);
-			
+
 		}
-		
+
 	}
 
 	@Override

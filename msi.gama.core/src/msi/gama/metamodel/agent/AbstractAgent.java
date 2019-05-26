@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.AbstractAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.agent.AbstractAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -77,12 +77,6 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public abstract IPopulation<? extends IAgent> getPopulation();
-
-	@Override
-	public abstract IShape getGeometry();
-
-	@Override
 	public IAgent getAgent() {
 		return this;
 	}
@@ -110,7 +104,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Returns the envelope of the geometry of the agent, or null if the geometry has not yet been defined
-	 * 
+	 *
 	 * @see msi.gama.interfaces.IShape#getEnvelope()
 	 */
 	@Override
@@ -261,7 +255,7 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * This method contains everything to do *before* the actual step is done (runs of reflexes, etc.). The basis
 	 * consists in updating the variables.
-	 * 
+	 *
 	 * @param scope
 	 *            the scope in which the agent is asked to do the preStep()
 	 * @return r
@@ -274,7 +268,7 @@ public abstract class AbstractAgent implements IAgent {
 	 * This method contains everything to do *during* during the step of an agent. The basis consists in asking the
 	 * architecture to execute on this and, if successfull, to step its sub-populations (if any). Only called if the
 	 * preStep() method has been sucessfull
-	 * 
+	 *
 	 * @param scope
 	 *            the scope in which the agent is asked to do the step
 	 * @return whether or not the step has been successful (i.e. no errors, etc.)
@@ -290,7 +284,7 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * This method contains everything to do *after* the actual step of the agent has been done. Only called if the
 	 * doStep() method has been successful.
-	 * 
+	 *
 	 * @param scope
 	 */
 	protected void postStep(final IScope scope) {}
@@ -456,7 +450,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method getPopulationFor()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.agent.IAgent#getPopulationFor(msi.gaml.species.ISpecies)
 	 */
 	@Override
@@ -475,7 +469,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method getPopulationFor()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.agent.IAgent#getPopulationFor(java.lang.String)
 	 */
 	@Override
@@ -566,7 +560,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method get()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Addressable#get(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
@@ -577,7 +571,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method getFromIndicesList()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Addressable#getFromIndicesList(msi.gama.runtime.IScope, msi.gama.util.IList)
 	 */
 	@Override
@@ -590,7 +584,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	/**
 	 * Method getPoints()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override

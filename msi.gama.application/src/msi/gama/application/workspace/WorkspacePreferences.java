@@ -33,7 +33,7 @@ import ummisco.gama.dev.utils.DEBUG;
 
 public class WorkspacePreferences {
 
-	static String lastWs;
+	// static String lastWs;
 	static String selectedWorkspaceRootLocation;
 	static boolean applyPrefs;
 	public static final String WS_IDENTIFIER = ".gama_application_workspace";

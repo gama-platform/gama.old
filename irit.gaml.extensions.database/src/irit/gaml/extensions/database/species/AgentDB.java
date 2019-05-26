@@ -24,7 +24,6 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
@@ -204,7 +203,7 @@ public class AgentDB extends GamlAgent {
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		// Boolean transform = scope.hasArg("transform") ? (Boolean)
 		// scope.getArg("transform", IType.BOOL) : false;
-		IList<? super IList<? super IList>> repRequest = GamaListFactory.create(msi.gaml.types.Types.LIST);
+		IList<? super IList<? super IList>> repRequest;
 		// get data
 		try {
 			if (values.size() > 0) {

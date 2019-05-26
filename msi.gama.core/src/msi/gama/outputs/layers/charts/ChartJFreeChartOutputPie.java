@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputPie.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartJFreeChartOutputPie.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -51,11 +51,8 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 			chart = ChartFactory.createPieChart3D(getName(), null, false, true, false);
 		} else if (style.equals(IKeyword.RING)) {
 			chart = ChartFactory.createRingChart(getName(), null, false, true, false);
-		} else if (style.equals(IKeyword.EXPLODED)) {
-			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
 		} else {
 			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
-			
 		}
 	}
 
@@ -99,19 +96,17 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		final PiePlot pp = (PiePlot) chart.getPlot();
 		pp.setShadowXOffset(0);
 		pp.setShadowYOffset(0);
-		if (!this.series_label_position.equals("none"))
-		{
-		pp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
-		if (axesColor != null) {
-			pp.setLabelLinkPaint(axesColor);
+		if (!this.series_label_position.equals("none")) {
+			pp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
+			if (axesColor != null) {
+				pp.setLabelLinkPaint(axesColor);
+			}
+			pp.setLabelFont(getTickFont());
 		}
-		pp.setLabelFont(getTickFont());
-		}
-		if (this.series_label_position.equals("none"))
-		{
+		if (this.series_label_position.equals("none")) {
 			pp.setLabelLinksVisible(false);
 			pp.setLabelGenerator(null);
-			
+
 		}
 		if (textColor != null) {
 			// pp.setLabelPaint(textColor);
@@ -125,7 +120,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	protected AbstractRenderer createRenderer(final IScope scope, final String serieid) {
 
 		final String style = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
-		AbstractRenderer newr = new DefaultPolarItemRenderer();
+		AbstractRenderer newr;
 		switch (style) {
 			case IKeyword.STACK:
 			case IKeyword.THREE_D:

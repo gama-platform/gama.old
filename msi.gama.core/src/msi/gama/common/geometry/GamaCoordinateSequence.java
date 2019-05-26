@@ -2,11 +2,11 @@
  *
  * msi.gama.common.geometry.GamaCoordinateSequence.java, in plugin msi.gama.core, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -28,7 +28,7 @@ import msi.gama.metamodel.shape.GamaPoint;
  * Clockwise sequence of points. Supports several computations (rotation, etc.) and a cheap visitor pattern. Be aware
  * that CW property is not maintained if individual points are modified via the setOrdinate() or replaceWith() method
  * and if the sequence is not a ring. All other methods should however maintain it.
- * 
+ *
  * @author A. Drogoul
  *
  */
@@ -44,7 +44,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * Creates a sequence from an array of points. The points will be cloned before being added (to prevent side
 	 * effects). The order of the points will not necessarily remain the same if the sequence is a ring (as this class
 	 * enforces a clockwise direction of the sequence)
-	 * 
+	 *
 	 * @param points2
 	 *            an array of points
 	 */
@@ -56,7 +56,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * Creates a sequence from an array of points. If copy is true, the points are cloned before being added to the
 	 * sequence (to prevent side effects, for instance). The sequence will be modified to enforce a clockwise direction
 	 * if the array represents a ring
-	 * 
+	 *
 	 * @param copy
 	 *            whether or not to copy the points or to add them directly
 	 * @param points2
@@ -77,7 +77,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Creates a sequence of points with a given size (that may be altered after)
-	 * 
+	 *
 	 * @param size
 	 *            an int > 0 (negative sizes will be treated as 0)
 	 */
@@ -90,7 +90,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method getDimension(). Always 3 for these sequences
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getDimension()
 	 */
 	@Override
@@ -102,7 +102,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * Makes a complete copy of this sequence (incl. cloning the points themselves)
 	 */
 	@Override
-	public GamaCoordinateSequence clone() {
+	public final GamaCoordinateSequence clone() {
 		return new GamaCoordinateSequence(true, points);
 	}
 
@@ -114,7 +114,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method getCoordinate(). The coordinate is *not* a copy of the original one, so any modification to it will
 	 * directly affect the sequence of points
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int)
 	 */
 	@Override
@@ -124,7 +124,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method getCoordinateCopy()
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinateCopy(int)
 	 */
 	@Override
@@ -134,7 +134,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method getCoordinate()
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int, com.vividsolutions.jts.geom.Coordinate)
 	 */
 	@Override
@@ -144,7 +144,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method getX()
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getX(int)
 	 */
 	@Override
@@ -154,7 +154,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method getY()
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getY(int)
 	 */
 	@Override
@@ -164,7 +164,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method getOrdinate()
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getOrdinate(int, int)
 	 */
 	@Override
@@ -174,7 +174,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method size()
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#size()
 	 */
 	@Override
@@ -184,7 +184,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method setOrdinate(). Be aware that CW property is not maintained in case of direct modifications like this
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#setOrdinate(int, int, double)
 	 */
 	@Override
@@ -194,7 +194,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method toCoordinateArray()
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#toCoordinateArray()
 	 */
 	@Override
@@ -204,7 +204,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
 	 * Method expandEnvelope()
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#expandEnvelope(com.vividsolutions.jts.geom.Envelope)
 	 */
 	@Override
@@ -241,7 +241,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.common.util.ICoordinates#yNegated()
 	 */
 	@Override
@@ -283,7 +283,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.common.util.ICoordinates#visitConsecutive(msi.gama.common.util.GamaCoordinateSequence.PairVisitor)
 	 */
 	@Override
@@ -298,7 +298,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * even with self-intersecting sequences or non-convex polygons. Its downside is that it processes all the points
 	 * (instead of processing only 3 of them) but robustness has a price ! This algorithm only operates on rings (this
 	 * is ensured in the code by processing the first point in case the sequence is not a ring).
-	 * 
+	 *
 	 * @param clockwise
 	 *            whether to obtain the normal facing up (for clockwise sequences) or down.
 	 * @param factor
@@ -424,8 +424,8 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	@Override
 	public boolean isCoveredBy(final Envelope3D env) {
-		for (int i = 0; i < points.length; i++) {
-			if (!env.covers(points[i])) { return false; }
+		for (final GamaPoint point : points) {
+			if (!env.covers(point)) { return false; }
 		}
 		return true;
 	}
@@ -474,7 +474,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Turns this sequence of coordinates into a clockwise orientation. Only done for rings (as it may change the
 	 * definition of line strings)
-	 * 
+	 *
 	 * @param points
 	 * @return
 	 */

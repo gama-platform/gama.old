@@ -55,7 +55,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
-	static Level LEVEL = Level.ALL;
+	// static Level LEVEL = Level.ALL;
 	final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<>();
 
 	static {
@@ -91,7 +91,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public boolean copyToClipboard(String text) {
+	public boolean copyToClipboard(final String text) {
 		return false;
 	}
 
@@ -145,7 +145,7 @@ public class HeadlessListener implements IGui {
 		return true;
 	}
 
-	@SuppressWarnings ("rawtypes") static Map<String, Class> displayClasses = null;
+	// @SuppressWarnings ("rawtypes") static Map<String, Class> displayClasses = null;
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... objects) {

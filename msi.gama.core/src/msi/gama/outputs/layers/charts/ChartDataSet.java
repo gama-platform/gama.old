@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartDataSet.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartDataSet.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -95,7 +95,8 @@ public class ChartDataSet {
 	}
 
 	public String getCategories(final IScope scope, final int i) {
-		if (Xcategories.size() > i) { return Xcategories.get(i);
+		if (Xcategories.size() > i) {
+			return Xcategories.get(i);
 
 		}
 		for (int c = Xcategories.size(); c <= i; c++) {
@@ -105,7 +106,8 @@ public class ChartDataSet {
 	}
 
 	public String getLastCategories(final IScope scope) {
-		if (Xcategories.size() > 0) { return Xcategories.get(Xcategories.size() - 1);
+		if (Xcategories.size() > 0) {
+			return Xcategories.get(Xcategories.size() - 1);
 
 		}
 		this.Xcategories.add("c" + 0);
@@ -355,7 +357,7 @@ public class ChartDataSet {
 					YSeriesValues = new ArrayList<>();
 					Ycategories = new ArrayList<>();
 					for (int i = 0; i < xv2.size(); i++) {
-						YSeriesValues.add(new Double(Cast.asFloat(scope, xv2.get(i))));
+						YSeriesValues.add(Cast.asFloat(scope, xv2.get(i)));
 						Ycategories.add(Cast.asString(scope, xl2.get(i)));
 
 					}
@@ -371,8 +373,10 @@ public class ChartDataSet {
 						}
 					}
 				}
-				if (xv2.size() < targetNb) { throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
-						+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope); }
+				if (xv2.size() < targetNb) {
+					throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
+							+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope);
+				}
 			} else {
 				if (this.useYSource && xval instanceof Number) {
 					final double dvalue = Cast.asFloat(scope, xval);
@@ -424,7 +428,7 @@ public class ChartDataSet {
 				value = YSeriesValues.get(YSeriesValues.size() - 1) + 1;
 			}
 		}
-		return Double.valueOf(value);
+		return value;
 	}
 
 	private void addCommonYValue(final IScope scope, final Double chartCycle) {
@@ -468,7 +472,7 @@ public class ChartDataSet {
 					XSeriesValues = new ArrayList<>();
 					Xcategories = new ArrayList<>();
 					for (int i = 0; i < xv2.size(); i++) {
-						XSeriesValues.add(new Double(Cast.asFloat(scope, xv2.get(i))));
+						XSeriesValues.add(Cast.asFloat(scope, xv2.get(i)));
 						Xcategories.add(Cast.asString(scope, xl2.get(i)));
 
 					}
@@ -478,7 +482,7 @@ public class ChartDataSet {
 						Xcategories = new ArrayList<>();
 						for (int i = 0; i < xv2.size(); i++) {
 							if (i >= XSeriesValues.size()) {
-								XSeriesValues.add(new Double(getXCycleOrPlusOneForBatch(scope, chartCycle)));
+								XSeriesValues.add(getXCycleOrPlusOneForBatch(scope, chartCycle));
 							}
 							Xcategories.add(Cast.asString(scope, xl2.get(i)));
 						}
@@ -486,14 +490,16 @@ public class ChartDataSet {
 					}
 
 				}
-				if (xv2.size() < targetNb) { throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
-						+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope); }
+				if (xv2.size() < targetNb) {
+					throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
+							+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope);
+				}
 
 			} else {
 				if (this.useXSource && xval instanceof Number) {
 					final double dvalue = Cast.asFloat(scope, xval);
 					final String lvalue = Cast.asString(scope, xlab);
-					XSeriesValues.add(new Double(dvalue));
+					XSeriesValues.add(dvalue);
 					Xcategories.add(lvalue);
 				}
 				if (targetNb == -1 && !this.forceNoXAccumulate) {
@@ -540,8 +546,7 @@ public class ChartDataSet {
 				value = XSeriesValues.get(XSeriesValues.size() - 1) + 1;
 			}
 		}
-		return Double.valueOf(value);
-		// return Double.valueOf(chartcycle);
+		return value;
 	}
 
 	private void addCommonXValue(final IScope scope, final Double chartCycle) {

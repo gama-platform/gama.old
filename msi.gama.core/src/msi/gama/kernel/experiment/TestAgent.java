@@ -36,7 +36,7 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class TestAgent extends BatchAgent implements WithTestSummary<TestExperimentSummary> {
 
-	int failedModels = 0;
+	// int failedModels = 0;
 	TestExperimentSummary summary;
 
 	public TestAgent(final IPopulation p, final int index) throws GamaRuntimeException {

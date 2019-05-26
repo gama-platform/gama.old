@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.SimulatedAnnealing.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.batch.SimulatedAnnealing.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.batch;
 
@@ -116,10 +116,10 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 		initParams();
 	}
 
-	@Override
-	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
-		super.initializeFor(scope, agent);
-	}
+	// @Override
+	// public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
+	// super.initializeFor(scope, agent);
+	// }
 
 	// FIXME SimulationScope is normally null at that point. Should be better called from initializeFor()
 	@Override

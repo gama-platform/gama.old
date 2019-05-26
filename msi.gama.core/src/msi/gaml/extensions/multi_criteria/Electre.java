@@ -1,34 +1,37 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.Electre.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.extensions.multi_criteria.Electre.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Electre {
 
-	private Map<String, Double> poids = new HashMap<String, Double>();
+	private Map<String, Double> poids = new HashMap<>();
 	private double seuilCoupe = 0.7;
-	private Map<String, Double> preference = new HashMap<String, Double>();
-	private Map<String, Double> indifference = new HashMap<String, Double>();
-	private Map<String, Double> veto = new HashMap<String, Double>();
+	private Map<String, Double> preference = new HashMap<>();
+	private Map<String, Double> indifference = new HashMap<>();
+	private Map<String, Double> veto = new HashMap<>();
 	private final List<String> critereOrdonnes;
 
 	public Electre(final List<String> critereOrdonnes) {
 		super();
 		this.critereOrdonnes = critereOrdonnes;
-		for ( String param : critereOrdonnes ) {
-			poids.put(param, new Double(5));
-			preference.put(param, new Double(0.3));
-			indifference.put(param, new Double(0.1));
-			veto.put(param, new Double(0));
+		for (final String param : critereOrdonnes) {
+			poids.put(param, 5d);
+			preference.put(param, 0.3);
+			indifference.put(param, 0.1);
+			veto.put(param, 0d);
 		}
 	}
 
@@ -58,21 +61,21 @@ public class Electre {
 	}
 
 	public Candidate decision(final List<Candidate> locations) {
-		int relation[][] = new int[locations.size()][locations.size()];
+		final int relation[][] = new int[locations.size()][locations.size()];
 
-		for ( int i = 0; i < locations.size() - 1; i++ ) {
-			Candidate act1 = locations.get(i);
-			for ( int j = i + 1; j < locations.size(); j++ ) {
-				Candidate act2 = locations.get(j);
+		for (int i = 0; i < locations.size() - 1; i++) {
+			final Candidate act1 = locations.get(i);
+			for (int j = i + 1; j < locations.size(); j++) {
+				final Candidate act2 = locations.get(j);
 
 				relation[i][j] = 0;
 				relation[j][i] = 0;
 
-				String relationPaire = relation(act1, act2);
-				if ( relationPaire.equals("A1_P_A2") ) {
+				final String relationPaire = relation(act1, act2);
+				if (relationPaire.equals("A1_P_A2")) {
 					relation[i][j] = 1;
 					relation[j][i] = -1;
-				} else if ( relationPaire.equals("A2_P_A1") ) {
+				} else if (relationPaire.equals("A2_P_A1")) {
 					relation[i][j] = -1;
 					relation[j][i] = 1;
 				}
@@ -81,12 +84,12 @@ public class Electre {
 
 		int max = -999999;
 		Candidate candMax = null;
-		for ( int i = 0; i < locations.size(); i++ ) {
+		for (int i = 0; i < locations.size(); i++) {
 			int val = 0;
-			for ( int j = 0; j < locations.size(); j++ ) {
+			for (int j = 0; j < locations.size(); j++) {
 				val += relation[i][j];
 			}
-			if ( val > max ) {
+			if (val > max) {
 				max = val;
 				candMax = locations.get(i);
 			}
@@ -96,25 +99,25 @@ public class Electre {
 
 	private double concordance(final double a1, final double a2, final String crit) {
 		double concordance = 0;
-		double prefCrit = preference.get(crit).doubleValue();
-		double indifCrit = indifference.get(crit).doubleValue();
-		double diff = a1 - a2;
-		if ( diff > -indifCrit ) {
+		final double prefCrit = preference.get(crit).doubleValue();
+		final double indifCrit = indifference.get(crit).doubleValue();
+		final double diff = a1 - a2;
+		if (diff > -indifCrit) {
 			concordance = 1;
-		} else if ( diff > -prefCrit ) {
+		} else if (diff > -prefCrit) {
 			concordance = (diff + prefCrit) / (prefCrit - indifCrit);
 		}
 		return concordance;
 	}
 
 	private double discordance(final double a1, final double a2, final String crit) {
-		double prefCrit = preference.get(crit).doubleValue();
-		double vetoCrit = veto.get(crit).doubleValue();
-		double diff = a1 - a2;
+		final double prefCrit = preference.get(crit).doubleValue();
+		final double vetoCrit = veto.get(crit).doubleValue();
+		final double diff = a1 - a2;
 		double discordance = 0;
-		if ( diff < -vetoCrit ) {
+		if (diff < -vetoCrit) {
 			discordance = 1;
-		} else if ( diff < -prefCrit ) {
+		} else if (diff < -prefCrit) {
 			discordance += (diff + prefCrit) / (prefCrit - vetoCrit);
 		}
 		return discordance;
@@ -127,10 +130,10 @@ public class Electre {
 		double concordGA2A1 = 0;
 
 		double poidsTot = 0;
-		for ( String crit : poids.keySet() ) {
-			double poidsCrit = poids.get(crit).doubleValue();
-			double a1 = val1.getValCriteria().get(crit).doubleValue();
-			double a2 = val2.getValCriteria().get(crit).doubleValue();
+		for (final String crit : poids.keySet()) {
+			final double poidsCrit = poids.get(crit).doubleValue();
+			final double a1 = val1.getValCriteria().get(crit).doubleValue();
+			final double a2 = val2.getValCriteria().get(crit).doubleValue();
 			poidsTot += poidsCrit;
 			concordGA1A2 += poidsCrit * concordance(a1, a2, crit);
 			concordGA2A1 += poidsCrit * concordance(a2, a1, crit);
@@ -141,40 +144,39 @@ public class Electre {
 
 		double TA1A2 = 1;
 		double TA2A1 = 1;
-		for ( String crit : poids.keySet() ) {
-			double a1 = val1.getValCriteria().get(crit).doubleValue();
-			double a2 = val2.getValCriteria().get(crit).doubleValue();
+		for (final String crit : poids.keySet()) {
+			final double a1 = val1.getValCriteria().get(crit).doubleValue();
+			final double a2 = val2.getValCriteria().get(crit).doubleValue();
 
-			double discordanceA1A2 = discordance(a1, a2, crit);
-			double discordanceA2A1 = discordance(a2, a1, crit);
+			final double discordanceA1A2 = discordance(a1, a2, crit);
+			final double discordanceA2A1 = discordance(a2, a1, crit);
 
-			if ( discordanceA1A2 > concordGA1A2 ) {
+			if (discordanceA1A2 > concordGA1A2) {
 				TA1A2 *= (1 - discordanceA1A2) / (1 - concordGA1A2);
 			}
-			if ( discordanceA2A1 > concordGA2A1 ) {
+			if (discordanceA2A1 > concordGA2A1) {
 				TA2A1 *= (1 - discordanceA2A1) / (1 - concordGA2A1);
 			}
 		}
 
-		double credibiliteGlobaleA1A2 = concordGA1A2 * TA1A2;
-		double credibiliteGlobaleA2A1 = concordGA2A1 * TA2A1;
+		final double credibiliteGlobaleA1A2 = concordGA1A2 * TA1A2;
+		final double credibiliteGlobaleA2A1 = concordGA2A1 * TA2A1;
 
 		// on d�duit enfin de ces valeurs la relation existante entre les deux vecteurs de valeurs
-		if ( credibiliteGlobaleA1A2 < seuilCoupe ) {
-			if ( credibiliteGlobaleA2A1 < seuilCoupe ) { return "A1_R_A2"; }
+		if (credibiliteGlobaleA1A2 < seuilCoupe) {
+			if (credibiliteGlobaleA2A1 < seuilCoupe) { return "A1_R_A2"; }
 			return "A2_P_A1";
 		}
-		if ( credibiliteGlobaleA2A1 < seuilCoupe ) { return "A1_P_A2"; }
+		if (credibiliteGlobaleA2A1 < seuilCoupe) { return "A1_P_A2"; }
 		return "A1_I_A2";
 	}
 
 	@Override
 	public String toString() {
 		String str = this.seuilCoupe + ",";
-		for ( String crit : critereOrdonnes ) {
-			str +=
-				crit + ":" + poids.get(crit) + "," + preference.get(crit) + "," + indifference.get(crit) + "," +
-					veto.get(crit);
+		for (final String crit : critereOrdonnes) {
+			str += crit + ":" + poids.get(crit) + "," + preference.get(crit) + "," + indifference.get(crit) + ","
+					+ veto.get(crit);
 		}
 		return str;
 	}

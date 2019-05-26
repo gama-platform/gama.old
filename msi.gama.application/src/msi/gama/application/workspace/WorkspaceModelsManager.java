@@ -319,7 +319,6 @@ public class WorkspaceModelsManager {
 					modelFolder.create(true, true, null);
 				}
 			} else {
-				project = container.getProject();
 				modelFolder = (IFolder) container;
 			}
 
@@ -370,10 +369,10 @@ public class WorkspaceModelsManager {
 	 */
 	private IFile createUniqueFileFrom(final IFile originalFile, final IFolder modelFolder) {
 		IFile file = originalFile;
+		final Pattern p = Pattern.compile("(.*?)(\\d+)?(\\..*)?");
 		while (file.exists()) {
 			final IPath path = file.getLocation();
 			String fName = path.lastSegment();
-			final Pattern p = Pattern.compile("(.*?)(\\d+)?(\\..*)?");
 			final Matcher m = p.matcher(fName);
 			if ( m.matches() ) {// group 1 is the prefix, group 2 is the number, group 3 is the suffix
 				fName = m.group(1) + (m.group(2) == null ? 1 : Integer.parseInt(m.group(2)) + 1) +
@@ -574,7 +573,7 @@ public class WorkspaceModelsManager {
 				ids.add(BUILTIN_NATURE);
 			}
 			desc = proj.getDescription();
-			desc.setNatureIds(ids.toArray(new String[0]));
+			desc.setNatureIds(ids.toArray(new String[ids.size()]));
 			// Addition of a special nature to the project.
 			if ( inTests && bundle == null ) {
 				desc.setComment("user defined");

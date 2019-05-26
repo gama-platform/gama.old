@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartDataSeries.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartDataSeries.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -24,19 +24,19 @@ import msi.gaml.operators.Cast;
 @SuppressWarnings ({ "rawtypes" })
 public class ChartDataSeries {
 
-	ArrayList<String> cvalues = new ArrayList<String>(); // for categories
-	ArrayList<Double> xvalues = new ArrayList<Double>(); // for xy charts
-	ArrayList<Double> yvalues = new ArrayList<Double>();
-	ArrayList<Double> svalues = new ArrayList<Double>(); // for marker sizes or
-															// 3d charts
-	ArrayList<Double> xerrvaluesmax = new ArrayList<Double>();
-	ArrayList<Double> yerrvaluesmax = new ArrayList<Double>();
-	ArrayList<Double> xerrvaluesmin = new ArrayList<Double>();
-	ArrayList<Double> yerrvaluesmin = new ArrayList<Double>();
-	ArrayList<Double> yvaluemax = new ArrayList<Double>(); // for box and
-															// whisker
-	ArrayList<Double> yvaluemin = new ArrayList<Double>(); // for box and
-															// whisker
+	ArrayList<String> cvalues = new ArrayList<>(); // for categories
+	ArrayList<Double> xvalues = new ArrayList<>(); // for xy charts
+	ArrayList<Double> yvalues = new ArrayList<>();
+	ArrayList<Double> svalues = new ArrayList<>(); // for marker sizes or
+													// 3d charts
+	ArrayList<Double> xerrvaluesmax = new ArrayList<>();
+	ArrayList<Double> yerrvaluesmax = new ArrayList<>();
+	ArrayList<Double> xerrvaluesmin = new ArrayList<>();
+	ArrayList<Double> yerrvaluesmin = new ArrayList<>();
+	ArrayList<Double> yvaluemax = new ArrayList<>(); // for box and
+														// whisker
+	ArrayList<Double> yvaluemin = new ArrayList<>(); // for box and
+														// whisker
 
 	GamaColor mycolor, mymincolor, mymedcolor;
 
@@ -48,19 +48,19 @@ public class ChartDataSeries {
 
 	boolean ongoing_update = false;
 
-	ArrayList<String> oldcvalues = new ArrayList<String>(); // for categories
-	ArrayList<Double> oldxvalues = new ArrayList<Double>(); // for xy charts
-	ArrayList<Double> oldyvalues = new ArrayList<Double>();
-	ArrayList<Double> oldsvalues = new ArrayList<Double>(); // for marker sizes
-															// or 3d charts
-	ArrayList<Double> oldxerrvaluesmax = new ArrayList<Double>();
-	ArrayList<Double> oldyerrvaluesmax = new ArrayList<Double>();
-	ArrayList<Double> oldxerrvaluesmin = new ArrayList<Double>();
-	ArrayList<Double> oldyerrvaluesmin = new ArrayList<Double>();
-	ArrayList<Double> oldyvaluemax = new ArrayList<Double>(); // for box and
-																// whisker
-	ArrayList<Double> oldyvaluemin = new ArrayList<Double>(); // for box and
-																// whisker
+	ArrayList<String> oldcvalues = new ArrayList<>(); // for categories
+	ArrayList<Double> oldxvalues = new ArrayList<>(); // for xy charts
+	ArrayList<Double> oldyvalues = new ArrayList<>();
+	ArrayList<Double> oldsvalues = new ArrayList<>(); // for marker sizes
+														// or 3d charts
+	// ArrayList<Double> oldxerrvaluesmax = new ArrayList<Double>();
+	// ArrayList<Double> oldyerrvaluesmax = new ArrayList<Double>();
+	// ArrayList<Double> oldxerrvaluesmin = new ArrayList<Double>();
+	// ArrayList<Double> oldyerrvaluesmin = new ArrayList<Double>();
+	// ArrayList<Double> oldyvaluemax = new ArrayList<Double>(); // for box and
+	// // whisker
+	// ArrayList<Double> oldyvaluemin = new ArrayList<Double>(); // for box and
+	// whisker
 
 	public boolean isOngoing_update() {
 		return ongoing_update;
@@ -154,29 +154,25 @@ public class ChartDataSeries {
 
 	public ArrayList<String> getCValues(final IScope scope) {
 		// TODO Auto-generated method stub
-		if (isOngoing_update())
-			return oldcvalues;
+		if (isOngoing_update()) { return oldcvalues; }
 		return cvalues;
 	}
 
 	public ArrayList<Double> getXValues(final IScope scope) {
 		// TODO Auto-generated method stub
-		if (isOngoing_update())
-			return oldxvalues;
+		if (isOngoing_update()) { return oldxvalues; }
 		return xvalues;
 	}
 
 	public ArrayList<Double> getYValues(final IScope scope) {
 		// TODO Auto-generated method stub
-		if (isOngoing_update())
-			return oldyvalues;
+		if (isOngoing_update()) { return oldyvalues; }
 		return yvalues;
 	}
 
 	public ArrayList<Double> getSValues(final IScope scope) {
 		// TODO Auto-generated method stub
-		if (isOngoing_update())
-			return oldsvalues;
+		if (isOngoing_update()) { return oldsvalues; }
 		return svalues;
 	}
 
@@ -184,7 +180,7 @@ public class ChartDataSeries {
 	 * public void addxysvalue(double dx, double dy, double dz, int date) { // TODO Auto-generated method stub
 	 * xvalues.add(dx); yvalues.add(dy); svalues.add(dz); this.getDataset().serieToUpdateBefore.put(this.getName(),
 	 * date);
-	 * 
+	 *
 	 * }
 	 */
 	public void clearValues(final IScope scope) {
@@ -194,46 +190,45 @@ public class ChartDataSeries {
 		oldxvalues = xvalues;
 		oldyvalues = yvalues;
 		oldsvalues = svalues;
-		oldxerrvaluesmax = xerrvaluesmax;
-		oldyerrvaluesmax = yerrvaluesmax;
-		oldxerrvaluesmin = xerrvaluesmin;
-		oldyerrvaluesmin = yerrvaluesmin;
-		oldyvaluemax = yvaluemax;
-		oldyvaluemin = yvaluemin;
+		// oldxerrvaluesmax = xerrvaluesmax;
+		// oldyerrvaluesmax = yerrvaluesmax;
+		// oldxerrvaluesmin = xerrvaluesmin;
+		// oldyerrvaluesmin = yerrvaluesmin;
+		// oldyvaluemax = yvaluemax;
+		// oldyvaluemin = yvaluemin;
 
-		cvalues = new ArrayList<String>(); // for xy charts
-		xvalues = new ArrayList<Double>(); // for xy charts
-		yvalues = new ArrayList<Double>();
-		svalues = new ArrayList<Double>(); // for marker sizes or 3d charts
-		xerrvaluesmax = new ArrayList<Double>();
-		yerrvaluesmax = new ArrayList<Double>();
-		xerrvaluesmin = new ArrayList<Double>();
-		yerrvaluesmin = new ArrayList<Double>();
-		yvaluemax = new ArrayList<Double>(); // for box and whisker
-		yvaluemin = new ArrayList<Double>(); // for box and whisker
+		cvalues = new ArrayList<>(); // for xy charts
+		xvalues = new ArrayList<>(); // for xy charts
+		yvalues = new ArrayList<>();
+		svalues = new ArrayList<>(); // for marker sizes or 3d charts
+		xerrvaluesmax = new ArrayList<>();
+		yerrvaluesmax = new ArrayList<>();
+		xerrvaluesmin = new ArrayList<>();
+		yerrvaluesmin = new ArrayList<>();
+		yvaluemax = new ArrayList<>(); // for box and whisker
+		yvaluemin = new ArrayList<>(); // for box and whisker
 
 	}
 
 	private Object getlistvalue(final IScope scope, final HashMap barvalues, final String valuetype,
 			final int listvalue) {
 		// TODO Auto-generated method stub
-		if (!barvalues.containsKey(valuetype))
-			return null;
+		if (!barvalues.containsKey(valuetype)) { return null; }
 		boolean uselist = true;
-		if (listvalue < 0)
+		if (listvalue < 0) {
 			uselist = false;
+		}
 		final Object oexp = barvalues.get(valuetype);
 		Object o = oexp;
-		if (oexp instanceof IExpression)
+		if (oexp instanceof IExpression) {
 			o = ((IExpression) oexp).value(scope);
+		}
 
-		if (!uselist)
-			return o;
+		if (!uselist) { return o; }
 
 		if (o instanceof GamaList) {
 			final IList ol = Cast.asList(scope, o);
-			if (ol.size() < listvalue)
-				return null;
+			if (ol.size() < listvalue) { return null; }
 			return ol.get(listvalue);
 
 		}
@@ -259,8 +254,9 @@ public class ChartDataSeries {
 			if (o != null) {
 				if (o instanceof GamaList) {
 					final IList ol = Cast.asList(scope, o);
-					if (ol.size() == 1)
+					if (ol.size() == 1) {
 						this.setMycolor(Cast.asColor(scope, ol.get(0)));
+					}
 					if (ol.size() == 2) {
 						this.setMycolor(Cast.asColor(scope, ol.get(1)));
 						this.setMyMincolor(Cast.asColor(scope, ol.get(0)));
@@ -282,8 +278,9 @@ public class ChartDataSeries {
 		if (barvalues.containsKey(ChartDataStatement.MARKERSIZE)) {
 			final Object o = getlistvalue(scope, barvalues, ChartDataStatement.MARKERSIZE, listvalue);
 			if (o != null) {
-				if (svalues.size() > xvalues.size())
+				if (svalues.size() > xvalues.size()) {
 					svalues.remove(svalues.get(svalues.size() - 1));
+				}
 				svalues.add(Cast.asFloat(scope, o));
 			}
 
@@ -352,8 +349,9 @@ public class ChartDataSeries {
 			if (o != null) {
 				if (o instanceof GamaList) {
 					final IList ol = Cast.asList(scope, o);
-					if (ol.size() == 1)
+					if (ol.size() == 1) {
 						this.setMycolor(Cast.asColor(scope, ol.get(0)));
+					}
 					if (ol.size() == 2) {
 						this.setMycolor(Cast.asColor(scope, ol.get(1)));
 						this.setMyMincolor(Cast.asColor(scope, ol.get(0)));
@@ -374,8 +372,9 @@ public class ChartDataSeries {
 		if (barvalues.containsKey(ChartDataStatement.MARKERSIZE)) {
 			final Object o = getlistvalue(scope, barvalues, ChartDataStatement.MARKERSIZE, listvalue);
 			if (o != null) {
-				if (svalues.size() > xvalues.size())
+				if (svalues.size() > xvalues.size()) {
 					svalues.remove(svalues.get(svalues.size() - 1));
+				}
 				svalues.add(Cast.asFloat(scope, o));
 			}
 
@@ -437,35 +436,40 @@ public class ChartDataSeries {
 		history.append(this.getName() + ",");
 		if (mysource.isByCategory()) {
 			if (this.cvalues.size() > 0) {
-				if (this.getMysource().isCumulative)
+				if (this.getMysource().isCumulative) {
 					history.append(this.cvalues.get(this.cvalues.size() - 1) + ",");
-				else
+				} else {
 					savelists(scope, history, this.cvalues);
+				}
 			}
 		} else {
 			if (this.xvalues.size() > 0) {
-				if (this.getMysource().isCumulative)
+				if (this.getMysource().isCumulative) {
 					history.append(this.xvalues.get(this.xvalues.size() - 1) + ",");
-				else
+				} else {
 					savelistd(scope, history, this.xvalues);
+				}
 
 			}
 		}
 		if (this.yvalues.size() > 0) {
-			if (this.getMysource().isCumulative)
+			if (this.getMysource().isCumulative) {
 				history.append(this.yvalues.get(this.yvalues.size() - 1) + ",");
-			else
+			} else {
 				savelistd(scope, history, this.yvalues);
+			}
 
 		}
-		if (this.svalues.size() > 0)
+		if (this.svalues.size() > 0) {
 			if (this.svalues.size() >= this.yvalues.size()) {
-				if (this.getMysource().isCumulative)
+				if (this.getMysource().isCumulative) {
 					history.append(this.svalues.get(this.svalues.size() - 1) + ",");
-				else
+				} else {
 					savelistd(scope, history, this.svalues);
+				}
 
 			}
+		}
 	}
 
 	public void inithistory(final StringBuilder history) {

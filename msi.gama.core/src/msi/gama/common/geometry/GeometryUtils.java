@@ -2,11 +2,11 @@
  *
  * msi.gama.common.geometry.GeometryUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -361,7 +361,7 @@ public class GeometryUtils {
 			final double xMax = env.getMaxX();
 			final double yMax = env.getMaxY();
 			double x = env.getMinX();
-			double y = env.getMinY();
+			double y;
 			boolean firstX = true;
 			while (x < xMax) {
 				y = env.getMinY();
@@ -534,7 +534,7 @@ public class GeometryUtils {
 		/*
 		 * applyToInnerGeometries(geom, (gg) -> { final ICoordinates cc = getContourCoordinates(gg); if
 		 * (cc.isCoveredBy(env) && buffered.covers(gg)) {
-		 * 
+		 *
 		 * } });
 		 */
 		return result;
@@ -927,8 +927,9 @@ public class GeometryUtils {
 
 	public static ICoordinates getContourCoordinates(final Polygon g) {
 		if (g.isEmpty()) { return ICoordinates.EMPTY; }
-		if (g.getExteriorRing().getCoordinateSequence() instanceof CoordinateArraySequence) { return GEOMETRY_FACTORY
-				.getCoordinateSequenceFactory().create(g.getExteriorRing().getCoordinates()); }
+		if (g.getExteriorRing().getCoordinateSequence() instanceof CoordinateArraySequence) {
+			return GEOMETRY_FACTORY.getCoordinateSequenceFactory().create(g.getExteriorRing().getCoordinates());
+		}
 		return (ICoordinates) g.getExteriorRing().getCoordinateSequence();
 	}
 
@@ -975,7 +976,7 @@ public class GeometryUtils {
 	/**
 	 * Applies a GeometryComponentFilter to internal geometries. Concerns the geometries contained in multi-geometries,
 	 * and the holes in polygons. Limited to one level (i.e. holes in polygons in a MultiPolygon will not be visited)
-	 * 
+	 *
 	 * @param g
 	 *            the geometry to visit
 	 * @param f

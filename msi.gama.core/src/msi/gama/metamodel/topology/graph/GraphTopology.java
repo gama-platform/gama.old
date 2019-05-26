@@ -937,6 +937,9 @@ public class GraphTopology extends AbstractTopology {
 		}
 		final List<IList<IShape>> edgesList = getPlaces().computeKBestRoutesBetween(scope, nodeS, nodeT, k);
 		for (IList<IShape> edges : edgesList) {
+			/**
+			 * TODO AD: PROBLEM HERE. Why is edges recomputed immediately ?
+			 */
 			edges = getPlaces().computeBestRouteBetween(scope, nodeS, nodeT);
 			if (edges.isEmpty() || edges.get(0) == null) {
 				continue;

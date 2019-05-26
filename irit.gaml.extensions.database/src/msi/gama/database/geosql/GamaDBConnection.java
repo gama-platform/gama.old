@@ -49,12 +49,12 @@ public class GamaDBConnection {
 	public static final String TIME = "TIME"; // MySQL ('00:00:00')
 	public static final String NULLVALUE = "NULL";
 
-	static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
+	static final String MYSQLDriver = "com.mysql.jdbc.Driver";
 	// static final String MSSQLDriver = new
 	// String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-	static final String MSSQLDriver = new String("net.sourceforge.jtds.jdbc.Driver");
-	static final String SQLITEDriver = new String("org.sqlite.JDBC");
-	static final String POSTGRESDriver = new String("org.postgresql.Driver");
+	static final String MSSQLDriver = "net.sourceforge.jtds.jdbc.Driver";
+	static final String SQLITEDriver = "org.sqlite.JDBC";
+	static final String POSTGRESDriver = "org.postgresql.Driver";
 
 	protected String vender = "";
 	protected String dbtype = "";

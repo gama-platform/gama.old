@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaImageFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaImageFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -105,9 +105,9 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		public ImageInfo(final String propertyString) {
 			super(propertyString);
 			final String[] segments = split(propertyString);
-			type = Integer.valueOf(segments[1]);
-			width = Integer.valueOf(segments[2]);
-			height = Integer.valueOf(segments[3]);
+			type = Integer.parseInt(segments[1]);
+			width = Integer.parseInt(segments[2]);
+			height = Integer.parseInt(segments[3]);
 			// thumbnail = null;
 		}
 
@@ -165,11 +165,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		 * @param pathName
 		 * @throws GamaRuntimeException
 		 */
-		@doc (value= "This file constructor allows to read a pgm file",
-				examples = {
-						@example(value = "file f <-pgm_file(\"file.pgm\");", isExecutable = false)
-				})
-		
+		@doc (
+				value = "This file constructor allows to read a pgm file",
+				examples = { @example (
+						value = "file f <-pgm_file(\"file.pgm\");",
+						isExecutable = false) })
+
 		public GamaPgmFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 			super(scope, pathName);
 		}
@@ -195,19 +196,21 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	// protected BufferedImage image;
 	private boolean isGeoreferenced = false;
 
-	@doc (value= "This file constructor allows to read an image file (tiff, jpg, jpeg, png, pict, bmp)",
-			examples = {
-					@example(value = "file f <-image_file(\"file.png\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read an image file (tiff, jpg, jpeg, png, pict, bmp)",
+			examples = { @example (
+					value = "file f <-image_file(\"file.png\");",
+					isExecutable = false) })
 
 	public GamaImageFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
-	@doc (value= "This file constructor allows to store a matrix in a image file (it does not save it - just store it in memory)",
-			examples = {
-					@example(value = "file f <-image_file(\"file.png\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to store a matrix in a image file (it does not save it - just store it in memory)",
+			examples = { @example (
+					value = "file f <-image_file(\"file.png\");",
+					isExecutable = false) })
 	public GamaImageFile(final IScope scope, final String pathName, final IMatrix<Integer> image) {
 		super(scope, pathName, image);
 		ImageUtils.getInstance().clearCache(getPath(scope));
@@ -259,8 +262,9 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
-		if (preferredSize != null) { return matrixValueFromImage(scope, preferredSize).matrixValue(scope, contentsType,
-				copy); }
+		if (preferredSize != null) {
+			return matrixValueFromImage(scope, preferredSize).matrixValue(scope, contentsType, copy);
+		}
 		return getBuffer().matrixValue(scope, contentsType, copy);
 	}
 
@@ -269,9 +273,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		final BufferedImage image;
 		try {
 			image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope), useCache);
-			if (image == null) { throw GamaRuntimeFileException.error("This image format (." + getExtension(scope)
-					+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
-					scope); }
+			if (image == null) {
+				throw GamaRuntimeFileException.error("This image format (." + getExtension(scope)
+						+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
+						scope);
+			}
 		} catch (final IOException e) {
 			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeFileException.create(e, scope), true);
 			return null;
@@ -347,13 +353,14 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			StringTokenizer tok;
 			String str = in.readLine();
-			if (str != null
-					&& !str.equals("P2")) { throw new UnsupportedEncodingException("File is not in PGM ascii format"); }
+			if (str != null && !str.equals("P2")) {
+				throw new UnsupportedEncodingException("File is not in PGM ascii format");
+			}
 			str = in.readLine();
 			if (str == null) { return GamaMatrixType.with(scope, 0, preferredSize, Types.INT); }
 			tok = new StringTokenizer(str);
-			final int xSize = Integer.valueOf(tok.nextToken());
-			final int ySize = Integer.valueOf(tok.nextToken());
+			final int xSize = Integer.parseInt(tok.nextToken());
+			final int ySize = Integer.parseInt(tok.nextToken());
 			in.readLine();
 			final StringBuilder buf = new StringBuilder();
 			String line = in.readLine();

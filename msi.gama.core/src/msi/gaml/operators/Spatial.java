@@ -5190,7 +5190,7 @@ public abstract class Spatial {
 				final CoordinateReferenceSystem crs = ((GamaGisFile) gisFile).getGis(scope).getInitialCRS(scope);
 				if (crs == null) { return null; }
 				try {
-					return CRS.lookupIdentifier(crs, true).toString();
+					return CRS.lookupIdentifier(crs, true);
 				} catch (final FactoryException e) {
 					return null;
 				} catch (final NullPointerException e) {

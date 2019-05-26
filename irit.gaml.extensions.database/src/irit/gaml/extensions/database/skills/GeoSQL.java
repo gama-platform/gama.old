@@ -17,8 +17,8 @@ public class GeoSQL {
 
 	static final String MYSQL = "MySQL";
 	static final String MSSQL = "MsSQL";
-	static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
-	static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	static final String MYSQLDriver = "com.mysql.jdbc.Driver";
+	static final String MSSQLDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
 	public GeoSQL() throws IOException, SQLException {
 
@@ -80,11 +80,6 @@ public class GeoSQL {
 			// DEBUG.ERR("3.1Connection: " + connection);
 		}
 
-	}
-
-	public static void main(final String[] args)
-			throws IOException, ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-		@SuppressWarnings ("unused") final GeoSQL mySQL = new GeoSQL();
 	}
 
 }

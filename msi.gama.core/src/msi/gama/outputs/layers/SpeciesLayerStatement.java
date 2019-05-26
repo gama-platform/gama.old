@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.SpeciesLayerStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.SpeciesLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -176,14 +176,14 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 		@Override
 		public void validate(final StatementDescription description) {
-			IExpressionDescription ed = description.getFacet(SPECIES);
+			// IExpressionDescription ed = description.getFacet(SPECIES);
 			SpeciesDescription target = null;
 			target = description.getGamlType().getDenotedSpecies();
 			if (target == null) {
 				// Already caught by the type checking
 				return;
 			}
-			ed = description.getFacet(ASPECT);
+			final IExpressionDescription ed = description.getFacet(ASPECT);
 			if (ed != null) {
 				final String a = description.getLitteral(ASPECT);
 				if (target.getAspect(a) != null) {
@@ -220,8 +220,9 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		if (species == null && hostSpecies != null) {
 			species = hostSpecies.getMicroSpecies(getName());
 		}
-		if (species == null) { throw GamaRuntimeException.error("not a suitable species to display: " + getName(),
-				scope); }
+		if (species == null) {
+			throw GamaRuntimeException.error("not a suitable species to display: " + getName(), scope);
+		}
 		if (super._init(scope)) {
 			if (microSpeciesLayers != null) {
 				for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.SavedAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.agent.SavedAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -30,7 +30,7 @@ import msi.gaml.types.Types;
  * A helper class to save agent and restore/recreate agent as a member of a population.
  */
 @SuppressWarnings ("unchecked")
-public class SavedAgent extends GamaMap<String, Object> implements Cloneable {
+public class SavedAgent extends GamaMap<String, Object> {
 
 	/** Variables which are not saved during the capture and release process. */
 	static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST,
@@ -40,7 +40,7 @@ public class SavedAgent extends GamaMap<String, Object> implements Cloneable {
 	Map<String, List<SavedAgent>> innerPopulations;
 
 	@Override
-	public SavedAgent clone() {
+	public final SavedAgent clone() {
 		final SavedAgent result = new SavedAgent();
 		result.putAll(this);
 		result.innerPopulations = innerPopulations;
@@ -155,10 +155,10 @@ public class SavedAgent extends GamaMap<String, Object> implements Cloneable {
 	 * @throws GamaRuntimeException
 	 */
 	private void saveMicroAgents(final IScope scope, final IMacroAgent agent) throws GamaRuntimeException {
-		innerPopulations = new THashMap<String, List<SavedAgent>>();
+		innerPopulations = new THashMap<>();
 
 		for (final IPopulation<? extends IAgent> microPop : agent.getMicroPopulations()) {
-			final List<SavedAgent> savedAgents = new ArrayList<SavedAgent>();
+			final List<SavedAgent> savedAgents = new ArrayList<>();
 			final Iterator<? extends IAgent> it = microPop.iterator();
 			while (it.hasNext()) {
 				savedAgents.add(new SavedAgent(scope, it.next()));

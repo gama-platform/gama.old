@@ -366,7 +366,7 @@ public class GamaGridFile extends GamaGisFile {
 		// getting name for the prj file
 		final String sourceAsString;
 		sourceAsString = source.getAbsolutePath();
-		final int index = sourceAsString.lastIndexOf(".");
+		final int index = sourceAsString.lastIndexOf('.');
 		final StringBuffer prjFileName;
 		if (index == -1) {
 			prjFileName = new StringBuffer(sourceAsString);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.LightStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.LightStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -123,7 +123,7 @@ public class LightStatement extends AbstractLayerStatement {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -147,7 +147,7 @@ public class LightStatement extends AbstractLayerStatement {
 
 			final IExpression spec = desc.getFacetExpr(IKeyword.TYPE);
 			if (spec != null && spec.isConst()) {
-				final String typeString = spec.literalValue().toString();
+				final String typeString = spec.literalValue();
 				// light type direction
 				if (typeString.compareTo("direction") == 0) {
 					if (position != null) {

@@ -53,12 +53,13 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	protected SashForm form;
 	public Composite surfaceComposite;
 	public final LayeredDisplayDecorator decorator;
-	protected volatile boolean disposed, realized;
+	protected volatile boolean disposed;
+	// protected volatile boolean realized;
 	Thread updateThread;
 	private volatile boolean lockAcquired = false;
 
 	@Override
-	public void setIndex(int index) {
+	public void setIndex(final int index) {
 		realIndex = index;
 	}
 

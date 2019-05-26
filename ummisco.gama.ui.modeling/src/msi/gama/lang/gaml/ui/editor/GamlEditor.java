@@ -455,7 +455,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				Selector listener = null;
 				String imageName = null;
 
-				if (msg == GamlEditorState.NO_EXP_DEFINED) {
+				if (GamlEditorState.NO_EXP_DEFINED.equals(msg)) {
 					msg = null;
 				} else if (newState.hasImportedErrors) {
 					listener = new OpenImportedErrorSelectionListener(GamlEditor.this, newState,

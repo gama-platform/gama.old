@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaFileMetaData.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaFileMetaData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -61,7 +61,7 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 		} else if (s == null || s.isEmpty()) {
 			fileModificationStamp = 0;
 		} else {
-			fileModificationStamp = Long.valueOf(s);
+			fileModificationStamp = Long.parseLong(s);
 		}
 	}
 
@@ -76,7 +76,7 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 
 	/**
 	 * Method getModificationStamp()
-	 * 
+	 *
 	 * @see msi.gama.util.file.IGamaFileInfo#getModificationStamp()
 	 */
 	@Override
@@ -94,7 +94,7 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 
 	/**
 	 * Subclasses should extend ! Method toPropertyString()
-	 * 
+	 *
 	 * @see msi.gama.util.file.IGamaFileMetaData#toPropertyString()
 	 */
 

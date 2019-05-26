@@ -162,8 +162,8 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	protected boolean _contains(final IScope scope, final Object o) {
-		for (int i = 0; i < matrix.length; i++) {
-			if (o instanceof Integer && matrix[i] == ((Integer) o).intValue()) { return true; }
+		for (final int element : matrix) {
+			if (o instanceof Integer && element == ((Integer) o).intValue()) { return true; }
 		}
 		return false;
 	}
@@ -225,11 +225,9 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	// category={IOperatorCategory.MATRIX})
 	public IMatrix _opAppendHorizontally(final IScope scope, final IMatrix b) {
 		final GamaIntMatrix a = this;
-		GamaIntMatrix aprime = new GamaIntMatrix(a.getRows(scope), a.getCols(scope));
-		aprime = (GamaIntMatrix) a._reverse(scope);
+		final GamaIntMatrix aprime = (GamaIntMatrix) a._reverse(scope);
 		// DEBUG.LOG("aprime = " + aprime);
-		GamaIntMatrix bprime = new GamaIntMatrix(b.getRows(scope), b.getCols(scope));
-		bprime = (GamaIntMatrix) ((GamaIntMatrix) b)._reverse(scope);
+		final GamaIntMatrix bprime = (GamaIntMatrix) ((GamaIntMatrix) b)._reverse(scope);
 		// DEBUG.LOG("bprime = " + bprime);
 		final GamaIntMatrix c = (GamaIntMatrix) aprime.opAppendVertically(scope, bprime);
 		// DEBUG.LOG("c = " + c);
@@ -280,8 +278,8 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public boolean _isEmpty(final IScope scope) {
-		for (int i = 0; i < matrix.length; i++) {
-			if (matrix[i] != 0) { return false; }
+		for (final int element : matrix) {
+			if (element != 0) { return false; }
 		}
 		return true;
 	}

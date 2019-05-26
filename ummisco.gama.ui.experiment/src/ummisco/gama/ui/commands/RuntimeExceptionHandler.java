@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
@@ -98,7 +98,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 					oldExcp.add(newEx);
 				} else {
 					boolean toAdd = true;
-					for (final GamaRuntimeException oldEx : oldExcp.toArray(new GamaRuntimeException[0])) {
+					for (final GamaRuntimeException oldEx : oldExcp.toArray(new GamaRuntimeException[oldExcp.size()])) {
 						if (oldEx.equivalentTo(newEx)) {
 							if (oldEx != newEx) {
 								oldEx.addAgents(newEx.getAgentsNames());

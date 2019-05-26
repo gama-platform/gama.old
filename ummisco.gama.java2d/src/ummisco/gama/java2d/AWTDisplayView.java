@@ -18,7 +18,6 @@ import javax.swing.JComponent;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.java2d.swing.SwingControl;
@@ -57,17 +56,17 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 			}
 
-			@Override
-			public Rectangle getClientArea() {
-				// if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getClientArea());
-				return super.getClientArea();
-			}
+			// @Override
+			// public Rectangle getClientArea() {
+			// // if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getClientArea());
+			// return super.getClientArea();
+			// }
 
-			@Override
-			public Point getSize() {
-				// if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getSize());
-				return super.getSize();
-			}
+			// @Override
+			// public Point getSize() {
+			// // if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getSize());
+			// return super.getSize();
+			// }
 
 			@Override
 			public Composite getLayoutAncestor() {

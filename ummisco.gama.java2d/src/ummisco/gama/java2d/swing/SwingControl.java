@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.java2d.swing;
@@ -60,7 +60,7 @@ import ummisco.gama.ui.utils.PlatformHelper;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public abstract class SwingControl extends Composite {
-	
+
 	public AWTDisplayView awtview;
 	JApplet applet;
 
@@ -309,12 +309,12 @@ public abstract class SwingControl extends Composite {
 			// org.eclipse.ui.internal.handlers.WidgetMethodHandler).
 			// TODO: can this be queried from the L&F?
 			final KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-			if (kfm.getDefaultFocusTraversalPolicy().getClass()
-					.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy") {
+			if (kfm.getDefaultFocusTraversalPolicy().getClass().getName()
+					.equals("javax.swing.LegacyGlueFocusTraversalPolicy")) {
 				kfm.setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
 			}
-			if (frame.getFocusTraversalPolicy() != null && frame.getFocusTraversalPolicy().getClass()
-					.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy") {
+			if (frame.getFocusTraversalPolicy() != null && frame.getFocusTraversalPolicy().getClass().getName()
+					.equals("javax.swing.LegacyGlueFocusTraversalPolicy")) {
 				frame.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
 			}
 
@@ -493,7 +493,7 @@ public abstract class SwingControl extends Composite {
 
 	/**
 	 * Returns the Swing component contained in this control. This method may be called from any thread.
-	 * 
+	 *
 	 * @return The embedded Swing component, or <code>null</code> if it has not yet been initialized.
 	 */
 	public /* final */ JComponent getSwingComponent() {
@@ -503,7 +503,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Returns the root of the AWT component hierarchy; this is the top-level parent of the embedded Swing component.
 	 * This method may be called from any thread.
-	 * 
+	 *
 	 * @return An AWT container, usually a Window, or <code>null</code> if the initialization is not yet complete.
 	 */
 	public /* final */ Container getAWTHierarchyRoot() {
@@ -580,7 +580,7 @@ public abstract class SwingControl extends Composite {
 		assert Display.getCurrent() != null; // On SWT event thread
 		final Rectangle rect = super.getClientArea();
 		if (borderlessChild == this) {
-			//assignInitialClientArea(rect);
+			// assignInitialClientArea(rect);
 		}
 		return rect;
 	}
@@ -719,7 +719,7 @@ public abstract class SwingControl extends Composite {
 
 	/**
 	 * Retrieves the minimum, preferred, and maximum sizes of the Swing component, if they are already available.
-	 * 
+	 *
 	 * @param min
 	 *            Output parameter for the Swing component's minimum size.
 	 * @param pref
@@ -778,7 +778,7 @@ public abstract class SwingControl extends Composite {
 
 		/**
 		 * Enqueues a request to this queue.
-		 * 
+		 *
 		 * @param onBehalfAWTTime
 		 *            The AWT time of the notification that triggered this request, or null.
 		 * @param width
@@ -829,7 +829,7 @@ public abstract class SwingControl extends Composite {
 
 		/**
 		 * Returns the enqueued request and removes it from the queue.
-		 * 
+		 *
 		 * @return The size to which the frame shall be resized, or null if if does not need to be resized after all.
 		 */
 		private synchronized Dimension dequeue() {
@@ -994,7 +994,7 @@ public abstract class SwingControl extends Composite {
 	 * Returns the uppermost parent of this control that is influenced by size changes of this control. It is usually on
 	 * this ancestor control that you want to call <code>layout()</code> when the preferred size of this control has
 	 * changed.
-	 * 
+	 *
 	 * @return the parent, grandparent, or other ancestor of this control, or <code>null</code>
 	 * @see #preferredSizeChanged(Point, Point, Point)
 	 */
@@ -1024,7 +1024,7 @@ public abstract class SwingControl extends Composite {
 	 * <p>
 	 * The parameters <var>minPoint</var>, <var>prefPoint</var>, <var>maxPoint</var> can usually be ignored: It is often
 	 * enough to rely on the {@link #layout()} method.
-	 * 
+	 *
 	 * @param minSize
 	 *            The new minimum size for this control, as reported by AWT, plus the border width on each side.
 	 * @param prefSize
@@ -1285,7 +1285,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Configures the SwingControl's participation in SWT traversals. See {@link #isSwtTabOrderExtended} for more
 	 * information.
-	 * 
+	 *
 	 * @param isSwtTabOrderExtended
 	 */
 	public void setSwtTabOrderExtended(final boolean isSwtTabOrderExtended) {
@@ -1304,7 +1304,7 @@ public abstract class SwingControl extends Composite {
 	 * element. Focus on a child component will then be determined completely by the AWT focus subsystem, independent of
 	 * any current SWT traversal state. This normally means that focus will move to the most recently focused Swing
 	 * component within the embedded frame.
-	 * 
+	 *
 	 * @return true if the child componets are SWT traversal participants. false otherwise.
 	 */
 	public boolean isSwtTabOrderExtended() {
@@ -1314,7 +1314,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Returns whether a permanent focus lost event is forced on a SwingControl when focus moves to another SWT
 	 * component within the same shell. See {@link #setAWTPermanentFocusLossForced(boolean)} for more information.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isAWTPermanentFocusLossForced() {
@@ -1332,7 +1332,7 @@ public abstract class SwingControl extends Composite {
 	 * <a href= "http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html"> AWT Focus Subsystem</a>
 	 * spec. For an example of the type of problem solved by keeping this property <code>true</code>, see
 	 * <a href="http://bugs.eclipse.org/60967">bug 60967</a>.
-	 * 
+	 *
 	 * @param isAWTPermanentFocusLossForced
 	 *            - <code>true</code> to enable the forcing of permanent focus loss. <code>false</code> to disable it.
 	 */
@@ -1422,7 +1422,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Common focus setting/forcing code. Since this may be called for the SwingControl or a borderless child component,
 	 * and it may be called for setting or forcing focus, the actual code to change focus is passed in a runnable
-	 * 
+	 *
 	 * @param focusSetter
 	 *            - invoked to set or force focus
 	 * @return the result of running the focus setter, or true if it was deferred
@@ -1566,7 +1566,7 @@ public abstract class SwingControl extends Composite {
 	 * {@link SwtPopupRegistry#setMenu} and as fallback at the popup menu registered on this <code>Control</code>.
 	 * <p>
 	 * This method can be overridden, to achieve dynamic popup menus.
-	 * 
+	 *
 	 * @param component
 	 *            The component on which a popup event was received.
 	 * @param x
@@ -1659,7 +1659,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Returns the set of keystrokes which will be consumed by this control. See
 	 * {@link #addConsumedKeystroke(SwtKeystroke)} for more information.
-	 * 
+	 *
 	 * @return Set the keystrokes configured to be consumed.
 	 */
 	public Set getConsumedKeystrokes() {
@@ -1673,7 +1673,7 @@ public abstract class SwingControl extends Composite {
 	 * This method can be used to block a SWT keystroke from being propagated both to the embedded Swing component and
 	 * to the native window system. By consuming a keystroke, you can avoid conflicts in key handling between the Swing
 	 * component and the rest of the application.
-	 * 
+	 *
 	 * @param key
 	 *            the keystroke to consume.
 	 */
@@ -1685,7 +1685,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Removes a SWT keystroke from the set of keystrokes to be consumed by this control. See
 	 * {@link #addConsumedKeystroke(SwtKeystroke)} for more information.
-	 * 
+	 *
 	 * @return <code>true</code> if a keystroke was successfully removed from the set.
 	 */
 	public boolean removeConsumedKeystroke(final SwtKeystroke key) {

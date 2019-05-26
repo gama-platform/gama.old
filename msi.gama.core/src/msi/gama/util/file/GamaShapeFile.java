@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaShapeFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaShapeFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -150,7 +150,7 @@ public class GamaShapeFile extends GamaGisFile {
 		public ShapeInfo(final String propertiesString) {
 			super(propertiesString);
 			final String[] segments = split(propertiesString);
-			itemNumber = Integer.valueOf(segments[1]);
+			itemNumber = Integer.parseInt(segments[1]);
 			final String crsString = segments[2];
 			CoordinateReferenceSystem theCRS;
 			if ("null".equals(crsString) || crsString.startsWith("Unknown")) {
@@ -163,8 +163,8 @@ public class GamaShapeFile extends GamaGisFile {
 				}
 			}
 			crs = theCRS;
-			width = Double.valueOf(segments[3]);
-			height = Double.valueOf(segments[4]);
+			width = Double.parseDouble(segments[3]);
+			height = Double.parseDouble(segments[4]);
 			if (segments.length > 5) {
 				final String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
 				final String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
@@ -176,7 +176,7 @@ public class GamaShapeFile extends GamaGisFile {
 
 		/**
 		 * Method getSuffix()
-		 * 
+		 *
 		 * @see msi.gama.util.file.GamaFileMetaInformation#getSuffix()
 		 */
 		@Override
@@ -249,47 +249,57 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @param scope
 	 * @param pathName
 	 */
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file",
-			examples = {
-				@example(value = "file f <- shape_file(\"file.shp\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a shapefile (.shp) file",
+			examples = { @example (
+					value = "file f <- shape_file(\"file.shp\");",
+					isExecutable = false) })
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
-	
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code)",
-			examples = {
-				@example(value = "file f <- shape_file(\"file.shp\", \"32648\");", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code)",
+			examples = { @example (
+					value = "file f <- shape_file(\"file.shp\", \"32648\");",
+					isExecutable = false) })
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code (epg,...,), as a string",
-			examples = {
-				@example(value = "file f <- shape_file(\"file.shp\", \"EPSG:32648\");", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code (epg,...,), as a string",
+			examples = { @example (
+					value = "file f <- shape_file(\"file.shp\", \"EPSG:32648\");",
+					isExecutable = false) })
 	public GamaShapeFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file and take a potential z value (not taken in account by default)",
-			examples = {
-				@example(value = "file f <- shape_file(\"file.shp\", true);", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a shapefile (.shp) file and take a potential z value (not taken in account by default)",
+			examples = { @example (
+					value = "file f <- shape_file(\"file.shp\", true);",
+					isExecutable = false) })
 	public GamaShapeFile(final IScope scope, final String pathName, final boolean with3D) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null, with3D);
 	}
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code) and take a potential z value (not taken in account by default)",
-			examples = {
-				@example(value = "file f <- shape_file(\"file.shp\", \"32648\", true);", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code) and take a potential z value (not taken in account by default)",
+			examples = { @example (
+					value = "file f <- shape_file(\"file.shp\", \"32648\", true);",
+					isExecutable = false) })
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code, final boolean with3D)
 			throws GamaRuntimeException {
 		super(scope, pathName, code, with3D);
 	}
-	@doc (value= "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default)",
-			examples = {
-				@example(value = "file f <- shape_file(\"file.shp\", \"EPSG:32648\",true);", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default)",
+			examples = { @example (
+					value = "file f <- shape_file(\"file.shp\", \"EPSG:32648\",true);",
+					isExecutable = false) })
 	public GamaShapeFile(final IScope scope, final String pathName, final String code, final boolean with3D)
 			throws GamaRuntimeException {
 		super(scope, pathName, code, with3D);
@@ -367,7 +377,7 @@ public class GamaShapeFile extends GamaGisFile {
 				while (reader.hasNext()) {
 					index++;
 					if (index % 20 == 0) {
-						scope.getGui().getStatus(scope).setSubStatusCompletion(index / size);
+						scope.getGui().getStatus(scope).setSubStatusCompletion(index / (double) size);
 					}
 					final Feature feature = reader.next();
 					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
@@ -376,14 +386,14 @@ public class GamaShapeFile extends GamaGisFile {
 							g = g.buffer(0.0);
 						}
 						g = gis.transform(g);
-						
+
 						if (!with3D) {
 							g.apply(ZERO_Z);
 							g.geometryChanged();
 						}
 						g = multiPolygonManagement(g);
 						list.add(new GamaGisGeometry(g, feature));
-						
+
 					} else if (g == null) {
 						// See Issue 725
 						GAMA.reportError(scope,

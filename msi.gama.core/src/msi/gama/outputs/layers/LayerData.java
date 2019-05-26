@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.LayerData.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.LayerData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -123,7 +123,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	@Override
 	public final Double getTransparency(final IScope scope) {
-		return Cast.asFloat(scope,transparency.value(scope));
+		return Cast.asFloat(scope, transparency.value(scope));
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	/**
 	 * Method getTrace()
-	 * 
+	 *
 	 * @see msi.gama.outputs.layers.ILayerData#getTrace()
 	 */
 	@Override
@@ -158,7 +158,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	/**
 	 * Method getFading()
-	 * 
+	 *
 	 * @see msi.gama.outputs.layers.ILayerData#getFading()
 	 */
 	@Override
@@ -224,7 +224,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 			relative_y = Math.abs(y) <= 1 ? pixelHeight * y : yRatio * y;
 		}
 
-		relative_y = Math.abs(y) <= 1 ? pixelHeight * y : yRatio * y;
+		// relative_y = Math.abs(y) <= 1 ? pixelHeight * y : yRatio * y;
 		final double absolute_y = Math.signum(y) < 0 ? pixelHeight + relative_y : relative_y;
 
 		point = getSize();

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutput.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartJFreeChartOutput.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -96,24 +96,12 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 		}
 
 		switch (type) {
-			case SERIES_CHART: {
-				newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
-				break;
-			}
+
 			case PIE_CHART: {
 				newChart = new ChartJFreeChartOutputPie(scope, name, typeexp);
 				break;
 			}
-			case HISTOGRAM_CHART: {
-				newChart = new ChartJFreeChartOutputHistogram(scope, name, typeexp);
-				break;
-			}
-			case XY_CHART:
-				newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
-				break;
-			case SCATTER_CHART:
-				newChart = new ChartJFreeChartOutputScatter(scope, name, typeexp);
-				break;
+			case HISTOGRAM_CHART:
 			case BOX_WHISKER_CHART: {
 				newChart = new ChartJFreeChartOutputHistogram(scope, name, typeexp);
 				break;
