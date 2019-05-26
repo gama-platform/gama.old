@@ -17,7 +17,7 @@ public class DEBUG {
 	 * A custom security manager that exposes the getClassContext() information
 	 */
 	static class MySecurityManager extends SecurityManager {
-		public String getCallerClassName(int callStackDepth) {
+		public String getCallerClassName(final int callStackDepth) {
 			return getClassContext()[callStackDepth].getName();
 		}
 	}
@@ -28,7 +28,7 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
-	private static final boolean GLOBAL_OFF = false;
+	private static final boolean GLOBAL_OFF = true;
 	private static final boolean GLOBAL_ON = false;
 
 	static {
@@ -95,8 +95,8 @@ public class DEBUG {
 		}
 	}
 
-	public static interface RunnableWithException<T extends Throwable> {
-		public void run() throws T;
+	public interface RunnableWithException<T extends Throwable> {
+		void run() throws T;
 	}
 
 	/**
