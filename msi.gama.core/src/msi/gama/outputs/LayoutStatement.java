@@ -58,6 +58,21 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("Whether the displays should show their toolbar or not")),
 				@facet (
+						name = "parameters",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the parameters view is visible or not (true by default)")),
+				@facet (
+						name = "navigator",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the navigator view is visible or not (true by default)")),
+				@facet (
+						name = "consoles",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the consoles are visible or not (true by default)")),
+				@facet (
 						name = "tabs",
 						type = IType.BOOL,
 						optional = true,

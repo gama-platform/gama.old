@@ -36,16 +36,16 @@ global {
 
 species seasons {
 	int season_duration <- 600;
-	int shift_cycle -> {season_duration * 4 + int(cycle - floor(season_duration / 2))};
+	int shift_cycle <- season_duration * 4 update: season_duration * 4 + int(cycle - floor(season_duration / 2));
 	list<string> season_list <- ["winter", "spring", "summer", "autumn"];
-	string current_season -> {season_list[(cycle div season_duration) mod 4]};
-	int current_day -> {cycle mod season_duration};
-	int shift_current_day -> {shift_cycle mod season_duration};
-	float energy -> energy_map[current_season];
-	int se -> {(shift_cycle div season_duration) mod 4};
-	int next_se -> {(se + 1) mod 4};
-	int ns_se -> {(cycle div season_duration) mod 4};
-	int ns_next_se -> {(ns_se + 1) mod 4};
+	string current_season <- "winter" update: season_list[(cycle div season_duration) mod 4];
+	int current_day <- 0 update:  cycle mod season_duration;
+	int shift_current_day <- 0 update: shift_cycle mod season_duration;
+	float energy <- 0.0 update: energy_map[current_season];
+	int se <- 0 update: (shift_cycle div season_duration) mod 4;
+	int next_se <- 1 update: (se + 1) mod 4;
+	int ns_se <- 0 update: (cycle div season_duration) mod 4;
+	int ns_next_se <- 1 update: (ns_se + 1) mod 4;
 	list<rgb> sky_color_list <- [rgb(238, 238, 238), rgb(129, 207, 224), rgb(25, 181, 254), rgb(254, 224, 144)];
 	list<rgb> leaf_color_list <- [rgb(150, 40, 27), rgb(134, 174, 83), rgb(30, 130, 76), rgb(192, 57, 43)];
 	list<rgb> ground_color_list <- [rgb(236, 240, 241), rgb(46, 204, 113), rgb(38, 166, 91), rgb(95, 104, 40)];
@@ -86,7 +86,7 @@ species tree_part {
 	float alpha <- 0.0;
 	float beta <- 0.0;
 	float level <- 1.0;
-	list childs <- nil;
+	list children <- nil;
 	float energy <- 0.0;
 }
 
@@ -106,10 +106,6 @@ species plant_seed parent: tree_part {
 		}
 
 		has_tree <- true;
-	}
-
-	point new_vector (float angle) {
-		return vector;
 	}
 
 	aspect default {
@@ -150,7 +146,7 @@ species burgeon parent: tree_part {
 			self.beta <- myself.beta;
 			self.parent <- myself.parent;
 			if myself.parent != nil {
-				myself.parent.childs <- myself.parent.childs + tmp;
+				myself.parent.children <- myself.parent.children + tmp;
 			}
 
 		}
@@ -162,7 +158,7 @@ species burgeon parent: tree_part {
 			self.beta <- myself.beta;
 			self.base <- tmp.end;
 			self.end <- self.base + {5 * cos(beta) * cos(alpha), 5 * cos(beta) * sin(alpha), 5 * sin(beta)};
-			tmp.childs <- tmp.childs + self;
+			tmp.children <- tmp.children + self;
 			self.creation_cycle <- cycle;
 		}
 
@@ -275,13 +271,9 @@ species leaf {
 		end <- base + {5 * cos(beta) * cos(alpha), 5 * cos(beta) * sin(alpha), 5 * sin(beta)};
 		if (season.current_season = "autumn") {
 			fall <- 1 - exp(-max([0, 5 * (season.current_day - fall_shift) / season.season_duration * 3]));
-		}
-
-		if (season.current_season = "winter") {
+		} else if (season.current_season = "winter") {
 			size <- 3 * (season.season_duration - season.current_day) / season.season_duration;
-		}
-
-		if (season.current_season = "spring") {
+		} else if (season.current_season = "spring") {
 			fall <- 0.0;
 			size <- 3 * season.current_day / season.season_duration;
 		}
@@ -293,15 +285,17 @@ species leaf {
 		int side2 <- -1 + 2 * rnd(1);
 		int side3 <- -1 + 2 * rnd(1);
 		int side4 <- -1 + 2 * rnd(1);
+		float factor <- secondary_split_angle_alpha / 100;
 		float branch1_alpha <- parent.alpha + side1 * rnd(100) / 100 * main_split_angle_alpha;
-		float branch2_alpha <- parent.alpha - side1 * rnd(100) / 100 * secondary_split_angle_alpha;
-		float branch3_alpha <- parent.alpha + side3 * rnd(100) / 100 * secondary_split_angle_alpha;
-		float branch4_alpha <- parent.alpha - side3 * rnd(100) / 100 * secondary_split_angle_alpha;
+		float branch2_alpha <- parent.alpha - side1 * rnd(100) * factor;
+		float branch3_alpha <- parent.alpha + side3 * rnd(100) * factor;
+		float branch4_alpha <- parent.alpha - side3 * rnd(100) * factor;
 		int sideb <- -1 + 2 * rnd(1);
+		 factor <- secondary_split_angle_beta / 100;
 		float branch1_beta <- parent.beta + sideb * rnd(100) / 100 * main_split_angle_beta;
-		float branch2_beta <- -20 + rnd(100) / 100 * secondary_split_angle_beta;
-		float branch3_beta <- -20 + rnd(100) / 100 * secondary_split_angle_beta;
-		float branch4_beta <- -20 + rnd(100) / 100 * secondary_split_angle_beta;
+		float branch2_beta <- -20 + rnd(100) * factor;
+		float branch3_beta <- -20 + rnd(100) * factor;
+		float branch4_beta <- -20 + rnd(100) * factor;
 		create burgeon number: 1 {
 			self.level <- myself.parent.level + 1;
 			self.base <- myself.base;
@@ -367,7 +361,7 @@ species leaf {
 
 		}
 
-		self.parent.childs <- self.parent.childs - self;
+		self.parent.children <- self.parent.children - self;
 		do die;
 	}
 
@@ -385,9 +379,7 @@ species fruit {
 		if (season.current_season = "spring") {
 			draw line([base, end], 0.1) color: season.leaf_color;
 			draw circle(1 * sin(180 * season.current_day / season.season_duration)) at: end color: °pink border: °pink;
-		}
-
-		if (season.current_season = "summer") {
+		} else if (season.current_season = "summer") {
 			draw line([base, end], 0.1) color: season.leaf_color;
 			draw sphere(1 * sin(90 * season.current_day / season.season_duration)) at: end color: season.fruit_color border: season.fruit_color;
 		}
@@ -398,9 +390,7 @@ species fruit {
 		base <- parent.end;
 		if (season.current_season = "spring") {
 			end <- base + {3 * cos(beta) * cos(alpha), 3 * cos(beta) * sin(alpha), 3 * sin(beta)};
-		}
-
-		if (season.current_season = "summer") {
+		} else if (season.current_season = "summer") {
 			float beta2 <- -90 + (beta + 90) * exp(-season.current_day / 100);
 			end <- base + {3 * cos(beta2) * cos(alpha), 3 * cos(beta2) * sin(alpha), 3 * sin(beta2)};
 		}
@@ -442,7 +432,7 @@ experiment "4 simulations" type: gui autorun: true {
 			species fruit aspect: default;
 		}
 
-		layout #split toolbars: false tabs: false;
+		layout #split toolbars: false tabs: false parameters: false consoles: false navigator: false;
 	}
 
 }
