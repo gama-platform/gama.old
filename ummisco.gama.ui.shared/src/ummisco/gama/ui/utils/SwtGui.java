@@ -103,7 +103,7 @@ public class SwtGui implements IGui {
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
 		if (exp == null || !GamaPreferences.Runtime.CORE_ASK_CLOSING.getValue()) { return true; }
-		PerspectiveHelper.openSimulationPerspective();
+		PerspectiveHelper.switchToSimulationPerspective();
 		return Messages.question("Close simulation confirmation", "Do you want to close experiment '" + exp.getName()
 				+ "' of model '" + exp.getModel().getName() + "' ?");
 	}
@@ -197,12 +197,12 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public boolean copyToClipboard(String text) {
+	public boolean copyToClipboard(final String text) {
 		WorkbenchHelper.asyncRun(() -> {
-			Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
-			TextTransfer textTransfer = TextTransfer.getInstance();
-			Transfer[] transfers = new Transfer[] { textTransfer };
-			Object[] data = new Object[] { text };
+			final Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
+			final TextTransfer textTransfer = TextTransfer.getInstance();
+			final Transfer[] transfers = new Transfer[] { textTransfer };
+			final Object[] data = new Object[] { text };
 			clipboard.setContents(data, transfers);
 			clipboard.dispose();
 		});
@@ -511,8 +511,10 @@ public class SwtGui implements IGui {
 				}
 			}
 			if (openModelingPerspective) {
+				DEBUG.OUT("Deleting simulation perspective and opening immediately the modeling perspective = "
+						+ immediately);
 				PerspectiveHelper.deleteCurrentSimulationPerspective();
-				PerspectiveHelper.openModelingPerspective(immediately);
+				PerspectiveHelper.openModelingPerspective(immediately, false);
 			}
 
 			getStatus(scope).neutralStatus("No simulation running");

@@ -65,7 +65,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 					// DEBUG.OUT("Running the perspective listener to automatically launch modeling");
 					final IPerspectiveDescriptor desc = page.getPerspective();
 					page.closePerspective(desc, false, false);
-					PerspectiveHelper.openModelingPerspective(true);
+					PerspectiveHelper.openModelingPerspective(true, false);
 				}
 				configurer.getWindow().removePerspectiveListener(this);
 
@@ -76,7 +76,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			@Override
 			public void pageActivated(final IWorkbenchPage page) {
 				configurer.getWindow().removePageListener(this);
-				PerspectiveHelper.openModelingPerspective(true);
+				PerspectiveHelper.openModelingPerspective(true, false);
 			}
 
 			@Override
