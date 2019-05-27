@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.factories;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -31,7 +32,7 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 	@Override
 	public void applyLayout(final Object layout, final Boolean keepTabs, final Boolean keepToolbars,
 			final Boolean showEditors, final Boolean showParameters, final Boolean showConsoles,
-			final Boolean showNavigator) {
+			final Boolean showNavigator, final Boolean showControls) {
 		WorkbenchHelper.run(() -> {
 			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 			if (!showConsoles) {
@@ -43,6 +44,13 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 			}
 			if (!showNavigator) {
 				WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID);
+			}
+			if (!showControls) {
+				try {
+					WorkbenchHelper.runCommand("org.eclipse.ui.ToggleCoolbarAction");
+				} catch (final ExecutionException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		WorkbenchHelper.runInUI("Arranging views", 0, (m) -> {

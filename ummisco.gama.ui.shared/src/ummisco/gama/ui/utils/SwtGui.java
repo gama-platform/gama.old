@@ -596,11 +596,11 @@ public class SwtGui implements IGui {
 	@Override
 	public void applyLayout(final IScope scope, final Object layout, final Boolean keepTabs, final Boolean keepToolbars,
 			final Boolean showEditors, final Boolean showParameters, final Boolean showConsoles,
-			final Boolean showNavigator) {
+			final Boolean showNavigator, final Boolean showControls) {
 		final IDisplayLayoutManager manager = WorkbenchHelper.getService(IDisplayLayoutManager.class);
 		if (manager != null) {
 			manager.applyLayout(layout, keepTabs, keepToolbars, showEditors, showParameters, showConsoles,
-					showNavigator);
+					showNavigator, showControls);
 		}
 	}
 

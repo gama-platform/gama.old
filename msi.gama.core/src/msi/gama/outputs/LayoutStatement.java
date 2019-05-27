@@ -58,6 +58,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("Whether the displays should show their toolbar or not")),
 				@facet (
+						name = "controls",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the experiment should show its control toolbar on top or not")),
+				@facet (
 						name = "parameters",
 						type = IType.BOOL,
 						optional = true,
