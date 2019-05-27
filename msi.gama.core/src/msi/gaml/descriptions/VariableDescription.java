@@ -310,8 +310,8 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	private VariableDescription getBuiltInAncestor() {
-		if (getEnclosingDescription() instanceof SpeciesDescription) {
-			final SpeciesDescription td = (SpeciesDescription) getEnclosingDescription();
+		if (getEnclosingDescription() instanceof TypeDescription) {
+			final TypeDescription td = (TypeDescription) getEnclosingDescription();
 			if (td.isBuiltIn()) { return this; }
 			if (td.getParent() != null && td.getParent().hasAttribute(name)) {
 				return td.getParent().getAttribute(name).getBuiltInAncestor();
