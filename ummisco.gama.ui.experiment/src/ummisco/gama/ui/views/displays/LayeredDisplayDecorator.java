@@ -151,7 +151,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			toolbar.button(toggleOverlay, SWT.LEFT);
 			toolbar.button(toggleInteractiveConsole, SWT.LEFT);
 			toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
-			ToolItem item = toolbar.button(runExperiment, SWT.LEFT);
+			final ToolItem item = toolbar.button(runExperiment, SWT.LEFT);
 			if (GAMA.isPaused()) {
 				item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
 			} else {
@@ -218,6 +218,14 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		addPerspectiveListener();
 		keyAndMouseListener = new SWTLayeredDisplayMultiListener(this, view.getDisplaySurface());
 		menuManager = new DisplaySurfaceMenu(view.getDisplaySurface(), view.getParentComposite(), presentationMenu());
+		final boolean tbVisible = view.getOutput().getData().isToolbarVisible();
+		WorkbenchHelper.runInUI("Toolbar", 0, (m) -> {
+			if (tbVisible) {
+				toolbar.show();
+			} else {
+				toolbar.hide();
+			}
+		});
 		if (view.getOutput().getData().fullScreen() > -1) {
 			WorkbenchHelper.runInUI("Fullscreen", 100, (m) -> toggleFullScreen());
 		}
@@ -246,9 +254,10 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				} else {
 					// Issue #2639
 					if (PlatformHelper.isMac() && !view.isOpenGL()) {
-						IDisplaySurface ds = view.getDisplaySurface();
-						if (ds != null)
+						final IDisplaySurface ds = view.getDisplaySurface();
+						if (ds != null) {
 							ds.updateDisplay(true);
+						}
 					}
 
 					if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {

@@ -29,6 +29,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import msi.gama.common.interfaces.IGui;
@@ -123,6 +124,10 @@ public class PerspectiveHelper {
 			try {
 				memorizeActiveEditor(page);
 				page.setPerspective(currentSimulationPerspective);
+				final Boolean showControls = keepControls();
+				if ( showControls != null ) {
+					((WorkbenchWindow) page.getWorkbenchWindow()).setCoolBarVisible(showControls);
+				}
 				applyActiveEditor(page);
 			} catch (final NullPointerException e) {
 				// DEBUG.ERR(
@@ -233,6 +238,10 @@ public class PerspectiveHelper {
 				currentSimulationPerspective = descriptor;
 			}
 			applyActiveEditor(page);
+			final Boolean showControls = keepControls();
+			if ( showControls != null ) {
+				((WorkbenchWindow) page.getWorkbenchWindow()).setCoolBarVisible(showControls);
+			}
 			// DEBUG.OUT("Perspective " + perspectiveId + " opened ");
 		};
 		if ( immediately ) {
@@ -295,6 +304,15 @@ public class PerspectiveHelper {
 		if ( d instanceof SimulationPerspectiveDescriptor ) {
 			return ((SimulationPerspectiveDescriptor) d).keepToolbars();
 		} else {
+			return null;
+		}
+	}
+
+	public final static Boolean keepControls() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if ( d instanceof SimulationPerspectiveDescriptor ) {
+			return ((SimulationPerspectiveDescriptor) d).keepControls();
+		} else {
 			return true;
 		}
 	}
@@ -323,6 +341,7 @@ public class PerspectiveHelper {
 
 		Boolean keepTabs = true;
 		Boolean keepToolbars = null;
+		Boolean keepControls = true;
 
 		SimulationPerspectiveDescriptor(final String id) {
 			super(id, id, getSimulationDescriptor());
@@ -385,6 +404,14 @@ public class PerspectiveHelper {
 
 		public void keepToolbars(final Boolean b) {
 			keepToolbars = b;
+		}
+
+		public void keepControls(final Boolean b) {
+			keepControls = b;
+		}
+
+		public Boolean keepControls() {
+			return keepControls;
 		}
 
 	}

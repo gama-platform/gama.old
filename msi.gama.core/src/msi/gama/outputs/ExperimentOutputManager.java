@@ -114,11 +114,11 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		final Object layoutObject =
 				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
 		final Boolean tabs = layoutDefinition.getFacetValue(scope, "tabs", true);
-		final Boolean toolbars = layoutDefinition.getFacetValue(scope, "toolbars", true);
-		final Boolean parameters = layoutDefinition.getFacetValue(scope, "parameters", true);
-		final Boolean consoles = layoutDefinition.getFacetValue(scope, "consoles", true);
-		final Boolean navigator = layoutDefinition.getFacetValue(scope, "navigator", true);
-		final Boolean controls = layoutDefinition.getFacetValue(scope, "controls", true);
+		final Boolean toolbars = layoutDefinition.getFacetValue(scope, "toolbars", null);
+		final Boolean parameters = layoutDefinition.getFacetValue(scope, "parameters", null);
+		final Boolean consoles = layoutDefinition.getFacetValue(scope, "consoles", null);
+		final Boolean navigator = layoutDefinition.getFacetValue(scope, "navigator", null);
+		final Boolean controls = layoutDefinition.getFacetValue(scope, "controls", null);
 		boolean editors;
 		if (layoutDefinition.hasFacet("editors")) {
 			editors = layoutDefinition.getFacetValue(scope, "editors", false);

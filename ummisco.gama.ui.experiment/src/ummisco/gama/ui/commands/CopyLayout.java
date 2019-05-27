@@ -34,7 +34,10 @@ public class CopyLayout extends AbstractHandler {
 			sb.append(" tabs:").append(PerspectiveHelper.keepTabs());
 		}
 		if (PerspectiveHelper.keepToolbars() != null) {
-			sb.append(" toolbars:").append(PerspectiveHelper.keepTabs());
+			sb.append(" toolbars:").append(PerspectiveHelper.keepToolbars());
+		}
+		if (PerspectiveHelper.keepControls() != null) {
+			sb.append(" controls:").append(PerspectiveHelper.keepControls());
 		}
 		sb.append(" editors: ").append(WorkbenchHelper.getPage().isEditorAreaVisible()).append(";");
 		WorkbenchHelper.copy(sb.toString());

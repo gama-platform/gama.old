@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.factories;
 
-import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -35,22 +35,18 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 			final Boolean showNavigator, final Boolean showControls) {
 		WorkbenchHelper.run(() -> {
 			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
-			if (!showConsoles) {
+			if (showConsoles != null && !showConsoles) {
 				WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
 				WorkbenchHelper.hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
 			}
-			if (!showParameters) {
+			if (showParameters != null && !showParameters) {
 				WorkbenchHelper.hideView(IGui.PARAMETER_VIEW_ID);
 			}
-			if (!showNavigator) {
+			if (showNavigator != null && !showNavigator) {
 				WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID);
 			}
-			if (!showControls) {
-				try {
-					WorkbenchHelper.runCommand("org.eclipse.ui.ToggleCoolbarAction");
-				} catch (final ExecutionException e) {
-					e.printStackTrace();
-				}
+			if (showControls != null) {
+				((WorkbenchWindow) WorkbenchHelper.getWindow()).setCoolBarVisible(showControls);
 			}
 		});
 		WorkbenchHelper.runInUI("Arranging views", 0, (m) -> {
@@ -58,6 +54,7 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 			if (sd != null) {
 				sd.keepTabs(keepTabs);
 				sd.keepToolbars(keepToolbars);
+				sd.keepControls(showControls);
 			}
 			ArrangeDisplayViews.execute(layout);
 		});
