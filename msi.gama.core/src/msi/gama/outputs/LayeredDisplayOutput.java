@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.LayeredDisplayOutput.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.LayeredDisplayOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -117,9 +117,9 @@ import msi.gaml.types.IType;
 						doc = @doc ("Indicates the condition under which this output should be refreshed (default is true)")),
 				@facet (
 						name = IKeyword.TOOLBAR,
-						type = { IType.BOOL },
+						type = { IType.BOOL, IType.COLOR },
 						optional = true,
-						doc = @doc ("Indicates whether the top toolbar of the display view should be initially visible or not")),
+						doc = @doc ("Indicates whether the top toolbar of the display view should be initially visible or not. If a color is passed, then the background of the toolbar takes this color")),
 				@facet (
 						name = IKeyword.FULLSCREEN,
 						type = { IType.BOOL, IType.INT },
@@ -276,7 +276,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		/**
 		 * Method collectPluginsInFacetValue()
-		 * 
+		 *
 		 * @see msi.gaml.descriptions.SymbolSerializer#collectPluginsInFacetValue(msi.gaml.descriptions.SymbolDescription,
 		 *      java.lang.String, java.util.Set)
 		 */
@@ -302,7 +302,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -333,7 +333,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 					return;
 				}
 				;
-			}else {
+			} else {
 				if (isOpenGLDefault) {
 					d.setFacet(TYPE, LabelExpressionDescription.create(LayeredDisplayData.OPENGL));
 				}

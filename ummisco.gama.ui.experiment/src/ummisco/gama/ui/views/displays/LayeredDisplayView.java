@@ -244,11 +244,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public boolean toolbarVisible() {
-		return getOutput().getData().isToolbarVisible();
-	}
-
-	@Override
 	public void zoomIn() {
 		if (getDisplaySurface() != null) {
 			getDisplaySurface().zoomIn();

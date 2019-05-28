@@ -230,16 +230,15 @@ experiment "3D View" type: gui {
 	}
 	
 	//Experiment to show how to make multi simulations
-experiment "4 Simulations" type: gui {
+experiment "3 Simulations" type: gui {
 	parameter 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population';
 	parameter 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
 	parameter 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
 
-	// We create three supplementary simulations using the species name 'ants_model' (automatically created from the name of the model + '_model')
+	// We create 2 supplementary simulations using the species name 'ants_model' (automatically created from the name of the model + '_model')
 
 	init {
 		create ants_model with: [ants_number::200,evaporation_per_cycle::100,diffusion_rate::0.2];
-		create ants_model with: [ants_number::50,evaporation_per_cycle::12,diffusion_rate::0.8];
 		create ants_model with: [ants_number::10,evaporation_per_cycle::72,diffusion_rate::0.6];
 	}
 	
@@ -253,11 +252,9 @@ experiment "4 Simulations" type: gui {
 		}
 	}
 	
-	
-
 	output {
-		layout #split editors: false consoles: false toolbars: false tabs: false tray: false;
-		display Ants background: #white type: opengl{
+		layout #split editors: false consoles: false toolbars: true tabs: false tray: false;
+		display Ants background: #white type: opengl toolbar: color{
 			image terrain position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
