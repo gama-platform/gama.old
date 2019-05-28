@@ -63,7 +63,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	@SuppressWarnings ("unchecked")
 	public static void execute(final Object layout) {
-		listDisplayViews();
+		// listDisplayViews();
 		if (layout instanceof Integer) {
 			execute(((Integer) layout).intValue());
 		} else if (layout instanceof GamaTree) {
@@ -207,8 +207,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		// DEBUG.OUT("Displays found: " + holders.size());
 		/// Issue #2680
 		int currentIndex = 0;
-		for (MPlaceholder h : holders) {
-			IGamaView.Display display = findDisplay(h.getElementId());
+		for (final MPlaceholder h : holders) {
+			final IGamaView.Display display = findDisplay(h.getElementId());
 			if (display != null) {
 				display.setIndex(currentIndex++);
 				h.getTransientData().put(DISPLAY_INDEX_KEY, String.valueOf(currentIndex - 1));
