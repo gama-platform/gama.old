@@ -241,6 +241,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_ASK_CLOSING =
 				create("pref_experiment_ask_closing", "Ask to close the previous experiment when launching a new one",
 						true, IType.BOOL, true).in(NAME, EXECUTION);
+		public static final Pref<Boolean> CORE_ASK_FULLSCREEN =
+				create("pref_experiment_ask_fullscreen", "Ask to go to fullscreen mode",
+						false, IType.BOOL, true).in(NAME, EXECUTION);
 		public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
 				"Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
 		public static final Pref<Boolean> CORE_SYNC =

@@ -40,6 +40,7 @@ import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -227,7 +228,11 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			}
 		});
 		if (view.getOutput().getData().fullScreen() > -1) {
-			WorkbenchHelper.runInUI("Fullscreen", 100, (m) -> toggleFullScreen());
+			boolean toggle=true;
+			if( GamaPreferences.Runtime.CORE_ASK_FULLSCREEN.getValue())
+				toggle= Messages.question("Toggle fullscreen confirmation", "Do you want to go fullscreen ?");
+			if(toggle)
+				WorkbenchHelper.runInUI("Fullscreen", 100, (m) -> toggleFullScreen());
 		}
 	}
 
