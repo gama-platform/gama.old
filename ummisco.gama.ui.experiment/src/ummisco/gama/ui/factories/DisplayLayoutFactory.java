@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.factories;
 
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -32,7 +31,7 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 	@Override
 	public void applyLayout(final Object layout, final Boolean keepTabs, final Boolean keepToolbars,
 			final Boolean showEditors, final Boolean showParameters, final Boolean showConsoles,
-			final Boolean showNavigator, final Boolean showControls) {
+			final Boolean showNavigator, final Boolean showControls, final Boolean keepTray) {
 		WorkbenchHelper.run(() -> {
 			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 			if (showConsoles != null && !showConsoles) {
@@ -46,7 +45,10 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 				WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID);
 			}
 			if (showControls != null) {
-				((WorkbenchWindow) WorkbenchHelper.getWindow()).setCoolBarVisible(showControls);
+				WorkbenchHelper.getWindow().setCoolBarVisible(showControls);
+			}
+			if (keepTray != null) {
+				PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray);
 			}
 		});
 		WorkbenchHelper.runInUI("Arranging views", 0, (m) -> {
@@ -55,6 +57,7 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 				sd.keepTabs(keepTabs);
 				sd.keepToolbars(keepToolbars);
 				sd.keepControls(showControls);
+				sd.keepTray(keepTray);
 			}
 			ArrangeDisplayViews.execute(layout);
 		});

@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Display;
@@ -42,6 +43,9 @@ public class PerspectiveHelper {
 	static {
 		DEBUG.ON();
 	}
+
+	// id of the status bar, as defined in the LegacyIDE.e4xmi
+	private static final String BOTTOM_TRIM_ID = "org.eclipse.ui.trim.status"; //$NON-NLS-1$
 
 	public static final String PERSPECTIVE_MODELING_ID = IGui.PERSPECTIVE_MODELING_ID;
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
@@ -109,6 +113,23 @@ public class PerspectiveHelper {
 		return openPerspective(PERSPECTIVE_MODELING_ID, immediately, false, memorizeEditors);
 	}
 
+	/* Get the MUIElement representing the status bar for the given window */
+	private static MUIElement getTrimStatus(final WorkbenchWindow window) {
+		final EModelService modelService = window.getService(EModelService.class);
+		final MUIElement searchRoot = window.getModel();
+		return modelService.find(BOTTOM_TRIM_ID, searchRoot);
+	}
+
+	public static void showBottomTray(final WorkbenchWindow window, final Boolean show) {
+
+		final MUIElement trimStatus = getTrimStatus(window);
+		if ( trimStatus != null ) {
+			// toggle statusbar visibility
+			trimStatus.setVisible(show);
+		}
+
+	}
+
 	public static final boolean switchToSimulationPerspective() {
 		if ( currentSimulationPerspective == null ) { return false; }
 		IWorkbenchPage activePage = null;
@@ -119,22 +140,28 @@ public class PerspectiveHelper {
 		}
 		if ( activePage == null ) { return false; }
 		final IWorkbenchPage page = activePage;
+		final WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
 		if ( page.getPerspective().equals(currentSimulationPerspective) ) { return true; }
 		Display.getDefault().syncExec(() -> {
+			memorizeActiveEditor(page);
 			try {
-				memorizeActiveEditor(page);
 				page.setPerspective(currentSimulationPerspective);
-				final Boolean showControls = keepControls();
-				if ( showControls != null ) {
-					((WorkbenchWindow) page.getWorkbenchWindow()).setCoolBarVisible(showControls);
-				}
-				applyActiveEditor(page);
 			} catch (final NullPointerException e) {
 				// DEBUG.ERR(
 				// "NPE in WorkbenchPage.setPerspective(). See Issue #1602.
 				// Working around the bug in e4...");
 				page.setPerspective(currentSimulationPerspective);
 			}
+			final Boolean showControls = keepControls();
+			if ( showControls != null ) {
+				window.setCoolBarVisible(showControls);
+			}
+			final Boolean keepTray = keepTray();
+			if ( keepTray != null ) {
+				showBottomTray(window, keepTray);
+			}
+			applyActiveEditor(page);
+
 		});
 		currentPerspectiveId = currentSimulationPerspective.getId();
 		return true;
@@ -214,6 +241,7 @@ public class PerspectiveHelper {
 		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
 		final IWorkbenchPage page = activePage;
+		final WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
 		final Runnable r = () -> {
 			try {
 				page.setPerspective(descriptor);
@@ -240,7 +268,11 @@ public class PerspectiveHelper {
 			applyActiveEditor(page);
 			final Boolean showControls = keepControls();
 			if ( showControls != null ) {
-				((WorkbenchWindow) page.getWorkbenchWindow()).setCoolBarVisible(showControls);
+				window.setCoolBarVisible(showControls);
+			}
+			final Boolean keepTray = keepTray();
+			if ( keepTray != null ) {
+				showBottomTray(window, keepTray);
 			}
 			// DEBUG.OUT("Perspective " + perspectiveId + " opened ");
 		};
@@ -317,6 +349,15 @@ public class PerspectiveHelper {
 		}
 	}
 
+	public final static Boolean keepTray() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if ( d instanceof SimulationPerspectiveDescriptor ) {
+			return ((SimulationPerspectiveDescriptor) d).keepTray();
+		} else {
+			return true;
+		}
+	}
+
 	public static boolean showOverlays() {
 		return GamaPreferences.Displays.CORE_OVERLAY.getValue();
 	}
@@ -342,6 +383,7 @@ public class PerspectiveHelper {
 		Boolean keepTabs = true;
 		Boolean keepToolbars = null;
 		Boolean keepControls = true;
+		Boolean keepTray = true;
 
 		SimulationPerspectiveDescriptor(final String id) {
 			super(id, id, getSimulationDescriptor());
@@ -412,6 +454,14 @@ public class PerspectiveHelper {
 
 		public Boolean keepControls() {
 			return keepControls;
+		}
+
+		public void keepTray(final Boolean b) {
+			keepTray = b;
+		}
+
+		public Boolean keepTray() {
+			return keepTray;
 		}
 
 	}

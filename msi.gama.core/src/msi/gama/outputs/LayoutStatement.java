@@ -78,6 +78,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("Whether the consoles are visible or not (true by default)")),
 				@facet (
+						name = "tray",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the bottom tray is visible or not (true by default)")),
+				@facet (
 						name = "tabs",
 						type = IType.BOOL,
 						optional = true,

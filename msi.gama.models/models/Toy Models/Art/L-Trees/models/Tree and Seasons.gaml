@@ -432,7 +432,7 @@ experiment "4 simulations" type: gui autorun: true {
 			species fruit aspect: default;
 		}
 
-		layout #split toolbars: false tabs: false parameters: false consoles: false navigator: false controls: false;
+		layout #split toolbars: false tabs: false parameters: false consoles: false navigator: false controls: false tray: false;
 	}
 
 }

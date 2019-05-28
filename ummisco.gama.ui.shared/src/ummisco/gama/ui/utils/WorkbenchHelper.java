@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.utils;
@@ -45,6 +45,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
 
 import com.google.common.cache.CacheBuilder;
@@ -139,16 +140,16 @@ public class WorkbenchHelper {
 		return getDisplay().getActiveShell();
 	}
 
-	public static IWorkbenchWindow getWindow() {
-		IWorkbenchWindow w = null;
+	public static WorkbenchWindow getWindow() {
+		WorkbenchWindow w = null;
 		try {
-			w = getWorkbench().getActiveWorkbenchWindow();
+			w = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
 		} catch (final Exception e) {
 			DEBUG.ERR("SWT bug: Window not found ");
 		}
 		if (w == null) {
 			final IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
-			if (windows != null && windows.length > 0) { return windows[0]; }
+			if (windows != null && windows.length > 0) { return (WorkbenchWindow) windows[0]; }
 		}
 		return w;
 	}

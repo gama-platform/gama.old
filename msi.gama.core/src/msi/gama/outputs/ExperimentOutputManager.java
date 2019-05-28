@@ -119,6 +119,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		final Boolean consoles = layoutDefinition.getFacetValue(scope, "consoles", null);
 		final Boolean navigator = layoutDefinition.getFacetValue(scope, "navigator", null);
 		final Boolean controls = layoutDefinition.getFacetValue(scope, "controls", null);
+		final Boolean tray = layoutDefinition.getFacetValue(scope, "tray", null);
 		boolean editors;
 		if (layoutDefinition.hasFacet("editors")) {
 			editors = layoutDefinition.getFacetValue(scope, "editors", false);
@@ -129,7 +130,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		super.init(scope);
 		scope.getGui().hideScreen();
 		scope.getGui().applyLayout(scope, layoutObject, tabs, toolbars, editors, parameters, consoles, navigator,
-				controls);
+				controls, tray);
 		scope.getGui().showScreen();
 		if (scope.getExperiment().getSpecies().isAutorun()) {
 			GAMA.startFrontmostExperiment();

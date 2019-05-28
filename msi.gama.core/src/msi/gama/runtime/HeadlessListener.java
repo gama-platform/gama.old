@@ -410,7 +410,7 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void applyLayout(final IScope scope, final Object layout, final Boolean keepTabs, final Boolean keepToolbars,
 			final Boolean showEditors, final Boolean showParameters, final Boolean showConsoles,
-			final Boolean showNavigator, final Boolean showControls) {}
+			final Boolean showNavigator, final Boolean showControls, final Boolean showTray) {}
 
 	@Override
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list) {}
