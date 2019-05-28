@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaBoolType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaBoolType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -28,45 +28,33 @@ import msi.gama.util.IContainer;
  * @todo Description
  *
  */
-@SuppressWarnings("unchecked")
-@type(name = IKeyword.BOOL, id = IType.BOOL, wraps = { Boolean.class,
-		boolean.class }, kind = ISymbolKind.Variable.REGULAR, doc = {
-				@doc("Represents boolean values, either true or false") }, concept = { IConcept.TYPE, IConcept.LOGICAL,
-						IConcept.CONDITION })
+@SuppressWarnings ("unchecked")
+@type (
+		name = IKeyword.BOOL,
+		id = IType.BOOL,
+		wraps = { Boolean.class, boolean.class },
+		kind = ISymbolKind.Variable.REGULAR,
+		doc = { @doc ("Represents boolean values, either true or false") },
+		concept = { IConcept.TYPE, IConcept.LOGICAL, IConcept.CONDITION })
 public class GamaBoolType extends GamaType<Boolean> {
 
 	@Override
+	@doc ("Casts parameter into a bool. false if the parameter is nil, equal to zero, empty or dead, depending on its type")
 	public Boolean cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, param, copy);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public static Boolean staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
-		if (obj == null) {
-			return false;
-		}
-		if (obj instanceof Boolean) {
-			return (Boolean) obj;
-		}
-		if (obj instanceof IAgent) {
-			return !((IAgent) obj).dead();
-		}
-		if (obj instanceof IContainer) {
-			return !((IContainer) obj).isEmpty(scope);
-		}
-		if (obj instanceof File) {
-			return ((File) obj).exists();
-		}
-		if (obj instanceof Integer) {
-			return !((Integer) obj == 0);
-		}
-		if (obj instanceof Double) {
-			return !((Double) obj == 0f);
-		}
-		if (obj instanceof String) {
-			return ((String) obj).equals("true");
-		}
+		if (obj == null) { return false; }
+		if (obj instanceof Boolean) { return (Boolean) obj; }
+		if (obj instanceof IAgent) { return !((IAgent) obj).dead(); }
+		if (obj instanceof IContainer) { return !((IContainer) obj).isEmpty(scope); }
+		if (obj instanceof File) { return ((File) obj).exists(); }
+		if (obj instanceof Integer) { return !((Integer) obj == 0); }
+		if (obj instanceof Double) { return !((Double) obj == 0f); }
+		if (obj instanceof String) { return ((String) obj).equals("true"); }
 		return false;
 	}
 
