@@ -294,7 +294,7 @@ openFile
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="eclipse.buildId" value="${build.id}" />
       <property name="org.eclipse.update.reconcile" value="false" />
-      <property name="version" value="1.7" />
+      <property name="version" value="1.8" />
    </configurations>
 
    <repositories>
