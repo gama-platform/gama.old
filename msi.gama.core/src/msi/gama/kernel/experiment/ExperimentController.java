@@ -170,6 +170,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 	public void userReload() {
 		// TODO Should maybe be done directly (so as to reload immediately)
 		if (experiment == null) { return; }
+		// GAMA.getGui().openSimulationPerspective(null, null);
 		offer(IExperimentController._RELOAD);
 	}
 

@@ -63,7 +63,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	@SuppressWarnings ("unchecked")
 	public static void execute(final Object layout) {
-		// listDisplayViews();
+		listDisplayViews();
 		if (layout instanceof Integer) {
 			execute(((Integer) layout).intValue());
 		} else if (layout instanceof GamaTree) {
@@ -120,7 +120,11 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	private static void activateDisplays(final List<MPlaceholder> holders, final boolean focus) {
-		holders.forEach((ph) -> getPartService().activate((MPart) ph.getRef(), focus));
+		holders.forEach((ph) -> {
+			getPartService().bringToTop((MPart) ph.getRef());
+			getPartService().activate((MPart) ph.getRef(), focus);
+
+		});
 	}
 
 	public static MPartStack getDisplaysPlaceholder() {
@@ -135,7 +139,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		decorateDisplays();
 		holders.forEach((ph) -> {
 			ph.setVisible(true);
-			// ph.setToBeRendered(true);
+			ph.setToBeRendered(true);
 		});
 		activateDisplays(holders, true);
 	}
@@ -249,6 +253,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void showScreen() {
 		// final MPartStack displayStack = getDisplaysPlaceholder();
 		// displayStack.setVisible(true);
+		// displayStack.setToBeRendered(true);
 	}
 
 }

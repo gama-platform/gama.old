@@ -380,11 +380,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// DEBUG.LOG("ExperimentPlan.dipose END");
 	}
 
-	public void createAgent(Double seed) {
+	public void createAgent(final Double seed) {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
-		List<Map<String, Object>> params =
+		final List<Map<String, Object>> params =
 				seed == null ? Collections.EMPTY_LIST : Arrays.asList(new HashMap<String, Object>() {
 					{
 						put(IKeyword.SEED, seed);
@@ -505,7 +505,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}
 
-	public synchronized void open(Double seed) {
+	public synchronized void open(final Double seed) {
 
 		createAgent(seed);
 		myScope.getGui().prepareForExperiment(myScope, this);
@@ -532,16 +532,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 */
 	@Override
 	public void reload() {
-		if (isBatch()) {
-			agent.dispose();
-			open();
-		} else {
-			agent.reset();
-			agent.getScope().getGui().getConsole(agent.getScope()).eraseConsole(false);
-			agent.init(agent.getScope());
-
-			agent.getScope().getGui().updateParameterView(agent.getScope(), this);
-		}
+		// if (isBatch()) {
+		agent.dispose();
+		open();
+		// } else {
+		// agent.reset();
+		// agent.getScope().getGui().getConsole(agent.getScope()).eraseConsole(false);
+		// agent.init(agent.getScope());
+		//
+		// agent.getScope().getGui().updateParameterView(agent.getScope(), this);
+		// }
 	}
 
 	@Override
