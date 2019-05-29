@@ -49,13 +49,13 @@ experiment Display  type: gui autorun:true{
 		camera_up_vector:{0.0,-1.0,0.0}{
 			species object aspect:default;
 		}
-		display FirstPersonn type:opengl camera_interaction:true camera_pos:{int(first(object).location.x),int(first(object).location.y),10} 
+		display FirstPerson type:opengl camera_interaction:true camera_pos:{int(first(object).location.x),int(first(object).location.y),10} 
 		camera_look_pos:{cos(first(object).heading)*first(object).speed+int(first(object).location.x),
 		sin(first(object).heading)*first(object).speed+int(first(object).location.y),10} 
 		camera_up_vector:{0.0,0.0,1.0}{
 			species object aspect:default;
 		}
-		display FocusPersonn type:opengl focus:first(object){
+		display FocusPerson type:opengl focus:first(object){
 			species object aspect:default;
 		}
 	}
