@@ -1,7 +1,7 @@
 	/**
 * Name: Light definition
 * Author: Arnaud Grignard & Julien Mazars
-* Description: Model presenting how to manipulate lights in your 3D display (espetially spot lights and point lights)
+* Description: Model presenting how to manipulate lights (spot lights and point lights) in a 3D display 
 * Tags: 3d, light
 */
 
