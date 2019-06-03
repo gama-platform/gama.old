@@ -43,7 +43,6 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
-import msi.gama.application.workbench.PerspectiveHelper.SimulationPerspectiveDescriptor;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaIcons;
 
@@ -181,14 +180,7 @@ public class CleanupHelper {
 					// remove trace of exceptions
 				}
 			});
-			WorkbenchHelper.run(() -> {
-				if (perspective instanceof SimulationPerspectiveDescriptor) {
-					WorkbenchHelper.getDisplayViews().forEach((dis) -> {
-						DEBUG.OUT("Forcing layout of " + dis.toString());
-						dis.forceLayout();
-					});
-				}
-			});
+
 		}
 
 		@Override

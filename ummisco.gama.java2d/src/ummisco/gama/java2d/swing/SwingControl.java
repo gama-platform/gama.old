@@ -22,10 +22,15 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public abstract class SwingControl extends Composite {
+
+	static {
+		DEBUG.ON();
+	}
 
 	JApplet applet;
 	Frame frame;
@@ -66,13 +71,9 @@ public abstract class SwingControl extends Composite {
 	 */
 	protected abstract JComponent createSwingComponent();
 
-	/**
-	 * Overridden to propagate the size to the embedded Swing component.
-	 */
 	@Override
 	public void setBounds(final Rectangle rect) {
-		populate();
-		super.setBounds(rect);
+		setBounds(rect.x, rect.y, rect.width, rect.height);
 	}
 
 	/**
@@ -80,6 +81,7 @@ public abstract class SwingControl extends Composite {
 	 */
 	@Override
 	public void setBounds(final int x, final int y, final int width, final int height) {
+		DEBUG.OUT("Bounds set to " + x + "  " + y + " | " + width + " " + height);
 		populate();
 		super.setBounds(x, y, width, height);
 	}

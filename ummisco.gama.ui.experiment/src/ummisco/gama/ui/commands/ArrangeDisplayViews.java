@@ -40,13 +40,12 @@ import msi.gama.util.tree.GamaTree;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.WorkaroundForIssue1353;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	public static final String LAYOUT_KEY = "msi.gama.displays.layout";
@@ -94,10 +93,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void execute(final GamaTree<String> tree) {
 		listDisplayViews();
 		final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
-		if (!WorkaroundForIssue1353.isInstalled()
-				&& StreamEx.of(displays).anyMatch((d) -> !d.getOutput().getData().isOpenGL())) {
-			WorkaroundForIssue1353.install();
-		}
+		// if (!WorkaroundForIssue1353.isInstalled()
+		// && StreamEx.of(displays).anyMatch((d) -> !d.getOutput().getData().isOpenGL())) {
+		// WorkaroundForIssue1353.install();
+		// }
 
 		if (tree != null) {
 			DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "

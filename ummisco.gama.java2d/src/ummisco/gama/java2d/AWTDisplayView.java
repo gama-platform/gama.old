@@ -9,9 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.java2d;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.swing.JComponent;
 
 import org.eclipse.swt.SWT;
@@ -38,17 +35,13 @@ public class AWTDisplayView extends LayeredDisplayView {
 		surfaceComposite.setEnabled(false);
 		WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
 		WorkaroundForIssue2476.installOn(((SwingControl) surfaceComposite).getTopLevelContainer(), getDisplaySurface());
+		WorkaroundForIssue2745.installOn(this);
 		return surfaceComposite;
 	}
 
 	@Override
-	public List<String> getCameraNames() {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
 	public void forceLayout() {
-		surfaceComposite.getParent().layout(true, true);
+		getSash().layout(true, true);
 	}
 
 }

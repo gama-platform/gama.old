@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views;
@@ -176,7 +176,7 @@ public abstract class GamaViewPart extends ViewPart
 
 	/**
 	 * Can be redefined by subclasses that accept that their instances remain open when no experiment is running.
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean shouldBeClosedWhenNoExperiments() {
@@ -268,7 +268,7 @@ public abstract class GamaViewPart extends ViewPart
 	/**
 	 * Needs to be redefined for views that use the left toolbar (so that they maintain their previous state) Method
 	 * stopDisplayingTooltips()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.controls.ITooltipDisplayer#stopDisplayingTooltips()
 	 */
 	@Override

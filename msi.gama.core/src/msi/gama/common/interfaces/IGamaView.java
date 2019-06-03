@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.util.Collections;
+import java.util.List;
+
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -88,6 +91,10 @@ public interface IGamaView {
 		void setIndex(int i);
 
 		default void forceLayout() {}
+
+		default List<String> getCameraNames() {
+			return Collections.EMPTY_LIST;
+		}
 	}
 
 	public interface Error {

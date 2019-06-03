@@ -13,7 +13,6 @@ import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_
 import static msi.gama.common.preferences.GamaPreferences.Runtime.CORE_SYNC;
 
 import java.awt.Color;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -357,8 +356,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		lockAcquired = false;
 		notify();
 	}
-
-	public abstract List<String> getCameraNames();
 
 	@Override
 	public boolean zoomWhenScrolling() {
