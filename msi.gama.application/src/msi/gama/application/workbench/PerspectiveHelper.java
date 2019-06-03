@@ -161,7 +161,6 @@ public class PerspectiveHelper {
 				showBottomTray(window, keepTray);
 			}
 			applyActiveEditor(page);
-
 		});
 		currentPerspectiveId = currentSimulationPerspective.getId();
 		return true;

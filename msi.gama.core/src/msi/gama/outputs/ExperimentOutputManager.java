@@ -15,7 +15,6 @@ import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_
 import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -108,30 +107,16 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
+		// scope.getGui().hideScreen();
 		// DEBUG.OUT("ExperimentOutputManager init");
 		final Symbol layoutDefinition = layout == null ? this : layout;
 		final String definitionFacet = layout == null ? LAYOUT : IKeyword.VALUE;
 		final Object layoutObject =
 				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
-		final Boolean tabs = layoutDefinition.getFacetValue(scope, "tabs", true);
-		final Boolean toolbars = layoutDefinition.getFacetValue(scope, "toolbars", null);
-		final Boolean parameters = layoutDefinition.getFacetValue(scope, "parameters", null);
-		final Boolean consoles = layoutDefinition.getFacetValue(scope, "consoles", null);
-		final Boolean navigator = layoutDefinition.getFacetValue(scope, "navigator", null);
-		final Boolean controls = layoutDefinition.getFacetValue(scope, "controls", null);
-		final Boolean tray = layoutDefinition.getFacetValue(scope, "tray", null);
-		boolean editors;
-		if (layoutDefinition.hasFacet("editors")) {
-			editors = layoutDefinition.getFacetValue(scope, "editors", false);
-		} else {
-			editors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
-		}
-
 		super.init(scope);
-		scope.getGui().hideScreen();
-		scope.getGui().applyLayout(scope, layoutObject, tabs, toolbars, editors, parameters, consoles, navigator,
-				controls, tray);
-		scope.getGui().showScreen();
+
+		scope.getGui().applyLayout(scope, layoutObject);
+		// scope.getGui().showScreen();
 		if (scope.getExperiment().getSpecies().isAutorun()) {
 			GAMA.startFrontmostExperiment();
 		}

@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
@@ -105,16 +105,18 @@ public class FrequencyController implements StateListener {
 
 	@Override
 	public void updateToReflectState() {
-		if (view == null)
-			return;
+		if (view == null) { return; }
 		final IDisplayOutput output = view.getOutput();
-		if (output == null)
-			return;
+		if (output == null) { return; }
 
 		WorkbenchHelper.run(() -> {
 			internalChange = true;
-			pauseItem.setSelection(output.isPaused());
-			syncItem.setSelection(output.isSynchronized());
+			if (pauseItem != null && !pauseItem.isDisposed()) {
+				pauseItem.setSelection(output.isPaused());
+			}
+			if (syncItem != null && !syncItem.isDisposed()) {
+				syncItem.setSelection(output.isSynchronized());
+			}
 			internalChange = false;
 		});
 

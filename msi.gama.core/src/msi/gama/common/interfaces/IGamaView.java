@@ -28,46 +28,46 @@ import msi.gaml.statements.test.CompoundSummary;
  */
 public interface IGamaView {
 
-	public void update(IDisplayOutput output);
+	void update(IDisplayOutput output);
 
-	public void addOutput(IDisplayOutput output);
+	void addOutput(IDisplayOutput output);
 
-	public void removeOutput(IDisplayOutput putput);
+	void removeOutput(IDisplayOutput putput);
 
 	IDisplayOutput getOutput();
 
-	public void close(IScope scope);
+	void close(IScope scope);
 
-	public void changePartNameWithSimulation(SimulationAgent agent);
+	void changePartNameWithSimulation(SimulationAgent agent);
 
-	public void reset();
+	void reset();
 
-	public String getPartName();
+	String getPartName();
 
-	public void setName(String name);
+	void setName(String name);
 
-	public void updateToolbarState();
+	void updateToolbarState();
 
 	public interface Test {
-		public void addTestResult(final CompoundSummary<?, ?> summary);
+		void addTestResult(final CompoundSummary<?, ?> summary);
 
-		public void startNewTestSequence(boolean all);
+		void startNewTestSequence(boolean all);
 
-		public void displayProgress(int number, int total);
+		void displayProgress(int number, int total);
 
-		public void finishTestSequence();
+		void finishTestSequence();
 
 	}
 
 	public interface Display {
 
-		public boolean containsPoint(int x, int y);
+		boolean containsPoint(int x, int y);
 
 		IDisplaySurface getDisplaySurface();
 
-		public void toggleFullScreen();
+		void toggleFullScreen();
 
-		public boolean isFullScreen();
+		boolean isFullScreen();
 
 		void toggleSideControls();
 
@@ -83,30 +83,27 @@ public interface IGamaView {
 
 		LayeredDisplayOutput getOutput();
 
-		public int getIndex();
-		// {
-		// final LayeredDisplayOutput output = getOutput();
-		// return output == null ? 0 : output.getIndex();
-		// }
+		int getIndex();
 
-		public void setIndex(int i);
-		// {}
+		void setIndex(int i);
+
+		default void forceLayout() {}
 	}
 
 	public interface Error {
 
-		public void displayErrors();
+		void displayErrors();
 
 	}
 
 	public interface Html {
-		public void setUrl(String url);
+		void setUrl(String url);
 	}
 
 	public interface Parameters {
-		public void addItem(IExperimentPlan exp);
+		void addItem(IExperimentPlan exp);
 
-		public void updateItemValues();
+		void updateItemValues();
 	}
 
 	public interface Console {
@@ -116,7 +113,7 @@ public interface IGamaView {
 	}
 
 	public interface User {
-		public void initFor(final IScope scope, final UserPanelStatement panel);
+		void initFor(final IScope scope, final UserPanelStatement panel);
 	}
 
 }

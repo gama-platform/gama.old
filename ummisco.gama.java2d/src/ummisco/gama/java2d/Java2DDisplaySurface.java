@@ -66,6 +66,7 @@ import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
@@ -76,6 +77,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
 @display ("java2D")
+@doc ("Display that uses the Java2D technology to draw the layers in a SWT view")
 public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private static final long serialVersionUID = 1L;
@@ -170,8 +172,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void setMousePosition(final int xm, final int ym) {
-		int x = scaleUpIfWin(xm);
-		int y = scaleUpIfWin(ym);
+		final int x = scaleUpIfWin(xm);
+		final int y = scaleUpIfWin(ym);
 		if (mousePosition == null) {
 			mousePosition = new Point(x, y);
 		} else {
@@ -741,11 +743,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public Font computeFont(Font f) {
-		if (f == null)
-			return null;
-		if (PlatformHelper.isWindows() && PlatformHelper.isHiDPI())
+	public Font computeFont(final Font f) {
+		if (f == null) { return null; }
+		if (PlatformHelper.isWindows() && PlatformHelper.isHiDPI()) {
 			return f.deriveFont(PlatformHelper.scaleUpIfWin(f.getSize2D()));
+		}
 		return f;
 
 	}
