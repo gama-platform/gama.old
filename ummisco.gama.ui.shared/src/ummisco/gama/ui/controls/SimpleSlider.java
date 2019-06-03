@@ -41,7 +41,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	static {
 		DEBUG.OFF();
 	}
-
+	boolean isInteger;
 	final int thumbWidth = 6;
 	final Composite parent;
 	final Thumb thumb;
@@ -55,7 +55,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 		final Color color;
 
-		public Thumb(final Composite parent, Color thumbColor) {
+		public Thumb(final Composite parent, final Color thumbColor) {
 			super(parent, SWT.NO_BACKGROUND);
 			color = thumbColor;
 			addPaintListener(this);
@@ -236,6 +236,10 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		return previousPosition;
 	}
 
+	public void setInteger(final boolean b) {
+		isInteger = b;
+	}
+
 	private void updatePositionListeners(final double perc) {
 		if (!notify) { return; }
 		if (Math.abs(perc - previousPosition) > 0.000001) {
@@ -250,17 +254,16 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	void moveThumbHorizontally(final int x) {
 		final int width = getClientArea().width - thumbWidth;
-		final int pos = x < 0 ? 0 : x > width ? width : x;
-		thumb.setFocus();
-		leftRegion.updatePosition(pos);
-		layout();
-
+		int pos = x < 0 ? 0 : x > width ? width : x;
 		double percentage = pos / (double) width;
 
 		if (step != null) {
 			percentage = Math.round(percentage / step) * step;
 		}
-
+		pos = (int) (percentage * width);
+		thumb.setFocus();
+		leftRegion.updatePosition(pos);
+		layout();
 		updatePositionListeners(percentage);
 		previousPosition = percentage;
 

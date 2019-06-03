@@ -122,11 +122,11 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 
 	@Override
 	protected Control createCustomParameterControl(final Composite comp) throws GamaRuntimeException {
-		List<GamaColor> colors = getParam().getColor(getScope());
+		final List<GamaColor> colors = getParam().getColor(getScope());
 		Color left = IGamaColors.OK.color();
 		Color right = IGamaColors.GRAY_LABEL.lighter();
 		Color thumb = left;
-		if (colors != null)
+		if (colors != null) {
 			if (colors.size() == 1) {
 				left = thumb = GamaColors.get(colors.get(0)).color();
 			} else if (colors.size() == 2) {
@@ -137,12 +137,14 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 				thumb = GamaColors.get(colors.get(1)).color();
 				right = GamaColors.get(colors.get(2)).color();
 			}
+		}
 		slider = new SimpleSlider(comp, left, right, thumb, false) {};
 
 		if (stepValue != null) {
 			final Double realStep = stepValue.doubleValue() / (maxValue.doubleValue() - minValue.doubleValue());
 			slider.setStep(realStep);
 		}
+		slider.setInteger(this instanceof Int);
 
 		slider.addPositionChangeListener((s, position) -> modifyAndDisplayValue(computeValue(position)));
 		slider.pack(true);
