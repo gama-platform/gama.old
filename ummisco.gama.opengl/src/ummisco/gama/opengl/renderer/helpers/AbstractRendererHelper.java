@@ -44,6 +44,12 @@ public abstract class AbstractRendererHelper {
 		return renderer.getMaxEnvDim();
 	}
 
+	public double getZNear() {
+		return renderer.getData().getzNear();
+	}
+	public double getZFar() {
+		return renderer.getData().getzFar();
+	}
 	public abstract void initialize();
 
 }

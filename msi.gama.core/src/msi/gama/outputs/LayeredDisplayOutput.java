@@ -232,6 +232,16 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("Set the angle for the rotation around the Z axis")),
 				@facet (
+						name = "z_near",
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("Set the distances to the near depth clipping planes. Must be positive.")),
+				@facet (
+						name = "z_far",
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("Set the distances to the far depth clipping planes. Must be positive.")),
+				@facet (
 						name = IKeyword.AUTOSAVE,
 						type = { IType.BOOL, IType.POINT },
 						optional = true,

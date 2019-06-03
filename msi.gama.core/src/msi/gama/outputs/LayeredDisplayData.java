@@ -136,6 +136,8 @@ public class LayeredDisplayData {
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
+	private double zNear = - 1.0;
+	private double zFar = -1.0;
 	/**
 	 * Overlay
 	 */
@@ -239,6 +241,17 @@ public class LayeredDisplayData {
 	 */
 	public void setShowfps(final boolean showfps) {
 		this.isShowingFPS = showfps;
+	}
+	
+	
+	
+
+	public double getzNear() {
+		return zNear;
+	}
+
+	public double getzFar() {
+		return zFar;
 	}
 
 	/**
@@ -746,6 +759,16 @@ public class LayeredDisplayData {
 		if (fps != null) {
 			setShowfps(Cast.asBool(scope, fps.value(scope)));
 		}
+		
+		final IExpression nZ = facets.getExpr("z_near");
+		if (nZ != null) {
+			setZNear(Cast.asFloat(scope, nZ.value(scope)));
+		}
+		
+		final IExpression fZ = facets.getExpr("z_far");
+		if (fZ != null) {
+			setZFar(Cast.asFloat(scope, fZ.value(scope)));
+		}
 		final IExpression denv = facets.getExpr(IKeyword.DRAWENV);
 		if (denv != null) {
 			setDrawEnv(Cast.asBool(scope, denv.value(scope)));
@@ -894,6 +917,15 @@ public class LayeredDisplayData {
 			constantCameraLook = cameraLook.isConst();
 		}
 
+	}
+
+	private void setZFar(Double zF) {
+		zFar = zF;
+		
+	}
+
+	private void setZNear(Double zN) {
+		zNear = zN;
 	}
 
 	public void update(final IScope scope, final Facets facets) {

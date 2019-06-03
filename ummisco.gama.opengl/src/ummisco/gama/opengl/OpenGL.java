@@ -269,9 +269,13 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		final double height = getViewHeight();
 		final double aspect = getViewWidth() / (height == 0d ? 1d : height);
 		final double maxDim = getMaxEnvDim();
+		double zNear = getZNear();
+		if (zNear < 0.0) zNear = maxDim / 100d;
+		double zFar = getZFar();
+		if (zFar < 0.0) zFar = maxDim * 100d;
+		
 		if (!getData().isOrtho()) {
 			try {
-				final double zNear = maxDim / 100d;
 				double fW, fH;
 				final double fovY = getData().getCameralens();
 				if (aspect > 1.0) {
@@ -282,7 +286,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 					fH = fW / aspect;
 				}
 
-				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 100d);
+				gl.glFrustum(-fW, fW, -fH, fH, zNear, zFar);
 			} catch (final BufferOverflowException e) {
 				DEBUG.ERR("Buffer overflow exception");
 			}
