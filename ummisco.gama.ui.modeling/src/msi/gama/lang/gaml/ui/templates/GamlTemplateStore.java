@@ -16,7 +16,8 @@ import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
-import org.eclipse.text.templates.TemplatePersistenceData;
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+// import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateStore;

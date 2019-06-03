@@ -17,12 +17,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.text.templates.TemplatePersistenceData;
+// import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.ui.PartInitException;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;

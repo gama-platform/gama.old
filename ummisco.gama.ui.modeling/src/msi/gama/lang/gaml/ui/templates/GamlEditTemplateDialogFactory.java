@@ -10,8 +10,9 @@
 package msi.gama.lang.gaml.ui.templates;
 
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.text.templates.TemplatePersistenceData;
+// import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.ui.codetemplates.ui.preferences.EditTemplateDialogFactory;
 import org.eclipse.xtext.ui.codetemplates.ui.preferences.TemplateResourceProvider;

@@ -14,7 +14,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.templates.Template;
-import org.eclipse.text.templates.TemplatePersistenceData;
+// import org.eclipse.text.templates.TemplatePersistenceData;
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
