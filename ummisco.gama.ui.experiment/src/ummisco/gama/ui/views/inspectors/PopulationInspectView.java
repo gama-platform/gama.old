@@ -242,11 +242,14 @@ public class PopulationInspectView extends GamaViewPart
 		// this.setContentDescription(StringUtils.capitalize(name) + "
 		// population in macro-agent " +
 		// getOutput().getRootAgent().getName());
-		if (!complete) {
-			setPartName(getOutput().getName() + ": set of " + name);
-		} else {
-			setPartName(getOutput().getName() + ": population of " + name);
-		}
+		WorkbenchHelper.runInUI("", 50, (m) -> {
+			if (!complete) {
+				setPartName(getOutput().getName() + ": set of " + name);
+			} else {
+				setPartName(getOutput().getName() + ": population of " + name);
+			}
+		});
+
 	}
 
 	private void createMenus(final Composite parent) {
