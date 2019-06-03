@@ -46,6 +46,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
@@ -140,6 +142,15 @@ public class PopulationInspectView extends GamaViewPart
 		}
 
 	}
+	/**
+	 * Added to address Issue #2752
+	 */
+	@Override
+	public void init(final IViewSite site) throws PartInitException {
+		super.init(site);
+		this.setTitleImage(GamaIcons.create("view.browser2").image());
+	}
+
 
 	final private AgentContentProvider provider = new AgentContentProvider();
 
@@ -242,13 +253,13 @@ public class PopulationInspectView extends GamaViewPart
 		// this.setContentDescription(StringUtils.capitalize(name) + "
 		// population in macro-agent " +
 		// getOutput().getRootAgent().getName());
-		WorkbenchHelper.runInUI("", 50, (m) -> {
-			if (!complete) {
-				setPartName(getOutput().getName() + ": set of " + name);
-			} else {
-				setPartName(getOutput().getName() + ": population of " + name);
-			}
-		});
+		// WorkbenchHelper.runInUI("", 50, (m) -> {
+		if (!complete) {
+			setPartName(getOutput().getName() + ": set of " + name);
+		} else {
+			setPartName(getOutput().getName() + ": population of " + name);
+		}
+		// });
 
 	}
 
