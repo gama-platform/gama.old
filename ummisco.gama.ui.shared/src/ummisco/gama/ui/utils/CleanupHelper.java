@@ -49,7 +49,7 @@ import ummisco.gama.ui.resources.GamaIcons;
 public class CleanupHelper {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	public static void run() {
@@ -143,9 +143,9 @@ public class CleanupHelper {
 
 		@Override
 		public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-			if (perspective != null) {
-				DEBUG.OUT("Perspective " + perspective.getId() + " activated");
-			}
+			// if (perspective != null) {
+			// DEBUG.OUT("Perspective " + perspective.getId() + " activated");
+			// }
 			final WorkbenchWindow w = (WorkbenchWindow) page.getWorkbenchWindow();
 			if (w.isClosing()) { return; }
 			WorkbenchHelper.runInUI("Cleaning menus", 0, m -> {

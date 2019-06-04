@@ -20,9 +20,6 @@ import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
 public class AWTDisplayView extends LayeredDisplayView {
 
-	static {
-		DEBUG.ON();
-	}
 
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
@@ -41,20 +38,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 		WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
 		WorkaroundForIssue2476.installOn(((SwingControl) surfaceComposite).getTopLevelContainer(), getDisplaySurface());
 		WorkaroundForIssue2745.installOn(this);
-		surfaceComposite.addPaintListener(e -> {
-			DEBUG.OUT("-- Surface asked to repaint");
-		});
 		return surfaceComposite;
-	}
-
-	@Override
-	public void forceLayout() {
-		surfaceComposite.requestLayout();
-		// final Composite parent = getSash().getParent();
-		// if (parent != null && !parent.isDisposed()) {
-		// parent.
-		// parent.layout(true, true);
-		// }
 	}
 
 }

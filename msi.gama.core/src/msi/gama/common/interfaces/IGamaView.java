@@ -90,8 +90,6 @@ public interface IGamaView {
 
 		void setIndex(int i);
 
-		default void forceLayout() {}
-
 		default List<String> getCameraNames() {
 			return Collections.EMPTY_LIST;
 		}

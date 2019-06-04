@@ -83,7 +83,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	private static final long serialVersionUID = 1L;
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 		GamaPreferences.Displays.DISPLAY_NO_ACCELERATION.onChange(newValue -> {
 			System.setProperty("sun.java2d.noddraw", newValue ? "true" : "false");
 			System.setProperty("sun.awt.noerasebackground", "true");
@@ -625,16 +625,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {
+		//DEBUG.OUT("-- Java2D surface set bounds to " + arg0 + " " + arg1 + " | " + arg2 + " " + arg3);
 		if (arg2 == 0 && arg3 == 0) { return; }
 		super.setBounds(arg0, arg1, arg2, arg3);
 	}
-
-	@Override
-	public void setBounds(final Rectangle r) {
-		// scope.getGui().debug("Set bounds called with " + r);
-		if (r.width < 1 && r.height < 1) { return; }
-		super.setBounds(r);
-	}
+	//
+	// @Override
+	// public void setBounds(final Rectangle r) {
+	// DEBUG.OUT("-- Java2D surface set bounds to " + r);
+	// if (r.width < 1 && r.height < 1) { return; }
+	// super.setBounds(r);
+	// }
 
 	double applyZoom(final double factor) {
 		double real_factor = Math.min(factor, 10 / getZoomLevel());
