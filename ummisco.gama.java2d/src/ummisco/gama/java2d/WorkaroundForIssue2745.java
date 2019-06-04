@@ -31,8 +31,7 @@ public class WorkaroundForIssue2745 {
 			public void partActivated(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
 					DEBUG.OUT("Part becomes activated ");
-					DEBUG.OUT("Forcing layout of " + view.toString());
-					WorkbenchHelper.asyncRun(() -> view.forceLayout());
+
 				}
 
 			}
@@ -76,8 +75,7 @@ public class WorkaroundForIssue2745 {
 			public void partVisible(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
 					DEBUG.OUT("Part becomes visible ");
-					DEBUG.OUT("Forcing layout of " + view.toString());
-					WorkbenchHelper.asyncRun(() -> view.forceLayout());
+
 				}
 			}
 
