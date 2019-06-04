@@ -43,9 +43,14 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaIcons;
 
 public class CleanupHelper {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public static void run() {
 		RemoveUnwantedWizards.run();
@@ -138,18 +143,17 @@ public class CleanupHelper {
 
 		@Override
 		public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
+			// if (perspective != null) {
+			// DEBUG.OUT("Perspective " + perspective.getId() + " activated");
+			// }
 			final WorkbenchWindow w = (WorkbenchWindow) page.getWorkbenchWindow();
-			if (w.isClosing())
-				return;
+			if (w.isClosing()) { return; }
 			WorkbenchHelper.runInUI("Cleaning menus", 0, m -> {
 				try {
-					// RearrangeMenus.run();
-					CoolBarToTrimManager cm = (CoolBarToTrimManager) w.getCoolBarManager2();
+
+					final CoolBarToTrimManager cm = (CoolBarToTrimManager) w.getCoolBarManager2();
 					final IContributionItem[] items = cm.getItems();
-					// DEBUG.LOG(Arrays.toString(items));
-					// We remove all contributions to the toolbar that do not
-					// relate
-					// to gama
+					// We remove all contributions to the toolbar that do not relate to gama
 					for (final IContributionItem item : items) {
 
 						for (final String s1 : TOOLBAR_ACTION_SETS_TO_REMOVE) {
@@ -172,10 +176,11 @@ public class CleanupHelper {
 					w.getCoolBarManager2().update(true);
 					w.getMenuManager().update(true);
 					w.getMenuBarManager().update(true);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					// remove trace of exceptions
 				}
 			});
+
 		}
 
 		@Override
@@ -183,6 +188,7 @@ public class CleanupHelper {
 			if (c.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) {
 				perspectiveActivated(p, d);
 			}
+
 		}
 
 	}

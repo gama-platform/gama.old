@@ -32,6 +32,7 @@ import org.eclipse.ui.services.ISourceProviderService;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.application.workbench.PerspectiveHelper;
+import msi.gama.application.workbench.PerspectiveHelper.SimulationPerspectiveDescriptor;
 import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -45,6 +46,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
@@ -52,6 +54,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -61,6 +64,7 @@ import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.types.IType;
@@ -416,14 +420,65 @@ public class SwtGui implements IGui {
 	@Override
 	public void prepareForExperiment(final IScope scope, final IExperimentPlan exp) {
 		if (exp.isGui()) {
+			// hideScreen();
 			final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
 			if (initializer != null && !initializer.isDone()) {
 				initializer.run();
 			}
 			WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
-			updateParameterView(scope, exp);
-			getConsole(scope).showConsoleView(exp.getAgent());
+			final ExperimentAgent agent = exp.getAgent();
+			final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
+			Symbol layout = manager.getLayout();
+			if (layout == null) {
+				layout = manager;
+			}
+			final Boolean keepTabs = layout.getFacetValue(scope, "tabs", true);
+			final Boolean keepToolbars = layout.getFacetValue(scope, "toolbars", null);
+			final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
+			final Boolean showConsoles = layout.getFacetValue(scope, "consoles", null);
+			final Boolean showNavigator = layout.getFacetValue(scope, "navigator", null);
+			final Boolean showControls = layout.getFacetValue(scope, "controls", null);
+			final Boolean keepTray = layout.getFacetValue(scope, "tray", null);
+			boolean showEditors;
+			if (layout.hasFacet("editors")) {
+				showEditors = layout.getFacetValue(scope, "editors", false);
+			} else {
+				showEditors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
+			}
+			WorkbenchHelper.runInUI("Arranging views", 0, (m) -> {
+				WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
+				if (showConsoles != null && !showConsoles) {
+					WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
+					WorkbenchHelper.hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
+				} else {
+					getConsole(scope).showConsoleView(exp.getAgent());
+				}
+				if (showParameters != null && !showParameters) {
+					WorkbenchHelper.hideView(IGui.PARAMETER_VIEW_ID);
+				} else {
+					updateParameterView(scope, exp);
+				}
+				if (showNavigator != null && !showNavigator) {
+					WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID);
+				}
+				if (showControls != null) {
+					WorkbenchHelper.getWindow().setCoolBarVisible(showControls);
+				}
+				if (keepTray != null) {
+					PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray);
+				}
+
+				final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
+				if (sd != null) {
+					sd.keepTabs(keepTabs);
+					sd.keepToolbars(keepToolbars);
+					sd.keepControls(showControls);
+					sd.keepTray(keepTray);
+				}
+			});
+
 		}
+
 	}
 
 	/**
@@ -594,13 +649,10 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void applyLayout(final IScope scope, final Object layout, final Boolean keepTabs, final Boolean keepToolbars,
-			final Boolean showEditors, final Boolean showParameters, final Boolean showConsoles,
-			final Boolean showNavigator, final Boolean showControls, final Boolean showTray) {
+	public void applyLayout(final IScope scope, final Object layout) {
 		final IDisplayLayoutManager manager = WorkbenchHelper.getService(IDisplayLayoutManager.class);
 		if (manager != null) {
-			manager.applyLayout(layout, keepTabs, keepToolbars, showEditors, showParameters, showConsoles,
-					showNavigator, showControls, showTray);
+			manager.applyLayout(layout);
 		}
 	}
 
@@ -643,22 +695,6 @@ public class SwtGui implements IGui {
 			refresh.completeRefresh(null);
 		}
 
-	}
-
-	@Override
-	public void hideScreen() {
-		final IDisplayLayoutManager manager = WorkbenchHelper.getService(IDisplayLayoutManager.class);
-		if (manager != null) {
-			manager.hideScreen();
-		}
-	}
-
-	@Override
-	public void showScreen() {
-		final IDisplayLayoutManager manager = WorkbenchHelper.getService(IDisplayLayoutManager.class);
-		if (manager != null) {
-			manager.showScreen();
-		}
 	}
 
 }

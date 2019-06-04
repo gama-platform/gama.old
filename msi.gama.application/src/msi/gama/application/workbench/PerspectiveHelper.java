@@ -41,7 +41,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class PerspectiveHelper {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	// id of the status bar, as defined in the LegacyIDE.e4xmi
@@ -161,7 +161,6 @@ public class PerspectiveHelper {
 				showBottomTray(window, keepTray);
 			}
 			applyActiveEditor(page);
-
 		});
 		currentPerspectiveId = currentSimulationPerspective.getId();
 		return true;
