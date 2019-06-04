@@ -31,7 +31,7 @@ public class WorkaroundForIssue2745 {
 			public void partActivated(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
 					DEBUG.OUT("Part becomes activated ");
-
+					// view.forceLayout();
 				}
 
 			}
@@ -39,14 +39,14 @@ public class WorkaroundForIssue2745 {
 			@Override
 			public void partClosed(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
-					DEBUG.OUT("Part becomes closed ");
+					// DEBUG.OUT("Part becomes closed ");
 				}
 			}
 
 			@Override
 			public void partDeactivated(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
-					DEBUG.OUT("Part becomes deactivated ");
+					// DEBUG.OUT("Part becomes deactivated ");
 				}
 			}
 
@@ -61,13 +61,14 @@ public class WorkaroundForIssue2745 {
 			public void partBroughtToTop(final IWorkbenchPartReference part) {
 				if (part.getPart(false).equals(view)) {
 					DEBUG.OUT("Part becomes brought to top ");
+					// view.forceLayout();
 				}
 			}
 
 			@Override
 			public void partHidden(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
-					DEBUG.OUT("Part becomes hidden ");
+					// DEBUG.OUT("Part becomes hidden ");
 				}
 			}
 
@@ -75,14 +76,14 @@ public class WorkaroundForIssue2745 {
 			public void partVisible(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
 					DEBUG.OUT("Part becomes visible ");
-
+					view.forceLayout();
 				}
 			}
 
 			@Override
 			public void partInputChanged(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
-					DEBUG.OUT("Part has its input changed ");
+					// DEBUG.OUT("Part has its input changed ");
 				}
 			}
 		};

@@ -81,7 +81,7 @@ public abstract class SwingControl extends Composite {
 	 */
 	@Override
 	public void setBounds(final int x, final int y, final int width, final int height) {
-		DEBUG.OUT("Bounds set to " + x + "  " + y + " | " + width + " " + height);
+		DEBUG.OUT("-- Surface bounds set to " + x + "  " + y + " | " + width + " " + height);
 		populate();
 		super.setBounds(x, y, width, height);
 	}

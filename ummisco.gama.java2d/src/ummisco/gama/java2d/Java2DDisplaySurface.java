@@ -406,14 +406,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void paintComponent(final Graphics g) {
+
 		realized = true;
-		if (iGraphics == null) { return; }
+		final AWTDisplayGraphics gg = getIGraphics();
+		if (gg == null) { return; }
+		DEBUG.OUT("-- Surface effectively painting on Java2D context");
 		super.paintComponent(g);
 		final Graphics2D g2d = (Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) Math.round(getDisplayWidth()),
 				(int) Math.round(getDisplayHeight()));
-		getIGraphics().setGraphics2D(g2d);
-		getIGraphics().setUntranslatedGraphics2D((Graphics2D) g);
-		layerManager.drawLayersOn(iGraphics);
+		gg.setGraphics2D(g2d);
+		gg.setUntranslatedGraphics2D((Graphics2D) g);
+		layerManager.drawLayersOn(gg);
 		if (temp_focus != null) {
 			final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()), false);
 			temp_focus = null;
