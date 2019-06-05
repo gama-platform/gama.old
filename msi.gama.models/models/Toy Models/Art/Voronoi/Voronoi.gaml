@@ -5,60 +5,74 @@
 * 	 is discretized using a grid, each cell computing its distance from a center to know in which cluster it is. 
 * Tags: skill, agent_movement, grid
 */
-
 model voronoi
- 
+
 global {
-	// Parameters 
-	//Number of points
-	int num_points <- 50 min: 1 max: 1000;
+// Parameters 
+//Number of points
+	int num_points <- 30 min: 1 max: 1000;
 	//Size of the environment
-	int env_width <- 150 min: 10 max: 400;
-	int env_height <- 150 min: 10 max: 400;
-	
+	int env_width <- 100 min: 10 max: 400;
+	int env_height <- 100 min: 10 max: 400;
+	bool blur1 <- false;
+	bool blur2 <- false;
+	topology w;
+
 	// Environment
 	geometry shape <- rectangle(env_width, env_height);
-	
-	init { 
-		write 'This model shows how Voronoi-like shapes can be drawn on a regular surface. A set of mobile agents is placed on a grid. Each agent possesses an attribute called *inside_color*. Each step, the agents move randomly and the grid cells paint themselves using the *inside_color* of the nearest agent. Dynamical boundaries then appear on the screen without any further calculations.';
+
+	init {
+		write
+		'This model shows how Voronoi-like shapes can be drawn on a regular surface. A set of mobile agents is placed on a grid. Each agent possesses an attribute called *inside_color*. Each step, the agents move randomly and the grid cells paint themselves using the *inside_color* of the nearest agent. Dynamical boundaries then appear on the screen without any further calculations.';
 		//Creation of all the points
-		create center number: num_points  ;
-	} 
-} 
-//Grid for the voronoi clustering
-grid cell width: env_width height: env_height neighbors: 8 use_regular_agents: false parallel: true {
-	// Note: since GAMA 1.7, the topology needs to be specified for this computation to use continuous distances
-	center closest_center <- nil update: (center closest_to self.location) using topology(world);
-	rgb color <- #white update: (closest_center).color;
-	
-	aspect default {
-		draw shape color: color border: false depth: grid_value;
+		create center number: num_points;
+		w <- topology(self);
 	}
 
 }
-//Species representing the center of a Voronoi point
-species center skills: [moving] { 
-	rgb color <- rnd_color(255); 
+//Grid for the voronoi clustering
+grid cell width: env_width height: env_height neighbors: 4 use_neighbors_cache: true use_individual_shapes: false use_regular_agents: false parallel: true {
+// Note: since GAMA 1.7, the topology needs to be specified for this computation to use continuous distances
+	rgb color <- #white update: ((center closest_to location) using w).color;
+
+	reflex when: blur1 {
+		color <- blend(color, one_of(neighbors).color);
+	}
+
+	reflex when: blur2 {
+		loop n over: neighbors {
+			color <- blend(color, n.color);
+		}
+
+	}
+
+}
+//Species representing the center of a Voronoi polygon
+species center skills: [moving] {
+	rgb color <- rnd_color(255);
 	//Make the center of the cluster wander in the environment       
 	reflex wander {
 		do wander amplitude: 90.0;
-	}  
-	aspect default {
-		draw circle(1.0) color: color border: #black ;
 	}
+
+	aspect default {
+		draw circle(1.0) color: color border: #black;
+	}
+
 }
 
-
-experiment voronoi type: gui{ 
-	parameter 'Number of points:' var: num_points ;
+experiment voronoi type: gui autorun: true {
+	parameter 'Number of points:' var: num_points;
 	parameter 'Width of the environment:' var: env_width;
 	parameter 'Height of the environment:' var: env_height;
-	
+	parameter "Simple blur" var: blur1;
+	parameter "Complex blur" var: blur2;
 	output {
-		
-		display "Voronoi 2D"{
-			grid cell ;
-			species center;
+		layout #split navigator: false tray: false toolbars: false consoles: false editors: false ;
+		display "Voronoi 2D" {
+			grid cell;
 		}
-	}	
+
+	}
+
 }
