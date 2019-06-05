@@ -107,13 +107,13 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	 *
 	 * @since 3.4
 	 */
-	private ILeveledImportStructureProvider structureProvider;
+	ILeveledImportStructureProvider structureProvider;
 
 	/**
 	 * @since 3.5
 	 *
 	 */
-	private final class ProjectLabelProvider extends LabelProvider implements IColorProvider {
+	final class ProjectLabelProvider extends LabelProvider implements IColorProvider {
 
 		@Override
 		public String getText(final Object element) {
@@ -128,8 +128,9 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		@Override
 		public Color getForeground(final Object element) {
 			final ProjectRecord projectRecord = (ProjectRecord) element;
-			if (projectRecord.hasConflicts
-					|| projectRecord.isInvalid) { return getShell().getDisplay().getSystemColor(SWT.COLOR_GRAY); }
+			if (projectRecord.hasConflicts || projectRecord.isInvalid) {
+				return getShell().getDisplay().getSystemColor(SWT.COLOR_GRAY);
+			}
 			return null;
 		}
 	}
@@ -186,21 +187,21 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		private void setProjectName() {
 			try {
 				if (projectArchiveFile != null) {
-					final InputStream stream = structureProvider.getContents(projectArchiveFile);
+					try (final InputStream stream = structureProvider.getContents(projectArchiveFile);) {
 
-					// If we can get a description pull the name from there
-					if (stream == null) {
-						if (projectArchiveFile instanceof ZipEntry) {
-							final IPath path = new Path(((ZipEntry) projectArchiveFile).getName());
-							projectName = path.segment(path.segmentCount() - 2);
-						} else if (projectArchiveFile instanceof TarEntry) {
-							final IPath path = new Path(((TarEntry) projectArchiveFile).getName());
-							projectName = path.segment(path.segmentCount() - 2);
+						// If we can get a description pull the name from there
+						if (stream == null) {
+							if (projectArchiveFile instanceof ZipEntry) {
+								final IPath path = new Path(((ZipEntry) projectArchiveFile).getName());
+								projectName = path.segment(path.segmentCount() - 2);
+							} else if (projectArchiveFile instanceof TarEntry) {
+								final IPath path = new Path(((TarEntry) projectArchiveFile).getName());
+								projectName = path.segment(path.segmentCount() - 2);
+							}
+						} else {
+							description = IDEWorkbenchPlugin.getPluginWorkspace().loadProjectDescription(stream);
+							projectName = description.getName();
 						}
-					} else {
-						description = IDEWorkbenchPlugin.getPluginWorkspace().loadProjectDescription(stream);
-						stream.close();
-						projectName = description.getName();
 					}
 
 				}
@@ -305,7 +306,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 
 	private final static String STORE_ARCHIVE_SELECTED = "WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"; //$NON-NLS-1$
 
-	private Combo directoryPathField;
+	Combo directoryPathField;
 
 	CheckboxTreeViewer projectsList;
 
@@ -321,36 +322,36 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 
 	// Keep track of the directory that we browsed to last time
 	// the wizard was invoked.
-	private static String previouslyBrowsedDirectory = ""; //$NON-NLS-1$
+	static String previouslyBrowsedDirectory = ""; //$NON-NLS-1$
 
 	// Keep track of the archive that we browsed to last time
 	// the wizard was invoked.
-	private static String previouslyBrowsedArchive = ""; //$NON-NLS-1$
+	static String previouslyBrowsedArchive = ""; //$NON-NLS-1$
 
-	private Button projectFromDirectoryRadio;
+	Button projectFromDirectoryRadio;
 
-	private Button projectFromArchiveRadio;
+	Button projectFromArchiveRadio;
 
-	private Combo archivePathField;
+	Combo archivePathField;
 
-	private Button browseDirectoriesButton;
+	Button browseDirectoriesButton;
 
-	private Button browseArchivesButton;
+	Button browseArchivesButton;
 
 	// The last selected path; to minimize searches
-	private String lastPath;
+	String lastPath;
 
 	// constant from WizardArchiveFileResourceImportPage1
-	private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
+	static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	// The initial path to set
-	private final String initialPath;
+	final String initialPath;
 
 	// private final IStructuredSelection currentSelection;
 
-	private Button hideConflictingProjects;
+	Button hideConflictingProjects;
 
-	private final ConflictingProjectFilter conflictingProjectsFilter = new ConflictingProjectFilter();
+	final ConflictingProjectFilter conflictingProjectsFilter = new ConflictingProjectFilter();
 
 	/**
 	 * Creates a new project creation wizard page.
@@ -710,7 +711,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		});
 	}
 
-	private void archiveRadioSelected() {
+	void archiveRadioSelected() {
 		if (projectFromArchiveRadio.getSelection()) {
 			directoryPathField.setEnabled(false);
 			browseDirectoriesButton.setEnabled(false);
@@ -725,7 +726,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		}
 	}
 
-	private void directoryRadioSelected() {
+	void directoryRadioSelected() {
 		if (projectFromDirectoryRadio.getSelection()) {
 			directoryPathField.setEnabled(true);
 			browseDirectoriesButton.setEnabled(true);
@@ -760,7 +761,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		updateProjectsList(path, false);
 	}
 
-	private void updateProjectsList(final String path, final boolean forceUpdate) {
+	void updateProjectsList(final String path, final boolean forceUpdate) {
 		// on an empty path empty selectedProjects
 		if (path == null || path.length() == 0) {
 			setMessage("Select a directory or an archive to search for existing GAMA projects.");
@@ -964,11 +965,11 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 		}
 		// no project description found or search for nested projects enabled,
 		// so recurse into sub-directories
-		for (int i = 0; i < contents.length; i++) {
-			if (contents[i].isDirectory()) {
-				if (!contents[i].getName().equals(METADATA_FOLDER)) {
+		for (final File content : contents) {
+			if (content.isDirectory()) {
+				if (!content.getName().equals(METADATA_FOLDER)) {
 					try {
-						final String canonicalPath = contents[i].getCanonicalPath();
+						final String canonicalPath = content.getCanonicalPath();
 						if (!directoriesVisited.add(canonicalPath)) {
 							// already been here --> do not recurse
 							continue;
@@ -978,7 +979,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 								StatusUtil.newStatus(IStatus.ERROR, exception.getLocalizedMessage(), exception));
 
 					}
-					collectProjectFilesFromDirectory(files, contents[i], directoriesVisited, monitor);
+					collectProjectFilesFromDirectory(files, content, directoriesVisited, monitor);
 				}
 			}
 		}
@@ -1152,7 +1153,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	 * @return status of the creation
 	 * @throws InterruptedException
 	 */
-	private IStatus createExistingProject(final ProjectRecord record, final IProgressMonitor monitor)
+	IStatus createExistingProject(final ProjectRecord record, final IProgressMonitor monitor)
 			throws InterruptedException {
 		final String projectName = record.getProjectName();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -1387,7 +1388,8 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 
 	private void restoreFromHistory(final IDialogSettings settings, final String key, final Combo combo) {
 		final String[] sourceNames = settings.getArray(key);
-		if (sourceNames == null) { return; // ie.- no values stored, so stop
+		if (sourceNames == null) {
+			return; // ie.- no values stored, so stop
 		}
 
 		for (final String sourceName : sourceNames) {

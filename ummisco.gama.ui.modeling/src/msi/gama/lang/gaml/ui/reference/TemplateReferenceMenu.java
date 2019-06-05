@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
+// import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.ui.PartInitException;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
@@ -33,10 +34,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class EditToolbarTemplateMenu.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
 public class TemplateReferenceMenu extends GamlReferenceMenu {
 

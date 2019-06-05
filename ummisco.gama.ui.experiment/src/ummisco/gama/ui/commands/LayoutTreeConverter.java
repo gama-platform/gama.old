@@ -38,7 +38,8 @@ public class LayoutTreeConverter {
 		if (layout < 0 || layout >= GamaPreferences.Displays.LAYOUTS.size()) { return null; }
 		ArrangeDisplayViews.listDisplayViews();
 		final int[] indices = of(WorkbenchHelper.getDisplayViews()).mapToInt((s) -> s.getIndex()).toArray();
-		if (indices.length <= 1) { return null; }
+		// Issue #2740 -- proceed anyway with only 1 display
+		// if (indices.length <= 1) { return null; }
 		Arrays.sort(indices);
 		final GamaTree<String> result = newLayoutTree();
 		switch (layout) {
@@ -140,7 +141,7 @@ public class LayoutTreeConverter {
 		if (element instanceof MElementContainer) {
 			return of(((MElementContainer<?>) element).getChildren()).allMatch(e -> isEmpty(e, holders));
 		}
-		return !(holders.contains(element));
+		return !holders.contains(element);
 	}
 
 	List<? extends MUIElement> getNonEmptyChildren(final MElementContainer<? extends MUIElement> container,

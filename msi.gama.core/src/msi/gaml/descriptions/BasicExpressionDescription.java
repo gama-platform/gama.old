@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.BasicExpressionDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.BasicExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -149,12 +149,13 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	}
 
 	@Override
-	public IType getDenotedType(final IDescription context) {
+	public IType<?> getDenotedType(final IDescription context) {
 		compile(context);
 		if (expression == null) { return Types.NO_TYPE; }
 		if (expression instanceof TypeExpression) { return ((TypeExpression) expression).getDenotedType(); }
-		if (expression.isConst()) { return context
-				.getTypeNamed(GamaStringType.staticCast(null, expression.getConstValue(), true)); }
+		if (expression.isConst()) {
+			return context.getTypeNamed(GamaStringType.staticCast(null, expression.getConstValue(), true));
+		}
 
 		final String s = expression.literalValue();
 		final ITypesManager tm = context.getModelDescription().getTypesManager();

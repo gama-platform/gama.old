@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
@@ -176,7 +176,7 @@ public class EditorSearchControls {
 
 	private void find(final boolean forward, final boolean incremental, final boolean wrap, final boolean wrapping) {
 
-		final IFindReplaceTarget findReplaceTarget = (IFindReplaceTarget) editor.getAdapter(IFindReplaceTarget.class);
+		final IFindReplaceTarget findReplaceTarget = editor.getAdapter(IFindReplaceTarget.class);
 		if (findReplaceTarget != null) {
 			try {
 				final String findText = find.getText();

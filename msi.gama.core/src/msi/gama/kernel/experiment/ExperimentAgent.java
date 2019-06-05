@@ -134,7 +134,9 @@ import msi.gaml.types.Types;
 				doc = @doc (
 						value = "Contains the absolute path to the project in which the current model is located",
 						comment = "Always terminated with a trailing separator")) })
-@experiment (IKeyword.GUI_)
+@experiment (
+		value = IKeyword.GUI_)
+@doc ("Experiments that declare a graphical user interface")
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public static final String MODEL_PATH = "model_path";
@@ -215,6 +217,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			// something
 			// else in the dynamics of closing/opening
 			ownScope.getGui().closeDialogs(ownScope);
+			ownScope.getGui().closeSimulationViews(ownScope, false, true);
+			// final IOutputManager outputs = getOutputManager();
+			// if (outputs != null) {
+			// outputs.close();
+			// }
 		}
 		// simulation = null;
 		// populationOfSimulations = null;
@@ -354,7 +361,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
-		if (!(getSpecies().isHeadless()) && !GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
+		if (!getSpecies().isHeadless() && !GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
 			return new ArrayList<>();
 		}
 		final List<ExperimentParameter> params = new ArrayList<>();
@@ -698,9 +705,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			// However, if the experiment is defined with keep_simulations: false, we should not give access to the
 			// value, as no simulations can be made available (see #2727)
 			if (this.getModel().getSpecies().hasVar(varName)) {
-				if (!getExperiment().getSpecies().keepsSimulations())
+				if (!getExperiment().getSpecies().keepsSimulations()) {
 					throw GamaRuntimeException.error("This experiment does not keep its simulations. " + varName
 							+ " cannot be retrieved in this context", this);
+				}
 				return getModel().getSpecies().getVar(varName).getInitialValue(this);
 			}
 			// Fourth case: this is a parameter, so we get it from the species

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.DynamicLineString.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.shape.DynamicLineString.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -29,7 +29,7 @@ import msi.gama.common.geometry.GeometryUtils;
 
 /**
  * A dynamical geometry that represents a link between two IShape.
- * 
+ *
  * @author drogoul
  *
  */
@@ -71,7 +71,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#getGeometryType()
 	 */
 	@Override
@@ -81,7 +81,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#getCoordinate()
 	 */
 	@Override
@@ -91,7 +91,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#getCoordinates()
 	 */
 	@Override
@@ -107,7 +107,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#getNumPoints()
 	 */
 	@Override
@@ -117,7 +117,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#isEmpty()
 	 */
 	@Override
@@ -127,7 +127,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#getDimension()
 	 */
 	@Override
@@ -137,7 +137,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#getBoundary()
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#getBoundaryDimension()
 	 */
 	@Override
@@ -167,7 +167,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#reverse()
 	 */
 	@Override
@@ -177,7 +177,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#equalsExact(com.vividsolutions.jts. geom.Geometry, double)
 	 */
 	@Override
@@ -189,7 +189,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateFilter)
 	 */
 	@Override
@@ -200,7 +200,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateSequenceFilter)
 	 */
 	@Override
@@ -216,7 +216,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. GeometryFilter)
 	 */
 	@Override
@@ -226,7 +226,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. GeometryComponentFilter)
 	 */
 	@Override
@@ -246,14 +246,14 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#normalize()
 	 */
 	@Override
 	public void normalize() {}
 
 	@Override
-	public Object clone() {
+	public final Object clone() {
 		final DynamicLineString s = new DynamicLineString(getFactory(), source, target);
 		s.setUserData(getUserData());
 		return s;
@@ -261,7 +261,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#computeEnvelopeInternal()
 	 */
 	@Override
@@ -272,7 +272,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object)
 	 */
 	@Override
@@ -285,7 +285,7 @@ public class DynamicLineString extends LineString {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object,
 	 * com.vividsolutions.jts.geom.CoordinateSequenceComparator)
 	 */

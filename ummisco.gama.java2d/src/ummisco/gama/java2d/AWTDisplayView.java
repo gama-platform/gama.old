@@ -4,40 +4,22 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.java2d;
 
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.JApplet;
 import javax.swing.JComponent;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Composite;
 
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.java2d.swing.SwingControl;
-import ummisco.gama.ui.utils.PlatformHelper;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
-import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 public class AWTDisplayView extends LayeredDisplayView {
 
-	public static long REALIZATION_TIME_OUT = 1000;
-	public boolean isVisible;
-
-	@Override
-	public Java2DDisplaySurface getDisplaySurface() {
-		return (Java2DDisplaySurface) super.getDisplaySurface();
-	}
 
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
@@ -48,167 +30,15 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 			@Override
 			protected JComponent createSwingComponent() {
-				return getDisplaySurface();
+				return (Java2DDisplaySurface) getDisplaySurface();
 			}
 
-			@Override
-			protected void preferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
-				WorkbenchHelper.asyncRun(() -> {
-					surfaceComposite.setSize(prefSize);
-					parent.layout(true, true);
-				});
-
-			}
-			
-			
-
-			@Override
-			public Rectangle getClientArea() {
-			//	if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getClientArea());
-				return super.getClientArea();
-			}
-
-			@Override
-			public Point getSize() {
-				//if (PlatformHelper.isWindows()) return DPIUtil.autoScaleUp(super.getSize());
-				return super.getSize();
-			}
-
-			@Override
-			public Composite getLayoutAncestor() {
-				// AD 02/16 Seems necessary to return null for displays to show
-				// up and correctly initialize their graphics environment
-				return null;
-			}
-
-			@Override
-			public boolean isSwtTabOrderExtended() {
-				return false;
-			}
-
-			@Override
-			public void afterComponentCreatedSWTThread() {}
-
-			@Override
-			public void checkWidget() {
-
-			}
-
-			@Override
-			public void afterComponentCreatedAWTThread() {}
 		};
 		surfaceComposite.setEnabled(false);
-		WorkaroundForIssue1594.installOn(AWTDisplayView.this, parent, surfaceComposite, getDisplaySurface());
-		((SwingControl)surfaceComposite).awtview=this;
+		WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
+		WorkaroundForIssue2476.installOn(((SwingControl) surfaceComposite).getTopLevelContainer(), getDisplaySurface());
+		WorkaroundForIssue2745.installOn(this);
 		return surfaceComposite;
-	}
-	
-	
-
-	volatile boolean inMenu=false;
-	public void addEvent(JApplet a) {
-		IToolbarDecoratedView.Zoomable s =((IToolbarDecoratedView.Zoomable )this);  
-		a.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-			
-			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (e.getPreciseWheelRotation()> 0) {
-					s.zoomOut();
-				} else {
-					s.zoomIn();
-				}				
-				
-			}
-		});  
-		a.addMouseMotionListener(new MouseMotionListener() {
-			
-			@Override
-			public void mouseMoved(java.awt.event.MouseEvent e) {
-				getDisplaySurface().setMousePosition(e.getX(), e.getY());  
- 
-//				getDisplaySurface().dispatchMouseEvent(SWT.MouseMove);
-
-			}
-			
-			@Override
-			public void mouseDragged(java.awt.event.MouseEvent e) { 
-					getDisplaySurface().draggedTo(e.getX(), e.getY());  
-				
-			}
-		});
-		a.addMouseListener(new java.awt.event.MouseListener() {
-			
-			@Override
-			public void mouseReleased(java.awt.event.MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(java.awt.event.MouseEvent e) {
-				// TODO Auto-generated method stub
-				inMenu=false;
-			}
-			
-			@Override
-			public void mouseExited(java.awt.event.MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(java.awt.event.MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent e) {
-			    if(e.getClickCount() == 2) {
-			    	s.zoomFit();
-			    }
-			    if(e.getButton()==3 && !inMenu) {
-					// DEBUG.LOG("Menu detected on " + view.getPartName());
-					inMenu = true;
-					getDisplaySurface().setMousePosition(e.getX(), e.getY());
-					getDisplaySurface().selectAgentsAroundMouse();
-			    }
-			}
-		});
-	}
-
-
-	/**
-	 * Wait for the AWT environment to be initialized, preventing a thread lock when two views want to open at the same
-	 * time. Must not be called in neither the AWT or the SWT thread. A configurable timeout is applied, so that other
-	 * views are not blocked. It remains to be seen what to do if this times out, as we should normally cancel the view.
-	 * 
-	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
-	 */
-	//
-	// @Override
-	// public void waitToBeRealized() {
-	// // if (PlatformHelper.isWin32()) { return; }
-	// final long start = System.currentTimeMillis();
-	// final long now = start;
-	// final boolean openable = false;
-	//
-	// // while (/* isVisible && */ !openable) {
-	// // try {
-	// // Thread.sleep(GamaPreferences.Displays.CORE_OUTPUT_DELAY.getValue());
-	// // } catch (final InterruptedException e) {
-	// // e.printStackTrace();
-	// // }
-	// // now = System.currentTimeMillis();
-	// // openable = now - start > REALIZATION_TIME_OUT || this.getDisplaySurface().isRealized();
-	// // }
-	// // DEBUG.LOG("Realized in " + (now - start) + "ms");
-	//
-	// }
-
-	@Override
-	public List<String> getCameraNames() {
-		return Collections.EMPTY_LIST;
 	}
 
 }

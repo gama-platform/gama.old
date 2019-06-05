@@ -41,7 +41,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenResourceAction extends WorkspaceAction implements IResourceChangeListener {
@@ -75,11 +75,11 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	/**
 	 * Returns the total number of closed projects in the workspace.
 	 */
-	private int countClosedProjects() {
+	int countClosedProjects() {
 		int count = 0;
 		final IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (!projects[i].isOpen()) {
+		for (final IProject project : projects) {
+			if (!project.isOpen()) {
 				count++;
 			}
 		}
@@ -104,7 +104,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	/**
 	 * Returns whether there are closed projects in the workspace that are not part of the current selection.
 	 */
-	private boolean hasOtherClosedProjects() {
+	boolean hasOtherClosedProjects() {
 		// count the closed projects in the selection
 		int closedInSelection = 0;
 		final Iterator<?> resources = getSelectedResources().iterator();
@@ -199,8 +199,8 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 				final IProject[] references = project.getReferencedProjects();
 				if (!hasPrompted) {
 					openProjectReferences = false;
-					for (int i = 0; i < references.length; i++) {
-						if (references[i].exists() && !references[i].isOpen()) {
+					for (final IProject reference : references) {
+						if (reference.exists() && !reference.isOpen()) {
 							openProjectReferences = true;
 							break;
 						}
@@ -215,9 +215,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 							// remember that we have prompted to avoid repeating the analysis
 							hasPrompted = true;
 						});
-						if (canceled) {
-							throw new OperationCanceledException();
-						}
+						if (canceled) { throw new OperationCanceledException(); }
 					}
 				}
 				if (openProjectReferences) {

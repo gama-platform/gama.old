@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ExperimentPlan.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.ExperimentPlan.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -71,10 +71,10 @@ import msi.gaml.variables.IVariable;
  * Written by drogoul Modified on 28 mai 2011 Apr. 2013: Important modifications to enable running true experiment
  * agents
  *
- * 
+ *
  * Dec 2015: ExperimentPlans now manage their own controller. They are entirely responsible for its life-cycle
  * (creation, disposal)
- * 
+ *
  * @todo Description
  *
  */
@@ -136,7 +136,7 @@ import msi.gaml.variables.IVariable;
 						name = IKeyword.KEEP_SEED,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("")),
+						doc = @doc ("Allows to keep the same seed between simulations. Mainly useful for batch experiments")),
 				@facet (
 						name = IKeyword.KEEP_SIMULATIONS,
 						type = IType.BOOL,
@@ -185,7 +185,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -380,13 +380,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// DEBUG.LOG("ExperimentPlan.dipose END");
 	}
 
-	
-	public void createAgent(Double seed) {
+	public void createAgent(final Double seed) {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
-		Double seed_temp;
-		List<Map<String, Object>> params =
+		final List<Map<String, Object>> params =
 				seed == null ? Collections.EMPTY_LIST : Arrays.asList(new HashMap<String, Object>() {
 					{
 						put(IKeyword.SEED, seed);
@@ -396,15 +394,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		addDefaultParameters();
 	}
 
-/*	
-	public void createAgent() {
-		final ExperimentPopulation pop = new ExperimentPopulation(this);
-		final IScope scope = getExperimentScope();
-		pop.initializeFor(scope);
-		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
-		addDefaultParameters();
-	}
-*/
+	/*
+	 * public void createAgent() { final ExperimentPopulation pop = new ExperimentPopulation(this); final IScope scope =
+	 * getExperimentScope(); pop.initializeFor(scope); agent = (ExperimentAgent) pop.createAgents(scope, 1,
+	 * Collections.EMPTY_LIST, false, true).get(0); addDefaultParameters(); }
+	 */
 	@Override
 	public IModel getModel() {
 		return model;
@@ -511,9 +505,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}
 
-	
-	
-	public synchronized void open(Double seed) {
+	public synchronized void open(final Double seed) {
 
 		createAgent(seed);
 		myScope.getGui().prepareForExperiment(myScope, this);
@@ -529,34 +521,27 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public synchronized void open() {
 		open(null);
 	}
-	
-	
-	
-	/*@Override
-	public synchronized void open() {
 
-		createAgent();
-		myScope.getGui().prepareForExperiment(myScope, this);
-		agent.schedule(agent.getScope());
-		if (isBatch()) {
-			agent.getScope().getGui().getStatus(agent.getScope())
-					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
-			agent.getScope().getGui().updateExperimentState(agent.getScope());
-		}
-	}
-*/
+	/*
+	 * @Override public synchronized void open() {
+	 *
+	 * createAgent(); myScope.getGui().prepareForExperiment(myScope, this); agent.schedule(agent.getScope()); if
+	 * (isBatch()) { agent.getScope().getGui().getStatus(agent.getScope()) .informStatus(isTest() ?
+	 * "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
+	 * agent.getScope().getGui().updateExperimentState(agent.getScope()); } }
+	 */
 	@Override
 	public void reload() {
-		if (isBatch()) {
-			agent.dispose();
-			open();
-		} else {
-			agent.reset();
-			agent.getScope().getGui().getConsole(agent.getScope()).eraseConsole(false);
-			agent.init(agent.getScope());
-
-			agent.getScope().getGui().updateParameterView(agent.getScope(), this);
-		}
+		// if (isBatch()) {
+		agent.dispose();
+		open();
+		// } else {
+		// agent.reset();
+		// agent.getScope().getGui().getConsole(agent.getScope()).eraseConsole(false);
+		// agent.init(agent.getScope());
+		//
+		// agent.getScope().getGui().updateParameterView(agent.getScope(), this);
+		// }
 	}
 
 	@Override
@@ -635,15 +620,19 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	protected IParameter.Batch checkGetParameterByTitle(final String parameterName) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameterByTitle(parameterName);
-		if (v == null) { throw GamaRuntimeException
-				.error("No parameter named " + parameterName + " in experiment " + getName(), getExperimentScope()); }
+		if (v == null) {
+			throw GamaRuntimeException.error("No parameter named " + parameterName + " in experiment " + getName(),
+					getExperimentScope());
+		}
 		return v;
 	}
 
 	protected IParameter.Batch checkGetParameter(final String parameterName) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameter(parameterName);
-		if (v == null) { throw GamaRuntimeException
-				.error("No parameter named " + parameterName + " in experiment " + getName(), getExperimentScope()); }
+		if (v == null) {
+			throw GamaRuntimeException.error("No parameter named " + parameterName + " in experiment " + getName(),
+					getExperimentScope());
+		}
 		return v;
 	}
 
@@ -718,7 +707,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	/**
 	 * Method getController()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IExperimentPlan#getController()
 	 */
 	@Override
@@ -731,7 +720,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	/**
 	 * Method refreshAllOutputs()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IExperimentPlan#refreshAllOutputs()
 	 */
 	@Override
@@ -788,7 +777,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	/**
 	 * Method getOriginalSimulationOutputs()
-	 * 
+	 *
 	 * @see msi.gama.kernel.experiment.IExperimentPlan#getOriginalSimulationOutputs()
 	 */
 	@Override
@@ -803,7 +792,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	/**
 	 * Returns the output managers that are currently active. If no agent is defined, then an empty iterable is returned
-	 * 
+	 *
 	 * @return
 	 */
 

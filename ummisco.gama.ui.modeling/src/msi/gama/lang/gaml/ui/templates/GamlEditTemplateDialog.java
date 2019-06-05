@@ -1,41 +1,64 @@
 /*********************************************************************************************
  *
- * 'GamlEditTemplateDialog.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlEditTemplateDialog.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
 
-import java.util.*;
+import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.text.templates.*;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewer;
+// XText still needs it
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
+// import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.ui.codetemplates.ui.internal.CodetemplatesActivator;
-import org.eclipse.xtext.ui.codetemplates.ui.preferences.*;
-import org.eclipse.xtext.ui.editor.embedded.*;
+import org.eclipse.xtext.ui.codetemplates.ui.preferences.IEditTemplateDialog;
+import org.eclipse.xtext.ui.codetemplates.ui.preferences.TemplateDialogMessages;
+import org.eclipse.xtext.ui.codetemplates.ui.preferences.TemplatesLanguageConfiguration;
+import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditor;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorFactory.Builder;
-import org.eclipse.xtext.ui.editor.validation.IValidationIssueProcessor;
+import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorModelAccess;
+import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
 import org.eclipse.xtext.validation.Issue;
-import com.google.common.collect.*;
+
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * The class GamlEditTemplateDialog.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
 public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplateDialog {
 
@@ -46,7 +69,7 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	private Text fNameText;
 	private Text fDescriptionText;
 	// private Label category;
-	private SourceViewer fPatternEditor;
+	SourceViewer fPatternEditor;
 	private EmbeddedEditorModelAccess partialModelEditor;
 	private Button fInsertVariableButton;
 	// private Button fAutoInsertCheckbox;
@@ -61,26 +84,25 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	private final IEditedResourceProvider resourceProvider;
 
 	public GamlEditTemplateDialog(final Shell parent, final TemplatePersistenceData data, final boolean edit,
-		final ContextTypeRegistry registry, final TemplatesLanguageConfiguration configuration,
-		final IEditedResourceProvider resourceProvider, final String languageName) {
+			final ContextTypeRegistry registry, final TemplatesLanguageConfiguration configuration,
+			final IEditedResourceProvider resourceProvider, final String languageName) {
 		super(parent);
 		this.data = data;
 		this.configuration = configuration;
 		this.resourceProvider = resourceProvider;
 		this.languageName = languageName;
 
-		String title =
-			edit ? TemplateDialogMessages.EditTemplateDialog_title_edit
+		final String title = edit ? TemplateDialogMessages.EditTemplateDialog_title_edit
 				: TemplateDialogMessages.EditTemplateDialog_title_new;
 		setTitle(title);
 
 		// this.fTemplate = data.getTemplate();
 		// fIsNameModifiable = isNameModifiable;
 
-		List<String[]> contexts = Lists.newArrayList();
-		for ( Iterator<TemplateContextType> it = Iterators.filter(registry.contextTypes(), TemplateContextType.class); it
-			.hasNext(); ) {
-			TemplateContextType type = it.next();
+		final List<String[]> contexts = Lists.newArrayList();
+		for (final Iterator<TemplateContextType> it =
+				Iterators.filter(registry.contextTypes(), TemplateContextType.class); it.hasNext();) {
+			final TemplateContextType type = it.next();
 			contexts.add(new String[] { type.getId(), type.getName() });
 		}
 		// fContextTypes = contexts.toArray(new String[contexts.size()][]);
@@ -101,7 +123,7 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 
 	@Override
 	protected Control createDialogArea(final Composite ancestor) {
-		Composite parent = new Composite(ancestor, SWT.NONE);
+		final Composite parent = new Composite(ancestor, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
@@ -112,13 +134,7 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 		parent.setLayout(layout);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ModifyListener listener = new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				doTextWidgetChanged(e.widget);
-			}
-		};
+		final ModifyListener listener = e -> doTextWidgetChanged(e.widget);
 
 		createLabel(parent, TemplateDialogMessages.EditTemplateDialog_name);
 
@@ -133,7 +149,7 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 		fNameText = createText(composite);
 
 		createLabel(composite, "Category:");
-		Label category = new Label(composite, SWT.NONE);
+		final Label category = new Label(composite, SWT.NONE);
 
 		// category.addModifyListener(listener);
 
@@ -144,11 +160,11 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 
 		fDescriptionText.addModifyListener(listener);
 
-		Label patternLabel = createLabel(parent, TemplateDialogMessages.EditTemplateDialog_pattern);
+		final Label patternLabel = createLabel(parent, TemplateDialogMessages.EditTemplateDialog_pattern);
 		patternLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		fPatternEditor = createEditor(parent);
 
-		Label filler = new Label(parent, SWT.NONE);
+		final Label filler = new Label(parent, SWT.NONE);
 		filler.setLayoutData(new GridData());
 
 		composite = new Composite(parent, SWT.NONE);
@@ -188,7 +204,7 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	}
 
 	protected void doTextWidgetChanged(final Widget w) {
-		if ( w == fNameText ) {
+		if (w == fNameText) {
 			partialModelEditor.updatePrefix(getPrefix());
 		}
 	}
@@ -202,38 +218,39 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	}
 
 	protected Status createErrorStatus(final String message, final TemplateException e) {
-		return new Status(IStatus.ERROR, CodetemplatesActivator.getInstance().getBundle().getSymbolicName(), message, e);
+		return new Status(IStatus.ERROR, CodetemplatesActivator.getInstance().getBundle().getSymbolicName(), message,
+				e);
 	}
 
 	private static GridData getButtonGridData() {
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		final GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		return data;
 	}
 
 	private static Label createLabel(final Composite parent, final String name) {
-		Label label = new Label(parent, SWT.NULL);
+		final Label label = new Label(parent, SWT.NULL);
 		label.setText(name);
 		label.setLayoutData(new GridData());
 		return label;
 	}
 
 	private static Text createText(final Composite parent) {
-		Text text = new Text(parent, SWT.BORDER);
+		final Text text = new Text(parent, SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return text;
 	}
 
 	private SourceViewer createEditor(final Composite parent) {
-		SourceViewer viewer = createViewer(parent);
+		final SourceViewer viewer = createViewer(parent);
 		int numberOfLines = viewer.getDocument().getNumberOfLines();
-		if ( numberOfLines < 7 ) {
+		if (numberOfLines < 7) {
 			numberOfLines = 7;
-		} else if ( numberOfLines > 14 ) {
+		} else if (numberOfLines > 14) {
 			numberOfLines = 14;
 		}
 
-		Control control = viewer.getControl();
-		GridData data = new GridData(GridData.FILL_BOTH);
+		final Control control = viewer.getControl();
+		final GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = convertWidthInCharsToPixels(80);
 		data.heightHint = convertHeightInCharsToPixels(numberOfLines);
 		control.setLayoutData(data);
@@ -241,53 +258,43 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	}
 
 	protected SourceViewer createViewer(final Composite parent) {
-		Builder editorBuilder = configuration.getEmbeddedEditorFactory().newEditor(resourceProvider);
-		editorBuilder.processIssuesBy(new IValidationIssueProcessor() {
-
-			@Override
-			public void processIssues(final List<Issue> issues, final IProgressMonitor monitor) {
-				IStatus result = Status.OK_STATUS;
-				StringBuilder messages = new StringBuilder();
-				for ( Issue issue : issues ) {
-					if ( issue.getSeverity() == Severity.ERROR ) {
-						if ( messages.length() != 0 ) {
-							messages.append('\n');
-						}
-						messages.append(issue.getMessage());
+		final Builder editorBuilder = configuration.getEmbeddedEditorFactory().newEditor(resourceProvider);
+		editorBuilder.processIssuesBy((issues, monitor) -> {
+			IStatus result = Status.OK_STATUS;
+			final StringBuilder messages = new StringBuilder();
+			for (final Issue issue : issues) {
+				if (issue.getSeverity() == Severity.ERROR) {
+					if (messages.length() != 0) {
+						messages.append('\n');
 					}
+					messages.append(issue.getMessage());
 				}
-				if ( messages.length() != 0 ) {
-					result = createErrorStatus(messages.toString(), null);
-				}
-				final IStatus toBeUpdated = result;
-				getShell().getDisplay().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						updateStatus(toBeUpdated);
-					}
-				});
 			}
+			if (messages.length() != 0) {
+				result = createErrorStatus(messages.toString(), null);
+			}
+			final IStatus toBeUpdated = result;
+			getShell().getDisplay().asyncExec(() -> updateStatus(toBeUpdated));
 		});
-		EmbeddedEditor handle = editorBuilder.withParent(parent);
+		final EmbeddedEditor handle = editorBuilder.withParent(parent);
 		partialModelEditor = handle.createPartialEditor(getPrefix(), data.getTemplate().getPattern(), "", true);
 		return handle.getViewer();
 	}
 
 	protected String getPrefix() {
-		String contextName = getContextName();
+		final String contextName = getContextName();
 		String name = data.getTemplate().getName();
-		if ( fNameText != null && !fNameText.isDisposed() ) {
+		if (fNameText != null && !fNameText.isDisposed()) {
 			name = fNameText.getText();
 		}
-		String prefix = "templates for " + languageName + " '" + name + "'" + " for " + contextName + " >>";
+		final String prefix = "templates for " + languageName + " '" + name + "'" + " for " + contextName + " >>";
 		return prefix;
 	}
 
 	@Override
 	protected void okPressed() {
-		String name = fNameText == null ? data.getTemplate().getName() : fNameText.getText();
-		Template t = new Template(name, fDescriptionText.getText(), getContextId(), getPattern(), true);
+		final String name = fNameText == null ? data.getTemplate().getName() : fNameText.getText();
+		final Template t = new Template(name, fDescriptionText.getText(), getContextId(), getPattern(), true);
 		data = new TemplatePersistenceData(t, true, data.getId());
 		super.okPressed();
 	}
@@ -302,9 +309,9 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
-		String sectionName = getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
+		final String sectionName = getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
 		IDialogSettings section = configuration.getDialogSettings().getSection(sectionName);
-		if ( section == null ) {
+		if (section == null) {
 			section = configuration.getDialogSettings().addNewSection(sectionName);
 		}
 		return section;

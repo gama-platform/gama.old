@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.image;
@@ -31,14 +31,14 @@ import org.eclipse.swt.widgets.Shell;
 class SaveImageAsDialog extends SaveAsDialog2 {
 
 	// These 3 arrays need to stay in sync
-	private static int[] IMAGE_TYPES =
+	static int[] IMAGE_TYPES =
 			{ SWT.IMAGE_PNG, SWT.IMAGE_GIF, SWT.IMAGE_JPEG, SWT.IMAGE_BMP, SWT.IMAGE_ICO, SWT.IMAGE_TIFF };
 
-	private static String[] IMAGE_LABELS = { "PNG (Portable Network Graphics)", "GIF (Graphics Interchange Format)",
+	static String[] IMAGE_LABELS = { "PNG (Portable Network Graphics)", "GIF (Graphics Interchange Format)",
 			"JPEG (Joint Photographic Experts Group)", "BMP (Bitmap)", "ICO (Icon File)",
 			"TIFF (Tagged Image File Format)" };
 
-	private static String[] IMAGE_EXTS = { "png", //$NON-NLS-1$
+	static String[] IMAGE_EXTS = { "png", //$NON-NLS-1$
 			"gif", //$NON-NLS-1$
 			"jpg", //$NON-NLS-1$
 			"bmp", //$NON-NLS-1$
@@ -56,7 +56,7 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 	 */
 	private int selectedImageTypeIndex = -1;
 
-	private Combo imageTypeCombo;
+	Combo imageTypeCombo;
 
 	public SaveImageAsDialog(final Shell parentShell) {
 		super(parentShell);
@@ -129,7 +129,7 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 
 	/**
 	 * Set the initial filename and image type. This must be called before {@code}create(){@code}.
-	 * 
+	 *
 	 * @param basename
 	 *            the file basename, no extension.
 	 * @param type
@@ -149,7 +149,7 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 
 	/**
 	 * Set the initial file and path and image type. This must be called before {@code}create(){@code}.
-	 * 
+	 *
 	 * @param origfile
 	 *            the original file.
 	 * @param type

@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
+// import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartListener2;
@@ -455,7 +456,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				Selector listener = null;
 				String imageName = null;
 
-				if (msg == GamlEditorState.NO_EXP_DEFINED) {
+				if (GamlEditorState.NO_EXP_DEFINED.equals(msg)) {
 					msg = null;
 				} else if (newState.hasImportedErrors) {
 					listener = new OpenImportedErrorSelectionListener(GamlEditor.this, newState,

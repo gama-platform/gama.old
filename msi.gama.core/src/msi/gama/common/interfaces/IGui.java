@@ -40,40 +40,40 @@ import msi.gaml.types.IType;
  */
 public interface IGui {
 
-	public static final int ERROR = 0;
-	public static final int WAIT = 1;
-	public static final int INFORM = 2;
-	public static final int NEUTRAL = 3;
-	public static final int USER = 4;
+	int ERROR = 0;
+	int WAIT = 1;
+	int INFORM = 2;
+	int NEUTRAL = 3;
+	int USER = 4;
 
-	public static final Map<String, DisplayDescription> DISPLAYS = new THashMap<>();
-	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
-	public static final String INTERACTIVE_CONSOLE_VIEW_ID = "msi.gama.application.view.InteractiveConsoleView";
-	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
-	public static final String TABLE_VIEW_ID = "msi.gama.application.view.TableAgentInspectView";
-	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
-	public static final String GL_LAYER_VIEW_ID = "msi.gama.application.view.OpenGLDisplayView";
-	public static final String GL_LAYER_VIEW_ID2 = "msi.gama.application.view.OpenGLDisplayView2";
-	public static final String WEB_VIEW_ID = "msi.gama.application.view.WebDisplayView";
-	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
-	public static final String TEST_VIEW_ID = "msi.gama.application.view.TestView";
-	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
-	public static final String HEADLESSPARAM_ID = "msi.gama.application.view.HeadlessParam";
-	public static final String HEADLESS_CHART_ID = "msi.gama.hpc.gui.HeadlessChart";
-	public static final String NAVIGATOR_VIEW_ID = "msi.gama.gui.view.GamaNavigator";
-	public static final String NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID = "msi.gama.application.decorator";
-	public static final String CONSOLE_VIEW_ID = "msi.gama.application.view.ConsoleView";
-	public static final String USER_CONTROL_VIEW_ID = "msi.gama.views.userControlView";
-	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
-	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
+	Map<String, DisplayDescription> DISPLAYS = new THashMap<>();
+	String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
+	String INTERACTIVE_CONSOLE_VIEW_ID = "msi.gama.application.view.InteractiveConsoleView";
+	String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
+	String TABLE_VIEW_ID = "msi.gama.application.view.TableAgentInspectView";
+	String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
+	String GL_LAYER_VIEW_ID = "msi.gama.application.view.OpenGLDisplayView";
+	String GL_LAYER_VIEW_ID2 = "msi.gama.application.view.OpenGLDisplayView2";
+	String WEB_VIEW_ID = "msi.gama.application.view.WebDisplayView";
+	String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
+	String TEST_VIEW_ID = "msi.gama.application.view.TestView";
+	String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
+	String HEADLESSPARAM_ID = "msi.gama.application.view.HeadlessParam";
+	String HEADLESS_CHART_ID = "msi.gama.hpc.gui.HeadlessChart";
+	String NAVIGATOR_VIEW_ID = "msi.gama.gui.view.GamaNavigator";
+	String NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID = "msi.gama.application.decorator";
+	String CONSOLE_VIEW_ID = "msi.gama.application.view.ConsoleView";
+	String USER_CONTROL_VIEW_ID = "msi.gama.views.userControlView";
+	String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
+	String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 
-	public final static String PAUSED = "STOPPED";
-	public final static String FINISHED = "FINISHED";
-	public final static String RUNNING = "RUNNING";
-	public final static String NOTREADY = "NOTREADY";
-	public final static String ONUSERHOLD = "ONUSERHOLD";
-	public final static String NONE = "NONE";
-	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
+	String PAUSED = "STOPPED";
+	String FINISHED = "FINISHED";
+	String RUNNING = "RUNNING";
+	String NOTREADY = "NOTREADY";
+	String ONUSERHOLD = "ONUSERHOLD";
+	String NONE = "NONE";
+	String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 
 	IStatusDisplayer getStatus(IScope scope);
 
@@ -97,7 +97,7 @@ public interface IGui {
 
 	boolean openSimulationPerspective(IModel model, String experimentId);
 
-	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
+	IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, Map<String, Object> initialValues,
 			Map<String, IType<?>> types);
@@ -128,7 +128,7 @@ public interface IGui {
 
 	void closeSimulationViews(IScope scope, boolean andOpenModelingPerspective, boolean immediately);
 
-	public DisplayDescription getDisplayDescriptionFor(final String name);
+	DisplayDescription getDisplayDescriptionFor(final String name);
 
 	String getExperimentState(String uid);
 
@@ -146,7 +146,7 @@ public interface IGui {
 
 	void setFocusOn(IShape o);
 
-	void applyLayout(IScope scope, Object layout, Boolean keepTabs, Boolean keepToolbars, boolean showEditors);
+	void applyLayout(IScope scope, Object layout);
 
 	void displayErrors(IScope scope, List<GamaRuntimeException> newExceptions);
 
@@ -166,9 +166,9 @@ public interface IGui {
 
 	void displayTestsResults(IScope scope, CompoundSummary<?, ?> summary);
 
-	public void endTestDisplay();
+	void endTestDisplay();
 
-	public List<TestExperimentSummary> runHeadlessTests(final Object model);
+	List<TestExperimentSummary> runHeadlessTests(final Object model);
 
 	/**
 	 * Tries to put the frontmost display in full screen mode or in normal view mode if it is already in full screen
@@ -178,9 +178,5 @@ public interface IGui {
 	boolean toggleFullScreenMode();
 
 	void refreshNavigator();
-
-	void hideScreen();
-
-	void showScreen();
 
 }

@@ -459,7 +459,7 @@ public abstract class Spatial {
 
 			return polygon(scope, GamaListFactory.createWithoutCasting(Types.POINT, origin, minPoint, maxPoint));
 		}
-		
+
 		@operator (
 				value = "cone",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
@@ -729,7 +729,7 @@ public abstract class Spatial {
 			ILocation location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			if ((base <= 0) || (height <= 0)) { return new GamaShape(location); }
+			if (base <= 0 || height <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(base, height, location);
 		}
 
@@ -2234,15 +2234,14 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "inverse_rotation(38.0::{1,1,1})",
 						equals = "-38.0::{1,1,1}",
-						test = false
-						) },
+						test = false) },
 				see = { "rotation_composition, normalized_rotation" })
-		@test("inverse_rotation(38.0::{1,1,1}) = (-38.0::{1,1,1})")
+		@test ("inverse_rotation(38.0::{1,1,1}) = (-38.0::{1,1,1})")
 		public static GamaPair<Double, GamaPoint> inverse_rotation(final IScope scope,
 				final GamaPair<Double, GamaPoint> rotation) {
 			return new GamaPair(-rotation.key, rotation.value, Types.FLOAT, Types.POINT);
 		}
-		
+
 		@operator (
 				value = "normalized_rotation",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
@@ -2253,20 +2252,18 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "normalized_rotation(-38.0::{1,1,1})",
 						equals = "38.0::{-0.5773502691896258,-0.5773502691896258,-0.5773502691896258}",
-						test = false
-						) },
+						test = false) },
 				see = { "rotation_composition, inverse_rotation" })
 		@test ("normalized_rotation(-38::{1,1,1})=(38.0::{-0.5773502691896258,-0.5773502691896258,-0.5773502691896258})")
-		public static GamaPair<Double, GamaPoint> normalized_rotation(final IScope scope,
-				final GamaPair rotation) {
-			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+		public static GamaPair<Double, GamaPoint> normalized_rotation(final IScope scope, final GamaPair rotation) {
+			final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
 					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
-			GamaPoint axis = rot.getValue();
-			double norm = Math.sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+			final GamaPoint axis = rot.getValue();
+			final double norm = Math.sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
 			axis.x = Math.signum(rot.getKey()) * axis.x / norm;
 			axis.y = Math.signum(rot.getKey()) * axis.y / norm;
 			axis.z = Math.signum(rot.getKey()) * axis.z / norm;
-			return new GamaPair(Math.signum(rot.getKey())*rot.getKey(), axis, Types.FLOAT, Types.POINT);
+			return new GamaPair(Math.signum(rot.getKey()) * rot.getKey(), axis, Types.FLOAT, Types.POINT);
 		}
 
 		@operator (
@@ -2281,20 +2278,20 @@ public abstract class Spatial {
 						equals = "115.22128507898108::{0.9491582126366207,0.31479943993669307,-0.0}",
 						test = false) },
 				see = { "inverse_rotation" })
-//		public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope,
-//				final GamaList<GamaPair<Double, GamaPoint>> rotation_list) {
-//			Rotation3D rotation = new Rotation3D(new GamaPoint(1, 0, 0), 0.0);
-//			for (GamaPair<Double, GamaPoint> rot : rotation_list) {
-//				rotation = rotation.applyTo(new Rotation3D(rot.value, 2 * Math.PI / 360 * rot.key));
-//			}
-//			return new GamaPair(180 / Math.PI * rotation.getAngle(), rotation.getAxis(), Types.FLOAT, Types.POINT);
-//		}
+		// public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope,
+		// final GamaList<GamaPair<Double, GamaPoint>> rotation_list) {
+		// Rotation3D rotation = new Rotation3D(new GamaPoint(1, 0, 0), 0.0);
+		// for (GamaPair<Double, GamaPoint> rot : rotation_list) {
+		// rotation = rotation.applyTo(new Rotation3D(rot.value, 2 * Math.PI / 360 * rot.key));
+		// }
+		// return new GamaPair(180 / Math.PI * rotation.getAngle(), rotation.getAxis(), Types.FLOAT, Types.POINT);
+		// }
 		@test ("normalized_rotation(rotation_composition(38.0::{1,1,1},90.0::{1,0,0}))=normalized_rotation(115.22128507898108::{0.9491582126366207,0.31479943993669307,-0.0})")
 		public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope,
 				final GamaList<GamaPair> rotation_list) {
 			Rotation3D rotation = new Rotation3D(new GamaPoint(1, 0, 0), 0.0);
-			for (GamaPair element : rotation_list) {
-				GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+			for (final GamaPair element : rotation_list) {
+				final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
 						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, element, null, false);
 				rotation = rotation.applyTo(new Rotation3D(rot.value, 2 * Math.PI / 360 * rot.key));
 			}
@@ -2322,21 +2319,21 @@ public abstract class Spatial {
 			if (vector.x == 0d && vector.y == 0d && vector.z == 0d) { return g1; }
 			return new GamaShape(g1, null, new AxisAngle(vector, rotation), g1.getLocation());
 		}
-		
+
 		@operator (
 				value = "rotated_by",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = {})
-		@doc (  
+		@doc (
 				value = "A point resulting from the application of the right-hand rotation operand (angles in degree)"
-				+ " to the left-hand operand point",
+						+ " to the left-hand operand point",
 				comment = "return a vector that results from ")
 		@no_test // hard to compare geometries
 		public static GamaPoint rotated_by(final IScope scope, final GamaPoint p1, final GamaPair rotation) {
 			if (p1 == null) { return null; }
-			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+			final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
 					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
-			GamaPoint p2 = new GamaPoint(p1);
+			final GamaPoint p2 = new GamaPoint(p1);
 			new Rotation3D(rot.getValue(), 2 * Math.PI / 360 * rot.getKey()).applyTo(p2);
 			return p2;
 		}
@@ -2357,7 +2354,7 @@ public abstract class Spatial {
 				see = { "transformed_by", "translated_by" })
 		@no_test // hard to compare geometries
 		public static IShape rotated_by(final IScope scope, final IShape g1, final GamaPair rotation) {
-			GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
+			final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
 					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
 			if (g1 == null || rot == null) { return null; }
 			return new GamaShape(g1, null, new AxisAngle(rot.getValue(), rot.getKey()), g1.getLocation());
@@ -2377,8 +2374,6 @@ public abstract class Spatial {
 			return new GamaShape(g1, null, new AxisAngle(angle.doubleValue()), null);
 
 		}
-		
-
 
 		/**
 		 * @throws GamaRuntimeException
@@ -2896,9 +2891,9 @@ public abstract class Spatial {
 						test = false) })
 		public static IList<IShape> toSegments(final IScope scope, final IShape geom) {
 			if (geom == null) { return GamaListFactory.create(Types.GEOMETRY); }
-			IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
+			final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 			if (geom.isMultiple()) {
-				for (IShape g : geom.getGeometries()) {
+				for (final IShape g : geom.getGeometries()) {
 					segments.addAll(toSegments(scope, g));
 				}
 			} else {
@@ -2906,7 +2901,7 @@ public abstract class Spatial {
 					segments.add(new GamaShape(geom));
 				} else {
 					for (int i = 1; i < geom.getPoints().size(); i++) {
-						IList<IShape> points = GamaListFactory.create(Types.POINT);
+						final IList<IShape> points = GamaListFactory.create(Types.POINT);
 						points.add(geom.getPoints().get(i - 1));
 						points.add(geom.getPoints().get(i));
 						segments.add(Spatial.Creation.line(scope, points));
@@ -3096,16 +3091,16 @@ public abstract class Spatial {
 			boolean change = true;
 			IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
 			lines.addAll((Collection<? extends IShape>) geoms);
-			IList<IShape> split_lines = GamaListFactory.create(Types.GEOMETRY);
+			final IList<IShape> split_lines = GamaListFactory.create(Types.GEOMETRY);
 			while (change) {
 				change = false;
-				IList<IShape> lines2 = GamaListFactory.createWithoutCasting(Types.GEOMETRY, lines);
-				for (IShape l : lines) {
+				final IList<IShape> lines2 = GamaListFactory.createWithoutCasting(Types.GEOMETRY, lines);
+				for (final IShape l : lines) {
 					lines2.remove(l);
 					if (!l.getInnerGeometry().isSimple()) {
-						IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
+						final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 						for (int i = 0; i < l.getPoints().size() - 1; i++) {
-							IList<IShape> points = GamaListFactory.create(Types.POINT);
+							final IList<IShape> points = GamaListFactory.create(Types.POINT);
 							points.add(l.getPoints().get(i));
 							points.add(l.getPoints().get(i + 1));
 							segments.add(Spatial.Creation.line(scope, points));
@@ -3116,9 +3111,10 @@ public abstract class Spatial {
 						for (int i = 0, n = nodedLineStrings.getNumGeometries(); i < n; i++) {
 							final Geometry g = nodedLineStrings.getGeometryN(i);
 							if (g instanceof LineString) {
-								IShape gS = new GamaShape(g);
-								if (l.getAttributes() != null)
+								final IShape gS = new GamaShape(g);
+								if (l.getAttributes() != null) {
 									gS.getAttributes().putAll(l.getAttributes());
+								}
 								lines2.add(new GamaShape(g));
 							}
 						}
@@ -3128,23 +3124,25 @@ public abstract class Spatial {
 						break;
 					}
 
-					List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, lines2, l);
+					final List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, lines2, l);
 					if (!ls.isEmpty()) {
-						ILocation pto = l.getPoints().firstValue(scope);
-						ILocation ptd = l.getPoints().lastValue(scope);
-						PreparedGeometry pg = PreparedGeometryFactory
+						final ILocation pto = l.getPoints().firstValue(scope);
+						final ILocation ptd = l.getPoints().lastValue(scope);
+						final PreparedGeometry pg = PreparedGeometryFactory
 								.prepare(l.getInnerGeometry().buffer(Math.min(0.001, l.getPerimeter() / 1000.0), 10));
-						for (IShape l2 : ls) {
-							if (pg.covers(l2.getInnerGeometry()) || pg.coveredBy(l2.getInnerGeometry()))
+						for (final IShape l2 : ls) {
+							if (pg.covers(l2.getInnerGeometry()) || pg.coveredBy(l2.getInnerGeometry())) {
 								continue;
-							IShape it = Spatial.Operators.inter(scope, l, l2);
-							if (it.getPerimeter() > 0.0)
+							}
+							final IShape it = Spatial.Operators.inter(scope, l, l2);
+							if (it.getPerimeter() > 0.0) {
 								continue;
+							}
 							if (!it.getLocation().equals(pto) && !it.getLocation().equals(ptd)) {
-								ILocation pt = it.getPoints().firstValue(scope);
-								IList<IShape> res1 = Spatial.Operators.split_at(l2, pt);
+								final ILocation pt = it.getPoints().firstValue(scope);
+								final IList<IShape> res1 = Spatial.Operators.split_at(l2, pt);
 								res1.removeIf(a -> a.getPerimeter() == 0.0);
-								IList<IShape> res2 = Spatial.Operators.split_at(l, pt);
+								final IList<IShape> res2 = Spatial.Operators.split_at(l, pt);
 								res2.removeIf(a -> a.getPerimeter() == 0.0);
 								if (res1.size() > 1 && res2.size() > 1) {
 									change = true;
@@ -4518,11 +4516,11 @@ public abstract class Spatial {
 		}
 
 		public static Collection<IShape> geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
-				final IShape source, int number) {
-			IList<IShape> shapes = (IList<IShape>) list.listValue(scope, Types.GEOMETRY, true);
-			shapes.removeIf(a -> ((a == null) || !(a instanceof IShape)));
-			if (shapes.size() <= number)
-				return shapes;
+				final IShape source, final int number) {
+			final IList<?> objects = list.listValue(scope, Types.GEOMETRY, true);
+			objects.removeIf(a -> !(a instanceof IShape));
+			final IList<IShape> shapes = (IList<IShape>) objects;
+			if (shapes.size() <= number) { return shapes; }
 			scope.getRandom().shuffle(shapes);
 			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
 			return GamaListFactory.createWithoutCasting(Types.GEOMETRY, ordering.leastOf(shapes, number));
@@ -4858,7 +4856,7 @@ public abstract class Spatial {
 				double sumNull = 0;
 				int nbNull = 0;
 				for (final Object obj : points.keySet()) {
-					GamaPoint pt = (GamaPoint) Cast.asPoint(scope, obj);
+					final GamaPoint pt = (GamaPoint) Cast.asPoint(scope, obj);
 					final double dist = scope.getTopology().distanceBetween(scope, geom, pt);
 					if (dist == 0) {
 						nbNull++;
@@ -5192,7 +5190,7 @@ public abstract class Spatial {
 				final CoordinateReferenceSystem crs = ((GamaGisFile) gisFile).getGis(scope).getInitialCRS(scope);
 				if (crs == null) { return null; }
 				try {
-					return CRS.lookupIdentifier(crs, true).toString();
+					return CRS.lookupIdentifier(crs, true);
 				} catch (final FactoryException e) {
 					return null;
 				} catch (final NullPointerException e) {

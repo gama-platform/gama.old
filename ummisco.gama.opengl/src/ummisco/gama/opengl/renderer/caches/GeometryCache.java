@@ -142,7 +142,7 @@ public class GeometryCache {
 		return index;
 	}
 
-	private Integer buildList(final OpenGL gl, final String name) {
+	Integer buildList(final OpenGL gl, final String name) {
 		// DEBUG.OUT("Bulding OpenGL list for " + name);
 		final GamaGeometryFile file = fileMap.get(name);
 		// We generate the list first

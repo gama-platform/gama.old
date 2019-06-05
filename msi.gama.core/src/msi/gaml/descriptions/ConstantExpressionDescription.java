@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.ConstantExpressionDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.ConstantExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -33,8 +33,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 	public final static ConstantExpressionDescription FALSE_EXPR_DESCRIPTION = new ConstantExpressionDescription(false);
 
 	public static IExpressionDescription create(final Object object) {
-		if (object == null)
-			return NULL_EXPR_DESCRIPTION;
+		if (object == null) { return NULL_EXPR_DESCRIPTION; }
 		try {
 			return CACHE.get(object, () -> new ConstantExpressionDescription(object));
 		} catch (final ExecutionException e) {
@@ -78,8 +77,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public IExpression compile(final IDescription context) {
@@ -87,8 +85,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 	}
 
 	@Override
-	public void setExpression(final IExpression expr) {
-	}
+	public void setExpression(final IExpression expr) {}
 
 	@Override
 	public IExpressionDescription cleanCopy() {
@@ -96,7 +93,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 	}
 
 	@Override
-	public IType getDenotedType(final IDescription context) {
+	public IType<?> getDenotedType(final IDescription context) {
 		return context.getTypeNamed(literalValue());
 	}
 
@@ -121,8 +118,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 	}
 
 	@Override
-	public void setTarget(final EObject target) {
-	}
+	public void setTarget(final EObject target) {}
 
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {

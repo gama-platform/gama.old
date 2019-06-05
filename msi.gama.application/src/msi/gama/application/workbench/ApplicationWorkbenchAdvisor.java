@@ -13,7 +13,6 @@ package msi.gama.application.workbench;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,7 +28,6 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.PluginActionBuilder;
-import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
@@ -89,8 +87,9 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		super.postStartup();
 		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
-		if ( false )
+		if ( false ) {
 			DEBUG.LOG("Arguments received by GAMA : " + Arrays.toString(args));
+		}
 		if ( args.length > 0 && args[0].contains("launcher.defaultAction") &&
 			!args[0].contains("--launcher.defaultAction") ) {
 			return;
@@ -207,7 +206,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	public void postShutdown() {
 		try {
 			super.postShutdown();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// Remove the trace of exceptions
 			// e.printStackTrace();
 		}
@@ -225,23 +224,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	}
 
-	@Override
-	public Map<String, AboutInfo> getNewlyAddedBundleGroups() {
-		// TODO Auto-generated method stub
-		return super.getNewlyAddedBundleGroups();
-	}
-
-	@Override
-	public boolean openWindows() {
-		// TODO Auto-generated method stub
-		return super.openWindows();
-	}
-
 	private void saveEclipsePreferences() {
 		final IPreferencesService service = Platform.getPreferencesService();
 
 		try (final FileOutputStream outputStream =
-			new FileOutputStream(Platform.getInstanceLocation().getURL().getPath().toString() + "/.gama.epf")) {
+			new FileOutputStream(Platform.getInstanceLocation().getURL().getPath() + "/.gama.epf")) {
 			service.exportPreferences(service.getRootNode(), WorkspacePreferences.getPreferenceFilters(), outputStream);
 		} catch (final CoreException | IOException e1) {}
 

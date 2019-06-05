@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -59,8 +59,9 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	protected GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
 		originalPath = pn;
 		String tempPath = originalPath;
-		if (originalPath == null) { throw GamaRuntimeException
-				.error("Attempt to " + (forReading ? "read" : "write") + " a null file", scope); }
+		if (originalPath == null) {
+			throw GamaRuntimeException.error("Attempt to " + (forReading ? "read" : "write") + " a null file", scope);
+		}
 		if (originalPath.startsWith("http")) {
 			url = buildURL(scope, originalPath);
 		} else {
@@ -106,7 +107,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	 * will be initialized, but the path will be set to the empty string and no attempt will be made to download data
 	 * later. In that case, it is the responsibility of subclasses to use the url -- and NOT the path -- to download the
 	 * contents of the file later (for example in fillBuffer()). The default is true.
-	 * 
+	 *
 	 * @return true or false depending on whether the contents should be cached in a temp file
 	 */
 	protected boolean automaticallyFetchFromURL() {
@@ -136,7 +137,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	/**
 	 * The content type to use for uploading the contents of the file. see
 	 * http://www.iana.org/assignments/media-types/media-types.xhtml
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getHttpContentType() {
@@ -152,8 +153,10 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
-		if (getFile(scope).exists() && getFile(scope).isDirectory()) { throw GamaRuntimeException
-				.error(getFile(scope).getAbsolutePath() + " is a folder. Files can not overwrite folders", scope); }
+		if (getFile(scope).exists() && getFile(scope).isDirectory()) {
+			throw GamaRuntimeException
+					.error(getFile(scope).getAbsolutePath() + " is a folder. Files can not overwrite folders", scope);
+		}
 	}
 
 	@Override
@@ -320,7 +323,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		// remain the same between the urls, local paths and links to external paths
 		final String path = getOriginalPath().toLowerCase();
 		// final String path = getPath(scope).toLowerCase();
-		final int mid = path.lastIndexOf(".");
+		final int mid = path.lastIndexOf('.');
 		if (mid == -1) { return ""; }
 		return path.substring(mid + 1, path.length());
 	}
@@ -337,8 +340,9 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public Container getContents(final IScope scope) throws GamaRuntimeException {
-		if (buffer == null && !exists(scope)) { throw GamaRuntimeException
-				.error("File " + getFile(scope).getAbsolutePath() + " does not exist", scope); }
+		if (buffer == null && !exists(scope)) {
+			throw GamaRuntimeException.error("File " + getFile(scope).getAbsolutePath() + " does not exist", scope);
+		}
 		fillBuffer(scope);
 		return getBuffer();
 	}

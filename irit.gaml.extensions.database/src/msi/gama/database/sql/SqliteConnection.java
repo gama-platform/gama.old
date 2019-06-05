@@ -236,8 +236,9 @@ public class SqliteConnection extends SqlConnection {
 		String colStr = "";
 		String valueStr = "";
 		// Check size of parameters
-		if (values.size() != col_no) { throw new IndexOutOfBoundsException(
-				"Size of columns list and values list are not equal"); }
+		if (values.size() != col_no) {
+			throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+		}
 		// Get column name
 		for (int i = 0; i < col_no; i++) {
 			if (i == col_no - 1) {
@@ -364,8 +365,9 @@ public class SqliteConnection extends SqlConnection {
 
 			final int col_no = col_Names.size();
 			// Check size of parameters
-			if (values.size() != col_Names.size()) { throw new IndexOutOfBoundsException(
-					"Size of columns list and values list are not equal"); }
+			if (values.size() != col_Names.size()) {
+				throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
+			}
 
 			if (DEBUG.IS_ON()) {
 				DEBUG.OUT("list of column Name:" + col_Names);
@@ -485,15 +487,9 @@ public class SqliteConnection extends SqlConnection {
 	// 23-July-2013
 	protected void load_extension(final Connection conn, final String extension) throws SQLException {
 		// load Spatialite extension library
-		try {
-			final Statement stmt = conn.createStatement();
+		try (final Statement stmt = conn.createStatement();) {
 			stmt.setQueryTimeout(30); // set timeout to 30 sec.
 			stmt.execute("SELECT load_extension('" + extension.replace('\\', '/') + "')");
-			// String sql = "SELECT InitSpatialMetadata()";
-			// stmt.execute(sql);
-			stmt.close();
-			// stmt=null;
-			// System.gc();
 			loadExt = true;
 		} catch (final SQLException e) {
 			throw e;

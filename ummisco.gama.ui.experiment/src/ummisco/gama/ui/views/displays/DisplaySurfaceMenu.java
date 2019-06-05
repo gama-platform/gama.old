@@ -2,15 +2,13 @@
  *
  * ummisco.gama.ui.views.displays.DisplaySurfaceMenu.java, in plugin ummisco.gama.ui.experiment, is part of the source
  * code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
-
-import static ummisco.gama.ui.utils.PlatformHelper.scaleDownIfWin;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,7 +102,7 @@ public class DisplaySurfaceMenu {
 	public void prepareNewMenu(final Control c, final int x, final int y, final boolean withPresentation) {
 		disposeMenu();
 		menu = new Menu(c);
-		//menu.setLocation(scaleDownIfWin(c.toDisplay(x, y)));
+		// menu.setLocation(scaleDownIfWin(c.toDisplay(x, y)));
 		if (withPresentation) {
 			presentationMenu.fill(menu, -1);
 			GamaMenu.separate(menu);
@@ -236,12 +234,12 @@ public class DisplaySurfaceMenu {
 					final FocusOnSelection adapter = new FocusOnSelection(surface);
 					final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 							"Focus on this display");
-					final MenuAction[] actions2;
-					if (layer instanceof GridLayer) {
-						actions2 = new MenuAction[] { focus };
-					} else {
-						actions2 = new MenuAction[] { focus };
-					}
+					final MenuAction[] actions2 = new MenuAction[] { focus };
+					// if (layer instanceof GridLayer) {
+					// actions2 = new MenuAction[] { focus };
+					// } else {
+					// actions2 = new MenuAction[] { focus };
+					// }
 
 					if (filteredList != null) {
 						pop.retainAll(filteredList);

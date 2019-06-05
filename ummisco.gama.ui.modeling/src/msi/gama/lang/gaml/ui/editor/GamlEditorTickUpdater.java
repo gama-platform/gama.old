@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
@@ -21,10 +21,10 @@ import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class GamlEditorTickUpdater.
- * 
+ *
  * @author drogoul
  * @since 8 sept. 2013
- * 
+ *
  */
 public class GamlEditorTickUpdater extends XtextEditorErrorTickUpdater {
 
@@ -35,15 +35,15 @@ public class GamlEditorTickUpdater extends XtextEditorErrorTickUpdater {
 		if (severity == null || severity == Severity.INFO) {
 			descriptor = GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor();
 		} else if (severity == Severity.ERROR) {
-			descriptor = GamaIcons.create("overlay.error2").descriptor();
+			descriptor = GamaIcons.create("navigator/overlay.error2").descriptor();
 		} else if (severity == Severity.WARNING) {
-			descriptor = GamaIcons.create("overlay.warning2").descriptor();
+			descriptor = GamaIcons.create("navigator/overlay.warning2").descriptor();
 		} else {
 			super.updateEditorImage(editor);
 			return;
 		}
-		final DecorationOverlayIcon decorationOverlayIcon = new DecorationOverlayIcon(editor.getDefaultImage(),
-				descriptor, IDecoration.BOTTOM_LEFT);
+		final DecorationOverlayIcon decorationOverlayIcon =
+				new DecorationOverlayIcon(editor.getDefaultImage(), descriptor, IDecoration.BOTTOM_LEFT);
 		scheduleUpdateEditor(decorationOverlayIcon);
 	}
 

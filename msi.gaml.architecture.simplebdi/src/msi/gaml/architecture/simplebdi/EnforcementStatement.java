@@ -165,12 +165,12 @@ public class EnforcementStatement extends AbstractStatement {
 						}
 					}
 					if (tempNorm != null && !tempNorm.getSanctioned()) {
-						if (reward != null && tempNorm != null && tempNorm.getApplied()) {// &&
-																							// tempNorm.getNormStatement()!=null
-																							// &&
-																							// tempNorm.getObligation(scope)!=null
-																							// &&
-																							// tempNorm.getObligation(scope).equals(tempObligation.getPredicate())){
+						if (reward != null && tempNorm.getApplied()) {// &&
+																		// tempNorm.getNormStatement()!=null
+																		// &&
+																		// tempNorm.getObligation(scope)!=null
+																		// &&
+																		// tempNorm.getObligation(scope).equals(tempObligation.getPredicate())){
 							Sanction rewardToExecute = null;
 							// Améliorable en temps de calcul
 							for (final Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)) {
@@ -186,11 +186,13 @@ public class EnforcementStatement extends AbstractStatement {
 							}
 							tempNorm.sanctioned();
 						} else {
-							if (sanction != null && tempNorm != null
-									/* && tempNorm.getNormStatement()==null) */ || sanction != null && tempNorm != null
-											&& tempNorm.getViolated()) {// && tempNorm.getNormStatement()!=null &&
-																		// tempNorm.getObligation(scope)!=null &&
-																		// !tempNorm.getObligation(scope).equals(tempObligation.getPredicate()))){
+							if (sanction != null/* && tempNorm.getNormStatement()==null) */ || sanction != null
+									&& tempNorm.getViolated()) {// &&
+																// tempNorm.getNormStatement()!=null
+																// &&
+																// tempNorm.getObligation(scope)!=null
+																// &&
+																// !tempNorm.getObligation(scope).equals(tempObligation.getPredicate()))){
 								Sanction sanctionToExecute = null;
 								// Améliorable en temps de calcul
 								for (final Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)) {
@@ -204,9 +206,7 @@ public class EnforcementStatement extends AbstractStatement {
 								if (sanctionToExecute != null) {
 									retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 								}
-								if (tempNorm != null) {
-									tempNorm.sanctioned();
-								}
+								tempNorm.sanctioned();
 							}
 						}
 					}

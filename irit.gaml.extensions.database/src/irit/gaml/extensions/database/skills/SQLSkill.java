@@ -26,7 +26,6 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
@@ -304,7 +303,7 @@ public class SQLSkill extends Skill {
 		// params.get("transform") : true;
 
 		SqlConnection sqlConn;
-		IList<? super IList<Object>> repRequest = GamaListFactory.create();
+		IList<? super IList<Object>> repRequest;
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			if (values.size() > 0) {

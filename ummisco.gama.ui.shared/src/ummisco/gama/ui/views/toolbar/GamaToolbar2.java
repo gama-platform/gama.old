@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
@@ -16,6 +16,7 @@ import java.io.StringReader;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -53,6 +54,17 @@ public class GamaToolbar2 extends Composite {
 		this.height = height;
 		createLayout();
 		createToolbars();
+	}
+
+	@Override
+	public void setBackground(final Color c) {
+		super.setBackground(c);
+		if (left != null) {
+			left.setBackground(c);
+		}
+		if (right != null) {
+			right.setBackground(c);
+		}
 	}
 
 	@Override
@@ -99,7 +111,9 @@ public class GamaToolbar2 extends Composite {
 		final GamaIcon icon = GamaIcons.createSizer(getBackground(), n, height);
 		final ToolItem item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
 		item.setDisabledImage(icon.image());
-		if (!PlatformHelper.isLinux()) item.setEnabled(false);
+		if (!PlatformHelper.isLinux()) {
+			item.setEnabled(false);
+		}
 		return item;
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.SwitchStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.SwitchStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -41,7 +41,7 @@ import msi.gaml.types.Types;
 
 /**
  * IfPrototype.
- * 
+ *
  * @author drogoul 14 nov. 07
  */
 @symbol (
@@ -223,7 +223,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -271,7 +271,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 
 	/**
 	 * The Constructor.
-	 * 
+	 *
 	 * @param sim
 	 *            the sim
 	 */
@@ -294,7 +294,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 				}
 			}
 		}
-		matches = cases.toArray(new MatchStatement[0]);
+		matches = cases.toArray(new MatchStatement[cases.size()]);
 		super.setChildren(Iterables.filter(commands, each -> each != defaultMatch || !cases.contains(each)));
 	}
 

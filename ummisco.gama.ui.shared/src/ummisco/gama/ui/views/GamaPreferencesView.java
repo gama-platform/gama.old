@@ -95,16 +95,11 @@ public class GamaPreferencesView {
 	}
 
 	static {
-		// preferenceNames.put("msi.gama.lang.gaml.Gaml.coloring", "Code");
-		// preferenceNames.put("org.eclipse.ui.preferencePages.GeneralTextEditor", "Editor");
-		// preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
 		prefs_images.put(GamaPreferences.Interface.NAME, GamaIcons.create(IGamaIcons.PREFS_GENERAL).image());
 		prefs_images.put(GamaPreferences.Modeling.NAME, GamaIcons.create(IGamaIcons.PREFS_EDITOR).image());
-		prefs_images.put(GamaPreferences.Runtime.NAME, GamaIcons.create("prefs.simulations2").image());
-		// prefs_images.put(GamaPreferences.Experiments.NAME, GamaIcons.create("prefs.simulations2").image());
-		prefs_images.put(GamaPreferences.Simulations.NAME, GamaIcons.create("prefs.runtime2").image());
-		prefs_images.put(GamaPreferences.Displays.NAME, GamaIcons.create("prefs.ui2").image());
-		// prefs_images.put(GamaPreferences.OpenGL.NAME, GamaIcons.create("prefs.opengl2").image());
+		prefs_images.put(GamaPreferences.Runtime.NAME, GamaIcons.create("prefs/prefs.simulations2").image());
+		prefs_images.put(GamaPreferences.Simulations.NAME, GamaIcons.create("prefs/prefs.runtime2").image());
+		prefs_images.put(GamaPreferences.Displays.NAME, GamaIcons.create("prefs/prefs.ui2").image());
 		prefs_images.put(GamaPreferences.External.NAME, GamaIcons.create(IGamaIcons.PREFS_LIBS).image());
 
 	}

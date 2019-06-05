@@ -2,11 +2,11 @@
  *
  * msi.gama.outputs.LayeredDisplayData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -62,7 +62,7 @@ public class LayeredDisplayData {
 	public static final String THREED = "3D";
 	public static final Double INITIAL_ZOOM = 1.0;
 
-	public static interface DisplayDataListener {
+	public interface DisplayDataListener {
 
 		void changed(Changes property, Object value);
 	}
@@ -89,6 +89,7 @@ public class LayeredDisplayData {
 	private GamaColor backgroundColor = GamaPreferences.Displays.CORE_BACKGROUND.getValue();
 	private GamaColor ambientColor = new GamaColor(64, 64, 64, 255);
 	private GamaColor highlightColor = GamaPreferences.Displays.CORE_HIGHLIGHT.getValue();
+	private GamaColor toolbarColor = GamaColor.NamedGamaColor.getNamed("white");
 
 	/**
 	 * Properties
@@ -135,6 +136,8 @@ public class LayeredDisplayData {
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
+	private double zNear = - 1.0;
+	private double zFar = -1.0;
 	/**
 	 * Overlay
 	 */
@@ -238,6 +241,17 @@ public class LayeredDisplayData {
 	 */
 	public void setShowfps(final boolean showfps) {
 		this.isShowingFPS = showfps;
+	}
+	
+	
+	
+
+	public double getzNear() {
+		return zNear;
+	}
+
+	public double getzFar() {
+		return zFar;
 	}
 
 	/**
@@ -692,6 +706,10 @@ public class LayeredDisplayData {
 		return this.isToolbarVisible;
 	}
 
+	public GamaColor getToolbarColor() {
+		return toolbarColor;
+	}
+
 	public void setToolbarVisible(final boolean b) {
 		isToolbarVisible = b;
 	}
@@ -730,11 +748,26 @@ public class LayeredDisplayData {
 		}
 		final IExpression toolbar = facets.getExpr(IKeyword.TOOLBAR);
 		if (toolbar != null) {
-			setToolbarVisible(Cast.asBool(scope, toolbar.value(scope)));
+			if (toolbar.getGamlType() == Types.BOOL) {
+				setToolbarVisible(Cast.asBool(scope, toolbar.value(scope)));
+			} else {
+				setToolbarVisible(true);
+				toolbarColor = Cast.asColor(scope, toolbar.value(scope));
+			}
 		}
 		final IExpression fps = facets.getExpr(IKeyword.SHOWFPS);
 		if (fps != null) {
 			setShowfps(Cast.asBool(scope, fps.value(scope)));
+		}
+		
+		final IExpression nZ = facets.getExpr("z_near");
+		if (nZ != null) {
+			setZNear(Cast.asFloat(scope, nZ.value(scope)));
+		}
+		
+		final IExpression fZ = facets.getExpr("z_far");
+		if (fZ != null) {
+			setZFar(Cast.asFloat(scope, fZ.value(scope)));
 		}
 		final IExpression denv = facets.getExpr(IKeyword.DRAWENV);
 		if (denv != null) {
@@ -886,6 +919,15 @@ public class LayeredDisplayData {
 
 	}
 
+	private void setZFar(Double zF) {
+		zFar = zF;
+		
+	}
+
+	private void setZNear(Double zN) {
+		zNear = zN;
+	}
+
 	public void update(final IScope scope, final Facets facets) {
 		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
 		if (auto != null) {
@@ -945,7 +987,7 @@ public class LayeredDisplayData {
 			}
 		}
 
-	} 
+	}
 
 	public boolean isOpenGL2() {
 		return displayType.equals(OPENGL2);

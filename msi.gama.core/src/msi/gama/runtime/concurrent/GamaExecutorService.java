@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.concurrent.GamaExecutorService.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.concurrent.GamaExecutorService.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
@@ -60,8 +60,8 @@ public abstract class GamaExecutorService {
 
 	};
 
-	public static ForkJoinPool AGENT_PARALLEL_EXECUTOR;
-	public static ExecutorService SIMULATION_PARALLEL_EXECUTOR;
+	public static volatile ForkJoinPool AGENT_PARALLEL_EXECUTOR;
+	public static volatile ExecutorService SIMULATION_PARALLEL_EXECUTOR;
 	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.newDirectExecutorService();// sameThreadExecutor();
 
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
@@ -134,13 +134,13 @@ public abstract class GamaExecutorService {
 				};
 	}
 
-	public static enum Caller {
+	public enum Caller {
 		SPECIES, GRID, NONE, SIMULATION
 	}
 
 	/**
 	 * Returns the level of parallelism from the expression passed and the preferences
-	 * 
+	 *
 	 * @param concurrency
 	 *            The facet passed to the statement or species
 	 * @param forSpecies
@@ -200,7 +200,7 @@ public abstract class GamaExecutorService {
 		final List<? extends IAgent> agents = schedule == null ? pop : Cast.asList(scope, schedule.value(scope));
 		final int threshold =
 				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
-		return doStep(scope, agents.toArray(new IAgent[0]), threshold, species);
+		return doStep(scope, agents.toArray(new IAgent[agents.size()]), threshold, species);
 	}
 
 	public static <A extends IShape> Boolean step(final IScope scope, final A[] array, final ISpecies species)
@@ -211,7 +211,7 @@ public abstract class GamaExecutorService {
 			scheduledAgents = array;
 		} else {
 			final List<IShape> agents = Cast.asList(scope, schedule.value(scope));
-			scheduledAgents = agents.toArray(new IShape[0]);
+			scheduledAgents = agents.toArray(new IShape[agents.size()]);
 		}
 		final int threshold =
 				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
@@ -269,7 +269,7 @@ public abstract class GamaExecutorService {
 
 	public static void execute(final IScope scope, final IExecutable executable, final List<? extends IAgent> list,
 			final IExpression parallel) throws GamaRuntimeException {
-		execute(scope, executable, list.toArray(new IAgent[0]), parallel);
+		execute(scope, executable, list.toArray(new IAgent[list.size()]), parallel);
 	}
 
 }

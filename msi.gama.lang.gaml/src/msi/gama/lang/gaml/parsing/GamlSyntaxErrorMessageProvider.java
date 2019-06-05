@@ -79,7 +79,7 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 				}
 			}
 		} else {
-			final int positionInLine = ex.charPositionInLine;
+			// final int positionInLine = ex.charPositionInLine;
 			// if (DEBUG.IS_ON()) {
 			// DEBUG.OUT("Position in line: " + positionInLine);
 			// }

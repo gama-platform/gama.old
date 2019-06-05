@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
@@ -37,7 +36,7 @@ import one.util.streamex.StreamEx;
  * @todo Description
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
+public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	private IContainerType type;
 
@@ -169,10 +168,10 @@ public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
 	 * @see java.util.ArrayList#add(java.lang.Object)
 	 * @warning This method DOES NOT ensure type safety. Use addValue(IScope, Object) instead
 	 */
-	@Override
-	public boolean add(final E value) {
-		return super.add(value);
-	}
+	// @Override
+	// public boolean add(final E value) {
+	// return super.add(value);
+	// }
 
 	/**
 	 *
@@ -181,10 +180,10 @@ public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
 	 * @see java.util.ArrayList#add(int, java.lang.Object)
 	 * @warning This method DOES NOT ensure type safety. Use addValue(IScope, Integer, Object) instead
 	 */
-	@Override
-	public void add(final int index, final E value) {
-		super.add(index, value);
-	}
+	// @Override
+	// public void add(final int index, final E value) {
+	// super.add(index, value);
+	// }
 
 	/**
 	 *
@@ -193,10 +192,10 @@ public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
 	 * @see java.util.ArrayList#set(int, java.lang.Object)
 	 * @warning This method DOES NOT ensure type safety. Use setValueAtIndex(IScope, Integer, Object) instead
 	 */
-	@Override
-	public E set(final int index, final E value) {
-		return super.set(index, value);
-	}
+	// @Override
+	// public E set(final int index, final E value) {
+	// return super.set(index, value);
+	// }
 
 	/**
 	 *
@@ -205,10 +204,10 @@ public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
 	 * @see java.util.ArrayList#addAll(java.util.Collection)
 	 * @warning This method DOES NOT ensure type safety. Use addValues(IScope, IContainer) instead
 	 */
-	@Override
-	public boolean addAll(final Collection<? extends E> values) {
-		return super.addAll(values);
-	}
+	// @Override
+	// public boolean addAll(final Collection<? extends E> values) {
+	// return super.addAll(values);
+	// }
 
 	/**
 	 *
@@ -217,10 +216,10 @@ public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
 	 * @see java.util.ArrayList#addAll(int, java.util.Collection)
 	 * @warning This method DOES NOT ensure type safety.
 	 */
-	@Override
-	public boolean addAll(final int index, final Collection<? extends E> values) {
-		return super.addAll(index, values);
-	}
+	// @Override
+	// public boolean addAll(final int index, final Collection<? extends E> values) {
+	// return super.addAll(index, values);
+	// }
 
 	@Override
 	public void removeValue(final IScope scope, final Object value) {

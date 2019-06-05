@@ -20,4 +20,19 @@ Require-Bundle: org.eclipse.jface,
  msi.gama.application,
  ummisco.gama.ui.navigator;bundle-version="1.7.0"
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: ummisco.gama.ui.viewers
+Export-Package: ummisco.gama.ui.viewers.csv,
+ ummisco.gama.ui.viewers.csv.model,
+ ummisco.gama.ui.viewers.csv.text,
+ ummisco.gama.ui.viewers.gis,
+ ummisco.gama.ui.viewers.gis.geotools,
+ ummisco.gama.ui.viewers.gis.geotools.action,
+ ummisco.gama.ui.viewers.gis.geotools.control,
+ ummisco.gama.ui.viewers.gis.geotools.event,
+ ummisco.gama.ui.viewers.gis.geotools.styling,
+ ummisco.gama.ui.viewers.gis.geotools.styling.simple,
+ ummisco.gama.ui.viewers.gis.geotools.tool,
+ ummisco.gama.ui.viewers.gis.geotools.utils,
+ ummisco.gama.ui.viewers.html,
+ ummisco.gama.ui.viewers.image
 

@@ -241,6 +241,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_ASK_CLOSING =
 				create("pref_experiment_ask_closing", "Ask to close the previous experiment when launching a new one",
 						true, IType.BOOL, true).in(NAME, EXECUTION);
+		public static final Pref<Boolean> CORE_ASK_FULLSCREEN =
+				create("pref_experiment_ask_fullscreen", "Ask to go to fullscreen mode",
+						false, IType.BOOL, true).in(NAME, EXECUTION);
 		public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
 				"Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
 		public static final Pref<Boolean> CORE_SYNC =
@@ -318,7 +321,7 @@ public class GamaPreferences {
 		public static final List<String> LAYOUTS = Arrays.asList("None", "Stacked", "Split", "Horizontal", "Vertical");
 		public static final Pref<String> CORE_DISPLAY_LAYOUT =
 				create("pref_display_view_layout", "Default layout of display views", "None", IType.STRING, true)
-						.among(LAYOUTS.toArray(new String[0])).in(NAME, PRESENTATION);
+						.among(LAYOUTS.toArray(new String[LAYOUTS.size()])).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
 				"Stack displays in the order defined in the model", true, IType.BOOL, true).in(NAME, PRESENTATION);
 		// public static final Pref<Integer> CORE_OUTPUT_DELAY = create("pref_display_delay_views",

@@ -2,11 +2,11 @@
  *
  * ummisco.gama.ui.views.toolbar.GamaToolbarFactory.java, in plugin ummisco.gama.ui.shared, is part of the source code
  * of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
@@ -227,21 +227,12 @@ public class GamaToolbarFactory {
 			tm.update(true);
 		}
 
-		if (!view.toolbarVisible()) {
-			toggle.run();
-			// tb.setVisible(false);
-			// ((GridData) tb.getParent().getLayoutData()).exclude = true;
-			// tb.getParent().setVisible(false);
-			// tb.getParent().getParent().layout();
-			// toggle.setIcon(false);
-		}
 		return childComposite;
 	}
 
 	public static void disposeToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
 		if (tb != null && !tb.isDisposed()) {
 			tb.dispose();
-
 		}
 	}
 

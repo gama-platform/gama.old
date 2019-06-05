@@ -13,3 +13,4 @@ Require-Bundle: org.eclipse.swt,
  ummisco.gama.ui.shared,
  ummisco.gama.ui.experiment;bundle-version="1.7.0",
  msi.gama.application;bundle-version="1.7.0"
+Automatic-Module-Name: ummisco.gama.java2d

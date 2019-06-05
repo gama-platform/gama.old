@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartDataSourceUnique.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartDataSourceUnique.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -33,19 +33,17 @@ public class ChartDataSourceUnique extends ChartDataSource {
 				new GamaColor(Random.opRnd(scope, 255), Random.opRnd(scope, 255), Random.opRnd(scope, 255), 255);
 		final IExpression ncol = GAML.getExpressionFactory().createConst(col, Types.COLOR);
 		this.colorexp = ncol;
-		String previousname= ((ChartDataSourceUnique) source).myname;
+		final String previousname = ((ChartDataSourceUnique) source).myname;
 		myname = ((ChartDataSourceUnique) source).myname + "_1*";
-		if (previousname.endsWith("*"))
-		{
-			int index=previousname.lastIndexOf("_");
-			String nosim=previousname.substring(index+1, previousname.lastIndexOf("*"));
-			int nosimv=Cast.asInt(scope, nosim);
-			String basename=previousname.substring(0,index);
-			nosimv=nosimv+1;
-			myname = basename +"_"+nosimv +"*";
+		if (previousname.endsWith("*")) {
+			final int index = previousname.lastIndexOf('_');
+			final String nosim = previousname.substring(index + 1, previousname.lastIndexOf('*'));
+			int nosimv = Cast.asInt(scope, nosim);
+			final String basename = previousname.substring(0, index);
+			nosimv = nosimv + 1;
+			myname = basename + "_" + nosimv + "*";
 		}
-		
-		
+
 		return res;
 	}
 
@@ -112,17 +110,22 @@ public class ChartDataSourceUnique extends ChartDataSource {
 		super.updatevalues(scope, chartCycle);
 
 		Object o = null;
-		final HashMap<String, Object> barvalues = new HashMap<String, Object>();
-		if (this.isUseYErrValues())
+		final HashMap<String, Object> barvalues = new HashMap<>();
+		if (this.isUseYErrValues()) {
 			barvalues.put(ChartDataStatement.YERR_VALUES, this.getValueyerr().value(scope));
-		if (this.isUseXErrValues())
+		}
+		if (this.isUseXErrValues()) {
 			barvalues.put(ChartDataStatement.XERR_VALUES, this.getValueyerr().value(scope));
-		if (this.isUseYMinMaxValues())
+		}
+		if (this.isUseYMinMaxValues()) {
 			barvalues.put(ChartDataStatement.XERR_VALUES, this.getValuexerr().value(scope));
-		if (this.isUseSizeExp())
+		}
+		if (this.isUseSizeExp()) {
 			barvalues.put(ChartDataStatement.MARKERSIZE, this.getSizeexp().value(scope));
-		if (this.isUseColorExp())
+		}
+		if (this.isUseColorExp()) {
 			barvalues.put(IKeyword.COLOR, this.getColorexp().value(scope));
+		}
 
 		if (getValue() != null) {
 			o = getValue().value(scope);

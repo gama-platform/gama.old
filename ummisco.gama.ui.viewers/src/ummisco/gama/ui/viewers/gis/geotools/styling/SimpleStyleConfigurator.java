@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'SimpleStyleConfigurator.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimpleStyleConfigurator.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling;
@@ -71,15 +70,15 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
  * Defines a "simple" StyleConfigurator for working with SLD documents.
  * <p>
  * This style configurator is defined as follows:
- * 
+ *
  * <pre>
  * &lt;code&gt;
  *         Mode: (*) Point ( ) Line ( ) Polygon
  *               +-+ +-------+ +------+ +------+
  *         Line: |x| | color | |size\/| |100%\/|
  *           	 +-+ +-------+ +------+ +------+
- *           	 +-+ +-------+ +------+             
- *         Fill: |x| | color | | 90%\/| 
+ *           	 +-+ +-------+ +------+
+ *         Fill: |x| | color | | 90%\/|
  *           	 +-+ +-------+ +------+
  *           	 +-+ +----------------+ +------+
  *        Label: |x| |         title\/| | Font |
@@ -95,7 +94,7 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
  *               +-+ +-------------+
  * &lt;/code&gt;
  * </pre>
- * 
+ *
  * </p>
  * Where:
  * <ul>
@@ -114,19 +113,17 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
  * Notes:
  * <ul>
  * <li>RasterSymbolizer is handled by its own thing, as is WMS etc...
- * <li>Layout as per the SLDEditorPart examples - so we can take advantage of
- * more or less room.
+ * <li>Layout as per the SLDEditorPart examples - so we can take advantage of more or less room.
  * <li>Presets is a good idea, just not here
  * <li>Apply/Revert buttons to be green/red
  * <li>Advanced (edit the SLD) can be in the view menu
- * <li>If possible replace color button with a drop down list (may not be
- * possible)
+ * <li>If possible replace color button with a drop down list (may not be possible)
  * </ul>
  * </P>
  * <p>
  * We will do our best to make this thing reusable on an Array of Symbolizers.
  * </p>
- * 
+ *
  * @author Jody Garnett
  * @since 1.0.0
  *
@@ -141,8 +138,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 	public static StyleFactory sf = CommonFactoryFinder.getStyleFactory(GeoTools.getDefaultHints());
 
 	/**
-	 * Viewer capturing the geometry name; may be "default" or an explicit
-	 * geometryName provided by the user
+	 * Viewer capturing the geometry name; may be "default" or an explicit geometryName provided by the user
 	 */
 	private ComboViewer geometryName;
 
@@ -177,8 +173,8 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 	private Mode mode;
 
 	/**
-	 * Used to respond to any widget selection event; will call synchronize()
-	 * method to extract any changes of state from the user interface
+	 * Used to respond to any widget selection event; will call synchronize() method to extract any changes of state
+	 * from the user interface
 	 */
 	private final SelectionListener synchronize = new SelectionListener() {
 
@@ -234,9 +230,8 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 			@Override
 			public void keyReleased(final KeyEvent e) {
 				/*
-				 * I don't like having different ways of checking for keypad
-				 * enter and the normal one. Using the keyCode would be better,
-				 * but I couldn't readily find the value for CR.
+				 * I don't like having different ways of checking for keypad enter and the normal one. Using the keyCode
+				 * would be better, but I couldn't readily find the value for CR.
 				 */
 				if (e.keyCode == SWT.KEYPAD_CR || e.character == SWT.CR) {
 					refresh(); // makeActionDoStuff();
@@ -253,7 +248,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 			public Object[] getElements(final Object inputElement) {
 				// note use of descriptors; so we can make use of associations
 				// if available
-				final ArrayList<String> names = new ArrayList<String>();
+				final ArrayList<String> names = new ArrayList<>();
 				names.add(DEFAULT_GEOMETRY);
 				if (schema != null) {
 					for (final PropertyDescriptor descriptor : schema.getDescriptors()) {
@@ -273,8 +268,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 			}
 
 			@Override
-			public void dispose() {
-			}
+			public void dispose() {}
 		});
 		geometryName.getCombo().setText(DEFAULT_GEOMETRY);
 		geometryName.getCombo().addSelectionListener(synchronize);
@@ -304,22 +298,22 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		return parentPanel;
 	}
 
-	@Override
-	protected void buttonPressed(final int buttonId) {
-		if (buttonId == OK) {
-			try {
-				final String styleToString = styleToString(style);
-				// DEBUG.LOG(styleToString);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-		}
-		super.buttonPressed(buttonId);
-	}
+	// @Override
+	// protected void buttonPressed(final int buttonId) {
+	// if (buttonId == OK) {
+	// try {
+	//// final String styleToString = styleToString(style);
+	// // DEBUG.LOG(styleToString);
+	// } catch (final Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// super.buttonPressed(buttonId);
+	// }
 
 	/**
 	 * Converts a style to its string representation to be written to file.
-	 * 
+	 *
 	 * @param style
 	 *            the style to convert.
 	 * @return the style string.
@@ -356,9 +350,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 					return Mode.POLYGON;
 				} else if (lineMode.getSelection()) {
 					return Mode.LINE;
-				} else if (pointMode.getSelection()) {
-					return Mode.POINT;
-				}
+				} else if (pointMode.getSelection()) { return Mode.POINT; }
 			}
 			return Mode.ALL; // we are a generic geometry
 		}
@@ -384,8 +376,9 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		LabelPlacement placement = null;
 
 		List<Rule> rules = Collections.emptyList();
-		if (fts != null)
+		if (fts != null) {
 			rules = fts.rules();
+		}
 		if (rules.size() > 1) {
 			// simple mode trimms away all but the first rule
 			final Rule keepRule = rules.get(0);
@@ -459,7 +452,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 
 	/** Synchronize the SLD with the array of symbolizers */
 	public void synchronize() {
-		final List<Symbolizer> acquire = new ArrayList<Symbolizer>();
+		final List<Symbolizer> acquire = new ArrayList<>();
 		final TextSymbolizer textSym = this.label.get(this.build);
 
 		final SimpleFeatureType schema = featureCollection.getSchema();
@@ -471,67 +464,69 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		}
 
 		switch (this.mode) {
-		case LINE: {
-			final LineSymbolizer lineSymbolizer = this.build.createLineSymbolizer(this.line.getStroke(this.build));
-			acquire.add(lineSymbolizer);
-			lineSymbolizer.setGeometryPropertyName(geometryPropertyName);
-			if (textSym != null) {
-				acquire.add(textSym);
+			case LINE: {
+				final LineSymbolizer lineSymbolizer = this.build.createLineSymbolizer(this.line.getStroke(this.build));
+				acquire.add(lineSymbolizer);
+				lineSymbolizer.setGeometryPropertyName(geometryPropertyName);
+				if (textSym != null) {
+					acquire.add(textSym);
+				}
 			}
-		}
-			break;
+				break;
 
-		case POLYGON: {
-			final PolygonSymbolizer polygonSymbolizer = this.build
-					.createPolygonSymbolizer(this.line.getStroke(this.build), this.fill.getFill(this.build));
-			polygonSymbolizer.setGeometryPropertyName(geometryPropertyName);
-			acquire.add(polygonSymbolizer);
-			if (textSym != null) {
-				acquire.add(textSym);
+			case POLYGON: {
+				final PolygonSymbolizer polygonSymbolizer = this.build
+						.createPolygonSymbolizer(this.line.getStroke(this.build), this.fill.getFill(this.build));
+				polygonSymbolizer.setGeometryPropertyName(geometryPropertyName);
+				acquire.add(polygonSymbolizer);
+				if (textSym != null) {
+					acquire.add(textSym);
+				}
 			}
-		}
-			break;
+				break;
 
-		case POINT: {
-			final PointSymbolizer pointSymbolizer = this.build.createPointSymbolizer(
-					this.point.getGraphic(this.fill.getFill(this.build), this.line.getStroke(this.build), this.build));
-			pointSymbolizer.setGeometryPropertyName(geometryPropertyName);
-			acquire.add(pointSymbolizer);
-			if (textSym != null) {
-				acquire.add(textSym);
+			case POINT: {
+				final PointSymbolizer pointSymbolizer = this.build.createPointSymbolizer(this.point
+						.getGraphic(this.fill.getFill(this.build), this.line.getStroke(this.build), this.build));
+				pointSymbolizer.setGeometryPropertyName(geometryPropertyName);
+				acquire.add(pointSymbolizer);
+				if (textSym != null) {
+					acquire.add(textSym);
+				}
 			}
-		}
-			break;
-		case ALL: {
-			final LineSymbolizer lineSymbolizer = this.build.createLineSymbolizer(this.line.getStroke(this.build));
-			acquire.add(lineSymbolizer);
-			acquire.add(lineSymbolizer);
-			final PolygonSymbolizer polygonSymbolizer = this.build
-					.createPolygonSymbolizer(this.line.getStroke(this.build), this.fill.getFill(this.build));
-			polygonSymbolizer.setGeometryPropertyName(geometryPropertyName);
-			acquire.add(polygonSymbolizer);
-			final PointSymbolizer pointSymbolizer = this.build.createPointSymbolizer(
-					this.point.getGraphic(this.fill.getFill(this.build), this.line.getStroke(this.build), this.build));
-			pointSymbolizer.setGeometryPropertyName(geometryPropertyName);
-			acquire.add(pointSymbolizer);
-			if (textSym != null) {
-				acquire.add(textSym);
+				break;
+			case ALL: {
+				final LineSymbolizer lineSymbolizer = this.build.createLineSymbolizer(this.line.getStroke(this.build));
+				acquire.add(lineSymbolizer);
+				acquire.add(lineSymbolizer);
+				final PolygonSymbolizer polygonSymbolizer = this.build
+						.createPolygonSymbolizer(this.line.getStroke(this.build), this.fill.getFill(this.build));
+				polygonSymbolizer.setGeometryPropertyName(geometryPropertyName);
+				acquire.add(polygonSymbolizer);
+				final PointSymbolizer pointSymbolizer = this.build.createPointSymbolizer(this.point
+						.getGraphic(this.fill.getFill(this.build), this.line.getStroke(this.build), this.build));
+				pointSymbolizer.setGeometryPropertyName(geometryPropertyName);
+				acquire.add(pointSymbolizer);
+				if (textSym != null) {
+					acquire.add(textSym);
+				}
 			}
-		}
-			break;
-		case NONE:
+				break;
+			case NONE:
 		}
 		final double minScaleDen = minScale.getScale();
 		final double maxScaleDen = maxScale.getScale();
 
 		final Symbolizer[] array = acquire.toArray(new Symbolizer[acquire.size()]);
 		final Rule rule = this.build.createRule(array);
-		if (minScale.isEnabled())
+		if (minScale.isEnabled()) {
 			rule.setMinScaleDenominator(minScaleDen);
-		if (maxScale.isEnabled())
+		}
+		if (maxScale.isEnabled()) {
 			rule.setMaxScaleDenominator(maxScaleDen);
-		final FeatureTypeStyle featureTypeStyle = this.build.createFeatureTypeStyle(SLDs.GENERIC_FEATURE_TYPENAME,
-				rule);
+		}
+		final FeatureTypeStyle featureTypeStyle =
+				this.build.createFeatureTypeStyle(SLDs.GENERIC_FEATURE_TYPENAME, rule);
 		featureTypeStyle.setName("simple"); //$NON-NLS-1$
 
 		final Style style = getStyle();
@@ -561,7 +556,7 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 				style.featureTypeStyles().addAll(fts);
 			} else {
 				// add the new entry to the array
-				final List<FeatureTypeStyle> fts2 = new ArrayList<FeatureTypeStyle>(fts);
+				final List<FeatureTypeStyle> fts2 = new ArrayList<>(fts);
 				Collections.copy(fts2, fts);
 				fts2.add(featureTypeStyle);
 				style.featureTypeStyles().clear();

@@ -81,7 +81,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 
 	static final doc[] NULL_DOCS = new doc[0];
 
-	protected boolean isInternal(Element main, Annotation a) {
+	protected boolean isInternal(final Element main, final Annotation a) {
 		boolean internal = false;
 		if (a instanceof species) {
 			internal = ((species) a).internal();
@@ -101,7 +101,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		return internal;
 	}
 
-	protected doc getDocAnnotation(Element main, Annotation a) {
+	protected doc getDocAnnotation(final Element main, final Annotation a) {
 		doc[] docs = NULL_DOCS;
 		if (a instanceof species) {
 			docs = ((species) a).doc();
@@ -137,52 +137,44 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		return d;
 	}
 
-	protected boolean isDeprecated(Element e, Annotation a) {
-		doc d = getDocAnnotation(e, a);
-		if (d == null)
-			return false;
+	protected boolean isDeprecated(final Element e, final Annotation a) {
+		final doc d = getDocAnnotation(e, a);
+		if (d == null) { return false; }
 		return d.deprecated().length() > 0;
 	}
 
-	public boolean hasTests(example[] examples) {
-		for (example ex : examples) {
+	public boolean hasTests(final example[] examples) {
+		for (final example ex : examples) {
 			if (ex.isTestOnly() || ex.isExecutable() && ex.test()) { return true; }
 		}
 		return false;
 	}
 
-	public boolean hasTests(Element e, Annotation a) {
+	public boolean hasTests(final Element e, final Annotation a) {
 		// if the artifact is internal, skip the verification
-		if (isInternal(e, a))
-			return true;
-		no_test no = e.getAnnotation(no_test.class);
+		if (isInternal(e, a)) { return true; }
+		final no_test no = e.getAnnotation(no_test.class);
 		// if no tests are necessary, skip the verification
-		if (no != null)
-			return true;
-		tests tests = e.getAnnotation(tests.class);
-		if (tests != null)
-			return true;
-		test test = e.getAnnotation(test.class);
-		if (test != null)
-			return true;
-		doc doc = getDocAnnotation(e, a);
-		if (doc == null)
-			return false;
-		if (hasTests(doc.examples()))
-			return true;
-		for (usage us : doc.usages()) {
-			if (hasTests(us.examples()))
-				return true;
+		if (no != null) { return true; }
+		final tests tests = e.getAnnotation(tests.class);
+		if (tests != null) { return true; }
+		final test test = e.getAnnotation(test.class);
+		if (test != null) { return true; }
+		final doc doc = getDocAnnotation(e, a);
+		if (doc == null) { return false; }
+		if (hasTests(doc.examples())) { return true; }
+		for (final usage us : doc.usages()) {
+			if (hasTests(us.examples())) { return true; }
 		}
 		return doc.deprecated().length() > 0;
 	}
 
-	protected void verifyDoc(ProcessorContext context, final Element e, String displayedName, final Annotation a) {
-		if (isInternal(e, a))
-			return;
-		doc d = getDocAnnotation(e, a);
+	protected void verifyDoc(final ProcessorContext context, final Element e, final String displayedName,
+			final Annotation a) {
+		if (isInternal(e, a)) { return; }
+		final doc d = getDocAnnotation(e, a);
 		boolean docMissing = d == null;
-		if (!docMissing) {
+		if (d != null) {
 			if (d.value().length() == 0 && d.deprecated().length() == 0 && d.usages().length == 0
 					&& d.special_cases().length == 0 && d.examples().length == 0) {
 				docMissing = true;

@@ -1,17 +1,18 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.simulation.SimulationClock.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.simulation.SimulationClock.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.simulation;
 
 import java.time.DateTimeException;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
@@ -37,7 +38,7 @@ public class SimulationClock {
 	final StringBuilder infoStringBuilder = new StringBuilder();
 
 	/** The number of simulation cycles elapsed so far. */
-	private volatile int cycle = 0;
+	private volatile AtomicInteger cycle = new AtomicInteger(0);
 
 	/**
 	 * The current value of time in the model timescale. The base unit is the second (see <link>IUnits</link>). This
@@ -101,22 +102,25 @@ public class SimulationClock {
 	// well, so as to allow writing
 	// "cycle <- cycle + 1" in GAML and have the correct information computed.
 	public void setCycle(final int i) throws GamaRuntimeException {
-		if (i < 0) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", clockScope); }
+		if (i < 0) {
+			throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", clockScope);
+		}
 		// TODO check backward
-		if ((i < cycle) && (!clockScope.getExperiment().canStepBack())) { throw GamaRuntimeException
-				.error("The current cycle of a simulation cannot be set backwards", clockScope); }
-		final int previous = cycle;
-		cycle = i;
-		setCurrentDate(getCurrentDate().plus(getStepInMillis(), cycle - previous, ChronoUnit.MILLIS));
+		final int previous = cycle.get();
+		if (i < previous && !clockScope.getExperiment().canStepBack()) {
+			throw GamaRuntimeException.error("The current cycle of a simulation cannot be set backwards", clockScope);
+		}
+		cycle.set(i);
+		setCurrentDate(getCurrentDate().plus(getStepInMillis(), i - previous, ChronoUnit.MILLIS));
 	}
 
 	public void incrementCycle() {
-		cycle++;
+		cycle.incrementAndGet();
 		setCurrentDate(getCurrentDate().plusMillis(getStepInMillis()));
 	}
 
 	public void resetCycles() {
-		cycle = 0;
+		cycle.set(0);
 		startingDate = null;
 		currentDate = null;
 	}
@@ -125,7 +129,7 @@ public class SimulationClock {
 	 * Returns the current value of cycle
 	 */
 	public int getCycle() {
-		return cycle;
+		return cycle.get();
 	}
 
 	/**
@@ -147,7 +151,7 @@ public class SimulationClock {
 
 	/**
 	 * Gets the current value of time in the simulation
-	 * 
+	 *
 	 * @return a positive double
 	 */
 	public double getTimeElapsedInSeconds() {
@@ -166,8 +170,10 @@ public class SimulationClock {
 	 */
 
 	public void setStep(final double exp) throws GamaRuntimeException {
-		if (exp <= 0) { throw GamaRuntimeException
-				.error("The interval between two cycles of a simulation cannot be negative or null", clockScope); }
+		if (exp <= 0) {
+			throw GamaRuntimeException
+					.error("The interval between two cycles of a simulation cannot be negative or null", clockScope);
+		}
 		step = exp;
 
 		// step = i <= 0 ? 1 : i;
@@ -175,7 +181,7 @@ public class SimulationClock {
 
 	/**
 	 * Return the current value of step
-	 * 
+	 *
 	 * @return a positive double
 	 */
 	public double getStepInSeconds() {
@@ -210,7 +216,7 @@ public class SimulationClock {
 
 	/**
 	 * Gets the duration (in milliseconds) of the latest cycle elapsed so far
-	 * 
+	 *
 	 * @return a duration in milliseconds
 	 */
 	public long getDuration() {
@@ -219,17 +225,17 @@ public class SimulationClock {
 
 	/**
 	 * Gets the average duration (in milliseconds) over
-	 * 
+	 *
 	 * @return a duration in milliseconds
 	 */
 	public double getAverageDuration() {
-		if (cycle == 0) { return 0; }
-		return (double) totalDuration / (double) cycle;
+		if (cycle.get() == 0) { return 0; }
+		return totalDuration / (double) cycle.get();
 	}
 
 	/**
 	 * Gets the total duration in milliseconds since the beginning of the current simulation.
-	 * 
+	 *
 	 * @return a duration in milliseconds
 	 */
 	public long getTotalDuration() {
@@ -270,8 +276,8 @@ public class SimulationClock {
 		final int currentCycle = getCycle();
 		final ITopLevelAgent agent = clockScope.getRoot();
 		infoStringBuilder.setLength(0);
-		infoStringBuilder.append(agent.getName()).append(": ").append(currentCycle).append(currentCycle == 1 ? " cycle " : " cycles ")
-				.append("elapsed ");
+		infoStringBuilder.append(agent.getName()).append(": ").append(currentCycle)
+				.append(currentCycle == 1 ? " cycle " : " cycles ").append("elapsed ");
 
 		try {
 			final String date = outputCurrentDateAsDuration ? Dates.asDuration(getStartingDate(), getCurrentDate())
@@ -331,7 +337,7 @@ public class SimulationClock {
 	public void setStartingDate(final GamaDate starting_date) {
 		this.startingDate = starting_date;
 		this.currentDate = starting_date;
-		this.cycle = 0;
+		cycle.set(0);
 	}
 
 	public void setCurrentDate(final GamaDate date) {

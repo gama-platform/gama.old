@@ -66,6 +66,7 @@ import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
@@ -76,12 +77,13 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
 @display ("java2D")
+@doc ("Display that uses the Java2D technology to draw the layers in a SWT view")
 public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private static final long serialVersionUID = 1L;
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 		GamaPreferences.Displays.DISPLAY_NO_ACCELERATION.onChange(newValue -> {
 			System.setProperty("sun.java2d.noddraw", newValue ? "true" : "false");
 			System.setProperty("sun.awt.noerasebackground", "true");
@@ -170,8 +172,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void setMousePosition(final int xm, final int ym) {
-		int x = scaleUpIfWin(xm);
-		int y = scaleUpIfWin(ym);
+		final int x = scaleUpIfWin(xm);
+		final int y = scaleUpIfWin(ym);
 		if (mousePosition == null) {
 			mousePosition = new Point(x, y);
 		} else {
@@ -404,14 +406,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void paintComponent(final Graphics g) {
+
 		realized = true;
-		if (iGraphics == null) { return; }
+		final AWTDisplayGraphics gg = getIGraphics();
+		if (gg == null) { return; }
+		DEBUG.OUT("-- Surface effectively painting on Java2D context");
 		super.paintComponent(g);
 		final Graphics2D g2d = (Graphics2D) g.create(getOrigin().x, getOrigin().y, (int) Math.round(getDisplayWidth()),
 				(int) Math.round(getDisplayHeight()));
-		getIGraphics().setGraphics2D(g2d);
-		getIGraphics().setUntranslatedGraphics2D((Graphics2D) g);
-		layerManager.drawLayersOn(iGraphics);
+		gg.setGraphics2D(g2d);
+		gg.setUntranslatedGraphics2D((Graphics2D) g);
+		layerManager.drawLayersOn(gg);
 		if (temp_focus != null) {
 			final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()), false);
 			temp_focus = null;
@@ -620,16 +625,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {
+		//DEBUG.OUT("-- Java2D surface set bounds to " + arg0 + " " + arg1 + " | " + arg2 + " " + arg3);
 		if (arg2 == 0 && arg3 == 0) { return; }
 		super.setBounds(arg0, arg1, arg2, arg3);
 	}
-
-	@Override
-	public void setBounds(final Rectangle r) {
-		// scope.getGui().debug("Set bounds called with " + r);
-		if (r.width < 1 && r.height < 1) { return; }
-		super.setBounds(r);
-	}
+	//
+	// @Override
+	// public void setBounds(final Rectangle r) {
+	// DEBUG.OUT("-- Java2D surface set bounds to " + r);
+	// if (r.width < 1 && r.height < 1) { return; }
+	// super.setBounds(r);
+	// }
 
 	double applyZoom(final double factor) {
 		double real_factor = Math.min(factor, 10 / getZoomLevel());
@@ -741,11 +747,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public Font computeFont(Font f) {
-		if (f == null)
-			return null;
-		if (PlatformHelper.isWindows() && PlatformHelper.isHiDPI())
+	public Font computeFont(final Font f) {
+		if (f == null) { return null; }
+		if (PlatformHelper.isWindows() && PlatformHelper.isHiDPI()) {
 			return f.deriveFont(PlatformHelper.scaleUpIfWin(f.getSize2D()));
+		}
 		return f;
 
 	}

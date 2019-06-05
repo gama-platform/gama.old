@@ -1,16 +1,14 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartDataListStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartDataListStatement.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
-
-import org.jfree.chart.renderer.AbstractRenderer;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -131,20 +129,20 @@ public class ChartDataListStatement extends AbstractStatement {
 	public static final String REVERSECATEG = "inverse_series_categories";
 	// protected int dataNumber = 0;
 
-	public static class ChartDataList {
+	// public static class ChartDataList {
 
-		IExpression colorlistexp;
-		IExpression valuelistexp;
-		IExpression legendlistexp;
-		IExpression categlistexp;
-		boolean doreverse;
-		AbstractRenderer renderer;
-		Object lastvalue;
-		String name;
-		int previoussize = 0;
-		boolean useSecondYAxis = false;
+	// IExpression colorlistexp;
+	// IExpression valuelistexp;
+	// IExpression legendlistexp;
+	// IExpression categlistexp;
+	// boolean doreverse;
+	// AbstractRenderer renderer;
+	// Object lastvalue;
+	// String name;
+	// int previoussize = 0;
+	// boolean useSecondYAxis = false;
 
-	}
+	// }
 
 	public ChartDataListStatement(final IDescription desc) {
 		super(desc);
@@ -158,22 +156,22 @@ public class ChartDataListStatement extends AbstractStatement {
 	/*
 	 * public ChartDataList createData(final IScope scope) throws GamaRuntimeException { ChartDataList datalist=new
 	 * ChartDataList();
-	 * 
-	 * 
+	 *
+	 *
 	 * IExpression valexp=getFacet(IKeyword.VALUE); datalist.valuelistexp=valexp; Boolean reverse= Cast.asBool(scope,
 	 * getFacetValue(scope, "inverse_series_categories",false)); datalist.doreverse=reverse;
-	 * 
+	 *
 	 * IExpression categexp=getFacet(ChartDataListStatement.CATEGNAMES); datalist.categlistexp=categexp;
-	 * 
+	 *
 	 * IExpression colorexp=getFacet(IKeyword.COLOR); datalist.colorlistexp=colorexp;
-	 * 
+	 *
 	 * IExpression serexp=getFacet(IKeyword.LEGEND); datalist.legendlistexp=serexp;
-	 * 
-	 * 
+	 *
+	 *
 	 * if (categexp!=null) { // scope.addVarWithValue(ChartDataListStatement.CATEGNAMES, categexp); } if (serexp!=null)
 	 * { // scope.addVarWithValue(ChartDataListStatement.SERIESNAMES, serexp); }
-	 * 
-	 * 
+	 *
+	 *
 	 * boolean showMarkers = getFacetValue(scope, ChartDataStatement.MARKER, true); boolean showLine =
 	 * getFacetValue(scope, ChartDataStatement.LINE_VISIBLE, true); boolean fillMarkers = getFacetValue(scope,
 	 * ChartDataStatement.FILL, true); String style = getLiteral(IKeyword.STYLE); if ( style == null ) { style =
@@ -186,7 +184,7 @@ public class ChartDataListStatement extends AbstractStatement {
 	 * style.equals(IKeyword.STEP) ) { r = new XYStepRenderer(); } else if ( style.equals(IKeyword.AREA_STACK) ) { r =
 	 * new StackedXYAreaRenderer2(); } else if ( style.equals(IKeyword.STACK) ) { r = new StackedBarRenderer(); }
 	 * datalist.renderer=r;
-	 * 
+	 *
 	 * return datalist; }
 	 */
 	public ChartDataSourceList createDataSource(final IScope scope, final ChartDataSet graphdataset)
@@ -258,7 +256,7 @@ public class ChartDataListStatement extends AbstractStatement {
 		/*
 		 * expval = getFacetValue(scope, ChartDataStatement.MARKERSHAPE, null); if (expval!=null) {
 		 * expval=expval.resolveAgainst(scope); data.setMarkerShapeExp(scope, expval);
-		 * 
+		 *
 		 * }
 		 */
 

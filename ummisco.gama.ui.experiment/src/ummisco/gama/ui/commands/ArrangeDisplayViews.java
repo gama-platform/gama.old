@@ -40,13 +40,12 @@ import msi.gama.util.tree.GamaTree;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.WorkaroundForIssue1353;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	public static final String LAYOUT_KEY = "msi.gama.displays.layout";
@@ -94,10 +93,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void execute(final GamaTree<String> tree) {
 		listDisplayViews();
 		final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
-		if (!WorkaroundForIssue1353.isInstalled()
-				&& StreamEx.of(displays).anyMatch((d) -> !d.getOutput().getData().isOpenGL())) {
-			WorkaroundForIssue1353.install();
-		}
+		// if (!WorkaroundForIssue1353.isInstalled()
+		// && StreamEx.of(displays).anyMatch((d) -> !d.getOutput().getData().isOpenGL())) {
+		// WorkaroundForIssue1353.install();
+		// }
 
 		if (tree != null) {
 			DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
@@ -120,7 +119,11 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	private static void activateDisplays(final List<MPlaceholder> holders, final boolean focus) {
-		holders.forEach((ph) -> getPartService().activate((MPart) ph.getRef(), focus));
+		holders.forEach((ph) -> {
+			getPartService().bringToTop((MPart) ph.getRef());
+			getPartService().activate((MPart) ph.getRef(), focus);
+
+		});
 	}
 
 	public static MPartStack getDisplaysPlaceholder() {
@@ -135,7 +138,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		decorateDisplays();
 		holders.forEach((ph) -> {
 			ph.setVisible(true);
-			// ph.setToBeRendered(true);
+			ph.setToBeRendered(true);
 		});
 		activateDisplays(holders, true);
 	}
@@ -207,8 +210,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		// DEBUG.OUT("Displays found: " + holders.size());
 		/// Issue #2680
 		int currentIndex = 0;
-		for (MPlaceholder h : holders) {
-			IGamaView.Display display = findDisplay(h.getElementId());
+		for (final MPlaceholder h : holders) {
+			final IGamaView.Display display = findDisplay(h.getElementId());
 			if (display != null) {
 				display.setIndex(currentIndex++);
 				h.getTransientData().put(DISPLAY_INDEX_KEY, String.valueOf(currentIndex - 1));
@@ -249,6 +252,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void showScreen() {
 		// final MPartStack displayStack = getDisplaysPlaceholder();
 		// displayStack.setVisible(true);
+		// displayStack.setToBeRendered(true);
 	}
 
 }

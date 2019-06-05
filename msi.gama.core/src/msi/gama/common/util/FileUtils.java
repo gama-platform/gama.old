@@ -364,12 +364,15 @@ public class FileUtils {
 
 	public static void cleanCache() {
 		if (GamaPreferences.External.CORE_HTTP_EMPTY_CACHE.getValue()) {
-			for (final File f : CACHE.listFiles()) {
-				if (!f.isDirectory()) {
-					try {
-						f.delete();
-					} catch (final Throwable e) {
-						e.printStackTrace();
+			final File[] files = CACHE.listFiles();
+			if (files != null) {
+				for (final File f : files) {
+					if (!f.isDirectory()) {
+						try {
+							f.delete();
+						} catch (final Throwable e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

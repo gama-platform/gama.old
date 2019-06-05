@@ -1,18 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.LabelExpressionDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.LabelExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.Set;
-
-import org.eclipse.emf.ecore.EObject;
 
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.util.StringUtils;
@@ -33,7 +31,7 @@ import msi.gaml.types.Types;
 public class LabelExpressionDescription extends BasicExpressionDescription implements IExpression {
 
 	@Override
-	public IType getDenotedType(final IDescription context) {
+	public IType<?> getDenotedType(final IDescription context) {
 		return context.getTypeNamed(value);
 	}
 
@@ -84,10 +82,10 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 		return value.equals(o);
 	}
 
-	@Override
-	public void setTarget(final EObject newTarget) {
-		super.setTarget(newTarget);
-	}
+	// @Override
+	// public void setTarget(final EObject newTarget) {
+	// super.setTarget(newTarget);
+	// }
 
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {

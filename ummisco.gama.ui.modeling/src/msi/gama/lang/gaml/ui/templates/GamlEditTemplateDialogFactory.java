@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'GamlEditTemplateDialogFactory.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlEditTemplateDialogFactory.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
@@ -13,38 +12,37 @@ package msi.gama.lang.gaml.ui.templates;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.swt.widgets.Shell;
+// import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.xtext.Constants;
-import org.eclipse.xtext.ui.codetemplates.ui.preferences.*;
-import com.google.inject.*;
+import org.eclipse.xtext.ui.codetemplates.ui.preferences.EditTemplateDialogFactory;
+import org.eclipse.xtext.ui.codetemplates.ui.preferences.TemplateResourceProvider;
+import org.eclipse.xtext.ui.codetemplates.ui.preferences.TemplatesLanguageConfiguration;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.name.Named;
 
 /**
  * The class GamlEditTemplateDialogFactory.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
 public class GamlEditTemplateDialogFactory extends EditTemplateDialogFactory {
 
-	@Inject
-	private Provider<TemplatesLanguageConfiguration> configurationProvider;
+	@Inject private Provider<TemplatesLanguageConfiguration> configurationProvider;
 
-	@Inject
-	private ContextTypeRegistry contextTypeRegistry;
+	@Inject private ContextTypeRegistry contextTypeRegistry;
 
-	@Inject
-	private TemplateResourceProvider resourceProvider;
+	@Inject private TemplateResourceProvider resourceProvider;
 
-	@Inject
-	@Named(Constants.LANGUAGE_NAME)
-	private String languageName;
+	@Inject @Named (Constants.LANGUAGE_NAME) private String languageName;
 
 	public GamlEditTemplateDialog createDialog(final TemplatePersistenceData template, final boolean edit,
-		final Shell shell) {
-		GamlEditTemplateDialog dialog =
-			new GamlEditTemplateDialog(shell, template, edit, contextTypeRegistry, configurationProvider.get(),
-				resourceProvider, languageName);
+			final Shell shell) {
+		final GamlEditTemplateDialog dialog = new GamlEditTemplateDialog(shell, template, edit, contextTypeRegistry,
+				configurationProvider.get(), resourceProvider, languageName);
 		return dialog;
 	}
 

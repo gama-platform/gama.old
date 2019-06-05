@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartDataSource.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartDataSource.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -61,7 +61,7 @@ public class ChartDataSource {
 	String style = IKeyword.DEFAULT;
 
 	// Object lastvalue;
-	LinkedHashMap<String, ChartDataSeries> mySeries = new LinkedHashMap<String, ChartDataSeries>();
+	LinkedHashMap<String, ChartDataSeries> mySeries = new LinkedHashMap<>();
 	ChartDataSet myDataset;
 	boolean isCumulative = false;
 	boolean isCumulativeY = false;
@@ -200,8 +200,9 @@ public class ChartDataSource {
 	}
 
 	public void setCumulative(final IScope scope, final boolean isCumulative) {
-		if (!forceCumulative)
+		if (!forceCumulative) {
 			this.isCumulative = isCumulative;
+		}
 	}
 
 	public boolean isCumulativeY() {
@@ -209,10 +210,12 @@ public class ChartDataSource {
 	}
 
 	public void setCumulativeY(final IScope scope, final boolean isCumulative) {
-		if (!forceCumulativeY)
+		if (!forceCumulativeY) {
 			this.isCumulativeY = isCumulative;
-		if (this.isCumulativeY)
+		}
+		if (this.isCumulativeY) {
 			this.getDataset().setForceNoYAccumulate(false);
+		}
 	}
 
 	public void setForceCumulativeY(final IScope scope, final boolean b) {
@@ -231,8 +234,9 @@ public class ChartDataSource {
 
 	public void setDataset(final IScope scope, final ChartDataSet myDataset) {
 		this.myDataset = myDataset;
-		if (myDataset.getStyle(scope) != null)
+		if (myDataset.getStyle(scope) != null) {
 			this.setStyle(scope, myDataset.getStyle(scope));
+		}
 	}
 
 	public void setStyle(final IScope scope, final String stval) {
@@ -240,8 +244,7 @@ public class ChartDataSource {
 	}
 
 	public String getStyle(final IScope scope) {
-		if (style == IKeyword.DEFAULT)
-			return this.getDataset().getStyle(scope);
+		if (IKeyword.DEFAULT.equals(style)) { return this.getDataset().getStyle(scope); }
 		return style;
 	}
 
@@ -345,18 +348,13 @@ public class ChartDataSource {
 
 	public int computeTypeOfData(final IScope scope, final IExpression expr) {
 		final IType type = expr.getGamlType();
-		if (type == Types.NO_TYPE)
-			return DATA_TYPE_NULL;
-		if (Types.POINT.isAssignableFrom(type))
-			return DATA_TYPE_POINT;
+		if (type == Types.NO_TYPE) { return DATA_TYPE_NULL; }
+		if (Types.POINT.isAssignableFrom(type)) { return DATA_TYPE_POINT; }
 		if (Types.MATRIX.isAssignableFrom(type)) {
 			final IType ct = type.getContentType();
-			if (ct == Types.INT || ct == Types.FLOAT)
-				return DATA_TYPE_MATRIX_DOUBLE;
-			if (Types.POINT.isAssignableFrom(ct))
-				return DATA_TYPE_MATRIX_POINT;
-			if (Types.LIST.isAssignableFrom(ct))
-				return DATA_TYPE_MATRIX_LIST_DOUBLE;
+			if (ct == Types.INT || ct == Types.FLOAT) { return DATA_TYPE_MATRIX_DOUBLE; }
+			if (Types.POINT.isAssignableFrom(ct)) { return DATA_TYPE_MATRIX_POINT; }
+			if (Types.LIST.isAssignableFrom(ct)) { return DATA_TYPE_MATRIX_LIST_DOUBLE; }
 			return DATA_TYPE_MATRIX_DOUBLE;
 		}
 		if (Types.LIST.isAssignableFrom(type)) {
@@ -383,11 +381,11 @@ public class ChartDataSource {
 				final IType subContents = contents.getContentType();
 				if (Types.LIST.isAssignableFrom(subContents)) {
 					final IType subSubContents = subContents.getContentType();
-					if (Types.POINT == subSubContents)
+					if (Types.POINT == subSubContents) {
 						return DATA_TYPE_LIST_LIST_POINT;
-					else if (Types.LIST.isAssignableFrom(subSubContents))
+					} else if (Types.LIST.isAssignableFrom(subSubContents)) {
 						return DATA_TYPE_LIST_LIST_LIST_DOUBLE;
-					else if (expr instanceof ListExpression) {
+					} else if (expr instanceof ListExpression) {
 						final IExpression[] exprs = ((ListExpression) expr).getElements();
 						if (exprs.length > 0) {
 							final IExpression contentExpr = exprs[0];
@@ -423,56 +421,38 @@ public class ChartDataSource {
 
 	public int get_data_type(final IScope scope, final Object o) {
 		// final int type = this.DATA_TYPE_NULL;
-		if (o == null)
-			return this.DATA_TYPE_NULL;
-		if (o instanceof GamaPoint)
-			return this.DATA_TYPE_POINT;
+		if (o == null) { return this.DATA_TYPE_NULL; }
+		if (o instanceof GamaPoint) { return this.DATA_TYPE_POINT; }
 		if (o instanceof GamaMatrix) {
 			final IMatrix l1value = Cast.asMatrix(scope, o);
-			if (l1value.length(scope) == 0)
-				return this.DATA_TYPE_MATRIX_DOUBLE;
+			if (l1value.length(scope) == 0) { return this.DATA_TYPE_MATRIX_DOUBLE; }
 			final Object o2 = l1value.get(scope, 0, 0);
-			if (o2 instanceof GamaPoint)
-				return this.DATA_TYPE_MATRIX_POINT;
-			if (o2 instanceof GamaList)
-				return this.DATA_TYPE_MATRIX_LIST_DOUBLE;
+			if (o2 instanceof GamaPoint) { return this.DATA_TYPE_MATRIX_POINT; }
+			if (o2 instanceof GamaList) { return this.DATA_TYPE_MATRIX_LIST_DOUBLE; }
 			return this.DATA_TYPE_MATRIX_DOUBLE;
 		}
 		if (o instanceof GamaList) {
 
 			final IList l1value = Cast.asList(scope, o);
-			if (l1value.length(scope) == 0)
-				return this.DATA_TYPE_LIST_DOUBLE_N;
+			if (l1value.length(scope) == 0) { return this.DATA_TYPE_LIST_DOUBLE_N; }
 			final Object o2 = l1value.get(0);
-			if (o2 instanceof GamaPoint)
-				return this.DATA_TYPE_LIST_POINT;
+			if (o2 instanceof GamaPoint) { return this.DATA_TYPE_LIST_POINT; }
 			if (o2 instanceof GamaList) {
 				final IList l2value = Cast.asList(scope, o2);
-				if (l2value.length(scope) == 0)
-					return this.DATA_TYPE_LIST_LIST_DOUBLE_N;
+				if (l2value.length(scope) == 0) { return this.DATA_TYPE_LIST_LIST_DOUBLE_N; }
 				final Object o3 = l2value.get(0);
-				if (o3 instanceof GamaList)
-					return this.DATA_TYPE_LIST_LIST_LIST_DOUBLE;
-				if (o3 instanceof GamaPoint)
-					return this.DATA_TYPE_LIST_LIST_POINT;
-				if (l2value.length(scope) == 1)
-					return this.DATA_TYPE_LIST_LIST_DOUBLE_12;
-				if (l2value.length(scope) == 2)
-					return this.DATA_TYPE_LIST_LIST_DOUBLE_12;
-				if (l2value.length(scope) == 3)
-					return this.DATA_TYPE_LIST_LIST_DOUBLE_3;
-				if (l2value.length(scope) > 3)
-					return this.DATA_TYPE_LIST_LIST_DOUBLE_N;
+				if (o3 instanceof GamaList) { return this.DATA_TYPE_LIST_LIST_LIST_DOUBLE; }
+				if (o3 instanceof GamaPoint) { return this.DATA_TYPE_LIST_LIST_POINT; }
+				if (l2value.length(scope) == 1) { return this.DATA_TYPE_LIST_LIST_DOUBLE_12; }
+				if (l2value.length(scope) == 2) { return this.DATA_TYPE_LIST_LIST_DOUBLE_12; }
+				if (l2value.length(scope) == 3) { return this.DATA_TYPE_LIST_LIST_DOUBLE_3; }
+				if (l2value.length(scope) > 3) { return this.DATA_TYPE_LIST_LIST_DOUBLE_N; }
 			}
 
-			if (l1value.length(scope) == 1)
-				return this.DATA_TYPE_LIST_DOUBLE_12;
-			if (l1value.length(scope) == 2)
-				return this.DATA_TYPE_LIST_DOUBLE_12;
-			if (l1value.length(scope) == 3)
-				return this.DATA_TYPE_LIST_DOUBLE_3;
-			if (l1value.length(scope) > 3)
-				return this.DATA_TYPE_LIST_DOUBLE_N;
+			if (l1value.length(scope) == 1) { return this.DATA_TYPE_LIST_DOUBLE_12; }
+			if (l1value.length(scope) == 2) { return this.DATA_TYPE_LIST_DOUBLE_12; }
+			if (l1value.length(scope) == 3) { return this.DATA_TYPE_LIST_DOUBLE_3; }
+			if (l1value.length(scope) > 3) { return this.DATA_TYPE_LIST_DOUBLE_N; }
 		}
 		return this.DATA_TYPE_DOUBLE;
 	}
@@ -562,8 +542,9 @@ public class ChartDataSource {
 							final IList l1value = Cast.asList(scope, o);
 							for (int n1 = 0; n1 < l1value.size(); n1++) {
 								final Object o2 = l1value.get(n1);
-								while (n1 >= getDataset().getXSeriesValues().size())
+								while (n1 >= getDataset().getXSeriesValues().size()) {
 									getDataset().updateXValues(scope, chartCycle, l1value.size());
+								}
 								myserie.addxyvalue(scope, getDataset().getXSeriesValues().get(n1),
 										Cast.asFloat(scope, o2), chartCycle, barvalues, listvalue);
 							}
@@ -875,8 +856,9 @@ public class ChartDataSource {
 						final IList l1value = Cast.asList(scope, o);
 						for (int n1 = 0; n1 < l1value.size(); n1++) {
 							final Object o2 = l1value.get(n1);
-							while (n1 >= getDataset().getXSeriesValues().size())
+							while (n1 >= getDataset().getXSeriesValues().size()) {
 								getDataset().updateXValues(scope, chartCycle, l1value.size());
+							}
 							myserie.addxysvalue(scope, getDataset().getXSeriesValues().get(n1),
 									getDataset().getCurrentCommonYValue(), Cast.asFloat(scope, o2), chartCycle,
 									barvalues, listvalue);
@@ -892,11 +874,13 @@ public class ChartDataSource {
 						for (int n1 = 0; n1 < l1value.size(); n1++) {
 							final Object o2 = l1value.get(n1);
 							final IList lvalue = Cast.asList(scope, o2);
-							while (n1 >= getDataset().getXSeriesValues().size())
+							while (n1 >= getDataset().getXSeriesValues().size()) {
 								getDataset().updateXValues(scope, chartCycle, l1value.size());
+							}
 							for (int n2 = 0; n2 < lvalue.size(); n2++) {
-								while (n2 >= getDataset().getYSeriesValues().size())
+								while (n2 >= getDataset().getYSeriesValues().size()) {
 									getDataset().updateYValues(scope, chartCycle, lvalue.size());
+								}
 								myserie.addxysvalue(scope, getDataset().getXSeriesValues().get(n1),
 										getDataset().getYSeriesValues().get(n2), Cast.asFloat(scope, lvalue.get(n2)),
 										chartCycle, barvalues, listvalue);
@@ -961,7 +945,7 @@ public class ChartDataSource {
 	public void setMarkerShape(final IScope scope, final String stval) {
 		// markerName is useless, for now creates/modifies the output
 		uniqueMarkerName = stval;
-		if (uniqueMarkerName == ChartDataStatement.MARKER_EMPTY) {
+		if (ChartDataStatement.MARKER_EMPTY.equals(uniqueMarkerName)) {
 			this.setMarkerBool(scope, false);
 		}
 	}
@@ -983,8 +967,7 @@ public class ChartDataSource {
 	}
 
 	public boolean isUseSizeExp() {
-		if (this.sizeexp == null)
-			return false;
+		if (this.sizeexp == null) { return false; }
 		return true;
 	}
 
@@ -1006,7 +989,7 @@ public class ChartDataSource {
 	}
 
 	public void setUseSecondYAxis(final IScope scope, final boolean boolval) {
-		useSecondYAxis=boolval;
+		useSecondYAxis = boolval;
 	}
 
 	public boolean getUseSecondYAxis(final IScope scope) {

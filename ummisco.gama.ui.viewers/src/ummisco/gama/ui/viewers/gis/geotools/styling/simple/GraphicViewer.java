@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
@@ -33,7 +33,7 @@ import org.opengis.style.GraphicalSymbol;
  * Allows editing/viewing of a Style Layer Descriptor "Graphic".
  * <p>
  * Here is the pretty picture:
- * 
+ *
  * <pre>
  * <code>
  *          +-+ +-------+ +------+
@@ -58,7 +58,7 @@ import org.opengis.style.GraphicalSymbol;
  * <li>getGraphic( Fill, Stroke, StyleBuilder ) - construct a Graphic based on fields
  * </ul>
  * </p>
- * 
+ *
  * @author Jody Garnett
  * @since 1.0.0
  *
@@ -76,7 +76,7 @@ public class GraphicViewer {
 	Combo name;
 	Combo size;
 
-	private class Listener implements SelectionListener, ModifyListener {
+	class Listener implements SelectionListener, ModifyListener {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -118,7 +118,7 @@ public class GraphicViewer {
 
 	/**
 	 * Accepts a listener that will be notified when content changes.
-	 * 
+	 *
 	 * @param listener1
 	 */
 	public void addListener(final SelectionListener listener1) {
@@ -127,7 +127,7 @@ public class GraphicViewer {
 
 	/**
 	 * Remove listener.
-	 * 
+	 *
 	 * @param listener1
 	 */
 	public void removeListener(final SelectionListener listener1) {
@@ -138,7 +138,7 @@ public class GraphicViewer {
 
 	/**
 	 * TODO summary sentence for fire ...
-	 * 
+	 *
 	 * @param event
 	 */
 	protected void fire(final SelectionEvent event) {
@@ -148,7 +148,7 @@ public class GraphicViewer {
 
 	/**
 	 * TODO summary sentence for createControl ...
-	 * 
+	 *
 	 * @param parent
 	 * @param klisten
 	 * @param build
@@ -176,7 +176,7 @@ public class GraphicViewer {
 
 	/**
 	 * TODO summary sentence for getGraphic ...
-	 * 
+	 *
 	 * @param filll
 	 * @param stroke
 	 * @param build
@@ -200,7 +200,7 @@ public class GraphicViewer {
 
 	/**
 	 * TODO summary sentence for setGraphic ...
-	 * 
+	 *
 	 * @param graphic
 	 * @param mode
 	 * @param enabled

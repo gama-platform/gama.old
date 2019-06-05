@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.image;
@@ -86,20 +86,20 @@ public class ImageViewer extends EditorPart
 		implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
 	GamaToolbar2 toolbar;
-	private Image image;
-	private ImageData imageData;
-	private ScrolledComposite scroll;
-	private Composite intermediate;
-	private Canvas imageCanvas;
-	private double zoomFactor = 1.0d;
-	private double maxZoomFactor = 1.0d;
-	private ImageResourceChangeListener inputListener = null;
+	Image image;
+	ImageData imageData;
+	ScrolledComposite scroll;
+	Composite intermediate;
+	Canvas imageCanvas;
+	double zoomFactor = 1.0d;
+	double maxZoomFactor = 1.0d;
+	ImageResourceChangeListener inputListener = null;
 
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		// we need either an IStorage or an input that can return an ImageData
-		if (!(input instanceof IStorageEditorInput) && input
-				.getAdapter(ImageData.class) == null) { throw new PartInitException("Unable to read input: " + input); //$NON-NLS-1$
+		if (!(input instanceof IStorageEditorInput) && input.getAdapter(ImageData.class) == null) {
+			throw new PartInitException("Unable to read input: " + input); //$NON-NLS-1$
 		}
 		setSite(site);
 		setInput(input, false);
@@ -110,7 +110,7 @@ public class ImageViewer extends EditorPart
 		setInput(input, true);
 	}
 
-	private void setInput(final IEditorInput input, final boolean notify) {
+	void setInput(final IEditorInput input, final boolean notify) {
 		final IEditorInput old = getEditorInput();
 		if (input != old) {
 			unregisterResourceListener(old);
@@ -131,7 +131,7 @@ public class ImageViewer extends EditorPart
 	/**
 	 * Set the part name based on the editor input.
 	 */
-	private void setPartName(final IEditorInput input) {
+	void setPartName(final IEditorInput input) {
 		String imageName = null;
 		if (input instanceof IStorageEditorInput) {
 			try {
@@ -153,7 +153,7 @@ public class ImageViewer extends EditorPart
 	/**
 	 * Get the IFile corresponding to the specified editor input, or null for none.
 	 */
-	private IFile getFileFor(final IEditorInput input) {
+	IFile getFileFor(final IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
 			return ((IFileEditorInput) input).getFile();
 		} else if (input instanceof IStorageEditorInput) {
@@ -167,7 +167,7 @@ public class ImageViewer extends EditorPart
 		return null;
 	}
 
-	private void displayInfoString() {
+	void displayInfoString() {
 		final GamaUIColor color = IGamaColors.OK;
 		final IGamaFileMetaData md =
 				GAMA.getGui().getMetaDataProvider().getMetaData(getFileFor(getEditorInput()), false, true);
@@ -263,7 +263,7 @@ public class ImageViewer extends EditorPart
 		startImageLoad();
 	}
 
-	private void resizeCanvas(final Point p) {
+	void resizeCanvas(final Point p) {
 		final Rectangle scrollSize = scroll.getClientArea();
 		final int width = p.x > scrollSize.width ? p.x : scrollSize.width;
 		final int height = p.y > scrollSize.height ? p.y : scrollSize.height;
@@ -289,7 +289,7 @@ public class ImageViewer extends EditorPart
 	/**
 	 * This will start a job to load the image for the current editor input. This can be started from any thread.
 	 */
-	private void startImageLoad() {
+	void startImageLoad() {
 		// skip if the UI hasn't been initialized yet, because
 		// createPartControl() will do this
 		if (imageCanvas == null) { return; }
@@ -339,7 +339,7 @@ public class ImageViewer extends EditorPart
 	 * Load the image data from the current editor input. This operation can take time and should not be called on the
 	 * ui thread.
 	 */
-	private void loadImageData() throws CoreException {
+	void loadImageData() throws CoreException {
 		final IEditorInput input = getEditorInput();
 		final Object o = input.getAdapter(ImageData.class);
 		if (o instanceof ImageData) {
@@ -358,7 +358,7 @@ public class ImageViewer extends EditorPart
 	 * @param createImage
 	 *            true to (re)create the image object from the imageData, false to reuse.
 	 */
-	private void showImage(final boolean createImage) {
+	void showImage(final boolean createImage) {
 		if (imageData != null) {
 			imageCanvas.setCursor(imageCanvas.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 			try {
@@ -467,8 +467,9 @@ public class ImageViewer extends EditorPart
 					throws CoreException, InvocationTargetException, InterruptedException {
 				try {
 					if (dest.exists()) {
-						if (!dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell())
-								.isOK()) { return; }
+						if (!dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell()).isOK()) {
+							return;
+						}
 					}
 					saveTo(imageData, dest, imageType, monitor);
 				} catch (final IOException ex) {
@@ -504,8 +505,8 @@ public class ImageViewer extends EditorPart
 		}
 	}
 
-	private void saveTo(final ImageData imageData, final IFile dest, final int imageType,
-			final IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
+	void saveTo(final ImageData imageData, final IFile dest, final int imageType, final IProgressMonitor monitor)
+			throws CoreException, InterruptedException, IOException {
 		// do an indeterminate progress monitor so that something shows, since
 		// the generation of the image data doesn't report progress
 		final SubMonitor m = SubMonitor.convert(monitor, dest.getFullPath().toPortableString(),
@@ -707,7 +708,7 @@ public class ImageViewer extends EditorPart
 
 	/**
 	 * Method createToolItem()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
 	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
@@ -721,7 +722,7 @@ public class ImageViewer extends EditorPart
 
 	/**
 	 * Method getColorLabels()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#getColorLabels()
 	 */
 	@Override
@@ -731,7 +732,7 @@ public class ImageViewer extends EditorPart
 
 	/**
 	 * Method getColor()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#getColor(int)
 	 */
 	@Override
@@ -741,7 +742,7 @@ public class ImageViewer extends EditorPart
 
 	/**
 	 * Method setColor()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#setColor(int,
 	 *      ummisco.gama.ui.resources.GamaColors.GamaUIColor)
 	 */
@@ -759,7 +760,7 @@ public class ImageViewer extends EditorPart
 
 	/**
 	 * Method zoomWhenScrolling()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
 	 */
 	@Override

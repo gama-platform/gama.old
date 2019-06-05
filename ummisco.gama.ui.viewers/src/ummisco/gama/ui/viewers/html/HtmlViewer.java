@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.html;
@@ -60,8 +60,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 	}
 
 	private void openInput() {
-		if (browser == null)
-			return;
+		if (browser == null) { return; }
 		if (getEditorInput() instanceof FileEditorInput) {
 			final FileEditorInput input = (FileEditorInput) getEditorInput();
 			try {
@@ -118,7 +117,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 	/**
 	 *
 	 */
-	private void checkButtons() {
+	void checkButtons() {
 		back.setEnabled(browser.isBackEnabled());
 		forward.setEnabled(browser.isForwardEnabled());
 	}
@@ -134,7 +133,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 
 	/**
 	 * Method createToolItem()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
 	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */

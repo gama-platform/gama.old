@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'GamlTemplateStore.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlTemplateStore.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
@@ -18,6 +17,7 @@ import java.util.Map;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+// import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateStore;
@@ -38,12 +38,13 @@ import msi.gaml.types.Signature;
 
 /**
  * The class GamlTemplateStore. Loads template and gives them a unique index.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
-@ProvidedBy(GamlTemplateStoreProvider.class)
+@SuppressWarnings ("deprecation")
+@ProvidedBy (GamlTemplateStoreProvider.class)
 public class GamlTemplateStore extends XtextTemplateStore {
 
 	public static class GamlTemplateStoreProvider implements Provider<GamlTemplateStore> {
@@ -52,7 +53,7 @@ public class GamlTemplateStore extends XtextTemplateStore {
 
 		@Inject private ContextTypeRegistry contextTypeRegistry;
 
-		@Inject @Named(Constants.LANGUAGE_NAME) private String languageName;
+		@Inject @Named (Constants.LANGUAGE_NAME) private String languageName;
 
 		@Inject private IPreferenceStore store;
 
@@ -121,9 +122,8 @@ public class GamlTemplateStore extends XtextTemplateStore {
 	}
 
 	/**
-	 * Adds a template to the internal store. The added templates must have a
-	 * unique id.
-	 * 
+	 * Adds a template to the internal store. The added templates must have a unique id.
+	 *
 	 * @param data
 	 *            the template data to add
 	 */

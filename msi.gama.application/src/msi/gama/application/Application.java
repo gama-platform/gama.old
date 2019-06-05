@@ -5,7 +5,7 @@
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.application;
@@ -108,7 +108,7 @@ public class Application implements IApplication {
 		// DEBUG.OUT(System.getProperties());
 		createProcessor();
 		final Object check = checkWorkspace();
-		if ( check == EXIT_OK ) { return EXIT_OK; }
+		if ( EXIT_OK.equals(check) ) { return EXIT_OK; }
 		// if ( check == EXIT_RESTART ) {
 		// ClearWorkspace(true);
 		// No need to restart : the value will be checked later

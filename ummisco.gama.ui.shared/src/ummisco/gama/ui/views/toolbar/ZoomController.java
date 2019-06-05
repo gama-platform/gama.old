@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
@@ -31,8 +31,8 @@ import ummisco.gama.ui.resources.IGamaIcons;
 public class ZoomController {
 
 	// Fix for Issue #1291
-	private final boolean includingScrolling;
-	private final IToolbarDecoratedView.Zoomable view;
+	final boolean includingScrolling;
+	final IToolbarDecoratedView.Zoomable view;
 
 	/**
 	 * @param view
@@ -61,8 +61,9 @@ public class ZoomController {
 
 			@Override
 			public void mouseDoubleClick(final MouseEvent e) {
-				if (e.button == 1)
+				if (e.button == 1) {
 					view.zoomFit();
+				}
 			}
 		};
 

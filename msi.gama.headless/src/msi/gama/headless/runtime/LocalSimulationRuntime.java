@@ -111,7 +111,13 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	public SimulationState getSimulationState(final String id) {
 		final ExperimentJob tmp = simulations.get(id);
 		if (tmp == null) { return SimulationState.UNDEFINED; }
+		/**
+		 * TODO AD BUG: ATTENTION !! queue contient des FakeApplication, pas des ExperimentJob
+		 */
 		if (started.contains(tmp)) { return SimulationState.STARTED; }
+		/**
+		 * TODO AD BUG: ATTENTION !! queue contient des FakeApplication, pas des ExperimentJob
+		 */
 		if (queue.contains(tmp)) { return SimulationState.ENQUEUED; }
 		return SimulationState.ACHIEVED;
 	}
@@ -166,7 +172,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	@Override
 	public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
 		// return lockUnLock( fl,null, null) ; //lockModel(fl); //
-		List<GamlCompilationError> errors = new ArrayList<GamlCompilationError>();
+		final List<GamlCompilationError> errors = new ArrayList<>();
 		return HeadlessSimulationLoader.loadModel(fl, errors); // lockModel(fl); //mdl.c;
 	}
 
@@ -204,8 +210,9 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 				noErrorFound = false;
 			}
 			try {
-				if (noErrorFound)
+				if (noErrorFound) {
 					si.loadAndBuild(this.runtime);
+				}
 
 			} catch (final InstantiationException e) {
 				noErrorFound = false;
@@ -229,8 +236,9 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 				System.out.println(e.toString());
 				DEBUG.ERR(e);
 			}
-			if (noErrorFound)
+			if (noErrorFound) {
 				si.playAndDispose();
+			}
 			((HeadlessListener) GAMA.getHeadlessGui()).leaveJob();
 			runtime.closeSimulation(this);
 			runtime.releaseModel(si.getSourcePath(), si.getSimulation().getModel());

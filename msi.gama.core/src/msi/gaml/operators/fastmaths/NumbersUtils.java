@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.fastmaths.NumbersUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.fastmaths.NumbersUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators.fastmaths;
 
@@ -441,8 +441,9 @@ public final class NumbersUtils {
 	 *             if the specified value does not fit as a signed integer over the specified number of bits.
 	 */
 	public static boolean checkIsInRangeSigned(final int a, final int bitSize) {
-		if (!isInRangeSigned(a, bitSize)) { throw new IllegalArgumentException(
-				a + " does not fit as a signed value over " + bitSize + " bits"); }
+		if (!isInRangeSigned(a, bitSize)) {
+			throw new IllegalArgumentException(a + " does not fit as a signed value over " + bitSize + " bits");
+		}
 		return true;
 	}
 
@@ -454,8 +455,9 @@ public final class NumbersUtils {
 	 *             if the specified value does not fit as a signed integer over the specified number of bits.
 	 */
 	public static boolean checkIsInRangeSigned(final long a, final int bitSize) {
-		if (!isInRangeSigned(a, bitSize)) { throw new IllegalArgumentException(
-				a + " does not fit as a signed value over " + bitSize + " bits"); }
+		if (!isInRangeSigned(a, bitSize)) {
+			throw new IllegalArgumentException(a + " does not fit as a signed value over " + bitSize + " bits");
+		}
 		return true;
 	}
 
@@ -467,8 +469,9 @@ public final class NumbersUtils {
 	 *             if the specified value does not fit as an unsigned integer over the specified number of bits.
 	 */
 	public static boolean checkIsInRangeUnsigned(final int a, final int bitSize) {
-		if (!isInRangeUnsigned(a, bitSize)) { throw new IllegalArgumentException(
-				a + " does not fit as an unsigned value over " + bitSize + " bits"); }
+		if (!isInRangeUnsigned(a, bitSize)) {
+			throw new IllegalArgumentException(a + " does not fit as an unsigned value over " + bitSize + " bits");
+		}
 		return true;
 	}
 
@@ -480,8 +483,9 @@ public final class NumbersUtils {
 	 *             if the specified value does not fit as an unsigned integer over the specified number of bits.
 	 */
 	public static boolean checkIsInRangeUnsigned(final long a, final int bitSize) {
-		if (!isInRangeUnsigned(a, bitSize)) { throw new IllegalArgumentException(
-				a + " does not fit as an unsigned value over " + bitSize + " bits"); }
+		if (!isInRangeUnsigned(a, bitSize)) {
+			throw new IllegalArgumentException(a + " does not fit as an unsigned value over " + bitSize + " bits");
+		}
 		return true;
 	}
 
@@ -642,8 +646,9 @@ public final class NumbersUtils {
 	 *             if a signed int value can't be read over the specified number of bits, i.e. if it is not in [1,32].
 	 */
 	public static boolean checkBitSizeForSignedInt(final int bitSize) {
-		if (!isValidBitSizeForSignedInt(bitSize)) { throw new IllegalArgumentException(
-				"bit size [" + bitSize + "] must be in [1,32] for signed int values"); }
+		if (!isValidBitSizeForSignedInt(bitSize)) {
+			throw new IllegalArgumentException("bit size [" + bitSize + "] must be in [1,32] for signed int values");
+		}
 		return true;
 	}
 
@@ -653,8 +658,9 @@ public final class NumbersUtils {
 	 *             if a signed long value can't be read over the specified number of bits, i.e. if it is not in [1,64].
 	 */
 	public static boolean checkBitSizeForSignedLong(final int bitSize) {
-		if (!isValidBitSizeForSignedLong(bitSize)) { throw new IllegalArgumentException(
-				"bit size [" + bitSize + "] must be in [1,64] for signed long values"); }
+		if (!isValidBitSizeForSignedLong(bitSize)) {
+			throw new IllegalArgumentException("bit size [" + bitSize + "] must be in [1,64] for signed long values");
+		}
 		return true;
 	}
 
@@ -665,8 +671,9 @@ public final class NumbersUtils {
 	 *             [1,31].
 	 */
 	public static boolean checkBitSizeForUnsignedInt(final int bitSize) {
-		if (!isValidBitSizeForUnsignedInt(bitSize)) { throw new IllegalArgumentException(
-				"bit size [" + bitSize + "] must be in [1,31] for unsigned int values"); }
+		if (!isValidBitSizeForUnsignedInt(bitSize)) {
+			throw new IllegalArgumentException("bit size [" + bitSize + "] must be in [1,31] for unsigned int values");
+		}
 		return true;
 	}
 
@@ -677,8 +684,9 @@ public final class NumbersUtils {
 	 *             [1,63].
 	 */
 	public static boolean checkBitSizeForUnsignedLong(final int bitSize) {
-		if (!isValidBitSizeForUnsignedLong(bitSize)) { throw new IllegalArgumentException(
-				"bit size [" + bitSize + "] must be in [1,63] for unsigned long values"); }
+		if (!isValidBitSizeForUnsignedLong(bitSize)) {
+			throw new IllegalArgumentException("bit size [" + bitSize + "] must be in [1,63] for unsigned long values");
+		}
 		return true;
 	}
 
@@ -1368,8 +1376,9 @@ public final class NumbersUtils {
 			// Some bits greater than 2^31 that might cause overflow
 			// Check the result using the divide operator
 			// and check for the special case of Long.MIN_VALUE * -1
-			if (b != 0 && prod / b != a
-					|| a == Long.MIN_VALUE && b == -1) { throw new ArithmeticException("overflow: " + a + "*" + b); }
+			if (b != 0 && prod / b != a || a == Long.MIN_VALUE && b == -1) {
+				throw new ArithmeticException("overflow: " + a + "*" + b);
+			}
 		}
 		return prod;
 	}
@@ -1402,8 +1411,9 @@ public final class NumbersUtils {
 			// Some bits greater than 2^31 that might cause overflow
 			// Check the result using the divide operator
 			// and check for the special case of Long.MIN_VALUE * -1
-			if (b != 0 && prod / b != a
-					|| a == Long.MIN_VALUE && b == -1) { return (a ^ b) >= 0 ? Long.MAX_VALUE : Long.MIN_VALUE; }
+			if (b != 0 && prod / b != a || a == Long.MIN_VALUE && b == -1) {
+				return (a ^ b) >= 0 ? Long.MAX_VALUE : Long.MIN_VALUE;
+			}
 		}
 		return prod;
 	}
@@ -1803,8 +1813,10 @@ public final class NumbersUtils {
 	 *             if the specified radix is not in [2,36].
 	 */
 	public static boolean checkRadix(final int radix) {
-		if (!isInRange(Character.MIN_RADIX, Character.MAX_RADIX, radix)) { throw new IllegalArgumentException(
-				"radix [" + radix + "] must be in [" + Character.MIN_RADIX + "," + Character.MAX_RADIX + "]"); }
+		if (!isInRange(Character.MIN_RADIX, Character.MAX_RADIX, radix)) {
+			throw new IllegalArgumentException(
+					"radix [" + radix + "] must be in [" + Character.MIN_RADIX + "," + Character.MAX_RADIX + "]");
+		}
 		return true;
 	}
 
@@ -2393,105 +2405,105 @@ public final class NumbersUtils {
 	 * @return String representing the specified value, not in "computerized scientific notation", which
 	 *         Double.toString(double) uses for non-infinite values, when |value| < 1e-3 or |value| >= 1e7.
 	 */
-	public static String toStringNoCSN(final double value) {
-		// Quick case.
-		// Should also work with long instead of int,
-		// but less obvious (due to roundings...),
-		// and we just want to speed up the more common
-		// case of "small" integer values.
-		final int intValue = (int) value;
-		if (value == intValue) {
-			if (value == 0.0) {
-				if (Double.doubleToRawLongBits(value) < 0) {
-					return "-0.0";
-				} else {
-					return "0.0";
-				}
-			} else {
-				return Integer.toString(intValue) + ".0";
-			}
-		}
-
-		final String raw = Double.toString(value);
-		final double abs = Math.abs(value);
-		if (abs >= NO_CSN_MAX_BOUND_EXCL) {
-			if (abs == Double.POSITIVE_INFINITY) { return raw; }
-			/*
-			 * 0123456789 1.234567E5 ===> 123456.7 1.23456E5 ===> 123456.0 (adding 0) 1.23E5 ===> 123000.0 1.0E5 ===>
-			 * 100000.0
-			 */
-			// "." close to start, so using indexOf.
-			final int dotIndex = raw.indexOf('.');
-			// "E" close to end, so using lastIndexOf.
-			final int eIndex = raw.lastIndexOf('E');
-			final int powerOfTen = Integer.parseInt(raw.substring(eIndex + 1));
-			final int nbrOfSignificantLoDigits = eIndex - dotIndex - 1;
-			final int nbrOfZerosToAddBeforeDot = powerOfTen - nbrOfSignificantLoDigits;
-
-			int start;
-			int end;
-
-			final StringBuilder sb = new StringBuilder();
-			sb.append(raw, 0, dotIndex);
-			if (nbrOfZerosToAddBeforeDot >= 0) {
-				// Can copy all digits that were between '.' and 'E'.
-				sb.append(raw, dotIndex + 1, eIndex);
-				for (int i = 0; i < nbrOfZerosToAddBeforeDot; i++) {
-					sb.append('0');
-				}
-				sb.append(".0");
-			} else {
-				start = dotIndex + 1;
-				sb.append(raw, start, end = start + powerOfTen);
-
-				sb.append('.');
-
-				start = end;
-				sb.append(raw, start, end = eIndex);
-			}
-			return sb.toString();
-		} else if (abs < NO_CSN_MIN_BOUND_INCL) {
-			// Not +-0.0 since already handled.
-			/*
-			 * 01234567 1.234E-4 ===> 0.0001234 1.0E-4 ===> 0.0001
-			 */
-			// "." close to start, so using indexOf.
-			final int dotIndex = raw.indexOf('.');
-			// "E" close to end, so using lastIndexOf.
-			final int eIndex = raw.lastIndexOf('E');
-			// Negative.
-			final int powerOfTen = Integer.parseInt(raw.substring(eIndex + 1));
-			final int nbrOfZerosToAddAfterDot = -powerOfTen - 1;
-
-			final StringBuilder sb = new StringBuilder();
-			if (value < 0.0) {
-				sb.append("-0.");
-			} else {
-				sb.append("0.");
-			}
-			for (int i = 0; i < nbrOfZerosToAddAfterDot; i++) {
-				sb.append('0');
-			}
-			// First raw digit.
-			sb.append(raw, dotIndex - 1, dotIndex);
-			if (eIndex == dotIndex + 2 && raw.charAt(dotIndex + 1) == '0') {
-				// Char past dot is alone and '0': no need to add it.
-			} else {
-				// Raw digits that were past dot.
-				sb.append(raw, dotIndex + 1, eIndex);
-			}
-			return sb.toString();
-		} else {
-			// abs in [0.001,1e7[.
-			if (abs < 1.0 && raw.charAt(raw.length() - 1) == '0') {
-				// Workaround for bug 4428022 (Double.toString(0.004) returns
-				// "0.0040", same with 0.001 etc.).
-				return raw.substring(0, raw.length() - 1);
-			} else {
-				return raw;
-			}
-		}
-	}
+	// public static String toStringNoCSN(final double value) {
+	// // Quick case.
+	// // Should also work with long instead of int,
+	// // but less obvious (due to roundings...),
+	// // and we just want to speed up the more common
+	// // case of "small" integer values.
+	// final int intValue = (int) value;
+	// if (value == intValue) {
+	// if (value == 0.0) {
+	// if (Double.doubleToRawLongBits(value) < 0) {
+	// return "-0.0";
+	// } else {
+	// return "0.0";
+	// }
+	// } else {
+	// return Integer.toString(intValue) + ".0";
+	// }
+	// }
+	//
+	// final String raw = Double.toString(value);
+	// final double abs = Math.abs(value);
+	// if (abs >= NO_CSN_MAX_BOUND_EXCL) {
+	// if (abs == Double.POSITIVE_INFINITY) { return raw; }
+	// /*
+	// * 0123456789 1.234567E5 ===> 123456.7 1.23456E5 ===> 123456.0 (adding 0) 1.23E5 ===> 123000.0 1.0E5 ===>
+	// * 100000.0
+	// */
+	// // "." close to start, so using indexOf.
+	// final int dotIndex = raw.indexOf('.');
+	// // "E" close to end, so using lastIndexOf.
+	// final int eIndex = raw.lastIndexOf('E');
+	// final int powerOfTen = Integer.parseInt(raw.substring(eIndex + 1));
+	// final int nbrOfSignificantLoDigits = eIndex - dotIndex - 1;
+	// final int nbrOfZerosToAddBeforeDot = powerOfTen - nbrOfSignificantLoDigits;
+	//
+	// int start;
+	// int end;
+	//
+	// final StringBuilder sb = new StringBuilder();
+	// sb.append(raw, 0, dotIndex);
+	// if (nbrOfZerosToAddBeforeDot >= 0) {
+	// // Can copy all digits that were between '.' and 'E'.
+	// sb.append(raw, dotIndex + 1, eIndex);
+	// for (int i = 0; i < nbrOfZerosToAddBeforeDot; i++) {
+	// sb.append('0');
+	// }
+	// sb.append(".0");
+	// } else {
+	// start = dotIndex + 1;
+	// sb.append(raw, start, end = start + powerOfTen);
+	//
+	// sb.append('.');
+	//
+	// start = end;
+	// sb.append(raw, start, end = eIndex);
+	// }
+	// return sb.toString();
+	// } else if (abs < NO_CSN_MIN_BOUND_INCL) {
+	// // Not +-0.0 since already handled.
+	// /*
+	// * 01234567 1.234E-4 ===> 0.0001234 1.0E-4 ===> 0.0001
+	// */
+	// // "." close to start, so using indexOf.
+	// final int dotIndex = raw.indexOf('.');
+	// // "E" close to end, so using lastIndexOf.
+	// final int eIndex = raw.lastIndexOf('E');
+	// // Negative.
+	// final int powerOfTen = Integer.parseInt(raw.substring(eIndex + 1));
+	// final int nbrOfZerosToAddAfterDot = -powerOfTen - 1;
+	//
+	// final StringBuilder sb = new StringBuilder();
+	// if (value < 0.0) {
+	// sb.append("-0.");
+	// } else {
+	// sb.append("0.");
+	// }
+	// for (int i = 0; i < nbrOfZerosToAddAfterDot; i++) {
+	// sb.append('0');
+	// }
+	// // First raw digit.
+	// sb.append(raw, dotIndex - 1, dotIndex);
+	// if (eIndex == dotIndex + 2 && raw.charAt(dotIndex + 1) == '0') {
+	// // Char past dot is alone and '0': no need to add it.
+	// } else {
+	// // Raw digits that were past dot.
+	// sb.append(raw, dotIndex + 1, eIndex);
+	// }
+	// return sb.toString();
+	// } else {
+	// // abs in [0.001,1e7[.
+	// if (abs < 1.0 && raw.charAt(raw.length() - 1) == '0') {
+	// // Workaround for bug 4428022 (Double.toString(0.004) returns
+	// // "0.0040", same with 0.001 etc.).
+	// return raw.substring(0, raw.length() - 1);
+	// } else {
+	// return raw;
+	// }
+	// }
+	// }
 
 	// --------------------------------------------------------------------------
 	// PRIVATE METHODS
@@ -2558,9 +2570,10 @@ public final class NumbersUtils {
 	 */
 
 	private static boolean checkBitPositions(final int firstBitPos, final int lastBitPosExcl, final int bitSize) {
-		if (firstBitPos < 0 || firstBitPos > lastBitPosExcl
-				|| lastBitPosExcl > bitSize) { throw new IllegalArgumentException("bit positions (first=" + firstBitPos
-						+ ",lastExcl=" + lastBitPosExcl + ") must verify 0 <= first <= lastExcl <= " + bitSize); }
+		if (firstBitPos < 0 || firstBitPos > lastBitPosExcl || lastBitPosExcl > bitSize) {
+			throw new IllegalArgumentException("bit positions (first=" + firstBitPos + ",lastExcl=" + lastBitPosExcl
+					+ ") must verify 0 <= first <= lastExcl <= " + bitSize);
+		}
 		return true;
 	}
 

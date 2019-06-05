@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaGridFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaGridFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+// ArcGridReader still requires input streams
 import java.io.StringBufferInputStream;
 import java.nio.channels.FileChannel;
 import java.util.Scanner;
@@ -293,27 +294,30 @@ public class GamaGridFile extends GamaGisFile {
 
 	}
 
-	@doc (value= "This file constructor allows to read a asc file or a tif (geotif) file",
-			examples = {
-				@example(value = "file f <- grid_file(\"file.asc\");", isExecutable = false)
-			})
-	
+	@doc (
+			value = "This file constructor allows to read a asc file or a tif (geotif) file",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.asc\");",
+					isExecutable = false) })
+
 	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
 
-	@doc (value= "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code, as an int (epsg code)",
-			examples = {
-				@example(value = "file f <- grid_file(\"file.asc\", 32648);", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code, as an int (epsg code)",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.asc\", 32648);",
+					isExecutable = false) })
 	public GamaGridFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
 
-	@doc (value= "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code (epg,...,), as a string ",
-			examples = {
-				@example(value = "file f <- grid_file(\"file.asc\",\"EPSG:32648\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code (epg,...,), as a string ",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.asc\",\"EPSG:32648\");",
+					isExecutable = false) })
 	public GamaGridFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
@@ -362,7 +366,7 @@ public class GamaGridFile extends GamaGisFile {
 		// getting name for the prj file
 		final String sourceAsString;
 		sourceAsString = source.getAbsolutePath();
-		final int index = sourceAsString.lastIndexOf(".");
+		final int index = sourceAsString.lastIndexOf('.');
 		final StringBuffer prjFileName;
 		if (index == -1) {
 			prjFileName = new StringBuffer(sourceAsString);

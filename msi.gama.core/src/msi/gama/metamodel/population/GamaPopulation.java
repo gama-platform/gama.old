@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.population.GamaPopulation.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.population.GamaPopulation.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
@@ -80,7 +80,6 @@ import msi.gaml.types.GamaTopologyType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
-import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 6 sept. 2010
@@ -197,10 +196,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return GamaExecutorService.step(scope, this, getSpecies());
 	}
 
-	@Override
-	public StreamEx<T> stream(final IScope scope) {
-		return super.stream(scope);
-	}
+	// @Override
+	// public StreamEx<T> stream(final IScope scope) {
+	// return super.stream(scope);
+	// }
 
 	/**
 	 * Take copy into account and always creates a list (necessary for #2254)
@@ -299,7 +298,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	/**
 	 * Special case for creating agents directly from geometries
-	 * 
+	 *
 	 * @param scope
 	 * @param number
 	 * @param initialValues
@@ -542,8 +541,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
 		exp = species.getFacet(FILES);
-		// AD WARNING: The following line is really UNSAFE !!!
-		final IList<GamaGridFile> files = (IList<GamaGridFile>) (exp != null ? exp.value(scope) : null);
+		IList<GamaGridFile> files = null;
+		if (exp != null) {
+			files = Cast.asList(scope, exp.value(scope));
+		}
 		GridTopology result;
 		if (files != null && !files.isEmpty()) {
 			result = new GridTopology(scope, host, files, isTorus, usesVN, useIndividualShapes, useNeighborsCache,
@@ -577,11 +578,11 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public IMacroAgent getHost() {
 		return host;
 	}
-
-	@Override
-	public Iterator<T> iterator() {
-		return super.iterator();
-	}
+	//
+	// @Override
+	// public Iterator<T> iterator() {
+	// return super.iterator();
+	// }
 
 	@Override
 	public final boolean equals(final Object o) {
@@ -738,23 +739,22 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	/**
 	 * Method getAgents()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 		return GamaListFactory.create(scope, getGamlType().getContentType(), GamaPopulation.allLivingAgents(this));
 	}
-	
+
 	@Override
 	public boolean hasAgentList() {
 		return true;
 	}
-	
 
 	/**
 	 * Method accept()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
 	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
 	 */
@@ -772,7 +772,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	/**
 	 * Method filter()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
 	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
 	 */

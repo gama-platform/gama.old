@@ -44,7 +44,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class DeleteResourceAction extends SelectionListenerAction {
@@ -170,8 +170,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
 		final IStructuredSelection selection = getStructuredSelection();
-		if (selection.toList().stream()
-				.anyMatch(each -> (each instanceof LinkedFile))) { return Collections.EMPTY_LIST; }
+		if (selection.toList().stream().anyMatch(each -> (each instanceof LinkedFile))) {
+			return Collections.EMPTY_LIST;
+		}
 		final List<IResource> list = new ArrayList<>();
 		for (final IResource r : super.getSelectedResources()) {
 			list.add(r);
@@ -247,7 +248,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), runnable);
 	}
 
-	private static List<IEditorReference> getMatchingEditors(final List<? extends IResource> resourceRoots,
+	static List<IEditorReference> getMatchingEditors(final List<? extends IResource> resourceRoots,
 			final IWorkbenchWindow w, final boolean deletedOnly) {
 		final List<IEditorReference> toClose = new ArrayList<>();
 		final IEditorReference[] editors = getEditors(w);
@@ -264,7 +265,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return toClose;
 	}
 
-	private static IEditorReference[] getEditors(final IWorkbenchWindow w) {
+	static IEditorReference[] getEditors(final IWorkbenchWindow w) {
 		if (w != null) {
 			final IWorkbenchPage page = w.getActivePage();
 			if (page != null) { return page.getEditorReferences(); }
@@ -272,7 +273,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return new IEditorReference[0];
 	}
 
-	private static IResource getAdapter(final IEditorReference ref) {
+	static IResource getAdapter(final IEditorReference ref) {
 		IEditorInput input;
 		try {
 			input = ref.getEditorInput();
@@ -291,14 +292,14 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return CloseResourceAction.getAdapter(input, IResource.class);
 	}
 
-	private static boolean belongsTo(final List<? extends IResource> roots, final IResource leaf) {
+	static boolean belongsTo(final List<? extends IResource> roots, final IResource leaf) {
 		for (final IResource resource : roots) {
 			if (resource.contains(leaf)) { return true; }
 		}
 		return false;
 	}
 
-	private static void closeEditors(final List<IEditorReference> toClose, final IWorkbenchWindow w) {
+	static void closeEditors(final List<IEditorReference> toClose, final IWorkbenchWindow w) {
 		final IWorkbenchPage page = w.getActivePage();
 		if (page == null) { return; }
 		page.closeEditors(toClose.toArray(new IEditorReference[toClose.size()]), false);

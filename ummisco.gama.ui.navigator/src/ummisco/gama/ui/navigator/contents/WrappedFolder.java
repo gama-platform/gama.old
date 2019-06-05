@@ -30,9 +30,8 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 		if (modelsCount == NOT_COMPUTED) {
 			super.countModels();
 			final boolean isExternal = getName().equals("external");
-			image = GamaIcons.create(
-					isExternal ? "file.svn2" : modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL)
-					.image();
+			image = GamaIcons.create(isExternal ? "navigator/file.svn2"
+					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
 			font = modelsCount == 0 ? GamaFonts.getResourceFont() : GamaFonts.getNavigFolderFont();
 			canBeDecorated = modelsCount > 0;
 		}

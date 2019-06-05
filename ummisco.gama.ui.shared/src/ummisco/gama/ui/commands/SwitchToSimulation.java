@@ -19,6 +19,6 @@ public class SwitchToSimulation extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		return PerspectiveHelper.openSimulationPerspective();
+		return PerspectiveHelper.switchToSimulationPerspective();
 	}
 }

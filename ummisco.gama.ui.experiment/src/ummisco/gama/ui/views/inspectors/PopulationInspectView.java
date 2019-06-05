@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
@@ -46,6 +46,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
@@ -140,6 +142,15 @@ public class PopulationInspectView extends GamaViewPart
 		}
 
 	}
+	/**
+	 * Added to address Issue #2752
+	 */
+	@Override
+	public void init(final IViewSite site) throws PartInitException {
+		super.init(site);
+		this.setTitleImage(GamaIcons.create("view.browser2").image());
+	}
+
 
 	final private AgentContentProvider provider = new AgentContentProvider();
 
@@ -155,8 +166,9 @@ public class PopulationInspectView extends GamaViewPart
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				final TableViewer v = viewer;
-				if (v == null || v.getTable() == null || v.getTable().isDisposed()
-						|| getOutput() == null) { return Status.CANCEL_STATUS; }
+				if (v == null || v.getTable() == null || v.getTable().isDisposed() || getOutput() == null) {
+					return Status.CANCEL_STATUS;
+				}
 				if (!locked) {
 					final IAgent[] agents = getOutput().getLastValue();
 					if (Arrays.equals(elements, agents)) {
@@ -241,11 +253,14 @@ public class PopulationInspectView extends GamaViewPart
 		// this.setContentDescription(StringUtils.capitalize(name) + "
 		// population in macro-agent " +
 		// getOutput().getRootAgent().getName());
+		// WorkbenchHelper.runInUI("", 50, (m) -> {
 		if (!complete) {
 			setPartName(getOutput().getName() + ": set of " + name);
 		} else {
 			setPartName(getOutput().getName() + ": population of " + name);
 		}
+		// });
+
 	}
 
 	private void createMenus(final Composite parent) {
@@ -716,36 +731,36 @@ public class PopulationInspectView extends GamaViewPart
 				false);
 		final Table table = viewer.getTable();
 		final TableColumn[] columns = table.getColumns();
-		final CsvWriter writer = new CsvWriter(exportFileName);
-		// AD 2/1/16 Replaces the comma by ';' to properly output points and
-		// lists
-		writer.setDelimiter(';');
-		writer.setUseTextQualifier(false);
+		try (final CsvWriter writer = new CsvWriter(exportFileName);) {
+			// AD 2/1/16 Replaces the comma by ';' to properly output points and
+			// lists
+			writer.setDelimiter(';');
+			writer.setUseTextQualifier(false);
 
-		final List<String[]> contents = new ArrayList<>();
-		final String[] headers = new String[columns.length];
-		int columnIndex = 0;
-		for (final TableColumn column : columns) {
-			headers[columnIndex++] = column.getText();
-		}
-		contents.add(headers);
-		final TableItem[] items = table.getItems();
-		for (final TableItem item : items) {
-			final String[] row = new String[columns.length];
-			for (int i = 0; i < columns.length; i++) {
-				row[i] = item.getText(i);
+			final List<String[]> contents = new ArrayList<>();
+			final String[] headers = new String[columns.length];
+			int columnIndex = 0;
+			for (final TableColumn column : columns) {
+				headers[columnIndex++] = column.getText();
 			}
-			contents.add(row);
-		}
-		try {
-			for (final String[] ss : contents) {
-				writer.writeRecord(ss);
+			contents.add(headers);
+			final TableItem[] items = table.getItems();
+			for (final TableItem item : items) {
+				final String[] row = new String[columns.length];
+				for (int i = 0; i < columns.length; i++) {
+					row[i] = item.getText(i);
+				}
+				contents.add(row);
 			}
+			try {
+				for (final String[] ss : contents) {
+					writer.writeRecord(ss);
+				}
 
-		} catch (final IOException e) {
-			throw GamaRuntimeException.create(e, getScope());
-		} finally {
-			writer.close();
+			} catch (final IOException e) {
+				throw GamaRuntimeException.create(e, getScope());
+
+			}
 		}
 	}
 
@@ -813,7 +828,7 @@ public class PopulationInspectView extends GamaViewPart
 
 	/**
 	 * Method pauseChanged()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#pauseChanged()
 	 */
 	@Override
@@ -821,7 +836,7 @@ public class PopulationInspectView extends GamaViewPart
 
 	/**
 	 * Method synchronizeChanged()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override

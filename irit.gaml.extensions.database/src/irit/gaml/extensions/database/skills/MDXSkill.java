@@ -21,7 +21,6 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
@@ -159,7 +158,7 @@ public class MDXSkill extends Skill {
 		String selectStr = "SELECT " + onColumnStr + " ON COLUMNS , " + onRowStr + " ON ROWS FROM " + fromStr;
 
 		MdxConnection mdxConn;
-		IList<Object> repRequest = GamaListFactory.create();
+		IList<Object> repRequest;
 		try {
 			if (whereStr != null) {
 				selectStr = selectStr + " WHERE " + whereStr;

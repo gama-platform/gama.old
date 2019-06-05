@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.core.GamaHeadlessException;
@@ -36,6 +37,11 @@ public class JobPlan {
 					&& ((JobPlanExperimentID) o).experimentName.equals(this.experimentName);
 		}
 
+		@Override
+		public int hashCode() {
+			return Objects.hash(modelName, experimentName);
+		}
+
 		public JobPlanExperimentID(final String modelN, final String expN) {
 			this.modelName = modelN;
 			this.experimentName = expN;
@@ -48,15 +54,15 @@ public class JobPlan {
 	IModel model = null;
 
 	public JobPlan() {
-		this.availableExperimentations = new HashMap<String, List<IExperimentJob>>();
-		this.choosenSeed = new ArrayList<Double>();
-		this.originalJobs = new HashMap<JobPlanExperimentID, IExperimentJob>();
+		this.availableExperimentations = new HashMap<>();
+		this.choosenSeed = new ArrayList<>();
+		this.originalJobs = new HashMap<>();
 	}
 
 	public List<IExperimentJob> getJobsWithName(final String name) {
 		List<IExperimentJob> res = this.availableExperimentations.get(name);
 		if (res == null) {
-			res = new ArrayList<IExperimentJob>();
+			res = new ArrayList<>();
 			this.availableExperimentations.put(name, res);
 		}
 		return res;
@@ -97,7 +103,7 @@ public class JobPlan {
 
 	public List<IExperimentJob> constructJobWithName(final IExperimentJob originalExperiment, final long[] seeds,
 			final long finalStep, final List<Parameter> in, final List<Output> out) {
-		final List<IExperimentJob> res = new ArrayList<IExperimentJob>();
+		final List<IExperimentJob> res = new ArrayList<>();
 		for (final long sd : seeds) {
 			final IExperimentJob job = new ExperimentJob((ExperimentJob) originalExperiment);
 			job.setSeed(sd);
@@ -126,7 +132,7 @@ public class JobPlan {
 	}
 
 	public List<IExperimentJob> getBuiltPlan() {
-		final List<IExperimentJob> res = new ArrayList<IExperimentJob>();
+		final List<IExperimentJob> res = new ArrayList<>();
 		for (final List<IExperimentJob> ll : this.availableExperimentations.values()) {
 			res.addAll(ll);
 		}
@@ -135,7 +141,7 @@ public class JobPlan {
 
 	private static List<IExperimentJob> loadAndBuildJobs(final IModel model) {
 		final ModelDescription modelDescription = model.getDescription().getModelDescription();
-		final List<IExperimentJob> res = new ArrayList<IExperimentJob>();
+		final List<IExperimentJob> res = new ArrayList<>();
 
 		@SuppressWarnings ("unchecked") final Collection<ExperimentDescription> experiments =
 				(Collection<ExperimentDescription>) modelDescription.getExperiments();

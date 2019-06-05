@@ -21,119 +21,116 @@ import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.OSUtils;
 
 public class ConvertToPDF {
-	
-	
-	public static String getCommandLine() 
-			throws ParserConfigurationException, SAXException, IOException{
+
+	public static String getCommandLine() throws ParserConfigurationException, SAXException, IOException {
 		FileInputStream in;
-		Properties prop2 = new Properties();
+		final Properties prop2 = new Properties();
 		try {
-			in = new FileInputStream(Constants.PANDOC_FOLDER+ File.separator + "param.properties");
+			in = new FileInputStream(Constants.PANDOC_FOLDER + File.separator + "param.properties");
 			prop2.load(in);
-		} catch (IOException e) {
-    		e.printStackTrace();
+		} catch (final IOException e) {
+			e.printStackTrace();
 		}
-		
-		TOCManager toc = new TOCManager(Constants.TOC_FILE);
+
+		final TOCManager toc = new TOCManager(Constants.TOC_FILE);
 		toc.createPartFiles();
 		toc.createSubpartFiles();
-		String files = toc.getTocFilesString();
+		final String files = toc.getTocFilesString();
 
-		File template = new File(Constants.PANDOC_FOLDER+File.separator+"mytemplate.tex");
-		File pdfFile = new File(Constants.DOCGAMA_PDF);
-		
-		String command = Constants.CMD_PANDOC+" --template="+template.getAbsolutePath()+" --latex-engine="+Constants.CMD_PDFLATEX+" --listings --toc";
+		final File template = new File(Constants.PANDOC_FOLDER + File.separator + "mytemplate.tex");
+		final File pdfFile = new File(Constants.DOCGAMA_PDF);
+
+		String command = Constants.CMD_PANDOC + " --template=" + template.getAbsolutePath() + " --latex-engine="
+				+ Constants.CMD_PDFLATEX + " --listings --toc";
 		command = command + " " + files;
-		for(Object s : prop2.keySet()) {
+		for (final Object s : prop2.keySet()) {
 			command = command + " " + "--variable " + s + "=" + prop2.getProperty(s.toString());
 		}
-		command = command + " -o " + pdfFile.getAbsolutePath() ;
-		
+		command = command + " -o " + pdfFile.getAbsolutePath();
+
 		System.out.println("Command " + command);
-		
+
 		return command;
-		
+
 	}
-	
-	public static void convertMacOs(){
+
+	public static void convertMacOs() {
 		System.out.println("Start of convert for MacOS");
 		String line;
 		try {
-			String[] env = { Constants.PATH };
+			final String[] env = { Constants.PATH };
 
-			Process p = Runtime.getRuntime().exec(getCommandLine(), env, new File(Constants.WIKI_FOLDER));
+			final Process p = Runtime.getRuntime().exec(getCommandLine(), env, new File(Constants.WIKI_FOLDER));
 
-			BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			while ((line = bri.readLine()) != null) {
-				System.out.println(line);
+			try (BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));) {
+				while ((line = bri.readLine()) != null) {
+					System.out.println(line);
+				}
+				bri.close();
+				while ((line = bre.readLine()) != null) {
+					System.out.println(line);
+				}
+				bre.close();
+				p.waitFor();
+				System.out.println("PDF generated.");
 			}
-			bri.close();
-			while ((line = bre.readLine()) != null) {
-				System.out.println(line);
-			}
-			bre.close();
-			p.waitFor();
-			System.out.println("PDF generated.");
-		} catch (Exception err) {
+		} catch (final Exception err) {
 			err.printStackTrace();
-		}		
+		}
 	}
-	
-	public static void convertWindows(){
+
+	public static void convertWindows() {
 		System.out.println("Start of convert for Windows");
-		
+
 		String line;
 		try {
-//			String[] env = { Constants.PATH };
-			
+			// String[] env = { Constants.PATH };
+
 			// build file .bat
-			File batFile = new File("batFile.bat");
+			final File batFile = new File("batFile.bat");
 			Files.deleteIfExists(batFile.toPath());
 			if (batFile.createNewFile() == false) {
 				System.err.println("Impossible to create the batFile...");
 				return;
 			}
-			List<String> lines = Arrays.asList("cd "+Constants.WIKI_FOLDER+" && "+getCommandLine() );
-			Path file = Paths.get("batFile.bat");
+			final List<String> lines = Arrays.asList("cd " + Constants.WIKI_FOLDER + " && " + getCommandLine());
+			final Path file = Paths.get("batFile.bat");
 			Files.write(file, lines, Charset.forName("UTF-8"));
-			
-			// run the bat file
-			Process p = Runtime.getRuntime().exec("cmd /c start batFile.bat && exit");
 
-			BufferedReader bri = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
-			BufferedReader bre = new BufferedReader(new InputStreamReader(
-					p.getErrorStream()));
-			while ((line = bri.readLine()) != null) {
-				System.out.println(line);
+			// run the bat file
+			final Process p = Runtime.getRuntime().exec("cmd /c start batFile.bat && exit");
+
+			try (final BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					final BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));) {
+				while ((line = bri.readLine()) != null) {
+					System.out.println(line);
+				}
+				while ((line = bre.readLine()) != null) {
+					System.out.println(line);
+				}
+				p.waitFor();
+				System.out.println("PDF generated.");
 			}
-			bri.close();
-			while ((line = bre.readLine()) != null) {
-				System.out.println(line);
-			}
-			bre.close();
-			p.waitFor();
-			System.out.println("PDF generated.");
-		} catch (Exception err) {
+		} catch (final Exception err) {
 			err.printStackTrace();
 		}
 	}
 
 	public static void convert() {
-		if(OSUtils.isWindows()) {
+		if (OSUtils.isWindows()) {
 			convertWindows();
-		} else if(OSUtils.isMacOS()) {
+		} else if (OSUtils.isMacOS()) {
 			convertMacOs();
 		} else {
 			throw new RuntimeException("This OS is not managed yet.");
 		}
-		
+
 	}
-	
-	public static void main(String[] argc) throws ParserConfigurationException, SAXException, IOException {
-		
+
+	public static void main(final String[] argc) throws ParserConfigurationException, SAXException, IOException {
+
 		convert();
-	
-	}	
+
+	}
 }

@@ -55,7 +55,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
-	static Level LEVEL = Level.ALL;
+	// static Level LEVEL = Level.ALL;
 	final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<>();
 
 	static {
@@ -91,7 +91,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public boolean copyToClipboard(String text) {
+	public boolean copyToClipboard(final String text) {
 		return false;
 	}
 
@@ -145,7 +145,7 @@ public class HeadlessListener implements IGui {
 		return true;
 	}
 
-	@SuppressWarnings ("rawtypes") static Map<String, Class> displayClasses = null;
+	// @SuppressWarnings ("rawtypes") static Map<String, Class> displayClasses = null;
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... objects) {
@@ -408,8 +408,7 @@ public class HeadlessListener implements IGui {
 	public void setFocusOn(final IShape o) {}
 
 	@Override
-	public void applyLayout(final IScope scope, final Object layout, final Boolean keepTabs, final Boolean keepToolbars,
-			final boolean showEditors) {}
+	public void applyLayout(final IScope scope, final Object layout) {}
 
 	@Override
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list) {}
@@ -476,18 +475,6 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void refreshNavigator() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void hideScreen() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showScreen() {
 		// TODO Auto-generated method stub
 
 	}

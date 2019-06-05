@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.graph.NBAStarPathfinder.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.graph.NBAStarPathfinder.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
@@ -60,8 +60,8 @@ public final class NBAStarPathfinder<V, E> {
 	private V sourceNode;
 	private V targetNode;
 
-	protected GamaGraph<V, E> graph;
-	protected boolean isSpatialGraph;
+	GamaGraph<V, E> graph;
+	boolean isSpatialGraph;
 
 	public NBAStarPathfinder(final GamaGraph<V, E> graph, final boolean stopWhenPathFound) {
 		this.graph = graph;
@@ -235,7 +235,7 @@ public final class NBAStarPathfinder<V, E> {
 
 	/**
 	 * Reconstructs a shortest path from the data structures maintained by a <b>bidirectional</b> pathfinding algorithm.
-	 * 
+	 *
 	 * @return the shortest path object.
 	 */
 	protected IList<E> tracebackPath() {

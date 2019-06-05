@@ -193,8 +193,6 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		return cprime;
 	}
 
-	
-
 	// @Override
 	// public Double _max(final IScope scope) {
 	// Double max = -Double.MAX_VALUE;
@@ -295,11 +293,11 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		final GamaObjectMatrix mat = (GamaObjectMatrix) m;
 		return Arrays.equals(this.getMatrix(), mat.getMatrix());
 	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
+	//
+	// @Override
+	// public int hashCode() {
+	// return super.hashCode();
+	// }
 
 	@Override
 	public void _putAll(final IScope scope, final Object o) {

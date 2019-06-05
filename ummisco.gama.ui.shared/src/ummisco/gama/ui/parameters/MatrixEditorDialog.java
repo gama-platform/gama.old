@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -41,13 +41,13 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 @SuppressWarnings ({ "rawtypes" })
 public class MatrixEditorDialog extends Dialog {
 
-	private IMatrix data;
+	IMatrix data;
 
-	private Composite container = null;
-	private Table table = null;
-	private final IScope scope;
+	Composite container = null;
+	Table table = null;
+	final IScope scope;
 
-	private final Color gray = WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_GRAY);
+	final Color gray = WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_GRAY);
 
 	protected MatrixEditorDialog(final IScope scope, final Shell parentShell, final IMatrix paramValue) {
 		super(parentShell);

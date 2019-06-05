@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.GridTopology.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.grid.GridTopology.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -229,14 +229,15 @@ public class GridTopology extends AbstractTopology {
 		// agents
 		if (filter.getSpecies() == getPlaces().getCellSpecies()) {
 			// case where the filter is the complete population set
-			if (filter instanceof IPopulationSet)
+			if (filter instanceof IPopulationSet) {
 				return placesConcerned;
-			else {
+			} else {
 				// otherwise, we return only the accepted cells
-				final Set<IAgent> agents = new HashSet<IAgent>();
+				final Set<IAgent> agents = new HashSet<>();
 				for (final IAgent ag : placesConcerned) {
-					if (filter.accept(scope, null, ag))
+					if (filter.accept(scope, null, ag)) {
 						agents.add(ag);
+					}
 				}
 				return agents;
 			}
@@ -263,18 +264,18 @@ public class GridTopology extends AbstractTopology {
 		getPlaces().dispose();
 	}
 
-	@Override
-	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
-			final int k) {
-		// TODO for the moment, returns only 1 shortest path.... need to fix it!
-		return super.KpathsBetween(scope, source, target, k);
-	}
-
-	@Override
-	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
-			final int k) {
-		// TODO for the moment, returns only 1 shortest path.... need to fix it!
-		return super.KpathsBetween(scope, source, target, k);
-	}
+	// @Override
+	// public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
+	// final int k) {
+	// // TODO for the moment, returns only 1 shortest path.... need to fix it!
+	// return super.KpathsBetween(scope, source, target, k);
+	// }
+	//
+	// @Override
+	// public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+	// final int k) {
+	// // TODO for the moment, returns only 1 shortest path.... need to fix it!
+	// return super.KpathsBetween(scope, source, target, k);
+	// }
 
 }

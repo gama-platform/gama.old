@@ -46,7 +46,6 @@ import org.eclipse.ui.actions.WorkspaceAction;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.FileEditorInput;
 
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -56,7 +55,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CloseResourceAction extends WorkspaceAction implements IResourceChangeListener {
@@ -277,7 +276,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), runnable);
 	}
 
-	private static IWorkbenchWindow getActiveWindow() {
+	static IWorkbenchWindow getActiveWindow() {
 		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (w == null) {
 			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -288,7 +287,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return w;
 	}
 
-	private static List<IEditorReference> getMatchingEditors(final List<? extends IResource> resourceRoots,
+	static List<IEditorReference> getMatchingEditors(final List<? extends IResource> resourceRoots,
 			final IWorkbenchWindow w, final boolean deletedOnly) {
 		final List<IEditorReference> toClose = new ArrayList<>();
 		final IEditorReference[] editors = getEditors(w);
@@ -305,7 +304,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return toClose;
 	}
 
-	private static IEditorReference[] getEditors(final IWorkbenchWindow w) {
+	static IEditorReference[] getEditors(final IWorkbenchWindow w) {
 		if (w != null) {
 			final IWorkbenchPage page = w.getActivePage();
 			if (page != null) { return page.getEditorReferences(); }
@@ -313,7 +312,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return new IEditorReference[0];
 	}
 
-	private static IResource getAdapter(final IEditorReference ref) {
+	static IResource getAdapter(final IEditorReference ref) {
 		IEditorInput input;
 		try {
 			input = ref.getEditorInput();
@@ -331,20 +330,16 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		if (adapter != null) { return adapter; }
 		return getAdapter(input, IResource.class);
 	}
-	
-	public final static <T> T getAdapter(Object sourceObject, Class<T> adapterType) {
+
+	public final static <T> T getAdapter(final Object sourceObject, final Class<T> adapterType) {
 		Assert.isNotNull(adapterType);
-		if (sourceObject == null) {
-			return null;
-		}
-		if (adapterType.isInstance(sourceObject)) {
-			return adapterType.cast(sourceObject);
-		}
+		if (sourceObject == null) { return null; }
+		if (adapterType.isInstance(sourceObject)) { return adapterType.cast(sourceObject); }
 
 		if (sourceObject instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) sourceObject;
+			final IAdaptable adaptable = (IAdaptable) sourceObject;
 
-			T result = adaptable.getAdapter(adapterType);
+			final T result = adaptable.getAdapter(adapterType);
 			if (result != null) {
 				// Sanity-check
 				Assert.isTrue(adapterType.isInstance(result));
@@ -353,23 +348,21 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		}
 
 		if (!(sourceObject instanceof PlatformObject)) {
-			T result = Platform.getAdapterManager().getAdapter(sourceObject, adapterType);
-			if (result != null) {
-				return result;
-			}
+			final T result = Platform.getAdapterManager().getAdapter(sourceObject, adapterType);
+			if (result != null) { return result; }
 		}
 
 		return null;
 	}
-	
-	private static boolean belongsTo(final List<? extends IResource> roots, final IResource leaf) {
+
+	static boolean belongsTo(final List<? extends IResource> roots, final IResource leaf) {
 		for (final IResource resource : roots) {
 			if (resource.contains(leaf)) { return true; }
 		}
 		return false;
 	}
 
-	private static void closeEditors(final List<IEditorReference> toClose, final IWorkbenchWindow w) {
+	static void closeEditors(final List<IEditorReference> toClose, final IWorkbenchWindow w) {
 		final IWorkbenchPage page = w.getActivePage();
 		if (page == null) { return; }
 		page.closeEditors(toClose.toArray(new IEditorReference[toClose.size()]), false);

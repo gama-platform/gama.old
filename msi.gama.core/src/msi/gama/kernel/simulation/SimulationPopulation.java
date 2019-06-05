@@ -1,15 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.simulation.SimulationPopulation.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.simulation.SimulationPopulation.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	/**
 	 * Method fireAgentRemoved()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.population.GamaPopulation#fireAgentRemoved(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -83,7 +84,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 			final boolean toBeScheduled) throws GamaRuntimeException {
 		final IList<SimulationAgent> result = GamaListFactory.create(SimulationAgent.class);
-		
+
 		for (int i = 0; i < number; i++) {
 			scope.getGui().getStatus(scope).waitStatus("Initializing simulation");
 			currentSimulation = new SimulationAgent(this, currentAgentIndex++);
@@ -92,7 +93,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 			add(currentSimulation);
 			currentSimulation.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
 			if (scope.interrupted()) { return null; }
-			initSimulation(scope, currentSimulation, initialValues, isRestored, toBeScheduled);
+			initSimulation(scope, currentSimulation, initialValues, i, isRestored, toBeScheduled);
 			if (toBeScheduled) {
 				runner.add(currentSimulation);
 			}
@@ -104,23 +105,24 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	}
 
 	private void initSimulation(final IScope scope, final SimulationAgent sim,
-			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
+			final List<? extends Map<String, Object>> initialValues, final int index, final boolean isRestored,
 			final boolean toBeScheduled) {
 		scope.getGui().getStatus(scope).waitStatus("Instantiating agents");
 		if (toBeScheduled) {
 			sim.prepareGuiForSimulation(scope);
 		}
-		
-		Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(0);
-		Object firstValue =  (firstInitValues != null && !firstInitValues.isEmpty()) ? firstInitValues.values().toArray()[0] : null;
-		if(firstValue != null && firstValue instanceof SavedAgent) {
+
+		final Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(index);
+		final Object firstValue =
+				firstInitValues != null && !firstInitValues.isEmpty() ? firstInitValues.values().toArray()[0] : null;
+		if (firstValue != null && firstValue instanceof SavedAgent) {
 			sim.updateWith(scope, (SavedAgent) firstValue);
 		} else {
-			createVariablesFor(sim.getScope(), Collections.singletonList(sim), initialValues);
+			createVariablesFor(sim.getScope(), Collections.singletonList(sim), Arrays.asList(firstInitValues));
 		}
-		
+
 		if (toBeScheduled) {
-			if (isRestored || (firstValue != null && firstValue instanceof SavedAgent)) {
+			if (isRestored || firstValue != null && firstValue instanceof SavedAgent) {
 				sim.initOutputs();
 			} else {
 				sim.schedule(scope);
@@ -167,7 +169,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	/**
 	 * This method can be called by the batch experiments to temporarily stop (unschedule) a simulation
-	 * 
+	 *
 	 * @param sim
 	 */
 	public void unscheduleSimulation(final SimulationAgent sim) {

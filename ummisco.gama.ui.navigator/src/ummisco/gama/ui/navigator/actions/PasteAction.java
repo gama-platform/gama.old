@@ -11,6 +11,7 @@ package ummisco.gama.ui.navigator.actions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -85,8 +86,9 @@ public class PasteAction extends SelectionListenerAction {
 	private IContainer getTarget() {
 		final List<? extends IResource> selectedResources = getSelectedResources();
 		for (final IResource resource : selectedResources) {
-			if (resource instanceof IProject
-					&& !((IProject) resource).isOpen()) { return ResourcesPlugin.getWorkspace().getRoot(); }
+			if (resource instanceof IProject && !((IProject) resource).isOpen()) {
+				return ResourcesPlugin.getWorkspace().getRoot();
+			}
 			if (resource.getType() == IResource.FILE) { return resource.getParent(); }
 			return (IContainer) resource;
 		}
@@ -247,7 +249,9 @@ public class PasteAction extends SelectionListenerAction {
 		if (resourceData != null) {
 			// linked resources can only be pasted into projects
 			if (isLinked(resourceData) && targetResource.getType() != IResource.PROJECT
-					&& targetResource.getType() != IResource.FOLDER) { return false; }
+					&& targetResource.getType() != IResource.FOLDER) {
+				return false;
+			}
 
 			if (targetResource.getType() == IResource.FOLDER) {
 				// don't try to copy folder to self
@@ -277,7 +281,8 @@ public class PasteAction extends SelectionListenerAction {
 						container = WorkspaceModelsManager.createOrUpdateProject(f.getName());
 						final CopyFilesAndFoldersOperation op = new CopyFilesAndFoldersOperation(shell);
 						op.setVirtualFolders(false);
-						final List<File> files = Arrays.<File> asList(f.listFiles());
+						final File[] list = f.listFiles();
+						final List<File> files = list == null ? Collections.EMPTY_LIST : Arrays.<File> asList(list);
 						final List<String> names = new ArrayList<>();
 						for (final File toCopy : files) {
 							if (toCopy.getName().equals(".project")) {

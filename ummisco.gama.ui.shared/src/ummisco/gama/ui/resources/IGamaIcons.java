@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
@@ -21,25 +21,17 @@ public interface IGamaIcons {
 	// Display toolbar
 
 	public static final String DISPLAY_TOOLBAR_PAUSE = "display.pause3";
-	public static final String DISPLAY_TOOLBAR_KNOB = "display.knob2";
-	public static final String DISPLAY_TOOLBAR_SLIDER = "display.slider2";
 	public static final String DISPLAY_TOOLBAR_SYNC = "display.sync3";
 	public static final String DISPLAY_TOOLBAR_SNAPSHOT = "display.snapshot2";
 	public static final String DISPLAY_TOOLBAR_ZOOMIN = "display.zoomin2";
 	public static final String DISPLAY_TOOLBAR_CSVEXPORT = "menu.saveas2";
 	public static final String DISPLAY_TOOLBAR_ZOOMOUT = "display.zoomout2";
 	public static final String DISPLAY_TOOLBAR_ZOOMFIT = "display.zoomfit2";
-	public static final String DISPLAY_TOOLBAR_AGENTS = "display.agents2";
-	public static final String DISPLAY_TOOLBAR_OPENGL = "display.opengl2";
-	public static final String DISPLAY_TOOLBAR_CAMERA = "display.camera2";
-	public static final String DISPLAY_TOOLBAR_ROTATE = "display.rotate2";
-	public static final String DISPLAY_TOOLBAR_SPLIT = "display.split2";
-	public static final String DISPLAY_TOOLBAR_TRIANGULATE = "display.triangulate2";
 
 	// Menus
 
 	public static final String MENU_BROWSE = "menu.browse2";;
-	public static final String MENU_POPULATION = DISPLAY_TOOLBAR_AGENTS;
+	public static final String MENU_POPULATION = "display.agents2";
 	public static final String MENU_AGENT = "menu.agent2";
 	public static final String MENU_INSPECT = "menu.inspect2";;
 	public static final String MENU_HIGHLIGHT = "menu.highlight2";
@@ -55,7 +47,6 @@ public interface IGamaIcons {
 	public static final String LAYER_SPECIES = "layer.species2";
 	public static final String LAYER_AGENTS = "layer.agents2";
 	public static final String LAYER_GRAPHICS = "layer.graphics2";
-	public static final String LAYER_TEXT = "layer.text2";
 	public static final String LAYER_IMAGE = "layer.image2";
 	public static final String LAYER_CHART = "layer.chart2";
 
@@ -64,10 +55,6 @@ public interface IGamaIcons {
 	public static final String ACTION_REVERT = "action.revert2";
 	public static final String ACTION_CLEAR = "action.clear2";
 
-	// General toolbar
-
-	public static final String TOOLBAR_KNOB = "toolbar.knob2";
-
 	// User Panels
 
 	public static final String PANEL_CONTINUE = "panel.continue2";
@@ -75,20 +62,20 @@ public interface IGamaIcons {
 
 	// Preferences tabs. 24x24
 
-	public static final String PREFS_GENERAL = "prefs.general2";
-	public static final String PREFS_DISPLAY = "prefs.display2";
-	public static final String PREFS_EDITOR = "prefs.editor2";
-	public static final String PREFS_LIBS = "prefs.libraries2";
+	public static final String PREFS_GENERAL = "prefs/prefs.general2";
+	public static final String PREFS_DISPLAY = "prefs/prefs.display2";
+	public static final String PREFS_EDITOR = "prefs/prefs.editor2";
+	public static final String PREFS_LIBS = "prefs/prefs.libraries2";
 
 	// Navigator
 
 	public static final String FOLDER_BUILTIN = "navigator/folder.library2";
 	public static final String FOLDER_PLUGIN = "navigator/folder.plugin2";
 	public static final String FOLDER_TEST = "navigator/folder.test2";
-	public static final String FOLDER_PROJECT = "folder.user2";
-	public static final String FOLDER_MODEL = "folder.model3";
-	public static final String FOLDER_RESOURCES = "folder.resources2";
-	public static final String FILE_ICON = "file.icon2";
+	public static final String FOLDER_PROJECT = "navigator/folder.user2";
+	public static final String FOLDER_MODEL = "navigator/folder.model3";
+	public static final String FOLDER_RESOURCES = "navigator/folder.resources2";
+	public static final String FILE_ICON = "navigator/file.icon2";
 	public static final String FOLDER_USER = "navigator/folder.user";
 
 	// Editor specific
@@ -109,7 +96,7 @@ public interface IGamaIcons {
 
 	// Overlays
 
-	public static final String OVERLAY_OK = "overlay.ok2";
+	public static final String OVERLAY_OK = "navigator/overlay.ok2";
 
 	// Viewers
 

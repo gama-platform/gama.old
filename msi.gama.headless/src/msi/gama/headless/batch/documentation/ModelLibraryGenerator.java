@@ -95,24 +95,24 @@ public class ModelLibraryGenerator {
 													// which contains all the
 													// important keywords of the
 													// model.
-	static List<String> expeUsedFromTheXML = new ArrayList<String>(); // this
-																		// variable
-																		// is
-																		// just
-																		// here
-																		// to
-																		// verify
-																		// if
-																		// the
-																		// modelScreenshot.xml
-																		// is
-																		// well
-																		// formed,
-																		// and
-																		// if
-																		// all
+	static List<String> expeUsedFromTheXML = new ArrayList<>(); // this
+																// variable
+																// is
+																// just
+																// here
+																// to
+																// verify
+																// if
+																// the
+																// modelScreenshot.xml
+																// is
+																// well
+																// formed,
+																// and
+																// if
+																// all
 	// the experiments have been used.
-	static List<Path> imagesCreatedPath = new ArrayList<Path>();
+	static List<Path> imagesCreatedPath = new ArrayList<>();
 
 	private static void updatePath() {
 		outputPathToModelLibrary = wikiFolder + "/References/ModelLibrary";
@@ -138,9 +138,9 @@ public class ModelLibraryGenerator {
 		Globals.OUTPUT_PATH = args.get(args.size() - 1);
 		updatePath();
 		// get all the gaml files in the model folder
-		final ArrayList<File> listFiles = new ArrayList<File>();
+		final ArrayList<File> listFiles = new ArrayList<>();
 		for (final String path : inputPathToModelLibrary) {
-			final ArrayList<File> listFilesTmp = new ArrayList<File>();
+			final ArrayList<File> listFilesTmp = new ArrayList<>();
 			Utils.getFilesFromFolder(path, listFilesTmp);
 			for (final File f : listFilesTmp) {
 				listFiles.add(f);
@@ -218,7 +218,7 @@ public class ModelLibraryGenerator {
 		// We will destroy it as soon as the headless execution is finish)
 		// Globals.OUTPUT_PATH = "/F:/outputHeadless";
 		// build the xml and run the headless
-		final ArrayList<File> gamlFilesForScreenshot = new ArrayList<File>();
+		final ArrayList<File> gamlFilesForScreenshot = new ArrayList<>();
 		for (final File gamlFile : gamlFiles) {
 			final String gamlFilePath = gamlFile.getAbsoluteFile().toString().replace("\\", "/");
 			gamlFilesForScreenshot.add(gamlFile);
@@ -266,22 +266,22 @@ public class ModelLibraryGenerator {
 		// read all the metadatas of the model files, and extract only the
 		// "important" GAML keywords.
 		// Store those data in the map mainKeywordsMap.
-		mainKeywordsMap = new HashMap<String, String>();
-		final HashMap<String, Integer> occurenceOfKeywords = new HashMap<String, Integer>(); // key
-																								// is
-																								// gaml
-																								// world,
-																								// value
-																								// is
-																								// occurence.
-		final ArrayList<String> mostSignificantKeywords = new ArrayList<String>(); // the
-																					// list
-																					// of
-																					// the
-																					// less
-																					// employed
-																					// gaml
-																					// keywords.
+		mainKeywordsMap = new HashMap<>();
+		final HashMap<String, Integer> occurenceOfKeywords = new HashMap<>(); // key
+																				// is
+																				// gaml
+																				// world,
+																				// value
+																				// is
+																				// occurence.
+		final ArrayList<String> mostSignificantKeywords = new ArrayList<>(); // the
+																				// list
+																				// of
+																				// the
+																				// less
+																				// employed
+																				// gaml
+																				// keywords.
 		final int maxOccurenceNumber = 20; // the maximum number of occurrence
 											// for the
 											// "mostSignificantKeywordsList".
@@ -351,30 +351,30 @@ public class ModelLibraryGenerator {
 
 	private static ArrayList<String> getGAMLWords(final File file) throws IOException {
 		// returns the list of experiments
-		final ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<>();
 		String extractedStr = "";
 
-		final FileInputStream fis = new FileInputStream(file);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		try (final FileInputStream fis = new FileInputStream(file);
+				final BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
 
-		String line = null;
+			String line = null;
 
-		final String[] categoryKeywords = { "operator", "type", "statement", "skill", "architecture", "constant" };
+			final String[] categoryKeywords = { "operator", "type", "statement", "skill", "architecture", "constant" };
 
-		while ((line = br.readLine()) != null) {
-			for (final String catKeywords : categoryKeywords) {
-				extractedStr = Utils.findAndReturnRegex(line, catKeywords + "s=(.*)");
-				final String[] keywordArray = extractedStr.split("~");
-				for (String kw : keywordArray) {
-					if (catKeywords.equals("constant")) {
-						kw = "#" + kw;
+			while ((line = br.readLine()) != null) {
+				for (final String catKeywords : categoryKeywords) {
+					extractedStr = Utils.findAndReturnRegex(line, catKeywords + "s=(.*)");
+					final String[] keywordArray = extractedStr.split("~");
+					for (String kw : keywordArray) {
+						if (catKeywords.equals("constant")) {
+							kw = "#" + kw;
+						}
+						kw = catKeywords + "_" + kw;
+						result.add(kw);
 					}
-					kw = catKeywords + "_" + kw;
-					result.add(kw);
 				}
 			}
 		}
-		br.close();
 
 		return result;
 	}
@@ -383,7 +383,7 @@ public class ModelLibraryGenerator {
 		// read modelScreenshot.xml, and load it to mapModelScreenshot.
 		// the extended name of the experiment is the key, the pair
 		// {displayName,cycleNumber} is the value.
-		mapModelScreenshot = new HashMap<String, ScreenshotStructure>();
+		mapModelScreenshot = new HashMap<>();
 		try {
 			final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -408,8 +408,9 @@ public class ModelLibraryGenerator {
 								((Element) eElement.getElementsByTagName("display").item(i)).getAttribute("name");
 						int cycleNumber = Integer.valueOf(((Element) eElement.getElementsByTagName("display").item(i))
 								.getAttribute("cycle_number"));
-						if (cycleNumber == 0)
+						if (cycleNumber == 0) {
 							cycleNumber = 10;
+						}
 						screenshot.addDisplay(displayName, cycleNumber);
 					}
 					mapModelScreenshot.put(id, screenshot);
@@ -515,7 +516,7 @@ public class ModelLibraryGenerator {
 	// }
 
 	private static ArrayList<String> getSectionName() {
-		final ArrayList<String> result = new ArrayList<String>();
+		final ArrayList<String> result = new ArrayList<>();
 		for (final String path : inputPathToModelLibrary) {
 			final File directory = new File(path);
 			final String[] sectionNames = directory.list((current, name) -> new File(current, name).isDirectory());
@@ -526,45 +527,46 @@ public class ModelLibraryGenerator {
 		return result;
 	}
 
-	private static ArrayList<String> getDisplayNamesByExpe(final File file, final String expeName) throws IOException {
-		// returns the list of experiments
-		final ArrayList<String> result = new ArrayList<String>();
-		String displayName = "";
-
-		boolean inTheRightExperiment = false;
-
-		final FileInputStream fis = new FileInputStream(file);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-
-		String line = null;
-
-		while ((line = br.readLine()) != null) {
-			if (inTheRightExperiment) {
-				if (line.startsWith("experiment") && (line.contains("type: gui") || line.contains("type:gui"))) {
-					// if (Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment
-					// (\\w+)") != "") {
-					// we are out of the right experiment. Return the result.
-					br.close();
-					return result;
-				}
-				displayName = Utils.findAndReturnRegex(line, "^[\\t,\\s]+display (\\w+)");
-				if (displayName != "") {
-					result.add(displayName);
-					displayName = "";
-				}
-			}
-			if (line.startsWith("experiment " + expeName)
-					&& (line.contains("type: gui") || line.contains("type:gui"))) {
-				// if
-				// (expeName.compareTo(Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment
-				// (\\w+)")) == 0) {
-				inTheRightExperiment = true;
-			}
-		}
-		br.close();
-
-		return result;
-	}
+	// private static ArrayList<String> getDisplayNamesByExpe(final File file, final String expeName) throws IOException
+	// {
+	// // returns the list of experiments
+	// final ArrayList<String> result = new ArrayList<>();
+	// String displayName = "";
+	//
+	// boolean inTheRightExperiment = false;
+	//
+	// try (final FileInputStream fis = new FileInputStream(file);
+	// final BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
+	//
+	// String line = null;
+	//
+	// while ((line = br.readLine()) != null) {
+	// if (inTheRightExperiment) {
+	// if (line.startsWith("experiment") && (line.contains("type: gui") || line.contains("type:gui"))) {
+	// // if (Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment
+	// // (\\w+)") != "") {
+	// // we are out of the right experiment. Return the result.
+	// br.close();
+	// return result;
+	// }
+	// displayName = Utils.findAndReturnRegex(line, "^[\\t,\\s]+display (\\w+)");
+	// if (displayName != "") {
+	// result.add(displayName);
+	// displayName = "";
+	// }
+	// }
+	// if (line.startsWith("experiment " + expeName)
+	// && (line.contains("type: gui") || line.contains("type:gui"))) {
+	// // if
+	// // (expeName.compareTo(Utils.findAndReturnRegex(line,"^[\\t,\\s]+experiment
+	// // (\\w+)")) == 0) {
+	// inTheRightExperiment = true;
+	// }
+	// }
+	// }
+	//
+	// return result;
+	// }
 
 	private static void writeMdContent(final ArrayList<File> gamlFiles) throws IOException {
 		// load the concepts
@@ -588,7 +590,7 @@ public class ModelLibraryGenerator {
 
 			if (metaStruct.getName() != "") {
 				// search if there are some images linked
-				final ArrayList<File> listScreenshot = new ArrayList<File>();
+				final ArrayList<File> listScreenshot = new ArrayList<>();
 				Utils.getFilesFromFolder(
 						gamlFile.getAbsolutePath().substring(0, gamlFile.getAbsolutePath().length() - 4),
 						listScreenshot);
@@ -618,7 +620,7 @@ public class ModelLibraryGenerator {
 					fileName = fileName.replace(".gaml", "");
 					fileName = fileName.replace("/models", "");
 
-					final ArrayList<String> listPathToScreenshots = new ArrayList<String>();
+					final ArrayList<String> listPathToScreenshots = new ArrayList<>();
 
 					for (final File f : listScreenshot) {
 						if (f.getName().contains("-0.png")) { // we don't need
@@ -633,10 +635,11 @@ public class ModelLibraryGenerator {
 							listPathToScreenshots.add(tmp.toPath().toString());
 						}
 					}
-					if (listScreenshot.size() != 0)
+					if (listScreenshot.size() != 0) {
 						listScreenshot.get(0).getParentFile().delete(); // delete
 																		// the
 																		// folder
+					}
 
 					// manipulate section and subsection files
 					// case of "sub-section" (ex : 3D Visualization, Agent
@@ -663,38 +666,38 @@ public class ModelLibraryGenerator {
 
 					Utils.CreateFolder(outputFile.getParentFile());
 					outputFile.createNewFile();
-					final FileOutputStream fileOut = new FileOutputStream(outputFile);
+					try (final FileOutputStream fileOut = new FileOutputStream(outputFile);) {
 
-					// write the header
-					fileOut.write(mainKeywordsMap.get(gamlFile.getAbsolutePath().replace("\\", "/")).getBytes());
-					fileOut.write(metaStruct.getMdHeader().getBytes());
+						// write the header
+						fileOut.write(mainKeywordsMap.get(gamlFile.getAbsolutePath().replace("\\", "/")).getBytes());
+						fileOut.write(metaStruct.getMdHeader().getBytes());
 
-					// show the images (if there are some)
-					for (String imagePath : listPathToScreenshots) {
-						imagePath = imagePath.replace("\\", "/");
-						final String urlToImage = imagePath.split(wikiFolder)[1];
-						fileOut.write(getHTMLCodeForImage(imagePath).getBytes());
-					}
-
-					// write the input (if there are any)
-					final List<String> inputFileList = searchInputListRecursive(gamlFile, new ArrayList<String>());
-					if (inputFileList.size() > 0) {
-						if (inputFileList.size() > 1) {
-							fileOut.write(new String("Imported models : \n\n").getBytes());
-						} else {
-							fileOut.write(new String("Imported model : \n\n").getBytes());
+						// show the images (if there are some)
+						for (String imagePath : listPathToScreenshots) {
+							imagePath = imagePath.replace("\\", "/");
+							// final String urlToImage = imagePath.split(wikiFolder)[1];
+							fileOut.write(getHTMLCodeForImage(imagePath).getBytes());
 						}
-					}
-					for (final String inputPath : inputFileList) {
-						// write the code of the input files
-						fileOut.write(getModelCode(new File(inputPath)).getBytes());
-						fileOut.write(new String("\n\n").getBytes());
-					}
 
-					// write the code
-					fileOut.write(new String("Code of the model : \n\n").getBytes());
-					fileOut.write(getModelCode(gamlFile).getBytes());
-					fileOut.close();
+						// write the input (if there are any)
+						final List<String> inputFileList = searchInputListRecursive(gamlFile, new ArrayList<String>());
+						if (inputFileList.size() > 0) {
+							if (inputFileList.size() > 1) {
+								fileOut.write(new String("Imported models : \n\n").getBytes());
+							} else {
+								fileOut.write(new String("Imported model : \n\n").getBytes());
+							}
+						}
+						for (final String inputPath : inputFileList) {
+							// write the code of the input files
+							fileOut.write(getModelCode(new File(inputPath)).getBytes());
+							fileOut.write(new String("\n\n").getBytes());
+						}
+
+						// write the code
+						fileOut.write(new String("Code of the model : \n\n").getBytes());
+						fileOut.write(getModelCode(gamlFile).getBytes());
+					}
 				}
 			} else {
 				System.out.println("WARNING : The model contained in the file " + gamlFile.getName()
@@ -707,26 +710,28 @@ public class ModelLibraryGenerator {
 		final File outputFile = new File(pathToSectionFile);
 		Utils.CreateFolder(outputFile.getParentFile());
 		outputFile.createNewFile();
-		final FileOutputStream fileOut = new FileOutputStream(outputFile);
+		try (final FileOutputStream fileOut = new FileOutputStream(outputFile)) {
 
-		final String sectionName =
-				pathToSectionFile.split("/")[pathToSectionFile.split("/").length - 1].replace(".md", "");
-		fileOut.write(new String("# " + sectionName + "\n\nThis section is composed of the following sub-section :\n\n")
-				.getBytes());
-		fileOut.close();
+			final String sectionName =
+					pathToSectionFile.split("/")[pathToSectionFile.split("/").length - 1].replace(".md", "");
+			fileOut.write(
+					new String("# " + sectionName + "\n\nThis section is composed of the following sub-section :\n\n")
+							.getBytes());
+		}
 	}
 
 	private static void createSubSectionFile(final String pathToSubSectionFile) throws IOException {
 		final File outputFile = new File(pathToSubSectionFile);
 		Utils.CreateFolder(outputFile.getParentFile());
 		outputFile.createNewFile();
-		final FileOutputStream fileOut = new FileOutputStream(outputFile);
+		try (final FileOutputStream fileOut = new FileOutputStream(outputFile)) {
 
-		final String sectionName =
-				pathToSubSectionFile.split("/")[pathToSubSectionFile.split("/").length - 1].replace(".md", "");
-		fileOut.write(new String("# " + sectionName + "\n\nThis sub-section is composed of the following models :\n\n")
-				.getBytes());
-		fileOut.close();
+			final String sectionName =
+					pathToSubSectionFile.split("/")[pathToSubSectionFile.split("/").length - 1].replace(".md", "");
+			fileOut.write(
+					new String("# " + sectionName + "\n\nThis sub-section is composed of the following models :\n\n")
+							.getBytes());
+		}
 	}
 
 	private static void addSubSection(final String pathToSectionFile, final String subSectionName) throws IOException {
@@ -755,79 +760,80 @@ public class ModelLibraryGenerator {
 		// returns the header
 		String result = "";
 
-		final FileInputStream fis = new FileInputStream(file);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		try (final FileInputStream fis = new FileInputStream(file);
+				final BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
 
-		String line = null;
+			String line = null;
 
-		// check if the file contains a header
-		if ((line = br.readLine()).startsWith("/**")) {
-			result += line + "\n";
-			while ((line = br.readLine()) != null) {
+			// check if the file contains a header
+			if ((line = br.readLine()).startsWith("/**")) {
 				result += line + "\n";
-				if (line.startsWith("*/") || line.startsWith(" */")) {
-					break;
+				while ((line = br.readLine()) != null) {
+					result += line + "\n";
+					if (line.startsWith("*/") || line.startsWith(" */")) {
+						break;
+					}
 				}
+			} else {
+				br.close();
 			}
-		} else {
-			br.close();
 		}
-		br.close();
 		return result;
 	}
 
-	private static ArrayList<String> searchInputListRecursive(final File file, ArrayList<String> results)
+	private static ArrayList<String> searchInputListRecursive(final File file, final ArrayList<String> results)
 			throws IOException {
 
-		final FileInputStream fis = new FileInputStream(file);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		ArrayList<String> results2 = results;
+		try (final FileInputStream fis = new FileInputStream(file);
+				final BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
 
-		String line = null;
+			String line = null;
 
-		line = br.readLine();
-		// search for a line that starts with "import"
-		while (line != null) {
-			final String regexMatch = Utils.findAndReturnRegex(line, "import \"(.*[^\"])\"");
-			if (regexMatch != "") {
-				results.add(0, file.getParentFile().getAbsolutePath().replace("\\", "/") + "/" + regexMatch);
-				results = searchInputListRecursive(
-						new File(file.getParentFile().getAbsolutePath().replace("\\", "/") + "/" + regexMatch),
-						results);
-			}
 			line = br.readLine();
+			// search for a line that starts with "import"
+			while (line != null) {
+				final String regexMatch = Utils.findAndReturnRegex(line, "import \"(.*[^\"])\"");
+				if (!"".equals(regexMatch)) {
+					results2.add(0, file.getParentFile().getAbsolutePath().replace("\\", "/") + "/" + regexMatch);
+					results2 = searchInputListRecursive(
+							new File(file.getParentFile().getAbsolutePath().replace("\\", "/") + "/" + regexMatch),
+							results2);
+				}
+				line = br.readLine();
+			}
 		}
-		br.close();
-		return results;
+		return results2;
 	}
 
 	private static String getModelCode(final File gamlFile) throws IOException {
 		// write the code
 		String result = "";
 		result = "```\n";
-		final FileInputStream fis = new FileInputStream(gamlFile);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-		String line = null;
-		boolean inHeader = true;
-		while ((line = br.readLine()) != null) {
-			if (!inHeader) {
-				// we are in the code
-				result += line + "\n";
-			} else if (line.startsWith("*/") || line.startsWith(" */")) {
-				// we are out of the header
-				inHeader = false;
-			} else if (line.startsWith("model")) {
-				// we are in the code
-				inHeader = false;
-				result += line + "\n";
+		try (final FileInputStream fis = new FileInputStream(gamlFile);
+				final BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
+			String line = null;
+			boolean inHeader = true;
+			while ((line = br.readLine()) != null) {
+				if (!inHeader) {
+					// we are in the code
+					result += line + "\n";
+				} else if (line.startsWith("*/") || line.startsWith(" */")) {
+					// we are out of the header
+					inHeader = false;
+				} else if (line.startsWith("model")) {
+					// we are in the code
+					inHeader = false;
+					result += line + "\n";
+				}
 			}
+			result += "```\n";
 		}
-		result += "```\n";
-		br.close();
 		return result;
 	}
 
-	private static String getHTMLCodeForImage(String absolutePathForImage) {
-		absolutePathForImage = absolutePathForImage.replace("\\", "/");
+	private static String getHTMLCodeForImage(final String api) {
+		final String absolutePathForImage = api.replace("\\", "/");
 		final String realPath = "gm_wiki/" + absolutePathForImage.split(wikiFolder)[1];
 		String result = "";
 		result += "<p>";

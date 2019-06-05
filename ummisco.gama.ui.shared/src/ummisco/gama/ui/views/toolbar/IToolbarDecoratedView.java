@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
@@ -24,46 +24,46 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
  */
 public interface IToolbarDecoratedView {
 
-	public IWorkbenchSite getSite();
+	IWorkbenchSite getSite();
 
-	public void createToolItems(GamaToolbar2 tb);
+	void createToolItems(GamaToolbar2 tb);
 
 	default void addStateListener(final StateListener listener) {};
 
-	public static interface StateListener {
-		public void updateToReflectState();
+	public interface StateListener {
+		void updateToReflectState();
 	}
 
-	public static interface Pausable extends IToolbarDecoratedView {
+	public interface Pausable extends IToolbarDecoratedView {
 
-		public void pauseChanged();
+		void pauseChanged();
 
-		public IDisplayOutput getOutput();
+		IDisplayOutput getOutput();
 
-		public void synchronizeChanged();
+		void synchronizeChanged();
 	}
 
-	public static interface Sizable extends IToolbarDecoratedView {
+	public interface Sizable extends IToolbarDecoratedView {
 
 		Control getSizableFontControl();
 	}
 
-	public static interface Colorizable extends IToolbarDecoratedView {
+	public interface Colorizable extends IToolbarDecoratedView {
 
-		public String[] getColorLabels();
+		String[] getColorLabels();
 
-		public GamaUIColor getColor(int index);
+		GamaUIColor getColor(int index);
 
-		public void setColor(int index, GamaUIColor c);
+		void setColor(int index, GamaUIColor c);
 	}
 
-	public static interface CSVExportable extends IToolbarDecoratedView {
+	public interface CSVExportable extends IToolbarDecoratedView {
 
-		public void saveAsCSV();
+		void saveAsCSV();
 
 	}
 
-	public static interface Zoomable extends IToolbarDecoratedView {
+	public interface Zoomable extends IToolbarDecoratedView {
 
 		void zoomIn();
 
@@ -81,10 +81,6 @@ public interface IToolbarDecoratedView {
 		 */
 		boolean zoomWhenScrolling();
 
-	}
-
-	public default boolean toolbarVisible() {
-		return true;
 	}
 
 }

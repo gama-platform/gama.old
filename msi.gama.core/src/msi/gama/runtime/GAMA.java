@@ -50,7 +50,7 @@ public class GAMA {
 
 	public final static String VERSION = "GAMA 1.8";
 	public static final String _WARNINGS = "warnings";
-	private static PlatformAgent agent;
+	private static volatile PlatformAgent agent;
 	private static Benchmark benchmarkAgent;
 	private static boolean isInHeadlessMode;
 	private static IGui regularGui;
@@ -346,7 +346,7 @@ public class GAMA {
 		return s.getScope();
 	}
 
-	public static interface InScope<T> {
+	public interface InScope<T> {
 
 		public abstract static class Void implements InScope<Object> {
 
@@ -420,7 +420,7 @@ public class GAMA {
 	 */
 	public static IGui setHeadLessMode() {
 		isInHeadlessMode = true;
-		IGui gui = new HeadlessListener();
+		final IGui gui = new HeadlessListener();
 		setHeadlessGui(gui);
 		return gui;
 	}

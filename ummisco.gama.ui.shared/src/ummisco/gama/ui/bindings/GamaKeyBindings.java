@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.bindings;
@@ -20,6 +20,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.access.GamlSearchField;
 import ummisco.gama.ui.utils.PlatformHelper;
@@ -28,11 +29,15 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 /**
  * The purpose of this class is to install global key bindings that can work in any of the contexts of GAMA (incl.
  * fullscreen)
- * 
+ *
  * @author drogoul
  *
  */
 public class GamaKeyBindings implements Listener {
+
+	static {
+		// DEBUG.ON();
+	}
 
 	public static int COMMAND = PlatformHelper.isMac() ? SWT.COMMAND : SWT.CTRL;
 	public static String SEARCH_STRING = format(COMMAND + SWT.SHIFT, 'H');
@@ -75,7 +80,7 @@ public class GamaKeyBindings implements Listener {
 					GamlSearchField.INSTANCE.search();
 				}
 				break;
-			// Handles START & RELOAD
+			// Handles START, PAUSE & STEP
 			case 'p':
 				if (ctrl(event) && shift(event)) {
 					consume(event);
@@ -85,16 +90,23 @@ public class GamaKeyBindings implements Listener {
 					GAMA.startPauseFrontmostExperiment();
 				}
 				break;
-			// Handles PAUSE & STEP
-			case 'r':
+			// Handles RELOAD & RELAUNCH
+			case 'r': {
+				if (PerspectiveHelper.isModelingPerspective()) {
+					// See Issue #2741
+					break;
+				}
 				if (ctrl(event) && shift(event)) {
+					// DEBUG.OUT("SHIFT CONTROL R Pressed");
 					consume(event);
 					GAMA.relaunchFrontmostExperiment();
 				} else if (ctrl(event)) {
+					// DEBUG.OUT("CONTROL R Pressed");
 					consume(event);
 					GAMA.reloadFrontmostExperiment();
 				}
 				break;
+			}
 			// Handles CLOSE
 			case 'x':
 				if (ctrl(event) && shift(event)) {

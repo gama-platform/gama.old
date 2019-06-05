@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'JParameterListWizard.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JParameterListWizard.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.control;
@@ -23,7 +22,7 @@ import org.geotools.data.Parameter;
 
 /**
  * The parameter list wizard.
- * 
+ *
  * @author Andrea Antonello (www.hydrologis.com)
  *
  *
@@ -45,8 +44,7 @@ public class JParameterListWizard extends Wizard {
 	 * @param description
 	 *            brief description to be displayed on the page
 	 * @param contents
-	 *            a {@code List} of {@code Parameter} objects defining the data
-	 *            being requested
+	 *            a {@code List} of {@code Parameter} objects defining the data being requested
 	 */
 	public JParameterListWizard(final String title, final String description, final List<Parameter<?>> contents) {
 		this(title, description, contents, new HashMap<String, Object>());
@@ -55,7 +53,7 @@ public class JParameterListWizard extends Wizard {
 	public JParameterListWizard(final String title, final String description, final List<Parameter<?>> contents,
 			final Map<String, Object> connectionParams) {
 
-		this.connectionParameters = connectionParams == null ? new HashMap<String, Object>() : connectionParams;
+		this.connectionParameters = connectionParams == null ? new HashMap<>() : connectionParams;
 		fillInDefaults(contents, this.connectionParameters);
 
 		final List<Parameter<?>> userContents = contentsForLevel(contents, "user");
@@ -73,10 +71,12 @@ public class JParameterListWizard extends Wizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		if (userPage != null)
+		if (userPage != null) {
 			addPage(userPage);
-		if (advancedPage != null)
+		}
+		if (advancedPage != null) {
 			addPage(advancedPage);
+		}
 	}
 
 	@Override
@@ -85,16 +85,14 @@ public class JParameterListWizard extends Wizard {
 	}
 
 	/**
-	 * Method used to fill in any required "programming" level defaults such as
-	 * dbtype.
-	 * 
+	 * Method used to fill in any required "programming" level defaults such as dbtype.
+	 *
 	 * @param contents
 	 * @param connectionParams
 	 *            a {@code Map} of initial parameter values
 	 */
 	private void fillInDefaults(final List<Parameter<?>> contents, final Map<String, Object> connectionParams) {
-		if (connectionParams == null)
-			return;
+		if (connectionParams == null) { return; }
 
 		for (final Parameter<?> param : contents) {
 			if (param.required && "program".equals(param.getLevel())) {
@@ -105,8 +103,9 @@ public class JParameterListWizard extends Wizard {
 		}
 	}
 
-	List<Parameter<?>> contentsForLevel(final List<Parameter<?>> contents, String level) {
-		final List<Parameter<?>> list = new ArrayList<Parameter<?>>();
+	List<Parameter<?>> contentsForLevel(final List<Parameter<?>> contents, final String theLevel) {
+		final List<Parameter<?>> list = new ArrayList<>();
+		String level = theLevel;
 		if (level == null) {
 			level = "user";
 		}
@@ -136,9 +135,8 @@ public class JParameterListWizard extends Wizard {
 	}
 
 	/**
-	 * Helper method that returns the "url" element of the connection parameters
-	 * as a File, if present. Equivalent to:
-	 * 
+	 * Helper method that returns the "url" element of the connection parameters as a File, if present. Equivalent to:
+	 *
 	 * <pre>
 	 * <code>
 	 *     URL url = (URL) myWizard.getConnectionParameters().get("url");

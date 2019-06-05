@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
@@ -259,7 +259,7 @@ public class LayerSideControls {
 		final PointEditor[] point = new PointEditor[4];
 		final ICoordinates points = data.getKeystone();
 		int i = 0;
-		for (final GamaPoint p : points) {
+		for (@SuppressWarnings ("unused") final GamaPoint p : points) {
 			final int j = i;
 			i++;
 			point[j] = EditorFactory.create(scope, contents, "Point " + j + ":",
@@ -404,8 +404,8 @@ public class LayerSideControls {
 
 		final ILayerStatement definition = layer.getDefinition();
 
-		EditorFactory.create(container.getScope(), compo, "Transparency:", layer.getData().getTransparency(container.getScope()), 0.0, 1.0,
-				0.1, false, newValue -> {
+		EditorFactory.create(container.getScope(), compo, "Transparency:",
+				layer.getData().getTransparency(container.getScope()), 0.0, 1.0, 0.1, false, newValue -> {
 					layer.getData().setTransparency(newValue);
 					updateIfPaused(layer, container);
 				});

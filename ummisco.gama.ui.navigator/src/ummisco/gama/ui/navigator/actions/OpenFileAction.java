@@ -36,7 +36,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenFileAction extends OpenSystemEditorAction {
@@ -97,7 +97,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 		while (itr.hasNext()) {
 			final IResource resource = (IResource) itr.next();
 			if (resource instanceof IFile) {
-				openFile((IFile) resource);
+				privateOpenFile((IFile) resource);
 			}
 		}
 	}
@@ -116,7 +116,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 	 * @param file
 	 *            the file resource
 	 */
-	void openFile(final IFile file) {
+	void privateOpenFile(final IFile file) {
 		try {
 			final boolean activate = OpenStrategy.activateOnOpen();
 			if (editorDescriptor == null) {

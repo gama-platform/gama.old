@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.csv.model;
@@ -25,8 +25,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.file.CsvReader;
 import msi.gama.util.file.CsvWriter;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
-import ummisco.gama.dev.utils.DEBUG;
 import msi.gama.util.file.IGamaFileMetaData;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  *
@@ -53,7 +53,7 @@ public class CSVModel implements IRowChangesListener {
 
 	/**
 	 * Check if first line in the file will be considered as the file header
-	 * 
+	 *
 	 * @return true if the first line in the file represents the header
 	 */
 	public boolean isFirstLineHeader() {
@@ -71,7 +71,7 @@ public class CSVModel implements IRowChangesListener {
 
 	/**
 	 * Get custom delimiter to use as a separator
-	 * 
+	 *
 	 * @return the delimiter
 	 */
 	public char getCustomDelimiter() {
@@ -87,7 +87,7 @@ public class CSVModel implements IRowChangesListener {
 
 	/**
 	 * Get the character that defines comment lines
-	 * 
+	 *
 	 * @return the comment line starting character. If no comments are allowed in this file, then Character.UNASSIGNED
 	 *         constant must be returned;
 	 *
@@ -99,7 +99,7 @@ public class CSVModel implements IRowChangesListener {
 
 	/**
 	 * Get custom text qualifier to use as a text qualifier in the data
-	 * 
+	 *
 	 * @return the text qualifier character to use as a text qualifier in the data
 	 */
 	public char getTextQualifier() {
@@ -109,7 +109,7 @@ public class CSVModel implements IRowChangesListener {
 
 	/**
 	 * check if the text qualifier has to be use for all fields or not
-	 * 
+	 *
 	 * @return true if the text qualifier is to be used for all data fields
 	 */
 	public boolean useQualifier() {
@@ -348,8 +348,9 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 */
 	public void removeRow(final CSVRow row) {
-		if (!rows.remove(row)) { return;
-		// TODO return error message
+		if (!rows.remove(row)) {
+			return;
+			// TODO return error message
 		}
 		final CSVInfo info = getInfo();
 		info.rows--;
@@ -435,7 +436,7 @@ public class CSVModel implements IRowChangesListener {
 
 	/**
 	 * Initialize the CsvWriter
-	 * 
+	 *
 	 * @param writer
 	 * @return
 	 */
@@ -453,9 +454,7 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public String getTextRepresentation() {
 
-		final StringWriter sw = new StringWriter();
-		try {
-			final CsvWriter clw = initializeWriter(sw);
+		try (final StringWriter sw = new StringWriter(); final CsvWriter clw = initializeWriter(sw);) {
 
 			for (final CSVRow row : rows) {
 				if (row.isCommentLine()) {
@@ -464,14 +463,11 @@ public class CSVModel implements IRowChangesListener {
 					clw.writeRecord(row.getEntriesAsArray());
 				}
 			}
-			clw.close();
-			sw.close();
+			return sw.toString();
 		} catch (final Exception e) {
 			DEBUG.ERR("cannot write csv file");
-			e.printStackTrace();
-		} finally {}
-
-		return sw.toString();
+			return "";
+		}
 
 	}
 

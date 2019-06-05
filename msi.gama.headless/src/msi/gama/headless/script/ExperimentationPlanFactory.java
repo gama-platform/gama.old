@@ -56,27 +56,26 @@ public class ExperimentationPlanFactory {
 		final File outFile = new File(headlessDirectory + "/" + outFileName + ".xml");
 		final File outerrFile = new File(headlessDirectory + "/err_" + outFileName + ".log");
 
-		final OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outFile));
-		final OutputStreamWriter outErr = new OutputStreamWriter(new FileOutputStream(outerrFile));
-		analyseModel(modelFile.getAbsolutePath(), out, outErr);
+		try (final OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outFile));
+				final OutputStreamWriter outErr = new OutputStreamWriter(new FileOutputStream(outerrFile));) {
+			analyseModel(modelFile.getAbsolutePath(), out, outErr);
 
-		/*
-		 * JobPlan jb = new JobPlan(); List<IExperimentJob> generatedExperiment; try {
-		 * jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); long[] seed = {DEFAULT_FINAL_STEP};
-		 * generatedExperiment = jb.constructAllJobs(seed,DEFAULT_FINAL_STEP);
-		 * 
-		 * 
-		 * Document dd =ExperimentationPlanFactory.buildXmlDocument(generatedExperiment); TransformerFactory
-		 * transformerFactory = TransformerFactory.newInstance(); Transformer transformer =
-		 * transformerFactory.newTransformer(); DOMSource source = new DOMSource(dd); StreamResult result = new
-		 * StreamResult(new File("/tmp/file.xml")); transformer.transform(source, result);
-		 * 
-		 * //generatedExperiment = jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); }catch(Exception e) {
-		 * outErr.write("Error in file : " + modelFile.getAbsolutePath()); }
-		 */
+			/*
+			 * JobPlan jb = new JobPlan(); List<IExperimentJob> generatedExperiment; try {
+			 * jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); long[] seed = {DEFAULT_FINAL_STEP};
+			 * generatedExperiment = jb.constructAllJobs(seed,DEFAULT_FINAL_STEP);
+			 * 
+			 * 
+			 * Document dd =ExperimentationPlanFactory.buildXmlDocument(generatedExperiment); TransformerFactory
+			 * transformerFactory = TransformerFactory.newInstance(); Transformer transformer =
+			 * transformerFactory.newTransformer(); DOMSource source = new DOMSource(dd); StreamResult result = new
+			 * StreamResult(new File("/tmp/file.xml")); transformer.transform(source, result);
+			 * 
+			 * //generatedExperiment = jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); }catch(Exception e) {
+			 * outErr.write("Error in file : " + modelFile.getAbsolutePath()); }
+			 */
 
-		outErr.close();
-		out.close();
+		}
 
 	}
 	//

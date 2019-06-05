@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.csv;
@@ -61,7 +61,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  *
  */
 public class MultiPageCSVEditor extends MultiPageEditorPart
-implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
+		implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 
 	private boolean isPageModified;
 
@@ -409,7 +409,7 @@ implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 	 */
 	private void updateTextEditorFromTable() {
 		editor.getDocumentProvider().getDocument(editor.getEditorInput())
-		.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
+				.set(((CSVModel) tableViewer.getInput()).getTextRepresentation());
 	}
 
 	/**
@@ -480,7 +480,7 @@ implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 
 	/**
 	 * Method createToolItem()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
 	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
@@ -507,7 +507,7 @@ implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 			}
 		});
 
-		tb.menu("action.set.delimiter2", "Determine which character should be used as delimiter of fields",
+		tb.menu("viewers/action.set.delimiter2", "Determine which character should be used as delimiter of fields",
 				"Determine which character should be used as delimiter of fields", e -> {
 					final GamaMenu menu = new GamaMenu() {
 
@@ -567,14 +567,14 @@ implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 					};
 					menu.open(tb.getToolbar(SWT.RIGHT), e);
 				}, SWT.RIGHT);
-		final ToolItem t = tb.check("action.set.header2", "First line is header", "First line is header", e -> {
+		final ToolItem t = tb.check("viewers/action.set.header2", "First line is header", "First line is header", e -> {
 			final ToolItem t1 = (ToolItem) e.widget;
 			model.setFirstLineHeader(t1.getSelection());
 			refreshWithDelimiter(null);
 		}, SWT.RIGHT);
 		t.setSelection(model.isFirstLineHeader());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("action.add.row2", "Add row",
+		tb.button("viewers/action.add.row2", "Add row",
 				"Insert a new row before the currently selected one or at the end of the file if none is selected",
 				e -> {
 					final CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
@@ -585,7 +585,7 @@ implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 					}
 					tableModified();
 				}, SWT.RIGHT);
-		tb.button("action.delete.row2", "Delete row", "Delete currently selected rows", e -> {
+		tb.button("viewers/action.delete.row2", "Delete row", "Delete currently selected rows", e -> {
 
 			CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
 
@@ -599,7 +599,7 @@ implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		if (model.isFirstLineHeader()) {
-			tb.button("action.add.column2", "Add column", "Add new column", arg0 -> {
+			tb.button("viewers/action.add.column2", "Add column", "Add new column", arg0 -> {
 				// call insert/add column page
 				final InsertColumnPage acPage = new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
 				if (acPage.open() == Window.OK) {
@@ -620,7 +620,7 @@ implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 
 		}
 		if (model.isFirstLineHeader()) {
-			tb.button("action.delete.column2", "Delete column", "Delete one or several column(s)", e -> {
+			tb.button("viewers/action.delete.column2", "Delete column", "Delete one or several column(s)", e -> {
 
 				// call delete column page
 				final DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());

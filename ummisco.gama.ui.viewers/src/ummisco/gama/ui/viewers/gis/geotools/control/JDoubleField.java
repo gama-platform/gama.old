@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'JDoubleField.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JDoubleField.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.control;
@@ -19,7 +18,7 @@ import org.geotools.data.Parameter;
 
 /**
  * Widget for double values
- * 
+ *
  * @author Andrea Antonello (www.hydrologis.com)
  * @author gdavis
  *
@@ -46,9 +45,7 @@ public class JDoubleField extends ParamField {
 	@Override
 	public Object getValue() {
 		final String val = text.getText();
-		if (val == null || val.equals("")) {
-			return new Double(0);
-		}
+		if (val == null || val.equals("")) { return new Double(0); }
 		try {
 			return new Double(val);
 		} catch (final NumberFormatException e) {
@@ -63,9 +60,9 @@ public class JDoubleField extends ParamField {
 
 	@Override
 	public boolean validate() {
-		final String val = text.getText();
+		// final String val = text.getText();
 		try {
-			final Double d = Double.parseDouble(val);
+			// final Double d = Double.parseDouble(val);
 			return true;
 		} catch (final NumberFormatException e) {
 			return false;

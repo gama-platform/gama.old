@@ -40,6 +40,8 @@ import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.dialogs.Messages;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -151,7 +153,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			toolbar.button(toggleOverlay, SWT.LEFT);
 			toolbar.button(toggleInteractiveConsole, SWT.LEFT);
 			toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
-			ToolItem item = toolbar.button(runExperiment, SWT.LEFT);
+			final ToolItem item = toolbar.button(runExperiment, SWT.LEFT);
 			if (GAMA.isPaused()) {
 				item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
 			} else {
@@ -218,8 +220,22 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		addPerspectiveListener();
 		keyAndMouseListener = new SWTLayeredDisplayMultiListener(this, view.getDisplaySurface());
 		menuManager = new DisplaySurfaceMenu(view.getDisplaySurface(), view.getParentComposite(), presentationMenu());
+		final boolean tbVisible = view.getOutput().getData().isToolbarVisible();
+		WorkbenchHelper.runInUI("Toolbar", 0, (m) -> {
+			if (tbVisible) {
+				toolbar.show();
+			} else {
+				toolbar.hide();
+			}
+		});
 		if (view.getOutput().getData().fullScreen() > -1) {
-			WorkbenchHelper.runInUI("Fullscreen", 100, (m) -> toggleFullScreen());
+			boolean toggle = true;
+			if (GamaPreferences.Runtime.CORE_ASK_FULLSCREEN.getValue()) {
+				toggle = Messages.question("Toggle fullscreen confirmation", "Do you want to go fullscreen ?");
+			}
+			if (toggle) {
+				WorkbenchHelper.runInUI("Fullscreen", 100, (m) -> toggleFullScreen());
+			}
 		}
 	}
 
@@ -246,9 +262,10 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				} else {
 					// Issue #2639
 					if (PlatformHelper.isMac() && !view.isOpenGL()) {
-						IDisplaySurface ds = view.getDisplaySurface();
-						if (ds != null)
+						final IDisplaySurface ds = view.getDisplaySurface();
+						if (ds != null) {
 							ds.updateDisplay(true);
+						}
 					}
 
 					if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {
@@ -375,6 +392,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.menu(IGamaIcons.MENU_POPULATION, "Browse displayed agents by layers", "Browse through all displayed agents",
 				trigger -> menuManager.buildToolbarMenu(trigger, (ToolItem) trigger.widget), SWT.RIGHT);
+		tb.setBackground(GamaColors.get(view.getOutput().getData().getToolbarColor()).color());
 	}
 
 	public void dispose() {

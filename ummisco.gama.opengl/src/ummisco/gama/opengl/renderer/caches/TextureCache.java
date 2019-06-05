@@ -184,7 +184,7 @@ public class TextureCache implements ITextureCache {
 		}
 	}
 
-	private TextureRenderer buildTextureRenderer(final GL gl, final BufferedImage im) {
+	TextureRenderer buildTextureRenderer(final GL gl, final BufferedImage im) {
 		try {
 			final int width, height;
 			if (isNonPowerOf2TexturesAvailable) {

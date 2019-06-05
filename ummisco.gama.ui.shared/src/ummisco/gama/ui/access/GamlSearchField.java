@@ -69,16 +69,16 @@ public class GamlSearchField {
 	protected Text text;
 	public static GamlSearchField INSTANCE;
 
-	private GamlAccessContents quickAccessContents;
+	GamlAccessContents quickAccessContents;
 
-	private int dialogHeight = -1;
-	private int dialogWidth = -1;
-	private Control previousFocusControl;
+	int dialogHeight = -1;
+	int dialogWidth = -1;
+	Control previousFocusControl;
 	// private GamaToolbarSimple toolbar;
 	private Composite composite;
-	private Table table;
+	Table table;
 
-	private String selectedString = ""; //$NON-NLS-1$
+	String selectedString = ""; //$NON-NLS-1$
 	private AccessibleAdapter accessibleListener;
 	private boolean commandsInstalled;
 
@@ -89,50 +89,49 @@ public class GamlSearchField {
 	}
 
 	void hookUpCommands() {
-		if (commandsInstalled)
-			return;
+		if (commandsInstalled) { return; }
 		commandsInstalled = true;
-		IFocusService focus = WorkbenchHelper.getService(IFocusService.class);
+		final IFocusService focus = WorkbenchHelper.getService(IFocusService.class);
 		focus.addFocusTracker(text, GamlSearchField.class.getName());
 
-		org.eclipse.core.expressions.Expression focusExpr = new org.eclipse.core.expressions.Expression() {
+		final org.eclipse.core.expressions.Expression focusExpr = new org.eclipse.core.expressions.Expression() {
 			@Override
-			public void collectExpressionInfo(ExpressionInfo info) {
+			public void collectExpressionInfo(final ExpressionInfo info) {
 				info.addVariableNameAccess(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
 			}
 
 			@Override
-			public EvaluationResult evaluate(IEvaluationContext context) {
+			public EvaluationResult evaluate(final IEvaluationContext context) {
 				return EvaluationResult.valueOf(GamlSearchField.class.getName()
 						.equals(context.getVariable(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME)));
 			}
 		};
 
-		IHandlerService whService = WorkbenchHelper.getService(IHandlerService.class);
+		final IHandlerService whService = WorkbenchHelper.getService(IHandlerService.class);
 		whService.activateHandler(IWorkbenchCommandConstants.EDIT_SELECT_ALL, new AbstractHandler() {
 			@Override
-			public Object execute(ExecutionEvent event) {
+			public Object execute(final ExecutionEvent event) {
 				text.selectAll();
 				return null;
 			}
 		}, focusExpr);
 		whService.activateHandler(IWorkbenchCommandConstants.EDIT_CUT, new AbstractHandler() {
 			@Override
-			public Object execute(ExecutionEvent event) {
+			public Object execute(final ExecutionEvent event) {
 				text.cut();
 				return null;
 			}
 		}, focusExpr);
 		whService.activateHandler(IWorkbenchCommandConstants.EDIT_COPY, new AbstractHandler() {
 			@Override
-			public Object execute(ExecutionEvent event) {
+			public Object execute(final ExecutionEvent event) {
 				text.copy();
 				return null;
 			}
 		}, focusExpr);
 		whService.activateHandler(IWorkbenchCommandConstants.EDIT_PASTE, new AbstractHandler() {
 			@Override
-			public Object execute(ExecutionEvent event) {
+			public Object execute(final ExecutionEvent event) {
 				text.paste();
 				return null;
 			}
@@ -178,13 +177,12 @@ public class GamlSearchField {
 			}
 
 			@Override
-			protected void handleElementSelected(String text, GamlAccessEntry entry) {
-				if (entry == null)
-					return;
+			protected void handleElementSelected(final String text, final GamlAccessEntry entry) {
+				if (entry == null) { return; }
 				final IGamlDescription element = entry.element;
-				String cat = entry.getSearchCategory();
-				String name = element.getName();
-				String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
+				final String cat = entry.getSearchCategory();
+				final String name = element.getName();
+				final String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
 				// String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
 				// DEBUG.OUT("Search phrase: " + search);
 				WebHelper.openPage(search);
@@ -419,7 +417,7 @@ public class GamlSearchField {
 	 * Removes a listener from the <code>org.eclipse.swt.accessibility.Accessible</code> object assigned to the Quick
 	 * Access search box.
 	 */
-	private void removeAccessibleListener() {
+	void removeAccessibleListener() {
 		if (accessibleListener != null) {
 			text.getAccessible().removeAccessibleListener(accessibleListener);
 			accessibleListener = null;
@@ -430,7 +428,7 @@ public class GamlSearchField {
 	/**
 	 * Notifies <code>org.eclipse.swt.accessibility.Accessible<code> object that selected item has been changed.
 	 */
-	private void notifyAccessibleTextChanged() {
+	void notifyAccessibleTextChanged() {
 		if (table.getSelection().length == 0) { return; }
 		final TableItem item = table.getSelection()[0];
 		selectedString = NLS.bind("{0}: {1}", item.getText(0), item.getText(1));

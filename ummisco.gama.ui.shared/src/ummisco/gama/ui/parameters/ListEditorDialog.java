@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'ListEditorDialog.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ListEditorDialog.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -34,20 +33,19 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 
 /**
- * The ListParameterDialog supply a window to help user to modify the list in
- * the visual way.
+ * The ListParameterDialog supply a window to help user to modify the list in the visual way.
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class ListEditorDialog extends Dialog {
 
-	private final ArrayList<String> data = new ArrayList<String>();
+	final ArrayList<String> data = new ArrayList<>();
 
-	private Button newElementButton = null;
-	private Button upButton = null;
-	private Button downButton = null;
-	private Button removeButton = null;
-	private List list = null;
-	private String listname = null;
+	Button newElementButton = null;
+	Button upButton = null;
+	Button downButton = null;
+	Button removeButton = null;
+	List list = null;
+	String listname = null;
 
 	protected ListEditorDialog(final Shell parentShell, final GamaList list, final String listname) {
 		super(parentShell);
@@ -65,9 +63,8 @@ public class ListEditorDialog extends Dialog {
 	}
 
 	/**
-	 * Creates and returns the contents of the upper part of this dialog (above
-	 * the button bar).
-	 * 
+	 * Creates and returns the contents of the upper part of this dialog (above the button bar).
+	 *
 	 * @param parent
 	 *            the parent composite to contain the dialog area
 	 * @return the dialog area control
@@ -114,8 +111,7 @@ public class ListEditorDialog extends Dialog {
 		});
 
 		/**
-		 * The list widget containing all the elements of the corresponding GAML
-		 * list.
+		 * The list widget containing all the elements of the corresponding GAML list.
 		 */
 		list = new List(container, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
 		for (final String gamlElement : data) {

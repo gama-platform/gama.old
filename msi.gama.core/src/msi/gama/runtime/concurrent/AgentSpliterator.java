@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.concurrent.AgentSpliterator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.concurrent.AgentSpliterator.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
@@ -21,13 +21,13 @@ import msi.gama.metamodel.shape.IShape;
 public class AgentSpliterator implements Spliterator<IAgent> {
 
 	public static Spliterator<IAgent> of(final IShape[] agents, final int threshold) {
-		if (agents == null || agents.length == 0)
-			return Spliterators.<IAgent> emptySpliterator();
+		if (agents == null || agents.length == 0) { return Spliterators.<IAgent> emptySpliterator(); }
 		return new AgentSpliterator(agents, 0, agents.length, threshold);
 	}
 
 	public static Spliterator<IAgent> of(final List<? extends IAgent> agents, final int threshold) {
-		return new AgentSpliterator(agents.toArray(new IAgent[0]), 0, agents.size(), threshold);
+		final int size = agents.size();
+		return new AgentSpliterator(agents.toArray(new IAgent[size]), 0, size, threshold);
 	}
 
 	int begin;
@@ -56,9 +56,7 @@ public class AgentSpliterator implements Spliterator<IAgent> {
 	@Override
 	public AgentSpliterator trySplit() {
 		final int size = end - begin;
-		if (size <= threshold) {
-			return null;
-		}
+		if (size <= threshold) { return null; }
 		final int mid = begin + size / 2;
 		final AgentSpliterator split = new AgentSpliterator(agents, begin, mid, threshold);
 		begin = mid;

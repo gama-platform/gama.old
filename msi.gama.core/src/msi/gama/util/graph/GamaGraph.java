@@ -89,7 +89,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	protected Map<Pair<V, V>, IList<IList<E>>> shortestPathComputed = null;
 	protected VertexRelationship vertexRelation;
 	protected GamaIntMatrix shortestPathMatrix = null;
-	
+
 	protected static double DEFAULT_NODE_WEIGHT = 0.0;
 
 	public enum shortestPathAlgorithm {
@@ -1336,7 +1336,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		final IList<E> edges = GamaListFactory.create(getGamlType().getContentType());
 		if (v1 == vt) { return edges; }
 		Object vc = vt;
-		int previous = j;
+		int previous;
 		int next = M[j];
 		if (j == next || next == -1) { return edges; }
 		do {
@@ -1371,7 +1371,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				continue;
 			}
 			Object vc = vt;
-			int previous = j;
+			int previous;
 			int next = M[j];
 			if (j == next || next == -1) {
 				continue;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.EvidenceTheory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.extensions.multi_criteria.EvidenceTheory.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
@@ -19,15 +19,15 @@ import java.util.Map;
 
 /**
  * Classe impl�mentant la prise de d�cision � l'aide des fonctions de croyance
- * 
+ *
  * @author PTaillandier
- * 
+ *
  */
 public class EvidenceTheory {
 
 	/**
 	 * M�thode assurant la fusion entre 2 sources
-	 * 
+	 *
 	 * @param m1
 	 *            : premi�re source
 	 * @param m2
@@ -49,7 +49,7 @@ public class EvidenceTheory {
 
 	/**
 	 * M�thode permettant de fusionner des ensembles de masses de croyances
-	 * 
+	 *
 	 * @param masses
 	 *            : ensemble de MassesCroyances : les masses de croyances � fusionner
 	 * @return les masses de croyances correspondant � la fusion de l'ensemble des masses
@@ -71,7 +71,7 @@ public class EvidenceTheory {
 
 	/**
 	 * M�thode assurant la fusion entre hypoth�ses
-	 * 
+	 *
 	 * @param candidats
 	 *            : dictionnaire des hypoth�ses : clef : Candidat (hypoth�se) -> valeur : MassesCroyances (associ� �
 	 *            l'hypoth�se)
@@ -88,7 +88,7 @@ public class EvidenceTheory {
 
 	/**
 	 * M�thode assurant la fusion de l'ensemble des crit�res
-	 * 
+	 *
 	 * @param criteres
 	 *            : Ensemble de CritereFonctionsCroyances (les crit�res pour cette m�thode)
 	 * @param valeursCourantes
@@ -115,7 +115,7 @@ public class EvidenceTheory {
 
 	/**
 	 * Fonction qui permet de d�finir le meilleur candidat
-	 * 
+	 *
 	 * @param criteres
 	 *            : Ensemble de CritereFonctionsCroyances (les crit�res pour cette m�thode)
 	 * @return le meilleur candidat
@@ -145,7 +145,7 @@ public class EvidenceTheory {
 
 	/**
 	 * Fonction de choix d'un candidat
-	 * 
+	 *
 	 * @param propositions
 	 *            : l'ensemble des propositions possibles ainsi que leur masse de croyance associ�
 	 * @param candidates
@@ -170,7 +170,7 @@ public class EvidenceTheory {
 
 	private/**
 			 * Calcul la probabilit� pignistic qu'un candidat soit le bon
-			 * 
+			 *
 			 * @param cand
 			 *            : le candidat correspondant
 			 * @param propositions
@@ -196,9 +196,9 @@ public class EvidenceTheory {
 	/**
 	 * Classe repr�sentant un ensemble de masse de croyance sp�cialis�e (pour la th�orie, voir Appriou... ou un truc du
 	 * genre.. voir dans ma th�se la ref)
-	 * 
+	 *
 	 * @author PTaillandier
-	 * 
+	 *
 	 */
 	private class MassesCroyances {
 
@@ -261,20 +261,20 @@ public class EvidenceTheory {
 
 	/**
 	 * Classe repr�sentant une proposition (genre : il faut apparier le jeu de K courant avec cet intervalle)
-	 * 
+	 *
 	 * @author PTaillandier
-	 * 
+	 *
 	 */
 	private class Proposition {
 
 		// Ensemble de Candidate : les hypoth�ses repr�sente les candidats
 		// une proposition peut avoir comme hypoth�se {bon, moyen}, c'est � dire que le jeu de K
 		// courant est pour cette proposition soit bon, soit mauvais
-		private final LinkedList<Candidate> hypothese;
+		final LinkedList<Candidate> hypothese;
 		// valeur de la masse de croyance associ�e � cette proposition
-		private double masseCroyance;
+		double masseCroyance;
 
-		private final int id;
+		final int id;
 
 		/**
 		 * @param hypothese
@@ -334,19 +334,19 @@ public class EvidenceTheory {
 
 	/**
 	 * Classe qui repr�sente un ensemble de propositions
-	 * 
+	 *
 	 * @author PTaillandier
-	 * 
+	 *
 	 */
 	private class Propositions {
 
 		// L'ensemble des Proposition
-		private LinkedList<Proposition> propositions;
+		LinkedList<Proposition> propositions;
 		private double coeffNorm;
 
 		/**
 		 * Constructeur qui va permettre la fusion des hypoth�ses et fournir l'ensemble des propositions apr�s fusion
-		 * 
+		 *
 		 * @param candidats
 		 *            : dictionnaire des diff�rents candidats possibles : Clef : Candidat -> Valeur : MassesCroyances
 		 *            associ�es au candidat
@@ -431,7 +431,7 @@ public class EvidenceTheory {
 
 		/**
 		 * M�thode qui permet d'ajouter une proposition � un dictionnaire de propositions
-		 * 
+		 *
 		 * @param propositionsTmp
 		 *            : dictionnaire de propositions : Clef : String : le nom de la proposition -> Valeur : Proposition
 		 *            : proposition correspondante
@@ -453,7 +453,7 @@ public class EvidenceTheory {
 
 		/**
 		 * M�thode qui permet de fusionner deux propositions
-		 * 
+		 *
 		 * @param prop1
 		 * @param prop2
 		 * @return la proposition fusionn�
@@ -476,7 +476,7 @@ public class EvidenceTheory {
 
 		/**
 		 * Initialisation de l'ensemble de propositions � partir d'un candidat (d'une hypoth�se)
-		 * 
+		 *
 		 * @param cand
 		 *            : un candidat (une hypoth�se)
 		 * @param mc1
@@ -520,7 +520,7 @@ public class EvidenceTheory {
 		public void computeCoeffNorm() {
 			for (final Proposition prop : propositions) {
 				if (prop.hypothese.isEmpty()) {
-					coeffNorm = (1.0 == prop.masseCroyance) ? 1.0 :1.0 / (1.0 - prop.masseCroyance);
+					coeffNorm = 1.0 == prop.masseCroyance ? 1.0 : 1.0 / (1.0 - prop.masseCroyance);
 					return;
 				}
 			}

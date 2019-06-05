@@ -171,7 +171,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				}
 				final IType<?> contentType = list.getGamlType().getContentType();
 				boolean isAll = false;
-				IType<?> valueType = Types.NO_TYPE;
+				IType<?> valueType;
 				if (!keyword.equals(PUT) && all && item.getGamlType().isTranslatableInto(Types.CONTAINER)) {
 					isAll = true;
 					valueType = item.getGamlType().getContentType();
@@ -199,12 +199,13 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				}
 				final IType<?> keyType = list.getGamlType().getKeyType();
 				if (index != null && keyType != Types.NO_TYPE && !index.getGamlType().isTranslatableInto(keyType)) {
-					if (!(Types.MATRIX.isAssignableFrom(list.getGamlType()) && index.getGamlType() == Types.INT))
+					if (!(Types.MATRIX.isAssignableFrom(list.getGamlType()) && index.getGamlType() == Types.INT)) {
 						cd.warning(
 								"The type of the index of " + list.serialize(false) + " (" + keyType
 										+ ") does not match with the type of " + index.serialize(false) + " ("
 										+ index.getGamlType() + "). The latter will be casted to " + keyType,
 								IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
+					}
 				}
 			}
 		}

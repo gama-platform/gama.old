@@ -16,13 +16,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+@SuppressWarnings ("unused")
 public class CheckConcepts {
+
 	private static void executeForAWebsitePart(final String path, final String websitePart) {
-		final ArrayList<File> listFiles = new ArrayList<File>();
+		final ArrayList<File> listFiles = new ArrayList<>();
 		Utils.getFilesFromFolder(path, listFiles);
 		final ArrayList<File> gamlFiles = Utils.filterFilesByExtensions(listFiles, "md");
 
-		ArrayList<String> listConcept = new ArrayList<String>();
+		ArrayList<String> listConcept = new ArrayList<>();
 
 		for (final File file : gamlFiles) {
 			try {
@@ -33,8 +35,9 @@ public class CheckConcepts {
 			for (final String concept : listConcept) {
 				if (!ConceptManager.conceptIsPossibleToAdd(concept)) {
 					System.out.println("WARNING : The concept " + concept + " is not a predefined concept !!");
-				} else
+				} else {
 					ConceptManager.addOccurrenceOfConcept(concept, websitePart);
+				}
 			}
 		}
 	}
@@ -72,19 +75,19 @@ public class CheckConcepts {
 		String result = "";
 
 		// read the file
-		final FileInputStream fis = new FileInputStream(file);
-		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		try (final FileInputStream fis = new FileInputStream(file);
+				final BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
 
-		String line = null;
+			String line = null;
 
-		while ((line = br.readLine()) != null) {
-			if (line.contains("__________________________________")) {
+			while ((line = br.readLine()) != null) {
+				if (line.contains("__________________________________")) {
+					result += line + "\n";
+					break;
+				}
 				result += line + "\n";
-				break;
 			}
-			result += line + "\n";
 		}
-		br.close();
 		result += "\n\n";
 
 		// add the statistics
@@ -92,8 +95,8 @@ public class CheckConcepts {
 
 		// write the file
 		final File outputFile = new File(file);
-		final FileOutputStream fileOut = new FileOutputStream(outputFile);
-		fileOut.write(result.getBytes());
-		fileOut.close();
+		try (final FileOutputStream fileOut = new FileOutputStream(outputFile)) {
+			fileOut.write(result.getBytes());
+		}
 	}
 }

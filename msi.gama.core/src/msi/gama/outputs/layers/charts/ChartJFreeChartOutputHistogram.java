@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputHistogram.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartJFreeChartOutputHistogram.java, in plugin msi.gama.core, is part of the source
+ * code of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -154,14 +154,14 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	static class LabelGenerator extends StandardCategoryItemLabelGenerator {
 		/**
 		 * Generates an item label.
-		 * 
+		 *
 		 * @param dataset
 		 *            the dataset.
 		 * @param series
 		 *            the series index.
 		 * @param category
 		 *            the category index.
-		 * 
+		 *
 		 * @return the label.
 		 */
 		@Override
@@ -489,13 +489,13 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		}
 
 	}
-
-	@Override
-	public void initChart(final IScope scope, final String chartname) {
-		super.initChart(scope, chartname);
-		// final CategoryPlot pp = (CategoryPlot) chart.getPlot();
-
-	}
+	//
+	// @Override
+	// public void initChart(final IScope scope, final String chartname) {
+	// super.initChart(scope, chartname);
+	// // final CategoryPlot pp = (CategoryPlot) chart.getPlot();
+	//
+	// }
 
 	@Override
 	public void initChart_post_data_init(final IScope scope) {

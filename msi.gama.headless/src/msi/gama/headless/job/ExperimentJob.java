@@ -53,14 +53,14 @@ public class ExperimentJob implements IExperimentJob {
 
 	private static long GLOBAL_ID_GENERATOR = 0;
 
-	public static enum OutputType {
+	public enum OutputType {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
 	}
 
 	public static class ListenedVariable {
 
 		public class NA {
-			private NA() {}
+			NA() {}
 
 			@Override
 			public String toString() {
@@ -77,11 +77,11 @@ public class ExperimentJob implements IExperimentJob {
 		Object value;
 		long step;
 		String path;
-		private boolean isNa;
+		// private boolean isNa;
 
 		private Object setNaValue() {
 			this.value = new NA();
-			this.isNa = true;
+			// this.isNa = true;
 			return this.value;
 		}
 
@@ -101,7 +101,7 @@ public class ExperimentJob implements IExperimentJob {
 		}
 
 		public void setValue(final Object obj, final long st, final DataType typ) {
-			this.isNa = false;
+			// this.isNa = false;
 			value = obj == null ? setNaValue() : obj;
 			this.step = st;
 			this.dataType = typ;
@@ -359,8 +359,9 @@ public class ExperimentJob implements IExperimentJob {
 				} else {
 					v.setValue(out.getValue(), out.getStep(), out.getType());
 				}
-			} else
+			} else {
 				v.setValue(null, this.step);
+			}
 		}
 		if (this.outputFile != null) {
 			this.outputFile.writeResultStep(this.step, this.listenedVariables);
@@ -489,7 +490,7 @@ public class ExperimentJob implements IExperimentJob {
 		double mseed = 0.0;
 		if (seedDescription != null) {
 			mseed = Double.valueOf(seedDescription.getExpression().literalValue()).doubleValue();
-			System.out.println("seed "+ mseed);
+			System.out.println("seed " + mseed);
 		}
 		final IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
 		final ExperimentJob expJob =

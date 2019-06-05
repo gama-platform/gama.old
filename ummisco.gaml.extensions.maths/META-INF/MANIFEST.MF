@@ -8,4 +8,5 @@ Require-Bundle: msi.gama.core;bundle-version="1.4.0",
 Bundle-ActivationPolicy: lazy
 Export-Package: ummisco.gaml.extensions.maths.ode.statements
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: ummisco.gaml.extensions.maths
 

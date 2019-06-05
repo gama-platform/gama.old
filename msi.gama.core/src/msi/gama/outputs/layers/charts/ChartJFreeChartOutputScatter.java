@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputScatter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartJFreeChartOutputScatter.java, in plugin msi.gama.core, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -23,7 +23,6 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
@@ -105,7 +104,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		return 1;
 	}
 
-	HashMap<String, ArrayList<Double>> MarkerScale = new HashMap<String, ArrayList<Double>>();
+	HashMap<String, ArrayList<Double>> MarkerScale = new HashMap<>();
 
 	public ChartJFreeChartOutputScatter(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
@@ -119,20 +118,13 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		jfreedataset.add(0, new XYIntervalSeriesCollection());
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
-		if (reverse_axes)
+		if (reverse_axes) {
 			orientation = PlotOrientation.HORIZONTAL;
+		}
 
 		switch (type) {
-			case SERIES_CHART: {
-				chart = ChartFactory.createXYLineChart(getName(), "", "",
-						(XYIntervalSeriesCollection) jfreedataset.get(0), orientation, true, false, false);
-				break;
-			}
-
+			case SERIES_CHART:
 			case XY_CHART:
-				chart = ChartFactory.createXYLineChart(getName(), "", "",
-						(XYIntervalSeriesCollection) jfreedataset.get(0), orientation, true, false, false);
-				break;
 			case SCATTER_CHART:
 				chart = ChartFactory.createXYLineChart(getName(), "", "",
 						(XYIntervalSeriesCollection) jfreedataset.get(0), orientation, true, false, false);
@@ -279,16 +271,20 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		if (newr instanceof myXYErrorRenderer) {
 			((myXYErrorRenderer) newr).setDrawYError(false);
 			((myXYErrorRenderer) newr).setDrawXError(false);
-			if (myserie.isUseYErrValues())
+			if (myserie.isUseYErrValues()) {
 				((myXYErrorRenderer) newr).setDrawYError(true);
-			if (myserie.isUseXErrValues())
+			}
+			if (myserie.isUseXErrValues()) {
 				((myXYErrorRenderer) newr).setDrawXError(true);
-			if (myserie.getMysource().isUseSize())
+			}
+			if (myserie.getMysource().isUseSize()) {
 				((myXYErrorRenderer) newr).setUseSize(scope, true);
+			}
 		}
 
-		if (myserie.getMysource().getUniqueMarkerName() != null)
+		if (myserie.getMysource().getUniqueMarkerName() != null) {
 			setSerieMarkerShape(scope, myserie.getName(), myserie.getMysource().getUniqueMarkerName());
+		}
 
 	}
 
@@ -355,30 +351,26 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		final ArrayList<Double> XValues = dataserie.getXValues(scope);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);
-		boolean secondaxis=false;
-		if (dataserie.getMysource().getUseSecondYAxis(scope))
-		{
-			secondaxis=true;
+		boolean secondaxis = false;
+		if (dataserie.getMysource().getUseSecondYAxis(scope)) {
+			secondaxis = true;
 			this.setUseSecondYAxis(scope, true);
-			
+
 		}
 
 		if (XValues.size() > 0) {
 			final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-			NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(0);
-			int ids=IdPosition.get(dataserie.getSerieId(scope));
-			if (secondaxis)
-			{
-	//			rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(1);
-//				((XYPlot) this.chart.getPlot()).setRangeAxis(IdPosition.get(dataserie.getSerieId(scope)),rangeAxis);
-	//			((XYPlot) this.chart.getPlot()).setRangeAxis(IdPosition.get(dataserie.getSerieId(scope)),rangeAxis);
-				 ((XYPlot) this.chart.getPlot()).mapDatasetToRangeAxis(ids, 1);
-			}
-			else
-			{
-//				((XYPlot) this.chart.getPlot()).setRangeAxis(IdPosition.get(dataserie.getSerieId(scope)),rangeAxis);
-				 ((XYPlot) this.chart.getPlot()).mapDatasetToRangeAxis(ids, 0);
-				
+			final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(0);
+			final int ids = IdPosition.get(dataserie.getSerieId(scope));
+			if (secondaxis) {
+				// rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(1);
+				// ((XYPlot) this.chart.getPlot()).setRangeAxis(IdPosition.get(dataserie.getSerieId(scope)),rangeAxis);
+				// ((XYPlot) this.chart.getPlot()).setRangeAxis(IdPosition.get(dataserie.getSerieId(scope)),rangeAxis);
+				((XYPlot) this.chart.getPlot()).mapDatasetToRangeAxis(ids, 1);
+			} else {
+				// ((XYPlot) this.chart.getPlot()).setRangeAxis(IdPosition.get(dataserie.getSerieId(scope)),rangeAxis);
+				((XYPlot) this.chart.getPlot()).mapDatasetToRangeAxis(ids, 0);
+
 			}
 			domainAxis.setAutoRange(false);
 			rangeAxis.setAutoRange(false);
@@ -429,82 +421,74 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	}
 
-	public NumberAxis formatYAxis(final IScope scope, NumberAxis axis)
-	{
+	public NumberAxis formatYAxis(final IScope scope, final NumberAxis axis) {
 		axis.setAxisLinePaint(axesColor);
 		axis.setTickLabelFont(getTickFont());
 		axis.setLabelFont(getLabelFont());
 		if (textColor != null) {
-				axis.setLabelPaint(textColor);
-				axis.setTickLabelPaint(textColor);
-			}
+			axis.setLabelPaint(textColor);
+			axis.setTickLabelPaint(textColor);
+		}
 		axis.setAxisLinePaint(axesColor);
-			axis.setLabelFont(getLabelFont());
-			axis.setTickLabelFont(getTickFont());
-			if (textColor != null) {
-				axis.setLabelPaint(textColor);
-				axis.setTickLabelPaint(textColor);
-			}
-		if (!this.getYTickValueVisible(scope))
-			{
+		axis.setLabelFont(getLabelFont());
+		axis.setTickLabelFont(getTickFont());
+		if (textColor != null) {
+			axis.setLabelPaint(textColor);
+			axis.setTickLabelPaint(textColor);
+		}
+		if (!this.getYTickValueVisible(scope)) {
 			axis.setTickMarksVisible(false);
 			axis.setTickLabelsVisible(false);
-				
-			}
+
+		}
 		return axis;
-		
+
 	}
+
 	@Override
 	public void resetAxes(final IScope scope) {
-		 NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
-		 NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
-		 NumberAxis range2Axis=rangeAxis; 
-		 boolean secondaxis=false;
-		 if (getUseSecondYAxis(scope))
-		 {
-			 secondaxis=true;
-			 range2Axis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(1);
-				if (range2Axis==null)
-				{
-					NumberAxis secondAxis = new NumberAxis("");
-					((XYPlot) this.chart.getPlot()).setRangeAxis(1,secondAxis);
-					range2Axis=secondAxis;
-					 range2Axis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(1);
-					 range2Axis=formatYAxis(scope,range2Axis);
+		NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
+		NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis();
+		NumberAxis range2Axis = rangeAxis;
+		boolean secondaxis = false;
+		if (getUseSecondYAxis(scope)) {
+			secondaxis = true;
+			range2Axis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(1);
+			if (range2Axis == null) {
+				final NumberAxis secondAxis = new NumberAxis("");
+				((XYPlot) this.chart.getPlot()).setRangeAxis(1, secondAxis);
+				range2Axis = secondAxis;
+				range2Axis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(1);
+				range2Axis = formatYAxis(scope, range2Axis);
 
-					
-				 ((XYPlot) this.chart.getPlot()).setRangeAxis(1,range2Axis);
-				}
-		 }
-
-		if (getX_LogScale(scope)) 
-		{
-		 LogarithmicAxis logAxis = new LogarithmicAxis(domainAxis.getLabel());
-			logAxis.setAllowNegativesFlag(true);
-		((XYPlot) this.chart.getPlot()).setDomainAxis(logAxis);
-		domainAxis=logAxis;
+				((XYPlot) this.chart.getPlot()).setRangeAxis(1, range2Axis);
+			}
 		}
-		if (getY_LogScale(scope)) 
-		{
+
+		if (getX_LogScale(scope)) {
+			final LogarithmicAxis logAxis = new LogarithmicAxis(domainAxis.getLabel());
+			logAxis.setAllowNegativesFlag(true);
+			((XYPlot) this.chart.getPlot()).setDomainAxis(logAxis);
+			domainAxis = logAxis;
+		}
+		if (getY_LogScale(scope)) {
 			LogarithmicAxis logAxis = new LogarithmicAxis(rangeAxis.getLabel());
 			logAxis.setAllowNegativesFlag(true);
-			logAxis=(LogarithmicAxis) formatYAxis(scope,logAxis);
-		((XYPlot) this.chart.getPlot()).setRangeAxis(logAxis);
-		rangeAxis=logAxis;
+			logAxis = (LogarithmicAxis) formatYAxis(scope, logAxis);
+			((XYPlot) this.chart.getPlot()).setRangeAxis(logAxis);
+			rangeAxis = logAxis;
 		}
-		if (secondaxis)
-		{
-			if (getY2_LogScale(scope)) 
-			{
+		if (secondaxis) {
+			if (getY2_LogScale(scope)) {
 				LogarithmicAxis logAxis = new LogarithmicAxis(range2Axis.getLabel());
 				logAxis.setAllowNegativesFlag(true);
-				logAxis=(LogarithmicAxis) formatYAxis(scope,logAxis);
-			((XYPlot) this.chart.getPlot()).setRangeAxis(1,logAxis);
-			range2Axis=logAxis;
+				logAxis = (LogarithmicAxis) formatYAxis(scope, logAxis);
+				((XYPlot) this.chart.getPlot()).setRangeAxis(1, logAxis);
+				range2Axis = logAxis;
 			}
-			
+
 		}
-		
+
 		if (!getUseXRangeInterval(scope) && !getUseXRangeMinMax(scope)) {
 			domainAxis.setAutoRange(true);
 		}
@@ -519,22 +503,21 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			domainAxis.setRange(getXRangeMin(scope), getXRangeMax(scope));
 
 		}
-		if (this.getXTickLineVisible(scope))
-		{
+		if (this.getXTickLineVisible(scope)) {
 			((XYPlot) this.chart.getPlot()).setDomainGridlinePaint(this.tickColor);
 			if (getXTickUnit(scope) > 0) {
 				domainAxis.setTickUnit(new NumberTickUnit(getXTickUnit(scope)));
 				((XYPlot) this.chart.getPlot()).setDomainGridlinesVisible(true);
-			} else
-				((XYPlot) this.chart.getPlot()).setDomainGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
-			
-		}
-		else
-		{
+			} else {
+				((XYPlot) this.chart.getPlot())
+						.setDomainGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
+			}
+
+		} else {
 			((XYPlot) this.chart.getPlot()).setDomainGridlinesVisible(false);
-			
+
 		}
-		
+
 		if (!getUseYRangeInterval(scope) && !getUseYRangeMinMax(scope)) {
 			rangeAxis.setAutoRange(true);
 		}
@@ -548,24 +531,22 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			rangeAxis.setRange(getYRangeMin(scope), getYRangeMax(scope));
 
 		}
-		if (this.getYTickLineVisible(scope))
-		{
+		if (this.getYTickLineVisible(scope)) {
 			((XYPlot) this.chart.getPlot()).setRangeGridlinePaint(this.tickColor);
 			if (getYTickUnit(scope) > 0) {
 				rangeAxis.setTickUnit(new NumberTickUnit(getYTickUnit(scope)));
 				((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(true);
-			} else
-				((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
-			
-		}
-		else
-		{
+			} else {
+				((XYPlot) this.chart.getPlot())
+						.setRangeGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
+			}
+
+		} else {
 			((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(false);
-			
+
 		}
-		
-		if (secondaxis)
-		{
+
+		if (secondaxis) {
 			if (!getUseY2RangeInterval(scope) && !getUseY2RangeMinMax(scope)) {
 				range2Axis.setAutoRange(true);
 			}
@@ -579,22 +560,21 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				range2Axis.setRange(getY2RangeMin(scope), getY2RangeMax(scope));
 
 			}
-			if (this.getYTickLineVisible(scope))
-			{
+			if (this.getYTickLineVisible(scope)) {
 				((XYPlot) this.chart.getPlot()).setRangeGridlinePaint(this.tickColor);
 				if (getY2TickUnit(scope) > 0) {
 					range2Axis.setTickUnit(new NumberTickUnit(getY2TickUnit(scope)));
 					((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(true);
-				} else
-					((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
-				
-			}
-			else
-			{
+				} else {
+					((XYPlot) this.chart.getPlot())
+							.setRangeGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
+				}
+
+			} else {
 				((XYPlot) this.chart.getPlot()).setRangeGridlinesVisible(false);
-				
+
 			}
-			
+
 		}
 
 		if (getXLabel(scope) != null && !getXLabel(scope).isEmpty()) {
@@ -603,22 +583,19 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		if (getYLabel(scope) != null && !getYLabel(scope).isEmpty()) {
 			rangeAxis.setLabel(getYLabel(scope));
 		}
-		if (secondaxis)
-		{
+		if (secondaxis) {
 			if (getY2Label(scope) != null && !getY2Label(scope).isEmpty()) {
 				range2Axis.setLabel(getY2Label(scope));
 			}
-			
+
 		}
-		if (this.series_label_position.equals("none")) 
-		{
-			(this.chart).getLegend().setVisible(false);
+		if (this.series_label_position.equals("none")) {
+			this.chart.getLegend().setVisible(false);
 		}
-		if (!this.getXTickValueVisible(scope))
-		{
+		if (!this.getXTickValueVisible(scope)) {
 			domainAxis.setTickMarksVisible(false);
 			domainAxis.setTickLabelsVisible(false);
-			
+
 		}
 
 	}
@@ -767,28 +744,29 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			pp.getDomainAxis().setTickLabelPaint(textColor);
 		}
 
-		NumberAxis axis=(NumberAxis) pp.getRangeAxis();
-		axis=formatYAxis(scope,axis);
+		NumberAxis axis = (NumberAxis) pp.getRangeAxis();
+		axis = formatYAxis(scope, axis);
 		pp.setRangeAxis(axis);
 		if (ytickunit > 0) {
 			((NumberAxis) pp.getRangeAxis()).setTickUnit(new NumberTickUnit(ytickunit));
 			pp.setRangeGridlinesVisible(true);
-		} else
+		} else {
 			pp.setRangeGridlinesVisible(GamaPreferences.Displays.CHART_GRIDLINES.getValue());
+		}
 
 		// resetAutorange(scope);
 
 		if (getType() == ChartOutput.SERIES_CHART) {
-			if (xlabel == null)
+			if (xlabel == null) {
 				xlabel = "time";
+			}
 		}
 		if (getType() == ChartOutput.XY_CHART) {}
 		if (getType() == ChartOutput.SCATTER_CHART) {}
-		if (!this.getXTickValueVisible(scope))
-		{
+		if (!this.getXTickValueVisible(scope)) {
 			pp.getDomainAxis().setTickMarksVisible(false);
 			pp.getDomainAxis().setTickLabelsVisible(false);
-			
+
 		}
 
 	}

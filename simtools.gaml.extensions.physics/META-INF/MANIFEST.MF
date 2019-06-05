@@ -11,3 +11,4 @@ Export-Package:
  simtools.gaml.extensions.physics
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: simtools.gaml.extensions.physics

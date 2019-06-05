@@ -1,14 +1,17 @@
 /*********************************************************************************************
  *
- * 'GamlAnnotationImageProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlAnnotationImageProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
+
+import static org.eclipse.xtext.ui.editor.XtextEditor.ERROR_ANNOTATION_TYPE;
+import static org.eclipse.xtext.ui.editor.XtextEditor.INFO_ANNOTATION_TYPE;
+import static org.eclipse.xtext.ui.editor.XtextEditor.WARNING_ANNOTATION_TYPE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +20,6 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
-import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.model.XtextMarkerAnnotationImageProvider;
 import org.eclipse.xtext.ui.editor.validation.XtextAnnotation;
 
@@ -26,40 +28,39 @@ import com.google.inject.Inject;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvider {
 
 	private static final Map<String, GamaIcon> fixables = new HashMap() {
 
 		{
-			put(XtextEditor.ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.error2"));
-			put(XtextEditor.WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.warning2"));
-			put(XtextEditor.INFO_ANNOTATION_TYPE, GamaIcons.create("marker.info2"));
+			put(ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.error2"));
+			put(WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.warning2"));
+			put(INFO_ANNOTATION_TYPE, GamaIcons.create("marker.info2"));
 			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.task2"));
 		}
 	};
 	private static final Map<String, GamaIcon> nonFixables = new HashMap() {
 
 		{
-			put(XtextEditor.ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.error2"));
-			put(XtextEditor.WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.warning2"));
-			put(XtextEditor.INFO_ANNOTATION_TYPE, GamaIcons.create("marker.info2"));
+			put(ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.error2"));
+			put(WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.warning2"));
+			put(INFO_ANNOTATION_TYPE, GamaIcons.create("marker.info2"));
 			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.task2"));
 		}
 	};
 	private static final Map<String, GamaIcon> deleted = new HashMap() {
 
 		{
-			put(XtextEditor.ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
-			put(XtextEditor.WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
-			put(XtextEditor.INFO_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
+			put(ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
+			put(WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
+			put(INFO_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
 			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.deleted2"));
 		}
 	};
 
 	@Inject
-	public GamlAnnotationImageProvider() {
-	}
+	public GamlAnnotationImageProvider() {}
 
 	@Override
 	public Image getManagedImage(final Annotation annotation) {
@@ -94,9 +95,7 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 				}
 			}
 		}
-		if (result != null) {
-			return result.image();
-		}
+		if (result != null) { return result.image(); }
 		// DEBUG.LOG("Image not found for type: " +
 		// annotation.getType());
 		return super.getManagedImage(annotation);

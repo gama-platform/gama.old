@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 22 juil. 2018
- * 
+ *
  */
 package msi.gama.lang.gaml.ui.editor;
 
@@ -123,7 +123,7 @@ public class GamlEditorDragAndDropHandler {
 				// FIXME: https://bugs.eclipse.org/bugs/show_bug.cgi?id=260922
 				if (editor.isBlockSelectionModeEnabled()) { return false; }
 
-				int offset = st.getOffsetAtLocation(point);
+				int offset = st.getOffsetAtPoint(point);
 				final Point p = st.getLocationAtOffset(offset);
 				if (p.x > point.x) {
 					offset--;

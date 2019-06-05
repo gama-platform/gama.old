@@ -48,14 +48,11 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
  */
 public class NavigatorSearchControl {
 
-	boolean shouldSelect(Object o) {
-		if (!(o instanceof WrappedGamaFile))
-			return false;
-		WrappedGamaFile file = (WrappedGamaFile) o;
-		if (file.getName().toLowerCase().contains(pattern))
-			return true;
-		if (file.hasTag(pattern))
-			return true;
+	boolean shouldSelect(final Object o) {
+		if (!(o instanceof WrappedGamaFile)) { return false; }
+		final WrappedGamaFile file = (WrappedGamaFile) o;
+		if (file.getName().toLowerCase().contains(pattern)) { return true; }
+		if (file.hasTag(pattern)) { return true; }
 		return false;
 	}
 
@@ -76,8 +73,7 @@ public class NavigatorSearchControl {
 
 		@SuppressWarnings ("unchecked")
 		private boolean select(final VirtualContent<?> element, final boolean b) {
-			if (alreadySelected.contains(element))
-				return true;
+			if (alreadySelected.contains(element)) { return true; }
 			if (internalSelect(element, b)) {
 				alreadySelected.add(element);
 				return true;
@@ -86,8 +82,7 @@ public class NavigatorSearchControl {
 		}
 
 		private boolean internalSelect(final VirtualContent<?> element, final boolean considerVirtualContent) {
-			if (pattern.isEmpty())
-				return true;
+			if (pattern.isEmpty()) { return true; }
 			switch (element.getType()) {
 				case FILE:
 					return shouldSelect(element);
@@ -101,9 +96,9 @@ public class NavigatorSearchControl {
 				case VIRTUAL_FOLDER:
 				default:
 					final Object[] children = element.getNavigatorChildren();
-					for (int i = 0; i < children.length; i++)
-						if (select((VirtualContent<?>) children[i], false))
-							return true;
+					for (final Object element2 : children) {
+						if (select((VirtualContent<?>) element2, false)) { return true; }
+					}
 					return false;
 			}
 		}
@@ -111,7 +106,7 @@ public class NavigatorSearchControl {
 
 	Text find;
 	private static final String EMPTY = "Find model..."; //$NON-NLS-1$
-	private String pattern;
+	String pattern;
 	GamaNavigator navigator;
 	CommonViewer treeViewer;
 	final NamePatternFilter filter = new NamePatternFilter();
@@ -132,7 +127,7 @@ public class NavigatorSearchControl {
 			data.heightHint = 24;
 			data.widthHint = 100;
 			parent.setLayoutData(data);
-			GridLayout layout = new GridLayout();
+			final GridLayout layout = new GridLayout();
 			parent.setLayout(layout);
 		}
 
@@ -189,8 +184,9 @@ public class NavigatorSearchControl {
 			searchJob.cancel();
 			resetJob.schedule(200);
 		} else {
-			if (searchJob.getState() == Job.SLEEPING || searchJob.getState() == Job.WAITING)
+			if (searchJob.getState() == Job.SLEEPING || searchJob.getState() == Job.WAITING) {
 				searchJob.cancel();
+			}
 			searchJob.schedule(200);
 
 		}
@@ -199,24 +195,26 @@ public class NavigatorSearchControl {
 	public void doSearch() {
 		treeViewer.getControl().setRedraw(false);
 		filter.reset();
-		if (!Arrays.asList(treeViewer.getFilters()).contains(filter))
+		if (!Arrays.asList(treeViewer.getFilters()).contains(filter)) {
 			treeViewer.addFilter(filter);
-		else
+		} else {
 			treeViewer.refresh(false);
+		}
 		treeViewer.expandAll();
 		treeViewer.getControl().setRedraw(true);
 	}
 
 	public void resetSearch() {
 		treeViewer.getControl().setRedraw(false);
-		if (Arrays.asList(treeViewer.getFilters()).contains(filter))
+		if (Arrays.asList(treeViewer.getFilters()).contains(filter)) {
 			treeViewer.removeFilter(filter);
-		else
+		} else {
 			treeViewer.refresh(false);
+		}
 		treeViewer.getControl().setRedraw(true);
 	}
 
-	public void searchFor(String name) {
+	public void searchFor(final String name) {
 		find.setText(name);
 		pattern = name;
 		doSearch();

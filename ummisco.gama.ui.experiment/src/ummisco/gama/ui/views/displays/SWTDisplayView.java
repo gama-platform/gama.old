@@ -23,7 +23,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public abstract class SWTDisplayView extends LayeredDisplayView {
 
-	boolean isOverlayTemporaryVisible;
+	// boolean isOverlayTemporaryVisible;
 
 	public static String ID = "msi.gama.application.view.SWTDisplayView";
 
@@ -47,8 +47,9 @@ public abstract class SWTDisplayView extends LayeredDisplayView {
 				if (getDisplaySurface() != null) {
 					getDisplaySurface().dispose();
 				}
-				if (getSite() != null && getSite().getPage() != null)
+				if (getSite() != null && getSite().getPage() != null) {
 					getSite().getPage().hideView(SWTDisplayView.this);
+				}
 			} catch (final Exception e) {
 				// e.printStackTrace();
 			}

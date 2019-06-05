@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
@@ -45,7 +45,7 @@ public class Popup {
 	private static Shell popup;
 	private static final Listener hide = event -> hide();
 
-	static Shell getPopup() {
+	static synchronized Shell getPopup() {
 		if (popup == null || popup.isDisposed() || popup.getShell() == null || popup.getShell().isDisposed()) {
 			popup = new Shell(WorkbenchHelper.getShell(), PopupDialog.HOVER_SHELLSTYLE);
 			popup.setLayout(new GridLayout(1, true));
@@ -117,7 +117,7 @@ public class Popup {
 		final Shell popup = getPopup();
 		final Control[] array = popup.getChildren();
 		final int labelsSize = s.size();
-		final List<Control> labels = new ArrayList<Control>(Arrays.asList(array));
+		final List<Control> labels = new ArrayList<>(Arrays.asList(array));
 		final int controlsSize = array.length;
 		if (controlsSize > labelsSize) {
 			for (int i = labelsSize; i < controlsSize; i++) {
@@ -156,8 +156,7 @@ public class Popup {
 	}
 
 	public static void hide() {
-		if (popup == null || popup.isDisposed() || !popup.isVisible())
-			return;
+		if (popup == null || popup.isDisposed() || !popup.isVisible()) { return; }
 		getPopup().setVisible(false);
 	}
 }

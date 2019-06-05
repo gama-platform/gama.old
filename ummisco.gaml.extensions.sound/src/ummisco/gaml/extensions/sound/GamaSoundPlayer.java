@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.sound;
@@ -24,7 +24,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSoundPlayer {
 
-	private class MyBasicPlayerListener implements BasicPlayerListener {
+	class MyBasicPlayerListener implements BasicPlayerListener {
 
 		@Override
 		public void opened(final Object stream, final Map properties) {}
@@ -62,30 +62,29 @@ public class GamaSoundPlayer {
 	public static final String OVERWRITE_MODE = IKeyword.OVERWRITE;
 	public static final String IGNORE_MODE = IKeyword.IGNORE;
 
-	private final BasicPlayer basicPlayer;
+	final BasicPlayer basicPlayer;
 	// private File soundFile;
 	// private String soundPlayerMode = OVERWRITE_MODE;
-	private Boolean repeat = false;
+	Boolean repeat = false;
 
 	// assure that we don't repeat playing a music file on an already dead agent
-	private Boolean agentDiedOrSimDisposed = false;
+	volatile boolean agentDiedOrSimDisposed = false;
 
-	private Boolean endOfMedia = false;
-	private Boolean playerStopped = false;
+	Boolean endOfMedia = false;
+	Boolean playerStopped = false;
 
 	public GamaSoundPlayer() {
 		basicPlayer = new BasicPlayer();
 		basicPlayer.addBasicPlayerListener(new MyBasicPlayerListener());
 	}
 
-	private void repeatSound(final IScope scope) {
-		synchronized (agentDiedOrSimDisposed) {
-			if (!agentDiedOrSimDisposed) {
-				try {
-					basicPlayer.play();
-				} catch (final BasicPlayerException e) {
-					throw GamaRuntimeException.error("Failed to replay sound", scope);
-				}
+	void repeatSound(final IScope scope) {
+
+		if (!agentDiedOrSimDisposed) {
+			try {
+				basicPlayer.play();
+			} catch (final BasicPlayerException e) {
+				throw GamaRuntimeException.error("Failed to replay sound", scope);
 			}
 		}
 	}
@@ -117,17 +116,17 @@ public class GamaSoundPlayer {
 	}
 
 	public void stop(final IScope scope, final boolean agentDiedOrSimDisposed) throws GamaRuntimeException {
-		synchronized (this.agentDiedOrSimDisposed) {
-			this.agentDiedOrSimDisposed = agentDiedOrSimDisposed;
 
-			try {
-				endOfMedia = true;
-				basicPlayer.stop();
-			} catch (final BasicPlayerException e) {
-				e.printStackTrace();
-				throw GamaRuntimeException.error("Failed to stop sound player", scope);
-			}
+		this.agentDiedOrSimDisposed = agentDiedOrSimDisposed;
+
+		try {
+			endOfMedia = true;
+			basicPlayer.stop();
+		} catch (final BasicPlayerException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error("Failed to stop sound player", scope);
 		}
+
 	}
 
 	public void pause(final IScope scope) throws GamaRuntimeException {

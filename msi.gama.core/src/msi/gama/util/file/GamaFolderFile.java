@@ -1,14 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaFolderFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaFolderFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
+
+import static msi.gama.util.GamaListFactory.createWithoutCasting;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.runtime.IScope;
@@ -33,11 +35,13 @@ public class GamaFolderFile extends GamaFile<IList<String>, String> {
 
 	@Override
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
-		if (!getFile(scope).isDirectory()) { throw GamaRuntimeException
-				.error(getFile(scope).getAbsolutePath() + "is not a folder", scope); }
-		if (!getFile(scope).exists()) { throw GamaRuntimeException.error(
-				"The folder " + getFile(scope).getAbsolutePath() + " does not exist. Please use 'new_folder' instead",
-				scope); }
+		if (!getFile(scope).isDirectory()) {
+			throw GamaRuntimeException.error(getFile(scope).getAbsolutePath() + "is not a folder", scope);
+		}
+		if (!getFile(scope).exists()) {
+			throw GamaRuntimeException.error("The folder " + getFile(scope).getAbsolutePath()
+					+ " does not exist. Please use 'new_folder' instead", scope);
+		}
 	}
 
 	@Override
@@ -64,7 +68,9 @@ public class GamaFolderFile extends GamaFile<IList<String>, String> {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if (getBuffer() != null) { return; }
-		setBuffer(GamaListFactory.createWithoutCasting(Types.STRING, getFile(scope).list()));
+		final String[] list = getFile(scope).list();
+		final IList<String> result = list == null ? GamaListFactory.create() : createWithoutCasting(Types.STRING, list);
+		setBuffer(result);
 	}
 
 	/*

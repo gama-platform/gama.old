@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.AgentIdentifier.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.agent.AgentIdentifier.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -20,7 +20,7 @@ import msi.gama.runtime.IScope;
 /**
  * Uniquely identifies an agent using a path from the simulation consisting of a set of species names and index in these
  * species of the different hosts and the agent
- * 
+ *
  * @author drogoul
  *
  */
@@ -32,7 +32,7 @@ public class AgentIdentifier {
 
 	/**
 	 * Builds an agent identifier from an agent
-	 * 
+	 *
 	 * @param agent
 	 */
 
@@ -46,18 +46,19 @@ public class AgentIdentifier {
 		while (true) {
 			specs.add(currentAgent.getSpeciesName());
 			inds.add(currentAgent.getIndex());
-			if (currentAgent == root)
+			if (currentAgent == root) {
 				break;
+			}
 			currentAgent = currentAgent.getPopulation().getHost();
 		}
-		species = specs.toArray(new String[0]);
-		indexes = inds.toArray(new Integer[0]);
+		species = specs.toArray(new String[specs.size()]);
+		indexes = inds.toArray(new Integer[inds.size()]);
 
 	}
 
 	/**
 	 * Returns the agent identified by this identifier
-	 * 
+	 *
 	 * @param scope
 	 * @return
 	 */
@@ -65,8 +66,7 @@ public class AgentIdentifier {
 		final ITopLevelAgent root = scope.getRoot();
 		IPopulation<? extends IAgent> pop = root.getPopulation();
 		IAgent currentAgent = pop.getAgent(indexes[indexes.length - 1]);
-		if (species.length == 1)
-			return currentAgent;
+		if (species.length == 1) { return currentAgent; }
 
 		for (int i = species.length - 2; i >= 0; i--) {
 			pop = currentAgent.getPopulationFor(species[i]);
@@ -77,8 +77,7 @@ public class AgentIdentifier {
 	}
 
 	public static AgentIdentifier of(final IAgent agent) {
-		if (agent == null)
-			return null;
+		if (agent == null) { return null; }
 		return new AgentIdentifier(agent);
 	}
 

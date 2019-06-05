@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.ImageUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.util.ImageUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -34,7 +34,6 @@ import javax.media.jai.RenderedOp;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.sun.media.jai.codec.FileSeekableStream;
-import com.sun.media.jai.codec.TIFFDecodeParam;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -80,7 +79,7 @@ public class ImageUtils {
 
 	/**
 	 * fileName is supposed to be already absolute, and to have been checked before, as the calls come from GamaFile
-	 * 
+	 *
 	 * @param scope
 	 * @param fileName
 	 * @param useCache
@@ -120,12 +119,15 @@ public class ImageUtils {
 		final String name = file.getName();
 		String ext = null;
 		if (name.contains(".")) {
-			ext = name.substring(file.getName().lastIndexOf("."));
+			ext = name.substring(file.getName().lastIndexOf('.'));
 		}
 		if (tiffExt.contains(ext)) {
 			try (FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath())) {
-				final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
-				decodeParam.setDecodePaletteAsShorts(true);
+				/**
+				 * AD TODO : decodeParam is not used ...
+				 */
+				// final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
+				// decodeParam.setDecodePaletteAsShorts(true);
 				final ParameterBlock params = new ParameterBlock();
 				params.add(stream);
 				final RenderedOp image1 = JAI.create("tiff", params);
@@ -157,7 +159,7 @@ public class ImageUtils {
 		try {
 			name = file.getName();
 			if (name.contains(".")) {
-				ext = name.substring(file.getName().lastIndexOf("."));
+				ext = name.substring(file.getName().lastIndexOf('.'));
 			}
 			if (gifExt.contains(ext)) {
 				if (useCache) {

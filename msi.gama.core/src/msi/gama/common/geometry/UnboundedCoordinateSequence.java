@@ -28,7 +28,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	int nbPoints;
 	final GamaPoint temp = new GamaPoint();
 
-	private void fillFrom(int begin) {
+	private void fillFrom(final int begin) {
 		for (int i = begin; i < points.length; i++) {
 			points[i] = new GamaPoint();
 		}
@@ -38,13 +38,12 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		growTo(INITIAL_SIZE);
 	}
 
-	private void growTo(int size) {
+	private void growTo(final int size) {
 		int begin = 0;
 		if (points == null) {
 			points = new GamaPoint[size];
 		} else {
-			if (size <= points.length)
-				return;
+			if (size <= points.length) { return; }
 			begin = points.length;
 			points = Arrays.copyOf(points, Math.max(size, begin + begin / 2));
 		}
@@ -68,7 +67,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public UnboundedCoordinateSequence clone() {
+	public final UnboundedCoordinateSequence clone() {
 		return new UnboundedCoordinateSequence(true, nbPoints, points);
 	}
 

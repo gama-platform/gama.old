@@ -4,10 +4,12 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
+
+import static ummisco.gama.ui.resources.IGamaIcons.OVERLAY_OK;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -34,15 +36,15 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	public static final TIntObjectHashMap<ImageDescriptor> DESCRIPTORS = new TIntObjectHashMap<ImageDescriptor>() {
 		{
 
-			put(CLOSED, GamaIcons.create("overlay.closed2").descriptor());
-			put(NO_PROBLEM, GamaIcons.create("overlay.ok2").descriptor());
-			put(IMarker.SEVERITY_INFO, GamaIcons.create("overlay.ok2").descriptor());
-			put(IMarker.SEVERITY_WARNING, GamaIcons.create("overlay.warning2").descriptor());
-			put(IMarker.SEVERITY_ERROR, GamaIcons.create("overlay.error2").descriptor());
-			put(LINK_OK, GamaIcons.create("overlay.ok").descriptor());
-			put(LINK_BROKEN, GamaIcons.create("overlay.link.broken").descriptor());
-			put(WEBLINK_OK, GamaIcons.create("overlay.cloud").descriptor());
-			put(WEBLINK_BROKEN, GamaIcons.create("overlay.link.broken").descriptor());
+			put(CLOSED, GamaIcons.create("navigator/overlay.closed2").descriptor());
+			put(NO_PROBLEM, GamaIcons.create(OVERLAY_OK).descriptor());
+			put(IMarker.SEVERITY_INFO, GamaIcons.create(OVERLAY_OK).descriptor());
+			put(IMarker.SEVERITY_WARNING, GamaIcons.create("navigator/overlay.warning2").descriptor());
+			put(IMarker.SEVERITY_ERROR, GamaIcons.create("navigator/overlay.error2").descriptor());
+			put(LINK_OK, GamaIcons.create("navigator/overlay.ok").descriptor());
+			put(LINK_BROKEN, GamaIcons.create("navigator/overlay.link.broken").descriptor());
+			put(WEBLINK_OK, GamaIcons.create("navigator/overlay.cloud").descriptor());
+			put(WEBLINK_BROKEN, GamaIcons.create("navigator/overlay.link.broken").descriptor());
 		}
 	};
 
@@ -72,7 +74,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	/**
 	 * Should both perform something and answer whether or not it has performed it, so that the navigator knows whether
 	 * it should handle double-clicks itself
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean handleDoubleClick() {

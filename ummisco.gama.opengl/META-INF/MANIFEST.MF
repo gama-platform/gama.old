@@ -176,3 +176,4 @@ Bundle-ClassPath: .,
  jogl-all.jar
 Bundle-Vendor: UMMISCO
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: ummisco.gama.opengl

@@ -13,7 +13,6 @@ import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_
 import static msi.gama.common.preferences.GamaPreferences.Runtime.CORE_SYNC;
 
 import java.awt.Color;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -53,12 +52,13 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	protected SashForm form;
 	public Composite surfaceComposite;
 	public final LayeredDisplayDecorator decorator;
-	protected volatile boolean disposed, realized;
+	protected volatile boolean disposed;
+	// protected volatile boolean realized;
 	Thread updateThread;
 	private volatile boolean lockAcquired = false;
 
 	@Override
-	public void setIndex(int index) {
+	public void setIndex(final int index) {
 		realIndex = index;
 	}
 
@@ -243,11 +243,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public boolean toolbarVisible() {
-		return getOutput().getData().isToolbarVisible();
-	}
-
-	@Override
 	public void zoomIn() {
 		if (getDisplaySurface() != null) {
 			getDisplaySurface().zoomIn();
@@ -361,8 +356,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		lockAcquired = false;
 		notify();
 	}
-
-	public abstract List<String> getCameraNames();
 
 	@Override
 	public boolean zoomWhenScrolling() {
