@@ -129,13 +129,13 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void mouseDown(final MouseEvent e) {
 		if (!ok.get()) { return; }
-		delegate.mouseDown(e.x, e.y, (e.stateMask & SWT.MODIFIER_MASK) != 0);
+		delegate.mouseDown(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
 	@Override
 	public void mouseUp(final MouseEvent e) {
 		if (!ok.get()) { return; }
-		delegate.mouseUp(e.x, e.y, (e.stateMask & SWT.MODIFIER_MASK) != 0);
+		delegate.mouseUp(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
 	@Override
