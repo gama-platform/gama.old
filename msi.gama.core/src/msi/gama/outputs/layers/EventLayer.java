@@ -22,12 +22,17 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.IExecutable;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by marilleau
  */
 
 public class EventLayer extends AbstractLayer {
+	
+	static {
+		DEBUG.OFF();
+	}
 
 	EventListener listener;
 	IScope executionScope;
@@ -175,6 +180,7 @@ public class EventLayer extends AbstractLayer {
 					|| pp.getY() >= surface.getEnvHeight()) {
 				if (MOUSE_EXITED != listenedEvent && MOUSE_ENTERED != listenedEvent) { return; }
 			}
+			//DEBUG.OUT("Coordinates in env " + pp);
 			GAMA.runAndUpdateAll(() -> executionScope.execute(executer, agent, null));
 
 		}

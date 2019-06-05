@@ -16,8 +16,19 @@ import javax.swing.JApplet;
 import org.eclipse.swt.SWT;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.runtime.GAMA;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class WorkaroundForIssue2476 {
+	
+	static {
+		DEBUG.OFF();
+	}
+	
+	private static void setMousePosition(IDisplaySurface surface, int x, int y) {
+		surface.setMousePosition(x, y);
+		GAMA.getGui().setMouseLocationInModel(surface.getModelCoordinates());
+	}
 
 	public static void installOn(final JApplet applet, final IDisplaySurface surface) {
 		// Install only on Linux
@@ -33,7 +44,7 @@ public class WorkaroundForIssue2476 {
 
 			@Override
 			public void mouseMoved(final java.awt.event.MouseEvent e) {
-				surface.setMousePosition(e.getX(), e.getY());
+				setMousePosition(surface, e.getX(), e.getY());
 			}
 
 			@Override
@@ -53,20 +64,19 @@ public class WorkaroundForIssue2476 {
 
 			@Override
 			public void mousePressed(final java.awt.event.MouseEvent e) {
-				surface.setMousePosition(e.getX(), e.getY());
-				if (inMenu) {
-					inMenu = false;
-					return;
-				}
-				surface.dispatchMouseEvent(SWT.MouseDown);
+
 				
 			}
 
 			@Override
-			public void mouseExited(final java.awt.event.MouseEvent e) {}
+			public void mouseExited(final java.awt.event.MouseEvent e) {
+				surface.dispatchMouseEvent(SWT.MouseExit);
+			}
 
 			@Override
-			public void mouseEntered(final java.awt.event.MouseEvent e) {}
+			public void mouseEntered(final java.awt.event.MouseEvent e) {
+				surface.dispatchMouseEvent(SWT.MouseEnter);
+			}
 
 			@Override
 			public void mouseClicked(final java.awt.event.MouseEvent e) {
@@ -75,9 +85,19 @@ public class WorkaroundForIssue2476 {
 				}
 				if (e.getButton() == 3 && !inMenu) {
 					inMenu = true;
-					surface.setMousePosition(e.getX(), e.getY());
+					setMousePosition(surface, e.getX(), e.getY());
 					surface.selectAgentsAroundMouse();
+					return;
 				}
+				
+				if (inMenu) {
+					inMenu = false;
+					return;
+				}
+				//DEBUG.OUT("Click on " + e.getX() + " " + e.getY());
+				setMousePosition(surface, e.getX(), e.getY());
+				surface.dispatchMouseEvent(SWT.MouseDown);
+				
 			}
 		});
 
