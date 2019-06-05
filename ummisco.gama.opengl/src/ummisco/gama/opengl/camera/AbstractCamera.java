@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
@@ -68,7 +68,6 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean keystoneMode = false;
 	protected double zCorrector = 1d;
 	private final boolean useNumKeys = GamaPreferences.Displays.OPENGL_NUM_KEYS_CAM.getValue();
-
 
 	public AbstractCamera(final IOpenGLRenderer renderer2) {
 		this.renderer = renderer2;
@@ -189,7 +188,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseScrolled()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.MouseWheelListener#mouseScrolled(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
@@ -209,16 +208,16 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseMove()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
 	public final void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
 
 		invokeOnGLThread(drawable -> {
-			if (cameraInteraction) {
-				internalMouseMove(e);
-			}
+			// if (cameraInteraction) {
+			internalMouseMove(e);
+			// }
 			return false;
 		});
 
@@ -233,7 +232,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseEnter()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
@@ -241,7 +240,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseExit()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
@@ -249,7 +248,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseHover()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
@@ -257,7 +256,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseDoubleClick()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
@@ -273,16 +272,16 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseDown()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
 	public final void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
 		invokeOnGLThread(drawable -> {
-			if (cameraInteraction) {
-				//PlatformHelper.scaleUpIfWin(e);
-				internalMouseDown(e);
-			}
+			// if (cameraInteraction) {
+			// PlatformHelper.scaleUpIfWin(e);
+			internalMouseDown(e);
+			// }
 			return false;
 		});
 
@@ -298,32 +297,32 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	private int clickOnKeystone(final MouseEvent e) {
-		//int x = e.x;
-		//int y = e.y;
-		int x = PlatformHelper.scaleUpIfWin(e.x);
-		int y = PlatformHelper.scaleUpIfWin(e.y);
+		// int x = e.x;
+		// int y = e.y;
+		final int x = PlatformHelper.scaleUpIfWin(e.x);
+		final int y = PlatformHelper.scaleUpIfWin(e.y);
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone.
 		// final GamaPoint p = getNormalizedCoordinates(e);
-		return renderer.getKeystoneHelper().cornerSelected(new GamaPoint(x,y));
+		return renderer.getKeystoneHelper().cornerSelected(new GamaPoint(x, y));
 	}
 
 	protected int hoverOnKeystone(final MouseEvent e) {
-	//	int x = e.x;
-	//	int y = e.y;
-		int x = PlatformHelper.scaleUpIfWin(e.x);
-		int y = PlatformHelper.scaleUpIfWin(e.y);
+		// int x = e.x;
+		// int y = e.y;
+		final int x = PlatformHelper.scaleUpIfWin(e.x);
+		final int y = PlatformHelper.scaleUpIfWin(e.y);
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone. Return 10 if click on the center.
 		// final GamaPoint p = getNormalizedCoordinates(e);
-		return renderer.getKeystoneHelper().cornerHovered(new GamaPoint(x,y));
+		return renderer.getKeystoneHelper().cornerHovered(new GamaPoint(x, y));
 	}
 
 	protected void internalMouseDown(final MouseEvent e) {
-		int x = PlatformHelper.scaleUpIfWin(e.x);
-		int y = PlatformHelper.scaleUpIfWin(e.y);
+		final int x = PlatformHelper.scaleUpIfWin(e.x);
+		final int y = PlatformHelper.scaleUpIfWin(e.y);
 		if (firsttimeMouseDown) {
-			firstMousePressedPosition = new Point(x,y);
+			firstMousePressedPosition = new Point(x, y);
 			firsttimeMouseDown = false;
 		}
 		if (keystoneMode) {
@@ -337,7 +336,7 @@ public abstract class AbstractCamera implements ICamera {
 			}
 		}
 
-		lastMousePressedPosition = new Point(x,y);
+		lastMousePressedPosition = new Point(x, y);
 		// Activate Picking when press and right click
 		if (e.button == 3 && !keystoneMode) {
 			if (renderer.getOpenGLHelper().mouseInROI(new GamaPoint(lastMousePressedPosition))) {
@@ -345,7 +344,7 @@ public abstract class AbstractCamera implements ICamera {
 			} else {
 				renderer.getPickingHelper().setPicking(true);
 			}
-		} else if (e.button == 2) { // mouse wheel
+		} else if (e.button == 2 && cameraInteraction) { // mouse wheel
 			resetPivot();
 		} else {
 			if (GamaKeyBindings.shift(e) && isViewInXYPlan()) {
@@ -366,16 +365,16 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method mouseUp()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
 	public final void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
 
 		invokeOnGLThread(drawable -> {
-			if (cameraInteraction) {
-				internalMouseUp(e);
-			}
+			// if (cameraInteraction) {
+			internalMouseUp(e);
+			// }
 			return false;
 		});
 
@@ -472,33 +471,43 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method keyPressed()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 	 */
 	@Override
 	public final void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
 
 		invokeOnGLThread(drawable -> {
-			if (cameraInteraction && !keystoneMode) {
+			if (!keystoneMode) {
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						AbstractCamera.this.strafeLeft = true;
+						if (cameraInteraction) {
+							AbstractCamera.this.strafeLeft = true;
+						}
 						break;
 					case SWT.ARROW_RIGHT:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						AbstractCamera.this.strafeRight = true;
+						if (cameraInteraction) {
+							AbstractCamera.this.strafeRight = true;
+						}
 						break;
 					case SWT.ARROW_UP:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						AbstractCamera.this.goesForward = true;
+						if (cameraInteraction) {
+							AbstractCamera.this.goesForward = true;
+						}
 						break;
 					case SWT.ARROW_DOWN:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						AbstractCamera.this.goesBackward = true;
+						if (cameraInteraction) {
+							AbstractCamera.this.goesBackward = true;
+						}
 						break;
 					case SWT.SPACE:
-						resetPivot();
+						if (cameraInteraction) {
+							resetPivot();
+						}
 						break;
 					case SWT.CTRL:
 						setCtrlPressed(!firsttimeMouseDown);
@@ -509,22 +518,42 @@ public abstract class AbstractCamera implements ICamera {
 				}
 				switch (e.character) {
 					case '+':
-						zoom(true);
+						if (cameraInteraction) {
+							zoom(true);
+						}
 						break;
 					case '-':
-						zoom(false);
+						if (cameraInteraction) {
+							zoom(false);
+						}
 						break;
 					case '4':
-						if(useNumKeys) quickLeftTurn();
+						if (cameraInteraction) {
+							if (useNumKeys) {
+								quickLeftTurn();
+							}
+						}
 						break;
 					case '6':
-						if(useNumKeys) quickRightTurn();
+						if (cameraInteraction) {
+							if (useNumKeys) {
+								quickRightTurn();
+							}
+						}
 						break;
 					case '8':
-						if(useNumKeys) quickUpTurn();
+						if (cameraInteraction) {
+							if (useNumKeys) {
+								quickUpTurn();
+							}
+						}
 						break;
 					case '2':
-						if(useNumKeys) quickDownTurn();
+						if (cameraInteraction) {
+							if (useNumKeys) {
+								quickDownTurn();
+							}
+						}
 						break;
 					case 'k':
 						if (!GamaKeyBindings.ctrl(e)) {
@@ -566,26 +595,34 @@ public abstract class AbstractCamera implements ICamera {
 
 	/**
 	 * Method keyReleased()
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 	 */
 	@Override
 	public final void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
 
 		invokeOnGLThread(drawable -> {
-			if (cameraInteraction && !keystoneMode) {
+			if (!keystoneMode) {
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT: // turns left (scene rotates right)
-						strafeLeft = false;
+						if (cameraInteraction) {
+							strafeLeft = false;
+						}
 						break;
 					case SWT.ARROW_RIGHT: // turns right (scene rotates left)
-						strafeRight = false;
+						if (cameraInteraction) {
+							strafeRight = false;
+						}
 						break;
 					case SWT.ARROW_UP:
-						goesForward = false;
+						if (cameraInteraction) {
+							goesForward = false;
+						}
 						break;
 					case SWT.ARROW_DOWN:
-						goesBackward = false;
+						if (cameraInteraction) {
+							goesBackward = false;
+						}
 						break;
 					case SWT.CTRL:
 						setCtrlPressed(false);
