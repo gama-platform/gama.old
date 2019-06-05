@@ -196,7 +196,7 @@ public class NetworkSkill extends MessagingSkill {
 				if (serverURL != null) {
 					connector.configure(IConnector.SERVER_URL, serverURL);
 					if (port == 0) {
-						connector.configure(IConnector.SERVER_PORT, "8080");
+						connector.configure(IConnector.SERVER_PORT, "1883");
 					} else {
 						connector.configure(IConnector.SERVER_PORT, port.toString());
 
