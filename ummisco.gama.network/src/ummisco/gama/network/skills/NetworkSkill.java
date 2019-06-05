@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import msi.gama.extensions.messaging.GamaMailbox;
 import msi.gama.extensions.messaging.GamaMessage;
@@ -200,7 +199,7 @@ public class NetworkSkill extends MessagingSkill {
 				if (serverURL != null) {
 					connector.configure(IConnector.SERVER_URL, serverURL);
 					if (port == 0) {
-						connector.configure(IConnector.SERVER_PORT, "8080");
+						connector.configure(IConnector.SERVER_PORT, "1883");
 					} else {
 						connector.configure(IConnector.SERVER_PORT, port.toString());
 
