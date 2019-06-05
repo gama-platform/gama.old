@@ -19,6 +19,7 @@ experiment GIS_visualization type: gui {
 
 	
 	output {
+		layout #split parameters: false navigator: false editors: false consoles: false;
 		// display of buildings in 3D with texture and with reading their HEIGHT attribute from the shapefile
 		display gis_displays_graphics type: opengl  {
 			graphics "Buildings as shapes" refresh: false {
