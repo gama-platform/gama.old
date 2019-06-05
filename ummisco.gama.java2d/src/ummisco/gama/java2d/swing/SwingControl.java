@@ -23,6 +23,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.java2d.Java2DDisplaySurface;
+import ummisco.gama.java2d.WorkaroundForIssue2476;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -58,7 +60,9 @@ public abstract class SwingControl extends Composite {
 					applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
 				}
 				frame.add(applet);
-				applet.getRootPane().getContentPane().add(createSwingComponent());
+				Java2DDisplaySurface surface = createSwingComponent();
+				applet.getRootPane().getContentPane().add(surface);
+				WorkaroundForIssue2476.installOn(applet, surface);
 				WorkbenchHelper.asyncRun(() -> SwingControl.this.getParent().layout(true, true));
 			});
 		}
@@ -69,7 +73,7 @@ public abstract class SwingControl extends Composite {
 	 *
 	 * @return a non-null Swing component
 	 */
-	protected abstract JComponent createSwingComponent();
+	protected abstract Java2DDisplaySurface createSwingComponent();
 
 	@Override
 	public void setBounds(final Rectangle rect) {

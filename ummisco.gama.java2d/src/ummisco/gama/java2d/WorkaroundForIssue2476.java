@@ -13,6 +13,8 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JApplet;
 
+import org.eclipse.swt.SWT;
+
 import msi.gama.common.interfaces.IDisplaySurface;
 
 public class WorkaroundForIssue2476 {
@@ -44,11 +46,20 @@ public class WorkaroundForIssue2476 {
 			volatile boolean inMenu;
 
 			@Override
-			public void mouseReleased(final java.awt.event.MouseEvent e) {}
+			public void mouseReleased(final java.awt.event.MouseEvent e) {
+				surface.setMousePosition(e.getX(), e.getY());
+				surface.dispatchMouseEvent(SWT.MouseUp);
+			}
 
 			@Override
 			public void mousePressed(final java.awt.event.MouseEvent e) {
-				inMenu = false;
+				surface.setMousePosition(e.getX(), e.getY());
+				if (inMenu) {
+					inMenu = false;
+					return;
+				}
+				surface.dispatchMouseEvent(SWT.MouseDown);
+				
 			}
 
 			@Override

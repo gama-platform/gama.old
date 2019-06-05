@@ -29,14 +29,13 @@ public class AWTDisplayView extends LayeredDisplayView {
 		surfaceComposite = new SwingControl(parent, SWT.NO_FOCUS) {
 
 			@Override
-			protected JComponent createSwingComponent() {
+			protected Java2DDisplaySurface createSwingComponent() {
 				return (Java2DDisplaySurface) getDisplaySurface();
 			}
 
 		};
 		surfaceComposite.setEnabled(false);
 		WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
-		WorkaroundForIssue2476.installOn(((SwingControl) surfaceComposite).getTopLevelContainer(), getDisplaySurface());
 		WorkaroundForIssue2745.installOn(this);
 		return surfaceComposite;
 	}
