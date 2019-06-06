@@ -76,7 +76,7 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 			expression = GAML.getExpressionFactory().createOperator(operator, context, target, exprs);
 			if (expression == null) {
 				// If no operator has been found, we throw an exception
-				context.error("Operator " + operator + " does not exist", IGamlIssue.UNKNOWN_UNARY,
+				context.error("Operator " + operator + " does not exist", IGamlIssue.UNKNOWN_OPERATOR,
 						getTarget() == null ? context.getUnderlyingElement() : getTarget(), operator);
 
 			}

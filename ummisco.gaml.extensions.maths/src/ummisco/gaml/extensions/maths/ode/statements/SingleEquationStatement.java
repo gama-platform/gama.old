@@ -28,11 +28,13 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.TOrderedHashMap;
@@ -149,7 +151,7 @@ public class SingleEquationStatement extends AbstractStatement {
 			final boolean isFunction = func instanceof IOperator && orderNames.containsKey(func.getName());
 			if (!isFunction) {
 				d.error("The left-hand member of an equation should be a variable or a call to the diff() or diff2() operators",
-						IGamlIssue.UNKNOWN_BINARY, fDesc.getTarget());
+						IGamlIssue.UNKNOWN_OPERATOR, fDesc.getTarget());
 				return;
 			}
 
@@ -168,7 +170,7 @@ public class SingleEquationStatement extends AbstractStatement {
 	}
 
 	private IExpression function, expression;
-	private final List<IExpression> var = new ArrayList<IExpression>();
+	private final List<IExpression> var = new ArrayList<>();
 	private IExpression var_t;
 
 	int order;
@@ -263,6 +265,8 @@ public class SingleEquationStatement extends AbstractStatement {
 			concept = { IConcept.EQUATION, IConcept.MATH })
 	@doc (
 			value = "A placeholder function for expressing equations")
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+
 	public static Double diff(final IScope scope, final Double var, final Double time) {
 		return Double.NaN;
 	}
@@ -270,6 +274,7 @@ public class SingleEquationStatement extends AbstractStatement {
 	@operator (
 			value = DIF2,
 			concept = { IConcept.EQUATION, IConcept.MATH })
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
 	@doc (
 			value = "A placeholder function for expressing equations")
 	public static Double diff2(final IScope scope, final Double var, final Double time) {
@@ -291,6 +296,8 @@ public class SingleEquationStatement extends AbstractStatement {
 			internal = true)
 	@doc (
 			value = "An internal placeholder function")
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+
 	public static Double f(final IScope scope, final IExpression var) {
 		return Double.NaN;
 	}

@@ -36,7 +36,7 @@ public interface IGamlIssue {
 	// Obsolete public static String NO_ENVIRONMENT = "gaml.no.environment.issue";
 	String NO_INIT = "gaml.no.init.issue";
 	String NOT_A_TYPE = "gaml.not.a.type.issue";
-	String NOT_AN_AGENT = "gaml.not.an.agent.issue";
+	// String NOT_AN_AGENT = "gaml.not.an.agent.issue";
 	String NOT_AMONG = "gaml.not.among.issue";
 	String NOT_CONST = "gaml.not.const.issue";
 	String REDEFINES = "gaml.redefinition.info";
@@ -48,14 +48,13 @@ public interface IGamlIssue {
 	String UNKNOWN_ACTION = "gaml.unknown.action.issue";
 	String UNKNOWN_ARGUMENT = "gaml.unknonw.argument.issue";
 	String UNKNOWN_BEHAVIOR = "gaml.unknown.behavior.issue";
-	String UNKNOWN_BINARY = "gaml.unknown.unary.issue";
+	String UNKNOWN_OPERATOR = "gaml.unknown.operator.issue";
 	String UNKNOWN_ENVIRONMENT = "gaml.unknown.environment.issue";
 	String UNKNOWN_FIELD = "gaml.unknown.field.issue";
 	String UNKNOWN_KEYWORD = "gaml.unknown.keyword.issue";
 	String UNKNOWN_NUMBER = "gaml.unknown.number.issue";
 	String UNKNOWN_SKILL = "gaml.unknown.skill.issue";
 	String UNKNOWN_SUBSPECIES = "gaml.unknown.subspecies.issue";
-	String UNKNOWN_UNARY = "gaml.unknown.unary.issue";
 	String UNKNOWN_VAR = "gaml.unknown.var.issue";
 	// public static String UNMATCHED_BINARY = "gaml.unmatched.unary.issue";
 	String UNMATCHED_OPERANDS = "gaml.unmatched.operands.issue";
