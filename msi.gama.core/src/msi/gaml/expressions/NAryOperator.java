@@ -11,7 +11,7 @@
 package msi.gaml.expressions;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.OperatorProto;
 
 public class NAryOperator extends AbstractNAryOperator {

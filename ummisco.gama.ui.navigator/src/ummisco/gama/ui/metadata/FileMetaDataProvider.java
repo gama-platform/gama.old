@@ -39,7 +39,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
 
 import msi.gama.common.GamlFileExtension;
-import msi.gama.util.GAML;
 import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gama.util.file.GamaFileMetaData;
@@ -48,6 +47,7 @@ import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import msi.gaml.compilation.GAML;
 // BEN import ummisco.gama.serializer.gaml.GamaSavedSimulationFile;
 // BEN import ummisco.gama.serializer.gaml.GamaSavedSimulationFile.SavedSimulationInfo;
 import msi.gama.util.file.GamlFileInfo;

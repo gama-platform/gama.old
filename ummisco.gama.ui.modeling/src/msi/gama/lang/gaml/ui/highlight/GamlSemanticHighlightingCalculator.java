@@ -130,7 +130,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				break;
 			case GamlPackage.BINARY_OPERATOR:
 			case GamlPackage.FUNCTION:
-				setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
+				setStyle(object, OPERATOR_ID, EGaml.getInstance().getKeyOf(object));
 				break;
 			case GamlPackage.ARGUMENT_PAIR:
 				setStyle(object, VARIABLE_ID, ((ArgumentPair) object).getOp());
@@ -142,7 +142,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				setStyle(object, UNIT_ID, 0);
 				break;
 			case GamlPackage.TYPE_REF:
-				final Statement st = EGaml.getStatement(object);
+				final Statement st = EGaml.getInstance().getStatement(object);
 				if (st instanceof S_Definition && ((S_Definition) st).getTkey() == object) {
 					setStyle(KEYWORD_ID, NodeModelUtils.findActualNodeFor(object));
 				} else {
@@ -157,7 +157,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				break;
 			case GamlPackage.STATEMENT:
 				final Statement stat = (Statement) object;
-				setStyle(object, VARDEF_ID, EGaml.getNameOf(stat));
+				setStyle(object, VARDEF_ID, EGaml.getInstance().getNameOf(stat));
 				setStyle(object, KEYWORD_ID, stat.getKey());
 				break;
 			default:

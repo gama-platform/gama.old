@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.GamlExpressionFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.GamlExpressionFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -50,7 +50,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlExpressionFactory implements IExpressionFactory {
 
-	public static interface ParserProvider {
+	public interface ParserProvider {
 		IExpressionCompiler get();
 	}
 
@@ -79,7 +79,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	/**
 	 * Method createUnit()
-	 * 
+	 *
 	 * @see msi.gaml.expressions.IExpressionFactory#createUnit(java.lang.Object, msi.gaml.types.IType, java.lang.String)
 	 */
 	@Override
@@ -292,30 +292,20 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createAction(final String op, final IDescription callerContext, final ActionDescription action,
 			final IExpression call, final Arguments arguments) {
-		if (action.verifyArgs(callerContext, arguments)) { return new PrimitiveOperator(callerContext, action, call,
-				arguments, call instanceof SuperExpression); }
+		if (action.verifyArgs(callerContext, arguments)) {
+			return new PrimitiveOperator(callerContext, action, call, arguments, call instanceof SuperExpression);
+		}
 		return null;
 	}
 
 	/**
 	 * Method createCastingExpression()
-	 * 
+	 *
 	 * @see msi.gaml.expressions.IExpressionFactory#createCastingExpression(msi.gaml.types.IType)
 	 */
 	@Override
 	public IExpression createTypeExpression(final IType type) {
 		return new TypeExpression(type);
-	}
-
-	/**
-	 * Method getFacetExpression()
-	 * 
-	 * @see msi.gaml.expressions.IExpressionFactory#getFacetExpression(msi.gaml.descriptions.IDescription,
-	 *      java.lang.Object)
-	 */
-	@Override
-	public EObject getFacetExpression(final IDescription context, final EObject facet) {
-		return getParser().getFacetExpression(context, facet);
 	}
 
 	@Override

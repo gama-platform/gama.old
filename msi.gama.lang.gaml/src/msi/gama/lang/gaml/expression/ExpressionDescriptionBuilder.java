@@ -96,7 +96,7 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 
 	@Override
 	public IExpressionDescription caseUnitName(final UnitName object) {
-		final String s = EGaml.getKeyOf(object);
+		final String s = EGaml.getInstance().getKeyOf(object);
 		if (IUnits.UNITS_EXPR.containsKey(s)) {
 			return IUnits.UNITS_EXPR.get(s);
 		}
@@ -105,7 +105,7 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 
 	@Override
 	public IExpressionDescription caseUnary(final Unary object) {
-		final String op = EGaml.getKeyOf(object);
+		final String op = EGaml.getInstance().getKeyOf(object);
 		if (op.equals("°") || op.equals("#")) {
 			return doSwitch(object.getRight());
 		}

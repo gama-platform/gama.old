@@ -90,7 +90,7 @@ public class GamlResourceDocumenter implements IDocManager {
 	@Override
 	public void document(final IDescription desc) {
 		if (desc == null) { return; }
-		final EObject e = desc.getUnderlyingElement(null);
+		final EObject e = desc.getUnderlyingElement();
 		if (e == null) { return; }
 		setGamlDocumentation(e, desc, true);
 		desc.visitOwnChildren(documentingVisitor);

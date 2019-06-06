@@ -13,7 +13,7 @@ package ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyn
 import java.util.ArrayList;
 import java.util.List;
 
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;

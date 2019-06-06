@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.IDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.IDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -47,37 +47,37 @@ public interface IDescription
 	/**
 	 * The Constant SYMBOL_SERIALIZER.
 	 */
-	public static final SymbolSerializer<SymbolDescription> SYMBOL_SERIALIZER = new SymbolSerializer<>();
+	SymbolSerializer<SymbolDescription> SYMBOL_SERIALIZER = new SymbolSerializer<>();
 
 	/**
 	 * The Constant VAR_SERIALIZER.
 	 */
-	public static final VarSerializer VAR_SERIALIZER = new VarSerializer();
+	VarSerializer VAR_SERIALIZER = new VarSerializer();
 
 	/**
 	 * The Constant SPECIES_SERIALIZER.
 	 */
-	public static final SpeciesSerializer SPECIES_SERIALIZER = new SpeciesSerializer();
+	SpeciesSerializer SPECIES_SERIALIZER = new SpeciesSerializer();
 
 	/**
 	 * The Constant MODEL_SERIALIZER.
 	 */
-	public static final ModelSerializer MODEL_SERIALIZER = new ModelSerializer();
+	ModelSerializer MODEL_SERIALIZER = new ModelSerializer();
 
 	/**
 	 * The Constant STATEMENT_SERIALIZER.
 	 */
-	public static final StatementSerializer STATEMENT_SERIALIZER = new StatementSerializer();
+	StatementSerializer STATEMENT_SERIALIZER = new StatementSerializer();
 
 	/**
 	 * The Constant TO_NAME.
 	 */
-	public static final Function<? super IDescription, ? extends String> TO_NAME = input -> input.getName();
+	Function<? super IDescription, ? extends String> TO_NAME = input -> input.getName();
 
 	/**
 	 * The Constant TO_CLASS.
 	 */
-	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = input -> input.getJavaBase();
+	Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = input -> input.getJavaBase();
 
 	/**
 	 * The Interface DescriptionVisitor.
@@ -86,11 +86,11 @@ public interface IDescription
 	 *            the generic type
 	 */
 	@FunctionalInterface
-	public static interface DescriptionVisitor<T extends IDescription> extends TObjectProcedure<T> {
+	public interface DescriptionVisitor<T extends IDescription> extends TObjectProcedure<T> {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see gnu.trove.procedure.TObjectProcedure#execute(java.lang.Object)
 		 */
 		@Override
@@ -105,7 +105,7 @@ public interface IDescription
 		 *            the desc
 		 * @return true, if successful
 		 */
-		public abstract boolean visit(T desc);
+		boolean visit(T desc);
 
 	}
 
@@ -113,12 +113,12 @@ public interface IDescription
 	 * The Interface IFacetVisitor.
 	 */
 	@FunctionalInterface
-	public static interface IFacetVisitor
+	public interface IFacetVisitor
 			extends TObjectObjectProcedure<String, IExpressionDescription>, BiConsumer<String, IExpressionDescription> {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see gnu.trove.procedure.TObjectObjectProcedure#execute(java.lang.Object, java.lang.Object)
 		 */
 		@Override
@@ -128,7 +128,7 @@ public interface IDescription
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.util.function.BiConsumer#accept(java.lang.Object, java.lang.Object)
 		 */
 		@Override
@@ -145,13 +145,13 @@ public interface IDescription
 		 *            the exp
 		 * @return true, if successful
 		 */
-		public abstract boolean visit(String name, IExpressionDescription exp);
+		boolean visit(String name, IExpressionDescription exp);
 	}
 
 	/**
 	 * The Constant VALIDATING_VISITOR.
 	 */
-	public static final DescriptionVisitor VALIDATING_VISITOR = desc -> {
+	DescriptionVisitor VALIDATING_VISITOR = desc -> {
 		if (desc.validate() == null) { return false; }
 		return true;
 
@@ -160,7 +160,7 @@ public interface IDescription
 	/**
 	 * The Constant DISPOSING_VISITOR.
 	 */
-	public static final DescriptionVisitor DISPOSING_VISITOR = desc -> {
+	DescriptionVisitor DISPOSING_VISITOR = desc -> {
 		desc.dispose();
 		return true;
 
@@ -172,7 +172,7 @@ public interface IDescription
 	 * @param message
 	 *            the message
 	 */
-	public void error(final String message);
+	void error(final String message);
 
 	/**
 	 * Error.
@@ -182,21 +182,7 @@ public interface IDescription
 	 * @param code
 	 *            the code
 	 */
-	public void error(final String message, String code);
-
-	/**
-	 * Error.
-	 *
-	 * @param message
-	 *            the message
-	 * @param code
-	 *            the code
-	 * @param element
-	 *            the element
-	 * @param data
-	 *            the data
-	 */
-	public void error(final String message, String code, String element, String... data);
+	void error(final String message, String code);
 
 	/**
 	 * Error.
@@ -210,7 +196,21 @@ public interface IDescription
 	 * @param data
 	 *            the data
 	 */
-	public void error(final String message, String code, EObject element, String... data);
+	void error(final String message, String code, String element, String... data);
+
+	/**
+	 * Error.
+	 *
+	 * @param message
+	 *            the message
+	 * @param code
+	 *            the code
+	 * @param element
+	 *            the element
+	 * @param data
+	 *            the data
+	 */
+	void error(final String message, String code, EObject element, String... data);
 
 	/**
 	 * Warning.
@@ -220,7 +220,7 @@ public interface IDescription
 	 * @param code
 	 *            the code
 	 */
-	public void warning(final String message, String code);
+	void warning(final String message, String code);
 
 	/**
 	 * Warning.
@@ -234,7 +234,7 @@ public interface IDescription
 	 * @param data
 	 *            the data
 	 */
-	public void warning(final String message, String code, String element, String... data);
+	void warning(final String message, String code, String element, String... data);
 
 	/**
 	 * Warning.
@@ -248,28 +248,28 @@ public interface IDescription
 	 * @param data
 	 *            the data
 	 */
-	public void warning(final String message, String code, EObject element, String... data);
+	void warning(final String message, String code, EObject element, String... data);
 
 	/**
 	 * Gets the keyword.
 	 *
 	 * @return the keyword
 	 */
-	public abstract String getKeyword();
+	String getKeyword();
 
 	/**
 	 * Gets the model description.
 	 *
 	 * @return the model description
 	 */
-	public abstract ModelDescription getModelDescription();
+	ModelDescription getModelDescription();
 
 	/**
 	 * Gets the species context.
 	 *
 	 * @return the species context
 	 */
-	public abstract SpeciesDescription getSpeciesContext();
+	SpeciesDescription getSpeciesContext();
 
 	/**
 	 * Sets the enclosing description.
@@ -277,7 +277,7 @@ public interface IDescription
 	 * @param desc
 	 *            the new enclosing description
 	 */
-	public abstract void setEnclosingDescription(final IDescription desc);
+	void setEnclosingDescription(final IDescription desc);
 
 	/**
 	 * Gets the underlying element.
@@ -286,7 +286,7 @@ public interface IDescription
 	 *            the facet
 	 * @return the underlying element
 	 */
-	public abstract EObject getUnderlyingElement(Object facet);
+	EObject getUnderlyingElement(Object facet, boolean returnFacet);
 
 	/**
 	 * Gets the underlying element.
@@ -294,7 +294,7 @@ public interface IDescription
 	 * @return the underlying element
 	 */
 	default EObject getUnderlyingElement() {
-		return getUnderlyingElement(null);
+		return getUnderlyingElement(null, false);
 	}
 
 	/**
@@ -302,14 +302,14 @@ public interface IDescription
 	 *
 	 * @return the meta
 	 */
-	public abstract SymbolProto getMeta();
+	SymbolProto getMeta();
 
 	/**
 	 * Gets the enclosing description.
 	 *
 	 * @return the enclosing description
 	 */
-	public abstract IDescription getEnclosingDescription();
+	IDescription getEnclosingDescription();
 
 	/**
 	 * Gets the description declaring var.
@@ -318,7 +318,7 @@ public interface IDescription
 	 *            the name
 	 * @return the description declaring var
 	 */
-	public abstract IVarDescriptionProvider getDescriptionDeclaringVar(final String name);
+	IVarDescriptionProvider getDescriptionDeclaringVar(final String name);
 
 	/**
 	 * Gets the description declaring action.
@@ -329,7 +329,7 @@ public interface IDescription
 	 *            the super invocation
 	 * @return the description declaring action
 	 */
-	public abstract IDescription getDescriptionDeclaringAction(final String name, boolean superInvocation);
+	IDescription getDescriptionDeclaringAction(final String name, boolean superInvocation);
 
 	/**
 	 * Gets the children with keyword.
@@ -338,14 +338,14 @@ public interface IDescription
 	 *            the keyword
 	 * @return the children with keyword
 	 */
-	public abstract Iterable<IDescription> getChildrenWithKeyword(String keyword);
+	Iterable<IDescription> getChildrenWithKeyword(String keyword);
 
 	/**
 	 * Gets the own children.
 	 *
 	 * @return the own children
 	 */
-	public abstract Iterable<IDescription> getOwnChildren();
+	Iterable<IDescription> getOwnChildren();
 
 	/**
 	 * Gets the child with keyword.
@@ -354,7 +354,7 @@ public interface IDescription
 	 *            the keyword
 	 * @return the child with keyword
 	 */
-	public abstract IDescription getChildWithKeyword(String keyword);
+	IDescription getChildWithKeyword(String keyword);
 
 	/**
 	 * Gets the type named.
@@ -363,7 +363,7 @@ public interface IDescription
 	 *            the s
 	 * @return the type named
 	 */
-	public abstract IType getTypeNamed(String s);
+	IType getTypeNamed(String s);
 
 	/**
 	 * Gets the species description.
@@ -372,7 +372,7 @@ public interface IDescription
 	 *            the actual species
 	 * @return the species description
 	 */
-	public abstract SpeciesDescription getSpeciesDescription(String actualSpecies);
+	SpeciesDescription getSpeciesDescription(String actualSpecies);
 
 	/**
 	 * Gets the action.
@@ -381,14 +381,14 @@ public interface IDescription
 	 *            the name
 	 * @return the action
 	 */
-	public abstract ActionDescription getAction(String name);
+	ActionDescription getAction(String name);
 
 	/**
 	 * Gets the validation context.
 	 *
 	 * @return the validation context
 	 */
-	public abstract ValidationContext getValidationContext();
+	ValidationContext getValidationContext();
 
 	/**
 	 * Copy.
@@ -397,42 +397,42 @@ public interface IDescription
 	 *            the into
 	 * @return the i description
 	 */
-	public abstract IDescription copy(IDescription into);
+	IDescription copy(IDescription into);
 
 	/**
 	 * Validate.
 	 *
 	 * @return the i description
 	 */
-	public abstract IDescription validate();
+	IDescription validate();
 
 	/**
 	 * Compile.
 	 *
 	 * @return the i symbol
 	 */
-	public abstract ISymbol compile();
+	ISymbol compile();
 
 	/**
 	 * Gets the kind.
 	 *
 	 * @return the kind
 	 */
-	public int getKind();
+	int getKind();
 
 	/**
 	 * Checks if is built in.
 	 *
 	 * @return true, if is built in
 	 */
-	public boolean isBuiltIn();
+	boolean isBuiltIn();
 
 	/**
 	 * Gets the origin name.
 	 *
 	 * @return the origin name
 	 */
-	public abstract String getOriginName();
+	String getOriginName();
 
 	/**
 	 * Sets the origin name.
@@ -440,7 +440,7 @@ public interface IDescription
 	 * @param name
 	 *            the new origin name
 	 */
-	public abstract void setOriginName(String name);
+	void setOriginName(String name);
 
 	/**
 	 * Sets the defining plugin.
@@ -448,7 +448,7 @@ public interface IDescription
 	 * @param plugin
 	 *            the new defining plugin
 	 */
-	public abstract void setDefiningPlugin(String plugin);
+	void setDefiningPlugin(String plugin);
 
 	/**
 	 * Info.
@@ -462,7 +462,7 @@ public interface IDescription
 	 * @param data
 	 *            the data
 	 */
-	public abstract void info(final String s, final String code, final String facet, final String... data);
+	void info(final String s, final String code, final String facet, final String... data);
 
 	/**
 	 * Info.
@@ -476,7 +476,7 @@ public interface IDescription
 	 * @param data
 	 *            the data
 	 */
-	public abstract void info(final String s, final String code, final EObject facet, final String... data);
+	void info(final String s, final String code, final EObject facet, final String... data);
 
 	/**
 	 * Info.
@@ -486,12 +486,12 @@ public interface IDescription
 	 * @param code
 	 *            the code
 	 */
-	public abstract void info(final String message, final String code);
+	void info(final String message, final String code);
 
 	/**
 	 * Reset origin name.
 	 */
-	public void resetOriginName();
+	void resetOriginName();
 
 	/**
 	 * Manipulates var.
@@ -500,7 +500,7 @@ public interface IDescription
 	 *            the name
 	 * @return true, if successful
 	 */
-	public boolean manipulatesVar(final String name);
+	boolean manipulatesVar(final String name);
 
 	/**
 	 * Gets the litteral.
@@ -509,7 +509,7 @@ public interface IDescription
 	 *            the name
 	 * @return the litteral
 	 */
-	public String getLitteral(String name);
+	String getLitteral(String name);
 
 	/**
 	 * Gets the facet expr.
@@ -518,7 +518,7 @@ public interface IDescription
 	 *            the strings
 	 * @return the facet expr
 	 */
-	public IExpression getFacetExpr(final String... strings);
+	IExpression getFacetExpr(final String... strings);
 
 	/**
 	 * Checks for facet.
@@ -527,7 +527,7 @@ public interface IDescription
 	 *            the until
 	 * @return true, if successful
 	 */
-	public boolean hasFacet(String until);
+	boolean hasFacet(String until);
 
 	/**
 	 * Gets the facet.
@@ -536,7 +536,7 @@ public interface IDescription
 	 *            the string
 	 * @return the facet
 	 */
-	public IExpressionDescription getFacet(String string);
+	IExpressionDescription getFacet(String string);
 
 	/**
 	 * Gets the facet.
@@ -545,7 +545,7 @@ public interface IDescription
 	 *            the strings
 	 * @return the facet
 	 */
-	public IExpressionDescription getFacet(String... strings);
+	IExpressionDescription getFacet(String... strings);
 
 	/**
 	 * Sets the facet.
@@ -555,7 +555,7 @@ public interface IDescription
 	 * @param exp
 	 *            the exp
 	 */
-	public void setFacet(String string, IExpressionDescription exp);
+	void setFacet(String string, IExpressionDescription exp);
 
 	/**
 	 * Sets the facet.
@@ -565,7 +565,7 @@ public interface IDescription
 	 * @param exp
 	 *            the exp
 	 */
-	public void setFacet(String item, IExpression exp);
+	void setFacet(String item, IExpression exp);
 
 	/**
 	 * Removes the facets.
@@ -573,7 +573,7 @@ public interface IDescription
 	 * @param strings
 	 *            the strings
 	 */
-	public void removeFacets(String... strings);
+	void removeFacets(String... strings);
 
 	/**
 	 * Returns whether or not the visit has been completed.
@@ -582,13 +582,13 @@ public interface IDescription
 	 *            the visitor
 	 * @return true, if successful
 	 */
-	public default boolean visitFacets(final IFacetVisitor visitor) {
+	default boolean visitFacets(final IFacetVisitor visitor) {
 		return visitFacets(null, visitor);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IBenchmarkable#getNameForBenchmarks()
 	 */
 	@Override
@@ -606,8 +606,7 @@ public interface IDescription
 	 * @param result
 	 *            the result
 	 */
-	public default void collectUsedVarsOf(final SpeciesDescription species,
-			final ICollector<VariableDescription> result) {
+	default void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
 		this.visitFacets((name, exp) -> {
 			final IExpression expression = exp.getExpression();
 			if (expression != null) {
@@ -630,7 +629,7 @@ public interface IDescription
 	 *            the visitor
 	 * @return true, if successful
 	 */
-	public boolean visitFacets(Set<String> facets, IFacetVisitor visitor);
+	boolean visitFacets(Set<String> facets, IFacetVisitor visitor);
 
 	/**
 	 * Visit children.
@@ -639,7 +638,7 @@ public interface IDescription
 	 *            the visitor
 	 * @return true, if successful
 	 */
-	public boolean visitChildren(DescriptionVisitor visitor);
+	boolean visitChildren(DescriptionVisitor visitor);
 
 	/**
 	 * Visit own children recursively.
@@ -648,7 +647,7 @@ public interface IDescription
 	 *            the visitor
 	 * @return true, if successful
 	 */
-	public boolean visitOwnChildrenRecursively(DescriptionVisitor visitor);
+	boolean visitOwnChildrenRecursively(DescriptionVisitor visitor);
 
 	/**
 	 * Visit own children.
@@ -657,7 +656,7 @@ public interface IDescription
 	 *            the visitor
 	 * @return true, if successful
 	 */
-	public boolean visitOwnChildren(DescriptionVisitor visitor);
+	boolean visitOwnChildren(DescriptionVisitor visitor);
 
 	/**
 	 * Document.
@@ -667,14 +666,14 @@ public interface IDescription
 	 * @param desc
 	 *            the desc
 	 */
-	public void document(EObject s, IGamlDescription desc);
+	void document(EObject s, IGamlDescription desc);
 
 	/**
 	 * Gets the facets.
 	 *
 	 * @return the facets
 	 */
-	public Facets getFacets();
+	Facets getFacets();
 
 	/**
 	 * Attach alternate var description provider.
@@ -682,7 +681,7 @@ public interface IDescription
 	 * @param vp
 	 *            the vp
 	 */
-	public void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp);
+	void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp);
 
 	/**
 	 * Replace children with.
@@ -690,27 +689,27 @@ public interface IDescription
 	 * @param array
 	 *            the array
 	 */
-	public void replaceChildrenWith(Iterable<IDescription> array);
+	void replaceChildrenWith(Iterable<IDescription> array);
 
 	/**
 	 * Checks if is documenting.
 	 *
 	 * @return true, if is documenting
 	 */
-	public boolean isDocumenting();
+	boolean isDocumenting();
 
 	/**
 	 * Gets the order.
 	 *
 	 * @return the order
 	 */
-	public int getOrder();
+	int getOrder();
 
 	/**
 	 * Gets the serializer.
 	 *
 	 * @return the serializer
 	 */
-	public SymbolSerializer getSerializer();
+	SymbolSerializer getSerializer();
 
 }

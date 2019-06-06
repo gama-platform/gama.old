@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.ActionDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.ActionDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -114,7 +114,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 						caller.error(
 								"Missing argument " + n + " in call to " + getName() + ". Arguments passed are : "
 										+ names,
-								IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { n });
+								IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(), new String[] { n });
 						return false;
 					}
 

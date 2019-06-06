@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.ModelDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.ModelDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -143,8 +143,8 @@ public class ModelDescription extends SpeciesDescription {
 			return;
 		}
 
-		final EObject newResource = newVar.getUnderlyingElement(null).eContainer();
-		final EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
+		final EObject newResource = newVar.getUnderlyingElement().eContainer();
+		final EObject existingResource = existingVar.getUnderlyingElement().eContainer();
 		if (Objects.equals(newResource, existingResource)) {
 			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
 					NAME);
@@ -180,7 +180,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	/**
 	 * Relocates the working path. The last segment must not end with a "/"
-	 * 
+	 *
 	 * @param path
 	 */
 	public void setWorkingDirectory(final String path) {
@@ -389,8 +389,8 @@ public class ModelDescription extends SpeciesDescription {
 		if (!super.finalizeDescription()) { return false; }
 		if (actions != null) {
 			for (final ActionDescription action : actions.values()) {
-				if (action.isAbstract() && !action.getUnderlyingElement(null).eResource()
-						.equals(getUnderlyingElement(null).eResource())) {
+				if (action.isAbstract()
+						&& !action.getUnderlyingElement().eResource().equals(getUnderlyingElement().eResource())) {
 					this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName()
 							+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
 					return false;
@@ -427,7 +427,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	/**
 	 * Returns all the species including the model itself, all the micro-species and the experiments
-	 * 
+	 *
 	 * @return
 	 */
 

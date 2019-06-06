@@ -54,7 +54,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 
 					Block block = stm.getBlock();
 					if (block != null) {
-						for (final Statement s : EGaml.getStatementsOf(block)) {
+						for (final Statement s : EGaml.getInstance().getStatementsOf(block)) {
 							if (s instanceof S_Global) {
 								block = s.getBlock();
 								if (block != null) {
@@ -101,7 +101,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 		IOutlineNode parametersNode = null;
 		IOutlineNode actionsNode = null;
 		if (block != null) {
-			for (final Statement s : EGaml.getStatementsOf(block)) {
+			for (final Statement s : EGaml.getInstance().getStatementsOf(block)) {
 				if (isAttribute(s)) {
 					if (attributesNode == null) {
 						attributesNode = new AbstractOutlineNode(parentNode, provider.convertToImage("_attributes.png"),
@@ -136,7 +136,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 	 */
 	public static boolean isAttribute(final Statement s) {
 		if (!(s instanceof S_Definition)) { return false; }
-		final String key = EGaml.getKeyOf(s);
+		final String key = EGaml.getInstance().getKeyOf(s);
 		if (IKeyword.ACTION.equals(key)) { return false; }
 		// if (s.getBlock() != null && s.getBlock().getFunction() == null) { return false; }
 		final SymbolProto p = DescriptionFactory.getStatementProto(key, null);
@@ -147,7 +147,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 	public static boolean isAction(final Statement s) {
 		if (!(s instanceof S_Definition)) { return false; }
 		if (s instanceof S_Action) { return true; }
-		final String key = EGaml.getKeyOf(s);
+		final String key = EGaml.getInstance().getKeyOf(s);
 		final SymbolProto p = DescriptionFactory.getStatementProto(key, null);
 		if (p != null && p.isTopLevel()) { return false; }
 		if (s.getKey() == null) { return true; }

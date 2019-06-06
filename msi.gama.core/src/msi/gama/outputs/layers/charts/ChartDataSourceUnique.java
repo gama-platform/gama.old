@@ -14,8 +14,8 @@ import java.util.HashMap;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
+import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Random;

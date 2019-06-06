@@ -16,7 +16,7 @@ import java.util.Collections;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.util.StringUtils;
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.TypeExpression;
 import msi.gaml.types.GamaStringType;

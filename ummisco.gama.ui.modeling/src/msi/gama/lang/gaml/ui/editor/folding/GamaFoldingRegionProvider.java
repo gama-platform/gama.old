@@ -59,12 +59,12 @@ public class GamaFoldingRegionProvider extends DefaultFoldingRegionProvider {
 
 	@Override
 	protected boolean isHandled(final EObject eObject) {
-		return EGaml.hasChildren(eObject) && super.isHandled(eObject);
+		return EGaml.getInstance().hasChildren(eObject) && super.isHandled(eObject);
 	}
 
 	@Override
 	protected boolean shouldProcessContent(final EObject object) {
-		return EGaml.hasChildren(object);
+		return EGaml.getInstance().hasChildren(object);
 	}
 
 	public class TypedFoldedPosition extends DefaultFoldedPosition {

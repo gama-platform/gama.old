@@ -31,7 +31,7 @@ import gnu.trove.procedure.TIntProcedure;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;

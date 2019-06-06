@@ -12,7 +12,7 @@ package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 

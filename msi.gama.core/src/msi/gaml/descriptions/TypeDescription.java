@@ -199,9 +199,9 @@ public abstract class TypeDescription extends SymbolDescription {
 				newVar.warning(msg, IGamlIssue.WRONG_REDEFINITION, NAME);
 			}
 		} else {
-			final EObject newObject = newVar.getUnderlyingElement(null);
+			final EObject newObject = newVar.getUnderlyingElement();
 			final Resource newResource = newObject == null ? null : newObject.eResource();
-			final EObject existingObject = existingVar.getUnderlyingElement(null);
+			final EObject existingObject = existingVar.getUnderlyingElement();
 			final Resource existingResource = existingObject == null ? null : existingObject.eResource();
 			final boolean same = newResource == null ? existingResource == null : newResource.equals(existingResource);
 			if (same) {
@@ -243,8 +243,8 @@ public abstract class TypeDescription extends SymbolDescription {
 		} else {
 			// Possibily different resources
 			final Resource newResource =
-					newVar.getUnderlyingElement(null) == null ? null : newVar.getUnderlyingElement(null).eResource();
-			final Resource existingResource = existingVar.getUnderlyingElement(null).eResource();
+					newVar.getUnderlyingElement() == null ? null : newVar.getUnderlyingElement().eResource();
+			final Resource existingResource = existingVar.getUnderlyingElement().eResource();
 			if (Objects.equals(newResource, existingResource)) {
 				newVar.info("This definition of " + newVar.getName() + " supersedes the one in "
 						+ existingVar.getOriginName(), IGamlIssue.REDEFINES, NAME);
@@ -325,8 +325,9 @@ public abstract class TypeDescription extends SymbolDescription {
 				if (attributes.containsValue(newVar)) {
 					dependencies.addVertex(newVar);
 					// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
-					if (!dependencies.containsEdge(newVar, var) && !dependencies.containsEdge(var, newVar))
+					if (!dependencies.containsEdge(newVar, var) && !dependencies.containsEdge(var, newVar)) {
 						dependencies.addEdge(newVar, var);
+					}
 				}
 			}
 			if (var.isSyntheticSpeciesContainer()) {
@@ -635,25 +636,25 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 		if (!myIt.hasNext() && parentIt.hasNext()) {
 			final String error = "Missing argument: " + parentIt.next().getName();
-			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement());
 			return;
 		}
 		if (added != null) {
 			final String error =
 					"Argument " + added + " does not belong to the definition of " + actionName + " in " + parentName;
-			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement());
 			return;
 		}
 		if (differentName) {
 			final String error = "The  names of arguments should be identical to those of the definition of "
 					+ actionName + " in " + parentName;
-			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement());
 			return;
 		}
 		if (differentType != null) {
 			final String error = "The  type of argument  " + differentType
 					+ " is not compatible with that in the definition of " + actionName + " in " + parentName;
-			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement());
 			return;
 		}
 

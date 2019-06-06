@@ -108,7 +108,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			comment += "<br/>";
 		}
 		if (o instanceof TypeRef) {
-			final Statement s = EGaml.getStatement(o);
+			final Statement s = EGaml.getInstance().getStatement(o);
 			if (s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
 				final IDocManager dm = GamlResourceServices.getResourceDocumenter();
 				final IGamlDescription gd = dm.getGamlDocumentation(s);
@@ -159,7 +159,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 				String facetName = ((Facet) o).getKey();
 				facetName = facetName.substring(0, facetName.length() - 1);
 				final EObject cont = o.eContainer();
-				final String key = EGaml.getKeyOf(cont);
+				final String key = EGaml.getInstance().getKeyOf(cont);
 				final SymbolProto p = DescriptionFactory.getProto(key, null);
 				if (p != null) {
 					final FacetProto f = p.getPossibleFacets().get(facetName);

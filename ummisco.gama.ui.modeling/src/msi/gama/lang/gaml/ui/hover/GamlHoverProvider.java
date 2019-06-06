@@ -238,7 +238,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			return "Import of the " + model + " defined in <b>" + uri + "</b>";
 		}
 		if (o instanceof S_Global) { return "Global definitions of " + getFirstLine(o.eContainer().eContainer()); }
-		final Statement s = EGaml.getStatement(o);
+		final Statement s = EGaml.getInstance().getStatement(o);
 		if (o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
 			return getFirstLine(s);
 		}
@@ -274,12 +274,12 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		if (description == null) {
 			if (o instanceof Facet) { return "<b>" + getFirstLineOf((Facet) o) + "</b>"; }
 
-			if (s != null && DescriptionFactory.isStatementProto(EGaml.getKeyOf(o))) {
+			if (s != null && DescriptionFactory.isStatementProto(EGaml.getInstance().getKeyOf(o))) {
 				if (s == o) { return ""; }
 				return getFirstLine(s);
 			} else {
 				if (o instanceof TypeRef) {
-					return "Type " + EGaml.getKeyOf(o);
+					return "Type " + EGaml.getInstance().getKeyOf(o);
 				} else {
 					return "";
 				}
@@ -306,7 +306,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		String facetName = o.getKey();
 		facetName = facetName.substring(0, facetName.length() - 1);
 		final EObject cont = o.eContainer();
-		final String key = EGaml.getKeyOf(cont);
+		final String key = EGaml.getInstance().getKeyOf(cont);
 		final SymbolProto p = DescriptionFactory.getProto(key, null);
 		if (p != null) {
 			final FacetProto f = p.getPossibleFacets().get(facetName);

@@ -20,7 +20,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
@@ -105,10 +105,10 @@ public class SetStatement extends AbstractStatement {
 				cd.error("The expression " + cd.getLitteral(NAME) + " is not a reference to a variable ", NAME);
 				return;
 			}
-			IVarExpression var = (IVarExpression) expr;
+			final IVarExpression var = (IVarExpression) expr;
 			final IExpressionDescription assigned = cd.getFacet(VALUE);
 			if (assigned != null) {
-				Assert.typesAreCompatibleForAssignment(cd, Cast.toGaml(expr), expr.getGamlType(), assigned);
+				Assert.typesAreCompatibleForAssignment(VALUE, cd, Cast.toGaml(expr), expr.getGamlType(), assigned);
 			}
 
 			// AD 19/1/13: test of the constants

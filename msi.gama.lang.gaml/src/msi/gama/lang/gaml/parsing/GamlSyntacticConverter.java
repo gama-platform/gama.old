@@ -165,7 +165,7 @@ public class GamlSyntacticConverter {
 			final SyntacticExperimentModelElement exp = SyntacticFactory.createExperimentModel(root, he, path);
 			convertFacets(he, exp.getExperiment(), errors);
 			exp.setFacet(NAME, LabelExpressionDescription.create(exp.getExperiment().getName()));
-			convStatements(exp.getExperiment(), EGaml.getStatementsOf(he.getBlock()), errors);
+			convStatements(exp.getExperiment(), EGaml.getInstance().getStatementsOf(he.getBlock()), errors);
 			return exp;
 		}
 		if (!(root instanceof Model)) { return null; }
@@ -175,12 +175,12 @@ public class GamlSyntacticConverter {
 
 		final String path = getAbsoluteContainerFolderPathOf(root.eResource());
 		final SyntacticModelElement model =
-				(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m), path/* , imps */);
+				(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.getInstance().hasChildren(m), path/* , imps */);
 		if (prgm != null) {
 			model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm));
 		}
 		model.setFacet(NAME, convertToLabel(null, m.getName()));
-		convStatements(model, EGaml.getStatementsOf(m), errors);
+		convStatements(model, EGaml.getInstance().getStatementsOf(m), errors);
 		// model.printStats();
 		model.compactModel();
 		return model;
@@ -239,7 +239,7 @@ public class GamlSyntacticConverter {
 	private final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
 			final Set<Diagnostic> errors) {
 		// We catch its keyword
-		String keyword = EGaml.getKeyOf(stm);
+		String keyword = EGaml.getInstance().getKeyOf(stm);
 
 		if (keyword == null) {
 			throw new NullPointerException(
@@ -251,10 +251,10 @@ public class GamlSyntacticConverter {
 		}
 
 		final boolean isVar = stm instanceof S_Definition && !DescriptionFactory.isStatementProto(keyword)
-				&& !doesNotDefineAttributes(upper.getKeyword()) && !EGaml.hasChildren(stm);
+				&& !doesNotDefineAttributes(upper.getKeyword()) && !EGaml.getInstance().hasChildren(stm);
 
 		final ISyntacticElement elt = isVar ? SyntacticFactory.createVar(keyword, ((S_Definition) stm).getName(), stm)
-				: SyntacticFactory.create(keyword, stm, EGaml.hasChildren(stm));
+				: SyntacticFactory.create(keyword, stm, EGaml.getInstance().hasChildren(stm));
 
 		if (stm instanceof S_Assignment) {
 			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
@@ -287,7 +287,7 @@ public class GamlSyntacticConverter {
 			// Translation of "stm ID (ID1: V1, ID2:V2)" to "stm ID with:(ID1:
 			// V1, ID2:V2)"
 			final Expression e = stm.getExpr();
-			addFacet(elt, ACTION, convertToLabel(e, EGaml.getKeyOf(e)), errors);
+			addFacet(elt, ACTION, convertToLabel(e, EGaml.getInstance().getKeyOf(e)), errors);
 			if (e instanceof Function) {
 				addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
 				final Function f = (Function) e;
@@ -316,7 +316,7 @@ public class GamlSyntacticConverter {
 			}
 		} else if (stm instanceof S_Solve) {
 			final Expression e = stm.getExpr();
-			addFacet(elt, EQUATION, convertToLabel(e, EGaml.getKeyOf(e)), errors);
+			addFacet(elt, EQUATION, convertToLabel(e, EGaml.getInstance().getKeyOf(e)), errors);
 		} else if (stm instanceof S_Try) {
 			convCatch((S_Try) stm, elt, errors);
 		}
@@ -345,7 +345,7 @@ public class GamlSyntacticConverter {
 				elt.setKeyword(type);
 			}
 		} else if (stm instanceof S_Equations) {
-			convStatements(elt, EGaml.getEquationsOf((S_Equations) stm), errors);
+			convStatements(elt, EGaml.getInstance().getEquationsOf((S_Equations) stm), errors);
 		}
 		// We add the dependencies (only for variable declarations)
 		// if (isVar) {
@@ -370,7 +370,7 @@ public class GamlSyntacticConverter {
 			// // facet
 			// addFacet(elt, FUNCTION, convExpr(function, errors), errors);
 			// } else {
-			convStatements(elt, EGaml.getStatementsOf(block), errors);
+			convStatements(elt, EGaml.getInstance().getStatementsOf(block), errors);
 			// }
 		}
 	}
@@ -390,11 +390,11 @@ public class GamlSyntacticConverter {
 	private void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		final EObject elseBlock = stm.getElse();
 		if (elseBlock != null) {
-			final ISyntacticElement elseElt = SyntacticFactory.create(ELSE, elseBlock, EGaml.hasChildren(elseBlock));
+			final ISyntacticElement elseElt = SyntacticFactory.create(ELSE, elseBlock, EGaml.getInstance().hasChildren(elseBlock));
 			if (elseBlock instanceof Statement) {
 				elseElt.addChild(convStatement(elt, (Statement) elseBlock, errors));
 			} else {
-				convStatements(elseElt, EGaml.getStatementsOf((Block) elseBlock), errors);
+				convStatements(elseElt, EGaml.getInstance().getStatementsOf((Block) elseBlock), errors);
 			}
 			elt.addChild(elseElt);
 		}
@@ -404,15 +404,15 @@ public class GamlSyntacticConverter {
 		final EObject catchBlock = stm.getCatch();
 		if (catchBlock != null) {
 			final ISyntacticElement catchElt =
-					SyntacticFactory.create(IKeyword.CATCH, catchBlock, EGaml.hasChildren(catchBlock));
-			convStatements(catchElt, EGaml.getStatementsOf((Block) catchBlock), errors);
+					SyntacticFactory.create(IKeyword.CATCH, catchBlock, EGaml.getInstance().hasChildren(catchBlock));
+			convStatements(catchElt, EGaml.getInstance().getStatementsOf((Block) catchBlock), errors);
 			elt.addChild(catchElt);
 		}
 	}
 
 	private void convertArgs(final ActionArguments args, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		if (args != null) {
-			for (final ArgumentDefinition def : EGaml.getArgsOf(args)) {
+			for (final ArgumentDefinition def : EGaml.getInstance().getArgsOf(args)) {
 				final ISyntacticElement arg = SyntacticFactory.create(ARG, def, false);
 				addFacet(arg, NAME, convertToLabel(null, def.getName()), errors);
 				final EObject type = def.getType();
@@ -441,7 +441,7 @@ public class GamlSyntacticConverter {
 				elt.setKeyword(kw);
 				addFacet(elt, ITEM, value, errors);
 				addFacet(elt, to, convExpr(((Access) expr).getLeft(), errors), errors);
-				final List<Expression> args = EGaml.getExprsOf(((Access) expr).getRight());
+				final List<Expression> args = EGaml.getInstance().getExprsOf(((Access) expr).getRight());
 				if (args.size() == 0) {
 					// Add facet all: true when no index is provided
 					addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
@@ -479,7 +479,7 @@ public class GamlSyntacticConverter {
 			elt.setKeyword(REMOVE);
 			// 20/01/14: Addition of the access [] to remove from the index
 			if (expr instanceof Access && ((Access) expr).getOp().equals("[")
-					&& EGaml.getExprsOf(((Access) expr).getRight()).size() == 0) {
+					&& EGaml.getInstance().getExprsOf(((Access) expr).getRight()).size() == 0) {
 				addFacet(elt, FROM, convExpr(((Access) expr).getLeft(), errors), errors);
 				addFacet(elt, INDEX, value, errors);
 			} else {
@@ -508,8 +508,8 @@ public class GamlSyntacticConverter {
 	private void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt,
 			final Set<Diagnostic> errors) {
 		final SymbolProto p = DescriptionFactory.getProto(keyword, null);
-		for (final Facet f : EGaml.getFacetsOf(stm)) {
-			String fname = EGaml.getKeyOf(f);
+		for (final Facet f : EGaml.getInstance().getFacetsOf(stm)) {
+			String fname = EGaml.getInstance().getKeyOf(f);
 
 			// We change the "<-" and "->" symbols into full names
 			if (fname.equals("<-")) {
@@ -544,8 +544,8 @@ public class GamlSyntacticConverter {
 	private void convertFacets(final HeadlessExperiment stm, final ISyntacticElement elt,
 			final Set<Diagnostic> errors) {
 		final SymbolProto p = DescriptionFactory.getProto(EXPERIMENT, null);
-		for (final Facet f : EGaml.getFacetsOf(stm)) {
-			final String fname = EGaml.getKeyOf(f);
+		for (final Facet f : EGaml.getInstance().getFacetsOf(stm)) {
+			final String fname = EGaml.getInstance().getKeyOf(f);
 
 			// We compute (and convert) the expression attached to the facet
 			final boolean label = p == null ? false : p.isLabel(fname);
@@ -601,7 +601,7 @@ public class GamlSyntacticConverter {
 				convertBlock(elt, b, errors);
 				return convExpr(elt, errors);
 			}
-			if (expr != null) { return label ? convertToLabel(expr, EGaml.getKeyOf(expr)) : convExpr(expr, errors); }
+			if (expr != null) { return label ? convertToLabel(expr, EGaml.getInstance().getKeyOf(expr)) : convExpr(expr, errors); }
 			final String name = facet.getName();
 			// TODO Verify the use of "facet"
 			if (name != null) { return convertToLabel(null, name); }
@@ -621,8 +621,8 @@ public class GamlSyntacticConverter {
 	final void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
 			final Set<Diagnostic> errors) {
 		for (final Statement stm : ss) {
-			if (IKeyword.GLOBAL.equals(EGaml.getKeyOf(stm))) {
-				convStatements(elt, EGaml.getStatementsOf(stm.getBlock()), errors);
+			if (IKeyword.GLOBAL.equals(EGaml.getInstance().getKeyOf(stm))) {
+				convStatements(elt, EGaml.getInstance().getStatementsOf(stm.getBlock()), errors);
 				convertFacets(stm, IKeyword.GLOBAL, elt, errors);
 			} else {
 				final ISyntacticElement child = convStatement(elt, stm, errors);
@@ -636,7 +636,7 @@ public class GamlSyntacticConverter {
 	private final IExpressionDescription findExpr(final Statement stm, final Set<Diagnostic> errors) {
 		if (stm == null) { return null; }
 		// The order below should be important
-		final String name = EGaml.getNameOf(stm);
+		final String name = EGaml.getInstance().getNameOf(stm);
 		if (name != null) { return convertToLabel(stm, name); }
 		final Expression expr = stm.getExpr();
 		if (expr != null) { return convExpr(expr, errors); }
@@ -646,7 +646,7 @@ public class GamlSyntacticConverter {
 	private final IExpressionDescription findExpr(final HeadlessExperiment stm, final Set<Diagnostic> errors) {
 		if (stm == null) { return null; }
 		// The order below should be important
-		return convertToLabel(stm, EGaml.getNameOf(stm));
+		return convertToLabel(stm, EGaml.getInstance().getNameOf(stm));
 
 	}
 

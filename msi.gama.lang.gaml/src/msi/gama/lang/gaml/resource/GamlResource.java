@@ -40,7 +40,7 @@ import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.runtime.IExecutionContext;
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ModelDescription;

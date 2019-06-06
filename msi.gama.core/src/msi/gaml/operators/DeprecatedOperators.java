@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
-import static msi.gama.util.GAML.notNull;
+import static msi.gaml.compilation.GAML.notNull;
 
 import java.util.Map;
 

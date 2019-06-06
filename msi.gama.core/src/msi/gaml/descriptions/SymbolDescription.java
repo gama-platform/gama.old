@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
-import static msi.gama.util.GAML.getExpressionFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +24,7 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
@@ -231,12 +230,12 @@ public abstract class SymbolDescription implements IDescription {
 		IDescription desc = this;
 		EObject e = source;
 		if (e == null) {
-			e = getUnderlyingElement(null);
+			e = getUnderlyingElement();
 		}
 		while (e == null && desc != null) {
 			desc = desc.getEnclosingDescription();
 			if (desc != null) {
-				e = desc.getUnderlyingElement(null);
+				e = desc.getUnderlyingElement();
 			}
 		}
 		// throws a runtime exception if there is no way to signal the error in
@@ -269,7 +268,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void error(final String message, final String code) {
-		flagError(message, code, false, false, getUnderlyingElement(null), (String[]) null);
+		flagError(message, code, false, false, getUnderlyingElement(), (String[]) null);
 	}
 
 	@Override
@@ -279,12 +278,12 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void error(final String s, final String code, final String facet, final String... data) {
-		flagError(s, code, false, false, this.getUnderlyingElement(facet), data);
+		flagError(s, code, false, false, this.getUnderlyingElement(facet, code.equals(IGamlIssue.UNKNOWN_FACET)), data);
 	}
 
 	@Override
 	public void info(final String message, final String code) {
-		flagError(message, code, false, true, getUnderlyingElement(null), (String[]) null);
+		flagError(message, code, false, true, getUnderlyingElement(), (String[]) null);
 	}
 
 	@Override
@@ -294,7 +293,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void info(final String s, final String code, final String facet, final String... data) {
-		flagError(s, code, false, true, this.getUnderlyingElement(facet), data);
+		flagError(s, code, false, true, this.getUnderlyingElement(facet, false), data);
 	}
 
 	@Override
@@ -309,7 +308,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void warning(final String s, final String code, final String facet, final String... data) {
-		flagError(s, code, true, false, this.getUnderlyingElement(facet), data);
+		flagError(s, code, true, false, this.getUnderlyingElement(facet, code.equals(IGamlIssue.UNKNOWN_FACET)), data);
 	}
 
 	@Override
@@ -379,16 +378,31 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public EObject getUnderlyingElement(final Object facet) {
+	public EObject getUnderlyingElement(final Object facet, final boolean returnFacet) {
 		if (facet == null) { return element; }
 		if (facet instanceof EObject) { return (EObject) facet; }
+		if (facet instanceof IExpressionDescription) {
+			final IExpressionDescription f = (IExpressionDescription) facet;
+			final EObject result = f.getTarget();
+			if (result != null) { return result; }
+		}
+		if (facet instanceof String) {
+			if (returnFacet) {
+				final EObject facetObject = GAML.getEcoreUtils().getFacetsMapOf(element).get(facet);
+				if (facetObject != null) { return facetObject; }
+			}
+			final IExpressionDescription f = getFacet((String) facet);
+			if (f != null) {
+				final EObject result = f.getTarget();
+				if (result != null) { return result; }
+			}
+			// Last chance if the expression is a constant (no information on EObjects), see Issue #2760
 
-		final IExpressionDescription f = facet instanceof IExpressionDescription ? (IExpressionDescription) facet
-				: facet instanceof String ? getFacet((String) facet) : null;
-		if (f == null) { return element; }
-		final EObject target = f.getTarget();
-		if (target == null) { return element; }
-		return getExpressionFactory().getFacetExpression(this, target);
+			final EObject facetExpr = GAML.getEcoreUtils().getExpressionAtKey(element, (String) facet);
+			if (facetExpr != null) { return facetExpr; }
+
+		}
+		return null;
 	}
 
 	@Override
@@ -585,9 +599,8 @@ public abstract class SymbolDescription implements IDescription {
 					if (child.getKeyword().equals(getKeyword()) && child != SymbolDescription.this) {
 						final String error = getKeyword() + " is defined twice. Only one definition is allowed in "
 								+ sd.getKeyword();
-						child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null),
-								getKeyword());
-						error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(null), getKeyword());
+						child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(), getKeyword());
+						error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(), getKeyword());
 						return false;
 					}
 					return true;

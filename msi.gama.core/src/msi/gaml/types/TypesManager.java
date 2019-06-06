@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.TypesManager.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.TypesManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -44,7 +44,7 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.types.ITypesManager#alias(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -63,7 +63,7 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.types.ITypesManager#addSpeciesType(msi.gaml.descriptions. TypeDescription)
 	 */
 	@Override
@@ -72,7 +72,7 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 		if (!name.equals(IKeyword.AGENT)) {
 			if (get(name) != Types.NO_TYPE) {
 				species.error("Species " + name + " already declared. Species name must be unique",
-						IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(null), name);
+						IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(), name);
 			}
 			return addSpeciesType(new GamaAgentType(species, species.getName(), ++CURRENT_INDEX,
 					(Class<IAgent>) species.getJavaBase()), species.getJavaBase());
@@ -115,7 +115,7 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.types.ITypesManager#init()
 	 */
 	@Override
@@ -136,7 +136,7 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.types.ITypesManager#containsType(java.lang.String)
 	 */
 	@Override
@@ -158,7 +158,7 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.types.ITypesManager#dispose()
 	 */
 	@Override

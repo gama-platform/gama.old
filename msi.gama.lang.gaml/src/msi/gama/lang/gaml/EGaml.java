@@ -1,7 +1,7 @@
 /*********************************************************************************************
  *
- * 'EGaml.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'EGaml.getInstance().java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  *
@@ -19,7 +19,6 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
@@ -40,7 +39,9 @@ import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Point;
 import msi.gama.lang.gaml.gaml.S_Action;
+import msi.gama.lang.gaml.gaml.S_Assignment;
 import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_DirectAssignment;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_If;
@@ -63,32 +64,31 @@ import msi.gama.lang.gaml.gaml.impl.S_IfImpl;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.IGamlEcoreUtils;
 import msi.gaml.compilation.ast.SyntacticFactory;
 
 /**
- * The class EGaml. A bunch of utilities to work with the various GAML statements and expressions.
+ * The class EGaml.getInstance(). A stateless class, bunch of utilities to work with the various GAML statements and
+ * expressions.
  *
  * @author drogoul
  * @since 2012
  *
  */
-public class EGaml {
+public class EGaml implements IGamlEcoreUtils {
 
-	/**
-	 * Gets the name of a statement
-	 *
-	 * @param s
-	 *            the s
-	 * @return the name of
-	 */
-	public static String getNameOf(final Statement s) {
-		if (s instanceof GamlDefinition) { return ((GamlDefinition) s).getName(); }
-		if (s instanceof S_Display) { return ((S_Display) s).getName(); }
-		return null;
+	private static final EGaml instance = new EGaml();
+
+	public static EGaml getInstance() {
+		return instance;
 	}
 
-	public static String getNameOf(final HeadlessExperiment s) {
-		return s.getName();
+	@Override
+	public String getNameOf(final EObject o) {
+		if (o instanceof GamlDefinition) { return ((GamlDefinition) o).getName(); }
+		if (o instanceof S_Display) { return ((S_Display) o).getName(); }
+		if (o instanceof HeadlessExperiment) { return ((HeadlessExperiment) o).getName(); }
+		return null;
 	}
 
 	/**
@@ -98,7 +98,8 @@ public class EGaml {
 	 *            the o
 	 * @return the exprs of
 	 */
-	public static List<Expression> getExprsOf(final EObject o) {
+	@Override
+	public List<Expression> getExprsOf(final EObject o) {
 		if (o instanceof ExpressionList) {
 			if (((ExpressionListImpl) o).eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS)) {
 				return ((ExpressionList) o).getExprs();
@@ -114,9 +115,14 @@ public class EGaml {
 	 *            the args
 	 * @return the args of
 	 */
-	public static List<ArgumentDefinition> getArgsOf(final ActionArguments args) {
+	@Override
+	public List<ArgumentDefinition> getArgsOf(final EObject args) {
 		if (args == null) { return Collections.EMPTY_LIST; }
-		if (((ActionArgumentsImpl) args).eIsSet(GamlPackage.ACTION_ARGUMENTS__ARGS)) { return args.getArgs(); }
+		if (args instanceof ActionArgumentsImpl) {
+			if (((ActionArgumentsImpl) args).eIsSet(GamlPackage.ACTION_ARGUMENTS__ARGS)) {
+				return ((ActionArgumentsImpl) args).getArgs();
+			}
+		}
 		return Collections.EMPTY_LIST;
 	}
 
@@ -127,13 +133,15 @@ public class EGaml {
 	 *            the s
 	 * @return the facets of
 	 */
-	public static List<Facet> getFacetsOf(final Statement s) {
-		if (((StatementImpl) s).eIsSet(GamlPackage.STATEMENT__FACETS)) { return s.getFacets(); }
-		return Collections.EMPTY_LIST;
-	}
-
-	public static List<Facet> getFacetsOf(final HeadlessExperiment s) {
-		if (((HeadlessExperimentImpl) s).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS)) { return s.getFacets(); }
+	@Override
+	public List<Facet> getFacetsOf(final EObject s) {
+		if (s instanceof StatementImpl) {
+			if (((StatementImpl) s).eIsSet(GamlPackage.STATEMENT__FACETS)) { return ((StatementImpl) s).getFacets(); }
+		} else if (s instanceof HeadlessExperimentImpl) {
+			if (((HeadlessExperimentImpl) s).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS)) {
+				return ((HeadlessExperimentImpl) s).getFacets();
+			}
+		}
 		return Collections.EMPTY_LIST;
 	}
 
@@ -144,18 +152,53 @@ public class EGaml {
 	 *            the s
 	 * @return the facets map of
 	 */
-	public static Map<String, Facet> getFacetsMapOf(final Statement s) {
-		final List<Facet> list = getFacetsOf(s);
+	@Override
+	public Map<String, Facet> getFacetsMapOf(final EObject s) {
+		final List<? extends EObject> list = getFacetsOf(s);
 		if (list.isEmpty()) { return Collections.EMPTY_MAP; }
 		final Map<String, Facet> map = new TOrderedHashMap<>();
-		for (final Facet f : list) {
-			map.put(getKeyOf(f), f);
+		for (final EObject f : list) {
+			if (f instanceof Facet) {
+				map.put(getKeyOf(f), (Facet) f);
+			}
 		}
 		return map;
 	}
 
+	/**
+	 * Get one particular facet of a statement
+	 *
+	 * @param s
+	 * @return
+	 */
+	@Override
+	public Expression getExpressionAtKey(final EObject s, final String name) {
+
+		if (s == null || name == null) { return null; }
+		if (name.equals("value") && s instanceof S_DirectAssignment) { return ((S_DirectAssignment) s).getValue(); }
+
+		final List<Facet> list = getFacetsOf(s);
+		for (final Facet f : list) {
+			final String key = getKeyOf(f);
+			if (s instanceof S_Definition) {
+				if (name.equals("value") || name.equals("init")) {
+					if (key.equals("<-")) { return f.getExpr(); }
+				}
+			} else if (s instanceof S_Assignment) {
+
+				if (name.equals("value")) {
+					if (key.equals("<-")) { return f.getExpr(); }
+				} else if (name.equals("item")) {
+					if (key.contains("<") || key.contains(">")) { return f.getExpr(); }
+				}
+			}
+			if (name.equals(key)) { return f.getExpr(); }
+		}
+		return null;
+	}
+
 	/** The children switch. */
-	private static GamlSwitch<Boolean> childrenSwitch = new GamlSwitch<Boolean>() {
+	private final GamlSwitch<Boolean> childrenSwitch = new GamlSwitch<Boolean>() {
 
 		@Override
 		public Boolean caseModel(final Model object) {
@@ -211,7 +254,8 @@ public class EGaml {
 	 *            the obj
 	 * @return true, if successful
 	 */
-	public static boolean hasChildren(final EObject obj) {
+	@Override
+	public boolean hasChildren(final EObject obj) {
 		return childrenSwitch.doSwitch(obj);
 	}
 
@@ -222,22 +266,14 @@ public class EGaml {
 	 *            the block
 	 * @return the statements of
 	 */
-	public static List<? extends Statement> getStatementsOf(final Block block) {
-		if (block != null && ((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS)) {
-			return block.getStatements();
-		}
-		return Collections.EMPTY_LIST;
-	}
+	@Override
+	public List<Statement> getStatementsOf(final EObject block) {
 
-	/**
-	 * Gets the statements of a model
-	 *
-	 * @param model
-	 *            the model
-	 * @return the statements of
-	 */
-	public static List<? extends Statement> getStatementsOf(final Model model) {
-		if (model != null) { return getStatementsOf(model.getBlock()); }
+		if (block instanceof BlockImpl) {
+			if (((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS)) {
+				return ((BlockImpl) block).getStatements();
+			}
+		} else if (block instanceof Model) { return getStatementsOf(((Model) block).getBlock()); }
 		return Collections.EMPTY_LIST;
 	}
 
@@ -248,8 +284,13 @@ public class EGaml {
 	 *            the stm
 	 * @return the equations of
 	 */
-	public static List<? extends Statement> getEquationsOf(final S_Equations stm) {
-		if (((S_EquationsImpl) stm).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS)) { return stm.getEquations(); }
+	@Override
+	public List<S_Assignment> getEquationsOf(final EObject stm) {
+		if (stm instanceof S_EquationsImpl) {
+			if (((S_EquationsImpl) stm).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS)) {
+				return ((S_EquationsImpl) stm).getEquations();
+			}
+		}
 		return Collections.EMPTY_LIST;
 	}
 
@@ -260,7 +301,8 @@ public class EGaml {
 	 *            the f
 	 * @return the key of
 	 */
-	public static String getKeyOf(final EObject f) {
+	@Override
+	public String getKeyOf(final EObject f) {
 		if (f == null) { return null; }
 		return getKeyOf(f, f.eClass());
 	}
@@ -274,7 +316,8 @@ public class EGaml {
 	 *            the clazz
 	 * @return the key of
 	 */
-	public static String getKeyOf(final EObject object, final EClass clazz) {
+	@Override
+	public String getKeyOf(final EObject object, final EClass clazz) {
 		String s;
 		final int id = clazz.getClassifierID();
 		switch (id) {
@@ -346,7 +389,8 @@ public class EGaml {
 	 *            the o
 	 * @return the name of ref
 	 */
-	public static String getNameOfRef(final EObject o) {
+	@Override
+	public String getNameOfRef(final EObject o) {
 		final ICompositeNode n = NodeModelUtils.getNode(o);
 		if (n != null) { return NodeModelUtils.getTokenText(n); }
 		if (o instanceof VariableRef) {
@@ -371,7 +415,7 @@ public class EGaml {
 	 *
 	 * @return the factory
 	 */
-	public static GamlFactory getFactory() {
+	public GamlFactory getFactory() {
 		return (GamlFactory) GamlPackage.eINSTANCE.getEFactoryInstance();
 	}
 
@@ -383,10 +427,11 @@ public class EGaml {
 	 * @return the string
 	 */
 
-	public static String toString(final EObject expr) {
+	@Override
+	public String toString(final EObject expr) {
 		if (expr == null) { return null; }
 		if (expr instanceof Statement) {
-			return getNameOf((Statement) expr);
+			return getNameOf(expr);
 		} else if (expr instanceof Facet) { return ((Facet) expr).getName(); }
 
 		if (!(expr instanceof Expression)) { return expr.toString(); }
@@ -404,7 +449,7 @@ public class EGaml {
 	 * @param expr
 	 *            the expr
 	 */
-	private static void serialize(final StringBuilder serializer, final Expression expr) {
+	private void serialize(final StringBuilder serializer, final Expression expr) {
 		if (expr == null) {
 			return;
 		} else if (expr instanceof If) {
@@ -462,20 +507,20 @@ public class EGaml {
 	 * @param expr
 	 *            the expr
 	 */
-	private static void function(final StringBuilder serializer, final Function expr) {
-		final List<Expression> args = getExprsOf(expr.getRight());
+	private void function(final StringBuilder serializer, final Function expr) {
+		final List<? extends EObject> args = getExprsOf(expr.getRight());
 		final String opName = getKeyOf(expr.getLeft());
 		switch (args.size()) {
 			case 1:
 				serializer.append(opName).append("(");
-				serialize(serializer, args.get(0));
+				serialize(serializer, (Expression) args.get(0));
 				serializer.append(")");
 				break;
 			case 2:
 				serializer.append("(");
-				serialize(serializer, args.get(0));
+				serialize(serializer, (Expression) args.get(0));
 				serializer.append(")").append(opName).append("(");
-				serialize(serializer, args.get(1));
+				serialize(serializer, (Expression) args.get(1));
 				serializer.append(")");
 				break;
 			default:
@@ -496,14 +541,14 @@ public class EGaml {
 	 * @param arguments
 	 *            the arguments
 	 */
-	private static void array(final StringBuilder serializer, final List<Expression> args, final boolean arguments) {
+	private void array(final StringBuilder serializer, final List<? extends EObject> args, final boolean arguments) {
 		// if arguments is true, parses the list to transform it into a map of
 		// args
 		// (starting at 1); Experimental right now
 		// serializer.append("[");
 		final int size = args.size();
 		for (int i = 0; i < size; i++) {
-			final Expression e = args.get(i);
+			final Expression e = (Expression) args.get(i);
 			if (arguments) {
 				serializer.append("arg").append(i).append("::");
 			}
@@ -522,7 +567,8 @@ public class EGaml {
 	 *            the o
 	 * @return the statement
 	 */
-	public static Statement getStatement(final EObject o) {
+	@Override
+	public Statement getStatement(final EObject o) {
 		if (o instanceof Statement) { return (Statement) o; }
 		if (o instanceof TypeRef && o.eContainer() instanceof S_Definition
 				&& ((S_Definition) o.eContainer()).getTkey() == o) {
@@ -539,24 +585,23 @@ public class EGaml {
 	 *            the e
 	 * @return true, if is batch
 	 */
-	public static boolean isBatch(final Statement e) {
-		if (!((StatementImpl) e).eIsSet(GamlPackage.STATEMENT__FACETS)) { return false; }
-		for (final Facet f : e.getFacets()) {
-			if (getKeyOf(f).equals(IKeyword.TYPE)) {
-				final String type = EGaml.getKeyOf(f.getExpr());
-				if (IKeyword.BATCH.equals(type) || IKeyword.TEST.equals(type)) { return true; }
+	@Override
+	public boolean isBatch(final EObject e) {
+		if (e instanceof StatementImpl) {
+			if (!((StatementImpl) e).eIsSet(GamlPackage.STATEMENT__FACETS)) { return false; }
+			for (final Facet f : ((Statement) e).getFacets()) {
+				if (getKeyOf(f).equals(IKeyword.TYPE)) {
+					final String type = EGaml.getInstance().getKeyOf(f.getExpr());
+					if (IKeyword.BATCH.equals(type) || IKeyword.TEST.equals(type)) { return true; }
+				}
 			}
-		}
-		return false;
-
-	}
-
-	public static boolean isBatch(final HeadlessExperiment e) {
-		if (!((HeadlessExperimentImpl) e).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS)) { return false; }
-		for (final Facet f : e.getFacets()) {
-			if (getKeyOf(f).equals(IKeyword.TYPE)) {
-				final String type = EGaml.getKeyOf(f.getExpr());
-				if (IKeyword.BATCH.equals(type)) { return true; }
+		} else if (e instanceof HeadlessExperimentImpl) {
+			if (!((HeadlessExperimentImpl) e).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS)) { return false; }
+			for (final Facet f : ((HeadlessExperimentImpl) e).getFacets()) {
+				if (getKeyOf(f).equals(IKeyword.TYPE)) {
+					final String type = EGaml.getInstance().getKeyOf(f.getExpr());
+					if (IKeyword.BATCH.equals(type)) { return true; }
+				}
 			}
 		}
 		return false;

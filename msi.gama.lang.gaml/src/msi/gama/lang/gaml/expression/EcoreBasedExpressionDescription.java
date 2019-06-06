@@ -47,7 +47,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 	@Override
 	public String toOwnString() {
-		return EGaml.toString(target);
+		return EGaml.getInstance().toString(target);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 			final String type = skills ? "skill" : "attribute";
 
 			if (target instanceof VariableRef) {
-				final String skillName = EGaml.getKeyOf(target);
+				final String skillName = EGaml.getInstance().getKeyOf(target);
 				context.warning(
 						type + "s should be provided as a list of identifiers, for instance [" + skillName + "]",
 						IGamlIssue.AS_ARRAY, target, skillName);
@@ -69,7 +69,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				return Collections.singleton(skillName);
 			}
 			if (target instanceof Expression) {
-				context.error("Impossible to recognize valid " + type + "s in " + EGaml.toString(target),
+				context.error("Impossible to recognize valid " + type + "s in " + EGaml.getInstance().toString(target),
 						skills ? IGamlIssue.UNKNOWN_SKILL : IGamlIssue.UNKNOWN_VAR, target);
 			} else {
 				context.error(type + "s should be provided as a list of identifiers.", IGamlIssue.UNKNOWN_SKILL,
@@ -79,10 +79,10 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 		}
 		final ICollector<String> result = new Collector.UniqueOrdered<String>();
 		final Array array = (Array) target;
-		for (final Expression expr : EGaml.getExprsOf(array.getExprs())) {
+		for (final Expression expr : EGaml.getInstance().getExprsOf(array.getExprs())) {
 			final String type = skills ? "skill" : "attribute";
 
-			final String name = EGaml.getKeyOf(expr);
+			final String name = EGaml.getInstance().getKeyOf(expr);
 			if (skills && !GamaSkillRegistry.INSTANCE.hasSkill(name)) {
 				context.error("Unknown " + type + " " + name, IGamlIssue.UNKNOWN_SKILL, expr);
 			} else {

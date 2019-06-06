@@ -20,7 +20,7 @@ import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 import ummisco.gama.dev.utils.DEBUG;
 

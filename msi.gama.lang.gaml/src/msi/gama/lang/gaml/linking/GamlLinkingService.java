@@ -73,7 +73,7 @@ public class GamlLinkingService extends DefaultLinkingService {
 	}
 
 	public EObject create(final String name, final EClass clazz) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(clazz);
+		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(clazz);
 		stub.setName(name);
 		return stub;
 	}

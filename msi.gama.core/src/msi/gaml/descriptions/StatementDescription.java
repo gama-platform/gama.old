@@ -20,7 +20,7 @@ import static msi.gaml.types.Types.NO_TYPE;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IOperator;
 import msi.gaml.expressions.IVarExpression;
@@ -171,7 +171,7 @@ public class StatementDescription extends SymbolDescription {
 				s = DEFAULT;
 			} else {
 				if (getKeyword().equals(REFLEX)) {
-					warning("Reflexes should be named", MISSING_NAME, getUnderlyingElement(null));
+					warning("Reflexes should be named", MISSING_NAME, getUnderlyingElement());
 				}
 				s = INTERNAL + getKeyword() + String.valueOf(COMMAND_INDEX++);
 			}
@@ -304,11 +304,12 @@ public class StatementDescription extends SymbolDescription {
 				final IExpression expr = getFacetExpr(OVER);
 				if (expr != null) {
 					// If of type pair, find the common supertype of key and contents
-					if (Types.PAIR.isAssignableFrom(expr.getGamlType()))
+					if (Types.PAIR.isAssignableFrom(expr.getGamlType())) {
 						t = GamaType.findCommonType(expr.getGamlType().getContentType(),
 								expr.getGamlType().getKeyType());
-					else
+					} else {
 						t = expr.getGamlType().getContentType();
+					}
 				}
 			} else if (hasFacet(FROM) && hasFacet(TO)) {
 				final IExpression expr = getFacetExpr(FROM);

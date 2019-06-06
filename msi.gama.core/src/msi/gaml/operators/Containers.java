@@ -11,7 +11,7 @@
 package msi.gaml.operators;
 
 import static com.google.common.collect.Iterables.toArray;
-import static msi.gama.util.GAML.notNull;
+import static msi.gaml.compilation.GAML.notNull;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -55,7 +55,6 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaListFactory.GamaListSupplier;
@@ -67,6 +66,7 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IOperatorValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;

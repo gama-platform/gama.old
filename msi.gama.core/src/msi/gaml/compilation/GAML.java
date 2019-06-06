@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.util;
+package msi.gaml.compilation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,9 +25,9 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IContainer;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
-import msi.gaml.compilation.GamlIdiomsProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
@@ -51,6 +51,7 @@ public class GAML {
 	public static IExpressionFactory expressionFactory = null;
 	public static ModelFactory modelFactory = null;
 	private static IGamlResourceInfoProvider infoProvider = null;
+	private static IGamlEcoreUtils gamlEcoreUtils = null;
 
 	public static <T> T notNull(final IScope scope, final T object) {
 		return notNull(scope, object, "Error: nil value detected");
@@ -281,6 +282,14 @@ public class GAML {
 
 	public static void registerInfoProvider(final IGamlResourceInfoProvider info) {
 		infoProvider = info;
+	}
+
+	public static void registerGamlEcoreUtils(final IGamlEcoreUtils utils) {
+		gamlEcoreUtils = utils;
+	}
+
+	public static IGamlEcoreUtils getEcoreUtils() {
+		return gamlEcoreUtils;
 	}
 
 	public static GamlFileInfo getInfo(final URI uri, final long stamp) {

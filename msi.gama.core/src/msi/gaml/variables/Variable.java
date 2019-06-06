@@ -186,8 +186,8 @@ public class Variable extends Symbol implements IVariable {
 				// May 2019: a warning is emitted instead (see why in #2574)
 				if (name.equals(STEP)) {
 					if (cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
-						IExpression expr = cd.getFacetExpr(INIT);
-						if (expr.findAny(e -> (e instanceof TimeUnitConstantExpression) && (!e.isConst()))) {
+						final IExpression expr = cd.getFacetExpr(INIT);
+						if (expr.findAny(e -> e instanceof TimeUnitConstantExpression && !e.isConst())) {
 							cd.warning(
 									"Time dependent constants used in 'init' are computed once. The resulting durations may be irrelevant after a few cycles. An 'update' facet should better be defined to recompute 'step' every cycle",
 									IGamlIssue.CONFLICTING_FACETS, INIT);
@@ -257,7 +257,7 @@ public class Variable extends Symbol implements IVariable {
 
 		public void assertAssignmentFacetsTypes(final VariableDescription vd) {
 			for (final String s : assignmentFacets) {
-				Assert.typesAreCompatibleForAssignment(vd, vd.getName(), vd.getGamlType(), /* vd.getContentType(), */
+				Assert.typesAreCompatibleForAssignment(s, vd, vd.getName(), vd.getGamlType(), /* vd.getContentType(), */
 						vd.getFacet(s));
 			}
 		}
@@ -316,7 +316,7 @@ public class Variable extends Symbol implements IVariable {
 
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + " must have an initial value", IGamlIssue.NO_INIT, cd.getUnderlyingElement(null),
+				cd.error(p + " must have an initial value", IGamlIssue.NO_INIT, cd.getUnderlyingElement(),
 						cd.getGamlType().toString());
 				return;
 			}
@@ -664,7 +664,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public List<GamaColor> getColor(IScope scope) {
+	public List<GamaColor> getColor(final IScope scope) {
 		// No facet available to describe a potential color
 		return null;
 	}

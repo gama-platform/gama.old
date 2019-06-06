@@ -88,17 +88,15 @@ public class GamlResourceServices {
 	 *         encoded version of the parameter.
 	 */
 	public static URI properlyEncodedURI(final URI uri) {
-		if (uri == null)
-			return null;
+		if (uri == null) { return null; }
 		URI pre_properlyEncodedURI = uri;
 		if (GAMA.isInHeadLessMode() && !uri.isPlatformResource()) {
-			String filePath = uri.toFileString();
-			if (filePath == null)
-				return null;
-			File file = new File(filePath);
+			final String filePath = uri.toFileString();
+			if (filePath == null) { return null; }
+			final File file = new File(filePath);
 			try {
 				pre_properlyEncodedURI = URI.createFileURI(file.getCanonicalPath());
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -218,7 +216,7 @@ public class GamlResourceServices {
 		if (existing != null) {
 			final ModelDescription desc = existing.getModelDescription();
 			if (desc != null) {
-				final EObject e = desc.getUnderlyingElement(null);
+				final EObject e = desc.getUnderlyingElement();
 				if (e != null) {
 					r = (GamlResource) e.eResource();
 					if (r != null) {

@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml;
@@ -37,7 +37,7 @@ import msi.gama.lang.gaml.resource.GamlResourceDescriptionStrategy;
 import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
 import msi.gama.lang.gaml.validation.ErrorToDiagnoticTranslator;
 import msi.gama.lang.gaml.validation.GamlResourceValidator;
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpressionCompiler;
 
@@ -58,6 +58,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		if (!initialized) {
 			GamlExpressionFactory.registerParserProvider(() -> new GamlExpressionCompiler());
 			GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
+			GAML.registerGamlEcoreUtils(EGaml.getInstance());
 			initialized = true;
 
 		}

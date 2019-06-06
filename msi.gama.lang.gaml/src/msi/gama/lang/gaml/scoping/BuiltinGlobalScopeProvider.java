@@ -315,7 +315,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	}
 
 	static GamlDefinition add(final EClass eClass, final String t) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
 		final IEObjectDescription e = EObjectDescription.create(t, stub);
@@ -325,7 +325,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	}
 
 	static void add(final EClass eClass, final String t, final OperatorProto o) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		stub.setName(t);
 		Map<String, String> doc;
 		resources.get(eClass).getContents().add(stub);
@@ -344,7 +344,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	}
 
 	public static void addVar(final String t, final IGamlDescription o, final String keyword) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eVar);
+		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eVar);
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eVar).getContents().add(stub);
@@ -363,7 +363,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	}
 
 	static void addAction(final EClass eClass, final String t, final IGamlDescription o) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
@@ -383,7 +383,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	}
 
 	static void addUnit(final EClass eClass, final String t) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
 		final String d = IUnits.UNITS_EXPR.get(t).getDocumentation();
@@ -395,7 +395,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	}
 
 	static void addType(final EClass eClass, final String t, final IType type) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.exceptions.GamaRuntimeException.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.exceptions.GamaRuntimeException.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.exceptions;
 
@@ -45,7 +45,7 @@ public class GamaRuntimeException extends RuntimeException {
 	// Factory methods
 	/**
 	 * This call is deprecated. Use the equivalent method that passes the scope
-	 * 
+	 *
 	 * @param s
 	 * @return
 	 */
@@ -59,8 +59,9 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public static GamaRuntimeException create(final Throwable ex, final IScope scope) {
 		if (ex instanceof GamaRuntimeException) { return (GamaRuntimeException) ex; }
-		if (ex instanceof IOException
-				|| ex instanceof FileNotFoundException) { return new GamaRuntimeFileException(scope, ex); }
+		if (ex instanceof IOException || ex instanceof FileNotFoundException) {
+			return new GamaRuntimeFileException(scope, ex);
+		}
 		return new GamaRuntimeException(scope, ex);
 	}
 
@@ -100,12 +101,11 @@ public class GamaRuntimeException extends RuntimeException {
 			return "exception in JTS library";
 		} else if (s.contains("rcaller")) {
 			return "exception in RCaller library";
-		} else if (s.contains("jogamp"))
+		} else if (s.contains("jogamp")) {
 			return "exception in JOGL library";
-		else if (s.contains("weka"))
+		} else if (s.contains("weka")) {
 			return "exception in Weka library";
-		else if (s.contains("math3"))
-			return "exception in Math library";
+		} else if (s.contains("math3")) { return "exception in Math library"; }
 		if (ex instanceof NullPointerException) {
 			return "nil value detected";
 		} else if (ex instanceof IndexOutOfBoundsException) {
@@ -135,8 +135,9 @@ public class GamaRuntimeException extends RuntimeException {
 			int i = 0;
 			for (final StackTraceElement element : ex.getStackTrace()) {
 				addContext(element.toString());
-				if (i++ > 5)
+				if (i++ > 5) {
 					break;
+				}
 			}
 		}
 		cycle = computeCycle(scope);
@@ -165,7 +166,7 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public void addContext(final ISymbol s) {
 		addContext("in " + s.serialize(false));
-		final EObject e = s.getDescription().getUnderlyingElement(null);
+		final EObject e = s.getDescription().getUnderlyingElement();
 		if (e != null) {
 			editorContext = e;
 		}

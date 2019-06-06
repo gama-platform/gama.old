@@ -129,7 +129,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 					IGamlIssue.SHADOWS_NAME, facet);
 		}
 		final IExpression result =
-				msi.gama.util.GAML.getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
+				msi.gaml.compilation.GAML.getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
 		temps.put(name, (IVarExpression) result);
 		return result;
 	}

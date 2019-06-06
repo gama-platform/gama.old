@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
-import msi.gama.util.GAML;
+import msi.gaml.compilation.GAML;
 import ummisco.gama.ui.controls.IPopupProvider.PopupText;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;

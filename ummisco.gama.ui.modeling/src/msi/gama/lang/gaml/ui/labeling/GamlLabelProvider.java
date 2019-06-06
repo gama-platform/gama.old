@@ -82,7 +82,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 
 	String text(final EObject ele) {
 		String text;
-		String key = EGaml.getKeyOf(ele);
+		String key = EGaml.getInstance().getKeyOf(ele);
 		if (key == null) {
 			key = "";
 		}
@@ -92,11 +92,11 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 			if (text.equals(IKeyword.PARAMETER)) { return parameterText((Statement) ele); }
 			if (GamlOutlineTreeProvider.isAttribute((Statement) ele)) { return attributeText((S_Definition) ele); }
 			if (GamlOutlineTreeProvider.isAction((Statement) ele)) { return actionText((Statement) ele); }
-			String name = EGaml.getNameOf((Statement) ele);
+			String name = EGaml.getInstance().getNameOf((Statement) ele);
 			if (name == null) {
 				final Expression expr = ((Statement) ele).getExpr();
 				if (expr != null) {
-					name = EGaml.getKeyOf(expr);
+					name = EGaml.getInstance().getKeyOf(expr);
 				}
 			}
 			if (name == null) {
@@ -122,9 +122,9 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	 * @return
 	 */
 	private String attributeText(final S_Definition ele) {
-		String type = EGaml.getKeyOf(ele);
+		String type = EGaml.getInstance().getKeyOf(ele);
 		String key = type.equals(IKeyword.CONST) ? type : null;
-		final Map<String, Facet> map = EGaml.getFacetsMapOf(ele);
+		final Map<String, Facet> map = EGaml.getInstance().getFacetsMapOf(ele);
 		if (ele.getBlock() != null /* && ele.getBlock().getFunction() != null */) {
 			key = "function";
 		} else {
@@ -135,14 +135,14 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		if (type.equals(IKeyword.VAR) || type.equals(IKeyword.CONST)) {
 			final Facet f = map.get(IKeyword.TYPE);
 			if (f != null) {
-				type = EGaml.getKeyOf(f.getExpr());
+				type = EGaml.getInstance().getKeyOf(f.getExpr());
 			}
 		}
-		String name = EGaml.getNameOf(ele);
+		String name = EGaml.getInstance().getNameOf(ele);
 		if (name == null) {
 			final Expression expr = ((Statement) ele).getExpr();
 			if (expr != null) {
-				name = EGaml.getKeyOf(expr);
+				name = EGaml.getInstance().getKeyOf(expr);
 			}
 		}
 		if (name == null) {
@@ -165,8 +165,8 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	 * @return
 	 */
 	private String actionText(final Statement ele) {
-		final String type = EGaml.getKeyOf(ele);
-		final String name = EGaml.getNameOf(ele);
+		final String type = EGaml.getInstance().getKeyOf(ele);
+		final String name = EGaml.getInstance().getNameOf(ele);
 		return "Action " + name + " " + (type.equals(IKeyword.ACTION) ? "" : " (" + type + ")");
 	}
 
@@ -177,15 +177,15 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	protected String parameterText(final Statement p) {
 		String type = null;
 		String var = null;
-		final Map<String, Facet> map = EGaml.getFacetsMapOf(p);
+		final Map<String, Facet> map = EGaml.getInstance().getFacetsMapOf(p);
 		Facet f = map.get(IKeyword.VAR);
 		if (f != null) {
 			final Expression vr = f.getExpr();
 			if (vr instanceof VariableRef) {
 				final VarDefinition vd = ((VariableRef) vr).getRef();
 				if (vd instanceof S_Declaration) {
-					type = EGaml.getKeyOf(vd);
-					var = EGaml.getNameOf((S_Declaration) vd);
+					type = EGaml.getInstance().getKeyOf(vd);
+					var = EGaml.getInstance().getNameOf((S_Declaration) vd);
 				}
 			}
 		}
@@ -214,7 +214,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	}
 
 	String image(final S_Experiment ele) {
-		final List<Facet> facets = EGaml.getFacetsOf(ele);
+		final List<Facet> facets = EGaml.getInstance().getFacetsOf(ele);
 		Facet type = null;
 		for (final Facet f : facets) {
 			if (f.getKey().startsWith(IKeyword.TYPE)) {
@@ -223,11 +223,11 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 			}
 		}
 		if (type == null) { return "_gui.png"; }
-		return typeImage(EGaml.toString(type.getExpr()));
+		return typeImage(EGaml.getInstance().toString(type.getExpr()));
 	}
 
 	String image(final HeadlessExperiment ele) {
-		final List<Facet> facets = EGaml.getFacetsOf(ele);
+		final List<Facet> facets = EGaml.getInstance().getFacetsOf(ele);
 		Facet type = null;
 		for (final Facet f : facets) {
 			if (f.getKey().startsWith(IKeyword.TYPE)) {
@@ -236,17 +236,17 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 			}
 		}
 		if (type == null) { return "_batch.png"; }
-		return typeImage(EGaml.toString(type.getExpr()));
+		return typeImage(EGaml.getInstance().toString(type.getExpr()));
 	}
 
 	// Statement : keyword.value
 	public String image(final Statement ele) {
-		final String kw = EGaml.getKeyOf(ele);
+		final String kw = EGaml.getInstance().getKeyOf(ele);
 		if (kw == null) { return null; }
 		if (kw.equals(IKeyword.PARAMETER)) { return parameterImage(ele); }
 		if (kw.equals(IKeyword.VAR) || kw.equals(IKeyword.CONST)) {
-			for (final Facet f : EGaml.getFacetsOf(ele)) {
-				if (EGaml.getKeyOf(f).startsWith(IKeyword.TYPE)) { return typeImage(EGaml.getKeyOf(f.getExpr())); }
+			for (final Facet f : EGaml.getInstance().getFacetsOf(ele)) {
+				if (EGaml.getInstance().getKeyOf(f).startsWith(IKeyword.TYPE)) { return typeImage(EGaml.getInstance().getKeyOf(f.getExpr())); }
 			}
 		}
 		return typeImage(kw);
@@ -255,13 +255,13 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	protected String parameterImage(final Statement p) {
 		if (IKeyword.PARAMETER.equals(p.getKey())) {
 			String var = null;
-			final Facet f = EGaml.getFacetsMapOf(p).get(IKeyword.VAR);
+			final Facet f = EGaml.getInstance().getFacetsMapOf(p).get(IKeyword.VAR);
 			if (f != null) {
 				final Expression vr = f.getExpr();
 				if (vr instanceof VariableRef) {
 					final VarDefinition vd = ((VariableRef) vr).getRef();
 					if (vd instanceof S_Declaration) {
-						var = EGaml.getKeyOf(vd);
+						var = EGaml.getInstance().getKeyOf(vd);
 					}
 				}
 			}

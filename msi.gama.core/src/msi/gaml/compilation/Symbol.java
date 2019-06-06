@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.Symbol.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.Symbol.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -23,9 +23,9 @@ import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 13 mai 2010 A simple class to serve as the root of all Gaml Symbols
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public abstract class Symbol implements ISymbol {
 
@@ -38,10 +38,10 @@ public abstract class Symbol implements ISymbol {
 		return description;
 	}
 
+	@Override
 	public URI getURI() {
-		if (description == null)
-			return null;
-		final EObject object = description.getUnderlyingElement(null);
+		if (description == null) { return null; }
+		final EObject object = description.getUnderlyingElement();
 		return object == null ? null : EcoreUtil.getURI(object);
 	}
 
@@ -57,11 +57,12 @@ public abstract class Symbol implements ISymbol {
 
 	public Symbol(final IDescription desc) {
 		description = desc;
-		if (desc != null)
+		if (desc != null) {
 			order = desc.getOrder();
-		else
+		} else {
 			order = SymbolDescription.ORDER++;
-		// DEBUG.LOG("Order of " + desc.getName() + " = " + order);
+			// DEBUG.LOG("Order of " + desc.getName() + " = " + order);
+		}
 	}
 
 	@Override

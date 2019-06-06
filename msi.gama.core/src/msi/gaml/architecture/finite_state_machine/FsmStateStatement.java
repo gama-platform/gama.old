@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.finite_state_machine.FsmStateStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.architecture.finite_state_machine.FsmStateStatement.java, in plugin msi.gama.core, is part of the source
+ * code of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.finite_state_machine;
 
@@ -160,7 +160,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -226,8 +226,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 				}
 			}
 			final String error = "No " + facet + " state defined";
-			sd.error(error, IGamlIssue.MISSING_DEFINITION, sd.getUnderlyingElement(null), desc.getKeyword(), facet,
-					TRUE);
+			sd.error(error, IGamlIssue.MISSING_DEFINITION, sd.getUnderlyingElement(), desc.getKeyword(), facet, TRUE);
 		}
 	}
 

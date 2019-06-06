@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.IDescriptionValidator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.IDescriptionValidator.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -29,15 +29,15 @@ import msi.gaml.types.Types;
 /**
  * Class IDescriptionValidator. This interface is intended to be used for individual validation of symbols. An instance
  * is typically known by a SymbolProto and called after the core of the validation has made its job.
- * 
+ *
  * @author drogoul
  * @since 13 sept. 2013
- * 
+ *
  */
 @SuppressWarnings ({ "rawtypes" })
 public interface IDescriptionValidator<T extends IDescription> extends IValidator {
 
-	public static final ImmutableSet<String> RESERVED = ImmutableSet
+	ImmutableSet<String> RESERVED = ImmutableSet
 			.copyOf(new String[] { IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF });
 
 	/**
@@ -47,10 +47,10 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 	 * the description unless it is absolutely necessary. It is supposed to attach warnings and errors to the
 	 * description instead. Alternatively, developers may want to override validate(IDescription, EObject,
 	 * IExpression[]), which allows to veto the validation by returning false
-	 * 
+	 *
 	 * @param description
 	 */
-	public void validate(T description);
+	void validate(T description);
 
 	/**
 	 * In that particular implementation, arguments will always be empty. Returning false will veto the validation
@@ -65,8 +65,8 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 
 	public static class Assert {
 
-		public static void typesAreCompatibleForAssignment(final IDescription context, final String receiverDescription,
-				final IType<?> receiverType, final IExpressionDescription assigned) {
+		public static void typesAreCompatibleForAssignment(final String facetName, final IDescription context,
+				final String receiverDescription, final IType<?> receiverType, final IExpressionDescription assigned) {
 			if (assigned == null) { return; }
 			// IExpression expr1 = receiver.getExpression();
 			final IExpression expr2 = assigned.getExpression();
@@ -80,11 +80,15 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 					&& !assignedType.getGamlType().isTranslatableInto(receiverType.getGamlType())
 					|| Types.intFloatCase(receiverType, assignedType)) {
 				if (!Types.isEmptyContainerCase(receiverType, expr2)) {
-					context.warning(
-							receiverDescription + " of type " + receiverType.getGamlType()
-									+ " is assigned a value of type " + assignedType.getGamlType()
-									+ ", which will be casted to " + receiverType.getGamlType(),
-							IGamlIssue.SHOULD_CAST, assigned.getTarget(), receiverType.toString());
+					final EObject target = assigned.getTarget();
+					final String msg = receiverDescription + " of type " + receiverType.getGamlType()
+							+ " is assigned a value of type " + assignedType.getGamlType()
+							+ ", which will be casted to " + receiverType.getGamlType();
+					if (target == null) {
+						context.warning(msg, IGamlIssue.SHOULD_CAST, facetName, receiverType.toString());
+					} else {
+						context.warning(msg, IGamlIssue.SHOULD_CAST, target, receiverType.toString());
+					}
 				}
 			}
 			// Contents Type
@@ -111,11 +115,20 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 				}
 				if (!contentType.isTranslatableInto(receiverContentType)
 						|| Types.intFloatCase(receiverContentType, contentType)) {
-					context.warning(
-							"Elements of " + receiverDescription + " are of type " + receiverContentType
-									+ " but are assigned elements of type " + contentType + ", which will be casted to "
-									+ receiverContentType,
-							IGamlIssue.SHOULD_CAST, assigned.getTarget(), receiverType.toString());
+					final EObject target = assigned.getTarget();
+					if (target == null) {
+						context.warning(
+								"Elements of " + receiverDescription + " are of type " + receiverContentType
+										+ " but are assigned elements of type " + contentType
+										+ ", which will be casted to " + receiverContentType,
+								IGamlIssue.SHOULD_CAST, facetName, receiverType.toString());
+					} else {
+						context.warning(
+								"Elements of " + receiverDescription + " are of type " + receiverContentType
+										+ " but are assigned elements of type " + contentType
+										+ ", which will be casted to " + receiverContentType,
+								IGamlIssue.SHOULD_CAST, target, receiverType.toString());
+					}
 				}
 			}
 		}
@@ -152,7 +165,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 
 		/**
 		 * Verifies that the name is valid (non reserved, non type and non species)
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -165,7 +178,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 
 		/**
 		 * Verifies that the name is valid (non reserved, non type and non species)
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override

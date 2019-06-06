@@ -104,7 +104,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				if (s == null) {
 					DEBUG.ERR("EXPERIMENT NULL");
 				}
-				if (EGaml.isBatch((Statement) e)) {
+				if (EGaml.getInstance().isBatch((Statement) e)) {
 					s = GamlFileInfo.BATCH_PREFIX + s;
 				}
 
@@ -115,7 +115,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 			} else if (e instanceof HeadlessExperiment) {
 				String s = ((HeadlessExperiment) e).getName();
 
-				if (EGaml.isBatch((HeadlessExperiment) e)) {
+				if (EGaml.getInstance().isBatch((HeadlessExperiment) e)) {
 					s = GamlFileInfo.BATCH_PREFIX + s;
 				}
 

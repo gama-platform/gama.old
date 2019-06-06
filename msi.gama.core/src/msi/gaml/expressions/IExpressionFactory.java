@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.IExpressionFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.IExpressionFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -31,38 +31,36 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "rawtypes" })
 public interface IExpressionFactory {
 
-	public static final ConstantExpression TRUE_EXPR = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
-	public static final ConstantExpression FALSE_EXPR = ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION;
-	public static final ConstantExpression NIL_EXPR = ConstantExpressionDescription.NULL_EXPR_DESCRIPTION;
-	public static final String TEMPORARY_ACTION_NAME = "__synthetic__action__";
+	ConstantExpression TRUE_EXPR = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
+	ConstantExpression FALSE_EXPR = ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION;
+	ConstantExpression NIL_EXPR = ConstantExpressionDescription.NULL_EXPR_DESCRIPTION;
+	String TEMPORARY_ACTION_NAME = "__synthetic__action__";
 
 	// public void registerParserProvider(IExpressionCompilerProvider parser);
 
-	public abstract ConstantExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
+	ConstantExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
 
-	public abstract ConstantExpression createConst(final Object val, final IType type, String name)
-			throws GamaRuntimeException;
+	ConstantExpression createConst(final Object val, final IType type, String name) throws GamaRuntimeException;
 
-	public SpeciesConstantExpression createSpeciesConstant(final IType type);
+	SpeciesConstantExpression createSpeciesConstant(final IType type);
 
-	public abstract IExpression createExpr(final IExpressionDescription s, final IDescription context);
+	IExpression createExpr(final IExpressionDescription s, final IDescription context);
 
-	public abstract IExpression createExpr(final String s, IDescription context);
+	IExpression createExpr(final String s, IDescription context);
 
-	public IExpression createExpr(final String s, final IDescription context,
-			final IExecutionContext additionalContext);
+	IExpression createExpr(final String s, final IDescription context, final IExecutionContext additionalContext);
 
-	public abstract UnitConstantExpression getUnitExpr(final String unit);
+	UnitConstantExpression getUnitExpr(final String unit);
 
 	Arguments createArgumentMap(ActionDescription action, IExpressionDescription args, IDescription context);
 
-	public IExpressionCompiler getParser();
+	IExpressionCompiler getParser();
 
 	IExpression createVar(String name, IType type, boolean isConst, int scope, IDescription definitionDescription);
 
-	public IExpression createList(final Iterable<? extends IExpression> elements);
+	IExpression createList(final Iterable<? extends IExpression> elements);
 
-	public IExpression createMap(final Iterable<? extends IExpression> elements);
+	IExpression createMap(final Iterable<? extends IExpression> elements);
 
 	/**
 	 * @param op
@@ -81,30 +79,21 @@ public interface IExpressionFactory {
 	 */
 	IExpression createTypeExpression(IType type);
 
-	// public abstract boolean isInitialized();
-
-	/**
-	 * @param symbolDescription
-	 * @param facet
-	 * @return
-	 */
-	public EObject getFacetExpression(IDescription context, EObject facet);
-
 	/**
 	 *
 	 */
-	public void resetParser();
+	void resetParser();
 
 	/**
 	 * Creates a new unit expression
-	 * 
+	 *
 	 * @param value
 	 * @param t
 	 * @param doc
 	 * @return
 	 */
-	public UnitConstantExpression createUnit(Object value, IType t, String name, String doc, String deprecated,
-			boolean isTime, String[] names);
+	UnitConstantExpression createUnit(Object value, IType t, String name, String doc, String deprecated, boolean isTime,
+			String[] names);
 
 	/**
 	 * @param op
@@ -117,11 +106,10 @@ public interface IExpressionFactory {
 	IExpression createAction(String op, IDescription callerContext, ActionDescription action, IExpression call,
 			Arguments arguments);
 
-	public abstract IExpression createTemporaryActionForAgent(IAgent agent, String expression,
-			IExecutionContext tempContext);
+	IExpression createTemporaryActionForAgent(IAgent agent, String expression, IExecutionContext tempContext);
 
-	public abstract boolean hasOperator(String op, IDescription context, EObject object, IExpression... compiledArgs);
+	boolean hasOperator(String op, IDescription context, EObject object, IExpression... compiledArgs);
 
-	public abstract IExpression createAs(IDescription context, IExpression toCast, IExpression createTypeExpression);
+	IExpression createAs(IDescription context, IExpression toCast, IExpression createTypeExpression);
 
 }

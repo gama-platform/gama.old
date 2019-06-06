@@ -38,7 +38,7 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		// }
 		// if (contextobj != null) {
 		// if (DEBUG.IS_ON()) {
-		// DEBUG.OUT("Current EObject: " + contextobj.eClass().getName() + " " + EGaml.getKeyOf(contextobj));
+		// DEBUG.OUT("Current EObject: " + contextobj.eClass().getName() + " " + EGaml.getInstance().getKeyOf(contextobj));
 		// }
 		// }
 		final RecognitionException ex = context.getRecognitionException();
@@ -119,7 +119,7 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 					} else {
 						String text;
 						if (contextobj != null) {
-							text = EGaml.getKeyOf(contextobj);
+							text = EGaml.getInstance().getKeyOf(contextobj);
 							if (text == null) {
 								text = token;
 							}
