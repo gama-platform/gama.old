@@ -768,11 +768,11 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (IUnits.UNITS_EXPR.containsKey(s)) {
 			final UnitConstantExpression exp = getFactory().getUnitExpr(s);
 			if (exp.isDeprecated()) {
-				getContext().warning(s + " is deprecated.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
+				getContext().warning(s + " is deprecated.", IGamlIssue.DEPRECATED, object, (String[]) null);
 			}
 			return exp;
 		}
-		getContext().error(s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
+		getContext().error(s + " is not a unit or constant name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
 		return null;
 	}
 

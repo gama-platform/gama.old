@@ -173,27 +173,26 @@ public class EGaml implements IGamlEcoreUtils {
 	 */
 	@Override
 	public Expression getExpressionAtKey(final EObject s, final String name) {
-
 		if (s == null || name == null) { return null; }
 		if (name.equals("value") && s instanceof S_DirectAssignment) { return ((S_DirectAssignment) s).getValue(); }
-
 		final List<Facet> list = getFacetsOf(s);
+
 		for (final Facet f : list) {
 			final String key = getKeyOf(f);
-			if (s instanceof S_Definition) {
-				if (name.equals("value") || name.equals("init")) {
-					if (key.equals("<-")) { return f.getExpr(); }
-				}
-			} else if (s instanceof S_Assignment) {
-
-				if (name.equals("value")) {
-					if (key.equals("<-")) { return f.getExpr(); }
-				} else if (name.equals("item")) {
-					if (key.contains("<") || key.contains(">")) { return f.getExpr(); }
-				}
+			if (s instanceof Statement && (name.equals("value") || name.equals("init"))) {
+				if (key.equals("<-")) { return f.getExpr(); }
+			} else if (s instanceof S_Assignment && name.equals("item")) {
+				if (key.contains("<") || key.contains(">")) { return f.getExpr(); }
 			}
 			if (name.equals(key)) { return f.getExpr(); }
 		}
+		return null;
+	}
+
+	@Override
+	public Expression getExprOf(final EObject s) {
+		if (s instanceof Expression) { return (Expression) s; }
+		if (s instanceof Statement) { return ((Statement) s).getExpr(); }
 		return null;
 	}
 

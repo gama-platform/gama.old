@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 
@@ -64,7 +64,7 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 
 		/**
 		 * Surrounds text with prefix, suffix
-		 * 
+		 *
 		 * @param offset
 		 *            start of section to surround
 		 * @param length
@@ -102,6 +102,16 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 		final String castingString = data[0];
 		acceptor.accept(issue, "Cast the expression to " + castingString + "...", "", "",
 				new Surround(issue.getOffset(), issue.getLength(), castingString + "(", ")"));
+	}
+
+	@Fix (IGamlIssue.NO_INIT)
+	public void addInit(final Issue issue, final IssueResolutionAcceptor acceptor) {
+		final IModification m;
+		acceptor.accept(issue, "Add an init facet...", "", "", (IModification) context -> {
+			final IXtextDocument doc = context.getXtextDocument();
+			doc.replace(issue.getOffset() + issue.getLength() + 1, 0, " <- " + issue.getData()[0] + " ");
+
+		});
 	}
 
 	@Fix (IGamlIssue.AS_ARRAY)

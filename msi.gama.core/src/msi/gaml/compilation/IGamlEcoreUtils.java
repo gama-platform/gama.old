@@ -145,4 +145,6 @@ public interface IGamlEcoreUtils {
 	 */
 	boolean isBatch(EObject e);
 
+	EObject getExprOf(EObject element);
+
 }

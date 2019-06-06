@@ -387,6 +387,12 @@ public abstract class SymbolDescription implements IDescription {
 			if (result != null) { return result; }
 		}
 		if (facet instanceof String) {
+			if (getMeta() != null && !returnFacet) {
+				if (facet.equals(getMeta().getOmissible())) {
+					final EObject o = GAML.getEcoreUtils().getExprOf(element);
+					if (o != null) { return o; }
+				}
+			}
 			if (returnFacet) {
 				final EObject facetObject = GAML.getEcoreUtils().getFacetsMapOf(element).get(facet);
 				if (facetObject != null) { return facetObject; }
