@@ -32,8 +32,8 @@ public class Constants {
 	// public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator +
 	// ".." + File.separator + "GamaWiki";
 	// Config for BG
-	public static String WIKI_FOLDER 	= SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator
-			+ ".." + File.separator + "gama.wiki";
+//	public static String WIKI_FOLDER 	= SRC_FOLDER + File.separator + ".." + File.separator + "gama.wiki";
+	public static String WIKI_FOLDER 	= "C:/git/gama.wiki";
 
 	// Generation folders
 	public static String WIKI_FOLDER_EXT 		= WIKI_FOLDER + File.separator + "References";	
@@ -79,8 +79,8 @@ public class Constants {
 
 	// Commandes
 	public static String CMD_PANDOC =
-			OSUtils.isWindows() ? "C:/Users/Julien/AppData/Local/Pandoc/pandoc" : "/usr/local/bin/pandoc";
-	public static String CMD_PDFLATEX = OSUtils.isWindows() ? "\"C:/Program Files/MiKTeX2.9/miktex/bin/x64/xelatex\""
+			OSUtils.isWindows() ? "C:/pandoc/pandoc.exe" : "/usr/local/bin/pandoc";
+	public static String CMD_PDFLATEX = OSUtils.isWindows() ? "\"C:/MiKTeX 2.9/miktex/bin/x64/pdflatex.exe\""
 			: "/Library/TeX/Root/bin/universal-darwin/pdflatex";
 
 	// Path
