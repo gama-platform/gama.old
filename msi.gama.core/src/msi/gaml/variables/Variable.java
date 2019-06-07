@@ -246,11 +246,15 @@ public class Variable extends Symbol implements IVariable {
 			final ListExpression list = (ListExpression) amongExpression;
 			final Object init = initExpression.getConstValue();
 			if (!list.containsValue(init)) {
-				vd.warning(
-						"The initial value of " + vd.getName()
-								+ " does not belong to the list of possible values. It will be initialized to "
-								+ list.getElements()[0].serialize(true) + " instead.",
-						IGamlIssue.WRONG_VALUE, IKeyword.AMONG);
+				if (list.getElements().length == 0) {
+					vd.error("No value of " + vd.getName() + " can be chosen.", IGamlIssue.NOT_AMONG, AMONG);
+				} else {
+					vd.warning(
+							"The initial value of " + vd.getName()
+									+ " does not belong to the list of possible values. It will be initialized to "
+									+ list.getElements()[0].serialize(true) + " instead.",
+							IGamlIssue.WRONG_VALUE, INIT, String.valueOf(list.getElements()[0].getConstValue()));
+				}
 			}
 
 		}

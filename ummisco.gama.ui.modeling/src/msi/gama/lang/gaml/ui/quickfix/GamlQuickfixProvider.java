@@ -131,4 +131,13 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 
 	}
 
+	@Fix (IGamlIssue.WRONG_VALUE)
+	public void replaceValue(final Issue issue, final IssueResolutionAcceptor acceptor) {
+		final String[] data = issue.getData();
+		if (data == null || data.length == 0) { return; }
+		final String value = data[0];
+		acceptor.accept(issue, "Replace with " + value + "...", "", "",
+				new Replace(issue.getOffset(), issue.getLength(), value));
+	}
+
 }

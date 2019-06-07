@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -61,7 +62,7 @@ public class Colors {
 					examples = { @example (
 							value = "rgb([255, 128, 32]) + rgb('red')",
 							equals = "rgb([255,128,32])") }))
-	@test("rgb([255, 128, 32]) + rgb('red') = rgb([255,128,32])")
+	@test ("rgb([255, 128, 32]) + rgb('red') = rgb([255,128,32])")
 	public static GamaColor add(final GamaColor c1, final GamaColor c2) {
 		return new GamaColor(c1.getRed() + c2.getRed(), c1.getGreen() + c2.getGreen(), c1.getBlue() + c2.getBlue(),
 				c1.alpha());
@@ -79,7 +80,7 @@ public class Colors {
 					examples = { @example (
 							value = "rgb([255, 128, 32]) + 3",
 							equals = "rgb([255,131,35])") }))
-	@test("rgb([255, 128, 32]) + 3 = rgb([255,131,35]) ")
+	@test ("rgb([255, 128, 32]) + 3 = rgb([255,131,35]) ")
 	public static GamaColor add(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() + i, c.getGreen() + i, c.getBlue() + i, c.alpha());
 	}
@@ -96,7 +97,7 @@ public class Colors {
 					examples = { @example (
 							value = "rgb([255, 128, 32]) - 3",
 							equals = "rgb([252,125,29])") }))
-	@test("rgb([255, 128, 32]) - 3 = rgb([252,125,29]) ")
+	@test ("rgb([255, 128, 32]) - 3 = rgb([252,125,29]) ")
 	public static GamaColor subtract(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() - i, c.getGreen() - i, c.getBlue() - i, c.alpha());
 	}
@@ -113,7 +114,7 @@ public class Colors {
 					examples = { @example (
 							value = "rgb([255, 128, 32]) - rgb('red')",
 							equals = "rgb([0,128,32])") }))
-	@test("rgb([255, 128, 32]) - rgb('red') = rgb([0,128,32])")
+	@test ("rgb([255, 128, 32]) - rgb('red') = rgb([0,128,32])")
 	public static GamaColor subtract(final GamaColor c1, final GamaColor c) {
 		return new GamaColor(c1.getRed() - c.getRed(), c1.getGreen() - c.getGreen(), c1.getBlue() - c.getBlue(),
 				c1.alpha());
@@ -131,7 +132,7 @@ public class Colors {
 					examples = { @example (
 							value = "rgb([255, 128, 32]) * 2",
 							equals = "rgb([255,255,64])") }))
-	@test("rgb([255, 128, 32]) * 2 = rgb([255,255,64])")
+	@test ("rgb([255, 128, 32]) * 2 = rgb([255,255,64])")
 	public static GamaColor multiply(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() * i, c.getGreen() * i, c.getBlue() * i, c.alpha());
 	}
@@ -148,7 +149,7 @@ public class Colors {
 					examples = { @example (
 							value = "rgb([255, 128, 32]) / 2",
 							equals = "rgb([127,64,16])") }))
-	@test("rgb([255, 128, 32]) / 2 = rgb([127,64,16])")
+	@test ("rgb([255, 128, 32]) / 2 = rgb([127,64,16])")
 	public static GamaColor divide(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() / i, c.getGreen() / i, c.getBlue() / i, c.alpha());
 	}
@@ -167,7 +168,7 @@ public class Colors {
 					examples = { @example (
 							value = "rgb([255, 128, 32]) / 2.5",
 							equals = "rgb([102,51,13])") }))
-	@test("rgb([255, 128, 32]) / 2.5 = rgb([102,51,13])")
+	@test ("rgb([255, 128, 32]) / 2.5 = rgb([102,51,13])")
 	public static GamaColor divide(final GamaColor c, final Double i) {
 		return new GamaColor(Maths.round(c.getRed() / i), Maths.round(c.getGreen() / i), Maths.round(c.getBlue() / i),
 				c.alpha());
@@ -186,7 +187,7 @@ public class Colors {
 					value = "hsb (0.0,1.0,1.0)",
 					equals = "rgb(\"red\")"),
 			see = "rgb")
-	@test("hsb (0.0,1.0,1.0) = rgb('red') ")
+	@test ("hsb (0.0,1.0,1.0) = rgb('red') ")
 	public static GamaColor hsb(final Double h, final Double s, final Double b) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()));
 	}
@@ -201,7 +202,7 @@ public class Colors {
 			examples = @example (
 					value = "hsb (0.5,1.0,1.0,0.0)",
 					equals = "rgb(\"cyan\",0)"))
-	@test("hsb (0.5,1.0,1.0,0.0) = rgb('cyan',0) ")
+	@test ("hsb (0.5,1.0,1.0,0.0) = rgb('cyan',0) ")
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Double a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}
@@ -213,7 +214,7 @@ public class Colors {
 			concept = {})
 	@doc (
 			value = "Converts hsb (h=hue, s=saturation, b=brightness) value to Gama color")
-	@test("int(hsb(200,40, 90)) = -526409")
+	@test ("int(hsb(200,40, 90)) = -526409")
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Integer a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}
@@ -231,7 +232,7 @@ public class Colors {
 					value = "rgb (255,0,0)",
 					equals = "#red"),
 			see = "hsb")
-	@test("rgb (255,0,0) = #red")
+	@test ("rgb (255,0,0) = #red")
 	public static GamaColor rgb(final int r, final int g, final int b) {
 		return new GamaColor(r, g, b, 255);
 	}
@@ -254,7 +255,7 @@ public class Colors {
 							returnType = IKeyword.INT,
 							isTestOnly = true) },
 			see = "hsb")
-	@test("rgb (255,0,0,125).alpha = 125")
+	@test ("rgb (255,0,0,125).alpha = 125")
 	public static GamaColor rgb(final int r, final int g, final int b, final int alpha) {
 		return new GamaColor(r, g, b, alpha);
 	}
@@ -272,7 +273,7 @@ public class Colors {
 					equals = "a light red color",
 					test = false),
 			see = "hsb")
-	@test(" int(rgb (255,0,0,0.5)) = 2147418112")
+	@test (" int(rgb (255,0,0,0.5)) = 2147418112")
 	public static GamaColor rgb(final int r, final int g, final int b, final double alpha) {
 		return new GamaColor(r, g, b, alpha);
 	}
@@ -289,7 +290,7 @@ public class Colors {
 					value = "rgb (\"red\")",
 					equals = "rgb(255,0,0)"),
 			see = "hsb")
-	@test("rgb ('red') = rgb(255,0,0) ")
+	@test ("rgb ('red') = rgb(255,0,0) ")
 	public static GamaColor rgb(final IScope scope, final String s, final int a) {
 		return GamaColorType.staticCast(scope, s, a, false);
 	}
@@ -307,7 +308,7 @@ public class Colors {
 					equals = "a light red color",
 					test = false),
 			see = "hsb")
-	@test("int(rgb(rgb(255,0,0),125)) = 2113863680")
+	@test ("int(rgb(rgb(255,0,0),125)) = 2113863680")
 	public static GamaColor rgb(final IScope scope, final GamaColor s, final int a) {
 		return GamaColorType.staticCast(scope, s, a, false);
 	}
@@ -325,7 +326,7 @@ public class Colors {
 					equals = "a light red color",
 					test = false),
 			see = "hsb")
-	@test("int(rgb(rgb(255,0,0),0.5)) = 2147418112")
+	@test ("int(rgb(rgb(255,0,0),0.5)) = 2147418112")
 	public static GamaColor rgb(final IScope scope, final GamaColor s, final double a) {
 		return GamaColorType.staticCast(scope, s, a, false);
 	}
@@ -347,7 +348,7 @@ public class Colors {
 							equals = "rgb(76,76,76)",
 							isTestOnly = true) },
 			see = { "rgb", "hsb" })
-	@test("int(grayscale (rgb(255,0,0))) = -11776948")
+	@test ("int(grayscale (rgb(255,0,0))) = -11776948")
 	public static GamaColor grayscale(final GamaColor c) {
 		final int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
@@ -365,7 +366,7 @@ public class Colors {
 					equals = "a random color, equivalent to rgb(rnd(255),rnd(255),rnd(255))",
 					test = false),
 			see = { "rgb", "hsb" })
-	@test("seed <- 1.0; int(rnd_color(255)) = -3749758")
+	@test ("seed <- 1.0; int(rnd_color(255)) = -3749758")
 	public static GamaColor random_color(final IScope scope, final Integer max) {
 		final RandomUtils r = scope.getRandom();
 		final int realMax = CmnFastMath.max(0, CmnFastMath.min(max, 255));
@@ -384,7 +385,7 @@ public class Colors {
 					equals = "a random color, equivalent to rgb(rnd(100, 200),rnd(100, 200),rnd(100, 200))",
 					test = false),
 			see = { "rgb", "hsb" })
-	@test("seed <- 1.0; int(rnd_color(100, 200)) = -5065833")
+	@test ("seed <- 1.0; int(rnd_color(100, 200)) = -5065833")
 	public static GamaColor random_color(final IScope scope, final Integer min, final Integer max) {
 		final RandomUtils r = scope.getRandom();
 		final int realMax = CmnFastMath.max(0, CmnFastMath.min(max, 255));
@@ -410,7 +411,7 @@ public class Colors {
 							equals = "to a color between the purple and the blue",
 							isExecutable = false) },
 			see = { "rgb", "hsb" })
-	@test("blend(#red, #blue, 0.3) = rgb(76,0,178)")
+	@test ("blend(#red, #blue, 0.3) = rgb(76,0,178)")
 	public static GamaColor blend(final GamaColor c1, final GamaColor c2, final double r) {
 		final double ir = 1.0 - r;
 		final GamaColor color = new GamaColor((int) (c1.getRed() * r + c2.getRed() * ir),
@@ -437,10 +438,11 @@ public class Colors {
 									equals = "to a color very close to the purple",
 									isExecutable = false) }),
 			see = { "rgb", "hsb" })
+	@test ("blend(#red, #blue) = rgb(127,0,127)")
 	public static GamaColor blend(final GamaColor color1, final GamaColor color2) {
 		return blend(color1, color2, 0.5);
 	}
-	@test("blend(#red, #blue) = rgb(127,0,127)")
+
 	public static class BrewerValidator implements IOperatorValidator {
 
 		@Override
@@ -451,9 +453,24 @@ public class Colors {
 					final String p = (String) palette;
 					final ColorBrewer brewer = ColorBrewer.instance();
 					if (!brewer.hasPalette(p)) {
-						context.error("Palette " + p + " does not exist. Available palette names are: "
-								+ Arrays.toString(brewer.getPaletteNames()), UNKNOWN_ARGUMENT, emfContext);
+						context.error(
+								"Palette " + p + " does not exist. Available palette names are: "
+										+ Arrays.toString(brewer.getPaletteNames()),
+								UNKNOWN_ARGUMENT, getArg(emfContext, 1));
 						return false;
+					} else if (arguments.length > 1) {
+						final IExpression exp = arguments[1];
+						if (exp.isConst()) {
+							final Object number = exp.getConstValue();
+							if (number instanceof Integer) {
+								final BrewerPalette pal = brewer.getPalette(p);
+								if (pal.getCount() < (Integer) number) {
+									context.warning("Palette " + p + " has only " + pal.getCount() + " colors.",
+											IGamlIssue.WRONG_VALUE, getArg(emfContext, 1),
+											String.valueOf(pal.getCount()));
+								}
+							}
+						}
 					}
 				}
 			}
@@ -476,7 +493,7 @@ public class Colors {
 					isExecutable = false) },
 			see = { "brewer_palettes" })
 	@no_test
-	public static IList<GamaColor> brewerPaletteColors(final String type) {
+	public static IList<GamaColor> brewerPaletteColors(final IScope scope, final String type) {
 		final IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
 		final ColorBrewer brewer = ColorBrewer.instance();
 		if (brewer.hasPalette(type)) {
@@ -486,7 +503,7 @@ public class Colors {
 				}
 			}
 		} else {
-			throw GamaRuntimeException.error(type + " does not exist", null);
+			throw GamaRuntimeException.error(type + " does not exist", scope);
 		}
 		return colors;
 	}
@@ -506,10 +523,10 @@ public class Colors {
 					isExecutable = false) },
 			see = { "brewer_palettes" })
 	@no_test
-	public static IList<GamaColor> brewerPaletteColors(final String type, final int nbClasses) {
-		final IList<GamaColor> cols = brewerPaletteColors(type);
+	public static IList<GamaColor> brewerPaletteColors(final IScope scope, final String type, final int nbClasses) {
+		final IList<GamaColor> cols = brewerPaletteColors(scope, type);
 		if (cols.size() < nbClasses) {
-			throw GamaRuntimeException.error(type + " has less than " + nbClasses + " colors", null);
+			throw GamaRuntimeException.error(type + " has less than " + nbClasses + " colors", scope);
 		}
 		while (cols.size() > nbClasses) {
 			cols.remove(cols.size() - 1);
