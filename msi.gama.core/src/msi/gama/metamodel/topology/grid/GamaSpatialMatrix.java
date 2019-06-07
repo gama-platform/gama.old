@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1386,15 +1389,14 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
-			final IAgentFilter f, int number, Collection<IAgent> alreadyChosen) {
+			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
 		final double exp = dist * Maths.SQRT2;
 		final Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
 		shapes.removeAll(alreadyChosen);
-		if (shapes.size() <= number)
-			return shapes;
-		boolean gridSpe = (f.getSpecies() != null) && (f.getSpecies().isGrid());
+		if (shapes.size() <= number) { return shapes; }
+		final boolean gridSpe = f.getSpecies() != null && f.getSpecies().isGrid();
 		final Ordering<IShape> ordering =
 				gridSpe ? Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input.getLocation()))
 						: Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
@@ -1404,10 +1406,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	private Set<IAgent> inEnvelope(final Envelope env) {
 		// TODO Is it really efficient?
 		final Set<IAgent> shapes = new LinkedHashSet();
-		final int minX = (int) (env.getMinX() / cellWidth);
-		final int minY = (int) (env.getMinY() / cellHeight);
-		final int maxX = (int) (env.getMaxX() / cellWidth);
-		final int maxY = (int) (env.getMaxY() / cellHeight);
+		final int minX = max(0, (int) (env.getMinX() / cellWidth));
+		final int minY = max(0, (int) (env.getMinY() / cellHeight));
+		final int maxX = min(numCols - 1, (int) (env.getMaxX() / cellWidth));
+		final int maxY = min(numRows - 1, (int) (env.getMaxY() / cellHeight));
 		for (int i = minX; i <= maxX; i++) {
 			for (int j = minY; j <= maxY; j++) {
 				final int index = getPlaceIndexAt(i, j);
