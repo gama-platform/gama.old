@@ -14,7 +14,7 @@ Please post issues about GAMA here:
 
 Issues regarding the website (http://gama-platform.org) and the documentation should be posted here: 
 
-    https://github.com/gama-platform/gama.doc/issues
+    https://github.com/gama-platform/gama-platform.github.io/issues
 
 
  
