@@ -10,6 +10,8 @@
  **********************************************************************************************/
 package msi.gama.application;
 
+import static java.lang.System.getProperty;
+import static java.lang.System.setProperty;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -118,6 +120,10 @@ public class Application implements IApplication {
 		try {
 			display = Display.getDefault();
 			checkWorkbenchXMI();
+			final String splash = getProperty("org.eclipse.equinox.launcher.splash.location");
+			if ( splash != null ) {
+				setProperty("org.eclipse.equinox.launcher.splash.location", splash.replace("bmp", "png"));
+			}
 			final int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 			if ( returnCode == PlatformUI.RETURN_RESTART ) { return IApplication.EXIT_RESTART; }
 			return IApplication.EXIT_OK;
@@ -136,7 +142,7 @@ public class Application implements IApplication {
 	private void checkWorkbenchXMI() {
 		final boolean removeWorkbenchXMI = IsClearWorkspace();
 		if ( removeWorkbenchXMI ) {
-			System.setProperty(org.eclipse.e4.ui.workbench.IWorkbench.CLEAR_PERSISTED_STATE, "true");
+			setProperty(org.eclipse.e4.ui.workbench.IWorkbench.CLEAR_PERSISTED_STATE, "true");
 			ClearWorkspace(false);
 		}
 
