@@ -361,7 +361,7 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	protected void readShapes(final IScope scope) {
-		scope.getGui().getStatus(scope).beginSubStatus("Reading file" + getName(scope));
+		scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope));
 		ShapefileDataStore store = null;
 		final File file = getFile(scope);
 		final IList list = getBuffer();

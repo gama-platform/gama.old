@@ -155,7 +155,7 @@ public class GamaGMLFile extends GamaGisFile {
 	}
 
 	protected void readShapes(final IScope scope) {
-		scope.getGui().getStatus(scope).beginSubStatus("Reading file" + getName(scope));
+		scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope));
 		final File file = getFile(scope);
 		shapes = GamaListFactory.create(Types.GEOMETRY);
 		int size = 0;
