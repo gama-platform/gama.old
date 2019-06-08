@@ -106,7 +106,6 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 
 	@Fix (IGamlIssue.NO_INIT)
 	public void addInit(final Issue issue, final IssueResolutionAcceptor acceptor) {
-		final IModification m;
 		acceptor.accept(issue, "Add an init facet...", "", "", (IModification) context -> {
 			final IXtextDocument doc = context.getXtextDocument();
 			doc.replace(issue.getOffset() + issue.getLength() + 1, 0, " <- " + issue.getData()[0] + " ");
@@ -138,6 +137,18 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 		final String value = data[0];
 		acceptor.accept(issue, "Replace with " + value + "...", "", "",
 				new Replace(issue.getOffset(), issue.getLength(), value));
+	}
+
+	@Fix (IGamlIssue.MISSING_FACET)
+	public void addFacet(final Issue issue, final IssueResolutionAcceptor acceptor) {
+		return;
+		// TODO
+		// final String[] data = issue.getData();
+		// if (data == null || data.length < 2) { return; }
+		// final String facet = data[0];
+		// final String value = data[1];
+		// acceptor.accept(issue, "Add '" + facet + ": " + value + "' ...", "", "",
+		// );
 	}
 
 }

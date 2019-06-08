@@ -185,12 +185,13 @@ public class PutStatement extends AddStatement {
 			final IExpression index = cd.getFacetExpr(AT, KEY);
 			final IExpression whole = cd.getFacetExpr(ALL);
 			if (whole != null && whole.getGamlType().id() != IType.BOOL) {
-				cd.error("Put cannot be used to add several values", IGamlIssue.MISSING_FACET, ALL);
+				cd.error("Put cannot be used to add several values", IGamlIssue.CONFLICTING_FACETS, ALL);
 				return;
 			}
 			final boolean all = whole == null ? false : !whole.literalValue().equals(FALSE);
 			if (!all && index == null) {
-				cd.error("Put needs a valid index (facets 'at:' or 'key:') ", IGamlIssue.MISSING_FACET, AT);
+				cd.error("Put needs a valid index (facets 'at:' or 'key:') ", IGamlIssue.MISSING_FACET,
+						cd.getUnderlyingElement(), AT, "0");
 			} else {
 				super.validate(cd);
 			}

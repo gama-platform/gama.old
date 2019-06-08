@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.MigrateStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.MigrateStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -90,7 +90,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -101,7 +101,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 				final TypeDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 				if (microSpecies == null) {
 					cd.error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName
-							+ " as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES, TARGET, microSpeciesName);
+							+ " as micro-species", IGamlIssue.UNKNOWN_SPECIES, TARGET, microSpeciesName);
 				}
 			}
 

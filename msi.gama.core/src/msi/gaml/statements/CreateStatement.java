@@ -253,30 +253,31 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			final IExpression species = cd.getFacetExpr(SPECIES);
 			// If the species cannot be determined, issue an error and leave validation
 			if (species == null) {
-				cd.error("The species to instantiate cannot be determined", MISSING_TYPE, SPECIES);
+				cd.error("The species to instantiate cannot be determined", UNKNOWN_SPECIES, SPECIES);
 				return;
 			}
 
 			final SpeciesDescription sd = species.getGamlType().getDenotedSpecies();
 			if (sd == null) {
-				cd.error("The species to instantiate cannot be determined", MISSING_TYPE, SPECIES);
+				cd.error("The species to instantiate cannot be determined", UNKNOWN_SPECIES, SPECIES);
 				return;
 			}
 
 			if (species instanceof SpeciesConstantExpression) {
-				boolean abs = sd.isAbstract();
-				boolean mir = sd.isMirror();
-				boolean gri = sd.isGrid();
-				boolean bui = sd.isBuiltIn();
+				final boolean abs = sd.isAbstract();
+				final boolean mir = sd.isMirror();
+				final boolean gri = sd.isGrid();
+				final boolean bui = sd.isBuiltIn();
 				if (abs || mir || gri || bui) {
-					String p = abs ? "abstract" : mir ? "a mirror" : gri ? "a grid" : bui ? "built-in" : "";
+					final String p = abs ? "abstract" : mir ? "a mirror" : gri ? "a grid" : bui ? "built-in" : "";
 					cd.error(sd.getName() + " is " + p + " and cannot be instantiated", WRONG_TYPE, SPECIES);
 					return;
 				}
 			} else {
-				if (!(sd instanceof ModelDescription))
+				if (!(sd instanceof ModelDescription)) {
 					cd.info("The actual species will be determined at runtime. This can lead to errors if it cannot be instantiated",
 							WRONG_TYPE, SPECIES);
+				}
 			}
 
 			if (sd instanceof ModelDescription && !(cd.getSpeciesContext() instanceof ExperimentDescription)) {
@@ -431,8 +432,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// Next, we compute the species to instantiate
 		final IPopulation pop = findPopulation(scope);
 		// A check is made in order to address issues #2621 and #2611
-		if (pop == null || pop.getSpecies() == null)
+		if (pop == null || pop.getSpecies() == null) {
 			throw GamaRuntimeException.error("Impossible to determine the species of the agents to create", scope);
+		}
 		checkPopulationValidity(pop, scope);
 
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
@@ -458,12 +460,12 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 * @param scope
 	 * @throws GamaRuntimeException
 	 */
-	private void checkPopulationValidity(IPopulation pop, IScope scope) throws GamaRuntimeException {
+	private void checkPopulationValidity(final IPopulation pop, final IScope scope) throws GamaRuntimeException {
 		if (pop instanceof SimulationPopulation && !(scope.getAgent() instanceof ExperimentAgent)) {
 			throw error("Simulations can only be created within experiments", scope);
 		}
-		SpeciesDescription sd = pop.getSpecies().getDescription();
-		String error = sd.isAbstract() ? "abstract"
+		final SpeciesDescription sd = pop.getSpecies().getDescription();
+		final String error = sd.isAbstract() ? "abstract"
 				: sd.isMirror() ? "a mirror" : sd.isBuiltIn() ? "built-in" : sd.isGrid() ? "a grid" : null;
 		if (error != null) { throw error(sd.getName() + "is " + error + " and cannot be instantiated.", scope); }
 	}

@@ -170,6 +170,12 @@ public abstract class SymbolDescription implements IDescription {
 		return getTypeDenotedByFacet(facets.getFirstExistingAmong(s), Types.NO_TYPE);
 	}
 
+	@Override
+	public String firstFacetFoundAmong(final String... strings) {
+		if (!hasFacets()) { return null; }
+		return facets.getFirstExistingAmong(strings);
+	}
+
 	public IType<?> getTypeDenotedByFacet(final String s, final IType<?> defaultType) {
 		if (!hasFacets()) { return defaultType; }
 		return facets.getTypeDenotedBy(s, this, defaultType);
@@ -641,7 +647,8 @@ public abstract class SymbolDescription implements IDescription {
 		final boolean isBuiltIn = isBuiltIn();
 		final Iterable<String> missingFacets = proto.getMissingMandatoryFacets(facets);
 		if (missingFacets != null && !Iterables.isEmpty(missingFacets)) {
-			error("Missing facets " + ImmutableSet.copyOf(missingFacets), IGamlIssue.MISSING_FACET);
+			error("Missing facets " + ImmutableSet.copyOf(missingFacets), IGamlIssue.MISSING_FACET,
+					getUnderlyingElement(), Iterables.getFirst(missingFacets, ""), "nil");
 			return false;
 		}
 		final boolean ok = visitFacets((facet, expr) -> {

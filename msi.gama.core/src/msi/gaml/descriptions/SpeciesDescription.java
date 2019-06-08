@@ -142,8 +142,8 @@ public class SpeciesDescription extends TypeDescription {
 				final ListExpression list = (ListExpression) expr;
 				for (final IExpression exp : list.getElements()) {
 					if (exp instanceof SkillConstantExpression) {
-						SkillDescription sk = ((ISkill) exp.getConstValue()).getDescription();
-						String dep = sk.getDeprecated();
+						final SkillDescription sk = ((ISkill) exp.getConstValue()).getDescription();
+						final String dep = sk.getDeprecated();
 						if (dep != null) {
 							warning("Skill " + sk.getName() + " is deprecated: " + dep, IGamlIssue.DEPRECATED, SKILLS);
 						}
@@ -221,7 +221,7 @@ public class SpeciesDescription extends TypeDescription {
 	public void copyJavaAdditions() {
 		final Class clazz = getJavaBase();
 		if (clazz == null) {
-			error("This species cannot be compiled as its Java base is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
+			error("This species cannot be compiled as its Java base is unknown. ", IGamlIssue.UNKNOWN_SPECIES);
 			return;
 		}
 		for (final IDescription v : AbstractGamlAdditions.getAllChildrenOf(getJavaBase(),

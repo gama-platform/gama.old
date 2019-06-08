@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.variables.ContainerVariable.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.variables.ContainerVariable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.variables;
 
@@ -123,7 +123,7 @@ public class ContainerVariable extends Variable {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -163,7 +163,7 @@ public class ContainerVariable extends Variable {
 				}
 			} else if (vd.hasFacet(FILL_WITH)) {
 				vd.error("Facet 'size:' missing. A container cannot be filled if no size is provided",
-						IGamlIssue.MISSING_FACET, FILL_WITH);
+						IGamlIssue.MISSING_FACET, vd.getUnderlyingElement(), SIZE, "0");
 				return;
 			}
 			super.validate(vd);

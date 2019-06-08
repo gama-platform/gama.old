@@ -206,7 +206,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					desc.warning(
 							"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the "
 									+ type + " experiment",
-							IGamlIssue.MISSING_FACET);
+							IGamlIssue.MISSING_FACET, desc.getUnderlyingElement(), UNTIL, "true");
 				}
 			}
 		}

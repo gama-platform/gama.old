@@ -881,10 +881,10 @@ Bundle-ClassPath: .,
  geotools 14.5/core-0.26.jar,
  jgrapht 1.0.1/jgrapht-core-1.0.1.jar,
  kml/jars/JavaAPIforKml-2.2.1.jar,
- streamex 0.6.7/streamex-0.6.7.jar,
  kml/jars/jaxb-impl.jar,
  kml/jars/jaxb-api.jar,
  kml/jars/jaxb-core.jar,
- jts 1.14/jars/jts-example-1.14.0.jar
+ jts 1.14/jars/jts-example-1.14.0.jar,
+ streamex 0.6.7/streamex-0.6.8.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: msi.gama.ext

@@ -548,6 +548,14 @@ public interface IDescription
 	IExpressionDescription getFacet(String... strings);
 
 	/**
+	 * Returns the first facet key found in this symbol or null
+	 *
+	 * @param strings
+	 * @return a facet key or null
+	 */
+	String firstFacetFoundAmong(final String... strings);
+
+	/**
 	 * Sets the facet.
 	 *
 	 * @param string

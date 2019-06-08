@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.LoopStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.LoopStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -209,7 +209,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -246,7 +246,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					return;
 				}
 				if (name != null) {
-					description.error("No variable should be declared", IGamlIssue.UNUSED, TIMES, NAME);
+					description.error("No variable should be declared", IGamlIssue.UNUSED, NAME);
 					return;
 				}
 			} else if (over != null) {
@@ -288,14 +288,17 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					return;
 				}
 				if (to == null) {
-					description.error("'loop' is missing the 'to:' facet", IGamlIssue.MISSING_FACET, FROM);
+					description.error("'loop' is missing the 'to:' facet", IGamlIssue.MISSING_FACET,
+							description.getUnderlyingElement(), TO, "0");
 					return;
 				}
 			} else if (to != null) {
-				description.error("'loop' is missing the 'from:' facet", IGamlIssue.MISSING_FACET, TO);
+				description.error("'loop' is missing the 'from:' facet", IGamlIssue.MISSING_FACET,
+						description.getUnderlyingElement(), FROM, "0");
 				return;
 			} else {
-				description.error("Missing the definitions of the loop to perform", IGamlIssue.MISSING_FACET);
+				description.error("Missing the definition of the kind of loop to perform (times, over, while, from/to)",
+						IGamlIssue.MISSING_FACET);
 				return;
 			}
 		}
@@ -361,7 +364,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	interface LoopExecuter {
 
-		abstract Object runIn(final IScope scope);
+		Object runIn(final IScope scope);
 	}
 
 	class Bounded implements LoopExecuter {

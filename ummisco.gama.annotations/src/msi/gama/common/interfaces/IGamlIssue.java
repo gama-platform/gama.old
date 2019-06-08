@@ -32,7 +32,7 @@ public interface IGamlIssue {
 	String MISSING_ARGUMENT = "gaml.missing.argument.issue";
 	String MISSING_DEFINITION = "gaml.missing.definition.issue";
 	String MISSING_NAME = "gaml.missing.name.issue";
-	String MISSING_TYPE = "gaml.missing.type.issue";
+	// String MISSING_TYPE = "gaml.missing.type.issue";
 	// Obsolete public static String NO_ENVIRONMENT = "gaml.no.environment.issue";
 	String NO_INIT = "gaml.no.init.issue";
 	String NOT_A_TYPE = "gaml.not.a.type.issue";
@@ -54,7 +54,8 @@ public interface IGamlIssue {
 	String UNKNOWN_KEYWORD = "gaml.unknown.keyword.issue";
 	String UNKNOWN_NUMBER = "gaml.unknown.number.issue";
 	String UNKNOWN_SKILL = "gaml.unknown.skill.issue";
-	String UNKNOWN_SUBSPECIES = "gaml.unknown.subspecies.issue";
+	String UNKNOWN_SPECIES = "gaml.unknown.species.issue";
+	// String UNKNOWN_SUBSPECIES = "gaml.unknown.subspecies.issue";
 	String UNKNOWN_VAR = "gaml.unknown.var.issue";
 	// public static String UNMATCHED_BINARY = "gaml.unmatched.unary.issue";
 	String UNMATCHED_OPERANDS = "gaml.unmatched.operands.issue";
