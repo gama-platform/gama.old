@@ -72,9 +72,9 @@ deploy(){
 embed_jdk(){
 	bash ./travis/zip_withjdk.sh "$TRAVIS_COMMIT" 
 }
-release(){	
+release_official(){	
 	echo "Upload release to github"	
-	bash ./travis/github-release.sh "$TRAVIS_COMMIT" 
+	bash ./travis/github_release_official.sh "$TRAVIS_COMMIT" 
 }
 release_continuous(){	
 	echo "Upload continuous/on-demand release to github"	

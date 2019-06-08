@@ -70,7 +70,7 @@ RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip"
 NEWFILES[$n]='GAMA1.8_Official_withJDK_Win_64bits.zip'
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Official_withJDK_MacOS_64bits.zip'
+NEWFILES[$n]='GAMA1.8_Official_withJDK_Mac_64bits.zip'
  
 
 i=0

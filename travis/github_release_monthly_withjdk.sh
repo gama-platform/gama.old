@@ -64,13 +64,13 @@ RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip"
 NEWFILES[$n]='GAMA1.8_Monthly_Win_64bits'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Monthly__withJDK_Linux_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Monthly_withJDK_Linux_64bits'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.8_Monthly__withJDK_Win_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Monthly_withJDK_Win_64bits'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Monthly__withJDK_MacOS'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Monthly_withJDK_Mac_64bits'$SUFFIX
  
 
 i=0
