@@ -125,7 +125,7 @@ else
 	fi	
 	if  [[ ${MESSAGE} == *"ci official"* ]] || [[ $MSG == *"ci official"* ]]; then
 		embed_jdk		
-		release 
+		release_official 
 	fi	
 fi
 
