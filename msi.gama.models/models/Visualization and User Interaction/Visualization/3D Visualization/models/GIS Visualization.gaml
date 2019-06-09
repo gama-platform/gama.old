@@ -11,7 +11,7 @@ global {
 	file shape_file_buildings <- shape_file("../includes/building.shp");
 	geometry shape <- envelope(shape_file_buildings);
 	string texture <- "../images/building_texture/texture1.jpg";
-	string roof_texture <- "../images/building_texture/roof_top.png";	
+	string roof_texture <- "../images/building_texture/roof_top.jpg";	
 }
 
 experiment GIS_visualization type: gui {

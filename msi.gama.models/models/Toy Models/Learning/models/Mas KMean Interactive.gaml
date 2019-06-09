@@ -20,9 +20,9 @@ global {
 	
 	//images used for the buttons
 	list<file> images <- [
-		file("../images/dot.png"),
+		file("../images/dot.jpg"),
 		file("../images/cross.png"),
-		file("../images/eraser.png")
+		file("../images/eraser.jpg")
 		
 	]; 
 	

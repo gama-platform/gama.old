@@ -1,9 +1,8 @@
 /**
 * Name: Boids 3D Motion
 * Author: 
-* Description: This model shows the movement of boids following a goal, and creating 
-* 	without their own volonty, a flock .  The goal agent and the boids will move within the 
-* 	3D space.
+* Description: This model shows the movement of boids following a goal, and creating a flock .  
+*	The goal agent and the boids will move within the 3D space.
 * Tags: gui, skill, 3d
 */
 model boids_3D 
@@ -148,13 +147,12 @@ species boids skills: [moving3D] {
 }
 
 
-experiment boids_3D type: gui {
+experiment "3D" type: gui {
 	
 	
 	output {
 		
-		display Sky1 type:opengl  {
-			image 'background' file:'../images/soil6.jpg' ;
+		display Sky1 type:opengl synchronized: true {
 			species boids aspect: image;
 			species boids_goal;	
 		}

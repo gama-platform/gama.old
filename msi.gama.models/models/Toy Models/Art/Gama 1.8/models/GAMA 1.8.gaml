@@ -11,7 +11,7 @@ global control: fsm {
 	rgb orange <- rgb(210, 103, 59);
 	rgb yellow <- rgb(238, 182, 79);
 	list<runner> runners <- list(runner);
-	shape_file town_file <- shape_file("../includes/buildings.shp");
+	shape_file town_file <- shape_file("../includes/buildings2.shp");
 	shape_file road_file <- shape_file("../includes/roads.shp");
 	geometry shape <- envelope(town_file);
 	float size <- shape.width / 100;

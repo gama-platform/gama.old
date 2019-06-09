@@ -1,8 +1,7 @@
 /**
 * Name: Boids With Flocks
 * Author: 
-* Description: This model shows the movement of boids following a goal, and creating 
-* 	without their own volonty, a flock . 
+* Description: This model shows the movement of boids following a goal and creating a flock . 
 * Tags: gui, skill, 3d, multi_level, clustering
 */
 model boids_flock

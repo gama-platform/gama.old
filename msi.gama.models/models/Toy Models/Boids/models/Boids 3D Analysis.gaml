@@ -1,11 +1,11 @@
 /**
 * Name: Boids 3D Analysis
 * Author: 
-* Description:  This model shows the movement of boids following a goal, and creating 
-* 	without their own volonty, a flock . Four experiments are proposed : start is the 3D display of the boids like a real world, trajectory_analysis 
-* 	like the name means is about the analysis of the trajectory of the boids, Space Time Cube adds two 
-* 	display to see the movement of the boids using the time as the z-axis, and the last one represents the 
-* 	differents camera available in GAMA.
+* Description:  This model shows the movement of boids following a goal and creating a flock. 
+* Four experiments are proposed : Simple is the 3D display of the boids like a real world, 
+* Trajectory Analysis is about the analysis of the trajectories of the boids, Space Time Cube adds two 
+* 	displays to see the movement of the boids using the time as the z-axis, and the last one represents the 
+* 	differents cameras available in GAMA.
 * Tags: gui, skill, 3d, camera, multi_level
 */
 model boids 
@@ -353,7 +353,7 @@ species obstacle skills: [moving] {
 
 
 
-experiment start type: gui {
+experiment "Simple" type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
 		display RealBoids  type:opengl  {
@@ -365,7 +365,7 @@ experiment start type: gui {
 	}
 }
 
-experiment trajectory_analysis type: gui {
+experiment "Trajectory Analysis" type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
 		layout #split;
@@ -384,7 +384,7 @@ experiment trajectory_analysis type: gui {
 	} 
 }
 
-experiment SpaceTimeCube type: gui {
+experiment "Space & Time Cube" type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
 		layout #split;
@@ -417,7 +417,7 @@ experiment SpaceTimeCube type: gui {
 	}
 }
 
-experiment MultipleView type: gui {
+experiment "Multiple views" type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
 		layout #split;

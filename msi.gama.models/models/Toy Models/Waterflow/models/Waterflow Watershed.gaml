@@ -12,7 +12,7 @@
 model Waterflowwatershed
 
 global {	
-	file watershed_shape_file <- shape_file("../includes/ZH.shp");
+	file watershed_shape_file <- shape_file("../includes/ZH2.shp");
 	geometry shape <- envelope(watershed_shape_file);
 
 	float rain <- rnd(10.0) update: every(20#cycle) ? rnd(10.0) : 0.0;
@@ -22,6 +22,7 @@ global {
 		
 		ask watershed {
 			do init_watershed;
+			write "" + int(self) + " " + length(shape.points) + " points";
 		}
 	}
 	
