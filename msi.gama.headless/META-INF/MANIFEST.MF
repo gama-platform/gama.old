@@ -4,8 +4,7 @@ Bundle-Name: Headless version of GAMA
 Bundle-SymbolicName: msi.gama.headless;singleton:=true
 Bundle-Version: 1.7.0.qualifier
 Bundle-Activator: msi.gama.headless.runtime.Activator
-Require-Bundle: com.ibm.icu,
- msi.gama.core,
+Require-Bundle: msi.gama.core,
  msi.gama.lang.gaml,
  org.eclipse.core.runtime,
  msi.gama.ext,
