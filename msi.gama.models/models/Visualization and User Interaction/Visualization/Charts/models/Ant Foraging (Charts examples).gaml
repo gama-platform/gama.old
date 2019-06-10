@@ -1,8 +1,8 @@
 /**
 * Name: Ant Foraging (Charts examples)
 * Author: Philippe Caillou
-* Description: Toy Model ant using the question of how ants search food and use pheromons to return to their 
-* nest once they did find food. In this model, the charts are particularly used.
+* Description: How ants search food and use pheromons to return to their 
+* nest once they find it. I
 * Tags: gui, skill, chart, grid, diffusion
 */
 model ants
@@ -22,10 +22,6 @@ global {
 	point center const: true <- { (gridsize / 2),  (gridsize / 2)} ;
 	file types const: true <- (pgm_file('../images/environment75x75.pgm')) ;
 	string ant_shape_empty const: true <- '../icons/ant.png' ;
-	string ant_shape_full const: true <- '../icons/full_ant.png'  ;
-	rgb C00CC00 const: true <- rgb('#00CC00') ;    
-	rgb C009900 const: true <- rgb('#009900') ; 
-	rgb C005500 const: true <- rgb('#005500') ; 
 	int food_gathered <- 0 ;   
 	geometry shape <- square(gridsize);
 	init{  
@@ -49,7 +45,7 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: 
 	int type <- int(types at {grid_x,grid_y}) ;
 	bool isNestLocation <- (self distance_to center) < 4 ; 
 	bool isFoodLocation <- type = 2 ; 
-	rgb color <- isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) update: isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (C00CC00) : ((road > 0.2)? (C009900) : (C005500)))))) ;
+	rgb color <- isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (#grey) : ((road > 0.2)? (#lightgrey) : (#darkgray)))))) update: isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (#grey) : ((road > 0.2)? (#lightgray) : (#darkgray)))))) ;
 	int food <- isFoodLocation ? 5 : 0 ;
 	int nest const: true <- 300 - int(self distance_to center) ;
 	
@@ -58,7 +54,6 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: 
 species ant skills: [moving] control: fsm {
 	float speed <- 2.0 ;
 	ant_grid place update: ant_grid (location ); 
-	string im <- 'ant_shape_empty' ;
 	bool hasFood <- false ;
 
 
@@ -68,7 +63,6 @@ species ant skills: [moving] control: fsm {
    }
    //Action to pick food
 	action pick {
-		im <- ant_shape_full ;
 		hasFood <- true ;
 		place.food <- place.food - 1 ;
 	}
@@ -113,16 +107,7 @@ species ant skills: [moving] control: fsm {
 		}
 		transition to: wandering when: (place.road < 0.05) ;
 	}
-	aspect text {
-		if use_icons {
-			draw  hasFood ? image_file(ant_shape_full) : image_file(ant_shape_empty) rotate: heading at: location size: {7,5} ;
-		} else {
-			draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
-		}
-		if display_state {
-			draw state at: location + {-3,1.5} color: °white size: 0.8 ;
-		}
-	}
+
 	aspect default {
 		draw circle(1.0) empty: !hasFood color: #orange ; 
 	}
@@ -173,7 +158,7 @@ experiment "Experiment" type: gui {
 		
 		display Ants type: opengl {
 			grid ant_grid ;
-			species ant aspect: text ;
+			species ant  ;
 		}
 		display ProportionCarryFood {
 			chart "Proportions carrying: Pie"  size: {0.5,0.5} position: {0, 0} type:pie
