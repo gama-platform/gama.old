@@ -10,7 +10,7 @@ model traffic
 
 global {
 	//Shapefile of the buildings
-	file building_shapefile <- file("../includes/buildings.shp");
+	file building_shapefile <- file("../includes/buildings2.shp");
 	//Shapefile of the roads
 	file road_shapefile <- file("../includes/roads.shp");
 	//Shape of the environment
