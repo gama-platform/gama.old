@@ -1,5 +1,8 @@
 package ummisco.gama.dev.utils;
 
+import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.currentThread;
+
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -28,8 +31,7 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
-	private static final boolean GLOBAL_OFF = true;
-	private static final boolean GLOBAL_ON = false;
+	private static final boolean GLOBAL_OFF = false;
 
 	static {
 		TO_STRING.put(int.class, (o) -> Arrays.toString((int[]) o));
@@ -58,7 +60,7 @@ public class DEBUG {
 	 * @return
 	 */
 	static String findCallingClassNameOld() {
-		return Thread.currentThread().getStackTrace()[3].getClassName();
+		return currentThread().getStackTrace()[3].getClassName();
 	}
 
 	/**
@@ -114,24 +116,24 @@ public class DEBUG {
 	 */
 
 	public static void TIMER(final String title, final Runnable runnable) {
-		if (GLOBAL_OFF || !REGISTERED.containsKey(findCallingClassName())) {
+		if (GLOBAL_OFF || !IS_ON(findCallingClassName())) {
 			runnable.run();
 			return;
 		}
-		final long start = System.currentTimeMillis();
+		final long start = currentTimeMillis();
 		runnable.run();
-		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
+		LOG(title + ": " + (currentTimeMillis() - start) + "ms");
 	}
 
 	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String title,
 			final RunnableWithException<T> runnable) throws T {
-		if (GLOBAL_OFF || !REGISTERED.containsKey(findCallingClassName())) {
+		if (GLOBAL_OFF || !IS_ON(findCallingClassName())) {
 			runnable.run();
 			return;
 		}
-		final long start = System.currentTimeMillis();
+		final long start = currentTimeMillis();
 		runnable.run();
-		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
+		LOG(title + ": " + (currentTimeMillis() - start) + "ms");
 	}
 
 	/**
@@ -155,7 +157,7 @@ public class DEBUG {
 
 	public static <T> T TIMER(final String title, final Supplier<T> supplier) {
 		final String s = findCallingClassName();
-		if (!REGISTERED.containsKey(s)) { return supplier.get(); }
+		if (!IS_ON(s)) { return supplier.get(); }
 		final long start = System.currentTimeMillis();
 		final T result = supplier.get();
 		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
@@ -190,7 +192,7 @@ public class DEBUG {
 	 */
 	public static boolean IS_ON() {
 		if (GLOBAL_OFF) { return false; }
-		return GLOBAL_ON || IS_ON(findCallingClassName());
+		return IS_ON(findCallingClassName());
 	}
 
 	/**
@@ -200,7 +202,7 @@ public class DEBUG {
 	 */
 	public static final void ERR(final Object s) {
 		if (!GLOBAL_OFF) {
-			System.err.println(s);
+			System.err.println(TO_STRING(s));
 		}
 	}
 
@@ -216,7 +218,7 @@ public class DEBUG {
 	}
 
 	/**
-	 * Will always output to System.out (using print if 'ln' is false) except if GLOBAL_OFF is true. Takes care of
+	 * Will always output to System.out (using print if 'newLine' is false) except if GLOBAL_OFF is true. Takes care of
 	 * arrays so as to output their contents (and not their identity)
 	 *
 	 * @param object
@@ -275,7 +277,7 @@ public class DEBUG {
 	 */
 	public static final void OUT(final Object s) {
 		if (GLOBAL_OFF) { return; }
-		if (GLOBAL_ON || IS_ON(findCallingClassName())) {
+		if (IS_ON(findCallingClassName())) {
 			LOG(s, true);
 		}
 	}
@@ -290,7 +292,7 @@ public class DEBUG {
 	 */
 	public static final void OUT(final Object s, final boolean newLine) {
 		if (GLOBAL_OFF) { return; }
-		if (GLOBAL_ON || IS_ON(findCallingClassName())) {
+		if (IS_ON(findCallingClassName())) {
 			LOG(s, newLine);
 		}
 	}
@@ -308,7 +310,7 @@ public class DEBUG {
 	public static final void OUT(final String title, final int pad, final Object other) {
 		if (GLOBAL_OFF) { return; }
 		if (title == null) { return; }
-		if (GLOBAL_ON || IS_ON(findCallingClassName())) {
+		if (IS_ON(findCallingClassName())) {
 			LOG(PAD(title, pad) + TO_STRING(other));
 		}
 	}

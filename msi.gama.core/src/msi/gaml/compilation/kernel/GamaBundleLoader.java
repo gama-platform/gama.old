@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package msi.gaml.compilation.kernel;
 
+import static ummisco.gama.dev.utils.DEBUG.ERR;
+import static ummisco.gama.dev.utils.DEBUG.PAD;
+import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -130,8 +134,8 @@ public class GamaBundleLoader {
 			try {
 				preBuild(CORE_PLUGIN);
 			} catch (final Exception e2) {
-				DEBUG.ERR(ERROR_MESSAGE);
-				DEBUG.ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
+				ERR(ERROR_MESSAGE);
+				ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
 				System.exit(0);
 				return;
 			}
@@ -141,8 +145,8 @@ public class GamaBundleLoader {
 				try {
 					preBuild(addition);
 				} catch (final Exception e1) {
-					DEBUG.ERR(ERROR_MESSAGE);
-					DEBUG.ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e1.getMessage());
+					ERR(ERROR_MESSAGE);
+					ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e1.getMessage());
 					System.exit(0);
 					return;
 				}
@@ -159,8 +163,8 @@ public class GamaBundleLoader {
 						CreateStatement.addDelegate(cd);
 					}
 				} catch (final Exception e1) {
-					DEBUG.ERR(ERROR_MESSAGE);
-					DEBUG.ERR("Error in loading CreateStatement delegate : " + e1.getMessage());
+					ERR(ERROR_MESSAGE);
+					ERR("Error in loading CreateStatement delegate : " + e1.getMessage());
 					System.exit(0);
 					return;
 
@@ -175,8 +179,8 @@ public class GamaBundleLoader {
 					EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
 				} catch (final CoreException e1) {
 
-					DEBUG.ERR(ERROR_MESSAGE);
-					DEBUG.ERR("Error in loading EventLayerStatement delegate : " + e1.getMessage());
+					ERR(ERROR_MESSAGE);
+					ERR("Error in loading EventLayerStatement delegate : " + e1.getMessage());
 					System.exit(0);
 					return;
 
@@ -226,13 +230,13 @@ public class GamaBundleLoader {
 
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
-		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: " + bundle.getSymbolicName(), 45) + " loaded in ", () -> {
+		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: " + bundle.getSymbolicName(), 45) + " loaded in ", () -> {
 			GamaClassLoader.getInstance().addBundle(bundle);
 			Class<IGamlAdditions> gamlAdditions = null;
 			try {
 				gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
 			} catch (final ClassNotFoundException e1) {
-				DEBUG.ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
+				ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
 				throw e1;
 
 			}
@@ -241,19 +245,19 @@ public class GamaBundleLoader {
 			try {
 				add = gamlAdditions.newInstance();
 			} catch (final InstantiationException e) {
-				DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
+				ERR(">> Impossible to instantiate additions from " + bundle);
 				throw e;
 			} catch (final IllegalAccessException e) {
-				DEBUG.ERR(">> Impossible to access additions from " + bundle);
+				ERR(">> Impossible to access additions from " + bundle);
 				throw e;
 			}
 			try {
 				add.initialize();
 			} catch (final SecurityException e) {
-				DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
+				ERR(">> Impossible to instantiate additions from " + bundle);
 				throw e;
 			} catch (final NoSuchMethodException e) {
-				DEBUG.ERR(">> Impossible to instantiate additions from " + bundle);
+				ERR(">> Impossible to instantiate additions from " + bundle);
 				throw e;
 			}
 

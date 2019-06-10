@@ -9,6 +9,10 @@
  **********************************************************************************************/
 package ummisco.gama.ui.metadata;
 
+import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
+import static ummisco.gama.dev.utils.DEBUG.ERR;
+import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
+
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,12 +51,12 @@ import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
-import msi.gaml.compilation.GAML;
 // BEN import ummisco.gama.serializer.gaml.GamaSavedSimulationFile;
 // BEN import ummisco.gama.serializer.gaml.GamaSavedSimulationFile.SavedSimulationInfo;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
+import msi.gaml.compilation.GAML;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -580,8 +584,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			public void saving(final ISaveContext context) throws CoreException {
 				if (context.getKind() != ISaveContext.FULL_SAVE) { return; }
 				final String[] toSave = new String[1];
-				DEBUG.TIMER_WITH_EXCEPTIONS("Saving workspace metadata in ", () -> {
-					ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
+				TIMER_WITH_EXCEPTIONS("Saving workspace metadata in ", () -> {
+					getWorkspace().getRoot().accept(resource -> {
 
 						try {
 							if (resource.isAccessible()) {
@@ -590,9 +594,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							}
 							return true;
 						} catch (final Exception e) {
-							DEBUG.OUT("Error for resource " + resource.getName());
+							ERR("Error for resource " + resource.getName());
 							if (toSave[0] != null) {
-								DEBUG.OUT("Trying to save " + toSave[0].length() + " bytes ");
+								ERR("Trying to save " + toSave[0].length() + " bytes ");
 							}
 							return true;
 						}
