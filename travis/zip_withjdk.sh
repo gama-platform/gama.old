@@ -52,7 +52,7 @@ NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Mac'$SUFFIX
 
 git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
 
-
+rem111(){
 sudo rm "${RELEASEFILES[0]}"
 sudo rm "${RELEASEFILES[1]}"
 sudo rm "${RELEASEFILES[2]}"
@@ -78,7 +78,7 @@ cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/um
 sudo zip -9 -qyr "${RELEASEFILES[1]}" . && echo "compressed ${RELEASEFILES[1]}" || echo "compress fail ${RELEASEFILES[1]}"
 cd ../../../../../../../
 
-
+}
 
 
 
