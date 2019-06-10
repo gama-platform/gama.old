@@ -282,6 +282,7 @@ experiment main_gui type: gui {
    parameter "Height of the dykes" var:dyke_height category:"Obstacles";
    parameter "Diffusion rate" var:diffusion_rate category:"Water dynamic";
    output { 
+   layout vertical([0::5000,1::5000]) tabs:false editors: false;
       display map type: opengl {
          grid cell triangulation: true;
          species buildings aspect: geometry refresh: false;
