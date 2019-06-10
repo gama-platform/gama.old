@@ -453,7 +453,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 
 <!-- Grid -->
 
-{"tag":"Grid","title":"grid_x","url":"GridSpecies#grid_x"},{"tag":"Grid","title":"grid_y","url":"GridSpecies#grid_y"},{"tag":"Grid","title":"agents","url":"GridSpecies#agents"},{"tag":"Grid","title":"color","url":"GridSpecies#color"},{"tag":"Grid","title":"grid_value","url":"GridSpecies#grid_value"},
+{"tag":"Grid","title":"Grid Species","url":"GridSpecies"},{"tag":"Grid","title":"grid_x","url":"GridSpecies#grid-_x"},{"tag":"Grid","title":"grid_y","url":"GridSpecies#grid-_y"},{"tag":"Grid","title":"agents","url":"GridSpecies#agents"},{"tag":"Grid","title":"color","url":"GridSpecies#color"},{"tag":"Grid","title":"grid_value","url":"GridSpecies#grid-_value"},
+
+{"tag":"Graph","title":"Graph Species","url":"GraphSpecies"},
+{"tag":"Mirror","title":"Mirror Species","url":"MirrorSpecies"},
 
 <!-- Other concepts -->
 
