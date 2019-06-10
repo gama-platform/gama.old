@@ -33,7 +33,7 @@
 		 -->
 		<pluginRepository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
 			<layout>default</layout>
 			<releases>
 				<enabled>true</enabled>
@@ -119,7 +119,7 @@
 		<repository>
 			<id>orbit</id>
 			<name>orbit</name>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
 			<layout>p2</layout>
 			<releases>
 				<enabled>true</enabled>
