@@ -51,8 +51,7 @@ public class Sanction implements IValue{
 	
 	@Override
 	public String serialize(boolean includingBuiltIn) {
-		// TODO Auto-generated method stub
-		return null;
+		return "Sanction( " + sanctionStatement + ")";
 	}
 
 	@Override
@@ -63,14 +62,12 @@ public class Sanction implements IValue{
 
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		return "Sanction( " + sanctionStatement + ")";
 	}
 
 	@Override
 	public IValue copy(IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		return new Sanction(sanctionStatement);
 	}
 
 }

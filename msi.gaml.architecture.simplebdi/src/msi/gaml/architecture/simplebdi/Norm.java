@@ -191,8 +191,7 @@ public class Norm implements IValue{
 	
 	@Override
 	public String serialize(boolean includingBuiltIn) {
-		// TODO Auto-generated method stub
-		return null;
+		return "Norm(" + normStatement + ")";
 	}
 
 	@Override
@@ -215,14 +214,12 @@ public class Norm implements IValue{
 
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		return "Norm(" + normStatement	+ ")";
 	}
 
 	@Override
 	public IValue copy(IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		return new Norm(normStatement);
 	}
 
 }

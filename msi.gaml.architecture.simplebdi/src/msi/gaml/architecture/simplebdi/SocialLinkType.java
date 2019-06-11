@@ -33,7 +33,6 @@ public class SocialLinkType extends GamaType<SocialLink> {
 
 	@Override
 	public SocialLink getDefault() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
