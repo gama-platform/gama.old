@@ -399,12 +399,13 @@ public class Predicate implements IValue {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return "predicate(" + name + (values == null ? "" : "," + values) + (agentCause == null ? "" : "," + agentCause)
-				+ ")";
+				+ is_true +")";
 	}
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return name + (values == null ? "" : "," + values);
+		return name + (values == null ? "" : "," + values) + (agentCause == null ? "" : "," + agentCause)
+				+ is_true +")";
 	}
 
 	@Override

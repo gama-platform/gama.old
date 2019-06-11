@@ -397,6 +397,23 @@ public class Operators {
 		temp.lifetime = lifetime;
 		return temp;
 	}
+	
+	@operator (
+			value = "not",
+			can_be_const = true,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "create a new predicate with the inverse truth value",
+			examples = @example (
+					value = "not predicate1",
+					isExecutable = false))
+	@no_test
+	public static Predicate not(final Predicate pred1) {
+		final Predicate tempPred = pred1.copy();
+		tempPred.setIs_True(!pred1.getIs_True());
+		return tempPred;
+	}
 
 	@operator (
 			value = "and",
