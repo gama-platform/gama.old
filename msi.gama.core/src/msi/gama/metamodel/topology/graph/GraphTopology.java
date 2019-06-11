@@ -103,7 +103,7 @@ public class GraphTopology extends AbstractTopology {
 		boolean targetNode = graph.getVertexMap().containsKey(target);
 		final boolean isAgentVertex = graph.isEmpty(scope) ? false : graph.getVertices().get(0) instanceof IAgent;
 		final boolean targetNSame = isAgentVertex == target instanceof IAgent;
-		final boolean sourceNSame = isAgentVertex == source instanceof IAgent;
+		final boolean sourceNSame = isAgentVertex == sourceShape instanceof IAgent;
 		boolean sourceNode = graph.getVertexMap().containsKey(source);
 		final boolean optimizedClosestTo = GamaPreferences.External.PATH_COMPUTATION_OPTIMIZATION.getValue();
 
