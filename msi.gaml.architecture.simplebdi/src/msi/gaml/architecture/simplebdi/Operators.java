@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -357,6 +358,28 @@ public class Operators {
 		return temp;
 	}
 
+	@operator (
+			value = "add_values",
+			can_be_const = true,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "add a new value to the map of the given predicate",
+			examples = @example (
+					value = "predicate add_values [\"time\"::10]",
+					isExecutable = false))
+	@no_test
+	public static Predicate addValues(final Predicate predicate, final GamaMap values) throws GamaRuntimeException {
+		final Predicate temp = predicate.copy();
+		Map<String, Object> tempValues = temp.getValues();
+		final Set<String> keys = values.keySet();
+		for (final String k : keys) {
+			tempValues.put(k, values.get(k));
+		}
+		temp.setValues(tempValues);
+		return temp;
+	}
+	
 	@operator (
 			value = "with_lifetime",
 			can_be_const = true,
