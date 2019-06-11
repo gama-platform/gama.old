@@ -95,15 +95,15 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public GamaSpatialPath pathBetween(final IScope scope, final IShape sourceShape, final IShape target) {
-		final ILocation source = sourceShape.getLocation();
+	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target) {
+		// final ILocation source = sourceShape.getLocation();
 		final GamaSpatialGraph graph = (GamaSpatialGraph) getPlaces();
 		IShape sourceN = source;
 		IShape targetN = target;
 		boolean targetNode = graph.getVertexMap().containsKey(target);
 		final boolean isAgentVertex = graph.isEmpty(scope) ? false : graph.getVertices().get(0) instanceof IAgent;
 		final boolean targetNSame = isAgentVertex == target instanceof IAgent;
-		final boolean sourceNSame = isAgentVertex == sourceShape instanceof IAgent;
+		final boolean sourceNSame = isAgentVertex == source instanceof IAgent;
 		boolean sourceNode = graph.getVertexMap().containsKey(source);
 		final boolean optimizedClosestTo = GamaPreferences.External.PATH_COMPUTATION_OPTIMIZATION.getValue();
 
@@ -153,7 +153,7 @@ public class GraphTopology extends AbstractTopology {
 			final IAgentFilter filter = In.edgesOf(getPlaces());
 
 			if (!sourceNode) {
-				edgeS = getPathEdge(scope, sourceShape);
+				edgeS = getPathEdge(scope, source);
 				if (edgeS == null) {
 					if (optimizedClosestTo) {
 						edgeS = optimizedClosestTo(source, getPlaces().getEdges());
@@ -206,7 +206,7 @@ public class GraphTopology extends AbstractTopology {
 		} else {
 			double distSMin = Double.MAX_VALUE;
 			double distTMin = Double.MAX_VALUE;
-			edgeS = getPathEdge(scope, sourceShape);
+			edgeS = getPathEdge(scope, source);
 			if (edgeS != null) {
 				distSMin = 0;
 			}
