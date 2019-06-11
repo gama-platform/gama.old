@@ -485,6 +485,7 @@ public class Predicate implements IValue {
 			final Set<String> keys = values.keySet();
 			keys.retainAll(other.values.keySet());
 			for (final String k : keys) {
+				if(this.values.get(k)==null && other.values.get(k)!=null) {return false;}
 				if (!values.get(k).equals(other.values.get(k))) { return false; }
 			}
 			return true;
@@ -602,6 +603,7 @@ public class Predicate implements IValue {
 			final Set<String> keys = values.keySet();
 			keys.retainAll(other.values.keySet());
 			for (final String k : keys) {
+				if(this.values.get(k)==null && other.values.get(k)!=null) {return false;}
 				if (!values.get(k).equals(other.values.get(k))) { return false; }
 			}
 			return true;
@@ -655,6 +657,7 @@ public class Predicate implements IValue {
 				final Set<String> keys = values.keySet();
 				keys.retainAll(other.values.keySet());
 				for (final String k : keys) {
+					if(this.values.get(k)==null && other.values.get(k)!=null) {return false;}
 					if (!values.get(k).equals(other.values.get(k))) { return false; }
 				}
 				return true;
@@ -716,6 +719,7 @@ public class Predicate implements IValue {
 			final Set<String> keys = values.keySet();
 			keys.retainAll(other.values.keySet());
 			for (final String k : keys) {
+				if(this.values.get(k)==null && other.values.get(k)!=null) {return false;}
 				if (!values.get(k).equals(other.values.get(k))) { return false; }
 			}
 			return true;
