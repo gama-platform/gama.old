@@ -12,9 +12,7 @@
 
 package msi.gaml.architecture.simplebdi;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.IConcept;
@@ -30,14 +28,13 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.System;
-import msi.gaml.statements.AbstractStatement;
+import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
 @symbol (
 		name = CopingStatement.COPING,
-		kind = ISymbolKind.SINGLE_STATEMENT,
-		with_sequence = false,
+		kind = ISymbolKind.BEHAVIOR,
+		with_sequence = true,
 		concept = { IConcept.BDI })
 @inside (
 		symbols = { SimpleBdiArchitecture.SIMPLE_BDI, SimpleBdiArchitectureParallel.PARALLEL_BDI },
@@ -271,7 +268,7 @@ import msi.gaml.types.IType;
 		examples = {
 				@example ("coping emotion: new_emotion(\"fear\") when: flip(0.5) new_desire: new_predicate(\"test\")") })
 
-public class CopingStatement extends AbstractStatement{
+public class CopingStatement extends AbstractStatementSequence{
 	
 	public static final String COPING = "coping";
 	public static final String BELIEF = "belief";
@@ -400,7 +397,7 @@ public class CopingStatement extends AbstractStatement{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
+	public Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
 		if (newBelief == null && newDesire == null && newEmotion == null && newUncertainty == null
 				&& removeBelief == null && removeDesire == null && removeIntention == null && removeEmotion == null
 				&& removeUncertainty == null && newBeliefs == null && newDesires == null && newEmotions == null
@@ -737,7 +734,8 @@ public class CopingStatement extends AbstractStatement{
 				}
 			}
 		}
-		return null;
+		return super.privateExecuteIn(scope);
+//		return null;
 	}
 	
 	private boolean hasBeliefs(final IScope scope, final List<Predicate> predicates) {

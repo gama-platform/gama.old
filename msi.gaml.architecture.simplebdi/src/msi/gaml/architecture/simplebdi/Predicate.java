@@ -399,7 +399,7 @@ public class Predicate implements IValue {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return "predicate(" + name + (values == null ? "" : "," + values) + (agentCause == null ? "" : "," + agentCause)
-				+ is_true +")";
+				+ "," + is_true +")";
 	}
 
 	@Override
