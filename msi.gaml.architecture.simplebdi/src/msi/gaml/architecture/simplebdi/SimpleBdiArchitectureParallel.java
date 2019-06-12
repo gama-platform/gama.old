@@ -137,6 +137,13 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 
 		// GamaExecutorService.execute(scope, new UpdateEmotions(null), agents,parallel) ;
 		GamaExecutorService.execute(scope, new UpdateSocialLinks(null), agents, parallel);
+		if (_copingNumber > 0) {
+			for (int i = 0; i < _copingNumber; i++) {
+				CopingStatement statement = _coping.get(i);
+				IExpression par = statement.getParallel() == null ? parallel : statement.getParallel();
+				GamaExecutorService.execute(scope, statement, agents, par);
+			}
+		}
 	}
 
 	@Override
