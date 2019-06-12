@@ -272,6 +272,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	protected final List<BDIPlan> _plans = new ArrayList<>();
 	protected final List<PerceiveStatement> _perceptions = new ArrayList<>();
 	protected final List<RuleStatement> _rules = new ArrayList<>();
+	protected final List<CopingStatement> _coping = new ArrayList<>();
 	protected final List<LawStatement> _laws = new ArrayList<>();
 	protected final List<Norm> _norms = new ArrayList<>();
 	protected final List<Sanction> _sanctions = new ArrayList<>();
@@ -280,6 +281,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	protected boolean iscurrentplaninstantaneous = false;
 	protected int _lawsNumber = 0;
 	protected int _rulesNumber = 0;
+	protected int _copingNumber = 0;
 	protected int _normNumber = 0;
 	protected int _sanctionNumber = 0;
 
@@ -288,6 +290,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		super.clearBehaviors();
 		_plans.clear();
 		_rules.clear();
+		_coping.clear();
 		_perceptions.clear();
 		_laws.clear();
 		_norms.clear();
@@ -316,6 +319,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			// final String statementKeyword = c.getDescription().getKeyword();
 			_rules.add((RuleStatement) c);
 			_rulesNumber++;
+		}else if (c instanceof CopingStatement) {
+			// final String statementKeyword = c.getDescription().getKeyword();
+			_coping.add((CopingStatement) c);
+			_copingNumber++;
 		} else if (c instanceof LawStatement) {
 			// final String statementKeyword = c.getDescription().getKeyword();
 			_laws.add((LawStatement) c);
@@ -375,6 +382,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		// computeEmotions(scope);
 		updateSocialLinks(scope);
+		if (_copingNumber > 0) {
+			for (int i = 0; i < _copingNumber; i++) {
+				_coping.get(i).executeOn(scope);
+				if (agent.dead()) { return null; }
+			}
+		}
 		final Object result = executePlans(scope);
 		if (!scope.getAgent().dead()) {
 			// Activer la violation des normes
