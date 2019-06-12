@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.core.runtime,
  ummisco.gama.annotations;visibility:=reexport,
  msi.gama.processor;bundle-version="1.4.0";visibility:=reexport,
  com.google.guava,
- org.eclipse.core.filesystem
+ org.eclipse.core.filesystem,
+ org.apache.commons.compress
 Bundle-ActivationPolicy: lazy
 Export-Package: msi.gama.common,
  msi.gama.common.geometry,
