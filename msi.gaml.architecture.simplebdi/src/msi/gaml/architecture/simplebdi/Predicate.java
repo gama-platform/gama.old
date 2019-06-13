@@ -62,17 +62,14 @@ public class Predicate implements IValue {
 
 	String name;
 	Map<String, Object> values;
-	// Double priority = 1.0;
 	Double date;
-	// Object onHoldUntil;
 	List<MentalState> onHoldUntil;
 	List<MentalState> subintentions;
 	MentalState superIntention;
-	// Double praiseworthiness = 0.0;
 	IAgent agentCause;
 	boolean everyPossibleValues = false;
 	boolean is_true = true;
-	int lifetime = -1;
+//	int lifetime = -1;
 	boolean isUpdated = false;
 	private boolean noAgentCause = true;
 
@@ -85,11 +82,6 @@ public class Predicate implements IValue {
 	public Map<String, Object> getValues() {
 		return values;
 	}
-
-	// @getter("priority")
-	// public Double getPriority() {
-	// return priority;
-	// }
 
 	@getter ("is_true")
 	public Boolean getIs_True() {
@@ -120,21 +112,13 @@ public class Predicate implements IValue {
 		return onHoldUntil;
 	}
 
-	public int getLifetime() {
-		return lifetime;
-	}
-
-	/*
-	 * public Double getPraiseworthiness(){ return praiseworthiness; }
-	 */
+//	public int getLifetime() {
+//		return lifetime;
+//	}
 
 	public void setSuperIntention(final MentalState superPredicate) {
 		this.superIntention = superPredicate;
 	}
-
-	// public void setOnHoldUntil(final Object onHoldUntil) {
-	// this.onHoldUntil = onHoldUntil;
-	// }
 
 	public void setOnHoldUntil(final List<MentalState> onHoldUntil) {
 		this.onHoldUntil = onHoldUntil;
@@ -149,10 +133,6 @@ public class Predicate implements IValue {
 		this.is_true = ist;
 	}
 
-	// public void setPriority(final Double priority) {
-	// this.priority = priority;
-	// }
-
 	public void setDate(final Double date) {
 		this.date = date;
 	}
@@ -161,13 +141,9 @@ public class Predicate implements IValue {
 		this.subintentions = subintentions;
 	}
 
-	public void setLifetime(final int lifetime) {
-		this.lifetime = lifetime;
-	}
-
-	/*
-	 * public void setPraiseworthiness(final Double praise){ this.praiseworthiness = praise; }
-	 */
+//	public void setLifetime(final int lifetime) {
+//		this.lifetime = lifetime;
+//	}
 
 	public void setAgentCause(final IAgent ag) {
 		this.agentCause = ag;
@@ -196,21 +172,14 @@ public class Predicate implements IValue {
 		this.agentCause = null;
 	}
 
-	// public Predicate(final String name, final double priority) {
-	// super();
-	// this.name = name;
-	// everyPossibleValues = true;
-	// this.priority = priority;
-	// this.agentCause = null;
-	// }
 
-	public Predicate(final String name, final int lifetime) {
-		super();
-		this.name = name;
-		everyPossibleValues = true;
-		this.lifetime = lifetime;
-		this.agentCause = null;
-	}
+//	public Predicate(final String name, final int lifetime) {
+//		super();
+//		this.name = name;
+//		everyPossibleValues = true;
+//		this.lifetime = lifetime;
+//		this.agentCause = null;
+//	}
 
 	public Predicate(final String name, final Map<String, Object> values) {
 		super();
@@ -236,24 +205,16 @@ public class Predicate implements IValue {
 		everyPossibleValues = values == null;
 		this.agentCause = null;
 	}
+//
+//	public Predicate(final String name, final Map<String, Object> values, final int lifetime) {
+//		super();
+//		this.name = name;
+//		this.values = values;
+//		this.lifetime = lifetime;
+//		everyPossibleValues = values == null;
+//		this.agentCause = null;
+//	}
 
-	public Predicate(final String name, final Map<String, Object> values, final int lifetime) {
-		super();
-		this.name = name;
-		this.values = values;
-		this.lifetime = lifetime;
-		everyPossibleValues = values == null;
-		this.agentCause = null;
-	}
-
-	// public Predicate(final String name, final double priority, final Map<String, Object> values) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.priority = priority;
-	// everyPossibleValues = values == null;
-	// this.agentCause = null;
-	// }
 
 	public Predicate(final String name, final Map<String, Object> values, final IAgent ag) {
 		super();
@@ -263,47 +224,15 @@ public class Predicate implements IValue {
 		this.agentCause = ag;
 		this.noAgentCause = ag == null;
 	}
-
-	// public Predicate(final String name, final double priority, final Map<String, Object> values, final int lifetime)
-	// {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.priority = priority;
-	// this.lifetime = lifetime;
-	// everyPossibleValues = values == null;
-	// this.agentCause = null;
-	// }
-
-	// public Predicate(final String name, final double priority, final Map<String, Object> values, final Boolean truth)
-	// {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.priority = priority;
-	// this.is_true = truth;
-	// everyPossibleValues = values == null;
-	// this.agentCause = null;
-	// }
-
-	// public Predicate(final String name, final double priority, final Map<String, Object> values, final IAgent ag) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.priority = priority;
-	// everyPossibleValues = values == null;
-	// this.agentCause = ag;
-	// this.noAgentCause = ag == null;
-	// }
-
-	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final Boolean truth) {
-		super();
-		this.name = name;
-		this.values = values;
-		this.lifetime = lifetime;
-		this.is_true = truth;
-		everyPossibleValues = values == null;
-	}
+//
+//	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final Boolean truth) {
+//		super();
+//		this.name = name;
+//		this.values = values;
+//		this.lifetime = lifetime;
+//		this.is_true = truth;
+//		everyPossibleValues = values == null;
+//	}
 
 	public Predicate(final String name, final Map<String, Object> values, final Boolean truth, final IAgent ag) {
 		super();
@@ -314,77 +243,28 @@ public class Predicate implements IValue {
 		this.agentCause = ag;
 		this.noAgentCause = ag == null;
 	}
+//
+//	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final IAgent ag) {
+//		super();
+//		this.name = name;
+//		this.values = values;
+//		this.lifetime = lifetime;
+//		everyPossibleValues = values == null;
+//		this.agentCause = ag;
+//		this.noAgentCause = ag == null;
+//	}
 
-	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final IAgent ag) {
-		super();
-		this.name = name;
-		this.values = values;
-		this.lifetime = lifetime;
-		everyPossibleValues = values == null;
-		this.agentCause = ag;
-		this.noAgentCause = ag == null;
-	}
-
-	// public Predicate(final String name, final double priority, final Map<String, Object> values, final int lifetime,
-	// final Boolean truth) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.priority = priority;
-	// this.lifetime = lifetime;
-	// this.is_true = truth;
-	// everyPossibleValues = values == null;
-	// this.agentCause = null;
-	// }
-
-	// public Predicate(final String name, final double priority, final Map<String, Object> values, final int lifetime,
-	// final IAgent ag) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.priority = priority;
-	// this.lifetime = lifetime;
-	// everyPossibleValues = values == null;
-	// this.agentCause = ag;
-	// this.noAgentCause = ag == null;
-	// }
-
-	// public Predicate(final String name, final double priority, final Map<String, Object> values, final Boolean truth,
-	// final IAgent ag) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.priority = priority;
-	// this.is_true = truth;
-	// everyPossibleValues = values == null;
-	// this.agentCause = ag;
-	// this.noAgentCause = ag == null;
-	// }
-
-	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final Boolean truth,
-			final IAgent ag) {
-		super();
-		this.name = name;
-		this.values = values;
-		this.lifetime = lifetime;
-		this.is_true = truth;
-		everyPossibleValues = values == null;
-		this.agentCause = ag;
-		this.noAgentCause = ag == null;
-	}
-
-	// public Predicate(final String name, final double priority, final Map<String, Object> values, final int lifetime,
-	// final Boolean truth, final IAgent ag) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.priority = priority;
-	// this.lifetime = lifetime;
-	// this.is_true = truth;
-	// everyPossibleValues = values == null;
-	// this.agentCause = ag;
-	// this.noAgentCause = ag == null;
-	// }
+//	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final Boolean truth,
+//			final IAgent ag) {
+//		super();
+//		this.name = name;
+//		this.values = values;
+//		this.lifetime = lifetime;
+//		this.is_true = truth;
+//		everyPossibleValues = values == null;
+//		this.agentCause = ag;
+//		this.noAgentCause = ag == null;
+//	}
 
 	public void setName(final String name) {
 		this.name = name;
@@ -421,12 +301,12 @@ public class Predicate implements IValue {
 		return new Predicate(name);
 	}
 
-	public void updateLifetime() {
-		if (this.lifetime > 0 && !this.isUpdated) {
-			this.lifetime = this.lifetime - 1;
-			this.isUpdated = true;
-		}
-	}
+//	public void updateLifetime() {
+//		if (this.lifetime > 0 && !this.isUpdated) {
+//			this.lifetime = this.lifetime - 1;
+//			this.isUpdated = true;
+//		}
+//	}
 
 	public boolean isSimilarName(final Predicate other) {
 		if (this == other) { return true; }
