@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.filter.In.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.filter.In.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.filter;
 
@@ -44,16 +44,13 @@ public abstract class In implements IAgentFilter {
 		return graph;
 	}
 
-	@Override
-	public abstract boolean accept(IScope scope, IShape source, IShape a);
-
 	private static class InList extends In {
 
 		final Set<IShape> agents;
 		ISpecies species;
 
 		InList(final IList<? extends IShape> list, final ISpecies species) {
-			agents = new LinkedHashSet<IShape>(list);
+			agents = new LinkedHashSet<>(list);
 			this.species = species;
 		}
 
@@ -79,8 +76,7 @@ public abstract class In implements IAgentFilter {
 
 		@Override
 		public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
-			if (species == null)
-				return null;
+			if (species == null) { return null; }
 			return scope.getSimulation().getPopulationFor(species);
 		}
 

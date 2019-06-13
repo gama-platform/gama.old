@@ -253,10 +253,7 @@ public class GamaBundleLoader {
 			}
 			try {
 				add.initialize();
-			} catch (final SecurityException e) {
-				ERR(">> Impossible to instantiate additions from " + bundle);
-				throw e;
-			} catch (final NoSuchMethodException e) {
+			} catch (final SecurityException | NoSuchMethodException e) {
 				ERR(">> Impossible to instantiate additions from " + bundle);
 				throw e;
 			}

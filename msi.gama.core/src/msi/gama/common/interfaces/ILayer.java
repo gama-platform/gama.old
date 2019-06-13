@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.ILayer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.interfaces.ILayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -29,7 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Represents the concrete layers that are displayed on IDisplaySurface's and managed by its ILayerManager
- * 
+ *
  * @author A. Drogoul
  * @since nov. 2009
  *
@@ -39,21 +39,21 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Returns the statement (ILayerStatement) that constitutes the definition of this layer, or null if it has none
-	 * 
+	 *
 	 * @return an instance of ILayerStatement or null
 	 */
 	ILayerStatement getDefinition();
 
 	/**
 	 * Returns the instance of ILayerData that holds all the data used by this layer
-	 * 
+	 *
 	 * @return an instance of ILayerData (never null)
 	 */
-	public ILayerData getData();
+	ILayerData getData();
 
 	/**
 	 * Returns the name to use in the layers menu in a display
-	 * 
+	 *
 	 * @return a string representing this layer in the layers menu
 	 */
 	default String getMenuName() {
@@ -62,7 +62,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Asks this layer to draw itself on the IGraphics instance passed in parameter.
-	 * 
+	 *
 	 * @param scope
 	 *            the current scope (usually that of the surface)
 	 * @param simGraphics
@@ -81,7 +81,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	/**
 	 * Whether the layer requires to stay proportional to the dimensions of the world or not when displaying itself. For
 	 * instance, chart layers accept to be stretched to the dimensions of the display instead
-	 * 
+	 *
 	 * @return true if the layer elements need to be drawn proportionnaly to the dimensions of the world, false
 	 *         otherwise
 	 */
@@ -92,7 +92,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	/**
 	 * Asks the layer to reload itself (i.e. to make itself visible again) on the given surface. Default is to mark
 	 * itself as not already drawn before
-	 * 
+	 *
 	 * @param surface
 	 *            the display surface on which this layer is drawn
 	 */
@@ -102,7 +102,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Indicates that this layer will make its first appearance on the surface, before being displayed
-	 * 
+	 *
 	 * @param surface
 	 *            the display surface on which this layer is drawn
 	 */
@@ -111,7 +111,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	/**
 	 * Indicates that this layer will has been enabled on the surface. Useful when layers "hook" on the surface (for
 	 * instance, EventLayers)
-	 * 
+	 *
 	 * @param surface
 	 *            the display surface on which this layer is drawn
 	 */
@@ -120,7 +120,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	/**
 	 * Indicates that this layer has been disabled on the surfaces. Useful when layers "hook" on the surface (for
 	 * instance, EventLayers)
-	 * 
+	 *
 	 * @param surface
 	 *            the display surface on which this layer is drawn
 	 */
@@ -130,15 +130,15 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Returns the human-readable type of the layer for use in the UI
-	 * 
+	 *
 	 * @return a string describing the type of the layer (e.g. "Agents layer", etc.)
 	 */
-	public abstract String getType();
+	String getType();
 
 	/**
 	 * Returns a rectangle that represents, in screen coordinates, the position of the geometry on which to focus in
 	 * this layer
-	 * 
+	 *
 	 * @param geometry
 	 *            a geometry or an agent
 	 * @param s
@@ -149,13 +149,12 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 		final Envelope3D envelope = geometry.getEnvelope();
 		final Point min = this.getScreenCoordinatesFrom(envelope.getMinX(), envelope.getMinY(), s);
 		final Point max = this.getScreenCoordinatesFrom(envelope.getMaxX(), envelope.getMaxY(), s);
-		final Rectangle2D r = new Rectangle2D.Double(min.x, min.y, max.x - min.x, max.y - min.y);
-		return r;
+		return new Rectangle2D.Double(min.x, min.y, (double) max.x - min.x, (double) max.y - min.y);
 	}
 
 	/**
 	 * Returns the collection of agents populating this layer in order to display them in the agents menu of the display
-	 * 
+	 *
 	 * @param scope
 	 *            the current scope (usually the surface's one)
 	 * @return a collection of agents or an empty collection if no agents are drawn on this layer
@@ -167,7 +166,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	/**
 	 * Whether this layer can be used as a support for providing coordinates (used to indicate the position of the
 	 * mouse)
-	 * 
+	 *
 	 * @return true if this layer can provide coordinates, false otherwise
 	 */
 	default boolean isProvidingCoordinates() {
@@ -177,7 +176,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	/**
 	 * Whether this layer can be used as a support for providing world coordinates (used to indicate the position of the
 	 * mouse)
-	 * 
+	 *
 	 * @return true if this layer can provide coordinates, false otherwise
 	 */
 	default boolean isProvidingWorldCoordinates() {
@@ -186,7 +185,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Returns whether this layer contains the mouse cursor (or the point on screen passed in parameter)
-	 * 
+	 *
 	 * @param x
 	 *            the x-ordinate on screen
 	 * @param y
@@ -201,7 +200,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Returns the world (model) coordinates of the mouse cursor (or the point on screen passed in parameter)
-	 * 
+	 *
 	 * @param xOnScreen
 	 *            the x-ordinate on screen
 	 * @param yOnScreen
@@ -217,7 +216,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Returns a point on screen whose coordinates correspond to the location in the world passed in parameter
-	 * 
+	 *
 	 * @param x
 	 *            the x-ordinate in the world
 	 * @param y
@@ -238,7 +237,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Feeds a StringBuilder with coordinates information about the location on screen correctly formatted
-	 * 
+	 *
 	 * @param xOnScreen
 	 *            the x-ordinate on screen
 	 * @param yOnScreen
@@ -259,7 +258,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	/**
 	 * Collect all the agents intersecting (or close) to the screen point passed in parameter
-	 * 
+	 *
 	 * @param x
 	 *            the x-ordinate on screen
 	 * @param y
@@ -275,11 +274,11 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	/**
 	 * Indicates to the layer that it has not been drawn once.
 	 */
-	public void forceRedrawingOnce();
+	void forceRedrawingOnce();
 
 	/**
 	 * Whether this layer is an overlay or not
-	 * 
+	 *
 	 * @return true if it is an overlay, false otherwise
 	 */
 	default boolean isOverlay() {
@@ -305,7 +304,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	/**
 	 * Whether the layer is to be displayed in the side controls so that the user can control its properties. Default is
 	 * true.
-	 * 
+	 *
 	 * @return true by default, false if the layer shouldnt be displayed in the layer side controls
 	 */
 

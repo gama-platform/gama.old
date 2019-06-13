@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.Envelope3D.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.geometry.Envelope3D.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -490,7 +490,7 @@ public class Envelope3D extends Envelope {
 	 *            The first z-value (minz)
 	 * @param z2
 	 *            The second z-value (maxz)
-	 * 
+	 *
 	 */
 	public Envelope3D(final double x1, final double x2, final double y1, final double y2, final double z1,
 			final double z2) {
@@ -632,8 +632,7 @@ public class Envelope3D extends Envelope {
 		int result = super.hashCode();
 		result = 37 * result + Coordinate.hashCode(minz);
 		result = 37 * result + Coordinate.hashCode(maxz);
-		final int code = result ^ (int) serialVersionUID;
-		return code;
+		return result ^ (int) serialVersionUID;
 	}
 
 	/**
@@ -644,9 +643,8 @@ public class Envelope3D extends Envelope {
 		if (!(other instanceof Envelope3D)) { return false; }
 		final Envelope3D otherEnvelope = (Envelope3D) other;
 		if (isNull()) { return otherEnvelope.isNull(); }
-		if (super.equals(other) && Comparison.equal(minz, otherEnvelope.getMinZ())
-				&& Comparison.equal(maxz, otherEnvelope.getMaxZ())) { return true; }
-		return false;
+		return super.equals(other) && Comparison.equal(minz, otherEnvelope.getMinZ())
+				&& Comparison.equal(maxz, otherEnvelope.getMaxZ());
 	}
 
 	public boolean isFlat() {
@@ -658,8 +656,9 @@ public class Envelope3D extends Envelope {
 	}
 
 	public Polygon toGeometry() {
-		if (isFlat()) { return (Polygon) GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre())
-				.getInnerGeometry(); }
+		if (isFlat()) {
+			return (Polygon) GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre()).getInnerGeometry();
+		}
 		return (Polygon) GamaGeometryType.buildBox(getWidth(), getHeight(), getDepth(), centre()).getInnerGeometry();
 	}
 

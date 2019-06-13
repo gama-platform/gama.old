@@ -115,14 +115,14 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		final Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(index);
 		final Object firstValue =
 				firstInitValues != null && !firstInitValues.isEmpty() ? firstInitValues.values().toArray()[0] : null;
-		if (firstValue != null && firstValue instanceof SavedAgent) {
+		if (firstValue instanceof SavedAgent) {
 			sim.updateWith(scope, (SavedAgent) firstValue);
 		} else {
 			createVariablesFor(sim.getScope(), Collections.singletonList(sim), Arrays.asList(firstInitValues));
 		}
 
 		if (toBeScheduled) {
-			if (isRestored || firstValue != null && firstValue instanceof SavedAgent) {
+			if (isRestored || firstValue instanceof SavedAgent) {
 				sim.initOutputs();
 			} else {
 				sim.schedule(scope);

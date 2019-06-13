@@ -235,9 +235,6 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public abstract Support getDefault();
-
-	@Override
 	public boolean isAgentType() {
 		return false;
 	}
@@ -399,10 +396,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public static IType<?> from(final IType<?> t, final IType<?> keyType, final IType<?> contentType) {
 		if (t instanceof IContainerType) {
-			if (!(t instanceof GamaSpeciesType))
+			if (!(t instanceof GamaSpeciesType)) {
 				if (contentType.isAssignableFrom(t.getContentType()) && keyType.isAssignableFrom(t.getKeyType())) {
 					return t;
 				}
+			}
 			return from((IContainerType) t, keyType, contentType);
 		}
 		return t;

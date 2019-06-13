@@ -640,9 +640,8 @@ public class GeometryUtils {
 		for (int i = 0; i < nb; i++) {
 			geometries[i] = geoms.get(i).getInnerGeometry();
 		}
-		final Geometry geom = GEOMETRY_FACTORY.createGeometryCollection(geometries);
+		return GEOMETRY_FACTORY.createGeometryCollection(geometries);
 
-		return geom;
 	}
 
 	private static Geometry buildLine(final List<List<ILocation>> listPoints) {

@@ -11,7 +11,7 @@
 package msi.gama.kernel.batch;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -199,7 +199,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 		int currentCycleSize = 0;
 		int cycleSize = 0;
 		ParametersSet startingCycle = null;
-		final Map<String, Object> endingCritParams = new Hashtable<>();
+		final Map<String, Object> endingCritParams = new HashMap<>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
 			nbTestWithoutCollision++;

@@ -19,11 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
@@ -237,40 +238,14 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	GamaMap<String, GamaList> filteringOptions;
-	Map<String, String> attributes = new Hashtable<>();
+	Map<String, String> attributes = new HashMap<>();
 
 	final Map<String, List<IShape>> layers = GamaMapFactory.create(Types.STRING, Types.LIST);
-	final static List<String> featureTypes = new ArrayList<String>() {
+	final static List<String> featureTypes = Arrays.asList("aerialway", "aeroway", "amenity", "barrier", "boundary",
+			"building", "craft", "emergency", "geological", "highway", "historic", "landuse", "leisure", "man_made",
+			"military", "natural", "office", "place", "power", "public_transport", "railway", "route", "shop", "sport",
+			"tourism", "waterway");
 
-		{
-			add("aerialway");
-			add("aeroway");
-			add("amenity");
-			add("barrier");
-			add("boundary");
-			add("building");
-			add("craft");
-			add("emergency");
-			add("geological");
-			add("highway");
-			add("historic");
-			add("landuse");
-			add("leisure");
-			add("man_made");
-			add("military");
-			add("natural");
-			add("office");
-			add("place");
-			add("power");
-			add("public_transport");
-			add("railway");
-			add("route");
-			add("shop");
-			add("sport");
-			add("tourism");
-			add("waterway");
-		}
-	};
 	final static List<String> relationFilter = new ArrayList<String>() {
 		{
 			add("public_transport");
@@ -289,7 +264,7 @@ public class GamaOsmFile extends GamaGisFile {
 			examples = { @example (
 					value = "file f <- osm_file(\"file\");",
 					isExecutable = false) })
-	public GamaOsmFile(final IScope scope, final String pathName) throws GamaRuntimeException {
+	public GamaOsmFile(final IScope scope, final String pathName) {
 		super(scope, pathName, (Integer) null);
 	}
 
@@ -424,7 +399,7 @@ public class GamaOsmFile extends GamaGisFile {
 			geomMap.put(node.getId(), node);
 			final GamaShape pt = nodesPt.get(node.getId());
 			final boolean hasAttributes = !node.getTags().isEmpty();
-			final Map<String, String> atts = new Hashtable<>();
+			final Map<String, String> atts = new HashMap<>();
 			if (pt != null) {
 				for (final Tag tg : node.getTags()) {
 					final String key = tg.getKey().split(":")[0];
@@ -461,7 +436,7 @@ public class GamaOsmFile extends GamaGisFile {
 		for (final Way way : ways) {
 			geomMap.put(way.getId(), way);
 			final Map<String, Object> values = new TOrderedHashMap<>();
-			final Map<String, String> atts = new Hashtable<>();
+			final Map<String, String> atts = new HashMap<>();
 
 			for (final Tag tg : way.getTags()) {
 				final String key = tg.getKey().split(":")[0];
@@ -472,14 +447,12 @@ public class GamaOsmFile extends GamaGisFile {
 				values.put(key, tg.getValue());
 			}
 			values.put("osm_id", way.getId());
-			// boolean isPolyline = values.containsKey("highway") ||
-			// !way.getWayNodes().get(0).equals(way.getWayNodes().get(way.getWayNodes().size()
-			// - 1));
-			final boolean isPolyline = values.containsKey("highway") || !(way.getWayNodes().get(0).getNodeId() == way
-					.getWayNodes().get(way.getWayNodes().size() - 1).getNodeId());
+
+			final boolean isPolyline = values.containsKey("highway") || way.getWayNodes().get(0).getNodeId() != way
+					.getWayNodes().get(way.getWayNodes().size() - 1).getNodeId();
 			if (isPolyline) {
 				final List<IShape> geoms = createSplitRoad(way.getWayNodes(), values, intersectionNodes, nodesPt);
-				((List) geometries).addAll(geoms);
+				geometries.addAll(geoms);
 				if (!geoms.isEmpty()) {
 					for (final Object att : values.keySet()) {
 						final String idType = att + " (line)";
@@ -513,9 +486,8 @@ public class GamaOsmFile extends GamaGisFile {
 				final IShape geom = GamaGeometryType.buildPolygon(points);
 				if (geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty()
 						&& geom.getInnerGeometry().getArea() > 0) {
-					for (final String key : values.keySet()) {
-						final Object val = values.get(key);
-						geom.setAttribute(key, val);
+					for (final Entry<String, Object> entry : values.entrySet()) {
+						geom.setAttribute(entry.getKey(), entry.getValue());
 					}
 					geometries.add(geom);
 					if (geom.getAttributes() != null) {
@@ -542,25 +514,17 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 		for (final Relation relation : relations) {
 			final Map<String, Object> values = new TOrderedHashMap<>();
-			// final Map<String, String> atts = new Hashtable<String, String>();
 
 			for (final Tag tg : relation.getTags()) {
 				final String key = tg.getKey().split(":")[0];
-				// final Object val = tg.getValue();
-				// if (val != null) {
-				// addAttribute(atts, key, val);
-				// }
 				values.put(key, tg.getValue());
 			}
 
-			// List<WayNode> relationWays = new ArrayList<>();
 			int order = 0;
 			for (final RelationMember member : relation.getMembers()) {
 				final Entity entity = geomMap.get(member.getMemberId());
-				if (entity != null && entity instanceof Way) {
-					// relationWays.addAll(((Way) entity).getWayNodes());
+				if (entity instanceof Way) {
 					final List<WayNode> relationWays = ((Way) entity).getWayNodes();
-					// final Map<String, Object> wayValues = new TOrderedHashMap<String, Object>(values);
 					final Map<String, Object> wayValues = new TOrderedHashMap<>();
 					wayValues.put("entity_order", order++);
 					// TODO FIXME AD: What's that ??
@@ -570,26 +534,14 @@ public class GamaOsmFile extends GamaGisFile {
 						final List<IShape> geoms = createSplitRoad(relationWays, wayValues, intersectionNodes, nodesPt);
 						geometries.addAll(geoms);
 					}
-				} else if (entity != null && entity instanceof Node) {
-					// geomMap.put(((Node) entity).getId(), ((Node) entity));
+				} else if (entity instanceof Node) {
 					final GamaShape pt = nodesPt.get(((Node) entity).getId());
 					final GamaShape pt2 = pt.copy(null);
 
 					final List objs = GamaListFactory.create(Types.GEOMETRY);
 					objs.add(pt2);
 
-					// GamaShape pt = (GamaShape) GamaListFactory.create(Types.GEOMETRY);
-
-					// for (final String key : values.keySet()) {
-					// pt.setAttribute(key, values.get(key));
-					// }
 					pt2.setAttribute("gama_bus_line", values.get("name"));
-
-					// for (final Tag tg : ((Node) entity).getTags()) {
-					// final String key = tg.getKey().split(":")[0];
-					// final Object val = tg.getValue();
-					// pt.setAttribute(key, val);
-					// }
 
 					geometries.add(pt2);
 

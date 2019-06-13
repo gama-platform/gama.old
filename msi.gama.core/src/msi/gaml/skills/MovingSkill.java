@@ -144,8 +144,7 @@ public class MovingSkill extends Skill {
 		final ILocation actualLocation = agent.getLocation();
 		final double dist = computeDistance(agent.getScope(), agent);
 		final ITopology topology = getTopology(agent);
-		final ILocation dest = topology.getDestination(actualLocation, getHeading(agent), dist, false);
-		return dest;
+		return topology.getDestination(actualLocation, getHeading(agent), dist, false);
 	}
 
 	@setter (IKeyword.DESTINATION)
@@ -283,7 +282,7 @@ public class MovingSkill extends Skill {
 	protected IShape computeTarget(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final Object target = scope.getArg("target", IType.NONE);
 		IShape result = null;
-		if (target != null && target instanceof IShape) {
+		if (target instanceof IShape) {
 			result = (IShape) target;// ((ILocated) target).getLocation();
 		}
 		// if ( result == null ) {
@@ -346,7 +345,7 @@ public class MovingSkill extends Skill {
 		} else {
 			final Object on = scope.getArg(IKeyword.ON, IType.GRAPH);
 			Double newHeading = null;
-			if (on != null && on instanceof GamaSpatialGraph) {
+			if (on instanceof GamaSpatialGraph) {
 				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
 				GamaMap<IShape, Double> probaDeplacement = null;
 				if (scope.hasArg("proba_edges")) {

@@ -62,7 +62,7 @@ public class RandomUtils {
 
 	public RandomUtils(final String rng) {
 		this(GamaPreferences.External.CORE_SEED_DEFINED.getValue() ? GamaPreferences.External.CORE_SEED.getValue()
-				: (Double) null, rng);
+				: null, rng);
 	}
 
 	public RandomUtils() {
@@ -194,7 +194,7 @@ public class RandomUtils {
 
 	}
 
-	public static boolean USE_BITWISE = true;
+	public static final boolean USE_BITWISE = true;
 
 	private byte[] createSeed(final Double s, final int length) {
 		this.seed = s;
@@ -206,11 +206,11 @@ public class RandomUtils {
 			realSeed *= Long.MAX_VALUE;
 		}
 		long l;
-		if (!USE_BITWISE) {
-			l = realSeed.longValue();
-		} else {
-			l = Double.doubleToRawLongBits(realSeed);
-		}
+		// if (!USE_BITWISE) {
+		// l = realSeed.longValue();
+		// } else {
+		l = Double.doubleToRawLongBits(realSeed);
+		// }
 		final byte[] result = new byte[length];
 		switch (length) {
 			case 4:
@@ -613,21 +613,21 @@ public class RandomUtils {
 		return generator;
 	}
 
-	public static void main(final String[] args) {
-		USE_BITWISE = false;
-		RandomUtils r1 = new RandomUtils(1.0, "mersenne1");
-		RandomUtils r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
-		RandomUtils r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
-		for (int i = 0; i < 3; i++) {
-			DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
-		}
-		USE_BITWISE = true;
-		r1 = new RandomUtils(1.0, "mersenne1");
-		r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
-		r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
-		for (int i = 0; i < 3; i++) {
-			DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
-		}
-	}
+	// public static void main(final String[] args) {
+	// USE_BITWISE = false;
+	// RandomUtils r1 = new RandomUtils(1.0, "mersenne1");
+	// RandomUtils r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
+	// RandomUtils r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
+	// for (int i = 0; i < 3; i++) {
+	// DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
+	// }
+	// USE_BITWISE = true;
+	// r1 = new RandomUtils(1.0, "mersenne1");
+	// r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
+	// r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
+	// for (int i = 0; i < 3; i++) {
+	// DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
+	// }
+	// }
 
 }

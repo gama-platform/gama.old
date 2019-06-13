@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.tree.GamaNode.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.tree.GamaNode.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gama.util.tree;
@@ -55,8 +55,7 @@ public class GamaNode<T> {
 	}
 
 	public GamaNode<T> addChild(final T child) {
-		final GamaNode<T> result = addChild(child, DEFAULT_WEIGHT);
-		return result;
+		return addChild(child, DEFAULT_WEIGHT);
 	}
 
 	public GamaNode<T> addChild(final T child, final Integer w) {
@@ -93,7 +92,7 @@ public class GamaNode<T> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

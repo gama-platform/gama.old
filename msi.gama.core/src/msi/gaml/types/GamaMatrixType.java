@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaMatrixType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaMatrixType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -52,8 +52,9 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		if (size == null) {
 			if (obj instanceof IContainer) { return ((IContainer) obj).matrixValue(scope, contentType, copy); }
 			return with(scope, obj, new GamaPoint(1, 1), contentType);
-		} else if (size.x <= 0 || size.y < 0) { throw GamaRuntimeException
-				.error("Dimensions of a matrix should be positive.", scope); }
+		} else if (size.x <= 0 || size.y < 0) {
+			throw GamaRuntimeException.error("Dimensions of a matrix should be positive.", scope);
+		}
 
 		if (obj instanceof IContainer) { return ((IContainer) obj).matrixValue(scope, contentType, size, copy); }
 		return with(scope, obj, size, contentType);
@@ -63,8 +64,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	@Override
 	public IMatrix cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 			final IType contentsType, final boolean copy) throws GamaRuntimeException {
-		final IMatrix m = staticCast(scope, obj, param, contentsType, copy);
-		return m;
+		return staticCast(scope, obj, param, contentsType, copy);
 	}
 
 	public static IMatrix from(final IScope scope, final IList list, final IType desiredType,
@@ -135,31 +135,34 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				final double[] dd = ((GamaFloatMatrix) result).getMatrix();
 				if (fillExpr.isConst()) {
 					Arrays.fill(dd, Cast.asFloat(scope, fillExpr.value(scope)));
-				} else
+				} else {
 					GamaExecutorService.executeThreaded(() -> IntStream.range(0, dd.length).parallel().forEach(i -> {
 						dd[i] = Cast.asFloat(scope, fillExpr.value(scope));
 					}));
+				}
 				break;
 			case IType.INT:
 				result = new GamaIntMatrix(cols, rows);
 				final int[] ii = ((GamaIntMatrix) result).getMatrix();
 				if (fillExpr.isConst()) {
 					Arrays.fill(ii, Cast.asInt(scope, fillExpr.value(scope)));
-				} else
+				} else {
 					GamaExecutorService.executeThreaded(() -> IntStream.range(0, ii.length).parallel().forEach(i -> {
 						ii[i] = Cast.asInt(scope, fillExpr.value(scope));
 					}));
+				}
 				break;
 			default:
 				result = new GamaObjectMatrix(cols, rows, fillExpr.getGamlType());
 				final Object[] contents = ((GamaObjectMatrix) result).getMatrix();
 				if (fillExpr.isConst()) {
 					Arrays.fill(contents, fillExpr.value(scope));
-				} else
+				} else {
 					GamaExecutorService
 							.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
 								contents[i] = fillExpr.value(scope);
 							}));
+				}
 		}
 		return result;
 	}

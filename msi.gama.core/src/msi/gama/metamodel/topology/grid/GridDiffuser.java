@@ -57,8 +57,7 @@ public class GridDiffuser {
 			if (obj == this) { return true; }
 
 			final PairVarGrid otherGrid = (PairVarGrid) obj;
-			if (otherGrid.Var_name.equals(Var_name) && otherGrid.Grid_name.equals(Grid_name)) { return true; }
-			return false;
+			return otherGrid.Var_name.equals(Var_name) && otherGrid.Grid_name.equals(Grid_name);
 		}
 	}
 

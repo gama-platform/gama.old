@@ -45,6 +45,7 @@ import msi.gaml.expressions.UnaryOperator;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class OperatorProto.
@@ -129,7 +130,7 @@ public class OperatorProto extends AbstractProto {
 			try {
 				tempValidator = val != null ? val.value().newInstance() : null;
 			} catch (InstantiationException | IllegalAccessException e) {
-				System.err.println("Error in creating the validator for operator " + name + " on method " + method);
+				DEBUG.ERR("Error in creating the validator for operator " + name + " on method " + method);
 			}
 			final depends_on d = method.getAnnotation(depends_on.class);
 			dependencies = d != null ? d.value() : null;
@@ -216,7 +217,6 @@ public class OperatorProto extends AbstractProto {
 			if (!rightType.isTranslatableInto(expected)) {
 				context.warning("Operator " + getName() + " expects an argument of type " + expected,
 						IGamlIssue.SHOULD_CAST);
-				return;
 			}
 		} else if (signature.isUnary()) {
 			for (final int element : expectedContentType) {
@@ -300,13 +300,13 @@ public class OperatorProto extends AbstractProto {
 	@Override
 	public doc getDocAnnotation() {
 		doc d = super.getDocAnnotation();
-		if (d != null)
-			return d;
+		if (d != null) { return d; }
 		if (support != null && support.isAnnotationPresent(operator.class)) {
-			operator op = support.getAnnotation(operator.class);
-			doc[] docs = op.doc();
-			if (docs != null && docs.length > 0)
+			final operator op = support.getAnnotation(operator.class);
+			final doc[] docs = op.doc();
+			if (docs != null && docs.length > 0) {
 				d = docs[0];
+			}
 		}
 		return d;
 	}

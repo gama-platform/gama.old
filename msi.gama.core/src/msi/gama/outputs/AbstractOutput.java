@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.AbstractOutput.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.AbstractOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -18,7 +18,6 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
@@ -134,9 +133,6 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	@Override
 	public abstract boolean step(IScope scope);
 
-	@Override
-	public abstract void update() throws GamaRuntimeException;
-
 	void setOpen(final boolean open) {
 		this.open = open;
 	}
@@ -158,8 +154,10 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	// @Override
 	@Override
 	public String getId() {
-		if (!this.getDescription().getModelDescription().getAlias().equals("")) { return getName() + "#"
-				+ this.getDescription().getModelDescription().getAlias() + "#" + getScope().getExperiment().getName(); }
+		if (!this.getDescription().getModelDescription().getAlias().equals("")) {
+			return getName() + "#" + this.getDescription().getModelDescription().getAlias() + "#"
+					+ getScope().getExperiment().getName();
+		}
 		return getName(); // by default
 	}
 

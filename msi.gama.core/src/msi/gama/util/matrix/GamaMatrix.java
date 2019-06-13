@@ -182,8 +182,9 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			try {
 				numCols = objects.size();
 				numRows = ((List) objects.get(0)).size();
-			} catch(Exception e) {
-				throw GamaRuntimeException.error("" +  objects.get(0) + " cannot be casted to a List (in matrix creation)", scope);
+			} catch (final Exception e) {
+				throw GamaRuntimeException
+						.error("" + objects.get(0) + " cannot be casted to a List (in matrix creation)", scope);
 			}
 		}
 		this.type = Types.MATRIX.of(contentsType);
@@ -283,11 +284,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public T get(final IScope scope, final ILocation p) {
 		final double px = p.getX();
 		final double py = p.getY();
-		if (px > numCols - 1 || px < 0) { 
-			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + px, scope); 
+		if (px > numCols - 1 || px < 0) {
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + px, scope);
 		}
-		if (py > numRows - 1 || py < 0) { 
-			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + py, scope); 
+		if (py > numRows - 1 || py < 0) {
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + py, scope);
 		}
 		return get(scope, (int) px, (int) py);
 	}
@@ -306,11 +307,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		}
 		final int px = Cast.asInt(scope, indices.get(0));
 		final int py = Cast.asInt(scope, indices.get(1));
-		if (px > numCols - 1 || px < 0) { 
-			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + px, scope); 
+		if (px > numCols - 1 || px < 0) {
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + px, scope);
 		}
-		if (py > numRows - 1 || py < 0)  { 
-			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + py, scope); 
+		if (py > numRows - 1 || py < 0) {
+			throw GamaRuntimeException.error("Access to a matrix element out of its bounds: " + py, scope);
 		}
 		return get(scope, px, py);
 	}
@@ -320,12 +321,6 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @return
 	 */
 	public abstract T getNthElement(Integer index);
-
-	@Override
-	public abstract T get(IScope scope, final int col, final int row);
-
-	@Override
-	public abstract void set(IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException;
 
 	@Override
 	public abstract Object remove(IScope scope, final int col, final int row);
@@ -391,9 +386,6 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return copy(scope, getDimensions(), true);
 	}
 
-	@Override
-	public abstract IMatrix copy(IScope scope, ILocation size, boolean copy);
-
 	public static boolean isFlat(final List val) {
 		for (int i = 0; i < val.size(); i++) {
 			if (val.get(i) instanceof List) { return false; }
@@ -417,7 +409,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			for (final Object o : ((IContainer) object).iterable(scope)) {
 				if (!checkBounds(scope, o, forAdding)) { return false; }
 			}
-		} else if (object instanceof Integer) { return ((Integer) object) < numCols * numRows; }
+		} else if (object instanceof Integer) { return (Integer) object < numCols * numRows; }
 		return false;
 	}
 
@@ -590,11 +582,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			// no need to take "copy" into account as the list is created anyway
 			return _listValue(scope, originalContentsType, false);
 		}
-		final IList result = _listValue(scope, contentsType, true);
+		return _listValue(scope, contentsType, true);
 		// for ( int i = 0, n = result.size(); i < n; i++ ) {
 		// result.set(i, contentsType.cast(scope, result.get(i), null, false));
 		// }
-		return result;
 	}
 
 	/*

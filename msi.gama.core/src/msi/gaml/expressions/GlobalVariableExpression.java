@@ -1,16 +1,17 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.GlobalVariableExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.GlobalVariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -30,11 +31,8 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		final IExpression exp = v.getFacetExpr(IKeyword.INIT);
 		if (exp != null) {
 			final boolean isConst = notModifiable && exp.isConst();
-			if (isConst) {
-				final IExpression e = GAML.getExpressionFactory().createConst(exp.getConstValue(), type, n);
-				// DEBUG.LOG(" ==== Simplification of global " + n + "
-				// into " + e.toGaml());
-				return e;
+			if (isConst && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
+				return GAML.getExpressionFactory().createConst(exp.getConstValue(), type, n);
 			}
 		}
 		return new GlobalVariableExpression(n, type, notModifiable, world);

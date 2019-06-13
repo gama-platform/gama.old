@@ -1507,10 +1507,8 @@ public final class Osmformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
-					if (hasBbox()) {
-						if (!getBbox().isInitialized()) { return null; }
-					}
+					// final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
+					if (hasBbox() && !getBbox().isInitialized()) { return null; }
 					return DEFAULT_INSTANCE;
 
 				}
@@ -2150,7 +2148,7 @@ public final class Osmformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
+					// final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
 					if (!hasLeft()) { return null; }
 					if (!hasRight()) { return null; }
 					if (!hasTop()) { return null; }
@@ -3238,7 +3236,6 @@ public final class Osmformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
 					if (!hasStringtable()) { return null; }
 					for (int i = 0; i < getPrimitivegroupCount(); i++) {
 						if (!getPrimitivegroup(i).isInitialized()) { return null; }
@@ -4642,7 +4639,6 @@ public final class Osmformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
 					for (int i = 0; i < getNodesCount(); i++) {
 						if (!getNodes(i).isInitialized()) { return null; }
 					}
@@ -8176,7 +8172,6 @@ public final class Osmformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
 					if (!hasId()) { return null; }
 					return DEFAULT_INSTANCE;
 
@@ -9300,7 +9295,6 @@ public final class Osmformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
 					if (!hasId()) { return null; }
 					if (!hasLat()) { return null; }
 					if (!hasLon()) { return null; }
@@ -12163,7 +12157,6 @@ public final class Osmformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
 					if (!hasId()) { return null; }
 					return DEFAULT_INSTANCE;
 
@@ -12569,7 +12562,7 @@ public final class Osmformat {
 			/**
 			 * @deprecated Use {@link #forNumber(int)} instead.
 			 */
-			@java.lang.Deprecated
+			@Deprecated
 			public static MemberType valueOf(final int value) {
 				return forNumber(value);
 			}
@@ -13813,7 +13806,6 @@ public final class Osmformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
 					if (!hasId()) { return null; }
 					return DEFAULT_INSTANCE;
 

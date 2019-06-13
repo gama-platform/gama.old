@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.GridNeighborhood.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.grid.GridNeighborhood.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -91,13 +91,9 @@ public abstract class GridNeighborhood implements INeighborhood {
 
 	@Override
 	public int neighborsIndexOf(final IScope scope, final int placeIndex, final int n) {
-		if (n == 1) {
-			return 0;
-		}
+		if (n == 1) { return 0; }
 		final int size = neighborsIndexes[placeIndex].length;
-		if (n > size) {
-			return neighbors[placeIndex].length - 1;
-		}
+		if (n > size) { return neighbors[placeIndex].length - 1; }
 		return neighborsIndexes[placeIndex][n - 2];
 	}
 
@@ -121,9 +117,6 @@ public abstract class GridNeighborhood implements INeighborhood {
 		scope.getRandom().shuffle2(result);
 		return result;
 	}
-
-	@Override
-	public abstract boolean isVN();
 
 	@Override
 	public void clear() {

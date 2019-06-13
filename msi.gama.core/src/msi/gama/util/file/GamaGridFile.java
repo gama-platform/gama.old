@@ -111,7 +111,7 @@ public class GamaGridFile extends GamaGisFile {
 						if (line.contains("dx")) {
 							text.append(line.replace("dx", "cellsize") + NL);
 						} else if (line.contains("dy")) {
-							continue;
+							// continue;
 						} else {
 							text.append(line + NL);
 						}
@@ -318,7 +318,7 @@ public class GamaGridFile extends GamaGisFile {
 			examples = { @example (
 					value = "file f <- grid_file(\"file.asc\",\"EPSG:32648\");",
 					isExecutable = false) })
-	public GamaGridFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
+	public GamaGridFile(final IScope scope, final String pathName, final String code) {
 		super(scope, pathName, code);
 	}
 
@@ -330,14 +330,13 @@ public class GamaGridFile extends GamaGisFile {
 
 	public Envelope computeEnvelopeWithoutBuffer(final IScope scope) {
 		if (gis == null) {
-			final GamaGridReader rd = createReader(scope, false);
-			if (rd == null) { return null; }
+			createReader(scope, false);
 		}
 		return gis.getProjectedEnvelope();
 	}
 
 	@Override
-	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
+	protected void fillBuffer(final IScope scope) {
 		if (getBuffer() != null) { return; }
 		createReader(scope, true);
 	}

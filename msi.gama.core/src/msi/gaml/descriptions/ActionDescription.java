@@ -111,10 +111,8 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				}
 				if (c.hasFacet(OPTIONAL) && c.getFacet(OPTIONAL).equalsString(FALSE) || !c.hasFacet(OPTIONAL)) {
 					if (!names.containsKey(n)) {
-						caller.error(
-								"Missing argument " + n + " in call to " + getName() + ". Arguments passed are : "
-										+ names,
-								IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(), new String[] { n });
+						caller.error("Missing argument " + n + " in call to " + getName() + ". Arguments passed are : "
+								+ names, IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(), n);
 						return false;
 					}
 
@@ -129,7 +127,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				final String the_name = arg.getKey();
 				if (!allArgs.contains(the_name)) {
 					caller.error("Unknown argument " + the_name + " in call to " + getName(),
-							IGamlIssue.UNKNOWN_ARGUMENT, arg.getValue().getTarget(), new String[] { arg.getKey() });
+							IGamlIssue.UNKNOWN_ARGUMENT, arg.getValue().getTarget(), arg.getKey());
 					return false;
 				} else if (arg.getValue() != null && arg.getValue().getExpression() != null) {
 					final IDescription formalArg =

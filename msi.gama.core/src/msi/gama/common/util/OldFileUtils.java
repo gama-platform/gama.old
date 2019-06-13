@@ -63,12 +63,11 @@ public class OldFileUtils {
 	 *             the gama runtime exception
 	 */
 	static public String constructAbsoluteFilePathAlternate(final IScope scope, final String fp,
-			final boolean mustExist) throws GamaRuntimeException {
+			final boolean mustExist) {
 		if (scope == null) { return fp; }
 		String filePath = null;
 		Iterable<String> baseDirectories = null;
 		final IExperimentAgent a = scope.getExperiment();
-		// final List<String> referenceDirectories = a.getWorkingPaths();
 
 		try {
 			baseDirectories = Iterables.transform(a.getWorkingPaths(), each -> {

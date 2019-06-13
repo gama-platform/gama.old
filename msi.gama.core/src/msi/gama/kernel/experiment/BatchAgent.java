@@ -293,8 +293,7 @@ public class BatchAgent extends ExperimentAgent {
 	}
 
 	public List<IParameter.Batch> getParametersToExplore() {
-		final List<IParameter.Batch> result = new ArrayList(getSpecies().getExplorableParameters().values());
-		return result;
+		return new ArrayList(getSpecies().getExplorableParameters().values());
 	}
 
 	@Override

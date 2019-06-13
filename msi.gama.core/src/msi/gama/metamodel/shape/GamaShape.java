@@ -2,11 +2,11 @@
  *
  * msi.gama.metamodel.shape.GamaShape.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -89,7 +89,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	/**
 	 * Creates a GamaShape from a source and a (optional) geometry. If the geometry is null, the geometry of the source
 	 * is used. In any case, we copy its attributes if present and if copyAttributes is true
-	 * 
+	 *
 	 * @param source
 	 * @param geom
 	 * @param copyAttributes
@@ -109,7 +109,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	/**
 	 * This is where the attributes of this shape and the attributes of an incoming shape are mixed. The default
 	 * strategy is to copy all the attributes to this
-	 * 
+	 *
 	 * @param source
 	 */
 	private void mixAttributes(final IShape source) {
@@ -125,7 +125,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	/**
 	 * Same as above, but applies a (optional) rotation around a given vector and (optional) translation to the geometry
-	 * 
+	 *
 	 * @param source
 	 *            cannot be null
 	 * @param geom
@@ -159,7 +159,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	/**
 	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box or a set of
 	 * coefficients.
-	 * 
+	 *
 	 * @param source
 	 *            cannot be null
 	 * @param geom
@@ -194,7 +194,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	/**
 	 * Same as above, but applies a (optional) scaling to the geometry by a given coefficient
-	 * 
+	 *
 	 * @param source
 	 *            cannot be null
 	 * @param geom
@@ -317,25 +317,26 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public Double getVolume() {
-		Double d = getDepth();
-		if(d==0) {
+		final Double d = getDepth();
+		if (d == 0) {
 			return 0d;
 		} else {
-			Type shapeType = Type.valueOf(getAttribute(IShape.TYPE_ATTRIBUTE).toString());
+			final Type shapeType = Type.valueOf(getAttribute(IShape.TYPE_ATTRIBUTE).toString());
 			// TODO : should put any specific shape volume calculation here !!!
 			switch (shapeType) {
-			case SPHERE:
-				return 4/3 * Maths.PI * Maths.pow(getWidth()/2.0,3);
-			case CONE: 
-				return 1/3 * Maths.PI * Maths.pow(getWidth()/2.0,2) * d;
-			case PYRAMID:
-				return (Maths.pow(getWidth(),2) * d) / 3;
-			case THREED_FILE:
-			case NULL:
-				Envelope3D env3D = getEnvelope();
-				return env3D == null ? Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume() : env3D.getVolume();	
-			default:
-				return getArea() * d;
+				case SPHERE:
+					return 4 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 3);
+				case CONE:
+					return 1 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 2) * d;
+				case PYRAMID:
+					return Maths.pow(getWidth(), 2) * d / 3;
+				case THREED_FILE:
+				case NULL:
+					final Envelope3D env3D = getEnvelope();
+					return env3D == null ? Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume()
+							: env3D.getVolume();
+				default:
+					return getArea() * d;
 			}
 		}
 	}
@@ -453,9 +454,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 			// See Issue 725
 			return;
 		}
-		if ((geom instanceof GeometryCollection) && (geom.getNumGeometries() == 1)) {
-				geometry = geom.getGeometryN(0);
-		}  else {
+		if (geom instanceof GeometryCollection && geom.getNumGeometries() == 1) {
+			geometry = geom.getGeometryN(0);
+		} else {
 			geometry = geom;
 		}
 	}
@@ -501,9 +502,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public int hashCode() {
-		if (geometry == null) return 0;
+		if (geometry == null) { return 0; }
 		return geometry.hashCode();
-		//return super.hashCode();
+		// return super.hashCode();
 		// if (geomtry == null) return s
 		// return GeometryUtils.getContourCoordinates(geometry)..
 		// return geometry == null ? super.hashCode() : geometry.hashCode();
@@ -516,8 +517,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public GamaShape copy(final IScope scope) {
-		final GamaShape g = new GamaShape(this, (Geometry) geometry.clone());
-		return g;
+		return new GamaShape(this, (Geometry) geometry.clone());
 	}
 
 	/**
@@ -614,7 +614,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	/**
 	 * Used when the geometry is not affected to an agent and directly accessed by 'read' or 'get' operators. Can be
 	 * used in Java too, of course, to retrieve any value stored in the shape
-	 * 
+	 *
 	 * @param s
 	 * @return the corresponding value of the attribute named 's' in the feature, or null if it is not present
 	 */
@@ -649,7 +649,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	/**
 	 * Method getGeometricalType()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getGeometricalType()
 	 */
 	@Override

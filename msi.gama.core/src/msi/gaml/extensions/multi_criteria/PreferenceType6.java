@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.PreferenceType6.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.extensions.multi_criteria.PreferenceType6.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
@@ -19,7 +19,7 @@ public class PreferenceType6 implements FonctionPreference {
 
 	@Override
 	public double valeur(final double diff) {
-		if ( diff <= 0 ) { return 0; }
+		if (diff <= 0) { return 0; }
 
 		return 1 - FastMath.exp(diff * diff / valSquare);
 	}
@@ -47,12 +47,11 @@ public class PreferenceType6 implements FonctionPreference {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if ( this == obj ) { return true; }
-		if ( obj == null ) { return false; }
-		if ( getClass() != obj.getClass() ) { return false; }
-		PreferenceType6 other = (PreferenceType6) obj;
-		if ( Double.doubleToLongBits(s) != Double.doubleToLongBits(other.s) ) { return false; }
-		return true;
+		if (this == obj) { return true; }
+		if (obj == null) { return false; }
+		if (getClass() != obj.getClass()) { return false; }
+		final PreferenceType6 other = (PreferenceType6) obj;
+		return Double.doubleToLongBits(s) == Double.doubleToLongBits(other.s);
 	}
 
 }

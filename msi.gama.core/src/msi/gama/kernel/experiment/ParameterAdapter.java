@@ -147,9 +147,6 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public abstract Object value();
-
-	@Override
 	public void reinitRandomly(final IScope scope) {}
 
 	//
@@ -195,7 +192,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public List<GamaColor> getColor(IScope scope) {
+	public List<GamaColor> getColor(final IScope scope) {
 		return null;
 	}
 

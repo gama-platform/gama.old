@@ -84,8 +84,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected boolean hasFacetsNotIn(final Set<String> others) {
 		if (facets == null) { return false; }
 		return !visitFacets((facetName, exp) -> {
-			if (others.contains(facetName)) { return true; }
-			return false;
+			return others.contains(facetName);
 		});
 	}
 
@@ -423,15 +422,9 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public abstract boolean visitChildren(DescriptionVisitor visitor);
-
-	@Override
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
 		return true;
 	}
-
-	@Override
-	public abstract boolean visitOwnChildren(DescriptionVisitor visitor);
 
 	@Override
 	public IDescription getEnclosingDescription() {
@@ -651,7 +644,7 @@ public abstract class SymbolDescription implements IDescription {
 					getUnderlyingElement(), Iterables.getFirst(missingFacets, ""), "nil");
 			return false;
 		}
-		final boolean ok = visitFacets((facet, expr) -> {
+		return visitFacets((facet, expr) -> {
 			final FacetProto fp = proto.getFacet(facet);
 
 			if (fp == null) {
@@ -722,8 +715,6 @@ public abstract class SymbolDescription implements IDescription {
 			}
 			return true;
 		});
-
-		return ok;
 
 	}
 

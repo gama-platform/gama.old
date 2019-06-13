@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.BreakStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.BreakStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -32,16 +32,22 @@ import msi.gaml.statements.BreakStatement.BreakValidator;
 
 /**
  * The class BreakCommand.
- * 
+ *
  * @author drogoul
  * @since 22 avr. 2012
- * 
+ *
  */
-@symbol(name = IKeyword.BREAK, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.LOOP })
-@inside(kinds = ISymbolKind.SEQUENCE_STATEMENT)
-@doc(value = "`" + IKeyword.BREAK + "` allows to interrupt the current sequence of statements.")
-@validator(BreakValidator.class)
-@serializer(BreakSerializer.class)
+@symbol (
+		name = IKeyword.BREAK,
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		with_sequence = false,
+		concept = { IConcept.LOOP })
+@inside (
+		kinds = ISymbolKind.SEQUENCE_STATEMENT)
+@doc (
+		value = "`" + IKeyword.BREAK + "` allows to interrupt the current sequence of statements.")
+@validator (BreakValidator.class)
+@serializer (BreakSerializer.class)
 public class BreakStatement extends AbstractStatement {
 
 	public static class BreakSerializer extends SymbolSerializer<StatementDescription> {
@@ -56,16 +62,14 @@ public class BreakStatement extends AbstractStatement {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
 		public void validate(final StatementDescription description) {
 			IDescription superDesc = description.getEnclosingDescription();
-			while (superDesc != null && superDesc instanceof StatementWithChildrenDescription) {
-				if (((StatementWithChildrenDescription) superDesc).isBreakable()) {
-					return;
-				}
+			while (superDesc instanceof StatementWithChildrenDescription) {
+				if (((StatementWithChildrenDescription) superDesc).isBreakable()) { return; }
 				superDesc = superDesc.getEnclosingDescription();
 			}
 			description.error("'break' must be used in the context of a loop, a switch or an ask statement",

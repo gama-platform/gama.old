@@ -203,11 +203,10 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		final int[] mb = ((GamaIntMatrix) b).getMatrix();
 		final int[] mab = ArrayUtils.addAll(ma, mb);
 
-		final GamaIntMatrix fl = new GamaIntMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
+		return new GamaIntMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
 
 		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not
 		// implemented. Returns nil for the moment");
-		return fl;
 	}
 
 	/**

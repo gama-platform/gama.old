@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AbstractStatementSequenceWithArgs.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.AbstractStatementSequenceWithArgs.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -17,10 +17,10 @@ import msi.gaml.statements.IStatement.WithArgs;
 
 /**
  * Class AbstractStatementSequenceWithArgs.
- * 
+ *
  * @author drogoul
  * @since 11 mai 2014
- * 
+ *
  */
 public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence implements WithArgs {
 
@@ -36,7 +36,7 @@ public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence
 
 	/**
 	 * Method setFormalArgs()
-	 * 
+	 *
 	 * @see msi.gaml.statements.IStatement.WithArgs#setFormalArgs(msi.gaml.statements.Arguments)
 	 */
 	@Override
@@ -44,7 +44,7 @@ public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence
 
 	/**
 	 * Method setRuntimeArgs()
-	 * 
+	 *
 	 * @see msi.gaml.statements.IStatement.WithArgs#setRuntimeArgs(msi.gaml.statements.Arguments)
 	 */
 	@Override
@@ -55,8 +55,7 @@ public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		scope.stackArguments(actualArgs.get());
-		final Object result = super.privateExecuteIn(scope);
-		return result;
+		return super.privateExecuteIn(scope);
 	}
 
 }

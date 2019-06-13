@@ -86,18 +86,14 @@ public class DescriptionFactory {
 		return p;
 	}
 
-	public final static SymbolProto getStatementProto(final String keyword, String control) {
-		List<SymbolProto> protos = STATEMENT_KEYWORDS_PROTOS.get(keyword);
-		if (protos == null || protos.isEmpty())
-			return null;
-		if (protos.size() == 1)
-			return protos.get(0);
-		if (control == null)
-			return protos.get(protos.size() - 1);
+	public final static SymbolProto getStatementProto(final String keyword, final String control) {
+		final List<SymbolProto> protos = STATEMENT_KEYWORDS_PROTOS.get(keyword);
+		if (protos == null || protos.isEmpty()) { return null; }
+		if (protos.size() == 1) { return protos.get(0); }
+		if (control == null) { return protos.get(protos.size() - 1); }
 		// DEBUG.OUT("Duplicate keyword: " + keyword + " ; looking for the one defined in " + control);
-		for (SymbolProto proto : protos) {
-			if (proto.shouldBeDefinedIn(control))
-				return proto;
+		for (final SymbolProto proto : protos) {
+			if (proto.shouldBeDefinedIn(control)) { return proto; }
 		}
 		return null;
 	}
@@ -185,9 +181,7 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
 			final IDescription superDesc, final Iterable<IDescription> children, final Facets facets) {
-		final IDescription result =
-				create(SyntacticFactory.create(keyword, facets, children != null), superDesc, children);
-		return result;
+		return create(SyntacticFactory.create(keyword, facets, children != null), superDesc, children);
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
@@ -223,8 +217,9 @@ public class DescriptionFactory {
 		final Set<String> result = new HashSet();
 		for (final String key : keys) {
 			final SymbolProto md = getProto(key, null);
-			if (md != null)
+			if (md != null) {
 				result.addAll(md.getPossibleFacets().keySet());
+			}
 		}
 
 		return result;
@@ -273,9 +268,10 @@ public class DescriptionFactory {
 									// exception
 			{
 				throw new RuntimeException("Description of " + keyword + " cannot be built");
-			} else
+			} else {
 				superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement(),
 						keyword);
+			}
 			return null;
 		}
 		Iterable<IDescription> children = cp;
@@ -296,8 +292,7 @@ public class DescriptionFactory {
 		}
 		final Facets facets = source.copyFacets(md);
 		final EObject element = source.getElement();
-		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md);
-		return desc;
+		return md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md);
 
 	}
 

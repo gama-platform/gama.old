@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.IShape.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.shape.IShape.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -99,7 +99,7 @@ import msi.gaml.types.IType;
 				doc = { @doc ("Returns the polyline representing the contour of this geometry") }) })
 public interface IShape extends ILocated, IValue, IAttributed {
 
-	static enum Type {
+	enum Type {
 		BOX,
 		CIRCLE,
 		CONE,
@@ -133,114 +133,116 @@ public interface IShape extends ILocated, IValue, IAttributed {
 		}
 	}
 
-	public static final WKTWriter SHAPE_WRITER = new WKTWriter();
+	WKTWriter SHAPE_WRITER = new WKTWriter();
 
-	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
-	public static final Map<String, Type> JTS_TYPES = new THashMap<>();
+	String DEPTH_ATTRIBUTE = "_shape_internal_depth";
+	Map<String, Type> JTS_TYPES = new THashMap<>();
 	// public static final String TEXTURE_ATTRIBUTE = "_shape_internal_texture";
-	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
+	String TYPE_ATTRIBUTE = "_shape_internal_type";
 	// public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
 	// public static final String COLOR_LIST_ATTRIBUTE =
 	// "_shape_internal_color_list";
 	// public static final String ROTATE_ATTRIBUTE = "_shape_internal_rotate";
 
 	@Override
-	public IShape copy(IScope scope);
+	IShape copy(IScope scope);
 
-	public abstract boolean covers(IShape g);
+	boolean covers(IShape g);
 
-	public abstract boolean crosses(IShape g);
+	boolean crosses(IShape g);
 
-	public abstract void dispose();
+	void dispose();
 
-	public abstract double euclidianDistanceTo(ILocation g);
+	double euclidianDistanceTo(ILocation g);
 
-	public abstract double euclidianDistanceTo(IShape g);
+	double euclidianDistanceTo(IShape g);
 
-	public abstract IAgent getAgent();
+	IAgent getAgent();
 
-	public abstract Envelope3D getEnvelope();
+	Envelope3D getEnvelope();
 
 	/**
 	 * Returns the geometrical type of this shape. May be computed dynamically (from the JTS inner geometry) or stored
 	 * somewhere (in the attributes of the shape, using TYPE_ATTRIBUTE)
-	 * 
+	 *
 	 * @param g
 	 * @return
 	 */
-	public IShape.Type getGeometricalType();
+	IShape.Type getGeometricalType();
 
-	public abstract IShape getGeometry();
+	IShape getGeometry();
 
-	public abstract Geometry getInnerGeometry();
+	Geometry getInnerGeometry();
 
-	public abstract boolean intersects(IShape g);
+	boolean intersects(IShape g);
 
-	public abstract boolean isLine();
+	boolean isLine();
 
-	public abstract boolean isPoint();
+	boolean isPoint();
 
-	public abstract void setAgent(IAgent agent);
+	void setAgent(IAgent agent);
 
-	public abstract void setGeometry(IShape g);
+	void setGeometry(IShape g);
 
-	public abstract void setInnerGeometry(Geometry intersection);
+	void setInnerGeometry(Geometry intersection);
 
-	public void setDepth(double depth);
+	void setDepth(double depth);
 
 	@Override
 	@getter ("attributes")
-	public GamaMap<String, Object> getOrCreateAttributes();
+	GamaMap<String, Object> getOrCreateAttributes();
 
 	@getter ("multiple")
-	public boolean isMultiple();
+	boolean isMultiple();
 
 	@getter ("area")
-	public Double getArea();
+	Double getArea();
 
 	@getter ("volume")
-	public Double getVolume();
+	Double getVolume();
 
 	@getter ("perimeter")
-	public double getPerimeter();
+	double getPerimeter();
 
 	@getter ("holes")
-	public IList<GamaShape> getHoles();
+	IList<GamaShape> getHoles();
 
 	@getter ("centroid")
-	public GamaPoint getCentroid();
+	GamaPoint getCentroid();
 
 	@getter ("contour")
-	public GamaShape getExteriorRing(IScope scope);
+	GamaShape getExteriorRing(IScope scope);
 
 	@getter ("width")
-	public Double getWidth();
+	Double getWidth();
 
 	@getter ("height")
-	public Double getHeight();
+	Double getHeight();
 
 	@getter ("depth")
-	public Double getDepth();
+	Double getDepth();
 
 	@getter ("envelope")
-	public GamaShape getGeometricEnvelope();
+	GamaShape getGeometricEnvelope();
 
 	@getter ("points")
-	public IList<? extends ILocation> getPoints();
+	IList<? extends ILocation> getPoints();
 
 	@getter ("geometries")
-	public IList<? extends IShape> getGeometries();
+	IList<? extends IShape> getGeometries();
 
 	/**
 	 * Copy only the attributes that support defining the shape
-	 * 
+	 *
 	 * @param other
 	 */
-	public default void copyShapeAttributesFrom(final IShape other) {
-		if (other.hasAttribute(DEPTH_ATTRIBUTE))
+	default void copyShapeAttributesFrom(final IShape other) {
+		if (other.hasAttribute(DEPTH_ATTRIBUTE)) {
 			this.setAttribute(DEPTH_ATTRIBUTE, other.getAttribute(DEPTH_ATTRIBUTE));
-		if (other.hasAttribute(TYPE_ATTRIBUTE))
+		}
+		if (other.hasAttribute(TYPE_ATTRIBUTE)) {
 			this.setAttribute(TYPE_ATTRIBUTE, other.getAttribute(TYPE_ATTRIBUTE));
+		}
 	}
 
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.LightPropertiesStructure.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.LightPropertiesStructure.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -18,27 +18,28 @@ import msi.gama.util.GamaColor;
 public class LightPropertiesStructure {
 	public int id;
 	public boolean active = false;
-	public GamaColor color = new GamaColor(127,127,127,255);
-	public GamaPoint position = new GamaPoint(0,0,20);
+	public GamaColor color = new GamaColor(127, 127, 127, 255);
+	public GamaPoint position = new GamaPoint(0, 0, 20);
 	public TYPE type = TYPE.DIRECTION;
 	public float linearAttenuation = 0;
 	public float quadraticAttenuation = 0;
 	public boolean drawLight = false;
-	public GamaPoint direction = new GamaPoint(0.5,0.5,-1);
+	public GamaPoint direction = new GamaPoint(0.5, 0.5, -1);
 	public float spotAngle = 45.0f;
-	
+
 	public Vector3f getColor() {
-		return new Vector3f((float)(color.red()/255.0),(float)(color.green()/255.0),(float)(color.blue()/255.0));
+		return new Vector3f((float) (color.red() / 255.0), (float) (color.green() / 255.0),
+				(float) (color.blue() / 255.0));
 	}
-	
+
 	public Vector3f getPosition() {
-		return new Vector3f((float)position.x,(float)position.y,(float)position.z);
+		return new Vector3f((float) position.x, (float) position.y, (float) position.z);
 	}
-	
+
 	public Vector3f getDirection() {
-		return new Vector3f((float)direction.x,(float)direction.y,(float)direction.z);
+		return new Vector3f((float) direction.x, (float) direction.y, (float) direction.z);
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -67,5 +68,7 @@ public class LightPropertiesStructure {
 		return spotAngle;
 	}
 
-	public static enum TYPE { DIRECTION, POINT, SPOT };
+	public enum TYPE {
+		DIRECTION, POINT, SPOT
+	}
 }

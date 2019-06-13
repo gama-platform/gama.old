@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.GamlAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.agent.GamlAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -67,8 +67,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	private Boolean isPopulation(final String populationName) {
 		final IVariable v = getSpecies().getVar(populationName);
 		if (v == null) { return false; }
-		if (v.isMicroPopulation()) { return true; }
-		return false;
+		return v.isMicroPopulation();
 	}
 
 	@Override
@@ -103,7 +102,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IList<IAgent> captureMicroAgents(final IScope scope, final ISpecies microSpecies,
 			final IList<IAgent> microAgents) throws GamaRuntimeException {
 		if (microAgents == null || microAgents.isEmpty() || microSpecies == null
-				|| !this.getSpecies().getMicroSpecies().contains(microSpecies)) { return GamaListFactory.create(); }
+				|| !this.getSpecies().getMicroSpecies().contains(microSpecies)) {
+			return GamaListFactory.create();
+		}
 
 		final List<IAgent> candidates = GamaListFactory.create(Types.AGENT);
 		for (final IAgent a : microAgents.iterable(scope)) {
@@ -301,7 +302,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		final IList<IAgent> agents = GamaListFactory.create(Types.AGENT);
 		agents.addAll(members.listValue(scope, Types.NO_TYPE, false));
 		for (final IAgent m : members.iterable(scope)) {
-			if (m != null && m instanceof IMacroAgent) {
+			if (m instanceof IMacroAgent) {
 				agents.addAll(((IMacroAgent) m).getAgents(scope));
 			}
 		}
@@ -346,11 +347,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
-		if (other == null || other.dead() || newSpecies == null
-				|| !this.getSpecies().containMicroSpecies(newSpecies)) { return false; }
+		if (other == null || other.dead() || newSpecies == null || !this.getSpecies().containMicroSpecies(newSpecies)) {
+			return false;
+		}
 		if (this.getMacroAgents().contains(other)) { return false; }
-		if (other.getHost().equals(this)) { return false; }
-		return true;
+		return !other.getHost().equals(this);
 	}
 
 	@Override

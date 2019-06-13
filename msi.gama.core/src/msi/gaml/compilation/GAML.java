@@ -249,15 +249,12 @@ public class GAML {
 		if (agent == null) { throw GamaRuntimeException.error("Agent is nil", tempContext.getScope()); }
 		final IDescription context = agent.getSpecies().getDescription();
 		try {
-			final IExpression result = getExpressionFactory().createExpr(expression, context, tempContext);
-			return result;
+			return getExpressionFactory().createExpr(expression, context, tempContext);
 		} catch (final Throwable e) {
 			// Maybe it is a statement instead ?
 			if (!onlyExpression) {
 				try {
-					final IExpression result =
-							getExpressionFactory().createTemporaryActionForAgent(agent, expression, tempContext);
-					return result;
+					return getExpressionFactory().createTemporaryActionForAgent(agent, expression, tempContext);
 				} catch (final Throwable e2) {
 					throw GamaRuntimeException.create(e2, tempContext.getScope());
 				}

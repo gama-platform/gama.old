@@ -24,7 +24,6 @@ package msi.gama.util.file.svg;
 
 import java.awt.Shape;
 import java.awt.geom.Area;
-import java.util.Iterator;
 
 /**
  * @author Mark McKay
@@ -39,32 +38,6 @@ public class ClipPath extends SVGElement {
 
 	/** Creates a new instance of Stop */
 	public ClipPath() {}
-
-	/*
-	 * public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent) { //Load style string
-	 * super.loaderStartElement(helper, attrs, parent);
-	 *
-	 * String clipPathUnits = attrs.getValue("clipPathUnits");
-	 *
-	 * if (clipPathUnits.equals("objectBoundingBox")) this.clipPathUnits = CP_OBJECT_BOUNDING_BOX;
-	 *
-	 * }
-	 */
-	/**
-	 * Called after the start element but before the end element to indicate each child tag that has been processed
-	 */
-	@Override
-	public void loaderAddChild(final SVGLoaderHelper helper, final SVGElement child) throws SVGElementException {
-		super.loaderAddChild(helper, child);
-
-		// if (child instanceof ShapeElement) members.add(child);
-	}
-
-	/*
-	 * public void loaderEndElement(SVGLoaderHelper helper) { // super.loaderEndElement(helper);
-	 *
-	 * // build(); }
-	 */
 
 	@Override
 	protected void build() throws SVGException {
@@ -85,8 +58,8 @@ public class ClipPath extends SVGElement {
 		if (children.size() == 1) { return ((ShapeElement) children.get(0)).getShape(); }
 
 		Area clipArea = null;
-		for (final Iterator it = children.iterator(); it.hasNext();) {
-			final ShapeElement se = (ShapeElement) it.next();
+		for (final Object element : children) {
+			final ShapeElement se = (ShapeElement) element;
 
 			if (clipArea == null) {
 				final Shape shape = se.getShape();

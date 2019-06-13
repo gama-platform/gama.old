@@ -1409,9 +1409,8 @@ public abstract class Spatial {
 			if (env.isNull()) {
 				env = new Envelope3D(0, 100, 0, 100, 0, 100);
 			}
-			final IShape shape = GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
+			return GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
 					env.centre().toGamaPoint());
-			return shape;
 		}
 	}
 
@@ -3518,8 +3517,7 @@ public abstract class Spatial {
 			final IShape target = nodes.lastValue(scope);
 			if (n == 2) {
 				if (topo instanceof GridTopology) {
-					final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, source, target, cells);
-					return path;
+					return ((GridTopology) topo).pathBetween(scope, source, target, cells);
 				} else {
 					return scope.getTopology().pathBetween(scope, source, target);
 				}
@@ -4011,8 +4009,7 @@ public abstract class Spatial {
 				see = { "closest_points_with", "farthest_point_to", "points_at" })
 		@no_test
 		public static ILocation any_location_in(final IScope scope, final IShape g) {
-			final ILocation p = GeometryUtils.pointInGeom(g, scope.getRandom());
-			return p;
+			return GeometryUtils.pointInGeom(g, scope.getRandom());
 		}
 
 		@operator (
@@ -4320,7 +4317,7 @@ public abstract class Spatial {
 			final IShape ag = scope.getAgent();
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final Object shape : list.listValue(scope, Types.GEOMETRY, false)) {
-				if (shape == null || !(shape instanceof IShape)) {
+				if (!(shape instanceof IShape)) {
 					continue;
 				}
 				if (scope.getTopology().distanceBetween(scope, ag, (IShape) shape) <= distance) {
@@ -4389,7 +4386,7 @@ public abstract class Spatial {
 				final IContainer<?, ? extends IShape> list, final IShape source, final boolean cover) {
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final Object shape : list.listValue(scope, Types.GEOMETRY, false)) {
-				if (shape == null || !(shape instanceof IShape)) {
+				if (!(shape instanceof IShape)) {
 					continue;
 				}
 				if (cover) {
@@ -4503,7 +4500,7 @@ public abstract class Spatial {
 			IShape shp = null;
 			double distMin = Double.MAX_VALUE;
 			for (final Object shape : list.listValue(scope, Types.GEOMETRY, false)) {
-				if (shape == null || !(shape instanceof IShape)) {
+				if (!(shape instanceof IShape)) {
 					continue;
 				}
 				final double dist = scope.getTopology().distanceBetween(scope, source, (IShape) shape);
@@ -4531,7 +4528,7 @@ public abstract class Spatial {
 			IShape shp = null;
 			double distMax = Double.MIN_VALUE;
 			for (final Object shape : list.listValue(scope, Types.GEOMETRY, false)) {
-				if (shape == null || !(shape instanceof IShape)) {
+				if (!(shape instanceof IShape)) {
 					continue;
 				}
 				final double dist = scope.getTopology().distanceBetween(scope, source, (IShape) shape);

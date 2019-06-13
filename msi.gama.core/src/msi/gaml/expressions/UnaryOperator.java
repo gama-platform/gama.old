@@ -131,9 +131,10 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	private IType computeType(final int theType, final IType def) {
 		int t = theType;
-		boolean returnFloatsInsteadOfInts = t < FLOAT_IN_CASE_OF_INT;
-		if (returnFloatsInsteadOfInts)
+		final boolean returnFloatsInsteadOfInts = t < FLOAT_IN_CASE_OF_INT;
+		if (returnFloatsInsteadOfInts) {
 			t = t - FLOAT_IN_CASE_OF_INT;
+		}
 		IType result = def;
 		if (t == WRAPPED) {
 			result = child.getGamlType().getWrappedType();
@@ -142,14 +143,16 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 				final IExpression[] array = ((ListExpression) child).getElements();
 				if (array.length == 0) {
 					result = Types.NO_TYPE;
-				} else
+				} else {
 					result = array[0].getGamlType().getContentType();
+				}
 			} else if (child instanceof MapExpression) {
 				final IExpression[] array = ((MapExpression) child).valuesArray();
 				if (array.length == 0) {
 					result = Types.NO_TYPE;
-				} else
+				} else {
 					result = array[0].getGamlType().getContentType();
+				}
 			} else {
 				final IType tt = child.getGamlType().getContentType().getContentType();
 				if (tt != Types.NO_TYPE) {
@@ -161,15 +164,16 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			final IType t2 = firstType.getContentType();
 			if (t2 == Types.NO_TYPE) {
 				result = firstType;
-			} else
+			} else {
 				result = t2;
-		} else
+			}
+		} else {
 			result = t == TYPE_AT_INDEX + 1 ? child.getGamlType()
 					: t == CONTENT_TYPE_AT_INDEX + 1 ? child.getGamlType().getContentType() : t == KEY_TYPE_AT_INDEX + 1
 							? child.getGamlType().getKeyType()
 							: t >= 0 ? Types.get(t) : t == DENOTED_TYPE_AT_INDEX + 1 ? child.getDenotedType() : def;
-		if (returnFloatsInsteadOfInts && result == Types.INT)
-			return Types.FLOAT;
+		}
+		if (returnFloatsInsteadOfInts && result == Types.INT) { return Types.FLOAT; }
 		return result;
 	}
 
@@ -184,7 +188,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 					contentType = GamaType.from(contentType, child.getGamlType().getKeyType(),
 							child.getGamlType().getContentType());
 				}
-				IType contentContentType =
+				final IType contentContentType =
 						computeType(prototype.contentTypeContentTypeProvider, contentType.getContentType());
 				contentType = ((IContainerType<?>) contentType).of(contentContentType);
 			}
@@ -244,8 +248,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public boolean findAny(final Predicate<IExpression> predicate) {
 		if (predicate.test(this)) { return true; }
-		if (child != null && child.findAny(predicate)) { return true; }
-		return false;
+		return child != null && child.findAny(predicate);
 	}
 
 }

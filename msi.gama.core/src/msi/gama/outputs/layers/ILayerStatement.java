@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.ILayerStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.ILayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -26,7 +26,7 @@ import msi.gaml.expressions.IExpression;
  */
 public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerStatement> {
 
-	public static enum LayerType {
+	public enum LayerType {
 
 		GRID(IKeyword.GRID),
 		AGENTS(IKeyword.AGENTS),
@@ -41,7 +41,7 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 		CAMERA(IKeyword.CAMERA),
 		LIGHT("light");
 
-		private final String name;
+		private String name;
 
 		LayerType(final String s) {
 			name = s;
@@ -61,10 +61,10 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 
 	}
 
-	public abstract LayerType getType(LayeredDisplayOutput output);
+	LayerType getType(LayeredDisplayOutput output);
 
-	public abstract void setDisplayOutput(IDisplayOutput output);
+	void setDisplayOutput(IDisplayOutput output);
 
-	public abstract IExpression getRefreshFacet();
+	IExpression getRefreshFacet();
 
 }

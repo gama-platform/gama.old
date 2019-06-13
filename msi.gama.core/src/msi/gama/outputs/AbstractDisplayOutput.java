@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.AbstractDisplayOutput.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.AbstractDisplayOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -110,13 +110,11 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	}
 
 	@Override
-	public abstract String getViewId();
-
-	@Override
 	public String getId() {
-		final String cName = ((AbstractOutput) this).getDescription().getModelDescription().getAlias();
-		if (cName != null && !cName.equals("") && !getName().contains("#")) { return isUnique() ? getViewId()
-				: getViewId() + getName() + "#" + cName; }
+		final String cName = this.getDescription().getModelDescription().getAlias();
+		if (cName != null && !cName.equals("") && !getName().contains("#")) {
+			return isUnique() ? getViewId() : getViewId() + getName() + "#" + cName;
+		}
 		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 

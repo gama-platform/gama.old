@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AspectStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.AspectStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -153,8 +153,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 				final IShape ag2 = ag.copy(scope);
 				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
-				final Rectangle2D r = g.drawShape(ag2.getInnerGeometry(), attributes);
-				return r;
+				return g.drawShape(ag2.getInnerGeometry(), attributes);
 			} catch (final GamaRuntimeException e) {
 				// cf. Issue 1052: exceptions are not thrown, just displayed
 				e.printStackTrace();
@@ -207,8 +206,7 @@ public class AspectStatement extends AbstractStatementSequence {
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final IGraphics g = scope.getGraphics();
-		if (g == null)
-			return null;
+		if (g == null) { return null; }
 		super.privateExecuteIn(scope);
 		return g.getAndWipeTemporaryEnvelope();
 	}

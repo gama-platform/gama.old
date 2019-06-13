@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.BinaryOperator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.BinaryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -29,9 +29,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 			final IExpression... child) {
 		final BinaryOperator u = new BinaryOperator(proto, context, child);
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
-			final IExpression e =
-					GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
-			return e;
+			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
 		}
 		return u;
 	}
@@ -75,8 +73,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 		try {
 			leftVal = prototype.lazy[0] ? exprs[0] : exprs[0].value(scope);
 			rightVal = prototype.lazy[1] ? exprs[1] : exprs[1].value(scope);
-			final Object result = prototype.helper.get(scope, leftVal, rightVal);
-			return result;
+			return prototype.helper.get(scope, leftVal, rightVal);
 		} catch (final GamaRuntimeException ge) {
 			throw ge;
 		} catch (final Throwable ex) {

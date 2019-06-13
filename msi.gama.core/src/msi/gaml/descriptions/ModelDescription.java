@@ -374,13 +374,10 @@ public class ModelDescription extends SpeciesDescription {
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
 		final DescriptionVisitor recursiveVisitor = each -> {
 			if (!visitor.visit(each)) { return false; }
-			if (!each.visitOwnChildrenRecursively(visitor)) { return false; }
-			return true;
+			return each.visitOwnChildrenRecursively(visitor);
 		};
 		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
-		if (experiments != null) {
-			if (!experiments.forEachValue(recursiveVisitor)) { return false; }
-		}
+		if (experiments != null && !experiments.forEachValue(recursiveVisitor)) { return false; }
 		return true;
 	}
 

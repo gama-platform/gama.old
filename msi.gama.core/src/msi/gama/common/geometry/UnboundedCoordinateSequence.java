@@ -151,8 +151,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 			// CW property is ensured by reversing the resulting array
 			points2[i] = points[size - i - 1].yNegated();
 		}
-		final GamaCoordinateSequence result = new GamaCoordinateSequence(false, points2);
-		return result;
+		return new GamaCoordinateSequence(false, points2);
 
 	}
 
@@ -360,8 +359,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	public boolean isRing() {
 		if (nbPoints < 4) { return false; }
-		if (!points[0].equals(points[nbPoints - 1])) { return false; }
-		return true;
+		return points[0].equals(points[nbPoints - 1]);
 	}
 
 	public double signedArea() {

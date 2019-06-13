@@ -32,19 +32,19 @@ public class TextDrawingAttributes extends DrawingAttributes implements Cloneabl
 		super(size, rotation, location, color, null, null);
 		this.font = font;
 		this.anchor = anchor;
-		this.perspective = perspective == null ? true : perspective.booleanValue();
+		this.perspective = perspective == null || perspective.booleanValue();
 	}
 
-	public TextDrawingAttributes copyTranslatedBy(GamaPoint p) {
+	public TextDrawingAttributes copyTranslatedBy(final GamaPoint p) {
 		try {
-			TextDrawingAttributes copy = (TextDrawingAttributes) super.clone();
+			final TextDrawingAttributes copy = (TextDrawingAttributes) super.clone();
 			copy.geometryProperties = copy.geometryProperties.copy();
 			// GamaPoint p1 = copy.geometryProperties.location;
 			copy.geometryProperties.location = copy.geometryProperties.location.plus(p);
 			// GamaPoint p2 = copy.geometryProperties.location;
 			// DEBUG.OUT("" + p1 + " " + p2);
 			return copy;
-		} catch (CloneNotSupportedException e) {
+		} catch (final CloneNotSupportedException e) {
 			return null;
 		}
 	}

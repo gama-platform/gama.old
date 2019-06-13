@@ -1325,7 +1325,6 @@ public final class Fileformat {
 					if (isInitialized == 1) { return DEFAULT_INSTANCE; }
 					if (isInitialized == 0) { return null; }
 
-					final boolean shouldMemoize = ((Boolean) arg0).booleanValue();
 					if (!hasType()) { return null; }
 					if (!hasDatasize()) { return null; }
 					return DEFAULT_INSTANCE;

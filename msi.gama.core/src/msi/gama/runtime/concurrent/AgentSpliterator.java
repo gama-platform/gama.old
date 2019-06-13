@@ -65,7 +65,7 @@ public class AgentSpliterator implements Spliterator<IAgent> {
 
 	@Override
 	public long estimateSize() {
-		return end - begin;
+		return (long) end - begin;
 	}
 
 	@Override

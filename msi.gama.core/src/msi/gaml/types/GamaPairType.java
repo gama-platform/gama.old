@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaPairType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaPairType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -43,8 +43,7 @@ public class GamaPairType extends GamaContainerType<GamaPair> {
 	@Override
 	public GamaPair cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 			final IType contentsType, final boolean copy) {
-		final GamaPair p = staticCast(scope, obj, keyType, contentsType, copy);
-		return p;
+		return staticCast(scope, obj, keyType, contentsType, copy);
 	}
 
 	public static GamaPair staticCast(final IScope scope, final Object obj, final IType keyType,

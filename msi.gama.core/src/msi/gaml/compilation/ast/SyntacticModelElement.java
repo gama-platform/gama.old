@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.ast.SyntacticModelElement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.ast.SyntacticModelElement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.ast;
 
@@ -19,10 +19,10 @@ import msi.gaml.statements.Facets;
 
 /**
  * Class SyntacticModelElement.
- * 
+ *
  * @author drogoul
  * @since 12 avr. 2014
- * 
+ *
  */
 public class SyntacticModelElement extends SyntacticTopLevelElement {
 
@@ -30,19 +30,24 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	 * The Class SyntacticExperimentModelElement.
 	 */
 	public static class SyntacticExperimentModelElement extends SyntacticModelElement {
-		
+
 		/**
 		 * Instantiates a new syntactic experiment model element.
 		 *
-		 * @param keyword the keyword
-		 * @param root the root
-		 * @param path the path
+		 * @param keyword
+		 *            the keyword
+		 * @param root
+		 *            the root
+		 * @param path
+		 *            the path
 		 */
 		public SyntacticExperimentModelElement(final String keyword, final EObject root, final String path) {
 			super(keyword, null, root, path);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see msi.gaml.compilation.ast.SyntacticComposedElement#addChild(msi.gaml.compilation.ast.ISyntacticElement)
 		 */
 		@Override
@@ -69,11 +74,16 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	/**
 	 * Instantiates a new syntactic model element.
 	 *
-	 * @param keyword the keyword
-	 * @param facets the facets
-	 * @param statement the statement
-	 * @param path the path
-	 * @param imports the imports
+	 * @param keyword
+	 *            the keyword
+	 * @param facets
+	 *            the facets
+	 * @param statement
+	 *            the statement
+	 * @param path
+	 *            the path
+	 * @param imports
+	 *            the imports
 	 */
 	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement, final String path,
 			final Object... imports) {
@@ -87,7 +97,9 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see msi.gaml.compilation.ast.SyntacticSpeciesElement#isSpecies()
 	 */
 	@Override
@@ -95,8 +107,12 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see msi.gaml.compilation.ast.AbstractSyntacticElement#visitExperiments(msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * msi.gaml.compilation.ast.AbstractSyntacticElement#visitExperiments(msi.gaml.compilation.ast.ISyntacticElement.
+	 * SyntacticVisitor)
 	 */
 	@Override
 	public void visitExperiments(final SyntacticVisitor visitor) {

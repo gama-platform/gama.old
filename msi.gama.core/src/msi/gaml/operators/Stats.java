@@ -857,11 +857,8 @@ public class Stats {
 			comment = "",
 			examples = { @example (
 					value = "[1, 2, 3, 3, 4, 4, 5, 3, 3, 4] frequency_of each",
-					equals = "map([1::1,2::1,3::4,4::3,5::1])")
-						}
-				)
-	
-	
+					equals = "map([1::1,2::1,3::4,4::3,5::1])") })
+
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 			throws GamaRuntimeException {
 		if (original == null) { return GamaMapFactory.create(Types.NO_TYPE, Types.INT); }
@@ -900,7 +897,7 @@ public class Stats {
 							equals = "0.981980506061966",
 							isExecutable = false) })
 	@no_test // because require R to be installed.
-	
+
 	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
 			throws GamaRuntimeException, ParseException, ExecutionException {
 		if (l1.length(scope) == 0 || l2.length(scope) == 0) { return Double.valueOf(0d); }
@@ -955,24 +952,18 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).",
-			examples = { 
-					@example (
+			examples = { @example (
 					value = "list<int> X <- [2, 3, 1];",
-					isExecutable = false
-							),
+					isExecutable = false),
 					@example (
 							value = "meanR(X)",
 							equals = "2",
 							returnType = IKeyword.INT,
-							isExecutable = false
-							 ),
+							isExecutable = false),
 					@example (
 							value = "meanR([2, 3, 1])",
 							equals = "2",
-							isExecutable = false
-							) 
-					}	
-		)
+							isExecutable = false) })
 	@no_test
 	public static Object getMeanR(final IScope scope, final IContainer l)
 			throws GamaRuntimeException, ParseException, ExecutionException {
@@ -1020,7 +1011,7 @@ public class Stats {
 					equals = "[[0,1,2,3]]") })
 	public static IList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
 			final Integer minPts) throws GamaRuntimeException {
-		IList<Integer> remainingData = GamaListFactory.create(Types.INT);
+		final IList<Integer> remainingData = GamaListFactory.create(Types.INT);
 		final DBSCANClusterer<DoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
 		final List<DoublePoint> instances = new ArrayList<>();
 		for (int i = 0; i < data.size(); i++) {
@@ -1038,13 +1029,13 @@ public class Stats {
 		for (final Cluster<DoublePoint> cl : clusters) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
 			for (final DoublePoint pt : cl.getPoints()) {
-				Integer id = ((Instance) pt).getId();
+				final Integer id = ((Instance) pt).getId();
 				clG.addValue(scope, id);
 				remainingData.remove(id);
 			}
 			results.add(clG);
 		}
-		for (Integer id : remainingData) {
+		for (final Integer id : remainingData) {
 			final GamaList clG = (GamaList) GamaListFactory.create();
 			clG.add(id);
 			results.add(clG);
@@ -1214,9 +1205,8 @@ public class Stats {
 			value = "returns a random value from a gamma distribution with specified values of the shape and scale parameters",
 			examples = { @example (
 					value = "gamma_distribution_complemented(2,3,0.9) with_precision(3)",
-					equals = "0.731")}
-	)
-	
+					equals = "0.731") })
+
 	public static Double OpGammaDist(final IScope scope, final Double shape, final Double scale)
 			throws GamaRuntimeException {
 		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(), shape, scale,
@@ -1287,7 +1277,6 @@ public class Stats {
 		return KMeansPlusplusApache(scope, data, k, -1);
 	}
 
-	
 	@operator (
 			value = "build",
 			can_be_const = false,
@@ -1301,7 +1290,7 @@ public class Stats {
 			examples = { @example (
 					value = "build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]]))",
 					isExecutable = false) })
-	@test("build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0],[5.0,1.0,3.0,5.0],[3.0,4.0,5.0,1.0]])).parameters collect (each with_precision 5) = [0.5,2.5,0.0,-1.5]")
+	@test ("build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0],[5.0,1.0,3.0,5.0],[3.0,4.0,5.0,1.0]])).parameters collect (each with_precision 5) = [0.5,2.5,0.0,-1.5]")
 	public static GamaRegression buildRegression(final IScope scope, final GamaMatrix data)
 			throws GamaRuntimeException {
 		try {
@@ -1323,9 +1312,9 @@ public class Stats {
 			examples = { @example (
 					value = "predict(my_regression, [1,2,3])",
 					isExecutable = false) })
-	@test("predict(build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]])),[1,2,3,2] ) = 2.1818181818181817")
+	@test ("predict(build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]])),[1,2,3,2] ) = 2.1818181818181817")
 	public static Double predictFromRegression(final IScope scope, final GamaRegression regression,
-			final GamaList instance) throws GamaRuntimeException {
+			final GamaList instance) {
 		return regression.predict(scope, instance);
 	}
 
@@ -1340,9 +1329,9 @@ public class Stats {
 							value = "gini([1.0, 0.5, 2.0])",
 							equals = "the gini index computed i.e. 0.2857143",
 							test = false) }) })
-	
+
 	@test ("(gini([1.0, 0.5, 2.0]) with_precision 4) = 0.2857")
-	
+
 	public static double giniIndex(final IScope scope, final IList<Double> vals) {
 		final int N = vals.size();
 		Double G = 0.0;

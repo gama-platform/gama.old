@@ -126,7 +126,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 				if (isMaximize() && neighborFitness.doubleValue() > getBestFitness()
 						|| !isMaximize() && neighborFitness.doubleValue() < getBestFitness()) {
 					bestNeighbor = neighborSol;
-					setBestFitness(neighborFitness.doubleValue());
+					setBestFitness(neighborFitness);
 				}
 			}
 			if (bestNeighbor != null) {

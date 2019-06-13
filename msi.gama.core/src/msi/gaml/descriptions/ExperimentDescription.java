@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.ExperimentDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.ExperimentDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -143,19 +143,12 @@ public class ExperimentDescription extends SpeciesDescription {
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
 		final DescriptionVisitor recursiveVisitor = each -> {
 			if (!visitor.visit(each)) { return false; }
-			if (!each.visitOwnChildrenRecursively(visitor)) { return false; }
-			return true;
+			return each.visitOwnChildrenRecursively(visitor);
 		};
 		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
-		if (parameters != null) {
-			if (!parameters.forEachValue(recursiveVisitor)) { return false; }
-		}
-		if (output != null) {
-			if (!(recursiveVisitor.visit(output))) { return false; }
-		}
-		if (permanent != null) {
-			if (!(recursiveVisitor.visit(permanent))) { return false; }
-		}
+		if (parameters != null && !parameters.forEachValue(recursiveVisitor)) { return false; }
+		if (output != null && !recursiveVisitor.visit(output)) { return false; }
+		if (permanent != null && !recursiveVisitor.visit(permanent)) { return false; }
 		return true;
 	}
 
@@ -197,14 +190,18 @@ public class ExperimentDescription extends SpeciesDescription {
 	 */
 	public Boolean isMemorize() {
 		return IKeyword.MEMORIZE.equals(getLitteral(IKeyword.TYPE));
-	}	
-	
-	public String getExperimentType() {
-		if(isBatch()) return  IKeyword.BATCH;
-		else if(isMemorize()) return IKeyword.MEMORIZE;
-		else return IKeyword.GUI_;
 	}
-	
+
+	public String getExperimentType() {
+		if (isBatch()) {
+			return IKeyword.BATCH;
+		} else if (isMemorize()) {
+			return IKeyword.MEMORIZE;
+		} else {
+			return IKeyword.GUI_;
+		}
+	}
+
 	@Override
 	public Class<? extends ExperimentAgent> getJavaBase() {
 		return isBatch() ? BatchAgent.class : ExperimentAgent.class;

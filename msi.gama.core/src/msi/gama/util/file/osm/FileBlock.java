@@ -26,6 +26,7 @@ import java.util.zip.Deflater;
 import com.google.protobuf.ByteString;
 
 import msi.gama.util.file.osm.Fileformat.BlobHeader;
+import ummisco.gama.dev.utils.DEBUG;
 
 /** A full fileblock object contains both the metadata and data of a fileblock */
 public class FileBlock extends FileBlockBase {
@@ -42,14 +43,14 @@ public class FileBlock extends FileBlockBase {
 
 	public static FileBlock newInstance(final String type, final ByteString blob, final ByteString indexdata) {
 		if (blob != null && blob.size() > MAX_BODY_SIZE / 2) {
-			System.err.println("Warning: Fileblock has body size too large and may be considered corrupt");
-			if (blob != null && blob.size() > MAX_BODY_SIZE - 1024 * 1024) {
+			DEBUG.ERR("Warning: Fileblock has body size too large and may be considered corrupt");
+			if (blob.size() > MAX_BODY_SIZE - 1024 * 1024) {
 				throw new Error("This file has too many entities in a block. Parsers will reject it.");
 			}
 		}
 		if (indexdata != null && indexdata.size() > MAX_HEADER_SIZE / 2) {
-			System.err.println("Warning: Fileblock has indexdata too large and may be considered corrupt");
-			if (indexdata != null && indexdata.size() > MAX_HEADER_SIZE - 512) {
+			DEBUG.ERR("Warning: Fileblock has indexdata too large and may be considered corrupt");
+			if (indexdata.size() > MAX_HEADER_SIZE - 512) {
 				throw new Error("This file header is too large. Parsers will reject it.");
 			}
 		}
@@ -68,7 +69,7 @@ public class FileBlock extends FileBlockBase {
 			// Buffer wasn't long enough. Be noisy.
 			++warncount;
 			if (warncount > 10 && warncount % 100 == 0) {
-				System.out.println("Compressed buffers are too short, causing extra copy");
+				DEBUG.OUT("Compressed buffers are too short, causing extra copy");
 			}
 			out = Arrays.copyOf(out, size + size / 64 + 16);
 			deflater.deflate(out, deflater.getTotalOut(), out.length - deflater.getTotalOut());

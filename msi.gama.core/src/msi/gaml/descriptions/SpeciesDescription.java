@@ -824,16 +824,9 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
 		if (!super.visitOwnChildren(visitor)) { return false; }
-		if (microSpecies != null) {
-			if (!microSpecies.forEachValue(visitor)) { return false; }
-		}
-		if (behaviors != null) {
-			if (!behaviors.forEachValue(visitor)) { return false; }
-		}
-
-		if (aspects != null) {
-			if (!aspects.forEachValue(visitor)) { return false; }
-		}
+		if (microSpecies != null && !microSpecies.forEachValue(visitor)) { return false; }
+		if (behaviors != null && !behaviors.forEachValue(visitor)) { return false; }
+		if (aspects != null && !aspects.forEachValue(visitor)) { return false; }
 		return true;
 	}
 
@@ -841,16 +834,11 @@ public class SpeciesDescription extends TypeDescription {
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
 		final DescriptionVisitor recursiveVisitor = each -> {
 			if (!visitor.visit(each)) { return false; }
-			if (!each.visitOwnChildrenRecursively(visitor)) { return false; }
-			return true;
+			return each.visitOwnChildrenRecursively(visitor);
 		};
 		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
-		if (microSpecies != null) {
-			if (!microSpecies.forEachValue(recursiveVisitor)) { return false; }
-		}
-		if (behaviors != null) {
-			if (!behaviors.forEachValue(recursiveVisitor)) { return false; }
-		}
+		if (microSpecies != null && !microSpecies.forEachValue(recursiveVisitor)) { return false; }
+		if (behaviors != null && !behaviors.forEachValue(recursiveVisitor)) { return false; }
 
 		if (aspects != null) {
 			if (!aspects.forEachValue(recursiveVisitor)) { return false; }

@@ -79,9 +79,10 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	protected IType computeType(final int tp, final int contentTypeProvider, final IType defaultType, final int kind) {
 		IType result = defaultType;
 		int typeProvider = tp;
-		boolean returnFloatsInsteadOfInts = typeProvider < FLOAT_IN_CASE_OF_INT;
-		if (returnFloatsInsteadOfInts)
+		final boolean returnFloatsInsteadOfInts = typeProvider < FLOAT_IN_CASE_OF_INT;
+		if (returnFloatsInsteadOfInts) {
 			typeProvider = typeProvider - FLOAT_IN_CASE_OF_INT;
+		}
 		if (typeProvider >= 0) {
 			result = Types.get(typeProvider);
 		} else if (exprs != null) {
@@ -158,8 +159,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 				result = ((IContainerType<?>) result).of(c);
 			}
 		}
-		if (returnFloatsInsteadOfInts && result == Types.INT)
-			return Types.FLOAT;
+		if (returnFloatsInsteadOfInts && result == Types.INT) { return Types.FLOAT; }
 		return result;
 	}
 
@@ -180,8 +180,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	public boolean isConst() {
 		if (!prototype.canBeConst) { return false; }
 		if (exprs != null) {
-			for (int i = 0; i < exprs.length; i++) {
-				if (!exprs[i].isConst()) { return false; }
+			for (final IExpression expr : exprs) {
+				if (!expr.isConst()) { return false; }
 			}
 		}
 		return true;
@@ -312,8 +312,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 			for (int i = 0; i < values.length; i++) {
 				values[i] = prototype.lazy[i] ? exprs[i] : exprs[i].value(scope);
 			}
-			final Object result = prototype.helper.get(scope, values);
-			return result;
+			return prototype.helper.get(scope, values);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));
 			throw e1;

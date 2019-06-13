@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.skills.MovingSkill3D.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.skills.MovingSkill3D.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.skills;
 
@@ -88,7 +88,7 @@ public class MovingSkill3D extends MovingSkill {
 	@getter (IKeyword.PITCH)
 	public Double getPitch(final IAgent agent) {
 		Double p = (Double) agent.getAttribute(IKeyword.PITCH);
-		if (p == null) {		
+		if (p == null) {
 			p = agent.getScope().getRandom().next() * 360;
 			setPitch(agent, p);
 		}
@@ -246,8 +246,7 @@ public class MovingSkill3D extends MovingSkill {
 			setPitch(agent, pitch);
 		}
 	}
-	
-	
+
 	@Override
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 
@@ -268,7 +267,7 @@ public class MovingSkill3D extends MovingSkill {
 		if (signumX == 0) {
 			setHeading(agent, signumY == 0 ? 0 : signumY > 0 ? 90 : 270);
 		} else {
-			setHeading(agent, (int) (FastMath.atan(diff.y / diff.x) * Maths.toDeg) + (signumX > 0 ? 0 : 180));
+			setHeading(agent, FastMath.atan(diff.y / diff.x) * Maths.toDeg + (signumX > 0 ? 0 : 180));
 		}
 
 		// Pitch
@@ -276,7 +275,7 @@ public class MovingSkill3D extends MovingSkill {
 			final int signumZ = Maths.signum(diff.z);
 			setPitch(agent, signumZ == 0 ? 0 : signumZ > 0 ? 90 : 270);
 		} else {
-			setPitch(agent, (FastMath.atan(diff.z / FastMath.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg));
+			setPitch(agent, FastMath.atan(diff.z / FastMath.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg);
 		}
 
 		return null;

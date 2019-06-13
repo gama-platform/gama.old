@@ -328,7 +328,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 				if (isMaximize() && neighborFitness.doubleValue() > bestFitness
 						|| !isMaximize() && neighborFitness.doubleValue() < bestFitness) {
 					bestNeighbor = neighborSol;
-					bestFitness = neighborFitness.doubleValue();
+					bestFitness = neighborFitness;
 					bestSol = bestNeighbor;
 				}
 			}

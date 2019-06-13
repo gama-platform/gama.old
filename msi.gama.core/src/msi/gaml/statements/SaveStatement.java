@@ -470,10 +470,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 				fw.write(val + Strings.LN);
 			}
-			fw.close();
-		} catch (final IOException e) {
-			return;
-		}
+			// fw.close();
+		} catch (final IOException e) {}
 
 	}
 
@@ -498,7 +496,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		try (FileWriter fw = new FileWriter(path.replace(".png", ".prj").replace(".tif", ".prj"))) {
 			fw.write(crs.toString());
-			fw.close();
+			// fw.close();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -597,9 +595,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String geomType = getGeometryType(agents);
 		specs.append("geometry:" + geomType);
 		try {
-			final SpeciesDescription species = agents instanceof IPopulation
-					? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription()
-					: agents.getGamlType().getContentType().getSpecies();
+			final SpeciesDescription species =
+					agents instanceof IPopulation ? ((IPopulation) agents).getSpecies().getDescription()
+							: agents.getGamlType().getContentType().getSpecies();
 			final Map<String, IExpression> attributes = GamaMapFactory.create();
 			if (species != null) {
 				if (withFacet != null) {
@@ -965,7 +963,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				final SimpleFeature ff = (SimpleFeature) fw.next();
 				final boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
 				if (!ok) {
-					continue;
+					break;
 				}
 			}
 			// store.dispose();
@@ -1029,7 +1027,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (crs != null) {
 			try (FileWriter fw = new FileWriter(path.replace(".shp", ".prj"))) {
 				fw.write(crs.toString());
-				fw.close();
+				// fw.close();
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}

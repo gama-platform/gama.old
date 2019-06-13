@@ -94,7 +94,7 @@ public class Containers {
 
 		private final Queue<Iterator> queue = new ArrayDeque<>();
 
-		public InterleavingIterator(IScope scope, final Object... objects) {
+		public InterleavingIterator(final IScope scope, final Object... objects) {
 			for (final Object object : objects) {
 				if (object instanceof IContainer) {
 					queue.add(((IContainer) object).iterable(scope).iterator());
@@ -123,7 +123,7 @@ public class Containers {
 	}
 
 	public static <T> Function<Object, T> with(final IScope scope, final IExpression filter) {
-		return (t) -> {
+		return t -> {
 			scope.setEach(t);
 			return (T) filter.value(scope);
 		};
@@ -138,11 +138,11 @@ public class Containers {
 
 	public static <T> Predicate<T> inContainer(final IScope scope, final IContainer l) {
 		final IContainer c = GAML.notNull(scope, l);
-		return (t) -> c.contains(scope, t);
+		return t -> c.contains(scope, t);
 	}
 
 	private static Function<Object, IList<?>> toLists =
-			(a) -> a instanceof IList ? (IList) a : GamaListFactory.createWithoutCasting(Types.NO_TYPE, a);
+			a -> a instanceof IList ? (IList) a : GamaListFactory.createWithoutCasting(Types.NO_TYPE, a);
 
 	private static StreamEx stream(final IScope scope, final IContainer c) {
 		return notNull(scope, c).stream(scope);

@@ -369,7 +369,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 				buf.append(' ');
 				line = in.readLine();
 			}
-			in.close();
+			// in.close();
 			str = buf.toString();
 			tok = new StringTokenizer(str);
 			final IMatrix matrix = new GamaIntMatrix(xSize, ySize);
@@ -488,8 +488,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 			maxCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
 		}
 
-		final Envelope3D boundsEnv = new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
-		return boundsEnv;
+		return new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 
 	}
 

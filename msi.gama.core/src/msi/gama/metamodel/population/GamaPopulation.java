@@ -120,7 +120,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 */
 	private LinkedList<IPopulation.Listener> listeners = null;
 
-	public static IPopulation.IsLiving isLiving = new IPopulation.IsLiving();
+	public final static IPopulation.IsLiving isLiving = new IPopulation.IsLiving();
 
 	class MirrorPopulationManagement implements IExecutable {
 

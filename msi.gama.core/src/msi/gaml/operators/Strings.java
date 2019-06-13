@@ -491,8 +491,7 @@ public class Strings {
 			sb.append(TAB);
 		}
 		final String t = sb.toString();
-		final String indented = s.replaceAll("(?m)^", t);
-		return indented;
+		return s.replaceAll("(?m)^", t);
 	}
 
 	@operator (

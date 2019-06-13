@@ -110,7 +110,7 @@ public abstract class Symbol implements ISymbol {
 
 	@Override
 	public boolean hasFacet(final String s) {
-		return description == null ? false : description.hasFacet(s);
+		return description != null && description.hasFacet(s);
 	}
 
 	@Override

@@ -475,7 +475,7 @@ public class ChartDataSource {
 		if (!this.isCommonYSeries()) {
 
 			// series charts (series/bw/...)
-			if (this.isCommonXSeries() & !this.isByCategory()) {
+			if (this.isCommonXSeries() && !this.isByCategory()) {
 				if (this.isCumulative()) {
 					// new cumulative Y value
 

@@ -238,14 +238,15 @@ public class GAMA {
 	}
 
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
-			final boolean shouldStopSimulation) throws GamaRuntimeException {
-		if (getExperiment() == null) {
-			if (!(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors()) {
-				// AD: we still throw exceptions related to files (Issue #1281)
-				g.printStackTrace();
-				return;
-			}
+			final boolean shouldStopSimulation) {
+
+		if (getExperiment() == null && !(g instanceof GamaRuntimeFileException) && scope != null
+				&& !scope.reportErrors()) {
+			// AD: we still throw exceptions related to files (Issue #1281)
+			g.printStackTrace();
+			return;
 		}
+
 		// DEBUG.LOG("reportAndThrowIfNeeded : " + g.getMessage());
 		if (scope != null && scope.getAgent() != null) {
 			final String name = scope.getAgent().getName();
@@ -364,8 +365,7 @@ public class GAMA {
 
 	public static <T> T run(final InScope<T> r) {
 		try (IScope scope = copyRuntimeScope(" in temporary scope block")) {
-			final T result = r.run(scope);
-			return result;
+			return r.run(scope);
 		}
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.StringUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.util.StringUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -18,8 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringEscapeUtils;
 
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.util.GamaListFactory;
@@ -47,12 +45,7 @@ public class StringUtils {
 		if (s == null) { return null; }
 		final StringBuilder sb = new StringBuilder(s.length());
 		sb.append('\'');
-		sb.append(s
-				.replace("\\", "\\\\")
-				.replace("'", "\\'")
-				.replace("\"", "\\\"")
-				.replace("/", "\\/")
-				);
+		sb.append(s.replace("\\", "\\\\").replace("'", "\\'").replace("\"", "\\\"").replace("/", "\\/"));
 		sb.append('\'');
 		return sb.toString();
 	}
@@ -68,7 +61,7 @@ public class StringUtils {
 	public static List<String> tokenize(final String expression) {
 		if (expression == null) { return Collections.EMPTY_LIST; }
 		final Pattern p = Pattern.compile(regex);
-		final List<String> tokens = new ArrayList<String>();
+		final List<String> tokens = new ArrayList<>();
 		final Matcher m = p.matcher(expression);
 		while (m.find()) {
 			tokens.add(expression.substring(m.start(), m.end()));
@@ -190,8 +183,7 @@ public class StringUtils {
 		final int n = s.length();
 		if (n == 0 || n == 1) { return false; }
 		if (s.charAt(0) != '\'') { return false; }
-		if (s.charAt(n - 1) != '\'') { return false; }
-		return true;
+		return s.charAt(n - 1) == '\'';
 	}
 
 	public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.SpeciesConstantExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.SpeciesConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -17,7 +17,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
@@ -70,7 +69,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 
 	/**
 	 * Method collectPlugins()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override
@@ -92,7 +91,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
 		if (species.hasAttribute(value.toString())) {
-			result.add(((TypeDescription) species).getAttribute(value.toString()));
+			result.add(species.getAttribute(value.toString()));
 		}
 	}
 

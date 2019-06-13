@@ -175,8 +175,9 @@ public abstract class GamaExecutorService {
 		} else {
 			final Object o = concurrency.value(scope);
 			if (o instanceof Boolean) {
-				if (o.equals(Boolean.FALSE)) { return 0; }
-				if (o.equals(Boolean.TRUE)) {
+				if (o.equals(Boolean.FALSE)) {
+					return 0;
+				} else {
 					if (caller == Caller.SIMULATION) { return CONCURRENCY_THREADS_NUMBER.getValue(); }
 					return CONCURRENCY_THRESHOLD.getValue();
 				}
@@ -187,7 +188,6 @@ public abstract class GamaExecutorService {
 				return getParallelism(scope, null, caller);
 			}
 		}
-		return 0;
 	}
 
 	public static void executeThreaded(final Runnable r) {

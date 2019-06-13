@@ -222,9 +222,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	@Override
 	public void startPause() {
-		if (experiment == null) {
-			return;
-		} else if (scheduler.paused) {
+		if (experiment == null) {} else if (scheduler.paused) {
 			userStart();
 		} else {
 			userPause();

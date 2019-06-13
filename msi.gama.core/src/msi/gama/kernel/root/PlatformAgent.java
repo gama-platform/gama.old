@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.root.PlatformAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.root.PlatformAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.root;
 
@@ -155,7 +155,8 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 				}
 			};
 		}
-		polling.scheduleAtFixedRate(currentTask, 0, 1000 * GamaPreferences.Runtime.CORE_MEMORY_FREQUENCY.getValue());
+		polling.scheduleAtFixedRate(currentTask, 0,
+				(long) 1000 * GamaPreferences.Runtime.CORE_MEMORY_FREQUENCY.getValue());
 	}
 
 	private void stopPollingMemory() {

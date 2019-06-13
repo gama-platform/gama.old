@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ActionExecuter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.ActionExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -23,7 +23,7 @@ public class ActionExecuter {
 	private static final int DISPOSE = 2;
 	private static final int ONE_SHOT = 3;
 
-	@SuppressWarnings("unchecked") final List<IExecutable>[] actions = new List[4];
+	@SuppressWarnings ("unchecked") final List<IExecutable>[] actions = new List[4];
 	protected final IScope scope;
 
 	public ActionExecuter(final IScope scope) {
@@ -35,13 +35,8 @@ public class ActionExecuter {
 	}
 
 	public void removeAction(final IExecutable haltAction) {
-		if (actions == null) {
-			return;
-		}
 		for (final List<IExecutable> list : actions) {
-			if (list != null && list.remove(haltAction)) {
-				return;
-			}
+			if (list != null && list.remove(haltAction)) { return; }
 		}
 	}
 
@@ -51,9 +46,7 @@ public class ActionExecuter {
 			list = new ArrayList<>();
 			actions[type] = list;
 		}
-		if (list.add(action)) {
-			return action;
-		}
+		if (list.add(action)) { return action; }
 		return null;
 	}
 
@@ -70,9 +63,7 @@ public class ActionExecuter {
 	}
 
 	public void executeEndActions() {
-		if (scope.interrupted()) {
-			return;
-		}
+		if (scope.interrupted()) { return; }
 		executeActions(END);
 	}
 
@@ -81,20 +72,15 @@ public class ActionExecuter {
 	}
 
 	public void executeOneShotActions() {
-		if (scope.interrupted()) {
-			return;
-		}
+		if (scope.interrupted()) { return; }
 		executeActions(ONE_SHOT);
 		actions[ONE_SHOT] = null;
 	}
 
 	private void executeActions(final int type) {
-		if (actions[type] == null) {
-			return;
-		}
+		if (actions[type] == null) { return; }
 		final int size = actions[type].size();
-		if (size == 0)
-			return;
+		if (size == 0) { return; }
 		final IExecutable[] array = actions[type].toArray(new IExecutable[size]);
 		for (final IExecutable action : array) {
 			if (!scope.interrupted()) {
@@ -113,9 +99,7 @@ public class ActionExecuter {
 	}
 
 	public void executeBeginActions() {
-		if (scope.interrupted()) {
-			return;
-		}
+		if (scope.interrupted()) { return; }
 		executeActions(BEGIN);
 	}
 

@@ -31,6 +31,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import ummisco.gama.dev.utils.DEBUG;
+
 /**
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
@@ -129,21 +131,21 @@ public class SVGLoader extends DefaultHandler {
 
 	@Override
 	public void startDocument() throws SAXException {
-		// System.err.println("Start doc");
+		// DEBUG.ERR("Start doc");
 
 		// buildStack.clear();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		// System.err.println("End doc");
+		// DEBUG.ERR("End doc");
 	}
 
 	@Override
 	public void startElement(final String namespaceURI, String sName, final String qName, final Attributes attrs)
 			throws SAXException {
 		if (verbose) {
-			System.err.println(printIndent(indent, " ") + "Starting parse of tag " + sName + ": " + namespaceURI);
+			DEBUG.ERR(printIndent(indent, " ") + "Starting parse of tag " + sName + ": " + namespaceURI);
 		}
 		indent++;
 
@@ -159,14 +161,14 @@ public class SVGLoader extends DefaultHandler {
 		final Object obj = nodeClasses.get(sName);
 		if (obj == null) {
 			if (!ignoreClasses.contains(sName)) {
-				System.err.println("SVGLoader: Could not identify tag '" + sName + "'");
+				DEBUG.ERR("SVGLoader: Could not identify tag '" + sName + "'");
 			}
 			return;
 		}
 
 		// Debug info tag depth
 		// for (int i = 0; i < buildStack.size(); i++) System.err.print(" ");
-		// System.err.println("+" + sName);
+		// DEBUG.ERR("+" + sName);
 
 		try {
 			final Class<?> cls = (Class<?>) obj;
@@ -190,7 +192,7 @@ public class SVGLoader extends DefaultHandler {
 	public void endElement(final String namespaceURI, String sName, final String qName) throws SAXException {
 		indent--;
 		if (verbose) {
-			System.err.println(printIndent(indent, " ") + "Ending parse of tag " + sName + ": " + namespaceURI);
+			DEBUG.ERR(printIndent(indent, " ") + "Ending parse of tag " + sName + ": " + namespaceURI);
 		}
 
 		if (skipNonSVGTagDepth != 0) {
@@ -205,7 +207,7 @@ public class SVGLoader extends DefaultHandler {
 
 		// Debug info tag depth
 		// for (int i = 0; i < buildStack.size(); i++) System.err.print(" ");
-		// System.err.println("-" + sName);
+		// DEBUG.ERR("-" + sName);
 
 		try {
 			final SVGElement svgEle = buildStack.removeLast();

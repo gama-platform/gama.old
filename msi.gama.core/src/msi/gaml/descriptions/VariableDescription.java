@@ -52,11 +52,12 @@ public class VariableDescription extends SymbolDescription {
 	// }
 
 	private static Map<String, Collection<String>> dependencies = new THashMap<>();
-	public static Set<String> INIT_DEPENDENCIES_FACETS =
+	public final static Set<String> INIT_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE, AMONG).build();
-	public static Set<String> UPDATE_DEPENDENCIES_FACETS =
+	public final static Set<String> UPDATE_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX).build();
-	public static Set<String> FUNCTION_DEPENDENCIES_FACETS = ImmutableSet.<String> builder().add(FUNCTION).build();
+	public final static Set<String> FUNCTION_DEPENDENCIES_FACETS =
+			ImmutableSet.<String> builder().add(FUNCTION).build();
 	private String plugin;
 
 	private final boolean _isGlobal, _isNotModifiable;
@@ -279,8 +280,7 @@ public class VariableDescription extends SymbolDescription {
 		final String title = getGamlType().getTitle()
 				+ (isParameter() ? " parameter " : isNotModifiable() ? " constant " : " attribute ") + getName();
 		if (getEnclosingDescription() == null) { return title; }
-		final String s = title + " of " + this.getEnclosingDescription().getTitle() + "<br/>";
-		return s;
+		return title + " of " + this.getEnclosingDescription().getTitle() + "<br/>";
 	}
 
 	@Override

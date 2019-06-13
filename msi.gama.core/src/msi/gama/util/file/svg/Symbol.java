@@ -81,10 +81,7 @@ public class Symbol extends Group {
 	protected boolean outsideClip(final Graphics2D g) throws SVGException {
 		g.getClipBounds(clipBounds);
 		final Rectangle2D rect = super.getBoundingBox();
-		if (rect.intersects(clipBounds)) { return false; }
-
-		return true;
-
+		return !rect.intersects(clipBounds);
 	}
 
 	@Override

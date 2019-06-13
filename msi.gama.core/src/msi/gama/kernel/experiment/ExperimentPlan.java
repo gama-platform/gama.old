@@ -605,7 +605,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	public IParameter.Batch getParameter(final String parameterName) {
 		final IParameter p = parameters.get(parameterName);
-		if (p != null && p instanceof IParameter.Batch) { return (IParameter.Batch) p; }
+		if (p instanceof IParameter.Batch) { return (IParameter.Batch) p; }
 		return null;
 	}
 

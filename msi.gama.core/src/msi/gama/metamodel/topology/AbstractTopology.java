@@ -422,7 +422,6 @@ public abstract class AbstractTopology implements ITopology {
 			IAgent result = null;
 			double distMax = Double.MIN_VALUE;
 			final IContainer<?, ? extends IShape> agents = getFilteredAgents(source, scope, filter);
-			System.out.println("agent:  " + agents);
 			for (final IShape s : agents.iterable(scope)) {
 				if (s instanceof IAgent) {
 					final double dist = this.distanceBetween(scope, source, s);

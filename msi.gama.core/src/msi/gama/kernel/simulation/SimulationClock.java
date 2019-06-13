@@ -310,8 +310,7 @@ public class SimulationClock {
 		@Override
 		public String getInfo() {
 			final int cycle = getCycle();
-			final String info = "Experiment: " + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed";
-			return info;
+			return "Experiment: " + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed";
 		}
 
 	}

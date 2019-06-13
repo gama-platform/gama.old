@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
@@ -401,8 +400,10 @@ public class FileUtils {
 				pathName = ROOT.getPathVariableManager().resolvePath(new Path(pathName)).toOSString();
 				// pathName = ROOT.getPathVariableManager().resolveURI(uri).getPath();
 				final java.nio.file.Path p = new File(pathName).toPath();
-				Files.deleteIfExists(p);
-				Files.copy(in, p, StandardCopyOption.REPLACE_EXISTING);
+				if (Files.exists(p)) {
+					Files.delete(p);
+				}
+				Files.copy(in, p);
 			}
 		} catch (final IOException | WebbException e) {
 			throw GamaRuntimeException.create(e, scope);

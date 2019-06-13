@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.RemoveStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.RemoveStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -42,64 +42,194 @@ import msi.gaml.types.IType;
  *
  */
 
-@facets(value = {
-		@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true, doc = @doc("any expression to remove from the container")),
-		@facet(name = IKeyword.FROM, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT,
-				IType.GEOMETRY }, optional = false, doc = { @doc("an expression that evaluates to a container") }),
-		@facet(name = IKeyword.INDEX, type = IType.NONE, optional = true, doc = @doc("any expression, the key at which to remove the element from the container ")),
-		@facet(name = IKeyword.EDGE, type = IType.NONE, optional = true, doc = @doc(deprecated = "Use 'remove edge(item)...' instead", value = "Indicates that the item to remove should be considered as an edge of the receiving graph")),
-		@facet(name = IKeyword.VERTEX, type = IType.NONE, optional = true, doc = {
-				@doc(deprecated = "Use 'remove node(item)' instead") }),
-		@facet(name = IKeyword.NODE, type = IType.NONE, optional = true, doc = @doc(deprecated = "Use 'remove node(item)...' instead", value = "Indicates that the item to remove should be considered as a node of the receiving graph")),
-		@facet(name = IKeyword.KEY, type = IType.NONE, optional = true, doc = @doc("any expression, the key at which to remove the element from the container ")),
-		@facet(name = IKeyword.ALL, type = IType.NONE, optional = true, doc = @doc("an expression that evaluates to a container. If it is true and if the value a list, it removes the first instance of each element of the list. If it is true and the value is not a container, it will remove all instances of this value.")) }, omissible = IKeyword.ITEM)
-@symbol(name = IKeyword.REMOVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
-		IConcept.CONTAINER, IConcept.GRAPH, IConcept.NODE, IConcept.EDGE, IConcept.ATTRIBUTE, IConcept.SPECIES,
-		IConcept.MAP, IConcept.MATRIX, IConcept.LIST })
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER }, symbols = IKeyword.CHART)
-@doc(value = "Allows the agent to remove an element from a container (a list, matrix, map...).", usages = {
-		@usage(value = "This statement should be used in the following ways, depending on the kind of container used and the expected action on it:", examples = {
-				@example(value = "remove expr from: expr_container;", isExecutable = false),
-				@example(value = "remove index: expr from: expr_container;", isExecutable = false),
-				@example(value = "remove key: expr from: expr_container;", isExecutable = false),
-				@example(value = "remove all: expr from: expr_container;", isExecutable = false) }),
-		@usage(value = "In the case of list, the facet `item:` is used to remove the first occurence of a given expression, whereas `all` is used to remove all the occurrences of the given expression.", examples = {
-				@example("list<int> removeList <- [3,2,1,2,3];"),
-				@example(value = "remove 2 from: removeList;", var = "removeList", equals = "[3,1,2,3]", returnType = "null"),
-				@example(value = "remove 3 all: true from: removeList;", var = "removeList", equals = "[1,2]", returnType = "null"),
-				@example(value = "remove index: 1 from: removeList;", var = "removeList", equals = "[1]", returnType = "null") }),
-		@usage(value = "In the case of map, the facet `key:` is used to remove the pair identified by the given key.", examples = {
-				@example("map<string,int> removeMap <- [\"x\"::5, \"y\"::7, \"z\"::7];"),
-				@example(value = "remove key: \"x\" from: removeMap;", var = "removeMap", equals = "[\"y\"::7, \"z\"::7]", returnType = "null"),
-				@example(value = "remove 7 all: true from: removeMap;", var = "removeMap", equals = "map([])", returnType = "null") }),
-		@usage(value = "In addition, a map a be managed as a list with pair key as index. Given that, facets item:, all: and index: can be used in the same way:", examples = {
-				@example("map<string,int> removeMapList <- [\"x\"::5, \"y\"::7, \"z\"::7, \"t\"::5];"),
-				@example(value = "remove 7 from: removeMapList;", var = "removeMapList", equals = "[\"x\"::5, \"z\"::7, \"t\"::5]", returnType = "null"),
-				@example(value = "remove [5,7] all: true from: removeMapList;", var = "removeMapList", equals = "[\"t\"::5]", returnType = "null"),
-				@example(value = "remove index: \"t\" from: removeMapList;", var = "removeMapList", equals = "map([])", returnType = "null") }),
-		@usage(value = "In the case of a graph, both edges and nodes can be removes using node: and edge facets. If a node is removed, all edges to and from this node are also removed.", examples = {
-				@example("graph removeGraph <- as_edge_graph([{1,2}::{3,4},{3,4}::{5,6}]);"),
-				@example(value = "remove node: {1,2} from: removeGraph;"),
-				@example(value = "remove node(1,2) from: removeGraph;"),
-				@example(value = "removeGraph.vertices", returnType = "list", equals = "[{3,4},{5,6}]"),
-				@example(value = "removeGraph.edges", returnType = "list", equals = "[polyline({3,4}::{5,6})]"),
-				@example(value = "remove edge: {3,4}::{5,6} from: removeGraph;"),
-				@example(value = "remove edge({3,4},{5,6}) from: removeGraph;"),
-				@example(value = "removeGraph.vertices", returnType = "list", equals = "[{3,4},{5,6}]"),
-				@example(value = "removeGraph.edges", returnType = "list", equals = "[]") }),
-		@usage(value = "In the case of an agent or a shape, `remove` allows to remove an attribute from the attributes map of the receiver. However, for agents, it will only remove attributes that have been added dynamically, not the ones defined in the species or in its built-in parent.", examples = {
-				@example(value = "global {", isExecutable = false), @example(value = "   init {", isExecutable = false),
-				@example(value = "      create speciesRemove;", isExecutable = false),
-				@example(value = "      speciesRemove sR <- speciesRemove(0); 	// sR.a now equals 100", isExecutable = false),
-				@example(value = "      remove key:\"a\" from: sR; 	// sR.a now equals nil", isExecutable = false),
-				@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false),
-				@example(value = "", isExecutable = false),
-				@example(value = "species speciesRemove {", isExecutable = false),
-				@example(value = "   int a <- 100; ", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "This statement can not be used on *matrix*.") }, see = { "add", "put" })
-@serializer(RemoveSerializer.class)
-@validator(ContainerValidator.class)
+@facets (
+		value = { @facet (
+				name = IKeyword.ITEM,
+				type = IType.NONE,
+				optional = true,
+				doc = @doc ("any expression to remove from the container")),
+				@facet (
+						name = IKeyword.FROM,
+						type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY },
+						optional = false,
+						doc = { @doc ("an expression that evaluates to a container") }),
+				@facet (
+						name = IKeyword.INDEX,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("any expression, the key at which to remove the element from the container ")),
+				@facet (
+						name = IKeyword.EDGE,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc (
+								deprecated = "Use 'remove edge(item)...' instead",
+								value = "Indicates that the item to remove should be considered as an edge of the receiving graph")),
+				@facet (
+						name = IKeyword.VERTEX,
+						type = IType.NONE,
+						optional = true,
+						doc = { @doc (
+								deprecated = "Use 'remove node(item)' instead") }),
+				@facet (
+						name = IKeyword.NODE,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc (
+								deprecated = "Use 'remove node(item)...' instead",
+								value = "Indicates that the item to remove should be considered as a node of the receiving graph")),
+				@facet (
+						name = IKeyword.KEY,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("any expression, the key at which to remove the element from the container ")),
+				@facet (
+						name = IKeyword.ALL,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("an expression that evaluates to a container. If it is true and if the value a list, it removes the first instance of each element of the list. If it is true and the value is not a container, it will remove all instances of this value.")) },
+		omissible = IKeyword.ITEM)
+@symbol (
+		name = IKeyword.REMOVE,
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		with_sequence = false,
+		concept = { IConcept.CONTAINER, IConcept.GRAPH, IConcept.NODE, IConcept.EDGE, IConcept.ATTRIBUTE,
+				IConcept.SPECIES, IConcept.MAP, IConcept.MATRIX, IConcept.LIST })
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER },
+		symbols = IKeyword.CHART)
+@doc (
+		value = "Allows the agent to remove an element from a container (a list, matrix, map...).",
+		usages = { @usage (
+				value = "This statement should be used in the following ways, depending on the kind of container used and the expected action on it:",
+				examples = { @example (
+						value = "remove expr from: expr_container;",
+						isExecutable = false),
+						@example (
+								value = "remove index: expr from: expr_container;",
+								isExecutable = false),
+						@example (
+								value = "remove key: expr from: expr_container;",
+								isExecutable = false),
+						@example (
+								value = "remove all: expr from: expr_container;",
+								isExecutable = false) }),
+				@usage (
+						value = "In the case of list, the facet `item:` is used to remove the first occurence of a given expression, whereas `all` is used to remove all the occurrences of the given expression.",
+						examples = { @example ("list<int> removeList <- [3,2,1,2,3];"), @example (
+								value = "remove 2 from: removeList;",
+								var = "removeList",
+								equals = "[3,1,2,3]",
+								returnType = "null"),
+								@example (
+										value = "remove 3 all: true from: removeList;",
+										var = "removeList",
+										equals = "[1,2]",
+										returnType = "null"),
+								@example (
+										value = "remove index: 1 from: removeList;",
+										var = "removeList",
+										equals = "[1]",
+										returnType = "null") }),
+				@usage (
+						value = "In the case of map, the facet `key:` is used to remove the pair identified by the given key.",
+						examples = { @example ("map<string,int> removeMap <- [\"x\"::5, \"y\"::7, \"z\"::7];"),
+								@example (
+										value = "remove key: \"x\" from: removeMap;",
+										var = "removeMap",
+										equals = "[\"y\"::7, \"z\"::7]",
+										returnType = "null"),
+								@example (
+										value = "remove 7 all: true from: removeMap;",
+										var = "removeMap",
+										equals = "map([])",
+										returnType = "null") }),
+				@usage (
+						value = "In addition, a map a be managed as a list with pair key as index. Given that, facets item:, all: and index: can be used in the same way:",
+						examples = {
+								@example ("map<string,int> removeMapList <- [\"x\"::5, \"y\"::7, \"z\"::7, \"t\"::5];"),
+								@example (
+										value = "remove 7 from: removeMapList;",
+										var = "removeMapList",
+										equals = "[\"x\"::5, \"z\"::7, \"t\"::5]",
+										returnType = "null"),
+								@example (
+										value = "remove [5,7] all: true from: removeMapList;",
+										var = "removeMapList",
+										equals = "[\"t\"::5]",
+										returnType = "null"),
+								@example (
+										value = "remove index: \"t\" from: removeMapList;",
+										var = "removeMapList",
+										equals = "map([])",
+										returnType = "null") }),
+				@usage (
+						value = "In the case of a graph, both edges and nodes can be removes using node: and edge facets. If a node is removed, all edges to and from this node are also removed.",
+						examples = { @example ("graph removeGraph <- as_edge_graph([{1,2}::{3,4},{3,4}::{5,6}]);"),
+								@example (
+										value = "remove node: {1,2} from: removeGraph;"),
+								@example (
+										value = "remove node(1,2) from: removeGraph;"),
+								@example (
+										value = "removeGraph.vertices",
+										returnType = "list",
+										equals = "[{3,4},{5,6}]"),
+								@example (
+										value = "removeGraph.edges",
+										returnType = "list",
+										equals = "[polyline({3,4}::{5,6})]"),
+								@example (
+										value = "remove edge: {3,4}::{5,6} from: removeGraph;"),
+								@example (
+										value = "remove edge({3,4},{5,6}) from: removeGraph;"),
+								@example (
+										value = "removeGraph.vertices",
+										returnType = "list",
+										equals = "[{3,4},{5,6}]"),
+								@example (
+										value = "removeGraph.edges",
+										returnType = "list",
+										equals = "[]") }),
+				@usage (
+						value = "In the case of an agent or a shape, `remove` allows to remove an attribute from the attributes map of the receiver. However, for agents, it will only remove attributes that have been added dynamically, not the ones defined in the species or in its built-in parent.",
+						examples = { @example (
+								value = "global {",
+								isExecutable = false),
+								@example (
+										value = "   init {",
+										isExecutable = false),
+								@example (
+										value = "      create speciesRemove;",
+										isExecutable = false),
+								@example (
+										value = "      speciesRemove sR <- speciesRemove(0); 	// sR.a now equals 100",
+										isExecutable = false),
+								@example (
+										value = "      remove key:\"a\" from: sR; 	// sR.a now equals nil",
+										isExecutable = false),
+								@example (
+										value = "   }",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false),
+								@example (
+										value = "",
+										isExecutable = false),
+								@example (
+										value = "species speciesRemove {",
+										isExecutable = false),
+								@example (
+										value = "   int a <- 100; ",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false) }),
+				@usage (
+						value = "This statement can not be used on *matrix*.") },
+		see = { "add", "put" })
+@serializer (RemoveSerializer.class)
+@validator (ContainerValidator.class)
 public class RemoveStatement extends AbstractContainerStatement {
 
 	public static class RemoveSerializer extends SymbolSerializer<StatementDescription> {
@@ -126,7 +256,7 @@ public class RemoveStatement extends AbstractContainerStatement {
 		setName("remove from " + list.serialize(false));
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 			final IContainer.Modifiable container) throws GamaRuntimeException {
@@ -165,7 +295,6 @@ public class RemoveStatement extends AbstractContainerStatement {
 
 	@Override
 	protected Object buildIndex(final IScope scope, final IGraph container) {
-		final Object o = this.index.value(scope);
-		return o;
+		return this.index.value(scope);
 	}
 }

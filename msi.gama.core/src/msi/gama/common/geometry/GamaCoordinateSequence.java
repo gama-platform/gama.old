@@ -252,8 +252,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 			// CW property is ensured by reversing the resulting array
 			points2[i] = points[size - i - 1].yNegated();
 		}
-		final GamaCoordinateSequence result = new GamaCoordinateSequence(false, points2);
-		return result;
+		return new GamaCoordinateSequence(false, points2);
 	}
 
 	@Override

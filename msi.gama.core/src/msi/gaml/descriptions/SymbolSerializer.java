@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SymbolSerializer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.SymbolSerializer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -60,8 +60,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
 			if (key.equals(TYPE) || key.equals(OF) || key.equals(INDEX)) { return null; }
-			if (key.equals(CONST) && s.hasFacet(CONST)
-					&& s.getFacet(key).serialize(includingBuiltIn).equals(FALSE)) { return null; }
+			if (key.equals(CONST) && s.hasFacet(CONST) && s.getFacet(key).serialize(includingBuiltIn).equals(FALSE)) {
+				return null;
+			}
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
@@ -266,7 +267,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	/**
 	 * Method serialize()
-	 * 
+	 *
 	 * @see msi.gaml.descriptions.IDescriptionSerializer#serialize(msi.gaml.descriptions.IDescription)
 	 */
 	public final String serialize(final SymbolDescription symbolDescription, final boolean includingBuiltIn) {
@@ -304,7 +305,6 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		});
 		if (childBuilder.length() == 0) {
 			sb.append(';');
-			return;
 		} else {
 			sb.append(' ').append('{').append(Strings.LN);
 			sb.append(childBuilder);
@@ -346,7 +346,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	/**
 	 * Return null to exclude a facet
-	 * 
+	 *
 	 * @param symbolDescription
 	 * @param key
 	 * @return

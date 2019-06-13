@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.IType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.IType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -28,101 +28,101 @@ import msi.gaml.expressions.IExpression;
  */
 public interface IType<Support> extends IGamlDescription, ITyped {
 
-	public static String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };
+	String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };
 
 	/** Constant fields to indicate the types of facets */
-	public static final int LABEL = -200;
-	public static final int ID = -201;
-	public static final int TYPE_ID = -202;
-	public static final int NEW_VAR_ID = -203;
-	public static final int NEW_TEMP_ID = -204;
+	int LABEL = -200;
+	int ID = -201;
+	int TYPE_ID = -202;
+	int NEW_VAR_ID = -203;
+	int NEW_TEMP_ID = -204;
 
-	public static final int NONE = 0;
-	public final static int INT = 1;
-	public final static int FLOAT = 2;
-	public final static int BOOL = 3;
-	public final static int STRING = 4;
-	public final static int LIST = 5;
-	public final static int COLOR = 6;
-	public final static int POINT = 7;
-	public final static int MATRIX = 8;
-	public final static int PAIR = 9;
-	public final static int MAP = 10;
-	public final static int AGENT = 11;
-	public final static int FILE = 12;
-	public static final int GEOMETRY = 13;
-	public final static int SPECIES = 14;
-	public static final int GRAPH = 15;
-	public static final int CONTAINER = 16;
-	public static final int PATH = 17;
-	public static final int TOPOLOGY = 18;
-	public static final int FONT = 19;
-	public static final int IMAGE = 20;
-	public final static int REGRESSION = 21;
-	public final static int SKILL = 22;
-	public final static int DATE = 23;
-	public final static int MESSAGE = 24;
-	public final static int MATERIAL = 25;
-	public final static int ACTION = 26;
-	public final static int ATTRIBUTES = 27;
+	int NONE = 0;
+	int INT = 1;
+	int FLOAT = 2;
+	int BOOL = 3;
+	int STRING = 4;
+	int LIST = 5;
+	int COLOR = 6;
+	int POINT = 7;
+	int MATRIX = 8;
+	int PAIR = 9;
+	int MAP = 10;
+	int AGENT = 11;
+	int FILE = 12;
+	int GEOMETRY = 13;
+	int SPECIES = 14;
+	int GRAPH = 15;
+	int CONTAINER = 16;
+	int PATH = 17;
+	int TOPOLOGY = 18;
+	int FONT = 19;
+	int IMAGE = 20;
+	int REGRESSION = 21;
+	int SKILL = 22;
+	int DATE = 23;
+	int MESSAGE = 24;
+	int MATERIAL = 25;
+	int ACTION = 26;
+	int ATTRIBUTES = 27;
 
-	public final static int KML = 29;
+	int KML = 29;
 	// Represents the meta-type (type of values type)
-	public final static int TYPE = 28;
-	public final static int AVAILABLE_TYPES = 50;
-	public final static int SPECIES_TYPES = 100;
+	int TYPE = 28;
+	int AVAILABLE_TYPES = 50;
+	int SPECIES_TYPES = 100;
 
-	public Support cast(IScope scope, Object obj, Object param, boolean copy);
+	Support cast(IScope scope, Object obj, Object param, boolean copy);
 
-	public Support cast(IScope scope, Object obj, Object param, IType<?> keyType, IType<?> contentType, boolean copy);
+	Support cast(IScope scope, Object obj, Object param, IType<?> keyType, IType<?> contentType, boolean copy);
 
-	public int id();
+	int id();
 
-	public Class<? extends Support> toClass();
+	Class<? extends Support> toClass();
 
-	public Support getDefault();
+	Support getDefault();
 
-	public int getVarKind();
+	int getVarKind();
 
-	public OperatorProto getGetter(String name);
+	OperatorProto getGetter(String name);
 
-	public Map<String, OperatorProto> getFieldGetters();
+	Map<String, OperatorProto> getFieldGetters();
 
-	public boolean isAgentType();
+	boolean isAgentType();
 
-	public boolean isSkillType();
+	boolean isSkillType();
 
-	public boolean isParametricType();
+	boolean isParametricType();
 
-	public boolean isParametricFormOf(final IType<?> l);
+	boolean isParametricFormOf(final IType<?> l);
 
-	public String getSpeciesName();
+	String getSpeciesName();
 
-	public SpeciesDescription getSpecies();
+	SpeciesDescription getSpecies();
 
-	public boolean isAssignableFrom(IType<?> l);
+	boolean isAssignableFrom(IType<?> l);
 
-	public boolean isTranslatableInto(IType<?> t);
+	boolean isTranslatableInto(IType<?> t);
 
-	public void setParent(IType<? super Support> p);
+	void setParent(IType<? super Support> p);
 
-	public IType<?> getParent();
+	IType<?> getParent();
 
 	IType<?> coerce(IType<?> expr, IDescription context);
 
 	/**
 	 * returns the distance between two types
-	 * 
+	 *
 	 * @param originalChildType
 	 * @return
 	 */
-	public int distanceTo(IType<?> originalChildType);
+	int distanceTo(IType<?> originalChildType);
 
 	/**
 	 * @param n
 	 * @param typeFieldExpression
 	 */
-	public void setFieldGetters(Map<String, OperatorProto> map);
+	void setFieldGetters(Map<String, OperatorProto> map);
 
 	/**
 	 * @param c
@@ -130,36 +130,36 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 */
 	boolean canBeTypeOf(IScope s, Object c);
 
-	public void init(int varKind, final int id, final String name, final Class<Support> clazz);
+	void init(int varKind, final int id, final String name, final Class<Support> clazz);
 
 	/**
 	 * Whether or not this type can be considered as having a contents. True for all containers and special types (like
 	 * rgb, species, etc.)
-	 * 
+	 *
 	 * @return
 	 */
 	// public abstract boolean hasContents();
 
-	public abstract boolean isContainer();
+	boolean isContainer();
 
 	/**
 	 * Whether or not this type can be used in add or remove statements
-	 * 
+	 *
 	 * @return
 	 */
-	public abstract boolean isFixedLength();
+	boolean isFixedLength();
 
 	/**
 	 * Tries to find a common supertype shared between this and the argument.
-	 * 
+	 *
 	 * @param iType
 	 * @return
 	 */
-	public IType<? super Support> findCommonSupertypeWith(IType<?> iType);
+	IType<? super Support> findCommonSupertypeWith(IType<?> iType);
 
-	public boolean isParented();
+	boolean isParented();
 
-	public void setSupport(Class<Support> clazz);
+	void setSupport(Class<Support> clazz);
 
 	/**
 	 * @param context
@@ -168,50 +168,49 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 * @param exp
 	 * @return
 	 */
-	public IType<?> typeIfCasting(final IExpression exp);
+	IType<?> typeIfCasting(final IExpression exp);
 
-	public IType<?> getContentType();
+	IType<?> getContentType();
 
-	public IType<?> getKeyType();
-
-	/**
-	 * @return
-	 */
-	public boolean canCastToConst();
+	IType<?> getKeyType();
 
 	/**
 	 * @return
 	 */
-	public String asPattern();
+	boolean canCastToConst();
+
+	/**
+	 * @return
+	 */
+	String asPattern();
 
 	/**
 	 * @param plugin
 	 *            name
 	 */
-	public void setDefiningPlugin(String plugin);
+	void setDefiningPlugin(String plugin);
 
-	public boolean isNumber();
+	boolean isNumber();
 
 	/**
 	 * @return
 	 */
-	public boolean isDrawable();
+	boolean isDrawable();
 
-	public default boolean isComparable() {
-		if (Comparable.class.isAssignableFrom(toClass())) { return true; }
-		return false;
+	default boolean isComparable() {
+		return Comparable.class.isAssignableFrom(toClass());
 	}
 
-	public IType<?> getWrappedType();
+	IType<?> getWrappedType();
 
 	SpeciesDescription getDenotedSpecies();
 
 	/**
 	 * Denotes a type that has components which can be exctracted when casting it to a container (for instance, points
 	 * have float components). The inner type is returned by getContentType(). Containers are compound types by default
-	 * 
+	 *
 	 * @return true if the type represents a compound value which components can be extracted
 	 */
-	public boolean isCompoundType();
+	boolean isCompoundType();
 
 }

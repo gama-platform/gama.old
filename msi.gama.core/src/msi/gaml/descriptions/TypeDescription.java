@@ -655,7 +655,6 @@ public abstract class TypeDescription extends SymbolDescription {
 			final String error = "The  type of argument  " + differentType
 					+ " is not compatible with that in the definition of " + actionName + " in " + parentName;
 			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement());
-			return;
 		}
 
 		// final Map<String, IType<?>> myMap = StreamEx.of(myArgs.iterator()).toMap(d -> d.getName(), d -> d.getType());
@@ -733,8 +732,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (actions == null) { return true; }
 		return actions.forEachValue(each -> {
 			if (!visitor.visit(each)) { return false; }
-			if (!each.visitOwnChildrenRecursively(visitor)) { return false; }
-			return true;
+			return each.visitOwnChildrenRecursively(visitor);
 		});
 	}
 

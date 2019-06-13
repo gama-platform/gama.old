@@ -405,7 +405,7 @@ abstract public class SVGElement implements Serializable {
 	}
 
 	protected SVGElement getParentContext() {
-		return contexts.isEmpty() ? null : (SVGElement) contexts.getLast();
+		return contexts.isEmpty() ? null : contexts.getLast();
 	}
 
 	/*

@@ -87,7 +87,6 @@ public class WeightedTaskStatement extends AbstractStatementSequence {
 				description.error("A " + description.getKeyword()
 						+ " can only be defined in a task-controlled species  (one of" + AllowedArchitectures + ")",
 						IGamlIssue.WRONG_CONTEXT);
-				return;
 			}
 		}
 	}

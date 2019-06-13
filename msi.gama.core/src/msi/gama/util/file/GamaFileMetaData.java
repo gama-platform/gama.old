@@ -85,9 +85,6 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 	}
 
 	@Override
-	public abstract String getSuffix();
-
-	@Override
 	public Object getThumbnail() {
 		return null;
 	}

@@ -435,9 +435,6 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	abstract class MapBackedView<E> extends AbstractSet<E> {
 
-		@Override
-		public abstract Iterator<E> iterator();
-
 		public abstract boolean removeElement(E key);
 
 		public abstract boolean containsElement(E key);
@@ -768,9 +765,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		int index = -1;
 		for (int insert = 0; insert <= _lastInsertOrderIndex; insert++) {
 			final int keyIndex = _indicesByInsertOrder[insert];
-			if (keyIndex == EMPTY) {
-				continue;
-			} else {
+			if (keyIndex != EMPTY) {
 				index++;
 				if (index == i) { return _values[keyIndex]; }
 			}

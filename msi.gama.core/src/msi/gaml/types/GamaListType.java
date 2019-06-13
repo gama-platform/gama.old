@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaListType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaListType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -42,8 +42,7 @@ public class GamaListType extends GamaContainerType<IList> {
 	@Override
 	public IList cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 			final IType contentsType, final boolean copy) throws GamaRuntimeException {
-		final IList list = staticCast(scope, obj, contentsType, copy);
-		return list;
+		return staticCast(scope, obj, contentsType, copy);
 	}
 
 	public static IList staticCast(final IScope scope, final Object obj, final IType ct, final boolean copy)
@@ -71,8 +70,9 @@ public class GamaListType extends GamaContainerType<IList> {
 			final GamaPoint point = (GamaPoint) obj;
 			return GamaListFactory.create(scope, contentsType, new double[] { point.x, point.y, point.z });
 		}
-		if (obj instanceof String) { return GamaListFactory.create(scope, contentsType,
-				StringUtils.tokenize((String) obj)); }
+		if (obj instanceof String) {
+			return GamaListFactory.create(scope, contentsType, StringUtils.tokenize((String) obj));
+		}
 		return GamaListFactory.create(scope, contentsType, new Object[] { obj });
 	}
 

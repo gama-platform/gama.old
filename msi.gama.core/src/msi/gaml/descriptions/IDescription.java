@@ -152,8 +152,7 @@ public interface IDescription
 	 * The Constant VALIDATING_VISITOR.
 	 */
 	DescriptionVisitor VALIDATING_VISITOR = desc -> {
-		if (desc.validate() == null) { return false; }
-		return true;
+		return desc.validate() != null;
 
 	};
 

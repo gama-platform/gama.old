@@ -41,7 +41,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 		if (strings != null) {
 			setUp(strings.length / 2);
 			int index = 0;
-			if (!(strings.length % 2 == 0)) {
+			if (strings.length % 2 != 0) {
 				index = 1;
 			}
 			for (; index < strings.length; index += 2) {

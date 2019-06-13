@@ -283,8 +283,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			if (type.isDrawable()) { return true; }
 			// In case we have a generic file operator, for instance
 			type = type.typeIfCasting(exp);
-			if (type.isDrawable()) { return true; }
-			return false;
+			return type.isDrawable();
 		}
 
 	}

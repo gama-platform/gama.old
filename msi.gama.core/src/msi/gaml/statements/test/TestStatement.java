@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.test.TestStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.test.TestStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.test;
 
@@ -139,12 +139,8 @@ public class TestStatement extends AbstractStatementSequence implements WithTest
 				try {
 					// TODO Verify this call (wrt IScope.execute())
 					lastResult = statement.executeOn(scope);
-				} catch (final GamaAssertException e) {
-					continue;
-				} catch (final GamaRuntimeException e) {
-					if (statement instanceof AssertStatement) {
-						continue;
-					} else {
+				} catch (final GamaAssertException e) {} catch (final GamaRuntimeException e) {
+					if (statement instanceof AssertStatement) {} else {
 						getSummary().setState(TestState.ABORTED);
 						getSummary().setError(e.getMessage());
 					}

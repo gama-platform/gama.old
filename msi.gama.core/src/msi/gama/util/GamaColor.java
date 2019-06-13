@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaColor.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.GamaColor.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -82,8 +82,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	}
 
 	public static GamaColor getNamed(final String rgb) {
-		final GamaColor result = colors.get(rgb);
-		return result;
+		return colors.get(rgb);
 	}
 
 	static {
@@ -271,7 +270,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 
 	/**
 	 * Method getType()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override

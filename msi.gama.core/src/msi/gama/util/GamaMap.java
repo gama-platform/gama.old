@@ -1,14 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaMap.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.GamaMap.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
+
+import static msi.gama.util.GamaMapFactory.createWithoutCasting;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -18,12 +20,12 @@ import com.google.common.base.Objects;
 
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
@@ -94,7 +96,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Returns the list of values by default (NOT the list of pairs) Method listValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -171,7 +173,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method add()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
@@ -187,7 +189,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method add()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -201,7 +203,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method put()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#put(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -213,7 +215,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method addAll()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#addAll(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
 	@Override
@@ -230,7 +232,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method setAll()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#setAll(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
@@ -245,7 +247,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method remove()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#remove(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
@@ -279,7 +281,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method removeAt()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#removeAt(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
@@ -289,7 +291,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method removeAll()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
 	@Override
@@ -302,7 +304,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method removeAll()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
@@ -381,19 +383,15 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
-	@doc (value = "Specialization of the reverse operator for maps. Reverses keys and values",
+	@doc (
+			value = "Specialization of the reverse operator for maps. Reverses keys and values",
 			comment = "",
-			examples = {
-					@example("map<int,int> m <- [1::111,2::222, 3::333, 4::444];"),
-					@example (
-						  value = "reverse(m)", 
-						  equals = "map([111::1,222::2,333::3,444::4])"
-						  )
-		  			}
-			)
-	
-	@test("map<int,int> m <- [1::111,2::222, 3::333, 4::444]; reverse(m) = map([111::1,222::2,333::3,444::4])")
-	
+			examples = { @example ("map<int,int> m <- [1::111,2::222, 3::333, 4::444];"), @example (
+					value = "reverse(m)",
+					equals = "map([111::1,222::2,333::3,444::4])") })
+
+	@test ("map<int,int> m <- [1::111,2::222, 3::333, 4::444]; reverse(m) = map([111::1,222::2,333::3,444::4])")
+
 	@Override
 	public IContainer reverse(final IScope scope) {
 		final GamaMap map = new GamaMap(size(), getGamlType().getContentType(), getGamlType().getKeyType());
@@ -425,9 +423,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	@Override
 	public GamaMap copy(final IScope scope) {
-		final GamaMap result =
-				GamaMapFactory.createWithoutCasting(getGamlType().getKeyType(), getGamlType().getContentType(), this);
-		return result;
+		return createWithoutCasting(getGamlType().getKeyType(), getGamlType().getContentType(), this);
 	}
 
 	@Override
@@ -464,7 +460,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method checkBounds()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#checkBounds(java.lang.Object, boolean)
 	 */
 	@Override
@@ -474,7 +470,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method removeIndexes()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Modifiable#removeIndexes(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
 	@Override
@@ -486,7 +482,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method buildValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object,
 	 *      msi.gaml.types.IContainerType)
 	 */
@@ -505,7 +501,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method buildValues()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer,
 	 *      msi.gaml.types.IContainerType)
 	 */
@@ -515,7 +511,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	/**
 	 * Method buildIndex()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object,
 	 *      msi.gaml.types.IContainerType)
 	 */

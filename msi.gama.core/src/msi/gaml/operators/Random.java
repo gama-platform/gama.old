@@ -162,8 +162,7 @@ public class Random {
 		final double mid = min + range / 2.0;
 		final double unitGaussian = RANDOM(scope).createGaussian(0.0, 1.0);
 		final double biasFactor = Math.exp(bias);
-		final double retval = mid + range * (biasFactor / (biasFactor + Math.exp(-unitGaussian / skew)) - 0.5);
-		return retval;
+		return mid + range * (biasFactor / (biasFactor + Math.exp(-unitGaussian / skew)) - 0.5);
 	}
 
 	@operator (

@@ -27,18 +27,13 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
@@ -49,6 +44,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import msi.gama.common.util.ImageUtils;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Many SVG files can be loaded at one time. These files will quite likely need to reference one another. The SVG
@@ -101,8 +97,6 @@ public class SVGUniverse implements Serializable {
 	 */
 	public void clear() {
 		loadedDocs.clear();
-		// loadedFonts.clear();
-		// loadedImages.clear();
 	}
 
 	/**
@@ -337,8 +331,7 @@ public class SVGUniverse implements Serializable {
 
 		// Check for gzip magic number
 		if ((b1 << 8 | b0) == GZIPInputStream.GZIP_MAGIC) {
-			final GZIPInputStream iis = new GZIPInputStream(bin);
-			return iis;
+			return new GZIPInputStream(bin);
 		} else {
 			// Plain text
 			return bin;
@@ -469,13 +462,7 @@ public class SVGUniverse implements Serializable {
 		// Place this docment in the universe before it is completely loaded
 		// so that the load process can refer to references within it's current
 		// document
-		// System.err.println("SVGUniverse: loading dia " + xmlBase);
 		loadedDocs.put(xmlBase, handler.getLoadedDiagram());
-
-		// Use the default (non-validating) parser
-		// SAXParserFactory factory = SAXParserFactory.newInstance();
-		// factory.setValidating(false);
-		// factory.setNamespaceAware(true);
 
 		try {
 			// Parse the input
@@ -484,12 +471,10 @@ public class SVGUniverse implements Serializable {
 			reader.setContentHandler(handler);
 			reader.parse(is);
 
-			// SAXParser saxParser = factory.newSAXParser();
-			// saxParser.parse(new InputSource(new BufferedReader(is)), handler);
 			return xmlBase;
 		} catch (final SAXParseException sex) {
-			System.err.println("Error processing " + xmlBase);
-			System.err.println(sex.getMessage());
+			DEBUG.ERR("Error processing " + xmlBase);
+			DEBUG.ERR(sex.getMessage());
 
 			loadedDocs.remove(xmlBase);
 			return null;
@@ -500,39 +485,6 @@ public class SVGUniverse implements Serializable {
 		return null;
 	}
 
-	public static void main(final String argv[]) {
-		try {
-			final URL url = new URL("svgSalamander", "localhost", -1, "abc.svg", new URLStreamHandler() {
-				@Override
-				protected URLConnection openConnection(final URL u) {
-					return null;
-				}
-			});
-			// URL url2 = new URL("svgSalamander", "localhost", -1, "abc.svg");
-
-			// Investigate URI resolution
-			URI uriA, uriB, uriC;
-			final URI uriD, uriE;
-
-			uriA = new URI("svgSalamander", "/names/mySpecialName", null);
-			// uriA = new URI("http://www.kitfox.com/salamander");
-			// uriA = new URI("svgSalamander://mySpecialName/grape");
-			System.err.println(uriA.toString());
-			System.err.println(uriA.getScheme());
-
-			uriB = uriA.resolve("#begin");
-			System.err.println(uriB.toString());
-
-			uriC = uriA.resolve("tree#boing");
-			System.err.println(uriC.toString());
-
-			uriC = uriA.resolve("../tree#boing");
-			System.err.println(uriC.toString());
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public boolean isVerbose() {
 		return verbose;
 	}
@@ -541,20 +493,4 @@ public class SVGUniverse implements Serializable {
 		this.verbose = verbose;
 	}
 
-	/**
-	 * Uses serialization to duplicate this universe.
-	 */
-	public SVGUniverse duplicate() throws IOException, ClassNotFoundException {
-		final ByteArrayOutputStream bs = new ByteArrayOutputStream();
-		final ObjectOutputStream os = new ObjectOutputStream(bs);
-		os.writeObject(this);
-		os.close();
-
-		final ByteArrayInputStream bin = new ByteArrayInputStream(bs.toByteArray());
-		final ObjectInputStream is = new ObjectInputStream(bin);
-		final SVGUniverse universe = (SVGUniverse) is.readObject();
-		is.close();
-
-		return universe;
-	}
 }

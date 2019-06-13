@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaAgentType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaAgentType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -50,8 +50,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 			// Hack to circumvent issue #1999. Should be better handled by
 			// letting type managers of comodels inherit from the type managers
 			// of imported models.
-			if (t.isAgentType() && t.getSpecies() == getSpecies())
-				return true;
+			if (t.isAgentType() && t.getSpecies() == getSpecies()) { return true; }
 		}
 		return assignable;
 	}
@@ -73,8 +72,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 		if (obj instanceof IAgent) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
 		if (obj instanceof Integer) { return scope.getAgent().getPopulationFor(species).getAgent((Integer) obj); }
 		if (obj instanceof ILocation) {
-			final IAgent result = scope.getAgent().getPopulationFor(species).getAgent(scope, (ILocation) obj);
-			return result;
+			return scope.getAgent().getPopulationFor(species).getAgent(scope, (ILocation) obj);
 		}
 		return null;
 	}

@@ -247,7 +247,6 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				}
 				if (name != null) {
 					description.error("No variable should be declared", IGamlIssue.UNUSED, NAME);
-					return;
 				}
 			} else if (over != null) {
 				if (cond != null) {
@@ -266,7 +265,6 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				}
 				if (name == null) {
 					description.error("No variable has been declared", IGamlIssue.MISSING_NAME, OVER);
-					return;
 				}
 			} else if (cond != null) {
 				if (from != null) {
@@ -280,7 +278,6 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				}
 				if (name != null) {
 					description.error("No variable should be declared", IGamlIssue.UNUSED, WHILE, NAME);
-					return;
 				}
 			} else if (from != null) {
 				if (name == null) {
@@ -290,16 +287,13 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				if (to == null) {
 					description.error("'loop' is missing the 'to:' facet", IGamlIssue.MISSING_FACET,
 							description.getUnderlyingElement(), TO, "0");
-					return;
 				}
 			} else if (to != null) {
 				description.error("'loop' is missing the 'from:' facet", IGamlIssue.MISSING_FACET,
 						description.getUnderlyingElement(), FROM, "0");
-				return;
 			} else {
 				description.error("Missing the definition of the kind of loop to perform (times, over, while, from/to)",
 						IGamlIssue.MISSING_FACET);
-				return;
 			}
 		}
 
@@ -322,7 +316,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	private final String varName;
 	// private final Object[] result = new Object[1];
 
-	public LoopStatement(final IDescription desc) throws GamaRuntimeException {
+	public LoopStatement(final IDescription desc) {
 		super(desc);
 		final boolean isWhile = getFacet(IKeyword.WHILE) != null;
 		final boolean isList = getFacet(IKeyword.OVER) != null;

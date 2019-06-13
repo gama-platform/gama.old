@@ -11,10 +11,9 @@
 package msi.gaml.compilation.ast;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 import org.eclipse.emf.ecore.EObject;
-
-import com.google.common.base.Predicate;
 
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
@@ -115,7 +114,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 	protected void visitAllChildren(final SyntacticVisitor visitor, final Predicate<ISyntacticElement> filter) {
 		if (children != null) {
 			for (final ISyntacticElement e : children) {
-				if (filter.apply(e)) {
+				if (filter.test(e)) {
 					visitor.visit(e);
 				}
 			}
@@ -147,9 +146,8 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 		}
 		children = null;
 	}
-	
-	
-// Added to fix Issue #2619
+
+	// Added to fix Issue #2619
 	@Override
 	public void visitSpecies(final SyntacticVisitor visitor) {
 		visitAllChildren(visitor, SPECIES_FILTER);

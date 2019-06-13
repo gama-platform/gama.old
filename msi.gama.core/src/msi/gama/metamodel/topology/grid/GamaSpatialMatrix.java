@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -558,8 +559,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final double yy = py == bounds.getMaxY() ? (py - precision) / cellHeight : py / cellHeight;
 		final int x = (int) xx;
 		final int y = (int) yy;
-		final int i = getPlaceIndexAt(x, y);
-		return i;
+		return getPlaceIndexAt(x, y);
 	}
 
 	@Override
@@ -913,11 +913,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final boolean[] open = new boolean[this.getAgents().size()];
 		initOpen(open, onWithWeight != null ? onWithWeight.keySet() : on);
 
-		final Map<IAgent, IAgent> cameFrom = new Hashtable<>();
+		final Map<IAgent, IAgent> cameFrom = new HashMap<>();
 
 		final PriorityQueue frontier = newPriorityQueue();
 
-		final Map<IAgent, Double> costSoFar = new Hashtable<>();
+		final Map<IAgent, Double> costSoFar = new HashMap<>();
 		costSoFar.put(startAg, 0.0);
 
 		frontier.add(new ArrayList() {
@@ -980,8 +980,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final boolean[] open = new boolean[this.getAgents().size()];
 		initOpen(open, weighted ? onWithWeight.keySet() : on);
 		final PriorityQueue frontier = newPriorityQueue();
-		final Map<IAgent, IAgent> cameFrom = new Hashtable<>();
-		final Map<IAgent, Double> costSoFar = new Hashtable<>();
+		final Map<IAgent, IAgent> cameFrom = new HashMap<>();
+		final Map<IAgent, Double> costSoFar = new HashMap<>();
 
 		frontier.add(new ArrayList() {
 			{
@@ -1037,8 +1037,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final boolean[] open = new boolean[this.getAgents().size()];
 		initOpen(open, on);
 		final PriorityQueue frontier = newPriorityQueue();
-		final Map<IAgent, IAgent> cameFrom = new Hashtable<>();
-		final Map<IAgent, Double> costSoFar = new Hashtable<>();
+		final Map<IAgent, IAgent> cameFrom = new HashMap<>();
+		final Map<IAgent, Double> costSoFar = new HashMap<>();
 
 		frontier.add(new ArrayList() {
 			{

@@ -195,11 +195,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public Double getDefinedSeed() {
 		if (GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
 			final IParameter.Batch p = (Batch) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.SEED);
-			final Double result = p.isDefined() ? (Double) p.value(ownScope) : null;
-			return result;
+			return p.isDefined() ? (Double) p.value(ownScope) : null;
 		}
 		return GamaPreferences.External.CORE_SEED_DEFINED.getValue() ? GamaPreferences.External.CORE_SEED.getValue()
-				: (Double) null;
+				: null;
 	}
 
 	@Override
@@ -724,8 +723,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			if (ExperimentAgent.this.hasAttribute(varName) || getSpecies().hasVar(varName)) { return true; }
 			if (this.getModel().getSpecies().hasVar(varName)) { return true; }
 			if (getSpecies().hasParameter(varName)) { return true; }
-			if (extraParametersMap.containsKey(varName)) { return true; }
-			return false;
+			return extraParametersMap.containsKey(varName);
 		}
 
 		@Override

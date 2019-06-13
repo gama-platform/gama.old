@@ -414,10 +414,8 @@ public class Colors {
 	@test ("blend(#red, #blue, 0.3) = rgb(76,0,178)")
 	public static GamaColor blend(final GamaColor c1, final GamaColor c2, final double r) {
 		final double ir = 1.0 - r;
-		final GamaColor color = new GamaColor((int) (c1.getRed() * r + c2.getRed() * ir),
-				(int) (c1.getGreen() * r + c2.getGreen() * ir), (int) (c1.getBlue() * r + c2.getBlue() * ir),
-				(int) (c1.getAlpha() * r + c2.getAlpha() * ir));
-		return color;
+		return new GamaColor((int) (c1.getRed() * r + c2.getRed() * ir), (int) (c1.getGreen() * r + c2.getGreen() * ir),
+				(int) (c1.getBlue() * r + c2.getBlue() * ir), (int) (c1.getAlpha() * r + c2.getAlpha() * ir));
 	}
 
 	@operator (
