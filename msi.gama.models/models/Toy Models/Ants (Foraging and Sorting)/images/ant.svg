@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://web.resource.org/cc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.0" width="128" height="128" id="ant" sodipodi:version="0.32" inkscape:version="0.44+devel" sodipodi:docname="Andy_-_ant.svg" inkscape:output_extension="org.inkscape.output.svg.inkscape" sodipodi:docbase="/home/rejon/Documents/projects/openclipartlibrary/art" sodipodi:modified="true">
+  <sodipodi:namedview inkscape:window-height="577" inkscape:window-width="852" inkscape:pageshadow="2" inkscape:pageopacity="0.0" guidetolerance="10.0" gridtolerance="10.0" objecttolerance="10.0" borderopacity="1.0" bordercolor="#666666" pagecolor="#ffffff" id="base" inkscape:zoom="2.9609375" inkscape:cx="64" inkscape:cy="63.358311" inkscape:window-x="424" inkscape:window-y="382" inkscape:current-layer="ant"/>
+  <metadata id="metadata3">
+    <rdf:RDF>
+      <cc:Work rdf:about="ant">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title>ant</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Andy Fitzsimon</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>andy.brisgeek.com</dc:source>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>ant</rdf:li>
+            <rdf:li>logo</rdf:li>
+            <rdf:li>shiny</rdf:li>
+            <rdf:li>insect</rdf:li>
+            <rdf:li>glossy</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/2.5/"/>
+        <dc:date>2006-08-30</dc:date>
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>Andy Fitzsimon</dc:title>
+          </cc:Agent>
+        </dc:contributor>
+        <dc:description>Balanced ant design with specularity.</dc:description>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/by-sa/2.5/">
+        <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+        <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+        <cc:requires rdf:resource="http://web.resource.org/cc/Notice"/>
+        <cc:requires rdf:resource="http://web.resource.org/cc/Attribution"/>
+        <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+        <cc:requires rdf:resource="http://web.resource.org/cc/ShareAlike"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <defs id="defs5">
+    <linearGradient id="WhiteTransparent">
+      <stop style="stop-color:white;stop-opacity:1" offset="0" id="stop8"/>
+      <stop style="stop-color:white;stop-opacity:0" offset="1" id="stop10"/>
+    </linearGradient>
+    <linearGradient xlink:href="#WhiteTransparent" id="linearGradient3153" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.633768,2.365244,-2.365244,0.633768,761.1766,-1845.476)" x1="682.04" y1="471.38" x2="680.06" y2="472.52"/>
+    <linearGradient xlink:href="#WhiteTransparent" id="linearGradient3156" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-2.365244,-0.633768,-0.633768,2.365244,1975.966,-632.1011)" x1="681.72" y1="471.57" x2="676.89" y2="474.35"/>
+    <linearGradient inkscape:collect="always" xlink:href="#WhiteTransparent" id="linearGradient2563" gradientUnits="userSpaceOnUse" gradientTransform="matrix(2.120622,1.224339,-1.224339,2.120622,-793.7969,-1778.614)" x1="682.04" y1="471.38" x2="680.06" y2="472.52"/>
+    <linearGradient inkscape:collect="always" xlink:href="#WhiteTransparent" id="linearGradient2566" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-2.120622,1.224339,1.224339,2.120622,923.1751,-1779.614)" x1="681.72" y1="471.57" x2="676.89" y2="474.35"/>
+  </defs>
+  <path d="M 17.176607,23.930791 C 16.151302,24.772248 24.403241,35.216218 24.912358,35.82433 C 31.962215,44.260117 38.941361,44.550031 39.804031,45.808681 C 40.673773,47.060261 44.831562,51.246334 52.227901,52.4767 C 52.256185,54.400031 52.362251,56.217296 52.560241,57.942637 C 48.013543,56.691058 42.894089,55.616255 40.030305,55.623326 C 37.010958,55.616255 26.786191,58.472968 24.954784,59.328567 C 24.311317,59.632623 12.629909,59.335638 12.629909,60.608431 C 12.629909,61.895366 24.261819,62.369127 24.742652,61.718589 C 28.964081,62.39034 40.92126,60.20538 42.194053,60.431654 C 43.466845,60.67207 53.260277,63.521712 53.330988,63.535854 C 54.066379,66.915825 55.134111,68.761375 56.399832,71.017046 C 51.534936,70.875624 42.802165,75.691023 37.930198,80.56299 C 33.885546,84.607642 27.146816,91.148382 26.128582,92.59088 C 22.324346,97.964894 24.028474,114.77283 26.135653,114.77283 C 27.790283,114.77283 23.830484,99.72559 27.63472,94.351577 C 28.730736,92.803013 40.9849,84.437937 42.413256,82.797448 C 43.841612,81.15696 51.435941,78.809365 54.617923,76.433485 C 51.414728,78.505309 49.222696,81.743859 49.222696,86.198633 C 49.222696,102.74494 57.856473,109.41296 64.340644,109.49074 C 64.340644,109.49074 64.347715,109.51195 64.361857,109.51195 C 64.375999,109.51195 64.390142,109.51195 64.404284,109.51195 C 64.418426,109.51195 64.432568,109.51195 64.44671,109.51195 C 64.460852,109.51195 64.474994,109.51195 64.489137,109.51195 C 70.966237,109.4271 79.557587,102.74494 79.557587,86.226917 C 79.564658,82.076199 77.648398,78.957857 74.805828,76.878963 C 78.263581,79.092208 85.044737,81.263026 86.38824,82.80452 C 87.823668,84.437937 100.02126,92.803013 101.12435,94.358648 C 104.93566,99.72559 100.98293,114.79404 102.6517,114.79404 C 104.74474,114.79404 106.45594,97.979036 102.6517,92.605023 C 101.6264,91.169595 94.894738,84.635927 90.850085,80.591275 C 85.971047,75.712236 77.252418,70.896838 72.380451,71.04533 C 73.646172,68.789659 74.706833,66.894612 75.449295,63.50757 C 75.512935,63.500498 85.306367,60.693284 86.58623,60.459938 C 87.866094,60.226593 99.816202,62.418625 104.0447,61.739802 C 104.51846,62.397412 116.15744,61.916579 116.15037,60.636715 C 116.15744,59.356851 104.44068,59.632623 103.79721,59.328567 C 101.97288,58.465897 91.797609,55.616255 88.771191,55.616255 C 85.907408,55.623326 80.745526,56.698129 76.198828,57.935566 C 76.396818,56.224367 76.545311,54.407102 76.573595,52.483771 C 83.969934,51.239263 88.134795,47.060261 88.990394,45.808681 C 89.860136,44.557102 96.839282,44.267188 103.88914,35.817259 C 104.39118,35.216218 112.65019,24.765177 111.61782,23.930791 C 110.40867,22.947912 102.84262,32.691846 102.53856,33.547446 C 100.48795,34.56568 90.744019,41.056922 89.570222,41.523613 C 88.389353,41.983232 82.449654,44.104553 76.135189,47.887576 C 75.166452,44.189406 72.726933,41.679176 69.742942,40.349815 C 73.865375,40.342744 76.863509,39.536642 76.863509,34.997015 C 76.863509,30.033124 75.908915,25.458142 74.303782,21.788256 C 78.694916,19.504301 81.876898,17.057711 82.831492,16.711228 C 83.786087,16.350604 84.153782,15.035385 82.343588,11.711982 C 79.359597,6.2531157 76.128118,1.5225699 75.428082,1.7841995 C 74.728046,2.0599712 77.99488,12.69486 80.795024,14.985887 C 77.478692,15.572786 75.300803,16.647589 72.536014,18.563849 C 70.358125,15.26873 67.557981,13.28883 64.467923,13.239333 C 64.460852,13.232262 64.453781,13.211049 64.44671,13.21812 C 64.418426,13.21812 64.38307,13.211049 64.354786,13.211049 C 61.257658,13.253475 58.400945,15.261659 56.230127,18.563849 C 53.458267,16.65466 51.29452,15.551573 47.985259,14.957603 C 50.785403,12.680718 54.07345,2.0529001 53.373414,1.7912705 C 52.673379,1.5296409 49.420686,6.2248314 46.436695,11.683697 C 44.61943,15.014171 45.01541,16.357675 45.970004,16.704157 C 46.93167,17.057711 50.113651,19.504301 54.504786,21.788256 C 52.892582,25.451071 51.937987,30.040195 51.937987,35.004086 C 51.937987,39.529571 54.936121,40.349815 59.051484,40.349815 C 56.074563,41.686247 53.635044,44.196477 52.666307,47.880505 C 46.351842,44.097482 40.383859,42.004446 39.210061,41.537755 C 38.029193,41.078135 28.292329,34.537396 26.241719,33.519162 C 25.944734,32.670633 18.392831,22.940841 17.176607,23.930791 z " style="fill:#222" id="ant-shape"/>
+</svg>

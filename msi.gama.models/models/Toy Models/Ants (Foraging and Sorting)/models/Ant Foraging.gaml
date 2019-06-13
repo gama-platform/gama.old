@@ -25,6 +25,7 @@ global {
 	int number_of_food_places <- 5 min: 1 parameter: 'Number of food depots:' category: 'Environment and Population';
 	float grid_transparency <- 1.0;
 	image_file ant_shape const: true <- file('../images/ant.png');
+	svg_file ant_shape_svg const: true <- svg_file("../images/ant.svg");
 	obj_file ant3D_shape const: true <- obj_file('../images/fire-ant.obj', '../images/fire-ant.mtl', -90::{1,0,0});
 	
 	//The center of the grid that will be considered as the nest location
@@ -165,6 +166,10 @@ species ant skills: [moving] control: fsm {
 	aspect icon {
 		draw ant_shape size: {7, 5} rotate: my heading + 1 empty: true;
 	}
+	
+	aspect icon_svg {
+		draw ant_shape_svg size: {5, 7} rotate: my heading + 270 color: #black;
+	}
  }
 
 
@@ -179,7 +184,7 @@ experiment "With Inspector" type: gui {
 		display Ants  {
 			image terrain position: {0.05, 0.05} size: {0.9, 0.9};
 			agents "agents" transparency: 0.7 position: {0.05, 0.05} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
-			species ant position: {0.05, 0.05} size: {0.9, 0.9} aspect: icon;
+			species ant position: {0.05, 0.05} size: {0.9, 0.9} aspect: icon_svg;
 			overlay transparency: 0.3 background: rgb(99, 85, 66, 255) position: {50 °px, 50 °px} size: {250 °px, 150 °px} border: rgb(99, 85, 66, 255) rounded: true {
 				draw ant_shape at: {60 °px, 70 °px} size: {140 °px, 100 °px} rotate: -60;
 				draw ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') at: {40 °px, 70 °px} font: font("Arial", 18, #bold) color:
