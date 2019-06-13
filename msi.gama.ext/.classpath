@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="protobuf-java-3.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-impl.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis.0.45/protobuf-java-2.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="streamex 0.6.7/streamex-0.6.8.jar" sourcepath="streamex 0.6.7/streamex-0.6.8-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-core-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/core-0.26.jar"/>
@@ -114,11 +114,6 @@
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/postgresql-9.4-1201-jdbc41.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/spatialite-jdbc-3.7.2-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/sqlite-jdbc-3.8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis.0.45/mysql-connector-java-5.1.37.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis.0.45/osmosis-core--SNAPSHOT.jar" sourcepath="osmosis.0.45/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="osmosis.0.45/osmosis-osm-binary--SNAPSHOT.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis.0.45/osmosis-pbf--SNAPSHOT.jar" sourcepath="osmosis.0.45/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="osmosis.0.45/osmosis-xml--SNAPSHOT.jar" sourcepath="osmosis.0.45/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jtds 1.3.1/jars/jtds-1.3.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>

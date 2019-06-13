@@ -79,7 +79,7 @@ species building
 {
 	aspect default
 	{
-		draw shape color: rgb(200, 200, 200);
+		draw shape color: #grey;
 	}
 
 }

@@ -42,23 +42,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
-import org.openstreetmap.osmosis.core.domain.v0_6.Bound;
-import org.openstreetmap.osmosis.core.domain.v0_6.Entity;
-import org.openstreetmap.osmosis.core.domain.v0_6.Node;
-import org.openstreetmap.osmosis.core.domain.v0_6.Relation;
-import org.openstreetmap.osmosis.core.domain.v0_6.RelationMember;
-import org.openstreetmap.osmosis.core.domain.v0_6.Tag;
-import org.openstreetmap.osmosis.core.domain.v0_6.Way;
-import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
-import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
-import org.openstreetmap.osmosis.core.task.v0_6.Sink;
-import org.openstreetmap.osmosis.xml.common.SaxParserFactory;
-import org.openstreetmap.osmosis.xml.v0_6.impl.OsmHandler;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import crosby.binary.osmosis.OsmosisReader;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.hash.TLongHashSet;
 import msi.gama.common.geometry.Envelope3D;
@@ -78,6 +64,20 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.file.osm.Bound;
+import msi.gama.util.file.osm.Entity;
+import msi.gama.util.file.osm.EntityContainer;
+import msi.gama.util.file.osm.Node;
+import msi.gama.util.file.osm.OsmHandler;
+import msi.gama.util.file.osm.OsmosisReader;
+import msi.gama.util.file.osm.Relation;
+import msi.gama.util.file.osm.RelationMember;
+import msi.gama.util.file.osm.RunnableSource;
+import msi.gama.util.file.osm.SaxParserFactory;
+import msi.gama.util.file.osm.Sink;
+import msi.gama.util.file.osm.Tag;
+import msi.gama.util.file.osm.Way;
+import msi.gama.util.file.osm.WayNode;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
@@ -375,7 +375,7 @@ public class GamaOsmFile extends GamaGisFile {
 			}
 
 			@Override
-			public void release() {}
+			public void close() {}
 
 			@Override
 			public void complete() {}
