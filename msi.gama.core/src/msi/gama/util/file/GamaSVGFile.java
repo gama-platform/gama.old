@@ -16,9 +16,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 
-import com.kitfox.svg.SVGCache;
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGUniverse;
 import com.vividsolutions.jts.awt.ShapeReader;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -35,6 +32,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.svg.SVGCache;
+import msi.gama.util.file.svg.SVGDiagram;
+import msi.gama.util.file.svg.SVGUniverse;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 

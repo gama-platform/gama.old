@@ -6,15 +6,7 @@ Bundle-Version: 1.7.0.qualifier
 Bundle-Activator: msi.gama.ext.Activator
 Bundle-Vendor: MSI
 Bundle-ActivationPolicy: lazy
-Export-Package: com.kitfox.svg;
-  uses:="com.kitfox.svg.pathcmd,
-   org.xml.sax.helpers,
-   com.kitfox.svg.animation.parser,
-   com.kitfox.svg.xml,
-   org.xml.sax,
-   com.kitfox.svg.animation,
-   javax.swing",
- com.mysql.jdbc,
+Export-Package: com.mysql.jdbc,
  com.mysql.jdbc.authentication,
  com.mysql.jdbc.exceptions,
  com.mysql.jdbc.exceptions.jdbc4,
@@ -707,7 +699,6 @@ Bundle-ClassPath: .,
  jfreechart 1.0.19/jars/jfreechart-1.0.19.jar,
  jts 1.14/jars/jts-core-1.14.0.jar,
  rcaller 2.5/jars/RCaller-2.5.jar,
- svgsalamander 1.0/jars/svg-salamander-1.0.jar,
  trove 3.0.3/jars/trove-3.0.3.jar,
  vecmath 1.5.2/jars/vecmath-1.5.2.jar,
  kabeja 0.4/jars/kabeja-0.4.jar,
@@ -830,11 +821,11 @@ Bundle-ClassPath: .,
  geotools 14.5/core-0.26.jar,
  jgrapht 1.0.1/jgrapht-core-1.0.1.jar,
  kml/jars/JavaAPIforKml-2.2.1.jar,
- kml/jars/jaxb-impl.jar,
- kml/jars/jaxb-api.jar,
- kml/jars/jaxb-core.jar,
  jts 1.14/jars/jts-example-1.14.0.jar,
  streamex 0.6.7/streamex-0.6.8.jar,
- osmosis.0.45/protobuf-java-2.6.1.jar
+ osmosis.0.45/protobuf-java-2.6.1.jar,
+ kml/jars/jaxb-impl.jar,
+ kml/jars/jaxb-api.jar,
+ kml/jars/jaxb-core.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: msi.gama.ext
