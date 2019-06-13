@@ -32,7 +32,7 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
 	private static final boolean GLOBAL_OFF = true;
-
+ 
 	static {
 		TO_STRING.put(int.class, (o) -> Arrays.toString((int[]) o));
 		TO_STRING.put(double.class, (o) -> Arrays.toString((double[]) o));
