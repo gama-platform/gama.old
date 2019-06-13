@@ -400,7 +400,9 @@ public class FileUtils {
 				// final java.net.URI uri = URIUtil.toURI(pathName);
 				pathName = ROOT.getPathVariableManager().resolvePath(new Path(pathName)).toOSString();
 				// pathName = ROOT.getPathVariableManager().resolveURI(uri).getPath();
-				Files.copy(in, new File(pathName).toPath(), StandardCopyOption.REPLACE_EXISTING);
+				final java.nio.file.Path p = new File(pathName).toPath();
+				Files.deleteIfExists(p);
+				Files.copy(in, p, StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (final IOException | WebbException e) {
 			throw GamaRuntimeException.create(e, scope);

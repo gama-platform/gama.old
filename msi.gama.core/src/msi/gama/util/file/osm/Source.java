@@ -6,7 +6,7 @@ package msi.gama.util.file.osm;
  *
  * @author Brett Henderson
  */
-public interface Source extends Task {
+public interface Source {
 
 	/**
 	 * Sets the osm sink to send data to.

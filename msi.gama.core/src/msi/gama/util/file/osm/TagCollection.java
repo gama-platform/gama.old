@@ -16,4 +16,6 @@ public interface TagCollection extends Collection<Tag>, Storeable {
 	 * @return The tags represented as a map.
 	 */
 	Map<String, String> buildMap();
+
+	TagCollection toReadOnly();
 }

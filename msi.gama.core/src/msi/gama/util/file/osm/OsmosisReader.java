@@ -14,6 +14,10 @@ import java.util.Collections;
 public class OsmosisReader implements RunnableSource {
 
 	private Sink sink;
+	/** Store the input stream we're using. */
+	final InputStream input;
+	/** The binary parser object. */
+	final OsmosisBinaryParser parser;
 
 	/**
 	 * Make a reader based on a target input stream.
@@ -43,17 +47,8 @@ public class OsmosisReader implements RunnableSource {
 		} catch (final IOException e) {
 			throw new OsmosisRuntimeException("Unable to process PBF stream", e);
 		} finally {
-			try {
-				sink.close();
-			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			sink.complete();
 		}
 	}
 
-	/** Store the input stream we're using. */
-	InputStream input;
-	/** The binary parser object. */
-	OsmosisBinaryParser parser;
 }

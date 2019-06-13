@@ -426,7 +426,7 @@ public class CommonEntityData implements Storeable {
 	 */
 	public void makeReadOnly() {
 		if (!readOnly) {
-			tags = new UnmodifiableTagCollection(tags);
+			tags = tags.toReadOnly();
 			metaTags = Collections.unmodifiableMap(metaTags);
 
 			readOnly = true;

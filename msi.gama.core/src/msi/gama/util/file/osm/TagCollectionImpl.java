@@ -11,13 +11,13 @@ import java.util.Map;
  *
  * @author Brett Henderson
  */
-public class TagCollectionImpl extends CollectionWrapper<Tag> implements TagCollection {
+public class TagCollectionImpl extends ArrayList<Tag> implements TagCollection {
 
 	/**
 	 * Creates a new instance.
 	 */
 	public TagCollectionImpl() {
-		super(new ArrayList<Tag>());
+		super();
 	}
 
 	/**
@@ -27,7 +27,7 @@ public class TagCollectionImpl extends CollectionWrapper<Tag> implements TagColl
 	 *            The initial tags.
 	 */
 	public TagCollectionImpl(final Collection<? extends Tag> tags) {
-		super(new ArrayList<Tag>(tags));
+		super(tags);
 	}
 
 	/**
@@ -39,10 +39,8 @@ public class TagCollectionImpl extends CollectionWrapper<Tag> implements TagColl
 	 *            Maintains the mapping between classes and their identifiers within the store.
 	 */
 	public TagCollectionImpl(final StoreReader sr, final StoreClassRegister scr) {
-		super(new ArrayList<Tag>());
-
+		super();
 		int tagCount;
-
 		tagCount = sr.readCharacter();
 		for (int i = 0; i < tagCount; i++) {
 			add(new Tag(sr, scr));
@@ -73,5 +71,10 @@ public class TagCollectionImpl extends CollectionWrapper<Tag> implements TagColl
 		}
 
 		return tagMap;
+	}
+
+	@Override
+	public TagCollection toReadOnly() {
+		return new TagCollectionImpl(java.util.Collections.unmodifiableCollection(this));
 	}
 }

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.geotools.data.DataUtilities;
@@ -73,7 +74,6 @@ import msi.gama.util.file.osm.OsmosisReader;
 import msi.gama.util.file.osm.Relation;
 import msi.gama.util.file.osm.RelationMember;
 import msi.gama.util.file.osm.RunnableSource;
-import msi.gama.util.file.osm.SaxParserFactory;
 import msi.gama.util.file.osm.Sink;
 import msi.gama.util.file.osm.Tag;
 import msi.gama.util.file.osm.Way;
@@ -375,9 +375,6 @@ public class GamaOsmFile extends GamaGisFile {
 			}
 
 			@Override
-			public void close() {}
-
-			@Override
 			public void complete() {}
 
 			@Override
@@ -566,6 +563,7 @@ public class GamaOsmFile extends GamaGisFile {
 					// final Map<String, Object> wayValues = new TOrderedHashMap<String, Object>(values);
 					final Map<String, Object> wayValues = new TOrderedHashMap<>();
 					wayValues.put("entity_order", order++);
+					// TODO FIXME AD: What's that ??
 					wayValues.put("gama_bus_line", values.get("name"));
 					wayValues.put("osm_way_id", ((Way) entity).getId());
 					if (relationWays.size() > 0) {
@@ -707,7 +705,7 @@ public class GamaOsmFile extends GamaGisFile {
 					break;
 			}
 			try (InputStream stream = inputStream) {
-				final SAXParser parser = SaxParserFactory.createParser();
+				final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 				parser.parse(stream, new OsmHandler(sink, false));
 			}
 		} catch (final Exception e) {
