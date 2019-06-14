@@ -3214,9 +3214,15 @@ public abstract class Spatial {
 		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, final double tolerance,
 				final boolean splitlines, final boolean keepMainGraph) {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }
-			final IList<IShape> geoms = (IList<IShape>) polylines.copy(scope);
+			IList<IShape> geoms = (IList<IShape>) polylines.copy(scope);
 			geoms.removeIf(a -> !a.getGeometry().isLine());
 			if (geoms.isEmpty()) { return GamaListFactory.create(); }
+			if (splitlines) {
+				geoms = Transformations.split_lines(scope, geoms, true);
+				geoms.removeIf(
+						a -> a.getPerimeter() < tolerance || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
+				
+			}
 			IList<IShape> results = GamaListFactory.create();
 
 			IList<IShape> geomsTmp = (IList<IShape>) geoms.copy(scope);
@@ -3248,9 +3254,7 @@ public abstract class Spatial {
 			}
 			results.removeIf(
 					a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
-			if (splitlines) {
-				results = Transformations.split_lines(scope, results, true);
-			}
+			
 			if (keepMainGraph) {
 				IGraph graph = Graphs.spatialFromEdges(scope, results);
 				graph = Graphs.ReduceToMainconnectedComponentOf(scope, graph);
