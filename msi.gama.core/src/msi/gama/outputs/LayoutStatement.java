@@ -25,7 +25,6 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
 
 /**
@@ -98,10 +97,6 @@ import msi.gaml.types.IType;
 						value = "layout horizontal([vertical([0::5000,1::5000])::5000,vertical([2::5000,3::5000])::5000]) tabs: false;",
 						isExecutable = false) }) })
 public class LayoutStatement extends Symbol {
-
-	public static LayoutStatement createEmpty() {
-		return new LayoutStatement(DescriptionFactory.create(IKeyword.PERMANENT, (String[]) null));
-	}
 
 	public LayoutStatement(final IDescription desc) {
 		super(desc);

@@ -20,33 +20,21 @@ import org.olap4j.OlapWrapper;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-public class MondrianXmlaConnection extends MdxConnection {
+class MondrianXmlaConnection extends MdxConnection {
 
-	static final String DRIVER = new String("org.olap4j.driver.xmla.XmlaOlap4jDriver");
+	private static final String DRIVER = "org.olap4j.driver.xmla.XmlaOlap4jDriver";
 
-	public MondrianXmlaConnection() {
-		super();
-	}
-
-	public MondrianXmlaConnection(final String vender) {
-		super(vender);
-	}
-
-	public MondrianXmlaConnection(final String venderName, final String database) {
-		super(venderName, database);
-	}
-
-	public MondrianXmlaConnection(final String venderName, final String url, final String port, final String dbName,
+	MondrianXmlaConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password) {
 		super(venderName, url, port, dbName, userName, password);
 	}
 
-	public MondrianXmlaConnection(final String venderName, final String url, final String port, final String dbName,
+	MondrianXmlaConnection(final String venderName, final String url, final String port, final String dbName,
 			final String catalog, final String userName, final String password) {
 		super(venderName, url, port, dbName, catalog, userName, password);
 	}
 
-	public MondrianXmlaConnection(final String venderName, final String dbtype, final String url, final String port,
+	MondrianXmlaConnection(final String venderName, final String dbtype, final String url, final String port,
 			final String dbName, final String catalog, final String userName, final String password) {
 		super(venderName, dbtype, url, port, dbName, catalog, userName, password);
 	}
@@ -58,34 +46,9 @@ public class MondrianXmlaConnection extends MdxConnection {
 		try {
 			if (vender.equalsIgnoreCase(MONDRIANXMLA)) {
 				Class.forName(DRIVER);
-				// conn =
-				// DriverManager.getConnection("jdbc:xmla:Server=http://" + url + ":" + port + "/" + dbName+"/xmla;"
-				// +"Provider=Mondrian;"
-				// //+"DataSource=C:/Program Files/Apache Software Foundation/Tomcat
-				// 7.0/webapps/mondrian/WEB-INF/datasources.xml;"
-				// +"DataSource=/WEB-INF/datasources.xml;"
-				//
-				// +"Catalog=FoodMart;"
-				// +"Cube=Store;"
-				//// + ";Cache=org.olap4j.driver.xmla.cache.XmlaOlap4jNamedMemoryCache"
-				//// + ";Cache.Name=MyNiftyConnection"
-				//// + ";Cache.Mode=LFU;Cache.Timeout=600;Cache.Size=100"
-				// ,userName, password
-				// );
-
-				// if (DEBUG.IS_ON()){
-				// DEBUG.OUT("MondrianXmlaConnection.connectMDB:"+vender+" - "+dbtype+" - "+" - "+url+" - "
-				// + port+" - "+dbName+" - "+catalog+" - "+userName+" - "+password);
-				//
-				// }
-
 				conn = DriverManager.getConnection("jdbc:xmla:Server=http://" + url + ":" + port + "/mondrian/xmla"
-				// +";Cache=org.olap4j.driver.xmla.cache.XmlaOlap4jNamedMemoryCache"
-				// +";Cache.Name=MyNiftyConnection"
-				// +";Cache.Mode=LFU;Cache.Timeout=600;Cache.Size=100"
-						+ ";Provider=mondrian" + ";DataSource=" + dbName + ";Catalog=" + catalog + ";"
-				// +"Role='Admin'"
-						, userName, password);
+						+ ";Provider=mondrian" + ";DataSource=" + dbName + ";Catalog=" + catalog + ";", userName,
+						password);
 				wrapper = (OlapWrapper) conn;
 				olapConnection = wrapper.unwrap(OlapConnection.class);
 			} else {
@@ -99,10 +62,6 @@ public class MondrianXmlaConnection extends MdxConnection {
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString(), scope);
 		}
-		// if ( DEBUG ) {
-		// DEBUG.OUT("MondrianXmlaConnection.connected");
-		//
-		// }
 		return olapConnection;
 
 	}

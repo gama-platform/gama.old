@@ -10,9 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opengis.geometry.MismatchedDimensionException;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -74,12 +71,6 @@ public class Envelope3D extends Envelope {
 	public static Envelope3D of(final Coordinate p) {
 		final Envelope3D env = new Envelope3D();
 		env.init(p);
-		return env;
-	}
-
-	public static Envelope3D of(final ICoordinates points) {
-		final Envelope3D env = new Envelope3D();
-		points.expandEnvelope(env);
 		return env;
 	}
 
@@ -411,10 +402,6 @@ public class Envelope3D extends Envelope {
 		return covers(p.x, p.y, p.z);
 	}
 
-	public boolean covers(final ICoordinates coords) {
-		return coords.isCoveredBy(this);
-	}
-
 	/**
 	 * Tests if the <code>Envelope other</code> lies wholely inside this <code>Envelope</code> (inclusive of the
 	 * boundary).
@@ -548,36 +535,6 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Computes the list of envelopes (from 2 to 4, possibily 0 if env covers this) resulting from the extrusion of env
-	 * from this. Only in 2D for the moment. Does not return null envelopes.
-	 *
-	 */
-	public List<Envelope> extrusion(final Envelope env) {
-		final List<Envelope> list = new ArrayList<>();
-		final double x1 = getMinX();
-		final double x2 = getMaxX();
-		final double y1 = getMinY();
-		final double y2 = getMaxY();
-		final double xx1 = env.getMinX();
-		final double xx2 = env.getMaxX();
-		final double yy1 = env.getMinY();
-		final double yy2 = env.getMaxY();
-		if (x2 >= x1 && yy1 >= y1) {
-			list.add(new Envelope(x1, x2, y1, yy1));
-		}
-		if (xx1 >= x1 && y2 >= yy1) {
-			list.add(new Envelope(x1, xx1, yy1, y2));
-		}
-		if (x2 >= xx1 && y2 >= yy2) {
-			list.add(new Envelope(xx1, x2, yy2, y2));
-		}
-		if (x2 >= xx2 && yy2 >= yy1) {
-			list.add(new Envelope(xx2, x2, yy1, yy2));
-		}
-		return list;
-	}
-
-	/**
 	 * Enlarges this <code>Envelope</code> so that it contains the <code>other</code> Envelope. Has no effect if
 	 * <code>other</code> is wholly on or within the envelope.
 	 *
@@ -678,13 +635,6 @@ public class Envelope3D extends Envelope {
 		se = new GamaShape(se, null, rotation, se.getLocation());
 		init(se.getEnvelope());
 		return this;
-	}
-
-	/**
-	 * Sets all coordinates to zero (as oppposed to setToNull, which sets them for the empty geometry)
-	 */
-	public void setToZero() {
-		this.init(0, 0, 0, 0, 0, 0);
 	}
 
 	// a: minx, miny, minz / b : minx, maxy / c: maxx maxy maxz

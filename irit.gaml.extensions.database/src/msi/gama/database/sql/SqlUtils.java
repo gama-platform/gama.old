@@ -45,16 +45,8 @@ public class SqlUtils {
 		final String database = (String) params.get("database");
 		final String user = (String) params.get("user");
 		final String passwd = (String) params.get("passwd");
-		// final String extension = (String) params.get("extension");
-		// thai.truongminh@gmail.com
-		// Move transform arg of select to a key in params
-		// boolean transform = scope.hasArg("transform") ? (Boolean)
-		// scope.getArg("transform", IType.BOOL) : true;
 		final boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
-		if (DEBUG.IS_ON()) {
-			DEBUG.OUT("SqlUtils.createConnection:" + dbtype + " - " + host + " - " + port + " - " + database + " - ");
-		}
 		SqlConnection sqlConn;
 		// create connection
 		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) {
@@ -99,28 +91,9 @@ public class SqlUtils {
 	 *
 	 * @throws IOException, ParseException
 	 */
-	public static Geometry read(final byte[] b) throws IOException, ParseException {
+	static Geometry read(final byte[] b) throws IOException, ParseException {
 		final WKBReader wkb = new WKBReader();
 		final Geometry geom = wkb.read(b);
-		return geom;
-	}
-
-	/*
-	 * @Method: Binary2Geometry(byte [] geometryAsBytes )
-	 *
-	 * @description: Convert binary to Geometry
-	 *
-	 * @param byte []
-	 *
-	 * @return Geometry
-	 *
-	 * @throws ParseException
-	 */
-	public static Geometry Binary2Geometry(final byte[] geometryAsBytes) throws ParseException {
-		final byte[] wkb = new byte[geometryAsBytes.length - 4];
-		System.arraycopy(geometryAsBytes, 4, wkb, 0, wkb.length);
-		final WKBReader wkbReader = new WKBReader();
-		final Geometry geom = wkbReader.read(wkb);
 		return geom;
 	}
 
@@ -135,7 +108,7 @@ public class SqlUtils {
 	 *
 	 * @throws Exception
 	 */
-	public static Geometry InputStream2Geometry(final InputStream inputStream) throws Exception {
+	static Geometry InputStream2Geometry(final InputStream inputStream) throws Exception {
 		Geometry dbGeometry = null;
 		if (inputStream != null) {
 			// convert the stream to a byte[] array
@@ -149,8 +122,9 @@ public class SqlUtils {
 
 			final byte[] geometryAsBytes = baos.toByteArray();
 
-			if (geometryAsBytes.length < 5) { throw new Exception(
-					"Invalid geometry inputStream - less than five bytes"); }
+			if (geometryAsBytes.length < 5) {
+				throw new Exception("Invalid geometry inputStream - less than five bytes");
+			}
 
 			// first four bytes of the geometry are the SRID,
 			// followed by the actual WKB. Determine the SRID
@@ -191,7 +165,7 @@ public class SqlUtils {
 	// public static GamaList<Object> transform(final GisUtils gis, final
 	// GamaList<? extends GamaList<Object>> dataset,
 	// final boolean fromAbsoluteToGis) throws GamaRuntimeException {
-	public static IList<Object> transform(final IScope scope, final IProjection gis,
+	static IList<Object> transform(final IScope scope, final IProjection gis,
 			final IList<? super IList<Object>> dataset, final boolean fromAbsoluteToGis) throws GamaRuntimeException {
 
 		try {
@@ -234,7 +208,6 @@ public class SqlUtils {
 			response.add(records_new);
 			return response;
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLConnection.Gis2Absolute: " + e.toString(), scope);
 		}

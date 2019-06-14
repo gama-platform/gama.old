@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.graph.AStar.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.graph.AStar.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
@@ -29,15 +29,14 @@ public class AStar<V, E> {
 	protected GamaGraph<V, E> graph;
 	protected V source;
 	protected V target;
-	protected Map<V, ASNode> openMap = new TOrderedHashMap<V, ASNode>();
-	protected Map<V, ASNode> closedMap = new TOrderedHashMap<V, ASNode>();
-	
+	protected Map<V, ASNode> openMap = new TOrderedHashMap<>();
+	protected Map<V, ASNode> closedMap = new TOrderedHashMap<>();
+
 	protected List<E> result;
 	protected boolean isSpatialGraph;
 	protected boolean isPathFound = false;
 
-	public AStar() {
-	}
+	public AStar() {}
 
 	public AStar(final GamaGraph<V, E> graph) {
 		init(graph);
@@ -75,10 +74,6 @@ public class AStar<V, E> {
 		return result;
 	}
 
-	public boolean noPathFound() {
-		return !isPathFound;
-	}
-
 	public IList<E> buildPath(final ASNode target) {
 		final IList<E> path = GamaListFactory.create();
 
@@ -112,7 +107,7 @@ public class AStar<V, E> {
 		isPathFound = false;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	protected void aStar(final V sourceNode, final V targetNode) {
 		cleanAll();
 		openMap.put(sourceNode, new ASNode(sourceNode, null, null, 0, heuristic(sourceNode, targetNode)));
@@ -139,15 +134,16 @@ public class AStar<V, E> {
 			for (final E edge : edges) {
 				final _Edge<V, E> eg = graph.getEdge(edge);
 				final V next = (V) (eg.getTarget().equals(current.node) ? eg.getSource() : eg.getTarget());
-				if (closedMap.containsKey(next))
+				if (closedMap.containsKey(next)) {
 					continue;
+				}
 
 				final double h = heuristic(next, targetNode);
 				final double g = current.g + eg.getWeight();
 				final ASNode openNode = openMap.get(next);
-				if (openNode == null || g < openNode.g)
+				if (openNode == null || g < openNode.g) {
 					openMap.put(next, new ASNode(next, edge, current, g, h));
-				else if (g >= openNode.rank) {
+				} else if (g >= openNode.rank) {
 					continue;
 				}
 			}
@@ -176,12 +172,6 @@ public class AStar<V, E> {
 		}
 
 		return theChosenOne;
-	}
-
-	public void compute(final V source, final V target) {
-		setSource(source);
-		setTarget(target);
-		compute();
 	}
 
 	protected class ASNode {

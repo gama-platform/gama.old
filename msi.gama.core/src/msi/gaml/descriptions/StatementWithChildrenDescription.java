@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.StatementWithChildrenDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.StatementWithChildrenDescription.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -19,7 +19,6 @@ import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
 import msi.gaml.expressions.IExpression;
@@ -109,7 +108,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 			return ((StatementWithChildrenDescription) getEnclosingDescription()).addTemp(declaration, name, type);
 		}
 		final String kw = getKeyword();
-		final String facet = kw == IKeyword.LET || kw == IKeyword.LOOP ? IKeyword.NAME : IKeyword.RETURNS;
+		final String facet = LET.equals(kw) || LOOP.equals(kw) ? NAME : RETURNS;
 		if (temps == null) {
 			temps = new THashMap<>();
 		}
@@ -128,8 +127,8 @@ public class StatementWithChildrenDescription extends StatementDescription {
 			declaration.warning("This declaration of " + name + " shadows the declaration of a global attribute",
 					IGamlIssue.SHADOWS_NAME, facet);
 		}
-		final IExpression result =
-				msi.gaml.compilation.GAML.getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
+		final IExpression result = msi.gaml.compilation.GAML.getExpressionFactory().createVar(name, type, false,
+				IVarExpression.TEMP, this);
 		temps.put(name, (IVarExpression) result);
 		return result;
 	}

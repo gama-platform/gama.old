@@ -2,11 +2,11 @@
  *
  * msi.gama.outputs.display.AWTDisplayGraphics.java, in plugin msi.gama.core, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gama.outputs.display;
@@ -142,7 +142,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	/**
 	 * Implements PointTransformation.transform
-	 * 
+	 *
 	 * @see com.vividsolutions.jts.awt.PointTransformation#transform(com.vividsolutions.jts.geom.Coordinate,
 	 *      java.awt.geom.Point2D)
 	 */
@@ -164,8 +164,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawFile(final GamaFile<?, ?> file, final FileDrawingAttributes attributes) {
 		final IScope scope = surface.getScope();
-		if (file instanceof GamaImageFile) { return drawImage(
-				((GamaImageFile) file).getImage(scope, attributes.useCache()), attributes); }
+		if (file instanceof GamaImageFile) {
+			return drawImage(((GamaImageFile) file).getImage(scope, attributes.useCache()), attributes);
+		}
 		if (!(file instanceof GamaGeometryFile)) { return null; }
 		IShape shape = Cast.asGeometry(scope, file);
 		if (shape == null) { return null; }
@@ -221,7 +222,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	/**
 	 * Method drawString.
-	 * 
+	 *
 	 * @param string
 	 *            String
 	 * @param stringColor
@@ -277,9 +278,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		r.setFrame(curX, curY, r.getWidth(), r.getHeight());
 		return r;
 	}
-	
-	private void setFont(Font f ) {
-		Font font = surface == null ? f : surface.computeFont(f);
+
+	private void setFont(final Font f) {
+		final Font font = surface == null ? f : surface.computeFont(f);
 		currentRenderer.setFont(font);
 	}
 
@@ -371,7 +372,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	/**
 	 * Method is2D()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGraphics#is2D()
 	 */
 	@Override
@@ -441,7 +442,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	final Rectangle2D chartRect = new Rectangle2D.Double();
-	static final FileDrawingAttributes CONSTANT_CHART_ATTRIBUTES = new FileDrawingAttributes(null, true);
 
 	@Override
 	public Rectangle2D drawChart(final ChartOutput chart) {
@@ -449,12 +449,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final BufferedImage im =
 				chart.getImage(getLayerWidth(), getLayerHeight(), getSurface().getData().isAntialias());
 		currentRenderer.drawImage(im, (int) getXOffsetInPixels(), (int) getYOffsetInPixels(), null);
-		// return drawImage(im, CONSTANT_CHART_ATTRIBUTES);
 		return chartRect;
-
-		// chartRect.setFrame(getXOffsetInPixels(), getYOffsetInPixels(), getLayerWidth(), getLayerHeight());
-		// chart.draw(currentRenderer, chartRect, getSurface().getData().isAntialias());
-		// return chartRect;
 	}
 
 }

@@ -2,11 +2,11 @@
  *
  * msi.gama.common.geometry.GamaGeometryFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -16,8 +16,6 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -94,10 +92,6 @@ public class GamaGeometryFactory extends GeometryFactory {
 
 	public LineString createLineString(final GamaPoint[] coordinates, final boolean copyPoints) {
 		return createLineString(COORDINATES_FACTORY.create(coordinates, copyPoints));
-	}
-
-	public GeometryCollection createGeometryCollectionFrom(final Geometry... geometries) {
-		return super.createGeometryCollection(geometries);
 	}
 
 }

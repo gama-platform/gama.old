@@ -17,8 +17,6 @@ import java.util.List;
 import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.interfaces.IGamaView.Display;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
@@ -434,18 +432,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return true;
 	}
 
-	protected IGamaView.Display getView() {
-		return (Display) view;
-	}
-	//
-	// @Override
-	// public void open() {
-	// super.open();
-	// // if (getView() != null) {
-	// // getView().waitToBeRealized();
-	// // }
-	// }
-
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		for (final ILayerStatement layer : getLayers()) {
@@ -581,11 +567,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public boolean isSynchronized() {
 		return super.isSynchronized() && data.isSynchronized();
-	}
-
-	public void releaseView() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public int getIndex() {

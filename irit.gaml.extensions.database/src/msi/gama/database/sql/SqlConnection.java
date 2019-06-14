@@ -44,39 +44,32 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class SqlConnection {
 
-	public static final String MYSQL = "mysql";
-	public static final String POSTGRES = "postgres";
-	public static final String POSTGIS = "postgis";
-	public static final String MSSQL = "sqlserver";
+	static final String MYSQL = "mysql";
+	static final String POSTGRES = "postgres";
+	static final String POSTGIS = "postgis";
+	static final String MSSQL = "sqlserver";
 	public static final String SQLITE = "sqlite";
 	public static final String GEOMETRYTYPE = "GEOMETRY";
-	public static final String CHAR = "CHAR";
-	public static final String VARCHAR = "VARCHAR";
-	public static final String NVARCHAR = "NVARCHAR";
-	public static final String TEXT = "TEXT";
-	public static final String BLOB = "BLOB";
-	public static final String TIMESTAMP = "TIMESTAMP"; // MSSQL
-														// (number);Postgres,MySQL
-														// ('YYYY-MM-DD
-														// HH:MM:SS')
-	public static final String DATETIME = "DATETIME"; // MSSQL,Postgres, MySQL,
-														// SQLite ( "YYYY-MM-DD
-														// HH:MM:SS.SSS")
-	public static final String SMALLDATETIME = "SMALLDATETIME"; // MSSQL
-	public static final String DATE = "DATE"; // MSSQL,Postgres, MySQL, SQlite
-	public static final String YEAR = "YEAR"; // Postgres, MySQL(yyyy)
-	public static final String TIME = "TIME"; // MySQL ('00:00:00')
-	public static final String NULLVALUE = "NULL";
+	static final String CHAR = "CHAR";
+	static final String VARCHAR = "VARCHAR";
+	static final String NVARCHAR = "NVARCHAR";
+	static final String TEXT = "TEXT";
+	static final String BLOB = "BLOB";
+	static final String TIMESTAMP = "TIMESTAMP";
+	static final String DATETIME = "DATETIME"; // MSSQL,Postgres, MySQL,
+
+	static final String DATE = "DATE"; // MSSQL,Postgres, MySQL, SQlite
+	static final String YEAR = "YEAR"; // Postgres, MySQL(yyyy)
+	static final String TIME = "TIME"; // MySQL ('00:00:00')
+	static final String NULLVALUE = "NULL";
 
 	static final String MYSQLDriver = "com.mysql.jdbc.Driver";
-	// static final String MSSQLDriver = new
-	// String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 	static final String MSSQLDriver = "net.sourceforge.jtds.jdbc.Driver";
 	static final String SQLITEDriver = "org.sqlite.JDBC";
 	static final String POSTGRESDriver = "org.postgresql.Driver";
 
 	protected String vender = "";
-	protected String dbtype = "";
+
 	protected String url = "";
 	protected String port = "";
 	protected String dbName = "";
@@ -84,14 +77,13 @@ public abstract class SqlConnection {
 	protected String password = "";
 	protected Boolean transformed = false;
 	protected String extension = null;
-	protected boolean loadExt = false;
 
 	// AD: Added to be sure that SQL connections use a correct projection when
 	// they load/save geometries
 	private IProjection gis = null;
 	// AD: Added to be sure to remember the parameters (which can contain other
 	// informations about GIS data
-	protected Map<String, Object> params;
+	private Map<String, Object> params;
 
 	public void setGis(final Projection gis) {
 		this.gis = gis;
@@ -130,13 +122,7 @@ public abstract class SqlConnection {
 						+ " code. GAMA may be unable to save any GIS data", scope);
 
 			}
-			// return
-			// scope.getSimulationScope().getProjectionFactory().forSavingWith(srid,
-			// longitudeFirst);
 		} else {
-			// return
-			// scope.getSimulationScope().getProjectionFactory().forSavingWith((Integer)
-			// null);
 			try {
 				return scope.getSimulation().getProjectionFactory().forSavingWith(scope,
 						GamaPreferences.External.LIB_OUTPUT_CRS.getValue());
@@ -156,26 +142,22 @@ public abstract class SqlConnection {
 		this.params = params;
 	}
 
-	public SqlConnection(final String dbName) {
+	SqlConnection(final String dbName) {
 		this.dbName = dbName;
 	}
 
-	public SqlConnection(final String venderName, final String database) {
+	SqlConnection(final String venderName, final String database) {
 		this.vender = venderName;
 		this.dbName = database;
-		this.dbtype = venderName;
 	}
 
-	public SqlConnection(final String venderName, final String database, final Boolean transformed) {
+	SqlConnection(final String venderName, final String database, final Boolean transformed) {
 		this.vender = venderName;
 		this.dbName = database;
 		this.transformed = transformed;
-		this.dbtype = venderName;
 	}
 
-	public SqlConnection() {}
-
-	public SqlConnection(final String venderName, final String url, final String port, final String dbName,
+	SqlConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password) {
 		this.vender = venderName;
 		this.url = url;
@@ -183,10 +165,9 @@ public abstract class SqlConnection {
 		this.dbName = dbName;
 		this.userName = userName;
 		this.password = password;
-		this.dbtype = venderName;
 	}
 
-	public SqlConnection(final String venderName, final String url, final String port, final String dbName,
+	SqlConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password, final Boolean transformed) {
 		this.vender = venderName;
 		this.url = url;
@@ -194,7 +175,6 @@ public abstract class SqlConnection {
 		this.dbName = dbName;
 		this.userName = userName;
 		this.password = password;
-		this.dbtype = venderName;
 		this.transformed = transformed;
 	}
 
@@ -397,7 +377,7 @@ public abstract class SqlConnection {
 		return n;
 	}
 
-	protected IList<IList<Object>> resultSet2GamaList(final ResultSet rs) throws SQLException {
+	private IList<IList<Object>> resultSet2GamaList(final ResultSet rs) throws SQLException {
 		final ResultSetMetaData rsmd = rs.getMetaData();
 		return resultSet2GamaList(rsmd, rs);
 	}
@@ -533,19 +513,6 @@ public abstract class SqlConnection {
 	 *  Insert a reccord into table
 	 *
 	 */
-	public int insertDB(final IScope scope, final Connection conn, final String table_name, final GamaList<Object> cols,
-			final GamaList<Object> values, final Boolean transformed) throws GamaRuntimeException {
-		this.transformed = transformed;
-		int rec_no = -1;
-		// Get Insert command
-		rec_no = insertDB(scope, conn, table_name, cols, values);
-		return rec_no;
-	}
-
-	/*-------------------------------------------------------------------------------------------------------------------------
-	 *  Insert a reccord into table
-	 *
-	 */
 	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
 			final GamaList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
@@ -554,17 +521,6 @@ public abstract class SqlConnection {
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
-		return rec_no;
-	}
-
-	/*
-	 * Insert a reccord into table
-	 */
-	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
-			final GamaList<Object> values, final Boolean transform) throws GamaRuntimeException {
-		this.transformed = transform;
-		int rec_no = -1;
-		rec_no = insertDB(scope, table_name, cols, values);
 		return rec_no;
 	}
 
@@ -591,12 +547,6 @@ public abstract class SqlConnection {
 		return rec_no;
 	}
 
-	public int insertDB(final IScope scope, final Connection conn, final String table_name,
-			final GamaList<Object> values, final Boolean transform) throws GamaRuntimeException {
-		this.transformed = transform;
-		return insertDB(scope, conn, table_name, values);
-	}
-
 	/*
 	 * Insert a reccord into table
 	 */
@@ -609,15 +559,6 @@ public abstract class SqlConnection {
 			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString(), scope);
 		}
 		return rec_no;
-	}
-
-	/*
-	 * Insert a reccord into table
-	 */
-	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> values,
-			final Boolean transform) throws GamaRuntimeException {
-		this.transformed = transform;
-		return insertDB(scope, table_name, values);
 	}
 
 	/*
@@ -670,45 +611,9 @@ public abstract class SqlConnection {
 
 			result.add(repRequest);
 
-			/**
-			 * AD: Added to transform Geometries
-			 */
-			// if ( columns.contains(GEOMETRYTYPE) && transformed) {
-			// if ( gis == null ) {
-			// // we have at least one geometry type and we compute the envelope
-			// if no gis is present
-			// // Envelope env = getBounds(repRequest);
-			// Envelope env = getBounds(result);
-			// // we now compute the GisUtils instance for our case (based on
-			// params and env)
-			// gis =
-			// scope.getSimulationScope().getProjectionFactory().fromParams(params,
-			// env);
-			// }
-			// // and we transform the geometries using its projection
-			// // repRequest = SqlUtils.transform(gis, repRequest, false);
-			// result = SqlUtils.transform(gis, result, false);
-			// }
-
-			/**
-			 * AD
-			 */
-
-			// result.add(repRequest);
-
-			if (DEBUG.IS_ON()) {
-				DEBUG.OUT("list of column name:" + result.get(0));
-				DEBUG.OUT("list of column type:" + result.get(1));
-				DEBUG.OUT("list of data:" + result.get(2));
-			}
-
-			// pstmt=null;
-			// System.gc();
-
 		} catch (final SQLException e) {
 			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString(), scope);
 		}
-		// return repRequest;
 		return result;
 
 	}

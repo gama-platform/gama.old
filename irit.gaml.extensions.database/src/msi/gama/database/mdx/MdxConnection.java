@@ -17,25 +17,16 @@ import org.olap4j.Axis;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
-import org.olap4j.CellSetAxisMetaData;
-import org.olap4j.CellSetMetaData;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.OlapStatement;
 import org.olap4j.Position;
-import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
-import org.olap4j.metadata.NamedList;
-import org.olap4j.metadata.Property;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gaml.operators.Strings;
-import ummisco.gama.dev.utils.DEBUG;
 
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC
@@ -62,10 +53,7 @@ public abstract class MdxConnection {
 	protected static final String MSSQL = "sqlserver";
 	protected static final String SQLITE = "sqlite";
 
-	protected static final String GEOMETRYTYPE = "GEOMETRY";
 	protected static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
-	// static final String MSSQLDriver = new
-	// String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 	protected static final String MSSQLDriver = new String("net.sourceforge.jtds.jdbc.Driver");
 	protected static final String SQLITEDriver = new String("org.sqlite.JDBC");
 	protected static final String POSTGRESDriver = new String("org.postgresql.Driver");
@@ -81,26 +69,16 @@ public abstract class MdxConnection {
 
 	protected OlapConnection olapConnection;
 
-	// protected Connection connection;
-
-	public MdxConnection() {}
-
-	public MdxConnection(final String vender) {
+	MdxConnection(final String vender) {
 		this.vender = vender;
 	}
 
-	public MdxConnection(final String venderName, final String database) {
+	MdxConnection(final String venderName, final String database) {
 		this.vender = venderName;
 		this.dbName = database;
 	}
 
-	public MdxConnection(final String venderName, final String dbtype, final String url) {
-		this.vender = venderName;
-		this.dbtype = dbtype;
-		this.dbName = url;
-	}
-
-	public MdxConnection(final String venderName, final String url, final String port, final String dbName,
+	MdxConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password) {
 		this.vender = venderName;
 		this.url = url;
@@ -110,7 +88,7 @@ public abstract class MdxConnection {
 		this.password = password;
 	}
 
-	public MdxConnection(final String venderName, final String url, final String port, final String dbName,
+	MdxConnection(final String venderName, final String url, final String port, final String dbName,
 			final String catalog, final String userName, final String password) {
 		this.vender = venderName;
 		this.url = url;
@@ -121,7 +99,7 @@ public abstract class MdxConnection {
 		this.password = password;
 	}
 
-	public MdxConnection(final String venderName, final String dbtype, final String url, final String port,
+	MdxConnection(final String venderName, final String dbtype, final String url, final String port,
 			final String dbName, final String catalog, final String userName, final String password) {
 		this.vender = venderName;
 		this.dbtype = dbtype;
@@ -174,20 +152,8 @@ public abstract class MdxConnection {
 		return this.vender;
 	}
 
-	public String getdbType() {
-		return this.dbtype;
-	}
-
-	public String getdbName() {
-		return this.dbName;
-	}
-
 	public String getURL() {
 		return this.url;
-	}
-
-	public String getport() {
-		return this.port;
 	}
 
 	public String getCatalog() {
@@ -206,20 +172,8 @@ public abstract class MdxConnection {
 		this.vender = vender;
 	}
 
-	public void setdbType(final String dbType) {
-		this.dbtype = dbType;
-	}
-
-	public void setdbName(final String dbName) {
-		this.dbName = dbName;
-	}
-
 	public void setURL(final String url) {
 		this.url = url;
-	}
-
-	public void setport(final String port) {
-		this.port = port;
 	}
 
 	public void setCatalog(final String catalog) {
@@ -230,35 +184,11 @@ public abstract class MdxConnection {
 		this.userName = userName;
 	}
 
-	public void getPassword(final String password) {
-		this.password = password;
-	}
-
-	// public String getDatabase() throws GamaRuntimeException {
-	// try {
-	// return olapConnection.getDatabase();
-	// } catch (OlapException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// throw GamaRuntimeException.error(e.toString());
-	// }
-	// }
-
-	// public OlapDatabaseMetaData getMetaData() throws GamaRuntimeException {
-	// try {
-	// return olapConnection.getMetaData();
-	// } catch (OlapException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// throw GamaRuntimeException.error(e.toString());
-	// }
-	// }
-
 	/*
 	 * Select data source with connection was established
 	 */
 
-	public CellSet select(final IScope scope, final String selectComm) {
+	private CellSet select(final IScope scope, final String selectComm) {
 		CellSet resultCellSet = null;
 		try (OlapConnection oConn = connectMDB(scope);) {
 			resultCellSet = select(scope, oConn, selectComm);
@@ -268,7 +198,7 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
-	public CellSet select(final IScope scope, final String selectComm, final IList<Object> condition_values) {
+	private CellSet select(final IScope scope, final String selectComm, final IList<Object> condition_values) {
 		CellSet resultCellSet = null;
 		try (OlapConnection oConn = connectMDB(scope);) {
 			final String mdxStr = parseMdx(selectComm, condition_values);
@@ -279,7 +209,7 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
-	public CellSet select(final IScope scope, final OlapConnection connection, final String selectComm)
+	private CellSet select(final IScope scope, final OlapConnection connection, final String selectComm)
 			throws GamaRuntimeException {
 		CellSet resultCellSet = null;
 		try (OlapStatement statement = connection.createStatement();) {
@@ -308,36 +238,6 @@ public abstract class MdxConnection {
 		return cellSet2List(cellSet);
 	}
 
-	public IList<Object> selectMDB(final IScope scope, final OlapConnection connection, final String selectComm) {
-		final CellSet cellSet = select(scope, connection, selectComm);
-		return cellSet2List(cellSet);
-	}
-
-	public IList<Object> selectMDB(final IScope scope, final String onColumns, final String onRows, final String from) {
-		final String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from;
-		return selectMDB(scope, mdxStr);
-	}
-
-	public IList<Object> selectMDB(final IScope scope, final OlapConnection connection, final String onColumns,
-			final String onRows, final String from) {
-		final String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from;
-		return selectMDB(scope, connection, mdxStr);
-	}
-
-	public IList<Object> selectMDB(final IScope scope, final String onColumns, final String onRows, final String from,
-			final String where) {
-		final String mdxStr =
-				"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
-		return selectMDB(scope, mdxStr);
-	}
-
-	public IList<Object> selectMDB(final IScope scope, final OlapConnection connection, final String onColumns,
-			final String onRows, final String from, final String where) {
-		final String mdxStr =
-				"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
-		return selectMDB(scope, connection, mdxStr);
-	}
-
 	/*
 	 * Format of Olap query result (GamaList<Object>: Result of OLAP query is transformed to Gamalist<Object> with
 	 * order: (0): GamaList<String>: List of column names. (1): GamaList<Object>: Row data. it contains List of list and
@@ -345,14 +245,14 @@ public abstract class MdxConnection {
 	 * two element: (0): rowMembers (GamaList<String>: this is a list of members in the row. (1): cellValues
 	 * (Gamalist<Object>): This is a list of values in cell column or (we can call measures)
 	 */
-	public IList<Object> cellSet2List(final CellSet cellSet) {
+	private IList<Object> cellSet2List(final CellSet cellSet) {
 		final IList<Object> olapResult = GamaListFactory.create();
 		olapResult.add(this.getColumnsName(cellSet));
 		olapResult.add(this.getRowsData(cellSet));
 		return olapResult;
 	}
 
-	protected IList<Object> getColumnsName(final CellSet cellSet) {
+	private IList<Object> getColumnsName(final CellSet cellSet) {
 		final IList<Object> columnsName = GamaListFactory.create();
 		final List<CellSetAxis> cellSetAxes = cellSet.getAxes();
 		// get headings.
@@ -365,7 +265,7 @@ public abstract class MdxConnection {
 
 	}
 
-	protected IList<Object> getRowsData(final CellSet cellSet) {
+	private IList<Object> getRowsData(final CellSet cellSet) {
 		final IList<Object> rowsData = GamaListFactory.create();
 
 		final List<CellSetAxis> cellSetAxes = cellSet.getAxes();
@@ -407,123 +307,10 @@ public abstract class MdxConnection {
 	}
 
 	/*
-	 * Get all column names of OLAP query
-	 */
-	public IList<Object> getAllColummsName(final IList<Object> olapResult) {
-		return (GamaList<Object>) olapResult.get(0);
-	}
-
-	/*
-	 * Get all column names of OLAP query
-	 */
-	public Object getColummNameAt(final IList<Object> olapResult, final int cIndex) {
-		return this.getAllColummsName(olapResult).get(cIndex);
-	}
-
-	/*
-	 * Get all rows data
-	 */
-	public IList<Object> getAllRowsData(final IList<Object> olapResult) {
-		return (GamaList<Object>) olapResult.get(1);
-	}
-
-	/*
-	 * Get row data (row members + cell values) at row index(rIndex)
-	 */
-	public IList<Object> getRowDataAt(final IList<Object> olapResult, final int rIndex) {
-		return (GamaList<Object>) getAllRowsData(olapResult).get(rIndex);
-	}
-
-	/*
-	 * Get all row members at row(index)
-	 */
-	public IList<Object> getAllMembersAt(final IList<Object> olapResult, final int rIndex) {
-		return (GamaList<Object>) getRowDataAt(olapResult, rIndex).get(0);
-	}
-
-	/*
-	 * Get row member at row index:rIndex ,member index:mIndex)
-	 */
-	public Object getRowMemberAt(final IList<Object> olapResult, final int rIndex, final int mIndex) {
-		return getAllMembersAt(olapResult, rIndex).get(mIndex);
-	}
-
-	/*
-	 * Get all cell values at index row
-	 */
-	public IList<Object> getAllCellValuesAt(final IList<Object> olapResult, final int rIndex) {
-		return (GamaList<Object>) getRowDataAt(olapResult, rIndex).get(1);
-	}
-
-	/*
-	 * Get cell value at row index:rIndex ,cell index:cIndex)
-	 */
-	public Object getCellValueAt(final IList<Object> olapResult, final int rIndex, final int cIndex) {
-		return getAllCellValuesAt(olapResult, rIndex).get(cIndex);
-	}
-
-	/*
-	 * Get cubes of OlapConnection
-	 */
-	public NamedList<Cube> getCubes(final OlapConnection connection) {
-		NamedList<Cube> cubes = null;
-		try {
-			cubes = connection.getOlapSchema().getCubes();
-
-		} catch (final OlapException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return cubes;
-	}
-
-	public void getCellSetMetaData(final CellSet cellSet) {
-		CellSetMetaData cellSetMD = null;
-		NamedList<CellSetAxisMetaData> cellSetAxisMD = null;
-		// NamedList<Property> properties = null;
-		// Cube cube = null;
-		// final CellSetAxisMetaData filterAxisMD = null;
-		try {
-			cellSetMD = cellSet.getMetaData();
-			cellSetAxisMD = cellSetMD.getAxesMetaData(); // MAP<K,V>
-			// properties = cellSetMD.getCellProperties();
-			// cube = cellSetMD.getCube();
-			// print
-			// DEBUG.LOG("CellSetAxis Meta Data");
-			final int m = cellSetAxisMD.size();
-			for (int i = 0; i < m; i++) {
-				final CellSetAxisMetaData cellMD = cellSetAxisMD.get(i);
-				final List<Hierarchy> hierarchy = cellMD.getHierarchies();
-				final List<Property> property = cellMD.getProperties();
-				// DEBUG.LOG("Hierarchy");
-				int n = hierarchy.size();
-				for (int j = 0; j < n; ++j) {
-					DEBUG.LOG(hierarchy.get(j).getName() + Strings.TAB, false);
-				}
-				// DEBUG.LOG("\n Properties");
-				n = property.size();
-				for (int j = 0; j < n; ++j) {
-					DEBUG.LOG(property.get(j).getName() + Strings.TAB, false);
-				}
-
-			}
-			// DEBUG.OUT("\n End Cell Set Meta Data ------------");
-			// DEBUG.OUT("Cell Set Axis Meta Data:" +
-			// cellSetAxisMD.iterator().toString());
-			// DEBUG.OUT("propertis Meta Data:" +
-			// properties.iterator().toString());
-			// DEBUG.OUT("cubes Meta Data:" + cube.toString());
-		} catch (final OlapException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	/*
 	 * print all column names
 	 */
 
-	public String parseMdx(final String str, final IList<Object> condition_values) throws GamaRuntimeException {
+	private String parseMdx(final String str, final IList<Object> condition_values) throws GamaRuntimeException {
 		String queryStr = str;
 		final int condition_count = condition_values.size();
 		// set value for each condition

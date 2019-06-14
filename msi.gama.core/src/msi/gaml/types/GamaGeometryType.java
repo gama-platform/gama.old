@@ -517,13 +517,6 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
-	public static IShape buildObjFile(final double radius, final ILocation location) {
-		final IShape g = buildCircle(radius, location);
-		g.setDepth(radius);
-		g.setAttribute(IShape.TYPE_ATTRIBUTE, SPHERE);
-		return g;
-	}
-
 	public static IShape buildCone3D(final double radius, final double depth, final ILocation location) {
 		final IShape g = buildCircle(radius, location);
 		g.setDepth(depth);

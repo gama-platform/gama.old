@@ -180,21 +180,4 @@ public class OldFileUtils {
 
 	}
 
-	public static String constructAbsoluteTempFilePath(final IScope scope, final String suffix) {
-		try {
-			final File temp = File.createTempFile("tmp", suffix);
-			temp.deleteOnExit();
-			return temp.getAbsolutePath();
-		} catch (final Exception e) {
-			// Not allowed to create temp files in system
-			final String newPath = FileUtils.constructAbsoluteFilePath(scope, "tmp/" + suffix, false);
-			final File file = new File(newPath);
-			try {
-				file.createNewFile();
-			} catch (final IOException e1) {}
-			file.deleteOnExit();
-			return file.getAbsolutePath();
-		}
-	}
-
 }

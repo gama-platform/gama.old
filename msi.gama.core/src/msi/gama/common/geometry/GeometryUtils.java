@@ -422,13 +422,6 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static IList<IShape> geometryDecomposition(final IShape geom, final int nbCols, final int nbRows) {
-		final Envelope env = geom.getEnvelope();
-		final double x_size = env.getWidth() / nbCols;
-		final double y_size = env.getHeight() / nbRows;
-		return geometryDecomposition(geom, x_size, y_size);
-	}
-
 	public static IList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();

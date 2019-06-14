@@ -179,12 +179,6 @@ public class ExperimentController implements Runnable, IExperimentController {
 		processUserCommand(IExperimentController._OPEN);
 	}
 
-	public void directReload() {
-		// TODO Should maybe be done directly (so as to reload immediately)
-		if (experiment == null) { return; }
-		processUserCommand(IExperimentController._RELOAD);
-	}
-
 	@Override
 	public void userStart() {
 		offer(IExperimentController._START);

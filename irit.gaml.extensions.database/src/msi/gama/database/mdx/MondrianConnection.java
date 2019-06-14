@@ -23,38 +23,23 @@ import ummisco.gama.dev.utils.DEBUG;
 
 public class MondrianConnection extends MdxConnection {
 
-	static final String DRIVER = new String("mondrian.olap4j.MondrianOlap4jDriver");
+	private static final String DRIVER = "mondrian.olap4j.MondrianOlap4jDriver";
 	private static java.util.HashMap<String, String> driverMap = new java.util.HashMap<>();
 	private static java.util.HashMap<String, String> jdbcMap = new java.util.HashMap<>();
 
-	public MondrianConnection() {
-		super();
-		init();
-	}
-
-	public MondrianConnection(final String vender) {
-		super(vender);
-		init();
-	}
-
-	public MondrianConnection(final String venderName, final String database) {
-		super(venderName, database);
-		init();
-	}
-
-	public MondrianConnection(final String venderName, final String url, final String port, final String dbName,
+	MondrianConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password) {
 		super(venderName, url, port, dbName, userName, password);
 		init();
 	}
 
-	public MondrianConnection(final String venderName, final String url, final String port, final String dbName,
+	MondrianConnection(final String venderName, final String url, final String port, final String dbName,
 			final String catalog, final String userName, final String password) {
 		super(venderName, url, port, dbName, catalog, userName, password);
 		init();
 	}
 
-	public MondrianConnection(final String venderName, final String dbtype, final String url, final String port,
+	MondrianConnection(final String venderName, final String dbtype, final String url, final String port,
 			final String dbName, final String catalog, final String userName, final String password) {
 		super(venderName, dbtype, url, port, dbName, catalog, userName, password);
 		init();

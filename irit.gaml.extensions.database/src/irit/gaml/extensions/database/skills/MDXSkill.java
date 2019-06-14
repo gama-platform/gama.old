@@ -41,23 +41,10 @@ import msi.gaml.types.IType;
 		name = "MDXSKILL",
 		concept = { IConcept.DATABASE, IConcept.SKILL })
 @SuppressWarnings ({ "rawtypes", "unchecked" })
+@doc ("This skill allows agents to be provided with actions and attributes in order to connect to MDX databases")
 public class MDXSkill extends Skill {
 
-	// private static final boolean DEBUG = false; // Change DEBUG = false for
-	// release version
-
-	/*
-	 * for test only
-	 */
-	// @action(name = "helloWorld")
-	// public Object helloWorld(final IScope scope) throws GamaRuntimeException
-	// {
-	// scope.getGui().informConsole("Hello World");
-	// return null;
-	// }
-
 	// Get current time of system
-	// added from MaeliaSkill
 	@action (
 			name = "timeStamp")
 	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
@@ -84,8 +71,6 @@ public class MDXSkill extends Skill {
 		try (final OlapConnection oConn = MdxUtils.createConnectionObject(scope, params).connectMDB(scope)) {
 			oConn.getCatalog();
 		} catch (final Exception e) {
-			// throw new GamaRuntimeException("SQLSkill.connectDB: " +
-			// e.toString());
 			return false;
 		}
 		return true;
@@ -98,19 +83,6 @@ public class MDXSkill extends Skill {
 					type = IType.MAP,
 					optional = false,
 					doc = @doc ("Connection parameters")),
-					// @arg(name = "select", type = IType.STRING, optional = false, doc
-					// =
-					// @doc("select string with question marks")),
-					// @arg(name = "values", type = IType.LIST, optional = true, doc =
-					// @doc("List of values that are used to replace question marks")),
-					// @arg(name = "transform", type = IType.BOOL, optional = true, doc
-					// =
-					// @doc("if transform = true then geometry will be tranformed from
-					// absolute to gis otherways it will be not transformed. Default
-					// value is false "))
-
-					// @arg(name = "mdx", type = IType.STRING, optional = true, doc =
-					// @doc("select string with question marks")),
 					@arg (
 							name = "onColumns",
 							type = IType.STRING,
@@ -142,14 +114,6 @@ public class MDXSkill extends Skill {
 
 		// ------------------------------------------------------------------------------------------
 		final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		// String selectStr = (String) scope.getArg("select", IType.STRING);
-		// GamaList<Object> values =scope.hasArg("values") ? (GamaList<Object>)
-		// scope.getArg("values", IType.LIST):null;
-		// final boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) :
-		// false;
-
-		// String mdxStr = scope.hasArg("mdx") ? (String) scope.getArg("mdx",
-		// IType.STRING):null;
 		final String onRowStr = (String) scope.getArg("onRows", IType.STRING);
 		final String onColumnStr = (String) scope.getArg("onColumns", IType.STRING);
 		final String fromStr = (String) scope.getArg("from", IType.STRING);
@@ -170,12 +134,6 @@ public class MDXSkill extends Skill {
 				repRequest = mdxConn.selectMDB(scope, selectStr);
 			}
 
-			// Transform GIS to Absolute (Geometry in GAMA)
-			// if ( transform ) {
-			// repRequest= mdxConn.fromGisToAbsolute(scope, repRequest);
-			// } else {
-			// return repRequest;
-			// }
 		} catch (final Exception e) {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("MDXSkill.select_QM: " + e.toString(), scope);

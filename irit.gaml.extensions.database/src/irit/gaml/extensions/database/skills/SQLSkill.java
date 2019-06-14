@@ -55,6 +55,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		name = "SQLSKILL",
 		concept = { IConcept.DATABASE, IConcept.SKILL })
 @SuppressWarnings ({ "rawtypes", "unchecked" })
+@doc ("This skill allows agents to be provided with actions and attributes in order to connect to SQL databases")
 public class SQLSkill extends Skill {
 
 	// Get current time of system

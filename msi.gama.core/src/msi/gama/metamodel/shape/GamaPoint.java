@@ -2,11 +2,11 @@
  *
  * msi.gama.metamodel.shape.GamaPoint.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -330,10 +330,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return this;
 	}
 
-	public Coordinate toCoordinate() {
-		return new Coordinate(x, y, z);
-	}
-
 	@Override
 	public GamaPoint copy(final IScope scope) {
 		return new GamaPoint(x, y, z);
@@ -386,8 +382,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if (tolerance == 0.0) { return equals3D(c); }
 		if (!NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)) { return false; }
 		if (!NumberUtil.equalsWithTolerance(this.y, c.y, tolerance)) { return false; }
-		if (!Double.isNaN(z) && !Double.isNaN(c.z)
-				&& !NumberUtil.equalsWithTolerance(this.z, c.z, tolerance)) { return false; }
+		if (!Double.isNaN(z) && !Double.isNaN(c.z) && !NumberUtil.equalsWithTolerance(this.z, c.z, tolerance)) {
+			return false;
+		}
 
 		return true;
 	}
@@ -499,7 +496,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getGeometricalType()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getGeometricalType()
 	 */
 	@Override
@@ -579,7 +576,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getPoints()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override
@@ -604,7 +601,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getType()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override
@@ -614,7 +611,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getArea()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getArea()
 	 */
 	@Override
@@ -624,7 +621,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getVolume()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getVolume()
 	 */
 	@Override
@@ -634,7 +631,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getPerimeter()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getPerimeter()
 	 */
 	@Override
@@ -644,7 +641,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getHoles()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getHoles()
 	 */
 	@Override
@@ -654,7 +651,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getCentroid()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getCentroid()
 	 */
 	@Override
@@ -664,7 +661,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getExteriorRing()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getExteriorRing()
 	 */
 	@Override
@@ -674,7 +671,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getWidth()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getWidth()
 	 */
 	@Override
@@ -684,7 +681,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getHeight()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getHeight()
 	 */
 	@Override
@@ -694,7 +691,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getDepth()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getDepth()
 	 */
 	@Override
@@ -704,7 +701,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getGeometricEnvelope()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
 	 */
 	@Override
@@ -714,7 +711,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method getGeometries()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getGeometries()
 	 */
 	@Override
@@ -724,7 +721,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	/**
 	 * Method isMultiple()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#isMultiple()
 	 */
 	@Override
@@ -750,10 +747,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	public GamaPoint crossProduct(final GamaPoint u2) {
 		return cross(this, u2);
-	}
-
-	public double dotProduct(final GamaPoint u2) {
-		return dotProduct(this, u2);
 	}
 
 	public GamaPoint orthogonal() {

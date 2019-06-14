@@ -77,7 +77,6 @@ import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.GamaMatrixType;
-import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
@@ -110,7 +109,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	protected Boolean isHexagon = null;
 
 	protected Boolean isHorizontalOrientation = null;
-	protected GridDiffuser_deprecated diffuser_deprecated;
 	protected GridDiffuser diffuser;
 	public INeighborhood neighborhood;
 
@@ -134,16 +132,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		_clear();
 		matrix = null;
 		diffuser = null;
-		diffuser_deprecated = null;
 		cellSpecies = null;
-	}
-
-	public IContainerType getPreciseType(final IScope scope) {
-		if (cellSpecies == null) {
-			return super.getGamlType();
-		} else {
-			return Types.MATRIX.of(scope.getType(cellSpecies.getName()));
-		}
 	}
 
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,

@@ -1,16 +1,14 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.projection.Projection.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.projection.Projection.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.projection;
-
-import javax.measure.converter.UnitConverter;
 
 import org.geotools.geometry.jts.DefaultCoordinateSequenceTransformer;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
@@ -56,8 +54,6 @@ public class Projection implements IProjection {
 			// createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
 		}
 	}
-	
-	
 
 	@Override
 	public void createTransformation(final MathTransform t) {
@@ -109,11 +105,6 @@ public class Projection implements IProjection {
 		return geom;
 	}
 
-	Envelope3D transform(final Envelope3D g, final boolean translate) {
-		if (transformer == null) { return g; }
-		return Envelope3D.of(transform(JTS.toGeometry(g), translate).getEnvelopeInternal());
-	}
-
 	Envelope3D transform(final Envelope3D g) {
 		if (transformer == null) { return g; }
 		return Envelope3D.of(transform(JTS.toGeometry(g)).getEnvelopeInternal());
@@ -136,7 +127,7 @@ public class Projection implements IProjection {
 
 	MathTransform computeProjection(final IScope scope) {
 		MathTransform crsTransformation = null;
-		if (initialCRS == null) return null;
+		if (initialCRS == null) { return null; }
 		try {
 			crsTransformation = CRS.findMathTransform(initialCRS, getTargetCRS(scope), true);
 		} catch (final FactoryException e) {
@@ -158,7 +149,7 @@ public class Projection implements IProjection {
 
 	/**
 	 * Method getTargetCRS()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.projection.IProjection#getTargetCRS()
 	 */
 	@Override
@@ -169,7 +160,7 @@ public class Projection implements IProjection {
 
 	/**
 	 * Method translate()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.projection.IProjection#translate(com.vividsolutions.jts.geom.Geometry)
 	 */
 	@Override
@@ -181,7 +172,7 @@ public class Projection implements IProjection {
 
 	/**
 	 * Method inverseTranslate()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.projection.IProjection#inverseTranslate(com.vividsolutions.jts.geom.Geometry)
 	 */
 	@Override
@@ -192,19 +183,19 @@ public class Projection implements IProjection {
 	}
 
 	@Override
-	public void convertUnit(Geometry geom) {
+	public void convertUnit(final Geometry geom) {
 		if (referenceProjection != null) {
 			referenceProjection.convertUnit(geom);
 		}
-		
+
 	}
 
 	@Override
-	public void inverseConvertUnit(Geometry geom) {
+	public void inverseConvertUnit(final Geometry geom) {
 		if (referenceProjection != null) {
 			referenceProjection.inverseConvertUnit(geom);
 		}
-		
+
 	}
 
 }

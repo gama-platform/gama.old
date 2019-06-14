@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.http.WebbUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.http.WebbUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file.http;
 
@@ -41,7 +41,7 @@ public class WebbUtils {
 
 	/**
 	 * Convert a Map to a query string.
-	 * 
+	 *
 	 * @param values
 	 *            the map with the values <code>null</code> will be encoded as empty string, all other objects are
 	 *            converted to String by calling its <code>toString()</code> method.
@@ -83,7 +83,7 @@ public class WebbUtils {
 
 	/**
 	 * Convert a byte array to a JSONObject.
-	 * 
+	 *
 	 * @param bytes
 	 *            a UTF-8 encoded string representing a JSON object.
 	 * @return the parsed object
@@ -105,7 +105,7 @@ public class WebbUtils {
 
 	/**
 	 * Convert a byte array to a JSONArray.
-	 * 
+	 *
 	 * @param bytes
 	 *            a UTF-8 encoded string representing a JSON array.
 	 * @return the parsed JSON array
@@ -165,7 +165,7 @@ public class WebbUtils {
 	 * Should be stored for later use but be aware that this DateFormat is not Thread-safe! <br>
 	 * If you have to deal with dates in this format with JavaScript, it's easy, because the JavaScript Date object has
 	 * a constructor for strings formatted this way.
-	 * 
+	 *
 	 * @return a new instance
 	 */
 	public static DateFormat getRfc1123DateFormat() {
@@ -191,8 +191,9 @@ public class WebbUtils {
 	}
 
 	static void addRequestProperty(final HttpURLConnection connection, final String name, final Object value) {
-		if (name == null || name.length() == 0
-				|| value == null) { throw new IllegalArgumentException("name and value must not be empty"); }
+		if (name == null || name.length() == 0 || value == null) {
+			throw new IllegalArgumentException("name and value must not be empty");
+		}
 
 		String valueAsString;
 		if (value instanceof Date) {
@@ -279,31 +280,22 @@ public class WebbUtils {
 	}
 
 	static byte[] gzip(final byte[] input) {
-		GZIPOutputStream gzipOS = null;
-		try {
-			final ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
-			gzipOS = new GZIPOutputStream(byteArrayOS);
+		try (final ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+				GZIPOutputStream gzipOS = new GZIPOutputStream(byteArrayOS);) {
 			gzipOS.write(input);
 			gzipOS.flush();
-			gzipOS.close();
-			gzipOS = null;
 			return byteArrayOS.toByteArray();
 		} catch (final Exception e) {
 			throw new WebbException(e);
-		} finally {
-			if (gzipOS != null) {
-				try {
-					gzipOS.close();
-				} catch (final Exception ignored) {}
-			}
 		}
 	}
 
 	static InputStream wrapStream(final String contentEncoding, final InputStream inputStream) throws IOException {
 		if (contentEncoding == null || "identity".equalsIgnoreCase(contentEncoding)) { return inputStream; }
 		if ("gzip".equalsIgnoreCase(contentEncoding)) { return new GZIPInputStream(inputStream); }
-		if ("deflate".equalsIgnoreCase(
-				contentEncoding)) { return new InflaterInputStream(inputStream, new Inflater(false), 512); }
+		if ("deflate".equalsIgnoreCase(contentEncoding)) {
+			return new InflaterInputStream(inputStream, new Inflater(false), 512);
+		}
 		throw new WebbException("unsupported content-encoding: " + contentEncoding);
 	}
 

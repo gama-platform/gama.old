@@ -162,7 +162,7 @@ public class AgentDB extends GamlAgent {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			try (final Connection conn = sqlConn.connectDB();) {}
 		} catch (final Exception e) {
-			return false;
+			throw GamaRuntimeException.create(e, scope);
 		}
 		return true;
 		// ---------------------------------------------------------------------------------------

@@ -189,30 +189,4 @@ public class ExperimentScheduler implements Runnable {
 		lock.release();
 	}
 
-	public void removeStepable(final String s) {
-
-		final Set<IStepable> beRemoved = new THashSet<>();
-		for (final IStepable ss : toStep.keySet()) {
-			if (ss.toString().contains(s)) {
-
-				final IScope scope = toStep.get(ss);
-				if (!scope.interrupted()) {
-					scope.setInterrupted();
-				}
-				beRemoved.add(ss);
-			}
-
-		}
-		for (final IStepable ss : beRemoved) {
-			toStep.remove(ss);
-			toStop.remove(ss);
-		}
-	}
-
-	public void unschedule(final IStepable scheduler) {
-		if (toStep.containsKey(scheduler)) {
-			toStep.get(scheduler).setInterrupted();
-		}
-	}
-
 }

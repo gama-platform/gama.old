@@ -64,7 +64,6 @@ public interface IGui {
 	String NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID = "msi.gama.application.decorator";
 	String CONSOLE_VIEW_ID = "msi.gama.application.view.ConsoleView";
 	String USER_CONTROL_VIEW_ID = "msi.gama.views.userControlView";
-	String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 
 	String PAUSED = "STOPPED";

@@ -102,20 +102,6 @@ public class RandomUtils {
 	}
 
 	/**
-	 * Creates a new Continuous Uniform Generator object.
-	 *
-	 * @param min
-	 *            the min
-	 * @param max
-	 *            the max
-	 *
-	 * @return the continuous uniform generator
-	 */
-	public double createUniform(final double min, final double max) {
-		return next() * (max - min) + min;
-	}
-
-	/**
 	 * Creates a new Gaussian Generator object.
 	 *
 	 * @param mean
@@ -194,8 +180,6 @@ public class RandomUtils {
 
 	}
 
-	public static final boolean USE_BITWISE = true;
-
 	private byte[] createSeed(final Double s, final int length) {
 		this.seed = s;
 		Double realSeed = seed;
@@ -205,12 +189,7 @@ public class RandomUtils {
 		if (realSeed < 1) {
 			realSeed *= Long.MAX_VALUE;
 		}
-		long l;
-		// if (!USE_BITWISE) {
-		// l = realSeed.longValue();
-		// } else {
-		l = Double.doubleToRawLongBits(realSeed);
-		// }
+		long l = Double.doubleToRawLongBits(realSeed);
 		final byte[] result = new byte[length];
 		switch (length) {
 			case 4:
@@ -307,16 +286,6 @@ public class RandomUtils {
 		}
 	}
 
-	public void shuffleInPlace(final char[] a) {
-		for (int i = a.length; i > 1; i--) {
-			final int i1 = i - 1;
-			final int j = between(0, i - 1);
-			final char tmp = a[i1];
-			a[i1] = a[j];
-			a[j] = tmp;
-		}
-	}
-
 	public List shuffle(final List list) {
 		for (int i = list.size(); i > 1; i--) {
 			final int i1 = i - 1;
@@ -332,18 +301,6 @@ public class RandomUtils {
 		final char[] c = string.toCharArray();
 		shuffle(c);
 		return String.copyValueOf(c);
-	}
-
-	public <T> T[] shuffle(final T[] array) {
-		final T[] copy = array.clone();
-		for (int i = array.length; i > 1; i--) {
-			final int i1 = i - 1;
-			final int j = between(0, i - 1);
-			final T tmp = copy[i1];
-			copy[i1] = copy[j];
-			copy[j] = tmp;
-		}
-		return copy;
 	}
 
 	/**
@@ -382,25 +339,6 @@ public class RandomUtils {
 
 	public double next() {
 		return generator.nextDouble();
-	}
-
-	public int nextInt() {
-		return generator.nextInt();
-	}
-
-	/**
-	 * @param matrix
-	 * @return
-	 */
-	public double[] shuffle(final double[] array) {
-		for (int i = array.length; i > 1; i--) {
-			final int i1 = i - 1;
-			final int j = between(0, i - 1);
-			final double tmp = array[i1];
-			array[i1] = array[j];
-			array[j] = tmp;
-		}
-		return array;
 	}
 
 	public int[] shuffle(final int[] array) {

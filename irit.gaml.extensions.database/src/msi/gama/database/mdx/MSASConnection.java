@@ -1,12 +1,12 @@
 /*********************************************************************************************
- * 
+ *
  *
  * 'MSASConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
  * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.database.mdx;
 
@@ -20,23 +20,11 @@ import org.olap4j.OlapWrapper;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-public class MSASConnection extends MdxConnection {
+class MSASConnection extends MdxConnection {
 
-	static final String DRIVER = new String("org.olap4j.driver.xmla.XmlaOlap4jDriver");
+	private static final String DRIVER = "org.olap4j.driver.xmla.XmlaOlap4jDriver";
 
-	public MSASConnection() {
-		super();
-	}
-
-	public MSASConnection(final String vender) {
-		super(vender);
-	}
-
-	public MSASConnection(final String venderName, final String database) {
-		super(venderName, database);
-	}
-
-	public MSASConnection(final String venderName, final String url, final String port, final String dbName,
+	MSASConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password) {
 		super(venderName, url, port, dbName, userName, password);
 	}

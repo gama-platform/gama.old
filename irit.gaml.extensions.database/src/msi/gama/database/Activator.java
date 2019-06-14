@@ -20,12 +20,6 @@ public class Activator implements BundleActivator {
 
 			if (!(obj instanceof GamaMap)) { return null; }
 			final GamaMap<String, Object> params = (GamaMap<String, Object>) obj;
-			// final String crs = (String) params.get("crs");
-			// final String srid = (String) params.get("srid");
-			// final Boolean longitudeFirst =
-			// params.containsKey("longitudeFirst") ? (Boolean)
-			// params.get("longitudeFirst")
-			// : true;
 			SqlConnection sqlConn;
 			Envelope3D env = null;
 			// create connection
@@ -34,15 +28,10 @@ public class Activator implements BundleActivator {
 			final IList gamaList = sqlConn.selectDB(scope, (String) params.get("select"));
 			env = SqlConnection.getBounds(gamaList);
 
-			// scope.getGui().debug("GeometryUtils.computeEnvelopeFromSQLData.Before
-			// Projection:" + env);
-
 			IProjection gis;
 			gis = scope.getSimulation().getProjectionFactory().fromParams(scope, params, env);
 			env = gis.getProjectedEnvelope();
 
-			// scope.getGui().debug("GeometryUtils.computeEnvelopeFromSQLData.After
-			// Projection:" + env);
 			return env;
 			// ----------------------------------------------------------------------------------------------------
 
