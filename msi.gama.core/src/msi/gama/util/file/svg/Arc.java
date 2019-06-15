@@ -133,11 +133,12 @@ public class Arc extends PathCommand {
 	/**
 	 * This constructs an unrotated Arc2D from the SVG specification of an Elliptical arc. To get the final arc you need
 	 * to apply a rotation transform such as:
-	 * 
+	 *
 	 * AffineTransform.getRotateInstance (angle, arc.getX()+arc.getWidth()/2, arc.getY()+arc.getHeight()/2);
 	 */
-	public static Arc2D computeArc(final double x0, final double y0, double rx, double ry, double angle,
-			final boolean largeArcFlag, final boolean sweepFlag, final double x, final double y) {
+	public static Arc2D computeArc(final double x0, final double y0, final double rrx, final double rry,
+			final double angleInDegrees, final boolean largeArcFlag, final boolean sweepFlag, final double x,
+			final double y) {
 		//
 		// Elliptical arc implementation based on the SVG specification notes
 		//
@@ -146,7 +147,7 @@ public class Arc extends PathCommand {
 		final double dx2 = (x0 - x) / 2.0;
 		final double dy2 = (y0 - y) / 2.0;
 		// Convert angle from degrees to radians
-		angle = Math.toRadians(angle % 360.0);
+		final double angle = Math.toRadians(angleInDegrees % 360.0);
 		final double cosAngle = Math.cos(angle);
 		final double sinAngle = Math.sin(angle);
 
@@ -156,8 +157,8 @@ public class Arc extends PathCommand {
 		final double x1 = cosAngle * dx2 + sinAngle * dy2;
 		final double y1 = -sinAngle * dx2 + cosAngle * dy2;
 		// Ensure radii are large enough
-		rx = Math.abs(rx);
-		ry = Math.abs(ry);
+		double rx = Math.abs(rrx);
+		double ry = Math.abs(rry);
 		double Prx = rx * rx;
 		double Pry = ry * ry;
 		final double Px1 = x1 * x1;

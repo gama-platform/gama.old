@@ -327,9 +327,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		overlay.setVisible(!overlay.isVisible());
 	}
 
-	public void makeOverlayVisibleByDefault() {
-		overlay.setVisible(GamaPreferences.Displays.CORE_OVERLAY.getValue());
-	}
+	// public void makeOverlayVisibleByDefault() {
+	// overlay.setVisible(GamaPreferences.Displays.CORE_OVERLAY.getValue());
+	// }
 
 	public void toggleSideControls() {
 		if (sideControlsVisible) {

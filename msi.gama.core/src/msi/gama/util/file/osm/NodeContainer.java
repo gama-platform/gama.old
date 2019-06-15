@@ -21,18 +21,6 @@ public class NodeContainer extends EntityContainer {
 	}
 
 	/**
-	 * Creates a new instance.
-	 *
-	 * @param sr
-	 *            The store to read state from.
-	 * @param scr
-	 *            Maintains the mapping between classes and their identifiers within the store.
-	 */
-	public NodeContainer(final StoreReader sr, final StoreClassRegister scr) {
-		node = new Node(sr, scr);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override

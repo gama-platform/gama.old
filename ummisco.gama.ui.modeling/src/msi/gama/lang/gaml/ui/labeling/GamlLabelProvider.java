@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.labeling;
@@ -92,7 +92,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 			if (text.equals(IKeyword.PARAMETER)) { return parameterText((Statement) ele); }
 			if (GamlOutlineTreeProvider.isAttribute((Statement) ele)) { return attributeText((S_Definition) ele); }
 			if (GamlOutlineTreeProvider.isAction((Statement) ele)) { return actionText((Statement) ele); }
-			String name = EGaml.getInstance().getNameOf((Statement) ele);
+			String name = EGaml.getInstance().getNameOf(ele);
 			if (name == null) {
 				final Expression expr = ((Statement) ele).getExpr();
 				if (expr != null) {
@@ -185,7 +185,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 				final VarDefinition vd = ((VariableRef) vr).getRef();
 				if (vd instanceof S_Declaration) {
 					type = EGaml.getInstance().getKeyOf(vd);
-					var = EGaml.getInstance().getNameOf((S_Declaration) vd);
+					var = EGaml.getInstance().getNameOf(vd);
 				}
 			}
 		}
@@ -246,7 +246,9 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		if (kw.equals(IKeyword.PARAMETER)) { return parameterImage(ele); }
 		if (kw.equals(IKeyword.VAR) || kw.equals(IKeyword.CONST)) {
 			for (final Facet f : EGaml.getInstance().getFacetsOf(ele)) {
-				if (EGaml.getInstance().getKeyOf(f).startsWith(IKeyword.TYPE)) { return typeImage(EGaml.getInstance().getKeyOf(f.getExpr())); }
+				if (EGaml.getInstance().getKeyOf(f).startsWith(IKeyword.TYPE)) {
+					return typeImage(EGaml.getInstance().getKeyOf(f.getExpr()));
+				}
 			}
 		}
 		return typeImage(kw);

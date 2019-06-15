@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.metadata;
@@ -44,32 +44,6 @@ import ummisco.gama.dev.utils.DEBUG;
 public class ImageDataLoader {
 
 	public static final int IMAGE_ASC = 8, IMAGE_PGM = 9;
-
-	// When the file is not known... The input stream must be kept open
-	public static ImageData getImageData(final InputStream stream) {
-		ImageData imageData = null;
-		stream.mark(2000);
-		try (Scanner scanner = new Scanner(stream)) {
-			if (scanner.hasNext("p2") || scanner.hasNext("P2")) {
-				stream.reset();
-				return readPGM(stream);
-			}
-			if (scanner.hasNext("ncols")) {
-				stream.reset();
-				return readASC(stream);
-			}
-
-			stream.reset();
-			imageData = new ImageData(stream);
-
-		} catch (final Exception e) {
-			DEBUG.ERR(e.toString());
-			return null;
-		} finally {
-			// scanner.close();
-		}
-		return imageData;
-	}
 
 	public static ImageData getImageData(final IFile file) {
 		ImageData imageData = null;

@@ -21,18 +21,6 @@ public class BoundContainer extends EntityContainer {
 	}
 
 	/**
-	 * Creates a new instance.
-	 *
-	 * @param sr
-	 *            The store to read state from.
-	 * @param scr
-	 *            Maintains the mapping between classes and their identifiers within the store.
-	 */
-	public BoundContainer(final StoreReader sr, final StoreClassRegister scr) {
-		bound = new Bound(sr, scr);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override

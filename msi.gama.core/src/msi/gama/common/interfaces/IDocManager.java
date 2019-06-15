@@ -37,28 +37,25 @@ public interface IDocManager {
 		public void addCleanupTask(final ModelDescription model) {}
 
 		@Override
-		public void setGamlDocumentation(EObject object, IGamlDescription description, boolean replace,
-				boolean force) {}
+		public void setGamlDocumentation(final EObject object, final IGamlDescription description,
+				final boolean replace, final boolean force) {}
 
 	}
 
-	public static final String KEY = "Doc";
+	void document(IDescription description);
 
-	public void document(IDescription description);
+	IGamlDescription getGamlDocumentation(EObject o);
 
-	public IGamlDescription getGamlDocumentation(EObject o);
+	IGamlDescription getGamlDocumentation(IGamlDescription o);
 
-	public IGamlDescription getGamlDocumentation(IGamlDescription o);
+	void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace, boolean force);
 
-	public void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace,
-			boolean force);
-
-	default void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace) {
+	default void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace) {
 		setGamlDocumentation(object, description, replace, false);
 	}
 
-	public void addCleanupTask(ModelDescription model);
+	void addCleanupTask(ModelDescription model);
 
-	public static final IDocManager NULL = new NullImpl();
+	IDocManager NULL = new NullImpl();
 
 }

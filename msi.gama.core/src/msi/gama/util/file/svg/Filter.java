@@ -51,7 +51,7 @@ public class Filter extends SVGElement {
 
 	URL href = null;
 
-	final ArrayList filterEffects = new ArrayList();
+	final ArrayList<SVGElement> filterEffects = new ArrayList<>();
 
 	/** Creates a new instance of FillElement */
 	public Filter() {}

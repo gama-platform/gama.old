@@ -10,9 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch;
 
+import static java.lang.Double.compare;
+import static one.util.streamex.StreamEx.of;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import msi.gama.runtime.IScope;
 
@@ -24,9 +26,8 @@ public class SelectionBest implements Selection {
 	public List<Chromosome> select(final IScope scope, final List<Chromosome> population, final int populationDim,
 			final boolean maximize) {
 
-		final List<Chromosome> nextGen = population.stream()
-				.sorted((e1, e2) -> Double.valueOf(e1.getFitness()).compareTo(Double.valueOf(e2.getFitness())))
-				.collect(Collectors.toList());
+		final List<Chromosome> nextGen =
+				of(population).sorted((e1, e2) -> compare(e1.getFitness(), e2.getFitness())).toList();
 		if (maximize) {
 			Collections.reverse(nextGen);
 		}

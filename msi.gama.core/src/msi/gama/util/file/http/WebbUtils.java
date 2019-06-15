@@ -220,29 +220,29 @@ public class WebbUtils {
 		String bodyStr = null;
 
 		if (request.params != null) {
-			WebbUtils.ensureRequestProperty(connection, Const.HDR_CONTENT_TYPE, Const.APP_FORM);
+			WebbUtils.ensureRequestProperty(connection, Webb.HDR_CONTENT_TYPE, Webb.APP_FORM);
 			bodyStr = WebbUtils.queryString(request.params);
 		} else if (request.payload == null) {
 			return null;
 		} else if (request.payload instanceof byte[]) {
-			WebbUtils.ensureRequestProperty(connection, Const.HDR_CONTENT_TYPE, Const.APP_BINARY);
+			WebbUtils.ensureRequestProperty(connection, Webb.HDR_CONTENT_TYPE, Webb.APP_BINARY);
 			requestBody = (byte[]) request.payload;
 		} else {
-			WebbUtils.ensureRequestProperty(connection, Const.HDR_CONTENT_TYPE, Const.TEXT_PLAIN);
+			WebbUtils.ensureRequestProperty(connection, Webb.HDR_CONTENT_TYPE, Webb.TEXT_PLAIN);
 			bodyStr = request.payload.toString();
 		}
 		if (bodyStr != null) {
-			requestBody = bodyStr.getBytes(Const.UTF8);
+			requestBody = bodyStr.getBytes(Webb.UTF8);
 		}
 
 		if (requestBody == null) { throw new IllegalStateException(); }
 
 		// only compress if the new body is smaller than uncompressed body
-		if (compress && requestBody.length > Const.MIN_COMPRESSED_ADVANTAGE) {
+		if (compress && requestBody.length > Webb.MIN_COMPRESSED_ADVANTAGE) {
 			final byte[] compressedBody = gzip(requestBody);
-			if (requestBody.length - compressedBody.length > Const.MIN_COMPRESSED_ADVANTAGE) {
+			if (requestBody.length - compressedBody.length > Webb.MIN_COMPRESSED_ADVANTAGE) {
 				requestBody = compressedBody;
-				connection.setRequestProperty(Const.HDR_CONTENT_ENCODING, "gzip");
+				connection.setRequestProperty(Webb.HDR_CONTENT_ENCODING, "gzip");
 			}
 		}
 
@@ -268,11 +268,11 @@ public class WebbUtils {
 			length = -1L; // use chunked streaming mode
 		}
 
-		WebbUtils.ensureRequestProperty(connection, Const.HDR_CONTENT_TYPE, Const.APP_BINARY);
+		WebbUtils.ensureRequestProperty(connection, Webb.HDR_CONTENT_TYPE, Webb.APP_BINARY);
 		if (length < 0) {
 			connection.setChunkedStreamingMode(-1); // use default chunk size
 			if (compress) {
-				connection.setRequestProperty(Const.HDR_CONTENT_ENCODING, "gzip");
+				connection.setRequestProperty(Webb.HDR_CONTENT_ENCODING, "gzip");
 			}
 		} else {
 			connection.setFixedLengthStreamingMode((int) length);
@@ -313,8 +313,8 @@ public class WebbUtils {
 		// we are ignoring headers describing the content type of the response, instead
 		// try to force the content based on the type the client is expecting it (clazz)
 		if (clazz == String.class) {
-			response.setBody(new String(responseBody, Const.UTF8));
-		} else if (clazz == Const.BYTE_ARRAY_CLASS) {
+			response.setBody(new String(responseBody, Webb.UTF8));
+		} else if (clazz == Webb.BYTE_ARRAY_CLASS) {
 			response.setBody(responseBody);
 		}
 		// else if (clazz == JSONObject.class) {
@@ -337,14 +337,14 @@ public class WebbUtils {
 
 		final byte[] responseBody = WebbUtils.readBytes(responseBodyStream);
 		final String contentType = response.connection.getContentType();
-		if (contentType == null || contentType.startsWith(Const.APP_BINARY) || clazz == Const.BYTE_ARRAY_CLASS) {
+		if (contentType == null || contentType.startsWith(Webb.APP_BINARY) || clazz == Webb.BYTE_ARRAY_CLASS) {
 			response.errorBody = responseBody;
 			return;
 		}
 
 		// fallback to String if bytes are valid UTF-8 characters ...
 		try {
-			response.errorBody = new String(responseBody, Const.UTF8);
+			response.errorBody = new String(responseBody, Webb.UTF8);
 			return;
 		} catch (final Exception ignored) {
 			// ignored - was just a try!

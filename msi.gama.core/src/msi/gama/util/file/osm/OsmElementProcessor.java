@@ -24,7 +24,6 @@ public class OsmElementProcessor extends SourceElementProcessor {
 
 	private boolean foundBound = false;
 	private boolean foundEntities = false;
-	private final boolean validateVersion;
 
 	private String generator;
 
@@ -65,8 +64,6 @@ public class OsmElementProcessor extends SourceElementProcessor {
 			final boolean enableDateParsing, final boolean validateVersion, final boolean coordinatesRequired) {
 		super(parentProcessor, sink, enableDateParsing);
 
-		this.validateVersion = validateVersion;
-
 		nodeElementProcessor = new NodeElementProcessor(this, getSink(), enableDateParsing, coordinatesRequired);
 		wayElementProcessor = new WayElementProcessor(this, getSink(), enableDateParsing);
 		relationElementProcessor = new RelationElementProcessor(this, getSink(), enableDateParsing);
@@ -77,15 +74,6 @@ public class OsmElementProcessor extends SourceElementProcessor {
 	 */
 	@Override
 	public void begin(final Attributes attributes) {
-		if (validateVersion) {
-			String fileVersion;
-
-			fileVersion = attributes.getValue(ATTRIBUTE_NAME_VERSION);
-
-			// if (!XmlConstants.OSM_VERSION.equals(fileVersion)) {
-			// LOG.warning("Expected version " + XmlConstants.OSM_VERSION + " but received " + fileVersion + ".");
-			// }
-		}
 
 		generator = attributes.getValue(ATTRIBUTE_NAME_GENERATOR);
 	}

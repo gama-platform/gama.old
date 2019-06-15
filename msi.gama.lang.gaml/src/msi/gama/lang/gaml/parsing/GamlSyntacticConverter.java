@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.parsing;
@@ -174,8 +174,8 @@ public class GamlSyntacticConverter {
 		// final Object[] imps = collectImports(m);<>
 
 		final String path = getAbsoluteContainerFolderPathOf(root.eResource());
-		final SyntacticModelElement model =
-				(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.getInstance().hasChildren(m), path/* , imps */);
+		final SyntacticModelElement model = (SyntacticModelElement) SyntacticFactory.create(MODEL, m,
+				EGaml.getInstance().hasChildren(m), path/* , imps */);
 		if (prgm != null) {
 			model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm));
 		}
@@ -345,7 +345,7 @@ public class GamlSyntacticConverter {
 				elt.setKeyword(type);
 			}
 		} else if (stm instanceof S_Equations) {
-			convStatements(elt, EGaml.getInstance().getEquationsOf((S_Equations) stm), errors);
+			convStatements(elt, EGaml.getInstance().getEquationsOf(stm), errors);
 		}
 		// We add the dependencies (only for variable declarations)
 		// if (isVar) {
@@ -390,11 +390,12 @@ public class GamlSyntacticConverter {
 	private void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		final EObject elseBlock = stm.getElse();
 		if (elseBlock != null) {
-			final ISyntacticElement elseElt = SyntacticFactory.create(ELSE, elseBlock, EGaml.getInstance().hasChildren(elseBlock));
+			final ISyntacticElement elseElt =
+					SyntacticFactory.create(ELSE, elseBlock, EGaml.getInstance().hasChildren(elseBlock));
 			if (elseBlock instanceof Statement) {
 				elseElt.addChild(convStatement(elt, (Statement) elseBlock, errors));
 			} else {
-				convStatements(elseElt, EGaml.getInstance().getStatementsOf((Block) elseBlock), errors);
+				convStatements(elseElt, EGaml.getInstance().getStatementsOf(elseBlock), errors);
 			}
 			elt.addChild(elseElt);
 		}
@@ -405,7 +406,7 @@ public class GamlSyntacticConverter {
 		if (catchBlock != null) {
 			final ISyntacticElement catchElt =
 					SyntacticFactory.create(IKeyword.CATCH, catchBlock, EGaml.getInstance().hasChildren(catchBlock));
-			convStatements(catchElt, EGaml.getInstance().getStatementsOf((Block) catchBlock), errors);
+			convStatements(catchElt, EGaml.getInstance().getStatementsOf(catchBlock), errors);
 			elt.addChild(catchElt);
 		}
 	}
@@ -601,7 +602,9 @@ public class GamlSyntacticConverter {
 				convertBlock(elt, b, errors);
 				return convExpr(elt, errors);
 			}
-			if (expr != null) { return label ? convertToLabel(expr, EGaml.getInstance().getKeyOf(expr)) : convExpr(expr, errors); }
+			if (expr != null) {
+				return label ? convertToLabel(expr, EGaml.getInstance().getKeyOf(expr)) : convExpr(expr, errors);
+			}
 			final String name = facet.getName();
 			// TODO Verify the use of "facet"
 			if (name != null) { return convertToLabel(null, name); }

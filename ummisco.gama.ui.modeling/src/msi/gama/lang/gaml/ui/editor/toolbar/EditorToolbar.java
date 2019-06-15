@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
@@ -133,9 +133,9 @@ public class EditorToolbar {
 
 	}
 
-	GamlEditor getEditor() {
-		return (GamlEditor) WorkbenchHelper.getActiveEditor();
-	}
+	// GamlEditor getEditor() {
+	// return (GamlEditor) WorkbenchHelper.getActiveEditor();
+	// }
 
 	// minus = toolbar.button("editor.decrease2", "", "Decrease font size", new
 	// SelectionAdapter() {

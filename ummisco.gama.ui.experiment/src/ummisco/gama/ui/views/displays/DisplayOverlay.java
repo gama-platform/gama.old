@@ -142,12 +142,12 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		// }
 	}
 
-	public void relocateOverlay(final Shell newShell) {
-		if (popup.setParent(newShell)) {
-			// DEBUG.LOG("Relocating overlay");
-			popup.moveAbove(referenceComposite);
-		}
-	}
+	// public void relocateOverlay(final Shell newShell) {
+	// if (popup.setParent(newShell)) {
+	// // DEBUG.LOG("Relocating overlay");
+	// popup.moveAbove(referenceComposite);
+	// }
+	// }
 
 	private Label label(final Composite c, final int horizontalAlign) {
 		final Label l = new Label(c, SWT.None);
@@ -372,9 +372,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		gc.drawText(string, xx, yBase - extent.y, !filled);
 	}
 
-	public void displayScale(final Boolean newValue) {
-		scalebar.setVisible(newValue);
-	}
+	// public void displayScale(final Boolean newValue) {
+	// scalebar.setVisible(newValue);
+	// }
 
 	/**
 	 * @param left2
@@ -442,9 +442,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		return popup;
 	}
 
-	protected LayeredDisplayView getView() {
-		return view;
-	}
+	// protected LayeredDisplayView getView() {
+	// return view;
+	// }
 
 	public void display() {
 		if (!isVisible()) { return; }

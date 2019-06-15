@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'OSMFileViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'OSMFileViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis;
@@ -57,9 +56,7 @@ import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.viewers.gis.geotools.MapLayerComposite;
-import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
-import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
+import ummisco.gama.ui.viewers.gis.geotools.styling.Utils;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 
 public class OSMFileViewer extends GISFileViewer {
@@ -76,7 +73,6 @@ public class OSMFileViewer extends GISFileViewer {
 		mapLayerTable = new MapLayerComposite(sashForm, SWT.BORDER);
 		pane = new SwtMapPane(sashForm, SWT.BORDER | SWT.NO_BACKGROUND, new StreamingRenderer(), content);
 		pane.setBackground(GamaColors.system(SWT.COLOR_WHITE));
-		pane.setCursorTool(newDragTool());
 		mapLayerTable.setMapPane(pane);
 		sashForm.setWeights(new int[] { 1, 4 });
 		pane.redraw();
@@ -98,7 +94,7 @@ public class OSMFileViewer extends GISFileViewer {
 			attributes = osmfile.getOSMAttributes(GAMA.getRuntimeScope());
 			final SimpleFeatureType TYPE = DataUtilities.createType("geometries", "geom:LineString");
 
-			final ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
+			final ArrayList<SimpleFeature> list = new ArrayList<>();
 
 			for (final IShape shape : osmfile.iterable(null)) {
 				list.add(SimpleFeatureBuilder.build(TYPE, new Object[] { shape.getInnerGeometry() }, null));
@@ -106,9 +102,9 @@ public class OSMFileViewer extends GISFileViewer {
 			final SimpleFeatureCollection collection = new ListFeatureCollection(TYPE, list);
 			featureSource = DataUtilities.source(collection);
 			content = new MapContent();
-			style = Utils.createStyle(f, featureSource);
+			style = Utils.createStyle2(featureSource);
 			layer = new FeatureLayer(featureSource, style);
-			final List<String> layers = new ArrayList<String>(osmfile.getLayers().keySet());
+			final List<String> layers = new ArrayList<>(osmfile.getLayers().keySet());
 			Collections.sort(layers);
 			Collections.reverse(layers);
 			for (final String val : layers) {
@@ -118,7 +114,7 @@ public class OSMFileViewer extends GISFileViewer {
 						: isLine ? DataUtilities.createType(val, "geom:LineString")
 								: DataUtilities.createType(val, "geom:Polygon");
 
-				final ArrayList<SimpleFeature> listT = new ArrayList<SimpleFeature>();
+				final ArrayList<SimpleFeature> listT = new ArrayList<>();
 
 				for (final IShape shape : osmfile.getLayers().get(val)) {
 					listT.add(SimpleFeatureBuilder.build(TYPET, new Object[] { shape.getInnerGeometry() }, null));
@@ -126,7 +122,7 @@ public class OSMFileViewer extends GISFileViewer {
 				final SimpleFeatureCollection collectionT = new ListFeatureCollection(TYPET, listT);
 				final SimpleFeatureSource featureSourceT = DataUtilities.source(collectionT);
 
-				final Style styleT = Utils.createStyle(f, featureSourceT);
+				final Style styleT = Utils.createStyle2(featureSourceT);
 				final FeatureLayer layerT = new FeatureLayer(featureSourceT, styleT);
 				content.addLayer(layerT);
 
@@ -193,7 +189,7 @@ public class OSMFileViewer extends GISFileViewer {
 				GamaMenu.separate(menu);
 				GamaMenu.separate(menu, "Attributes");
 				try {
-					final List<String> atts = new ArrayList<String>(attributes.keySet());
+					final List<String> atts = new ArrayList<>(attributes.keySet());
 					Collections.sort(atts);
 					String currentType = "";
 
@@ -223,9 +219,8 @@ public class OSMFileViewer extends GISFileViewer {
 	public void saveAsCSV() {
 
 		final Layer layer = mapLayerTable.getMapLayerTableViewer().getSelectedMapLayer();
-		if (layer == null)
-			return;
-		final HashSet<String> atts = new HashSet<String>();
+		if (layer == null) { return; }
+		final HashSet<String> atts = new HashSet<>();
 
 		final String layerName = layer.getFeatureSource().getName().toString();
 		for (final String at : attributes.keySet()) {
@@ -237,7 +232,7 @@ public class OSMFileViewer extends GISFileViewer {
 			}
 		}
 		final List<IShape> geoms = osmfile.getLayers().get(layerName);
-		final List<String> attsOrd = new ArrayList<String>(atts);
+		final List<String> attsOrd = new ArrayList<>(atts);
 		Collections.sort(attsOrd);
 		saveAsCSV(attsOrd, geoms, layerName);
 	}

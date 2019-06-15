@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis;
@@ -57,9 +57,9 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PreferencesHelper;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.Mode;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.SLDs;
-import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
+import ummisco.gama.ui.viewers.gis.geotools.styling.Mode;
+import ummisco.gama.ui.viewers.gis.geotools.styling.SLDs;
+import ummisco.gama.ui.viewers.gis.geotools.styling.Utils;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedView.Colorizable {
@@ -80,7 +80,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 			store.setCharset(Charset.forName("UTF8"));
 			content = new MapContent();
 			featureSource = store.getFeatureSource();
-			style = Utils.createStyle(f, featureSource);
+			style = Utils.createStyle2(featureSource);
 			layer = new FeatureLayer(featureSource, style);
 			mode = determineMode(featureSource.getSchema(), "Polygon");
 			final List<FeatureTypeStyle> ftsList = style.featureTypeStyles();
@@ -263,7 +263,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 
 	/**
 	 * Method getColorLabels()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#getColorLabels()
 	 */
 	@Override
@@ -277,7 +277,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 
 	/**
 	 * Method getColor()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#getColor(int)
 	 */
 	@Override
@@ -294,7 +294,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 
 	/**
 	 * Method setColor()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#setColor(int,
 	 *      ummisco.gama.ui.resources.GamaColors.GamaUIColor)
 	 */

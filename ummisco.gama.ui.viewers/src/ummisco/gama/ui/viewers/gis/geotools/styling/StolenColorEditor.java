@@ -7,7 +7,7 @@
  *
  *
  **********************************************************************************************/
-package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
+package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;

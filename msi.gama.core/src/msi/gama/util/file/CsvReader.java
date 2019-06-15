@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -174,21 +173,6 @@ public class CsvReader {
 
 	/**
 	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using an {@link java.io.InputStream InputStream}
-	 * object as the data source.
-	 *
-	 * @param inputStream
-	 *            The stream to use as the data source.
-	 * @param delimiter
-	 *            The character to use as the column delimiter.
-	 * @param charset
-	 *            The {@link java.nio.charset.Charset Charset} to use while parsing the data.
-	 */
-	public CsvReader(final InputStream inputStream, final char delimiter, final Charset charset) {
-		this(new InputStreamReader(inputStream, charset), delimiter);
-	}
-
-	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using an {@link java.io.InputStream InputStream}
 	 * object as the data source.&nbsp;Uses a comma as the column delimiter.
 	 *
 	 * @param inputStream
@@ -199,19 +183,6 @@ public class CsvReader {
 	public CsvReader(final InputStream inputStream, final Charset charset) {
 		this(new InputStreamReader(inputStream, charset));
 	}
-
-	//
-	// public boolean getCaptureRawRecord() {
-	// return userSettings.CaptureRawRecord;
-	// }
-
-	// public void setCaptureRawRecord(final boolean captureRawRecord) {
-	// userSettings.CaptureRawRecord = captureRawRecord;
-	// }
-	//
-	// public String getRawRecord() {
-	// return rawRecord;
-	// }
 
 	/**
 	 * Gets whether leading and trailing whitespace characters are being trimmed from non-textqualified column data.
@@ -493,35 +464,6 @@ public class CsvReader {
 		return "";
 	}
 
-	/**
-	 * Returns the current column value for a given column header name.
-	 *
-	 * @param headerName
-	 *            The header name of the column.
-	 * @return The current column value.
-	 * @exception IOException
-	 *                Thrown if this object has already been closed.
-	 */
-	public String get(final String headerName) throws IOException {
-		checkClosed();
-
-		return get(getIndex(headerName));
-	}
-
-	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a string of data as the source.&nbsp;Uses
-	 * ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
-	 *
-	 * @param data
-	 *            The String of data to use as the source.
-	 * @return A {@link com.csvreader.CsvReader CsvReader} object using the String of data as the source.
-	 */
-	public static CsvReader parse(final String data) {
-		if (data == null) { throw new IllegalArgumentException("Parameter data can not be null."); }
-
-		return new CsvReader(new StringReader(data));
-	}
-
 	public static class Stats {
 
 		public Character delimiter;
@@ -530,7 +472,6 @@ public class CsvReader {
 		public int cols;
 		public IType type = Types.NO_TYPE;
 		public String[] headers = null;
-		public long startTime = System.currentTimeMillis();
 
 		private IType firstLineType = Types.NO_TYPE;
 		private boolean atLeastOneNumber;
@@ -614,21 +555,6 @@ public class CsvReader {
 			return s2;
 		}
 
-		// private boolean onlyContainsDigitsAndPunctuation(final String s) {
-		// for ( char c : s.toCharArray() ) {
-		// if ( Character.isLetter(c) ) { return false; }
-		// }
-		// return true;
-		// }
-		//
-		// private boolean onlyContainsDigits(final String s) {
-		// for ( char c : s.toCharArray() ) {
-		// if ( !Character.isDigit(c) && !Character.isWhitespace(c) ) { return
-		// false; }
-		// }
-		// return true;
-		// }
-
 		private class StringAnalysis {
 
 			boolean isFloat = true;
@@ -702,23 +628,6 @@ public class CsvReader {
 			return null;
 		}
 
-	}
-
-	public static Stats getStats(final String initial, final boolean withHeader) {
-		try {
-			// CsvReader reader = new CsvReader(initial);
-			final Stats stats = new Stats(new CsvReader(initial), null);
-			return stats;
-		} catch (final FileNotFoundException e1) {
-			return null;
-		}
-
-	}
-
-	public static Stats getStats(final InputStream initial) {
-		if (initial == null) { return null; }
-		final Stats stats = new Stats(new CsvReader(initial, Charset.forName("ISO-8859-1")), null);
-		return stats;
 	}
 
 	/**
@@ -1371,38 +1280,6 @@ public class CsvReader {
 	}
 
 	/**
-	 * Returns the column header value for a given column index.
-	 *
-	 * @param columnIndex
-	 *            The index of the header column being requested.
-	 * @return The value of the column header at the given column index.
-	 * @exception IOException
-	 *                Thrown if this object has already been closed.
-	 */
-	public String getHeader(final int columnIndex) throws IOException {
-		checkClosed();
-
-		// check to see if we have read the header record yet
-
-		// check to see if the column index is within the bounds
-		// of our header array
-
-		if (columnIndex > -1 && columnIndex < headersHolder.Length) {
-			// return the processed header data for this column
-
-			return headersHolder.Headers[columnIndex];
-		}
-		return "";
-	}
-
-	public boolean isQualified(final int columnIndex) throws IOException {
-		checkClosed();
-
-		if (columnIndex < columnsCount && columnIndex > -1) { return isQualified[columnIndex]; }
-		return false;
-	}
-
-	/**
 	 * @exception IOException
 	 *                Thrown if a very rare extreme exception occurs during parsing, normally resulting from improper
 	 *                data format.
@@ -1550,30 +1427,6 @@ public class CsvReader {
 
 		if (indexValue != null) { return ((Integer) indexValue).intValue(); }
 		return -1;
-	}
-
-	/**
-	 * Skips the next record of data by parsing each column.&nbsp;Does not increment
-	 * {@link com.csvreader.CsvReader#getCurrentRecord getCurrentRecord()}.
-	 *
-	 * @return Whether another record was successfully skipped or not.
-	 * @exception IOException
-	 *                Thrown if an error occurs while reading data from the source stream.
-	 */
-	public boolean skipRecord() throws IOException {
-		checkClosed();
-
-		boolean recordRead = false;
-
-		if (hasMoreData) {
-			recordRead = readRecord();
-
-			if (recordRead) {
-				currentRecord--;
-			}
-		}
-
-		return recordRead;
 	}
 
 	/**

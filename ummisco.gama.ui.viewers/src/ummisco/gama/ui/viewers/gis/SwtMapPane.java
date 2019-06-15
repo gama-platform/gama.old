@@ -7,7 +7,7 @@
  *
  *
  **********************************************************************************************/
-package ummisco.gama.ui.viewers.gis.geotools;
+package ummisco.gama.ui.viewers.gis;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -18,14 +18,13 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -34,7 +33,6 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.geotools.geometry.DirectPosition2D;
@@ -51,19 +49,12 @@ import org.geotools.map.event.MapLayerListListener;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.renderer.GTRenderer;
-import org.geotools.renderer.label.LabelCacheImpl;
-import org.geotools.renderer.lite.LabelCache;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import ummisco.gama.ui.viewers.gis.geotools.event.MapMouseListener;
-import ummisco.gama.ui.viewers.gis.geotools.event.MapPaneEvent;
-import ummisco.gama.ui.viewers.gis.geotools.event.MapPaneListener;
-import ummisco.gama.ui.viewers.gis.geotools.tool.CursorTool;
-import ummisco.gama.ui.viewers.gis.geotools.tool.MapToolManager;
-import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
+import ummisco.gama.ui.viewers.gis.geotools.styling.Utils;
 
 /**
  * A map display pane that works with a GTRenderer and MapContext to display features. It supports the use of tool
@@ -81,21 +72,13 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
  *
  * @source $URL$
  */
-public class SwtMapPane extends Canvas implements Listener, MapLayerListListener, MapBoundsListener {
+public class SwtMapPane extends Canvas
+		implements Listener, MapLayerListListener, MapBoundsListener, MouseListener, MouseMoveListener {
 
 	private static final PaletteData PALETTE_DATA = new PaletteData(0xFF0000, 0xFF00, 0xFF);
 
 	/** RGB value to use as transparent color */
 	private static final int TRANSPARENT_COLOR = 0x123456;
-	/**
-	 * Default delay (milliseconds) before the map will be redrawn when resizing the pane. This is to avoid flickering
-	 * while drag-resizing.
-	 */
-	public static final int DEFAULT_RESIZING_PAINT_DELAY = 500; // delay in
-																// milliseconds
-
-	private int resizingPaintDelay;
-	private boolean acceptRepaintRequests;
 
 	/**
 	 * This field is used to cache the full extent of the combined map layers.
@@ -104,20 +87,13 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 	MapContent content;
 	private GTRenderer renderer;
-	private LabelCache labelCache;
-	private final MapToolManager toolManager;
 	private MapLayerComposite layerTable;
-	private final Set<MapPaneListener> listeners = new HashSet<>();
 	private AffineTransform worldToScreen;
 	private AffineTransform screenToWorld;
 	Rectangle curPaintArea;
 	private BufferedImage baseImage;
 	private final Point imageOrigin;
 	private boolean redrawBaseImage;
-	private boolean clearLabelCache;
-
-	private boolean toolCanDraw;
-	private boolean toolCanMove;
 
 	/**
 	 * swt image used to draw
@@ -130,28 +106,13 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	private int endX;
 	private int endY;
 	private boolean isDragging = false;
-
-	private Image overlayImage;
-
-	private ReferencedEnvelope overlayEnvelope;
-
-	private boolean overlayDoXor;
+	private final org.eclipse.swt.graphics.Point panePos = new org.eclipse.swt.graphics.Point(0, 0);
+	boolean panning;
 
 	private int alpha = 255;
 
 	private final Color white;
 	private final Color yellow;
-
-	private Color cursorToolColor;
-	private int cursorToolLineWidth;
-	private int cursorToolLineStyle;
-
-	/**
-	 * Constructor - creates an instance of JMapPane with no map context or renderer initially
-	 */
-	public SwtMapPane(final Composite parent, final int style) {
-		this(parent, style, null, null);
-	}
 
 	/**
 	 * Constructor - creates an instance of JMapPane with the given renderer and map context.
@@ -172,33 +133,13 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 		imageOrigin = new Point(0, 0);
 
-		acceptRepaintRequests = true;
 		redrawBaseImage = true;
-		clearLabelCache = false;
 
 		setRenderer(renderer);
 		setMapContent(content);
 
-		toolManager = new MapToolManager(this);
-
-		this.addMouseListener(toolManager);
-		this.addMouseMoveListener(toolManager);
-		this.addMouseWheelListener(toolManager);
-
-		/*
-		 * Listen for mouse entered events to (re-)set the current tool cursor, otherwise the cursor seems to default to
-		 * the standard cursor sometimes (at least on OSX)
-		 */
-		this.addMouseMoveListener(event -> {
-			if (mouseDown) {
-				endX = event.x;
-				endY = event.y;
-				isDragging = true;
-				if (!isDisposed()) {
-					redraw();
-				}
-			}
-		});
+		this.addMouseListener(this);
+		this.addMouseMoveListener(this);
 
 		addControlListener(new ControlAdapter() {
 
@@ -209,76 +150,43 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			}
 		});
 
-		cursorToolColor = getDisplay().getSystemColor(SWT.COLOR_YELLOW);
-		cursorToolLineWidth = 2;
-		cursorToolLineStyle = SWT.LINE_SOLID;
 	}
 
-	/**
-	 * Set the current cursor tool
-	 *
-	 * @param tool
-	 *            the tool to set; null means no active cursor tool
-	 */
-	public void setCursorTool(final CursorTool tool) {
-		if (tool == null) {
-			toolManager.setNoCursorTool();
-			toolCanDraw = false;
-			toolCanMove = false;
-		} else {
-			toolManager.setCursorTool(tool);
-			toolCanDraw = tool.canDraw();
-			toolCanMove = tool.canMove();
+	@Override
+	public void mouseMove(final MouseEvent e) {
+		if (panning) {
+			moveImage(e.x - panePos.x, e.y - panePos.y);
+			panePos.x = e.x;
+			panePos.y = e.y;
 		}
+
+		if (mouseDown) {
+			endX = e.x;
+			endY = e.y;
+			isDragging = true;
+			if (!isDisposed()) {
+				redraw();
+			}
+		}
+
 	}
 
-	/**
-	 * Register an object that wishes to receive {@code MapMouseEvent}s such as a
-	 * {@linkplain org.geotools.swing.StatusBar}
-	 *
-	 * @param listener
-	 *            an object that implements {@code MapMouseListener}
-	 * @throws IllegalArgumentException
-	 *             if listener is null
-	 * @see MapMouseListener
-	 */
-	public void addMouseListener(final MapMouseListener listener) {
-		if (listener == null) {
-			throw new IllegalArgumentException("The argument must not be null"); //$NON-NLS-1$
-		}
+	@Override
+	public void mouseDoubleClick(final MouseEvent arg0) {}
 
-		toolManager.addMouseListener(listener);
+	@Override
+	public void mouseDown(final MouseEvent e) {
+		panePos.x = e.x;
+		panePos.y = e.y;
+		panning = true;
 	}
 
-	/**
-	 * Unregister the {@code MapMouseListener} object.
-	 *
-	 * @param listener
-	 *            the listener to remove
-	 * @throws IllegalArgumentException
-	 *             if listener is null
-	 */
-	public void removeMouseListener(final MapMouseListener listener) {
-		if (listener == null) {
-			throw new IllegalArgumentException("The argument must not be null"); //$NON-NLS-1$
+	@Override
+	public void mouseUp(final MouseEvent e) {
+		if (panning) {
+			panning = false;
+			redraw();
 		}
-
-		toolManager.removeMouseListener(listener);
-	}
-
-	/**
-	 * Register an object that wishes to receive {@code MapPaneEvent}s
-	 *
-	 * @param listener
-	 *            an object that implements {@code MapPaneListener}
-	 * @see MapPaneListener
-	 */
-	public void addMapPaneListener(final MapPaneListener listener) {
-		if (listener == null) {
-			throw new IllegalArgumentException("The argument must not be null"); //$NON-NLS-1$
-		}
-
-		listeners.add(listener);
 	}
 
 	/**
@@ -316,20 +224,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	 */
 	public void setRenderer(final GTRenderer renderer) {
 		if (renderer != null) {
-			Map<Object, Object> hints;
 			if (renderer instanceof StreamingRenderer) {
-				hints = renderer.getRendererHints();
-				if (hints == null) {
-					hints = new HashMap<>();
-				}
-				if (hints.containsKey(StreamingRenderer.LABEL_CACHE_KEY)) {
-					labelCache = (LabelCache) hints.get(StreamingRenderer.LABEL_CACHE_KEY);
-				} else {
-					labelCache = new LabelCacheImpl();
-					hints.put(StreamingRenderer.LABEL_CACHE_KEY, labelCache);
-				}
-				renderer.setRendererHints(hints);
-
 				if (this.content != null) {
 					renderer.setMapContent(this.content);
 				}
@@ -360,11 +255,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 			if (this.content != null) {
 				this.content.removeMapLayerListListener(this);
-				// for( MapLayer layer : this.context.getLayers() ) {
-				// if (layer instanceof ComponentListener) {
-				// removeComponentListener((ComponentListener) layer);
-				// }
-				// }
 			}
 
 			this.content = content;
@@ -376,9 +266,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				// set all layers as selected by default for the info tool
 				for (final Layer layer : content.layers()) {
 					layer.setSelected(true);
-					// if (layer instanceof ComponentListener) {
-					// addComponentListener((ComponentListener) layer);
-					// }
 				}
 
 				setFullExtent();
@@ -388,8 +275,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				renderer.setMapContent(this.content);
 			}
 
-			final MapPaneEvent ev = new MapPaneEvent(this, MapPaneEvent.Type.NEW_CONTEXT);
-			publishEvent(ev);
 		}
 	}
 
@@ -423,9 +308,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 	public void setCrs(final CoordinateReferenceSystem crs) {
 		try {
-			// DEBUG.LOG(content.layers().size());
 			final ReferencedEnvelope rEnv = getDisplayArea();
-			// DEBUG.LOG(rEnv);
 
 			final CoordinateReferenceSystem sourceCRS = rEnv.getCoordinateReferenceSystem();
 			final CoordinateReferenceSystem targetCRS = crs;
@@ -438,9 +321,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			fullExtent = null;
 			doSetDisplayArea(newEnvelope);
 
-			// ReferencedEnvelope displayArea =
-			getDisplayArea();
-			// DEBUG.LOG(displayArea);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -471,7 +351,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 				return;
 			} else {
 				doSetDisplayArea(envelope);
-				clearLabelCache = true;
 				if (!isDisposed()) {
 					redraw();
 				}
@@ -500,8 +379,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		final ReferencedEnvelope adjustedEnvelope = getDisplayArea();
 		content.getViewport().setBounds(adjustedEnvelope);
 
-		final MapPaneEvent ev = new MapPaneEvent(this, MapPaneEvent.Type.DISPLAY_AREA_CHANGED);
-		publishEvent(ev);
 	}
 
 	/**
@@ -561,44 +438,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Specify whether the map pane should defer its normal repainting behaviour.
-	 * <p>
-	 * Typical use:
-	 *
-	 * <pre>
-	 * {@code
-	 * myMapPane.setRepaint(false);
-	 *
-	 * // do various things that would cause time-consuming
-	 * // re-paints normally
-	 *
-	 * myMapPane.setRepaint(true);
-	 * myMapPane.repaint();
-	 * }
-	 * </pre>
-	 *
-	 * @param repaint
-	 *            if true, paint requests will be handled normally; if false, paint requests will be deferred.
-	 *
-	 * @see #isAcceptingRepaints()
-	 */
-	public void setRepaint(final boolean repaint) {
-		acceptRepaintRequests = repaint;
-	}
-
-	/**
-	 * Query whether the map pane is currently accepting or ignoring repaint requests from other GUI components and the
-	 * system.
-	 *
-	 * @return true if the pane is currently accepting repaint requests; false if it is ignoring them
-	 *
-	 * @see #setRepaint(boolean)
-	 */
-	public boolean isAcceptingRepaints() {
-		return acceptRepaintRequests;
-	}
-
-	/**
 	 * Retrieve the map pane's current base image.
 	 * <p>
 	 * The map pane caches the most recent rendering of map layers as an image to avoid time-consuming rendering
@@ -611,35 +450,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	 */
 	public RenderedImage getBaseImage() {
 		return this.baseImage;
-	}
-
-	/**
-	 * Get the length of the delay period between the pane being resized and the next repaint.
-	 * <p>
-	 * The map pane imposes a delay between resize events and repainting to avoid flickering of the display during
-	 * drag-resizing.
-	 *
-	 * @return delay in milliseconds
-	 */
-	public int getResizeDelay() {
-		return resizingPaintDelay;
-	}
-
-	/**
-	 * Set the length of the delay period between the pane being resized and the next repaint.
-	 * <p>
-	 * The map pane imposes a delay between resize events and repainting to avoid flickering of the display during
-	 * drag-resizing.
-	 *
-	 * @param delay
-	 *            the delay in milliseconds; if {@code <} 0 the default delay period will be set
-	 */
-	public void setResizeDelay(final int delay) {
-		if (delay < 0) {
-			resizingPaintDelay = DEFAULT_RESIZING_PAINT_DELAY;
-		} else {
-			resizingPaintDelay = delay;
-		}
 	}
 
 	/**
@@ -692,62 +502,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		if (!isDisposed()) {
 			redraw();
 		}
-	}
-
-	/**
-	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering has been completed Publishes a
-	 * {@linkplain MapPaneEvent} of type {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
-	 *
-	 * @see MapPaneListener#onRenderingStopped(org.geotools.swing.event.MapPaneEvent)
-	 */
-	public void onRenderingCompleted() {
-		if (clearLabelCache) {
-			labelCache.clear();
-		}
-		clearLabelCache = false;
-
-		// Graphics2D paneGr = (Graphics2D) this.getGraphics();
-		// paneGr.drawImage(baseImage, imageOrigin.x, imageOrigin.y, null);
-
-		// swtImage = new Image(this.getDisplay(), awtToSwt(baseImage,
-		// curPaintArea.width,
-		// curPaintArea.height));
-		// if (gc != null && !gc.isDisposed() && swtImage != null)
-		// gc.drawImage(swtImage, imageOrigin.x, imageOrigin.y);
-
-		final MapPaneEvent ev = new MapPaneEvent(this, MapPaneEvent.Type.RENDERING_STOPPED);
-		publishEvent(ev);
-	}
-
-	/**
-	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering was cancelled. Publishes a
-	 * {@linkplain MapPaneEvent} of type {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
-	 *
-	 * @see MapPaneListener#onRenderingStopped(org.geotools.swing.event.MapPaneEvent)
-	 */
-	public void onRenderingCancelled() {
-		final MapPaneEvent ev = new MapPaneEvent(this, MapPaneEvent.Type.RENDERING_STOPPED);
-		publishEvent(ev);
-	}
-
-	/**
-	 * Called by the {@linkplain SwtMapPane.RenderingTask} when rendering failed. Publishes a {@linkplain MapPaneEvent}
-	 * of type {@code MapPaneEvent.Type.RENDERING_STOPPED} to listeners.
-	 *
-	 * @see MapPaneListener#onRenderingStopped(org.geotools.swing.event.MapPaneEvent)
-	 */
-	public void onRenderingFailed() {
-		final MapPaneEvent ev = new MapPaneEvent(this, MapPaneEvent.Type.RENDERING_STOPPED);
-		publishEvent(ev);
-	}
-
-	/**
-	 * Called when a rendering request has been rejected. This will be common, such as when the user pauses during
-	 * drag-resizing fo the map pane. The base implementation does nothing. It is provided for sub-classes to override
-	 * if required.
-	 */
-	public void onRenderingRejected() {
-		// do nothing
 	}
 
 	/**
@@ -892,29 +646,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 													// context.getCoordinateReferenceSystem());
 
 				}
-				// else {
-				// double w = fullExtent.getWidth();
-				// double h = fullExtent.getHeight();
-				// double x = fullExtent.getMinimum(0);
-				// double y = fullExtent.getMinimum(1);
-				//
-				// double xmin = x;
-				// double xmax = x + w;
-				// if (w <= 0.0) {
-				// xmin = x - 1.0;
-				// xmax = x + 1.0;
-				// }
-				//
-				// double ymin = y;
-				// double ymax = y + h;
-				// if (h <= 0.0) {
-				// ymin = y - 1.0;
-				// ymax = y + 1.0;
-				// }
-				//
-				// fullExtent = new ReferencedEnvelope(xmin, xmax, ymin, ymax,
-				// context.getCoordinateReferenceSystem());
-				// }
 
 			} catch (final Exception ex) {
 				throw new IllegalStateException(ex);
@@ -968,47 +699,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	/**
-	 * Publish a MapPaneEvent to registered listeners
-	 *
-	 * @param ev
-	 *            the event to publish
-	 * @see MapPaneListener
-	 */
-	private void publishEvent(final MapPaneEvent ev) {
-		for (final MapPaneListener listener : listeners) {
-			switch (ev.getType()) {
-				case NEW_CONTEXT:
-					listener.onNewContext(ev);
-					break;
-
-				case NEW_RENDERER:
-					listener.onNewRenderer(ev);
-					break;
-
-				case PANE_RESIZED:
-					listener.onResized(ev);
-					break;
-
-				case DISPLAY_AREA_CHANGED:
-					listener.onDisplayAreaChanged(ev);
-					break;
-
-				case RENDERING_STARTED:
-					listener.onRenderingStarted(ev);
-					break;
-
-				case RENDERING_STOPPED:
-					listener.onRenderingStopped(ev);
-					break;
-
-				case RENDERING_PROGRESS:
-					listener.onRenderingProgress(ev);
-					break;
-			}
-		}
-	}
-
-	/**
 	 * This method is called if all layers are removed from the context.
 	 */
 	private void clearFields() {
@@ -1019,38 +709,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 
 	public Rectangle getVisibleRect() {
 		return getClientArea();
-	}
-
-	/**
-	 * Define an image that has to be set as overlay.
-	 *
-	 * <p>
-	 * The image will be scaled to fit into the supplied envelope.
-	 *
-	 * @param overlayImage
-	 *            the image to overlay.
-	 * @param overlayEnvelope
-	 *            the envelope it has to cover.
-	 * @param overlayDoXor
-	 *            flag for Xor mode.
-	 */
-	public void setOverlay(final Image overlayImage, final ReferencedEnvelope overlayEnvelope,
-			final boolean overlayDoXor, final boolean boundsChanged) {
-		if (this.overlayImage != null) {
-			this.overlayImage.dispose();
-		}
-		this.overlayImage = overlayImage;
-		this.overlayEnvelope = overlayEnvelope;
-		this.overlayDoXor = overlayDoXor;
-
-		if (boundsChanged || swtImage == null) {
-			redrawBaseImage = true;
-		} else {
-			redrawBaseImage = false;
-		}
-		if (!isDisposed()) {
-			redraw();
-		}
 	}
 
 	/**
@@ -1080,7 +738,7 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 			endY = event.y;
 
 			final boolean mouseWasMoved = startX != endX || startY != endY;
-			if (toolCanMove && mouseWasMoved) {
+			if (mouseWasMoved) {
 				// if the tool is able to move draw the moved image
 				afterImageMove();
 			}
@@ -1090,179 +748,88 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 		} else if (event.type == SWT.Paint) {
 			// DEBUG.LOG("PAINT CALLED (DOESN'T MEAN I'M DRAWING)");
 
-			if (acceptRepaintRequests) {
-				gc = event.gc;
+			gc = event.gc;
 
-				// DEBUG.LOG(toolCanDraw + "/" + toolCanMove + "/" +
-				// isDragging + "/" +
-				// redrawBaseImage);
-
-				/*
-				 * if the mouse is dragging and the current tool can move the map we just draw what we already have on
-				 * white background. At the end of the moving we will take care of adding the missing pieces.
-				 */
-				if (toolCanMove && isDragging) {
-					// DEBUG.LOG("toolCanMove && isDragging");
-					if (gc != null && !gc.isDisposed() && swtImage != null) {
-						/*
-						 * double buffer necessary, since the SWT.NO_BACKGROUND needed by the canvas to properly draw
-						 * background, doesn't clean the parts outside the bounds of the moving panned image, giving a
-						 * spilling image effect.
-						 */
-						final Image tmpImage = new Image(getDisplay(), curPaintArea.width, curPaintArea.height);
-						final GC tmpGc = new GC(tmpImage);
-						tmpGc.setBackground(white);
-						tmpGc.fillRectangle(0, 0, curPaintArea.width, curPaintArea.height);
-						tmpGc.drawImage(swtImage, imageOrigin.x, imageOrigin.y);
-						gc.drawImage(tmpImage, 0, 0);
-						tmpImage.dispose();
-					}
-					return;
+			/*
+			 * if the mouse is dragging and the current tool can move the map we just draw what we already have on white
+			 * background. At the end of the moving we will take care of adding the missing pieces.
+			 */
+			if (isDragging) {
+				// DEBUG.LOG("toolCanMove && isDragging");
+				if (gc != null && !gc.isDisposed() && swtImage != null) {
+					/*
+					 * double buffer necessary, since the SWT.NO_BACKGROUND needed by the canvas to properly draw
+					 * background, doesn't clean the parts outside the bounds of the moving panned image, giving a
+					 * spilling image effect.
+					 */
+					final Image tmpImage = new Image(getDisplay(), curPaintArea.width, curPaintArea.height);
+					final GC tmpGc = new GC(tmpImage);
+					tmpGc.setBackground(white);
+					tmpGc.fillRectangle(0, 0, curPaintArea.width, curPaintArea.height);
+					tmpGc.drawImage(swtImage, imageOrigin.x, imageOrigin.y);
+					gc.drawImage(tmpImage, 0, 0);
+					tmpImage.dispose();
 				}
-
-				/*
-				 * if the mouse is dragging and the current tool can draw a boundingbox while dragging, we draw the box
-				 * keeping the current drawn image
-				 */
-				if (toolCanDraw && toolManager.getCursorTool().isDrawing() && isDragging) {
-					// DEBUG.LOG("draw box: " + startX + "/" + startY +
-					// "/" + endX +
-					// "/" + endY);
-					if (swtImage != null) {
-						drawFinalImage(swtImage);
-					}
-					gc.setXORMode(true);
-
-					final org.eclipse.swt.graphics.Color fC = gc.getForeground();
-					gc.setLineStyle(cursorToolLineStyle);
-					gc.setLineWidth(cursorToolLineWidth);
-					gc.setForeground(cursorToolColor);
-					gc.drawRectangle(startX, startY, endX - startX, endY - startY);
-
-					gc.setForeground(fC);
-					gc.setXORMode(false);
-					return;
-				}
-
-				if (!toolCanDraw && !toolCanMove && isDragging) { return; }
-
-				if (curPaintArea == null || content == null || renderer == null) { return; }
-
-				if (content.layers().size() == 0) {
-					// if no layers available, return only if there are also no
-					// overlays
-
-					gc.setForeground(yellow);
-					gc.fillRectangle(0, 0, curPaintArea.width + 1, curPaintArea.height + 1);
-					if (overlayImage == null) { return; }
-				}
-
-				final ReferencedEnvelope mapAOI = content.getViewport().getBounds();
-				if (mapAOI == null) { return; }
-
-				if (redrawBaseImage) {
-					final MapPaneEvent ev = new MapPaneEvent(this, MapPaneEvent.Type.RENDERING_STARTED);
-					publishEvent(ev);
-
-					baseImage = new BufferedImage(curPaintArea.width + 1, curPaintArea.height + 1,
-							BufferedImage.TYPE_INT_ARGB);
-					final Graphics2D g2d = baseImage.createGraphics();
-					g2d.fillRect(0, 0, curPaintArea.width + 1, curPaintArea.height + 1);
-					g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-					// renderer.setContext(context);
-					final java.awt.Rectangle awtRectangle = Utils.toAwtRectangle(curPaintArea);
-					renderer.paint(g2d, awtRectangle, mapAOI, getWorldToScreenTransform());
-					// swtImage.dispose();
-
-					if (swtImage != null && !swtImage.isDisposed()) {
-						swtImage.dispose();
-						swtImage = null;
-					}
-					// DEBUG.LOG("READRAWBASEIMAGE");
-					swtImage = new Image(getDisplay(),
-							awtToSwt(baseImage, curPaintArea.width + 1, curPaintArea.height + 1));
-				}
-
-				if (swtImage != null) {
-					drawFinalImage(swtImage);
-				}
-
-				final MapPaneEvent ev = new MapPaneEvent(this, MapPaneEvent.Type.RENDERING_STOPPED);
-				publishEvent(ev);
-				clearLabelCache = true;
-				onRenderingCompleted();
-				redrawBaseImage = false;
+				return;
 			}
+
+			if (curPaintArea == null || content == null || renderer == null) { return; }
+
+			if (content.layers().size() == 0) {
+				// if no layers available, return only if there are also no
+				// overlays
+
+				gc.setForeground(yellow);
+				gc.fillRectangle(0, 0, curPaintArea.width + 1, curPaintArea.height + 1);
+
+			}
+
+			final ReferencedEnvelope mapAOI = content.getViewport().getBounds();
+			if (mapAOI == null) { return; }
+
+			if (redrawBaseImage) {
+
+				baseImage =
+						new BufferedImage(curPaintArea.width + 1, curPaintArea.height + 1, BufferedImage.TYPE_INT_ARGB);
+				final Graphics2D g2d = baseImage.createGraphics();
+				g2d.fillRect(0, 0, curPaintArea.width + 1, curPaintArea.height + 1);
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+				// renderer.setContext(context);
+				final java.awt.Rectangle awtRectangle = Utils.toAwtRectangle(curPaintArea);
+				renderer.paint(g2d, awtRectangle, mapAOI, getWorldToScreenTransform());
+				// swtImage.dispose();
+
+				if (swtImage != null && !swtImage.isDisposed()) {
+					swtImage.dispose();
+					swtImage = null;
+				}
+				swtImage =
+						new Image(getDisplay(), awtToSwt(baseImage, curPaintArea.width + 1, curPaintArea.height + 1));
+			}
+
+			if (swtImage != null) {
+				drawFinalImage(swtImage);
+			}
+
+			redrawBaseImage = false;
 		}
 	}
 
 	private void drawFinalImage(final Image swtImage) {
-		final Display display = getDisplay();
-		// this is only done if an overlay image exists
-
-		// create a new image
-		Image tmpImage = new Image(display, curPaintArea.width, curPaintArea.height);
-		GC tmpGc = new GC(tmpImage);
+		final Image tmpImage = new Image(getDisplay(), curPaintArea.width, curPaintArea.height);
+		final GC tmpGc = new GC(tmpImage);
 		tmpGc.setBackground(white);
 		tmpGc.fillRectangle(0, 0, curPaintArea.width, curPaintArea.height);
 		if (swtImage != null) {
-			// set the alpha to the new image
 			tmpGc.setAlpha(alpha);
-			/*
-			 * draw the background image into it (this means everything but the overlay image)
-			 */
 			tmpGc.drawImage(swtImage, imageOrigin.x, imageOrigin.y);
-			/*
-			 * set the alpha back to opaque so it doesn't influence the overlay image
-			 */
-			tmpGc.setAlpha(255);
 		}
-		if (overlayImage != null) {
-			// finally draw the overlay image on top
-			doOverlayImage(tmpGc);
-		}
-		// draw the created new image on the pane
 		if (gc != null && !gc.isDisposed()) {
 			gc.drawImage(tmpImage, imageOrigin.x, imageOrigin.y);
 		}
-
-		if (!tmpImage.isDisposed()) {
-			tmpImage.dispose();
-			tmpImage = null;
-		}
-		if (!tmpGc.isDisposed()) {
-			tmpGc.dispose();
-			tmpGc = null;
-		}
-	}
-
-	@SuppressWarnings ("deprecation")
-	private void doOverlayImage(final GC gc) {
-		final Point2D lowerLeft = new Point2D.Double(overlayEnvelope.getMinX(), overlayEnvelope.getMinY());
-		worldToScreen.transform(lowerLeft, lowerLeft);
-
-		final Point2D upperRight = new Point2D.Double(overlayEnvelope.getMaxX(), overlayEnvelope.getMaxY());
-		worldToScreen.transform(upperRight, upperRight);
-
-		final Rectangle bounds = overlayImage.getBounds();
-		if (overlayDoXor) {
-			gc.setXORMode(true);
-		}
-
-		gc.drawImage(overlayImage, //
-				0, //
-				0, //
-				bounds.width, //
-				bounds.height, //
-				(int) lowerLeft.getX(), //
-				(int) upperRight.getY(), //
-				(int) (upperRight.getX() - lowerLeft.getX()), //
-				(int) Math.abs(upperRight.getY() - lowerLeft.getY())//
-		);
-		if (overlayDoXor) {
-			gc.setXORMode(false);
-		}
+		tmpGc.dispose();
+		tmpImage.dispose();
 	}
 
 	/**
@@ -1297,72 +864,6 @@ public class SwtMapPane extends Canvas implements Listener, MapLayerListListener
 	}
 
 	@Override
-	public void layerPreDispose(final MapLayerListEvent event) {
-
-	}
-
-	/**
-	 * Returns the colour which is used to draw the bounding box of the currently active cursor tool. The bounding box
-	 * is drawn in xor mode.
-	 *
-	 * @return the colour used for the tool's bounding box
-	 */
-	public Color getCursorToolColor() {
-		return cursorToolColor;
-	}
-
-	/**
-	 * Sets the colour which is used to draw the bounding box of the currently active cursor tool. The bounding box is
-	 * drawn in xor mode.
-	 *
-	 * @param color
-	 *            the colour used for the tool's bounding box
-	 */
-	public void setCursorToolColor(final Color color) {
-		this.cursorToolColor = color;
-	}
-
-	/**
-	 * Returns the line width of the bounding box of the currently active cursor tool.
-	 *
-	 * @return line width
-	 */
-	public int getCursorToolLineWidth() {
-		return cursorToolLineWidth;
-	}
-
-	/**
-	 * Sets the line width of the bounding box of the currently active cursor tool.
-	 *
-	 * @param lineWidth
-	 *            line width
-	 */
-	public void setCursorToolLineWidth(final int lineWidth) {
-		this.cursorToolLineWidth = lineWidth;
-	}
-
-	/**
-	 * Returns the line style of the bounding box of the currently active cursor tool.
-	 *
-	 * @return line style
-	 */
-	public int getCursorToolLineStyle() {
-		return cursorToolLineStyle;
-	}
-
-	/**
-	 * Sets the line style of the bounding box of the currently active cursor tool.
-	 *
-	 * @param lineStyle
-	 *            line style
-	 * @see SWT#LINE_SOLID
-	 * @see SWT#LINE_DASH
-	 * @see SWT#LINE_DOT
-	 * @see SWT#LINE_DASHDOT
-	 * @see SWT#LINE_DASHDOTDOT
-	 */
-	public void setCursorToolLineStyle(final int lineStyle) {
-		this.cursorToolLineStyle = lineStyle;
-	}
+	public void layerPreDispose(final MapLayerListEvent event) {}
 
 }

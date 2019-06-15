@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.menus;
@@ -360,9 +360,6 @@ public class AgentsMenu extends ContributionItem {
 		return new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(),
 				a.getScope().getGui().getHighlightedAgent() == a ? "Remove highlight" : "Highlight");
 	}
-
-	public static MenuAction HIGHLIGHT_ACTION =
-			new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(), "Highlight");
 
 	@Override
 	public void fill(final Menu parent, final int index) {

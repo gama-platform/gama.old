@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.IDisplaySurface.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.interfaces.IDisplaySurface.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -31,23 +31,22 @@ import msi.gaml.statements.draw.DrawingAttributes;
 /**
  * Class IDisplaySurface. Represents a concrete object on which layers can be drawn on screen. Instances of subclasses
  * are the 'display's of GAMA (java2D, openGL, image)
- * 
+ *
  * Written by A. Drogoul
- * 
+ *
  * @since26 nov. 2009
  *
  */
 public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposable {
 
-	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
-	static final double MIN_ZOOM_FACTOR = 0.1;
-	static final int MAX_ZOOM_FACTOR = 10;
-	public static final double SELECTION_SIZE = 5; // pixels
-	public static final int MAX_SIZE = Integer.MAX_VALUE; // pixels
+	String SNAPSHOT_FOLDER_NAME = "snapshots";
+	double MIN_ZOOM_FACTOR = 0.1;
+	int MAX_ZOOM_FACTOR = 10;
+	double SELECTION_SIZE = 5; // pixels
 
 	/**
 	 * This sub-interface represents display surfaces relying on OpenGL
-	 * 
+	 *
 	 * @author drogoul
 	 *
 	 */
@@ -65,27 +64,27 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 
 	/**
 	 * Returns a BufferedImage that captures the current state of the surface on screen.
-	 * 
+	 *
 	 * @param width
 	 *            the desired width of the image
 	 * @param height
 	 *            the desired height of the image
 	 * @return a BufferedImage of size {width, height} with all layers drawn on it
 	 */
-	public BufferedImage getImage(int width, int height);
+	BufferedImage getImage(int width, int height);
 
 	/**
 	 * Asks the surface to update its display, optionnaly forcing it to do so (if it is paused, for instance)
 	 **/
-	public void updateDisplay(boolean force);
+	void updateDisplay(boolean force);
 
 	/**
 	 * Sets a concrete menu manager to be used for displaying menus on this surface
-	 * 
+	 *
 	 * @param displaySurfaceMenu
 	 *            an object, normally instance of DisplaySurfaceMenu
 	 */
-	public void setMenuManager(Object displaySurfaceMenu);
+	void setMenuManager(Object displaySurfaceMenu);
 
 	void zoomIn();
 
@@ -99,7 +98,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 
 	/**
 	 * Run the runnable in argument and refresh the output
-	 * 
+	 *
 	 * @param r
 	 */
 	void runAndUpdate(Runnable r);
@@ -125,16 +124,16 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 
 	double getEnvHeight();
 
-	public abstract double getDisplayWidth();
+	double getDisplayWidth();
 
-	public abstract double getDisplayHeight();
+	double getDisplayHeight();
 
-	public ILocation getModelCoordinates();
+	ILocation getModelCoordinates();
 
-	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+	ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels);
 
-	public Collection<IAgent> selectAgent(final int x, final int y);
+	Collection<IAgent> selectAgent(final int x, final int y);
 
 	void followAgent(IAgent a);
 
@@ -151,9 +150,9 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 
 	void layersChanged();
 
-	public void addListener(IEventLayerListener e);
+	void addListener(IEventLayerListener e);
 
-	public void removeListener(IEventLayerListener e);
+	void removeListener(IEventLayerListener e);
 
 	Collection<IEventLayerListener> getLayerListeners();
 
@@ -191,7 +190,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 
 	void selectAgentsAroundMouse();
 
-	default Font computeFont(Font f) {
+	default Font computeFont(final Font f) {
 		return f;
 	}
 

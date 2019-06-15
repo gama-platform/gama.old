@@ -142,8 +142,9 @@ public class SVGLoader extends DefaultHandler {
 	}
 
 	@Override
-	public void startElement(final String namespaceURI, String sName, final String qName, final Attributes attrs)
-			throws SAXException {
+	public void startElement(final String namespaceURI, final String tagName, final String qName,
+			final Attributes attrs) throws SAXException {
+		String sName = tagName;
 		if (verbose) {
 			DEBUG.ERR(printIndent(indent, " ") + "Starting parse of tag " + sName + ": " + namespaceURI);
 		}
@@ -189,10 +190,10 @@ public class SVGLoader extends DefaultHandler {
 	}
 
 	@Override
-	public void endElement(final String namespaceURI, String sName, final String qName) throws SAXException {
+	public void endElement(final String namespaceURI, final String tagName, final String qName) throws SAXException {
 		indent--;
 		if (verbose) {
-			DEBUG.ERR(printIndent(indent, " ") + "Ending parse of tag " + sName + ": " + namespaceURI);
+			DEBUG.ERR(printIndent(indent, " ") + "Ending parse of tag " + tagName + ": " + namespaceURI);
 		}
 
 		if (skipNonSVGTagDepth != 0) {
@@ -200,7 +201,7 @@ public class SVGLoader extends DefaultHandler {
 			return;
 		}
 
-		sName = sName.toLowerCase();
+		final String sName = tagName.toLowerCase();
 
 		final Object obj = nodeClasses.get(sName);
 		if (obj == null) { return; }

@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'BoxProviderImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BoxProviderImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
@@ -18,7 +17,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class BoxProviderImpl implements IBoxProvider {
 
 	protected String id;
@@ -56,26 +55,11 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	@Override
 	public IBoxDecorator decorate(final IWorkbenchPart editorPart) {
-		if (!(editorPart instanceof IBoxEnabledEditor)) {
-			return null;
-		}
+		if (!(editorPart instanceof IBoxEnabledEditor)) { return null; }
 		final IBoxSettings settings = getEditorsBoxSettings();
-		if (!settings.getEnabled()) {
-			return null;
-		}
+		if (!settings.getEnabled()) { return null; }
 		((IBoxEnabledEditor) editorPart).createDecorator();
 		return ((IBoxEnabledEditor) editorPart).getDecorator();
-	}
-
-	protected StyledText getStyledText(final IWorkbenchPart editorPart) {
-		if (editorPart != null) {
-			final Object obj = editorPart.getAdapter(Control.class);
-			if (obj instanceof StyledText) {
-				return (StyledText) obj;
-			}
-		}
-
-		return null;
 	}
 
 	@Override
@@ -87,9 +71,7 @@ public class BoxProviderImpl implements IBoxProvider {
 	protected boolean supportsFile(final String fileName) {
 		if (fileName != null) {
 			for (final Matcher matcher : getMatchers()) {
-				if (matcher.matches(fileName)) {
-					return true;
-				}
+				if (matcher.matches(fileName)) { return true; }
 			}
 		}
 		return false;
@@ -97,7 +79,7 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	protected Collection<Matcher> getMatchers() {
 		if (matchers == null) {
-			matchers = new ArrayList<Matcher>();
+			matchers = new ArrayList<>();
 			final Collection<String> fileNames = getEditorsBoxSettings().getFileNames();
 			if (fileNames != null) {
 				for (final String pattern : fileNames) {
@@ -169,9 +151,7 @@ public class BoxProviderImpl implements IBoxProvider {
 		if (name != null && builders != null) {
 			c = builders.get(name);
 		}
-		if (c == null) {
-			return new BoxBuilderImpl();
-		}
+		if (c == null) { return new BoxBuilderImpl(); }
 		try {
 			return (IBoxBuilder) c.newInstance();
 		} catch (final Exception e) {

@@ -246,12 +246,6 @@ public class GamaOsmFile extends GamaGisFile {
 			"military", "natural", "office", "place", "power", "public_transport", "railway", "route", "shop", "sport",
 			"tourism", "waterway");
 
-	final static List<String> relationFilter = new ArrayList<String>() {
-		{
-			add("public_transport");
-			add("route");
-		}
-	};
 	int nbObjects;
 
 	/**

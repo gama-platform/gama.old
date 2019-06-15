@@ -8,7 +8,7 @@
  * 
  *
  **********************************************************************************************/
-package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
+package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 /**
  * Captures the current *mode* of the style configurator making use

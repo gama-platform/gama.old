@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.CsvWriter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.CsvWriter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -14,7 +14,6 @@ import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
@@ -101,20 +100,6 @@ public class CsvWriter implements Closeable {
 		this.outputStream = outputStream;
 		userSettings.Delimiter = delimiter;
 		initialized = true;
-	}
-
-	/**
-	 * Creates a {@link com.csvreader.CsvWriter CsvWriter} object using an OutputStream to write data to.
-	 *
-	 * @param outputStream
-	 *            The stream to write the column delimited data to.
-	 * @param delimiter
-	 *            The character to use as the column delimiter.
-	 * @param charset
-	 *            The {@link java.nio.charset.Charset Charset} to use while writing the data.
-	 */
-	public CsvWriter(final OutputStream outputStream, final char delimiter, final Charset charset) {
-		this(new OutputStreamWriter(outputStream, charset), delimiter);
 	}
 
 	/**
@@ -338,19 +323,6 @@ public class CsvWriter implements Closeable {
 		firstColumn = false;
 	}
 
-	/**
-	 * Writes another column of data to this record.&nbsp;Does not preserve leading and trailing whitespace in this
-	 * column of data.
-	 *
-	 * @param content
-	 *            The data for the new column.
-	 * @exception IOException
-	 *                Thrown if an error occurs while writing data to the destination stream.
-	 */
-	public void write(final String content) throws IOException {
-		write(content, false);
-	}
-
 	public void writeComment(final String commentText) throws IOException {
 		checkClosed();
 
@@ -435,16 +407,6 @@ public class CsvWriter implements Closeable {
 
 			initialized = true;
 		}
-	}
-
-	/**
-	 * Clears all buffers for the current writer and causes any buffered data to be written to the underlying device.
-	 * 
-	 * @exception IOException
-	 *                Thrown if an error occurs while writing data to the destination stream.
-	 */
-	public void flush() throws IOException {
-		outputStream.flush();
 	}
 
 	/**

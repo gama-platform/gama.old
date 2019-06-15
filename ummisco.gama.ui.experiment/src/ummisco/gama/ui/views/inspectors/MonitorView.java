@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
@@ -21,7 +21,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.metamodel.agent.IAgent;
@@ -53,10 +52,6 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	private static int count = 0;
 
-	public static final String ID = IGui.MONITOR_VIEW_ID;
-
-	// private final ArrayList<MonitorOutput> outputs = new ArrayList<>();
-
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
 		displayItems();
@@ -66,12 +61,6 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	protected boolean needsOutput() {
 		return false;
 	}
-	// @Override
-	// public void setRefreshRate(final int rate) {
-	// if ( rate > 0 ) {
-	// setPartName("Monitors");
-	// }
-	// }
 
 	@Override
 	public void addOutput(final IDisplayOutput output) {
@@ -250,7 +239,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	/**
 	 * Method pauseChanged()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#pauseChanged()
 	 */
 	@Override
@@ -258,7 +247,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	/**
 	 * Method synchronizeChanged()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override
@@ -266,15 +255,14 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	/**
 	 * Method handleMenu()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final MonitorOutput data, final int x, final int y) {
 		final Map<String, Runnable> menu = new HashMap();
 		final IExpression exp = data.getValue();
-		if (exp == null)
-			return null;
+		if (exp == null) { return null; }
 		final IType<?> type = exp.getGamlType();
 		menu.put("Copy to clipboard", () -> {
 			WorkbenchHelper.copy(getValueAsString(data));

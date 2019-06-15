@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.http.WebbException.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.http.WebbException.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file.http;
 
@@ -26,10 +26,6 @@ public class WebbException extends RuntimeException {
 	public WebbException(final String message, final Response<?> response) {
 		super(message);
 		this.response = response;
-	}
-
-	public WebbException(final String message, final Throwable cause) {
-		super(message, cause);
 	}
 
 	public WebbException(final Throwable cause) {

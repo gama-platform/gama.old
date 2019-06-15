@@ -15,26 +15,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.GeoTools;
 import org.geotools.map.Layer;
-import org.geotools.styling.FeatureTypeConstraint;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
 import org.geotools.styling.Graphic;
@@ -43,28 +44,13 @@ import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
 import org.geotools.styling.Rule;
-import org.geotools.styling.SLDTransformer;
+import org.geotools.styling.SLD;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
-import org.geotools.styling.StyleFactory;
-import org.geotools.styling.StyledLayerDescriptor;
+import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.TextSymbolizer;
-import org.geotools.styling.UserLayer;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.PropertyDescriptor;
-
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.AbstractSimpleConfigurator;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.FillViewer;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.GraphicViewer;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.LabelViewer;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.Mode;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.SLDs;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.ScaleViewer;
-import ummisco.gama.ui.viewers.gis.geotools.styling.simple.StrokeViewer;
-import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
 
 /**
  * Defines a "simple" StyleConfigurator for working with SLD documents.
@@ -131,25 +117,11 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
  *
  * @source $URL$
  */
-public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
+public class SimpleConfigurator extends Dialog {
 
-	private static final String DEFAULT_GEOMETRY = "(default)"; //$NON-NLS-1$
-
-	public static StyleFactory sf = CommonFactoryFinder.getStyleFactory(GeoTools.getDefaultHints());
-
-	/**
-	 * Viewer capturing the geometry name; may be "default" or an explicit geometryName provided by the user
-	 */
-	private ComboViewer geometryName;
-
-	/** Radio button used to indicate point geometry type */
-	private Button pointMode;
-
-	/** Radio button used to indicate polygon geometry type */
-	private Button polyMode;
-
-	/** Radio button used to indicate linestring geometry type */
-	private Button lineMode;
+	protected StyleBuilder build = new StyleBuilder();
+	protected SimpleFeatureCollection featureCollection;
+	protected Style style;
 
 	/** Viewer used to allow interaction with Stroke definition */
 	private final StrokeViewer line = new StrokeViewer();
@@ -159,15 +131,6 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 
 	/** Viewer used to allow interaction with Graphic definition */
 	private final GraphicViewer point = new GraphicViewer();
-
-	/** Viewer used to allow interaction with TextSymbolizer definition */
-	private final LabelViewer label = new LabelViewer();
-
-	/** Viewer used to allow interaction with minScale definition */
-	private final ScaleViewer minScale = new ScaleViewer(ScaleViewer.MIN);
-
-	/** Viewer used to allow interaction with maxScale definition */
-	private final ScaleViewer maxScale = new ScaleViewer(ScaleViewer.MAX);
 
 	/** The current mode we are working with */
 	private Mode mode;
@@ -194,16 +157,44 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 	/**
 	 * Construct <code>SimpleStyleConfigurator</code>.
 	 */
-	public SimpleStyleConfigurator(final Shell parent, final SimpleFeatureCollection featureCollection,
-			final Style style) {
-		super(parent, featureCollection, style);
-
+	public SimpleConfigurator(final Shell parent, final SimpleFeatureCollection featureCollection, final Style style) {
+		super(parent);
+		this.featureCollection = featureCollection;
+		this.style = style;
 		this.line.addListener(this.synchronize);
 		this.fill.addListener(this.synchronize);
-		this.label.addListener(this.synchronize);
 		this.point.addListener(this.synchronize);
-		this.minScale.addListener(this.synchronize);
-		this.maxScale.addListener(this.synchronize);
+	}
+
+	protected void setLayout(final Composite parent) {
+		final RowLayout layout = new RowLayout();
+		layout.pack = false;
+		layout.wrap = true;
+		layout.type = SWT.HORIZONTAL;
+		layout.fill = true;
+		layout.marginLeft = 0;
+		layout.marginRight = 0;
+		layout.marginTop = 0;
+		layout.marginBottom = 0;
+		layout.spacing = 0;
+		parent.setLayout(layout);
+	}
+
+	protected Style getStyle() {
+		assert featureCollection != null;
+		Style style = this.style;
+		if (style == null) {
+			final SimpleFeatureType schema = featureCollection.getSchema();
+			if (SLDs.isLine(schema)) {
+				style = SLD.createLineStyle(Color.red, 1);
+			} else if (SLDs.isPoint(schema)) {
+				style = SLD.createPointStyle("Circle", Color.red, Color.green, 1f, 3f);
+			} else if (SLDs.isPolygon(schema)) {
+				style = SLD.createPolygonStyle(Color.red, Color.green, 1f);
+			}
+		}
+		this.style = style;
+		return style;
 	}
 
 	@Override
@@ -238,57 +229,15 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 				}
 			}
 		};
-		Composite part = AbstractSimpleConfigurator.subpart(parentPanel, "Geometry:");
-		geometryName = new ComboViewer(part);
-		geometryName.setContentProvider(new IStructuredContentProvider() {
-
-			FeatureType schema;
-
-			@Override
-			public Object[] getElements(final Object inputElement) {
-				// note use of descriptors; so we can make use of associations
-				// if available
-				final ArrayList<String> names = new ArrayList<>();
-				names.add(DEFAULT_GEOMETRY);
-				if (schema != null) {
-					for (final PropertyDescriptor descriptor : schema.getDescriptors()) {
-						if (descriptor instanceof GeometryDescriptor) {
-							names.add(((GeometryDescriptor) descriptor).getLocalName());
-						}
-					}
-				}
-				return names.toArray();
-			}
-
-			@Override
-			public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-				// we don't really care since we are not listening to the change
-				// in schema
-				schema = (FeatureType) newInput;
-			}
-
-			@Override
-			public void dispose() {}
-		});
-		geometryName.getCombo().setText(DEFAULT_GEOMETRY);
-		geometryName.getCombo().addSelectionListener(synchronize);
-
-		part = AbstractSimpleConfigurator.subpart(parentPanel, "Mode:");
-		this.pointMode = new Button(part, SWT.RADIO);
-		pointMode.setText("Point");
-		this.lineMode = new Button(part, SWT.RADIO);
-		lineMode.setText("Line");
-		this.polyMode = new Button(part, SWT.RADIO);
-		polyMode.setText("Polygon");
 
 		this.line.createControl(parentPanel, adp);
 		this.fill.createControl(parentPanel, adp);
 		this.point.createControl(parentPanel, adp, this.build);
-		this.label.createControl(parentPanel, adp);
-		this.minScale.createControl(parentPanel, adp);
-		this.maxScale.createControl(parentPanel, adp);
+		// this.label.createControl(parentPanel, adp);
+		// this.minScale.createControl(parentPanel, adp);
+		// this.maxScale.createControl(parentPanel, adp);
 
-		final Composite replaceComp = AbstractSimpleConfigurator.subpart(parentPanel, "Replace");
+		final Composite replaceComp = subpart(parentPanel, "Replace");
 		this.replace = new Button(replaceComp, SWT.CHECK);
 		replace.addSelectionListener(synchronize);
 		replace.setSelection(true);
@@ -296,40 +245,6 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		refresh();
 
 		return parentPanel;
-	}
-
-	// @Override
-	// protected void buttonPressed(final int buttonId) {
-	// if (buttonId == OK) {
-	// try {
-	//// final String styleToString = styleToString(style);
-	// // DEBUG.LOG(styleToString);
-	// } catch (final Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// super.buttonPressed(buttonId);
-	// }
-
-	/**
-	 * Converts a style to its string representation to be written to file.
-	 *
-	 * @param style
-	 *            the style to convert.
-	 * @return the style string.
-	 * @throws Exception
-	 */
-	public static String styleToString(final Style style) throws Exception {
-		final StyledLayerDescriptor sld = sf.createStyledLayerDescriptor();
-		final UserLayer layer = sf.createUserLayer();
-		layer.setLayerFeatureConstraints(new FeatureTypeConstraint[] { null });
-		sld.addStyledLayer(layer);
-		layer.addUserStyle(style);
-
-		final SLDTransformer aTransformer = new SLDTransformer();
-		aTransformer.setIndentation(4);
-		final String xml = aTransformer.transform(sld);
-		return xml;
 	}
 
 	public Mode determineMode(final SimpleFeatureType schema, final boolean askUser) {
@@ -342,16 +257,6 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		} else if (SLDs.isPoint(schema)) {
 			return Mode.POINT;
 		} else {
-			// we must be Geometry?
-			if (askUser) {
-				// could not figure it out from the schema
-				// try trusting the user?
-				if (polyMode.getSelection()) {
-					return Mode.POLYGON;
-				} else if (lineMode.getSelection()) {
-					return Mode.LINE;
-				} else if (pointMode.getSelection()) { return Mode.POINT; }
-			}
 			return Mode.ALL; // we are a generic geometry
 		}
 	}
@@ -366,8 +271,6 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		}
 
 		final SimpleFeatureType schema = featureCollection.getSchema();
-		geometryName.setInput(schema);
-		String name = DEFAULT_GEOMETRY;
 
 		Stroke stroke = null;
 		Fill fill = null;
@@ -387,37 +290,21 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		}
 		this.mode = determineMode(schema, true);
 
-		if (mode == Mode.NONE) {
-			pointMode.setSelection(false);
-			polyMode.setSelection(false);
-			lineMode.setSelection(false);
-		} else if (mode == Mode.LINE) {
-			lineMode.setSelection(true);
+		if (mode == Mode.LINE) {
 			final LineSymbolizer sym = SLDs.lineSymbolizer(fts);
 			stroke = SLDs.stroke(sym);
 			placement = SLDs.getPlacement(SLDs.ALIGN_LEFT, SLDs.ALIGN_MIDDLE, 0);
-
-			name = sym == null ? null : sym.getGeometryPropertyName();
 		} else if (mode == Mode.POLYGON) {
-			polyMode.setSelection(true);
 			final PolygonSymbolizer sym = SLDs.polySymbolizer(fts);
 			stroke = SLDs.stroke(sym);
 			fill = SLDs.fill(sym);
 			placement = SLDs.getPlacement(SLDs.ALIGN_CENTER, SLDs.ALIGN_MIDDLE, 0);
-
-			name = sym == null ? null : sym.getGeometryPropertyName();
-		} else if (mode == Mode.POINT || mode == Mode.ALL) { // default to
-																// handling as
-																// Point
-			pointMode.setSelection(true);
-
+		} else if (mode == Mode.POINT || mode == Mode.ALL) {
 			final PointSymbolizer sym = SLDs.pointSymbolizer(fts);
 			stroke = SLDs.stroke(sym);
 			fill = SLDs.fill(sym);
 			graphic = SLDs.graphic(sym);
 			placement = SLDs.getPlacement(SLDs.ALIGN_LEFT, SLDs.ALIGN_MIDDLE, 0);
-
-			name = sym == null ? null : sym.getGeometryPropertyName();
 		}
 
 		text = SLDs.textSymbolizer(fts);
@@ -425,19 +312,6 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 			text.setLabelPlacement(placement);
 		}
 
-		if (name == null) {
-			name = DEFAULT_GEOMETRY;
-			geometryName.getCombo().setText(name);
-		} else {
-			geometryName.getCombo().setText(name);
-		}
-		final Mode raw = determineMode(schema, false);
-		pointMode.setEnabled(raw == Mode.ALL);
-		polyMode.setEnabled(raw == Mode.ALL);
-		lineMode.setEnabled(raw == Mode.ALL);
-
-		final double minScaleDen = SLDs.minScale(fts);
-		final double maxScaleDen = SLDs.maxScale(fts);
 		final Color defaultColor = Color.red;
 
 		this.line.setStroke(stroke, this.mode, defaultColor);
@@ -445,32 +319,22 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		this.fill.setFill(fill, this.mode, defaultColor);
 		this.point.setGraphic(graphic, this.mode, defaultColor);
 
-		this.label.set(schema, text, this.mode);
-		this.minScale.setScale(minScaleDen, 0l);
-		this.maxScale.setScale(maxScaleDen, 1111111l);
 	}
 
 	/** Synchronize the SLD with the array of symbolizers */
 	public void synchronize() {
 		final List<Symbolizer> acquire = new ArrayList<>();
-		final TextSymbolizer textSym = this.label.get(this.build);
 
 		final SimpleFeatureType schema = featureCollection.getSchema();
 		this.mode = determineMode(schema, true);
 
-		String geometryPropertyName = null;
-		if (geometryName.getCombo().getSelectionIndex() != 0) {
-			geometryPropertyName = geometryName.getCombo().getText();
-		}
+		final String geometryPropertyName = null;
 
 		switch (this.mode) {
 			case LINE: {
 				final LineSymbolizer lineSymbolizer = this.build.createLineSymbolizer(this.line.getStroke(this.build));
 				acquire.add(lineSymbolizer);
 				lineSymbolizer.setGeometryPropertyName(geometryPropertyName);
-				if (textSym != null) {
-					acquire.add(textSym);
-				}
 			}
 				break;
 
@@ -479,9 +343,6 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 						.createPolygonSymbolizer(this.line.getStroke(this.build), this.fill.getFill(this.build));
 				polygonSymbolizer.setGeometryPropertyName(geometryPropertyName);
 				acquire.add(polygonSymbolizer);
-				if (textSym != null) {
-					acquire.add(textSym);
-				}
 			}
 				break;
 
@@ -490,9 +351,6 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 						.getGraphic(this.fill.getFill(this.build), this.line.getStroke(this.build), this.build));
 				pointSymbolizer.setGeometryPropertyName(geometryPropertyName);
 				acquire.add(pointSymbolizer);
-				if (textSym != null) {
-					acquire.add(textSym);
-				}
 			}
 				break;
 			case ALL: {
@@ -507,24 +365,13 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 						.getGraphic(this.fill.getFill(this.build), this.line.getStroke(this.build), this.build));
 				pointSymbolizer.setGeometryPropertyName(geometryPropertyName);
 				acquire.add(pointSymbolizer);
-				if (textSym != null) {
-					acquire.add(textSym);
-				}
 			}
 				break;
 			case NONE:
 		}
-		final double minScaleDen = minScale.getScale();
-		final double maxScaleDen = maxScale.getScale();
 
 		final Symbolizer[] array = acquire.toArray(new Symbolizer[acquire.size()]);
 		final Rule rule = this.build.createRule(array);
-		if (minScale.isEnabled()) {
-			rule.setMinScaleDenominator(minScaleDen);
-		}
-		if (maxScale.isEnabled()) {
-			rule.setMaxScaleDenominator(maxScaleDen);
-		}
 		final FeatureTypeStyle featureTypeStyle =
 				this.build.createFeatureTypeStyle(SLDs.GENERIC_FEATURE_TYPENAME, rule);
 		featureTypeStyle.setName("simple"); //$NON-NLS-1$
@@ -567,42 +414,70 @@ public class SimpleStyleConfigurator extends AbstractSimpleConfigurator {
 		this.style = style;
 	}
 
-	// public static void main( String[] args ) throws Exception {
-	// Display display = new Display();
-	// Shell shell = new Shell(display);
-	//
-	// File shapeFile = new File("D:\\TMP\\gt-swt-tests\\junctions.shp");
-	// ShapefileDataStore store = new
-	// ShapefileDataStore(shapeFile.toURI().toURL());
-	// SimpleFeatureSource featureSource = store.getFeatureSource();
-	// SimpleFeatureCollection shapefile = featureSource.getFeatures();
-	//
-	// File styleFile = new File("D:\\TMP\\gt-swt-tests\\junctions.sld");
-	// SLDParser parser = new SLDParser(new StyleFactoryImpl(), styleFile);
-	// Style[] styles = parser.readXML();
-	//
-	// SimpleStyleConfigurator tmp = new SimpleStyleConfigurator(shell,
-	// shapefile, styles[0]);
-	// tmp.setBlockOnOpen(true);
-	// tmp.open();
-	//
-	// }
-
 	public static Style showDialog(final Shell parent, final Layer layer) throws IOException {
-		if (!Utils.isGridLayer(layer)) {
-			final SimpleFeatureSource featureSource = (SimpleFeatureSource) layer.getFeatureSource();
-			final Style style = layer.getStyle();
-			showDialog(parent, featureSource, style);
-		}
+		final SimpleFeatureSource featureSource = (SimpleFeatureSource) layer.getFeatureSource();
+		final Style style = layer.getStyle();
+		showDialog(parent, featureSource, style);
 		return null;
 	}
 
 	public static Style showDialog(final Shell parent, final SimpleFeatureSource featureSource, final Style style)
 			throws IOException {
 		final SimpleFeatureCollection features = featureSource.getFeatures();
-		final SimpleStyleConfigurator tmp = new SimpleStyleConfigurator(parent, features, style);
+		final SimpleConfigurator tmp = new SimpleConfigurator(parent, features, style);
 		tmp.setBlockOnOpen(true);
 		tmp.open();
 		return tmp.getStyle();
+	}
+
+	public static Composite subpart(final Composite parent, final String label) {
+		final Composite subpart = new Composite(parent, SWT.NONE);
+		final RowLayout across = new RowLayout();
+		across.type = SWT.HORIZONTAL;
+		across.wrap = true;
+		across.pack = true;
+		across.fill = true;
+		across.marginBottom = 1;
+		across.marginRight = 2;
+
+		subpart.setLayout(across);
+
+		final Label labell = new Label(subpart, SWT.LEFT);
+		labell.setText(label);
+
+		final RowData data = new RowData();
+		data.width = 40;
+		// check to see if width is not enough space
+		final GC gc = new GC(parent.getParent());
+		gc.setFont(parent.getParent().getFont());
+		final FontMetrics fontMetrics = gc.getFontMetrics();
+		gc.dispose();
+		final int labelWidth = Dialog.convertWidthInCharsToPixels(fontMetrics, labell.getText().length() + 1);
+		if (labelWidth > data.width) {
+			data.width = labelWidth;
+		}
+		// TODO: adjust the methods that call this one to keep a consistent
+		// width (otherwise they're misaligned)
+		data.height = 10;
+		labell.setLayoutData(data);
+
+		return subpart;
+	}
+
+	public static SelectionEvent selectionEvent(final ModifyEvent e) {
+		final Event event = new Event();
+		event.widget = e.widget;
+		event.data = e.data;
+		event.display = e.display;
+		event.time = e.time;
+		return new SelectionEvent(event) {
+			/** <code>serialVersionUID</code> field */
+			private static final long serialVersionUID = 6544345585295778029L;
+
+			@Override
+			public Object getSource() {
+				return e.getSource();
+			}
+		};
 	}
 }

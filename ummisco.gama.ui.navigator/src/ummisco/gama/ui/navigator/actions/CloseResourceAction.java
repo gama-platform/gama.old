@@ -78,19 +78,6 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		initAction();
 	}
 
-	/**
-	 * Provide text to the action.
-	 *
-	 * @param provider
-	 *            the shell provider for any dialogs
-	 * @param text
-	 *            label
-	 * @since 3.4
-	 */
-	protected CloseResourceAction(final IShellProvider provider, final String text) {
-		super(provider, text);
-	}
-
 	private void initAction() {
 		setId(ID);
 		setToolTipText(IDEWorkbenchMessages.CloseResourceAction_toolTip);

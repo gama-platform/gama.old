@@ -62,7 +62,7 @@ public class SVGUniverse implements Serializable {
 	 * Maps document URIs to their loaded SVG diagrams. Note that URIs for documents loaded from URLs will reflect their
 	 * URLs and URIs for documents initiated from streams will have the scheme <i>svgSalamander</i>.
 	 */
-	final HashMap loadedDocs = new HashMap();
+	final HashMap<URI, SVGDiagram> loadedDocs = new HashMap<>();
 
 	// final HashMap loadedFonts = new HashMap();
 
@@ -260,14 +260,14 @@ public class SVGUniverse implements Serializable {
 			// Strip fragment from URI
 			final URI xmlBase = new URI(path.getScheme(), path.getSchemeSpecificPart(), null);
 
-			SVGDiagram dia = (SVGDiagram) loadedDocs.get(xmlBase);
+			SVGDiagram dia = loadedDocs.get(xmlBase);
 			if (dia == null && loadIfAbsent) {
 				// System.err.println("SVGUnivserse: " + xmlBase.toString());
 				// javax.swing.JOptionPane.showMessageDialog(null, xmlBase.toString());
 				final URL url = xmlBase.toURL();
 
 				loadSVG(url, false);
-				dia = (SVGDiagram) loadedDocs.get(xmlBase);
+				dia = loadedDocs.get(xmlBase);
 				if (dia == null) { return null; }
 			}
 
@@ -289,7 +289,7 @@ public class SVGUniverse implements Serializable {
 	public SVGDiagram getDiagram(final URI xmlBase, final boolean loadIfAbsent) {
 		if (xmlBase == null) { return null; }
 
-		SVGDiagram dia = (SVGDiagram) loadedDocs.get(xmlBase);
+		SVGDiagram dia = loadedDocs.get(xmlBase);
 		if (dia != null || !loadIfAbsent) { return dia; }
 
 		// Load missing diagram
@@ -304,7 +304,7 @@ public class SVGUniverse implements Serializable {
 			}
 
 			loadSVG(url, false);
-			dia = (SVGDiagram) loadedDocs.get(xmlBase);
+			dia = loadedDocs.get(xmlBase);
 			return dia;
 		} catch (final Exception e) {
 			e.printStackTrace();

@@ -61,7 +61,7 @@ abstract public class ShapeElement extends RenderableElement {
 
 	@Override
 	void pick(final Point2D point, final boolean boundingBox, final List retVec) throws SVGException {
-		final StyleAttribute styleAttrib = new StyleAttribute();
+		// final StyleAttribute styleAttrib = new StyleAttribute();
 		// if (getStyle(styleAttrib.setName("fill")) && getShape().contains(point))
 		if ((boundingBox ? getBoundingBox() : getShape()).contains(point)) {
 			retVec.add(getPath(null));
@@ -71,7 +71,7 @@ abstract public class ShapeElement extends RenderableElement {
 	@Override
 	void pick(final Rectangle2D pickArea, final AffineTransform ltw, final boolean boundingBox, final List retVec)
 			throws SVGException {
-		final StyleAttribute styleAttrib = new StyleAttribute();
+		// final StyleAttribute styleAttrib = new StyleAttribute();
 		// if (getStyle(styleAttrib.setName("fill")) && getShape().contains(point))
 		if (ltw.createTransformedShape(boundingBox ? getBoundingBox() : getShape()).intersects(pickArea)) {
 			retVec.add(getPath(null));
@@ -125,9 +125,7 @@ abstract public class ShapeElement extends RenderableElement {
 
 		Paint strokePaint = null; // Default is to stroke with none
 		if (getStyle(styleAttrib.setName("stroke"))) {
-			if (styleAttrib.getStringValue().equals("none")) {
-				strokePaint = null;
-			} else {
+			if (!styleAttrib.getStringValue().equals("none")) {
 				strokePaint = styleAttrib.getColorValue();
 				if (strokePaint == null) {
 					final URI uri = styleAttrib.getURIValue(getXMLBase());

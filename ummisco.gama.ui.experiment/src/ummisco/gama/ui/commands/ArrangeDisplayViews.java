@@ -92,11 +92,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static void execute(final GamaTree<String> tree) {
 		listDisplayViews();
-		final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
-		// if (!WorkaroundForIssue1353.isInstalled()
-		// && StreamEx.of(displays).anyMatch((d) -> !d.getOutput().getData().isOpenGL())) {
-		// WorkaroundForIssue1353.install();
-		// }
+		// final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
 
 		if (tree != null) {
 			DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
@@ -134,7 +130,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
 		root.setVisible(true);
-		// root.setToBeRendered(true);
 		decorateDisplays();
 		holders.forEach((ph) -> {
 			ph.setVisible(true);
@@ -207,7 +202,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	static final List<MPlaceholder> listDisplayViews() {
 		final List<MPlaceholder> holders = getModelService().findElements(getApplication(), MPlaceholder.class,
 				IN_ACTIVE_PERSPECTIVE, e -> WorkbenchHelper.isDisplay(e.getElementId()));
-		// DEBUG.OUT("Displays found: " + holders.size());
 		/// Issue #2680
 		int currentIndex = 0;
 		for (final MPlaceholder h : holders) {
@@ -218,11 +212,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			}
 		}
 
-		// holders.forEach(h -> h.getTransientData().put(DISPLAY_INDEX_KEY,
-		// String.valueOf(findDisplay(h.getElementId()).getIndex())));
-		// holders.forEach(h -> {
-		// DEBUG.OUT("Holder " + h.getElementId() + " for display #" + h.getTransientData().get(DISPLAY_INDEX_KEY));
-		// });
 		return holders;
 	}
 
@@ -242,17 +231,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			root.getChildren().add(c);
 		}
 		return c;
-	}
-
-	public static void hideScreen() {
-		// final MPartStack displayStack = getDisplaysPlaceholder();
-		// displayStack.setVisible(false);
-	}
-
-	public static void showScreen() {
-		// final MPartStack displayStack = getDisplaysPlaceholder();
-		// displayStack.setVisible(true);
-		// displayStack.setToBeRendered(true);
 	}
 
 }

@@ -4,10 +4,10 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
-package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
+package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 import java.awt.Color;
 import java.text.MessageFormat;
@@ -29,11 +29,11 @@ import org.geotools.styling.StyleBuilder;
  * Allows editing/viewing of a Style Layer Descriptor "Stroke".
  * <p>
  * Here is the pretty picture:
- * 
+ *
  * <pre>
  * <code>
- *          +-+ +-------+ +------+             
- *    Fill: |x| | color | | 90%\/| 
+ *          +-+ +-------+ +------+
+ *    Fill: |x| | color | | 90%\/|
  *          +-+ +-------+ +------+
  * </code>
  * </pre>
@@ -54,7 +54,7 @@ import org.geotools.styling.StyleBuilder;
  * <li>getFill( StyleBuilder ) - construct a Fill based on fields
  * </ul>
  * </p>
- * 
+ *
  * @author Jody Garnett
  * @since 1.0.0
  *
@@ -86,7 +86,7 @@ public class FillViewer {
 
 		@Override
 		public void modifyText(final ModifyEvent e) {
-			sync(AbstractSimpleConfigurator.selectionEvent(e));
+			sync(SimpleConfigurator.selectionEvent(e));
 		};
 
 		private void sync(final SelectionEvent selectionEvent) {
@@ -124,7 +124,7 @@ public class FillViewer {
 
 	/**
 	 * Accepts a listener that will be notified when content changes.
-	 * 
+	 *
 	 * @param listener1
 	 */
 	public void addListener(final SelectionListener listener1) {
@@ -132,19 +132,8 @@ public class FillViewer {
 	}
 
 	/**
-	 * Remove listener.
-	 * 
-	 * @param listener1
-	 */
-	public void removeListener(final SelectionListener listener1) {
-		if (this.listener == listener1) {
-			this.listener = null;
-		}
-	}
-
-	/**
 	 * TODO summary sentence for fire ...
-	 * 
+	 *
 	 * @param event
 	 */
 	protected void fire(final SelectionEvent event) {
@@ -154,13 +143,13 @@ public class FillViewer {
 
 	/**
 	 * TODO summary sentence for createControl ...
-	 * 
+	 *
 	 * @param parent
 	 * @param kListener
 	 * @return Generated composite
 	 */
 	public Composite createControl(final Composite parent, final KeyListener kListener) {
-		final Composite part = AbstractSimpleConfigurator.subpart(parent, "Fill:");
+		final Composite part = SimpleConfigurator.subpart(parent, "Fill:");
 
 		this.on = new Button(part, SWT.CHECK);
 		this.on.addSelectionListener(this.sync);
@@ -177,9 +166,9 @@ public class FillViewer {
 
 	/**
 	 * TODO summary sentence for getFill ...
-	 * 
+	 *
 	 * @param build
-	 * 
+	 *
 	 * @return Fill defined by this model
 	 */
 	public Fill getFill(final StyleBuilder build) {
@@ -204,7 +193,7 @@ public class FillViewer {
 
 	/**
 	 * TODO summary sentence for setFill ...
-	 * 
+	 *
 	 * @param fill
 	 * @param mode
 	 * @param enabled

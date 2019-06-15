@@ -37,7 +37,6 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.S_Experiment;
-import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.util.file.GamlFileInfo;
@@ -104,7 +103,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				if (s == null) {
 					DEBUG.ERR("EXPERIMENT NULL");
 				}
-				if (EGaml.getInstance().isBatch((Statement) e)) {
+				if (EGaml.getInstance().isBatch(e)) {
 					s = GamlFileInfo.BATCH_PREFIX + s;
 				}
 
@@ -115,7 +114,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 			} else if (e instanceof HeadlessExperiment) {
 				String s = ((HeadlessExperiment) e).getName();
 
-				if (EGaml.getInstance().isBatch((HeadlessExperiment) e)) {
+				if (EGaml.getInstance().isBatch(e)) {
 					s = GamlFileInfo.BATCH_PREFIX + s;
 				}
 

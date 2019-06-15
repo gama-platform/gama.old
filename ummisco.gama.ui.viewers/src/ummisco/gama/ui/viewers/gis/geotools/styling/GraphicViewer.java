@@ -7,7 +7,7 @@
  *
  *
  **********************************************************************************************/
-package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
+package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 import java.awt.Color;
 import java.text.MessageFormat;
@@ -90,7 +90,7 @@ public class GraphicViewer {
 
 		@Override
 		public void modifyText(final ModifyEvent e) {
-			sync(AbstractSimpleConfigurator.selectionEvent(e));
+			sync(SimpleConfigurator.selectionEvent(e));
 		};
 
 		private void sync(final SelectionEvent selectionEvent) {
@@ -126,17 +126,6 @@ public class GraphicViewer {
 	}
 
 	/**
-	 * Remove listener.
-	 *
-	 * @param listener1
-	 */
-	public void removeListener(final SelectionListener listener1) {
-		if (this.listener == listener1) {
-			this.listener = null;
-		}
-	}
-
-	/**
 	 * TODO summary sentence for fire ...
 	 *
 	 * @param event
@@ -155,13 +144,12 @@ public class GraphicViewer {
 	 * @return Generated composite
 	 */
 	public Composite createControl(final Composite parent, final KeyListener klisten, final StyleBuilder build) {
-		final Composite part = AbstractSimpleConfigurator.subpart(parent, "Point");
+		final Composite part = SimpleConfigurator.subpart(parent, "Point");
 
 		this.on = new Button(part, SWT.CHECK);
-		// this.on.addSelectionListener( this.sync );
 
 		this.size = new Combo(part, SWT.DROP_DOWN);
-		this.size.setItems(new String[] { "1", "2", "3", "5", "10", "15" }); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		this.size.setItems(new String[] { "1", "2", "3", "5", "10", "15" });
 		this.size.setTextLimit(2);
 		this.size.addKeyListener(klisten);
 		this.size.setToolTipText("Graphic size");

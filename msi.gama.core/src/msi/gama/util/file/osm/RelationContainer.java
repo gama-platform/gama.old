@@ -21,18 +21,6 @@ public class RelationContainer extends EntityContainer {
 	}
 
 	/**
-	 * Creates a new instance.
-	 *
-	 * @param sr
-	 *            The store to read state from.
-	 * @param scr
-	 *            Maintains the mapping between classes and their identifiers within the store.
-	 */
-	public RelationContainer(final StoreReader sr, final StoreClassRegister scr) {
-		relation = new Relation(sr, scr);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override

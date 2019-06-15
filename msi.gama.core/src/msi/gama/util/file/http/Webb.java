@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.http.Webb.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.http.Webb.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file.http;
 
@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
@@ -37,17 +36,22 @@ import org.json.simple.JSONObject;
  * @author hgoebl
  */
 public class Webb {
-	public static final String DEFAULT_USER_AGENT = Const.DEFAULT_USER_AGENT;
-	public static final String APP_FORM = Const.APP_FORM;
-	public static final String APP_JSON = Const.APP_JSON;
-	public static final String APP_BINARY = Const.APP_BINARY;
-	public static final String TEXT_PLAIN = Const.TEXT_PLAIN;
-	public static final String HDR_CONTENT_TYPE = Const.HDR_CONTENT_TYPE;
-	public static final String HDR_CONTENT_ENCODING = Const.HDR_CONTENT_ENCODING;
-	public static final String HDR_ACCEPT = Const.HDR_ACCEPT;
-	public static final String HDR_ACCEPT_ENCODING = Const.HDR_ACCEPT_ENCODING;
-	public static final String HDR_USER_AGENT = Const.HDR_USER_AGENT;
-	public static final String HDR_AUTHORIZATION = "Authorization";
+	static final String DEFAULT_USER_AGENT = "gama-platform.org/1.0";
+	static final String APP_FORM = "application/x-www-form-urlencoded";
+	static final String APP_JSON = "application/json";
+	static final String APP_BINARY = "application/octet-stream";
+	static final String TEXT_PLAIN = "text/plain";
+	public static final String HDR_CONTENT_TYPE = "Content-Type";
+	static final String HDR_CONTENT_ENCODING = "Content-Encoding";
+	static final String HDR_ACCEPT_ENCODING = "Accept-Encoding";
+	static final String HDR_ACCEPT = "Accept";
+	static final String HDR_USER_AGENT = "User-Agent";
+	static final String UTF8 = "utf-8";
+
+	static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+	@SuppressWarnings ("rawtypes") static final Class BYTE_ARRAY_CLASS = EMPTY_BYTE_ARRAY.getClass();
+	/** Minimal number of bytes the compressed content must be smaller than uncompressed */
+	static final int MIN_COMPRESSED_ADVANTAGE = 80;
 
 	static final Map<String, Object> globalHeaders = new LinkedHashMap<>();
 	static String globalBaseUri;
@@ -68,84 +72,11 @@ public class Webb {
 
 	/**
 	 * Create an instance which can be reused for multiple requests in the same Thread.
-	 * 
+	 *
 	 * @return the created instance.
 	 */
 	public static Webb create() {
 		return new Webb();
-	}
-
-	/**
-	 * Set the value for a named header which is valid for all requests in the running JVM. <br>
-	 * The value can be overwritten by calling {@link Webb#setDefaultHeader(String, Object)} and/or
-	 * {@link com.goebl.david.Request#header(String, Object)}. <br>
-	 * For the supported types for values see {@link Request#header(String, Object)}.
-	 *
-	 * @param name
-	 *            name of the header (regarding HTTP it is not case-sensitive, but here case is important).
-	 * @param value
-	 *            value of the header. If <code>null</code> the header value is cleared (effectively not set).
-	 *
-	 * @see #setDefaultHeader(String, Object)
-	 * @see com.goebl.david.Request#header(String, Object)
-	 */
-	public static void setGlobalHeader(final String name, final Object value) {
-		if (value != null) {
-			globalHeaders.put(name, value);
-		} else {
-			globalHeaders.remove(name);
-		}
-	}
-
-	/**
-	 * Set the base URI for all requests starting in this JVM from now. <br>
-	 * For all requests this value is taken as a kind of prefix for the effective URI, so you can address the URIs
-	 * relatively. The value is only taken when {@link Webb#setBaseUri(String)} is not called or called with
-	 * <code>null</code>.
-	 *
-	 * @param globalBaseUri
-	 *            the prefix for all URIs of new Requests.
-	 * @see #setBaseUri(String)
-	 */
-	public static void setGlobalBaseUri(final String globalBaseUri) {
-		Webb.globalBaseUri = globalBaseUri;
-	}
-
-	/**
-	 * The number of characters to indent child properties, <code>-1</code> for "productive" code. <br>
-	 * Default is production ready JSON (-1) means no indentation (single-line serialization).
-	 * 
-	 * @param indentFactor
-	 *            the number of spaces to indent
-	 */
-	public static void setJsonIndentFactor(final int indentFactor) {
-		Webb.jsonIndentFactor = indentFactor;
-	}
-
-	/**
-	 * Set the timeout in milliseconds for connecting the server. <br>
-	 * In contrast to {@link java.net.HttpURLConnection}, we use a default timeout of 10 seconds, since no timeout is
-	 * odd.<br>
-	 * Can be overwritten for each Request with {@link com.goebl.david.Request#connectTimeout(int)}.
-	 * 
-	 * @param globalConnectTimeout
-	 *            the new timeout or <code>&lt;= 0</code> to use HttpURLConnection default timeout.
-	 */
-	public static void setConnectTimeout(final int globalConnectTimeout) {
-		connectTimeout = globalConnectTimeout > 0 ? globalConnectTimeout : null;
-	}
-
-	/**
-	 * Set the timeout in milliseconds for getting response from the server. <br>
-	 * In contrast to {@link java.net.HttpURLConnection}, we use a default timeout of 3 minutes, since no timeout is
-	 * odd.<br>
-	 * Can be overwritten for each Request with {@link com.goebl.david.Request#readTimeout(int)}.
-	 * 
-	 * @param globalReadTimeout
-	 *            the new timeout or <code>&lt;= 0</code> to use HttpURLConnection default timeout.
-	 */
-	public static void setReadTimeout(final int globalReadTimeout) {
-		readTimeout = globalReadTimeout > 0 ? globalReadTimeout : null;
 	}
 
 	/**
@@ -154,7 +85,7 @@ public class Webb {
 	 * </a>. <br>
 	 * Use this method to set the behaviour for all requests created by this instance when receiving redirect responses.
 	 * You can overwrite the setting for a single request by calling {@link Request#followRedirects(boolean)}.
-	 * 
+	 *
 	 * @param auto
 	 *            <code>true</code> to automatically follow redirects (HTTP status code 3xx). Default value comes from
 	 *            HttpURLConnection and should be <code>true</code>.
@@ -165,7 +96,7 @@ public class Webb {
 
 	/**
 	 * Set a custom {@link javax.net.ssl.SSLSocketFactory}, most likely to relax Certification checking.
-	 * 
+	 *
 	 * @param sslSocketFactory
 	 *            the factory to use (see test cases for an example).
 	 */
@@ -175,7 +106,7 @@ public class Webb {
 
 	/**
 	 * Set a custom {@link javax.net.ssl.HostnameVerifier}, most likely to relax host-name checking.
-	 * 
+	 *
 	 * @param hostnameVerifier
 	 *            the verifier (see test cases for an example).
 	 */
@@ -185,7 +116,7 @@ public class Webb {
 
 	/**
 	 * Sets a proxy object to be used for opening the connection. See {@link URL#openConnection(Proxy)}
-	 * 
+	 *
 	 * @param proxy
 	 *            the proxy to be used or <tt>null</tt> for no proxy.
 	 */
@@ -216,34 +147,8 @@ public class Webb {
 	}
 
 	/**
-	 * Set the value for a named header which is valid for all requests created by this instance. <br>
-	 * The value takes precedence over {@link Webb#setGlobalHeader(String, Object)} but can be overwritten by
-	 * {@link com.goebl.david.Request#header(String, Object)}. <br>
-	 * For the supported types for values see {@link Request#header(String, Object)}.
-	 *
-	 * @param name
-	 *            name of the header (regarding HTTP it is not case-sensitive, but here case is important).
-	 * @param value
-	 *            value of the header. If <code>null</code> the header value is cleared (effectively not set). When
-	 *            setting the value to null, a value from global headers can shine through.
-	 *
-	 * @see #setGlobalHeader(String, Object)
-	 * @see com.goebl.david.Request#header(String, Object)
-	 */
-	public void setDefaultHeader(final String name, final Object value) {
-		if (defaultHeaders == null) {
-			defaultHeaders = new HashMap<>();
-		}
-		if (value == null) {
-			defaultHeaders.remove(name);
-		} else {
-			defaultHeaders.put(name, value);
-		}
-	}
-
-	/**
 	 * Registers an alternative {@link com.goebl.david.RetryManager}.
-	 * 
+	 *
 	 * @param retryManager
 	 *            the new manager for deciding whether it makes sense to retry a request.
 	 */
@@ -253,7 +158,7 @@ public class Webb {
 
 	/**
 	 * Creates a <b>GET HTTP</b> request with the specified absolute or relative URI.
-	 * 
+	 *
 	 * @param pathOrUri
 	 *            the URI (will be concatenated with global URI or default URI without further checking). If it starts
 	 *            already with http:// or https:// this URI is taken and all base URIs are ignored.
@@ -265,7 +170,7 @@ public class Webb {
 
 	/**
 	 * Creates a <b>POST</b> HTTP request with the specified absolute or relative URI.
-	 * 
+	 *
 	 * @param pathOrUri
 	 *            the URI (will be concatenated with global URI or default URI without further checking) If it starts
 	 *            already with http:// or https:// this URI is taken and all base URIs are ignored.
@@ -276,20 +181,8 @@ public class Webb {
 	}
 
 	/**
-	 * Creates a <b>PUT</b> HTTP request with the specified absolute or relative URI.
-	 * 
-	 * @param pathOrUri
-	 *            the URI (will be concatenated with global URI or default URI without further checking) If it starts
-	 *            already with http:// or https:// this URI is taken and all base URIs are ignored.
-	 * @return the created Request object (in fact it's more a builder than a real request object)
-	 */
-	public Request put(final String pathOrUri) {
-		return new Request(this, Request.Method.PUT, buildPath(pathOrUri));
-	}
-
-	/**
 	 * Creates a <b>DELETE</b> HTTP request with the specified absolute or relative URI.
-	 * 
+	 *
 	 * @param pathOrUri
 	 *            the URI (will be concatenated with global URI or default URI without further checking) If it starts
 	 *            already with http:// or https:// this URI is taken and all base URIs are ignored.
@@ -331,7 +224,8 @@ public class Webb {
 				}
 			}
 		}
-		if (response == null) { throw new IllegalStateException(); // should never reach this line
+		if (response == null) {
+			throw new IllegalStateException(); // should never reach this line
 		}
 		if (request.ensureSuccess) {
 			response.ensureSuccess();
@@ -537,7 +431,7 @@ public class Webb {
 		/**
 		 * Creates an <code>AutoDisconnectInputStream</code> by assigning the argument <code>in</code> to the field
 		 * <code>this.in</code> so as to remember it for later use.
-		 * 
+		 *
 		 * @param connection
 		 *            the underlying connection to disconnect on close.
 		 * @param in

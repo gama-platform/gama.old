@@ -24,14 +24,10 @@ package msi.gama.util.file.svg;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Top level structure in an SVG tree.
@@ -43,7 +39,7 @@ public class SVGDiagram implements Serializable {
 	public static final long serialVersionUID = 0;
 
 	// Indexes elements within this SVG diagram
-	final HashMap idMap = new HashMap();
+	final HashMap<String, SVGElement> idMap = new HashMap<>();
 
 	SVGRoot root;
 	final SVGUniverse universe;
@@ -91,33 +87,33 @@ public class SVGDiagram implements Serializable {
 	 *
 	 * @return the passed in list
 	 */
-	public List pick(final Point2D point, final List retVec) throws SVGException {
-		return pick(point, false, retVec);
-	}
+	// public List pick(final Point2D point, final List retVec) throws SVGException {
+	// return pick(point, false, retVec);
+	// }
+	//
+	// public List pick(final Point2D point, final boolean boundingBox, List retVec) throws SVGException {
+	// if (retVec == null) {
+	// retVec = new ArrayList();
+	// }
+	//
+	// root.pick(point, boundingBox, retVec);
+	//
+	// return retVec;
+	// }
 
-	public List pick(final Point2D point, final boolean boundingBox, List retVec) throws SVGException {
-		if (retVec == null) {
-			retVec = new ArrayList();
-		}
-
-		root.pick(point, boundingBox, retVec);
-
-		return retVec;
-	}
-
-	public List pick(final Rectangle2D pickArea, final List retVec) throws SVGException {
-		return pick(pickArea, false, retVec);
-	}
-
-	public List pick(final Rectangle2D pickArea, final boolean boundingBox, List retVec) throws SVGException {
-		if (retVec == null) {
-			retVec = new ArrayList();
-		}
-
-		root.pick(pickArea, new AffineTransform(), boundingBox, retVec);
-
-		return retVec;
-	}
+	// public List pick(final Rectangle2D pickArea, final List retVec) throws SVGException {
+	// return pick(pickArea, false, retVec);
+	// }
+	//
+	// public List pick(final Rectangle2D pickArea, final boolean boundingBox, List retVec) throws SVGException {
+	// if (retVec == null) {
+	// retVec = new ArrayList();
+	// }
+	//
+	// root.pick(pickArea, new AffineTransform(), boundingBox, retVec);
+	//
+	// return retVec;
+	// }
 
 	public SVGUniverse getUniverse() {
 		return universe;
@@ -155,7 +151,7 @@ public class SVGDiagram implements Serializable {
 	}
 
 	public SVGElement getElement(final String name) {
-		return (SVGElement) idMap.get(name);
+		return idMap.get(name);
 	}
 
 	public void setElement(final String name, final SVGElement node) {

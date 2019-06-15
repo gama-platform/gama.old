@@ -7,7 +7,7 @@
  *
  *
  **********************************************************************************************/
-package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
+package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 import java.awt.Color;
 import java.text.MessageFormat;
@@ -54,7 +54,7 @@ import org.geotools.styling.StyleBuilder;
  * <li>getStroke( StyleBuilder ) - construct a Stroke based on fields
  * </ul>
  * </p>
- * 
+ *
  * @author Jody Garnett
  * @since 1.0.0
  *
@@ -88,7 +88,7 @@ public class StrokeViewer {
 
 		@Override
 		public void modifyText(final ModifyEvent e) {
-			sync(AbstractSimpleConfigurator.selectionEvent(e));
+			sync(SimpleConfigurator.selectionEvent(e));
 		};
 
 		private void sync(final SelectionEvent cause) {
@@ -140,7 +140,7 @@ public class StrokeViewer {
 	 * @return Generated composite
 	 */
 	public Composite createControl(final Composite parent, final KeyListener klisten) {
-		final Composite part = AbstractSimpleConfigurator.subpart(parent, "Line");
+		final Composite part = SimpleConfigurator.subpart(parent, "Line");
 
 		this.on = new Button(part, SWT.CHECK);
 
@@ -162,7 +162,7 @@ public class StrokeViewer {
 
 	/**
 	 * Accepts a listener that will be notified when content changes.
-	 * 
+	 *
 	 * @param listener1
 	 */
 	public void addListener(final SelectionListener listener1) {
@@ -171,7 +171,7 @@ public class StrokeViewer {
 
 	/**
 	 * Remove listener.
-	 * 
+	 *
 	 * @param listener1
 	 */
 	public void removeListener(final SelectionListener listener1) {
@@ -254,7 +254,7 @@ public class StrokeViewer {
 
 	/**
 	 * TODO summary sentence for getStroke ...
-	 * 
+	 *
 	 * @param build
 	 *
 	 * @return Stroke defined by this model

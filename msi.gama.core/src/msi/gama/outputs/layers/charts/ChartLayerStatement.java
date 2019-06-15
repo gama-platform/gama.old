@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartLayerStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartLayerStatement.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -45,9 +45,9 @@ import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @symbol (
 		name = IKeyword.CHART,
@@ -644,19 +644,17 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (string1 != null) {
 			chartoutput.setYTickLineVisible(scope, Cast.asBool(scope, string1.value(scope)));
 		}
-		colorvalue = new GamaColor(Color.black);
 		color = getFacet(IKeyword.COLOR);
 		if (color != null) {
 			colorvalue = Cast.asColor(scope, color.value(scope));
-			chartoutput.setColorValue(scope, colorvalue);
 		}
-
+		chartoutput.setColorValue(scope, colorvalue);
 		colorvalue = new GamaColor(Color.white);
 		color = getFacet(IKeyword.BACKGROUND);
 		if (color != null) {
 			colorvalue = Cast.asColor(scope, color.value(scope));
-			chartoutput.setBackgroundColorValue(scope, colorvalue);
 		}
+		chartoutput.setBackgroundColorValue(scope, colorvalue);
 
 		IExpression face = getFacet(ChartLayerStatement.TICKFONTFACE);
 		if (face != null) {

@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'BoxDecoratorImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BoxDecoratorImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
@@ -107,9 +106,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 
 	protected void buildBoxes() {
 		final IBoxBuilder boxBuilder = getBuilder();
-		if (boxBuilder == null) {
-			return;
-		}
+		if (boxBuilder == null) { return; }
 
 		builder.setTabSize(boxText.getTabs());
 		builder.setCaretOffset(setCaretOffset ? boxText.getCaretOffset() : -1);
@@ -127,20 +124,8 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		charCount = boxText.getCharCount();
 	}
 
-	protected void updateOffsetColors() {
-		int maxLevel = 0;
-		for (final Box b : boxes) {
-			if (b.level > maxLevel) {
-				maxLevel = b.level;
-			}
-		}
-		settings.setColorsSize(maxLevel + 2);
-	}
-
 	protected IBoxBuilder getBuilder() {
-		if (settings.getBuilder() == null) {
-			return null;
-		}
+		if (settings.getBuilder() == null) { return null; }
 		if (builder == null || builderName == null || !builderName.equals(settings.getBuilder())) {
 			builderName = settings.getBuilder();
 			builder = provider.createBoxBuilder(builderName);
@@ -172,15 +157,11 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	}
 
 	void drawBackgroundBoxes() {
-		if (boxes == null || !visible) {
-			return;
-		}
+		if (boxes == null || !visible) { return; }
 
 		final Rectangle r0 = boxText.getClientArea();
 
-		if (r0.width < 1 || r0.height < 1) {
-			return;
-		}
+		if (r0.width < 1 || r0.height < 1) { return; }
 
 		final int xOffset = boxText.getHorizontalPixel();
 		final int yOffset = boxText.getTopPixel();
@@ -222,7 +203,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 			if (settings.getFillOnMove() && currentBox != null && stateMask == settings.getFillKeyModifierSWTInt()) {
 				fillRectangle(settings.getFillSelectedColor(), gc, currentBox.rec.x - xOffset,
 						currentBox.rec.y - yOffset, ex ? r0.width : currentBox.rec.width + 1,
-								currentBox.rec.height + 1);
+						currentBox.rec.height + 1);
 			} else if (fillBox != null) {
 				fillRectangle(settings.getFillSelectedColor(), gc, fillBox.rec.x - xOffset, fillBox.rec.y - yOffset,
 						ex ? r0.width : fillBox.rec.width + 1, fillBox.rec.height + 1);
@@ -294,9 +275,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	}
 
 	void fillRectangle(final Color c, final GC gc, final int x, final int y, final int width, final int height) {
-		if (c == null) {
-			return;
-		}
+		if (c == null) { return; }
 
 		gc.setBackground(c);
 		if (settings.getRoundBox()) {
@@ -315,9 +294,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	@Override
 	public void decorate(final boolean mouseDbClickColorChange) {
 		decorated = false;
-		if (boxText == null || settings == null) {
-			return;
-		}
+		if (boxText == null || settings == null) { return; }
 
 		boxPaint = new BoxPaintListener();
 		boxMouseMove = new BoxMouseMoveListener();
@@ -356,15 +333,11 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 
 	@Override
 	public void undecorate() {
-		if (boxText == null && !decorated) {
-			return;
-		}
+		if (boxText == null && !decorated) { return; }
 		if (settingsChangeListener != null) {
 			settings.removePropertyChangeListener(settingsChangeListener);
 		}
-		if (boxText == null || boxText.isDisposed()) {
-			return;
-		}
+		if (boxText == null || boxText.isDisposed()) { return; }
 		decorated = false;
 		if (boxMouseClick != null) {
 			boxText.removeMouseListener(boxMouseClick);
@@ -468,9 +441,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	}
 
 	protected boolean turnOnBox(final int x0, final int y0) {
-		if (boxes == null || !visible) {
-			return false;
-		}
+		if (boxes == null || !visible) { return false; }
 
 		final int x = x0 + boxText.getHorizontalPixel();
 		final int y = y0 + boxText.getTopPixel();
@@ -567,10 +538,9 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	private final class BoxModifyListener implements ModifyListener {
 
 		/**
-		 * 
+		 *
 		 */
-		public BoxModifyListener() {
-		}
+		public BoxModifyListener() {}
 
 		@Override
 		public void modifyText(final ModifyEvent e) {
@@ -588,10 +558,9 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	private final class BoxKeyListener implements KeyListener {
 
 		/**
-		 * 
+		 *
 		 */
-		public BoxKeyListener() {
-		}
+		public BoxKeyListener() {}
 
 		@Override
 		public void keyReleased(final KeyEvent e) {
@@ -600,8 +569,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 
 		@Override
-		public void keyPressed(final KeyEvent e) {
-		}
+		public void keyPressed(final KeyEvent e) {}
 	}
 
 	class SettingsChangeListener implements IPropertyChangeListener {
@@ -618,9 +586,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 
 		@Override
 		public void paintControl(final PaintEvent e) {
-			if (paintMode) {
-				return;
-			}
+			if (paintMode) { return; }
 			paintMode = true;
 			try {
 				// check charCount as workaround for no event when
@@ -657,8 +623,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	class BoxMouseTrackListener implements MouseTrackListener {
 
 		@Override
-		public void mouseEnter(final MouseEvent e) {
-		}
+		public void mouseEnter(final MouseEvent e) {}
 
 		@Override
 		public void mouseExit(final MouseEvent e) {
@@ -677,8 +642,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 
 		@Override
-		public void mouseHover(final MouseEvent e) {
-		}
+		public void mouseHover(final MouseEvent e) {}
 	}
 
 	class BoxTextChangeListener implements TextChangeListener {
@@ -694,8 +658,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 
 		@Override
-		public void textChanging(final TextChangingEvent event) {
-		}
+		public void textChanging(final TextChangingEvent event) {}
 
 		@Override
 		public void textSet(final TextChangedEvent event) {
@@ -775,14 +738,6 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 			}
 
 			drawBackgroundBoxes();
-		}
-	}
-
-	class BoxSettingsPropertyListner implements IPropertyChangeListener {
-
-		@Override
-		public void propertyChange(final PropertyChangeEvent event) {
-			update();
 		}
 	}
 

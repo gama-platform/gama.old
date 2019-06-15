@@ -2044,15 +2044,6 @@ public final class Osmformat {
 			/**
 			 * <code>required sint64 right = 2;</code>
 			 */
-			public Builder setRight(final long value) {
-				copyOnWrite();
-				instance.setRight(value);
-				return this;
-			}
-
-			/**
-			 * <code>required sint64 right = 2;</code>
-			 */
 			public Builder clearRight() {
 				copyOnWrite();
 				instance.clearRight();
@@ -2078,15 +2069,6 @@ public final class Osmformat {
 			/**
 			 * <code>required sint64 top = 3;</code>
 			 */
-			public Builder setTop(final long value) {
-				copyOnWrite();
-				instance.setTop(value);
-				return this;
-			}
-
-			/**
-			 * <code>required sint64 top = 3;</code>
-			 */
 			public Builder clearTop() {
 				copyOnWrite();
 				instance.clearTop();
@@ -2107,15 +2089,6 @@ public final class Osmformat {
 			@java.lang.Override
 			public long getBottom() {
 				return instance.getBottom();
-			}
-
-			/**
-			 * <code>required sint64 bottom = 4;</code>
-			 */
-			public Builder setBottom(final long value) {
-				copyOnWrite();
-				instance.setBottom(value);
-				return this;
 			}
 
 			/**

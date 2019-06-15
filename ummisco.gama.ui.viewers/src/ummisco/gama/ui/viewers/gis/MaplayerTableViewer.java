@@ -1,15 +1,14 @@
 /*********************************************************************************************
  *
- * 'MaplayerTableViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MaplayerTableViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 
-package ummisco.gama.ui.viewers.gis.geotools.control;
+package ummisco.gama.ui.viewers.gis;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,9 +36,7 @@ import org.geotools.styling.Style;
 
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
-import ummisco.gama.ui.viewers.gis.geotools.styling.SimpleStyleConfigurator;
-import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
+import ummisco.gama.ui.viewers.gis.geotools.styling.SimpleConfigurator;
 
 /**
  * A {@link TableViewer table viewer} for {@link Layer map layers}.
@@ -51,7 +48,7 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
  * @source $URL$
  */
 public class MaplayerTableViewer extends TableViewer implements ISelectionChangedListener {
-	private final List<Layer> layersList = new ArrayList<Layer>();
+	private final List<Layer> layersList = new ArrayList<>();
 	private Layer selectedMapLayer;
 
 	private final String[] titles = { "Layer name", "Visible", "Style" };
@@ -59,13 +56,12 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * <p>
-	 * <b>Note</b> that after the object is built and before actually using it,
-	 * the {@link SwtMapPane map pane} has to be set through the
-	 * {@link #setPane(SwtMapPane)} method.
+	 * <b>Note</b> that after the object is built and before actually using it, the {@link SwtMapPane map pane} has to
+	 * be set through the {@link #setPane(SwtMapPane)} method.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent {@link Composite}.
 	 * @param style
@@ -87,7 +83,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 
 	/**
 	 * Setter for the {@link SwtMapPane map pane}.
-	 * 
+	 *
 	 * @param pane
 	 *            the map pane to use.
 	 */
@@ -97,7 +93,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 
 	/**
 	 * Getter for the loaded {@link MapLayer}s list.
-	 * 
+	 *
 	 * @return the list of map layers.
 	 */
 	public List<Layer> getLayersList() {
@@ -106,7 +102,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 
 	/**
 	 * Getter for the selected {@link Layer}.
-	 * 
+	 *
 	 * @return the selected layer or <code>null</code>.
 	 */
 	public Layer getSelectedMapLayer() {
@@ -121,13 +117,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(final Object element) {
-				if (element instanceof Layer) {
-					final Layer p = (Layer) element;
-					if (Utils.isGridLayer(p)) {
-						return GamaIcons.create(IGamaIcons.GRID).image();
-					}
-					return GamaIcons.create(IGamaIcons.FEATURE).image();
-				}
+				if (element instanceof Layer) { return GamaIcons.create(IGamaIcons.FEATURE).image(); }
 				return null;
 			}
 
@@ -137,8 +127,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 					final Layer p = (Layer) element;
 					String title = p.getTitle();
 					if (title == null || title.length() == 0) {
-						@SuppressWarnings("rawtypes")
-						final FeatureSource featureSource = p.getFeatureSource();
+						@SuppressWarnings ("rawtypes") final FeatureSource featureSource = p.getFeatureSource();
 						if (featureSource != null) {
 							title = featureSource.getName().getLocalPart().toString();
 						}
@@ -155,9 +144,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 			public Image getImage(final Object element) {
 				if (element instanceof Layer) {
 					final Layer p = (Layer) element;
-					if (p.isVisible()) {
-						return GamaIcons.create(IGamaIcons.CHECKED).image();
-					}
+					if (p.isVisible()) { return GamaIcons.create(IGamaIcons.CHECKED).image(); }
 					return GamaIcons.create(IGamaIcons.UNCHECKED).image();
 				}
 				return null;
@@ -238,7 +225,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	private void doSetStyle(final Layer layer) throws IOException {
 		if (layer instanceof StyleLayer) {
 			final StyleLayer styleLayer = (StyleLayer) layer;
-			final Style style = SimpleStyleConfigurator.showDialog(this.getTable().getShell(), layer);
+			final Style style = SimpleConfigurator.showDialog(this.getTable().getShell(), layer);
 			if (style != null) {
 				styleLayer.setStyle(style);
 			}
@@ -247,7 +234,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 
 	/**
 	 * Adds a {@link Layer} to the viewer and updates.
-	 * 
+	 *
 	 * @param layer
 	 *            the layer to add.
 	 */
@@ -258,7 +245,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 
 	/**
 	 * Removes a {@link Layer} from the viewer and updates.
-	 * 
+	 *
 	 * @param layer
 	 *            the layer to remove.
 	 */

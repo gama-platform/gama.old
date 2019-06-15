@@ -8,7 +8,7 @@
  *
  **********************************************************************************************/
 
-package ummisco.gama.ui.viewers.gis.geotools;
+package ummisco.gama.ui.viewers.gis;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +26,6 @@ import org.geotools.map.MapContent;
 
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.viewers.gis.geotools.control.MaplayerTableViewer;
 
 /**
  * Displays a list of the map layers in an associated {@linkplain JMapPane} and provides controls to set the visibility,

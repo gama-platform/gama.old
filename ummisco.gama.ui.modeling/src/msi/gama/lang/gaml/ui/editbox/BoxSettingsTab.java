@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'BoxSettingsTab.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BoxSettingsTab.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
@@ -34,11 +33,9 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.ui.IWorkbench;
 
 public class BoxSettingsTab {
 
-	protected IWorkbench workbench;
 	protected IBoxProvider provider;
 	protected IBoxSettingsStore store;
 	protected IBoxSettings settings;
@@ -78,8 +75,7 @@ public class BoxSettingsTab {
 	Scale scale;
 	Spinner spinner;
 
-	public BoxSettingsTab() {
-	}
+	public BoxSettingsTab() {}
 
 	public Control createContro(final Composite parent, final IBoxProvider provider0) {
 		provider = provider0;
@@ -99,8 +95,9 @@ public class BoxSettingsTab {
 		decorator.enableUpdates(true);
 		settings.addPropertyChangeListener(event -> {
 			changed = true;
-			if (event.getProperty().equals(IBoxSettings.PropertiesKeys.Color.name()))
+			if (event.getProperty().equals(IBoxSettings.PropertiesKeys.Color.name())) {
 				updateFromToColors();
+			}
 
 			provider.getEditorsBoxSettings().copyFrom(settings);
 		});
@@ -243,8 +240,8 @@ public class BoxSettingsTab {
 		c1.setLayoutData(new GridData());
 
 		newLabel(c1, " style");
-		borderLineStyle = newCombo(c1, new String[] { "Solid", "Dot", "Dash", "DashDot", "DashDotDot" },
-				new SelectionAdapter() {
+		borderLineStyle =
+				newCombo(c1, new String[] { "Solid", "Dot", "Dash", "DashDot", "DashDotDot" }, new SelectionAdapter() {
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
 						settings.setBorderLineStyle(borderLineStyle.getSelectionIndex());
@@ -307,8 +304,8 @@ public class BoxSettingsTab {
 		c3.setLayoutData(new GridData());
 
 		newLabel(c3, " style");
-		highlightLineStyle = newCombo(c3, new String[] { "Solid", "Dot", "Dash", "DashDot", "DashDotDot" },
-				new SelectionAdapter() {
+		highlightLineStyle =
+				newCombo(c3, new String[] { "Solid", "Dot", "Dash", "DashDot", "DashDotDot" }, new SelectionAdapter() {
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
 						settings.setHighlightLineStyle(highlightLineStyle.getSelectionIndex());
@@ -324,8 +321,8 @@ public class BoxSettingsTab {
 		c4.setLayoutData(new GridData());
 
 		newLabel(c4, "color");
-		highlightColorType = newCombo(c4, new String[] { "Custom", "Dark", "Darker", "Darkest" },
-				new SelectionAdapter() {
+		highlightColorType =
+				newCombo(c4, new String[] { "Custom", "Dark", "Darker", "Darkest" }, new SelectionAdapter() {
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
 						final int idx = highlightColorType.getSelectionIndex();
@@ -561,11 +558,9 @@ public class BoxSettingsTab {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				if (fromColorLab.getColorValue() == null || toColorLab.getColorValue() == null)
-					return;
+				if (fromColorLab.getColorValue() == null || toColorLab.getColorValue() == null) { return; }
 				final Color[] colors = settings.getColors();
-				if (colors == null || colors.length < 2)
-					return;
+				if (colors == null || colors.length < 2) { return; }
 				settings.setColorsRGB(rgbGradient(colors));
 			}
 		});
@@ -590,8 +585,7 @@ public class BoxSettingsTab {
 	}
 
 	protected Shell getShell() {
-		if (composite != null)
-			return composite.getShell();
+		if (composite != null) { return composite.getShell(); }
 		return null;
 	}
 
@@ -613,8 +607,9 @@ public class BoxSettingsTab {
 		final Label l = new Label(c, SWT.NONE);
 		l.setText(msg);
 		final Color bc = c.getBackground();
-		if (bc != null)
+		if (bc != null) {
 			l.setBackground(new Color(null, bc.getRGB()));
+		}
 		return l;
 	}
 
@@ -623,34 +618,40 @@ public class BoxSettingsTab {
 		combo.setItems(store.getCatalog().toArray(new String[0]));
 		if (settings.getName() != null) {
 			final int idx = combo.indexOf(settings.getName());
-			if (idx > -1)
+			if (idx > -1) {
 				combo.select(idx);
-			else
+			} else {
 				combo.setText(settings.getName());
+			}
 		}
-		if (settings.getBorderColor() != null)
+		if (settings.getBorderColor() != null) {
 			borderColorSelector.setColorValue(settings.getBorderColor().getRGB());
+		}
 		borderWidth.select(settings.getBorderWidth());
 		roundBox.setSelection(settings.getRoundBox());
-		if (settings.getHighlightColor() != null)
+		if (settings.getHighlightColor() != null) {
 			highlightColorSelector.setColorValue(settings.getHighlightColor().getRGB());
+		}
 		highlightWidth.select(settings.getHighlightWidth());
 		highlightOne.setSelection(settings.getHighlightOne());
 		fillSelected.setSelection(settings.getFillSelected());
-		if (settings.getFillSelectedColor() != null)
+		if (settings.getFillSelectedColor() != null) {
 			fillSelectedColor.setColorValue(settings.getFillSelectedColor().getRGB());
+		}
 		builderCombo.setItems(provider.getBuilders().toArray(new String[0]));
 		int i = -1;
-		if (settings.getBuilder() != null)
+		if (settings.getBuilder() != null) {
 			i = builderCombo.indexOf(settings.getBuilder());
+		}
 		builderCombo.select(i == -1 ? 0 : i);
 		st.setText(generateIndentText(settings.getColorsSize() + 1));
 		updateFromToColors();
 		bordertDrawLine.setSelection(settings.getBorderDrawLine());
 		highlightDrawLine.setSelection(settings.getHighlightDrawLine());
 		fillGradient.setSelection(settings.getFillGradient());
-		if (settings.getFillGradientColor() != null)
+		if (settings.getFillGradientColor() != null) {
 			fillGradientColor.setColorValue(settings.getFillGradientColor().getRGB());
+		}
 		fillOnMove.setSelection(settings.getFillOnMove());
 		circulateColors.setSelection(settings.getCirculateLevelColors());
 		levels.select(settings.getColorsSize());
@@ -672,25 +673,23 @@ public class BoxSettingsTab {
 		if (c != null && c.length > 1) {
 			updateBackground(fromColorLab, c[0]);
 			updateBackground(toColorLab, c[c.length - 1]);
-		} else
+		} else {
 			genGradientBut.setEnabled(false);
+		}
 	}
 
 	protected void updateBackground(final ColorSelector ctrl, final Color c) {
 		if (c == null) {
 			genGradientBut.setEnabled(false);
-		} else
+		} else {
 			ctrl.setColorValue(c.getRGB());
-	}
-
-	protected void disposeColor(final Color oldColor) {
-		if (oldColor != null)
-			oldColor.dispose();
+		}
 	}
 
 	public void dispose() {
-		if (settings != null)
+		if (settings != null) {
 			settings.dispose();
+		}
 	}
 
 	RGB[] rgbGradient(final Color[] c) {
@@ -713,8 +712,9 @@ public class BoxSettingsTab {
 	String generateIndentText(final int n) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < i; j++)
+			for (int j = 0; j < i; j++) {
 				sb.append("  ");
+			}
 			sb.append("level " + (i + 1 == n ? "n" : i + 1));
 			sb.append("\n");
 		}
@@ -731,9 +731,7 @@ public class BoxSettingsTab {
 
 	public String validate() {
 		settings.setName(combo.getText());
-		if (settings.getName() == null || settings.getName().length() == 0) {
-			return "Enter configuration name";
-		}
+		if (settings.getName() == null || settings.getName().length() == 0) { return "Enter configuration name"; }
 		return null;
 	}
 
