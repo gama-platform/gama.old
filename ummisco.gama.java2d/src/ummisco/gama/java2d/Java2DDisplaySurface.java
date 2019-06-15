@@ -625,7 +625,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {
-		//DEBUG.OUT("-- Java2D surface set bounds to " + arg0 + " " + arg1 + " | " + arg2 + " " + arg3);
+		// DEBUG.OUT("-- Java2D surface set bounds to " + arg0 + " " + arg1 + " | " + arg2 + " " + arg3);
 		if (arg2 == 0 && arg3 == 0) { return; }
 		super.setBounds(arg0, arg1, arg2, arg3);
 	}
@@ -717,15 +717,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 
 	};
-
-	/**
-	 * Method getZoomIncrement()
-	 *
-	 * @see msi.gama.gui.displays.awt.IJava2DDisplaySurface#getZoomIncrement()
-	 */
-	double getZoomIncrement() {
-		return zoomIncrement;
-	}
 
 	@Override
 	public boolean isRealized() {

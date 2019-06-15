@@ -63,10 +63,10 @@ import msi.gaml.types.Types;
 		init = "true",
 		doc = @doc ("Define if the physical world has a gravity or not")),
 		@variable (
-			name = "gravity",
-			type = IType.FLOAT,
-			init = "9.81",
-			doc = @doc ("Define if the value for the gravity")),
+				name = "gravity",
+				type = IType.FLOAT,
+				init = "9.81",
+				doc = @doc ("Define if the value for the gravity")),
 		@variable (
 				name = IKeyword.AGENTS,
 				type = IType.LIST,
@@ -92,7 +92,9 @@ public class Physical3DWorldAgent extends MinimalAgent {
 	@setter (IKeyword.AGENTS)
 	public void setRegisteredAgents(final IList<IAgent> agents) {
 		if (agents.size() > PhysicsWorldJBullet.MAX_OBJECTS) {
-			GamaRuntimeException.error("Physic engine cannot manage more than " + PhysicsWorldJBullet.MAX_OBJECTS + "agents", GAMA.getRuntimeScope());
+			GamaRuntimeException.error(
+					"Physic engine cannot manage more than " + PhysicsWorldJBullet.MAX_OBJECTS + "agents",
+					GAMA.getRuntimeScope());
 		} else {
 
 			world = new PhysicsWorldJBullet(true);
@@ -100,11 +102,14 @@ public class Physical3DWorldAgent extends MinimalAgent {
 			registeredAgents.addAll(agents);
 			setRegisteredAgentsToWorld();
 		}
-		
+
 	}
+
 	@getter ("gravity")
 	public Double getGravity() {
-		if (!this.hasAttribute("gravity")) this.setAttribute("gravity", 9.81);
+		if (!this.hasAttribute("gravity")) {
+			this.setAttribute("gravity", 9.81);
+		}
 		return (Double) this.getAttribute("gravity");
 	}
 
@@ -112,17 +117,20 @@ public class Physical3DWorldAgent extends MinimalAgent {
 	public void setGravity(final Double gravity) {
 		this.setAttribute("gravity", gravity);
 		if (isUseGravity()) {
-			float g = gravity.floatValue() * - 1;
+			final float g = gravity.floatValue() * -1;
 			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, g));
 		} else {
 			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, 0.0f));
 		}
 
 	}
+
 	@getter ("use_gravity")
 	public Boolean isUseGravity() {
-		if (!this.hasAttribute("use_gravity")) this.setAttribute("use_gravity", true);
-		
+		if (!this.hasAttribute("use_gravity")) {
+			this.setAttribute("use_gravity", true);
+		}
+
 		return (Boolean) this.getAttribute("use_gravity");
 	}
 
@@ -130,7 +138,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 	public void setGravity(final Boolean useGravity) {
 		this.setAttribute("use_gravity", useGravity);
 		if (useGravity) {
-			float gravity = getGravity().floatValue() * - 1;
+			final float gravity = getGravity().floatValue() * -1;
 			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, gravity));
 		} else {
 			world.dynamicsWorld.setGravity(new Vector3f(0.0f, 0.0f, 0.0f));
@@ -154,14 +162,15 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 		// Double mass = 1.0;
 		CollisionShape shape = null;
-				// FIXME: As getLocation() is not working in 3D (hard to compute a 3D
+		// FIXME: As getLocation() is not working in 3D (hard to compute a 3D
 		// centroid)
 		// e;G The location of a plan with a z value will be at 0.
 		// Basic way to set the right z get the first coordinate of the shape,
 		// problem if the shape
 		// is not in the z plan it is totally wrong.
-		
-		final GamaList<Double> velocity = (GamaList<Double>) Cast.asList(GAMA.getRuntimeScope(), geom.getAttribute("velocity"));
+
+		final GamaList<Double> velocity =
+				(GamaList<Double>) Cast.asList(GAMA.getRuntimeScope(), geom.getAttribute("velocity"));
 		final Vector3f _velocity =
 				new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
 
@@ -170,21 +179,23 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		final Double restitution = (Double) geom.getAttribute("restitution");
 		final Double lin_damping = (Double) geom.getAttribute("lin_damping");
 		final Double ang_damping = (Double) geom.getAttribute("ang_damping");
-		Vector3f position = new Vector3f(0,0,0);
-		final GamaMap<String, ?> collisionBound = geom.hasAttribute("collisionBound") ? Cast.asMap(null, geom.getAttribute("collisionBound"), false) : null;
+		Vector3f position = new Vector3f(0, 0, 0);
+		final GamaMap<String, ?> collisionBound = geom.hasAttribute("collisionBound")
+				? Cast.asMap(null, geom.getAttribute("collisionBound"), false) : null;
 
 		if (collisionBound == null) { // Default collision uses the shape of the object: only work for convex objects
 			shape = defaultCollisionShape(geom);
 		} else {
 
 			String shapeType = (String) collisionBound.get("shape");
-			if (shapeType == null) shapeType = "";
+			if (shapeType == null) {
+				shapeType = "";
+			}
 			if (shapeType.equalsIgnoreCase("sphere")) {
 				final Double radius = Cast.asFloat(null, collisionBound.get("radius"));
 				shape = new SphereShape(radius.floatValue());
 				position = positionFromLocation(geom);
-			}
-			else if (shapeType.equalsIgnoreCase("floor")) {
+			} else if (shapeType.equalsIgnoreCase("floor")) {
 				final double x = Cast.asFloat(null, collisionBound.get("x"));
 				final double y = Cast.asFloat(null, collisionBound.get("y"));
 				final double z = Cast.asFloat(null, collisionBound.get("z"));
@@ -194,10 +205,11 @@ public class Physical3DWorldAgent extends MinimalAgent {
 				shape = defaultCollisionShape(geom);
 			}
 		}
-		return world.addCollisionObject(shape, mass.floatValue(), position, _velocity, friction.floatValue(), lin_damping.floatValue(), ang_damping.floatValue(), restitution.floatValue());
+		return world.addCollisionObject(shape, mass.floatValue(), position, _velocity, friction.floatValue(),
+				lin_damping.floatValue(), ang_damping.floatValue(), restitution.floatValue());
 	}
-	
-	private Vector3f positionFromLocation(IShape geom) {
+
+	private Vector3f positionFromLocation(final IShape geom) {
 		float computedZLocation;
 		if (Double.isNaN(geom.getInnerGeometry().getCoordinates()[0].z) == true) {
 			computedZLocation = (float) geom.getLocation().getZ();
@@ -207,10 +219,13 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		return new Vector3f((float) geom.getLocation().getX(), (float) geom.getLocation().getY(), computedZLocation);
 
 	}
-	private CollisionShape defaultCollisionShape(IShape geom) {
-		ObjectArrayList<Vector3f> points = new ObjectArrayList<Vector3f>();
-		for (ILocation loc : geom.getPoints()) 
-			points.add(new Vector3f((float)loc.toGamaPoint().x,(float)loc.toGamaPoint().y,(float)loc.toGamaPoint().z));
+
+	private CollisionShape defaultCollisionShape(final IShape geom) {
+		final ObjectArrayList<Vector3f> points = new ObjectArrayList<>();
+		for (final ILocation loc : geom.getPoints()) {
+			points.add(new Vector3f((float) loc.toGamaPoint().x, (float) loc.toGamaPoint().y,
+					(float) loc.toGamaPoint().z));
+		}
 		return new ConvexHullShape(points);
 	}
 
@@ -235,15 +250,17 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 	@action (
 			name = "compute_forces",
-			args = {@arg (
-					name = "step", 
+			args = { @arg (
+					name = "step",
 					type = IType.FLOAT,
 					optional = true,
-					doc = @doc("allows to define the time step considered for the physical world agent. "
-							+ "If not defined, the physical world agent will use the step global variable. "))})
-	@doc(value = "This action allows the world to compute the forces exerted on each agent",
-	examples = {@example(value = "do compute_forces step: 1.0;", isExecutable = false)
-		})
+					doc = @doc ("allows to define the time step considered for the physical world agent. "
+							+ "If not defined, the physical world agent will use the step global variable. ")) })
+	@doc (
+			value = "This action allows the world to compute the forces exerted on each agent",
+			examples = { @example (
+					value = "do compute_forces step: 1.0;",
+					isExecutable = false) })
 	public Object primComputeForces(final IScope scope) throws GamaRuntimeException {
 
 		final Double timeStep = scope.hasArg("step") ? (Double) scope.getArg("step", IType.FLOAT) : 1.0;
@@ -251,13 +268,15 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		world.update(timeStep.floatValue());
 		registeredMap.keySet().removeIf(entry -> entry == null || entry.dead());
 		for (final IAgent ia : registeredMap.keySet()) {
-			if((Double) ia.getAttribute("mass") == 0.0) continue;
+			if ((Double) ia.getAttribute("mass") == 0.0) {
+				continue;
+			}
 
 			final RigidBody node = registeredMap.get(ia);
 			final Vector3f _position = world.getNodePosition(node);
 			final GamaPoint position =
 					new GamaPoint(new Double(_position.x), new Double(_position.y), new Double(_position.z));
-			
+
 			ia.setLocation(position);
 			final Coordinate[] coordinates = ia.getInnerGeometry().getCoordinates();
 			for (int i = 0; i < coordinates.length; i++) {

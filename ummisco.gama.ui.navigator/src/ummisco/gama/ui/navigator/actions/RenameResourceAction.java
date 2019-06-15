@@ -45,7 +45,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RenameResourceAction extends WorkspaceAction {
@@ -139,9 +139,10 @@ public class RenameResourceAction extends WorkspaceAction {
 
 		// Do a quick read only check
 		final ResourceAttributes attributes = currentResource.getResourceAttributes();
-		if (attributes != null && attributes
-				.isReadOnly()) { return MessageDialog.openQuestion(WorkbenchHelper.getShell(), CHECK_RENAME_TITLE,
-						MessageFormat.format(CHECK_RENAME_MESSAGE, new Object[] { currentResource.getName() })); }
+		if (attributes != null && attributes.isReadOnly()) {
+			return MessageDialog.openQuestion(WorkbenchHelper.getShell(), CHECK_RENAME_TITLE,
+					MessageFormat.format(CHECK_RENAME_MESSAGE, new Object[] { currentResource.getName() }));
+		}
 
 		return true;
 	}
@@ -181,12 +182,14 @@ public class RenameResourceAction extends WorkspaceAction {
 		final IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 		final IPath prefix = resource.getFullPath().removeLastSegments(1);
 		final IInputValidator validator = string -> {
-			if (resource.getName()
-					.equals(string)) { return IDEWorkbenchMessages.RenameResourceAction_nameMustBeDifferent; }
+			if (resource.getName().equals(string)) {
+				return IDEWorkbenchMessages.RenameResourceAction_nameMustBeDifferent;
+			}
 			final IStatus status = workspace.validateName(string, resource.getType());
 			if (!status.isOK()) { return status.getMessage(); }
-			if (workspace.getRoot()
-					.exists(prefix.append(string))) { return IDEWorkbenchMessages.RenameResourceAction_nameExists; }
+			if (workspace.getRoot().exists(prefix.append(string))) {
+				return IDEWorkbenchMessages.RenameResourceAction_nameExists;
+			}
 			return null;
 		};
 
@@ -232,20 +235,10 @@ public class RenameResourceAction extends WorkspaceAction {
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
 		final IStructuredSelection selection = getStructuredSelection();
-		if (selection.toList().stream()
-				.anyMatch(each -> (each instanceof LinkedFile))) { return Collections.EMPTY_LIST; }
+		if (selection.toList().stream().anyMatch(each -> (each instanceof LinkedFile))) {
+			return Collections.EMPTY_LIST;
+		}
 		return super.getSelectedResources();
-	}
-
-	/**
-	 * @param path
-	 *            the path
-	 * @param resource
-	 *            the resource
-	 */
-	protected void runWithNewPath(final IPath path, final IResource resource) {
-		this.newPath = path;
-		super.run();
 	}
 
 	/**
@@ -292,7 +285,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * @see org.eclipse.ui.actions.WorkspaceAction#createOperation(org.eclipse.core.runtime.IStatus[])
 	 *
 	 * Overridden to create and execute an undoable operation that performs the rename.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override

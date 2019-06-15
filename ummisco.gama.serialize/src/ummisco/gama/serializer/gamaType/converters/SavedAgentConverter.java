@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
@@ -28,11 +28,7 @@ import msi.gama.metamodel.agent.SavedAgent;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SavedAgentConverter implements Converter {
 
-	ConverterScope convertScope;
-
-	public SavedAgentConverter(final ConverterScope s) {
-		convertScope = s;
-	}
+	public SavedAgentConverter(final ConverterScope s) {}
 
 	@Override
 	public boolean canConvert(final Class arg0) {
@@ -46,16 +42,16 @@ public class SavedAgentConverter implements Converter {
 		writer.setValue("" + savedAgt.getIndex());
 		writer.endNode();
 
-		final ArrayList<String> keys = new ArrayList<String>();
-		final ArrayList<Object> datas = new ArrayList<Object>();
+		final ArrayList<String> keys = new ArrayList<>();
+		final ArrayList<Object> datas = new ArrayList<>();
 
 		for (final String ky : savedAgt.getKeys()) {
-			Object val = savedAgt.get(ky);
-			if( !(val instanceof ExperimentAgent) && !(val instanceof SimulationAgent) ) {
+			final Object val = savedAgt.get(ky);
+			if (!(val instanceof ExperimentAgent) && !(val instanceof SimulationAgent)) {
 				keys.add(ky);
-				datas.add(val);				
+				datas.add(val);
 			}
-		}		
+		}
 
 		writer.startNode("variables");
 		writer.startNode("keys");
@@ -65,19 +61,18 @@ public class SavedAgentConverter implements Converter {
 		context.convertAnother(datas);
 		writer.endNode();
 		writer.endNode();
-		
+
 		final Map<String, List<SavedAgent>> inPop = savedAgt.getInnerPopulations();
-		if(inPop!=null)
-		{
+		if (inPop != null) {
 			writer.startNode("innerPopulations");
 			context.convertAnother(inPop);
-			writer.endNode();			
+			writer.endNode();
 		}
 	}
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-		
+
 		reader.moveDown();
 		final String indexStr = reader.getValue();
 		final Integer index = Integer.parseInt(indexStr);
@@ -90,17 +85,16 @@ public class SavedAgentConverter implements Converter {
 		final ArrayList<Object> datas = (ArrayList<Object>) arg1.convertAnother(null, ArrayList.class);
 		reader.moveUp();
 		reader.moveUp();
-		final Map<String, Object> localData = new HashMap<String, Object>();
+		final Map<String, Object> localData = new HashMap<>();
 		for (int ii = 0; ii < keys.size(); ii++) {
 			localData.put(keys.get(ii), datas.get(ii));
 		}
 		Map<String, List<SavedAgent>> inPop = null;
-		
-		if(reader.hasMoreChildren())
-		{
+
+		if (reader.hasMoreChildren()) {
 			reader.moveDown();
 			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, THashMap.class);
-			reader.moveUp();			
+			reader.moveUp();
 		}
 
 		final SavedAgent agtToReturn = new SavedAgent(index, localData, inPop);

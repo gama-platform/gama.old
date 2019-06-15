@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.network.tcp;
@@ -26,7 +26,6 @@ public class MultiThreadedSocketServer extends Thread {
 	}
 
 	private final IAgent myAgent;
-	boolean ServerOn = true;
 	private ServerSocket myServerSocket;
 	private boolean closed = false;
 
@@ -47,7 +46,7 @@ public class MultiThreadedSocketServer extends Thread {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Thread#interrupt()
 	 */
 	@Override

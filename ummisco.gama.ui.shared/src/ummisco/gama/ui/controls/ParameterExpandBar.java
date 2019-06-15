@@ -180,10 +180,6 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 	}
 
-	static int checkStyle(final int style) {
-		return style & ~SWT.H_SCROLL;
-	}
-
 	@Override
 	protected void checkSubclass() {}
 
@@ -284,29 +280,11 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		bandHeight = Math.max(ParameterExpandItem.CHEVRON_SIZE, metrics.getHeight());
 	}
 
-	/**
-	 * Returns the item at the given, zero-relative index in the receiver. Throws an exception if the index is out of
-	 * range.
-	 *
-	 * @param index
-	 *            the index of the item to return
-	 * @return the item at the given index
-	 *
-	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the list
-	 *                minus 1 (inclusive)</li>
-	 *                </ul>
-	 */
-	public ParameterExpandItem getItem(final int index) {
-		return items[index];
-	}
-
 	public ParameterExpandItem getItem(final Object data) {
 		for (final ParameterExpandItem item : items) {
-			if (item != null)
-				if (Objects.equal(item.getData(), data))
-					return item;
+			if (item != null) {
+				if (Objects.equal(item.getData(), data)) { return item; }
+			}
 		}
 		return null;
 	}
@@ -691,8 +669,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		final int width = Math.max(0, rect.width - spacing * 2);
 		for (int i = 0; i < itemCount; i++) {
 			final ParameterExpandItem item = items[i];
-			if (item.getControl() != null)
+			if (item.getControl() != null) {
 				item.setHeight(item.getControl().computeSize(width, SWT.DEFAULT).y);
+			}
 			item.setBounds(0, 0, width, item.height, false, true);
 		}
 		setScrollbar();

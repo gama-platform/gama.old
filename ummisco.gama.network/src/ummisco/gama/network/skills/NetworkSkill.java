@@ -70,9 +70,6 @@ public class NetworkSkill extends MessagingSkill {
 	final static String REGISTERED_AGENTS = "registred_agents";
 	final static String REGISTRED_SERVER = "registred_servers";
 
-	static Map<String, IConnector> REGISTERED_CONNECTORS_MAP = new HashMap<>();
-	static ArrayList<IAgent> REGISTRED_AGENTS_LIST = new ArrayList<>();
-
 	@action (
 			name = "execute",
 			args = { @arg (

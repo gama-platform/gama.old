@@ -10,10 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -202,15 +200,6 @@ public class PerspectiveHelper {
 		}
 	}
 
-	public static Set<String> listCurrentPerspectives() {
-		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		final Set<String> result = new HashSet<>();
-		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
-			result.add(desc.getId());
-		}
-		return result;
-	}
-
 	public static boolean openPerspective(final String perspectiveId, final boolean immediately,
 		final boolean withAutoSave, final boolean memorizeEditors) {
 		if ( perspectiveId == null ) { return false; }
@@ -313,11 +302,6 @@ public class PerspectiveHelper {
 		final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
 		return currentDescriptor;
-
-	}
-
-	public final static String getActivePerspectiveName() {
-		return getActivePerspective().getId();
 
 	}
 

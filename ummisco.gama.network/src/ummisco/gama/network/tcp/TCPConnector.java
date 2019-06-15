@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.network.tcp;
@@ -29,8 +29,7 @@ import ummisco.gama.network.common.GamaNetworkException;
 
 @SuppressWarnings ({ "unchecked" })
 public class TCPConnector extends Connector {
-	private boolean is_server = false;
-	// private final IScope myScope;
+	private final boolean is_server = false;
 	public static String _TCP_SERVER = "__tcp_server";
 	public static String _TCP_SOCKET = "__tcp_socket";
 	public static String _TCP_CLIENT = "__tcp_client";
@@ -38,11 +37,6 @@ public class TCPConnector extends Connector {
 
 	public static String DEFAULT_HOST = "localhost";
 	public static String DEFAULT_PORT = "1988";
-
-	public TCPConnector(final IScope scope, final boolean as_server) {
-		is_server = as_server;
-		// myScope = scope;
-	}
 
 	public void openServerSocket(final IAgent agent) throws GamaRuntimeException {
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
@@ -60,7 +54,7 @@ public class TCPConnector extends Connector {
 				throw GamaRuntimeException.create(e, agent.getScope());
 			}
 		}
-		
+
 	}
 
 	public void connectToServerSocket(final IAgent agent) throws GamaRuntimeException {
@@ -185,11 +179,11 @@ public class TCPConnector extends Connector {
 		final String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(agent.getScope(), sport);
 		final Thread sersock = (Thread) agent.getScope().getSimulation().getAttribute(_TCP_SERVER + port);
-		if(sersock != null && sersock.isAlive()) return true;
-		
+		if (sersock != null && sersock.isAlive()) { return true; }
+
 		final Thread cSock = (Thread) agent.getScope().getAgent().getAttribute(_TCP_SOCKET);
-		if(sersock != null && cSock.isAlive()) return true;
-		
+		if (sersock != null && cSock.isAlive()) { return true; }
+
 		return false;
 	}
 

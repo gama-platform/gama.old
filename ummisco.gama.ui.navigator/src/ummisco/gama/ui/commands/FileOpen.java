@@ -23,7 +23,7 @@ import msi.gama.common.GamlFileExtension;
 /**
  * Opens a file
  */
-public class FileOpen extends AbstractHandler {
+public class FileOpen extends AbstractHandler { // NO_UCD (unused code)
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {

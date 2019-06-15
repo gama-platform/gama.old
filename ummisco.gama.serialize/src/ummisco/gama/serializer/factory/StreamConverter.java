@@ -1,114 +1,83 @@
 /*********************************************************************************************
  *
- * 'StreamConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StreamConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.serializer.factory;
-
-import java.util.logging.Logger;
-
-import org.geotools.util.ConverterFactory;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.kernel.GamaClassLoader;
-import msi.gaml.types.IType;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 
 public abstract class StreamConverter {
-	//private static XStream dataStreamer;
-//	private static IScope  currentScope;
-	
-	public static void closeXStream()
-	{
-		//dataStreamer= null;
-		//currentScope = null;
-	}
-	
-	public static void registerConverter( XStream dataStreamer,Converter c)
-	{
+
+	public static void registerConverter(final XStream dataStreamer, final Converter c) {
 		dataStreamer.registerConverter(c);
 	}
-	
-	public static XStream loadAndBuild(ConverterScope cs)	
-	{
-		XStream dataStreamer = new XStream(new DomDriver());
+
+	public static XStream loadAndBuild(final ConverterScope cs) {
+		final XStream dataStreamer = new XStream(new DomDriver());
 		dataStreamer.setClassLoader(GamaClassLoader.getInstance());
 
-		Converter[] cnv = Converters.converterFactory(cs);
-		for(Converter c:cnv)
-		{
-			StreamConverter.registerConverter(dataStreamer,c);
+		final Converter[] cnv = Converters.converterFactory(cs);
+		for (final Converter c : cnv) {
+			StreamConverter.registerConverter(dataStreamer, c);
 		}
-//		dataStreamer.setMode(XStream.ID_REFERENCES);
+		// dataStreamer.setMode(XStream.ID_REFERENCES);
 		return dataStreamer;
 	}
-	
-	public static synchronized String convertObjectToStream(IScope scope, Object o)
-	{
+
+	public static synchronized String convertObjectToStream(final IScope scope, final Object o) {
 		return loadAndBuild(new ConverterScope(scope)).toXML(o);
 	}
-	
-	public static synchronized String convertObjectToStream(ConverterScope scope, Object o)
-	{
+
+	public static synchronized String convertObjectToStream(final ConverterScope scope, final Object o) {
 		return loadAndBuild(scope).toXML(o);
-	}	
-	
-	public static Object convertStreamToObject(IScope scope,String data)
-	{
+	}
+
+	public static Object convertStreamToObject(final IScope scope, final String data) {
 		return loadAndBuild(new ConverterScope(scope)).fromXML(data);
 	}
-	
-	public static Object convertStreamToObject(ConverterScope scope,String data)
-	{
+
+	public static Object convertStreamToObject(final ConverterScope scope, final String data) {
 		return loadAndBuild(scope).fromXML(data);
 	}
-	
-	
 
-	
 	// TODO To remove when possible
-	public static XStream loadAndBuildNetwork(ConverterScope cs)	
-	{
-		XStream dataStreamer = new XStream(new DomDriver());
+	public static XStream loadAndBuildNetwork(final ConverterScope cs) {
+		final XStream dataStreamer = new XStream(new DomDriver());
 		dataStreamer.setClassLoader(GamaClassLoader.getInstance());
 
-		Converter[] cnv = Converters.converterNetworkFactory(cs);
-		for(Converter c:cnv)
-		{
-			StreamConverter.registerConverter(dataStreamer,c);
+		final Converter[] cnv = Converters.converterNetworkFactory(cs);
+		for (final Converter c : cnv) {
+			StreamConverter.registerConverter(dataStreamer, c);
 		}
 		return dataStreamer;
-	}	
+	}
 
-	public static synchronized String convertNetworkObjectToStream(ConverterScope scope, Object o)
-	{
+	public static synchronized String convertNetworkObjectToStream(final ConverterScope scope, final Object o) {
 		return loadAndBuildNetwork(scope).toXML(o);
-	}	
-	
-	public static synchronized String convertNetworkObjectToStream(IScope scope, Object o)
-	{
+	}
+
+	public static synchronized String convertNetworkObjectToStream(final IScope scope, final Object o) {
 		return loadAndBuildNetwork(new ConverterScope(scope)).toXML(o);
 	}
-	
-	public static Object convertNetworkStreamToObject(ConverterScope scope,String data)
-	{
+
+	public static Object convertNetworkStreamToObject(final ConverterScope scope, final String data) {
 		return loadAndBuildNetwork(scope).fromXML(data);
 	}
-	
-	public static Object convertNetworkStreamToObject(IScope scope,String data)
-	{
+
+	public static Object convertNetworkStreamToObject(final IScope scope, final String data) {
 		return loadAndBuildNetwork(new ConverterScope(scope)).fromXML(data);
-	}	
-	
+	}
+
 	// END TODO
 }

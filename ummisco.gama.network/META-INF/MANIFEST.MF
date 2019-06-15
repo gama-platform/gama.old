@@ -6,7 +6,6 @@ Bundle-Version: 1.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.paho.client.mqttv3,
  org.eclipse.paho.client.mqttv3.persist,
- ummisco.gama.mqtt.external.connector,
  ummisco.gama.network.common;
   uses:="msi.gama.extensions.messaging,
    msi.gama.metamodel.agent,

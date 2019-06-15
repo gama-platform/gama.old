@@ -176,10 +176,6 @@ public class MessageBroker {
 		return instance;
 	}
 
-	public void dispose() {
-		messagesToDeliver.clear();
-	}
-
 	public IList<FIPAMessage> getMessagesFor(final IAgent agent) {
 		if (!conversationsMessages.containsKey(agent)) { return GamaListFactory.create(); }
 

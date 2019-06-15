@@ -27,7 +27,7 @@ import ummisco.gama.ui.resources.IGamaColors;
 
 public abstract class VirtualContent<P extends VirtualContent<?>> {
 
-	public static enum VirtualContentType {
+	public enum VirtualContentType {
 		ROOT, VIRTUAL_FOLDER, PROJECT, FOLDER, FILE, FILE_REFERENCE, CATEGORY, GAML_ELEMENT
 	}
 
@@ -55,7 +55,6 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	public static final int WEBLINK_OK = -5;
 	public static final int WEBLINK_BROKEN = -6;
 	public static Object[] EMPTY = new Object[0];
-	public static WrappedProject[] EMPTY_PROJECTS = new WrappedProject[0];
 
 	private final P root;
 	private final String name;

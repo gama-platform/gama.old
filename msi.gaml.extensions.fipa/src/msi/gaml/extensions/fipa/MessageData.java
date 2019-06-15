@@ -34,18 +34,6 @@ public class MessageData {
 	/** The associated conversation. */
 	private Conversation conversation;
 
-	/**
-	 * Instantiates a new message.
-	 */
-	public MessageData() {}
-
-	public void dispose() {
-		conversation = null;
-		content.clear();
-		receivers.clear();
-		sender = null;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *

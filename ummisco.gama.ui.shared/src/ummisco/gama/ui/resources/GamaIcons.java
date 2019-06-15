@@ -15,12 +15,10 @@ import java.util.Map;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 
 import msi.gama.application.workbench.IIconProvider;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -47,33 +45,17 @@ public class GamaIcons implements IIconProvider {
 	static final String SIZER_PREFIX = "sizer_";
 	static final String COLOR_PREFIX = "color_";
 
-	Map<String, GamaIcon> iconCache = new HashMap<String, GamaIcon>();
-	Map<String, Image> imageCache = new HashMap<String, Image>();
+	Map<String, GamaIcon> iconCache = new HashMap<>();
+	Map<String, Image> imageCache = new HashMap<>();
 
 	GamaIcon getIcon(final String name) {
 		return iconCache.get(name);
 	}
 
 	Image putImageInCache(final String name, final Image image) {
-		// final int height = image.getBounds().height;
-		// final int width = image.getBounds().width;
-		// final int desiredHeight = CORE_ICONS_HEIGHT.getValue();
-		// if (desiredHeight == 16) {
-		// if (height <= desiredHeight || name.startsWith("sizer")) {
-		// imageCache.put(name, image);
-		// return image;
-		// }
-		// final double ratio = height / (double) width;
-		// final int desiredWidth = (int) (desiredHeight * ratio);
-		// final Image new_image = scaleImage(Display.getCurrent(), image,
-		// desiredWidth, desiredHeight);
-		// image.dispose();
-		// imageCache.put(name, new_image);
-		// return new_image;
-		// } else {
 		imageCache.put(name, image);
 		return image;
-		// }
+
 	}
 
 	void putIconInCache(final String name, final GamaIcon icon) {
@@ -189,74 +171,6 @@ public class GamaIcons implements IIconProvider {
 		getInstance().putImageInCache(name, image);
 		getInstance().putIconInCache(name, new GamaIcon(name));
 		return image;
-	}
-
-	/*
-	 * Use "ISharedImages.field"
-	 */
-	// public static ImageDescriptor getEclipseIconDescriptor(final String icon)
-	// {
-	// return
-	// PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(icon);
-	// }
-	//
-	// public static Image system(final String icon) {
-	// return PlatformUI.getWorkbench().getSharedImages().getImage(icon);
-	// }
-
-	public static Image scaleImage(final Device d, final Image im, final int width, final int height) {
-		final Rectangle curBounds = im.getBounds();
-		// no change required
-		if (curBounds.width == width && curBounds.height == height) { return im; }
-
-		// create a new image
-		final Image newIm = new Image(d, width, height);
-		GC gc = null;
-		try {
-			gc = new GC(newIm);
-
-			// put up a border for debugging to help see where the image is
-			// located in the available space
-			// gc.drawRectangle(0, 0, width - 1, height - 1);
-
-			// image is smaller than requested since, so center
-			if (curBounds.width <= width && curBounds.height <= height) {
-				gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, (width - curBounds.width) / 2,
-						(height - curBounds.height) / 2, curBounds.width, curBounds.height);
-			} else // too wide or too tall
-			{
-				// shortcut if the image is perfectly proportional to avoid
-				// some of the math below
-				if (curBounds.width == curBounds.height) {
-					gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, 0, 0, width, height);
-				}
-				// try to keep the proportions of the original image
-				// wider than tall
-				else if (curBounds.width > curBounds.height) {
-					// the proportional new height
-					final int newHt = (int) (height * ((double) curBounds.height / (double) curBounds.width));
-					// and center that
-					gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, 0, (height - newHt) / 2, width, newHt);
-				} else // taller than wide
-				{
-					// the proportional new width
-					final int newWd = (int) (width * ((double) curBounds.width / (double) curBounds.height));
-					// and center that
-					gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, (width - newWd) / 2, 0, newWd, height);
-
-				}
-			}
-			// clear this up since we successfully created a new image
-			im.dispose();
-			return newIm;
-		} catch (final RuntimeException ex) {
-			newIm.dispose();
-			throw ex;
-		} finally {
-			if (gc != null) {
-				gc.dispose();
-			}
-		}
 	}
 
 	@Override

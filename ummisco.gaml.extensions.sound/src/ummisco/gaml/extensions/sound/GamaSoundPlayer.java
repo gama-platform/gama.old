@@ -60,7 +60,6 @@ public class GamaSoundPlayer {
 	}
 
 	public static final String OVERWRITE_MODE = IKeyword.OVERWRITE;
-	public static final String IGNORE_MODE = IKeyword.IGNORE;
 
 	final BasicPlayer basicPlayer;
 	// private File soundFile;

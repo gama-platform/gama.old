@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.files;
@@ -57,18 +57,6 @@ public class MtlLoader {
 		return returnfloat;
 	}
 
-	public float[] getKa(final String namepass) {
-		final float[] returnfloat = new float[3];
-		for (int i = 0; i < Materials.size(); i++) {
-			final mtl tempmtl = (mtl) Materials.get(i);
-			if (tempmtl.name.matches(namepass)) {
-				// returnfloat = tempmtl.Ka;
-				return tempmtl.Ka;
-			}
-		}
-		return returnfloat;
-	}
-
 	public float[] getKd(final String namepass) {
 		final float[] returnfloat = new float[3];
 		for (int i = 0; i < Materials.size(); i++) {
@@ -79,26 +67,6 @@ public class MtlLoader {
 			}
 		}
 		return returnfloat;
-	}
-
-	public float[] getKs(final String namepass) {
-		final float[] returnfloat = new float[3];
-		for (int i = 0; i < Materials.size(); i++) {
-			final mtl tempmtl = (mtl) Materials.get(i);
-			if (tempmtl.name.matches(namepass)) {
-				// returnfloat = tempmtl.Ks;
-				return tempmtl.Ks;
-			}
-		}
-		return returnfloat;
-	}
-
-	public Integer getMtlnum(final String namepass) {
-		for (int i = 0; i < Materials.size(); i++) {
-			final mtl tempmtl = (mtl) Materials.get(i);
-			if (tempmtl.name.matches(namepass)) { return tempmtl.mtlnum; }
-		}
-		return null;
 	}
 
 	public String getMapKa(final String namepass) {

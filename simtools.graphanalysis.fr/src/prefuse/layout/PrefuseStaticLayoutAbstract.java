@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.layout.PrefuseStaticLayoutAbstract.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.graph.layout.PrefuseStaticLayoutAbstract.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package prefuse.layout;
 
@@ -75,7 +75,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 				final VisualTable tuples = (VisualTable) viz.getVisualGroup(PREFUSE_GRAPH + ".nodes");
 				final int nbtuples = tuples.getTupleCount();
 
-				lastNode2measures = new HashMap<VisualItem, Double>(count_measures);
+				lastNode2measures = new HashMap<>(count_measures);
 
 				// let's select n random nodes that will be used for measurement
 				while (lastNode2measures.size() < count_measures) {
@@ -89,7 +89,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 			} else {
 
-				final Map<VisualItem, Double> newMeasures = new HashMap<VisualItem, Double>(count_measures);
+				final Map<VisualItem, Double> newMeasures = new HashMap<>(count_measures);
 
 				double temperature = 0.0;
 
@@ -115,7 +115,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	/**
 	 * Takes a prefuse graph and applies a prefuse layout, with a max time for execution; the layout is bounded
 	 * according to parameters.
-	 * 
+	 *
 	 * @param prefuseGraph
 	 * @param prefuseLayout
 	 * @param bounds
@@ -215,7 +215,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	/**
 	 * Takes a prefuse graph and applies a prefuse layout, with a max time for execution. Layout will use the space
 	 * defined by the world agent found through the gama scope.
-	 * 
+	 *
 	 * @param prefuseGraph
 	 * @param prefuseLayout
 	 * @param scope
@@ -236,7 +236,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 	/**
 	 * The actual creation of the prefuse layout to be used by the layout process.
-	 * 
+	 *
 	 * @param timeout
 	 * @param options
 	 * @return
@@ -245,22 +245,17 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 	/**
 	 * Returns a concise name for this layout
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract String getLayoutName();
 
 	/**
 	 * returns the name of options that could be accepted by the layout
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract Collection<String> getLayoutOptions();
-
-	protected Logger getLayoutLogger() {
-		return Logger.getLogger(getLayoutName());
-
-	}
 
 	@Override
 	public void doLayoutOneShot(final IScope scope, final GamaGraph<?, ?> graph, final long timeout,
@@ -270,7 +265,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 				createLayout(scope, timeout, options), scope, timeout);
 
 		// warn the user of the options that were provided but not used
-		final Set<String> uselessOptions = new HashSet<String>(options.keySet());
+		final Set<String> uselessOptions = new HashSet<>(options.keySet());
 		uselessOptions.removeAll(getLayoutOptions());
 		if (!uselessOptions.isEmpty()) {
 			final StringBuffer sb = new StringBuffer();

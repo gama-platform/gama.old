@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
@@ -18,12 +18,12 @@ import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * Class GamaNavigatorMenus.
- * 
+ *
  * @author drogoul
  * @since 8 mars 2015
- * 
+ *
  */
-public class GamaNavigatorImportMenu extends GamaNavigatorMenu {
+public class GamaNavigatorImportMenu extends GamaNavigatorMenu { // NO_UCD (unused code)
 
 	public GamaNavigatorImportMenu(final IStructuredSelection selection) {
 		this.selection = selection;

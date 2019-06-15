@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'ExpressionBasedEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExpressionBasedEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -39,10 +38,6 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 		super(scope, variable, l);
 	}
 
-	public ExpressionBasedEditor(final IScope scope, final IAgent a, final IParameter variable) {
-		super(scope, a, variable);
-	}
-
 	public ExpressionBasedEditor(final IScope scope, final IAgent a, final IParameter variable,
 			final EditorListener<T> l) {
 		super(scope, a, variable, l);
@@ -65,10 +60,6 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 	protected void displayParameterValue() {
 		internalModification = true;
 		expression.displayValue(currentValue);
-		// if (getExpectedType() == Types.STRING)
-		// expression.getControl()
-		// .setText(currentValue == null ? "" : StringUtils.toJavaString(currentValue.toString()));
-		// expression.getControl().setText(StringUtils.toGaml(currentValue, false));
 		internalModification = false;
 	}
 

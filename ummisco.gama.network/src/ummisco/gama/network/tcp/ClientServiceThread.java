@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'ClientServiceThread.java, in plugin ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ClientServiceThread.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.network.tcp;
@@ -24,20 +23,17 @@ import msi.gama.util.IList;
 import msi.gaml.types.Types;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.MessageFactory;
-import ummisco.gama.network.common.NetworkMessage;
 
 public class ClientServiceThread extends Thread {
 	private Socket myClientSocket;
 	private boolean closed = false;
-	boolean m_bRunThread = true;
-	boolean ServerOn = true;
 	private IAgent myAgent;
 
 	public ClientServiceThread() {
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public ClientServiceThread(final IAgent a, final Socket s) {
 
 		myAgent = a;
@@ -70,7 +66,7 @@ public class ClientServiceThread extends Thread {
 		this.myClientSocket = myClientSocket;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void run() {
 		BufferedReader in = null;
@@ -84,8 +80,8 @@ public class ClientServiceThread extends Thread {
 
 				// GamaMap<String, Object> m = (GamaMap<String, Object>)
 				// myAgent.getAttribute("messages" + myAgent);
-				GamaList<ConnectorMessage> msgs = (GamaList<ConnectorMessage>) myAgent
-						.getAttribute("messages" + myAgent);
+				GamaList<ConnectorMessage> msgs =
+						(GamaList<ConnectorMessage>) myAgent.getAttribute("messages" + myAgent);
 				if (msgs == null) {
 					msgs = (GamaList<ConnectorMessage>) GamaListFactory.create(ConnectorMessage.class);
 				}
@@ -102,7 +98,8 @@ public class ClientServiceThread extends Thread {
 				// }
 				clientCommand = clientCommand.replaceAll("@n@", "\n");
 				clientCommand = clientCommand.replaceAll("@b@@r@", "\b\r");
-				final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(myClientSocket.toString(), clientCommand);
+				final ConnectorMessage msg =
+						MessageFactory.unPackNetworkMessage(myClientSocket.toString(), clientCommand);
 
 				// NetworkMessage msg=new
 				// NetworkMessage(myClientSocket.toString(), clientCommand);

@@ -46,25 +46,19 @@ public class AssertEditor extends AbstractStatementEditor<AbstractSummary<?>> {
 
 	private GamaUIColor getColor() {
 		GamaUIColor color = GamaColors.get(getStatement().getColor());
-		if (color == null)
+		if (color == null) {
 			color = IGamaColors.NEUTRAL;
+		}
 		return color;
 	}
 
 	private String getText() {
 		final AbstractSummary<?> summary = getStatement();
 
-		if (summary instanceof AssertionSummary && getStatement().getState() == TestState.ABORTED)
+		if (summary instanceof AssertionSummary && getStatement().getState() == TestState.ABORTED) {
 			return getStatement().getState().toString() + ": " + ((AssertionSummary) getStatement()).getError() + "  ";
+		}
 		return getStatement().getState().toString() + "  ";
-	}
-
-	public void updateValueWith(final AbstractSummary<?> assertion) {
-		setStatement(assertion);
-		textBox.setText(getText());
-		textBox.setColor(getColor());
-		textBox.redraw();
-		textBox.update();
 	}
 
 }

@@ -144,7 +144,6 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 			final Double realStep = stepValue.doubleValue() / (maxValue.doubleValue() - minValue.doubleValue());
 			slider.setStep(realStep);
 		}
-		slider.setInteger(this instanceof Int);
 
 		slider.addPositionChangeListener((s, position) -> modifyAndDisplayValue(computeValue(position)));
 		slider.pack(true);

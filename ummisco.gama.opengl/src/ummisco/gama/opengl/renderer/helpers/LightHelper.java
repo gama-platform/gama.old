@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
@@ -15,14 +15,11 @@ import java.util.List;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.math.Vector3D;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.util.GamaColor;
-import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
@@ -32,7 +29,7 @@ public class LightHelper extends AbstractRendererHelper {
 		super(renderer);
 	}
 
-	public static final int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR };
+	// public static final int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR };
 
 	public void setAmbiantLight(final OpenGL gl, final Color ambientLightValue) {
 		final float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
@@ -217,59 +214,6 @@ public class LightHelper extends AbstractRendererHelper {
 		result[1] = vect1[2] * vect2[0] - vect1[0] * vect2[2];
 		result[2] = vect1[0] * vect2[1] - vect1[1] * vect2[0];
 		return result;
-	}
-
-	public void notifyOpenGLRotation(final OpenGL openGL, final double angle, final Coordinate axis) {
-		final GL2 gl = openGL.getGL();
-		final LayeredDisplayData data = getData();
-		final List<LightPropertiesStructure> lightPropertiesList = data.getDiffuseLights();
-		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
-			if (lightProperties.active) {
-				final Coordinate normalized = Vector3D.normalize(axis);
-				// update the position
-				// a, b, c are the normalized composants of the axis.
-				final double a = normalized.x;
-				final double b = normalized.y;
-				final double c = normalized.z;
-				// x, y, z are the initial position of the light.
-				double x = lightProperties.position.x;
-				double y = lightProperties.position.y;
-				double z = lightProperties.position.z;
-				if (lightProperties.type == LightPropertiesStructure.TYPE.POINT) {
-					final double resultX = x * (a * a + (1 - a * a) * Maths.cos(angle))
-							+ y * (a * b * (1 - Maths.cos(angle) - c * Maths.sin(angle)))
-							+ z * (a * c * (1 - Maths.cos(angle) + b * Maths.sin(angle)));
-					final double resultY = x * (a * b * (1 - Maths.cos(angle) + c * Maths.sin(angle)))
-							+ y * (b * b + (1 - b * b) * Maths.cos(angle))
-							+ z * (b * c * (1 - Maths.cos(angle)) - a * Maths.sin(angle));
-					final double resultZ = x * (a * c * (1 - Maths.cos(angle)) - b * Maths.sin(angle))
-							+ y * (b * c * (1 - Maths.cos(angle)) + a * Maths.sin(angle))
-							+ z * (c * c + (1 - c * c) * Maths.cos(angle));
-					gl.glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_POSITION,
-							new float[] { (float) resultX, (float) resultY, (float) resultZ }, 0);
-					lightProperties.position = new GamaPoint(resultX, resultY, resultZ);
-				}
-				// update the direction
-				// x, y, z are the initial position of the light.
-				x = lightProperties.direction.x;
-				y = -lightProperties.direction.y;
-				z = lightProperties.direction.z;
-				if (lightProperties.type == LightPropertiesStructure.TYPE.POINT) {
-					final double resultX = x * (a * a + (1 - a * a) * Maths.cos(angle))
-							+ y * (a * b * (1 - Maths.cos(angle) - c * Maths.sin(angle)))
-							+ z * (a * c * (1 - Maths.cos(angle) + b * Maths.sin(angle)));
-					final double resultY = x * (a * b * (1 - Maths.cos(angle) + c * Maths.sin(angle)))
-							+ y * (b * b + (1 - b * b) * Maths.cos(angle))
-							+ z * (b * c * (1 - Maths.cos(angle)) - a * Maths.sin(angle));
-					final double resultZ = x * (a * c * (1 - Maths.cos(angle)) - b * Maths.sin(angle))
-							+ y * (b * c * (1 - Maths.cos(angle)) + a * Maths.sin(angle))
-							+ z * (c * c + (1 - c * c) * Maths.cos(angle));
-					gl.glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_SPOT_DIRECTION,
-							new float[] { (float) resultX, (float) resultY, (float) resultZ }, 0);
-					data.setLightDirection(lightProperties.id, new GamaPoint(resultX, -resultY, resultZ));
-				}
-			}
-		}
 	}
 
 	public void draw() {

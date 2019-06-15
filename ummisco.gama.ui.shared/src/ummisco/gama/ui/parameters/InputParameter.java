@@ -51,11 +51,6 @@ public class InputParameter extends ParameterAdapter {
 		this.step = step;
 	}
 
-	InputParameter(final String name, final String unit, final Object value, final Number min, final Number max) {
-		this(name, value, min, max);
-		unitLabel = unit;
-	}
-
 	InputParameter(final String name, final String unit, final Object value, final Number min, final Number max,
 			final Number step) {
 		this(name, value, min, max);
@@ -109,7 +104,7 @@ public class InputParameter extends ParameterAdapter {
 	}
 
 	@Override
-	public List<GamaColor> getColor(IScope scope) {
+	public List<GamaColor> getColor(final IScope scope) {
 		return null;
 	}
 

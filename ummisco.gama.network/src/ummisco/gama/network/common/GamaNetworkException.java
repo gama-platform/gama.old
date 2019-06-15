@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'GamaNetworkException.java, in plugin ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaNetworkException.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.network.common;
@@ -19,7 +18,6 @@ public class GamaNetworkException extends GamaRuntimeException {
 	public static String DISCONNECTION_FAILURE = "Cannot be disconnected!";
 	public static String SUBSCRIBE_FAILURE = "Cannot subscribe to the expected topic!";
 	public static String SENDING_FAILURE = "Cannot send the message to agent!";
-	public static String UNSUSCRIBE_FAILURE = "Cannot unsuscribe to topic!";
 
 	protected GamaNetworkException(final IScope scope, final String s, final boolean warning) {
 		super(scope, s, warning);
@@ -47,7 +45,7 @@ public class GamaNetworkException extends GamaRuntimeException {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

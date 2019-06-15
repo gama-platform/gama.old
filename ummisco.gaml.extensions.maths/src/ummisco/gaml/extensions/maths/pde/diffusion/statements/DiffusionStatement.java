@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.pde.diffusion.statements;
@@ -208,8 +208,6 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 	}
 
-	boolean initialized = false;
-
 	final String envName;
 
 	public DiffusionStatement(final IDescription desc) {
@@ -218,9 +216,6 @@ public class DiffusionStatement extends AbstractStatement {
 		envName = s.getName();
 
 	}
-
-	double[] input, output;
-	int nbRows, nbCols;
 
 	private IGrid getEnvironment(final IScope scope) {
 		return (IGrid) scope.getAgent().getScope().getSimulation().getPopulationFor(envName).getTopology().getPlaces();
@@ -314,8 +309,9 @@ public class DiffusionStatement extends AbstractStatement {
 		final Object obj = getFacetValue(scope, IKeyword.ON);
 		if (obj instanceof ISpecies) {
 			// the diffusion is applied to the whole grid
-			if (!((ISpecies) obj).isGrid()) { throw GamaRuntimeException
-					.error("Diffusion statement works only on grid agents", scope); }
+			if (!((ISpecies) obj).isGrid()) {
+				throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
+			}
 		} else {
 			// the diffusion is applied just to a certain part of the grid.
 			// Search the mask.

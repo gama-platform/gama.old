@@ -4,14 +4,13 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
 import org.eclipse.core.internal.runtime.AdapterManager;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -84,8 +83,9 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	@Override
 	public Object getAdapter(final Class adapter) {
-		if (adapter == IResource.class
-				|| adapter == IContainer.class) { return ResourcesPlugin.getWorkspace().getRoot(); }
+		if (adapter == IResource.class || adapter == IContainer.class) {
+			return ResourcesPlugin.getWorkspace().getRoot();
+		}
 		return AdapterManager.getDefault().getAdapter(this, adapter);
 	}
 
@@ -194,13 +194,6 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	public void setTestFolder(final TopLevelFolder testFolder) {
 		this.testFolder = testFolder;
-	}
-
-	public TopLevelFolder findFolderFor(final IProject project) {
-		for (final TopLevelFolder folder : getFolders()) {
-			if (folder.privateAccepts(project)) { return folder; }
-		}
-		return null;
 	}
 
 	@Override

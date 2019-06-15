@@ -36,12 +36,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IDecoratorManager;
@@ -235,20 +233,6 @@ public class PreferencesHelper {
 			}
 		} catch (final IOException e) {}
 
-	}
-
-	private static URL HOME_URL;
-
-	public static URL getWelcomePageURL() {
-		if (HOME_URL == null) {
-			try {
-				HOME_URL = FileLocator
-						.toFileURL(Platform.getBundle("ummisco.gama.ui.shared").getEntry("/welcome/welcome.html"));
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return HOME_URL;
 	}
 
 }

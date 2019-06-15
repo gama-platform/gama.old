@@ -62,13 +62,6 @@ public class GamlAccessEntry {
 	public static final int MATCH_GOOD = 10;
 
 	/**
-	 * Indicates only part of the filter string matches to the element's label.
-	 *
-	 * @see #getMatchQuality()
-	 */
-	public static final int MATCH_PARTIAL = 15;
-
-	/**
 	 * Creates a new quick access entry from the given element and provider. If no filter was used to match this entry
 	 * the element/provider match regions may be empty and the match quality should be {@link #MATCH_PERFECT}
 	 *

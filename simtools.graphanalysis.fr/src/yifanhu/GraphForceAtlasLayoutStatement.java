@@ -127,8 +127,6 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 	public static final String BOUNDED_P2 = "bounded_point2";
 	public static final String NB_STEPS = "nb_steps";
 
-	public static double stepvalue = -1;
-
 	/*
 	 * private static ProjectController pc; private static Workspace workspace; private static GraphModel graph_model;
 	 * private static UndirectedGraph the_graph; private static boolean initialized = false; private static int

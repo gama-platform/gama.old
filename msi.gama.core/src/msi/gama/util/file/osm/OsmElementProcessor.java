@@ -15,7 +15,6 @@ public class OsmElementProcessor extends SourceElementProcessor {
 	private static final String ELEMENT_NAME_NODE = "node";
 	private static final String ELEMENT_NAME_WAY = "way";
 	private static final String ELEMENT_NAME_RELATION = "relation";
-	private static final String ATTRIBUTE_NAME_VERSION = "version";
 	private static final String ATTRIBUTE_NAME_GENERATOR = "generator";
 
 	private final NodeElementProcessor nodeElementProcessor;

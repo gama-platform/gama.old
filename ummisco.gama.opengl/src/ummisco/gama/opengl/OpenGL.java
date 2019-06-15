@@ -140,7 +140,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	private boolean isROISticky;
 
 	// Working objects
-	final GamaPoint workingPoint = new GamaPoint();
+	// final GamaPoint workingPoint = new GamaPoint();
 	final GamaPoint currentNormal = new GamaPoint();
 	// final GamaPoint currentScale = new GamaPoint(1, 1, 1);
 	final GamaPoint textureCoords = new GamaPoint();
@@ -270,10 +270,14 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		final double aspect = getViewWidth() / (height == 0d ? 1d : height);
 		final double maxDim = getMaxEnvDim();
 		double zNear = getZNear();
-		if (zNear < 0.0) zNear = maxDim / 100d;
+		if (zNear < 0.0) {
+			zNear = maxDim / 100d;
+		}
 		double zFar = getZFar();
-		if (zFar < 0.0) zFar = maxDim * 100d;
-		
+		if (zFar < 0.0) {
+			zFar = maxDim * 100d;
+		}
+
 		if (!getData().isOrtho()) {
 			try {
 				double fW, fH;
@@ -773,18 +777,6 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		return textureCache.getTexture(file, isAnimated, useCache);
 	}
 
-	static boolean IsPowerOfTwo(final int x) {
-		return (x & x - 1) == 0;
-	}
-
-	static int getClosestPow(final int value) {
-		int power = 1;
-		while (power < value) {
-			power *= 2;
-		}
-		return power;
-	}
-
 	// GEOMETRIES
 
 	public void cacheGeometry(final GamaGeometryFile object) {
@@ -799,10 +791,10 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	// TEXT
 
-	private int computeFontSize(int size) {
+	private int computeFontSize(final int size) {
 		return PlatformHelper.scaleUpIfWin(Math.round(size * textSizeMultiplier));
 	}
-	
+
 	public void cacheFont(final Font f) {
 		fontCache.process(f, computeFontSize(f.getSize()));
 	}

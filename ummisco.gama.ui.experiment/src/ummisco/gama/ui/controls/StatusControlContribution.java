@@ -69,7 +69,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		INSTANCE = this;
 	}
 
-	public StatusControlContribution(final String id) {
+	public StatusControlContribution(final String id) { // NO_UCD (unused code)
 		super(id);
 		INSTANCE = this;
 	}

@@ -317,11 +317,4 @@ public class PasteAction extends SelectionListenerAction {
 		}
 	}
 
-	public void handlePasteIntoUserModels() {
-		final FileTransfer transfer = FileTransfer.getInstance();
-		final String[] selection = (String[]) clipboard.getContents(transfer);
-		if (selection != null && selection.length != 0) {
-			handlePaste(selection);
-		}
-	}
 }

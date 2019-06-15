@@ -41,7 +41,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	static {
 		DEBUG.OFF();
 	}
-	boolean isInteger;
 	final int thumbWidth = 6;
 	final Composite parent;
 	final Thumb thumb;
@@ -106,10 +105,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	Popup2 popup = null;
 	private boolean notify = true;
 	private final IPositionChangeListener popupListener = (slider, position) -> popup.display();
-
-	public SimpleSlider(final Composite parent, final Color color) {
-		this(parent, color, color, color);
-	}
 
 	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor, final Color thumbColor) {
 		this(parent, leftColor, rightColor, thumbColor, true);
@@ -214,12 +209,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		// }
 	}
 
-	public void removePositionChangeListener(final IPositionChangeListener listener) {
-		synchronized (positionChangedListeners) {
-			positionChangedListeners.remove(listener);
-		}
-	}
-
 	public void addPositionChangeListener(final IPositionChangeListener listener) {
 		synchronized (positionChangedListeners) {
 			if (!positionChangedListeners.contains(listener)) {
@@ -236,20 +225,14 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		return previousPosition;
 	}
 
-	public void setInteger(final boolean b) {
-		isInteger = b;
-	}
-
 	private void updatePositionListeners(final double perc) {
 		if (!notify) { return; }
 		if (Math.abs(perc - previousPosition) > 0.000001) {
-			// synchronized (positionChangedListeners) {
 			final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
 			while (iter.hasNext()) {
 				iter.next().positionChanged(SimpleSlider.this, perc);
 			}
 		}
-		// }
 	}
 
 	void moveThumbHorizontally(final int x) {

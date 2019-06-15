@@ -4,14 +4,13 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -23,10 +22,6 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
 
 public class IntEditor extends NumberEditor<Integer> {
-
-	IntEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull) {
-		this(scope, agent, param, canBeNull, null);
-	}
 
 	IntEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
 			final EditorListener<Integer> l) {
@@ -67,10 +62,12 @@ public class IntEditor extends NumberEditor<Integer> {
 	@Override
 	protected void modifyValue(final Integer val) throws GamaRuntimeException {
 		final Integer i = Cast.asInt(getScope(), val);
-		if (minValue != null && i < minValue.intValue()) { throw GamaRuntimeException
-				.error("Value " + i + " should be greater than " + minValue, getScope()); }
-		if (maxValue != null && i > maxValue.intValue()) { throw GamaRuntimeException
-				.error("Value " + i + " should be smaller than " + maxValue, getScope()); }
+		if (minValue != null && i < minValue.intValue()) {
+			throw GamaRuntimeException.error("Value " + i + " should be greater than " + minValue, getScope());
+		}
+		if (maxValue != null && i > maxValue.intValue()) {
+			throw GamaRuntimeException.error("Value " + i + " should be smaller than " + maxValue, getScope());
+		}
 		super.modifyValue(i);
 	}
 

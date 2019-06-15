@@ -176,7 +176,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			this.suffix = suffix;
 		}
 
-		public GenericFileInfo(final String propertiesString) {
+		public GenericFileInfo(final String propertiesString) { // NO_UCD (unused code)
 			super(propertiesString);
 			final String[] segments = split(propertiesString);
 			suffix = segments[1];
@@ -215,7 +215,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			comment = desc.getComment();
 		}
 
-		public ProjectInfo(final String propertiesString) {
+		public ProjectInfo(final String propertiesString) { // NO_UCD (unused code)
 			super(propertiesString);
 			final String[] segments = split(propertiesString);
 			comment = segments[1];

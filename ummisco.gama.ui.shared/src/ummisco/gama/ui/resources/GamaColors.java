@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
@@ -46,10 +46,6 @@ public class GamaColors {
 			return active.getRed() + ", " + active.getGreen() + ", " + active.getBlue();
 		}
 
-		public int luminance() {
-			return GamaColors.luminanceOf(active);
-		}
-
 		public boolean isDark() {
 			return GamaColors.isDark(active);
 		}
@@ -70,13 +66,6 @@ public class GamaColors {
 			return inactive;
 		}
 
-		public Color reverse() {
-			if (reverse == null) {
-				reverse = computeReverse(active);
-			}
-			return reverse;
-		}
-
 		public Color darker() {
 			if (darker == null) {
 				darker = computeDarker(active);
@@ -89,39 +78,6 @@ public class GamaColors {
 				lighter = computeLighter(active);
 			}
 			return lighter;
-		}
-
-		public Color gray() {
-			if (gray == null) {
-				gray = computeGray(active);
-			}
-			return gray;
-		}
-
-		public void dispose() {
-			if (active != null) {
-				colors.remove(getRGB());
-				active.dispose();
-				active = null;
-			}
-			if (inactive != null) {
-				inactive.dispose();
-				inactive = null;
-			}
-
-			if (gray != null) {
-				gray.dispose();
-				gray = null;
-			}
-			if (darker != null) {
-				darker.dispose();
-				darker = null;
-			}
-			if (lighter != null) {
-				lighter.dispose();
-				lighter = null;
-			}
-
 		}
 
 		public RGB getRGB() {
@@ -226,7 +182,7 @@ public class GamaColors {
 
 	/**
 	 * Get the color of the icon passed in parameter (supposing it's mono-colored)
-	 * 
+	 *
 	 * @param create
 	 * @return
 	 */
@@ -247,15 +203,8 @@ public class GamaColors {
 	};
 
 	public static int luminanceOf(final Color color) {
-		// return (int) (0.2126 * color.getRed() * color.getRed() / 255+ 0.7152
-		// * color.getGreen() * color.getGreen() / 255+ 0.0722 *
-		// color.getBlue()* color.getRed() / 255); //first formula
 		return (int) (0.299 * color.getRed() * color.getRed() / 255 + 0.587 * color.getGreen() * color.getGreen() / 255
 				+ 0.114 * color.getBlue() * color.getBlue() / 255); // http://alienryderflex.com/hsp.html
-		// return (int) (0.241 * color.getRed() * color.getRed() / 255 + 0.691 *
-		// color.getGreen() * color.getGreen() / 255 + 0.068 * color.getBlue()*
-		// color.getBlue() / 255); //
-		// http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
 	}
 
 	public static java.awt.Color toAwtColor(final Color color) {
@@ -277,16 +226,6 @@ public class GamaColors {
 	 */
 	public static GamaUIColor getTextColorForBackground(final Color background) {
 		return isDark(background) ? IGamaColors.WHITE : IGamaColors.BLACK;
-	}
-
-	public static GamaUIColor getTextColorForBackgroundFrom(final Color background, final Color initial) {
-		final boolean darkB = isDark(background);
-		if (darkB) {
-			return get(computeLighter(computeLighter(computeLighter(initial))).getRGB());
-		} else {
-			return get(computeDarker(computeDarker(computeDarker(initial))).getRGB());
-		}
-
 	}
 
 	public static GamaUIColor getTextColorForBackground(final GamaUIColor background) {

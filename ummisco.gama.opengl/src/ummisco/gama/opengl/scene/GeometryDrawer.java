@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.scene.GeometryDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -91,7 +91,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	/**
 	 * The main drawing method, which does not rely on the state so that it can be called from outside. Depending on the
 	 * type of the geometry, it calls specialized sub-methods
-	 * 
+	 *
 	 * @param geom
 	 *            the geometry to draw
 	 * @param file
@@ -280,13 +280,14 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		drawCachedGeometry(Type.CIRCLE, solid, border);
 	}
 
-	public void drawRoundedRectangle(final GamaPoint pos, final boolean solid, final double width, final double height,
-			final Color fill, final Color border) {
-		_center.setCoordinate(pos);
-		_scale.setTo(width, height, 1);
-		gl.setCurrentColor(fill);
-		drawCachedGeometry(Type.ROUNDED, solid, border);
-	}
+	// public void drawRoundedRectangle(final GamaPoint pos, final boolean solid, final double width, final double
+	// height,
+	// final Color fill, final Color border) {
+	// _center.setCoordinate(pos);
+	// _scale.setTo(width, height, 1);
+	// gl.setCurrentColor(fill);
+	// drawCachedGeometry(Type.ROUNDED, solid, border);
+	// }
 
 	private void drawCylinder(final Geometry g, final boolean solid, final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(g));
@@ -357,7 +358,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	/**
 	 * Helper method that draws the ROI box in the world
-	 * 
+	 *
 	 * @param envelope
 	 *            the size of the ROI box
 	 */
@@ -371,7 +372,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	/**
 	 * Helper method that draws the sphere used to indicate a user rotation
-	 * 
+	 *
 	 * @param pos
 	 *            the position at which to draw the helper
 	 * @param distance

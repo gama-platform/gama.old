@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.files;
@@ -22,8 +22,8 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
@@ -35,12 +35,12 @@ import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
- * 
+ *
  * Class Gama3DSFile. A basic loader (only loads vertices and faces).
- * 
+ *
  * @author drogoul
  * @since 31 déc. 2013
- * 
+ *
  */
 
 @file (
@@ -48,7 +48,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		extensions = { "3ds", "max" },
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY)
-@doc("Autodesk 3DS Max file format: https://en.wikipedia.org/wiki/.3ds")
+@doc ("Autodesk 3DS Max file format: https://en.wikipedia.org/wiki/.3ds")
 public class Gama3DSFile extends Gama3DGeometryFile {
 
 	class Chunk {
@@ -60,7 +60,6 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 	class Obj {
 
-		public String strName = null;
 		public GamaPoint verts[] = null;
 		public List<Geometry> faces;
 	}
@@ -87,14 +86,16 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	private Chunk currentChunk = new Chunk();
 
 	// Constructor
-	@doc (value= "This file constructor allows to read a 3DS Max file. Only loads vertices and faces",
-			examples = {
-				@example(value = "threeds_file f <- threeds_file(\"file\");", isExecutable = false)
+	@doc (
+			value = "This file constructor allows to read a 3DS Max file. Only loads vertices and faces",
+			examples = { @example (
+					value = "threeds_file f <- threeds_file(\"file\");",
+					isExecutable = false)
 
-			}) 
+			})
 	public Gama3DSFile(final IScope scope, final String fileName) {
 		super(scope, fileName);
-	} 
+	}
 
 	// Verified
 	@Override
@@ -150,7 +151,6 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 					case OBJECT:
 						final Obj obj = new Obj();
-						obj.strName = getString(currentChunk);
 						objects.add(obj);
 						processNextObjectChunk(obj, currentChunk);
 						break;

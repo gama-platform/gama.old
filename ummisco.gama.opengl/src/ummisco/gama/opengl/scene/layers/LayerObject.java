@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.scene.layers.LayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
  * GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
@@ -57,8 +57,6 @@ public class LayerObject {
 
 	final static GamaPoint NULL_OFFSET = new GamaPoint();
 	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
-
-	protected boolean constantRedrawnLayer = false;
 
 	GamaPoint offset = new GamaPoint(NULL_OFFSET);
 	GamaPoint scale = new GamaPoint(NULL_SCALE);

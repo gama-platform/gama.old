@@ -10,10 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -213,26 +209,6 @@ public class SwtGui implements IGui {
 		return true;
 	}
 
-	public static boolean isInternetReachable() {
-
-		try {
-			final URL url = new URL("http://gama-platform.org");
-			// open a connection to that source
-			final HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
-			// trying to retrieve data from the source. If there
-			// is no connection, this line will fail
-			urlConnect.setConnectTimeout(2000);
-			urlConnect.getContent();
-		} catch (final UnknownHostException e) {
-			e.printStackTrace();
-			return false;
-		} catch (final IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
 	@Override
 	public void openWelcomePage(final boolean ifEmpty) {
 		WebHelper.openWelcomePage(ifEmpty);
@@ -295,16 +271,6 @@ public class SwtGui implements IGui {
 			result.putAll(dialog.open() == Window.OK ? dialog.getValues() : initialValues);
 		});
 		return result;
-	}
-
-	public void openUserControlDialog(final IScope scope, final UserPanelStatement panel) {
-		WorkbenchHelper.run(() -> {
-			final IUserDialogFactory userDialogFactory = WorkbenchHelper.getService(IUserDialogFactory.class);
-			if (userDialogFactory != null) {
-				userDialogFactory.openUserDialog(scope, panel);
-			}
-		});
-
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import ummisco.gama.dev.utils.DEBUG;
 
-public class ResourceChangeReporter implements IResourceChangeListener {
+public class ResourceChangeReporter implements IResourceChangeListener { // NO_UCD (unused code)
 
 	class DeltaPrinter implements IResourceDeltaVisitor {
 		@Override

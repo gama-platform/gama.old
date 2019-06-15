@@ -132,7 +132,7 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
-	public AgentsMenu(final String id) {
+	public AgentsMenu(final String id) { // NO_UCD (unused code)
 		super(id);
 	}
 

@@ -3,11 +3,11 @@
  *
  * ummisco.gama.opengl.scene.AbstractObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -24,7 +24,7 @@ import ummisco.gama.opengl.OpenGL;
 
 public abstract class AbstractObject<T, ATT extends DrawingAttributes> implements IDisposable {
 
-	public static enum DrawerType {
+	public enum DrawerType {
 		GEOMETRY, STRING, FIELD, RESOURCE
 	}
 
@@ -52,18 +52,9 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 
 	public abstract DrawerType getDrawerType();
 
-	public int[] getTexturesId(final OpenGL gl) {
-		if (textures == null) { return null; }
-		for (int i = 0; i < textures.length; i++) {
-			final int t = getTexture(gl, i);
-			textures[i] = t == OpenGL.NO_TEXTURE ? 0 : t;
-		}
-		return textures;
-	}
-
 	/**
 	 * Returns the id of the texture at index 1
-	 * 
+	 *
 	 * @param gl
 	 * @return the id of the texture or Integer.MAX_VALUE if none is defined
 	 */
@@ -73,7 +64,7 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 
 	/**
 	 * Returns the id of the texture at index 0
-	 * 
+	 *
 	 * @param gl
 	 * @return the id of the texture or Integer.MAX_VALUE if none is defined
 	 */

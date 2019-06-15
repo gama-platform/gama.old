@@ -34,10 +34,6 @@ public class FileOpener {
 
 	static final IWorkbenchPage PAGE = WorkbenchHelper.getPage();
 
-	public static IEditorPart openFile(final String path, final URI root) {
-		return openFile(FileUtils.getURI(path, root));
-	}
-
 	public static IEditorPart openFile(final URI uri) {
 		if (uri == null) {
 			MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found", "Trying to open a null file");

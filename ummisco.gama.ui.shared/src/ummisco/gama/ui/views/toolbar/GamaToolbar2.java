@@ -117,11 +117,6 @@ public class GamaToolbar2 extends Composite {
 		return item;
 	}
 
-	public ToolItem status(final String image, final String s, final GamaUIColor color,
-			final int side /* SWT.LEFT or SWT.RIGHT */) {
-		return status(GamaIcons.create(image).image(), s, color, side);
-	}
-
 	public ToolItem status(final Image image, final String s, final GamaUIColor color,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		wipe(side, true);
@@ -209,11 +204,6 @@ public class GamaToolbar2 extends Composite {
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
 	}
 
-	public ToolItem label(final GamaUIColor color, final String text, final Image image, final int side) {
-		final FlatButton button = FlatButton.label(side == SWT.LEFT ? left : right, color, text, image);
-		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
-	}
-
 	public ToolItem menu(final GamaUIColor color, final String text, final int side) {
 		final FlatButton button = FlatButton.menu(side == SWT.LEFT ? left : right, color, text);
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
@@ -224,13 +214,8 @@ public class GamaToolbar2 extends Composite {
 		return create(image, text, tip, listener, SWT.DROP_DOWN, false, null, side);
 	}
 
-	public ToolItem menu(final GamaCommand command, final int side) {
-		return menu(command.getImage(), command.getText(), command.getTooltip(), command.getListener(), side);
-	}
-
 	public ToolItem control(final Control c, final int width, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		final ToolItem control = create(null, null, null, null, SWT.SEPARATOR, false, c, side);
-		// control.setControl(c);
 		if (width == SWT.DEFAULT) {
 			control.setWidth(c.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
 		} else {
@@ -325,10 +310,6 @@ public class GamaToolbar2 extends Composite {
 	 */
 	public boolean hasTooltip() {
 		return hasTooltip;
-	}
-
-	public void updateItems() {
-
 	}
 
 	private ToggleAction toggle;

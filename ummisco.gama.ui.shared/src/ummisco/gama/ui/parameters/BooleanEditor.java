@@ -32,20 +32,11 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	private SwitchButton button;
 
-	BooleanEditor(final IScope scope, final IParameter param) {
-		super(scope, param);
-		acceptNull = false;
-	}
-
 	BooleanEditor(final IScope scope, final Composite parent, final String title, final boolean value,
 			final EditorListener<Boolean> whenModified) {
 		super(scope, new InputParameter(title, value), whenModified);
 		acceptNull = false;
 		this.createComposite(parent);
-	}
-
-	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param) {
-		this(scope, agent, param, null);
 	}
 
 	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<Boolean> l) {
@@ -88,16 +79,17 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
-		List<GamaColor> colors = getParam().getColor(getScope());
+		final List<GamaColor> colors = getParam().getColor(getScope());
 		Color left = IGamaColors.OK.color();
 		Color right = IGamaColors.ERROR.color();
-		if (colors != null)
+		if (colors != null) {
 			if (colors.size() == 1) {
 				left = right = GamaColors.get(colors.get(0)).color();
 			} else if (colors.size() >= 2) {
 				left = GamaColors.get(colors.get(0)).color();
 				right = GamaColors.get(colors.get(1)).color();
 			}
+		}
 		button = new SwitchButton(comp, SWT.CHECK, left, right);
 		button.addSelectionListener(this);
 		return button;

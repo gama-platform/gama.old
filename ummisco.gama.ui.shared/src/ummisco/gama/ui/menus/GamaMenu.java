@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.menus;
@@ -18,15 +18,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.views.toolbar.GamaCommand;
-
 /**
  * The class GamaMenu.
- * 
+ *
  * @author drogoul
  * @since 11 déc. 2014
- * 
+ *
  */
 public abstract class GamaMenu {
 
@@ -35,24 +32,6 @@ public abstract class GamaMenu {
 		string.setEnabled(false);
 		string.setText(s);
 		return string;
-	}
-
-	public static MenuItem action(final Menu parent, final GamaCommand command) {
-		final MenuItem m = new MenuItem(parent, SWT.PUSH);
-		m.setText(command.getText());
-		m.setImage(GamaIcons.create(command.getImage()).image());
-		m.setToolTipText(command.getTooltip());
-		m.addSelectionListener(command.getListener());
-		return m;
-	}
-
-	public static MenuItem check(final Menu parent, final GamaCommand command) {
-		final MenuItem m = new MenuItem(parent, SWT.CHECK);
-		m.setText(command.getText());
-		m.setImage(GamaIcons.create(command.getImage()).image());
-		m.setToolTipText(command.getTooltip());
-		m.addSelectionListener(command.getListener());
-		return m;
 	}
 
 	public static MenuItem separate(final Menu parent) {
@@ -73,18 +52,10 @@ public abstract class GamaMenu {
 		createItem(m, SWT.SEPARATOR);
 	}
 
-	protected final void sep(final String s) {
-		sep(mainMenu, s);
-	}
-
 	protected final void sep(final Menu m, final String s) {
 		final MenuItem me = createItem(m, SWT.NONE);
 		me.setText(s);
 		me.setEnabled(false);
-	}
-
-	protected final void title(final String s) {
-		title(mainMenu, s);
 	}
 
 	protected final void title(final Menu m, final String s) {
@@ -113,15 +84,6 @@ public abstract class GamaMenu {
 			action.setImage(image);
 		}
 		return action;
-	}
-
-	protected final MenuItem check(final String s, final boolean selected, final SelectionListener listener) {
-		return check(mainMenu, s, selected, listener);
-	}
-
-	protected final MenuItem check(final String s, final boolean selected, final SelectionListener listener,
-			final Image image) {
-		return check(mainMenu, s, selected, listener, image);
 	}
 
 	protected final MenuItem check(final Menu m, final String s, final boolean select,

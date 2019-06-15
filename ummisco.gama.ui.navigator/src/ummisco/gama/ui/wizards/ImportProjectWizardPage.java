@@ -276,12 +276,6 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 			return NLS.bind(DataTransferMessages.WizardProjectsImportPage_projectLabel, projectName, path);
 		}
 
-		/**
-		 * @return Returns the hasConflicts.
-		 */
-		public boolean hasConflicts() {
-			return hasConflicts;
-		}
 	}
 
 	/**
@@ -366,7 +360,7 @@ public class ImportProjectWizardPage extends WizardDataTransferPage {
 	 *
 	 * @param pageName
 	 */
-	public ImportProjectWizardPage(final String pageName) {
+	public ImportProjectWizardPage(final String pageName) { // NO_UCD (unused code)
 		this(pageName, null, null);
 	}
 

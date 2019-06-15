@@ -4,7 +4,7 @@
  * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.experiment.parameters;
@@ -29,11 +29,6 @@ import ummisco.gama.ui.parameters.EditorFactory;
 
 @SuppressWarnings ({ "rawtypes" })
 public class ExperimentsParametersList extends EditorsList<String> {
-
-	@FunctionalInterface
-	static interface EditorVisitor {
-		abstract void visit(IParameterEditor ed);
-	}
 
 	final IScope scope;
 	final Map<String, Boolean> activations = new HashMap<>();
@@ -128,14 +123,6 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		}
 	}
 
-	void visitEditors(final EditorVisitor visitor) {
-		categories.forEach((s, m) -> {
-			m.forEach((n, p) -> {
-				visitor.visit(p);
-			});
-		});
-	}
-
 	@Override
 	public boolean addItem(final String cat) {
 		if (!categories.containsKey(cat)) {
@@ -157,7 +144,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 
 	/**
 	 * Method handleMenu()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override

@@ -63,6 +63,7 @@ import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
@@ -85,6 +86,7 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
  *
  */
 @display ("opengl")
+@doc ("Displays that uses the OpenGL technology to display their layers in 3D")
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	static {
@@ -93,7 +95,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	GLAnimatorControl animator;
 	IOpenGLRenderer renderer;
-	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
 	Set<IEventLayerListener> listeners = new HashSet<>();
 	final LayeredDisplayOutput output;
@@ -184,7 +185,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if (!current) {
 			glad.getGL().getContext().makeCurrent();
 		}
-		BufferedImage image = getImage(glad.getGL().getGL2(), w, h);
+		final BufferedImage image = getImage(glad.getGL().getGL2(), w, h);
 		// final AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(glad.getGLProfile(), false);
 		// final BufferedImage image = glReadBufferUtil.readPixelsToBufferedImage(glad.getGL(), true);
 		if (!current) {
@@ -196,26 +197,26 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	ByteBuffer buffer;
 
-	protected ByteBuffer getBuffer(int w, int h) {
+	protected ByteBuffer getBuffer(final int w, final int h) {
 
-		if (buffer == null || buffer.capacity() != w * h * 4)
+		if (buffer == null || buffer.capacity() != w * h * 4) {
 			buffer = GLBuffers.newDirectByteBuffer(w * h * 4);
-		else {
+		} else {
 			buffer.rewind();
 		}
 
 		return buffer;
 	}
 
-	protected BufferedImage getImage(GL2 gl3, int ww, int hh) {
+	protected BufferedImage getImage(final GL2 gl3, final int ww, final int hh) {
 
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
-		int width = scaleDownIfMac(ww);
-		int height = scaleDownIfMac(hh);
-		BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		Graphics graphics = screenshot.getGraphics();
+		final int width = scaleDownIfMac(ww);
+		final int height = scaleDownIfMac(hh);
+		final BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		final Graphics graphics = screenshot.getGraphics();
 
-		ByteBuffer buffer = getBuffer(width, height);
+		final ByteBuffer buffer = getBuffer(width, height);
 		// be sure you are reading from the right fbo (here is supposed to be the default one)
 		// bind the right buffer to read from
 		gl3.glReadBuffer(GL.GL_BACK);
@@ -227,7 +228,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				// The color are the three consecutive bytes, it's like referencing
 				// to the next consecutive array elements, so we got red, green, blue..
 				// red, green, blue, and so on..+ ", "
-				graphics.setColor(new Color((buffer.get() & 0xff), (buffer.get() & 0xff), (buffer.get() & 0xff)));
+				graphics.setColor(new Color(buffer.get() & 0xff, buffer.get() & 0xff, buffer.get() & 0xff));
 				buffer.get(); // consume alpha
 				graphics.drawRect(w, height - h - 1, 1, 1); // height - h is for flipping the image
 			}
