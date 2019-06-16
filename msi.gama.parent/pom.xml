@@ -380,6 +380,7 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>0.25.0</version>
 				<configuration>
+					<debug>false</debug>
 					<source>1.8</source>
 					<target>1.8</target>
 					<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
@@ -393,6 +394,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5.1</version>
 				<configuration>
+					<debug>false</debug>
 					<source>1.8</source>
 					<target>1.8</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
