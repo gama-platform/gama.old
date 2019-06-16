@@ -56,22 +56,22 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_Linux_64bits'$SUFFIX 
+NEWFILES[$n]='GAMA1.8_Continuous_Linux'$SUFFIX 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_Mac_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Continuous_Mac'$SUFFIX
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.8_Continuous_Win_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Continuous_Win'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Linux_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Linux'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Win_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Win'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Mac_64bits'$SUFFIX
+NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Mac'$SUFFIX
  
 
 i=0
@@ -126,7 +126,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"Built once a day or with \"ci release\" \n # The release file names are composed with a number of segments separated by \`_\` : \n_ the version of the release, (e.g., \`GAMA1.8\`)  \n_ the name of the OS: either \`Linux\`, \`Mac\` or \`Win\`  \n_ the number of bits: 64bits or 32 bits  \n_ the day it has been produced (e.g., \`07.03.18\` for the 3rd of July, 2018)  \n_ the hashcode of the corresponding commit (e.g., \`bbe2b68\` that can be retrieved at https://github.com/gama-platform/gama/commits/master)","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"Built once a day or by adding \`ci release\` to the comment of a commit. **The release file names are composed with a number of segments separated by \`_\` :** \n- the version of the release, (e.g., \`GAMA1.8\`)  \n- the name of the OS: either \`Linux\`, \`Mac\` or \`Win\`  \n- the day it has been produced (e.g., \`07.03.18\` for the 3rd of July, 2018)  \n- the hashcode of the corresponding commit (which can be retrieved using the address \`https://github.com/gama-platform/gama/commit/\` followed by the code, like https://github.com/gama-platform/gama/commit/$COMMIT for this release)","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
