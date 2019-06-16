@@ -126,7 +126,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"Built once a day or by adding \`ci release\` to the comment of a commit. **The release file names are composed with a number of segments separated by \`_\` :** \n- the version of the release, (e.g., \`GAMA1.8\`)  \n- the name of the OS: either \`Linux\`, \`Mac\` or \`Win\`  \n- the day it has been produced (e.g., \`07.03.18\` for the 3rd of July, 2018)  \n- the hashcode of the corresponding commit (which can be retrieved using the address \`https://github.com/gama-platform/gama/commit/\` followed by the code, like https://github.com/gama-platform/gama/commit/$COMMIT for this release)","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"Built once a day or by adding \`ci release\` to the comment of a commit. **The release file names are composed with a number of segments separated by \`_\` :** \n- the version of the release, (e.g., \`GAMA1.8\`)  \n- the name of the OS: either \`Linux\`, \`Mac\` or \`Win\`  \n- the day it has been produced (e.g., \`07.03.18\` for the 3rd of July, 2018)  \n- the hashcode of the corresponding commit (which can be retrieved using the address \`https://github.com/gama-platform/gama/commit/\` followed by the code, for instance https://github.com/gama-platform/gama/commit/'$COMMIT' for this release)","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
