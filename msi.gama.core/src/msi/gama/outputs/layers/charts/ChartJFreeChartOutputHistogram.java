@@ -34,7 +34,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.AbstractCategoryItemRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.BarRenderer3D;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.GradientBarPainter;
 import org.jfree.chart.renderer.category.LevelRenderer;
@@ -46,12 +45,12 @@ import org.jfree.chart.renderer.category.StatisticalLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.GradientXYBarPainter;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.TextAnchor;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
@@ -103,7 +102,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			orientation = PlotOrientation.HORIZONTAL;
 		}
 		if (style.equals(IKeyword.THREE_D)) {
-			chart = ChartFactory.createBarChart3D(getName(), null, null, null, orientation, true, true, false);
+			chart = ChartFactory.createBarChart(getName(), null, null, null, orientation, true, true, false);
 		} else if (style.equals(IKeyword.STACK)) {
 			chart = ChartFactory.createStackedBarChart(getName(), null, null, null, orientation, true, true, false);
 		} else {
@@ -180,11 +179,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 				break;
 
 			}
-			case IKeyword.THREE_D: {
-				newr = new BarRenderer3D();
-				break;
 
-			}
 			case IKeyword.DOT: {
 				newr = new ScatterRenderer();
 				break;
@@ -203,6 +198,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			}
 			case IKeyword.RING:
 			case IKeyword.EXPLODED:
+			case IKeyword.THREE_D:
 			default: {
 				newr = new BarRenderer();
 				break;
@@ -235,12 +231,12 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			if (this.series_label_position.equals("onchart")) {
 				// ((BarRenderer)newr).setBaseItemLabelGenerator(new
 				// LabelGenerator());
-				newr.setBaseItemLabelGenerator(new LabelGenerator());
+				newr.setDefaultItemLabelGenerator(new LabelGenerator());
 				final ItemLabelPosition itemlabelposition =
 						new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER);
-				newr.setBasePositiveItemLabelPosition(itemlabelposition);
-				newr.setBaseNegativeItemLabelPosition(itemlabelposition);
-				newr.setBaseItemLabelsVisible(true);
+				newr.setDefaultPositiveItemLabelPosition(itemlabelposition);
+				newr.setDefaultNegativeItemLabelPosition(itemlabelposition);
+				newr.setDefaultItemLabelsVisible(true);
 			}
 
 			if (newr instanceof BarRenderer) {

@@ -40,11 +40,11 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYBoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLine3DRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYShapeRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.PieDataset;
@@ -53,7 +53,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYIntervalDataItem;
 import org.jfree.data.xy.XYIntervalSeries;
 import org.jfree.data.xy.XYIntervalSeriesCollection;
-import org.jfree.ui.RectangleInsets;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
@@ -199,7 +198,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	@Override
 	protected AbstractRenderer createRenderer(final IScope scope, final String serieid) {
 		final String style = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
-		AbstractRenderer newr = new myXYErrorRenderer();
+		AbstractRenderer newr;
 		switch (style) {
 			case IKeyword.SPLINE: {
 				newr = new XYSplineRenderer();
@@ -226,7 +225,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				break;
 			}
 			case IKeyword.THREE_D: {
-				newr = new XYLine3DRenderer();
+				newr = new XYLineAndShapeRenderer();
 				break;
 			}
 			case IKeyword.STACK:
@@ -247,7 +246,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		final AbstractXYItemRenderer newr = (AbstractXYItemRenderer) this.getOrCreateRenderer(scope, serieid);
 		// newr.setSeriesStroke(0, new BasicStroke(0));
-		newr.setBaseCreateEntities(true);
+		newr.setDefaultCreateEntities(true);
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
 
 		if (newr instanceof XYLineAndShapeRenderer) {
