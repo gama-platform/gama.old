@@ -26,8 +26,6 @@
  */
 package msi.gama.util.graph.graphstream_copy;
 
-import java.io.IOException;
-
 /**
  * An Interface that advises general purpose methods for handling graphs.
  *
@@ -39,7 +37,8 @@ import java.io.IOException;
  * <p>
  * With {@link msi.gama.util.graph.graphstream_copy.Source}, {@link msi.gama.util.graph.graphstream_copy.Sink} and
  * {@link msi.gama.util.graph.graphstream_copy.Pipe}, this interface is one of the most important. A graph is a
- * {@link msi.gama.util.graph.graphstream_copy.Pipe} that buffers the graph events and present the graph structure as it is actually.
+ * {@link msi.gama.util.graph.graphstream_copy.Pipe} that buffers the graph events and present the graph structure as it
+ * is actually.
  * </p>
  *
  * <p>
@@ -48,10 +47,11 @@ import java.io.IOException;
  * </p>
  *
  * <p>
- * With factories ({@link msi.gama.util.graph.graphstream_copy.NodeFactory}, {@link msi.gama.util.graph.graphstream_copy.EdgeFactory}), users can
- * define their own models of nodes or edges. Problem is that when you define such model, you want to access to elements
- * with the valid type, without cast if possible. To improve the access to elements in such cases, Graph offers implicit
- * genericity to access nodes or edges. The following is an example of an access without genericity :
+ * With factories ({@link msi.gama.util.graph.graphstream_copy.NodeFactory},
+ * {@link msi.gama.util.graph.graphstream_copy.EdgeFactory}), users can define their own models of nodes or edges.
+ * Problem is that when you define such model, you want to access to elements with the valid type, without cast if
+ * possible. To improve the access to elements in such cases, Graph offers implicit genericity to access nodes or edges.
+ * The following is an example of an access without genericity :
  *
  * <pre>
  * 	Graph g = ... ;
@@ -102,7 +102,7 @@ import java.io.IOException;
  * will always iterate on all the nodes of <code>g</code>.
  * </p>
  */
-public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
+public interface Graph extends Element, Source, Sink, Iterable<Node>, Structure {
 	// Access
 
 	/**
@@ -249,8 +249,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * <p>
 	 * This acts as a factory, creating the node instance automatically (and eventually using the node factory
 	 * provided). An event is generated toward the listeners. If strict checking is enabled, and a node already exists
-	 * with this identifier, an {@link msi.gama.util.graph.graphstream_copy.IdAlreadyInUseException} is raised. Else the error is
-	 * silently ignored and the already existing node is returned.
+	 * with this identifier, an {@link msi.gama.util.graph.graphstream_copy.IdAlreadyInUseException} is raised. Else the
+	 * error is silently ignored and the already existing node is returned.
 	 * </p>
 	 * <p>
 	 * This method is implicitly generic and returns something which extends Node. The return type is the one of the
@@ -470,63 +470,6 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 * @return the list of {@link ElementSink} under the form of an iterable object.
 	 */
 	Iterable<ElementSink> elementSinks();
-
-	// Utility shortcuts (should be mixins or traits, what are you doing Mr Java
-	// ?)
-	// XXX use a Readable/Writable/Displayable interface for this ?
-
-	/**
-	 * Utility method to read a graph. This method tries to identify the graph format by itself and instantiates the
-	 * corresponding reader automatically. If this process fails, a NotFoundException is raised.
-	 *
-	 * @param filename
-	 *            The graph filename (or URL).
-	 * @throws ElementNotFoundException
-	 *             If the file cannot be found or if the format is not recognized.
-	 * @throws GraphParseException
-	 *             If there is a parsing error while reading the file.
-	 * @throws IOException
-	 *             If an input output error occurs during the graph reading.
-	 */
-	void read(String filename) throws IOException, GraphParseException, ElementNotFoundException;
-
-	/**
-	 * Utility method to read a graph using the given reader.
-	 *
-	 * @param input
-	 *            An appropriate reader for the filename.
-	 * @param filename
-	 *            The graph filename (or URL).
-	 * @throws ElementNotFoundException
-	 *             If the file cannot be found or if the format is not recognised.
-	 * @throws GraphParseException
-	 *             If there is a parsing error while reading the file.
-	 * @throws IOException
-	 *             If an input/output error occurs during the graph reading.
-	 */
-	void read(FileSource input, String filename) throws IOException, GraphParseException;
-
-	/**
-	 * Utility method to write a graph in DGS format to a file.
-	 *
-	 * @param filename
-	 *            The file that will contain the saved graph (or URL).
-	 * @throws IOException
-	 *             If an input/output error occurs during the graph writing.
-	 */
-	void write(String filename) throws IOException;
-
-	/**
-	 * Utility method to write a graph in the chosen format to a file.
-	 *
-	 * @param filename
-	 *            The file that will contain the saved graph (or URL).
-	 * @param output
-	 *            The output format to use.
-	 * @throws IOException
-	 *             If an input/output error occurs during the graph writing.
-	 */
-	void write(FileSink output, String filename) throws IOException;
 
 	// New methods
 

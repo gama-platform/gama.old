@@ -32,7 +32,7 @@ import msi.gama.util.graph.graphstream_copy.AbstractElement.AttributeChangeEvent
  * Helper object to handle events producted by a graph.
  *
  */
-public class GraphListeners extends SourceBase implements Pipe {
+public class GraphListeners extends SourceBase implements Source, Sink {
 
 	SinkTime sinkTime;
 	boolean passYourWay, passYourWayAE;

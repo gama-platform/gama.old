@@ -480,54 +480,6 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 
 	// breadth- and depth-first iterator
 
-	/**
-	 * This implementation creates an instance of {@link org.graphstream.graph#BreadthFirstIterator} and returns it.
-	 *
-	 * @see msi.gama.util.graph.graphstream_copy.Node#getBreadthFirstIterator()
-	 */
-	@Override
-	public <T extends Node> Iterator<T> getBreadthFirstIterator() {
-		// XXX change it when the old iterator disappears
-		// XXX change the return type to have access to the other methods
-		return new BreadthFirstIterator<>(this);
-	}
-
-	/**
-	 * This implementation creates an instance of {@link org.graphstream.graph#BreadthFirstIterator} and returns it.
-	 *
-	 * @see msi.gama.util.graph.graphstream_copy.Node#getBreadthFirstIterator(boolean)
-	 */
-	@Override
-	public <T extends Node> Iterator<T> getBreadthFirstIterator(final boolean directed) {
-		// XXX change it when the old iterator disappears
-		// XXX change the return type to have access to the other methods
-		return new BreadthFirstIterator<>(this, directed);
-	}
-
-	/**
-	 * This implementation creates an instance of {@link org.graphstream.graph#DepthFirstIterator} and returns it.
-	 *
-	 * @see msi.gama.util.graph.graphstream_copy.Node#getDepthFirstIterator()
-	 */
-	@Override
-	public <T extends Node> Iterator<T> getDepthFirstIterator() {
-		// XXX change it when the old iterator disappears
-		// XXX change the return type to have access to the other methods
-		return new DepthFirstIterator<>(this);
-	}
-
-	/**
-	 * This implementation creates an instance of {@link org.graphstream.graph#DepthFirstIterator} and returns it.
-	 *
-	 * @see msi.gama.util.graph.graphstream_copy.Node#getDepthFirstIterator(boolean)
-	 */
-	@Override
-	public <T extends Node> Iterator<T> getDepthFirstIterator(final boolean directed) {
-		// XXX change it when the old iterator disappears
-		// XXX change the return type to have access to the other methods
-		return new DepthFirstIterator<>(this, directed);
-	}
-
 	// *** Other methods ***
 
 	/**

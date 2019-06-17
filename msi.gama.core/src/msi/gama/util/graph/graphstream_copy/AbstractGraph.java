@@ -26,17 +26,16 @@
  */
 package msi.gama.util.graph.graphstream_copy;
 
-import java.io.IOException;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
  * <p>
- * This class provides a basic implementation of {@link msi.gama.util.graph.graphstream_copy.Graph} interface, to minimize the effort
- * required to implement this interface. It provides event management implementing all the methods of
- * {@link msi.gama.util.graph.graphstream_copy.Pipe}. It also manages strict checking and auto-creation policies, as well as other
- * services as displaying, reading and writing.
+ * This class provides a basic implementation of {@link msi.gama.util.graph.graphstream_copy.Graph} interface, to
+ * minimize the effort required to implement this interface. It provides event management implementing all the methods
+ * of {@link msi.gama.util.graph.graphstream_copy.Pipe}. It also manages strict checking and auto-creation policies, as
+ * well as other services as displaying, reading and writing.
  * </p>
  *
  * <p>
@@ -48,7 +47,7 @@ import java.util.Iterator;
  * data structures and to re-index elements if necessary.
  * </p>
  */
-public abstract class AbstractGraph extends AbstractElement implements Graph, Replayable {
+public abstract class AbstractGraph extends AbstractElement implements Graph {
 	// *** Fields ***
 
 	private boolean strictChecking;
@@ -61,7 +60,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	private boolean nullAttributesAreErrors;
 
-	private long replayId = 0;
+	private final long replayId = 0;
 
 	// *** Constructors ***
 
@@ -739,50 +738,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 		listeners.stepBegins(sourceId, timeId, step);
 	}
 
-	// display, read, write
-
-	@Override
-	public void read(final FileSource input, final String filename) throws IOException, GraphParseException {
-		input.readAll(filename);
-	}
-
-	@Override
-	public void read(final String filename) throws IOException, GraphParseException, ElementNotFoundException {
-		final FileSource input = FileSourceFactory.sourceFor(filename);
-		if (input != null) {
-			input.addSink(this);
-			read(input, filename);
-			input.removeSink(this);
-		} else {
-			throw new IOException("No source reader for " + filename);
-		}
-	}
-
-	@Override
-	public void write(final FileSink output, final String filename) throws IOException {
-		output.writeAll(this, filename);
-	}
-
-	@Override
-	public void write(final String filename) throws IOException {
-		final FileSink output = FileSinkFactory.sinkFor(filename);
-		if (output != null) {
-			write(output, filename);
-		} else {
-			throw new IOException("No sink writer for " + filename);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.stream.Replayable#getReplayController()
-	 */
-	@Override
-	public Replayable.Controller getReplayController() {
-		return new GraphReplayController();
-	}
-
 	// *** callbacks maintaining user's data structure
 
 	/**
@@ -973,58 +928,4 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 		}
 	}
 
-	class GraphReplayController extends SourceBase implements Replayable.Controller {
-		GraphReplayController() {
-			super(AbstractGraph.this.id + "replay");
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.graphstream.stream.Replayable.Controller#replay()
-		 */
-		@Override
-		public void replay() {
-			final String sourceId = String.format("%s-replay-%x", id, replayId++);
-			replay(sourceId);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see org.graphstream.stream.Replayable.Controller#replay(java.lang.String)
-		 */
-		@Override
-		public void replay(final String sourceId) {
-			for (final String key : getAttributeKeySet()) {
-				sendGraphAttributeAdded(sourceId, key, getAttribute(key));
-			}
-
-			for (int i = 0; i < getNodeCount(); i++) {
-				final Node node = getNode(i);
-				final String nodeId = node.getId();
-
-				sendNodeAdded(sourceId, nodeId);
-
-				if (node.getAttributeCount() > 0) {
-					for (final String key : node.getAttributeKeySet()) {
-						sendNodeAttributeAdded(sourceId, nodeId, key, node.getAttribute(key));
-					}
-				}
-			}
-
-			for (int i = 0; i < getEdgeCount(); i++) {
-				final Edge edge = getEdge(i);
-				final String edgeId = edge.getId();
-
-				sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge.getNode1().getId(), edge.isDirected());
-
-				if (edge.getAttributeCount() > 0) {
-					for (final String key : edge.getAttributeKeySet()) {
-						sendEdgeAttributeAdded(sourceId, edgeId, key, edge.getAttribute(key));
-					}
-				}
-			}
-		}
-	}
 }
