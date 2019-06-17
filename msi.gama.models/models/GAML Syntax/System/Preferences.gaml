@@ -145,9 +145,6 @@ init {
 	//Auto-run experiments when they are launched
 	write sample(gama.pref_experiment_auto_run);
 
-	//Default step for the delay slider (in sec.)
-	write sample(gama.pref_experiment_default_step);
-
 	//Only display (in the UI and in headless runs) failed and aborted tests
 	write sample(gama.pref_failed_tests);
 
@@ -408,9 +405,6 @@ init {
 
 	//Auto-run experiments when they are launched
 	gama.pref_experiment_auto_run <- false;
-
-	//Default step for the delay slider (in sec.)
-	gama.pref_experiment_default_step <- 0.01;
 
 	//Only display (in the UI and in headless runs) failed and aborted tests
 	gama.pref_failed_tests <- false;

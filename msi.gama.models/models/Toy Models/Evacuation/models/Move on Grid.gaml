@@ -104,7 +104,7 @@ grid cell width: 150 height: 150  neighbors: 8 frequency: 0 {
 	rgb color <- #white;
 }
 
-experiment main type: gui {
+experiment Run type: gui {
 	parameter "nb people" var: nb_people min: 1 max: 1000;
 	float minimum_cycle_duration <- 0.04; 
 	output {
