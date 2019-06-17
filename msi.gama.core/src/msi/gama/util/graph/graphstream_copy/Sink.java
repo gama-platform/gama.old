@@ -35,7 +35,6 @@ package msi.gama.util.graph.graphstream_copy;
  * </p>
  *
  * <p>
- * The output can filter the stream of attribute events using {@link AttributePredicate}s.
  * </p>
  *
  *

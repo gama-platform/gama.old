@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * A base implementation of an element.
@@ -160,28 +158,6 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n*m)) with n being the number of attributes of this element and m the number of keys given.
-	 */
-	@Override
-	// public Object getFirstAttributeOf( String ... keys )
-	@SuppressWarnings ("all")
-	public <T> T getFirstAttributeOf(final String... keys) {
-		Object o = null;
-
-		if (attributes != null) {
-			for (final String key : keys) {
-				o = attributes.get(key);
-
-				if (o != null) { return (T) o; }
-			}
-		}
-
-		if (o == null && nullAttributesAreErrors()) { throw new NullPointerException(); }
-
-		return (T) o;
-	}
-
-	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this element.
 	 */
 	@Override
@@ -200,124 +176,6 @@ public abstract class AbstractElement implements Element {
 	}
 
 	/**
-	 * @complexity O(log(n*m)) with n being the number of attributes of this element and m the number of keys given.
-	 */
-	@Override
-	// public Object getFirstAttributeOf( Class<?> clazz, String ... keys )
-	@SuppressWarnings ("all")
-	public <T> T getFirstAttributeOf(final Class<T> clazz, final String... keys) {
-		Object o = null;
-
-		if (attributes == null) { return null; }
-
-		for (final String key : keys) {
-			o = attributes.get(key);
-
-			if (o != null && clazz.isInstance(o)) { return (T) o; }
-		}
-
-		if (nullAttributesAreErrors()) { throw new NullPointerException(); }
-
-		return null;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public String getLabel(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null && o instanceof CharSequence) { return o.toString(); }
-		}
-
-		if (nullAttributesAreErrors()) { throw new NullPointerException(key); }
-
-		return null;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public double getNumber(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null) {
-				if (o instanceof Number) { return ((Number) o).doubleValue(); }
-
-				if (o instanceof String) {
-					try {
-						return Double.parseDouble((String) o);
-					} catch (final NumberFormatException e) {}
-				} else if (o instanceof CharSequence) {
-					try {
-						return Double.parseDouble(((CharSequence) o).toString());
-					} catch (final NumberFormatException e) {}
-				}
-			}
-		}
-
-		if (nullAttributesAreErrors()) { throw new NullPointerException(key); }
-
-		return Double.NaN;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	@SuppressWarnings ("unchecked")
-	public ArrayList<? extends Number> getVector(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null && o instanceof ArrayList) { return (ArrayList<? extends Number>) o; }
-		}
-
-		if (nullAttributesAreErrors()) { throw new NullPointerException(key); }
-
-		return null;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public Object[] getArray(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null && o instanceof Object[]) { return (Object[]) o; }
-		}
-
-		if (nullAttributesAreErrors()) { throw new NullPointerException(key); }
-
-		return null;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public HashMap<?, ?> getHash(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null) {
-				if (o instanceof HashMap<?, ?>) { return (HashMap<?, ?>) o; }
-				if (o instanceof CompoundAttribute) { return ((CompoundAttribute) o).toHashMap(); }
-			}
-		}
-
-		if (nullAttributesAreErrors()) { throw new NullPointerException(key); }
-
-		return null;
-	}
-
-	/**
 	 * @complexity O(log(n)) with n being the number of attributes of this element.
 	 */
 	@Override
@@ -327,97 +185,6 @@ public abstract class AbstractElement implements Element {
 		return false;
 	}
 
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public boolean hasAttribute(final String key, final Class<?> clazz) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null) { return clazz.isInstance(o); }
-		}
-
-		return false;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public boolean hasLabel(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null) { return o instanceof CharSequence; }
-		}
-
-		return false;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public boolean hasNumber(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null) { return o instanceof Number; }
-		}
-
-		return false;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public boolean hasVector(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null && o instanceof ArrayList<?>) { return true; }
-		}
-
-		return false;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public boolean hasArray(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null && o instanceof Object[]) { return true; }
-		}
-
-		return false;
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public boolean hasHash(final String key) {
-		if (attributes != null) {
-			final Object o = attributes.get(key);
-
-			if (o != null && (o instanceof HashMap<?, ?> || o instanceof CompoundAttribute)) { return true; }
-		}
-
-		return false;
-	}
-
-	@Override
-	public Iterator<String> getAttributeKeyIterator() {
-		if (attributes != null) { return attributes.keySet().iterator(); }
-
-		return null;
-	}
-
 	@Override
 	public Iterable<String> getEachAttributeKey() {
 		return getAttributeKeySet();
@@ -425,23 +192,10 @@ public abstract class AbstractElement implements Element {
 
 	@Override
 	public Collection<String> getAttributeKeySet() {
-		if (attributes != null) { return (Collection<String>) Collections.unmodifiableCollection(attributes.keySet()); }
+		if (attributes != null) { return Collections.unmodifiableCollection(attributes.keySet()); }
 
 		return Collections.emptySet();
 	}
-
-	// public Map<String,Object> getAttributeMap()
-	// {
-	// if( attributes != null )
-	// {
-	// if( constMap == null )
-	// constMap = new ConstMap<String,Object>( attributes );
-	//
-	// return constMap;
-	// }
-	//
-	// return null;
-	// }
 
 	/**
 	 * Override the Object method
@@ -456,19 +210,6 @@ public abstract class AbstractElement implements Element {
 		if (attributes != null) { return attributes.size(); }
 
 		return 0;
-	}
-
-	// Command
-
-	@Override
-	public void clearAttributes() {
-		if (attributes != null) {
-			for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
-				attributeChanged(AttributeChangeEvent.REMOVE, entry.getKey(), entry.getValue(), null);
-			}
-
-			attributes.clear();
-		}
 	}
 
 	protected void clearAttributesWithNoEvent() {
@@ -521,23 +262,6 @@ public abstract class AbstractElement implements Element {
 	@Override
 	public void setAttribute(final String attribute, final Object... values) {
 		addAttribute(attribute, values);
-	}
-
-	/**
-	 * @complexity O(log(n)) with n being the number of attributes of this element.
-	 */
-	@Override
-	public void addAttributes(final Map<String, Object> attributes) {
-		if (this.attributes == null) {
-			this.attributes = new HashMap<>(attributes.size());
-		}
-
-		final Iterator<String> i = attributes.keySet().iterator();
-		final Iterator<Object> j = attributes.values().iterator();
-
-		while (i.hasNext() && j.hasNext()) {
-			addAttribute(i.next(), j.next());
-		}
 	}
 
 	/**

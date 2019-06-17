@@ -545,26 +545,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	// *** Sinks, sources etc. ***
 
 	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.graphstream.graph.Graph#attributeSinks()
-	 */
-	@Override
-	public Iterable<AttributeSink> attributeSinks() {
-		return listeners.attributeSinks();
-	}
-
-	/*
-	 * *(non-Javadoc)
-	 *
-	 * @see org.graphstream.graph.Graph#elementSinks()
-	 */
-	@Override
-	public Iterable<ElementSink> elementSinks() {
-		return listeners.elementSinks();
-	}
-
-	/*
 	 * *(non-Javadoc)
 	 *
 	 * @see org.graphstream.stream.Source#addAttributeSink(org.graphstream.stream .AttributeSink)

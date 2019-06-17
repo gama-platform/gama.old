@@ -454,23 +454,6 @@ public interface Graph extends Element, Source, Sink, Iterable<Node>, Structure 
 	 */
 	void stepBegins(double time);
 
-	// Source
-	// XXX do we put the iterable attributeSinks and elementSinks in Source ?
-
-	/**
-	 * Returns an "iterable" of {@link AttributeSink} objects registered to this graph.
-	 *
-	 * @return the set of {@link AttributeSink} under the form of an iterable object.
-	 */
-	Iterable<AttributeSink> attributeSinks();
-
-	/**
-	 * Returns an "iterable" of {@link ElementSink} objects registered to this graph.
-	 *
-	 * @return the list of {@link ElementSink} under the form of an iterable object.
-	 */
-	Iterable<ElementSink> elementSinks();
-
 	// New methods
 
 	/**

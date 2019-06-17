@@ -27,7 +27,8 @@
 package msi.gama.util.graph.graphstream_copy;
 
 import java.util.ArrayList;
-import java.util.Random;
+
+import msi.gama.runtime.GAMA;
 
 /**
  * Base graph generator.
@@ -88,11 +89,6 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	 * If edge attributes are added, in which range are the numbers chosen ?.
 	 */
 	protected double[] edgeAttributeRange = new double[2];
-
-	/**
-	 * The random number generator.
-	 */
-	protected Random random = new Random();
 
 	/**
 	 * Set the node label attribute using the identifier?.
@@ -180,16 +176,6 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	@Override
 	public void end() {
 		clearKeptData();
-	}
-
-	/**
-	 * Set the random seed used for random number generation.
-	 *
-	 * @param seed
-	 *            The seed.
-	 */
-	public void setRandomSeed(final long seed) {
-		random.setSeed(seed);
 	}
 
 	/**
@@ -374,7 +360,8 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 		double value;
 
 		for (final String attr : nodeAttributes) {
-			value = random.nextDouble() * (nodeAttributeRange[1] - nodeAttributeRange[0]) + nodeAttributeRange[0];
+			value = GAMA.getCurrentRandom().next() * (nodeAttributeRange[1] - nodeAttributeRange[0])
+					+ nodeAttributeRange[0];
 			sendNodeAttributeAdded(sourceId, id, attr, value);
 
 			if (useInternalGraph) {
@@ -406,7 +393,7 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	 *            The source node (can be inverted randomly with the target node).
 	 */
 	protected void addEdge(String id, String from, String to) {
-		if (directed && randomlyDirected && random.nextFloat() > 0.5f) {
+		if (directed && randomlyDirected && GAMA.getCurrentRandom().next() > 0.5d) {
 			final String tmp = from;
 			from = to;
 			to = tmp;
@@ -427,8 +414,8 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 		}
 
 		for (final String attr : edgeAttributes) {
-			final double value =
-					random.nextDouble() * (edgeAttributeRange[1] - edgeAttributeRange[0]) + edgeAttributeRange[0];
+			final double value = GAMA.getCurrentRandom().next() * (edgeAttributeRange[1] - edgeAttributeRange[0])
+					+ edgeAttributeRange[0];
 			sendEdgeAttributeAdded(sourceId, id, attr, value);
 
 			if (useInternalGraph) {

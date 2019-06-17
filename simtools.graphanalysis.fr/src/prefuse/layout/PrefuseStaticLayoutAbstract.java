@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -51,8 +50,6 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	private int count_measures = 20; // TODO adapt to the size of the graph
 	private Map<VisualItem, Double> lastNode2measures = null;
 
-	protected Random random = new Random();
-
 	private final Logger logger = Logger.getLogger(getClass().getName());
 
 	private void resetThermometer(final int nbtuples) {
@@ -79,7 +76,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 				// let's select n random nodes that will be used for measurement
 				while (lastNode2measures.size() < count_measures) {
-					final VisualItem i = tuples.getItem(random.nextInt(nbtuples));
+					final VisualItem i = tuples.getItem(GAMA.getCurrentRandom().between(0, nbtuples - 1));
 					lastNode2measures.put(i, i.getX() + i.getY());
 				}
 
