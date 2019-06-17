@@ -213,11 +213,6 @@ public class RandomUtils {
 		return result;
 	}
 
-	public void dispose() {
-		seed = null;
-		generator = null;
-	}
-
 	public byte[] generateSeed(final int length) {
 		return createSeed(seed, length);
 	}

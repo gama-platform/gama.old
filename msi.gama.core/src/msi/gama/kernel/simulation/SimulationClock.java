@@ -72,10 +72,10 @@ public class SimulationClock {
 	 */
 	private long start = 0;
 
-	/**
-	 * Whether to display the number of cycles or a more readable information (in model time)
-	 */
-	private volatile boolean displayCycles = true;
+	// /**
+	// * Whether to display the number of cycles or a more readable information (in model time)
+	// */
+	// private volatile boolean displayCycles = true;
 
 	private GamaDate startingDate = null;
 	private GamaDate currentDate = null;
@@ -264,10 +264,6 @@ public class SimulationClock {
 		resetTotalDuration();
 	}
 
-	public void toggleDisplay() {
-		displayCycles = !displayCycles;
-	}
-
 	public void beginCycle() {
 		resetDuration();
 	}
@@ -341,10 +337,6 @@ public class SimulationClock {
 
 	public void setCurrentDate(final GamaDate date) {
 		currentDate = date;
-	}
-
-	public boolean outputAsDuration() {
-		return outputCurrentDateAsDuration;
 	}
 
 }

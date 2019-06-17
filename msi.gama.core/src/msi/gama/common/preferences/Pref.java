@@ -29,7 +29,7 @@ import msi.gaml.types.Types;
 public class Pref<T> implements IParameter {
 
 	@FunctionalInterface
-	public static interface ValueProvider<T> {
+	public interface ValueProvider<T> {
 
 		T get();
 	}
@@ -58,11 +58,6 @@ public class Pref<T> implements IParameter {
 		this.inGaml = inGaml;
 	}
 
-	public Pref<T> group(final String g) {
-		this.group = g;
-		return this;
-	}
-
 	public Pref<T> disabled() {
 		disabled = true;
 		return this;
@@ -80,11 +75,6 @@ public class Pref<T> implements IParameter {
 	@Override
 	public int getOrder() {
 		return order;
-	}
-
-	public Pref<T> noSlider() {
-		slider = false;
-		return this;
 	}
 
 	public Pref<T> among(@SuppressWarnings ("unchecked") final T... v) {
@@ -321,7 +311,7 @@ public class Pref<T> implements IParameter {
 	}
 
 	@Override
-	public List<GamaColor> getColor(IScope scope) {
+	public List<GamaColor> getColor(final IScope scope) {
 		return null;
 	}
 

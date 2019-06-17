@@ -143,8 +143,8 @@ public class GamaPreferences {
 		 * Options
 		 */
 		public static final String OPTIONS = "Options";
-		public static final Pref<Boolean> CORE_PERSPECTIVE = create("pref_switch_perspective",
-				"Switch to modeling perspective when editing a model", false, IType.BOOL, false).in(NAME, OPTIONS);
+		// public static final Pref<Boolean> CORE_PERSPECTIVE = create("pref_switch_perspective",
+		// "Switch to modeling perspective when editing a model", false, IType.BOOL, false).in(NAME, OPTIONS);
 		/**
 		 * Validation
 		 */
@@ -204,12 +204,12 @@ public class GamaPreferences {
 		// .among(Arrays.asList("Day", "Week", "Month", "Update")).in(NAME, TESTS);
 
 	}
-
-	public static class Experiments {
-		public static final String NAME = "Experiments";
-
-		// Unused for the moment
-	}
+	//
+	// public static class Experiments {
+	// public static final String NAME = "Experiments";
+	//
+	// // Unused for the moment
+	// }
 
 	/**
 	 *
@@ -242,10 +242,10 @@ public class GamaPreferences {
 				create("pref_experiment_ask_closing", "Ask to close the previous experiment when launching a new one",
 						true, IType.BOOL, true).in(NAME, EXECUTION);
 		public static final Pref<Boolean> CORE_ASK_FULLSCREEN =
-				create("pref_experiment_ask_fullscreen", "Ask to go to fullscreen mode",
-						false, IType.BOOL, true).in(NAME, EXECUTION);
-		public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
-				"Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
+				create("pref_experiment_ask_fullscreen", "Ask to go to fullscreen mode", false, IType.BOOL, true)
+						.in(NAME, EXECUTION);
+		// public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
+		// "Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
 		public static final Pref<Boolean> CORE_SYNC =
 				create("pref_display_synchronized", "Synchronize outputs with the simulation", false, IType.BOOL, true)
 						.in(NAME, EXECUTION);
@@ -260,9 +260,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> TESTS_SORTED =
 				create("pref_tests_sorted", "Sorts the results of tests by severity", false, IType.BOOL, false)
 						.in(NAME, TESTS).withComment(", if true, aborted and failed tests are displayed first");
-		public static final Pref<Boolean> RUN_TESTS =
-				create("pref_run_tests", "Run tests after each update of the platform", false, IType.BOOL, false)
-						.in(NAME, TESTS).disabled().hidden();
+		// public static final Pref<Boolean> RUN_TESTS =
+		// create("pref_run_tests", "Run tests after each update of the platform", false, IType.BOOL, false)
+		// .in(NAME, TESTS).disabled().hidden();
 		public static final Pref<Boolean> START_TESTS =
 				create("pref_start_tests", "Run tests at each start of the platform", false, IType.BOOL, false).in(NAME,
 						TESTS);
@@ -324,21 +324,12 @@ public class GamaPreferences {
 						.among(LAYOUTS.toArray(new String[LAYOUTS.size()])).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
 				"Stack displays in the order defined in the model", true, IType.BOOL, true).in(NAME, PRESENTATION);
-		// public static final Pref<Integer> CORE_OUTPUT_DELAY = create("pref_display_delay_views",
-		// "Delay in ms between the opening of views (increase to avoid freezes of Java2D displays)", 200,
-		// IType.INT).between(0, 1000).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_BORDER =
 				create("pref_display_show_border", "Display a border around display views", false, IType.BOOL, true)
 						.in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_PERSPECTIVE =
 				create("pref_display_continue_drawing", "Continue to draw displays when in Modeling perspective", false,
 						IType.BOOL, true).in(NAME, PRESENTATION);
-		// public static final Pref<Boolean> DISPLAY_NATIVE_FULLSCREEN = create("pref_display_fullscreen_native",
-		// "Use the native mode for full-screen (experimental)", false, IType.BOOL).in(NAME, PRESENTATION);
-		// public static final Pref<Boolean> DISPLAY_MODAL_FULLSCREEN = create("pref_display_fullscreen_menu",
-		// "Disable the OS menu bar when a display is full-screen", true, IType.BOOL).in(NAME, PRESENTATION);
-		// public static final Pref<Boolean> DISPLAY_TOOLBAR_FULLSCREEN = create("pref_display_fullscreen_toolbar",
-		// "Show the toolbar when a display is full-screen", false, IType.BOOL).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> DISPLAY_FAST_SNAPSHOT = create("pref_display_fast_snapshot",
 				"Enable fast snapshots (uncomplete when the display is obscured by others but much faster)", false,
 				IType.BOOL, true).in(NAME, PRESENTATION);
@@ -348,11 +339,6 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_OVERLAY =
 				create("pref_display_show_overlay", "Show the display bottom overlay", false, IType.BOOL, true).in(NAME,
 						PRESENTATION);
-		// public static final Pref<Boolean> CORE_SCALE =
-		// create("pref_display_show_scale", "Show scale bar", false, IType.BOOL, true).in(NAME, PRESENTATION);
-		// public static final Pref<Boolean> CORE_SHOW_FPS =
-		// create("pref_display_show_fps", "Show number of frames per second", false, IType.BOOL, true).in(NAME,
-		// PRESENTATION);
 
 		/**
 		 * Charts
@@ -837,7 +823,6 @@ public class GamaPreferences {
 	static Interface i_ = new Interface();
 	static Modeling m_ = new Modeling();
 	static Runtime r_ = new Runtime();
-	static Experiments e_ = new Experiments();
 	static Simulations s_ = new Simulations();
 	static Displays d_ = new Displays();
 	static External ext_ = new External();

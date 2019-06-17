@@ -30,16 +30,6 @@ public class ActionExecuter {
 		this.scope = scope.copy("of ActionExecuter");
 	}
 
-	public void dispose() {
-		executeActions(DISPOSE);
-	}
-
-	public void removeAction(final IExecutable haltAction) {
-		for (final List<IExecutable> list : actions) {
-			if (list != null && list.remove(haltAction)) { return; }
-		}
-	}
-
 	private IExecutable insertAction(final IExecutable action, final int type) {
 		List<IExecutable> list = actions[type];
 		if (list == null) {
