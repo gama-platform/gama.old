@@ -15,13 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
-import org.graphstream.algorithm.generator.BaseGenerator;
-import org.graphstream.algorithm.generator.FullGenerator;
-import org.graphstream.algorithm.generator.WattsStrogatzGenerator;
-import org.graphstream.stream.Sink;
-import org.graphstream.stream.SinkAdapter;
-
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -42,6 +35,12 @@ import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.GraphAndPopulationsSynchronizer;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph.graphstream_copy.BarabasiAlbertGenerator;
+import msi.gama.util.graph.graphstream_copy.BaseGenerator;
+import msi.gama.util.graph.graphstream_copy.FullGenerator;
+import msi.gama.util.graph.graphstream_copy.Sink;
+import msi.gama.util.graph.graphstream_copy.SinkAdapter;
+import msi.gama.util.graph.graphstream_copy.WattsStrogatzGenerator;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;

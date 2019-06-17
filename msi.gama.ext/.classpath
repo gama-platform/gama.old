@@ -61,7 +61,6 @@
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-arcgrid-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-data-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-epsg-wkt-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-geometry-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-geotiff-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-grid-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-14.5.jar"/>
@@ -70,7 +69,6 @@
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-oracle-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-postgis-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-spatialite-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jts-wrapper-14.5.jar" sourcepath="/Users/drogoul/Downloads/geotools-14.5/modules/library/api/src"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-main-14.5.jar" sourcepath="/Users/drogoul/Downloads/geotools-14.5/modules/library/main"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-metadata-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-opengis-14.5.jar" sourcepath="/Users/drogoul/Downloads/geotools-14.5/modules/library/opengis"/>
@@ -113,7 +111,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-example-1.14.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-algo-1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-core-1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

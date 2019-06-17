@@ -12,13 +12,12 @@ package msi.gama.util.graph.writer;
 
 import java.io.IOException;
 
-import org.graphstream.stream.file.FileSink;
-
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.graph.GraphUtilsGraphStream;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph.graphstream_copy.FileSink;
 
 /**
  * 
