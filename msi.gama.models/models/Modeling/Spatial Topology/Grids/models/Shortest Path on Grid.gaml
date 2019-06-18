@@ -70,7 +70,7 @@ experiment goto_grid type: gui {
 				draw circle(1) color: #green at: source border: #black;
 				draw circle(1) color: #red at: goal  border: #black;
 				loop v over: the_path.vertices {
-					draw triangle(0.5) color: #yellow border: #black at: v;
+					draw triangle(0.5) color: #yellow border: #black at: point(v);
 				}
 				loop s over: the_path.segments {
 					draw s color: #red ;
