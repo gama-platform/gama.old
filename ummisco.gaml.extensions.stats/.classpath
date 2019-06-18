@@ -9,6 +9,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/colt.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/concurrent.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
