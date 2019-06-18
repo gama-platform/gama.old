@@ -32,7 +32,7 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
 	private static final boolean GLOBAL_OFF = true;
- 
+
 	static {
 		TO_STRING.put(int.class, (o) -> Arrays.toString((int[]) o));
 		TO_STRING.put(double.class, (o) -> Arrays.toString((double[]) o));
@@ -203,6 +203,18 @@ public class DEBUG {
 	public static final void ERR(final Object s) {
 		if (!GLOBAL_OFF) {
 			System.err.println(TO_STRING(s));
+		}
+	}
+
+	/**
+	 * Unconditional output to System.err except if GLOBAL_OFF is true. The stack trace is included
+	 *
+	 * @param string
+	 */
+	public static final void ERR(final Object s, final Throwable t) {
+		if (!GLOBAL_OFF) {
+			System.err.println(TO_STRING(s));
+			t.printStackTrace();
 		}
 	}
 
