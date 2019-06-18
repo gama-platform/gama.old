@@ -845,7 +845,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final Expression right = object.getRight();
 		if (right instanceof StringLiteral) {
 			return compileNamedExperimentFieldExpr(object.getLeft(), EGaml.getInstance().getKeyOf(right));
-		} else if (right != null) { return compileFieldExpr(object.getLeft(), object.getRight()); }
+		} else if (right != null) { return compileFieldExpr(object.getLeft(), right); }
 		return null;
 	}
 

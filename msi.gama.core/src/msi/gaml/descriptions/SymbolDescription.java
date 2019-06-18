@@ -692,7 +692,9 @@ public abstract class SymbolDescription implements IDescription {
 						if (requestedType1.isContainer()) {
 							requestedType1 = GamaType.from(requestedType1, keyType, contentType);
 						}
-						compatible = compatible || actualType.isTranslatableInto(requestedType1)
+						compatible = compatible || actualType.equals(requestedType1)
+								|| requestedType1.id() == IType.NONE
+								|| actualType.id() != IType.NONE && actualType.isTranslatableInto(requestedType1)
 								|| Types.isEmptyContainerCase(requestedType1, exp);
 						if (compatible) {
 							break;
