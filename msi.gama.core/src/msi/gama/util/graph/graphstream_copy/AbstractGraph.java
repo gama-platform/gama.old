@@ -60,8 +60,6 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 
 	private boolean nullAttributesAreErrors;
 
-	private final long replayId = 0;
-
 	// *** Constructors ***
 
 	/**

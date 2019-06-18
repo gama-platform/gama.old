@@ -2,11 +2,11 @@
  *
  * msi.gama.metamodel.topology.GamaQuadTree.java, in plugin msi.gama.core, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gama.metamodel.topology;
@@ -67,7 +67,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		// Envelope 2D, so that all computations are made
 		// in 2D in the QuadTree
 		root = new QuadNode(new Envelope(bounds));
-		minSize = bounds.getWidth() / 1000d;
+		minSize = bounds.getWidth() / 100d;
 	}
 
 	@Override
@@ -124,21 +124,21 @@ public class GamaQuadTree implements ISpatialIndex {
 		result.removeIf(each -> source.euclidianDistanceTo(each) > dist);
 		return result;
 	}
-	
+
 	@Override
-	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f, final int number, Collection<IAgent> alreadyChosen ) {
+	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
+			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
 		final double exp = dist * Maths.SQRT2;
 		final Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
-		in_square.removeAll(alreadyChosen );
+		in_square.removeAll(alreadyChosen);
 		if (in_square.isEmpty()) { return GamaListFactory.create(); }
-		
-		if (in_square.size() <= number) return in_square;
+
+		if (in_square.size() <= number) { return in_square; }
 		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
 		return ordering.leastOf(in_square, number);
 	}
-
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {

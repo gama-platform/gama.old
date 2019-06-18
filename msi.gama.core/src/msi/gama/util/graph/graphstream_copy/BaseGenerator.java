@@ -26,8 +26,6 @@
  */
 package msi.gama.util.graph.graphstream_copy;
 
-import java.util.ArrayList;
-
 import msi.gama.runtime.GAMA;
 
 /**
@@ -71,36 +69,6 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	protected boolean randomlyDirected = false;
 
 	/**
-	 * List of attributes to put on nodes with a randomly chosen numerical value.
-	 */
-	protected ArrayList<String> nodeAttributes = new ArrayList<>();
-
-	/**
-	 * List of attributes to put on edges with a randomly chosen numerical value.
-	 */
-	protected ArrayList<String> edgeAttributes = new ArrayList<>();
-
-	/**
-	 * If node attributes are added, in which range are the numbers chosen ?.
-	 */
-	protected double[] nodeAttributeRange = new double[2];
-
-	/**
-	 * If edge attributes are added, in which range are the numbers chosen ?.
-	 */
-	protected double[] edgeAttributeRange = new double[2];
-
-	/**
-	 * Set the node label attribute using the identifier?.
-	 */
-	protected boolean addNodeLabels = false;
-
-	/**
-	 * Set the edge label attribute using the identifier?.
-	 */
-	protected boolean addEdgeLabels = false;
-
-	/**
 	 * Flag to know if generator has to use an internal graph. Generator which want to use this feature have to use the
 	 * {@link #setUseInternalGraph(boolean)} method to set this flag.
 	 */
@@ -137,31 +105,6 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	public BaseGenerator(final boolean directed, final boolean randomlyDirectedEdges) {
 		super(String.format("generator-%08x", generatorId++));
 		setDirectedEdges(directed, randomlyDirectedEdges);
-
-		nodeAttributeRange[0] = 0;
-		nodeAttributeRange[1] = 1;
-		edgeAttributeRange[0] = 0;
-		edgeAttributeRange[1] = 1;
-	}
-
-	/**
-	 * New base graph generator.
-	 *
-	 * @param directed
-	 *            If true the edges are directed.
-	 * @param randomlyDirectedEdges
-	 *            It true, edges are directed and the direction is choosed randomly.
-	 * @param nodeAttribute
-	 *            put an attribute by that name on each node with a random numeric value.
-	 * @param edgeAttribute
-	 *            put an attribute by that name on each edge with a random numeric value.
-	 */
-	public BaseGenerator(final boolean directed, final boolean randomlyDirectedEdges, final String nodeAttribute,
-			final String edgeAttribute) {
-		this(directed, randomlyDirectedEdges);
-
-		addNodeAttribute(nodeAttribute);
-		addEdgeAttribute(edgeAttribute);
 	}
 
 	// Commands
@@ -179,26 +122,6 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	}
 
 	/**
-	 * Allow to add label attributes on nodes. The label is the identifier of the node.
-	 *
-	 * @param on
-	 *            If true labels are added.
-	 */
-	public void addNodeLabels(final boolean on) {
-		addNodeLabels = on;
-	}
-
-	/**
-	 * Allow to add label attributes on edges. The label is the identifier of the edge.
-	 *
-	 * @param on
-	 *            If true labels are added.
-	 */
-	public void addEdgeLabels(final boolean on) {
-		addEdgeLabels = on;
-	}
-
-	/**
 	 * Make each generated edge directed or not. If the new edge created are directed, the direction is chosen randomly.
 	 *
 	 * @param directed
@@ -212,82 +135,6 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 		if (directed && randomly) {
 			randomlyDirected = randomly;
 		}
-	}
-
-	/**
-	 * Add this attribute on all nodes generated. This attribute will have a numerical value chosen in a range that is
-	 * by default [0-1].
-	 *
-	 * @param name
-	 *            The attribute name.
-	 * @see #setNodeAttributesRange(double, double)
-	 * @see #removeNodeAttribute(String)
-	 */
-	public void addNodeAttribute(final String name) {
-		nodeAttributes.add(name);
-	}
-
-	/**
-	 * Remove an automatic attribute for nodes.
-	 *
-	 * @param name
-	 *            The attribute name.
-	 * @see #addNodeAttribute(String)
-	 */
-	public void removeNodeAttribute(final String name) {
-		final int pos = nodeAttributes.indexOf(name);
-
-		if (pos >= 0) {
-			nodeAttributes.remove(pos);
-		}
-	}
-
-	/**
-	 * Add this attribute on all edges generated. This attribute will have a numerical value chosen in a range that is
-	 * by default [0-1].
-	 *
-	 * @param name
-	 *            The attribute name.
-	 * @see #setEdgeAttributesRange(double, double)
-	 * @see #removeEdgeAttribute(String)
-	 */
-	public void addEdgeAttribute(final String name) {
-		edgeAttributes.add(name);
-	}
-
-	/**
-	 * Remove an automatic attribute for edges.
-	 *
-	 * @param name
-	 *            The attribute name.
-	 * @see #addEdgeAttribute(String)
-	 */
-	public void removeEdgeAttribute(final String name) {
-		final int pos = edgeAttributes.indexOf(name);
-
-		if (pos >= 0) {
-			edgeAttributes.remove(pos);
-		}
-	}
-
-	/**
-	 * If node attributes are added automatically, choose in which range the values are choosed.
-	 *
-	 * @see #addNodeAttribute(String)
-	 */
-	public void setNodeAttributesRange(final double low, final double hi) {
-		nodeAttributeRange[0] = low;
-		nodeAttributeRange[1] = hi;
-	}
-
-	/**
-	 * If edge attributes are added automatically, choose in which range the values are choosed.
-	 *
-	 * @see #addEdgeAttribute(String)
-	 */
-	public void setEdgeAttributesRange(final double low, final double hi) {
-		edgeAttributeRange[0] = low;
-		edgeAttributeRange[1] = hi;
 	}
 
 	/**
@@ -320,25 +167,25 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	public boolean isUsingInternalGraph() {
 		return useInternalGraph;
 	}
-
-	/**
-	 * Same as {@link #addNode(String)} but specify attributes to position the node on a plane.
-	 *
-	 * @param id
-	 *            The node identifier.
-	 * @param x
-	 *            The node abscissa.
-	 * @param y
-	 *            The node ordinate.
-	 */
-	protected void addNode(final String id, final double x, final double y) {
-		addNode(id);
-		sendNodeAttributeAdded(sourceId, id, "xy", new Double[] { new Double(x), new Double(y) });
-
-		if (useInternalGraph) {
-			internalGraph.getNode(id).addAttribute("xy", (Object) new Double[] { new Double(x), new Double(y) });
-		}
-	}
+	//
+	// /**
+	// * Same as {@link #addNode(String)} but specify attributes to position the node on a plane.
+	// *
+	// * @param id
+	// * The node identifier.
+	// * @param x
+	// * The node abscissa.
+	// * @param y
+	// * The node ordinate.
+	// */
+	// protected final void addNode(final String id, final double x, final double y) {
+	// addNode(id);
+	// // sendNodeAttributeAdded(sourceId, id, "xy", new Double[] { new Double(x), new Double(y) });
+	// //
+	// // if (useInternalGraph) {
+	// // internalGraph.getNode(id).addAttribute("xy", (Object) new Double[] { new Double(x), new Double(y) });
+	// // }
+	// }
 
 	/**
 	 * Add a node and put attributes on it if needed.
@@ -346,28 +193,13 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	 * @param id
 	 *            The new node identifier.
 	 */
-	protected void addNode(final String id) {
+	protected final void addNode(final String id) {
 		sendNodeAdded(sourceId, id);
-
-		if (addNodeLabels) {
-			sendNodeAttributeAdded(sourceId, id, "label", id);
-		}
 
 		if (useInternalGraph) {
 			internalGraph.addNode(id);
 		}
 
-		double value;
-
-		for (final String attr : nodeAttributes) {
-			value = GAMA.getCurrentRandom().next() * (nodeAttributeRange[1] - nodeAttributeRange[0])
-					+ nodeAttributeRange[0];
-			sendNodeAttributeAdded(sourceId, id, attr, value);
-
-			if (useInternalGraph) {
-				internalGraph.getNode(id).addAttribute(attr, value);
-			}
-		}
 	}
 
 	/**
@@ -376,7 +208,7 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	 * @param id
 	 *            id of the node to remove
 	 */
-	protected void delNode(final String id) {
+	protected final void delNode(final String id) {
 		if (useInternalGraph) {
 			internalGraph.removeNode(id);
 		}
@@ -407,20 +239,6 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 
 		if (useInternalGraph) {
 			internalGraph.addEdge(id, from, to, directed);
-		}
-
-		if (addEdgeLabels) {
-			sendEdgeAttributeAdded(sourceId, id, "label", id);
-		}
-
-		for (final String attr : edgeAttributes) {
-			final double value = GAMA.getCurrentRandom().next() * (edgeAttributeRange[1] - edgeAttributeRange[0])
-					+ edgeAttributeRange[0];
-			sendEdgeAttributeAdded(sourceId, id, attr, value);
-
-			if (useInternalGraph) {
-				internalGraph.getEdge(id).addAttribute(attr, value);
-			}
 		}
 	}
 
