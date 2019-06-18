@@ -14,10 +14,10 @@ import java.nio.FloatBuffer;
 import java.util.Scanner;
 
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.dev.utils.DEBUG;
 
 public abstract class AbstractShader {
@@ -180,8 +180,8 @@ public abstract class AbstractShader {
 		loadFloat(location_layerAlpha, layerAlpha);
 	}
 
-	public Vector3f getTranslation() {
-		return new Vector3f(0, 0, 0);
+	public GamaPoint getTranslation() {
+		return new GamaPoint(0, 0, 0);
 	}
 
 	public boolean isOverlay() {

@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.renderer.shaders;
 
-import javax.vecmath.Vector3f;
-
 import com.jogamp.opengl.GL2;
 
 public abstract class AbstractPostprocessingShader extends AbstractShader {
@@ -50,11 +48,6 @@ public abstract class AbstractPostprocessingShader extends AbstractShader {
 	@Override
 	public int getTextureID() {
 		return textureIDStored;
-	}
-
-	@Override
-	public Vector3f getTranslation() {
-		return new Vector3f(0, 0, 0);
 	}
 
 }

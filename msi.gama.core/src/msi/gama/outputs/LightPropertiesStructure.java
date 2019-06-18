@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.outputs;
 
-import javax.vecmath.Vector3f;
-
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
 
@@ -27,17 +25,16 @@ public class LightPropertiesStructure {
 	public GamaPoint direction = new GamaPoint(0.5, 0.5, -1);
 	public float spotAngle = 45.0f;
 
-	public Vector3f getColor() {
-		return new Vector3f((float) (color.red() / 255.0), (float) (color.green() / 255.0),
-				(float) (color.blue() / 255.0));
+	public GamaPoint getColor() {
+		return new GamaPoint(color.red() / 255.0, color.green() / 255.0, color.blue() / 255.0);
 	}
 
-	public Vector3f getPosition() {
-		return new Vector3f((float) position.x, (float) position.y, (float) position.z);
+	public GamaPoint getPosition() {
+		return position;
 	}
 
-	public Vector3f getDirection() {
-		return new Vector3f((float) direction.x, (float) direction.y, (float) direction.z);
+	public GamaPoint getDirection() {
+		return direction;
 	}
 
 	public int getId() {
