@@ -82,9 +82,6 @@ init {
 	//Forces textures dimensions to a power of 2 (e.g. 16x16. Necessary on some configurations)
 	write sample(gama.pref_display_power_of_2);
 
-	//Stack displays in the order defined in the model
-	write sample(gama.pref_display_same_order);
-
 	//Display a border around display views
 	write sample(gama.pref_display_show_border);
 
@@ -342,9 +339,6 @@ init {
 
 	//Forces textures dimensions to a power of 2 (e.g. 16x16. Necessary on some configurations)
 	gama.pref_display_power_of_2 <- false;
-
-	//Stack displays in the order defined in the model
-	gama.pref_display_same_order <- true;
 
 	//Display a border around display views
 	gama.pref_display_show_border <- false;
