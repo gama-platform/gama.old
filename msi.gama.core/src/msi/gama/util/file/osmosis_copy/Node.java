@@ -2,7 +2,6 @@
 package msi.gama.util.file.osmosis_copy;
 
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * A data class representing a single OSM node.
@@ -17,59 +16,6 @@ public class Node extends Entity implements Comparable<Node> {
 	/**
 	 * Creates a new instance.
 	 *
-	 * @param id
-	 *            The unique identifier.
-	 * @param version
-	 *            The version of the entity.
-	 * @param timestamp
-	 *            The last updated timestamp.
-	 * @param user
-	 *            The user that last modified this entity.
-	 * @param changesetId
-	 *            The id of the changeset that this version of the entity was created by.
-	 * @param latitude
-	 *            The geographic latitude.
-	 * @param longitude
-	 *            The geographic longitude.
-	 * @deprecated As of 0.40, replaced by Node(entityData, latitude, longitude).
-	 */
-	@Deprecated
-	public Node(final long id, final int version, final Date timestamp, final OsmUser user, final long changesetId,
-			final double latitude, final double longitude) {
-		// Chain to the more-specific constructor
-		this(id, version, new SimpleTimestampContainer(timestamp), user, changesetId, latitude, longitude);
-	}
-
-	/**
-	 * Creates a new instance.
-	 *
-	 * @param id
-	 *            The unique identifier.
-	 * @param version
-	 *            The version of the entity.
-	 * @param timestampContainer
-	 *            The container holding the timestamp in an alternative timestamp representation.
-	 * @param user
-	 *            The name of the user that last modified this entity.
-	 * @param changesetId
-	 *            The id of the changeset that this version of the entity was created by.
-	 * @param latitude
-	 *            The geographic latitude.
-	 * @param longitude
-	 *            The geographic longitude.
-	 * @deprecated As of 0.40, replaced by Node(entityData, latitude, longitude).
-	 */
-	@Deprecated
-	public Node(final long id, final int version, final TimestampContainer timestampContainer, final OsmUser user,
-			final long changesetId, final double latitude, final double longitude) {
-		super(id, version, timestampContainer, user, changesetId);
-
-		init(latitude, longitude);
-	}
-
-	/**
-	 * Creates a new instance.
-	 *
 	 * @param entityData
 	 *            The common entity data.
 	 * @param latitude
@@ -79,63 +25,6 @@ public class Node extends Entity implements Comparable<Node> {
 	 */
 	public Node(final CommonEntityData entityData, final double latitude, final double longitude) {
 		super(entityData);
-
-		init(latitude, longitude);
-	}
-
-	/**
-	 * Creates a new instance.
-	 *
-	 * @param id
-	 *            The unique identifier.
-	 * @param version
-	 *            The version of the entity.
-	 * @param timestamp
-	 *            The last updated timestamp.
-	 * @param user
-	 *            The user that last modified this entity.
-	 * @param changesetId
-	 *            The id of the changeset that this version of the entity was created by.
-	 * @param tags
-	 *            The tags to apply to the object.
-	 * @param latitude
-	 *            The geographic latitude.
-	 * @param longitude
-	 *            The geographic longitude.
-	 * @deprecated As of 0.40, replaced by Node(entityData, latitude, longitude).
-	 */
-	@Deprecated
-	public Node(final long id, final int version, final Date timestamp, final OsmUser user, final long changesetId,
-			final Collection<Tag> tags, final double latitude, final double longitude) {
-		// Chain to the more-specific constructor
-		this(id, version, new SimpleTimestampContainer(timestamp), user, changesetId, tags, latitude, longitude);
-	}
-
-	/**
-	 * Creates a new instance.
-	 *
-	 * @param id
-	 *            The unique identifier.
-	 * @param version
-	 *            The version of the entity.
-	 * @param timestampContainer
-	 *            The container holding the timestamp in an alternative timestamp representation.
-	 * @param user
-	 *            The name of the user that last modified this entity.
-	 * @param changesetId
-	 *            The id of the changeset that this version of the entity was created by.
-	 * @param tags
-	 *            The tags to apply to the object.
-	 * @param latitude
-	 *            The geographic latitude.
-	 * @param longitude
-	 *            The geographic longitude.
-	 * @deprecated As of 0.40, replaced by Node(entityData, latitude, longitude).
-	 */
-	@Deprecated
-	public Node(final long id, final int version, final TimestampContainer timestampContainer, final OsmUser user,
-			final long changesetId, final Collection<Tag> tags, final double latitude, final double longitude) {
-		super(id, version, timestampContainer, user, changesetId, tags);
 
 		init(latitude, longitude);
 	}

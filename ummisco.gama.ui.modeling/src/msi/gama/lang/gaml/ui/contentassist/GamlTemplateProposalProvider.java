@@ -1,30 +1,38 @@
 /*********************************************************************************************
  *
- * 'GamlTemplateProposalProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlTemplateProposalProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.contentassist;
 
-import msi.gama.lang.gaml.services.GamlGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.text.templates.*;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
-import org.eclipse.xtext.ui.editor.contentassist.*;
-import org.eclipse.xtext.ui.editor.templates.*;
+import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
+import org.eclipse.xtext.ui.editor.contentassist.ITemplateAcceptor;
+import org.eclipse.xtext.ui.editor.templates.ContextTypeIdHelper;
+import org.eclipse.xtext.ui.editor.templates.DefaultTemplateProposalProvider;
+import org.eclipse.xtext.ui.editor.templates.XtextTemplateStore;
+
 import com.google.inject.Inject;
+
+import msi.gama.lang.gaml.services.GamlGrammarAccess;
 
 /**
  * The class GamlTemplateProposalProvider.
- * 
+ *
  * @author drogoul
  * @since 21 janv. 2014
- * 
+ *
  */
+
+@SuppressWarnings ("deprecation")
 public class GamlTemplateProposalProvider extends DefaultTemplateProposalProvider {
 
 	/**
@@ -33,32 +41,30 @@ public class GamlTemplateProposalProvider extends DefaultTemplateProposalProvide
 	 * @param helper
 	 */
 
-	@Inject
-	private XtextTemplateStore store;
+	@Inject private XtextTemplateStore store;
 
 	@Inject
 	public GamlTemplateProposalProvider(final TemplateStore templateStore, final ContextTypeRegistry registry,
-		final ContextTypeIdHelper helper) {
+			final ContextTypeIdHelper helper) {
 		super(templateStore, registry, helper);
 	}
 
-	@Inject
-	private GamlGrammarAccess ga;
+	@Inject private GamlGrammarAccess ga;
 
 	@Override
 	protected void createTemplates(final TemplateContext templateContext, final ContentAssistContext context,
-		final ITemplateAcceptor acceptor) {
+			final ITemplateAcceptor acceptor) {
 		// Disabling for comments (see Issue 786)
-		EObject grammarElement = context.getCurrentNode().getGrammarElement();
-		if ( grammarElement == ga.getML_COMMENTRule() ) { return; }
-		if ( grammarElement == ga.getSL_COMMENTRule() ) { return; }
+		final EObject grammarElement = context.getCurrentNode().getGrammarElement();
+		if (grammarElement == ga.getML_COMMENTRule()) { return; }
+		if (grammarElement == ga.getSL_COMMENTRule()) { return; }
 		// TemplateContextType contextType = templateContext.getContextType();
-		Template[] templates = store.getTemplates();
-		for ( Template template : templates ) {
-			if ( !acceptor.canAcceptMoreTemplates() ) { return; }
-			if ( validate(template, templateContext) ) {
-				acceptor.accept(createProposal(template, templateContext, context, getImage(template),
-					getRelevance(template)));
+		final Template[] templates = store.getTemplates();
+		for (final Template template : templates) {
+			if (!acceptor.canAcceptMoreTemplates()) { return; }
+			if (validate(template, templateContext)) {
+				acceptor.accept(
+						createProposal(template, templateContext, context, getImage(template), getRelevance(template)));
 			}
 		}
 

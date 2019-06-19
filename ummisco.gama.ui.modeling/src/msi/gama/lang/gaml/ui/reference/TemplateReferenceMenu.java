@@ -39,6 +39,8 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 5 déc. 2014
  *
  */
+
+@SuppressWarnings ("deprecation")
 public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 	abstract class Node {

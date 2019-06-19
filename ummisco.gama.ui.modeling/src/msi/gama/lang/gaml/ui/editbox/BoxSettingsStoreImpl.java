@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'BoxSettingsStoreImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BoxSettingsStoreImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
@@ -33,8 +32,9 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 	private Collection<String> defaultCatalog;
 
 	protected IPreferenceStore getStore() {
-		if (store == null)
+		if (store == null) {
 			store = ModelingActivator.getInstance().getPreferenceStore();
+		}
 		return store;
 	}
 
@@ -50,22 +50,24 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 	@Override
 	public void loadDefaults(final IBoxSettings editorsSettings) {
 		String defaultName = getStore().getString(key(DEFAULT));
-		if (isEmpty(defaultName))
+		if (isEmpty(defaultName)) {
 			defaultName = providerId;
+		}
 		load(defaultName, editorsSettings);
 	}
 
 	@Override
 	public void load(final String name, final IBoxSettings editorsSettings) {
 		final String value = getStore().getString(key(name));
-		if (!isEmpty(value))
+		if (!isEmpty(value)) {
 			editorsSettings.load(value);
-		else
+		} else {
 			try {
 				editorsSettings.load(getClass().getResourceAsStream("/" + name + ".eb"));
 			} catch (final Exception e) {
 				// EditBox.logError(this, "Error loading settings: " + name, e);
 			}
+		}
 		editorsSettings.setEnabled(getIsEnabled());
 		editorsSettings.setFileNames(getFileNames());
 	}
@@ -76,8 +78,7 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 
 	protected boolean getIsEnabled() {
 		final String key = key(ENABLED);
-		if (getStore().contains(key))
-			return getStore().getBoolean(key);
+		if (getStore().contains(key)) { return getStore().getBoolean(key); }
 		return true;
 	}
 
@@ -88,6 +89,7 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		store(settings);
 	}
 
+	@SuppressWarnings ("deprecation")
 	public void store(final IBoxSettings settings) {
 		final String name = settings.getName();
 		getStore().setValue(key(name), settings.export());
@@ -107,8 +109,9 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 	private void storeCatalog(final Set<String> cat) {
 		final StringBuilder sb = new StringBuilder();
 		for (final String c : cat) {
-			if (sb.length() > 0)
+			if (sb.length() > 0) {
 				sb.append(",");
+			}
 			sb.append(c);
 		}
 		getStore().setValue(key("catalog"), sb.toString());
@@ -117,15 +120,18 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 	@Override
 	public Set<String> getCatalog() {
 		if (catalog == null) {
-			catalog = new LinkedHashSet<String>();
+			catalog = new LinkedHashSet<>();
 			final String cstr = getStore().getString(key("catalog"));
-			if (!isEmpty(cstr))
-				for (final String s : cstr.split(","))
+			if (!isEmpty(cstr)) {
+				for (final String s : cstr.split(",")) {
 					catalog.add(s);
+				}
+			}
 
 		}
-		if (defaultCatalog != null && catalog != null)
+		if (defaultCatalog != null && catalog != null) {
 			catalog.addAll(defaultCatalog);
+		}
 		return catalog;
 	}
 
@@ -133,10 +139,12 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		defaultCatalog = cat;
 	}
 
+	@SuppressWarnings ("deprecation")
 	@Override
 	public void remove(final String name) {
-		if (getCatalog().remove(name))
+		if (getCatalog().remove(name)) {
 			storeCatalog(getCatalog());
+		}
 		getStore().setValue(key(name), "");
 		getStore().setValue(key(name + TXT_POSTFIX), "");
 		ModelingActivator.getInstance().savePluginPreferences();
@@ -147,8 +155,9 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		if (fileNames != null) {
 			boolean first = true;
 			for (final String s : fileNames) {
-				if (!first)
+				if (!first) {
 					sb.append(",");
+				}
 				sb.append(s);
 				first = false;
 			}
@@ -162,17 +171,17 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 	protected Collection<String> getFileNames() {
 		final String key = key(FILE_NAMES);
 
-		if (!getStore().contains(key))
-			return null;
+		if (!getStore().contains(key)) { return null; }
 
 		final String value = getStore().getString(key);
-		final List<String> l = new ArrayList<String>();
+		final List<String> l = new ArrayList<>();
 		if (value != null) {
 			final StringTokenizer st = new StringTokenizer(value, ",");
 			while (st.hasMoreTokens()) {
 				final String t = st.nextToken().trim();
-				if (t.length() > 0)
+				if (t.length() > 0) {
 					l.add(t);
+				}
 			}
 		}
 

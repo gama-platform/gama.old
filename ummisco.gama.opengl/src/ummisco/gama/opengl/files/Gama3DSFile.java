@@ -271,27 +271,6 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		}
 	}
 
-	private String getString(final Chunk chunk) {
-		int index = 0, bytesRead = 0;
-		final boolean read = true;
-		final byte buffer[] = new byte[256];
-
-		try {
-			while (read) {
-				bytesRead += dataInputStream.read(buffer, index, 1);
-				if (buffer[index] == 0x00) {
-					break;
-				}
-				index++;
-			}
-		} catch (final IOException e) {
-			DEBUG.ERR("Error: File IO error in: Get String");
-			return "";
-		}
-		chunk.bytesRead += bytesRead;
-		return new String(buffer).trim();
-	}
-
 	private static short swap(final short value) {
 		final int b1 = value & 0xff;
 		final int b2 = value >> 8 & 0xff;

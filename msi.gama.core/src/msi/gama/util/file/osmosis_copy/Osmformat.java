@@ -1787,14 +1787,6 @@ public final class Osmformat {
 		/**
 		 * <code>required sint64 right = 2;</code>
 		 */
-		private void setRight(final long value) {
-			bitField0_ |= 0x00000002;
-			right_ = value;
-		}
-
-		/**
-		 * <code>required sint64 right = 2;</code>
-		 */
 		private void clearRight() {
 			bitField0_ = bitField0_ & ~0x00000002;
 			right_ = 0L;
@@ -1822,14 +1814,6 @@ public final class Osmformat {
 		/**
 		 * <code>required sint64 top = 3;</code>
 		 */
-		private void setTop(final long value) {
-			bitField0_ |= 0x00000004;
-			top_ = value;
-		}
-
-		/**
-		 * <code>required sint64 top = 3;</code>
-		 */
 		private void clearTop() {
 			bitField0_ = bitField0_ & ~0x00000004;
 			top_ = 0L;
@@ -1852,14 +1836,6 @@ public final class Osmformat {
 		@java.lang.Override
 		public long getBottom() {
 			return bottom_;
-		}
-
-		/**
-		 * <code>required sint64 bottom = 4;</code>
-		 */
-		private void setBottom(final long value) {
-			bitField0_ |= 0x00000008;
-			bottom_ = value;
 		}
 
 		/**

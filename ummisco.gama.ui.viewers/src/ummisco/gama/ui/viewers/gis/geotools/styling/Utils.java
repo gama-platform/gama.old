@@ -45,12 +45,12 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class Utils {
 	/**
-	 * The default {@link StyleFactory} to use.
+	 * The default StyleFactory to use.
 	 */
 	public static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(GeoTools.getDefaultHints());
 
 	/**
-	 * The default {@link FilterFactory} to use.
+	 * The default FilterFactory to use.
 	 */
 	public static FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory(GeoTools.getDefaultHints());
 
@@ -59,7 +59,7 @@ public class Utils {
 	 *
 	 * @param rect
 	 *            the swt <code>Rectangle</code>
-	 * @return a {@link java.awt.Rectangle} instance with the appropriate location and size.
+	 * @return a java.awt.Rectangle instance with the appropriate location and size.
 	 */
 	public static java.awt.Rectangle toAwtRectangle(final Rectangle rect) {
 		final java.awt.Rectangle rect2d = new java.awt.Rectangle();
@@ -68,7 +68,7 @@ public class Utils {
 	}
 
 	/**
-	 * Create a default {@link Style} ofr the featureSource.
+	 * Create a default Style ofr the featureSource.
 	 *
 	 * @param featureSource
 	 *            the source on which to create the style.
@@ -146,17 +146,12 @@ public class Utils {
 	 */
 	public static Style createPointStyle() {
 		final Graphic gr = styleFactory.createDefaultGraphic();
-
 		final Mark mark = styleFactory.getCircleMark();
-
 		mark.setStroke(styleFactory.createStroke(filterFactory.literal(Color.BLUE), filterFactory.literal(1)));
-
 		mark.setFill(styleFactory.createFill(filterFactory.literal(Color.CYAN)));
-
 		gr.graphicalSymbols().clear();
 		gr.graphicalSymbols().add(mark);
 		gr.setSize(filterFactory.literal(5));
-
 		/*
 		 * Setting the geometryPropertyName arg to null signals that we want to draw the default geomettry of features
 		 */

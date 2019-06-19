@@ -28,8 +28,8 @@ import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
- * Displays a list of the map layers in an associated {@linkplain JMapPane} and provides controls to set the visibility,
- * selection and style of each layer.
+ * Displays a list of the map layers in an associated and provides controls to set the visibility, selection and style
+ * of each layer.
  * <p>
  * Implementation note: DefaultMapContext stores its list of MapLayer objects in rendering order, ie. the layer at index
  * 0 is rendererd first, followed by index 1 etc. MapLayerTable stores its layers in the reverse order since it is more
@@ -48,7 +48,6 @@ public class MapLayerComposite extends Composite {
 	protected MaplayerTableViewer mapLayerTableViewer;
 
 	/**
-	 * Default constructor. A subsequent call to {@linkplain #setMapPane} will be required.
 	 */
 	public MapLayerComposite(final Composite parent, final int style) {
 		super(parent, style);

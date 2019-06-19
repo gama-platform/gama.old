@@ -4,7 +4,6 @@ package msi.gama.util.file.osmosis_copy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,51 +18,6 @@ public class Relation extends Entity implements Comparable<Relation> {
 	/**
 	 * Creates a new instance.
 	 *
-	 * @param id
-	 *            The unique identifier.
-	 * @param version
-	 *            The version of the entity.
-	 * @param timestamp
-	 *            The last updated timestamp.
-	 * @param user
-	 *            The user that last modified this entity.
-	 * @param changesetId
-	 *            The id of the changeset that this version of the entity was created by.
-	 * @deprecated As of 0.40, replaced by Relation(entityData).
-	 */
-	@Deprecated
-	public Relation(final long id, final int version, final Date timestamp, final OsmUser user,
-			final long changesetId) {
-		// Chain to the more-specific constructor
-		this(id, version, new SimpleTimestampContainer(timestamp), user, changesetId);
-	}
-
-	/**
-	 * Creates a new instance.
-	 *
-	 * @param id
-	 *            The unique identifier.
-	 * @param version
-	 *            The version of the entity.
-	 * @param timestampContainer
-	 *            The container holding the timestamp in an alternative timestamp representation.
-	 * @param user
-	 *            The user that last modified this entity.
-	 * @param changesetId
-	 *            The id of the changeset that this version of the entity was created by.
-	 * @deprecated As of 0.40, replaced by Relation(entityData).
-	 */
-	@Deprecated
-	public Relation(final long id, final int version, final TimestampContainer timestampContainer, final OsmUser user,
-			final long changesetId) {
-		super(id, version, timestampContainer, user, changesetId);
-
-		this.members = new ArrayList<>();
-	}
-
-	/**
-	 * Creates a new instance.
-	 *
 	 * @param entityData
 	 *            The common entity data.
 	 */
@@ -71,59 +25,6 @@ public class Relation extends Entity implements Comparable<Relation> {
 		super(entityData);
 
 		this.members = new ArrayList<>();
-	}
-
-	/**
-	 * Creates a new instance.
-	 *
-	 * @param id
-	 *            The unique identifier.
-	 * @param version
-	 *            The version of the entity.
-	 * @param timestamp
-	 *            The last updated timestamp.
-	 * @param user
-	 *            The user that last modified this entity.
-	 * @param changesetId
-	 *            The id of the changeset that this version of the entity was created by.
-	 * @param tags
-	 *            The tags to apply to the object.
-	 * @param members
-	 *            The members to apply to the object.
-	 * @deprecated As of 0.40, replaced by Relation(entityData, members).
-	 */
-	@Deprecated
-	public Relation(final long id, final int version, final Date timestamp, final OsmUser user, final long changesetId,
-			final Collection<Tag> tags, final List<RelationMember> members) {
-		// Chain to the more-specific constructor
-		this(id, version, new SimpleTimestampContainer(timestamp), user, changesetId, tags, members);
-	}
-
-	/**
-	 * Creates a new instance.
-	 *
-	 * @param id
-	 *            The unique identifier.
-	 * @param version
-	 *            The version of the entity.
-	 * @param timestampContainer
-	 *            The container holding the timestamp in an alternative timestamp representation.
-	 * @param user
-	 *            The user that last modified this entity.
-	 * @param changesetId
-	 *            The id of the changeset that this version of the entity was created by.
-	 * @param tags
-	 *            The tags to apply to the object.
-	 * @param members
-	 *            The members to apply to the object.
-	 * @deprecated As of 0.40, replaced by Relation(entityData, members).
-	 */
-	@Deprecated
-	public Relation(final long id, final int version, final TimestampContainer timestampContainer, final OsmUser user,
-			final long changesetId, final Collection<Tag> tags, final List<RelationMember> members) {
-		super(id, version, timestampContainer, user, changesetId, tags);
-
-		this.members = new ArrayList<>(members);
 	}
 
 	/**

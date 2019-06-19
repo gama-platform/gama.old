@@ -60,6 +60,8 @@ import com.google.common.collect.Lists;
  * @since 5 déc. 2014
  *
  */
+
+@SuppressWarnings ("deprecation")
 public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplateDialog {
 
 	TemplatePersistenceData data;

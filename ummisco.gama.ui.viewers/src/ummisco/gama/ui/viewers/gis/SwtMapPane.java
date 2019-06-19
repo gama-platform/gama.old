@@ -40,7 +40,6 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.map.MapContext;
 import org.geotools.map.event.MapBoundsEvent;
 import org.geotools.map.event.MapBoundsListener;
 import org.geotools.map.event.MapLayerEvent;
@@ -57,10 +56,10 @@ import org.opengis.referencing.operation.MathTransform;
 import ummisco.gama.ui.viewers.gis.geotools.styling.Utils;
 
 /**
- * A map display pane that works with a GTRenderer and MapContext to display features. It supports the use of tool
- * classes to implement, for example, mouse-controlled zooming and panning.
+ * A map display pane that works with a GTRenderer to display features. It supports the use of tool classes to
+ * implement, for example, mouse-controlled zooming and panning.
  * <p>
- * Rendering is performed on a background thread and is managed by the {@linkplain RenderingExecutor} class.
+ * Rendering is performed on a background thread and is managed
  * <p>
  * Adapted from original code by Ian Turton.
  *
@@ -119,8 +118,7 @@ public class SwtMapPane extends Canvas
 	 *
 	 * @param renderer
 	 *            a renderer object
-	 * @param content
-	 *            an instance of MapContext
+	 *
 	 */
 	public SwtMapPane(final Composite parent, final int style, final GTRenderer renderer, final MapContent content) {
 		super(parent, style);
@@ -190,8 +188,6 @@ public class SwtMapPane extends Canvas
 	}
 
 	/**
-	 * Register a {@linkplain MapLayerComposite} object to be receive layer change events from this map pane and to
-	 * control layer ordering, visibility and selection.
 	 *
 	 * @param layerTable
 	 *            an instance of MapLayerTable
@@ -281,10 +277,9 @@ public class SwtMapPane extends Canvas
 	/**
 	 * Return a (copy of) the currently displayed map area.
 	 * <p>
-	 * Note, this will not always be the same as the envelope returned by {@code MapContext.getAreaOfInterest()}. For
-	 * example, when the map is displayed at the full extent of all layers {@code MapContext.getAreaOfInterest()} will
-	 * return the union of the layer bounds while this method will return an evnelope that can included extra space
-	 * beyond the bounds of the layers.
+	 * Note, this will not always be the same as the envelope returned by . For example, when the map is displayed at
+	 * the full extent of all layers will return the union of the layer bounds while this method will return an evnelope
+	 * that can included extra space beyond the bounds of the layers.
 	 *
 	 * @return the display area in world coordinates as a new {@code ReferencedEnvelope}
 	 */
@@ -327,9 +322,8 @@ public class SwtMapPane extends Canvas
 	}
 
 	/**
-	 * Sets the area to display by calling the {@linkplain MapContext#setAreaOfInterest} method of this pane's map
-	 * context. Does nothing if the MapContext has not been set. If neither the context or the envelope have coordinate
-	 * reference systems defined this method does nothing.
+	 * Sets the area to display by calling the method of this pane's map context. Does nothing if has not been set. If
+	 * neither the context or the envelope have coordinate reference systems defined this method does nothing.
 	 * <p>
 	 * The map area that ends up being displayed will often be larger than the requested display area. For instance, if
 	 * the square area is requested, but the map pane's screen area is a rectangle with width greater than height, then
@@ -362,8 +356,8 @@ public class SwtMapPane extends Canvas
 	}
 
 	/**
-	 * Helper method for {@linkplain #setDisplayArea} which is also called by other methods that want to set the display
-	 * area without provoking repainting of the display
+	 * Helper method for which is also called by other methods that want to set the display area without provoking
+	 * repainting of the display
 	 *
 	 * @param envelope
 	 *            requested display area

@@ -159,11 +159,11 @@ public class SLDs extends SLD {
 	}
 
 	/**
-	 * Extracts the fill color with a given opacity from the {@link PointSymbolizer}.
+	 * Extracts the fill color with a given opacity from the PointSymbolizer.
 	 *
 	 * @param symbolizer
 	 *            the point symbolizer from which to get the color.
-	 * @return the {@link Color} with transparency if available. Returns null if no color is available.
+	 * @return the Color with transparency if available. Returns null if no color is available.
 	 */
 	public static Color pointFillWithAlpha(final PointSymbolizer symbolizer) {
 		if (symbolizer == null) { return null; }
@@ -212,7 +212,7 @@ public class SLDs extends SLD {
 	}
 
 	/**
-	 * Returns the max scale of the default rule, or {@linkplain Double#NaN} if none is set
+	 * Returns the max scale of the default rule, or Double#NaN if none is set
 	 */
 	public static double maxScale(final FeatureTypeStyle fts) {
 		if (fts == null || fts.rules().size() == 0) { return Double.NaN; }

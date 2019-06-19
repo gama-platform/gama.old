@@ -42,10 +42,6 @@ public class StolenColorEditor {
 	final Button fButton;
 	SelectionListener listener;
 
-	public StolenColorEditor(final Composite parent) {
-		this(parent, null);
-	}
-
 	public StolenColorEditor(final Composite parent, final SelectionListener parentListener) {
 		this.listener = parentListener;
 		fButton = new Button(parent, SWT.PUSH);

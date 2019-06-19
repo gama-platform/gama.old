@@ -4,7 +4,7 @@
  * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
@@ -25,13 +25,15 @@ import ummisco.gama.ui.views.toolbar.Selector;
  * @since 27 août 2016
  *
  */
+
+@SuppressWarnings ("deprecation")
 public class CreateExperimentSelectionListener implements Selector {
 
 	GamlEditor editor;
 	Control control;
 
 	/**
-	 * 
+	 *
 	 */
 	public CreateExperimentSelectionListener(final GamlEditor editor, final Control toolbar) {
 		this.editor = editor;

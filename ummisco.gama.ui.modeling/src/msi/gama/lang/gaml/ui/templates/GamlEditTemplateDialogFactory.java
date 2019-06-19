@@ -29,6 +29,8 @@ import com.google.inject.name.Named;
  * @since 5 déc. 2014
  *
  */
+
+@SuppressWarnings ("deprecation")
 public class GamlEditTemplateDialogFactory extends EditTemplateDialogFactory {
 
 	@Inject private Provider<TemplatesLanguageConfiguration> configurationProvider;

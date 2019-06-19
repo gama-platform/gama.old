@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.geotools.data.FeatureSource;
 import org.geotools.map.Layer;
-import org.geotools.map.MapLayer;
 import org.geotools.map.StyleLayer;
 import org.geotools.styling.Style;
 
@@ -39,7 +38,6 @@ import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.styling.SimpleConfigurator;
 
 /**
- * A {@link TableViewer table viewer} for {@link Layer map layers}.
  *
  * @author Andrea Antonello (www.hydrologis.com)
  *
@@ -58,14 +56,11 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	 * Constructor.
 	 *
 	 * <p>
-	 * <b>Note</b> that after the object is built and before actually using it, the {@link SwtMapPane map pane} has to
-	 * be set through the {@link #setPane(SwtMapPane)} method.
+	 * <b>Note</b> that after the object is built and before actually using it, the has to be set through the method.
 	 * </p>
 	 *
 	 * @param parent
-	 *            the parent {@link Composite}.
 	 * @param style
-	 *            the style for the {@link Composite}.
 	 */
 	public MaplayerTableViewer(final Composite parent, final int style) {
 		super(parent, style);
@@ -82,7 +77,6 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	}
 
 	/**
-	 * Setter for the {@link SwtMapPane map pane}.
 	 *
 	 * @param pane
 	 *            the map pane to use.
@@ -92,7 +86,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	}
 
 	/**
-	 * Getter for the loaded {@link MapLayer}s list.
+	 * Getter for the loaded list.
 	 *
 	 * @return the list of map layers.
 	 */
@@ -101,7 +95,6 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	}
 
 	/**
-	 * Getter for the selected {@link Layer}.
 	 *
 	 * @return the selected layer or <code>null</code>.
 	 */
@@ -233,7 +226,6 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	}
 
 	/**
-	 * Adds a {@link Layer} to the viewer and updates.
 	 *
 	 * @param layer
 	 *            the layer to add.
@@ -244,7 +236,6 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	}
 
 	/**
-	 * Removes a {@link Layer} from the viewer and updates.
 	 *
 	 * @param layer
 	 *            the layer to remove.

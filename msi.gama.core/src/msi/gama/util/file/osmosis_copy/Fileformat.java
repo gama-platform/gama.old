@@ -3,6 +3,7 @@
 
 package msi.gama.util.file.osmosis_copy;
 
+@SuppressWarnings ("deprecation")
 public final class Fileformat {
 	private Fileformat() {}
 
