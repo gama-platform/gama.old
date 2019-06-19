@@ -19,6 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -180,10 +181,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 									value = "[{1,2}, {3,4}, {5,6}] contains {3,4}",
 									equals = "true") }),
 					@usage ("if it is a map, contains returns true if the operand is a value of the map"),
+					@usage ("if it is a pair, contains_key returns true if the operand is equal to the value of the pair"),
 					@usage ("if it is a file, contains returns true it the operand is contained in the file content"),
 					@usage ("if it is a population, contains returns true if the operand is an agent of the population, false otherwise"),
-					@usage ("if it is a graph, contains returns true if the operand is an edge of the graph, false otherwise (use contains_key to retrieve a node)") },
+					@usage ("if it is a graph, contains returns true if the operand is an edge of the graph, false otherwise (use 'contains_key' for testing the presence of a node)") },
 			see = { "contains_all", "contains_any", "contains_key" })
+	@test ("['aa'::'bb', 13::14] contains 'bb'")
 	boolean contains(IScope scope, Object o) throws GamaRuntimeException;
 
 	@operator (
@@ -206,11 +209,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 									value = "[{1,2}, {3,4}, {5,6}] contains_key 0",
 									equals = "true") }),
 					@usage ("if it is a map, contains_key returns true if the operand is a key of the map"),
+					@usage ("if it is a pair, contains_key returns true if the operand is equal to the key of the pair"),
 					@usage ("if it is a matrix, contains_key returns true if the point operand is a valid index of the matrix (i.e. >= {0,0} and < {rows, col})"),
 					@usage ("if it is a file, contains_key is applied to the file contents -- a container"),
-					@usage ("if it is a graph, contains_key returns true if the graph contains the corresponding node") },
+					@usage ("if it is a graph, contains_key returns true if the graph contains the corresponding node (use 'contains' for testing the presence of an edge)") },
 			see = { "contains_all", "contains", "contains_any" })
-
+	@test ("['aa'::'bb', 13::14] contains_key 'aa'")
 	boolean containsKey(IScope scope, Object o) throws GamaRuntimeException;
 
 	@operator (
