@@ -379,7 +379,7 @@ public class Graphs {
 							value = "graphFromMap contains_vertex {1,5}",
 							equals = "true") },
 			see = { "contains_edge" })
-	public static Boolean containsVertex(final IScope scope, final GamaGraph graph, final Object vertex) {
+	public static Boolean containsVertex(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the contains_vertex operator, the graph should not be null!", scope);
 		}

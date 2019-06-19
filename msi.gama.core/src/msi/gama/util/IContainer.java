@@ -164,12 +164,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	// Operators available in GAML
 
 	@operator (
-			value = "contains",
+			value = { "contains", "contains_value" },
 			can_be_const = true,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
 	@doc (
-			value = "true, if the container contains the right operand, false otherwise",
+			value = "true, if the container contains the right operand, false otherwise. 'contains' can also be written 'contains_value'. On graphs, it is equivalent to calling 'contains_edge'",
 			masterDoc = true,
 			comment = "the contains operator behavior depends on the nature of the operand",
 			usages = { @usage (
@@ -180,22 +180,23 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 							@example (
 									value = "[{1,2}, {3,4}, {5,6}] contains {3,4}",
 									equals = "true") }),
-					@usage ("if it is a map, contains returns true if the operand is a value of the map"),
+					@usage ("if it is a map, contains, which can also be written 'contains_value', returns true if the operand is a value of the map"),
 					@usage ("if it is a pair, contains_key returns true if the operand is equal to the value of the pair"),
 					@usage ("if it is a file, contains returns true it the operand is contained in the file content"),
 					@usage ("if it is a population, contains returns true if the operand is an agent of the population, false otherwise"),
-					@usage ("if it is a graph, contains returns true if the operand is an edge of the graph, false otherwise (use 'contains_key' for testing the presence of a node)") },
+					@usage ("if it is a graph, contains can be written 'contains_edge' and  returns true if the operand is an edge of the graph, false otherwise (use 'contains_node' for testing the presence of a node)") },
 			see = { "contains_all", "contains_any", "contains_key" })
 	@test ("['aa'::'bb', 13::14] contains 'bb'")
 	boolean contains(IScope scope, Object o) throws GamaRuntimeException;
 
 	@operator (
-			value = "contains_key",
+			value = { "contains_key", "contains_node" },
 			can_be_const = true,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
+
 	@doc (
-			value = "true, if the left-hand operand -- the container -- contains a key -- or an index -- equal to the right-hand operand, false otherwise",
+			value = "true, if the left-hand operand -- the container -- contains a key -- or an index -- equal to the right-hand operand, false otherwise. On graphs, 'contains_key' is equivalent to calling 'contains_vertex' ",
 			masterDoc = true,
 			comment = "the behavior of contains_key depends on the nature of the container",
 			usages = { @usage (
@@ -212,7 +213,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 					@usage ("if it is a pair, contains_key returns true if the operand is equal to the key of the pair"),
 					@usage ("if it is a matrix, contains_key returns true if the point operand is a valid index of the matrix (i.e. >= {0,0} and < {rows, col})"),
 					@usage ("if it is a file, contains_key is applied to the file contents -- a container"),
-					@usage ("if it is a graph, contains_key returns true if the graph contains the corresponding node (use 'contains' for testing the presence of an edge)") },
+					@usage ("if it is a graph, contains_key returns true if the graph contains the corresponding vertex") },
 			see = { "contains_all", "contains", "contains_any" })
 	@test ("['aa'::'bb', 13::14] contains_key 'aa'")
 	boolean containsKey(IScope scope, Object o) throws GamaRuntimeException;
