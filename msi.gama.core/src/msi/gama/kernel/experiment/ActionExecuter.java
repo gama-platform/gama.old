@@ -63,8 +63,11 @@ public class ActionExecuter {
 
 	public void executeOneShotActions() {
 		if (scope.interrupted()) { return; }
-		executeActions(ONE_SHOT);
-		actions[ONE_SHOT] = null;
+		try {
+			executeActions(ONE_SHOT);
+		} finally {
+			actions[ONE_SHOT] = null;
+		}
 	}
 
 	private void executeActions(final int type) {

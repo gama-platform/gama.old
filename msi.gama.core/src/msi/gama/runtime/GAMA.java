@@ -267,7 +267,7 @@ public class GAMA {
 				if (isInHeadLessMode()) { throw g; }
 				final IExperimentController controller = getFrontmostController();
 				if (controller == null || controller.isDisposing()) { return; }
-				controller.userPause();
+				controller.directPause();
 				throw g;
 			}
 		}
