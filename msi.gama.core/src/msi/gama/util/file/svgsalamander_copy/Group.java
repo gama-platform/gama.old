@@ -88,8 +88,9 @@ public class Group extends ShapeElement {
 	}
 
 	@Override
-	void pick(final Rectangle2D pickArea, AffineTransform ltw, final boolean boundingBox, final List retVec)
+	void pick(final Rectangle2D pickArea, final AffineTransform aff, final boolean boundingBox, final List retVec)
 			throws SVGException {
+		AffineTransform ltw = aff;
 		if (xform != null) {
 			ltw = new AffineTransform(ltw);
 			ltw.concatenate(xform);

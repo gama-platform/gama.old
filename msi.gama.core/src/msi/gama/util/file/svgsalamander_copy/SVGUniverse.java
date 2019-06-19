@@ -144,15 +144,12 @@ public class SVGUniverse implements Serializable {
 
 			SVGDiagram dia = loadedDocs.get(xmlBase);
 			if (dia == null && loadIfAbsent) {
-				// System.err.println("SVGUnivserse: " + xmlBase.toString());
-				// javax.swing.JOptionPane.showMessageDialog(null, xmlBase.toString());
 				final URL url = xmlBase.toURL();
 
 				loadSVG(url, false);
 				dia = loadedDocs.get(xmlBase);
-				if (dia == null) { return null; }
 			}
-
+			if (dia == null) { return null; }
 			final String fragment = path.getFragment();
 			return fragment == null ? dia.getRoot() : dia.getElement(fragment);
 		} catch (final Exception e) {
@@ -313,7 +310,8 @@ public class SVGUniverse implements Serializable {
 	 * @param name
 	 *            - Name given the document constructed from a stream.
 	 */
-	public URI getStreamBuiltURI(String name) {
+	public URI getStreamBuiltURI(final String n) {
+		String name = n;
 		if (name == null || name.length() == 0) { return null; }
 
 		if (name.charAt(0) != '/') {

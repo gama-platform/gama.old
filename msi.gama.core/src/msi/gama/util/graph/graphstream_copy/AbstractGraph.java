@@ -767,20 +767,21 @@ public abstract class AbstractGraph extends AbstractElement implements Graph {
 	// here. If the node does not exist the reference will be null.
 	// And if autoCreate is on, we need also the id. Sad but true!
 	@SuppressWarnings ("unchecked")
-	protected <T extends Edge> T addEdge(final String edgeId, AbstractNode src, final String srcId, AbstractNode dst,
-			final String dstId, final boolean directed) {
+	protected <T extends Edge> T addEdge(final String edgeId, final AbstractNode srcNode, final String srcId,
+			final AbstractNode dstNode, final String dstId, final boolean directed) {
 		AbstractEdge edge = getEdge(edgeId);
 		if (edge != null) {
 			if (strictChecking) {
 				throw new IdAlreadyInUseException("id \"" + edgeId + "\" already in use. Cannot create an edge.");
 			}
-			if (edge.getSourceNode() == src && edge.getTargetNode() == dst
-					|| !directed && edge.getTargetNode() == src && edge.getSourceNode() == dst) {
+			if (edge.getSourceNode() == srcNode && edge.getTargetNode() == dstNode
+					|| !directed && edge.getTargetNode() == srcNode && edge.getSourceNode() == dstNode) {
 				return (T) edge;
 			}
 			return null;
 		}
-
+		AbstractNode src = srcNode;
+		AbstractNode dst = dstNode;
 		if (src == null || dst == null) {
 			if (strictChecking) {
 				throw new ElementNotFoundException(

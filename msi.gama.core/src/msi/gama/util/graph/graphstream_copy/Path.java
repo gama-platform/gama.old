@@ -193,7 +193,8 @@ public class Path implements Structure {
 	 * @param edge
 	 *            The edge used.
 	 */
-	public void add(Node from, final Edge edge) {
+	public void add(final Node f, final Edge edge) {
+		Node from = f;
 		if (root == null) {
 			if (from == null) {
 				throw new IllegalArgumentException("From node cannot be null.");

@@ -80,8 +80,10 @@ public class AdjacencyListGraph extends AbstractGraph {
 	 *            expensive operation.
 	 */
 	public AdjacencyListGraph(final String id, final boolean strictChecking, final boolean autoCreate,
-			int initialNodeCapacity, int initialEdgeCapacity) {
+			final int nodeCapacity, final int edgeCapacity) {
 		super(id, strictChecking, autoCreate);
+		int initialNodeCapacity = nodeCapacity;
+		int initialEdgeCapacity = edgeCapacity;
 
 		setNodeFactory((id1, graph) -> new AdjacencyListNode((AbstractGraph) graph, id1));
 		setEdgeFactory(
@@ -285,14 +287,16 @@ public class AdjacencyListGraph extends AbstractGraph {
 	public <T extends Edge> Iterator<T> getEdgeIterator() {
 		return new EdgeIterator<>();
 	}
-	
+
 	NodeIterator nodeIterator;
 
 	@Override
 	public <T extends Node> Iterator<T> getNodeIterator() {
-		if (nodeIterator == null)
-		nodeIterator = new NodeIterator<>();
-		else nodeIterator.reset();
+		if (nodeIterator == null) {
+			nodeIterator = new NodeIterator<>();
+		} else {
+			nodeIterator.reset();
+		}
 		return nodeIterator;
 	}
 

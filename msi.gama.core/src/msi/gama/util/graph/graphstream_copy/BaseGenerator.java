@@ -224,7 +224,10 @@ public abstract class BaseGenerator extends SourceBase implements Generator {
 	 * @param from
 	 *            The source node (can be inverted randomly with the target node).
 	 */
-	protected void addEdge(String id, String from, String to) {
+	protected void addEdge(final String i, final String f, final String t) {
+		String id = i;
+		String from = f;
+		String to = t;
 		if (directed && randomlyDirected && GAMA.getCurrentRandom().next() > 0.5d) {
 			final String tmp = from;
 			from = to;

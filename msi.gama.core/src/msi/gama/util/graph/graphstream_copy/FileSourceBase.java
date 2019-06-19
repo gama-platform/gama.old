@@ -1092,9 +1092,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	/**
 	 * True if the <code>string</code> represents a truth statement ("1", "true", "yes", "on").
 	 */
-	protected boolean isTrue(String string) {
-		string = string.toLowerCase();
-
+	protected boolean isTrue(final String s) {
+		final String string = s.toLowerCase();
 		if (string.equals("1")) { return true; }
 		if (string.equals("true")) { return true; }
 		if (string.equals("yes")) { return true; }
@@ -1106,9 +1105,8 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	/**
 	 * True if the <code>string</code> represents a false statement ("0", "false", "no", "off").
 	 */
-	protected boolean isFalse(String string) {
-		string = string.toLowerCase();
-
+	protected boolean isFalse(final String s) {
+		final String string = s.toLowerCase();
 		if (string.equals("0")) { return true; }
 		if (string.equals("false")) { return true; }
 		if (string.equals("no")) { return true; }
@@ -1179,15 +1177,15 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 	 * Get a number triplet with numbers separated by comas and return new bounds for it. For example "0,1,2". protected
 	 * Bounds3 getBounds3(String value) throws NumberFormatException { int p0 = value.indexOf(','); int p1 =
 	 * value.indexOf(',', p0 + 1);
-	 * 
+	 *
 	 * if (p0 > 0 && p1 > 0) { String n0, n1, n2; float v0, v1, v2;
-	 * 
+	 *
 	 * n0 = value.substring(0, p0); n1 = value.substring(p0 + 1, p1); n2 = value.substring(p1 + 1);
-	 * 
+	 *
 	 * v0 = Float.parseFloat(n0); v1 = Float.parseFloat(n1); v2 = Float.parseFloat(n2);
-	 * 
+	 *
 	 * return new Bounds3(v0, v1, v2); }
-	 * 
+	 *
 	 * throw new NumberFormatException("value '" + value + "' not in a valid point3 format"); }
 	 */
 

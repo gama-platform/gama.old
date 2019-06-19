@@ -178,7 +178,9 @@ public class WattsStrogatzGenerator extends BaseGenerator {
 		return String.format("%d", id);
 	}
 
-	protected String edgeId(int from, int to) {
+	protected String edgeId(final int f, final int t) {
+		int from = f;
+		int to = t;
 		if (from > to) {
 			to += from;
 			from = to - from;

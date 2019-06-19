@@ -137,7 +137,8 @@ abstract public class SVGElement implements Serializable {
 	/**
 	 * @return an ordered list of nodes from the root of the tree to this node
 	 */
-	public List<SVGElement> getPath(List<SVGElement> retVec) {
+	public List<SVGElement> getPath(final List<SVGElement> list) {
+		List<SVGElement> retVec = list;
 		if (retVec == null) {
 			retVec = new ArrayList<>();
 		}

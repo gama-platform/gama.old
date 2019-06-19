@@ -138,7 +138,8 @@ public class GraphListeners extends SourceBase implements Sink {
 	 */
 	@Override
 	public void edgeAttributeChanged(final String sourceId, final long timeId, final String edgeId,
-			final String attribute, Object oldValue, final Object newValue) {
+			final String attribute, final Object oldVal, final Object newValue) {
+		Object oldValue = oldVal;
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			final Edge edge = g.getEdge(edgeId);
 			if (edge != null) {
@@ -213,8 +214,9 @@ public class GraphListeners extends SourceBase implements Sink {
 	 * java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void graphAttributeChanged(final String sourceId, final long timeId, final String attribute, Object oldValue,
-			final Object newValue) {
+	public void graphAttributeChanged(final String sourceId, final long timeId, final String attribute,
+			final Object oldVal, final Object newValue) {
+		Object oldValue = oldVal;
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			passYourWay = true;
 
@@ -284,7 +286,8 @@ public class GraphListeners extends SourceBase implements Sink {
 	 */
 	@Override
 	public void nodeAttributeChanged(final String sourceId, final long timeId, final String nodeId,
-			final String attribute, Object oldValue, final Object newValue) {
+			final String attribute, final Object oldVal, final Object newValue) {
+		Object oldValue = oldVal;
 		if (sinkTime.isNewEvent(sourceId, timeId)) {
 			final Node node = g.getNode(nodeId);
 			if (node != null) {
