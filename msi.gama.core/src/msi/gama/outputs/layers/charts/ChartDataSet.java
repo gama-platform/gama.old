@@ -71,8 +71,6 @@ public class ChartDataSet {
 	boolean commonXSeries = false; // series
 	boolean commonYSeries = false; // heatmap & 3d
 	boolean byCategory = false; // histogram/pie
-	boolean keepOldSeries = true; // keep old series or move to deleted (to keep
-									// history)
 
 	final boolean keepHistory;
 	final ChartHistory history;
@@ -572,12 +570,6 @@ public class ChartDataSet {
 		this.xlabels = data;
 	}
 
-	public void setYSource(final IScope scope, final IExpression data) {
-		// TODO Auto-generated method stub
-		this.useYSource = true;
-		this.ysource = data;
-	}
-
 	public void setYLabels(final IScope scope, final IExpression data) {
 		// TODO Auto-generated method stub
 		this.useYLabels = true;
@@ -618,11 +610,6 @@ public class ChartDataSet {
 			this.setResetAllBefore(this.getDate(scope));
 
 		}
-	}
-
-	public void setStyle(final IScope scope, final String stval) {
-		// TODO Auto-generated method stub
-		defaultstyle = stval;
 	}
 
 	public String getStyle(final IScope scope) {

@@ -376,22 +376,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	}
 
-	static final int SERIES_CHART = 0;
-	static final int HISTOGRAM_CHART = 1;
-	static final int PIE_CHART = 2;
-	static final int XY_CHART = 3;
-	static final int BOX_WHISKER_CHART = 4;
-	static final int SCATTER_CHART = 5;
-
 	private ChartOutput chartoutput = null;
 
 	// private HashMap<String,Object> chartParameters=new
 	// HashMap<String,Object>();
 
-	static String xAxisName = "'time'";
 	final Map<String, Double> lastValues;
-	Long lastComputeCycle;
-	// ChartDataStatement timeSeriesXData = null;
 	DataDeclarationSequence dataDeclaration = new DataDeclarationSequence(getDescription());
 
 	public ChartOutput getOutput() {
@@ -401,7 +391,6 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public ChartLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		lastValues = new LinkedHashMap<>();
-		lastComputeCycle = 0l;
 	}
 
 	@Override

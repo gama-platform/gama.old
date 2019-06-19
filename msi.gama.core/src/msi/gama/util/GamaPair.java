@@ -70,10 +70,6 @@ public class GamaPair<K, V>
 		type = Types.PAIR.of(keyType, contentsType);
 	}
 
-	public GamaPair(final Map.Entry<K, V> entry, final IType keyType, final IType contentsType) {
-		this(entry.getKey(), entry.getValue(), keyType, contentsType);
-	}
-
 	public boolean equals(final GamaPair p) {
 		return Objects.equals(key, p.key) && Objects.equals(value, p.value);
 		// return key.equals(p.key) && value.equals(p.value);

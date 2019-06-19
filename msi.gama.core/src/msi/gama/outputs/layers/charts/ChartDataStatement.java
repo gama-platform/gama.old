@@ -1,16 +1,14 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartDataStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartDataStatement.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
-
-import java.awt.Shape;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -135,7 +133,6 @@ public class ChartDataStatement extends AbstractStatement {
 	public static final String CUMUL_VALUES = "accumulate_values";
 	public static final String XERR_VALUES = "x_err_values";
 	public static final String YERR_VALUES = "y_err_values";
-	public static final String XMINMAX_VALUES = "x_minmax_values";
 	public static final String YMINMAX_VALUES = "y_minmax_values";
 	public static final String MARKER_EMPTY = "marker_empty";
 	public static final String MARKER_SQUARE = "marker_square";
@@ -149,12 +146,6 @@ public class ChartDataStatement extends AbstractStatement {
 	public static final String MARKER_VERT_RECTANGLE = "marker_vert_rectangle";
 	public static final String MARKER_LEFT_TRIANGLE = "marker_left_triangle";
 	public static final String THICKNESS = "thickness";
-
-	public static final Shape[] defaultmarkers =
-			org.jfree.chart.plot.DefaultDrawingSupplier.createStandardSeriesShapes();
-
-	public static final String DATAS = "chart_datas";
-	protected int dataNumber = 0;
 
 	public ChartDataStatement(final IDescription desc) {
 		super(desc);
@@ -249,15 +240,15 @@ public class ChartDataStatement extends AbstractStatement {
 		// TODO
 		/*
 		 * stval = getFacetValue(scope, IKeyword.COLOR, "black"); data.sourceParameters.put(IKeyword.COLOR,stval);
-		 * 
+		 *
 		 * boolval = getFacetValue(scope, MARKER, true); data.sourceParameters.put(MARKER,boolval);
-		 * 
+		 *
 		 * boolval = getFacetValue(scope, LINE_VISIBLE, true); data.sourceParameters.put(LINE_VISIBLE,boolval);
-		 * 
+		 *
 		 * boolval = getFacetValue(scope, FILL, true); data.sourceParameters.put(FILL,boolval);
-		 * 
+		 *
 		 * stval = getFacetValue(scope, MARKERSHAPE, null); data.sourceParameters.put(MARKERSHAPE,stval);
-		 * 
+		 *
 		 * stval = getFacetValue(scope, MARKERSHAPE, null); data.sourceParameters.put(MARKERSHAPE,stval);
 		 */
 
@@ -267,7 +258,7 @@ public class ChartDataStatement extends AbstractStatement {
 	/**
 	 * Data statements rely on the fact that a variable called "chart_datas" is available in the scope. If not, it will
 	 * not do anything. This variable is normally created by the ChartLayerStatement.
-	 * 
+	 *
 	 * @see msi.gaml.statements.AbstractStatement#privateExecuteIn(msi.gama.runtime.IScope)
 	 */
 

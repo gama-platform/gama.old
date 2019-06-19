@@ -273,35 +273,6 @@ public class GifDecoder {
 	/**
 	 * Reads GIF image from stream
 	 *
-	 * @param BufferedInputStream
-	 *            containing GIF file.
-	 * @return read status code (0 = no errors)
-	 */
-	public int read(final BufferedInputStream is) {
-		init();
-		if (is != null) {
-			in = is;
-			readHeader();
-			if (!err()) {
-				readContents();
-				if (frameCount < 0) {
-					status = STATUS_FORMAT_ERROR;
-				}
-			}
-		} else {
-			status = STATUS_OPEN_ERROR;
-		}
-		try {
-			if (is != null) {
-				is.close();
-			}
-		} catch (final IOException e) {}
-		return status;
-	}
-
-	/**
-	 * Reads GIF image from stream
-	 *
 	 * @param InputStream
 	 *            containing GIF file.
 	 * @return read status code (0 = no errors)

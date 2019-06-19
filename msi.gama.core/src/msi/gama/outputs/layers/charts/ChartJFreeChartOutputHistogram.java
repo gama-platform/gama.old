@@ -48,7 +48,6 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.Dataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.data.xy.XYDataset;
 
@@ -144,10 +143,6 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			}
 		}
 
-	}
-
-	Dataset createDataset(final IScope scope) {
-		return new DefaultCategoryDataset();
 	}
 
 	static class LabelGenerator extends StandardCategoryItemLabelGenerator {

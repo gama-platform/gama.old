@@ -46,7 +46,6 @@ import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.general.Dataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
 import org.jfree.data.xy.XYDataset;
@@ -189,10 +188,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			chartdataset.setCommonXSeries(false);
 			chartdataset.setByCategory(false);
 		}
-	}
-
-	Dataset createDataset(final IScope scope) {
-		return new XYIntervalSeriesCollection();
 	}
 
 	@Override

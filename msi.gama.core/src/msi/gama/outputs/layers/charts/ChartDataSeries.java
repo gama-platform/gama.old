@@ -33,10 +33,6 @@ public class ChartDataSeries {
 	ArrayList<Double> yerrvaluesmax = new ArrayList<>();
 	ArrayList<Double> xerrvaluesmin = new ArrayList<>();
 	ArrayList<Double> yerrvaluesmin = new ArrayList<>();
-	ArrayList<Double> yvaluemax = new ArrayList<>(); // for box and
-														// whisker
-	ArrayList<Double> yvaluemin = new ArrayList<>(); // for box and
-														// whisker
 
 	GamaColor mycolor, mymincolor, mymedcolor;
 
@@ -52,15 +48,6 @@ public class ChartDataSeries {
 	ArrayList<Double> oldxvalues = new ArrayList<>(); // for xy charts
 	ArrayList<Double> oldyvalues = new ArrayList<>();
 	ArrayList<Double> oldsvalues = new ArrayList<>(); // for marker sizes
-														// or 3d charts
-	// ArrayList<Double> oldxerrvaluesmax = new ArrayList<Double>();
-	// ArrayList<Double> oldyerrvaluesmax = new ArrayList<Double>();
-	// ArrayList<Double> oldxerrvaluesmin = new ArrayList<Double>();
-	// ArrayList<Double> oldyerrvaluesmin = new ArrayList<Double>();
-	// ArrayList<Double> oldyvaluemax = new ArrayList<Double>(); // for box and
-	// // whisker
-	// ArrayList<Double> oldyvaluemin = new ArrayList<Double>(); // for box and
-	// whisker
 
 	public boolean isOngoing_update() {
 		return ongoing_update;
@@ -184,18 +171,11 @@ public class ChartDataSeries {
 	 * }
 	 */
 	public void clearValues(final IScope scope) {
-		// TODO Auto-generated method stub
 
 		oldcvalues = cvalues;
 		oldxvalues = xvalues;
 		oldyvalues = yvalues;
 		oldsvalues = svalues;
-		// oldxerrvaluesmax = xerrvaluesmax;
-		// oldyerrvaluesmax = yerrvaluesmax;
-		// oldxerrvaluesmin = xerrvaluesmin;
-		// oldyerrvaluesmin = yerrvaluesmin;
-		// oldyvaluemax = yvaluemax;
-		// oldyvaluemin = yvaluemin;
 
 		cvalues = new ArrayList<>(); // for xy charts
 		xvalues = new ArrayList<>(); // for xy charts
@@ -205,8 +185,6 @@ public class ChartDataSeries {
 		yerrvaluesmax = new ArrayList<>();
 		xerrvaluesmin = new ArrayList<>();
 		yerrvaluesmin = new ArrayList<>();
-		yvaluemax = new ArrayList<>(); // for box and whisker
-		yvaluemin = new ArrayList<>(); // for box and whisker
 
 	}
 
@@ -470,11 +448,6 @@ public class ChartDataSeries {
 
 			}
 		}
-	}
-
-	public void inithistory(final StringBuilder history) {
-		history.append(this.getName() + "_X" + ",");
-		history.append(this.getName() + "_Y" + ",");
 	}
 
 	public double getLineThickness() {

@@ -59,10 +59,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return outputs.get(id);
 	}
 
-	public IOutput getOutputWithName(final String s) {
-		return Iterables.find(this, each -> each.getName().equals(s), null);
-	}
-
 	@Override
 	public void putAll(final Map<String, IOutput> mm) {
 		outputs.putAll(mm);
