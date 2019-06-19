@@ -60,20 +60,20 @@ public interface IMatrix<T>
 	 * Cols, rows instead of row cols because intended to work with xSize and ySize dimensions.
 	 */
 
-	public static final String DIMENSION = "dimension";
+	String DIMENSION = "dimension";
 
-	public static final String ROWS = "rows";
+	String ROWS = "rows";
 
-	public static final String COLUMNS = "columns";
+	String COLUMNS = "columns";
 
 	@getter (ROWS)
-	public abstract int getRows(IScope scope);
+	int getRows(IScope scope);
 
 	@getter (COLUMNS)
-	public abstract int getCols(IScope scope);
+	int getCols(IScope scope);
 
 	@getter (DIMENSION)
-	public abstract GamaPoint getDimensions();
+	GamaPoint getDimensions();
 
 	@operator (
 			value = "rows_list",
@@ -88,7 +88,7 @@ public interface IMatrix<T>
 					value = "rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
 					equals = "[[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]") },
 			see = "columns_list")
-	public abstract IList<IList<T>> getRowsList(IScope scope);
+	IList<IList<T>> getRowsList(IScope scope);
 
 	@operator (
 			value = "columns_list",
@@ -103,7 +103,7 @@ public interface IMatrix<T>
 					value = "columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
 					equals = "[[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]") },
 			see = "rows_list")
-	public abstract IList<IList<T>> getColumnsList(IScope scope);
+	IList<IList<T>> getColumnsList(IScope scope);
 
 	@operator (
 			value = "row_at",
@@ -117,7 +117,7 @@ public interface IMatrix<T>
 					value = "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2",
 					equals = "[\"el13\",\"el23\",\"el33\"]") },
 			see = { "column_at", "columns_list" })
-	public abstract IList<T> getRow(IScope scope, Integer num_line);
+	IList<T> getRow(IScope scope, Integer num_line);
 
 	@operator (
 			value = "column_at",
@@ -131,7 +131,7 @@ public interface IMatrix<T>
 					value = "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2",
 					equals = "[\"el31\",\"el32\",\"el33\"]") },
 			see = { "row_at", "rows_list" })
-	public abstract IList<T> getColumn(IScope scope, Integer num_line);
+	IList<T> getColumn(IScope scope, Integer num_line);
 
 	@operator (
 			value = IKeyword.PLUS,
@@ -140,8 +140,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Returns a matrix containing the addition of  the elements of two matrices in argument "))
-	@test("matrix([[1,2],[3,4]]) + matrix([[1,2],[3,4]]) = matrix([[2,4],[6,8]])") 
-	public abstract IMatrix plus(IScope scope, IMatrix other) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) + matrix([[1,2],[3,4]]) = matrix([[2,4],[6,8]])")
+	IMatrix plus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.MULTIPLY,
@@ -150,8 +150,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Multiplies the two matrices operands"))
-	@test("matrix([[1,2],[3,4]]) * matrix([[1,2],[3,4]]) = matrix([[1,4],[9,16]]) ") 
-	public abstract IMatrix times(IScope scope, IMatrix other) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) * matrix([[1,2],[3,4]]) = matrix([[1,4],[9,16]]) ")
+	IMatrix times(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -160,8 +160,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Divides the two matrices operands"))
-	@test("matrix([[1,2],[3,4]]) / matrix([[1,2],[3,4]]) = matrix([[1,1],[1,1]])") 
-	public abstract IMatrix divides(IScope scope, IMatrix other) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) / matrix([[1,2],[3,4]]) = matrix([[1,1],[1,1]])")
+	IMatrix divides(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
 			value = ".",
@@ -175,8 +175,8 @@ public interface IMatrix<T>
 					examples = @example (
 							value = "matrix([[1,1],[1,2]]) . matrix([[1,1],[1,2]])",
 							equals = "matrix([[2,3],[3,5]])")))
-	@test("matrix([[1,1],[1,2]]) . matrix([[1,1],[1,2]]) = matrix([[2,3],[3,5]])")
-	public abstract IMatrix matrixMultiplication(IScope scope, IMatrix other) throws GamaRuntimeException;
+	@test ("matrix([[1,1],[1,2]]) . matrix([[1,1],[1,2]]) = matrix([[2,3],[3,5]])")
+	IMatrix matrixMultiplication(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.MINUS,
@@ -185,8 +185,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Performs a subtraction between the two matrix operands"))
-	@test("matrix([[1,2],[3,4]]) - matrix([[1,2],[3,4]]) = matrix([[0,0],[0,0]])") 
-	public abstract IMatrix minus(IScope scope, IMatrix other) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) - matrix([[1,2],[3,4]]) = matrix([[0,0],[0,0]])")
+	IMatrix minus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.MULTIPLY,
@@ -195,8 +195,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Performs a multiplication between the matrix operand and the float operand"))
-	@test("matrix([[1,2],[3,4]]) * 2.5 = matrix([[2.5,5.0],[7.5,10]])") 
-	public abstract IMatrix times(Double val) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) * 2.5 = matrix([[2.5,5.0],[7.5,10]])")
+	IMatrix times(Double val) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.MULTIPLY,
@@ -205,8 +205,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Performs a multiplication between the two matrix operands"))
-	@test("matrix([[1,2],[3,4]]) * 2 = matrix([[2,4],[6,8]])") 
-	public abstract IMatrix times(Integer val) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) * 2 = matrix([[2,4],[6,8]])")
+	IMatrix times(Integer val) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -215,8 +215,9 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Divides all the elements of the matrix operand by the float operand"))
-	@test("matrix([[1,2],[3,4]]) / 2.5 = matrix([[0.4,0.8],[1.2,1.6]])") 
-	public abstract IMatrix divides(Double val) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) / 2.5 = matrix([[0.4,0.8],[1.2,1.6]])")
+	IMatrix divides(Double val) throws GamaRuntimeException;
+
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
@@ -224,8 +225,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Divides all the elements of the matrix operand by the integer operand"))
-	@test("matrix([[1,2],[3,4]]) / 2 = matrix([[0.5,1],[1.5,2]])") 
-	public abstract IMatrix divides(Integer val) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) / 2 = matrix([[0.5,1],[1.5,2]])")
+	IMatrix divides(Integer val) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.PLUS,
@@ -234,8 +235,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Adds the float operand to all the elements in the matrix"))
-	@test("matrix([[1,2],[3,4]]) + 22.5 = matrix([[23.5,24.5],[25.5,26.5]])") 
-	public abstract IMatrix plus(Double val) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) + 22.5 = matrix([[23.5,24.5],[25.5,26.5]])")
+	IMatrix plus(Double val) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.PLUS,
@@ -244,8 +245,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Adds the int operand to all the elements in the matrix"))
-	@test("matrix([[1,2],[3,4]]) + 2 = matrix([[3,4],[5,6]])") 
-	public abstract IMatrix plus(Integer val) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) + 2 = matrix([[3,4],[5,6]])")
+	IMatrix plus(Integer val) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.MINUS,
@@ -254,8 +255,8 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Subtracts the float operand from all the elements in the matrix"))
-	@test("matrix([[1,2],[3,4]]) - 1.5 = matrix([[-0.5,0.5],[1.5,2.5]])") 
-	public abstract IMatrix minus(Double val) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) - 1.5 = matrix([[-0.5,0.5],[1.5,2.5]])")
+	IMatrix minus(Double val) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.MINUS,
@@ -264,12 +265,12 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = {},
 			doc = @doc ("Subtracts the int operand from all the elements in the matrix"))
-	@test("matrix([[1,2],[3,4]]) - 1 = matrix([[0,1],[2,3]])") 
-	public abstract IMatrix minus(Integer val) throws GamaRuntimeException;
+	@test ("matrix([[1,2],[3,4]]) - 1 = matrix([[0,1],[2,3]])")
+	IMatrix minus(Integer val) throws GamaRuntimeException;
 
-	public abstract T get(IScope scope, final int col, final int row);
+	T get(IScope scope, final int col, final int row);
 
-	public abstract void set(IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException;
+	void set(IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException;
 
 	@operator (
 			value = IKeyword.APPEND_HORIZONTALLY,
@@ -282,7 +283,7 @@ public interface IMatrix<T>
 			examples = { @example (
 					value = "matrix([[1.0,2.0],[3.0,4.0]]) append_horizontally matrix([[1,2],[3,4]])",
 					equals = "matrix([[1.0,2.0],[3.0,4.0],[1.0,2.0],[3.0,4.0]])") })
-	public abstract IMatrix opAppendHorizontally(final IScope scope, final IMatrix b);
+	IMatrix opAppendHorizontally(final IScope scope, final IMatrix b);
 
 	@operator (
 			value = IKeyword.APPEND_VERTICALLY,
@@ -295,7 +296,7 @@ public interface IMatrix<T>
 			examples = { @example (
 					value = "matrix([[1,2],[3,4]]) append_vertically matrix([[1,2],[3,4]])",
 					equals = "matrix([[1,2,1,2],[3,4,3,4]])") })
-	public abstract IMatrix opAppendVertically(final IScope scope, final IMatrix b);
+	IMatrix opAppendVertically(final IScope scope, final IMatrix b);
 
 	@operator (
 			value = { "determinant", "det" },
@@ -307,7 +308,7 @@ public interface IMatrix<T>
 			examples = { @example (
 					value = "determinant(matrix([[1,2],[3,4]]))",
 					equals = "-2") })
-	public abstract Double getDeterminant(IScope scope) throws GamaRuntimeException;
+	Double getDeterminant(IScope scope) throws GamaRuntimeException;
 
 	@operator (
 			value = "trace",
@@ -319,7 +320,7 @@ public interface IMatrix<T>
 			examples = { @example (
 					value = "trace(matrix([[1,2],[3,4]]))",
 					equals = "5") })
-	public abstract Double getTrace(IScope scope) throws GamaRuntimeException;
+	Double getTrace(IScope scope) throws GamaRuntimeException;
 
 	@operator (
 			value = "eigenvalues",
@@ -332,7 +333,7 @@ public interface IMatrix<T>
 			examples = { @example (
 					value = "eigenvalues(matrix([[5,-3],[6,-4]]))",
 					equals = "[2.0000000000000004,-0.9999999999999998]") })
-	public abstract IList<Double> getEigen(IScope scope) throws GamaRuntimeException;
+	IList<Double> getEigen(IScope scope) throws GamaRuntimeException;
 
 	@operator (
 			value = "transpose",
@@ -346,7 +347,7 @@ public interface IMatrix<T>
 			examples = { @example (
 					value = "transpose(matrix([[5,-3],[6,-4]]))",
 					equals = "matrix([[5,6],[-3,-4]])") })
-	public abstract IMatrix transpose(IScope scope) throws GamaRuntimeException;
+	IMatrix transpose(IScope scope) throws GamaRuntimeException;
 
 	@operator (
 			value = "inverse",
@@ -361,24 +362,27 @@ public interface IMatrix<T>
 			examples = { @example (
 					value = "inverse(matrix([[4,3],[3,2]]))",
 					equals = "matrix([[-2.0,3.0],[3.0,-4.0]])") })
-	public abstract IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException;
+	IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException;
 
 	@Override
-	public abstract StreamEx<T> stream(final IScope scope);
-
-	// public abstract void put(final int col, final int row, final double obj)
-	// throws GamaRuntimeException;
-
-	// public abstract void put(final int col, final int row, final int obj)
-	// throws GamaRuntimeException;
-
-	public abstract Object remove(IScope scope, final int col, final int row) throws GamaRuntimeException;
-
-	public abstract void shuffleWith(RandomUtils randomAgent);
+	StreamEx<T> stream(final IScope scope);
 
 	@Override
-	public abstract IMatrix copy(IScope scope) throws GamaRuntimeException;
+	default boolean containsKey(final IScope scope, final Object o) {
+		if (o instanceof GamaPoint) {
+			final GamaPoint p = (GamaPoint) o;
+			return p.x >= 0 && p.y >= 0 && p.x < getCols(scope) && p.y < getRows(scope);
+		}
+		return false;
+	}
 
-	public abstract IMatrix copy(IScope scope, ILocation preferredSize, boolean copy);
+	Object remove(IScope scope, final int col, final int row) throws GamaRuntimeException;
+
+	void shuffleWith(RandomUtils randomAgent);
+
+	@Override
+	IMatrix copy(IScope scope) throws GamaRuntimeException;
+
+	IMatrix copy(IScope scope, ILocation preferredSize, boolean copy);
 
 }

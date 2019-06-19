@@ -67,19 +67,11 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	IContainerType type;
 
-	// public GamaMap(final IType key, final IType content) {
-	// this(10, key, content);
-	// }
-
-	/* protected */public GamaMap(final int capacity, final IType key, final IType content) {
+	public GamaMap(final int capacity, final IType key, final IType content) {
 		super(capacity);
 		type = Types.MAP.of(key, content);
 	}
 
-	// public GamaMap(final Map arg0, final IType key, final IType content) {
-	// this(arg0.size(), key, content);
-	// putAll(arg0);
-	// }
 	//
 	@Override
 	public IContainerType getGamlType() {
@@ -162,15 +154,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	}
 
-	//
-	// @Override
-	// public V anyValue(final IScope scope) {
-	// int size = _size;
-	// if ( size == 0 ) { return null; }
-	// final int i = scope.getRandom().between(0, _size - 1);
-	// return valueAt(i);
-	// }
-
 	/**
 	 * Method add()
 	 *
@@ -178,8 +161,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	 */
 	@Override
 	public void addValue(final IScope scope, final V v) {
-		// final K key;
-		// final V val;
 		if (v instanceof GamaPair) {
 			setValueAtIndex(scope, (K) ((GamaPair) v).key, (V) ((GamaPair) v).value);
 		} else {
@@ -220,13 +201,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	 */
 	@Override
 	public void addValues(final IScope scope, final IContainer/* <?, GamaPair<K, V>> */ values) {
-		// if ( values instanceof GamaMap ) {
-		// putAll((GamaMap) values);
-		// } else {
-		// values are supposed to be pairs
 		for (final Object o : values.iterable(scope)) {
 			addValue(scope, (V) o);
-			// }
 		}
 	}
 
@@ -239,9 +215,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	public void setAllValues(final IScope scope, final V value) {
 		// value is supposed to be correctly casted to V
 		final V val = buildValue(scope, value);
-		// for ( Map.Entry<K, V> entry : entrySet() ) {
-		// entry.setValue(val);
-		// }
 		Arrays.fill(_values, val);
 	}
 
@@ -253,7 +226,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
 		// Dont know what to do... Removing the first pair with value = value ?
-		// final Object[] keys = _set;
 		final V[] values = _values;
 		final int[] inserts = _indicesByInsertOrder;
 		for (int i = 0; i <= _lastInsertOrderIndex; i++) {
@@ -267,16 +239,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 			}
 		}
 
-		// Iterator<Map.Entry<K, V>> it = entrySet().iterator();
-		// while (it.hasNext()) {
-		// Map.Entry<K, V> entry = it.next();
-		// boolean toRemove = value == null ? entry.getValue() == null :
-		// value.equals(entry.getValue());
-		// if ( toRemove ) {
-		// it.remove();
-		// return;
-		// }
-		// }
 	}
 
 	/**
@@ -314,54 +276,17 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 				removeAt(i);
 			}
 		}
-		// Iterator<Map.Entry<K, V>> it = super.entrySet().iterator();
-		// while (it.hasNext()) {
-		// Map.Entry<K, V> entry = it.next();
-		// if ( value == null ? entry.getValue() == null :
-		// value.equals(entry.getValue()) ) {
-		// it.remove();
-		// }
-		// }
+
 	}
 
 	@Override
 	public V firstValue(final IScope scope) {
 		return valueAt(0);
-		//
-		// final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
-		// final Map.Entry<K, V> entry = it.hasNext() ? it.next() : null;
-		// return entry == null ? null : entry.getValue();
 	}
-
-	//
-	// public GamaPair getAtIndex(final int i) {
-	// if ( i >= _size ) { return null; }
-	// int index = 0;
-	// for ( int keyIndex = 0; keyIndex < _size; keyIndex++ ) {
-	// Object o = _set[keyIndex];
-	// if ( o != FREE && o != REMOVED ) {
-	// index++;
-	// if ( index == i ) { return new GamaPair(o, _values[keyIndex],
-	// type.getKeyType(), type.getContentType()); }
-	// }
-	// }
-	// return null;
-	//
-	// // final List<Map.Entry<Object, Object>> list = new
-	// ArrayList(entrySet());
-	// // final Map.Entry entry = list.get(index);
-	// // return entry == null ? null : new GamaPair(entry.getKey(),
-	// entry.getValue(), type.getKeyType(),
-	// // type.getContentType());
-	// }
 
 	@Override
 	public V lastValue(final IScope scope) {
 		return valueAt(_size - 1);
-		//
-		// final List<Map.Entry<K, V>> list = new ArrayList(entrySet());
-		// final Map.Entry<K, V> entry = list.get(list.size() - 1);
-		// return entry == null ? null : entry.getValue();
 	}
 
 	@Override
@@ -371,7 +296,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	@Override
 	public boolean contains(final IScope scope, final Object o) {
-		// AD: see Issue 918
+		// AD: see Issue 918 and #2772
 		return /* containsKey(o) || */containsValue(o);
 	}
 
@@ -533,6 +458,11 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	 */
 	public Object[] getRawValues() {
 		return _values;
+	}
+
+	@Override
+	public boolean containsKey(final IScope scope, final Object o) throws GamaRuntimeException {
+		return index(o) >= 0;
 	}
 
 }

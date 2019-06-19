@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.population.MetaPopulation.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.population.MetaPopulation.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
@@ -41,10 +41,10 @@ import one.util.streamex.StreamEx;
 /**
  * Class MetaPopulation. A list of IPopulation, ISpecies or MetaPopulation that behaves like a list of agents (also to
  * filter them).
- * 
+ *
  * @author drogoul
  * @since 8 déc. 2013
- * 
+ *
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, IPopulationSet {
@@ -60,8 +60,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
-		if (setOfPopulations.size() == 1)
-			return setOfPopulations.values().iterator().next();
+		if (setOfPopulations.size() == 1) { return setOfPopulations.values().iterator().next(); }
 		return null;
 	}
 
@@ -81,7 +80,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	public IContainerType getGamlType() {
 		return type;
 	}
-	
+
 	@Override
 	public boolean hasAgentList() {
 		return true;
@@ -89,7 +88,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method getAgents()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
@@ -103,7 +102,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method accept()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
 	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
 	 */
@@ -116,7 +115,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method filter()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
 	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
 	 */
@@ -129,7 +128,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method stringValue()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IValue#stringValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -139,7 +138,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method copy()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IValue#copy(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -149,7 +148,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method toGaml()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlable#toGaml()
 	 */
 	@Override
@@ -169,7 +168,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method get()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#get(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
@@ -179,7 +178,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method getFromIndicesList()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#getFromIndicesList(msi.gama.runtime.IScope, msi.gama.util.IList)
 	 */
 	@Override
@@ -189,7 +188,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method contains()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#contains(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
@@ -201,9 +200,18 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 		return false;
 	}
 
+	@Override
+	public boolean containsKey(final IScope scope, final Object o) {
+		if (o instanceof Integer) {
+			final Integer i = (Integer) o;
+			return i > 0 && i < length(scope);
+		}
+		return false;
+	}
+
 	/**
 	 * Method first()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#first(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -214,7 +222,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method last()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#last(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -225,7 +233,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method length()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#length(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -239,7 +247,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method isEmpty()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#isEmpty(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -252,7 +260,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method reverse()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#reverse(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -262,7 +270,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method any()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#any(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -275,7 +283,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method checkBounds()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#checkBounds(java.lang.Object, boolean)
 	 */
 	// @Override
@@ -286,7 +294,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method add()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, java.lang.Object,
 	 *      boolean, boolean)
 	 */
@@ -299,7 +307,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method remove()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#remove(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, boolean)
 	 */
 	// @Override
@@ -310,7 +318,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method listValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -322,7 +330,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method matrixValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -333,7 +341,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method matrixValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
@@ -344,7 +352,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method mapValue()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -355,7 +363,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method iterable()
-	 * 
+	 *
 	 * @see msi.gama.util.IContainer#iterable(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -369,7 +377,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method getSpecies()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSpecies()
 	 */
 	@Override
@@ -396,7 +404,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method getPopulations()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.population.IPopulationSet#getPopulations(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -406,7 +414,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/**
 	 * Method iterator()
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	// @Override

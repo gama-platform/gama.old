@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.IGamaFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.IGamaFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -76,68 +76,74 @@ import msi.gaml.types.IType;
 public interface IGamaFile<C extends IModifiableContainer, Contents>
 		extends IAddressableContainer, IModifiableContainer {
 
-	public abstract void setWritable(IScope scope, final boolean w);
+	void setWritable(IScope scope, final boolean w);
 
-	public abstract void setContents(final C cont) throws GamaRuntimeException;
+	void setContents(final C cont) throws GamaRuntimeException;
 
 	@Override
-	public abstract IGamaFile copy(IScope scope);
+	IGamaFile copy(IScope scope);
 
-	public C getBuffer();
+	C getBuffer();
 
 	@getter (
 			value = IKeyword.EXISTS,
 			initializer = true)
-	public abstract Boolean exists(IScope scope);
+	Boolean exists(IScope scope);
 
 	@getter (
 			value = IKeyword.EXTENSION,
 			initializer = true)
-	public abstract String getExtension(IScope scope);
+	String getExtension(IScope scope);
 
 	@getter (
 			value = IKeyword.NAME,
 			initializer = true)
-	public abstract String getName(IScope scope);
+	String getName(IScope scope);
 
 	@getter (
 			value = IKeyword.PATH,
 			initializer = true)
-	public abstract String getPath(IScope scope);
+	String getPath(IScope scope);
 
 	@getter (IKeyword.CONTENTS)
-	public abstract C getContents(IScope scope) throws GamaRuntimeException;
+	C getContents(IScope scope) throws GamaRuntimeException;
 
 	@getter (IKeyword.ATTRIBUTES)
 	/**
 	 * Retrieves the list of "attributes" present in files that support this concept (and an empty list for the others).
 	 * For instance, in a CSV file, attributes represent the headers of the columns (if any); in a shape file, the
 	 * attributes provided to the objects, etc.
-	 * 
+	 *
 	 * @param scope
 	 * @return a list of string or an empty list (never null)
 	 */
-	public abstract IList<String> getAttributes(IScope scope);
+	IList<String> getAttributes(IScope scope);
 
 	@getter (
 			value = IKeyword.ISFOLDER,
 			initializer = true)
-	public abstract Boolean isFolder(IScope scope);
+	Boolean isFolder(IScope scope);
 
 	@getter (
 			value = IKeyword.READABLE,
 			initializer = true)
-	public abstract Boolean isReadable(IScope scope);
+	Boolean isReadable(IScope scope);
 
 	@getter (
 			value = IKeyword.WRITABLE,
 			initializer = true)
-	public abstract Boolean isWritable(IScope scope);
+	Boolean isWritable(IScope scope);
 
-	public Envelope3D computeEnvelope(final IScope scope);
+	Envelope3D computeEnvelope(final IScope scope);
 
-	public abstract void save(IScope scope, Facets parameters);
+	void save(IScope scope, Facets parameters);
 
-	public abstract String getOriginalPath();
+	String getOriginalPath();
+
+	@Override
+	default boolean containsKey(final IScope scope, final Object o) {
+		final C contents = getContents(scope);
+		return contents != null && contents.contains(scope, o);
+	}
 
 }

@@ -285,4 +285,9 @@ public class GamaPair<K, V>
 		return listValue(scope, Types.NO_TYPE, false);
 	}
 
+	@Override
+	public boolean containsKey(final IScope scope, final Object o) throws GamaRuntimeException {
+		return Objects.equals(key, o);
+	}
+
 }

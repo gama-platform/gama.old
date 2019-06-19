@@ -1034,6 +1034,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
+	public boolean containsKey(final IScope scope, final Object o) {
+		// AD: see Issue 918
+		return containsVertex(o);
+	}
+
+	@Override
 	public E firstValue(final IScope scope) {
 		return listValue(scope, Types.NO_TYPE, false).firstValue(scope);
 	}

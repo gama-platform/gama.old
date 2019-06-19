@@ -15,6 +15,7 @@ import java.util.Collection;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -26,7 +27,6 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
@@ -342,25 +342,23 @@ public class GamlSpecies extends AbstractSpecies {
 		concurrency = this.getFacet(IKeyword.PARALLEL);
 		if (((SpeciesDescription) desc).isMirror() && !hasFacet(IKeyword.SCHEDULES)) {
 			// See Issue #2731 -- mirror species have a default scheduling rule
-			schedule = new IExpression() {
-
-				@Override
-				public Object value(IScope scope) throws GamaRuntimeException {
-					IList<IAgent> agents = GamaListFactory.create();
-					for (IAgent agent : getPopulation(scope)) {
-						Object obj = agent.getDirectVarValue(scope, IKeyword.TARGET);
-						if (obj instanceof IAgent) {
-							IAgent target = (IAgent) obj;
-							if (!target.dead())
-								agents.add(agent);
+			schedule = scope -> {
+				final IList<IAgent> agents = GamaListFactory.create();
+				for (final IAgent agent : getPopulation(scope)) {
+					final Object obj = agent.getDirectVarValue(scope, IKeyword.TARGET);
+					if (obj instanceof IAgent) {
+						final IAgent target = (IAgent) obj;
+						if (!target.dead()) {
+							agents.add(agent);
 						}
-
 					}
-					return agents;
+
 				}
+				return agents;
 			};
-		} else
+		} else {
 			schedule = this.getFacet(IKeyword.SCHEDULES);
+		}
 		frequency = this.getFacet(IKeyword.FREQUENCY);
 	}
 
@@ -417,12 +415,20 @@ public class GamlSpecies extends AbstractSpecies {
 	 */
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
-		return getPopulation(scope).accept(scope, source, a);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? false : pop.accept(scope, source, a);
+	}
+
+	@Override
+	public boolean containsKey(final IScope scope, final Object o) {
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? false : pop.containsKey(scope, o);
 	}
 
 	@Override
 	public StreamEx<IAgent> stream(final IScope scope) {
-		return getPopulation(scope).stream(scope);
+		final IPopulation<IAgent> pop = getPopulation(scope);
+		return pop == null ? StreamEx.empty() : pop.stream(scope);
 	}
 
 	/**
@@ -433,7 +439,10 @@ public class GamlSpecies extends AbstractSpecies {
 	 */
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
-		getPopulation(scope).filter(scope, source, results);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		if (pop != null) {
+			pop.filter(scope, source, results);
+		}
 	}
 
 	/**
