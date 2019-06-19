@@ -431,9 +431,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ "(g contains_edge ({10,5}::{20,3})) = true")
 	public static Boolean containsEdge(final IScope scope, final IGraph graph, final GamaPair edge) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the contains_edge operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
@@ -460,9 +458,7 @@ public class Graphs {
 							equals = "{1,5}") },
 			see = { "target_of" })
 	public static Object sourceOf(final IScope scope, final IGraph graph, final Object edge) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the source_of operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsEdge(edge)) { return graph.getEdgeSource(edge); }
 		return null;
 	}
@@ -487,9 +483,7 @@ public class Graphs {
 							equals = "{12,45}") },
 			see = "source_of")
 	public static Object targetOf(final IScope scope, final IGraph graph, final Object edge) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the target_of operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsEdge(edge)) { return graph.getEdgeTarget(edge); }
 		return null;
 	}
@@ -509,7 +503,7 @@ public class Graphs {
 							value = "graphFromMap weight_of(link({1,5},{12,45}))",
 							equals = "1.0") })
 	public static Double weightOf(final IScope scope, final IGraph graph, final Object edge) {
-		if (graph == null) { throw GamaRuntimeException.error("graph is nil", scope); }
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (edge instanceof Graphs.GraphObjectToAdd) {
 			if (edge instanceof Graphs.EdgeToAdd) {
 				final Graphs.EdgeToAdd edge2 = (Graphs.EdgeToAdd) edge;
@@ -548,9 +542,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g2 <- directed(as_edge_graph([ edge({10,5}, {30,30}), edge({30,30}, {80,35}), node ({30,30})]));\r\n"
 			+ "first(link({10,5},{30,30})) = first(g2 in_edges_of {30,30})")
 	public static IList inEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the in_edges_of operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsVertex(vertex)) {
 			return GamaListFactory.create(scope, graph.getGamlType().getContentType(), graph.incomingEdgesOf(vertex));
 		}
@@ -572,9 +564,7 @@ public class Graphs {
 			+ "edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ "(g edge_between ({10,5}::{20,3})) = g.edges[0]")
 	public static Object EdgeBetween(final IScope scope, final IGraph graph, final GamaPair verticePair) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the edge_between operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsVertex(verticePair.key) && graph.containsVertex(verticePair.value)) {
 			return graph.getEdge(verticePair.key, verticePair.value);
 		}
@@ -599,9 +589,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ "(g in_degree_of ({20,3})) = 1")
 	public static int inDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsVertex(vertex)) { return graph.inDegreeOf(vertex); }
 		return 0;
 	}
@@ -626,9 +614,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " list li <- g out_edges_of {10,5};  length(li) = 2")
 	public static IList outEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the out_edges_of operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsVertex(vertex)) {
 			return GamaListFactory.create(scope, graph.getGamlType().getContentType(), graph.outgoingEdgesOf(vertex));
 		}
@@ -655,9 +641,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g2 <- directed(as_edge_graph([ edge({30,30}, {10,5}), edge({30,30}, {80,35}), node ({30,30})]));\r\n"
 			+ "g2 out_degree_of {30,30} = 2")
 	public static int outDregreeOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the out_degree_of operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsVertex(vertex)) { return graph.outDegreeOf(vertex); }
 		return 0;
 	}
@@ -680,9 +664,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " (g degree_of ({10,5})) = 3")
 	public static int degreeOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsVertex(vertex)) { return graph.degreeOf(vertex); }
 		return 0;
 	}
@@ -705,10 +687,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " list comp <- connected_components_of(g); " + " length(comp) = 2")
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
-					scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
@@ -739,10 +718,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " list comp <- connected_components_of(g, true); " + " length(comp) = 2")
 	public static IList<IList> connectedComponentOf(final IScope scope, final IGraph graph, final boolean edge) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
-					scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
@@ -780,10 +756,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " length(main_connected_component(g)) = 5")
 	public static IGraph ReduceToMainconnectedComponentOf(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the connected_components_of operator, the graph should not be null!",
-					scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
 		final IList<IList> cc = connectedComponentOf(scope, graph);
 		final IGraph newGraph = (IGraph) graph.copy(scope);
@@ -824,10 +797,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " maximal_cliques_of(g) = [[{10.0,5.0,0.0},{20.0,3.0,0.0}],[{30.0,30.0,0.0},{10.0,5.0,0.0}],[{20.0,3.0,0.0}],[{30.0,30.0,0.0},{80.0,35.0,0.0}],[{40.0,60.0,0.0},{80.0,35.0,0.0}],[{40.0,60.0,0.0}],[{50.0,50.0,0.0}]]  ")
 	public static IList<IList> getMaximalCliques(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the maximal_cliques_of operator, the graph should not be null!",
-					scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		final Collection cliques = cls.getAllMaximalCliques();
@@ -855,10 +825,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " biggest_cliques_of(g) = [[{10.0,5.0,0.0},{20.0,3.0,0.0}],[{30.0,30.0,0.0},{10.0,5.0,0.0}],[{30.0,30.0,0.0},{80.0,35.0,0.0}],[{40.0,60.0,0.0},{80.0,35.0,0.0}]]  ")
 	public static IList<IList> getBiggestCliques(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the biggest_cliques_of operator, the graph should not be null!",
-					scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
@@ -886,9 +853,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " nb_cycles(g) = 1 ")
 	public static int nbCycles(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the nb_cycles operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final int S = graph.vertexSet().size();
 		final int C = connectedComponentOf(scope, graph).size();
 		final int L = graph.edgeSet().size();
@@ -912,9 +877,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " alpha_index(g) = 0.14285714285714285 ")
 	public static double alphaIndex(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the alpha_index operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final int S = graph.vertexSet().size();
 		return nbCycles(scope, graph) / (2.0 * S - 5);
 	}
@@ -935,9 +898,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " beta_index(g) = 0.8333333333333334 ")
 	public static double betaIndex(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the beta_index operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		return (graph.edgeSet().size() + 0.0) / graph.vertexSet().size();
 	}
 
@@ -957,9 +918,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " gamma_index(g) = 0.7142857142857143 ")
 	public static double gammaIndex(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the gamma_index operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		return graph.edgeSet().size() / (2.0 * graph.vertexSet().size() - 5);
 	}
 
@@ -979,10 +938,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " connectivity_index(g) = 0.8 ")
 	public static double connectivityIndex(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the connectivity_index operator, the graph should not be null!",
-					scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final int S = graph.vertexSet().size();
 		final int C = connectedComponentOf(scope, graph).size();
 		return (S - C) / (S - 1.0);
@@ -1006,10 +962,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " betweenness_centrality(g) = [{10.0,5.0,0.0}::5,{20.0,3.0,0.0}::0,{30.0,30.0,0.0}::2,{80.0,35.0,0.0}::4,{40.0,60.0,0.0}::0,{50.0,50.0,0.0}::0] ")
 	public static GamaMap betweennessCentrality(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the betweenness_centrality operator, the graph should not be null!",
-					scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
 		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
 		final GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
@@ -1061,9 +1014,7 @@ public class Graphs {
 			see = {})
 	@no_test
 	public static GamaMap edgeBetweenness(final IScope scope, final IGraph graph) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the edge_betweenness operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		// DEBUG.OUT("result.getRaw() : " + result.getRaw());
 
 		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
@@ -1111,9 +1062,7 @@ public class Graphs {
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ "g neighbors_of ({10,5}) = [{80.0,35.0,0.0},{20.0,3.0,0.0},{30.0,30.0,0.0}]")
 	public static IList neighborsOf(final IScope scope, final IGraph graph, final Object vertex) {
-		if (graph == null) {
-			throw GamaRuntimeException.error("In the neighbors_of operator, the graph should not be null!", scope);
-		}
+		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsVertex(vertex)) {
 			return GamaListFactory.create(scope, graph.getGamlType().getKeyType(),
 					org.jgrapht.Graphs.neighborListOf(graph, vertex));
@@ -1237,12 +1186,6 @@ public class Graphs {
 		return createdGraph;
 	}
 
-	// @operator(value = "graph_from_edges")
-	// public static IGraph fromEdges(final IScope scope, final GamaMap edges) {
-	// Edges are represented by pairs of vertex::vertex
-	// return GamaGraphType.from(edges, false);
-	// }
-
 	@operator (
 			value = "as_edge_graph",
 			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
@@ -1262,12 +1205,6 @@ public class Graphs {
 
 		return GamaGraphType.from(scope, edges, true);
 	}
-
-	// @operator(value = "graph_from_vertices")
-	// public static IGraph fromVertices(final IScope scope, final GamaList
-	// vertices) {
-	// return new GamaGraph(vertices, false, false);
-	// }
 
 	@operator (
 			value = "as_intersection_graph",
@@ -1439,7 +1376,7 @@ public class Graphs {
 			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH })
 	@doc (
 			value = "if the second operand is true, the operand graph will store in a cache all the previously computed shortest path (the cache be cleared if the graph is modified).",
-			comment = "the operator alters the operand graph, it does not create a new one.",
+			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph.",
 			see = { "path_between" })
 	@no_test
 	public static IGraph useCacheForShortestPaths(final IGraph g, final boolean useCache) {
@@ -1454,7 +1391,7 @@ public class Graphs {
 			concept = { IConcept.GRAPH })
 	@doc (
 			value = "the operand graph becomes a directed graph.",
-			comment = "the operator alters the operand graph, it does not create a new one.",
+			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph.",
 			see = { "undirected" })
 	@no_test
 	public static IGraph asDirectedGraph(final IGraph g) {
@@ -1470,7 +1407,7 @@ public class Graphs {
 			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH })
 	@doc (
 			value = "the operand graph becomes an undirected graph.",
-			comment = "the operator alters the operand graph, it does not create a new one.",
+			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph.",
 			see = { "directed" })
 	@no_test
 	public static IGraph asUndirectedGraph(final IGraph g) {
@@ -1487,7 +1424,7 @@ public class Graphs {
 	@doc (
 			value = "returns the graph (left-hand operand) with weight given in the map (right-hand operand).",
 			masterDoc = true,
-			comment = "this operand re-initializes the path finder",
+			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph. It also re-initializes the path finder",
 			usages = @usage (
 					value = "if the left-hand operand is a map, the map should contains pairs such as: vertex/edge::double",
 					examples = @example (
@@ -1495,10 +1432,6 @@ public class Graphs {
 							isExecutable = false)))
 	@no_test
 	public static IGraph withWeights(final IScope scope, final IGraph graph, final GamaMap weights) {
-		// a map of vertex/edge::double to provide weights
-		// Example : graph_from_edges (list ant as_map each::one_of (list ant))
-		// with_weights (list
-		// ant as_map each::each.food)
 		graph.setWeights(weights);
 		graph.incVersion();
 		if (graph instanceof GamaSpatialGraph) {
@@ -1514,7 +1447,7 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = {})
 	@doc (
-			usages = @usage ("if the right-hand operand is a list, affects the n elements of the list to the n first edges. "
+			usages = @usage ("if the right-hand operand is a list, assigns the n elements of the list to the n first edges. "
 					+ "Note that the ordering of edges may change overtime, which can create some problems..."))
 	@no_test
 	public static IGraph withWeights(final IScope scope, final IGraph graph, final IList weights) {
@@ -1571,10 +1504,12 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE })
 	@doc (
+			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph",
 			value = "adds a node in a graph.",
 			examples = @example (
 					value = "graph add_node node(0) ",
-					equals = "the graph with node(0)",
+					equals = "the graph, to which node(0) has been added",
+
 					isExecutable = false),
 			see = { "add_edge", "graph" })
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
@@ -1591,8 +1526,8 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.NODE })
 	@doc (
+			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph. All the edges containing this node are also removed.",
 			value = "removes a node from a graph.",
-			comment = "all the edges containing this node are also removed.",
 			examples = @example (
 					value = "node(0) remove_node_from graphEpidemio",
 					equals = "the graph without node(0)",
@@ -1612,8 +1547,8 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.EDGE })
 	@doc (
+			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph. If there are too many edges, all the edges will be rewired.",
 			value = "rewires the given count of edges.",
-			comment = "If there are too many edges, all the edges will be rewired.",
 			examples = { @example (
 					value = "graph graphEpidemio <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 					isTestOnly = true),
@@ -1635,8 +1570,8 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.EDGE })
 	@doc (
+			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph. If the edge already exists, the graph is unchanged",
 			value = "add an edge between a source vertex and a target vertex (resp. the left and the right element of the pair operand)",
-			comment = "if the edge already exists, the graph is unchanged",
 			examples = @example (
 					value = "graph <- graph add_edge (source::target);",
 					isExecutable = false),
