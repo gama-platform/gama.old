@@ -37,7 +37,6 @@ public class GamaRuntimeException extends RuntimeException {
 	private boolean isWarning;
 	protected final List<String> context = new ArrayList<>();
 	protected EObject editorContext;
-	protected int lineNumber;
 	protected int occurrences = 0;
 	protected boolean reported = false;
 	protected final IScope scope;

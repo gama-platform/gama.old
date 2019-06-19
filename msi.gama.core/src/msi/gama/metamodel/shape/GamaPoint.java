@@ -745,10 +745,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public void copyShapeAttributesFrom(final IShape other) {}
 
-	public GamaPoint crossProduct(final GamaPoint u2) {
-		return cross(this, u2);
-	}
-
 	public GamaPoint orthogonal() {
 
 		final double threshold = 0.6 * norm();

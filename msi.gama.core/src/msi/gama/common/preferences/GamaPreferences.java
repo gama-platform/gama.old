@@ -322,8 +322,9 @@ public class GamaPreferences {
 		public static final Pref<String> CORE_DISPLAY_LAYOUT =
 				create("pref_display_view_layout", "Default layout of display views", "None", IType.STRING, true)
 						.among(LAYOUTS.toArray(new String[LAYOUTS.size()])).in(NAME, PRESENTATION);
-		public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
-				"Stack displays in the order defined in the model", true, IType.BOOL, true).in(NAME, PRESENTATION);
+		// Unused code found by UCDetector
+		// public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
+		// "Stack displays in the order defined in the model", true, IType.BOOL, true).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_BORDER =
 				create("pref_display_show_border", "Display a border around display views", false, IType.BOOL, true)
 						.in(NAME, PRESENTATION);

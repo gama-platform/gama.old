@@ -26,8 +26,6 @@
  */
 package msi.gama.util.graph.graphstream_copy;
 
-import static java.lang.Math.PI;
-
 import msi.gama.runtime.GAMA;
 
 /**
@@ -121,7 +119,7 @@ public class WattsStrogatzGenerator extends BaseGenerator {
 
 	@Override
 	public void begin() {
-		final double step = 2 * PI / n;
+		// final double step = 2 * PI / n;
 		// double x = 0;
 
 		for (int i = 0; i < n; i++) {

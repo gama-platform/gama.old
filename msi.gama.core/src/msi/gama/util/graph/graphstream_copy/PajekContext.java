@@ -76,8 +76,8 @@ public class PajekContext {
 
 	protected void addNodePosition(final String id, final Token x, final Token y, final Token z) throws ParseException {
 		final Object pos[] = new Object[3];
-		pos[0] = (Double) getReal(x);
-		pos[1] = (Double) getReal(y);
+		pos[0] = getReal(x);
+		pos[1] = getReal(y);
 		pos[2] = z != null ? (Double) getReal(z) : 0;
 
 		pajek.sendAttributeChangedEvent(sourceId, id, ElementType.NODE, "xyz", AttributeChangeEvent.ADD, null, pos);
