@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 memory=4096m
 outputFile=""
 inputFile=""
