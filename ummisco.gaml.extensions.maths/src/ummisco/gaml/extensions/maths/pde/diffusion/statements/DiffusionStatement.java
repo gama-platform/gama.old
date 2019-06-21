@@ -58,14 +58,6 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 						optional = false,
 						doc = @doc ("the list of agents (in general cells of a grid), on which the diffusion will occur")),
 				@facet (
-						name = "mat_diffu",
-						type = IType.MATRIX,
-						of = IType.FLOAT,
-						optional = true,
-						doc = @doc (
-								value = "the diffusion matrix (can have any size)",
-								deprecated = "Please use 'matrix' instead")),
-				@facet (
 						name = IKeyword.MATRIX,
 						type = IType.MATRIX,
 						of = IType.FLOAT,
@@ -139,12 +131,12 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 						value = "matrix<float> math_diff <- matrix([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]]);",
 						isExecutable = false),
 						@example (
-								value = "diffuse var: phero on: cells mat_diffu: math_diff;",
+								value = "diffuse var: phero on: cells matrix: math_diff;",
 								isExecutable = false) }),
 				@usage (
 						value = "The diffusion can be masked by obstacles, created from a bitmap image:",
 						examples = { @example (
-								value = "diffuse var: phero on: cells mat_diffu: math_diff mask: mymask;",
+								value = "diffuse var: phero on: cells matrix: math_diff mask: mymask;",
 								isExecutable = false) }),
 				@usage (
 						value = "A convenient way to have an uniform diffusion in a given radius is (which is equivalent to the above diffusion):",
@@ -183,10 +175,7 @@ public class DiffusionStatement extends AbstractStatement {
 				}
 			}
 
-			IExpressionDescription mat_diffu = desc.getFacet("mat_diffu");
-			if (mat_diffu == null) {
-				mat_diffu = desc.getFacet(MATRIX);
-			}
+			final IExpressionDescription mat_diffu = desc.getFacet(MATRIX);
 			final IExpressionDescription propor = desc.getFacet(IKeyword.PROPORTION);
 			final IExpressionDescription propagation = desc.getFacet(IKeyword.PROPAGATION);
 			final IExpressionDescription radius = desc.getFacet(IKeyword.RADIUS);
