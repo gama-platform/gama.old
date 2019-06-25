@@ -148,7 +148,7 @@ species ant skills: [moving] control: fsm {
 		}
 		draw circle(1) empty: !has_food color: #red;
 		if (destination != nil) {
-			draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false end_arrow: 1;
+			draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false end_arrow: 1.2;
 		}
 		if (state != "wandering") {
 			draw circle(4) empty: true color: #white;
@@ -251,7 +251,7 @@ experiment "3 Simulations" type: gui {
 		display Comparison background: #white {
 			chart "Food Gathered" type: series {
 				loop s over: simulations {
-					data "Food " + int(s) value: s.food_gathered color: s.color marker: false style: line ;
+					data "Food " + int(s) value: s.food_gathered color: s.color marker: false style: line thickness: 5 ;
 				}
 			}
 		}
@@ -259,7 +259,7 @@ experiment "3 Simulations" type: gui {
 	
 	output {
 		layout #split editors: false consoles: false toolbars: true tabs: false tray: false;
-		display Ants background: #white type: opengl toolbar: color{
+		display Ants background: color type: opengl toolbar: color draw_env: false{
 			image terrain position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
