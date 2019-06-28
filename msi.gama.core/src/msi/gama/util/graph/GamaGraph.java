@@ -13,7 +13,6 @@ package msi.gama.util.graph;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,7 @@ import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -106,7 +106,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<>();
 
-	private final Set<IAgent> generatedEdges = new HashSet<>();
+	private final Set<IAgent> generatedEdges = new TLinkedHashSet<>();
 	protected int version;
 
 	protected ISpecies vertexSpecies;
@@ -540,7 +540,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Set getAllEdges(final Object v1, final Object v2) {
-		final Set s = new HashSet();
+		final Set s = new TLinkedHashSet();
 		if (!containsVertex(v1) || !containsVertex(v2)) { return s; }
 		s.addAll(getVertex(v1).edgesTo(v2));
 		if (!directed) {
@@ -630,7 +630,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Set removeAllEdges(final Object v1, final Object v2) {
-		final Set result = new HashSet();
+		final Set result = new TLinkedHashSet();
 		Object edge = removeEdge(v1, v2);
 		while (edge != null) {
 			result.add(edge);
