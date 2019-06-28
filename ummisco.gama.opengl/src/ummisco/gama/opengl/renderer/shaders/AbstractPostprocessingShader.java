@@ -4,18 +4,14 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.renderer.shaders;
 
-import javax.vecmath.Vector3f;
-
 import com.jogamp.opengl.GL2;
 
 public abstract class AbstractPostprocessingShader extends AbstractShader {
-
-	protected final static String containingFolder = "postprocessing";
 
 	private int location_texture;
 
@@ -52,11 +48,6 @@ public abstract class AbstractPostprocessingShader extends AbstractShader {
 	@Override
 	public int getTextureID() {
 		return textureIDStored;
-	}
-
-	@Override
-	public Vector3f getTranslation() {
-		return new Vector3f(0, 0, 0);
 	}
 
 }

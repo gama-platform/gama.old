@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.ExecutionContext.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.ExecutionContext.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -39,11 +39,6 @@ public class ExecutionContext implements IExecutionContext {
 		this.scope = scope;
 	}
 
-	public ExecutionContext(final IScope scope, final Map<String, Object> vars) {
-		this(scope);
-		local = vars;
-	}
-
 	@Override
 	public final IExecutionContext getOuterContext() {
 		return outer;
@@ -52,8 +47,9 @@ public class ExecutionContext implements IExecutionContext {
 	@Override
 	public void setTempVar(final String name, final Object value) {
 		if (local == null || !local.containsKey(name)) {
-			if (outer != null)
+			if (outer != null) {
 				outer.setTempVar(name, value);
+			}
 		} else {
 			local.put(name, value);
 		}
@@ -62,18 +58,16 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public Object getTempVar(final String name) {
-		if (local == null || !local.containsKey(name))
-			return outer == null ? null : outer.getTempVar(name);
-		// if (name == ExecutionScope.EACH)
-		// DEBUG.LOG("EACH value found in context " + this);
+		if (local == null || !local.containsKey(name)) { return outer == null ? null : outer.getTempVar(name); }
 		return local.get(name);
 	}
 
 	@Override
 	public ExecutionContext createCopyContext() {
 		final ExecutionContext r = new ExecutionContext(scope, outer);
-		if (local != null)
-			r.local = new THashMap<String, Object>(local);
+		if (local != null) {
+			r.local = new THashMap<>(local);
+		}
 		return r;
 	}
 
@@ -94,29 +88,27 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public void putLocalVar(final String varName, final Object val) {
-		if (local == null)
+		if (local == null) {
 			local = new THashMap<>();
+		}
 		local.put(varName, val);
 	}
 
 	@Override
 	public Object getLocalVar(final String string) {
-		if (local == null)
-			return null;
+		if (local == null) { return null; }
 		return local.get(string);
 	}
 
 	@Override
 	public boolean hasLocalVar(final String name) {
-		if (local == null)
-			return false;
+		if (local == null) { return false; }
 		return local.containsKey(name);
 	}
 
 	@Override
 	public void removeLocalVar(final String name) {
-		if (local == null)
-			return;
+		if (local == null) { return; }
 		local.remove(name);
 	}
 

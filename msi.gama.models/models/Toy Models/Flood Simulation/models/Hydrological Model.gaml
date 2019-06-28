@@ -274,7 +274,7 @@ global {
    }
 
 
-experiment main_gui type: gui {
+experiment Run type: gui {
 	parameter "Run agents in parallel" var: parallel <- true category: "Model";
    parameter "Shapefile for the river" var:river_shapefile category:"Water data";
    parameter "Shapefile for the dykes" var:dykes_shapefile category:"Obstacles";

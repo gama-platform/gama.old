@@ -104,16 +104,11 @@ public class GamaPreferencesView {
 
 	}
 
-	static class Group {
-		Composite compo;
-		int nb_divisions;
-	}
-
 	Shell parentShell, shell;
 	CTabFolder tabFolder;
 	List<ParameterExpandBar> contents = new ArrayList();
 	final Map<String, IParameterEditor> editors = new LinkedHashMap();
-	final Map<IParameterEditor, Composite> groups = new HashMap();
+
 	final Map<String, Object> modelValues = new LinkedHashMap();
 
 	private GamaPreferencesView(final Shell parent) {

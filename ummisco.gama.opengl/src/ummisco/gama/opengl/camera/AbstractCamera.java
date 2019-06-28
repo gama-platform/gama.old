@@ -31,7 +31,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected final IOpenGLRenderer renderer;
 	private final GLU glu;
-	protected static final GamaPoint UNDEFINED = new GamaPoint();
 	protected boolean initialized;
 
 	// Mouse
@@ -640,10 +639,6 @@ public abstract class AbstractCamera implements ICamera {
 			}
 			return false;
 		});
-	}
-
-	public boolean inKeystoneMode() {
-		return keystoneMode;
 	}
 
 	public void setTarget(final GamaPoint centre) {

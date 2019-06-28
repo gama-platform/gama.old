@@ -173,8 +173,6 @@ public class SingleEquationStatement extends AbstractStatement {
 	private final List<IExpression> var = new ArrayList<>();
 	private IExpression var_t;
 
-	int order;
-
 	public IExpression getFunction() {
 		return function;
 	}
@@ -201,10 +199,6 @@ public class SingleEquationStatement extends AbstractStatement {
 
 	public IExpression getVar(final int index) {
 		return var.get(index);
-	}
-
-	public void setVar(final int index, final IVarExpression v) {
-		this.var.set(index, v);
 	}
 
 	public void setVar_t(final IVarExpression vt) {

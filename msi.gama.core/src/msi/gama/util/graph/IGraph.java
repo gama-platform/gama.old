@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.IGraph.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.graph.IGraph.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -32,7 +32,6 @@ import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.path.IPath;
 import msi.gaml.operators.Graphs;
-import msi.gaml.operators.Graphs.GraphObjectToAdd;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -67,61 +66,62 @@ import msi.gaml.types.IType;
 				of = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 				doc = { @doc ("Returns the list of vertices of the receiver graph") }) })
 @SuppressWarnings ({ "rawtypes" })
-public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, Graphs.GraphObjectToAdd>,
+public interface IGraph<Node, Edge>
+		extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, Graphs.GraphObjectToAdd>,
 		IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, WeightedGraph<Node, Edge>,
 		DirectedGraph<Node, Edge>, UndirectedGraph<Node, Edge>, IGraphEventProvider {
 
-	public abstract double getVertexWeight(final Object v);
+	double getVertexWeight(final Object v);
 
-	public abstract Double getWeightOf(final Object v);
+	Double getWeightOf(final Object v);
 
-	public abstract void setVertexWeight(final Object v, final double weight);
+	void setVertexWeight(final Object v, final double weight);
 
 	void setWeights(Map<?, Double> weights);
 
-	public Collection _internalEdgeSet();
+	Collection _internalEdgeSet();
 
-	public Collection _internalNodesSet();
+	Collection _internalNodesSet();
 
-	public Map<Edge, _Edge<Node, Edge>> _internalEdgeMap();
+	Map<Edge, _Edge<Node, Edge>> _internalEdgeMap();
 
-	public Map<Node, _Vertex<Node, Edge>> _internalVertexMap();
+	Map<Node, _Vertex<Node, Edge>> _internalVertexMap();
 
 	@getter ("edges")
-	public abstract IList<Edge> getEdges();
+	IList<Edge> getEdges();
 
 	@getter ("vertices")
-	public abstract IList<Node> getVertices();
+	IList<Node> getVertices();
 
 	@getter ("spanning_tree")
-	public abstract IList<Edge> getSpanningTree(IScope scope);
+	IList<Edge> getSpanningTree(IScope scope);
 
 	@getter ("circuit")
-	public abstract IPath<Node, Edge, IGraph<Node, Edge>> getCircuit(IScope scope);
+	IPath<Node, Edge, IGraph<Node, Edge>> getCircuit(IScope scope);
 
 	@getter ("connected")
-	public abstract Boolean getConnected();
+	Boolean getConnected();
 
 	@getter ("has_cycle")
-	public abstract Boolean hasCycle();
+	Boolean hasCycle();
 
-	public abstract boolean isDirected();
+	boolean isDirected();
 
-	public abstract void setDirected(final boolean b);
+	void setDirected(final boolean b);
 
-	public abstract Object addEdge(Object p);
+	Object addEdge(Object p);
 
-	public abstract void setOptimizerType(String optiType);
+	void setOptimizerType(String optiType);
 
-	public FloydWarshallShortestPathsGAMA<Node, Edge> getOptimizer();
+	FloydWarshallShortestPathsGAMA<Node, Edge> getOptimizer();
 
-	public void setOptimizer(FloydWarshallShortestPathsGAMA<Node, Edge> optimizer);
+	void setOptimizer(FloydWarshallShortestPathsGAMA<Node, Edge> optimizer);
 
-	public int getVersion();
+	int getVersion();
 
-	public void setVersion(int version);
+	void setVersion(int version);
 
-	public void incVersion();
+	void incVersion();
 
 	// FIXME Patrick: To check
 	// public abstract IPath<V,E> computeShortestPathBetween(final Object
@@ -129,35 +129,45 @@ public interface IGraph<Node, Edge> extends IModifiableContainer<Node, Edge, Gam
 	// public abstract IList<IShape> computeBestRouteBetween(final Object
 	// source, final Object target);
 
-	public abstract IPath<Node, Edge, IGraph<Node, Edge>> computeShortestPathBetween(IScope scope, final Node source,
+	IPath<Node, Edge, IGraph<Node, Edge>> computeShortestPathBetween(IScope scope, final Node source,
 			final Node target);
 
-	public abstract IList<Edge> computeBestRouteBetween(IScope scope, final Node source, final Node target);
+	IList<Edge> computeBestRouteBetween(IScope scope, final Node source, final Node target);
 
-	public double computeWeight(final IPath<Node, Edge, ? extends IGraph<Node, Edge>> gamaPath);
+	double computeWeight(final IPath<Node, Edge, ? extends IGraph<Node, Edge>> gamaPath);
 
-	public double computeTotalWeight();
+	double computeTotalWeight();
 
-	public boolean isSaveComputedShortestPaths();
+	boolean isSaveComputedShortestPaths();
 
-	public void setSaveComputedShortestPaths(boolean saveComputedShortestPaths);
+	void setSaveComputedShortestPaths(boolean saveComputedShortestPaths);
 
-	public abstract IList<IPath<Node, Edge, IGraph<Node, Edge>>> computeKShortestPathsBetween(IScope scope, Node source,
-			Node target, int k);
-
-	public abstract IList<IList<Edge>> computeKBestRoutesBetween(IScope scope, final Node source, final Node target,
+	IList<IPath<Node, Edge, IGraph<Node, Edge>>> computeKShortestPathsBetween(IScope scope, Node source, Node target,
 			int k);
 
-	public Graphs.GraphObjectToAdd buildValue(IScope scope, Object object);
+	IList<IList<Edge>> computeKBestRoutesBetween(IScope scope, final Node source, final Node target, int k);
 
-	public IContainer buildValues(IScope scope, IContainer objects);
+	Graphs.GraphObjectToAdd buildValue(IScope scope, Object object);
 
-	public GamaPair<Node, Node> buildIndex(IScope scope, Object object);
+	IContainer buildValues(IScope scope, IContainer objects);
 
-	public IContainer<?, GamaPair<Node, Node>> buildIndexes(IScope scope, IContainer value);
+	GamaPair<Node, Node> buildIndex(IScope scope, Object object);
 
-	public ISpecies getVertexSpecies();
+	IContainer<?, GamaPair<Node, Node>> buildIndexes(IScope scope, IContainer value);
 
-	public ISpecies getEdgeSpecies();
+	ISpecies getVertexSpecies();
+
+	ISpecies getEdgeSpecies();
+
+	@Override
+	default boolean contains(final IScope scope, final Object o) {
+		if (o instanceof GamaPair) { return Graphs.containsEdge(scope, this, (GamaPair) o); }
+		return Graphs.containsEdge(scope, this, o);
+	}
+
+	@Override
+	default boolean containsKey(final IScope scope, final Object o) {
+		return Graphs.containsVertex(scope, this, o);
+	}
 
 }

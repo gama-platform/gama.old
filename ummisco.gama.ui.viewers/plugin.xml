@@ -5,7 +5,6 @@
          point="org.eclipse.ui.editors">
       <editor
             class="ummisco.gama.ui.viewers.image.ImageViewer"
-            contributorClass="ummisco.gama.ui.viewers.image.ImageViewerActionBarContributor"
             default="false"
             extensions="JPG,jpg,JPEG,jpeg,PNG,png,BMP,bmp,TIFF,tiff,TIF,tif,ICO,ico,ASC,asc,PGM,pgm"
             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/file.image2.png"

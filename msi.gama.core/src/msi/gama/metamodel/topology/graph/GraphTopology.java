@@ -94,6 +94,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @throws GamaRuntimeException
 	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
+	@SuppressWarnings ("null")
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target) {
 		// final ILocation source = sourceShape.getLocation();

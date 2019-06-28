@@ -1,77 +1,46 @@
 /*********************************************************************************************
  *
- * 'INetworkSkill.java, in plugin ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'INetworkSkill.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.network.skills;
 
-import java.util.Observer;
+public interface INetworkSkill {
+	String CONNECT_TOPIC = "connect";
+	String SERVER_URL = "to";
+	String LOGIN = "login";
+	String PASSWORD = "password";
+	String WITHNAME = "with_name";
+	String PROTOCOL = "protocol";
+	String PORT = "port";
 
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
+	// Agent Data
+	String NET_AGENT_NAME = "network_name";
+	String NET_AGENT_GROUPS = "network_groups";
+	String NET_AGENT_SERVER = "network_server";
 
-public interface INetworkSkill  {
-	public final static String OPEN_TOPIC = "open";
-	public final static String CONNECT_TOPIC = "connect";
-	public final static String SERVER_URL = "to";
-	public final static String LOGIN = "login";
-	public final static String PASSWORD = "password";
-	public final static String GROUP = "with_group";
-	public final static String WITHNAME = "with_name";
-	public final static String PROTOCOL = "protocol";
-	public final static String PORT = "port";
-	
-	//Agent Data
-	public final static String NET_AGENT_NAME = "network_name";
-	public final static String NET_AGENT_GROUPS = "network_groups";
-	public final static String NET_AGENT_SERVER = "network_server";
-	
-	//MESSAGE CONTENTS
-	public final static String TO = "to";
-	public final static String FROM = "from";
-	public final static String CONTENT = "content";
-	public final static String BROADCAST = "all";
-
-	
 	// CONNECTION PROTOCOL
-	public final static String UDP_SERVER = "udp_server";
-	public final static String UDP_CLIENT = "udp_emitter";
-	public final static String TCP_SERVER = "tcp_server";
-	public final static String TCP_CLIENT = "tcp_client";
-	public final static String MQTT = "mqtt";
-	
+	String UDP_SERVER = "udp_server";
+	String UDP_CLIENT = "udp_emitter";
+	String TCP_SERVER = "tcp_server";
+	String TCP_CLIENT = "tcp_client";
+
 	///// SKILL NETWORK
-	public static String NETWORK_SKILL = "network";
-	public static String SEND_MESSAGE = "send_message";
-	public static String FETCH_MESSAGE = "fetch_message";
-	public static String LISTEN = "listen";
-	public static String HAS_MORE_MESSAGE_IN_BOX="has_more_message";
-	public static String BROADCAST_RECEIVER = "all";
-	public static String FORCE_NETWORK_USE = "force_network_use";
-	
+	String NETWORK_SKILL = "network";
+	String FETCH_MESSAGE = "fetch_message";
+	String HAS_MORE_MESSAGE_IN_BOX = "has_more_message";
+	String FORCE_NETWORK_USE = "force_network_use";
+
 	///// GROUP MANAGEMENT
-	public static String REGISTER_TO_GROUP = "join_group";
-	public static String LEAVE_THE_GROUP = "leave_group";
-	public static String RETRIEVE_GROUP_MEMBER = "retrieve_member_of";
-	public static String[] DEFAULT_GROUP = {"ALL"};
-	
-	
-	// SKILL SENSING
-	public static String SENSING_SKILL  = "sensor";
-	public static String SENSING_CONNECT = "connect_sensor";
-	public static String SENSOR_NAME = "sensor_name";
-	public static String FETCH_DATA = "fetch_data";
-	public static String EMPTY_BUFFER="has_received_data";
-	
-	
-	//SKILL TEST
-	public static String SIMULATE_STEP = "simulate_step";
-	
-	
+	String REGISTER_TO_GROUP = "join_group";
+	String LEAVE_THE_GROUP = "leave_group";
+	String[] DEFAULT_GROUP = { "ALL" };
+
+	// SKILL TEST
+	String SIMULATE_STEP = "simulate_step";
+
 }

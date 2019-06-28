@@ -106,7 +106,7 @@ global {
 			rgb colorList <- rgb(rnd(255),rnd(255),rnd(255));
 			loop a_dummy over: a_list
 			{
-				if(length(theDummies["cluster_distance"])=0)
+				if(!(theDummies contains_key "cluster_distance") or length(theDummies["cluster_distance"])=0)
 				{
 					add map<dummy,rgb>([a_dummy::colorList]) at:"cluster_distance" to:theDummies;
 				}
@@ -126,7 +126,7 @@ global {
 			rgb colorList <- rgb(rnd(255),rnd(255),rnd(255));
 			loop a_dummy over: a_list
 			{
-				if(length(theDummies["cluster_hierarchical"])=0)
+				if(!(theDummies contains_key "cluster_hierarchical") or length(theDummies["cluster_hierarchical"])=0)
 				{
 					add map<dummy,rgb>([a_dummy::colorList]) at:"cluster_hierarchical" to:theDummies;
 				}

@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.TypedListener;
 
 import ummisco.gama.ui.resources.GamaColors;
@@ -33,7 +31,6 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
 
@@ -106,8 +103,9 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 				}
 				break;
 			case SWT.MouseDown:
-				if (e.button == 1 && getClientArea().contains(e.x, e.y))
+				if (e.button == 1 && getClientArea().contains(e.x, e.y)) {
 					doButtonDown();
+				}
 				break;
 			default:
 				;
@@ -122,11 +120,6 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public void addSelectionListener(final SelectionListener listener) {
 		if (listener == null) { return; }
 		addListener(SWT.Selection, new TypedListener(listener));
-	}
-
-	public void removeSelectionListener(final SelectionListener listener) {
-		if (listener == null) { return; }
-		removeListener(SWT.Selection, listener);
 	}
 
 	public void doButtonDown() {
@@ -338,25 +331,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		}
 	}
 
-	public ToolItem item() {
-		if (getParent() instanceof GamaToolbarSimple) {
-			final GamaToolbarSimple p = (GamaToolbarSimple) getParent();
-			return p.control(this, computeSize(SWT.DEFAULT, height, false).x + 4);
-		}
-		final ToolItem t = new ToolItem((ToolBar) getParent(), SWT.SEPARATOR);
-		final int width = this.computeSize(SWT.DEFAULT, height, false).x + 4;
-		t.setControl(this);
-		t.setWidth(width);
-		return t;
-	}
-
 	public FlatButton disabled() {
 		setEnabled(false);
-		return this;
-	}
-
-	public FlatButton enabled() {
-		setEnabled(true);
 		return this;
 	}
 

@@ -309,7 +309,7 @@ species building {
 	}
 }
 
-experiment my_experiment {
+experiment "Run" {
 	float minimum_cycle_duration <- 0.1;
 		
 	parameter "Alert Strategy" var:the_alert_strategy init:"STAGED" among:["NONE","STAGED","SPATIAL","EVERYONE"] category:"Alert";

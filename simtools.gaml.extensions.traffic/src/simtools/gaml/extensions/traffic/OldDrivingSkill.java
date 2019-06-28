@@ -2,18 +2,17 @@
  *
  * simtools.gaml.extensions.traffic.DrivingSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source
  * code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -83,7 +82,8 @@ import msi.gaml.types.Types;
 @skill (
 		name = "driving",
 		concept = { IConcept.TRANSPORT, IConcept.SKILL, IConcept.AGENT_MOVEMENT },
-		doc = @doc (value = "A basic skill for providing agents with some 'driving' capabilities",
+		doc = @doc (
+				value = "A basic skill for providing agents with some 'driving' capabilities",
 				deprecated = "For agents that simply follow a graph network, use the 'moving' skill instead, "
 						+ "and for agents that follow traffic rules, use the new (advanced) 'driving' skill instead"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -636,39 +636,4 @@ public class OldDrivingSkill extends MovingSkill {
 		return followedPath;
 	}
 
-	protected IList initMoveAlongPath(final IAgent agent, final IPath path, final GamaPoint currentLocation,
-			final GamaPoint falseTarget, final IAgent currentRoad) {
-		final IList initVals = GamaListFactory.create(Types.INT);
-		Integer indexSegment = 0;
-		Integer endIndexSegment = 0;
-		final IList<IShape> edges = path.getEdgeGeometry();
-		if (edges.isEmpty()) { return null; }
-		// final int nb = edges.size();
-		if (currentRoad.getInnerGeometry().getNumPoints() == 2) {
-			indexSegment = 0;
-			endIndexSegment = 0;
-
-		} else {
-			double distanceS = Double.MAX_VALUE;
-			double distanceT = Double.MAX_VALUE;
-			final IShape line = currentRoad.getGeometry();
-			final GamaPoint coords[] = GeometryUtils.getPointsOf(line); // .getInnerGeometry().getCoordinates();
-			final int nbSp = coords.length;
-			for (int i = 0; i < nbSp - 1; i++) {
-				final double distS = CGAlgorithms.distancePointLine(currentLocation, coords[i], coords[i + 1]);
-				if (distS < distanceS) {
-					distanceS = distS;
-					indexSegment = i + 1;
-				}
-				final double distT = CGAlgorithms.distancePointLine(falseTarget, coords[i], coords[i + 1]);
-				if (distT < distanceT) {
-					distanceT = distT;
-					endIndexSegment = i + 1;
-				}
-			}
-		}
-		initVals.add(indexSegment);
-		initVals.add(endIndexSegment);
-		return initVals;
-	}
 }

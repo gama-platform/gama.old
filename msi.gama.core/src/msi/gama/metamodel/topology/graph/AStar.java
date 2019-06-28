@@ -180,7 +180,7 @@ public class AStar<V, E> {
 		public ASNode parent;
 		public E edge;
 		public double g;
-		public double h;
+		// public double h;
 
 		public double rank;
 
@@ -189,7 +189,7 @@ public class AStar<V, E> {
 			this.edge = edge;
 			this.parent = parent;
 			this.g = g;
-			this.h = h;
+			// this.h = h;
 			this.rank = g + h;
 		}
 	}

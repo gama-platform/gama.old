@@ -2,11 +2,11 @@
  *
  * simtools.gaml.extensions.traffic.AdvancedDrivingSkill.java, in plugin simtools.gaml.extensions.traffic, is part of
  * the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
@@ -104,8 +102,7 @@ import ummisco.gama.dev.utils.DEBUG;
 				init = "1.0",
 				doc = @doc (
 						deprecated = "use safety_distance_coeff instead",
-						value = "the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - safety_distance =max(min_safety_distance, safety_distance_coeff `*` min(self.real_speed, other.real_speed) )")
-				),
+						value = "the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - safety_distance =max(min_safety_distance, safety_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
 		@variable (
 				name = "safety_distance_coeff",
 				type = IType.FLOAT,
@@ -116,8 +113,8 @@ import ummisco.gama.dev.utils.DEBUG;
 				type = IType.FLOAT,
 				init = "0.5",
 				doc = @doc (
-						deprecated="use min_safety_distance instead",
-						value="the minimal distance to another driver")),
+						deprecated = "use min_safety_distance instead",
+						value = "the minimal distance to another driver")),
 		@variable (
 				name = "min_safety_distance",
 				type = IType.FLOAT,
@@ -214,14 +211,11 @@ public class DrivingSkill extends MovingSkill {
 		DEBUG.OFF();
 	}
 
-
-	@Deprecated
-	public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
+	@Deprecated public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
 	public final static String SAFETY_DISTANCE_COEFF = "safety_distance_coeff";
-	@Deprecated
-	public final static String MIN_SECURITY_DISTANCE = "min_security_distance";
+	@Deprecated public final static String MIN_SECURITY_DISTANCE = "min_security_distance";
 	public final static String MIN_SAFETY_DISTANCE = "min_safety_distance";
-	
+
 	public final static String CURRENT_ROAD = "current_road";
 	public final static String CURRENT_LANE = "current_lane";
 	public final static String DISTANCE_TO_GOAL = "distance_to_goal";
@@ -415,7 +409,7 @@ public class DrivingSkill extends MovingSkill {
 	public void setRightSideDriving(final IAgent agent, final Boolean isRight) {
 		agent.setAttribute(RIGHT_SIDE_DRIVING, isRight);
 	}
-	
+
 	@Deprecated
 	@getter (SECURITY_DISTANCE_COEFF)
 	public double getSecurityDistanceCoeff(final IAgent agent) {
@@ -427,12 +421,12 @@ public class DrivingSkill extends MovingSkill {
 	public void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
 		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
 	}
-	
+
 	@getter (SAFETY_DISTANCE_COEFF)
 	public double getSafetyDistanceCoeff(final IAgent agent) {
 		return (Double) agent.getAttribute(SAFETY_DISTANCE_COEFF);
 	}
-	
+
 	@setter (SAFETY_DISTANCE_COEFF)
 	public void setSafetyDistanceCoeff(final IAgent agent, final double ls) {
 		agent.setAttribute(SAFETY_DISTANCE_COEFF, ls);
@@ -457,21 +451,17 @@ public class DrivingSkill extends MovingSkill {
 	public double getDistanceToGoal(final IAgent agent) {
 		return (Double) agent.getAttribute(DISTANCE_TO_GOAL);
 	}
-	
+
 	@getter (MIN_SECURITY_DISTANCE)
 	public double getMinSecurityDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
 	}
-	
+
 	@setter (MIN_SECURITY_DISTANCE)
 	public void setMinSecDistance(final IAgent agent, final double msd) {
 		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
 	}
 
-	public void setMinSafetyDistance(final IAgent agent, final double msd) {
-		agent.setAttribute(MIN_SAFETY_DISTANCE, msd);
-	}
-	
 	@getter (MIN_SAFETY_DISTANCE)
 	public double getMinSafetyDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SAFETY_DISTANCE);
@@ -485,7 +475,8 @@ public class DrivingSkill extends MovingSkill {
 	public Double primAdvancedFollow(final IScope scope, final IAgent agent, final double s, final double t,
 			final IPath path, final GamaPoint target) throws GamaRuntimeException {
 
-		final double safety_distance_coeff = agent.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(agent) : getSecurityDistanceCoeff(agent);
+		final double safety_distance_coeff = agent.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(agent)
+				: getSecurityDistanceCoeff(agent);
 		final int currentLane = getCurrentLane(agent);
 		final Double probaChangeLaneUp = getProbaLaneChangeUp(agent);
 		final Double probaChangeLaneDown = getProbaLaneChangeDown(agent);
@@ -580,7 +571,8 @@ public class DrivingSkill extends MovingSkill {
 		final Integer lane = (Integer) scope.getArg("lane", IType.INT);
 		final IAgent driver = getCurrentAgent(scope);
 		final double vL = getVehiculeLength(driver);
-		final double secDistCoeff = driver.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(driver) : getSecurityDistanceCoeff(driver);
+		final double secDistCoeff = driver.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(driver)
+				: getSecurityDistanceCoeff(driver);
 		final double probaBlock = getProbaBlockNode(driver);
 		final boolean testBlockNode = Random.opFlip(scope, probaBlock);
 		final IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
@@ -698,8 +690,9 @@ public class DrivingSkill extends MovingSkill {
 
 				// if ( dr.euclidianDistanceTo(driver) < vL / 2 + secDist +
 				// getVehiculeLength(dr) / 2 ) { return false; }
-				if (GeometryUtils.getFirstPointOf(road).euclidianDistanceTo(dr) < vL / 2
-						+ getVehiculeLength(dr) / 2) { return false; }
+				if (GeometryUtils.getFirstPointOf(road).euclidianDistanceTo(dr) < vL / 2 + getVehiculeLength(dr) / 2) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -1097,7 +1090,8 @@ public class DrivingSkill extends MovingSkill {
 		final boolean onLinkedRoad = getOnLinkedRoad(driver);
 		final IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
 		final double vL = getVehiculeLength(driver);
-		final double secDistCoeff = driver.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(driver) : getSecurityDistanceCoeff(driver);
+		final double secDistCoeff = driver.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(driver)
+				: getSecurityDistanceCoeff(driver);
 		final double probaBlock = getProbaBlockNode(driver);
 		final boolean testBlockNode = Random.opFlip(scope, probaBlock);
 		final Map<IAgent, List<IAgent>> block = (Map<IAgent, List<IAgent>>) node.getAttribute(RoadNodeSkill.BLOCK);
@@ -1257,7 +1251,8 @@ public class DrivingSkill extends MovingSkill {
 		// DEBUG.OUT(agent + " agents: " + agents);
 		final double distanceToGoal = getDistanceToGoal(agent);
 		final boolean nextSegment = distanceToGoal < distance;
-		final double min_safety_distance = agent.hasAttribute(MIN_SAFETY_DISTANCE) ? getMinSafetyDistance(agent) : getMinSecurityDistance(agent);
+		final double min_safety_distance =
+				agent.hasAttribute(MIN_SAFETY_DISTANCE) ? getMinSafetyDistance(agent) : getMinSecurityDistance(agent);
 		// final IAgent theRoad = onLinkedRoad ?
 		// RoadSkill.getLinkedRoad(currentRoad) : currentRoad;
 		final int segment =
@@ -1706,45 +1701,4 @@ public class DrivingSkill extends MovingSkill {
 		return _distance == 0.0 ? 1.0 : distance / _distance;
 	}
 
-	protected IList initMoveAlongPath(final IAgent agent, final IPath path, final GamaPoint currentLocation,
-			final GamaPoint falseTarget, final IAgent currentRoad) {
-		final IList initVals = GamaListFactory.create(Types.INT);
-		Integer indexSegment = 0;
-		Integer endIndexSegment = 0;
-		final IList<IShape> edges = path.getEdgeGeometry();
-		if (edges.isEmpty()) { return null; }
-		if (currentRoad.getInnerGeometry().getNumPoints() == 2) {
-			indexSegment = 1;
-			endIndexSegment = 1;
-
-		} else {
-			double distanceS = Double.MAX_VALUE;
-			double distanceT = Double.MAX_VALUE;
-			final IShape line = currentRoad.getGeometry();
-			final Point pointS = (Point) currentLocation.getInnerGeometry();
-			final Point pointT = (Point) falseTarget.getInnerGeometry();
-			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-			final int nbSp = coords.length;
-			final Coordinate[] temp = new Coordinate[2];
-			for (int i = 0; i < nbSp - 1; i++) {
-				temp[0] = coords[i];
-				temp[1] = coords[i + 1];
-				final LineString segment = GeometryUtils.GEOMETRY_FACTORY.createLineString(temp);
-				final double distS = segment.distance(pointS);
-				if (distS <= distanceS) {
-					distanceS = distS;
-					indexSegment = i + 1;
-				}
-
-				final double distT = segment.distance(pointT);
-				if (distT <= distanceT) {
-					distanceT = distT;
-					endIndexSegment = i + 1;
-				}
-			}
-		}
-		initVals.add(indexSegment);
-		initVals.add(endIndexSegment);
-		return initVals;
-	}
 }

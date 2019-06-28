@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'CSVRow.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CSVRow.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.csv.model;
@@ -36,33 +35,18 @@ public class CSVRow {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param line
 	 * @param listener
 	 */
 	public CSVRow(final List<String> line, final IRowChangesListener listener) {
-		entries = new ArrayList<String>(line);
+		entries = new ArrayList<>(line);
 		this.listener = listener;
 	}
 
 	/**
 	 * Constructor
-	 * 
-	 * @param row
-	 * @param listener
-	 */
-	@SuppressWarnings("unchecked")
-	public CSVRow(final CSVRow row, final IRowChangesListener listener) {
-
-		this.entries = (ArrayList<String>) row.entries.clone();
-		this.listener = listener;
-		this.isCommentLine = row.isCommentLine;
-		this.isHeader = row.isHeader;
-	}
-
-	/**
-	 * Constructor
-	 * 
+	 *
 	 * @param lineElements
 	 * @param listener
 	 */
@@ -72,14 +56,14 @@ public class CSVRow {
 
 	/**
 	 * Create an empty row
-	 * 
+	 *
 	 * @param nbOfColumns
 	 * @param delimiter
 	 * @param listener
 	 * @return
 	 */
 	public static CSVRow createEmptyLine(final int nbOfColumns, final IRowChangesListener listener) {
-		final List<String> line = new LinkedList<String>();
+		final List<String> line = new LinkedList<>();
 		for (int i = 0; i < nbOfColumns; i++) {
 			line.add("");
 		}
@@ -112,23 +96,20 @@ public class CSVRow {
 	}
 
 	/**
-	 * return the element at a given index. This method makes sure that if the
-	 * current line does not have as many elements as the header, it will not
-	 * break and return an empty string
+	 * return the element at a given index. This method makes sure that if the current line does not have as many
+	 * elements as the header, it will not break and return an empty string
 	 *
 	 * @param index
 	 * @return the element at a given index
 	 */
 	public String getElementAt(final int index) {
-		if (index >= entries.size()) {
-			return "";
-		}
+		if (index >= entries.size()) { return ""; }
 		return entries.get(index);
 	}
 
 	/**
 	 * Return the number of elements in this row
-	 * 
+	 *
 	 * @return number of elements in this row
 	 */
 	public int getNumberOfElements() {
@@ -212,14 +193,11 @@ public class CSVRow {
 		// content
 
 		/*
-		 * AttributeRow thisRow = (AttributeRow) anObject; for (int i=0;
-		 * i<getNumberOfElements(); i++) { if
-		 * (!(getElementAt(i).equals(thisRow.getElementAt(i)))) { return false;
-		 * } } return true;
+		 * AttributeRow thisRow = (AttributeRow) anObject; for (int i=0; i<getNumberOfElements(); i++) { if
+		 * (!(getElementAt(i).equals(thisRow.getElementAt(i)))) { return false; } } return true;
 		 */
 
-		if (this == anObject)
-			return true;
+		if (this == anObject) { return true; }
 		return false;
 	}
 

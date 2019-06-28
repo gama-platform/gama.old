@@ -10,8 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.util.graph.writer;
 
-import org.graphstream.stream.file.FileSink;
-import org.graphstream.stream.file.FileSinkGraphML;
+import msi.gama.util.graph.graphstream_copy.FileSink;
+import msi.gama.util.graph.graphstream_copy.FileSinkGraphML;
 
 /**
  * 

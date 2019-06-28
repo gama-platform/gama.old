@@ -24,10 +24,10 @@ import ummisco.gama.opengl.renderer.shaders.KeystoneShaderProgram;
 
 public class KeystoneHelper extends AbstractRendererHelper {
 
-	public static interface Pass extends AutoCloseable {
+	public interface Pass extends AutoCloseable {
 
 		@Override
-		public void close();
+		void close();
 
 	}
 
@@ -64,10 +64,6 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	public GamaPoint getKeystoneCoordinates(final int corner) {
 		return getCoords()[corner];
-	}
-
-	public boolean drawKeystoneHelper() {
-		return drawKeystoneHelper;
 	}
 
 	public void startDrawHelper() {

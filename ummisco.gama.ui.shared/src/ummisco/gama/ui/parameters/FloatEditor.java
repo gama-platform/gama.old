@@ -4,14 +4,13 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -24,14 +23,6 @@ import ummisco.gama.ui.interfaces.EditorListener;
 
 public class FloatEditor extends NumberEditor<Double> {
 
-	FloatEditor(final IScope scope, final IParameter param, final boolean canBeNull) {
-		super(scope, param, canBeNull);
-	}
-
-	FloatEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull) {
-		this(scope, agent, param, canBeNull, null);
-	}
-
 	FloatEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
 			final EditorListener<Double> l) {
 		super(scope, agent, param, l, canBeNull);
@@ -41,8 +32,9 @@ public class FloatEditor extends NumberEditor<Double> {
 			final Double max, final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value, min, max, step), whenModified, canBeNull);
-		if (step != null)
+		if (step != null) {
 			stepValue = step;
+		}
 		this.createComposite(parent);
 	}
 
@@ -60,10 +52,12 @@ public class FloatEditor extends NumberEditor<Double> {
 		if (acceptNull && val == null) {
 			i = null;
 		} else {
-			if (minValue != null && i < minValue.doubleValue()) { throw GamaRuntimeException
-					.error("Value " + i + " should be greater than " + minValue, getScope()); }
-			if (maxValue != null && i > maxValue.doubleValue()) { throw GamaRuntimeException
-					.error("Value " + i + " should be smaller than " + maxValue, getScope()); }
+			if (minValue != null && i < minValue.doubleValue()) {
+				throw GamaRuntimeException.error("Value " + i + " should be greater than " + minValue, getScope());
+			}
+			if (maxValue != null && i > maxValue.doubleValue()) {
+				throw GamaRuntimeException.error("Value " + i + " should be smaller than " + maxValue, getScope());
+			}
 		}
 		super.modifyValue(i);
 	}

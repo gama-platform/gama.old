@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
@@ -60,10 +60,6 @@ public class RefreshHandler implements IRefreshHandler {
 		return navigator;
 	}
 	//
-	// private VirtualContent<?> getContent(final Object target) {
-	// final VirtualContent<?> result = ResourceManager.getInstance().findWrappedInstanceOf(target);
-	// return result;
-	// }
 
 	@Override
 	public void refreshNavigator() {

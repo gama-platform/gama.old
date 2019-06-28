@@ -56,7 +56,6 @@ import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
-import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -348,18 +347,9 @@ public abstract class AbstractEditor<T>
 		composite.setLayoutData(data);
 
 		final GridLayout layout = new GridLayout(2, false);
-		// layout.verticalSpacing = 8;
-		// layout.marginHeight = 5;
 		layout.marginWidth = 5;
 
 		composite.setLayout(layout);
-		// if (isSubParameter) {
-		// titleLabel = createLeftLabel(composite, name, false);
-		// titleLabel.setFont(GamaFonts.getNavigFolderFont());
-		// final GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		// d.grabExcessHorizontalSpace = false;
-		// titleLabel.setLayoutData(d);
-		// }
 		createEditorControl(composite);
 		toolbar = createToolbar2();
 
@@ -373,13 +363,6 @@ public abstract class AbstractEditor<T>
 		for (final Button b : items) {
 			addToolbarHiders(b);
 		}
-		// toolbar.addDisposeListener(new DisposeListener() {
-		//
-		// @Override
-		// public void widgetDisposed(final DisposeEvent e) {
-		// DEBUG.LOG("Toolbar disposed !");
-		// }
-		// });
 		for (final Control c : controlsThatShowHideToolbars) {
 			c.addMouseTrackListener(hideShowToolbarListener);
 			c.addDisposeListener(e -> {
@@ -511,67 +494,6 @@ public abstract class AbstractEditor<T>
 		t.pack();
 		return t;
 
-	}
-
-	// protected ToolBar createToolbar() {
-	// final ToolBar t = new ToolBar(composite, SWT.FLAT | SWT.LEFT | SWT.HORIZONTAL | SWT.WRAP);
-	// final GridData d = new GridData(SWT.FILL, SWT.TOP, false, false);
-	// t.setLayoutData(d);
-	// final String unitText = computeUnitLabel();
-	// sep(12, t);
-	// if (!unitText.isEmpty()) {
-	// unitItem = new Text(t, SWT.READ_ONLY | SWT.FLAT);
-	// unitItem.setText(unitText);
-	// unitItem.setEnabled(false);
-	// }
-	// if (!isEditable) { return t; }
-	// final int[] codes = this.getToolItems();
-	// for (final int i : codes) {
-	// ToolItem item = null;
-	// switch (i) {
-	// case REVERT:
-	// item = createItem(t, "Revert to original value", GamaIcons.create("small.revert").image());
-	// break;
-	// case PLUS:
-	// item = createPlusItem(t);
-	// break;
-	// case MINUS:
-	// item = createItem(t, "Decrement the parameter", GamaIcons.create(IGamaIcons.SMALL_MINUS).image());
-	// break;
-	// case EDIT:
-	// item = createItem(t, "Edit the parameter", GamaIcons.create("small.edit").image());
-	// break;
-	// case INSPECT:
-	// item = createItem(t, "Inspect the agent", GamaIcons.create("small.inspect").image());
-	// break;
-	// case BROWSE:
-	// item = createItem(t, "Browse the list of agents", GamaIcons.create("small.browse").image());
-	// break;
-	// case CHANGE:
-	// item = createItem(t, "Choose another agent", GamaIcons.create("small.change").image());
-	// break;
-	// case DEFINE:
-	// item = createItem(t, "Set the parameter to undefined", GamaIcons.create("small.undefine").image());
-	// }
-	// if (item != null) {
-	// items[i] = item;
-	// item.addSelectionListener(new ItemSelectionListener(i));
-	//
-	// }
-	// }
-	// t.layout();
-	// t.pack();
-	// return t;
-	// }
-
-	public ToolItem sep(final int n, final ToolBar t) {
-		final GamaIcon icon = GamaIcons.createSizer(t.getBackground(), n, 12);
-		final ToolItem i = new ToolItem(t, SWT.NONE);
-		i.setToolTipText("");
-		i.setImage(icon.image());
-		i.setDisabledImage(icon.image());
-		i.setEnabled(false);
-		return i;
 	}
 
 	protected ToolItem createPlusItem(final ToolBar t) {
@@ -727,11 +649,12 @@ public abstract class AbstractEditor<T>
 		if (!isValueDifferent(val)) { return; }
 		currentValue = val;
 		WorkbenchHelper.asyncRun(() -> {
-			if (CORE_EDITORS_HIGHLIGHT.getValue())
+			if (CORE_EDITORS_HIGHLIGHT.getValue()) {
 				if (titleLabel != null && !titleLabel.isDisposed()) {
 					titleLabel.setBackground(
 							isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
 				}
+			}
 		});
 
 		if (!internalModification) {
@@ -796,16 +719,19 @@ public abstract class AbstractEditor<T>
 		modifyValue(val);
 		WorkbenchHelper.asyncRun(() -> {
 			if (!isEditable) {
-				if (!fixedValue.isDisposed())
+				if (!fixedValue.isDisposed()) {
 					fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val, false));
+				}
 			} else if (isCombo) {
-				if (!combo.isDisposed())
+				if (!combo.isDisposed()) {
 					combo.select(possibleValues.indexOf(val));
+				}
 			} else {
 				displayParameterValueAndCheckButtons();
 			}
-			if (!composite.isDisposed())
+			if (!composite.isDisposed()) {
 				composite.update();
+			}
 		});
 
 	}

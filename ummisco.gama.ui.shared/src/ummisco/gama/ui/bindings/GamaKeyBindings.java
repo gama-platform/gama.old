@@ -44,7 +44,6 @@ public class GamaKeyBindings implements Listener {
 	public static String PLAY_STRING = format(COMMAND, 'P');
 	public static String STEP_STRING = format(COMMAND + SWT.SHIFT, 'P');
 	public static String RELOAD_STRING = format(COMMAND, 'R');
-	public static String RELAUNCH_STRING = format(COMMAND + SWT.SHIFT, 'R');
 	public static String QUIT_STRING = format(COMMAND + SWT.SHIFT, 'X');
 
 	public static abstract class PluggableBinding implements Runnable {
@@ -144,23 +143,11 @@ public class GamaKeyBindings implements Listener {
 		return (e.stateMask & COMMAND) != 0;
 	}
 
-	public static boolean ctrl(final java.awt.event.KeyEvent e) {
-		return e.isControlDown(); // TODO Command ?
-	}
-
 	public static boolean ctrl(final MouseEvent e) {
 		return (e.stateMask & COMMAND) != 0;
 	}
 
 	public static boolean shift(final Event e) {
-		return (e.stateMask & SWT.SHIFT) != 0;
-	}
-
-	public static boolean shift(final java.awt.event.KeyEvent e) {
-		return e.isShiftDown();
-	}
-
-	public static boolean shift(final KeyEvent e) {
 		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 

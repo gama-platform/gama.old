@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/jlayer-1.0.1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mp3spi-1.9.5.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tritonus-share-0.3.7.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
@@ -8,10 +11,5 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/basicplayer3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-logging-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jl1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/mp3spi1.9.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tritonus_share.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

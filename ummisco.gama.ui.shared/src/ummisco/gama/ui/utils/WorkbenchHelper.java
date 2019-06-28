@@ -42,7 +42,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -73,8 +72,8 @@ public class WorkbenchHelper {
 				}
 			});
 
-	public final static String GAMA_NATURE = WorkspaceModelsManager.GAMA_NATURE;
-	public final static String XTEXT_NATURE = WorkspaceModelsManager.XTEXT_NATURE;
+	public final static String GAMA_NATURE = WorkspaceModelsManager.GAMA_NATURE; // NO_UCD (unused code)
+	public final static String XTEXT_NATURE = WorkspaceModelsManager.XTEXT_NATURE; // NO_UCD (unused code)
 	public final static String PLUGIN_NATURE = WorkspaceModelsManager.PLUGIN_NATURE;
 	public final static String TEST_NATURE = WorkspaceModelsManager.TEST_NATURE;
 	public final static String BUILTIN_NATURE = WorkspaceModelsManager.BUILTIN_NATURE;
@@ -119,19 +118,6 @@ public class WorkbenchHelper {
 		final IWorkbenchWindow w = getWindow();
 		if (w == null) { return null; }
 		final IWorkbenchPage p = w.getActivePage();
-		return p;
-	}
-
-	public static IWorkbenchPage getPage(final String perspectiveId) {
-		IWorkbenchPage p = getPage();
-		if (p == null && perspectiveId != null) {
-			try {
-				p = getWindow().openPage(perspectiveId, null);
-
-			} catch (final WorkbenchException e) {
-				e.printStackTrace();
-			}
-		}
 		return p;
 	}
 

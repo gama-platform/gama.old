@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.IExperimentPlan.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.experiment.IExperimentPlan.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -30,86 +30,85 @@ import msi.gaml.species.ISpecies;
  */
 public interface IExperimentPlan extends ISpecies {
 
-	static final String BATCH_CATEGORY_NAME = "Exploration method";
-	static final String TEST_CATEGORY_NAME = "Configuration of tests";
-	static final String EXPLORABLE_CATEGORY_NAME = "Parameters to explore";
-	static final String FIXED_CATEGORY_NAME = "Fixed parameters";
-	static final String SYSTEM_CATEGORY_PREFIX = "Random number generation";
+	String BATCH_CATEGORY_NAME = "Exploration method";
+	String TEST_CATEGORY_NAME = "Configuration of tests";
+	String EXPLORABLE_CATEGORY_NAME = "Parameters to explore";
+	String SYSTEM_CATEGORY_PREFIX = "Random number generation";
 
-	public abstract IModel getModel();
+	IModel getModel();
 
-	public abstract void setModel(final IModel model);
+	void setModel(final IModel model);
 
-	public abstract IOutputManager getOriginalSimulationOutputs();
+	IOutputManager getOriginalSimulationOutputs();
 
-	public abstract void refreshAllOutputs();
+	void refreshAllOutputs();
 
-	public abstract void pauseAllOutputs();
+	void pauseAllOutputs();
 
-	public abstract void resumeAllOutputs();
+	void resumeAllOutputs();
 
-	public abstract void synchronizeAllOutputs();
+	void synchronizeAllOutputs();
 
-	public abstract void unSynchronizeAllOutputs();
+	void unSynchronizeAllOutputs();
 
-	public abstract void closeAllOutputs();
+	void closeAllOutputs();
 
-	public abstract IOutputManager getExperimentOutputs();
+	IOutputManager getExperimentOutputs();
 
-	public abstract boolean isGui();
+	boolean isGui();
 
-	public abstract boolean hasParameter(String name);
+	boolean hasParameter(String name);
 
-	public ExperimentAgent getAgent();
+	ExperimentAgent getAgent();
 
-	public abstract IScope getExperimentScope();
+	IScope getExperimentScope();
 
-	public abstract void open();
+	void open();
 
-	public abstract void reload();
+	void reload();
 
-	public abstract SimulationAgent getCurrentSimulation();
+	SimulationAgent getCurrentSimulation();
 
-	public abstract Map<String, IParameter> getParameters();
+	Map<String, IParameter> getParameters();
 
-	public abstract IExploration getExplorationAlgorithm();
+	IExploration getExplorationAlgorithm();
 
-	public FileOutput getLog();
+	FileOutput getLog();
 
-	public abstract boolean isBatch();
+	boolean isBatch();
 
-	public abstract boolean isMemorize();
+	boolean isMemorize();
 
-	public abstract Map<String, Batch> getExplorableParameters();
+	Map<String, Batch> getExplorableParameters();
 
-	public abstract IExperimentController getController();
+	IExperimentController getController();
 
 	/**
 	 * @return
 	 */
-	public abstract boolean isHeadless();
+	boolean isHeadless();
 
-	public abstract void setHeadless(boolean headless);
+	void setHeadless(boolean headless);
 
-	public abstract String getExperimentType();
+	String getExperimentType();
 
-	public abstract boolean keepsSeed();
+	boolean keepsSeed();
 
-	public abstract boolean keepsSimulations();
+	boolean keepsSimulations();
 
-	public abstract boolean hasParametersOrUserCommands();
+	boolean hasParametersOrUserCommands();
 
-	public abstract void recomputeAndRefreshAllOutputs();
+	void recomputeAndRefreshAllOutputs();
 
-	public abstract Iterable<IOutputManager> getActiveOutputManagers();
+	Iterable<IOutputManager> getActiveOutputManagers();
 
-	public abstract boolean isAutorun();
+	boolean isAutorun();
 
-	public abstract boolean isTest();
+	boolean isTest();
 
 	@Override
-	public ExperimentDescription getDescription();
+	ExperimentDescription getDescription();
 
-	public abstract boolean shouldBeBenchmarked();
+	boolean shouldBeBenchmarked();
 
 }

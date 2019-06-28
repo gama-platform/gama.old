@@ -13,18 +13,17 @@ package msi.gama.util.graph;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.EdgeRejectedException;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.IdAlreadyInUseException;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.MultiGraph;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.graph.graphstream_copy.Edge;
+import msi.gama.util.graph.graphstream_copy.EdgeRejectedException;
+import msi.gama.util.graph.graphstream_copy.Graph;
+import msi.gama.util.graph.graphstream_copy.IdAlreadyInUseException;
+import msi.gama.util.graph.graphstream_copy.MultiGraph;
+import msi.gama.util.graph.graphstream_copy.Node;
 
 /**
  * Graph utilities for the use of the graphstream library.
@@ -103,7 +102,7 @@ public class GraphUtilsGraphStream {
 			final _Edge edge = (_Edge) gamaGraph._internalEdgeMap().get(edgeObj);
 
 			try {
-				final Edge e = g.addEdge(edgeObj.toString(), gamaNode2graphStreamNode.get(edge.getSource()),
+				final Edge e = g.addEdgeToNodes(edgeObj.toString(), gamaNode2graphStreamNode.get(edge.getSource()),
 						gamaNode2graphStreamNode.get(edge.getTarget()), gamaGraph.isDirected() // till
 																								// now,
 																								// directionality

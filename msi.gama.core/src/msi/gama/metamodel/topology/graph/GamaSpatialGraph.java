@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.graph.GamaSpatialGraph.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.graph.GamaSpatialGraph.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
@@ -63,7 +63,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	/**
 	 * Determines the relationship among two polygons.
 	 */
-	public static interface VertexRelationship<T> {
+	public interface VertexRelationship<T> {
 
 		/**
 		 * @param scope
@@ -186,13 +186,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		return topology;
 	}
 
-	@Override
-	public void invalidateTopology() {
-		// Nothing to do, actually, as the topology relies entirely on the graph
-		// to do computations
-		// (I.e. no caches are being made)
-	}
-
 	protected void setTopology(final ITopology topology) {
 		this.topology = topology;
 	}
@@ -219,8 +212,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	protected Object generateEdgeObject(final Object v1, final Object v2) {
-		if (v1 instanceof IShape
-				&& v2 instanceof IShape) { return GamaGeometryType.buildLink(graphScope, (IShape) v1, (IShape) v2); }
+		if (v1 instanceof IShape && v2 instanceof IShape) {
+			return GamaGeometryType.buildLink(graphScope, (IShape) v1, (IShape) v2);
+		}
 		return super.generateEdgeObject(v1, v2);
 	}
 
@@ -270,14 +264,13 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public IShape getBuiltVertex(final Coordinate vertex) {
-		if (tolerance == 0)
-			return verticesBuilt.get(vertex.hashCode());
+		if (tolerance == 0) { return verticesBuilt.get(vertex.hashCode()); }
 		final IShape sh = verticesBuilt.get(vertex.hashCode());
-		if (sh != null)
-			return sh;
+		if (sh != null) { return sh; }
 		for (final Object v : verticesBuilt.values()) {
-			if (vertex.distance3D(
-					GeometryUtils.toCoordinate(((IShape) v).getLocation())) <= tolerance) { return (IShape) v; }
+			if (vertex.distance3D(GeometryUtils.toCoordinate(((IShape) v).getLocation())) <= tolerance) {
+				return (IShape) v;
+			}
 		}
 		return null;
 	}
@@ -289,8 +282,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 		for (final Object p : edges.iterable(scope)) {
 			final boolean addEdge = addDrivingEdge(scope, (IShape) p, nodes);
-			if (!addEdge)
+			if (!addEdge) {
 				continue;
+			}
 			getEdge(p).setWeight(((IShape) p).getPerimeter());
 		}
 	}
@@ -301,11 +295,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		final IShape ptS = new GamaPoint(coord[0]);
 		final IShape ptT = new GamaPoint(coord[coord.length - 1]);
 		final IAgent v1 = nodes.get(ptS);
-		if (v1 == null)
-			return false;
+		if (v1 == null) { return false; }
 		final IAgent v2 = nodes.get(ptT);
-		if (v2 == null)
-			return false;
+		if (v2 == null) { return false; }
 
 		final IAgent ag = e.getAgent();
 		final List v1ro = (List) v1.getAttribute("roads_out");
@@ -341,7 +333,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	/**
 	 * Method getSpecies()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSpecies()
 	 */
 	@Override
@@ -356,7 +348,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	/**
 	 * Method getAgents()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
@@ -371,7 +363,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	/**
 	 * Method accept()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.runtime.IScope,
 	 *      msi.gama.metamodel.shape.IShape, msi.gama.metamodel.shape.IShape)
 	 */
@@ -382,7 +374,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	/**
 	 * Method filter()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.runtime.IScope,
 	 *      msi.gama.metamodel.shape.IShape, java.util.Collection)
 	 */

@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -34,16 +34,8 @@ public class DateEditor extends AbstractEditor<GamaDate> {
 	private DateTime date;
 	private DateTime time;
 
-	DateEditor(final IScope scope, final IParameter param) {
-		super(scope, param);
-	}
-
 	DateEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaDate> l) {
 		super(scope, agent, param, l);
-	}
-
-	DateEditor(final IScope scope, final IAgent agent, final IParameter param) {
-		this(scope, agent, param, null);
 	}
 
 	DateEditor(final IScope scope, final Composite parent, final String title, final Object value,

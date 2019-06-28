@@ -19,6 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -41,17 +42,17 @@ import one.util.streamex.StreamEx;
 public interface IContainer<KeyType, ValueType> extends IValue {
 
 	@Override
-	public IContainerType<?> getGamlType();
+	IContainerType<?> getGamlType();
 
-	public abstract IList<ValueType> listValue(IScope scope, IType<?> contentType, boolean copy);
+	IList<ValueType> listValue(IScope scope, IType<?> contentType, boolean copy);
 
-	public abstract IMatrix<?> matrixValue(IScope scope, IType<?> contentType, boolean copy);
+	IMatrix<?> matrixValue(IScope scope, IType<?> contentType, boolean copy);
 
-	public abstract IMatrix<?> matrixValue(IScope scope, IType<?> contentType, ILocation size, boolean copy);
+	IMatrix<?> matrixValue(IScope scope, IType<?> contentType, ILocation size, boolean copy);
 
-	public abstract GamaMap<?, ?> mapValue(IScope scope, IType<?> keyType, IType<?> contentType, boolean copy);
+	GamaMap<?, ?> mapValue(IScope scope, IType<?> keyType, IType<?> contentType, boolean copy);
 
-	public java.lang.Iterable<? extends ValueType> iterable(final IScope scope);
+	java.lang.Iterable<? extends ValueType> iterable(final IScope scope);
 
 	/**
 	 * Internal method to get a correct stream in order to reuse the algorithms of the Java Collections Framework. The
@@ -62,17 +63,16 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	 * @return
 	 */
 	@SuppressWarnings ("unchecked")
-	public default StreamEx<ValueType> stream(final IScope scope) {
-		if (this instanceof Collection)
-			return StreamEx.of(((Collection<ValueType>) this).stream());
+	default StreamEx<ValueType> stream(final IScope scope) {
+		if (this instanceof Collection) { return StreamEx.of(((Collection<ValueType>) this).stream()); }
 		return StreamEx.of(listValue(scope, Types.NO_TYPE, false));
 	}
 
-	public default StreamEx<ValueType> parallelStream(final IScope scope) {
+	default StreamEx<ValueType> parallelStream(final IScope scope) {
 		return stream(scope).parallel(GamaExecutorService.AGENT_PARALLEL_EXECUTOR);
 	}
 
-	public static interface Addressable<KeyType, ValueType> {
+	public interface Addressable<KeyType, ValueType> {
 
 		@operator (
 				value = { IKeyword.AT, "@" },
@@ -102,7 +102,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 						@usage ("if it is a graph and if the right operand is an edge, at returns the pair node_out::node_in of the edge"),
 						@usage ("if it is a graph and if the right operand is a pair node1::node2, at returns the edge from node1 to node2 in the graph") },
 				see = { "contains_all", "contains_any" })
-		public ValueType get(IScope scope, KeyType index) throws GamaRuntimeException;
+		ValueType get(IScope scope, KeyType index) throws GamaRuntimeException;
 
 		// FIXME No way to test if the index is correct or not
 
@@ -124,52 +124,52 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 				value = "For internal use only. Corresponds to the implementation of the access to containers with [index]",
 				see = { IKeyword.AT })
 		@no_test
-		public ValueType getFromIndicesList(IScope scope, IList<KeyType> indices) throws GamaRuntimeException;
+		ValueType getFromIndicesList(IScope scope, IList<KeyType> indices) throws GamaRuntimeException;
 
 	}
 
-	public static interface Modifiable<KeyType, ValueType> {
+	public interface Modifiable<KeyType, ValueType> {
 
-		public boolean checkBounds(IScope scope, Object index, boolean forAdding);
+		boolean checkBounds(IScope scope, Object index, boolean forAdding);
 
 		// The simple method, that simply contains the object to add
-		public void addValue(IScope scope, final ValueType value);
+		void addValue(IScope scope, final ValueType value);
 
 		// The same but with an index
-		public void addValueAtIndex(IScope scope, final Object index, final ValueType value);
+		void addValueAtIndex(IScope scope, final Object index, final ValueType value);
 
 		// Set, that takes a mandatory index
-		public void setValueAtIndex(IScope scope, final Object index, final ValueType value);
+		void setValueAtIndex(IScope scope, final Object index, final ValueType value);
 
 		// Then, methods for "all" operations
 		// Adds the values if possible, without replacing existing ones
-		public void addValues(IScope scope, IContainer<?, ?> values);
+		void addValues(IScope scope, IContainer<?, ?> values);
 
 		// Adds this value to all slots (if this operation is available),
 		// otherwise replaces the values with this one
-		public void setAllValues(IScope scope, ValueType value);
+		void setAllValues(IScope scope, ValueType value);
 
-		public void removeValue(IScope scope, Object value);
+		void removeValue(IScope scope, Object value);
 
-		public void removeIndex(IScope scope, Object index);
+		void removeIndex(IScope scope, Object index);
 
-		public void removeIndexes(IScope scope, IContainer<?, ?> index);
+		void removeIndexes(IScope scope, IContainer<?, ?> index);
 
-		public void removeValues(IScope scope, IContainer<?, ?> values);
+		void removeValues(IScope scope, IContainer<?, ?> values);
 
-		public void removeAllOccurrencesOfValue(IScope scope, Object value);
+		void removeAllOccurrencesOfValue(IScope scope, Object value);
 
 	}
 
 	// Operators available in GAML
 
 	@operator (
-			value = "contains",
+			value = { "contains", "contains_value" },
 			can_be_const = true,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
 	@doc (
-			value = "true, if the container contains the right operand, false otherwise",
+			value = "true, if the container contains the right operand, false otherwise. 'contains' can also be written 'contains_value'. On graphs, it is equivalent to calling 'contains_edge'",
 			masterDoc = true,
 			comment = "the contains operator behavior depends on the nature of the operand",
 			usages = { @usage (
@@ -180,12 +180,43 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 							@example (
 									value = "[{1,2}, {3,4}, {5,6}] contains {3,4}",
 									equals = "true") }),
-					@usage ("if it is a map, contains returns true if the operand is a key of the map"),
+					@usage ("if it is a map, contains, which can also be written 'contains_value', returns true if the operand is a value of the map"),
+					@usage ("if it is a pair, contains_key returns true if the operand is equal to the value of the pair"),
 					@usage ("if it is a file, contains returns true it the operand is contained in the file content"),
 					@usage ("if it is a population, contains returns true if the operand is an agent of the population, false otherwise"),
-					@usage ("if it is a graph, contains returns true if the operand is a node or an edge of the graph, false otherwise") },
-			see = { "contains_all", "contains_any" })
-	public boolean contains(IScope scope, Object o) throws GamaRuntimeException;
+					@usage ("if it is a graph, contains can be written 'contains_edge' and  returns true if the operand is an edge of the graph, false otherwise (use 'contains_node' for testing the presence of a node)") },
+			see = { "contains_all", "contains_any", "contains_key" })
+	@test ("['aa'::'bb', 13::14] contains 'bb'")
+	boolean contains(IScope scope, Object o) throws GamaRuntimeException;
+
+	@operator (
+			value = { "contains_key", "contains_node" },
+			can_be_const = true,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
+
+	@doc (
+			value = "true, if the left-hand operand -- the container -- contains a key -- or an index -- equal to the right-hand operand, false otherwise. On graphs, 'contains_key' is equivalent to calling 'contains_vertex' ",
+			masterDoc = true,
+			comment = "the behavior of contains_key depends on the nature of the container",
+			usages = { @usage (
+					value = "if it is a list, contains_key returns true if the right-hand operand is an integer and if it is a valid index (i.e. >= 0 and < length)",
+					examples = { @example (
+							isExecutable = true,
+							value = "[1, 2, 3] contains_key 3",
+							equals = "false"),
+							@example (
+									isExecutable = true,
+									value = "[{1,2}, {3,4}, {5,6}] contains_key 0",
+									equals = "true") }),
+					@usage ("if it is a map, contains_key returns true if the operand is a key of the map"),
+					@usage ("if it is a pair, contains_key returns true if the operand is equal to the key of the pair"),
+					@usage ("if it is a matrix, contains_key returns true if the point operand is a valid index of the matrix (i.e. >= {0,0} and < {rows, col})"),
+					@usage ("if it is a file, contains_key is applied to the file contents -- a container"),
+					@usage ("if it is a graph, contains_key returns true if the graph contains the corresponding vertex") },
+			see = { "contains_all", "contains", "contains_any" })
+	@test ("['aa'::'bb', 13::14] contains_key 'aa'")
+	boolean containsKey(IScope scope, Object o) throws GamaRuntimeException;
 
 	@operator (
 			value = "first",
@@ -218,7 +249,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 					@usage (
 							value = "for a matrix of object or geometry, it will return nil if the matrix is empty") },
 			see = { "last" })
-	public ValueType firstValue(IScope scope) throws GamaRuntimeException;
+	ValueType firstValue(IScope scope) throws GamaRuntimeException;
 
 	@operator (
 			value = "last",
@@ -251,7 +282,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 					@usage (
 							value = "for a matrix of object or geometry, it will return nil if the matrix is empty") },
 			see = { "first" })
-	public ValueType lastValue(IScope scope) throws GamaRuntimeException;
+	ValueType lastValue(IScope scope) throws GamaRuntimeException;
 
 	@operator (
 			value = "length",
@@ -277,7 +308,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 							examples = { @example (
 									value = "length(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))",
 									equals = "6") }) })
-	public int length(IScope scope);
+	int length(IScope scope);
 
 	@operator (
 			value = "empty",
@@ -305,7 +336,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 							value = "if it is a matrix of int, float or object, it will return true if all elements are respectively 0, 0.0 or null, and false otherwise"),
 					@usage (
 							value = "if it is a matrix of geometry, it will return true if the matrix contains no cell, and false otherwise") })
-	public boolean isEmpty(IScope scope);
+	boolean isEmpty(IScope scope);
 
 	@operator (
 			value = "reverse",
@@ -342,7 +373,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 									returnType = "matrix<string>",
 									value = "reverse(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))",
 									equals = "matrix([[\"c11\",\"c21\"],[\"c12\",\"c22\"],[\"c13\",\"c23\"]])") }) })
-	public IContainer<?, ?> reverse(IScope scope) throws GamaRuntimeException;
+	IContainer<?, ?> reverse(IScope scope) throws GamaRuntimeException;
 
 	/**
 	 * @return one of the values stored in this container using GAMA.getRandom()
@@ -403,6 +434,6 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 											value = "bug b <- one_of(bug);  	// Given a previously defined species bug, b is one of the created bugs, e.g. bug3",
 											isExecutable = false) }) },
 			see = { "contains" })
-	public ValueType anyValue(IScope scope);
+	ValueType anyValue(IScope scope);
 
 }

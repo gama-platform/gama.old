@@ -31,23 +31,8 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 
 	Text populationDisplayer;
 
-	PopulationEditor(final IScope scope, final IParameter param) {
-		super(scope, param);
-	}
-
-	PopulationEditor(final IScope scope, final IAgent agent, final IParameter param) {
-		this(scope, agent, param, null);
-	}
-
 	PopulationEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
 		super(scope, agent, param, l);
-	}
-
-	PopulationEditor(final IScope scope, final Composite parent, final String title, final Object value,
-			final EditorListener<IContainer> whenModified) {
-		// Convenience method
-		super(scope, new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
 	}
 
 	@Override

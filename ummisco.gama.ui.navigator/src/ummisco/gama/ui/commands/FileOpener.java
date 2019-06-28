@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
@@ -27,20 +27,12 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * Utility methods related to open file from different type of locations.
- * 
+ *
  * @author alruiz@google.com (Alex Ruiz), Alexis Drogoul (2018)
  */
 public class FileOpener {
 
 	static final IWorkbenchPage PAGE = WorkbenchHelper.getPage();
-
-	public static IEditorPart openFile(final String path) {
-		return openFile(path, null);
-	}
-
-	public static IEditorPart openFile(final String path, final URI root) {
-		return openFile(FileUtils.getURI(path, root));
-	}
 
 	public static IEditorPart openFile(final URI uri) {
 		if (uri == null) {

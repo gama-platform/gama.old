@@ -22,19 +22,17 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
  */
 public interface IGamaColors {
 
-	public static GamaUIColor BLUE = GamaColors.get(GamaIcons.create("palette/palette.blue2")).validate();
-	public static GamaUIColor BROWN = GamaColors.get(GamaIcons.create("palette/palette.brown2")).validate();
-	public static GamaUIColor ERROR = GamaColors.get(GamaIcons.create("palette/palette.red2")).validate();
-	public static GamaUIColor OK = GamaColors.get(GamaIcons.create("palette/palette.green2")).validate();
-	public static GamaUIColor IMPORTED = GamaColors.get(212, 147, 119).validate();
-	public static GamaUIColor WARNING = GamaColors.get(GamaIcons.create("palette/palette.orange2")).validate();
-	public static GamaUIColor NEUTRAL = GamaColors.get(GamaIcons.create("palette/palette.gray2")).validate();
-	public static GamaUIColor TOOLTIP = GamaColors.get(GamaIcons.create("palette/palette.yellow2")).validate();
-	public static GamaUIColor GRAY_LABEL = GamaColors.get(0x88, 0x88, 0x88).validate();
-	public static GamaUIColor VERY_LIGHT_GRAY = GamaColors.get(245, 245, 245).validate();
-	public static GamaUIColor WHITE =
+	GamaUIColor BLUE = GamaColors.get(GamaIcons.create("palette/palette.blue2")).validate();
+	GamaUIColor ERROR = GamaColors.get(GamaIcons.create("palette/palette.red2")).validate();
+	GamaUIColor OK = GamaColors.get(GamaIcons.create("palette/palette.green2")).validate();
+	GamaUIColor WARNING = GamaColors.get(GamaIcons.create("palette/palette.orange2")).validate();
+	GamaUIColor NEUTRAL = GamaColors.get(GamaIcons.create("palette/palette.gray2")).validate();
+	GamaUIColor TOOLTIP = GamaColors.get(GamaIcons.create("palette/palette.yellow2")).validate();
+	GamaUIColor GRAY_LABEL = GamaColors.get(0x88, 0x88, 0x88).validate();
+	GamaUIColor VERY_LIGHT_GRAY = GamaColors.get(245, 245, 245).validate();
+	GamaUIColor WHITE =
 			new GamaUIColor(GamaColors.system(SWT.COLOR_WHITE), GamaColors.system(SWT.COLOR_WHITE)).validate();
-	public static GamaUIColor BLACK = new GamaUIColor(GamaColors.system(SWT.COLOR_BLACK)).validate();
-	public static GamaUIColor PARAMETERS_BACKGROUND = GamaColors.get(255, 255, 255).validate();
+	GamaUIColor BLACK = new GamaUIColor(GamaColors.system(SWT.COLOR_BLACK)).validate();
+	GamaUIColor PARAMETERS_BACKGROUND = GamaColors.get(255, 255, 255).validate();
 
 }

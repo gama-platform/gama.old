@@ -22,7 +22,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ActionExecuter;
 import msi.gama.kernel.experiment.IExperimentAgent;
-import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.metamodel.agent.GamlAgent;
@@ -536,8 +535,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			doc = @doc ("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
 
 	public Object pause(final IScope scope) {
-		final IExperimentController controller = scope.getExperiment().getSpecies().getController();
-		controller.directPause();
+		GAMA.pauseFrontmostExperiment();
 		return null;
 	}
 

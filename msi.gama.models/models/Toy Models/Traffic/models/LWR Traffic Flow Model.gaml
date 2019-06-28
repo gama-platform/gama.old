@@ -140,7 +140,6 @@ species section {
 	float offer ;
 	float demand  ;
 	
-	rgb color;
 	
 	float critical_concentration ; 
 	float max_speed ; 
@@ -152,7 +151,7 @@ species section {
 	// The width of a section depends on its concentration.
 	
 	aspect shape_section {
-		draw shape + (1 + 15 * ln (current_concentration + 1)) color: color;		
+		draw shape + (10 + 15 * ln (current_concentration + 1)) color: #gray + 128*current_concentration;		
 	} 
 
 }
@@ -172,7 +171,7 @@ experiment TraficGroup type: gui {
 		monitor "Sum Concentrations" value: sum(section collect each.current_concentration);
 		
 		// A display shows the road. Section width depend on their concentration.
-		
+		layout #split;
 		display TheRoad{
 			species section aspect: shape_section ;
 		}

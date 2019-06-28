@@ -41,17 +41,10 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 		CAMERA(IKeyword.CAMERA),
 		LIGHT("light");
 
-		private String name;
+		private final String name;
 
 		LayerType(final String s) {
 			name = s;
-		}
-
-		static LayerType get(final String s) {
-			for (final LayerType lt : values()) {
-				if (lt.name.equals(s)) { return lt; }
-			}
-			return null;
 		}
 
 		@Override

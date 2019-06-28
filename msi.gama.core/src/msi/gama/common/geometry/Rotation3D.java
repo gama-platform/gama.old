@@ -106,29 +106,6 @@ public class Rotation3D implements Serializable, Transformation3D {
 		q3 = 0;
 	}
 
-	public void setToRotationBetween(final GamaPoint u, final GamaPoint v) {
-		final double normProduct = u.norm() * v.norm();
-		final double dot = u.x * v.x + u.y * v.y + u.z * v.z;
-		if (dot < (2.0e-15 - 1.0) * normProduct) {
-			// special case u = -v: we select a PI angle rotation around
-			// an arbitrary vector orthogonal to u
-			final GamaPoint w = u.orthogonal();
-			q0 = 0.0;
-			q1 = -w.x;
-			q2 = -w.y;
-			q3 = -w.z;
-		} else {
-			// general case: (u, v) defines a plane, we select
-			// the shortest possible rotation: axis orthogonal to this plane
-			q0 = Math.sqrt(0.5 * (1.0 + dot / normProduct));
-			final double coeff = 1.0 / (2.0 * q0 * normProduct);
-			final GamaPoint q = v.crossProduct(u);
-			q1 = coeff * q.x;
-			q2 = coeff * q.y;
-			q3 = coeff * q.z;
-		}
-	}
-
 	/**
 	 * Sets this rotation to a rotation between the given vector u and the PLUS_I vector
 	 *

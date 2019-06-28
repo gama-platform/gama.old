@@ -389,34 +389,6 @@ public class SwitchButton extends Canvas {
 	}
 
 	/**
-	 * Removes the listener from the collection of listeners who will be notified when the control is selected by the
-	 * user.
-	 *
-	 * @param listener
-	 *            the listener which should no longer be notified
-	 *
-	 * @exception IllegalArgumentException
-	 *                <ul>
-	 *                <li>ERROR_NULL_ARGUMENT - if the listener is null</li>
-	 *                </ul>
-	 * @exception SWTException
-	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 *                </ul>
-	 *
-	 * @see SelectionListener
-	 * @see #addSelectionListener
-	 */
-	public void removeSelectionListener(final SelectionListener listener) {
-		this.checkWidget();
-		if (listener == null) {
-			SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		}
-		this.listOfSelectionListeners.remove(listener);
-	}
-
-	/**
 	 * @see org.eclipse.swt.widgets.Composite#computeSize(int, int, boolean)
 	 */
 	@Override

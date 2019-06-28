@@ -58,7 +58,6 @@ public class LayeredDisplayData {
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
 	public static final String OPENGL2 = "opengl2";
-	public static final String WEB = "web";
 	public static final String THREED = "3D";
 	public static final Double INITIAL_ZOOM = 1.0;
 
@@ -136,7 +135,7 @@ public class LayeredDisplayData {
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
-	private double zNear = - 1.0;
+	private double zNear = -1.0;
 	private double zFar = -1.0;
 	/**
 	 * Overlay
@@ -242,9 +241,6 @@ public class LayeredDisplayData {
 	public void setShowfps(final boolean showfps) {
 		this.isShowingFPS = showfps;
 	}
-	
-	
-	
 
 	public double getzNear() {
 		return zNear;
@@ -759,12 +755,12 @@ public class LayeredDisplayData {
 		if (fps != null) {
 			setShowfps(Cast.asBool(scope, fps.value(scope)));
 		}
-		
+
 		final IExpression nZ = facets.getExpr("z_near");
 		if (nZ != null) {
 			setZNear(Cast.asFloat(scope, nZ.value(scope)));
 		}
-		
+
 		final IExpression fZ = facets.getExpr("z_far");
 		if (fZ != null) {
 			setZFar(Cast.asFloat(scope, fZ.value(scope)));
@@ -919,12 +915,12 @@ public class LayeredDisplayData {
 
 	}
 
-	private void setZFar(Double zF) {
+	private void setZFar(final Double zF) {
 		zFar = zF;
-		
+
 	}
 
-	private void setZNear(Double zN) {
+	private void setZNear(final Double zN) {
 		zNear = zN;
 	}
 

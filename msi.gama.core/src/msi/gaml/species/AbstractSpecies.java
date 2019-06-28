@@ -468,59 +468,70 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IAgent get(final IScope scope, final Integer index) throws GamaRuntimeException {
-		return getPopulation(scope).get(scope, index);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? null : pop.get(scope, index);
 	}
 
 	@Override
 	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
-		return getPopulation(scope).contains(scope, o);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? false : pop.contains(scope, o);
 	}
 
 	@Override
 	public IAgent firstValue(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).firstValue(scope);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? null : pop.firstValue(scope);
 	}
 
 	@Override
 	public IAgent lastValue(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).lastValue(scope);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? null : pop.lastValue(scope);
 	}
 
 	@Override
 	public int length(final IScope scope) {
-		return getPopulation(scope).length(scope);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? 0 : pop.length(scope);
 	}
 
 	@Override
 	public boolean isEmpty(final IScope scope) {
-		return getPopulation(scope).isEmpty(scope);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? true : pop.isEmpty(scope);
 	}
 
 	@Override
 	public IContainer<Integer, ? extends IAgent> reverse(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).reverse(scope);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? null : pop.reverse(scope);
 	}
 
 	@Override
 	public IAgent anyValue(final IScope scope) {
-		return getPopulation(scope).anyValue(scope);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? null : pop.anyValue(scope);
 	}
 
 	@Override
 	public IMatrix<? extends IAgent> matrixValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
-		return getPopulation(scope).matrixValue(scope, contentsType, copy);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? null : pop.matrixValue(scope, contentsType, copy);
 	}
 
 	@Override
 	public IMatrix<? extends IAgent> matrixValue(final IScope scope, final IType contentsType,
 			final ILocation preferredSize, final boolean copy) throws GamaRuntimeException {
-		return getPopulation(scope).matrixValue(scope, contentsType, preferredSize, copy);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? null : pop.matrixValue(scope, contentsType, preferredSize, copy);
 	}
 
 	@Override
 	public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-		return getPopulation(scope).getFromIndicesList(scope, indices);
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? null : pop.getFromIndicesList(scope, indices);
 	}
 
 	@Override
@@ -530,7 +541,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public Collection<? extends IPopulation<? extends IAgent>> getPopulations(final IScope scope) {
-		return Collections.singleton(getPopulation(scope));
+		final IPopulation<? extends IAgent> pop = getPopulation(scope);
+		return pop == null ? Collections.EMPTY_LIST : Collections.singleton(pop);
 	}
 
 	public ISkill getSkillInstanceFor(final Class skillClass) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.MemoryUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.MemoryUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -41,28 +41,6 @@ public final class MemoryUtils {
 	 */
 	public static long availableMemory() {
 		return RUNTIME.freeMemory() + RUNTIME.maxMemory() - RUNTIME.totalMemory();
-	}
-
-	/**
-	 * Returns the percentage of available memory (free memory plus never allocated memory).
-	 *
-	 * @return the percentage of available memory.
-	 */
-	public static int percAvailableMemory() {
-		return (int) (MemoryUtils.availableMemory() * 100 / Runtime.getRuntime().maxMemory());
-	}
-
-	/**
-	 * Tries to compact memory as much as possible by forcing garbage collection.
-	 */
-	public static void compactMemory() {
-		try {
-			final byte[][] unused = new byte[128][];
-			for (int i = unused.length; i-- != 0;) {
-				unused[i] = new byte[2000000000];
-			}
-		} catch (final OutOfMemoryError itsWhatWeWanted) {}
-		System.gc();
 	}
 
 }

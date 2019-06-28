@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.csv;
@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.csv.model.CSVRow;
@@ -41,15 +40,6 @@ public class CSVLabelProvider extends StyledCellLabelProvider {
 	 */
 	public CSVLabelProvider() {
 		searchColor = WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_YELLOW);
-	}
-
-	/**
-	 * @param element
-	 * @param columnIndex
-	 * @return
-	 */
-	public Image getColumnImage(final Object element, final int columnIndex) {
-		return null;
 	}
 
 	/**
@@ -110,7 +100,7 @@ public class CSVLabelProvider extends StyledCellLabelProvider {
 		cell.setImage(null);
 		if (searchText != null && searchText.length() > 0) {
 			final int intRangesCorrectSize[] = SearchResultStyle.getSearchTermOccurrences(searchText, columnText);
-			final List<StyleRange> styleRange = new ArrayList<StyleRange>();
+			final List<StyleRange> styleRange = new ArrayList<>();
 			for (int i = 0; i < intRangesCorrectSize.length / 2; i++) {
 				final StyleRange myStyleRange = new StyleRange(0, 0, null, searchColor);
 				myStyleRange.start = intRangesCorrectSize[i];

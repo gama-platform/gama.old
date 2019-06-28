@@ -14,7 +14,8 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Random;
+
+import msi.gama.runtime.GAMA;
 
 public class Promethee {
 
@@ -30,9 +31,8 @@ public class Promethee {
 	public Promethee(final Collection<String> criteres) {
 		poidsCrit = new Hashtable<>();
 		fctPrefCrit = new Hashtable<>();
-		final Random rand = new Random();
 		for (final String crit : criteres) {
-			poidsCrit.put(crit, Double.valueOf(rand.nextInt(10)));
+			poidsCrit.put(crit, Double.valueOf(GAMA.getCurrentRandom().between(0, 9)));
 			fctPrefCrit.put(crit, new PreferenceType5(0.1, 0.8));
 		}
 	}

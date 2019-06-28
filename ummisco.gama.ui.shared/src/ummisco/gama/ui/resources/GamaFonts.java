@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
@@ -59,10 +59,6 @@ public class GamaFonts {
 		return baseFont;
 	}
 
-	public static void setBaseFont(final String baseFont) {
-		GamaFonts.baseFont = baseFont;
-	}
-
 	public static FontData getBaseData() {
 		if (baseData == null) {
 			baseData = getSystemFont().getFontData()[0];
@@ -70,19 +66,11 @@ public class GamaFonts {
 		return baseData;
 	}
 
-	public static void setBaseData(final FontData baseData) {
-		GamaFonts.baseData = baseData;
-	}
-
 	public static Font getSystemFont() {
 		if (systemFont == null) {
 			systemFont = WorkbenchHelper.getDisplay().getSystemFont();
 		}
 		return systemFont;
-	}
-
-	public static void setSystemFont(final Font systemFont) {
-		GamaFonts.systemFont = systemFont;
 	}
 
 	static void initFonts() {
@@ -162,20 +150,6 @@ public class GamaFonts {
 		return helpFont;
 	}
 
-	public static Font getBoldHelpFont() {
-		if (boldHelpFont == null) {
-			initFonts();
-		}
-		return boldHelpFont;
-	}
-
-	public static Font getParameterEditorsFont() {
-		if (parameterEditorsFont == null) {
-			initFonts();
-		}
-		return parameterEditorsFont;
-	}
-
 	public static Font getNavigFolderFont() {
 		if (navigRegularFont == null) {
 			initFonts();
@@ -197,13 +171,6 @@ public class GamaFonts {
 		return navigFileFont;
 	}
 
-	public static Font getNavigSmallFont() {
-		if (smallNavigFont == null) {
-			initFonts();
-		}
-		return smallNavigFont;
-	}
-
 	public static Font getNavigHeaderFont() {
 		if (navigHeaderFont == null) {
 			initFonts();
@@ -216,13 +183,6 @@ public class GamaFonts {
 			initFonts();
 		}
 		return navigResourceFont;
-	}
-
-	public static Font getUnitFont() {
-		if (unitFont == null) {
-			initFonts();
-		}
-		return unitFont;
 	}
 
 }

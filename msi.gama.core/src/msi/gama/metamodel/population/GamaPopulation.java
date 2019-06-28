@@ -69,7 +69,6 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.graph.AbstractGraphNodeAgent;
-import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
@@ -112,7 +111,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	protected final String[] orderedVarNames;
 	protected final IVariable[] updatableVars;
 	protected int currentAgentIndex;
-	protected final IArchitecture architecture;
 	private final int hashCode;
 
 	/**
@@ -162,7 +160,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 				: host.getModel().getDescription().getTypeNamed(species.getName()));
 		this.host = host;
 		this.species = species;
-		architecture = species.getArchitecture();
 		final TypeDescription ecd = species.getDescription();
 		orderedVarNames = ecd.getOrderedAttributeNames(INIT_DEPENDENCIES_FACETS).toArray(new String[0]);
 		final List<String> updatableVarNames = ecd.getUpdatableAttributeNames();

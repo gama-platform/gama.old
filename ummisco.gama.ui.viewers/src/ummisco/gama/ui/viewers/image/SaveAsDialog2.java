@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'SaveAsDialog2.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SaveAsDialog2.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.image;
@@ -24,7 +23,7 @@ public class SaveAsDialog2 extends org.eclipse.ui.dialogs.SaveAsDialog {
 
 	/**
 	 * Creates a new Save As dialog for no specific file.
-	 * 
+	 *
 	 * @param parentShell
 	 *            the parent shell
 	 */
@@ -34,10 +33,9 @@ public class SaveAsDialog2 extends org.eclipse.ui.dialogs.SaveAsDialog {
 	}
 
 	/**
-	 * Get the "resourceGroup" field for the specified dialog. This is a silly
-	 * hack to workaround org.eclipse.ui.dialogs.SaveAsDialog's resourceGroup
-	 * field and class not being public or protected, or otherwise supporting
-	 * methods to manipulate the UI programatically.
+	 * Get the "resourceGroup" field for the specified dialog. This is a silly hack to workaround
+	 * org.eclipse.ui.dialogs.SaveAsDialog's resourceGroup field and class not being public or protected, or otherwise
+	 * supporting methods to manipulate the UI programatically.
 	 */
 	protected static synchronized ResourceAndContainerGroup getResourceGroup(final SaveAsDialog2 d) {
 		boolean origAccessible = false;
@@ -61,17 +59,13 @@ public class SaveAsDialog2 extends org.eclipse.ui.dialogs.SaveAsDialog {
 	}
 
 	/**
-	 * Returns the current file name as entered by the user, or its anticipated
-	 * initial value.
-	 * 
-	 * @return the file name, its anticipated initial value, or
-	 *         <code>null</code> if no file name is known
+	 * Returns the current file name as entered by the user, or its anticipated initial value.
+	 *
+	 * @return the file name, its anticipated initial value, or <code>null</code> if no file name is known
 	 */
 	public String getFileName() {
 		final ResourceAndContainerGroup resourceGroup = getResourceGroup(this);
-		if (resourceGroup != null) {
-			return resourceGroup.getResource();
-		}
+		if (resourceGroup != null) { return resourceGroup.getResource(); }
 
 		return ""; //$NON-NLS-1$
 	}

@@ -25,7 +25,7 @@ import msi.gaml.types.Types;
 public abstract class ParameterAdapter implements IParameter.Batch {
 
 	private final int order = SymbolDescription.ORDER++;
-	protected boolean editable;
+
 	protected String title;
 	protected final IType type;
 	protected String category;
@@ -44,12 +44,6 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	public ParameterAdapter(final String title, final String category, final String unit, final int type) {
 		this(title, category, type);
 		this.unitLabel = unit;
-	}
-
-	// @Override
-	public String serializeToGaml() {
-		// GamlSerializer gs = new GamlSerializer();
-		return "";
 	}
 
 	@Override
@@ -72,21 +66,13 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 		return false;
 	}
 
-	//
-	// @Override
-	// public boolean isLabel() {
-	// return false;
-	// }
-
 	@Override
 	public boolean canBeExplored() {
 		return false;
 	}
 
 	@Override
-	public void setEditable(final boolean editable) {
-		this.editable = editable;
-	}
+	public void setEditable(final boolean editable) {}
 
 	@Override
 	public String getCategory() {
@@ -97,11 +83,6 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	public String getUnitLabel(final IScope scope) {
 		return unitLabel;
 	}
-
-	// @Override
-	// public Integer getDefinitionOrder() {
-	// return 0;
-	// }
 
 	@Override
 	public void setValue(final IScope scope, final Object value) {}

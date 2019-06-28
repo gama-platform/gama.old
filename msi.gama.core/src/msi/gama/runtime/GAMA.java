@@ -17,6 +17,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentController;
@@ -264,9 +265,7 @@ public class GAMA {
 			final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 			if (shouldStop) {
 				if (isInHeadLessMode()) { throw g; }
-				final IExperimentController controller = getFrontmostController();
-				if (controller == null || controller.isDisposing()) { return; }
-				controller.userPause();
+				pauseFrontmostExperiment();
 				throw g;
 			}
 		}
@@ -345,6 +344,12 @@ public class GAMA {
 		final SimulationAgent s = a.getSimulation();
 		if (s == null || s.dead()) { return a.getScope(); }
 		return s.getScope();
+	}
+
+	public static RandomUtils getCurrentRandom() {
+		final IScope scope = getRuntimeScope();
+		if (scope == null) { return new RandomUtils(); }
+		return scope.getRandom();
 	}
 
 	public interface InScope<T> {

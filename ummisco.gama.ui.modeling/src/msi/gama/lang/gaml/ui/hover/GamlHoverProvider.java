@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.nodemodel.ILeafNode;
-import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
@@ -62,15 +61,15 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
-	public static class NonXRefEObjectAtOffset extends EObjectAtOffsetHelper {
-
-		@Override
-		protected EObject resolveCrossReferencedElement(final INode node) {
-			final EObject referenceOwner = NodeModelUtils.findActualSemanticObjectFor(node);
-			return referenceOwner;
-		}
-
-	}
+	// public static class NonXRefEObjectAtOffset extends EObjectAtOffsetHelper {
+	//
+	// @Override
+	// protected EObject resolveCrossReferencedElement(final INode node) {
+	// final EObject referenceOwner = NodeModelUtils.findActualSemanticObjectFor(node);
+	// return referenceOwner;
+	// }
+	//
+	// }
 
 	public static class GamlDispatchingEObjectTextHover extends DispatchingEObjectTextHover {
 
@@ -244,7 +243,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		}
 		// Case of do xxx;
 		if (o instanceof VariableRef && o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
-			VarDefinition vd = ((VariableRef) o).getRef();
+			final VarDefinition vd = ((VariableRef) o).getRef();
 			final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
 			if (description != null) {
 				String result = description.getTitle();

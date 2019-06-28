@@ -188,8 +188,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	private boolean fIsTextDragAndDropInstalled;
 
-	protected Object fTextDragAndDropToken;
-
 	private URI fileURI;
 
 	@Override
@@ -714,15 +712,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		final IRegion r = new Region(offset, length);
 		final TemplateProposal tp = new TemplateProposal(t, dtc, r, null);
 		tp.apply(getInternalSourceViewer(), (char) 0, 0, offset);
-	}
-
-	public void toggleBlockComment() {
-		final String s = getSelectedText().trim();
-		if (s.startsWith("/*") && s.endsWith("*/")) {
-			insertText(s.substring(2, s.length() - 2));
-		} else {
-			insertText("/*" + s + "*/");
-		}
 	}
 
 	public void openOutlinePopup() {

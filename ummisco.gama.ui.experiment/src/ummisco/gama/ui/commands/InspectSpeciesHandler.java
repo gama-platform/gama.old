@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
@@ -18,7 +18,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 
-public class InspectSpeciesHandler extends AbstractHandler {
+public class InspectSpeciesHandler extends AbstractHandler { // NO_UCD (unused code)
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {

@@ -80,8 +80,6 @@ public class GamaToolbarFactory {
 
 	public static class ToggleSideControls extends Action {
 
-		boolean show = true;
-
 		ToggleSideControls() {
 			super("Toggle Side Controls", IAction.AS_PUSH_BUTTON);
 			setIcon();
@@ -94,8 +92,6 @@ public class GamaToolbarFactory {
 	}
 
 	public static class ToggleOverlay extends Action {
-
-		boolean show = true;
 
 		ToggleOverlay() {
 			super("Toggle Overlay", IAction.AS_PUSH_BUTTON);

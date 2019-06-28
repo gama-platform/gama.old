@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -39,14 +39,6 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	private Composite pointEditor;
 	private boolean allowVerification;
 	private boolean isReverting;
-
-	PointEditor(final IScope scope, final IParameter param) {
-		super(scope, param);
-	}
-
-	PointEditor(final IScope scope, final IAgent agent, final IParameter param) {
-		this(scope, agent, param, null);
-	}
 
 	PointEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<ILocation> l) {
 		super(scope, agent, param, l);

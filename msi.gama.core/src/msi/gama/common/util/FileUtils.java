@@ -55,6 +55,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @since 20 dec. 2011
  *
  */
+@SuppressWarnings ("deprecation")
 public class FileUtils {
 
 	public static ThreadLocal<Webb> WEB = ThreadLocal.withInitial(() -> Webb.create());
@@ -385,6 +386,7 @@ public class FileUtils {
 		return false;
 	}
 
+	@SuppressWarnings ("deprecation")
 	public static String fetchToTempFile(final IScope scope, final URL url) {
 		String pathName = constructRelativeTempFilePath(scope, url);
 		final String urlPath = url.toExternalForm();

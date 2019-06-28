@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.stats;
@@ -68,12 +68,12 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the auto-correlation of a data sequence given some lag",
 				comment = "",
-				examples = {@example (
+				examples = { @example (
 						value = "auto_correlation([1,0,1,0,1,0],2)",
 						equals = "1"),
-							@example (value = "auto_correlation([1,0,1,0,1,0],1)",
-								equals = "-1")				
-				})
+						@example (
+								value = "auto_correlation([1,0,1,0,1,0],1)",
+								equals = "-1") })
 		public static Double opAutoCorrelation(final IScope scope, final IContainer data, final Integer lag) {
 
 			// TODO input parameters validation
@@ -86,7 +86,7 @@ public class Stats2 extends Stats {
 
 		/**
 		 * Returns the correlation of two data sequences.
-		 * 
+		 *
 		 * @see <a href="http://www.mathsisfun.com/data/correlation.html"> Correlation</a>
 		 *
 		 * @param scope
@@ -106,12 +106,12 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the correlation of two data sequences (having the same size)",
 				comment = "",
-				examples = {@example (
+				examples = { @example (
 						value = "correlation([1,2,1,3,1,2], [1,2,1,3,1,2]) with_precision(4)",
 						equals = "1.2"),
 						@example (
 								value = "correlation([13,2,1,4,1,2], [1,2,1,3,1,2]) with_precision(2)",
-								equals = "-0.21")})
+								equals = "-0.21") })
 		public static Double opCorrelation(final IScope scope, final IContainer data1, final IContainer data2) {
 
 			// TODO input parameters validation
@@ -140,9 +140,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the covariance of two data sequences",
 				comment = "",
-				examples = {@example(
-						value="covariance([13,2,1,4,1,2], [1,2,1,3,1,2]) with_precision(2)",
-						equals="-0.67")})
+				examples = { @example (
+						value = "covariance([13,2,1,4,1,2], [1,2,1,3,1,2]) with_precision(2)",
+						equals = "-0.67") })
 		public static Double opCovariance(final IScope scope, final IContainer data1, final IContainer data2) {
 
 			// TODO input parameters validation
@@ -167,10 +167,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Durbin-Watson computation",
 				comment = "",
-				examples = {
-						@example(value="durbin_watson([13,2,1,4,1,2]) with_precision(4)",
-								equals="0.7231")
-				})
+				examples = { @example (
+						value = "durbin_watson([13,2,1,4,1,2]) with_precision(4)",
+						equals = "0.7231") })
 		public static Double opDurbinWatson(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
@@ -195,10 +194,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the kurtosis (aka excess) of a data sequence",
 				comment = "",
-				examples = {
-						@example(value="kurtosis([13,2,1,4,1,2]) with_precision(4)",
-								equals="4.8083")
-				})
+				examples = { @example (
+						value = "kurtosis([13,2,1,4,1,2]) with_precision(4)",
+						equals = "4.8083") })
 		public static Double opKurtosis(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
@@ -227,10 +225,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the kurtosis (aka excess) of a data sequence",
 				comment = "",
-				examples = {
-						@example(value="kurtosis(3,12) with_precision(4)",
-						equals="-2.9999")
-				})
+				examples = { @example (
+						value = "kurtosis(3,12) with_precision(4)",
+						equals = "-2.9999") })
 		public static Double opKurtosis(final IScope scope, final Double moment4, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -258,11 +255,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the moment of k-th order with constant c of a data sequence",
 				comment = "",
-				examples = {
-						@example(
-								value="moment([13,2,1,4,1,2], 2, 1.2) with_precision(4)",
-								equals="24.74")
-				})
+				examples = { @example (
+						value = "moment([13,2,1,4,1,2], 2, 1.2) with_precision(4)",
+						equals = "24.74") })
 		public static Double opMoment(final IScope scope, final IContainer data, final Integer k, final Double c) {
 
 			// TODO input parameters validation
@@ -288,9 +283,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the phi-quantile; that is, an element elem for which holds that phi percent of data elements are less than elem. The quantile need not necessarily be contained in the data sequence, it can be a linear interpolation. Note that the container holding the values must be sorted first",
 				comment = "",
-				examples = {@example(value="quantile([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 0.5)",
-						equals="35.5")
-					})
+				examples = { @example (
+						value = "quantile([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 0.5)",
+						equals = "35.5") })
 		public static Double opQuantile(final IScope scope, final IContainer data, final Double phi) {
 
 			// TODO input parameters validation
@@ -316,10 +311,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns how many percent of the elements contained in the receiver are <= element. Does linear interpolation if the element is not contained but lies in between two contained elements. Note that the container holding the values must be sorted first",
 				comment = "",
-				examples = {
-						@example(value="quantile_inverse([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 35.5) with_precision(2)",
-						equals="0.52")
-				})
+				examples = { @example (
+						value = "quantile_inverse([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 35.5) with_precision(2)",
+						equals = "0.52") })
 		public static Double opQuantileInverse(final IScope scope, final IContainer data, final Double element) {
 
 			// TODO input parameters validation
@@ -345,10 +339,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the linearly interpolated number of elements in a list less or equal to a given element. The rank is the number of elements <= element. Ranks are of the form {0, 1, 2,..., sortedList.size()}. If no element is <= element, then the rank is zero. If the element lies in between two contained elements, then linear interpolation is used and a non integer value is returned. Note that the container holding the values must be sorted first",
 				comment = "",
-				examples = {
-						@example(value="rank_interpolated([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 35)",
-								equals="13.0")
-				})
+				examples = { @example (
+						value = "rank_interpolated([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 35)",
+						equals = "13.0") })
 		public static Double opRankInterpolated(final IScope scope, final IContainer data, final Double element) {
 
 			// TODO input parameters validation
@@ -376,12 +369,10 @@ public class Stats2 extends Stats {
 						+ "of the elements in the data sequence. It is a measure of the average size of "
 						+ "the elements of a data sequence.",
 				comment = "",
-				examples = {
-						@example(" list<float> data_sequence <- [6.0, 7.0, 8.0, 9.0]; "),
-						@example(" list<float> squares <- data_sequence collect (each*each); "),
-						@example(value=" rms(length(data_sequence),sum(squares)) with_precision(4) ",
-								equals="7.5829")
-				})
+				examples = { @example (" list<float> data_sequence <- [6.0, 7.0, 8.0, 9.0]; "),
+						@example (" list<float> squares <- data_sequence collect (each*each); "), @example (
+								value = " rms(length(data_sequence),sum(squares)) with_precision(4) ",
+								equals = "7.5829") })
 		public static Double opRms(final IScope scope, final Integer size, final Double sumOfSquares) {
 
 			// TODO input parameters validation
@@ -407,10 +398,9 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the skew of a data sequence, which is moment(data,3,mean) / standardDeviation3",
 				comment = "",
-				examples = {
-						@example(value="skew([1,3,5,6,9,11,12,13]) with_precision(2)",
-								equals="-0.14")
-				})
+				examples = { @example (
+						value = "skew([1,3,5,6,9,11,12,13]) with_precision(2)",
+						equals = "-0.14") })
 		public static Double opSkew(final IScope scope, final IContainer data) {
 
 			// TODO input parameters validation
@@ -440,15 +430,13 @@ public class Stats2 extends Stats {
 				comment = "In R moment(c(1, 3, 5, 6, 9, 11, 12, 13), order=3,center=TRUE) is -10.125 and sd(c(1,3,5,6,9,11,12,13)) = 4.407785"
 						+ "The value of the skewness tested here is different because there are different types of estimator"
 						+ "Joanes and Gill (1998) discuss three methods for estimating skewness:"
-						+ "Type 1: g_1 = m_3 / m_2^(3/2). This is the typical definition used in many older textbooks." 
-						+ "Type 2: G_1 = g_1 * sqrt(n(n-1)) / (n-2). Used in SAS and SPSS." 
+						+ "Type 1: g_1 = m_3 / m_2^(3/2). This is the typical definition used in many older textbooks."
+						+ "Type 2: G_1 = g_1 * sqrt(n(n-1)) / (n-2). Used in SAS and SPSS."
 						+ "Type 3: b_1 = m_3 / s^3 = g_1 ((n-1)/n)^(3/2). Used in MINITAB and BMDP."
 						+ "In R skewness(c(1, 3, 5, 6, 9, 11, 12, 13),type=3) is -0.1182316",
-				examples = {
-						@example(value="skew(-10.125,4.407785) with_precision(2)",
-										equals="-0.12")
-				}
-				)
+				examples = { @example (
+						value = "skew(-10.125,4.407785) with_precision(2)",
+						equals = "-0.12") })
 		public static Double opSkew(final IScope scope, final Double moment3, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -456,24 +444,6 @@ public class Stats2 extends Stats {
 			return Descriptive.skew(moment3, standardDeviation);
 		}
 
-		/**
-		 *
-		 *
-		 * @param scope
-		 * @param variance
-		 * @return
-		 */
-		public static Double opStandardDeviation(final IScope scope, final Double variance) {
-			return Descriptive.standardDeviation(variance);
-		}
-
-		/**
-		 *
-		 *
-		 * @param scope
-		 * @param standardDeviation
-		 * @return
-		 */
 		@operator (
 				value = "variance",
 				can_be_const = true,
@@ -483,13 +453,12 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the variance from a standard deviation.",
 				comment = "",
-				examples = {@example(
-						value="int(variance([1,3,5,6,9,11,12,13]))",
-						equals ="17",
-						returnType="int")
-				})
-		
-		//@test ("int(variance([1,3,5,6,9,11,12,13])) = 17")
+				examples = { @example (
+						value = "int(variance([1,3,5,6,9,11,12,13]))",
+						equals = "17",
+						returnType = "int") })
+
+		// @test ("int(variance([1,3,5,6,9,11,12,13])) = 17")
 		public static Double opVariance(final IScope scope, final Double standardDeviation) {
 
 			// TODO input parameters validation
@@ -516,11 +485,10 @@ public class Stats2 extends Stats {
 				value = "Returns the variance of a data sequence. That is (sumOfSquares - mean*sum) / size with mean = sum/size.",
 				comment = "In the example we consider variance of [1,3,5,7]. The size is 4, the sum is 1+3+5+7=16 and the sum of squares is 84."
 						+ "The variance is (84- 16^2/4)/4. CQFD.",
-						examples = {@example(
-								value="int(variance(4,16,84))",
-								equals ="5",
-								returnType="int")
-				})
+				examples = { @example (
+						value = "int(variance(4,16,84))",
+						equals = "5",
+						returnType = "int") })
 		public static Double variance(final IScope scope, final Integer size, final Double sum,
 				final Double numOfSquares) {
 
@@ -558,12 +526,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the P value of F statistic fstat with numerator degrees of freedom dfn and denominator degress of freedom dfd. Uses the incomplete Beta function.",
 				comment = "",
-				examples = {@example (
-								value = "pValue_for_fStat(1.9,10,12) with_precision(3)",
-								equals = "0.145")}
-				)
-		
-		
+				examples = { @example (
+						value = "pValue_for_fStat(1.9,10,12) with_precision(3)",
+						equals = "0.145") })
+
 		public static Double opPvalueForFstat(final IScope scope, final Double fstat, final Integer dfn,
 				final Integer dfd) { // see Spatial.Punctual.angle_between
 
@@ -599,12 +565,10 @@ public class Stats2 extends Stats {
 				value = "Returns the P value of the T statistic tstat with df degrees of freedom. "
 						+ "This is a two-tailed test so we just double the right tail which is given by studentT of -|tstat|.",
 				comment = "",
-				examples = {@example (
-								value = "pValue_for_tStat(0.9,10) with_precision(3)",
-								equals = "0.389")}
-				)
-		
-		
+				examples = { @example (
+						value = "pValue_for_tStat(0.9,10) with_precision(3)",
+						equals = "0.389") })
+
 		public static Double opPvalueForTstat(final IScope scope, final Double tstat, final Integer df) {
 
 			// Returns the P value of the T statistic tstat with df degrees of
@@ -639,13 +603,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the area to the left of x in the Student T distribution with the given degrees of freedom.",
 				comment = "",
-				examples = {@example (
+				examples = { @example (
 						value = "student_area(1.64,3) with_precision(2)",
-						equals = "0.9")}
-				)
-		
-		
-		
+						equals = "0.9") })
+
 		public static Double opStudentArea(final IScope scope, final Double x, final Integer df) {
 
 			// Returns the area to the left of x in the Student T distribution
@@ -677,12 +638,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the area to the left of x in the normal distribution with the given mean and standard deviation.",
 				comment = "",
-				examples = {@example (
+				examples = { @example (
 						value = "normal_area(0.9,0,1) with_precision(3)",
-						equals = "0.816")}
-				)
-		
-		
+						equals = "0.816") })
+
 		public static Double opNormalArea(final IScope scope, final Double x, final Double mean, final Double sd) {
 
 			// Returns the area to the left of x in the normal distribution
@@ -714,10 +673,10 @@ public class Stats2 extends Stats {
 				value = "Returns the value, t, for which the area under the Student-t probability density function "
 						+ "(integrated from minus infinity to t) is equal to x.",
 				comment = "",
-				
-		examples = {@example (
-				value = "student_t_inverse(0.9,3) with_precision(2)",
-				equals = "1.64")})
+
+				examples = { @example (
+						value = "student_t_inverse(0.9,3) with_precision(2)",
+						equals = "1.64") })
 
 		public static Double opStudentTInverse(final IScope scope, final Double x, final Integer df) {
 
@@ -753,11 +712,11 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the x in the normal distribution with the given mean and standard deviation, to the left of which lies the given area. normal.Inverse returns the value in terms of standard deviations from the mean, so we need to adjust it for the given mean and standard deviation.",
 				comment = "",
-				examples = {@example (
+				examples = { @example (
 						value = "normal_inverse(0.98,0,1) with_precision(2)",
-						equals = "2.05")}
-				
-				)
+						equals = "2.05") }
+
+		)
 		public static Double opNormalInverse(final IScope scope, final Double area, final Double mean,
 				final Double sd) {
 
@@ -794,13 +753,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the probability of x in the normal distribution with the given mean and standard deviation.",
 				comment = "",
-						examples = {@example(
-								value="(normal_density(2,1,1)*100) with_precision 2",
-								equals ="24.2")}
-						)
-		
-		
-		
+				examples = { @example (
+						value = "(normal_density(2,1,1)*100) with_precision 2",
+						equals = "24.2") })
+
 		public static Double opNormalDensity(final IScope scope, final Double x, final Double mean, final Double sd) {
 
 			// Returns the probability of x in the normal distribution with the
@@ -828,13 +784,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns n choose k as a double. Note the integerization of the double return value.",
 				comment = "",
-				examples = {@example (
-								value = "binomial_coeff(10,2)",
-								equals = "45")}
-)
-		
-		
-		
+				examples = { @example (
+						value = "binomial_coeff(10,2)",
+						equals = "45") })
+
 		public static Double opBinomialCoeff(final IScope scope, final Integer n, final Integer k) {
 
 			// Returns "n choose k" as a double. Note the "integerization" of
@@ -867,12 +820,10 @@ public class Stats2 extends Stats {
 				value = "Returns the sum of the terms 0 through k of the Binomial probability density, where "
 						+ "n is the number of trials and p is the probability of success in the range 0 to 1.",
 				comment = "",
-						examples = {@example (
-								value = "binomial_sum(5,10,0.5) with_precision(2)",
-								equals = "0.62")})
-		
-		
-		
+				examples = { @example (
+						value = "binomial_sum(5,10,0.5) with_precision(2)",
+						equals = "0.62") })
+
 		public static Double opBinomialSum(final IScope scope, final Integer k, final Integer n, final Double p) {
 
 			// Returns the sum of the terms 0 through k of the Binomial
@@ -909,11 +860,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the integral from zero to x of the gamma probability density function.",
 				comment = "incomplete_gamma(a,x) is equal to pgamma(a,1,x).",
-				examples = {
-						@example ( value = "gamma_distribution(2,3,0.9) with_precision(3)",
-								   equals = "0.269")
-					})
-		
+				examples = { @example (
+						value = "gamma_distribution(2,3,0.9) with_precision(3)",
+						equals = "0.269") })
+
 		public static Double opGamma(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the integral from zero to x of the gamma probability
@@ -948,11 +898,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the integral from x to infinity of the gamma probability density function.",
 				comment = "",
-				examples = {
-						@example ( value = "gamma_distribution_complemented(2,3,0.9) with_precision(3)",
-								   equals = "0.731")
-		 })
-		
+				examples = { @example (
+						value = "gamma_distribution_complemented(2,3,0.9) with_precision(3)",
+						equals = "0.731") })
+
 		public static Double opGammaComplemented(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the integral from x to infinity of the gamma probability
@@ -985,11 +934,10 @@ public class Stats2 extends Stats {
 				value = "Returns the sum of the terms k+1 through n of the Binomial probability density, "
 						+ "where n is the number of trials and P is the probability of success in the range 0 to 1.",
 				comment = "",
-						examples = {@example (
-								value = "binomial_complemented(10,5,0.5) with_precision(2)",
-								equals = "0.38")} )
-		
-		
+				examples = { @example (
+						value = "binomial_complemented(10,5,0.5) with_precision(2)",
+						equals = "0.38") })
+
 		public static Double opBinomialComplemented(final IScope scope, final Integer n, final Integer k,
 				final Double p) {
 
@@ -1022,14 +970,12 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the area under the left hand tail (from 0 to x) of the Chi square probability density function with df degrees of freedom.",
 				comment = "",
-				examples = {@example (
+				examples = { @example (
 						value = "chi_square(20.0,10) with_precision(3)",
-						equals = "0.971")}
-				
-				)
-		
-		
-		
+						equals = "0.971") }
+
+		)
+
 		public static Double opChiSquare(final IScope scope, final Double x, final Double df) {
 
 			// Returns the area under the left hand tail (from 0 to x) of the
@@ -1062,15 +1008,13 @@ public class Stats2 extends Stats {
 				value = "Returns the area under the right hand tail (from x to infinity) of the Chi square probability density function with df degrees of freedom.",
 				comment = "",
 				examples = {
-						
+
 						@example (
 								value = "chi_square_complemented(2,10) with_precision(3)",
 								equals = "0.996")
-						
+
 				})
-		
-		
-		
+
 		public static Double opChiSquareComplemented(final IScope scope, final Double x, final Double df) {
 
 			// Returns the area under the right hand tail (from x to infinity)
@@ -1104,11 +1048,11 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the value of the Gamma function at x.",
 				comment = "",
-				examples = {@example(
-								value="gamma(5)",
-								equals ="24.0")}
-						
-				)
+				examples = { @example (
+						value = "gamma(5)",
+						equals = "24.0") }
+
+		)
 		public static Double opGamma(final IScope scope, final Double x) {
 
 			// Returns the value of the Gamma function at x.
@@ -1137,12 +1081,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the log of the value of the Gamma function at x.",
 				comment = "",
-				examples = {@example (
-								value = "log_gamma(0.6) with_precision(4)",
-								equals = "0.3982")}
-				)
-		
-		
+				examples = { @example (
+						value = "log_gamma(0.6) with_precision(4)",
+						equals = "0.3982") })
+
 		public static Double opLogGamma(final IScope scope, final Double x) {
 
 			// Returns the log of the value of the Gamma function at x.
@@ -1167,20 +1109,17 @@ public class Stats2 extends Stats {
 				value = "incomplete_gamma",
 				can_be_const = true,
 				type = IType.FLOAT,
-				category = { IOperatorCategory.STATISTICAL },				
+				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
 				value = " Returns the regularized integral of the Gamma function with argument a to the integration end point x.",
 				comment = "",
-				examples = {
-						@example (
-								value = "incomplete_gamma(1,5.3) with_precision(3)",
-								equals = "0.995")
-						
+				examples = { @example (
+						value = "incomplete_gamma(1,5.3) with_precision(3)",
+						equals = "0.995")
+
 				})
-		
-		
-		
+
 		public static Double opIncompleteGamma(final IScope scope, final Double a, final Double x) {
 
 			// Returns the regularized integral of the Gamma function with
@@ -1212,14 +1151,12 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the complemented regularized incomplete Gamma function of the argument a and integration start point x.",
 				comment = "Is the complement to 1 of incomplete_gamma.",
-				examples = {@example (
+				examples = { @example (
 						value = "incomplete_gamma_complement(1,5.3) with_precision(3)",
 						equals = "0.005")
-				
-		})
-		
-		
-		
+
+				})
+
 		public static Double opIncompleteGammaComplement(final IScope scope, final Double a, final Double x) {
 			// Returns the complemented regularized incomplete Gamma function of
 			// the
@@ -1250,12 +1187,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the beta function with arguments a, b.",
 				comment = "Checked on R. beta(4,5)",
-				examples = {@example(
-								value="beta(4,5) with_precision(4)",
-								equals = "0.0036" )
-				}
-				)
-		
+				examples = { @example (
+						value = "beta(4,5) with_precision(4)",
+						equals = "0.0036") })
+
 		public static Double opBeta(final IScope scope, final Double a, final Double b) {
 
 			// Returns the beta function with arguments a, b.
@@ -1286,15 +1221,10 @@ public class Stats2 extends Stats {
 		@doc (
 				value = "Returns the regularized integral of the beta function with arguments a and b, from zero to x.",
 				comment = "",
-				examples = {
-						@example (
-								value = "incomplete_beta(2,3,0.9) with_precision(3)",
-								equals = "0.996")
-				})
-		
-		
-		
-		
+				examples = { @example (
+						value = "incomplete_beta(2,3,0.9) with_precision(3)",
+						equals = "0.996") })
+
 		public static Double opIncompleteBeta(final IScope scope, final Double a, final Double b, final Double x) {
 
 			// Returns the regularized integral of the beta function with

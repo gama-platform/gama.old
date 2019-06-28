@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.graph.ISpatialGraph.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.graph.ISpatialGraph.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
@@ -19,21 +19,19 @@ import msi.gama.util.graph.IGraph;
 
 /**
  * The class ISpatialGraph.
- * 
+ *
  * @author drogoul
  * @since 3 f�vr. 2012
- * 
+ *
  */
 public interface ISpatialGraph extends IGraph<IShape, IShape>, IAgentFilter {
 
-	public abstract ITopology getTopology(IScope scope);
-
-	public abstract void invalidateTopology();
+	ITopology getTopology(IScope scope);
 
 	@Override
-	public abstract IList<IShape> getVertices();
+	IList<IShape> getVertices();
 
 	@Override
-	public abstract IList<IShape> getEdges();
+	IList<IShape> getEdges();
 
 }

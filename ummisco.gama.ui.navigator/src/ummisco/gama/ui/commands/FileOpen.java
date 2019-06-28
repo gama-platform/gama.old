@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
@@ -23,7 +23,7 @@ import msi.gama.common.GamlFileExtension;
 /**
  * Opens a file
  */
-public class FileOpen extends AbstractHandler {
+public class FileOpen extends AbstractHandler { // NO_UCD (unused code)
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
@@ -31,7 +31,7 @@ public class FileOpen extends AbstractHandler {
 		final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 		dialog.setFilterExtensions(new String[] { "*.gaml", "*.experiment", "*.*" });
-		dialog.setFilterNames(new String[] { "GAML model files", "All Files" });
+		dialog.setFilterNames(new String[] { "GAML model files", "GAML experiment files", "All Files" });
 		final String fileSelected = dialog.open();
 
 		if (fileSelected != null && GamlFileExtension.isAny(fileSelected)) {

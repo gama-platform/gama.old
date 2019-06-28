@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.GifDecoder.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.util.GifDecoder.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -18,17 +18,15 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
  * Class GifDecoder - Decodes a GIF file into one or more frames. <br>
- * 
+ *
  * <pre>
  * Example:
  *    GifDecoder d = new GifDecoder();
@@ -40,7 +38,7 @@ import java.util.TimerTask;
  *       // do something with frame
  *    }
  * </pre>
- * 
+ *
  * No copyright asserted on the source code of this class. May be used for any purpose, however, refer to the Unisys LZW
  * patent for any additional restrictions. Please forward any corrections to questions at fmsware.com.
  *
@@ -82,7 +80,6 @@ public class GifDecoder {
 	protected int bgIndex; // background color index
 	protected int bgColor; // background color
 	protected int lastBgColor; // previous bg color
-	protected int pixelAspect; // pixel aspect ratio
 
 	protected boolean lctFlag; // local color table flag
 	protected boolean interlace; // interlace flag
@@ -128,22 +125,6 @@ public class GifDecoder {
 		public int delay;
 	}
 
-	/**
-	 * Gets display duration for specified frame.
-	 *
-	 * @param n
-	 *            int index of frame
-	 * @return delay in milliseconds
-	 */
-	public int getDelay(final int n) {
-		//
-		delay = -1;
-		if (n >= 0 && n < frameCount) {
-			delay = frames.get(n).delay;
-		}
-		return delay;
-	}
-
 	public int getDuration() {
 		int duration = 0;
 		for (final GifFrame f : frames) {
@@ -154,7 +135,7 @@ public class GifDecoder {
 
 	/**
 	 * Gets the number of frames read from file.
-	 * 
+	 *
 	 * @return frame count
 	 */
 	public int getFrameCount() {
@@ -292,35 +273,6 @@ public class GifDecoder {
 	/**
 	 * Reads GIF image from stream
 	 *
-	 * @param BufferedInputStream
-	 *            containing GIF file.
-	 * @return read status code (0 = no errors)
-	 */
-	public int read(final BufferedInputStream is) {
-		init();
-		if (is != null) {
-			in = is;
-			readHeader();
-			if (!err()) {
-				readContents();
-				if (frameCount < 0) {
-					status = STATUS_FORMAT_ERROR;
-				}
-			}
-		} else {
-			status = STATUS_OPEN_ERROR;
-		}
-		try {
-			if (is != null) {
-				is.close();
-			}
-		} catch (final IOException e) {}
-		return status;
-	}
-
-	/**
-	 * Reads GIF image from stream
-	 *
 	 * @param InputStream
 	 *            containing GIF file.
 	 * @return read status code (0 = no errors)
@@ -348,31 +300,6 @@ public class GifDecoder {
 				is.close();
 			}
 		} catch (final IOException e) {}
-		return status;
-	}
-
-	/**
-	 * Reads GIF file from specified file/URL source (URL assumed if name contains ":/" or "file:")
-	 *
-	 * @param name
-	 *            String containing source
-	 * @return read status code (0 = no errors)
-	 */
-	public int read(final String n) {
-		status = STATUS_OK;
-		try {
-			final String name = n.trim().toLowerCase();
-			if (name.indexOf("file:") >= 0 || name.indexOf(":/") > 0) {
-				final URL url = new URL(name);
-				in = new BufferedInputStream(url.openStream());
-			} else {
-				in = new BufferedInputStream(new FileInputStream(name));
-			}
-			status = read(in);
-		} catch (final IOException e) {
-			status = STATUS_OPEN_ERROR;
-		}
-
 		return status;
 	}
 
@@ -763,8 +690,9 @@ public class GifDecoder {
 		// 5 : gct sort flag
 		gctSize = 2 << (packed & 7); // 6-8 : gct size
 
-		bgIndex = read(); // background color index
-		pixelAspect = read(); // pixel aspect ratio
+		bgIndex = read();
+		// background color index
+		/* pixelAspect = */ read(); // pixel aspect ratio
 	}
 
 	/**

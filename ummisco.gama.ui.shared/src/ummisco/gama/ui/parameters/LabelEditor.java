@@ -1,16 +1,14 @@
 /*********************************************************************************************
  *
- * 'LabelEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LabelEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -20,42 +18,27 @@ import org.eclipse.swt.widgets.Text;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
 
 public class LabelEditor extends AbstractEditor<String> {
 
 	private Text textBox;
 
-	LabelEditor(final IScope scope, final IParameter param) {
-		super(scope, param);
-	}
-
-	LabelEditor(final IScope scope, final IAgent agent, final IParameter param) {
-		this(scope, agent, param, null);
-	}
-
 	LabelEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<String> l) {
 		super(scope, agent, param, l);
 	}
 
 	LabelEditor(final IScope scope, final Composite parent, final String title, final Object value,
-		final EditorListener<String> whenModified) {
+			final EditorListener<String> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 
 	}
 
-	LabelEditor(final IScope scope, final Composite parent, final String title, final String value,
-		final List<String> among, final EditorListener<String> whenModified) {
-		super(scope, new InputParameter(title, value, Types.STRING, among), whenModified);
-		this.createComposite(parent);
-	}
-
 	@Override
 	public void modifyText(final ModifyEvent me) {
-		if ( internalModification ) { return; }
+		if (internalModification) { return; }
 		modifyValue(textBox.getText());
 	}
 
@@ -69,7 +52,7 @@ public class LabelEditor extends AbstractEditor<String> {
 	@Override
 	protected void displayParameterValue() {
 		String s = currentValue;
-		if ( s == null ) {
+		if (s == null) {
 			s = "";
 		}
 		textBox.setText(s);

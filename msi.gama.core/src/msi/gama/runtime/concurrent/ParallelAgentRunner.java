@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
-import java.util.List;
 import java.util.Spliterator;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
@@ -48,34 +47,14 @@ public abstract class ParallelAgentRunner<T> extends RecursiveTask<T> implements
 		}
 	}
 
-	public static void execute(final IScope scope, final IExecutable executable, final List<? extends IAgent> list,
-			final int threshold) throws GamaRuntimeException {
-		final ParallelAgentRunner<?> runner = from(scope, executable, list, threshold);
-		if (list.size() <= threshold) {
-			runner.executeOn(scope);
-		} else {
-			execute(runner);
-		}
-	}
-
 	private static <A extends IShape> ParallelAgentRunner<Boolean> from(final IScope scope, final A[] array,
 			final int threshold) {
 		return new ParallelAgentStepper(scope, AgentSpliterator.of(array, threshold));
 	}
 
-	// private static ParallelAgentRunner<Boolean> from(final IScope scope, final List<? extends IAgent> list,
-	// final int threshold) {
-	// return new ParallelAgentStepper(scope, AgentSpliterator.of(list, threshold));
-	// }
-
 	private static <A extends IShape> ParallelAgentExecuter from(final IScope scope, final IExecutable executable,
 			final A[] array, final int threshold) {
 		return new ParallelAgentExecuter(scope, executable, AgentSpliterator.of(array, threshold));
-	}
-
-	private static ParallelAgentExecuter from(final IScope scope, final IExecutable executable,
-			final List<? extends IAgent> list, final int threshold) {
-		return new ParallelAgentExecuter(scope, executable, AgentSpliterator.of(list, threshold));
 	}
 
 	protected <A extends IShape> ParallelAgentRunner(final IScope scope, final Spliterator<IAgent> agents) {

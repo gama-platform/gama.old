@@ -307,7 +307,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	private ParametersSet improveSolution(final IScope scope, final ParametersSet solution,
 			final double currentFitness) {
 		ParametersSet bestSol = solution;
-		Double bestFitness = currentFitness;
+		double bestFitness = currentFitness;
 		while (true) {
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, solution);
 			if (neighbors.isEmpty()) {
@@ -319,14 +319,15 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 				if (neighborSol == null) {
 					continue;
 				}
-				Double neighborFitness = testedSolutions.get(neighborSol);
-				if (neighborFitness == null) {
+				final double neighborFitness;
+				if (!testedSolutions.containsKey(neighborSol)) {
 					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+					testedSolutions.put(neighborSol, neighborFitness);
+				} else {
+					neighborFitness = testedSolutions.get(neighborSol);
 				}
-				testedSolutions.put(neighborSol, neighborFitness);
 
-				if (isMaximize() && neighborFitness.doubleValue() > bestFitness
-						|| !isMaximize() && neighborFitness.doubleValue() < bestFitness) {
+				if (isMaximize() && neighborFitness > bestFitness || !isMaximize() && neighborFitness < bestFitness) {
 					bestNeighbor = neighborSol;
 					bestFitness = neighborFitness;
 					bestSol = bestNeighbor;

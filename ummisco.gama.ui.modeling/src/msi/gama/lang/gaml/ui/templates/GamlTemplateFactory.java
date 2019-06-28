@@ -42,6 +42,8 @@ import msi.gaml.types.Types;
  * @since 12 déc. 2014
  *
  */
+
+@SuppressWarnings ("deprecation")
 public class GamlTemplateFactory {
 
 	public static String getContextName() {
@@ -51,41 +53,6 @@ public class GamlTemplateFactory {
 	public static String getContextId() {
 		return "msi.gama.lang.gaml.Gaml.Model";
 	}
-
-	//
-	// public static TemplatePersistenceData from(final template t, final
-	// SymbolProto sp) {
-	//
-	// String name = t.name();
-	// String menuPath = "";
-	// for ( String p : path ) {
-	// menuPath += p + ".";
-	// }
-	// String pattern = t.pattern();
-	// String menu = t.menu();
-	// if ( menu.equals(template.NULL) ) {
-	// menu = ISymbolKind.TEMPLATE_MENU[sp.getKind()];
-	// }
-	// String desc = t.description();
-	// if ( desc.equals(template.NULL) ) {
-	// // Trying to build something that makes sense..
-	// desc = menu + " " + name;
-	// desc += Strings.LN;
-	// String doc = sp.getDocumentation();
-	// int index = doc.indexOf(". ");
-	// if ( index == -1 ) {
-	// index = doc.length();
-	// }
-	// desc += doc.substring(0, FastMath.min(index, 150)) + " [...]";
-	// }
-	//
-	// menuPath = menu + "." + menuPath.substring(0, menuPath.length() - 1);
-	// Template template = new Template(name, desc, getContextId(), pattern,
-	// true);
-	// TemplatePersistenceData data = new TemplatePersistenceData(template,
-	// true, menuPath);
-	// return data;
-	// }
 
 	public static TemplatePersistenceData from(final usage u, final AbstractProto sp) {
 		boolean isExample = false;

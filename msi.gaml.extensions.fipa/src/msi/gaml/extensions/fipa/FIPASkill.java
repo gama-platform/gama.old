@@ -954,23 +954,6 @@ public class FIPASkill extends MessagingSkill {
 	}
 
 	/**
-	 * @throws GamaRuntimeException
-	 *             Receive message.
-	 *
-	 * @param message
-	 *            the message
-	 *
-	 * @throws GamlException
-	 *             the gaml exception
-	 */
-	protected void receiveMessage(final IScope scope, final IAgent agent, final FIPAMessage message)
-			throws GamaRuntimeException {
-		FIPAMessage messageToAdd;
-		messageToAdd = new FIPAMessage(scope, message);
-		getMessages(scope, agent).add(messageToAdd);
-	}
-
-	/**
 	 * Filter.
 	 *
 	 * @param performative
@@ -992,15 +975,4 @@ public class FIPASkill extends MessagingSkill {
 		return result;
 	}
 
-	/**
-	 * @throws GamaRuntimeException
-	 *             Adds a conversation to the conversation list.
-	 *
-	 * @param conv
-	 *            the conv
-	 */
-	protected void addConversation(final IAgent agent, final Conversation conv) throws GamaRuntimeException {
-		final List<Conversation> conversations = getConversations(agent);
-		conversations.add(conv);
-	}
 }

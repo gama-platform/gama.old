@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
@@ -28,7 +28,7 @@ public class FileFolderSorter extends ViewerComparator {
 
 	public FileFolderSorter() {}
 
-	public FileFolderSorter(final Collator collator) {
+	public FileFolderSorter(final Collator collator) { // NO_UCD (unused code)
 		super(collator);
 	}
 

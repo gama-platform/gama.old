@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views;
@@ -207,7 +207,7 @@ public class InteractiveConsoleView extends GamaViewPart
 
 	/**
 	 * Append the text to the console.
-	 * 
+	 *
 	 * @param text
 	 *            to display in the console
 	 */
@@ -272,7 +272,7 @@ public class InteractiveConsoleView extends GamaViewPart
 	 * As ConsoleView is automatically opened by moving to the simulation perspective, the automatic closing can cause
 	 * problems. So the view is stated as accepting an "experiment-less" mode. See Issue #1361 Method
 	 * shouldBeClosedWhenNoExperiments()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.GamaViewPart#shouldBeClosedWhenNoExperiments()
 	 */
 	@Override
@@ -284,8 +284,6 @@ public class InteractiveConsoleView extends GamaViewPart
 	protected boolean needsOutput() {
 		return false;
 	}
-
-	volatile boolean isListening;
 
 	@Override
 	public void append(final String text, final ITopLevelAgent agent, final GamaColor color) {

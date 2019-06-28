@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.viewers.csv.model;
 
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -19,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.CsvReader;
@@ -35,7 +33,7 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class CSVModel implements IRowChangesListener {
 
-	private boolean displayFirstLine;
+	private final boolean displayFirstLine;
 	private final ArrayList<CSVRow> rows;
 	private final ArrayList<ICsvFileModelListener> listeners;
 	private final IFile file;
@@ -121,13 +119,6 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public void setInput(final String text) {
 		readLines(text);
-	}
-
-	/**
-	 * @param display
-	 */
-	public void displayFirstLine(final boolean display) {
-		displayFirstLine = display;
 	}
 
 	/**
@@ -338,13 +329,6 @@ public class CSVModel implements IRowChangesListener {
 	}
 
 	/**
-	 * @param rowIndex
-	 */
-	public void removeRow(final int rowIndex) {
-		rows.remove(rowIndex);
-	}
-
-	/**
 	 *
 	 */
 	public void removeRow(final CSVRow row) {
@@ -475,20 +459,7 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 */
 	public void saveMetaData() {
-		// DEBUG.LOG("Saving the following metadata: " +
-		// getInfo().getSuffix());
 		GAMA.getGui().getMetaDataProvider().storeMetaData(file, getInfo(), true);
-	}
-
-	/**
-	 *
-	 */
-	public void reload() {
-		try {
-			readLines(new InputStreamReader(file.getContents()));
-		} catch (final CoreException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**

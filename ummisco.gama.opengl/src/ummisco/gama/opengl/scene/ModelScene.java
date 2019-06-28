@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.scene.ModelScene.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -43,10 +43,7 @@ public class ModelScene {
 
 	public static final String AXES_KEY = "__axes__0";
 	public static final String FRAME_KEY = "__frame__0";
-	public static final String ROTATION_HELPER_KEY = "__rotation__0";
-	public static final String KEYSTONE_HELPER_KEY = "__keystone__0";
-	public static final String LIGHTS_KEY = "__lights__0";
-	public static final String FPS_KEY = "z__fps__0";
+
 	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<>();
 	protected LayerObject currentLayer;
 	protected final IOpenGLRenderer renderer;
@@ -54,10 +51,6 @@ public class ModelScene {
 	private volatile int objectNumber;
 	private double zIncrement;
 	private int currentLayerTrace;
-
-	public static abstract class ObjectVisitor {
-		public abstract void process(AbstractObject object);
-	}
 
 	public ModelScene(final IOpenGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
@@ -182,10 +175,6 @@ public class ModelScene {
 		}
 		dispose();
 		initWorld();
-	}
-
-	public void hideLayer(final String name) {
-		layers.put(name, null);
 	}
 
 	public void beginDrawingLayer(final ILayer layer, final Double alpha) {

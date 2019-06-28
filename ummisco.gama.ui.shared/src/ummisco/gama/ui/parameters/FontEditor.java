@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'FontEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FontEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -31,22 +30,8 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 
 	private FlatButton edit;
 
-	FontEditor(final IScope scope, final IParameter param) {
-		super(scope, param);
-	}
-
 	FontEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaFont> l) {
 		super(scope, agent, param, l);
-	}
-
-	FontEditor(final IScope scope, final IAgent agent, final IParameter param) {
-		this(scope, agent, param, null);
-	}
-
-	FontEditor(final IScope scope, final Composite parent, final String title, final Object value,
-			final EditorListener<GamaFont> whenModified) {
-		super(scope, new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
 	}
 
 	@Override
@@ -60,8 +45,8 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		final GamaFont data = currentValue != null ? currentValue
-				: toGamaFont(GamaFonts.getSmallFont().getFontData()[0]);
+		final GamaFont data =
+				currentValue != null ? currentValue : toGamaFont(GamaFonts.getSmallFont().getFontData()[0]);
 		edit.setText(data.toString());
 		edit.setFont(new Font(WorkbenchHelper.getDisplay(), toFontData(data)));
 		internalModification = false;
@@ -75,19 +60,10 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 		return new FontData(gf.getName(), gf.getSize(), gf.getStyle());
 	}
 
-	public void modifyValue() {
-
-	}
-
 	@Override
 	public Control getEditorControl() {
 		return edit;
 	}
-
-	// @Override
-	// public IType getExpectedType() {
-	// return Types.STRING;
-	// }
 
 	@Override
 	protected int[] getToolItems() {

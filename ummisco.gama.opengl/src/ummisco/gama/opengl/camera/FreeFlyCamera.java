@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
@@ -13,12 +13,8 @@ import java.awt.Point;
 
 import org.eclipse.swt.SWT;
 
-import com.jogamp.opengl.glu.GLU;
-
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -108,12 +104,6 @@ public class FreeFlyCamera extends AbstractCamera {
 	@Override
 	public void setUpVector(final double xPos, final double yPos, final double zPos) {
 		// Not allowed for this camera
-	}
-
-	public void followAgent(final IAgent a, final GLU glu) {
-		final ILocation l = a.getLocation();
-		setPosition(l.getX(), l.getY(), l.getZ());
-		glu.gluLookAt(0, 0, (float) (getRenderer().getMaxEnvDim() * 1.5), 0, 0, 0, 0.0f, 0.0f, 1.0f);
 	}
 
 	@Override

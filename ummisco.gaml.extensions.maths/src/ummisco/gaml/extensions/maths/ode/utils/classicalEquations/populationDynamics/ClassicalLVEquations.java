@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'ClassicalLVEquations.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ClassicalLVEquations.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDynamics;
@@ -45,14 +44,12 @@ public class ClassicalLVEquations {
 	}
 
 	public List<SingleEquationStatement> LV(final IExpression with_vars, final IExpression with_params) {
-		if (with_vars == null || with_params == null) {
-			return null;
-		}
-		final ArrayList<SingleEquationStatement> cmd = new ArrayList<SingleEquationStatement>();
+		if (with_vars == null || with_params == null) { return null; }
+		final ArrayList<SingleEquationStatement> cmd = new ArrayList<>();
 		final IExpression[] v = ((ListExpression) with_vars).getElements();
 		final IExpression[] p = ((ListExpression) with_params).getElements();
 
-		final StatementDescription stm = new StatementDescription("=", getDescription(), false, null, null, null, null);
+		final StatementDescription stm = new StatementDescription("=", getDescription(), false, null, null, null);
 
 		final SingleEquationStatement eq1 = new SingleEquationStatement(stm);
 		eq1.setFunction(GAML.getExpressionFactory()

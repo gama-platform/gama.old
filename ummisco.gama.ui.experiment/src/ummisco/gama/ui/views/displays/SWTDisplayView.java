@@ -23,10 +23,6 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public abstract class SWTDisplayView extends LayeredDisplayView {
 
-	// boolean isOverlayTemporaryVisible;
-
-	public static String ID = "msi.gama.application.view.SWTDisplayView";
-
 	@Override
 	public Control[] getZoomableControls() {
 		return new Control[] { surfaceComposite };
@@ -50,16 +46,9 @@ public abstract class SWTDisplayView extends LayeredDisplayView {
 				if (getSite() != null && getSite().getPage() != null) {
 					getSite().getPage().hideView(SWTDisplayView.this);
 				}
-			} catch (final Exception e) {
-				// e.printStackTrace();
-			}
+			} catch (final Exception e) {}
 		});
 
 	}
-
-	// @Override
-	// public void waitToBeRealized() {
-	// WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getPage().bringToTop(SWTDisplayView.this));
-	// }
 
 }

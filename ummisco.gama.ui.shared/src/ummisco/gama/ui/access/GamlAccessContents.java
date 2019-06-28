@@ -56,8 +56,6 @@ public abstract class GamlAccessContents implements IPopupProvider {
 	 * {@link #resourceManager} is disposed.
 	 */
 	TextLayout textLayout;
-	boolean resized = false;
-	// private TriggerSequence keySequence;
 
 	Popup2 popup;
 
@@ -255,10 +253,6 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		if (textLayout != null && !textLayout.isDisposed()) {
 			textLayout.dispose();
 		}
-	}
-
-	protected String getId() {
-		return "org.eclipse.ui.internal.QuickAccess"; //$NON-NLS-1$
 	}
 
 	protected abstract void handleElementSelected(String text, GamlAccessEntry selectedElement);

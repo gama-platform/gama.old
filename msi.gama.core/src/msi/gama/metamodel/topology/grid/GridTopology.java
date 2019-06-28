@@ -152,17 +152,7 @@ public class GridTopology extends AbstractTopology {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
 	}
 
-	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target,
-			final IList<IAgent> on) throws GamaRuntimeException {
-		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
-	}
-
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,
-			final Map<IAgent, Object> on) throws GamaRuntimeException {
-		return getPlaces().computeShortestPathBetweenWeighted(scope, source, target, this, on);
-	}
-
-	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target,
 			final Map<IAgent, Object> on) throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetweenWeighted(scope, source, target, this, on);
 	}

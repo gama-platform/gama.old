@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 
@@ -22,7 +22,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -1325,20 +1324,6 @@ public class SWTChartEditor implements ChartEditor {
 	}
 
 	static class SWTStrokeCanvas extends Canvas {
-
-		/**
-		 * Creates a new instance.
-		 *
-		 * @param parent
-		 *            the parent.
-		 * @param style
-		 *            the style.
-		 * @param image
-		 *            the image.
-		 */
-		public SWTStrokeCanvas(final Composite parent, final int style, final Image image) {
-			this(parent, style);
-		}
 
 		/**
 		 * Creates a new instance.

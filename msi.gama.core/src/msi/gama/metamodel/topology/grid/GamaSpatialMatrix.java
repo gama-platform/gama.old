@@ -1720,6 +1720,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
+		public boolean containsKey(final IScope scope, final Object o) {
+			if (o instanceof Integer) { return super.containsKey(scope, o); }
+			if (o instanceof GamaPoint) { return GamaSpatialMatrix.this.containsKey(scope, o); }
+			return false;
+		}
+
+		@Override
 		public java.lang.Iterable<G> iterable(final IScope scope) {
 			return listValue(scope, Types.NO_TYPE, false); // TODO Types.AGENT
 			// ??

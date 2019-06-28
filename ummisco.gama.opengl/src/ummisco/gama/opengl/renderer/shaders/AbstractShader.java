@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.renderer.shaders;
@@ -14,10 +14,10 @@ import java.nio.FloatBuffer;
 import java.util.Scanner;
 
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.dev.utils.DEBUG;
 
 public abstract class AbstractShader {
@@ -30,14 +30,10 @@ public abstract class AbstractShader {
 	private final int vertexShaderID;
 	private final int fragmentShaderID;
 
-	private int location_transformationMatrix;
-	private int location_projectionMatrix;
-	private int location_viewMatrix;
 	private int location_layerAlpha;
 
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
-	public static final int COLOR_ATTRIBUTE_IDX = 1;
-	public static final int NORMAL_ATTRIBUTE_IDX = 2;
+
 	public static final int UVMAPPING_ATTRIBUTE_IDX = 3;
 
 	private static FloatBuffer matrixBuffer = FloatBuffer.allocate(16);
@@ -48,11 +44,13 @@ public abstract class AbstractShader {
 
 		try {
 			vertexInputStream = getClass().getResourceAsStream(vertexFile);
-			if (vertexInputStream == null) { throw new RuntimeException(
-					"Cannot locate vertex shader program " + vertexFile); }
+			if (vertexInputStream == null) {
+				throw new RuntimeException("Cannot locate vertex shader program " + vertexFile);
+			}
 			fragmentInputStream = getClass().getResourceAsStream(fragmentFile);
-			if (fragmentInputStream == null) { throw new RuntimeException(
-					"Cannot locate vertex shader program " + vertexFile); }
+			if (fragmentInputStream == null) {
+				throw new RuntimeException("Cannot locate vertex shader program " + vertexFile);
+			}
 		} catch (final Exception e) {
 			DEBUG.ERR(e.getMessage());
 			vertexShaderID = -1;
@@ -121,15 +119,6 @@ public abstract class AbstractShader {
 		gl.glUseProgram(0);
 	}
 
-	public void cleanUp() {
-		stop();
-		gl.glDetachShader(programID, vertexShaderID);
-		gl.glDetachShader(programID, fragmentShaderID);
-		gl.glDeleteShader(vertexShaderID);
-		gl.glDeleteShader(fragmentShaderID);
-		gl.glDeleteProgram(programID);
-	}
-
 	public int getProgramID() {
 		return programID;
 	}
@@ -149,9 +138,6 @@ public abstract class AbstractShader {
 	}
 
 	protected void getAllUniformLocations() {
-		location_transformationMatrix = getUniformLocation("transformationMatrix");
-		location_projectionMatrix = getUniformLocation("projectionMatrix");
-		location_viewMatrix = getUniformLocation("viewMatrix");
 		location_layerAlpha = getUniformLocation("layerAlpha");
 	}
 
@@ -190,45 +176,12 @@ public abstract class AbstractShader {
 		gl.glUniform1i(location, value);
 	}
 
-	protected void loadVector(final int location, final Vector3f vector) {
-		gl.glUniform3f(location, vector.x, vector.y, vector.z);
-	}
-
-	public void loadTransformationMatrix(final Matrix4f matrix) {
-		if (isOverlay) {
-			matrix.setIdentity();
-		}
-		loadMatrix(location_transformationMatrix, matrix);
-	}
-
-	public void loadProjectionMatrix(final Matrix4f matrix) {
-		if (isOverlay) {
-			matrix.setIdentity();
-			matrix.setScale(2f);
-			matrix.m30 = -1f;
-			matrix.m31 = 1f;
-			matrix.m11 = -matrix.m11;
-		}
-		loadMatrix(location_projectionMatrix, matrix);
-	}
-
-	public void loadViewMatrix(final Matrix4f viewMatrix) {
-		if (isOverlay) {
-			viewMatrix.setIdentity();
-		}
-		loadMatrix(location_viewMatrix, viewMatrix);
-	}
-
 	public void setLayerAlpha(final float layerAlpha) {
 		loadFloat(location_layerAlpha, layerAlpha);
 	}
 
-	public Vector3f getTranslation() {
-		return new Vector3f(0, 0, 0);
-	}
-
-	public void enableOverlay(final boolean value) {
-		isOverlay = value;
+	public GamaPoint getTranslation() {
+		return new GamaPoint(0, 0, 0);
 	}
 
 	public boolean isOverlay() {

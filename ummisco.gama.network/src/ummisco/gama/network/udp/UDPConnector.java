@@ -31,7 +31,6 @@ import ummisco.gama.network.skills.INetworkSkill;
 public class UDPConnector extends Connector {
 
 	public static String _UDP_SERVER = "__udp_server";
-	public static Integer _UDP_SO_TIMEOUT = 10000;
 
 	private boolean is_server = false;
 
@@ -114,14 +113,10 @@ public class UDPConnector extends Connector {
 	}
 
 	@Override
-	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
-		// TODO Auto-generated method stub
-	}
+	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {}
 
 	@Override
-	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
-		// TODO Auto-generated method stub
-	}
+	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {}
 
 	@Override
 	protected boolean isAlive(final IAgent agent) throws GamaNetworkException {

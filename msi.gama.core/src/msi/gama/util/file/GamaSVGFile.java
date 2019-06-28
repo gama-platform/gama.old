@@ -32,9 +32,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gama.util.file.svg.SVGCache;
-import msi.gama.util.file.svg.SVGDiagram;
-import msi.gama.util.file.svg.SVGUniverse;
+import msi.gama.util.file.svgsalamander_copy.SVGCache;
+import msi.gama.util.file.svgsalamander_copy.SVGDiagram;
+import msi.gama.util.file.svgsalamander_copy.SVGUniverse;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 

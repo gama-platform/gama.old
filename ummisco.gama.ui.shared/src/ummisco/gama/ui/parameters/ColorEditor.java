@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -57,16 +57,8 @@ public class ColorEditor extends AbstractEditor<Color> {
 
 	private FlatButton edit;
 
-	ColorEditor(final IScope scope, final IParameter param) {
-		super(scope, param);
-	}
-
 	ColorEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<Color> l) {
 		super(scope, agent, param, l);
-	}
-
-	ColorEditor(final IScope scope, final IAgent agent, final IParameter param) {
-		this(scope, agent, param, null);
 	}
 
 	ColorEditor(final IScope scope, final Composite parent, final String title, final Object value,

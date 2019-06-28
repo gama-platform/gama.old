@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -32,14 +32,6 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	private FlatButton textBox;
-
-	FileEditor(final IScope scope, final IParameter param) {
-		super(scope, param);
-	}
-
-	FileEditor(final IScope scope, final IAgent agent, final IParameter param) {
-		this(scope, agent, param, null);
-	}
 
 	FileEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
 		super(scope, agent, param, l);

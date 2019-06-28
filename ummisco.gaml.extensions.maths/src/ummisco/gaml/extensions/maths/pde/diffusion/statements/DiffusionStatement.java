@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.pde.diffusion.statements;
@@ -57,14 +57,6 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 						of = IType.AGENT,
 						optional = false,
 						doc = @doc ("the list of agents (in general cells of a grid), on which the diffusion will occur")),
-				@facet (
-						name = "mat_diffu",
-						type = IType.MATRIX,
-						of = IType.FLOAT,
-						optional = true,
-						doc = @doc (
-								value = "the diffusion matrix (can have any size)",
-								deprecated = "Please use 'matrix' instead")),
 				@facet (
 						name = IKeyword.MATRIX,
 						type = IType.MATRIX,
@@ -139,12 +131,12 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 						value = "matrix<float> math_diff <- matrix([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]]);",
 						isExecutable = false),
 						@example (
-								value = "diffuse var: phero on: cells mat_diffu: math_diff;",
+								value = "diffuse var: phero on: cells matrix: math_diff;",
 								isExecutable = false) }),
 				@usage (
 						value = "The diffusion can be masked by obstacles, created from a bitmap image:",
 						examples = { @example (
-								value = "diffuse var: phero on: cells mat_diffu: math_diff mask: mymask;",
+								value = "diffuse var: phero on: cells matrix: math_diff mask: mymask;",
 								isExecutable = false) }),
 				@usage (
 						value = "A convenient way to have an uniform diffusion in a given radius is (which is equivalent to the above diffusion):",
@@ -183,10 +175,7 @@ public class DiffusionStatement extends AbstractStatement {
 				}
 			}
 
-			IExpressionDescription mat_diffu = desc.getFacet("mat_diffu");
-			if (mat_diffu == null) {
-				mat_diffu = desc.getFacet(MATRIX);
-			}
+			final IExpressionDescription mat_diffu = desc.getFacet(MATRIX);
 			final IExpressionDescription propor = desc.getFacet(IKeyword.PROPORTION);
 			final IExpressionDescription propagation = desc.getFacet(IKeyword.PROPAGATION);
 			final IExpressionDescription radius = desc.getFacet(IKeyword.RADIUS);
@@ -208,8 +197,6 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 	}
 
-	boolean initialized = false;
-
 	final String envName;
 
 	public DiffusionStatement(final IDescription desc) {
@@ -218,9 +205,6 @@ public class DiffusionStatement extends AbstractStatement {
 		envName = s.getName();
 
 	}
-
-	double[] input, output;
-	int nbRows, nbCols;
 
 	private IGrid getEnvironment(final IScope scope) {
 		return (IGrid) scope.getAgent().getScope().getSimulation().getPopulationFor(envName).getTopology().getPlaces();
@@ -314,8 +298,9 @@ public class DiffusionStatement extends AbstractStatement {
 		final Object obj = getFacetValue(scope, IKeyword.ON);
 		if (obj instanceof ISpecies) {
 			// the diffusion is applied to the whole grid
-			if (!((ISpecies) obj).isGrid()) { throw GamaRuntimeException
-					.error("Diffusion statement works only on grid agents", scope); }
+			if (!((ISpecies) obj).isGrid()) {
+				throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
+			}
 		} else {
 			// the diffusion is applied just to a certain part of the grid.
 			// Search the mask.

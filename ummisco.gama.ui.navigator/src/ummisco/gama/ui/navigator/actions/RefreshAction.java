@@ -42,8 +42,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceAction;
@@ -182,18 +180,6 @@ public class RefreshAction extends WorkspaceAction {
 	}
 
 	/**
-	 * Handle the key release.
-	 *
-	 * @param event
-	 *            the event
-	 */
-	public void handleKeyReleased(final KeyEvent event) {
-		if (event.keyCode == SWT.F5 && event.stateMask == 0) {
-			refreshAll();
-		}
-	}
-
-	/**
 	 * Refreshes the entire workspace.
 	 */
 	final public void refreshAll() {
@@ -205,19 +191,6 @@ public class RefreshAction extends WorkspaceAction {
 
 	@Override
 	final protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
-		// final ISchedulingRule rule = null;
-		// final IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
-
-		// List<? extends IResource> actionResources = new ArrayList<>(resources);
-		// if (shouldPerformResourcePruning()) {
-		// actionResources = pruneResources2(actionResources);
-		// }
-		// final List<? extends IResource> resources = actionResources;
-
-		// final Iterator<? extends IResource> res = resources.iterator();
-		// while (res.hasNext()) {
-		// rule = MultiRule.combine(rule, factory.refreshRule(res.next()));
-		// }
 		return new WorkspaceModifyOperation() {
 			@Override
 			public void execute(final IProgressMonitor monitor) {
@@ -288,8 +261,9 @@ public class RefreshAction extends WorkspaceAction {
 			};
 			job.setUser(true);
 			job.schedule();
-		} else
+		} else {
 			super.run();
+		}
 	}
 
 }

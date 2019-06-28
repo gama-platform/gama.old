@@ -15,12 +15,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.graphstream.stream.SinkAdapter;
-import org.graphstream.stream.file.FileSource;
-
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.graph.graphstream_copy.FileSource;
+import msi.gama.util.graph.graphstream_copy.SinkAdapter;
 
 /**
  * Basis for the graph parser based on graphstream. GraphStream is based on filesource (which defines the format), and

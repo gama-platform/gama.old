@@ -100,8 +100,9 @@ species areaclc {
 }
 
 
-experiment mapcomparison type: gui {
+experiment "Compare" type: gui {
 	output {
+		layout #split consoles: false editors: false navigator: false parameters: false tabs: false toolbars: false tray: false ;
 		display map_sim type: opengl{
 			species areaclc aspect: simulation;
 		}
@@ -111,7 +112,7 @@ experiment mapcomparison type: gui {
 		display map_init type: opengl{
 			species areaclc aspect: init refresh: false;
 		}
-		display map_fuzzy type: opengl background: #pink{
+		display map_fuzzy type: opengl background: #black{
 			species areaclc aspect: fuzzy_sim ;
 		}
 	}

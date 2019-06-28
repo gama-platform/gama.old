@@ -55,7 +55,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types; 
+import msi.gaml.types.Types;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement.SystemOfEquationsValidator;
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSEIREquations;
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIEquations;
@@ -242,10 +242,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 				for (int i = 0; i < ((SingleEquationStatement) s).getVars().size(); i++) {
 					final IExpression v = ((SingleEquationStatement) s).getVar(i);
 					if (((SingleEquationStatement) s).getOrder() > 0) {
-						GamaPair p1 = new GamaPair<IAgent, SingleEquationStatement>(null, (SingleEquationStatement) s,
-								Types.AGENT, Types.NO_TYPE);
+						final GamaPair p1 = new GamaPair<IAgent, SingleEquationStatement>(null,
+								(SingleEquationStatement) s, Types.AGENT, Types.NO_TYPE);
 						equations.put(equations.size(), p1);
-						GamaPair p2 = new GamaPair<IAgent, IExpression>(null, v, Types.AGENT, Types.NO_TYPE);
+						final GamaPair p2 = new GamaPair<IAgent, IExpression>(null, v, Types.AGENT, Types.NO_TYPE);
 						variables_diff.put(variables_diff.size(), p2);
 					}
 				}
@@ -261,15 +261,13 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	// DEBUG.ON();
 	// }
 
-	static boolean OWN_DEBUG = false;
-
 	public void assignValue(final IScope scope, final double time, final double[] y) {
 		// final List<SingleEquationStatement> equationValues = new
 		// ArrayList<SingleEquationStatement>(equations.values());
 		// final List<IExpression> variableValues = new
 		// ArrayList<IExpression>(variables_diff.values());
-		GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
-		GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = getVariableDiff(scope.getAgent());
+		final GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
+		final GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = getVariableDiff(scope.getAgent());
 		for (int i = 0, n = myEQ.size(); i < n; i++) {
 
 			final GamaPair<IAgent, SingleEquationStatement> s = myEQ.get(i);
@@ -286,8 +284,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 						((IVarExpression) s.getValue().getVarTime()).setVal(scope, time, false);
 					}
 					if (myVar.get(i).getValue() instanceof IVarExpression) {
-//						if (OWN_DEBUG)
-//							DEBUG.LOG(remoteAgent + " assign " + myVar.get(i).getValue() + " " + y[i]);
+						// if (OWN_DEBUG)
+						// DEBUG.LOG(remoteAgent + " assign " + myVar.get(i).getValue() + " " + y[i]);
 						((IVarExpression) myVar.get(i).getValue()).setVal(scope, y[i], false);
 					}
 				} catch (final Throwable ex1) {
@@ -330,7 +328,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		 * Variables in GAMA, which is use by GAMA modeler
 		 */
 
-		GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
+		final GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
 		assignValue(currentScope, time, y);
 
 		/*
@@ -342,8 +340,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		// ArrayList<SingleEquationStatement>(equations.values());
 		final Map<Integer, IAgent> equaAgents = getEquationAgents(currentScope);
 		for (int i = 0, n = getDimension(); i < n; i++) {
-			if (myEQ.get(i) == null)
+			if (myEQ.get(i) == null) {
 				continue;
+			}
 			try {
 				final ExecutionResult result = currentScope.execute(myEQ.get(i).getValue(), equaAgents.get(i), null);
 				ydot[i] = Cast.asFloat(currentScope, result.getValue());
@@ -363,7 +362,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	@Override
 	public int getDimension() {
 		int count = 0;
-		GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
+		final GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
 		for (final GamaPair<IAgent, SingleEquationStatement> s : myEQ.values()) {
 			if (s.getValue().getOrder() > 0) {
 				count++;
@@ -378,8 +377,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private Set<IAgent> getExternalAgents(final IScope scope) {
-		if (scope.getAgent() == null)
-			return new HashSet();
+		if (scope.getAgent() == null) { return new HashSet(); }
 		Set<IAgent> result = (Set<IAgent>) scope.getAgent().getAttribute("__externalAgents");
 		if (result == null) {
 			result = new HashSet();
@@ -388,9 +386,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		return result;
 	}
 
-	public GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> getEquations(IAgent agt) {
-		if (agt == null)
-			return GamaMapFactory.create();
+	public GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> getEquations(final IAgent agt) {
+		if (agt == null) { return GamaMapFactory.create(); }
 		GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> result =
 				(GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>>) agt.getAttribute(___equations);
 		if (result == null) {
@@ -400,15 +397,13 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		return result;
 	}
 
-	public void setEquations(IAgent agt, GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> eqs) {
-		if (agt == null)
-			return;
+	public void setEquations(final IAgent agt, final GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> eqs) {
+		if (agt == null) { return; }
 		agt.setAttribute(___equations, eqs);
 	}
 
-	public GamaMap<Integer, GamaPair<IAgent, IExpression>> getVariableDiff(IAgent agt) {
-		if (agt == null)
-			return GamaMapFactory.create();
+	public GamaMap<Integer, GamaPair<IAgent, IExpression>> getVariableDiff(final IAgent agt) {
+		if (agt == null) { return GamaMapFactory.create(); }
 		GamaMap<Integer, GamaPair<IAgent, IExpression>> result =
 				(GamaMap<Integer, GamaPair<IAgent, IExpression>>) agt.getAttribute(___variables_diff);
 		if (result == null) {
@@ -418,15 +413,13 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		return result;
 	}
 
-	public void setVariableDiff(IAgent agt, GamaMap<Integer, GamaPair<IAgent, IExpression>> var) {
-		if (agt == null)
-			return;
+	public void setVariableDiff(final IAgent agt, final GamaMap<Integer, GamaPair<IAgent, IExpression>> var) {
+		if (agt == null) { return; }
 		agt.setAttribute(___variables_diff, var);
 	}
 
 	public Map<Integer, IAgent> getEquationAgents(final IScope scope) {
-		if (scope.getAgent() == null)
-			return new HashMap();
+		if (scope.getAgent() == null) { return new HashMap(); }
 		Map<Integer, IAgent> result = (Map<Integer, IAgent>) scope.getAgent().getAttribute("__equationAgents");
 		if (result == null) {
 			result = new HashMap();
@@ -486,8 +479,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void removeExternalEquations(final IScope scope) {
-		if (scope.getAgent() == null)
-			return;
+		if (scope.getAgent() == null) { return; }
 		final GamaMap<String, IList<Double>> result =
 				(GamaMap<String, IList<Double>>) scope.getAgent().getAttribute("__integrated_values");
 		for (final IAgent remoteAgent : getExternalAgents(scope)) {
@@ -499,14 +491,14 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void addEquationsOf(final IAgent remoteAgent) {
-		GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
-		GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = getVariableDiff(currentScope.getAgent());
+		final GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
+		final GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = getVariableDiff(currentScope.getAgent());
 		// if (remoteAgent.equals(currentScope.getAgent())) {
 		for (final GamaPair<IAgent, SingleEquationStatement> e : myEQ.values()) {
 			if (e.getKey().equals(remoteAgent)) { return; }
 		}
-//		if (OWN_DEBUG)
-//			DEBUG.LOG(currentScope.getAgent() + " addEquationsOf " + remoteAgent);
+		// if (OWN_DEBUG)
+		// DEBUG.LOG(currentScope.getAgent() + " addEquationsOf " + remoteAgent);
 		final SystemOfEquationsStatement ses =
 				remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class, getName());
 		if (ses != null) {
@@ -518,18 +510,17 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 			for (final GamaPair<IAgent, SingleEquationStatement> s : ses.equations.values()) {
 				// final String name = remoteAgent.getName() + s.getKey();
 				final SingleEquationStatement eq = s.getValue();
-//				if (OWN_DEBUG)
-//					DEBUG.LOG("eq " + eq);
-				GamaPair p1 =
-						new GamaPair<IAgent, SingleEquationStatement>(remoteAgent, eq, Types.AGENT, Types.NO_TYPE);
+				// if (OWN_DEBUG)
+				// DEBUG.LOG("eq " + eq);
+				final GamaPair p1 = new GamaPair<>(remoteAgent, eq, Types.AGENT, Types.NO_TYPE);
 				myEQ.put(myEQ.size(), p1);
 			}
 			for (final GamaPair<IAgent, IExpression> s : ses.variables_diff.values()) {
 				// final String name = remoteAgent.getName() + s.getKey();
 				final IExpression v = s.getValue();
-//				if (OWN_DEBUG)
-//					DEBUG.LOG("v " + v);
-				GamaPair p1 = new GamaPair<IAgent, IExpression>(remoteAgent, v, Types.AGENT, Types.NO_TYPE);
+				// if (OWN_DEBUG)
+				// DEBUG.LOG("v " + v);
+				final GamaPair p1 = new GamaPair<>(remoteAgent, v, Types.AGENT, Types.NO_TYPE);
 				myVar.put(myVar.size(), p1);
 			}
 		}
@@ -568,21 +559,21 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void removeEquationsOf(final IAgent remoteAgent) {
-		GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
-		GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = getVariableDiff(currentScope.getAgent());
+		final GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
+		final GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = getVariableDiff(currentScope.getAgent());
 
 		// final SystemOfEquationsStatement ses =
 		// remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class,
 		// getName());
 
-//		DEBUG.LOG("removeEquationsOf " + remoteAgent);
+		// DEBUG.LOG("removeEquationsOf " + remoteAgent);
 		// GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> ses = getEquations(remoteAgent);
 		// GamaMap<Integer, GamaPair<IAgent, IExpression>> sesVar = getVariableDiff(remoteAgent);
 		if (myEQ != null) {
 			// final int n = equations.size();
 			for (final GamaPair<IAgent, SingleEquationStatement> e : myEQ.values()) {
 				if (e.getKey().equals(remoteAgent)) {
-//					myVar.values().remove(remoteAgent);
+					// myVar.values().remove(remoteAgent);
 					// for (final IExpression eV : e.getValue().getVars()) {
 					// DEBUG.OUT(eV);
 					// GamaPair p1 = new GamaPair<IAgent, IExpression>(remoteAgent, eV, Types.AGENT, Types.NO_TYPE);

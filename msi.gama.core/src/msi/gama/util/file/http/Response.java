@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.http.Response.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.http.Response.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file.http;
 
@@ -37,7 +37,7 @@ public class Response<T> {
 
 	/**
 	 * Access to the <code>Request</code> object (which will not be very useful in most cases).
-	 * 
+	 *
 	 * @return the request object which was responsible for creating this response.
 	 */
 	public Request getRequest() {
@@ -46,7 +46,7 @@ public class Response<T> {
 
 	/**
 	 * Returns the payload of the response converted to the given type.
-	 * 
+	 *
 	 * @return the converted payload (can be null).
 	 */
 	public T getBody() {
@@ -64,7 +64,7 @@ public class Response<T> {
 	 * </ul>
 	 * If converting the error body is not successful, <code>String</code> and <code>byte[]</code> is used as a
 	 * fallback. You have to check the type with <code>instanceof</code> or try/catch the cast.
-	 * 
+	 *
 	 * @return the error body converted to an object (see above) or <code>null</code> if there is no body or no error.
 	 */
 	public Object getErrorBody() {
@@ -74,7 +74,7 @@ public class Response<T> {
 	/**
 	 * See <a href="http://docs.oracle.com/javase/7/docs/api/java/net/HttpURLConnection.html#responseCode">
 	 * HttpURLConnection.responseCode</a>
-	 * 
+	 *
 	 * @return An int representing the three digit HTTP Status-Code.
 	 */
 	public int getStatusCode() {
@@ -83,7 +83,7 @@ public class Response<T> {
 
 	/**
 	 * The first line returned by the web-server, like "HTTP/1.1 200 OK".
-	 * 
+	 *
 	 * @return first header
 	 */
 	public String getStatusLine() {
@@ -92,7 +92,7 @@ public class Response<T> {
 
 	/**
 	 * Was the request successful (returning a 2xx status code)?
-	 * 
+	 *
 	 * @return <code>true</code> when status code is between 200 and 299, else <code>false</code>
 	 */
 	public boolean isSuccess() {
@@ -101,7 +101,7 @@ public class Response<T> {
 
 	/**
 	 * Returns the text explaining the status code.
-	 * 
+	 *
 	 * @return e.g. "Moved Permanently", "Created", ...
 	 */
 	public String getResponseMessage() {
@@ -153,54 +153,8 @@ public class Response<T> {
 	}
 
 	/**
-	 * Returns the value of the named header field. <br>
-	 * See
-	 * <a href="http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getHeaderField(java.lang.String)">
-	 * URLConnection.getHeaderField()</a>
-	 *
-	 * @param name
-	 *            name of the header field
-	 * @return the value of the named header field, or null
-	 */
-	public String getHeaderField(final String name) {
-		return connection.getHeaderField(name);
-	}
-
-	/**
-	 * Returns the value of the named field parsed as date (Millis since 1970). <br>
-	 * See <a href=
-	 * "http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getHeaderFieldDate(java.lang.String,+long)">
-	 * URLConnection.getHeaderFieldDate()</a>
-	 *
-	 * @param field
-	 *            name of the header field
-	 * @param defaultValue
-	 *            the default value if the field is not present or malformed
-	 * @return the value of the named header field, or the given default value
-	 */
-	public long getHeaderFieldDate(final String field, final long defaultValue) {
-		return connection.getHeaderFieldDate(field, defaultValue);
-	}
-
-	/**
-	 * Returns the value of the named field parsed as a number. <br>
-	 * See <a href=
-	 * "http://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#getHeaderFieldInt(java.lang.String,+int)">
-	 * URLConnection.getHeaderFieldInt()</a>
-	 *
-	 * @param field
-	 *            name of the header field
-	 * @param defaultValue
-	 *            the default value if the field is not present or malformed
-	 * @return the value of the named header field, or the given default value
-	 */
-	public int getHeaderFieldInt(final String field, final int defaultValue) {
-		return connection.getHeaderFieldInt(field, defaultValue);
-	}
-
-	/**
 	 * Get the "real" connection, typically to call some getters which are not provided by this Response object.
-	 * 
+	 *
 	 * @return the connection object (many methods throw IllegalStateException depending on the internal state).
 	 */
 	public HttpURLConnection getConnection() {
