@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.scene.ResourceDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -17,13 +17,13 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 
-public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
+public class ResourceDrawer extends ObjectDrawer<LayerElement<GamaGeometryFile, DrawingAttributes>> {
 
 	public ResourceDrawer(final OpenGL gl) {
 		super(gl);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 	 */
 
 	@Override
-	protected boolean applyRotation(final ResourceObject object) {
+	protected boolean applyRotation(final LayerElement<GamaGeometryFile, DrawingAttributes> object) {
 		final AxisAngle rotation = object.getAttributes().getRotation();
 		final AxisAngle initRotation = object.getObject().getInitRotation();
 		if (rotation == null && initRotation == null) { return false; }
@@ -55,12 +55,13 @@ public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 	}
 
 	@Override
-	protected boolean isDrawing2D(final Scaling3D size, final Envelope3D env, final ResourceObject object) {
+	protected boolean isDrawing2D(final Scaling3D size, final Envelope3D env,
+			final LayerElement<GamaGeometryFile, DrawingAttributes> object) {
 		return super.isDrawing2D(size, env, object) || object.getObject().is2D();
 	}
 
 	@Override
-	protected void _draw(final ResourceObject object) {
+	protected void _draw(final LayerElement<GamaGeometryFile, DrawingAttributes> object) {
 		final boolean push = object.getAttributes().getRotation() != null
 				|| object.getObject().getInitRotation() != null || object.getAttributes().getSize() != null;
 		try {

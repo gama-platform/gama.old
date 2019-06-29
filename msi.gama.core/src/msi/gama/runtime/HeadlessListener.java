@@ -35,7 +35,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -414,12 +414,12 @@ public class HeadlessListener implements IGui {
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list) {}
 
 	@Override
-	public ILocation getMouseLocationInModel() {
-		return new GamaPoint(0, 0);
+	public GamaPoint getMouseLocationInModel() {
+		return GamaPoint.create(0, 0);
 	}
 
 	@Override
-	public void setMouseLocationInModel(final ILocation modelCoordinates) {}
+	public void setMouseLocationInModel(final GamaPoint modelCoordinates) {}
 
 	@Override
 	public IGamlLabelProvider getGamlLabelProvider() {

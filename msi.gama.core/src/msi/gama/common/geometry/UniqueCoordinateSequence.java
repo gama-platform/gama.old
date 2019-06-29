@@ -29,7 +29,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	final GamaPoint point;
 
 	public UniqueCoordinateSequence(final Coordinate coord) {
-		point = new GamaPoint(coord);
+		point = GamaPoint.create(coord);
 	}
 
 	public UniqueCoordinateSequence(final boolean copy, final GamaPoint gamaPoint) {
@@ -48,7 +48,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public Coordinate getCoordinateCopy(final int i) {
-		return new GamaPoint((Coordinate) point);
+		return GamaPoint.create((Coordinate) point);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public final ICoordinates clone() {
-		return new UniqueCoordinateSequence(new GamaPoint((Coordinate) point));
+		return new UniqueCoordinateSequence(GamaPoint.create((Coordinate) point));
 	}
 
 	@Override
@@ -165,7 +165,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public GamaPoint directionBetweenLastPointAndOrigin() {
-		return new GamaPoint();
+		return GamaPoint.createEmpty();
 	}
 
 	@Override
@@ -198,7 +198,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public boolean isCoveredBy(final Envelope3D env) {
-		return env.covers(point);
+		return env.covers((Coordinate) point);
 	}
 
 	@Override

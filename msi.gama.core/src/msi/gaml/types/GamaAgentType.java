@@ -11,7 +11,7 @@
 package msi.gaml.types;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -71,8 +71,8 @@ public class GamaAgentType extends GamaType<IAgent> {
 		if (species == null) { return (IAgent) Types.AGENT.cast(scope, obj, param, copy); }
 		if (obj instanceof IAgent) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
 		if (obj instanceof Integer) { return scope.getAgent().getPopulationFor(species).getAgent((Integer) obj); }
-		if (obj instanceof ILocation) {
-			return scope.getAgent().getPopulationFor(species).getAgent(scope, (ILocation) obj);
+		if (obj instanceof GamaPoint) {
+			return scope.getAgent().getPopulationFor(species).getAgent(scope, (GamaPoint) obj);
 		}
 		return null;
 	}

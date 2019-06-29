@@ -54,7 +54,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.GAMA;
@@ -588,7 +588,7 @@ public class PopulationInspectView extends GamaViewPart
 									rc = stringComparator.compare(v1, v2);
 									break;
 								case IType.POINT:
-									rc = ((ILocation) v1).compareTo(v2);
+									rc = ((GamaPoint) v1).compareTo(v2);
 									break;
 								default:
 									rc = Cast.toGaml(v1).compareTo(Cast.toGaml(v2));

@@ -67,7 +67,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
@@ -182,9 +181,9 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="See Creation.experiment in test models : {Circle tests with tolerance}")
 		public static IShape circle(final IScope scope, final Double radius) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (radius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildCircle(radius, location);
 		}
@@ -205,7 +204,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="See Creation.experiment in test models : {Circle tests with tolerance}")
 		public static IShape circle(final IScope scope, final Double radius, final GamaPoint position) {
-			ILocation location;
+			GamaPoint location;
 			location = position;
 			if (radius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildCircle(radius, location);
@@ -230,7 +229,7 @@ public abstract class Spatial {
 		public static IShape ellipse(final IScope scope, final Double xRadius, final Double yRadius) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (xRadius <= 0) {
 				if (yRadius <= 0) { return new GamaShape(location); }
 			}
@@ -256,7 +255,7 @@ public abstract class Spatial {
 		public static IShape squicle(final IScope scope, final Double xRadius, final Double power) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (xRadius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildSquircle(xRadius, power, location);
 		}
@@ -302,7 +301,7 @@ public abstract class Spatial {
 				final boolean filled) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (xRadius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildArc(xRadius, heading, amplitude, filled, location);
 		}
@@ -323,7 +322,7 @@ public abstract class Spatial {
 		public static IShape cross(final IScope scope, final Double xRadius, final Double width) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (xRadius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildCross(xRadius, width, location);
 		}
@@ -344,7 +343,7 @@ public abstract class Spatial {
 		public static IShape cross(final IScope scope, final Double xRadius) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (xRadius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildCross(xRadius, null, location);
 		}
@@ -366,9 +365,9 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape cylinder(final IScope scope, final Double radius, final Double depth) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (radius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildCylinder(radius, depth, location);
 		}
@@ -390,9 +389,9 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape sphere(final IScope scope, final Double radius) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (radius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildSphere(radius, location);
 		}
@@ -413,9 +412,9 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape teapot(final IScope scope, final Double size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (size <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildTeapot(size, location);
 		}
@@ -441,7 +440,7 @@ public abstract class Spatial {
 			final Double min_angle = Maths.checkHeading(p1);
 			final Double max_angle = Maths.checkHeading(p2);
 			final IAgent a = scope.getAgent();
-			final ILocation origin = a.getLocation() == null ? new GamaPoint(0, 0) : a.getLocation();
+			final GamaPoint origin = a.getLocation() == null ? GamaPoint.create(0, 0) : a.getLocation();
 			final double originx = origin.getX();
 			final double originy = origin.getY();
 			final double worldWidth = scope.getTopology().getWidth();// -
@@ -451,11 +450,11 @@ public abstract class Spatial {
 			final double max = Math.max(worldWidth, worldHeight);
 			final double min_point_x = originx + Maths.cos(min_angle) * max;
 			final double min_point_y = originy + Maths.sin(min_angle) * max;
-			final ILocation minPoint = new GamaPoint(min_point_x, min_point_y);
+			final GamaPoint minPoint = GamaPoint.create(min_point_x, min_point_y);
 
 			final double max_point_x = originx + Maths.cos(max_angle) * max;
 			final double max_point_y = originy + Maths.sin(max_angle) * max;
-			final ILocation maxPoint = new GamaPoint(max_point_x, max_point_y);
+			final GamaPoint maxPoint = GamaPoint.create(max_point_x, max_point_y);
 
 			return polygon(scope, GamaListFactory.createWithoutCasting(Types.POINT, origin, minPoint, maxPoint));
 		}
@@ -496,9 +495,9 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (radius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildCone3D(radius, height, location);
 		}
@@ -524,9 +523,9 @@ public abstract class Spatial {
 						"triangle" })
 		@test ("square(10).area = 100")
 		public static IShape square(final IScope scope, final Double side_size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (side_size <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildSquare(side_size, location);
 		}
@@ -548,9 +547,9 @@ public abstract class Spatial {
 						"triangle" })
 		@test ("cube(10).volume = 1000")
 		public static IShape cube(final IScope scope, final Double side_size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (side_size <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildCube(side_size, location);
 		}
@@ -576,9 +575,9 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint p) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			return GamaGeometryType.buildRectangle(p.x, p.y, location);
 		}
 
@@ -602,9 +601,9 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final double x, final double y) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			return GamaGeometryType.buildRectangle(x, y, location);
 		}
 
@@ -628,12 +627,12 @@ public abstract class Spatial {
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint upperLeftCorner,
 				final GamaPoint lowerRightCorner) {
-			ILocation location;
+			GamaPoint location;
 			final double width = Math.abs(upperLeftCorner.x - lowerRightCorner.x);
 			final double height = Math.abs(upperLeftCorner.y - lowerRightCorner.y);
-			final GamaPoint realTopLeftCorner = new GamaPoint(Math.min(upperLeftCorner.x, lowerRightCorner.x),
+			final GamaPoint realTopLeftCorner = GamaPoint.create(Math.min(upperLeftCorner.x, lowerRightCorner.x),
 					Math.min(upperLeftCorner.y, lowerRightCorner.y));
-			location = new GamaPoint(realTopLeftCorner.x + width / 2, realTopLeftCorner.y + height / 2);
+			location = GamaPoint.create(realTopLeftCorner.x + width / 2, realTopLeftCorner.y + height / 2);
 			return GamaGeometryType.buildRectangle(width, height, location);
 		}
 
@@ -658,9 +657,9 @@ public abstract class Spatial {
 				see = { "around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 						"square", "cube", "triangle" })
 		public static IShape box(final IScope scope, final GamaPoint p) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			return GamaGeometryType.buildBox(p.x, p.y, p.z, location);
 		}
 
@@ -681,9 +680,9 @@ public abstract class Spatial {
 						"square", "cube", "triangle" })
 		@test ("box(10,5,5).volume = 250")
 		public static IShape box(final IScope scope, final double x, final double y, final double z) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			return GamaGeometryType.buildBox(x, y, z, location);
 		}
 
@@ -703,9 +702,9 @@ public abstract class Spatial {
 						"square" })
 		@no_test
 		public static IShape triangle(final IScope scope, final Double side_size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (side_size <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
 		}
@@ -726,9 +725,9 @@ public abstract class Spatial {
 						"square" })
 		@no_test
 		public static IShape triangle(final IScope scope, final Double base, final Double height) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (base <= 0 || height <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(base, height, location);
 		}
@@ -750,9 +749,9 @@ public abstract class Spatial {
 						"square" })
 		@no_test
 		public static IShape pyramid(final IScope scope, final Double side_size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (side_size <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildPyramid(side_size, location);
 		}
@@ -774,9 +773,9 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape hexagon(final IScope scope, final Double size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (size <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildHexagon(size, location);
 		}
@@ -797,9 +796,9 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape hexagon(final IScope scope, final GamaPoint size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			final Double width = size.x;
 			final Double height = size.y;
 			if (width <= 0 || height <= 0) { return new GamaShape(location); }
@@ -822,9 +821,9 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape hexagon(final IScope scope, final Double width, final Double height) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			if (width == null || height == null || width <= 0 || height <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildHexagon(width, height, location);
 		}
@@ -858,7 +857,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape polygon(final IScope scope, final IContainer<?, ? extends IShape> points) {
-			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
+			if (points == null || points.isEmpty(scope)) { return new GamaShape(GamaPoint.create(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now
 			// replaced by a copy of the list (see Issue 740)
 			final IList<IShape> shapes = GamaListFactory.create(scope, Types.GEOMETRY, points);
@@ -893,7 +892,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape polyhedron(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
-			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
+			if (points == null || points.isEmpty(scope)) { return new GamaShape(GamaPoint.create(0, 0)); }
 			// final IList<IShape> shapes = points.listValue(scope); Now
 			// replaced by a copy of the list (see Issue 740)
 			final IList<IShape> shapes = GamaListFactory.create(scope, Types.POINT, points);
@@ -1058,11 +1057,11 @@ public abstract class Spatial {
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient, final boolean right, final int nbPoints, final double proportion) {
 			if (P0 == null || P1 == null) { return null; }
-			GamaPoint P01 = new GamaPoint(P0.x + (P1.x - P0.x) * proportion, P0.y + (P1.y - P0.y) * proportion,
+			GamaPoint P01 = GamaPoint.create(P0.x + (P1.x - P0.x) * proportion, P0.y + (P1.y - P0.y) * proportion,
 					P0.z + (P1.z - P0.z) * proportion);
 			final double val = coefficient * P0.euclidianDistanceTo(P1);
 			final double heading = Relations.towards(scope, P0, P1);
-			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val,
+			P01 = GamaPoint.create(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val,
 					P01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.z);
 			return BezierCurve(scope, P0, P01, P1, nbPoints);
 		}
@@ -1087,10 +1086,10 @@ public abstract class Spatial {
 				final Double coefficient, final int nbPoints, final double proportion, final double angle) {
 			IShape shape = BezierCurve(scope, P0, P1, coefficient, false, nbPoints, proportion);
 			shape = Transformations.rotated_by(scope, shape, angle,
-					new GamaPoint(P0.x - P1.x, P0.y - P1.y, P0.z - P1.z));
-			final GamaPoint newPt0 = (GamaPoint) shape.getPoints().get(0);
+					GamaPoint.create(P0.x - P1.x, P0.y - P1.y, P0.z - P1.z));
+			final GamaPoint newPt0 = shape.getPoints().get(0);
 			shape = Transformations.translated_by(scope, shape,
-					new GamaPoint(P0.x - newPt0.x, P0.y - newPt0.y, P0.z - newPt0.z));
+					GamaPoint.create(P0.x - newPt0.x, P0.y - newPt0.y, P0.z - newPt0.z));
 			return shape;
 		}
 
@@ -1167,7 +1166,7 @@ public abstract class Spatial {
 				final double x = quadraticBezier(P0.x, P1.x, P2.x, (double) i / (nbPoints - 1));
 				final double y = quadraticBezier(P0.y, P1.y, P2.y, (double) i / (nbPoints - 1));
 				final double z = quadraticBezier(P0.z, P1.z, P2.z, (double) i / (nbPoints - 1));
-				points.add(new GamaPoint(x, y, z));
+				points.add(GamaPoint.create(x, y, z));
 			}
 			return points;
 		}
@@ -1179,7 +1178,7 @@ public abstract class Spatial {
 				final double x = cubicBezier(P0.x, P1.x, P2.x, P3.x, (double) i / (nbPoints - 1));
 				final double y = cubicBezier(P0.y, P1.y, P2.y, P3.y, (double) i / (nbPoints - 1));
 				final double z = cubicBezier(P0.z, P1.z, P2.z, P3.z, (double) i / (nbPoints - 1));
-				points.add(new GamaPoint(x, y, z));
+				points.add(GamaPoint.create(x, y, z));
 			}
 			return points;
 		}
@@ -1224,7 +1223,7 @@ public abstract class Spatial {
 		@test ("points_along(line({0,0},{0,10}),[0.5])[0] = point({0,5})")
 
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points) {
-			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
+			if (points == null || points.isEmpty(scope)) { return new GamaShape(GamaPoint.create(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
@@ -1250,7 +1249,7 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		public static IShape geometryCollection(final IScope scope, final IContainer<?, IShape> geometries) {
-			if (geometries == null || geometries.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
+			if (geometries == null || geometries.isEmpty(scope)) { return new GamaShape(GamaPoint.create(0, 0)); }
 			final IList<IShape> shapes = geometries.listValue(scope, Types.NO_TYPE, false);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
@@ -1279,7 +1278,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points, final double radius) {
-			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
+			if (points == null || points.isEmpty(scope)) { return new GamaShape(GamaPoint.create(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
@@ -1306,7 +1305,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape plan(final IScope scope, final IContainer<?, IShape> points, final Double depth) {
-			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
+			if (points == null || points.isEmpty(scope)) { return new GamaShape(GamaPoint.create(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
 			final int size = shapes.length(scope);
 			final IShape first = shapes.firstValue(scope);
@@ -1335,7 +1334,7 @@ public abstract class Spatial {
 				throws GamaRuntimeException {
 			if (source == null) {
 				if (target == null) {
-					return new GamaPoint(0, 0);
+					return GamaPoint.create(0, 0);
 				} else {
 					return GamaGeometryType.createPoint(target.getLocation());
 				}
@@ -1409,8 +1408,7 @@ public abstract class Spatial {
 			if (env.isNull()) {
 				env = new Envelope3D(0, 100, 0, 100, 0, 100);
 			}
-			return GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
-					env.centre().toGamaPoint());
+			return GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(), env.centre());
 		}
 	}
 
@@ -1492,7 +1490,7 @@ public abstract class Spatial {
 							.intersection(GeometryPrecisionReducer.reducePointwise(geom2, pm));
 				} catch (final Exception e1) {
 					try {
-						geom = Spatial.Transformations.translated_by(scope, g2.copy(scope), new GamaPoint(0.01, 0))
+						geom = Spatial.Transformations.translated_by(scope, g2.copy(scope), GamaPoint.create(0.01, 0))
 								.getInnerGeometry().union(geom1);
 
 					} catch (final Exception e2) {
@@ -1640,9 +1638,9 @@ public abstract class Spatial {
 						value = "polygon([{10,10},{10,20},{20,20}]) add_point {20,10}",
 						returnType = "geometry",
 						equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
-		public static IShape add_point(final IScope scope, final IShape g, final ILocation p) {
+		public static IShape add_point(final IScope scope, final IShape g, final GamaPoint p) {
 			if (p == null || g == null) { return g; }
-			final Coordinate point = (Coordinate) p;
+			final Coordinate point = p;
 			final Geometry geometry = g.getInnerGeometry();
 			Geometry geom_Tmp = null;
 			if (geometry instanceof Point) {
@@ -1652,7 +1650,7 @@ public abstract class Spatial {
 				geom_Tmp = GeometryUtils.GEOMETRY_FACTORY.createLineString(coord);
 			} else if (geometry instanceof MultiPoint) {
 				final Coordinate[] coordinates = new Coordinate[geometry.getNumPoints() + 1];
-				coordinates[coordinates.length - 1] = GeometryUtils.toCoordinate(p);
+				coordinates[coordinates.length - 1] = p;
 				geom_Tmp = GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(coordinates);
 			} else if (geometry instanceof LineString) {
 				geom_Tmp = createLineStringWithPoint(geometry, point);
@@ -1807,14 +1805,14 @@ public abstract class Spatial {
 			final IAgent a = scope.getAgent();
 			final List<IShape> obst =
 					obstacles == null ? new ArrayList<>() : obstacles.listValue(scope, Types.GEOMETRY, false);
-			final ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			final GamaPoint location = a != null ? a.getLocation() : GamaPoint.create(0, 0);
 			final Geometry visiblePercept = GeometryUtils.GEOMETRY_FACTORY.createGeometry(source.getInnerGeometry());
 			final boolean isPoint = source.isPoint();
 			if (obstacles != null && !obstacles.isEmpty(scope)) {
-				final Geometry pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(GeometryUtils.toCoordinate(location));
+				final Geometry pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(location);
 				final Geometry locG = pt.buffer(0.01).getEnvelope();
 				double percep_dist = 0;
-				for (final ILocation p : source.getPoints()) {
+				for (final GamaPoint p : source.getPoints()) {
 					final double dist = location.euclidianDistanceTo(p);
 					if (dist > percep_dist) {
 						percep_dist = dist;
@@ -1825,8 +1823,8 @@ public abstract class Spatial {
 				for (int k = 1; k < gbuff.getNumPoints(); k++) {
 					final IList coordinates = GamaListFactory.create(Types.POINT, 4);
 					coordinates.add(location);
-					coordinates.add(new GamaPoint(gbuff.getCoordinates()[k - 1]));
-					coordinates.add(new GamaPoint(gbuff.getCoordinates()[k]));
+					coordinates.add(GamaPoint.create(gbuff.getCoordinates()[k - 1]));
+					coordinates.add(GamaPoint.create(gbuff.getCoordinates()[k]));
 					coordinates.add(location);
 					final IShape gg =
 							Spatial.Operators.inter(scope, source, Spatial.Creation.polygon(scope, coordinates));
@@ -1914,12 +1912,12 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "polyline([{1,2},{4,6}]) split_at {7,6}",
 						equals = "[polyline([{1.0,2.0},{7.0,6.0}]), polyline([{7.0,6.0},{4.0,6.0}])]") })
-		public static IList<IShape> split_at(final IShape geom, final ILocation pt) {
+		public static IList<IShape> split_at(final IShape geom, final GamaPoint pt) {
 			final IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
 			List<Geometry> geoms = null;
 			if (geom.getInnerGeometry() instanceof LineString) {
 				final Coordinate[] coords = ((LineString) geom.getInnerGeometry()).getCoordinates();
-				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(pt.getLocation().toGamaPoint());
+				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(pt.getLocation());
 				final int nb = coords.length;
 				int indexTarget = -1;
 				double distanceT = Double.MAX_VALUE;
@@ -1939,11 +1937,11 @@ public abstract class Spatial {
 				for (int i = 0; i <= indexTarget; i++) {
 					coords1[i] = coords[i];
 				}
-				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation());
+				coords1[indexTarget + 1] = GamaPoint.create(pt.getLocation());
 
 				nbSp = coords.length - indexTarget;
 				final Coordinate[] coords2 = new Coordinate[nbSp];
-				coords2[0] = new GamaPoint(pt.getLocation());
+				coords2[0] = GamaPoint.create(pt.getLocation());
 				int k = 1;
 				for (int i = indexTarget + 1; i < coords.length; i++) {
 					coords2[k] = coords[i];
@@ -1954,7 +1952,7 @@ public abstract class Spatial {
 				geoms1.add(GeometryUtils.GEOMETRY_FACTORY.createLineString(coords2));
 				geoms = geoms1;
 			} else if (geom.getInnerGeometry() instanceof MultiLineString) {
-				final Point point = GeometryUtils.GEOMETRY_FACTORY.createPoint((Coordinate) pt);
+				final Point point = GeometryUtils.GEOMETRY_FACTORY.createPoint(pt);
 				final MultiLineString ml = (MultiLineString) geom.getInnerGeometry();
 				Geometry geom2 = ml.getGeometryN(0);
 				double distMin = geom2.distance(point);
@@ -1967,7 +1965,7 @@ public abstract class Spatial {
 					}
 				}
 				final Coordinate[] coords = ((LineString) geom2).getCoordinates();
-				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(new GamaPoint(pt.getLocation()));
+				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(GamaPoint.create(pt.getLocation()));
 				final int nb = coords.length;
 				int indexTarget = -1;
 				double distanceT = Double.MAX_VALUE;
@@ -1987,11 +1985,11 @@ public abstract class Spatial {
 				for (int i = 0; i <= indexTarget; i++) {
 					coords1[i] = coords[i];
 				}
-				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation());
+				coords1[indexTarget + 1] = GamaPoint.create(pt.getLocation());
 
 				nbSp = coords.length - indexTarget;
 				final Coordinate[] coords2 = new Coordinate[nbSp];
-				coords2[0] = new GamaPoint(pt.getLocation());
+				coords2[0] = GamaPoint.create(pt.getLocation());
 				int k = 1;
 				for (int i = indexTarget + 1; i < coords.length; i++) {
 					coords2[k] = coords[i];
@@ -2009,9 +2007,9 @@ public abstract class Spatial {
 			}
 			if (geom.getAttributes() != null) {
 				for (final IShape li : lines) {
-					for (final String at : geom.getAttributes().keySet()) {
-						li.setAttribute(at, geom.getAttribute(at));
-					}
+					geom.getAttributes().forEach((at, o) -> {
+						li.setAttribute(at, o);
+					});
 				}
 			}
 
@@ -2288,7 +2286,7 @@ public abstract class Spatial {
 		@test ("normalized_rotation(rotation_composition(38.0::{1,1,1},90.0::{1,0,0}))=normalized_rotation(115.22128507898108::{0.9491582126366207,0.31479943993669307,-0.0})")
 		public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope,
 				final GamaList<GamaPair> rotation_list) {
-			Rotation3D rotation = new Rotation3D(new GamaPoint(1, 0, 0), 0.0);
+			Rotation3D rotation = new Rotation3D(GamaPoint.create(1, 0, 0), 0.0);
 			for (final GamaPair element : rotation_list) {
 				final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
 						.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, element, null, false);
@@ -2332,7 +2330,7 @@ public abstract class Spatial {
 			if (p1 == null) { return null; }
 			final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
 					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
-			final GamaPoint p2 = new GamaPoint(p1);
+			final GamaPoint p2 = GamaPoint.create(p1);
 			new Rotation3D(rot.getValue(), 2 * Math.PI / 360 * rot.getKey()).applyTo(p2);
 			return p2;
 		}
@@ -2423,7 +2421,7 @@ public abstract class Spatial {
 		public static IShape translated_by(final IScope scope, final IShape g, final GamaPoint p)
 				throws GamaRuntimeException {
 			if (g == null) { return null; }
-			return at_location(scope, g, msi.gaml.operators.Points.add((GamaPoint) g.getLocation(), p));
+			return at_location(scope, g, msi.gaml.operators.Points.add(g.getLocation(), p));
 		}
 
 		@operator (
@@ -2441,7 +2439,7 @@ public abstract class Spatial {
 								value = " (box({10, 10 , 5}) at_location point(50,50,0)).location.x",
 								equals = "50.0",
 								returnType = "float") })
-		public static IShape at_location(final IScope scope, final IShape g, final ILocation p)
+		public static IShape at_location(final IScope scope, final IShape g, final GamaPoint p)
 				throws GamaRuntimeException {
 			if (g == null) { return null; }
 			return new GamaShape(g, null, (AxisAngle) null, p);
@@ -3125,8 +3123,8 @@ public abstract class Spatial {
 
 					final List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, lines2, l);
 					if (!ls.isEmpty()) {
-						final ILocation pto = l.getPoints().firstValue(scope);
-						final ILocation ptd = l.getPoints().lastValue(scope);
+						final GamaPoint pto = l.getPoints().firstValue(scope);
+						final GamaPoint ptd = l.getPoints().lastValue(scope);
 						final PreparedGeometry pg = PreparedGeometryFactory
 								.prepare(l.getInnerGeometry().buffer(Math.min(0.001, l.getPerimeter() / 1000.0), 10));
 						for (final IShape l2 : ls) {
@@ -3138,7 +3136,7 @@ public abstract class Spatial {
 								continue;
 							}
 							if (!it.getLocation().equals(pto) && !it.getLocation().equals(ptd)) {
-								final ILocation pt = it.getPoints().firstValue(scope);
+								final GamaPoint pt = it.getPoints().firstValue(scope);
 								final IList<IShape> res1 = Spatial.Operators.split_at(l2, pt);
 								res1.removeIf(a -> a.getPerimeter() == 0.0);
 								final IList<IShape> res2 = Spatial.Operators.split_at(l, pt);
@@ -3219,9 +3217,9 @@ public abstract class Spatial {
 			if (geoms.isEmpty()) { return GamaListFactory.create(); }
 			if (splitlines) {
 				geoms = Transformations.split_lines(scope, geoms, true);
-				geoms.removeIf(
-						a -> a.getPerimeter() < tolerance || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
-				
+				geoms.removeIf(a -> a.getPerimeter() < tolerance || !a.getInnerGeometry().isValid()
+						|| a.getInnerGeometry().isEmpty());
+
 			}
 			IList<IShape> results = GamaListFactory.create();
 
@@ -3231,14 +3229,14 @@ public abstract class Spatial {
 
 				while (modif) {
 					for (final IShape geom : geomsTmp) {
-						final GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
+						final GamaPoint ptF = geom.getPoints().firstValue(scope);
 						modif = connectLine(scope, ptF, geom, true, geoms, results, tolerance);
 						if (modif) {
 							geomsTmp = GamaListFactory.create();
 							geomsTmp.addAll(geoms);
 							break;
 						}
-						final GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
+						final GamaPoint ptL = geom.getPoints().lastValue(scope);
 						modif = connectLine(scope, ptL, geom, false, geoms, results, tolerance);
 						if (modif) {
 							geomsTmp = GamaListFactory.create();
@@ -3254,7 +3252,7 @@ public abstract class Spatial {
 			}
 			results.removeIf(
 					a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
-			
+
 			if (keepMainGraph) {
 				IGraph graph = Graphs.spatialFromEdges(scope, results);
 				graph = Graphs.ReduceToMainconnectedComponentOf(scope, graph);
@@ -3271,9 +3269,9 @@ public abstract class Spatial {
 			final IShape closest = Queries.closest_to(scope, tot, pt);
 			if (closest.intersects(shape)) { return false; }
 			if (closest.euclidianDistanceTo(pt) <= tolerance) {
-				final GamaPoint fp = (GamaPoint) closest.getPoints().firstValue(scope);
+				final GamaPoint fp = closest.getPoints().firstValue(scope);
 				if (pt.equals3D(fp)) { return false; }
-				final GamaPoint lp = (GamaPoint) closest.getPoints().lastValue(scope);
+				final GamaPoint lp = closest.getPoints().lastValue(scope);
 				if (pt.equals3D(lp)) { return false; }
 				if (pt.euclidianDistanceTo(fp) <= tolerance) {
 					modifyPoint(scope, shape, fp, first);
@@ -3475,7 +3473,7 @@ public abstract class Spatial {
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
-					// TODO Take the case of ILocation
+					// TODO Take the case of GamaPoint
 					final GamaSpatialPath path = topo.pathBetween(scope, previous, gg);
 					if (path != null && path.getEdgeList() != null) {
 						edges.addAll(path.getEdgeList());
@@ -3530,7 +3528,7 @@ public abstract class Spatial {
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
-					// TODO Take the case of ILocation
+					// TODO Take the case of GamaPoint
 					if (topo instanceof GridTopology) {
 						final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
 						edges.addAll(path.getEdgeList());
@@ -3588,7 +3586,7 @@ public abstract class Spatial {
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
-					// TODO Take the case of ILocation
+					// TODO Take the case of GamaPoint
 					if (topo instanceof GridTopology) {
 						final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
 						edges.addAll(path.getEdgeList());
@@ -3993,10 +3991,10 @@ public abstract class Spatial {
 						test = false) },
 				see = { "any_location_in", "closest_points_with", "farthest_point_to", "points_at" })
 		@test (" centroid(world) = {50.0, 50.0, 0.0} ")
-		public static ILocation centroidArea(final IScope scope, final IShape g) {
+		public static GamaPoint centroidArea(final IScope scope, final IShape g) {
 			if (g == null || g.getInnerGeometry() == null) { return null; }
 			final Centroid cent = new Centroid(g.getInnerGeometry());
-			return new GamaPoint(cent.getCentroid());
+			return GamaPoint.create(cent.getCentroid());
 		}
 
 		@operator (
@@ -4012,7 +4010,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "closest_points_with", "farthest_point_to", "points_at" })
 		@no_test
-		public static ILocation any_location_in(final IScope scope, final IShape g) {
+		public static GamaPoint any_location_in(final IScope scope, final IShape g) {
 			return GeometryUtils.pointInGeom(g, scope.getRandom());
 		}
 
@@ -4084,17 +4082,17 @@ public abstract class Spatial {
 						test = false) },
 				see = { "any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
 
-		public static IList<ILocation> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
+		public static IList<GamaPoint> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
 			if (distance == null || nbLoc == null) {
 				// scope.setStatus(ExecutionStatus.failure);
 				throw GamaRuntimeException.error("Impossible to compute points_at", scope);
 			}
-			final IList<ILocation> locations = GamaListFactory.create(Types.POINT);
-			final ILocation loc = scope.getAgent().getLocation();
+			final IList<GamaPoint> locations = GamaListFactory.create(Types.POINT);
+			final GamaPoint loc = scope.getAgent().getLocation();
 			final double angle1 = scope.getRandom().between(0, 2 * CmnFastMath.PI);
 
 			for (int i = 0; i < nbLoc; i++) {
-				final GamaPoint p = new GamaPoint(
+				final GamaPoint p = GamaPoint.create(
 						loc.getX() + distance * FastMath.cos(angle1 + (double) i / nbLoc * 2 * CmnFastMath.PI),
 						loc.getY() + distance * FastMath.sin(angle1 + (double) i / nbLoc * 2 * CmnFastMath.PI));
 				locations.add(p);
@@ -4119,7 +4117,8 @@ public abstract class Spatial {
 				see = { "any_location_in", "any_point_in", "farthest_point_to", "points_at" })
 		public static IList<GamaPoint> closest_points_with(final IShape a, final IShape b) {
 			final Coordinate[] coors = DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
-			return GamaListFactory.createWithoutCasting(Types.POINT, new GamaPoint(coors[0]), new GamaPoint(coors[1]));
+			return GamaListFactory.createWithoutCasting(Types.POINT, GamaPoint.create(coors[0]),
+					GamaPoint.create(coors[1]));
 		}
 
 		@operator (
@@ -4134,7 +4133,7 @@ public abstract class Spatial {
 						equals = "the farthest point of geom to pt",
 						isExecutable = false) },
 				see = { "any_location_in", "any_point_in", "closest_points_with", "points_at" })
-		public static ILocation farthest_point_to(final IShape g, final GamaPoint p) {
+		public static GamaPoint farthest_point_to(final IShape g, final GamaPoint p) {
 			if (g == null) { return p.getLocation(); }
 			if (p == null) { return g.getLocation(); }
 
@@ -4149,7 +4148,7 @@ public abstract class Spatial {
 					dist_max = dist;
 				}
 			}
-			return new GamaPoint(pt_max);
+			return GamaPoint.create(pt_max);
 		}
 
 		/**
@@ -4161,19 +4160,19 @@ public abstract class Spatial {
 		 * @param poly
 		 *            a polygon
 		 */
-		public static ILocation _closest_point_to(final IShape pt, final IShape geom) {
+		public static GamaPoint _closest_point_to(final IShape pt, final IShape geom) {
 			if (pt == null) { return null; }
 			if (geom == null) { return pt.getLocation(); }
 			final Coordinate[] cp = new DistanceOp(geom.getInnerGeometry(), pt.getInnerGeometry()).nearestPoints();
-			return new GamaPoint(cp[0]);
+			return GamaPoint.create(cp[0]);
 		}
 
-		public static ILocation _closest_point_to(final ILocation pt, final IShape geom) {
+		public static GamaPoint _closest_point_to(final GamaPoint pt, final IShape geom) {
 			if (pt == null) { return null; }
 			if (geom == null) { return pt; }
 			final PointPairDistance ppd = new PointPairDistance();
-			DistanceToPoint.computeDistance(geom.getInnerGeometry(), GeometryUtils.toCoordinate(pt), ppd);
-			return new GamaPoint(ppd.getCoordinate(0));
+			DistanceToPoint.computeDistance(geom.getInnerGeometry(), pt, ppd);
+			return GamaPoint.create(ppd.getCoordinate(0));
 		}
 
 		@operator (
@@ -4461,12 +4460,17 @@ public abstract class Spatial {
 				final IShape source, final int number) {
 			if (list == null || list.isEmpty(scope)) { return GamaListFactory.create(); }
 			final IType contentType = list.getGamlType().getContentType();
+			Collection agents = null;
 			if (contentType.isAgentType()) {
-				return (IList) _closest(scope, In.list(scope, list), source, number);
+				agents = _closest(scope, In.list(scope, list), source, number);
 			} else if (list.getGamlType().getContentType().isTranslatableInto(Types.GEOMETRY)) {
-				return (IList<IShape>) geomClostestTo(scope, list, source, number);
+				agents = geomClostestTo(scope, list, source, number);
 			}
-			return GamaListFactory.create(contentType);
+			if (agents == null) {
+				return GamaListFactory.create(contentType);
+			} else {
+				return GamaListFactory.createWithoutCasting(contentType, agents);
+			}
 		}
 
 		@operator (
@@ -4518,11 +4522,11 @@ public abstract class Spatial {
 
 		public static Collection<IShape> geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source, final int number) {
-			final IList<?> objects = list.listValue(scope, Types.GEOMETRY, true);
-			objects.removeIf(a -> !(a instanceof IShape));
-			final IList<IShape> shapes = (IList<IShape>) objects;
+			final IList<IShape> shapes = (IList<IShape>) list.listValue(scope, Types.GEOMETRY, true);
+			// objects.removeIf(a -> !(a instanceof IShape));
+			// final IList<IShape> shapes = (IList<IShape>) objects;
 			if (shapes.size() <= number) { return shapes; }
-			scope.getRandom().shuffle(shapes);
+			scope.getRandom().shuffleInPlace(shapes);
 			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
 			return GamaListFactory.createWithoutCasting(Types.GEOMETRY, ordering.leastOf(shapes, number));
 		}
@@ -4857,7 +4861,7 @@ public abstract class Spatial {
 				double sumNull = 0;
 				int nbNull = 0;
 				for (final Object obj : points.keySet()) {
-					final GamaPoint pt = (GamaPoint) Cast.asPoint(scope, obj);
+					final GamaPoint pt = Cast.asPoint(scope, obj);
 					final double dist = scope.getTopology().distanceBetween(scope, geom, pt);
 					if (dist == 0) {
 						nbNull++;
@@ -5076,13 +5080,13 @@ public abstract class Spatial {
 			}
 			final IGraphics graphics = scope.getGraphics();
 			if (graphics == null || graphics.cannotDraw()) { return null; }
-			final FieldDrawingAttributes attributes = new FieldDrawingAttributes(null, null, false);
+			final FieldDrawingAttributes attributes = new FieldDrawingAttributes(null);
 			attributes.setHeight(z_factor);
 
 			if (!graphics.is2D()) {
 				// If we are in the OpenGL world
 				final BufferedImage dem = ((GamaImageFile) demFile).getImage(scope, true);
-				attributes.setCellSize(new GamaPoint(1, 1));
+				attributes.setCellSize(GamaPoint.create(1, 1));
 				attributes.setTextures(Arrays.asList(textureFile, dem));
 				graphics.drawField(null, attributes);
 			} else {
@@ -5105,9 +5109,9 @@ public abstract class Spatial {
 						equals = "a list of points",
 						isExecutable = false) },
 				see = {})
-		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile file) {
+		public static IList<GamaPoint> rgb_to_xyz(final IScope scope, final GamaFile file) {
 
-			final IList<ILocation> points = GamaListFactory.create(Types.POINT);
+			final IList<GamaPoint> points = GamaListFactory.create(Types.POINT);
 			BufferedImage texture = null;
 			int rows, cols, x, y;
 
@@ -5124,7 +5128,7 @@ public abstract class Spatial {
 			for (y = 0; y < rows; y++) {
 				for (x = 0; x <= cols; x++) {
 					final Color c = new Color(texture.getRGB(cols - x, y));
-					points.add(new GamaPoint(c.getRed(), c.getGreen(), c.getBlue()));
+					points.add(GamaPoint.create(c.getRed(), c.getGreen(), c.getBlue()));
 				}
 			}
 
@@ -5218,7 +5222,7 @@ public abstract class Spatial {
 			final IProjection gis = scope.getSimulation().getProjectionFactory().getWorld();
 			if (gis == null) { return g.copy(scope); }
 			final IShape s = new GamaShape(gis.inverseTransform(g.getInnerGeometry()));
-			if (g instanceof ILocation) { return s.getLocation(); }
+			if (g instanceof GamaPoint) { return s.getLocation(); }
 			return s;
 		}
 
@@ -5238,7 +5242,7 @@ public abstract class Spatial {
 			final IProjection gis = scope.getSimulation().getProjectionFactory().getWorld();
 			if (gis == null) { return g.copy(scope); }
 			final IShape s = new GamaShape(gis.transform(g.getInnerGeometry()));
-			if (g instanceof ILocation) { return s.getLocation(); }
+			if (g instanceof GamaPoint) { return s.getLocation(); }
 			return s;
 		}
 
@@ -5264,7 +5268,7 @@ public abstract class Spatial {
 			}
 			if (gis == null) { return g.copy(scope); }
 			final IShape s = new GamaShape(gis.transform(g.getInnerGeometry()));
-			if (g instanceof ILocation) { return s.getLocation(); }
+			if (g instanceof GamaPoint) { return s.getLocation(); }
 			return s;
 		}
 
@@ -5291,7 +5295,7 @@ public abstract class Spatial {
 			}
 			if (gis == null) { return g.copy(scope); }
 			final IShape s = new GamaShape(gis.inverseTransform(g.getInnerGeometry()));
-			if (g instanceof ILocation) { return s.getLocation(); }
+			if (g instanceof GamaPoint) { return s.getLocation(); }
 			return s;
 		}
 	}

@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.scene.FieldDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -25,6 +25,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
+import msi.gaml.statements.draw.FieldDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 
 /**
@@ -35,7 +36,7 @@ import ummisco.gama.opengl.OpenGL;
  * @since 15 mai 2013
  *
  */
-public class FieldDrawer extends ObjectDrawer<FieldObject> {
+public class FieldDrawer extends ObjectDrawer<LayerElement<double[], FieldDrawingAttributes>> {
 
 	// Working copies of coordinate sequences to limit excessive garbage
 	final ICoordinates threePoints = GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory().create(3, 3);
@@ -47,7 +48,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 	}
 
 	@Override
-	protected void _draw(final FieldObject demObj) {
+	protected void _draw(final LayerElement<double[], FieldDrawingAttributes> demObj) {
 		try {
 			gl.pushMatrix();
 			if (demObj.getObject() == null) {
@@ -72,7 +73,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		}
 	}
 
-	public void drawLabels(final FieldObject demObj, final double altFactor) {
+	public void drawLabels(final LayerElement<double[], FieldDrawingAttributes> demObj, final double altFactor) {
 		final GamaPoint cellDim = demObj.getAttributes().getCellSize();
 		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
 		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
@@ -95,7 +96,8 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	}
 
-	public void drawAsTriangles(final FieldObject demObj, final double altFactor, final double maxZ) {
+	public void drawAsTriangles(final LayerElement<double[], FieldDrawingAttributes> demObj, final double altFactor,
+			final double maxZ) {
 		final GamaPoint cellDim = demObj.getAttributes().getCellSize();
 		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
 		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
@@ -173,7 +175,8 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		gl.drawClosedLine(vertices, -1);
 	}
 
-	public void drawAsRectangles(final FieldObject demObj, final double altFactor, final double maxZ) {
+	public void drawAsRectangles(final LayerElement<double[], FieldDrawingAttributes> demObj, final double altFactor,
+			final double maxZ) {
 		final GamaPoint cellDim = demObj.getAttributes().getCellSize();
 		final double columns = Math.floor(gl.getWorldWidth() / cellDim.x);
 		final double rows = Math.floor(gl.getWorldHeight() / cellDim.y);
@@ -214,7 +217,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		gl.drawVertices(GL2.GL_QUADS, vertices, 4, true, texCoords);
 	}
 
-	protected void drawFromImage(final FieldObject demObj) {
+	protected void drawFromImage(final LayerElement<double[], FieldDrawingAttributes> demObj) {
 		int rows, cols;
 		// final double vx, vy;
 		double ts, tt, tw, th;
@@ -255,7 +258,8 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	}
 
-	public BufferedImage getDirectImage(final FieldObject object, final int order) {
+	public BufferedImage getDirectImage(final LayerElement<double[], FieldDrawingAttributes> object,
+			final int order) {
 		final List<?> textures = object.getAttributes().getTextures();
 		if (textures == null || textures.size() > order + 1) { return null; }
 		final Object t = textures.get(order);

@@ -14,19 +14,27 @@ import java.util.Collections;
 import java.util.Map;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.util.PoolUtils;
 
 public class ExecutionContext implements IExecutionContext {
 
 	Map<String, Object> local;
-	final IExecutionContext outer;
-	IScope scope;
+	private IExecutionContext outer;
+	private IScope scope;
+	private PoolUtils.ObjectPool<IExecutionContext> pool;
 
-	public ExecutionContext(final IScope scope) {
-		this(scope, (IExecutionContext) null);
+	public static IExecutionContext create(final IScope scope, final IExecutionContext outer,
+			final PoolUtils.ObjectPool<IExecutionContext> pool) {
+		// return new ExecutionContext().init(scope, outer);
+		return pool.get().init(scope, outer, pool);
 	}
 
-	public ExecutionContext(final IExecutionContext outer) {
-		this(outer.getScope(), outer);
+	@Override
+	public void dispose() {
+		local = null;
+		outer = null;
+		scope = null;
+		pool.release(this);
 	}
 
 	@Override
@@ -34,10 +42,16 @@ public class ExecutionContext implements IExecutionContext {
 		return scope;
 	}
 
-	ExecutionContext(final IScope scope, final IExecutionContext outer) {
-		this.outer = outer;
+	@Override
+	public IExecutionContext init(final IScope scope, final IExecutionContext outer,
+			final PoolUtils.ObjectPool<IExecutionContext> pool) {
 		this.scope = scope;
+		this.outer = outer;
+		this.pool = pool;
+		return this;
 	}
+
+	ExecutionContext() {}
 
 	@Override
 	public final IExecutionContext getOuterContext() {
@@ -63,27 +77,23 @@ public class ExecutionContext implements IExecutionContext {
 	}
 
 	@Override
-	public ExecutionContext createCopyContext() {
-		final ExecutionContext r = new ExecutionContext(scope, outer);
+	public IExecutionContext createCopyContext() {
+		final ExecutionContext r = (ExecutionContext) pool.get().init(scope, outer, pool);
 		if (local != null) {
-			r.local = new THashMap<>(local);
+			r.local = new THashMap<>(local); // JavaUtils.MAP_POOL.get();
+			r.local.putAll(local);
 		}
 		return r;
 	}
 
 	@Override
-	public ExecutionContext createChildContext() {
-		return new ExecutionContext(this);
+	public IExecutionContext createChildContext() {
+		return pool.get().init(scope, this, pool);
 	}
 
 	@Override
 	public Map<? extends String, ? extends Object> getLocalVars() {
 		return local == null ? Collections.EMPTY_MAP : local;
-	}
-
-	@Override
-	public void clearLocalVars() {
-		local = null;
 	}
 
 	@Override

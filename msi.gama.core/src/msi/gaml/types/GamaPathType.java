@@ -67,7 +67,7 @@ public class GamaPathType extends GamaType<IPath> {
 		}
 		 
 		if (obj instanceof List) {
-			// List<ILocation> list = new GamaList();
+			// List<GamaPoint> list = new GamaList();
 			final List<IShape> list = GamaListFactory.create(Types.GEOMETRY);
 			boolean isEdges = true;
 

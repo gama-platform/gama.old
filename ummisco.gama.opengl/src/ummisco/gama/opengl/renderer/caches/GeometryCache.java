@@ -264,7 +264,7 @@ public class GeometryCache {
 		put(PYRAMID, BuiltInGeometry.assemble().bottom(gl.compileAsList(() -> {
 			gl.drawSimpleShape(vertices, 4, true, false, true, null);
 		})).faces(gl.compileAsList(() -> {
-			final GamaPoint top = new GamaPoint(0, 0, 1);
+			final GamaPoint top = GamaPoint.create(0, 0, 1);
 			vertices.visit((pj, pk) -> {
 				triangleVertices.setTo(pj.x, pj.y, pj.z, top.x, top.y, top.z, pk.x, pk.y, pk.z, pj.x, pj.y, pj.z);
 				gl.drawSimpleShape(triangleVertices, 3, true, true, true, null);

@@ -1,16 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.ILocated.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.interfaces.ILocated.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
@@ -38,7 +38,7 @@ public interface ILocated {
 	 * @param p
 	 *            the new location
 	 */
-	public abstract void setLocation(ILocation p);
+	void setLocation(GamaPoint p);
 
 	/**
 	 * Gets the absolute location of the object implemeting this interface . If the implementation classes provide an
@@ -48,6 +48,6 @@ public interface ILocated {
 	 * @return the absolute (i.e. agent-like) location
 	 */
 	@getter (IKeyword.LOCATION)
-	public abstract ILocation getLocation();
+	GamaPoint getLocation();
 
 }

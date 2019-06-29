@@ -18,13 +18,13 @@ import java.awt.image.BufferedImage;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 
 /**
@@ -42,11 +42,11 @@ public interface IGraphics {
 			return false;
 		}
 
-		public abstract ILocation getCameraPos();
+		public abstract GamaPoint getCameraPos();
 
-		public abstract ILocation getCameraTarget();
+		public abstract GamaPoint getCameraTarget();
 
-		public abstract ILocation getCameraOrientation();
+		public abstract GamaPoint getCameraOrientation();
 	}
 
 	public static final RenderingHints QUALITY_RENDERING = new RenderingHints(null);
@@ -59,17 +59,17 @@ public interface IGraphics {
 
 	public abstract int getDisplayHeight();
 
-	public abstract Rectangle2D drawFile(GamaFile<?, ?> file, FileDrawingAttributes attributes);
+	public abstract Rectangle2D drawFile(GamaFile<?, ?> file, DrawingAttributes attributes);
 
 	public abstract Rectangle2D drawField(final double[] values, final FieldDrawingAttributes attributes);
 
-	public abstract Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes);
+	public abstract Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes);
 
 	public abstract Rectangle2D drawChart(ChartOutput chart);
 
 	public abstract Rectangle2D drawString(final String string, final TextDrawingAttributes attributes);
 
-	public abstract Rectangle2D drawShape(final Geometry shape, final ShapeDrawingAttributes attributes);
+	public abstract Rectangle2D drawShape(final Geometry shape, final DrawingAttributes attributes);
 
 	public abstract void setOpacity(double i);
 

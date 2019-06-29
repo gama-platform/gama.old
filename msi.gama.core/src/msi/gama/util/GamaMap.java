@@ -18,7 +18,7 @@ import java.util.Set;
 
 import com.google.common.base.Objects;
 
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -116,7 +116,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		return matrixValue(scope, contentsType, copy);
 	}

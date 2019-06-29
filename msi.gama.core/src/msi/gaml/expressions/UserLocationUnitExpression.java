@@ -11,7 +11,7 @@
 package msi.gaml.expressions;
 
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.Types;
 
@@ -22,7 +22,7 @@ public class UserLocationUnitExpression extends UnitConstantExpression {
 	}
 
 	@Override
-	public ILocation _value(final IScope scope) {
+	public GamaPoint _value(final IScope scope) {
 		return scope.getGui().getMouseLocationInModel();
 	}
 

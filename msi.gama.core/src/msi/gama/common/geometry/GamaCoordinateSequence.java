@@ -48,7 +48,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * @param points2
 	 *            an array of points
 	 */
-	GamaCoordinateSequence(final Coordinate... points2) {
+	GamaCoordinateSequence(final Coordinate[] points2) {
 		this(true, points2);
 	}
 
@@ -62,12 +62,12 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * @param points2
 	 *            an array of points
 	 */
-	GamaCoordinateSequence(final boolean copy, final Coordinate... points2) {
+	GamaCoordinateSequence(final boolean copy, final Coordinate[] points2) {
 		if (copy) {
 			final int size = points2.length;
 			points = new GamaPoint[size];
 			for (int i = 0; i < size; i++) {
-				points[i] = new GamaPoint(points2[i]);
+				points[i] = GamaPoint.create(points2[i]);
 			}
 			ensureClockwiseness();
 		} else {
@@ -84,7 +84,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	GamaCoordinateSequence(final int size) {
 		points = new GamaPoint[size < 0 ? 0 : size];
 		for (int i = 0; i < size; i++) {
-			points[i] = new GamaPoint(0d, 0d, 0d);
+			points[i] = GamaPoint.create(0d, 0d, 0d);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 */
 	@Override
 	public GamaPoint getCoordinateCopy(final int i) {
-		return new GamaPoint((Coordinate) points[i]);
+		return GamaPoint.create((Coordinate) points[i]);
 	}
 
 	/**
@@ -370,11 +370,11 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	@Override
 	public GamaPoint directionBetweenLastPointAndOrigin() {
-		final GamaPoint result = new GamaPoint();
+		final GamaPoint result = GamaPoint.createEmpty();
 		final GamaPoint origin = points[0];
 		for (int i = points.length - 1; i > 0; i--) {
 			if (!points[i].equals(origin)) {
-				result.setLocation(points[i]).subtract(origin).normalize();
+				result.setLocation(points[i].x, points[i].y, points[i].z).subtract(origin).normalize();
 				return result;
 			}
 		}
@@ -424,7 +424,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	@Override
 	public boolean isCoveredBy(final Envelope3D env) {
 		for (final GamaPoint point : points) {
-			if (!env.covers(point)) { return false; }
+			if (!env.covers((Coordinate) point)) { return false; }
 		}
 		return true;
 	}

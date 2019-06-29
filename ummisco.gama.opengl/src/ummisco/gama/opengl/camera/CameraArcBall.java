@@ -173,7 +173,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	// public void followAgent(IAgent a) {
 	//
-	// ILocation l = a.getGeometry().getLocation();
+	// GamaPoint l = a.getGeometry().getLocation();
 	// Envelope env = a.getGeometry().getEnvelope();
 	//
 	// double xPos = l.getX() - myRenderer.displaySurface.getEnvWidth() / 2;
@@ -219,9 +219,9 @@ public class CameraArcBall extends AbstractCamera {
 				updateCartesianCoordinatesFromAngles();
 				// update();
 			}
-			initialPosition = new GamaPoint(position);
-			initialTarget = new GamaPoint(target);
-			initialUpVector = new GamaPoint(upVector);
+			initialPosition = GamaPoint.create(position);
+			initialTarget = GamaPoint.create(target);
+			initialUpVector = GamaPoint.create(upVector);
 		} else {
 			data.setCameraPos(initialPosition);
 			data.setCameraLookPos(initialTarget);
@@ -459,9 +459,9 @@ public class CameraArcBall extends AbstractCamera {
 		} else if (shiftPressed && isViewInXYPlan()) {
 			getMousePosition().x = PlatformHelper.scaleUpIfWin(x);
 			getMousePosition().y = PlatformHelper.scaleUpIfWin(y);
-			getRenderer().getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
-					new GamaPoint(getMousePosition()));
-		} else if (getRenderer().getOpenGLHelper().mouseInROI(new GamaPoint(getMousePosition()))) {
+			getRenderer().getOpenGLHelper().defineROI(GamaPoint.create(firstMousePressedPosition),
+					GamaPoint.create(getMousePosition()));
+		} else if (getRenderer().getOpenGLHelper().mouseInROI(GamaPoint.create(getMousePosition()))) {
 			GamaPoint p = getRenderer().getRealWorldPointFromWindowPoint(getMousePosition());
 			p = p.minus(getRenderer().getOpenGLHelper().getROIEnvelope().centre());
 			getRenderer().getOpenGLHelper().getROIEnvelope().translate(p.x, p.y);

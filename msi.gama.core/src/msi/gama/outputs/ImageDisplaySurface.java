@@ -377,7 +377,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		final int yInDisplay = yOnScreen - positionInPixels.y;
 		final double xInModel = xInDisplay / xScale;
 		final double yInModel = yInDisplay / yScale;
-		return new GamaPoint(xInModel, yInModel);
+		return GamaPoint.create(xInModel, yInModel);
 	}
 
 	@Override

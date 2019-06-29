@@ -21,7 +21,7 @@ import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -86,7 +86,7 @@ public interface IGamlAdditions {
 	public final static Class<?> GL = GamaList.class;
 	public final static Class<?> P = GamaPoint.class;
 	public final static Class<?> IC = IContainer.class;
-	public final static Class<?> IL = ILocation.class;
+	public final static Class<?> IL = GamaPoint.class;
 	public final static Class<?> LI = IList.class;
 	public final static Class<?> IM = IMatrix.class;
 	public final static Class<?> GR = IGraph.class;

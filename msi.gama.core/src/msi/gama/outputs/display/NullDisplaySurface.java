@@ -211,7 +211,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public GamaPoint getModelCoordinates() {
-		return new GamaPoint();
+		return GamaPoint.createEmpty();
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels) {
-		return new GamaPoint();
+		return GamaPoint.createEmpty();
 	}
 
 	/**

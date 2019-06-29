@@ -100,7 +100,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 			// final Envelope env = geom.getEnvelopeInternal();
 			// GamaPoint translation = new GamaPoint(-env.getWidth() / 2,
 			// -env.getHeight() / 2);
-			final IShape gs = new GamaShape(null, geom, null, new GamaPoint(0, 0), size, true);
+			final IShape gs = new GamaShape(null, geom, null, GamaPoint.create(0, 0), size, true);
 			// gs.setLocation(new GamaPoint(0, 0));
 			// gs.setLocation(translation);
 			// if ( size != null ) {

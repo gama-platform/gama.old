@@ -25,8 +25,6 @@ import com.vividsolutions.jts.geom.GeometryFilter;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
-import msi.gama.common.geometry.GeometryUtils;
-
 /**
  * A dynamical geometry that represents a link between two IShape.
  *
@@ -86,7 +84,7 @@ public class DynamicLineString extends LineString {
 	 */
 	@Override
 	public Coordinate getCoordinate() {
-		return GeometryUtils.toCoordinate(source.getLocation());
+		return source.getLocation();
 	}
 
 	/*
@@ -96,8 +94,7 @@ public class DynamicLineString extends LineString {
 	 */
 	@Override
 	public Coordinate[] getCoordinates() {
-		return new Coordinate[] { GeometryUtils.toCoordinate(source.getLocation()),
-				GeometryUtils.toCoordinate(target.getLocation()) };
+		return new Coordinate[] { source.getLocation(), target.getLocation() };
 	}
 
 	@Override
@@ -152,7 +149,7 @@ public class DynamicLineString extends LineString {
 
 	@Override
 	public Point getEndPoint() {
-		return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation()));
+		return getFactory().createPoint(target.getLocation());
 	}
 
 	/*
@@ -195,7 +192,7 @@ public class DynamicLineString extends LineString {
 	@Override
 	public void apply(final CoordinateFilter filter) {
 		filter.filter(getCoordinate());
-		filter.filter(GeometryUtils.toCoordinate(target.getLocation()));
+		filter.filter(target.getLocation());
 	}
 
 	/*
@@ -313,14 +310,14 @@ public class DynamicLineString extends LineString {
 	@Override
 	public Point getPointN(final int n) {
 		if (n == 0) { return getFactory().createPoint(getCoordinate()); }
-		if (n == 1) { return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation())); }
+		if (n == 1) { return getFactory().createPoint(target.getLocation()); }
 		return null;
 	}
 
 	@Override
 	public Coordinate getCoordinateN(final int n) {
 		if (n == 0) { return getCoordinate(); }
-		if (n == 1) { return GeometryUtils.toCoordinate(target.getLocation()); }
+		if (n == 1) { return target.getLocation(); }
 		return null;
 
 	}

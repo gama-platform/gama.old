@@ -26,11 +26,11 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	final static int INITIAL_SIZE = 1000;
 	GamaPoint[] points = null;
 	int nbPoints;
-	final GamaPoint temp = new GamaPoint();
+	final GamaPoint temp = GamaPoint.createEmpty();
 
 	private void fillFrom(final int begin) {
 		for (int i = begin; i < points.length; i++) {
-			points[i] = new GamaPoint();
+			points[i] = GamaPoint.createEmpty();
 		}
 	}
 
@@ -281,11 +281,11 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public GamaPoint directionBetweenLastPointAndOrigin() {
-		final GamaPoint result = new GamaPoint();
+		final GamaPoint result = GamaPoint.createEmpty();
 		final GamaPoint origin = points[0];
 		for (int i = nbPoints - 1; i > 0; i--) {
 			if (!points[i].equals(origin)) {
-				result.setLocation(points[i]).subtract(origin).normalize();
+				result.setLocation(points[i].x, points[i].y, points[i].z).subtract(origin).normalize();
 				return result;
 			}
 		}
@@ -327,7 +327,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	@Override
 	public boolean isCoveredBy(final Envelope3D envelope3d) {
 		for (int i = 0; i < nbPoints; i++) {
-			if (!envelope3d.covers(points[i])) { return false; }
+			if (!envelope3d.covers((Coordinate) points[i])) { return false; }
 		}
 		return true;
 	}

@@ -26,7 +26,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.charts.ChartOutput;
@@ -35,8 +34,7 @@ import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.dev.utils.DEBUG;
@@ -244,7 +242,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile file, final DrawingAttributes attributes) {
 		if (file == null) { return null; }
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) { return null; }
@@ -286,7 +284,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 * openGl.
 	 */
 	@Override
-	public Rectangle2D drawShape(final Geometry shape, final ShapeDrawingAttributes attributes) {
+	public Rectangle2D drawShape(final Geometry shape, final DrawingAttributes attributes) {
 		if (shape == null) { return null; }
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) { return null; }
@@ -296,14 +294,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
 		if (img == null) { return null; }
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) { return null; }
 		scene.addImage(img, attributes);
 		tryToHighlight(attributes);
 		if (attributes.getBorder() != null) {
-			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.getBorder());
+			drawGridLine(GamaPoint.create(img.getWidth(), img.getHeight()), attributes.getBorder());
 		}
 		return rect;
 	}
@@ -318,11 +316,11 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		y = x;
 		// TODO See if it not possible to generate directly a texture renderer instead
 		final BufferedImage im = chart.getImage(x, y, getSurface().getData().isAntialias());
-		scene.addImage(im, new FileDrawingAttributes(null, true));
+		scene.addImage(im, new DrawingAttributes());
 		return rect;
 	}
 
-	protected void tryToHighlight(final FileDrawingAttributes attributes) {
+	protected void tryToHighlight(final DrawingAttributes attributes) {
 		if (highlight) {
 			attributes.setHighlighted(data.getHighlightColor());
 		}
@@ -335,14 +333,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		final double cellWidth = getEnvHeight() / dimensions.x;
 		final double cellHeight = getEnvWidth() / dimensions.y;
 		final GamaColor color = GamaColor.getInt(lineColor.getRGB());
-		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
+		final DrawingAttributes attributes = new DrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
 		attributes.setEmpty(true);
 		for (double i = 0; i < dimensions.x; i++) {
 			for (double j = 0; j < dimensions.y; j++) {
 				stepX = i + 0.5;
 				stepY = j + 0.5;
 				final Geometry g = GamaGeometryType
-						.buildRectangle(cellWidth, cellHeight, new GamaPoint(stepX * cellWidth, stepY * cellHeight))
+						.buildRectangle(cellWidth, cellHeight, GamaPoint.create(stepX * cellWidth, stepY * cellHeight))
 						.getInnerGeometry();
 				scene.addGeometry(g, attributes);
 			}
@@ -357,11 +355,11 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		// Multiline: Issue #780
 		if (string.contains("\n")) {
 			int i = 0;
-			double shift = attributes.font.getSize() / this.getyRatioBetweenPixelsAndModelUnits();
+			final double shift = attributes.font.getSize() / this.getyRatioBetweenPixelsAndModelUnits();
 			for (final String s : string.split("\n")) {
 				// DEBUG.OUT("Attributes Font Size: " + attributes.font.getSize());
 				// DEBUG.OUT("Get Y Ratio: " + getyRatioBetweenPixelsAndModelUnits());
-				drawString(s, attributes.copyTranslatedBy(new GamaPoint(0, shift * i++)));
+				drawString(s, attributes.copyTranslatedBy(GamaPoint.create(0, shift * i++)));
 			}
 			return null;
 		}
@@ -378,17 +376,17 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 
 	@Override
-	public final ILocation getCameraPos() {
+	public final GamaPoint getCameraPos() {
 		return cameraHelper.getPosition();
 	}
 
 	@Override
-	public final ILocation getCameraTarget() {
+	public final GamaPoint getCameraTarget() {
 		return cameraHelper.getTarget();
 	}
 
 	@Override
-	public final ILocation getCameraOrientation() {
+	public final GamaPoint getCameraOrientation() {
 		return cameraHelper.getOrientation();
 	}
 
@@ -441,7 +439,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point mouse) {
-		return openGL.getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y));
+		return openGL.getWorldPositionFrom(GamaPoint.create(mouse.x, mouse.y));
 	}
 
 	@Override

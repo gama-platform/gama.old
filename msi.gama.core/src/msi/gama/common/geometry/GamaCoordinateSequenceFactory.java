@@ -53,7 +53,7 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 	 */
 	@Override
 	public ICoordinates create(final int size, final int dimension) {
-		if (size == 1) { return new UniqueCoordinateSequence(new GamaPoint()); }
+		if (size == 1) { return new UniqueCoordinateSequence(GamaPoint.createEmpty()); }
 		return new GamaCoordinateSequence(size);
 	}
 

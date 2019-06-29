@@ -153,7 +153,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	void dispose();
 
-	double euclidianDistanceTo(ILocation g);
+	double euclidianDistanceTo(GamaPoint g);
 
 	double euclidianDistanceTo(IShape g);
 
@@ -226,7 +226,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	GamaShape getGeometricEnvelope();
 
 	@getter ("points")
-	IList<? extends ILocation> getPoints();
+	IList<? extends GamaPoint> getPoints();
 
 	@getter ("geometries")
 	IList<? extends IShape> getGeometries();

@@ -11,7 +11,7 @@
 package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -65,7 +65,7 @@ import msi.gaml.types.IType;
 public class CameraDefinition extends AbstractLayerStatement {
 
 	final IExpression locationExpr, lookAtExpr, upVectorExpr;
-	ILocation location, lookAt, upVector;
+	GamaPoint location, lookAt, upVector;
 
 	public CameraDefinition(final IDescription desc) throws GamaRuntimeException {
 		super(desc);

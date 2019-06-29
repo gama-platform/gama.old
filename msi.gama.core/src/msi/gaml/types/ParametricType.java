@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Objects;
 import com.google.common.cache.Cache;
 
 import msi.gama.precompiler.ISymbolKind;
@@ -49,23 +48,24 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	static Cache<Integer, ParametricType> CACHE2 = newBuilder().expireAfterAccess(30, MINUTES).build();
 	static boolean USE_CACHE = true;
 
-	static boolean useCacheFor(IType<?> t) {
-		boolean builtIn = builtInTypes.containsType(t.getName());
+	static boolean useCacheFor(final IType<?> t) {
+		final boolean builtIn = builtInTypes.containsType(t.getName());
 		return t.isCompoundType() ? builtIn && useCacheFor(t.getContentType()) && useCacheFor(t.getKeyType()) : builtIn;
 	}
 
 	public static ParametricType createParametricType(final IContainerType<IContainer<?, ?>> t, final IType<?> kt,
 			final IType<?> ct) {
 		if (USE_CACHE && useCacheFor(t) && useCacheFor(kt) && useCacheFor(ct)) {
-			final Integer key = Objects.hashCode(t, kt, ct);
+			final Integer key = 31 * (31 * (31 + t.hashCode()) + kt.hashCode()) + ct.hashCode();
 			ParametricType p = CACHE2.getIfPresent(key);
 			if (p == null) {
 				p = new ParametricType(t, kt, ct);
 				CACHE2.put(key, p);
 				// DEBUG.OUT("Size: " + CACHE2.size() + " | Saved Type = " + p);
-			} else
+			} else {
 				// DEBUG.OUT("Saved creations : " + savedTypes++);
 				return p;
+			}
 		}
 		return new ParametricType(t, kt, ct);
 	}
@@ -97,7 +97,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(type, keyType, contentsType);
+		return 31 * (31 * (31 + type.hashCode()) + keyType.hashCode()) + contentsType.hashCode();
 	}
 
 	@Override
@@ -511,10 +511,24 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	}
 
 	@Override
-	public IContainerType<?> of(final IType<?>... subs) {
-		if (subs.length == 0) { return this; }
-		IType<?> kt = subs.length == 1 ? getKeyType() : subs[0];
-		IType<?> ct = subs.length == 1 ? subs[0] : subs[1];
+	public IContainerType<?> of(final IType<?> sub1) {
+		IType<?> kt = getKeyType();
+		IType<?> ct = sub1;
+		if (ct == Types.NO_TYPE) {
+			if (kt == Types.NO_TYPE) { return this; }
+			ct = getContentType();
+		}
+		if (kt == Types.NO_TYPE) {
+			kt = getKeyType();
+		}
+		return createParametricType(this, kt, ct);
+
+	}
+
+	@Override
+	public IContainerType<?> of(final IType<?> sub1, final IType<?> sub2) {
+		IType<?> kt = sub1;
+		IType<?> ct = sub2;
 		if (ct == Types.NO_TYPE) {
 			if (kt == Types.NO_TYPE) { return this; }
 			ct = getContentType();

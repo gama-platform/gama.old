@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph._Vertex.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.graph._Vertex.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.jgrapht.util.ArrayUnenforcedSet;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class _Vertex<E, V> extends GraphObject<GamaGraph<E, V>, E, V> {
 
 	Set inEdges = new ArrayUnenforcedSet(1);
@@ -64,9 +64,7 @@ public class _Vertex<E, V> extends GraphObject<GamaGraph<E, V>, E, V> {
 	public Object edgeTo(final Object v2) {
 		for (final Object e : outEdges) {
 			final _Edge<V, E> edge = (_Edge<V, E>) graph.edgeMap.get(e);
-			if (edge.getTarget().equals(v2)) {
-				return e;
-			}
+			if (edge.getTarget().equals(v2)) { return e; }
 		}
 		return null;
 	}
@@ -78,7 +76,7 @@ public class _Vertex<E, V> extends GraphObject<GamaGraph<E, V>, E, V> {
 			if (edge.getTarget().equals(v2)) {
 				result.add(e);
 			}
-		}
+		} 
 		return result;
 	}
 

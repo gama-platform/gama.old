@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -342,10 +342,10 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	/**
 	 * Method matrixValue()
 	 *
-	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gama.metamodel.shape.ILocation)
+	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gama.metamodel.shape.GamaPoint)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		return listValue(scope, contentsType, false).matrixValue(scope, contentsType, preferredSize, false);
 	}

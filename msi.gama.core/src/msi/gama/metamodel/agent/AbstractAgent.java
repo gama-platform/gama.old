@@ -21,7 +21,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -69,8 +69,8 @@ import msi.gaml.variables.IVariable;
 public abstract class AbstractAgent implements IAgent {
 
 	private final int index;
-	protected volatile boolean dead = false;
-	protected volatile boolean dying = false;
+	protected /* volatile */ boolean dead = false;
+	protected /* volatile */ boolean dying = false;
 
 	public AbstractAgent(final int index) {
 		this.index = index;
@@ -130,7 +130,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public double euclidianDistanceTo(final ILocation g) {
+	public double euclidianDistanceTo(final GamaPoint g) {
 		return getGeometry().euclidianDistanceTo(g);
 	}
 
@@ -322,12 +322,12 @@ public abstract class AbstractAgent implements IAgent {
 	public void setName(final String name) {}
 
 	@Override
-	public ILocation getLocation() {
+	public GamaPoint getLocation() {
 		return getGeometry().getLocation();
 	}
 
 	@Override
-	public void setLocation(final ILocation l) {
+	public void setLocation(final GamaPoint l) {
 		getGeometry().setLocation(l);
 	}
 
@@ -588,7 +588,7 @@ public abstract class AbstractAgent implements IAgent {
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override
-	public IList<? extends ILocation> getPoints() {
+	public IList<? extends GamaPoint> getPoints() {
 		if (getGeometry() == null) { return GamaListFactory.create(); }
 		return getGeometry().getPoints();
 	}

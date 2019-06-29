@@ -25,7 +25,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	/**
 	 * The Axis around which the rotation is done
 	 */
-	public final GamaPoint axis = new GamaPoint(Rotation3D.PLUS_K);
+	public final GamaPoint axis = GamaPoint.create(Rotation3D.PLUS_K);
 
 	/**
 	 * The angle of rotation in degrees.
