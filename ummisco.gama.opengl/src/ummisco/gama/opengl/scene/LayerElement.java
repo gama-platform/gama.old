@@ -16,7 +16,7 @@ import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;

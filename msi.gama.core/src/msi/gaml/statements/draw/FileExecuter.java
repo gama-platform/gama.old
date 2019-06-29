@@ -12,7 +12,7 @@ package msi.gaml.statements.draw;
 
 import java.awt.geom.Rectangle2D;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;

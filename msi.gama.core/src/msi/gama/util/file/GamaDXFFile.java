@@ -30,7 +30,7 @@ import org.kabeja.parser.DXFParser;
 import org.kabeja.parser.Parser;
 import org.kabeja.parser.ParserBuilder;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;

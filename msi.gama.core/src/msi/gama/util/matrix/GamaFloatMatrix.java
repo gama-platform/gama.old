@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
-import static com.vividsolutions.jts.index.quadtree.IntervalSize.isZeroWidth;
+import static org.locationtech.jts.index.quadtree.IntervalSize.isZeroWidth;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import com.google.common.primitives.Doubles;
-import com.vividsolutions.jts.index.quadtree.IntervalSize;
+import org.locationtech.jts.index.quadtree.IntervalSize;
 
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;

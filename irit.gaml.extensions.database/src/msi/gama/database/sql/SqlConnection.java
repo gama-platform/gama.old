@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.opengis.referencing.FactoryException;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;

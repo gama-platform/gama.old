@@ -1,29 +1,27 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.projection.ProjectionFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.projection.ProjectionFactory.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
 import java.util.Map;
 
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
 
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CartesianCS;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.Envelope3D;
@@ -31,12 +29,14 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaGisFile;
+import si.uom.SI;
+
 /**
  * Class ProjectionFactory.
- * 
+ *
  * @author drogoul
  * @since 17 déc. 2013
- * 
+ *
  */
 public class ProjectionFactory {
 
@@ -67,11 +67,11 @@ public class ProjectionFactory {
 				targetCRS = computeDefaultCRS(scope, GamaPreferences.External.LIB_TARGET_CRS.getValue(), true);
 			} else {
 				if (crs != null && crs instanceof ProjectedCRS) { // Temporary fix of issue 766... a better solution
-					CartesianCS ccs = ((ProjectedCRS) crs).getCoordinateSystem();
-					Unit<?> unitX = ccs.getAxis(0).getUnit();
-					if (unitX != null && !unitX.equals(SI.METER)) {
-						unitConverter = unitX.getConverterTo(SI.METER);
-					} 
+					final CartesianCS ccs = ((ProjectedCRS) crs).getCoordinateSystem();
+					final Unit<> unitX = ccs.getAxis(0).getUnit();
+					if (unitX != null && !unitX.equals(SI.METRE)) {
+						unitConverter = unitX.getConverterTo(SI.METRE);
+					}
 					targetCRS = crs;
 				} else {
 					final int index = (int) (0.5 + (longitude + 186.0) / 6);
@@ -224,8 +224,7 @@ public class ProjectionFactory {
 		gis.initialCRS = crs;
 		// gis.computeProjection();
 		gis.createTransformation(gis.computeProjection(scope));
-		
-		
+
 		return gis;
 	}
 
@@ -234,9 +233,8 @@ public class ProjectionFactory {
 			try {
 				return getCRS(scope, GamaPreferences.External.LIB_INITIAL_CRS.getValue());
 			} catch (final GamaRuntimeException e) {
-				throw GamaRuntimeException.error(
-						"The code " + GamaPreferences.External.LIB_INITIAL_CRS.getValue()
-								+ " does not correspond to a known EPSG code. Try to change it in Gama > Preferences... > External",
+				throw GamaRuntimeException.error("The code " + GamaPreferences.External.LIB_INITIAL_CRS.getValue()
+						+ " does not correspond to a known EPSG code. Try to change it in Gama > Preferences... > External",
 						scope);
 			}
 		} else {
@@ -246,16 +244,17 @@ public class ProjectionFactory {
 
 	public void testConsistency(final IScope scope, final CoordinateReferenceSystem crs, final Envelope env) {
 		if (!(crs instanceof ProjectedCRS)) {
-			if (env.getHeight() > 180 || env.getWidth() > 180) { throw GamaRuntimeException.error(
-					"Inconsistency between the data and the CRS: The CRS " + crs
-							+ " corresponds to a not projected one, whereas the data seem to be already projected.",
-					scope); }
+			if (env.getHeight() > 180 || env.getWidth() > 180) {
+				throw GamaRuntimeException.error(
+						"Inconsistency between the data and the CRS: The CRS " + crs
+								+ " corresponds to a not projected one, whereas the data seem to be already projected.",
+						scope);
+			}
 		}
 	}
 
 	public UnitConverter getUnitConverter() {
 		return unitConverter;
 	}
-	
-	
+
 }

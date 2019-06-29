@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaPoint;

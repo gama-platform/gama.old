@@ -13,7 +13,7 @@ package msi.gama.util.file;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
