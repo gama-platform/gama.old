@@ -24,7 +24,7 @@ import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
@@ -107,7 +107,7 @@ public class GridLayerData extends LayerData {
 			// final double height2 = env2.getHeight();
 			final double cols = grid.getCols(scope);
 			final double rows = grid.getRows(scope);
-			cellSize = new GamaPoint(width / cols, height / rows);
+			cellSize = GamaPoint.create(width / cols, height / rows);
 		}
 		super.compute(scope, g);
 		if (shouldComputeImage) {
@@ -169,7 +169,7 @@ public class GridLayerData extends LayerData {
 	protected void computeImage(final IScope scope, final IGraphics g) {
 		if (image == null) {
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) grid;
-			final ILocation p = m.getDimensions();
+			final GamaPoint p = m.getDimensions();
 			image = ImageUtils.createCompatibleImage((int) p.getX(), (int) p.getY(), !g.is2D());
 		}
 	}

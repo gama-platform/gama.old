@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -176,7 +176,7 @@ public interface IPopulation<T extends IAgent>
 	 * @param coord
 	 * @return
 	 */
-	T getAgent(IScope scope, ILocation coord);
+	T getAgent(IScope scope, GamaPoint coord);
 
 	@Override
 	T[] toArray();

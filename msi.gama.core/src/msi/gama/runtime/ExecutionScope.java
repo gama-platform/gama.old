@@ -1,14 +1,17 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.ExecutionScope.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.ExecutionScope.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
+
+import static msi.gama.runtime.ExecutionResult.FAILED;
+import static msi.gama.runtime.ExecutionResult.PASSED;
 
 import java.util.Collections;
 import java.util.Map;
@@ -19,6 +22,7 @@ import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStepable;
+import msi.gama.common.util.PoolUtils;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
@@ -57,6 +61,10 @@ public class ExecutionScope implements IScope {
 
 	private static final String ATTRIBUTES = "%_attributes_%";
 	private static int SCOPE_NUMBER = 0;
+	PoolUtils.ObjectPool<IExecutionContext> contextPool =
+			PoolUtils.create("ExecutionContexts", true, () -> new ExecutionContext(), null);
+	PoolUtils.ObjectPool<AgentExecutionContext> agentContextPool =
+			PoolUtils.create("AgentsExecutionContexts", true, () -> new AgentExecutionContext(), null);
 
 	private final String scopeName;
 	protected IExecutionContext executionContext;
@@ -99,31 +107,6 @@ public class ExecutionScope implements IScope {
 
 	}
 
-	class AgentExecutionContext {
-
-		final IAgent agent;
-		final AgentExecutionContext outer;
-
-		public AgentExecutionContext(final IAgent agent, final AgentExecutionContext outer) {
-			this.outer = outer;
-			this.agent = agent;
-		}
-
-		public IAgent getAgent() {
-			return agent;
-		}
-
-		@Override
-		public String toString() {
-			return "context of " + agent;
-		}
-
-		public AgentExecutionContext getOuterContext() {
-			return outer;
-		}
-
-	}
-
 	public ExecutionScope(final ITopLevelAgent root) {
 		this(root, null);
 	}
@@ -145,18 +128,16 @@ public class ExecutionScope implements IScope {
 		}
 		name += otherName == null || otherName.isEmpty() ? "" : " (" + otherName + ")";
 		this.scopeName = name;
-		this.executionContext = context == null ? new ExecutionContext(this) : context.createCopyContext();
-		this.agentContext = agentContext == null ? new AgentExecutionContext(root, null) : agentContext;
+		this.executionContext =
+				context == null ? ExecutionContext.create(this, null, contextPool) : context.createCopyContext();
+		this.agentContext =
+				agentContext == null ? AgentExecutionContext.create(root, null, agentContextPool) : agentContext;
 		this.additionalContext.copyFrom(specialContext);
 	}
 
-	public AgentExecutionContext createChildContext(final IAgent agent) {
-		return new AgentExecutionContext(agent, agentContext);
-	};
-
 	/**
 	 * Method clear()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#clear()
 	 */
 	@Override
@@ -208,7 +189,7 @@ public class ExecutionScope implements IScope {
 	/**
 	 *
 	 * Method interrupted(). Returns true if the scope is currently marked as interrupted.
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#interrupted()
 	 */
 	@Override
@@ -260,7 +241,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method push()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
@@ -275,7 +256,7 @@ public class ExecutionScope implements IScope {
 			// get rid of the previous context **important**
 			agentContext = null;
 		} else if (a == agent) { return false; }
-		agentContext = createChildContext(agent);
+		agentContext = AgentExecutionContext.create(agent, agentContext, agentContextPool);
 		return true;
 	}
 
@@ -285,20 +266,22 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method pop()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
 	@Override
 	public void pop(final IAgent agent) {
 		if (agentContext == null) { throw GamaRuntimeException.warning("Agents stack is empty", this); }
-		agentContext = agentContext.getOuterContext();
+		final AgentExecutionContext tmp = agentContext.getOuterContext();
+		agentContext.dispose();
+		agentContext = tmp;
 		_agent_halted = false;
 	}
 
 	/**
 	 * Method push()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#push(msi.gaml.statements.IStatement)
 	 */
 	@Override
@@ -307,7 +290,7 @@ public class ExecutionScope implements IScope {
 		if (executionContext != null) {
 			executionContext = executionContext.createChildContext();
 		} else {
-			executionContext = new ExecutionContext(this);
+			executionContext = ExecutionContext.create(this, null, contextPool);
 		}
 	}
 
@@ -343,13 +326,15 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method pop()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#pop(msi.gaml.statements.IStatement)
 	 */
 	@Override
 	public void pop(final ISymbol symbol) {
 		if (executionContext != null) {
-			executionContext = executionContext.getOuterContext();
+			final IExecutionContext tmp = executionContext.getOuterContext();
+			executionContext.dispose();
+			executionContext = tmp;
 		}
 	}
 
@@ -361,7 +346,7 @@ public class ExecutionScope implements IScope {
 	/**
 	 * Method execute(). Asks the scope to manage the execution of a statement on an agent, taking care of pushing the
 	 * agent on the stack, verifying the runtime state, etc. This method accepts optional arguments (which can be null)
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -381,7 +366,7 @@ public class ExecutionScope implements IScope {
 				// We push the caller to the remote sequence (will be cleaned when the remote sequence leaves its scope)
 				((RemoteSequence) statement).setMyself(caller);
 			}
-			return new ExecutionResultWithValue(statement.executeOn(this));
+			return ExecutionResult.withValue(statement.executeOn(this));
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 			return FAILED;
@@ -427,22 +412,22 @@ public class ExecutionScope implements IScope {
 	public ExecutionResult step(final IStepable agent) {
 		if (agent == null || interrupted()) { return FAILED; }
 		return agent instanceof IAgent
-				? pushRunAndCatch((IAgent) agent, (a) -> new ExecutionResultWithValue(agent.step(this)))
-				: runAndCatch(agent, (a) -> new ExecutionResultWithValue(agent.step(this)));
+				? pushRunAndCatch((IAgent) agent, (a) -> ExecutionResult.withValue(agent.step(this)))
+				: runAndCatch(agent, (a) -> ExecutionResult.withValue(agent.step(this)));
 	}
 
 	@Override
 	public ExecutionResult init(final IStepable agent) {
 		if (agent == null || interrupted()) { return FAILED; }
 		return agent instanceof IAgent
-				? pushRunAndCatch((IAgent) agent, (a) -> new ExecutionResultWithValue(agent.init(this)))
-				: runAndCatch(agent, (a) -> new ExecutionResultWithValue(agent.init(this)));
+				? pushRunAndCatch((IAgent) agent, (a) -> ExecutionResult.withValue(agent.init(this)))
+				: runAndCatch(agent, (a) -> ExecutionResult.withValue(agent.init(this)));
 	}
 
 	@Override
 	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
 		if (agent == null || interrupted()) { return FAILED; }
-		return pushRunAndCatch(agent, (a) -> new ExecutionResultWithValue(expr.value(this)));
+		return pushRunAndCatch(agent, (a) -> ExecutionResult.withValue(expr.value(this)));
 	}
 
 	private ExecutionResult pushRunAndCatch(final IAgent a, final Function<IAgent, ExecutionResult> f) {
@@ -474,7 +459,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getVarValue(java.lang.String)
 	 */
 	@Override
@@ -485,7 +470,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setVarValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -497,7 +482,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method saveAllVarValuesIn()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#saveAllVarValuesIn(java.util.Map)
 	 */
 	@Override
@@ -508,20 +493,8 @@ public class ExecutionScope implements IScope {
 	}
 
 	/**
-	 * Method removeAllVars()
-	 * 
-	 * @see msi.gama.runtime.IScope#removeAllVars()
-	 */
-	@Override
-	public void removeAllVars() {
-		if (executionContext != null) {
-			executionContext.clearLocalVars();
-		}
-	}
-
-	/**
 	 * Method addVarWithValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#addVarWithValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -533,7 +506,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setEach()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setEach(java.lang.Object)
 	 */
 	@Override
@@ -544,7 +517,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getEach()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getEach()
 	 */
 	@Override
@@ -554,13 +527,14 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getArg()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getArg(java.lang.String, int)
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		if (executionContext != null) { return Types.get(type).cast(this, executionContext.getLocalVar(string), null,
-				false); }
+		if (executionContext != null) {
+			return Types.get(type).cast(this, executionContext.getLocalVar(string), null, false);
+		}
 		return null;
 	}
 
@@ -591,7 +565,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method hasArg()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#hasArg(java.lang.String)
 	 */
 	@Override
@@ -602,7 +576,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getAgentVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String)
 	 */
 	@Override
@@ -620,7 +594,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setAgentVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String,
 	 *      java.lang.Object)
 	 */
@@ -656,7 +630,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getGlobalVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getGlobalVarValue(java.lang.String)
 	 */
 	@Override
@@ -676,7 +650,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setGlobalVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setGlobalVarValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -688,7 +662,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getName()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getName()
 	 */
 
@@ -704,7 +678,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getTopology()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getTopology()
 	 */
 	@Override
@@ -717,7 +691,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setTopology()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setTopology(msi.gama.metamodel.topology.ITopology)
 	 */
 	@Override
@@ -729,7 +703,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setGraphics()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setGraphics(msi.gama.common.interfaces.IGraphics)
 	 */
 	@Override
@@ -739,7 +713,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getGraphics()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getGraphics()
 	 */
 	@Override
@@ -749,7 +723,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getAgentScope()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getAgent()
 	 */
 	@Override
@@ -760,7 +734,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getSimulationScope()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getSimulation()
 	 */
 	@Override
@@ -779,7 +753,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getModel()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getModel()
 	 */
 	@Override
@@ -800,7 +774,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getClock()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getClock()
 	 */
 	@Override
@@ -824,7 +798,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method pushReadAttributes()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#pushReadAttributes(java.util.Map)
 	 */
 	@Override
@@ -834,7 +808,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method popReadAttributes()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#popReadAttributes()
 	 */
 	@Override
@@ -887,7 +861,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getRandom()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getRandom()
 	 */
 	@Override

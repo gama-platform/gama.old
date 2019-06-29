@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.renderer.helpers.SceneHelper.java, in plugin ummisco.gama.opengl, is part of the source code of
  * the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
@@ -35,6 +35,8 @@ public class SceneHelper extends AbstractRendererHelper {
 	volatile ModelScene staticScene;
 	volatile ModelScene frontScene;
 	private final Queue<ModelScene> garbage = new ConcurrentLinkedQueue<>();
+	// private final PoolUtils.ObjectPool<ModelScene> scenePool =
+	// PoolUtils.create("ModelScenes", true, () -> new ModelScene(getRenderer()), (s) -> s.dispose());
 
 	public SceneHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
@@ -120,22 +122,22 @@ public class SceneHelper extends AbstractRendererHelper {
 	/**
 	 * This method creates a new scene and copies to it the static layers from a given existing scene. If no existing
 	 * scene is passed, a completely new scene is created
-	 * 
+	 *
 	 * @return a new scene
 	 */
 	protected ModelScene createSceneFrom(final ModelScene existing) {
-		ModelScene newScene;
+		final ModelScene newScene = new ModelScene(getRenderer());// scenePool.get();
 		if (existing == null) {
-			newScene = new ModelScene(getRenderer(), true);
+			newScene.initWorld();
 		} else {
-			newScene = existing.copyStatic();
+			existing.copyStaticInto(newScene);
 		}
 		return newScene;
 	}
 
 	/**
 	 * Returns the scene to be rendered by the renderer. Can be null.
-	 * 
+	 *
 	 * @return
 	 */
 
@@ -145,7 +147,7 @@ public class SceneHelper extends AbstractRendererHelper {
 
 	/**
 	 * Returns the scene to update. Can be null
-	 * 
+	 *
 	 * @return
 	 */
 
@@ -155,7 +157,7 @@ public class SceneHelper extends AbstractRendererHelper {
 
 	/**
 	 * Performs the management and disposal of discarded scenes
-	 * 
+	 *
 	 * @param gl
 	 */
 	public void garbageCollect(final OpenGL gl) {
@@ -164,6 +166,7 @@ public class SceneHelper extends AbstractRendererHelper {
 		for (final ModelScene scene : scenes) {
 			scene.wipe(gl);
 			scene.dispose();
+			// scenePool.release(scene);
 		}
 	}
 
@@ -174,14 +177,17 @@ public class SceneHelper extends AbstractRendererHelper {
 	public void dispose() {
 		if (frontScene != null) {
 			frontScene.dispose();
+			// scenePool.release(frontScene);
 		}
 		frontScene = null;
 		if (backScene != null) {
 			backScene.dispose();
+			// scenePool.release(backScene);
 		}
 		backScene = null;
 		if (staticScene != null) {
 			staticScene.dispose();
+			// scenePool.release(staticScene);
 		}
 		staticScene = null;
 	}

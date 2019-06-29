@@ -20,8 +20,8 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
@@ -52,18 +52,25 @@ public class ModelScene {
 	private double zIncrement;
 	private int currentLayerTrace;
 
-	public ModelScene(final IOpenGLRenderer renderer, final boolean withWorld) {
+	public ModelScene(final IOpenGLRenderer renderer) {
 		this.renderer = renderer;
-		if (withWorld) {
-			initWorld();
-		}
 	}
 
-	protected void initWorld() {
+	public void initWorld() {
 		if (renderer.getData().isDrawEnv()) {
 			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
 		}
+	}
+
+	public void dispose() {
+		// renderer should stay the same
+		layers.clear();
+		currentLayer = null;
+		rendered = false;
+		objectNumber = 0;
+		zIncrement = 0d;
+		currentLayerTrace = 0;
 	}
 
 	/**
@@ -128,19 +135,19 @@ public class ModelScene {
 		}
 	}
 
-	public void addGeometryFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
+	public void addGeometryFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addFile(file, attributes);
 		}
 	}
 
-	public void addImage(final Object img, final FileDrawingAttributes attributes) {
+	public void addImage(final Object img, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addImage(img, attributes);
 		}
 	}
 
-	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addGeometry(geometry, attributes);
 		}
@@ -150,11 +157,6 @@ public class ModelScene {
 		if (increment()) {
 			currentLayer.addField(fieldValues, attributes);
 		}
-	}
-
-	public void dispose() {
-		layers.clear();
-		currentLayer = null;
 	}
 
 	public void beginDrawingLayers() {
@@ -195,8 +197,7 @@ public class ModelScene {
 	/**
 	 * @return
 	 */
-	public ModelScene copyStatic() {
-		final ModelScene newScene = new ModelScene(renderer, false);
+	public ModelScene copyStaticInto(final ModelScene newScene) {
 		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
 			final LayerObject layer = entry.getValue();
 			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) {

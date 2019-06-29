@@ -67,8 +67,7 @@ public abstract class AbstractGraphLayoutStatement extends AbstractStatement {
 		final Set<GamlAgent> ga = ig._internalVertexMap().keySet();
 		final Iterator<GamlAgent> gi = ga.iterator();
 		for (int i = 1; i <= ig.getVertices().size(); i++) {
-			gi.next().setLocation(new GamaPoint(the_graph.getNode(node_index_diff + i).getNodeData().x(),
-					the_graph.getNode(node_index_diff + i).getNodeData().y()));
+			gi.next().setLocation(GamaPoint.create(the_graph.getNode(node_index_diff + i).getNodeData().x(), the_graph.getNode(node_index_diff + i).getNodeData().y()));
 		}
 		update_node_index_diff();
 	}
@@ -97,8 +96,7 @@ public abstract class AbstractGraphLayoutStatement extends AbstractStatement {
 			}
 		}
 		for (int i = 1; i <= ig.getVertices().size(); i++) {
-			gi.next().setLocation(new GamaPoint(the_graph.getNode(node_index_diff + i).getNodeData().x(),
-					the_graph.getNode(node_index_diff + i).getNodeData().y()));
+			gi.next().setLocation(GamaPoint.create(the_graph.getNode(node_index_diff + i).getNodeData().x(), the_graph.getNode(node_index_diff + i).getNodeData().y()));
 		}
 		update_node_index_diff();
 	}
@@ -125,8 +123,7 @@ public abstract class AbstractGraphLayoutStatement extends AbstractStatement {
 			}
 		}
 		for (int i = 1; i <= ig.getVertices().size(); i++) {
-			gi.next().setLocation(new GamaPoint(the_graph.getNode(node_index_diff + i).getNodeData().x(),
-					the_graph.getNode(node_index_diff + i).getNodeData().y()));
+			gi.next().setLocation(GamaPoint.create(the_graph.getNode(node_index_diff + i).getNodeData().x(), the_graph.getNode(node_index_diff + i).getNodeData().y()));
 		}
 		update_node_index_diff();
 	}

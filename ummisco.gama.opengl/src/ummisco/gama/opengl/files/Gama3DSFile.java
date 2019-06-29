@@ -233,8 +233,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 			object.verts = new GamaPoint[numOfVerts];
 			for (int i = 0; i < numOfVerts; i++) {
-				object.verts[i] = new GamaPoint(swap(dataInputStream.readFloat()), swap(dataInputStream.readFloat()),
-						swap(dataInputStream.readFloat()));
+				object.verts[i] = GamaPoint.create(swap(dataInputStream.readFloat()), swap(dataInputStream.readFloat()), swap(dataInputStream.readFloat()));
 
 				previousChunk.bytesRead += 12;
 			}

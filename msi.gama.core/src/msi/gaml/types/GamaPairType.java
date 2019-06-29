@@ -55,7 +55,7 @@ public class GamaPairType extends GamaContainerType<GamaPair> {
 		} else
 		// 8/01/14: No more automatic casting between points and pairs (as
 		// points can now have 3 coordinates
-		// if ( obj instanceof ILocation ) { return new GamaPair(((GamaPoint)
+		// if ( obj instanceof GamaPoint ) { return new GamaPair(((GamaPoint)
 		// obj).x, ((GamaPoint) obj).y); }
 		if (obj instanceof GamaShape && ((GamaShape) obj).getInnerGeometry() instanceof DynamicLineString) {
 			final DynamicLineString g = (DynamicLineString) ((GamaShape) obj).getInnerGeometry();

@@ -40,7 +40,7 @@ import de.micromata.opengis.kml.v_2_2_0.Placemark;
 import de.micromata.opengis.kml.v_2_2_0.Scale;
 import de.micromata.opengis.kml.v_2_2_0.Style;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -260,7 +260,7 @@ public class GamaKmlExport{
 		 * @param description
 		 *            Description (only displayed on mouse click on the label)
 		 */
-		public void addLabel(IScope scope, ILocation loc, 
+		public void addLabel(IScope scope, GamaPoint loc, 
 				String beginDate, String endDate, String name, String description,
 				String styleName) {
 			Placemark placemark = fold.createAndAddPlacemark().withStyleUrl(
@@ -278,7 +278,7 @@ public class GamaKmlExport{
 		}
 
 		
-		public void add3DModel(IScope scope, ILocation loc, double orientation,
+		public void add3DModel(IScope scope, GamaPoint loc, double orientation,
 				double scale, String beginDate, String endDate, String daefile) {
 
 			Placemark placemark = fold.createAndAddPlacemark();

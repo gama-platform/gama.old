@@ -53,7 +53,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * @return a new point containing the ordinates of the center
 	 */
 	default GamaPoint getCenter() {
-		final GamaPoint p = new GamaPoint();
+		final GamaPoint p = GamaPoint.createEmpty();
 		addCenterTo(p);
 		return p;
 	}
@@ -167,7 +167,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 
 	default GamaPoint getNormal(final boolean clockwise) {
-		final GamaPoint normal = new GamaPoint();
+		final GamaPoint normal = GamaPoint.createEmpty();
 		getNormal(clockwise, 1, normal);
 		return normal;
 	};

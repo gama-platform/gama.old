@@ -72,8 +72,8 @@ public class ExperimentScheduler implements Runnable {
 		}
 	}
 
-	private IStepable[] stepables = null;
-	private IScope[] scopes = null;
+	// private IStepable[] stepables = null;
+	// private IScope[] scopes = null;
 
 	public void step() {
 		if (!experiment.isHeadless() && paused) {
@@ -85,18 +85,24 @@ public class ExperimentScheduler implements Runnable {
 			}
 		}
 
-		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
-		scopes = toStep.values().toArray(new IScope[toStep.size()]);
-		for (int i = 0; i < stepables.length; i++) {
-			final IScope scope = scopes[i];
-			try {
-				if (!scope.step(stepables[i]).passed()) {
-					toStop.add(stepables[i]);
-				}
-			} catch (final Exception e) {
-				e.printStackTrace();
+		toStep.forEach((stepable, scope) -> {
+			if (!scope.step(stepable).passed()) {
+				toStop.add(stepable);
 			}
-		}
+		});
+
+		// stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
+		// scopes = toStep.values().toArray(new IScope[toStep.size()]);
+		// for (int i = 0; i < stepables.length; i++) {
+		// final IScope scope = scopes[i];
+		// try {
+		// if (!scope.step(stepables[i]).passed()) {
+		// toStop.add(stepables[i]);
+		// }
+		// } catch (final Exception e) {
+		// e.printStackTrace();
+		// }
+		// }
 	}
 
 	private void clean() {
@@ -138,7 +144,7 @@ public class ExperimentScheduler implements Runnable {
 	public void stepBack() {
 		paused = true;
 		// lock.release();
-		experiment.getAgent().backward(scopes[0]);
+		experiment.getAgent().backward(experiment.getAgent().getScope()); // ??
 	}
 
 	public void start() {

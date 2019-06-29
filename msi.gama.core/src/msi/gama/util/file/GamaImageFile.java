@@ -33,7 +33,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -259,7 +259,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
 		if (preferredSize != null) {
@@ -304,13 +304,13 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 	}
 
-	private IMatrix matrixValueFromImage(final IScope scope, final ILocation preferredSize)
+	private IMatrix matrixValueFromImage(final IScope scope, final GamaPoint preferredSize)
 			throws GamaRuntimeException {
 		final BufferedImage image = loadImage(scope, true);
 		return matrixValueFromImage(scope, image, preferredSize);
 	}
 
-	private IMatrix matrixValueFromImage(final IScope scope, final BufferedImage image, final ILocation preferredSize) {
+	private IMatrix matrixValueFromImage(final IScope scope, final BufferedImage image, final GamaPoint preferredSize) {
 		int xSize, ySize;
 		BufferedImage resultingImage = image;
 		if (preferredSize == null) {
@@ -453,8 +453,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 			final Envelope e = file.computeEnvelopeWithoutBuffer(scope);
 			if (e != null) {
-				GamaPoint minCorner = new GamaPoint(e.getMinX(), e.getMinY());
-				GamaPoint maxCorner = new GamaPoint(e.getMaxX(), e.getMaxY());
+				GamaPoint minCorner = GamaPoint.create(e.getMinX(), e.getMinY());
+				GamaPoint maxCorner = GamaPoint.create(e.getMaxX(), e.getMaxY());
 				if (geodataFile != null) {
 					IProjection pr;
 					try {
@@ -479,13 +479,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		final double x2 = xllcorner + cellSizeX * nbCols;
 		final double y1 = yllcorner;
 		final double y2 = yllcorner + cellSizeY * nbRows;
-		GamaPoint minCorner = new GamaPoint(xNeg ? FastMath.max(x1, x2) : FastMath.min(x1, x2),
-				yNeg ? FastMath.max(y1, y2) : FastMath.min(y1, y2));
-		GamaPoint maxCorner = new GamaPoint(xNeg ? FastMath.min(x1, x2) : FastMath.max(x1, x2),
-				yNeg ? FastMath.min(y1, y2) : FastMath.max(y1, y2));
+		GamaPoint minCorner = GamaPoint.create(xNeg ? FastMath.max(x1, x2) : FastMath.min(x1, x2), yNeg ? FastMath.max(y1, y2) : FastMath.min(y1, y2));
+		GamaPoint maxCorner = GamaPoint.create(xNeg ? FastMath.min(x1, x2) : FastMath.max(x1, x2), yNeg ? FastMath.min(y1, y2) : FastMath.max(y1, y2));
 		if (geodataFile != null) {
-			minCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, minCorner).getLocation();
-			maxCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
+			minCorner = Projections.to_GAMA_CRS(scope, minCorner).getLocation();
+			maxCorner = Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
 		}
 
 		return new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);

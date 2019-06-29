@@ -2,11 +2,11 @@
  *
  * msi.gama.outputs.layers.ImageLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -22,7 +22,7 @@ import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.types.GamaFileType;
 import msi.gaml.types.Types;
 
@@ -101,14 +101,14 @@ public class ImageLayer extends AbstractLayer {
 	public void privateDraw(final IScope scope, final IGraphics dg) {
 		final GamaImageFile file = buildImage(scope);
 		if (file == null) { return; }
-		final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
+		final DrawingAttributes attributes = new DrawingAttributes();
 		attributes.setUseCache(!getData().getRefresh());
 		if (env != null) {
 			final GamaPoint loc;
 			if (dg.is2D()) {
-				loc = new GamaPoint(env.getMinX(), env.getMinY());
+				loc = GamaPoint.create(env.getMinX(), env.getMinY());
 			} else {
-				loc = new GamaPoint(env.getWidth() / 2+ env.getMinX(), env.getHeight() / 2 + env.getMinY());
+				loc = GamaPoint.create(env.getWidth() / 2 + env.getMinX(), env.getHeight() / 2 + env.getMinY());
 			}
 			attributes.setLocation(loc);
 			attributes.setSize(Scaling3D.of(env.getWidth(), env.getHeight(), 0));

@@ -114,7 +114,7 @@ public abstract class GridNeighborhood implements INeighborhood {
 		for (int i = 0; i < nnSize; i++) {
 			result.add(matrix.matrix[nn[i]].getAgent());
 		}
-		scope.getRandom().shuffle2(result);
+		scope.getRandom().shuffleInPlace(result);
 		return result;
 	}
 

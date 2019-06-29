@@ -30,7 +30,7 @@ import com.google.common.collect.Ordering;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -526,11 +526,11 @@ public class Stats {
 			see = { "min" })
 	public static Object max(final IScope scope, final IContainer l) {
 		Number maxNum = null;
-		ILocation maxPoint = null;
+		GamaPoint maxPoint = null;
 		for (final Object o : l.iterable(scope)) {
-			if (o instanceof ILocation && maxNum == null) {
-				if (maxPoint == null || ((ILocation) o).compareTo(maxPoint) > 0) {
-					maxPoint = (ILocation) o;
+			if (o instanceof GamaPoint && maxNum == null) {
+				if (maxPoint == null || ((GamaPoint) o).compareTo(maxPoint) > 0) {
+					maxPoint = (GamaPoint) o;
 				}
 			} else if (o instanceof Number && maxPoint == null
 					&& (maxNum == null || ((Number) o).doubleValue() > maxNum.doubleValue())) {
@@ -588,11 +588,11 @@ public class Stats {
 			see = { "max" })
 	public static Object min(final IScope scope, final IContainer l) {
 		Number minNum = null;
-		ILocation minPoint = null;
+		GamaPoint minPoint = null;
 		for (final Object o : l.iterable(scope)) {
-			if (o instanceof ILocation && minNum == null) {
-				if (minPoint == null || ((ILocation) o).compareTo(minPoint) < 0) {
-					minPoint = (ILocation) o;
+			if (o instanceof GamaPoint && minNum == null) {
+				if (minPoint == null || ((GamaPoint) o).compareTo(minPoint) < 0) {
+					minPoint = (GamaPoint) o;
 				}
 			} else if (o instanceof Number && minPoint == null
 					&& (minNum == null || ((Number) o).doubleValue() < minNum.doubleValue())) {
@@ -651,12 +651,12 @@ public class Stats {
 		final DataSet x = new DataSet();
 		DataSet y = null, z = null;
 		for (final Object o : l.iterable(scope)) {
-			if (o instanceof ILocation) {
+			if (o instanceof GamaPoint) {
 				if (y == null) {
 					y = new DataSet();
 					z = new DataSet();
 				}
-				final ILocation p = (ILocation) o;
+				final GamaPoint p = (GamaPoint) o;
 				x.addValue(p.getX());
 				y.addValue(p.getY());
 				z.addValue(p.getZ());
@@ -666,10 +666,10 @@ public class Stats {
 		}
 		if (x.getSize() == 0) {
 			if (y == null) { return 0.0; }
-			return new GamaPoint(0, 0, 0);
+			return GamaPoint.create(0, 0, 0);
 		}
 		if (y == null) { return x.getProduct(); }
-		return new GamaPoint(x.getProduct(), y.getProduct(), z.getProduct());
+		return GamaPoint.create(x.getProduct(), y.getProduct(), z.getProduct());
 	}
 
 	// TODO Penser a faire ces calculs sur les points, egalement (et les entiers
@@ -709,13 +709,13 @@ public class Stats {
 				final DataSet y = new DataSet();
 				final DataSet z = new DataSet();
 				for (final Object o : values.iterable(scope)) {
-					final ILocation p = (ILocation) o;
+					final GamaPoint p = (GamaPoint) o;
 					x.addValue(p.getX());
 					y.addValue(p.getY());
 					z.addValue(p.getZ());
 				}
-				if (x.getSize() == 0) { return new GamaPoint(0, 0, 0); }
-				return new GamaPoint(x.getMedian(), y.getMedian(), z.getMedian());
+				if (x.getSize() == 0) { return GamaPoint.create(0, 0, 0); }
+				return GamaPoint.create(x.getMedian(), y.getMedian(), z.getMedian());
 			case IType.COLOR:
 				final DataSet r = new DataSet();
 				final DataSet g = new DataSet();

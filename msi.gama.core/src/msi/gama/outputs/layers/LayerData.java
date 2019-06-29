@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -51,8 +51,8 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	boolean positionIsInPixels, sizeIsInPixels;
 	Envelope visibleRegion;
 
-	Attribute<ILocation> size;
-	Attribute<ILocation> position;
+	Attribute<GamaPoint> size;
+	Attribute<GamaPoint> position;
 	Attribute<Boolean> refresh;
 	final Attribute<Boolean> fading;
 	final Attribute<Integer> trace;
@@ -63,10 +63,10 @@ public class LayerData extends AttributeHolder implements ILayerData {
 		super(def);
 		final IExpression sizeExp = def.getFacet(SIZE);
 		sizeIsInPixels = sizeExp != null && sizeExp.findAny((p) -> p instanceof PixelUnitExpression);
-		size = create(SIZE, sizeExp, POINT, new GamaPoint(1, 1, 1));
+		size = create(SIZE, sizeExp, POINT, GamaPoint.create(1, 1, 1));
 		final IExpression posExp = def.getFacet(POSITION);
 		positionIsInPixels = posExp != null && posExp.findAny((p) -> p instanceof PixelUnitExpression);
-		position = create(POSITION, posExp, POINT, new GamaPoint());
+		position = create(POSITION, posExp, POINT, GamaPoint.createEmpty());
 		refresh = create(REFRESH, def.getRefreshFacet(), BOOL, true);
 		fading = create(FADING, BOOL, false);
 		trace = create(TRACE, (scope, exp) -> exp.getGamlType() == BOOL && Cast.asBool(scope, exp.value(scope))
@@ -89,24 +89,24 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	}
 
 	@Override
-	public void setSize(final ILocation p) {
+	public void setSize(final GamaPoint p) {
 		setSize(p.getX(), p.getY(), p.getZ());
 	}
 
 	@Override
 	public void setSize(final double width, final double height, final double depth) {
-		size = create(SIZE, new GamaPoint(width, height, depth));
+		size = create(SIZE, GamaPoint.create(width, height, depth));
 		sizeIsInPixels = false;
 	}
 
 	@Override
-	public void setPosition(final ILocation p) {
+	public void setPosition(final GamaPoint p) {
 		setPosition(p.getX(), p.getY(), p.getZ());
 	}
 
 	@Override
 	public void setPosition(final double x, final double y, final double z) {
-		position = create(POSITION, new GamaPoint(x, y, z));
+		position = create(POSITION, GamaPoint.create(x, y, z));
 		positionIsInPixels = false;
 	}
 
@@ -127,12 +127,12 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	}
 
 	@Override
-	public ILocation getPosition() {
+	public GamaPoint getPosition() {
 		return position.get();
 	}
 
 	@Override
-	public ILocation getSize() {
+	public GamaPoint getSize() {
 		return size.get();
 	}
 
@@ -203,7 +203,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 		final double xRatio = g.getxRatioBetweenPixelsAndModelUnits();
 		final double yRatio = g.getyRatioBetweenPixelsAndModelUnits();
 
-		ILocation point = getPosition();
+		GamaPoint point = getPosition();
 		// Computation of x
 		final double x = point.getX();
 

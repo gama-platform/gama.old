@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -183,15 +183,15 @@ public class GamaGridFile extends GamaGisFile {
 				final double originY = envP.getMinY();
 				final double maxY = envP.getMaxY();
 				final double maxX = envP.getMaxX();
-				shapes.add(new GamaPoint(originX, originY));
-				shapes.add(new GamaPoint(maxX, originY));
-				shapes.add(new GamaPoint(maxX, maxY));
-				shapes.add(new GamaPoint(originX, maxY));
+				shapes.add(GamaPoint.create(originX, originY));
+				shapes.add(GamaPoint.create(maxX, originY));
+				shapes.add(GamaPoint.create(maxX, maxY));
+				shapes.add(GamaPoint.create(originX, maxY));
 				shapes.add(shapes.get(0));
 				geom = GamaGeometryType.buildPolygon(shapes);
 				if (!fillBuffer) { return; }
 
-				final GamaPoint p = new GamaPoint(0, 0);
+				final GamaPoint p = GamaPoint.create(0, 0);
 				coverage = store.read(null);
 				final double cmx = cellWidth / 2;
 				final double cmy = cellHeight / 2;
@@ -443,7 +443,7 @@ public class GamaGridFile extends GamaGisFile {
 		return coverage;
 	}
 
-	public Double valueOf(final IScope scope, final ILocation loc) {
+	public Double valueOf(final IScope scope, final GamaPoint loc) {
 		if (getBuffer() == null) {
 			fillBuffer(scope);
 		}

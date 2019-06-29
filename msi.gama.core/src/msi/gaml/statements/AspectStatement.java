@@ -19,7 +19,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -36,7 +36,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 
@@ -123,7 +123,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 				if (index != Constants.DEFAULT_INT_NO_ENTRY_VALUE) {
 					final Double defaultSize = GamaPreferences.Displays.CORE_SIZE.getValue();
-					final ILocation point = agent.getLocation();
+					final GamaPoint point = agent.getLocation();
 
 					switch (SHAPES.get(defaultShape)) {
 						case 1:
@@ -152,7 +152,7 @@ public class AspectStatement extends AbstractStatementSequence {
 				}
 
 				final IShape ag2 = ag.copy(scope);
-				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
+				final DrawingAttributes attributes = new DrawingAttributes(ag2, agent, color, borderColor);
 				return g.drawShape(ag2.getInnerGeometry(), attributes);
 			} catch (final GamaRuntimeException e) {
 				// cf. Issue 1052: exceptions are not thrown, just displayed

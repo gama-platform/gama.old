@@ -23,6 +23,7 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
 import com.google.common.collect.Lists;
 
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -35,9 +36,9 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
@@ -380,7 +381,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		if (scope.getAgent() == null) { return new HashSet(); }
 		Set<IAgent> result = (Set<IAgent>) scope.getAgent().getAttribute("__externalAgents");
 		if (result == null) {
-			result = new HashSet();
+			result = new TLinkedHashSet();
 			scope.getAgent().setAttribute("__externalAgents", result);
 		}
 		return result;

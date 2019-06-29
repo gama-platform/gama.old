@@ -302,7 +302,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 			final CSVInfo stats = getInfo(scope, csvSeparator);
 			csvSeparator = csvSeparator == null ? "" + stats.delimiter : csvSeparator;
 			contentsType = contentsType == null ? stats.type : contentsType;
-			userSize = userSize == null ? new GamaPoint(stats.cols, stats.rows) : userSize;
+			userSize = userSize == null ? GamaPoint.create(stats.cols, stats.rows) : userSize;
 			// AD We take the decision for the modeler is he/she hasn't
 			// specified if the header must be read or not.
 			hasHeader = hasHeader == null ? stats.header : hasHeader;

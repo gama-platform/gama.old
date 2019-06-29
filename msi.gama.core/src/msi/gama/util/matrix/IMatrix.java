@@ -13,7 +13,7 @@ package msi.gama.util.matrix;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -54,7 +54,7 @@ import one.util.streamex.StreamEx;
 				doc = { @doc ("Returns the number of columns of the receiver matrix") }) })
 @SuppressWarnings ({ "rawtypes" })
 public interface IMatrix<T>
-		extends IModifiableContainer<ILocation, T, ILocation, T>, IAddressableContainer<ILocation, T, ILocation, T> {
+		extends IModifiableContainer<GamaPoint, T, GamaPoint, T>, IAddressableContainer<GamaPoint, T, GamaPoint, T> {
 
 	/**
 	 * Cols, rows instead of row cols because intended to work with xSize and ySize dimensions.
@@ -383,6 +383,6 @@ public interface IMatrix<T>
 	@Override
 	IMatrix copy(IScope scope) throws GamaRuntimeException;
 
-	IMatrix copy(IScope scope, ILocation preferredSize, boolean copy);
+	IMatrix copy(IScope scope, GamaPoint preferredSize, boolean copy);
 
 }

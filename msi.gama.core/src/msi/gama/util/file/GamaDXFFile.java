@@ -131,18 +131,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	public IShape manageObj(final IScope scope, final DXFSolid obj) {
 		if (obj == null) { return null; }
 		final IList list = GamaListFactory.create(Types.POINT);
-		list.add(new GamaPoint(obj.getPoint1().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getPoint1().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getPoint1().getZ() * (unit == null ? 1 : unit)));
-		list.add(new GamaPoint(obj.getPoint2().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getPoint2().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getPoint2().getZ() * (unit == null ? 1 : unit)));
-		list.add(new GamaPoint(obj.getPoint3().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getPoint3().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getPoint3().getZ() * (unit == null ? 1 : unit)));
-		list.add(new GamaPoint(obj.getPoint4().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getPoint4().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getPoint4().getZ() * (unit == null ? 1 : unit)));
+		list.add(GamaPoint.create(obj.getPoint1().getX() * (unit == null ? 1 : unit) - x_t, obj.getPoint1().getY() * (unit == null ? 1 : unit) - y_t, obj.getPoint1().getZ() * (unit == null ? 1 : unit)));
+		list.add(GamaPoint.create(obj.getPoint2().getX() * (unit == null ? 1 : unit) - x_t, obj.getPoint2().getY() * (unit == null ? 1 : unit) - y_t, obj.getPoint2().getZ() * (unit == null ? 1 : unit)));
+		list.add(GamaPoint.create(obj.getPoint3().getX() * (unit == null ? 1 : unit) - x_t, obj.getPoint3().getY() * (unit == null ? 1 : unit) - y_t, obj.getPoint3().getZ() * (unit == null ? 1 : unit)));
+		list.add(GamaPoint.create(obj.getPoint4().getX() * (unit == null ? 1 : unit) - x_t, obj.getPoint4().getY() * (unit == null ? 1 : unit) - y_t, obj.getPoint4().getZ() * (unit == null ? 1 : unit)));
 
 		final IShape shape = createPolygone(scope, list);
 
@@ -151,33 +143,23 @@ public class GamaDXFFile extends GamaGeometryFile {
 
 	public IShape manageObj(final IScope scope, final DXFCircle obj) {
 		if (obj == null) { return null; }
-		final GamaPoint pt = new GamaPoint(obj.getCenterPoint().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getCenterPoint().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getCenterPoint().getZ() * (unit == null ? 1 : unit));
+		final GamaPoint pt = GamaPoint.create(obj.getCenterPoint().getX() * (unit == null ? 1 : unit) - x_t, obj.getCenterPoint().getY() * (unit == null ? 1 : unit) - y_t, obj.getCenterPoint().getZ() * (unit == null ? 1 : unit));
 		return createCircle(scope, pt, obj.getRadius() * (unit == null ? 1 : unit));
 	}
 
 	public IShape manageObj(final IScope scope, final DXFLine obj) {
 		if (obj == null) { return null; }
 		final IList list = GamaListFactory.create(Types.POINT);
-		list.add(new GamaPoint(obj.getStartPoint().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getStartPoint().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getStartPoint().getZ() * (unit == null ? 1 : unit)));
-		list.add(new GamaPoint(obj.getEndPoint().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getEndPoint().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getEndPoint().getZ() * (unit == null ? 1 : unit)));
+		list.add(GamaPoint.create(obj.getStartPoint().getX() * (unit == null ? 1 : unit) - x_t, obj.getStartPoint().getY() * (unit == null ? 1 : unit) - y_t, obj.getStartPoint().getZ() * (unit == null ? 1 : unit)));
+		list.add(GamaPoint.create(obj.getEndPoint().getX() * (unit == null ? 1 : unit) - x_t, obj.getEndPoint().getY() * (unit == null ? 1 : unit) - y_t, obj.getEndPoint().getZ() * (unit == null ? 1 : unit)));
 		return createPolyline(scope, list);
 	}
 
 	public IShape manageObj(final IScope scope, final DXFArc obj) {
 		if (obj == null) { return null; }
 		final IList list = GamaListFactory.create(Types.POINT);
-		list.add(new GamaPoint(obj.getStartPoint().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getStartPoint().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getStartPoint().getZ() * (unit == null ? 1 : unit)));
-		list.add(new GamaPoint(obj.getEndPoint().getX() * (unit == null ? 1 : unit) - x_t,
-				obj.getEndPoint().getY() * (unit == null ? 1 : unit) - y_t,
-				obj.getEndPoint().getZ() * (unit == null ? 1 : unit)));
+		list.add(GamaPoint.create(obj.getStartPoint().getX() * (unit == null ? 1 : unit) - x_t, obj.getStartPoint().getY() * (unit == null ? 1 : unit) - y_t, obj.getStartPoint().getZ() * (unit == null ? 1 : unit)));
+		list.add(GamaPoint.create(obj.getEndPoint().getX() * (unit == null ? 1 : unit) - x_t, obj.getEndPoint().getY() * (unit == null ? 1 : unit) - y_t, obj.getEndPoint().getZ() * (unit == null ? 1 : unit)));
 		return createPolyline(scope, list);
 	}
 
@@ -187,8 +169,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 		final Iterator it = obj.getVertexIterator();
 		while (it.hasNext()) {
 			final DXFVertex vertex = (DXFVertex) it.next();
-			list.add(new GamaPoint(vertex.getX() * (unit == null ? 1 : unit) - x_t,
-					vertex.getY() * (unit == null ? 1 : unit) - y_t, vertex.getZ() * (unit == null ? 1 : unit)));
+			list.add(GamaPoint.create(vertex.getX() * (unit == null ? 1 : unit) - x_t, vertex.getY() * (unit == null ? 1 : unit) - y_t, vertex.getZ() * (unit == null ? 1 : unit)));
 		}
 		list = Containers.remove_duplicates(scope, list);
 		final GamaPoint pt = (GamaPoint) list.get(list.size() - 1);
@@ -220,8 +201,8 @@ public class GamaDXFFile extends GamaGeometryFile {
 		final double ymax = (doc.getBounds().getMaximumY() - doc.getBounds().getMinimumY()) * (unit == null ? 1 : unit);
 
 		final IShape env = GamaGeometryType.buildPolygon(
-				GamaListFactory.createWithoutCasting(Types.POINT, new GamaPoint(0, 0), new GamaPoint(xmax, 0),
-						new GamaPoint(xmax, ymax), new GamaPoint(0, ymax), new GamaPoint(0, 0)));
+				GamaListFactory.createWithoutCasting(Types.POINT, GamaPoint.create(0, 0), GamaPoint.create(xmax, 0),
+						GamaPoint.create(xmax, ymax), GamaPoint.create(0, ymax), GamaPoint.create(0, 0)));
 		final Iterator it = doc.getDXFLayerIterator();
 		final List<IShape> entities = new ArrayList<IShape>();
 		while (it.hasNext()) {

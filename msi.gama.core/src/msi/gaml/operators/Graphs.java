@@ -34,7 +34,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
@@ -167,7 +167,7 @@ public class Graphs {
 				return nb == 2;
 			}
 
-			final Set<ILocation> cp = new HashSet<>();
+			final Set<GamaPoint> cp = new HashSet<>();
 			final GamaPoint[] lp1 = GeometryUtils.getPointsOf(p1);
 			for (final GamaPoint pt : GeometryUtils.getPointsOf(p2)) {
 				if (ArrayUtils.contains(lp1, pt)) {

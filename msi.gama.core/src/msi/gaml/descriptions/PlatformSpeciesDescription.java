@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.PlatformSpeciesDescription.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.descriptions.PlatformSpeciesDescription.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -60,8 +60,8 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 				PlatformSpeciesDescription.this, NAME, key);
 		AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(key, entry.getTitle());
 		final IGamaHelper<?> get = (scope, agent, skill, values) -> GamaPreferences.get(key).getValue();
-		final IGamaHelper<?> set = (scope, agent, skill, values) -> {
-			GamaPreferences.get(key).setValue(scope, values[0]);
+		final IGamaHelper<?> set = (scope, agent, skill, val) -> {
+			GamaPreferences.get(key).setValue(scope, val);
 			return this;
 		};
 		final IGamaHelper<?> init = (scope, agent, skill, values) -> GamaPreferences.get(key).getValue();

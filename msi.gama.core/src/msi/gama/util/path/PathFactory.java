@@ -15,7 +15,7 @@ import static msi.gama.common.geometry.GeometryUtils.getLastPointOf;
 
 
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
@@ -35,7 +35,7 @@ public class PathFactory {
 			final IList<? extends V> nodes) {
 		if (nodes.isEmpty() && g instanceof GamaSpatialGraph) {
 			return (GamaPath) new GamaSpatialPath((GamaSpatialGraph) g, (IList<IShape>) nodes);
-		} else if (nodes.get(0) instanceof ILocation || g instanceof GamaSpatialGraph) {
+		} else if (nodes.get(0) instanceof GamaPoint || g instanceof GamaSpatialGraph) {
 			return (GamaPath) new GamaSpatialPath((GamaSpatialGraph) g, (IList<IShape>) nodes);
 		} else {
 			return new GamaPath<>(g, nodes);

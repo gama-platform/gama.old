@@ -9,15 +9,12 @@ import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.AbstractAgent;
-import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -32,31 +29,34 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	ArrayList<AgentAttribute> agtAttr;
 	ReferenceToAgent attributeValue;
-	
-	public ReferenceAgent(IAgent _agt, String agtAttrName, IAgent agtAttrValue) {
-	//	super(null,-1);
-		agtAttr = new ArrayList<AgentAttribute>();
-		
-		if(_agt != null && agtAttrName != null) {
+
+	public ReferenceAgent(final IAgent _agt, final String agtAttrName, final IAgent agtAttrValue) {
+		// super(null,-1);
+		agtAttr = new ArrayList<>();
+
+		if (_agt != null && agtAttrName != null) {
 			agtAttr.add(new AgentAttribute(_agt, agtAttrName));
 		}
 		attributeValue = new ReferenceToAgent(agtAttrValue);
 	}
-	
-	public ReferenceAgent(IAgent refAgt, String attrName, ReferenceToAgent refAttrValue) {
-	//	super(null,-1);
 
-		agtAttr = new ArrayList<AgentAttribute>();
-		if(refAgt != null && attrName != null) {
+	public ReferenceAgent(final IAgent refAgt, final String attrName, final ReferenceToAgent refAttrValue) {
+		// super(null,-1);
+
+		agtAttr = new ArrayList<>();
+		if (refAgt != null && attrName != null) {
 			agtAttr.add(new AgentAttribute(refAgt, attrName));
 		}
 		attributeValue = refAttrValue;
 	}
 
-	public ReferenceToAgent getAttributeValue() {return attributeValue;}
+	public ReferenceToAgent getAttributeValue() {
+		return attributeValue;
+	}
 
-	public Object constructReferencedObject(SimulationAgent sim) {
-		return getAttributeValue().getReferencedAgent(sim);	
+	@Override
+	public Object constructReferencedObject(final SimulationAgent sim) {
+		return getAttributeValue().getReferencedAgent(sim);
 	}
 
 	@Override
@@ -64,27 +64,29 @@ public class ReferenceAgent implements IReference, IAgent {
 		return agtAttr;
 	}
 
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        else
-        	return false;
-    }
+	@Override
+	public boolean equals(final Object o) {
+		if (o == this) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	@Override
-	public IShape copy(IScope scope) {
+	public IShape copy(final IScope scope) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean covers(IShape g) {
+	public boolean covers(final IShape g) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean crosses(IShape g) {
+	public boolean crosses(final IShape g) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -92,17 +94,17 @@ public class ReferenceAgent implements IReference, IAgent {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public double euclidianDistanceTo(ILocation g) {
+	public double euclidianDistanceTo(final GamaPoint g) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double euclidianDistanceTo(IShape g) {
+	public double euclidianDistanceTo(final IShape g) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -132,7 +134,7 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public boolean intersects(IShape g) {
+	public boolean intersects(final IShape g) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -150,21 +152,21 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public void setAgent(IAgent agent) {
+	public void setAgent(final IAgent agent) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void setInnerGeometry(Geometry intersection) {
+	public void setInnerGeometry(final Geometry intersection) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void setDepth(double depth) {
+	public void setDepth(final double depth) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -210,7 +212,7 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public GamaShape getExteriorRing(IScope scope) {
+	public GamaShape getExteriorRing(final IScope scope) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -240,7 +242,7 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public IList<? extends ILocation> getPoints() {
+	public IList<? extends GamaPoint> getPoints() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -252,13 +254,13 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String serialize(boolean includingBuiltIn) {
+	public String serialize(final boolean includingBuiltIn) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -276,49 +278,49 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public Object getAttribute(String key) {
+	public Object getAttribute(final String key) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setAttribute(String key, Object value) {
+	public void setAttribute(final String key, final Object value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public boolean hasAttribute(String key) {
+	public boolean hasAttribute(final String key) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public int compareTo(IAgent o) {
+	public int compareTo(final IAgent o) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean init(IScope scope) throws GamaRuntimeException {
+	public boolean init(final IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean step(IScope scope) throws GamaRuntimeException {
+	public boolean step(final IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Object get(IScope scope, String index) throws GamaRuntimeException {
+	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Object getFromIndicesList(IScope scope, IList<String> indices) throws GamaRuntimeException {
+	public Object getFromIndicesList(final IScope scope, final IList<String> indices) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -336,9 +338,9 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public void setPeers(IList<IAgent> peers) {
+	public void setPeers(final IList<IAgent> peers) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -354,21 +356,22 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public void setName(String name) {
+	public void setName(final String name) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public ILocation getLocation() {
+	public GamaPoint getLocation() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setLocation(ILocation l) {
+	public void setLocation(final GamaPoint l) {
 		// TODO Auto-generated method stub
-		
+		return;
+
 	}
 
 	@Override
@@ -378,9 +381,9 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public void setGeometry(IShape newGeometry) {
+	public void setGeometry(final IShape newGeometry) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -396,21 +399,21 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public void setHost(IMacroAgent macroAgent) {
+	public void setHost(final IMacroAgent macroAgent) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void schedule(IScope scope) {
+	public void schedule(final IScope scope) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void setExtraAttributes(Map<String, Object> map) {
+	public void setExtraAttributes(final Map<String, Object> map) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -438,21 +441,21 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public boolean isInstanceOf(ISpecies s, boolean direct) {
+	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException {
+	public Object getDirectVarValue(final IScope scope, final String s) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException {
+	public void setDirectVarValue(final IScope scope, final String s, final Object v) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -468,26 +471,26 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public boolean isInstanceOf(String skill, boolean direct) {
+	public boolean isInstanceOf(final String skill, final boolean direct) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public IPopulation<? extends IAgent> getPopulationFor(ISpecies microSpecies) {
+	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies microSpecies) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IPopulation<? extends IAgent> getPopulationFor(String speciesName) {
+	public IPopulation<? extends IAgent> getPopulationFor(final String speciesName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void updateWith(IScope s, SavedAgent sa) {
+	public void updateWith(final IScope s, final SavedAgent sa) {
 		// TODO Auto-generated method stub
-		
-	}	
+
+	}
 }

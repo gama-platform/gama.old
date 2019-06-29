@@ -319,7 +319,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			// final String statementKeyword = c.getDescription().getKeyword();
 			_rules.add((RuleStatement) c);
 			_rulesNumber++;
-		}else if (c instanceof CopingStatement) {
+		} else if (c instanceof CopingStatement) {
 			// final String statementKeyword = c.getDescription().getKeyword();
 			_coping.add((CopingStatement) c);
 			_copingNumber++;
@@ -676,8 +676,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 		} else {
 			final List<MentalState> desireBaseTest = GamaListFactory.create();
-			for (final MentalState tempDesire : (GamaList<MentalState>) scope.getSimulation().getRandomGenerator()
-					.shuffle(getBase(scope, DESIRE_BASE))) {
+			for (final MentalState tempDesire : (GamaList<MentalState>) scope.getRandom()
+					.shuffleInPlace(getBase(scope, DESIRE_BASE))) {
 				if (listPlans != null) {
 					for (final BDIPlan tempPlan : listPlans) {
 						if (tempPlan == null) {
@@ -827,8 +827,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			} else {
 				final List<MentalState> obligationBaseTest = GamaListFactory.create();
-				for (final MentalState tempObligation : (GamaList<MentalState>) scope.getSimulation()
-						.getRandomGenerator().shuffle(getBase(scope, OBLIGATION_BASE))) {
+				for (final MentalState tempObligation : (GamaList<MentalState>) scope.getRandom()
+						.shuffleInPlace(getBase(scope, OBLIGATION_BASE))) {
 					for (final Norm tempNorm : listNorm) {
 						if (tempNorm == null) {
 							continue;
@@ -914,8 +914,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		double highestPriority = Double.MIN_VALUE;
 		final List<BDIPlan> temp_plan = new ArrayList<>();
 		final IList priorities = GamaListFactory.create(Types.FLOAT);
-		for (final Object BDIPlanstatement : scope.getSimulation().getRandomGenerator()
-				.shuffle(new ArrayList(_plans))) {
+		for (final Object BDIPlanstatement : scope.getRandom().shuffleInPlace(new ArrayList(_plans))) {
 			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
 			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
 					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
@@ -952,7 +951,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				for (final Object statement : temp_plan) {
 					if (((BDIPlan) statement).getPlanStatement().hasFacet(PRIORITY)) {
 						priorities.add(msi.gaml.operators.Cast.asFloat(scope,
-								(((BDIPlan) statement).getPlanStatement().getPriorityExpression().value(scope))));
+								((BDIPlan) statement).getPlanStatement().getPriorityExpression().value(scope)));
 					} else {
 						priorities.add(1.0);
 					}
@@ -990,7 +989,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			;
 		}
 
-		for (final Object Normstatement : scope.getSimulation().getRandomGenerator().shuffle(new ArrayList(_norms))) {
+		for (final Object Normstatement : scope.getRandom().shuffleInPlace(new ArrayList(_norms))) {
 			final NormStatement statement = ((Norm) Normstatement).getNormStatement();
 			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
 					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
@@ -1180,7 +1179,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	protected final List<SimpleBdiPlanStatement> listExecutablePlans(final IScope scope) {
 		final List<SimpleBdiPlanStatement> plans = new ArrayList<>();
-		for (final Object BDIPlanstatement : scope.getRandom().shuffle(new ArrayList(_plans))) {
+		for (final Object BDIPlanstatement : scope.getRandom().shuffleInPlace(new ArrayList(_plans))) {
 			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
 
 			if (statement.getContextExpression() != null
@@ -1202,7 +1201,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	protected final List<NormStatement> listExecutableNorms(final IScope scope) {
 		final List<NormStatement> norms = new ArrayList<>();
-		for (final Object Normstatement : scope.getRandom().shuffle(new ArrayList(_norms))) {
+		for (final Object Normstatement : scope.getRandom().shuffleInPlace(new ArrayList(_norms))) {
 			final NormStatement statement = ((Norm) Normstatement).getNormStatement();
 
 			if (statement.getContextExpression() != null
@@ -2616,7 +2615,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Predicate) (scope.hasArg("old_predicate") ? scope.getArg("old_predicate", PredicateType.id) : null);
 		boolean ok = true;
 		if (oldPredicate != null) {
-			ok = getBase(scope, BELIEF_BASE).remove(new MentalState("Belief",oldPredicate));
+			ok = getBase(scope, BELIEF_BASE).remove(new MentalState("Belief", oldPredicate));
 		} else {
 			ok = false;
 		}
@@ -2625,11 +2624,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (newPredicate != null) {
 			final MentalState temp = new MentalState("Belief", newPredicate);
 			// Predicate current_intention = currentIntention(scope);
-			if (getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(new MentalState("Intention",newPredicate))) {
+			if (getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)
+					.contains(new MentalState("Intention", newPredicate))) {
 				removeFromBase(scope, temp, DESIRE_BASE);
 				removeFromBase(scope, temp, INTENTION_BASE);
 			}
-			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(new MentalState("Desire",newPredicate))) {
+			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(new MentalState("Desire", newPredicate))) {
 				removeFromBase(scope, temp, DESIRE_BASE);
 			}
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {

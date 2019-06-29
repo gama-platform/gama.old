@@ -238,12 +238,21 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		return true;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void forEach(final BiConsumer<? super K, ? super V> action) {
-		forEachEntry((TObjectObjectProcedure<? super K, ? super V>) (k, v) -> {
-			action.accept(k, v);
-			return true;
-		});
+		final Object[] keys = _set;
+		final V[] values = _values;
+		final int[] inserts = _indicesByInsertOrder;
+		for (int i = 0; i <= _lastInsertOrderIndex; i++) {
+			final int index = inserts[i];
+			if (index == EMPTY) {
+				continue;
+			}
+			if (keys[index] != FREE && keys[index] != REMOVED) {
+				action.accept((K) keys[index], values[index]);
+			}
+		}
 	}
 
 	@Override

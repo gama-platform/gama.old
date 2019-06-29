@@ -181,7 +181,7 @@ public abstract class AbstractShader {
 	}
 
 	public GamaPoint getTranslation() {
-		return new GamaPoint(0, 0, 0);
+		return GamaPoint.create(0, 0, 0);
 	}
 
 	public boolean isOverlay() {

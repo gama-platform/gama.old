@@ -60,7 +60,7 @@ public class _SpatialEdge extends _Edge<IShape, IShape> {
 	private Object findVertexWithCoordinates(final Coordinate c) {
 		IShape vertex = ((GamaSpatialGraph) graph).getBuiltVertex(c);
 		if (vertex != null) { return vertex; }
-		vertex = new GamaPoint(c);
+		vertex = GamaPoint.create(c);
 		graph.addVertex(vertex);
 		((GamaSpatialGraph) graph).addBuiltVertex(vertex);
 		return vertex;
