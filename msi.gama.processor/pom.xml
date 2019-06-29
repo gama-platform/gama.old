@@ -107,7 +107,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.8.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -116,7 +116,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-compiler-plugin</artifactId>
-				<version>0.25.0</version>
+				<version>1.4.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -127,7 +127,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
-				<version>0.25.0</version>
+				<version>1.4.0</version>
 				<extensions>true</extensions>
 				<configuration>
 					<source>1.8</source>
@@ -139,19 +139,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<version>0.25.0</version>
-				<configuration>
-					<filters>
-						<filter>
-							<type>eclipse-plugin</type>
-							<id>org.eclipse.jdt.core</id>
-							<restrictTo>
-								<version>3.11.2.v20160128-0629</version>
-								<!--<version>3.4.0.v20150518-1201</version> -->
-							</restrictTo>
-						</filter>
-					</filters>
-				</configuration>
+				<version>1.4.0</version>
 			</plugin>
 		</plugins>
 	</build>
