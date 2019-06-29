@@ -8,7 +8,8 @@ before_install:
 notifications:
   email:
     recipients:
-    - my.gama.bot@gmail.com
+    - hqnghi@ctu.edu.vn
+    - alexis.drogoul@gmail.com
     on_success: change
     on_failure: always
 cache:
@@ -30,4 +31,4 @@ after_success:
 - bash ./travis/publish.sh
 branches:
   only:
-    - master
+    - GAMA_1.9
