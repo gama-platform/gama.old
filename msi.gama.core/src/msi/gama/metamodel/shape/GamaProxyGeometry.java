@@ -254,7 +254,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		final Geometry copy = (Geometry) getReferenceGeometry().getInnerGeometry().clone();
+		final Geometry copy = getReferenceGeometry().getInnerGeometry().copy();
 		translate(copy, getReferenceGeometry().getLocation(), getLocation());
 		return copy;
 	}

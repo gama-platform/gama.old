@@ -11,14 +11,13 @@
 package msi.gama.common.geometry;
 
 import static com.google.common.collect.Iterators.forArray;
-import static org.locationtech.jts.algorithm.CGAlgorithms.signedArea;
 import static msi.gama.common.geometry.GamaGeometryFactory.isRing;
+import static org.locationtech.jts.algorithm.CGAlgorithms.signedArea;
 
 import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.lang.ArrayUtils;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 
@@ -102,7 +101,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * Makes a complete copy of this sequence (incl. cloning the points themselves)
 	 */
 	@Override
-	public final GamaCoordinateSequence clone() {
+	public final GamaCoordinateSequence copy() {
 		return new GamaCoordinateSequence(true, points);
 	}
 
@@ -495,6 +494,12 @@ public class GamaCoordinateSequence implements ICoordinates {
 	@Override
 	public int hashCode() {
 		return Arrays.hashCode(points);
+	}
+
+	@SuppressWarnings ("deprecation")
+	@Override
+	public Object clone() {
+		return copy();
 	}
 
 }

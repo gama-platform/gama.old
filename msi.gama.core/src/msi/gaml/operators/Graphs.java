@@ -14,7 +14,6 @@ import static one.util.streamex.StreamEx.of;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -688,7 +687,7 @@ public class Graphs {
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
-		ci = new ConnectivityInspector((DirectedGraph) graph);
+		ci = new ConnectivityInspector(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			results.add(GamaListFactory.create(scope, graph.getGamlType().getContentType(), (Set) obj));
@@ -719,7 +718,7 @@ public class Graphs {
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
-		ci = new ConnectivityInspector((DirectedGraph) graph);
+		ci = new ConnectivityInspector(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			if (edge) {
@@ -797,10 +796,7 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
-		final Collection cliques = cls.getAllMaximalCliques();
-		for (final Object obj : cliques) {
-			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
-		}
+		cls.forEach((obj) -> results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj)));
 		return results;
 	}
 
@@ -824,12 +820,9 @@ public class Graphs {
 	public static IList<IList> getBiggestCliques(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
-
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
-		final Collection cliques = cls.getBiggestMaximalCliques();
-		for (final Object obj : cliques) {
-			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
-		}
+		cls.maximumIterator().forEachRemaining(
+				(obj) -> results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj)));
 		return results;
 	}
 

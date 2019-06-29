@@ -100,7 +100,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 */
 
 	public GamaShape(final IShape source, final Geometry geom, final boolean copyAttributes) {
-		this((Geometry) (geom == null ? source.getInnerGeometry().clone() : geom));
+		this(geom == null ? source.getInnerGeometry().copy() : geom);
 		if (copyAttributes) {
 			mixAttributes(source);
 		}
@@ -550,7 +550,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public GamaShape copy(final IScope scope) {
-		return new GamaShape(this, (Geometry) geometry.clone());
+		return new GamaShape(this, geometry.copy());
 	}
 
 	/**

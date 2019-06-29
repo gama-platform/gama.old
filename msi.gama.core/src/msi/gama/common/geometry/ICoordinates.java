@@ -2,11 +2,11 @@
  *
  * msi.gama.common.geometry.ICoordinates.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -18,28 +18,28 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * An interface used to visit pairs of coordinates in a sequence
-	 * 
+	 *
 	 * @author drogoul
 	 *
 	 */
 	@FunctionalInterface
-	public static interface PairVisitor {
-		public void process(GamaPoint p1, GamaPoint p2);
+	public interface PairVisitor {
+		void process(GamaPoint p1, GamaPoint p2);
 	}
 
 	/**
 	 * An interface used to visit points in a sequence, which accepts their ordinates and their index in the sequence
-	 * 
+	 *
 	 * @author drogoul
 	 *
 	 */
 	@FunctionalInterface
-	public static interface IndexedVisitor {
-		public void process(final int i, final double x, final double y, final double z);
+	public interface IndexedVisitor {
+		void process(final int i, final double x, final double y, final double z);
 	}
 
-	public static interface VertexVisitor {
-		public void process(final double... ordinates);
+	public interface VertexVisitor {
+		void process(final double... ordinates);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Returns the geometric center of this sequence of points
-	 * 
+	 *
 	 * @return a new point containing the ordinates of the center
 	 */
 	default GamaPoint getCenter() {
@@ -65,7 +65,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Computes the center of this sequence of points and fills the parameter with its ordinates
-	 * 
+	 *
 	 * @param other
 	 *            the result of the computation
 	 */
@@ -76,7 +76,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Returns the point at index i or null if i is greater than the sequence size or smaller than zero
-	 * 
+	 *
 	 * @param i
 	 * @return a point or null
 	 */
@@ -87,7 +87,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Returns a new sequence of points with all their y ordinate negated. The original sequence is left untouched
-	 * 
+	 *
 	 * @return a new sequence of points with all their y ordinate negated
 	 */
 	ICoordinates yNegated();
@@ -102,7 +102,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Visits the coordinates, passing the x, y, z ordinates of each coordinate and its index to the visitor
-	 * 
+	 *
 	 * @param v
 	 *            the visitor (cannot be null)
 	 * @param max
@@ -115,27 +115,17 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * Visits all the coordinates, passing the x, y, z ordinates of each coordinate to the visitor. The visit is done in
 	 * the clockwise order. In the case of a line string, the last point is not visited.
-	 * 
+	 *
 	 * @param v
 	 *            the visitor (cannot be null)
 	 */
 	void visitClockwise(VertexVisitor v);
-	//
-	// /**
-	// * Visits all the coordinates, passing the x, y, z ordinates of each coordinate to the visitor. The visit is done
-	// in
-	// * the counter-clockwise order. In the case of a line string, the first point is not visited.
-	// *
-	// * @param v
-	// * the visitor (cannot be null)
-	// */
-	// void visitCounterClockwise(VertexVisitor v);
 
 	/**
 	 * Visits all the coordinates, passing the x, -y, z ordinates of each coordinate to the visitor. The visit is done
 	 * in the counter-clockwise order (same as the clockwise order if y was not negated). In the case of a line string,
 	 * the first point is not visited.
-	 * 
+	 *
 	 * @param v
 	 *            the visitor (cannot be null)
 	 */
@@ -145,7 +135,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * Visits all the coordinates, passing the x, -y, z ordinates of each coordinate to the visitor. The visit is done
 	 * in the clockwise order (same as the counter-clockwise order if y was not negated). In the case of a line string,
 	 * the first point is not visited.
-	 * 
+	 *
 	 * @param v
 	 *            the visitor (cannot be null)
 	 */
@@ -153,7 +143,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Visits all the coordinates by pairs of adjacent coordinates (n, n+1)
-	 * 
+	 *
 	 * @param v
 	 *            the pair visitor (cannot be null)
 	 */
@@ -162,7 +152,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * Returns the normal to the sequence, with a direction of 1 (when clockwise is asked and the sequence is clockwise)
 	 * or -1
-	 * 
+	 *
 	 * @return the normal to the sequence of points, in clockwise or counter-clockwise direction
 	 */
 
@@ -175,7 +165,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * Computes the normal to this sequence, multiplying the resulting unit vector by a given factor, and fills the
 	 * third parameter with its ordinates
-	 * 
+	 *
 	 * @param clockwise
 	 *            Whether or not the sequence is expected to be clockwise
 	 * @param factor
@@ -187,14 +177,14 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Expands an existing envelope with this sequence of points
-	 * 
+	 *
 	 * @param envelope
 	 */
 	Envelope3D getEnvelopeInto(Envelope3D envelope);
 
 	/**
 	 * Returns a new envelope that contains all the points in the sequence
-	 * 
+	 *
 	 * @return a new Envelope3D containing all the points
 	 */
 	default Envelope3D getEnvelope() {
@@ -203,10 +193,10 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Compute the average z ordinate of this sequence of points
-	 * 
+	 *
 	 * @return the average z ordinate
 	 */
-	public double averageZ();
+	double averageZ();
 
 	/**
 	 * To prevent excessive garbage to be created, points can be replaced directly with this method. Note that the size
@@ -214,12 +204,12 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * greater than the size of the sequence). Allows to maintain 'working sequences' without having to create new ones
 	 * (be aware that if the same working sequence is used in different methods, it might create unexpected side
 	 * effects)
-	 * 
+	 *
 	 * @param points
 	 *            an Array of points
 	 * @return this
 	 */
-	public ICoordinates setTo(GamaPoint... points);
+	ICoordinates setTo(GamaPoint... points);
 
 	/**
 	 * To prevent excessive garbage to be created, points can be replaced directly with this method. Note that the size
@@ -227,17 +217,17 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * is greater than the size of the sequence). Allows to maintain 'working sequences' without having to create new
 	 * ones (be aware that if the same working sequence is used in different methods, it might create unexpected side
 	 * effects)
-	 * 
+	 *
 	 * @param points
 	 *            an Array of double x, y, z
 	 * @return this
 	 */
-	public ICoordinates setTo(double... ordinates);
+	ICoordinates setTo(double... ordinates);
 
 	/**
 	 * Equivalent to the setOrdinate(i, d) method but sets all the ordinates at once. No measure is taken for ensuring
 	 * that the sequence is still valid after this (i.e. clockwise and/or ring)
-	 * 
+	 *
 	 * @param i
 	 *            the index of the point to replace
 	 * @param x
@@ -247,47 +237,47 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * @param z
 	 *            z ordinate
 	 */
-	public void replaceWith(int i, double x, double y, double z);
+	void replaceWith(int i, double x, double y, double z);
 
 	/**
 	 * Returns the vector between the point considered as the origin of the sequence (i.e. at index 0) and the following
 	 * point in the sequence, normalized
-	 * 
+	 *
 	 * @return a point containing the vector
 	 */
 	GamaPoint directionBetweenLastPointAndOrigin();
 
 	/**
 	 * Applies a 3D rotation to the sequence of points
-	 * 
+	 *
 	 * @param rotation
 	 */
 	void applyRotation(Rotation3D rotation);
 
 	/**
 	 * Whether this sequence is horizontal or not (i.e. all the z ordinates are equal)
-	 * 
+	 *
 	 * @return true if all the z ordinates are equal, otherwise false
 	 */
 	boolean isHorizontal();
 
 	/**
 	 * Return the length of the sequence (i.e. the sum of all the segments)
-	 * 
+	 *
 	 * @return the length of the sequence
 	 */
 	double getLength();
 
 	/**
 	 * Sets all the z ordinates of the points to the given z ordinate
-	 * 
+	 *
 	 * @param elevation
 	 */
 	void setAllZ(double elevation);
 
 	/**
 	 * Returns whether or not all the points in this sequence are covered by the envelope in argument
-	 * 
+	 *
 	 * @param envelope3d
 	 *            an Envelope3D (cannot be null)
 	 * @return true or false if at least one point lies outside the envelope
@@ -296,18 +286,18 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Creates a sequence filled with {0,0,0} points of the given length
-	 * 
+	 *
 	 * @param length
 	 *            the length of the sequence
 	 * @return a new ICoordinates with the given length
 	 */
-	public static ICoordinates ofLength(final int length) {
+	static ICoordinates ofLength(final int length) {
 		return GamaGeometryFactory.COORDINATES_FACTORY.create(length, 3);
 	}
 
 	/**
 	 * Returns whether or not the sequence is ordered in the clockwise order
-	 * 
+	 *
 	 * @return true or false if CCW
 	 */
 	boolean isClockwise();
@@ -319,7 +309,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
 	 * Translates the points in the sequence by the ordinates provided as arguments
-	 * 
+	 *
 	 * @param i,
 	 *            j, k the ordinates of the translation
 	 */

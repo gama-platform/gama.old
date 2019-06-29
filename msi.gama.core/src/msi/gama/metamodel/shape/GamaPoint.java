@@ -44,7 +44,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul 11 oct. 07
  */
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes", "deprecation" })
 @vars ({ @variable (
 		name = IKeyword.X,
 		type = IType.FLOAT,
@@ -57,7 +57,7 @@ import msi.gaml.types.Types;
 				name = IKeyword.Z,
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the z ordinate of this point") }) })
-public class GamaPoint extends Coordinate implements IShape, Comparable, IEnvelope {
+public class GamaPoint extends Coordinate implements IShape, IEnvelope {
 
 	// FACTORY METHODS
 
@@ -246,28 +246,34 @@ public class GamaPoint extends Coordinate implements IShape, Comparable, IEnvelo
 		}
 	}
 
+	@Override
 	public void setX(final double xx) {
 		x = xx;
 	}
 
+	@Override
 	public void setY(final double yy) {
 		y = yy;
 	}
 
+	@Override
 	public void setZ(final double zz) {
 		z = Double.isNaN(zz) ? 0.0d : zz;
 	}
 
+	@Override
 	@getter ("x")
 	public double getX() {
 		return x;
 	}
 
+	@Override
 	@getter ("y")
 	public double getY() {
 		return y;
 	}
 
+	@Override
 	@getter ("z")
 	public double getZ() {
 		return z;
@@ -794,6 +800,15 @@ public class GamaPoint extends Coordinate implements IShape, Comparable, IEnvelo
 	public boolean covers(final IEnvelope bounds) {
 		if (bounds.isPoint()) { return this.equals(bounds.getLocation()); }
 		return false;
+	}
+
+	@Override
+	public int compareTo(final Coordinate other) {
+		final int result = super.compareTo(other);
+		if (result != 0 || Double.isNaN(z)) { return result; }
+		if (z < other.z) { return -1; }
+		if (z > other.z) { return 1; }
+		return 0;
 	}
 
 }

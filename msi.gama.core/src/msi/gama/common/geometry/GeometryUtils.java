@@ -10,13 +10,13 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import static org.locationtech.jts.algorithm.CGAlgorithms.distancePointLine;
 import static msi.gama.metamodel.shape.IShape.Type.LINESTRING;
 import static msi.gama.metamodel.shape.IShape.Type.MULTILINESTRING;
 import static msi.gama.metamodel.shape.IShape.Type.MULTIPOINT;
 import static msi.gama.metamodel.shape.IShape.Type.NULL;
 import static msi.gama.metamodel.shape.IShape.Type.POINT;
 import static msi.gama.metamodel.shape.IShape.Type.POLYGON;
+import static org.locationtech.jts.algorithm.CGAlgorithms.distancePointLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.geotools.geometry.jts.JTS;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateFilter;
 import org.locationtech.jts.geom.Envelope;
@@ -82,7 +81,7 @@ import msi.gaml.types.Types;
  * @since 14 dec. 2011
  *
  */
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes", "deprecation" })
 public class GeometryUtils {
 
 	private static List<IEnvelopeComputer> envelopeComputers = new ArrayList<>();

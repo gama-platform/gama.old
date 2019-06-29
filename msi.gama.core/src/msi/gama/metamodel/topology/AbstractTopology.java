@@ -17,12 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Ordering;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
+
+import com.google.common.collect.Ordering;
 
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -78,7 +79,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public List<Geometry> listToroidalGeometries(final Geometry geom) {
-		final Geometry copy = (Geometry) geom.clone();
+		final Geometry copy = geom.copy();
 		final List<Geometry> geoms = new ArrayList<>();
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(copy);
