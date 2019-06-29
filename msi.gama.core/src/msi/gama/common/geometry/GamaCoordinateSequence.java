@@ -32,6 +32,8 @@ import msi.gama.metamodel.shape.GamaPoint;
  *
  */
 
+@SuppressWarnings ("deprecation")
+
 public class GamaCoordinateSequence implements ICoordinates {
 
 	/**

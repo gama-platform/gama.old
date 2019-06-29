@@ -20,7 +20,6 @@ import static msi.gaml.operators.Spatial.Punctal._closest_point_to;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.jgrapht.Graph;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -44,7 +43,7 @@ import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings ({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked", "deprecation" })
 public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, IShape>> {
 
 	IList<IShape> segments;

@@ -19,9 +19,10 @@ import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
 
 import java.awt.Color;
 
-import com.jogamp.opengl.util.gl2.GLUT;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
+
+import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
@@ -49,6 +50,7 @@ import ummisco.gama.opengl.OpenGL;
  * @revised january 2017
  *
  */
+@SuppressWarnings ("deprecation")
 public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingAttributes>> {
 
 	private static final GamaColor DEFAULT_BORDER = new GamaColor(Color.black);

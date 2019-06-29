@@ -250,7 +250,7 @@ public class DynamicLineString extends LineString {
 	public void normalize() {}
 
 	@Override
-	public final Object clone() {
+	public final DynamicLineString copy() {
 		final DynamicLineString s = new DynamicLineString(getFactory(), source, target);
 		s.setUserData(getUserData());
 		return s;

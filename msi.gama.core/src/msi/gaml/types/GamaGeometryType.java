@@ -81,7 +81,7 @@ import msi.gaml.species.ISpecies;
 		kind = ISymbolKind.Variable.REGULAR,
 		concept = { IConcept.TYPE, IConcept.GEOMETRY },
 		doc = @doc ("Represents geometries, i.e. the support for the shapes of agents and all the spatial operations in GAMA."))
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes", "deprecation" })
 public class GamaGeometryType extends GamaType<IShape> {
 
 	public static WKTReader SHAPE_READER = new WKTReader();

@@ -114,7 +114,7 @@ public class LayerElement<T, ATT extends DrawingAttributes> implements IDisposab
 			if (obj instanceof BufferedImage) {
 				textures[order] = gl.getTextureId((BufferedImage) obj);
 			} else if (obj instanceof GamaImageFile) {
-				final DrawingAttributes fd = (DrawingAttributes) getAttributes();
+				final DrawingAttributes fd = getAttributes();
 				textures[order] = gl.getTextureId((GamaImageFile) obj, fd.useCache());
 			}
 		}

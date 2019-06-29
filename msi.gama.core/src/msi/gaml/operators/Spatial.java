@@ -25,10 +25,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import com.google.common.collect.Ordering;
 import org.locationtech.jts.algorithm.Centroid;
 import org.locationtech.jts.algorithm.distance.DistanceToPoint;
 import org.locationtech.jts.algorithm.distance.PointPairDistance;
@@ -54,6 +50,10 @@ import org.locationtech.jts.precision.EnhancedPrecisionOp;
 import org.locationtech.jts.precision.GeometryPrecisionReducer;
 import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.locationtech.jts.util.AssertionFailedException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.google.common.collect.Ordering;
 
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.AxisAngle;
@@ -119,7 +119,7 @@ import msi.gaml.types.Types;
  * All the spatial operators available in GAML. Regrouped by types of operators.
  *
  */
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes", "deprecation" })
 public abstract class Spatial {
 
 	/**

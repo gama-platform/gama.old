@@ -19,7 +19,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.IEnvelope;
 import msi.gama.metamodel.topology.ITopology;
@@ -98,7 +97,7 @@ public class MinimalAgent extends AbstractAgent {
 		} else {
 			// If the agent is different, we do not copy the attributes present in the shape passed as argument (see
 			// Issue #2053).
-			newLocalGeom = new GamaShape((Geometry) newGeometry.getInnerGeometry().clone());
+			newLocalGeom = new GamaShape(newGeometry.getInnerGeometry().copy());
 			newLocalGeom.copyShapeAttributesFrom(newGeometry);
 		}
 		topology.normalizeLocation(newGeomLocation, false);

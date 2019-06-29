@@ -21,6 +21,7 @@ import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
+@SuppressWarnings ("deprecation")
 public class UnboundedCoordinateSequence implements ICoordinates {
 
 	final static int INITIAL_SIZE = 1000;
