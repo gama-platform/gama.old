@@ -2,11 +2,11 @@
  *
  * msi.gama.common.geometry.GamaCoordinateSequenceFactory.java, in plugin msi.gama.core, is part of the source code of
  * the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -20,7 +20,7 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 
 	/**
 	 * Method create()
-	 * 
+	 *
 	 * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(org.locationtech.jts.geom.Coordinate[])
 	 */
 	@Override
@@ -36,19 +36,19 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 
 	/**
 	 * Method create()
-	 * 
+	 *
 	 * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(org.locationtech.jts.geom.CoordinateSequence)
 	 */
 	@Override
 	public ICoordinates create(final CoordinateSequence coordSeq) {
 		if (coordSeq.size() == 1) { return new UniqueCoordinateSequence(coordSeq.getCoordinate(0)); }
-		if (coordSeq instanceof GamaCoordinateSequence) { return ((GamaCoordinateSequence) coordSeq).clone(); }
+		if (coordSeq instanceof GamaCoordinateSequence) { return ((GamaCoordinateSequence) coordSeq).copy(); }
 		return new GamaCoordinateSequence(coordSeq.toCoordinateArray());
 	}
 
 	/**
 	 * Method create()
-	 * 
+	 *
 	 * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(int, int)
 	 */
 	@Override

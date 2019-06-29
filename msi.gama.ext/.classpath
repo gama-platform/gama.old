@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jts-core-1.16.1.jar" sourcepath="geotools 21.1/jts-jts-1.16.1.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/batik-transcoder-1.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-collections-3.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-dbcp-1.4.jar"/>
@@ -88,7 +89,6 @@
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-zonal-1.1.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-zonalstats-1.5.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/jtds-1.3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 21.1/jts-core-1.16.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/mysql-connector-java-5.1.46.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/postgresql-42.2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.1/si-quantity-0.7.1.jar"/>

@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
+import javax.measure.quantity.Length;
 
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Envelope;
@@ -68,7 +69,7 @@ public class ProjectionFactory {
 			} else {
 				if (crs != null && crs instanceof ProjectedCRS) { // Temporary fix of issue 766... a better solution
 					final CartesianCS ccs = ((ProjectedCRS) crs).getCoordinateSystem();
-					final Unit<> unitX = ccs.getAxis(0).getUnit();
+					final Unit<Length> unitX = (Unit<Length>) ccs.getAxis(0).getUnit();
 					if (unitX != null && !unitX.equals(SI.METRE)) {
 						unitConverter = unitX.getConverterTo(SI.METRE);
 					}

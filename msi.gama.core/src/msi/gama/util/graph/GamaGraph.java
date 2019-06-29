@@ -23,14 +23,19 @@ import java.util.function.Supplier;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
+import org.jgrapht.GraphType;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.cycle.CycleDetector;
+import org.jgrapht.alg.interfaces.HamiltonianCycleAlgorithm;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.alg.shortestpath.KShortestSimplePaths;
 import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
+import org.jgrapht.alg.tour.PalmerHamiltonianCycle;
 import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.AsUndirectedGraph;
+import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -925,9 +930,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				paths.add(GamaListFactory.create(scope, getGamlType().getContentType(), sp));
 			}
 		} else {
-			final KShortestPaths<V, E> kp = new KShortestPaths<>(getProxyGraph(), k);
+			final KShortestSimplePaths<V, E> kp = new KShortestSimplePaths<>(getProxyGraph(), k);
 
-			final List<GraphPath<V, E>> pathsJGT = kp.getPaths(source, target);
+			final List<GraphPath<V, E>> pathsJGT = kp.getPaths(source, target, k);
 			final IList<IList<E>> el = GamaListFactory.create(Types.LIST.of(getGamlType().getContentType()));
 			for (final GraphPath<V, E> p : pathsJGT) {
 				paths.add(GamaListFactory.create(scope, getGamlType().getContentType(), p.getEdgeList()));
@@ -1023,6 +1028,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
+	public boolean contains(final IScope scope, final Object o) {
+		// AD: see Issue 918
+		return /* containsVertex(o) || */containsEdge(o);
+	}
+
+	@Override
 	public E firstValue(final IScope scope) {
 		return listValue(scope, Types.NO_TYPE, false).firstValue(scope);
 	}
@@ -1071,9 +1082,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IPath getCircuit(final IScope scope) {
-		final SimpleWeightedGraph g = new SimpleWeightedGraph(getEdgeSupplier());
+		final SimpleWeightedGraph g = new SimpleWeightedGraph(null);
 		Graphs.addAllEdges(g, this, edgeSet());
-		final List vertices = HamiltonianCycle.getApproximateOptimalForCompleteGraph(g);
+		final HamiltonianCycleAlgorithm<V, E> h = new PalmerHamiltonianCycle<>();
+		final List vertices = h.getTour(g).getVertexList();
 		final int size = vertices.size();
 		final IList edges = GamaListFactory.create(getGamlType().getContentType());
 		for (int i = 0; i < size - 1; i++) {
@@ -1620,6 +1632,24 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				((IAgent) obj).dispose();
 			}
 		}
+	}
+
+	@Override
+	public V addVertex() {
+		if (getVertexSupplier() == null) { return null; }
+		final V v = getVertexSupplier().get();
+		if (addVertex(v)) { return v; }
+		return null;
+	}
+
+	@Override
+	public GraphType getType() {
+		return DefaultGraphType.directedMultigraph();
+	}
+
+	@Override
+	public Supplier<V> getVertexSupplier() {
+		return null;
 	}
 
 }

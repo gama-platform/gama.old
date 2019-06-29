@@ -67,7 +67,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public final UnboundedCoordinateSequence clone() {
+	public final UnboundedCoordinateSequence copy() {
 		return new UnboundedCoordinateSequence(true, nbPoints, points);
 	}
 
@@ -406,6 +406,12 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 			points[j].setLocation(temp);
 
 		}
+	}
+
+	@SuppressWarnings ("deprecation")
+	@Override
+	public Object clone() {
+		return copy();
 	}
 
 }

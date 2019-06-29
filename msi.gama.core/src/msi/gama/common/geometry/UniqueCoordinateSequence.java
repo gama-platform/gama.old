@@ -12,9 +12,10 @@ package msi.gama.common.geometry;
 
 import java.util.Iterator;
 
-import com.google.common.collect.Iterators;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
+
+import com.google.common.collect.Iterators;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
@@ -107,7 +108,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public final ICoordinates clone() {
+	public final ICoordinates copy() {
 		return new UniqueCoordinateSequence(GamaPoint.create((Coordinate) point));
 	}
 
@@ -207,22 +208,11 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	}
 
-	// @Override
-	// public void visitCounterClockwise(final VertexVisitor v) {
-	// v.process(point.x, point.y, point.z);
-	//
-	// }
-
 	@Override
 	public void visitYNegatedCounterClockwise(final VertexVisitor v) {
 		v.process(point.x, -point.y, point.z);
 
 	}
-	//
-	// @Override
-	// public void visitYNegatedClockwise(final VertexVisitor v) {
-	// v.process(point.x, -point.y, point.z);
-	// }
 
 	@Override
 	public boolean isClockwise() {
@@ -240,6 +230,12 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	@Override
 	public void ensureClockwiseness() {
 
+	}
+
+	@SuppressWarnings ("deprecation")
+	@Override
+	public Object clone() {
+		return copy();
 	}
 
 }

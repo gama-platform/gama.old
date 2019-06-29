@@ -1,28 +1,28 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.GraphObject.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.graph.GraphObject.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
-import org.jgrapht.WeightedGraph;
+import org.jgrapht.Graph;
 
 /**
  * Class GraphObject.
- * 
+ *
  * @author drogoul
  * @since 12 janv. 2014
- * 
+ *
  */
 public abstract class GraphObject<T extends IGraph<V, E>, V, E> {
 
 	protected final T graph;
-	protected double weight = WeightedGraph.DEFAULT_EDGE_WEIGHT;
+	protected double weight = Graph.DEFAULT_EDGE_WEIGHT;
 
 	GraphObject(final T g, final double w) {
 		graph = g;

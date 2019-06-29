@@ -27,7 +27,6 @@ import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterCha
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
@@ -109,7 +108,7 @@ public class LayeredDisplayData {
 	public static final ICoordinates KEYSTONE_IDENTITY =
 			ICoordinates.ofLength(4).setTo(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
 
-	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
+	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.copy();
 	private double zRotationAngleDelta = 0;
 	private double currentRotationAboutZ = 0;
 	private boolean isOpenGL;

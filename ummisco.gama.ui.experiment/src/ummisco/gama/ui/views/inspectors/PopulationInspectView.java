@@ -142,6 +142,7 @@ public class PopulationInspectView extends GamaViewPart
 		}
 
 	}
+
 	/**
 	 * Added to address Issue #2752
 	 */
@@ -150,7 +151,6 @@ public class PopulationInspectView extends GamaViewPart
 		super.init(site);
 		this.setTitleImage(GamaIcons.create("view.browser2").image());
 	}
-
 
 	final private AgentContentProvider provider = new AgentContentProvider();
 
@@ -588,7 +588,7 @@ public class PopulationInspectView extends GamaViewPart
 									rc = stringComparator.compare(v1, v2);
 									break;
 								case IType.POINT:
-									rc = ((GamaPoint) v1).compareTo(v2);
+									rc = ((GamaPoint) v1).compareTo((GamaPoint) v2);
 									break;
 								default:
 									rc = Cast.toGaml(v1).compareTo(Cast.toGaml(v2));
