@@ -25,6 +25,7 @@ import msi.gama.metamodel.shape.GamaPoint;
  * @author drogoul
  *
  */
+@SuppressWarnings ("deprecation")
 public class UniqueCoordinateSequence implements ICoordinates {
 
 	final GamaPoint point;

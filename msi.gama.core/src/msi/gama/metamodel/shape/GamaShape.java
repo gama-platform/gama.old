@@ -56,7 +56,7 @@ import msi.gaml.types.Types;
  *
  *
  */
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes", "deprecation" })
 public class GamaShape implements IShape /* , IContainer */ {
 
 	final static PointLocator pl = new PointLocator();

@@ -31,7 +31,7 @@ import msi.gaml.operators.fastmaths.FastMath;
  * @adapted from Apache maths3 library by A. Drogoul (2017), esp. to allow direct access to the fields and make the
  *          instances mutable in place (reducing the number of garbage during long rotation operations)
  */
-
+@SuppressWarnings ("deprecation")
 public class Rotation3D implements Serializable, Transformation3D {
 
 	public static class CenteredOn extends Rotation3D {

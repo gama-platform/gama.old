@@ -28,14 +28,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFilter;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFilter;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
@@ -50,6 +51,7 @@ import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.files.GamaObjFile;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
+@SuppressWarnings ("deprecation")
 public class GeometryCache {
 
 	private static final double PI_2 = 2f * Math.PI;

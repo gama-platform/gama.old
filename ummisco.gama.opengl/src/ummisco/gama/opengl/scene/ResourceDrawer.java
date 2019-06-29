@@ -20,6 +20,7 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 
+@SuppressWarnings ("deprecation")
 public class ResourceDrawer extends ObjectDrawer<LayerElement<GamaGeometryFile, DrawingAttributes>> {
 
 	public ResourceDrawer(final OpenGL gl) {

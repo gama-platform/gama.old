@@ -1,19 +1,18 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Points.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.Points.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -36,6 +35,7 @@ import msi.gaml.expressions.IExpression;
  * @todo Description
  *
  */
+@SuppressWarnings ("deprecation")
 public class Points {
 	public static class PointValidator implements IOperatorValidator {
 
@@ -236,9 +236,9 @@ public class Points {
 			value = "Returns a point with coordinate summing of the two operands.",
 			usages = @usage (
 					value = "if the left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.",
-					examples = {@example (
-									value = "{1, 2} + 4.5",
-									equals = "{5.5, 6.5,4.5}") }))
+					examples = { @example (
+							value = "{1, 2} + 4.5",
+							equals = "{5.5, 6.5,4.5}") }))
 	public static GamaPoint add(final GamaPoint p1, final Double p) {
 		if (p1 == null) { return GamaPoint.create(p, p, p); }
 		return GamaPoint.create(p1.x + p, p1.y + p, p1.z + p);
@@ -253,7 +253,7 @@ public class Points {
 			value = "Returns a point with coordinate summing of the two operands.",
 			examples = { @example (
 					value = "{1, 2} + 4",
-					equals = "{5.0, 6.0,4.0}")})
+					equals = "{5.0, 6.0,4.0}") })
 	public static GamaPoint add(final GamaPoint p1, final Integer p) {
 		if (p1 == null) { return GamaPoint.create(p, p, p); }
 		return GamaPoint.create(p1.x + p, p1.y + p, p1.z + p);
@@ -323,9 +323,9 @@ public class Points {
 			concept = {})
 	@doc (
 			value = "Returns a point with coordinate resulting from the first operand minus the second operand.",
-			examples = {
-					@example(value="{2.0,3.0,4.0} - 1", equals="{1.0,2.0,3.0}")
-			})
+			examples = { @example (
+					value = "{2.0,3.0,4.0} - 1",
+					equals = "{1.0,2.0,3.0}") })
 	@test ("{2.0,3.0,4.0} - 1 = {1.0,2.0,3.0}")
 	public static GamaPoint subtract(final GamaPoint p1, final Integer p) {
 		if (p1 == null) { return GamaPoint.create(-p, -p, -p); }
@@ -344,7 +344,8 @@ public class Points {
 			see = "round")
 	public static GamaPoint round(final GamaPoint v, final Integer precision) {
 		if (v == null) { return null; }
-		return GamaPoint.create(Maths.round(v.getX(), precision), Maths.round(v.getY(), precision), Maths.round(v.getZ(), precision));
+		return GamaPoint.create(Maths.round(v.getX(), precision), Maths.round(v.getY(), precision),
+				Maths.round(v.getZ(), precision));
 	}
 
 	@operator (
@@ -357,7 +358,7 @@ public class Points {
 					value = "{12345.78943,  12345.78943, 12345.78943} with_precision 2",
 					equals = "{12345.79,12345.79,12345.79}") },
 			see = "round")
-	@test("{12345.78943,  12345.78943, 12345.78943} with_precision 2 = {12345.79,12345.79,12345.79}")
+	@test ("{12345.78943,  12345.78943, 12345.78943} with_precision 2 = {12345.79,12345.79,12345.79}")
 	public static GamaPoint round(final GamaPoint v) {
 		if (v == null) { return null; }
 		return GamaPoint.create(Maths.round(v.getX()), Maths.round(v.getY()), Maths.round(v.getZ()));

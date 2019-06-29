@@ -10,12 +10,12 @@
  ********************************************************************************************************/
 package msi.gaml.skills;
 
-import static org.locationtech.jts.algorithm.CGAlgorithms.distancePointLine;
 import static msi.gama.common.geometry.GeometryUtils.getFirstPointOf;
 import static msi.gama.common.geometry.GeometryUtils.getLastPointOf;
 import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
 import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.ArrayUtils.indexOf;
+import static org.locationtech.jts.algorithm.CGAlgorithms.distancePointLine;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -118,7 +118,7 @@ import msi.gaml.types.Types;
 @skill (
 		name = IKeyword.MOVING_SKILL,
 		concept = { IConcept.SKILL, IConcept.AGENT_MOVEMENT })
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes", "deprecation" })
 public class MovingSkill extends Skill {
 	@getter (IKeyword.HEADING)
 	public Double getHeading(final IAgent agent) {
