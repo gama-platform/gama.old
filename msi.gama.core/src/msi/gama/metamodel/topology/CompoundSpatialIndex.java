@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;

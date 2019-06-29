@@ -18,11 +18,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Ordering;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.geom.util.AffineTransformation;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.prep.PreparedGeometry;
+import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
+import org.locationtech.jts.geom.util.AffineTransformation;
 
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TLinkedHashSet;

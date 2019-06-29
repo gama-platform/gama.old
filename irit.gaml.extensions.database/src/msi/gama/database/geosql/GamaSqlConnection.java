@@ -20,7 +20,7 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.FileUtils;

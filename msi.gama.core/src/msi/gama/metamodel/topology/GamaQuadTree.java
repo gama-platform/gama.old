@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.geometry.Envelope3D;

@@ -19,20 +19,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.WeightedGraph;
-import org.jgrapht.alg.ConnectivityInspector;
-import org.jgrapht.alg.CycleDetector;
-import org.jgrapht.alg.HamiltonianCycle;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.alg.shortestpath.KShortestPaths;
 import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
 import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.AsUndirectedGraph;
@@ -557,7 +552,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
-	public EdgeFactory getEdgeFactory() {
+	public Supplier<E> getEdgeSupplier() {
 		return null; // NOT USED
 	}
 
@@ -575,7 +570,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public double getEdgeWeight(final Object e) {
-		if (!containsEdge(e)) { return WeightedGraph.DEFAULT_EDGE_WEIGHT; }
+		if (!containsEdge(e)) { return Graph.DEFAULT_EDGE_WEIGHT; }
 		return getEdge(e).getWeight();
 	}
 
@@ -1076,7 +1071,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IPath getCircuit(final IScope scope) {
-		final SimpleWeightedGraph g = new SimpleWeightedGraph(getEdgeFactory());
+		final SimpleWeightedGraph g = new SimpleWeightedGraph(getEdgeSupplier());
 		Graphs.addAllEdges(g, this, edgeSet());
 		final List vertices = HamiltonianCycle.getApproximateOptimalForCompleteGraph(g);
 		final int size = vertices.size();
@@ -1091,11 +1086,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public Boolean getConnected() {
 		ConnectivityInspector c;
 		if (directed) {
-			c = new ConnectivityInspector((DirectedGraph) this);
+			c = new ConnectivityInspector(this);
 		} else {
-			c = new ConnectivityInspector((UndirectedGraph) this);
+			c = new ConnectivityInspector(this);
 		}
-		return c.isGraphConnected();
+		return c.isConnected();
 	}
 
 	@Override

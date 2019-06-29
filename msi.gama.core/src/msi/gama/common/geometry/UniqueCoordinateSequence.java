@@ -13,8 +13,8 @@ package msi.gama.common.geometry;
 import java.util.Iterator;
 
 import com.google.common.collect.Iterators;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
 

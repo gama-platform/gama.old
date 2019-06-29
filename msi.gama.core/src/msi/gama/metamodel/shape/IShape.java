@@ -12,8 +12,8 @@ package msi.gama.metamodel.shape;
 
 import java.util.Map;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTWriter;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.Envelope3D;

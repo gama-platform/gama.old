@@ -12,8 +12,8 @@ package simtools.gaml.extensions.traffic;
 
 import java.util.List;
 
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.algorithm.CGAlgorithms;
+import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;

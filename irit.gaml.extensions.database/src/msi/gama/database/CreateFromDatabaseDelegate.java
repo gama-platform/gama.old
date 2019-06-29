@@ -7,7 +7,7 @@ package msi.gama.database;
 import java.util.List;
 import java.util.Map;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.database.sql.SqlConnection;

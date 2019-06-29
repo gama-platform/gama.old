@@ -22,18 +22,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.alg.BronKerboschCliqueFinder;
-import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.clique.BronKerboschCliqueFinder;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
-
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;

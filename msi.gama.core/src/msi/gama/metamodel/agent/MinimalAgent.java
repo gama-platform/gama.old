@@ -13,7 +13,7 @@ package msi.gama.metamodel.agent;
 import java.util.Objects;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;

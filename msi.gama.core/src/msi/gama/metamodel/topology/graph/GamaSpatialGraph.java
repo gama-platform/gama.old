@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.jgrapht.Graphs;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.util.StringUtils;

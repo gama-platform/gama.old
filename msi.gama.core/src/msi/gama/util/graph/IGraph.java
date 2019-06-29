@@ -14,10 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.WeightedGraph;
-
 import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -66,10 +62,9 @@ import msi.gaml.types.IType;
 				of = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 				doc = { @doc ("Returns the list of vertices of the receiver graph") }) })
 @SuppressWarnings ({ "rawtypes" })
-public interface IGraph<Node, Edge>
-		extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, Graphs.GraphObjectToAdd>,
-		IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, WeightedGraph<Node, Edge>,
-		DirectedGraph<Node, Edge>, UndirectedGraph<Node, Edge>, IGraphEventProvider {
+public interface IGraph<Node, Edge> extends
+		IModifiableContainer<Node, Edge, GamaPair<Node, Node>, Graphs.GraphObjectToAdd>, org.jgrapht.Graph<Node, Edge>,
+		IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, IGraphEventProvider {
 
 	double getVertexWeight(final Object v);
 

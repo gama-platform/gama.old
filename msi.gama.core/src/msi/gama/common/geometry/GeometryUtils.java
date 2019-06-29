@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import static com.vividsolutions.jts.algorithm.CGAlgorithms.distancePointLine;
+import static org.locationtech.jts.algorithm.CGAlgorithms.distancePointLine;
 import static msi.gama.metamodel.shape.IShape.Type.LINESTRING;
 import static msi.gama.metamodel.shape.IShape.Type.MULTILINESTRING;
 import static msi.gama.metamodel.shape.IShape.Type.MULTIPOINT;
@@ -27,30 +27,30 @@ import java.util.function.Consumer;
 
 import org.geotools.geometry.jts.JTS;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFilter;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.io.WKTWriter;
-import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
-import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
-import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
-import com.vividsolutions.jts.triangulate.ConstraintEnforcementException;
-import com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder;
-import com.vividsolutions.jts.triangulate.VoronoiDiagramBuilder;
-import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateFilter;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFilter;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.locationtech.jts.geom.prep.PreparedGeometry;
+import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
+import org.locationtech.jts.io.WKTWriter;
+import org.locationtech.jts.precision.GeometryPrecisionReducer;
+import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
+import org.locationtech.jts.triangulate.ConformingDelaunayTriangulationBuilder;
+import org.locationtech.jts.triangulate.ConstraintEnforcementException;
+import org.locationtech.jts.triangulate.DelaunayTriangulationBuilder;
+import org.locationtech.jts.triangulate.VoronoiDiagramBuilder;
+import org.locationtech.jts.triangulate.quadedge.LocateFailureException;
 
 import msi.gama.common.interfaces.IEnvelopeComputer;
 import msi.gama.common.util.RandomUtils;

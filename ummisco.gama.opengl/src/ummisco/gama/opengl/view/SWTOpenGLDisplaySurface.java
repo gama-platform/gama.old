@@ -42,7 +42,7 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.GLBuffers;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.geometry.Envelope3D;

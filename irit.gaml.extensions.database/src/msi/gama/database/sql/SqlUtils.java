@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;

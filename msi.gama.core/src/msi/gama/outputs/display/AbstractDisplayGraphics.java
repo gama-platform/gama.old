@@ -12,7 +12,7 @@ package msi.gama.outputs.display;
 
 import java.awt.geom.Rectangle2D;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;

@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -97,7 +97,7 @@ public class AmorphousTopology implements ITopology {
 
 	/**
 	 * @see msi.gama.environment.ITopology#updateAgent(msi.gama.interfaces.IAgent, boolean, msi.gama.util.GamaPoint,
-	 *      com.vividsolutions.jts.geom.Envelope)
+	 *      org.locationtech.jts.geom.Envelope)
 	 */
 	// @Override
 	// public void updateAgent(final IAgent agent, final boolean

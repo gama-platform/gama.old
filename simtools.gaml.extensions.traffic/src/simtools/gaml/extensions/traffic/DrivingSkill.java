@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
