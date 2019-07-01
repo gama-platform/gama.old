@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.VariableExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.VariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -59,7 +59,8 @@ public abstract class VariableExpression extends AbstractExpression implements I
 
 	@Override
 	public boolean isConst() {
-		return false;
+		if (type.isContainer()) { return false; }
+		return isNotModifiable;
 	}
 
 	public IDescription getDefinitionDescription() {
@@ -84,7 +85,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 
 	/**
 	 * Method collectPlugins()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override
