@@ -21,6 +21,7 @@ import ummisco.gama.opengl.renderer.shaders.AbstractPostprocessingShader;
 import ummisco.gama.opengl.renderer.shaders.AbstractShader;
 import ummisco.gama.opengl.renderer.shaders.FrameBufferObject;
 import ummisco.gama.opengl.renderer.shaders.KeystoneShaderProgram;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 public class KeystoneHelper extends AbstractRendererHelper {
 
@@ -47,6 +48,14 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	public KeystoneHelper(final IOpenGLRenderer r) {
 		super(r);
+	}
+
+	int getViewWidth() {
+		return PlatformHelper.scaleDownIfMac(getRenderer().getViewWidth());
+	}
+
+	int getViewHeight() {
+		return PlatformHelper.scaleDownIfMac(getRenderer().getViewHeight());
 	}
 
 	@Override
@@ -89,12 +98,13 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		}
 	}
 
+	@SuppressWarnings ("restriction")
 	public void beginRenderToTexture() {
 		final GL2 gl = getGL();
 		gl.glClearColor(0, 0, 0, 1.0f);
 		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		if (fboScene == null) {
-			fboScene = new FrameBufferObject(gl, getRenderer().getDisplayWidth(), getRenderer().getDisplayHeight());
+			fboScene = new FrameBufferObject(gl, getViewWidth(), getViewHeight());
 		}
 		// redirect the rendering to the fbo_scene (will be rendered later, as a texture)
 		fboScene.bindFrameBuffer();
@@ -116,8 +126,8 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		final GL2 gl = getGL();
 
 		//
-		final int displayWidthInPixels = getRenderer().getViewWidth();
-		final int displayHeightInPixels = getRenderer().getViewHeight();
+		final int displayWidthInPixels = getViewWidth();
+		final int displayHeightInPixels = getViewHeight();
 		final double pixelWidthIn01 = 1d / displayWidthInPixels;
 		final double pixelHeightIn01 = 1d / displayHeightInPixels;
 		final double[] worldCoords = getOpenGL().getPixelWidthAndHeightOfWorld();
@@ -303,14 +313,14 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	}
 
 	public int cornerSelected(final GamaPoint mouse) {
-		if (mouse.x < getRenderer().getViewWidth() / 2) {
-			if (mouse.y < getRenderer().getViewHeight() / 2) {
+		if (mouse.x < getViewWidth() / 2) {
+			if (mouse.y < getViewHeight() / 2) {
 				return 1;
 			} else {
 				return 0;
 			}
 		} else {
-			if (mouse.y < getRenderer().getViewHeight() / 2) {
+			if (mouse.y < getViewHeight() / 2) {
 				return 2;
 			} else {
 				return 3;
@@ -319,14 +329,14 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	}
 
 	public int cornerHovered(final GamaPoint mouse) {
-		if (mouse.x < getRenderer().getViewWidth() / 2) {
-			if (mouse.y < getRenderer().getViewHeight() / 2) {
+		if (mouse.x < getViewWidth() / 2) {
+			if (mouse.y < getViewHeight() / 2) {
 				return 1;
 			} else {
 				return 0;
 			}
 		} else {
-			if (mouse.y < getRenderer().getViewHeight() / 2) {
+			if (mouse.y < getViewHeight() / 2) {
 				return 2;
 			} else {
 				return 3;
