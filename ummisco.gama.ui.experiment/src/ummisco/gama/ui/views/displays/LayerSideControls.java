@@ -42,6 +42,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
@@ -221,8 +222,10 @@ public class LayerSideControls {
 					preset.getParam().setValue(scope, "Choose...");
 					preset.forceUpdateValueAsynchronously();
 					break;
+
 				default:
 					;
+					copyCameraAndKeystoneDefinition(scope, data);
 			}
 		});
 		final Label l = new Label(contents, SWT.None);
@@ -236,12 +239,7 @@ public class LayerSideControls {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				String text = IKeyword.CAMERA_POS + ": "
-						+ cameraPos.getCurrentValue().yNegated().withPrecision(4).serialize(false);
-				text += " " + IKeyword.CAMERA_LOOK_POS + ": "
-						+ cameraTarget.getCurrentValue().yNegated().withPrecision(4).serialize(false);
-				text += " " + IKeyword.CAMERA_UP_VECTOR + ": "
-						+ cameraUp.getCurrentValue().withPrecision(4).serialize(false);
+				final String text = cameraDefinitionToCopy();
 				WorkbenchHelper.copy(text);
 			}
 
@@ -277,6 +275,7 @@ public class LayerSideControls {
 						point[k].getParam().setValue(scope, data.getKeystone().at(k));
 						point[k].forceUpdateValueAsynchronously();
 					}
+					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				default:
 					;
@@ -294,9 +293,7 @@ public class LayerSideControls {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final IList<GamaPoint> pp =
-						GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
-				final String text = IKeyword.KEYSTONE + ": " + pp.serialize(false);
+				final String text = keystoneDefinitionToCopy(scope, data);
 				WorkbenchHelper.copy(text);
 			}
 
@@ -506,5 +503,26 @@ public class LayerSideControls {
 
 		}
 
+	}
+
+	private void copyCameraAndKeystoneDefinition(final IScope scope, final LayeredDisplayData data) {
+		final String toCopy = cameraDefinitionToCopy() + " " + Strings.LN
+				+ (data.isKeystoneDefined() ? keystoneDefinitionToCopy(scope, data) : "");
+		WorkbenchHelper.copy(toCopy);
+	}
+
+	private String cameraDefinitionToCopy() {
+		String text =
+				IKeyword.CAMERA_POS + ": " + cameraPos.getCurrentValue().yNegated().withPrecision(4).serialize(false);
+		text += " " + IKeyword.CAMERA_LOOK_POS + ": "
+				+ cameraTarget.getCurrentValue().yNegated().withPrecision(4).serialize(false);
+		text += " " + IKeyword.CAMERA_UP_VECTOR + ": " + cameraUp.getCurrentValue().withPrecision(4).serialize(false);
+		return text;
+	}
+
+	private String keystoneDefinitionToCopy(final IScope scope, final LayeredDisplayData data) {
+		final IList<GamaPoint> pp = GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
+		final String text = IKeyword.KEYSTONE + ": " + pp.serialize(false);
+		return text;
 	}
 }
