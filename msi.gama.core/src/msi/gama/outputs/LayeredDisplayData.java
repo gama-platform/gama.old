@@ -52,6 +52,7 @@ public class LayeredDisplayData {
 		HIGHLIGHT,
 		ZOOM,
 		KEYSTONE,
+		ANTIALIAS,
 		ROTATION;
 	}
 
@@ -555,6 +556,7 @@ public class LayeredDisplayData {
 
 	public void setAntialias(final boolean a) {
 		isAntialiasing = a;
+		notifyListeners(Changes.ANTIALIAS, a);
 	}
 
 	/**

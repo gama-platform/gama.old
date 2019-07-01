@@ -47,6 +47,7 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.parameters.BooleanEditor;
 import ummisco.gama.ui.parameters.ColorEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.FloatEditor;
@@ -275,6 +276,7 @@ public class LayerSideControls {
 						point[k].getParam().setValue(scope, data.getKeystone().at(k));
 						point[k].forceUpdateValueAsynchronously();
 					}
+					data.setAntialias(data.isKeystoneDefined());
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				default:
@@ -306,10 +308,12 @@ public class LayerSideControls {
 		final IDisplaySurface ds = view.getDisplaySurface();
 		final IScope scope = ds.getScope();
 		final LayeredDisplayData data = ds.getData();
-		EditorFactory.create(scope, contents, "Antialias:", data.isAntialias(), (EditorListener<Boolean>) newValue -> {
-			data.setAntialias(newValue);
-			ds.updateDisplay(true);
-		});
+		final BooleanEditor antialias = EditorFactory.create(scope, contents, "Antialias:", data.isAntialias(),
+				(EditorListener<Boolean>) newValue -> {
+					data.setAntialias(newValue);
+					ds.updateDisplay(true);
+				});
+
 		final ColorEditor background = EditorFactory.create(scope, contents, "Background:", data.getBackgroundColor(),
 				(EditorListener<Color>) newValue -> {
 					data.setBackgroundColor(new GamaColor(newValue));
@@ -360,8 +364,13 @@ public class LayerSideControls {
 						rotate.forceUpdateValueAsynchronously();
 					}
 					break;
+				case ANTIALIAS:
+					antialias.getParam().setValue(scope, data.isAntialias());
+					antialias.forceUpdateValueAsynchronously();
+					break;
 				default:
 					;
+
 			}
 
 		});
