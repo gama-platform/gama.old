@@ -137,19 +137,30 @@ import msi.gaml.types.IType;
 				IKeyword.OVERLAY, IKeyword.POPULATION, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
-	public static Set<String> EVENTS =
-			new HashSet<>(Arrays.asList("mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit"));
+//	public static Set<String> EVENTS =
+//			new HashSet<>(Arrays.asList("mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit"));
 
 	public static class EventLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
 		public void validate(final StatementDescription description) {
 			String name = description.getLitteral(NAME);
-			if (name.length() > 1 && !EVENTS.contains(name)) {
-				description.error("No event can be triggered for '" + name + "'. Acceptable values are " + EVENTS
-						+ " or a character", IGamlIssue.UNKNOWN_ARGUMENT, NAME);
-				return;
+			if (name.length() > 1) {
+				String error="";
+				boolean foundEventName = false;
+				for (final IEventLayerDelegate delegate : delegates) {
+					error+=delegate.getEvents()+" ";
+					if (delegate.getEvents().contains(name)) {
+						foundEventName = true;
+					}
+				}
+				if (!foundEventName) {
+					description.error("No event can be triggered for '" + name + "'. Acceptable values are " + error
+							+ " or a character", IGamlIssue.UNKNOWN_ARGUMENT, NAME);
+					return;
+				}
 			}
+			
 			final String actionName = description.getLitteral(ACTION);
 			StatementDescription sd = description.getModelDescription().getAction(actionName);
 			if (sd == null) {

@@ -34,6 +34,12 @@ public class MouseEventLayerDelegate implements IEventLayerDelegate {
 		return true;
 	}
 
+	@Override
+	public Set<String> getEvents() {
+		// TODO Auto-generated method stub
+		return EVENTS;
+	}
+
 //	@Override
 //	public boolean acceptEvent(final String event) {
 //		return EVENTS.contains(event);

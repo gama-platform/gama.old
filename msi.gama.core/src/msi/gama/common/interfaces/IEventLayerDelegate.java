@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.util.Set;
+
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.IScope;
 
@@ -22,6 +24,8 @@ import msi.gama.runtime.IScope;
  */
 public interface IEventLayerDelegate {
 
+	Set<String> getEvents();
+	
 	/**
 	 * Returns whether or not this delegate accepts the input source.
 	 * 
@@ -30,7 +34,6 @@ public interface IEventLayerDelegate {
 	 * 
 	 * @return
 	 */
-
 	boolean acceptSource(IScope scope, Object source);
 
 	/**
