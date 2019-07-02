@@ -81,6 +81,15 @@ public class WorkbenchHelper {
 	private static Clipboard CLIPBOARD;
 	private final static Transfer[] TRANSFERS = new Transfer[] { TextTransfer.getInstance() };
 
+	public static boolean isDisplayThread() {
+		Display d = getDisplay();
+		if (d == null) {
+			d = Display.getCurrent();
+		}
+		if (d == null) { return false; }
+		return d.getThread() == Thread.currentThread();
+	}
+
 	public static Clipboard getClipboard() {
 		if (CLIPBOARD == null) {
 			CLIPBOARD = new Clipboard(getDisplay());
@@ -236,7 +245,12 @@ public class WorkbenchHelper {
 	}
 
 	public static void copy(final String o) {
-		getClipboard().setContents(new String[] { o }, TRANSFERS);
+		final Runnable r = () -> getClipboard().setContents(new String[] { o }, TRANSFERS);
+		if (isDisplayThread()) {
+			r.run();
+		} else {
+			asyncRun(r);
+		}
 	}
 
 	/**

@@ -210,23 +210,26 @@ public class LayerSideControls {
 				case CAMERA_POS:
 					cameraPos.getParam().setValue(scope, data.getCameraPos());
 					cameraPos.forceUpdateValueAsynchronously();
+					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_TARGET:
 					cameraTarget.getParam().setValue(scope, data.getCameraLookPos());
 					cameraTarget.forceUpdateValueAsynchronously();
+					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_UP:
 					cameraUp.getParam().setValue(scope, data.getCameraUpVector());
 					cameraUp.forceUpdateValueAsynchronously();
+					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_PRESET:
 					preset.getParam().setValue(scope, "Choose...");
 					preset.forceUpdateValueAsynchronously();
+					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 
 				default:
 					;
-					copyCameraAndKeystoneDefinition(scope, data);
 			}
 		});
 		final Label l = new Label(contents, SWT.None);
