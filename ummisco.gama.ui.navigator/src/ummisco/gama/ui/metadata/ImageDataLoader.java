@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.util.Locale;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
@@ -59,33 +60,35 @@ public class ImageDataLoader {
 					imageData = readASC(in);
 				} else if ("pgm".equals(ext)) {
 					imageData = readPGM(in);
+				} else if (ext.contains("tif")) {
+					final BufferedImage tif = ImageIO.read(in);
+					imageData = convertToSWT(tif);
+					if (imageData == null) {
+						TIFFImageReader reader;
+						final ImageReaderSpi spi = new TIFFImageReaderSpi();
+						reader = new TIFFImageReader(spi);
+						try (ImageInputStream is =
+								new FileImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()));) {
+							reader.setInput(is);
+							BufferedImage image;
+							try {
+								image = ImageUtils.toCompatibleImage(reader.read(0));
+
+								imageData = ImageDataLoader.convertToSWT(image);
+								image.flush();
+								imageData.type = SWT.IMAGE_TIFF;
+							} catch (final IOException e) {
+								e.printStackTrace();
+							}
+						} catch (final IOException e1) {
+							e1.printStackTrace();
+						}
+
+					}
 				} else {
 					imageData = new ImageData(in);
 				}
-			} catch (final Exception ex) {
-				if (ext.contains("tif")) {
-					TIFFImageReader reader;
-					final ImageReaderSpi spi = new TIFFImageReaderSpi();
-					reader = new TIFFImageReader(spi);
-					try (ImageInputStream is =
-							new FileImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()));) {
-						reader.setInput(is);
-						BufferedImage image;
-						try {
-							image = reader.read(0);
-							imageData = ImageDataLoader.convertToSWT(image);
-							image.flush();
-							imageData.type = SWT.IMAGE_TIFF;
-						} catch (final IOException e) {
-							e.printStackTrace();
-						}
-
-					} catch (final IOException e1) {
-						e1.printStackTrace();
-					}
-
-				}
-			}
+			} catch (final Exception ex) {}
 		}
 		if (imageData == null) {
 			DEBUG.ERR("null image data");
@@ -229,6 +232,7 @@ public class ImageDataLoader {
 	}
 
 	public static ImageData convertToSWT(final java.awt.image.BufferedImage image) {
+		if (image == null) { return null; }
 		if (image.getColorModel() instanceof java.awt.image.DirectColorModel) {
 			final java.awt.image.DirectColorModel colorModel = (java.awt.image.DirectColorModel) image.getColorModel();
 			final PaletteData palette =
