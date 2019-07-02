@@ -137,7 +137,7 @@ import msi.gaml.types.Types;
 								value = "species animal {",
 								isExecutable = false),
 								@example (
-										value = "    float energy <- rnd (1000) min: 0.0 {",
+										value = "    float energy <- rnd (1000) min: 0.0;",
 										isExecutable = false),
 								@example (
 										value = "    reflex when: energy > 500 { // executed when the energy is above the given threshold",
