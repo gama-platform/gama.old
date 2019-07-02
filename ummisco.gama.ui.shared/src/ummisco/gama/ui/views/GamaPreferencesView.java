@@ -291,7 +291,7 @@ public class GamaPreferencesView {
 		final Composite group1 = new Composite(shell, SWT.NONE);
 		group1.setLayout(new FillLayout());
 		final GridData gridDataGroup1 = new GridData(GridData.BEGINNING, GridData.END, true, false);
-		gridDataGroup1.widthHint = 300;
+		// gridDataGroup1.widthHint = 300;
 		group1.setLayoutData(gridDataGroup1);
 
 		final Button buttonRevert = new Button(group1, SWT.PUSH | SWT.FLAT);
