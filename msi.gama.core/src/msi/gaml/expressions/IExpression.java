@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.ITyped;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
@@ -44,7 +45,7 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 	 */
 	default Object getConstValue() {
 		try {
-			return value(null);
+			return value(GAMA.getRuntimeScope());
 		} catch (final RuntimeException e) {
 			return null;
 		}
