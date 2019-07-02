@@ -31,6 +31,7 @@ import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.continuous.RootTopology;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
@@ -182,7 +183,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	private SimulationOutputManager outputs;
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
-	private /* volatile */ boolean isOnUserHold;
+	private volatile boolean isOnUserHold;
 	private RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
@@ -360,11 +361,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public void setLocation(final GamaPoint newGlobalLoc) {}
+	public void setLocation(final ILocation newGlobalLoc) {}
 
 	@Override
-	public GamaPoint getLocation() {
-		if (geometry == null || geometry.getInnerGeometry() == null) { return GamaPoint.create(0, 0); }
+	public ILocation getLocation() {
+		if (geometry == null || geometry.getInnerGeometry() == null) { return new GamaPoint(0, 0); }
 		return super.getLocation();
 	}
 
@@ -375,7 +376,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// We systematically translate the geometry to {0,0}
 		IShape geom = g;
 		if (geom == null) {
-			geom = GamaGeometryType.buildBox(100, 100, 100, GamaPoint.create(50, 50, 50));
+			geom = GamaGeometryType.buildBox(100, 100, 100, new GamaPoint(50, 50, 50));
 		}
 		final Envelope3D env = geom.getEnvelope();
 		if (getProjectionFactory().getWorld() == null) {
@@ -384,7 +385,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 		((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
 		((WorldProjection) getProjectionFactory().getWorld()).updateUnit(getProjectionFactory().getUnitConverter());
-		final GamaPoint p = GamaPoint.create(-env.getMinX(), -env.getMinY(), -env.getMinZ());
+		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry.setGeometry(Transformations.translated_by(getScope(), geom, p));
 		if (getProjectionFactory().getUnitConverter() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).convertUnit(geometry.getInnerGeometry());

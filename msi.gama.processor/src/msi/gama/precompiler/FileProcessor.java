@@ -19,13 +19,13 @@ public class FileProcessor extends ElementProcessor<file> {
 		final String clazz = rawNameOf(context, e.asType());
 		sb.append(in).append("_file(").append(toJavaString(f.name())).append(',').append(toClassObject(clazz))
 				.append(',');
-		buildUnaryFileConstructor(sb, clazz);
+		buildFileConstructor(sb, STRING_ARRAY, clazz);
 		sb.append(",").append(f.buffer_type()).append(",").append(f.buffer_index()).append(",")
 				.append(f.buffer_content()).append(",");
 		toArrayOfStrings(f.extensions(), sb).append(");");
-		sb.append(in).append("_unary(S(").append(toJavaString("is_" + f.name()))
+		sb.append(in).append("_operator(S(").append(toJavaString("is_" + f.name()))
 				.append("),null,C(S),I(0),B,true,3,0,0,0,").append("(s,o)-> { return GamaFileType.verifyExtension(")
-				.append(toJavaString(f.name())).append(",(String)o);});");
+				.append(toJavaString(f.name())).append(",(String)o[0]);});");
 		for (final Element m : e.getEnclosedElements()) {
 			if (m.getKind() == ElementKind.CONSTRUCTOR) {
 				final List<? extends VariableElement> argParams = ((ExecutableElement) m).getParameters();
@@ -55,8 +55,7 @@ public class FileProcessor extends ElementProcessor<file> {
 
 	private void writeCreateFileOperator(final ProcessorContext context, final StringBuilder sb, final String name,
 			final String clazz, final String[] names, final int contents, final int index) {
-		final boolean isBinary = names.length == 2;
-		sb.append(in).append(isBinary ? "_binary(S(" : "_operator(S(").append(toJavaString(name + "_file")).append("),")
+		sb.append(in).append("_operator(S(").append(toJavaString(name + "_file")).append("),")
 				.append(toClassObject(clazz)).append(".getConstructor(").append(toClassObject(ISCOPE)).append(',');
 		for (final String classe : names) {
 			sb.append(toClassObject(classe)).append(',');
@@ -70,28 +69,8 @@ public class FileProcessor extends ElementProcessor<file> {
 			}
 		}
 		sb.append("),I(0),GF,false,").append(toJavaString(name)).append(',');
-		if (isBinary) {
-			buildBinaryFileConstructor(sb, names, clazz);
-		} else {
-			buildFileConstructor(sb, names, clazz);
-		}
+		buildFileConstructor(sb, names, clazz);
 		sb.append(");");
-	}
-
-	protected void buildUnaryFileConstructor(final StringBuilder sb, final String className) {
-		sb.append("(s,o)-> {return new ").append(className).append("(s");
-		sb.append(',');
-		param(sb, "String", "o");
-		sb.append(");}");
-	}
-
-	protected void buildBinaryFileConstructor(final StringBuilder sb, final String[] classes, final String className) {
-		sb.append("(s,o1, o2)-> {return new ").append(className).append("(s");
-		for (int i = 0; i < classes.length; i++) {
-			sb.append(',');
-			param(sb, classes[i], "o" + (i + 1));
-		}
-		sb.append(");}");
 	}
 
 	protected void buildFileConstructor(final StringBuilder sb, final String[] classes, final String className) {

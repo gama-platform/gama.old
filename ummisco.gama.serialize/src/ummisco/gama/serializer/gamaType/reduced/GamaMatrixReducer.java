@@ -33,7 +33,7 @@ public class GamaMatrixReducer {
 
 	public GamaMatrix constructObject(final IScope scope) {
 		return (GamaMatrix) GamaMatrixType.from(scope, valuesMatrixReducer, contentTypeMatrixReducer,
-				GamaPoint.create(nCols, nRows));
+				new GamaPoint(nCols, nRows));
 
 	}
 }

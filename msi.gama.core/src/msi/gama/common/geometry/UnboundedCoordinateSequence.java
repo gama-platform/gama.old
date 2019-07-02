@@ -16,22 +16,21 @@ import static com.google.common.collect.Iterators.limit;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
-@SuppressWarnings ("deprecation")
 public class UnboundedCoordinateSequence implements ICoordinates {
 
 	final static int INITIAL_SIZE = 1000;
 	GamaPoint[] points = null;
 	int nbPoints;
-	final GamaPoint temp = GamaPoint.createEmpty();
+	final GamaPoint temp = new GamaPoint();
 
 	private void fillFrom(final int begin) {
 		for (int i = begin; i < points.length; i++) {
-			points[i] = GamaPoint.createEmpty();
+			points[i] = new GamaPoint();
 		}
 	}
 
@@ -68,7 +67,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public final UnboundedCoordinateSequence copy() {
+	public final UnboundedCoordinateSequence clone() {
 		return new UnboundedCoordinateSequence(true, nbPoints, points);
 	}
 
@@ -282,11 +281,11 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public GamaPoint directionBetweenLastPointAndOrigin() {
-		final GamaPoint result = GamaPoint.createEmpty();
+		final GamaPoint result = new GamaPoint();
 		final GamaPoint origin = points[0];
 		for (int i = nbPoints - 1; i > 0; i--) {
 			if (!points[i].equals(origin)) {
-				result.setLocation(points[i].x, points[i].y, points[i].z).subtract(origin).normalize();
+				result.setLocation(points[i]).subtract(origin).normalize();
 				return result;
 			}
 		}
@@ -328,7 +327,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	@Override
 	public boolean isCoveredBy(final Envelope3D envelope3d) {
 		for (int i = 0; i < nbPoints; i++) {
-			if (!envelope3d.covers((Coordinate) points[i])) { return false; }
+			if (!envelope3d.covers(points[i])) { return false; }
 		}
 		return true;
 	}
@@ -407,12 +406,6 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 			points[j].setLocation(temp);
 
 		}
-	}
-
-	@SuppressWarnings ("deprecation")
-	@Override
-	public Object clone() {
-		return copy();
 	}
 
 }

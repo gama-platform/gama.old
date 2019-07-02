@@ -2,11 +2,11 @@
  *
  * msi.gaml.statements.draw.ShapeExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- *
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -27,8 +27,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.interfaces.IGraphics;
@@ -49,7 +49,7 @@ class ShapeExecuter extends DrawExecuter {
 	final IShape constantShape;
 	final Double constantEnd, constantBegin;
 	final boolean hasArrows;
-	final GamaPoint center = GamaPoint.createEmpty();
+	final GamaPoint center = new GamaPoint();
 
 	ShapeExecuter(final IExpression item, final IExpression beginArrow, final IExpression endArrow)
 			throws GamaRuntimeException {
@@ -87,7 +87,7 @@ class ShapeExecuter extends DrawExecuter {
 	Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingData data) throws GamaRuntimeException {
 		final IShape shape = constantShape == null ? asGeometry(scope, item.value(scope), false) : constantShape;
 		if (shape == null) { return null; }
-		final DrawingAttributes attributes = computeAttributes(scope, data, shape);
+		final ShapeDrawingAttributes attributes = computeAttributes(scope, data, shape);
 		Geometry gg = shape.getInnerGeometry();
 		if (gg == null) { return null; }
 		final ICoordinates ic = getContourCoordinates(gg);
@@ -110,12 +110,12 @@ class ShapeExecuter extends DrawExecuter {
 		final Geometry withArrows = addArrows(scope, gg, !attributes.isEmpty());
 		if (withArrows != gg) {
 			gg = withArrows;
-			attributes.setType(IShape.Type.NULL);
+			attributes.type = IShape.Type.NULL;
 		}
 		final Geometry withTorus = addToroidalParts(scope, gg);
 		if (withTorus != gg) {
 			gg = withTorus;
-			attributes.setType(IShape.Type.NULL);
+			attributes.type = IShape.Type.NULL;
 		}
 
 		// XXX EXPERIMENTAL See Issue #1521
@@ -134,8 +134,8 @@ class ShapeExecuter extends DrawExecuter {
 		return gr.drawShape(gg, attributes);
 	}
 
-	DrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
-		final DrawingAttributes attributes = new DrawingAttributes(of(data.size.get()), data.depth.get(),
+	ShapeDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
+		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(of(data.size.get()), data.depth.get(),
 				data.rotation.get(), data.getLocation(), data.empty.get(), data.getCurrentColor(), data.getColors(),
 				data.border.get(), data.texture.get(), data.material.get(), scope.getAgent(),
 				shape.getGeometricalType(), data.lineWidth.get(), data.lighting.get());
@@ -149,7 +149,7 @@ class ShapeExecuter extends DrawExecuter {
 	 * @param attributes
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
-	private void addTextures(final IScope scope, final DrawingAttributes attributes) {
+	private void addTextures(final IScope scope, final ShapeDrawingAttributes attributes) {
 		if (attributes.getTextures() == null) { return; }
 		final List textures = create(Types.STRING);
 		textures.addAll(attributes.getTextures());

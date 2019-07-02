@@ -15,14 +15,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.population.IPopulationSet;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
-import msi.gama.metamodel.topology.IEnvelope;
 import msi.gama.metamodel.topology.ISpatialIndex;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
@@ -45,7 +46,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public void updateAgent(final IEnvelope previous, final IAgent agent) {}
+	public void updateAgent(final Envelope previous, final IAgent agent) {}
 
 	@Override
 	public void initialize(final IScope scope, final IPopulation<? extends IAgent> pop) throws GamaRuntimeException {
@@ -166,7 +167,7 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#isValidLocation(msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public boolean isValidLocation(final IScope scope, final GamaPoint p) {
+	public boolean isValidLocation(final IScope scope, final ILocation p) {
 		return getPlaces().getPlaceAt(p) != null;
 
 	}
@@ -191,7 +192,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Double distanceBetween(final IScope scope, final GamaPoint source, final GamaPoint target) {
+	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
 		if (!isValidLocation(scope, source) || !isValidLocation(scope, target)) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
@@ -261,7 +262,7 @@ public class GridTopology extends AbstractTopology {
 	// }
 	//
 	// @Override
-	// public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final GamaPoint source, final GamaPoint target,
+	// public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
 	// final int k) {
 	// // TODO for the moment, returns only 1 shortest path.... need to fix it!
 	// return super.KpathsBetween(scope, source, target, k);

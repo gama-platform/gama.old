@@ -16,7 +16,7 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -36,35 +36,36 @@ import msi.gaml.operators.Cast;
 @type (
 		name = IKeyword.POINT,
 		id = IType.POINT,
-		wraps = { GamaPoint.class, GamaPoint.class },
+		wraps = { ILocation.class, GamaPoint.class },
 		kind = ISymbolKind.Variable.REGULAR,
 		concept = { IConcept.TYPE, IConcept.POINT },
 		doc = @doc ("Represent locations in either 2 or 3 dimensions"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaPointType extends GamaType<GamaPoint> {
+public class GamaPointType extends GamaType<ILocation> {
 
 	@Override
-	public GamaPoint cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+	public ILocation cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, copy);
 	}
 
-	public static GamaPoint staticCast(final IScope scope, final Object obj, final boolean copy) {
-		if (obj instanceof GamaPoint) { return (GamaPoint) obj; }
+	public static ILocation staticCast(final IScope scope, final Object obj, final boolean copy) {
+		if (obj instanceof ILocation) { return (ILocation) obj; }
 		if (obj instanceof IShape) { return ((IShape) obj).getLocation(); }
 		if (obj instanceof List) {
 			final List l = (List) obj;
-			if (l.size() > 2) { return GamaPoint.create(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)), Cast.asFloat(scope, l.get(2))); }
-			if (l.size() > 1) { return GamaPoint.create(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1))); }
+			if (l.size() > 2) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)),
+					Cast.asFloat(scope, l.get(2))); }
+			if (l.size() > 1) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1))); }
 			if (l.size() > 0) { return staticCast(scope, l.get(0), copy); }
-			return GamaPoint.create(0, 0, 0);
+			return new GamaPoint(0, 0, 0);
 		}
 		if (obj instanceof Map) {
 			final Map m = (Map) obj;
 			final double x = Cast.asFloat(scope, m.get("x"));
 			final double y = Cast.asFloat(scope, m.get("y"));
 			final double z = Cast.asFloat(scope, m.get("z"));
-			return GamaPoint.create(x, y, z);
+			return new GamaPoint(x, y, z);
 		}
 		// Decodes the stringValue() of GamaPoint
 		if (obj instanceof String) {
@@ -74,14 +75,15 @@ public class GamaPointType extends GamaType<GamaPoint> {
 			    return staticCast(scope, Arrays.asList(s.split(",")), false);
 			}
 		}
-		if (obj instanceof GamaPair) { return GamaPoint.create(Cast.asFloat(scope, ((GamaPair) obj).first()), Cast.asFloat(scope, ((GamaPair) obj).last())); }
+		if (obj instanceof GamaPair) { return new GamaPoint(Cast.asFloat(scope, ((GamaPair) obj).first()),
+				Cast.asFloat(scope, ((GamaPair) obj).last())); }
 		if (obj == null) { return null; }
 		final double dval = Cast.asFloat(scope, obj);
-		return GamaPoint.create(dval, dval, dval);
+		return new GamaPoint(dval, dval, dval);
 	}
 
 	@Override
-	public GamaPoint getDefault() {
+	public ILocation getDefault() {
 		return null;
 	}
 

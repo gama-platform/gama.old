@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
@@ -242,7 +243,7 @@ public class ModelAssembler {
 	}
 
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
-		final SimpleDirectedGraph<SpeciesDescription, Object> hierarchy = new SimpleDirectedGraph<>(Object.class);
+		final DirectedGraph<SpeciesDescription, Object> hierarchy = new SimpleDirectedGraph<>(Object.class);
 		final DescriptionVisitor visitor = desc -> {
 			if (desc instanceof ModelDescription) { return true; }
 			final SpeciesDescription sd = ((SpeciesDescription) desc).getParent();

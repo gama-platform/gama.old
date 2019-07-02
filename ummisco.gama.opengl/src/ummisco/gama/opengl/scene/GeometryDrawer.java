@@ -19,10 +19,9 @@ import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
 
 import java.awt.Color;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Polygon;
-
 import com.jogamp.opengl.util.gl2.GLUT;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
@@ -33,7 +32,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
-import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
 
@@ -50,14 +48,13 @@ import ummisco.gama.opengl.OpenGL;
  * @revised january 2017
  *
  */
-@SuppressWarnings ("deprecation")
-public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingAttributes>> {
+public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	private static final GamaColor DEFAULT_BORDER = new GamaColor(Color.black);
 
-	final GamaPoint _normal = GamaPoint.createEmpty();
-	final GamaPoint _center = GamaPoint.createEmpty();
-	final GamaPoint _tangent = GamaPoint.createEmpty();
+	final GamaPoint _normal = new GamaPoint();
+	final GamaPoint _center = new GamaPoint();
+	final GamaPoint _tangent = new GamaPoint();
 	final Rotation3D _rot = Rotation3D.identity();
 	final Heterogeneous _scale = new Heterogeneous(1, 1, 1);
 	final ICoordinates _quadvertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(5, 3);
@@ -72,7 +69,7 @@ public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingA
 	 * computes a number of properties attached to the geometry object, and calls the main drawing method
 	 */
 	@Override
-	protected final void _draw(final LayerElement<Geometry, DrawingAttributes> object) {
+	protected final void _draw(final GeometryObject object) {
 		gl.pushMatrix();
 		try {
 
@@ -251,8 +248,7 @@ public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingA
 		_vertices.setToYNegated(getContourCoordinates(p));
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
-		final GamaPoint gp = _vertices.at(0);
-		_tangent.setLocation(gp.x, gp.y, gp.z).subtract(_vertices.at(1));
+		_tangent.setLocation(_vertices.at(0)).subtract(_vertices.at(1));
 		_scale.setTo(_tangent.norm(), _vertices.at(2).euclidianDistanceTo(_vertices.at(1)), height);
 		drawCachedGeometry(Type.CUBE, solid, border);
 	}
@@ -261,8 +257,7 @@ public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingA
 		_vertices.setToYNegated(getContourCoordinates(p));
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
-		final GamaPoint gp = _vertices.at(0);
-		_tangent.setLocation(gp.x, gp.y, gp.z).subtract(_vertices.at(1));
+		_tangent.setLocation(_vertices.at(0)).subtract(_vertices.at(1));
 		_scale.setTo(height);
 		drawCachedGeometry(Type.PYRAMID, solid, border);
 	}
@@ -271,7 +266,7 @@ public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingA
 		_vertices.setToYNegated(getContourCoordinates(p));
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
-		_tangent.setLocation(_center.x, _center.y, _center.z).subtract(_vertices.at(0));
+		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(height);
 		drawCachedGeometry(Type.SPHERE, solid, border);
 	}
@@ -280,7 +275,7 @@ public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingA
 		_vertices.setToYNegated(getContourCoordinates(p));
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
-		_tangent.setLocation(_center.x, _center.y, _center.z).subtract(_vertices.at(0));
+		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(height);
 		drawCachedGeometry(Type.CIRCLE, solid, border);
 	}
@@ -299,7 +294,7 @@ public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingA
 		final double radius = g instanceof Polygon ? _vertices.getLength() / (2 * Math.PI) : height;
 		_vertices.getCenter(_center);
 		_vertices.getNormal(true, 1, _normal);
-		_tangent.setLocation(_center.x, _center.y, _center.z).subtract(_vertices.at(0));
+		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(radius, radius, height);
 		drawCachedGeometry(Type.CYLINDER, solid, border);
 	}
@@ -333,7 +328,7 @@ public class GeometryDrawer extends ObjectDrawer<LayerElement<Geometry, DrawingA
 		final double radius = p instanceof Polygon ? _vertices.getLength() / (2 * Math.PI) : _vertices.getLength();
 		_vertices.getCenter(_center);
 		_vertices.getNormal(true, 1, _normal);
-		_tangent.setLocation(_center.x, _center.y, _center.z).subtract(_vertices.at(0));
+		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_rot.rotateToHorizontal(_normal, _tangent, false).revertInPlace();
 		_scale.setTo(radius, radius, height);
 		drawCachedGeometry(Type.CONE, solid, border);

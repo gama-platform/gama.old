@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.locationtech.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -233,7 +233,8 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 			object.verts = new GamaPoint[numOfVerts];
 			for (int i = 0; i < numOfVerts; i++) {
-				object.verts[i] = GamaPoint.create(swap(dataInputStream.readFloat()), swap(dataInputStream.readFloat()), swap(dataInputStream.readFloat()));
+				object.verts[i] = new GamaPoint(swap(dataInputStream.readFloat()), swap(dataInputStream.readFloat()),
+						swap(dataInputStream.readFloat()));
 
 				previousChunk.bytesRead += 12;
 			}

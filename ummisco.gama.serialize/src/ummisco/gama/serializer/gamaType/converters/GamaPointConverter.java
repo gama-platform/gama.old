@@ -54,7 +54,7 @@ public class GamaPointConverter implements Converter {
 		x= Double.valueOf(lines[0]).doubleValue();
 		y= Double.valueOf(lines[1]).doubleValue();
 		z= Double.valueOf(lines[2]).doubleValue();
-		return GamaPoint.create(x, y, z);
+		return new GamaPoint(x,y,z);
 	}
 
 }

@@ -10,9 +10,9 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
-import static org.locationtech.jts.index.quadtree.IntervalSize.isZeroWidth;
+import static com.vividsolutions.jts.index.quadtree.IntervalSize.isZeroWidth;
 
-import org.locationtech.jts.index.quadtree.IntervalSize;
+import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;

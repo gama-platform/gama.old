@@ -14,7 +14,7 @@ import java.util.List;
 
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.opengl.scene.LayerElement;
+import ummisco.gama.opengl.scene.AbstractObject;
 
 public class StaticLayerObject extends LayerObject {
 
@@ -61,7 +61,7 @@ public class StaticLayerObject extends LayerObject {
 			return false;
 		}
 
-		public abstract void fillWithObjects(List<LayerElement<?, ?>> list);
+		public abstract void fillWithObjects(List<AbstractObject<?, ?>> list);
 	}
 
 	public StaticLayerObject(final IOpenGLRenderer renderer) {

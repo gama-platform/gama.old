@@ -119,11 +119,10 @@ public class OperatorProto extends AbstractProto {
 			final boolean lazy, final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
 			final int contentTypeContentTypeProvider, final int[] expectedContentType, final String plugin) {
 		super(name, method, plugin);
-		iterator = IExpressionCompiler.ITERATORS.contains(name);
-
 		if (name.equals(IKeyword.AS)) {
 			AS = this;
 		}
+		this.iterator = IExpressionCompiler.ITERATORS.contains(name);
 		IValidator tempValidator = null;
 		String[] dependencies = null;
 		if (method != null) {
@@ -213,7 +212,7 @@ public class OperatorProto extends AbstractProto {
 	public void verifyExpectedTypes(final IDescription context, final IType<?> rightType) {
 		if (expectedContentType == null || expectedContentType.length == 0) { return; }
 		if (context == null) { return; }
-		if (expectedContentType.length == 1 && iterator) {
+		if (expectedContentType.length == 1 && IExpressionCompiler.ITERATORS.contains(getName())) {
 			final IType<?> expected = Types.get(expectedContentType[0]);
 			if (!rightType.isTranslatableInto(expected)) {
 				context.warning("Operator " + getName() + " expects an argument of type " + expected,

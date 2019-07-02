@@ -106,7 +106,7 @@ public interface Constants {
 			put("IShape", "IS");
 			put("GamaMap", "GM");
 			put("IContainer", "IC");
-			put("GamaPoint", "IL");
+			put("ILocation", "IL");
 			put("IMatrix", "IM");
 			put("String", "S");
 			put("GamaPoint", "P");

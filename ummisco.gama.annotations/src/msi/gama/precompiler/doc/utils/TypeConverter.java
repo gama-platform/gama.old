@@ -109,7 +109,7 @@ public class TypeConverter {
 //		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>", "list<geometry>");
 //		hm.put("msi.gama.util.GamaList<msi.gama.util.GamaList<msi.gama.metamodel.shape.GamaPoint>>",
 //				"list<list<point>>");
-//		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>", "list<point>");
+//		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.ILocation>", "list<point>");
 //		hm.put("java.util.List<msi.gama.util.path.GamaSpatialPath>", "list<path>");
 //		hm.put("msi.gama.util.GamaList<java.lang.Double>", "list<float>");
 //		hm.put("msi.gama.util.IList<java.lang.Double>", "list<float>");
@@ -137,6 +137,7 @@ public class TypeConverter {
 		hm.put("? extends msi.gama.metamodel.shape.IShape", "geometry");		
 		
 		hm.put("msi.gama.metamodel.shape.GamaPoint", "point");
+		hm.put("msi.gama.metamodel.shape.ILocation", "point");
 		hm.put("msi.gama.util.graph.IGraph", "graph");
 		hm.put("msi.gama.util.graph.GamaGraph", "graph");
 		hm.put("msi.gama.metamodel.topology.ITopology", "topology");

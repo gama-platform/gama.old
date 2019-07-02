@@ -12,6 +12,7 @@ package msi.gama.kernel.experiment;
 
 import static msi.gama.common.interfaces.IKeyword.TEST;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,9 +34,10 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.outputs.ExperimentOutputManager;
+import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.outputs.LayoutStatement;
 import msi.gama.outputs.SimulationOutputManager;
@@ -222,7 +224,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected final Scope myScope = new Scope("in ExperimentPlan");
 	protected IModel model;
 	protected IExploration exploration;
-	// private FileOutput log;
+	private FileOutput log;
 	private boolean isHeadless;
 	private final boolean keepSeed;
 	private final boolean keepSimulations;
@@ -271,7 +273,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 
 		@Override
-		public ExperimentAgent getAgent(final IScope scope, final GamaPoint value) {
+		public ExperimentAgent getAgent(final IScope scope, final ILocation value) {
 			return agent;
 		}
 
@@ -500,7 +502,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			data = exploration.getFitnessExpression();
 		}
 		final String dataString = data == null ? "time" : data.serialize(false);
-		// log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
+		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}
 
 	public synchronized void open(final Double seed) {
@@ -687,10 +689,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		return exploration;
 	}
 
-	// @Override
-	// public FileOutput getLog() {
-	// return log;
-	// }
+	@Override
+	public FileOutput getLog() {
+		return log;
+	}
 
 	public void addExplorableParameter(final IParameter.Batch p) {
 		p.setCategory(EXPLORABLE_CATEGORY_NAME);

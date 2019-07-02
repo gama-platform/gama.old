@@ -16,7 +16,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GAML;
-import msi.gaml.compilation.GamaGetter;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.operators.Cast;
@@ -74,7 +73,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 		try {
 			leftVal = prototype.lazy[0] ? exprs[0] : exprs[0].value(scope);
 			rightVal = prototype.lazy[1] ? exprs[1] : exprs[1].value(scope);
-			return ((GamaGetter.Binary) prototype.helper).get(scope, leftVal, rightVal);
+			return prototype.helper.get(scope, leftVal, rightVal);
 		} catch (final GamaRuntimeException ge) {
 			throw ge;
 		} catch (final Throwable ex) {

@@ -2,15 +2,13 @@
  *
  * msi.gama.outputs.layers.SpeciesLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- *
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
-
-import static msi.gama.runtime.ExecutionResult.FAILED;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Set;
@@ -21,8 +19,8 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AspectStatement;
@@ -94,7 +92,7 @@ public class SpeciesLayer extends AgentLayer {
 			} else {
 				result = scope.execute(aspect, a, null);
 			}
-			if (result == FAILED) {
+			if (result == IScope.FAILED) {
 				break;
 			}
 			if (result != null && result.getValue() instanceof Rectangle2D) {

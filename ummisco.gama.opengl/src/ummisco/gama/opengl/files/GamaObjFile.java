@@ -302,7 +302,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		final IList<IShape> vertices = GamaListFactory.create(Types.POINT);
 		for (final double[] coords : setOfVertex) {
-			final GamaPoint pt = GamaPoint.create(coords[0], -coords[1], coords[2]);
+			final GamaPoint pt = new GamaPoint(coords[0], -coords[1], coords[2]);
 			vertices.add(pt);
 		}
 		for (final int[] vertexRefs : faces) {
@@ -354,9 +354,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			nextmat = Integer.parseInt(nextmatnamearray[1]);
 		}
 		Texture texture = null;
-		final GamaPoint tex = GamaPoint.createEmpty();
-		final GamaPoint normal = GamaPoint.createEmpty();
-		final GamaPoint vertex = GamaPoint.createEmpty();
+		final GamaPoint tex = new GamaPoint();
+		final GamaPoint normal = new GamaPoint();
+		final GamaPoint vertex = new GamaPoint();
 		for (int i = 0; i < faces.size(); i++) {
 			if (i == nextmat) {
 				if (texture != null) {

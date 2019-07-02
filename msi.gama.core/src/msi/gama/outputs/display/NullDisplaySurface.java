@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.locationtech.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
@@ -211,7 +211,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public GamaPoint getModelCoordinates() {
-		return GamaPoint.createEmpty();
+		return new GamaPoint();
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels) {
-		return GamaPoint.createEmpty();
+		return new GamaPoint();
 	}
 
 	/**

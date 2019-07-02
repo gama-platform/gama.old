@@ -13,43 +13,22 @@ package msi.gaml.statements.draw;
 import java.awt.Color;
 import java.util.List;
 
-import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.PoolUtils;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGifFile;
 
-public class ColorProperties implements IDisposable {
-
-	static PoolUtils.ObjectPool<ColorProperties> POOL =
-			PoolUtils.create("ColorProperties", true, () -> new ColorProperties(), null);
-
-	public static ColorProperties create() {
-		// return new ColorProperties();
-		return POOL.get();
-	}
-
-	private ColorProperties() {}
+public class ColorProperties {
 
 	public static final GamaColor TEXTURED_COLOR = GamaColor.getInt(Color.white.getRGB());
-	public static final GamaColor SELECTED_COLOR = new GamaColor(Color.red);
-	GamaColor fill, border, highlight;
+
+	GamaColor fill;
+	GamaColor border;
 	List<?> textures;
 	GamaColor[] colors;
-	boolean empty = false, lighting = true, useCache = true;
-
-	@Override
-	public void dispose() {
-		fill = null;
-		border = null;
-		highlight = null;
-		textures = null;
-		colors = null;
-		POOL.release(this);
-	}
+	boolean empty;
+	boolean lighting = true;
 
 	public GamaColor getFillColor() {
-		if (highlight != null) { return highlight; }
 		if (empty) { return null; }
 		if (fill == null) {
 			if (colors != null) { return colors[0]; }
@@ -78,36 +57,44 @@ public class ColorProperties implements IDisposable {
 		return colors;
 	}
 
-	void toEmpty() {
+	ColorProperties toEmpty() {
 		empty = true;
+		return this;
 	}
 
-	void toFilled() {
+	ColorProperties toFilled() {
 		empty = false;
+		return this;
 	}
 
-	void withFill(final GamaColor color) {
+	ColorProperties withFill(final GamaColor color) {
 		fill = color;
+		return this;
 	}
 
-	void withColors(final GamaColor[] colors) {
+	ColorProperties withColors(final GamaColor[] colors) {
 		this.colors = colors;
+		return this;
 	}
 
-	void withBorder(final GamaColor border) {
+	ColorProperties withBorder(final GamaColor border) {
 		this.border = border;
+		return this;
 	}
 
-	void withLighting(final Boolean lighting) {
-		this.lighting = lighting != null && lighting;
+	ColorProperties withLighting(final boolean lighting) {
+		this.lighting = lighting;
+		return this;
 	}
 
-	void toNoBorder() {
+	ColorProperties toNoBorder() {
 		border = null;
+		return this;
 	}
 
-	void withTextures(final List<?> textures) {
+	ColorProperties withTextures(final List<?> textures) {
 		this.textures = textures;
+		return this;
 	}
 
 	List<?> getTextures() {
@@ -119,11 +106,26 @@ public class ColorProperties implements IDisposable {
 	}
 
 	public boolean isAnimated() {
-		if (!useCache) { return true; }
 		if (textures == null) { return false; }
 		final Object o = textures.get(0);
 		if (!(o instanceof GamaGifFile)) { return false; }
 		return true;
+	}
+
+	public int getFrameCount() {
+		if (textures == null) { return 1; }
+		final Object o = textures.get(0);
+		if (!(o instanceof GamaGifFile)) { return 1; }
+		return ((GamaGifFile) o).getFrameCount();
+
+	}
+
+	public int getAverageDelay() {
+		if (textures == null) { return 0; }
+		final Object o = textures.get(0);
+		if (!(o instanceof GamaGifFile)) { return 0; }
+		return ((GamaGifFile) o).getAverageDelay();
+
 	}
 
 	public boolean isLighting() {

@@ -1167,7 +1167,7 @@ public abstract class FileSourceBase extends SourceBase implements FileSource {
 			v1 = Float.parseFloat(n1);
 			v2 = Float.parseFloat(n2);
 
-			return GamaPoint.create(v0, v1, v2);
+			return new GamaPoint(v0, v1, v2);
 		}
 
 		throw new NumberFormatException("value '" + value + "' not in a valid point3 format");

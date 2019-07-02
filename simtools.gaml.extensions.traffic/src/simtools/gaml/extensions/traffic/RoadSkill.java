@@ -2,18 +2,18 @@
  *
  * simtools.gaml.extensions.traffic.RoadSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source
  * code of the GAMA modeling and simulation platform (v. 1.8)
- *
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
 import java.util.List;
 
-import org.locationtech.jts.algorithm.CGAlgorithms;
-import org.locationtech.jts.geom.Coordinate;
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
+import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -206,7 +206,7 @@ public class RoadSkill extends Skill {
 		final GamaPoint[] coords = GeometryUtils.getPointsOf(road);
 		if (coords.length == 2) { return 0; }
 
-		final GamaPoint loc = driver.getLocation();
+		final GamaPoint loc = driver.getLocation().toGamaPoint();
 		for (int i = 0; i < coords.length - 1; i++) {
 			if (coords[i].equals(loc)) { return i; }
 		}
@@ -291,7 +291,7 @@ public class RoadSkill extends Skill {
 			}
 			// DEBUG.LOG("register " + driver + " lane : " + lane);
 			final Coordinate[] coords = road.getInnerGeometry().getCoordinates();
-			final Coordinate pt = driver.getLocation();
+			final Coordinate pt = (Coordinate) driver.getLocation();
 			if (coords[0].equals(pt)) {
 				driver.setAttribute(DrivingSkill.DISTANCE_TO_GOAL, coords[1].distance(pt));
 			} else {

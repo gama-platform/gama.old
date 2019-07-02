@@ -12,16 +12,14 @@ package msi.gama.common.geometry;
 
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.topology.IEnvelope;
 import msi.gaml.operators.Comparison;
 import msi.gaml.types.GamaGeometryType;
 
@@ -35,7 +33,7 @@ import msi.gaml.types.GamaGeometryType;
  * @adapted for GAMA by A. Drogoul
  *
  */
-public class Envelope3D extends Envelope implements IEnvelope {
+public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final Geometry g) {
 		if (g instanceof GeometryCollection) { return of((GeometryCollection) g); }
@@ -75,12 +73,6 @@ public class Envelope3D extends Envelope implements IEnvelope {
 		env.init(p);
 		return env;
 	}
-
-	// public static Envelope3D of(final IEnvelope e) {
-	// final Envelope3D env = new Envelope3D();
-	// env.init(e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY());
-	// return env;
-	// }
 
 	/**
 	 * Serial number for compatibility with different versions.
@@ -338,7 +330,7 @@ public class Envelope3D extends Envelope implements IEnvelope {
 	@Override
 	public GamaPoint centre() {
 		if (isNull()) { return null; }
-		return GamaPoint.create((getMinX() + getMaxX()) / 2.0, (getMinY() + getMaxY()) / 2.0,
+		return new GamaPoint((getMinX() + getMaxX()) / 2.0, (getMinY() + getMaxY()) / 2.0,
 				(getMinZ() + getMaxZ()) / 2.0);
 	}
 
@@ -643,34 +635,6 @@ public class Envelope3D extends Envelope implements IEnvelope {
 		se = new GamaShape(se, null, rotation, se.getLocation());
 		init(se.getEnvelope());
 		return this;
-	}
-
-	@Override
-	public GamaPoint getLocation() {
-		return centre();
-	}
-
-	@Override
-	public boolean isPoint() {
-		return getArea() == 0d;
-	}
-
-	@Override
-	public boolean intersects(final IEnvelope bounds) {
-		if (bounds.isPoint()) {
-			final GamaPoint loc = bounds.getLocation();
-			return contains(loc.getX(), loc.getY());
-		}
-		return intersects((Envelope) bounds);
-	}
-
-	@Override
-	public boolean covers(final IEnvelope bounds) {
-		if (bounds.isPoint()) {
-			final GamaPoint loc = bounds.getLocation();
-			return contains(loc.getX(), loc.getY());
-		}
-		return covers((Envelope) bounds);
 	}
 
 	// a: minx, miny, minz / b : minx, maxy / c: maxx maxy maxz

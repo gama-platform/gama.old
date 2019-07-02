@@ -18,7 +18,7 @@ import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class CameraHelper extends AbstractRendererHelper implements ICamera {
-	public final static GamaPoint UNDEFINED = GamaPoint.createEmpty();
+	public final static GamaPoint UNDEFINED = new GamaPoint();
 	public final static Point NULL_POINT = new Point();
 	public static Map<String, CameraPreset> PRESETS = new LinkedHashMap<>();
 	ICamera camera;

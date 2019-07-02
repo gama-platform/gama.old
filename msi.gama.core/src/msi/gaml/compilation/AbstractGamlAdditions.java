@@ -151,7 +151,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
-	protected void _file(final String string, final Class clazz, final GamaGetter.Unary<IGamaFile<?, ?>> helper,
+	protected void _file(final String string, final Class clazz, final GamaGetter<IGamaFile<?, ?>> helper,
 			final int innerType, final int keyType, final int contentType, final String[] s) {
 		// helper.setSkillClass(clazz);
 		GamaFileType.addFileTypeDefinition(string, Types.get(innerType), Types.get(keyType), Types.get(contentType),
@@ -208,50 +208,15 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _iterator(final String[] keywords, final Method method, final Class[] classes,
 			final int[] expectedContentTypes, final Class ret, final boolean c, final int t, final int content,
-			final int index, final int contentContentType, final GamaGetter.Binary helper) {
+			final int index, final int contentContentType, final GamaGetter helper) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
-		_binary(keywords, method, classes, expectedContentTypes, ret, c, t, content, index, contentContentType, helper);
-	}
-
-	public void _binary(final String[] keywords, final AccessibleObject method, final Class[] classes,
-			final int[] expectedContentTypes, final Object returnClassOrType, final boolean c, final int t,
-			final int content, final int index, final int contentContentType, final GamaGetter.Binary helper) {
-		final Signature signature = new Signature(classes);
-		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
-		for (final String keyword : keywords) {
-			final String kw = keyword;
-			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, new THashMap<>());
-			}
-			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
-			if (!map.containsKey(signature)) {
-				OperatorProto proto;
-				IType rt;
-				if (returnClassOrType instanceof Class) {
-					rt = Types.get((Class) returnClassOrType);
-				} else {
-					rt = (IType) returnClassOrType;
-				}
-				// binary
-				if ((kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isAgentType()) {
-					proto = new OperatorProto(kw, method, helper, c, true, rt, signature,
-							IExpression.class.equals(classes[1]), t, content, index, contentContentType,
-							expectedContentTypes, plugin);
-				} else {
-					proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
-							IExpression.class.equals(classes[1]), t, content, index, contentContentType,
-							expectedContentTypes, plugin);
-				}
-
-				map.put(signature, proto);
-			}
-		}
-
+		_operator(keywords, method, classes, expectedContentTypes, ret, c, t, content, index, contentContentType,
+				helper);
 	}
 
 	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
 			final int[] expectedContentTypes, final Object returnClassOrType, final boolean c, final int t,
-			final int content, final int index, final int contentContentType, final GamaGetter.NAry helper) {
+			final int content, final int index, final int contentContentType, final GamaGetter helper) {
 		final Signature signature = new Signature(classes);
 		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		for (final String keyword : keywords) {
@@ -293,66 +258,20 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	}
 
-	public void _unary(final String[] keywords, final AccessibleObject method, final Class[] classes,
-			final int[] expectedContentTypes, final Object returnClassOrType, final boolean c, final int t,
-			final int content, final int index, final int contentContentType, final GamaGetter.Unary helper) {
-		final Signature signature = new Signature(classes);
-		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
-		for (final String keyword : keywords) {
-			final String kw = keyword;
-			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, new THashMap<>());
-			}
-			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
-			if (!map.containsKey(signature)) {
-				OperatorProto proto;
-				IType rt;
-				if (returnClassOrType instanceof Class) {
-					rt = Types.get((Class) returnClassOrType);
-				} else {
-					rt = (IType) returnClassOrType;
-				}
-				proto = new OperatorProto(kw, method, helper, c, false, rt, signature,
-						IExpression.class.equals(classes[0]), t, content, index, contentContentType,
-						expectedContentTypes, plugin);
-				map.put(signature, proto);
-			}
-		}
-
-	}
-
 	// For files
 	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
 			final int[] expectedContentTypes, final Class ret, final boolean c, final String typeAlias,
-			final GamaGetter.NAry helper) {
+			final GamaGetter helper) {
 		final ParametricFileType fileType = GamaFileType.getTypeFromAlias(typeAlias);
 		int indexOfIType = -1;
 		for (int i = 0; i < classes.length; i++) {
-			final Class cl = classes[i];
+			Class cl = classes[i];
 			if (IType.class.isAssignableFrom(cl)) {
 				indexOfIType = i;
 			}
 		}
-		final int content =
-				indexOfIType == -1 ? ITypeProvider.NONE : ITypeProvider.DENOTED_TYPE_AT_INDEX + indexOfIType + 1;
+		int content = indexOfIType == -1 ? ITypeProvider.NONE : ITypeProvider.DENOTED_TYPE_AT_INDEX + indexOfIType + 1;
 		this._operator(keywords, method, classes, expectedContentTypes, fileType, c, ITypeProvider.NONE, content,
-				ITypeProvider.NONE, ITypeProvider.NONE, helper);
-	}
-
-	public void _binary(final String[] keywords, final AccessibleObject method, final Class[] classes,
-			final int[] expectedContentTypes, final Class ret, final boolean c, final String typeAlias,
-			final GamaGetter.Binary helper) {
-		final ParametricFileType fileType = GamaFileType.getTypeFromAlias(typeAlias);
-		int indexOfIType = -1;
-		for (int i = 0; i < classes.length; i++) {
-			final Class cl = classes[i];
-			if (IType.class.isAssignableFrom(cl)) {
-				indexOfIType = i;
-			}
-		}
-		final int content =
-				indexOfIType == -1 ? ITypeProvider.NONE : ITypeProvider.DENOTED_TYPE_AT_INDEX + indexOfIType + 1;
-		this._binary(keywords, method, classes, expectedContentTypes, fileType, c, ITypeProvider.NONE, content,
 				ITypeProvider.NONE, ITypeProvider.NONE, helper);
 	}
 
@@ -388,7 +307,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return new FacetProto(name, types, ct, kt, values, optional, internal);
 	}
 
-	protected OperatorProto _proto(final String name, final GamaGetter.Unary helper, final int returnType,
+	protected OperatorProto _proto(final String name, final GamaGetter helper, final int returnType,
 			final Class signature, final int typeProvider, final int contentTypeProvider, final int keyTypeProvider) {
 		return new OperatorProto(name, null, helper, false, true, returnType, signature, false, typeProvider,
 				contentTypeProvider, keyTypeProvider, AI);

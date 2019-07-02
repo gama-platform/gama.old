@@ -32,6 +32,7 @@ import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -158,7 +159,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public ExperimentAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
-		super.setGeometry(GamaGeometryType.createPoint(GamaPoint.create(-1, -1)));
+		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
 		ownScope = new ExperimentAgentScope();
 		ownClock = new ExperimentClock(ownScope);
 		executer = new ActionExecuter(ownScope);
@@ -348,7 +349,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public void setLocation(final GamaPoint newGlobalLoc) {}
+	public void setLocation(final ILocation newGlobalLoc) {}
 
 	@Override
 	public void setGeometry(final IShape newGlobalGeometry) {}
@@ -640,7 +641,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	public class ExperimentAgentScope extends ExecutionScope {
 
-		/* volatile */ boolean interrupted = false;
+		volatile boolean interrupted = false;
 
 		@Override
 		protected boolean _root_interrupted() {

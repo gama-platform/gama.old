@@ -48,7 +48,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
@@ -463,7 +463,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@SuppressWarnings ("unchecked")
 	@Override
-	public T getAgent(final IScope scope, final GamaPoint coord) {
+	public T getAgent(final IScope scope, final ILocation coord) {
 		final IAgentFilter filter = In.list(scope, this);
 		if (filter == null) { return null; }
 
@@ -803,7 +803,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 				return super.getFromIndicesList(scope, indices);
 			case 2:
 				return this.getAgent(scope,
-						GamaPoint.create(Cast.asFloat(scope, indices.get(0)), Cast.asFloat(scope, indices.get(1))));
+						new GamaPoint(Cast.asFloat(scope, indices.get(0)), Cast.asFloat(scope, indices.get(1))));
 			default:
 				throw GamaRuntimeException.error("Populations cannot be accessed with 3 or more indexes", scope);
 

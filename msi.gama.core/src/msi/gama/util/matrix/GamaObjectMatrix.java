@@ -18,7 +18,7 @@ import org.apache.commons.lang.ArrayUtils;
 import com.google.common.collect.ImmutableList;
 
 import msi.gama.common.util.RandomUtils;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.GAMA.InScope;
@@ -51,7 +51,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	/** The matrix. */
 	private Object[] matrix;
 
-	public GamaObjectMatrix(final GamaPoint p, final IType<?> contentsType) {
+	public GamaObjectMatrix(final ILocation p, final IType<?> contentsType) {
 		this((int) p.getX(), (int) p.getY(), contentsType);
 	}
 
@@ -83,7 +83,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, CmnFastMath.min(objects.length, rows * cols));
 	}
 
-	public GamaObjectMatrix(final IScope scope, final IList<?> objects, final GamaPoint preferredSize,
+	public GamaObjectMatrix(final IScope scope, final IList<?> objects, final ILocation preferredSize,
 			final IType<?> contentsType) {
 		super(scope, objects, preferredSize, contentsType);
 		setMatrix(new Object[numRows * numCols]);
@@ -256,7 +256,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	protected IMatrix<Object> _matrixValue(final IScope scope, final GamaPoint preferredSize, final IType type,
+	protected IMatrix<Object> _matrixValue(final IScope scope, final ILocation preferredSize, final IType type,
 			final boolean copy) {
 		return GamaMatrixType.from(scope, this, type, preferredSize, copy);
 	}
@@ -273,7 +273,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	public GamaObjectMatrix copy(final IScope scope, final GamaPoint size, final boolean copy) {
+	public GamaObjectMatrix copy(final IScope scope, final ILocation size, final boolean copy) {
 		if (size == null) {
 			if (copy) {
 				return new GamaObjectMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length),

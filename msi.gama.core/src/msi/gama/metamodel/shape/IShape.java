@@ -12,8 +12,8 @@ package msi.gama.metamodel.shape;
 
 import java.util.Map;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.WKTWriter;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.WKTWriter;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.Envelope3D;
@@ -153,7 +153,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	void dispose();
 
-	double euclidianDistanceTo(GamaPoint g);
+	double euclidianDistanceTo(ILocation g);
 
 	double euclidianDistanceTo(IShape g);
 
@@ -226,7 +226,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	GamaShape getGeometricEnvelope();
 
 	@getter ("points")
-	IList<? extends GamaPoint> getPoints();
+	IList<? extends ILocation> getPoints();
 
 	@getter ("geometries")
 	IList<? extends IShape> getGeometries();

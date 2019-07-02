@@ -1,26 +1,24 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.IExecutionContext.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
- *
+ * msi.gama.runtime.IExecutionContext.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.runtime;
 
 import java.util.Map;
 
-import msi.gama.common.interfaces.IDisposable;
-import msi.gama.common.util.PoolUtils.ObjectPool;
+public interface IExecutionContext {
 
-public interface IExecutionContext extends IDisposable {
+	public IScope getScope();
 
-	IScope getScope();
-
-	default int depth() {
-		if (getOuterContext() == null) { return 0; }
+	public default int depth() {
+		if (getOuterContext() == null)
+			return 0;
 		return 1 + getOuterContext().depth();
 	}
 
@@ -28,34 +26,34 @@ public interface IExecutionContext extends IDisposable {
 	 * Temporary variables, defined in execution contexts. Can be accessed in a recursive way
 	 */
 
-	void setTempVar(String name, Object value);
+	public abstract void setTempVar(String name, Object value);
 
-	Object getTempVar(String name);
+	public abstract Object getTempVar(String name);
 
 	/**
 	 * Local variables, for example arguments, defined in execution contexts. Are only managed locally
 	 */
 
-	Map<? extends String, ? extends Object> getLocalVars();
+	public abstract Map<? extends String, ? extends Object> getLocalVars();
 
-	void putLocalVar(String varName, Object val);
+	public abstract void clearLocalVars();
 
-	Object getLocalVar(String string);
+	public abstract void putLocalVar(String varName, Object val);
 
-	boolean hasLocalVar(String name);
+	public abstract Object getLocalVar(String string);
 
-	void removeLocalVar(String name);
+	public abstract boolean hasLocalVar(String name);
+
+	public abstract void removeLocalVar(String name);
 
 	/**
 	 * Other methods
 	 */
 
-	IExecutionContext getOuterContext();
+	public abstract IExecutionContext getOuterContext();
 
-	IExecutionContext createCopyContext();
+	public abstract IExecutionContext createCopyContext();
 
-	IExecutionContext createChildContext();
-
-	IExecutionContext init(IScope scope, IExecutionContext outer, ObjectPool<IExecutionContext> pool);
+	public abstract IExecutionContext createChildContext();
 
 }

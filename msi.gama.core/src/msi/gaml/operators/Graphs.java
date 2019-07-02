@@ -14,6 +14,7 @@ import static one.util.streamex.StreamEx.of;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -21,16 +22,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.jgrapht.alg.clique.BronKerboschCliqueFinder;
-import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.BronKerboschCliqueFinder;
+import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
-import org.locationtech.jts.geom.Coordinate;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
@@ -163,7 +167,7 @@ public class Graphs {
 				return nb == 2;
 			}
 
-			final Set<GamaPoint> cp = new HashSet<>();
+			final Set<ILocation> cp = new HashSet<>();
 			final GamaPoint[] lp1 = GeometryUtils.getPointsOf(p1);
 			for (final GamaPoint pt : GeometryUtils.getPointsOf(p2)) {
 				if (ArrayUtils.contains(lp1, pt)) {
@@ -687,7 +691,7 @@ public class Graphs {
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
-		ci = new ConnectivityInspector(graph);
+		ci = new ConnectivityInspector((DirectedGraph) graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			results.add(GamaListFactory.create(scope, graph.getGamlType().getContentType(), (Set) obj));
@@ -718,7 +722,7 @@ public class Graphs {
 
 		ConnectivityInspector ci;
 		// there is an error with connectivity inspector of JGrapht....
-		ci = new ConnectivityInspector(graph);
+		ci = new ConnectivityInspector((DirectedGraph) graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			if (edge) {
@@ -796,7 +800,10 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
-		cls.forEach((obj) -> results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj)));
+		final Collection cliques = cls.getAllMaximalCliques();
+		for (final Object obj : cliques) {
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
+		}
 		return results;
 	}
 
@@ -820,9 +827,12 @@ public class Graphs {
 	public static IList<IList> getBiggestCliques(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
+
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
-		cls.maximumIterator().forEachRemaining(
-				(obj) -> results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj)));
+		final Collection cliques = cls.getBiggestMaximalCliques();
+		for (final Object obj : cliques) {
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
+		}
 		return results;
 	}
 

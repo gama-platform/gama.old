@@ -48,7 +48,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.IDisplayOutput;
@@ -89,7 +89,7 @@ public class SwtGui implements IGui {
 	public volatile static boolean ALL_TESTS_RUNNING;
 
 	private IAgent highlightedAgent;
-	private GamaPoint mouseLocationInModel;
+	private ILocation mouseLocationInModel;
 
 	static {
 		// GamaFonts.setLabelFont(PreferencesHelper.BASE_BUTTON_FONT.getValue());
@@ -623,12 +623,12 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public GamaPoint getMouseLocationInModel() {
+	public ILocation getMouseLocationInModel() {
 		return mouseLocationInModel;
 	}
 
 	@Override
-	public void setMouseLocationInModel(final GamaPoint location) {
+	public void setMouseLocationInModel(final ILocation location) {
 		mouseLocationInModel = location;
 	}
 

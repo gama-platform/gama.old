@@ -227,11 +227,11 @@ public class LightStatement extends AbstractLayerStatement {
 		}
 		if (getFacetValue(scope, IKeyword.POSITION) != null) {
 			getLayeredDisplayData().setLightPosition(lightId,
-					Cast.asPoint(scope, getFacetValue(scope, IKeyword.POSITION)));
+					(GamaPoint) Cast.asPoint(scope, getFacetValue(scope, IKeyword.POSITION)));
 		}
 		if (getFacetValue(scope, IKeyword.DIRECTION) != null) {
 			getLayeredDisplayData().setLightDirection(lightId,
-					Cast.asPoint(scope, getFacetValue(scope, IKeyword.DIRECTION)));
+					(GamaPoint) Cast.asPoint(scope, getFacetValue(scope, IKeyword.DIRECTION)));
 		}
 		final IExpression expr = getFacet(IKeyword.COLOR);
 		if (expr != null) {

@@ -26,7 +26,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.GAML;
-import msi.gaml.compilation.GamaGetter;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -80,10 +79,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public Object _value(final IScope scope) throws GamaRuntimeException {
 		final Object childValue = prototype.lazy[0] ? child : child.value(scope);
 		try {
-			return ((GamaGetter.Unary) prototype.helper).get(scope, childValue);
+			return prototype.helper.get(scope, childValue);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw e1;
+
 		} catch (final Throwable e) {
 			// DEBUG.LOG(e + " when applying the " + literalValue() + "
 			// operator on " + childValue);

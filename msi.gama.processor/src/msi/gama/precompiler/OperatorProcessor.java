@@ -50,26 +50,23 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 		}
 		final int n = args.length;
-		final boolean hasScope = n > 0 && args[0].contains("IScope");
+		final boolean scope = n > 0 && args[0].contains("IScope");
 		final boolean isStatic = modifiers.contains(Modifier.STATIC);
-		if (n == 0 && !isStatic || isStatic && hasScope && n == 1) {
+		if (n == 0 && !isStatic || isStatic && scope && n == 1) {
 			context.emitError("GAML: an operator needs to have at least one operand", method);
 			return;
 		}
-		final int actualArgsNumber = n + (hasScope ? -1 : 0) + (!isStatic ? 1 : 0);
-		final boolean isUnary = actualArgsNumber == 1;
-		final boolean isBinary = actualArgsNumber == 2;
-		final boolean isIterator = op.iterator();
+		final int actual_args_number = n + (scope ? -1 : 0) + (!isStatic ? 1 : 0);
 
-		final String[] classes = new String[actualArgsNumber];
+		final String[] classes = new String[actual_args_number];
 		int begin = 0;
 		if (!isStatic) {
 			classes[0] = declClass;
 			begin = 1;
 		}
-		final int shift = hasScope ? 1 : 0;
+		final int shift = scope ? 1 : 0;
 		try {
-			for (int i = 0; i < actualArgsNumber - begin; i++) {
+			for (int i = 0; i < actual_args_number - begin; i++) {
 				classes[begin + i] = args[i + shift];
 			}
 		} catch (final Exception e1) {
@@ -105,87 +102,15 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			return;
 		}
 		final String met = isStatic ? declClass + "." + method.getSimpleName() : method.getSimpleName().toString();
-		sb.append(in).append(isIterator ? "_iterator(" : isUnary ? "_unary(" : isBinary ? "_binary(" : "_operator(");
+		sb.append(in).append(op.iterator() ? "_iterator(" : "_operator(");
 		toArrayOfStrings(names, sb).append(',');
-		buildMethodCall(sb, classes, met, isStatic, hasScope).append(',');
+		buildMethodCall(sb, classes, met, isStatic, scope).append(',');
 		toArrayOfClasses(sb, classes).append(',');
 		toArrayOfInts(op.expected_content_type(), sb).append(',').append(toClassObject(ret)).append(',')
 				.append(toBoolean(op.can_be_const())).append(',').append(op.type()).append(',')
 				.append(op.content_type()).append(',').append(op.index_type()).append(',')
-				.append(op.content_type_content_type());
-
-		if (isUnary) {
-			buildUnaryHelperCall(sb, hasScope, isStatic, classes, met);
-		} else if (isBinary) {
-			buildBinaryHelperCall(sb, hasScope, isStatic, classes, met);
-		} else {
-			buildHelperCall(sb, hasScope, isStatic, isUnary, classes, met);
-		}
-	}
-
-	private void buildUnaryHelperCall(final StringBuilder sb, final boolean hasScope, final boolean isStatic,
-			final String[] classes, final String met) {
-		sb.append(',').append("(s,o)->");
-		final int start = isStatic ? 0 : 1;
-		final String firstArg = hasScope ? "s" : "";
-		if (isStatic) {
-			sb.append(met).append('(').append(firstArg);
-		} else {
-			sb.append("((").append(classes[0]).append(")o).").append(met).append('(').append(firstArg);
-		}
-		if (start < classes.length) {
-			if (hasScope) {
-				sb.append(',');
-			}
-			param(sb, classes[0], "o");
-		}
-		sb.append("));");
-	}
-
-	private void buildBinaryHelperCall(final StringBuilder sb, final boolean hasScope, final boolean isStatic,
-			final String[] classes, final String met) {
-		sb.append(',').append("(s,o1, o2)->");
-		final int start = isStatic ? 0 : 1;
-		final String firstArg = hasScope ? "s" : "";
-		if (isStatic) {
-			sb.append(met).append('(').append(firstArg);
-		} else {
-			sb.append("((").append(classes[0]).append(")o1).").append(met).append('(').append(firstArg);
-		}
-		if (start < classes.length) {
-			if (hasScope) {
-				sb.append(',');
-			}
-			if (start == 0) {
-				param(sb, classes[0], "o1");
-				sb.append(',');
-			}
-			param(sb, classes[1], "o2");
-		}
-		sb.append("));");
-	}
-
-	private void buildHelperCall(final StringBuilder sb, final boolean hasScope, final boolean isStatic,
-			final boolean isUnary, final String[] classes, final String met) {
-		sb.append(',').append("(s,o)->");
-		final int start = isStatic ? 0 : 1;
-		final String firstArg = hasScope ? "s" : "";
-		if (isStatic) {
-			sb.append(met).append('(').append(firstArg);
-		} else {
-			sb.append("((").append(classes[0]).append(isUnary ? ")o)." : ")o[0]).").append(met).append('(')
-					.append(firstArg);
-		}
-		if (start < classes.length) {
-			if (hasScope) {
-				sb.append(',');
-			}
-			for (int i = start; i < classes.length; i++) {
-				param(sb, classes[i], isUnary ? "o" : "o[" + i + "]");
-				sb.append(i != classes.length - 1 ? "," : "");
-			}
-		}
-		sb.append("));");
+				.append(op.content_type_content_type()).append(',').append("(s,o)->");
+		buildNAry(sb, classes, met, ret, isStatic, scope).append(");");
 	}
 
 	public void verifyClassTypeCompatibility(final ProcessorContext context, final String string, final Element ve) {
@@ -223,6 +148,32 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 	@Override
 	protected Class<operator> getAnnotationClass() {
 		return operator.class;
+	}
+
+	protected static StringBuilder buildNAry(final StringBuilder sb, final String[] classes, final String name,
+			final String retClass, final boolean isStatic, final boolean scope) {
+		// final String ret = checkPrim(retClass);
+		final int start = isStatic ? 0 : 1;
+		final String firstArg = scope ? "s" : "";
+		if (isStatic) {
+			sb.append(name).append('(').append(firstArg);
+		} else {
+			// AD: REMOVE THE DEFAULT BEHAVIOR WHEN NULL IS PASSED (which was wrong, see #2713)
+			sb.append("((").append(classes[0]).append(")o[0]).").append(name).append('(').append(firstArg);
+			// sb.append("o[0]==null?").append(returnWhenNull(ret)).append(":((").append(classes[0]).append(")o[0]).")
+			// .append(name).append('(').append(firstArg);
+		}
+		if (start < classes.length) {
+			if (scope) {
+				sb.append(',');
+			}
+			for (int i = start; i < classes.length; i++) {
+				param(sb, classes[i], "o[" + i + "]");
+				sb.append(i != classes.length - 1 ? "," : "");
+			}
+		}
+		sb.append(")");
+		return sb;
 	}
 
 	@Override

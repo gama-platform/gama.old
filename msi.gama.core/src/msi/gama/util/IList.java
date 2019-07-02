@@ -12,7 +12,7 @@ package msi.gama.util;
 
 import java.util.List;
 
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.IType;
@@ -31,7 +31,7 @@ public interface IList<E>
 	IContainer<Integer, E> reverse(final IScope scope);
 
 	@Override
-	IMatrix<E> matrixValue(IScope scope, IType<?> contentType, GamaPoint size, boolean copy);
+	IMatrix<E> matrixValue(IScope scope, IType<?> contentType, ILocation size, boolean copy);
 
 	@Override
 	IMatrix<E> matrixValue(IScope scope, IType<?> contentType, boolean copy);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.JavaUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
- *
+ * msi.gama.common.util.JavaUtils.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -24,7 +24,6 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.UnmodifiableIterator;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.ISkill;
 
 /**
@@ -35,10 +34,6 @@ import msi.gama.common.interfaces.ISkill;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class JavaUtils {
-	public final static PoolUtils.ObjectPool<Set> SET_POOL =
-			PoolUtils.create("TLinkedHashSets", true, () -> new TLinkedHashSet(), c -> c.clear());
-	public final static PoolUtils.ObjectPool<List> LIST_POOL =
-			PoolUtils.create("ArrayLists", true, () -> new ArrayList(200), c -> c.clear());
 
 	public final static TIntObjectHashMap<List<Class>> IMPLEMENTATION_CLASSES = new TIntObjectHashMap();
 	private static Multimap<Class, Class> INTERFACES = HashMultimap.<Class, Class> create();
@@ -46,14 +41,14 @@ public class JavaUtils {
 
 	private static int keyOf(final Class base, final Iterable<Class<? extends ISkill>> others) {
 		int result = base.hashCode();
-		for (final Class other : others) {
+		for (final Class other : others)
 			result += other.hashCode();
-		}
 		return result;
 	}
 
 	private static final Set<Class> allInterfacesOf(final Class c, final Set<Class> in) {
-		if (c == null) { return Collections.EMPTY_SET; }
+		if (c == null)
+			return Collections.EMPTY_SET;
 		if (!INTERFACES.containsKey(c)) {
 			final Class[] interfaces = c.getInterfaces();
 			for (final Class c1 : interfaces) {
@@ -68,7 +63,8 @@ public class JavaUtils {
 	}
 
 	private static final Set<Class> allSuperclassesOf(final Class c, final Set<Class> in) {
-		if (c == null) { return null; }
+		if (c == null)
+			return null;
 		if (!SUPERCLASSES.containsKey(c)) {
 			Class c2 = c.getSuperclass();
 			while (c2 != null) {

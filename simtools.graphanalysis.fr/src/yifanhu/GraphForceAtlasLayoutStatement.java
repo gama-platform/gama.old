@@ -4,7 +4,7 @@ import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2;
 import org.gephi.layout.plugin.forceAtlas2.ForceAtlas2Builder;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -210,8 +210,8 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 		// fa2Layout.goAlgo();
 		// fa2Layout.endAlgo();
 		if (bp1 != null && bp2 != null) {
-			final GamaPoint p1 = Cast.asPoint(scope, bp1);
-			final GamaPoint p2 = Cast.asPoint(scope, bp2);
+			final ILocation p1 = Cast.asPoint(scope, bp1);
+			final ILocation p2 = Cast.asPoint(scope, bp2);
 			Update_locations(g, FastMath.min(p1.getX(), p2.getX()), FastMath.min(p1.getY(), p2.getY()),
 					FastMath.max(p1.getX(), p2.getX()), FastMath.max(p1.getY(), p2.getY()));
 		} else {

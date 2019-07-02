@@ -16,7 +16,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.jogamp.opengl.GL2;
-import org.locationtech.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -33,14 +33,17 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.DrawingAttributes;
-import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.opengl.scene.LayerElement;
-import ummisco.gama.opengl.scene.LayerElement.DrawerType;
+import ummisco.gama.opengl.scene.AbstractObject;
+import ummisco.gama.opengl.scene.FieldObject;
+import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.ResourceObject;
+import ummisco.gama.opengl.scene.StringObject;
 
 /**
  * Class LayerObject.
@@ -52,11 +55,11 @@ import ummisco.gama.opengl.scene.LayerElement.DrawerType;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class LayerObject {
 
-	final static GamaPoint NULL_OFFSET = GamaPoint.createEmpty();
-	final static GamaPoint NULL_SCALE = GamaPoint.create(1, 1, 1);
+	final static GamaPoint NULL_OFFSET = new GamaPoint();
+	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
 
-	GamaPoint offset = GamaPoint.create(NULL_OFFSET);
-	GamaPoint scale = GamaPoint.create(NULL_SCALE);
+	GamaPoint offset = new GamaPoint(NULL_OFFSET);
+	GamaPoint scale = new GamaPoint(NULL_SCALE);
 	protected Double alpha = 1d;
 	public final ILayer layer;
 	volatile boolean isInvalid;
@@ -64,8 +67,8 @@ public class LayerObject {
 	volatile boolean locked;
 	boolean isAnimated;
 	protected final IOpenGLRenderer renderer;
-	protected final LinkedList<List<LayerElement<?, ?>>> traces;
-	protected List<LayerElement<?, ?>> currentList;
+	protected final LinkedList<List<AbstractObject<?, ?>>> traces;
+	protected List<AbstractObject<?, ?>> currentList;
 	protected Integer openGLListIndex;
 	protected boolean isFading;
 
@@ -104,7 +107,7 @@ public class LayerObject {
 
 		if (expr != null) {
 			final boolean containsPixels = expr.findAny((e) -> e instanceof PixelUnitExpression);
-			offset.setLocation(Cast.asPoint(scope, expr.value(scope)));
+			offset.setLocation((GamaPoint) Cast.asPoint(scope, expr.value(scope)));
 			if (Math.abs(offset.x) <= 1 && !containsPixels) {
 				offset.x *= renderer.getEnvWidth();
 			}
@@ -205,11 +208,11 @@ public class LayerObject {
 	}
 
 	private void addFrame(final OpenGL gl) {
-		GamaPoint size = GamaPoint.create(renderer.getEnvWidth(), renderer.getEnvHeight());
+		GamaPoint size = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());
 		final IScope scope = renderer.getSurface().getScope();
 		final IExpression expr = layer.getDefinition().getFacet(IKeyword.SIZE);
 		if (expr != null) {
-			size = Cast.asPoint(scope, expr.value(scope));
+			size = (GamaPoint) Cast.asPoint(scope, expr.value(scope));
 			if (size.x <= 1) {
 				size.x *= renderer.getEnvWidth();
 			}
@@ -237,7 +240,7 @@ public class LayerObject {
 				delta = size == 0 ? 0 : 1d / size;
 			}
 			double alpha = 0d;
-			for (final List<LayerElement<?, ?>> list : traces) {
+			for (final List<AbstractObject<?, ?>> list : traces) {
 				alpha = delta == 0d ? this.alpha : this.alpha * (alpha + delta);
 				drawObjects(gl, list, alpha, picking);
 			}
@@ -246,11 +249,11 @@ public class LayerObject {
 		}
 	}
 
-	protected void drawObjects(final OpenGL gl, final List<LayerElement<?, ?>> list, final double alpha,
+	protected void drawObjects(final OpenGL gl, final List<AbstractObject<?, ?>> list, final double alpha,
 			final boolean picking) {
-		final ImmutableList<LayerElement> l = ImmutableList.copyOf(list);
+		final ImmutableList<AbstractObject> l = ImmutableList.copyOf(list);
 		gl.setCurrentObjectAlpha(alpha);
-		for (final LayerElement object : l) {
+		for (final AbstractObject object : l) {
 			object.draw(gl, gl.getDrawerFor(object.getDrawerType()), picking);
 		}
 	}
@@ -270,7 +273,7 @@ public class LayerObject {
 
 	public void setOffset(final GamaPoint offset) {
 		if (offset != null) {
-			this.offset = GamaPoint.create(offset);
+			this.offset = new GamaPoint(offset);
 		} else {
 			this.offset = null;
 		}
@@ -285,18 +288,18 @@ public class LayerObject {
 	}
 
 	public void setScale(final GamaPoint scale) {
-		this.scale = GamaPoint.create(scale);
+		this.scale = new GamaPoint(scale);
 	}
 
 	public void addString(final String string, final TextDrawingAttributes attributes) {
-		currentList.add(LayerElement.createLayerElement(string, attributes, DrawerType.STRING));
+		currentList.add(new StringObject(string, attributes));
 	}
 
-	public void addFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
-		currentList.add(LayerElement.createLayerElement(file, attributes, DrawerType.RESOURCE));
+	public void addFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
+		currentList.add(new ResourceObject(file, attributes));
 	}
 
-	public void addImage(final Object o, final DrawingAttributes attributes) {
+	public void addImage(final Object o, final FileDrawingAttributes attributes) {
 		// If no dimensions have been defined, then the image is considered as wide and tall as the environment
 		Scaling3D size = attributes.getSize();
 		if (size == null) {
@@ -316,12 +319,12 @@ public class LayerObject {
 	}
 
 	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		currentList.add(LayerElement.createLayerElement(fieldValues, attributes, DrawerType.FIELD));
+		currentList.add(new FieldObject(fieldValues, attributes));
 	}
 
-	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
+	public void addGeometry(final Geometry geometry, final FileDrawingAttributes attributes) {
 		isAnimated = attributes.isAnimated();
-		currentList.add(LayerElement.createLayerElement(geometry, attributes, DrawerType.GEOMETRY));
+		currentList.add(new GeometryObject(geometry, attributes));
 	}
 
 	protected int getTrace() {
@@ -337,23 +340,17 @@ public class LayerObject {
 	}
 
 	public void clear(final OpenGL gl) {
+
 		if (traces != null) {
 			final int sizeLimit = getTrace();
 			isFading = getFading();
 			final int size = traces.size();
 			for (int i = 0, n = size - sizeLimit; i < n; i++) {
-				final List<LayerElement<?, ?>> list = traces.poll();
-				for (final LayerElement o : list) {
-					o.dispose();
-				}
-				list.clear();
+				traces.poll();
 			}
 			currentList = newCurrentList();
 			traces.offer(currentList);
 		} else {
-			for (final LayerElement o : currentList) {
-				o.dispose();
-			}
 			currentList.clear();
 		}
 		final Integer index = openGLListIndex;
@@ -400,14 +397,14 @@ public class LayerObject {
 		return true;
 	}
 
-	protected void addSyntheticObject(final List<LayerElement<?, ?>> list, final IShape shape, final GamaColor color,
+	protected void addSyntheticObject(final List<AbstractObject<?, ?>> list, final IShape shape, final GamaColor color,
 			final IShape.Type type, final boolean empty) {
-		final DrawingAttributes att = new DrawingAttributes(shape, (IAgent) null, color, color, type,
+		final ShapeDrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
 				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 		att.setEmpty(empty);
 		att.setHeight(shape.getDepth());
-		att.setLighting(false);
-		list.add(LayerElement.createLayerElement(shape.getInnerGeometry(), att, DrawerType.GEOMETRY));
+		att.withLighting(false);
+		list.add(new GeometryObject(shape.getInnerGeometry(), att));
 	}
 
 	public void forceRedraw() {

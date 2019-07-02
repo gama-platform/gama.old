@@ -16,13 +16,15 @@ import java.util.Set;
 
 import org.jgrapht.Graphs;
 
-import org.locationtech.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Coordinate;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -266,13 +268,15 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		final IShape sh = verticesBuilt.get(vertex.hashCode());
 		if (sh != null) { return sh; }
 		for (final Object v : verticesBuilt.values()) {
-			if (vertex.distance3D(((IShape) v).getLocation()) <= tolerance) { return (IShape) v; }
+			if (vertex.distance3D(GeometryUtils.toCoordinate(((IShape) v).getLocation())) <= tolerance) {
+				return (IShape) v;
+			}
 		}
 		return null;
 	}
 
 	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
-		final GamaMap<GamaPoint, IAgent> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
+		final GamaMap<ILocation, IAgent> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
 		for (final Object ag : vertices.iterable(scope)) {
 			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}
@@ -285,11 +289,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 	}
 
-	public boolean addDrivingEdge(final IScope scope, final IShape e, final GamaMap<GamaPoint, IAgent> nodes) {
+	public boolean addDrivingEdge(final IScope scope, final IShape e, final GamaMap<ILocation, IAgent> nodes) {
 		if (containsEdge(e)) { return false; }
 		final Coordinate[] coord = e.getInnerGeometry().getCoordinates();
-		final IShape ptS = GamaPoint.create(coord[0]);
-		final IShape ptT = GamaPoint.create(coord[coord.length - 1]);
+		final IShape ptS = new GamaPoint(coord[0]);
+		final IShape ptT = new GamaPoint(coord[coord.length - 1]);
 		final IAgent v1 = nodes.get(ptS);
 		if (v1 == null) { return false; }
 		final IAgent v2 = nodes.get(ptT);

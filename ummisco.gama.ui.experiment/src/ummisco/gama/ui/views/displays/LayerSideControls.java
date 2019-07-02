@@ -27,7 +27,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.layers.AgentLayerStatement;
 import msi.gama.outputs.layers.GridLayer;
@@ -186,18 +186,18 @@ public class LayerSideControls {
 				});
 
 		cameraPos = EditorFactory.create(scope, contents, "Position:", data.getCameraPos(),
-				(EditorListener<GamaPoint>) newValue -> {
-					data.setCameraPos(newValue);
+				(EditorListener<ILocation>) newValue -> {
+					data.setCameraPos((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
 		cameraTarget = EditorFactory.create(scope, contents, "Target:", data.getCameraLookPos(),
-				(EditorListener<GamaPoint>) newValue -> {
-					data.setCameraLookPos(newValue);
+				(EditorListener<ILocation>) newValue -> {
+					data.setCameraLookPos((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
 		cameraUp = EditorFactory.create(scope, contents, "Orientation:", data.getCameraUpVector(),
-				(EditorListener<GamaPoint>) newValue -> {
-					data.setCameraUpVector(newValue, true);
+				(EditorListener<ILocation>) newValue -> {
+					data.setCameraUpVector((GamaPoint) newValue, true);
 					ds.updateDisplay(true);
 				});
 		preset.setActive(!cameraLocked);
@@ -265,7 +265,7 @@ public class LayerSideControls {
 			final int j = i;
 			i++;
 			point[j] = EditorFactory.create(scope, contents, "Point " + j + ":",
-					(GamaPoint) data.getKeystone().at(j).clone(), (EditorListener<GamaPoint>) newValue -> {
+					(GamaPoint) data.getKeystone().at(j).clone(), (EditorListener<ILocation>) newValue -> {
 						data.getKeystone().at(j).setLocation(newValue);
 						data.setKeystone(data.getKeystone());
 						ds.updateDisplay(true);
@@ -419,12 +419,12 @@ public class LayerSideControls {
 					updateIfPaused(layer, container);
 				});
 		EditorFactory.create(container.getScope(), compo, "Position:", layer.getData().getPosition(),
-				(EditorListener<GamaPoint>) newValue -> {
+				(EditorListener<ILocation>) newValue -> {
 					layer.getData().setPosition(newValue);
 					updateIfPaused(layer, container);
 				});
 		EditorFactory.create(container.getScope(), compo, "Size:", layer.getData().getSize(),
-				(EditorListener<GamaPoint>) newValue -> {
+				(EditorListener<ILocation>) newValue -> {
 					layer.getData().setSize(newValue);
 					updateIfPaused(layer, container);
 				});

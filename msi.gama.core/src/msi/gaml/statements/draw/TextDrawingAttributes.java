@@ -11,14 +11,16 @@
 package msi.gaml.statements.draw;
 
 import msi.gama.common.geometry.Scaling3D;
+import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
+import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
-import msi.gaml.types.Types;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class TextDrawingAttributes extends DrawingAttributes {
+public class TextDrawingAttributes extends DrawingAttributes implements Cloneable {
 
 	public final GamaFont font;
 	public final boolean perspective;
@@ -34,9 +36,38 @@ public class TextDrawingAttributes extends DrawingAttributes {
 	}
 
 	public TextDrawingAttributes copyTranslatedBy(final GamaPoint p) {
-		return new TextDrawingAttributes(getSize(),
-				new GamaPair(getRotation().getAngle(), getRotation().getAxis(), Types.FLOAT, Types.POINT),
-				getLocation().plus(p), getAnchor(), getColor(), font, perspective);
+		try {
+			final TextDrawingAttributes copy = (TextDrawingAttributes) super.clone();
+			copy.geometryProperties = copy.geometryProperties.copy();
+			// GamaPoint p1 = copy.geometryProperties.location;
+			copy.geometryProperties.location = copy.geometryProperties.location.plus(p);
+			// GamaPoint p2 = copy.geometryProperties.location;
+			// DEBUG.OUT("" + p1 + " " + p2);
+			return copy;
+		} catch (final CloneNotSupportedException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Method getMaterial()
+	 *
+	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
+	 */
+	@Override
+	public GamaMaterial getMaterial() {
+		// TODO
+		return null;
+	}
+
+	@Override
+	public AgentIdentifier getAgentIdentifier() {
+		return null;
+	}
+
+	@Override
+	public Type getType() {
+		return Type.POLYGON;
 	}
 
 	@Override

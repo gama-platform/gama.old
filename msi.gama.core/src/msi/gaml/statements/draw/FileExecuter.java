@@ -2,17 +2,17 @@
  *
  * msi.gaml.statements.draw.FileExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- *
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
 import java.awt.geom.Rectangle2D;
 
-import org.locationtech.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
@@ -40,7 +40,7 @@ class FileExecuter extends DrawExecuter {
 	Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingData data) throws GamaRuntimeException {
 		final GamaFile file = constImg == null ? (GamaFile) item.value(scope) : constImg;
 		if (file == null) { return null; }
-		final DrawingAttributes attributes =
+		final FileDrawingAttributes attributes =
 				computeAttributes(scope, data, file instanceof GamaImageFile, file instanceof GamaGisFile, g.is2D());
 
 		// XXX EXPERIMENTAL See Issue #1521
@@ -62,15 +62,15 @@ class FileExecuter extends DrawExecuter {
 		return g.drawFile(file, attributes);
 	}
 
-	DrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile,
+	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile,
 			final boolean gisFile, final boolean twoD) {
-		final DrawingAttributes attributes = new DrawingAttributes(Scaling3D.of(data.size.get()),
+		final FileDrawingAttributes attributes = new FileDrawingAttributes(Scaling3D.of(data.size.get()),
 				data.rotation.get(), data.getLocation(), data.getCurrentColor(), data.border.get(), scope.getAgent(),
 				data.lineWidth.get(), imageFile, data.lighting.get());
 		// We push the location of the agent if none has been provided and if it is not a GIS file (where coordinates
 		// are already provided, see Issue #2165)
 		if (!gisFile) {
-			attributes.setLocationIfAbsent(scope.getAgent().getLocation());
+			attributes.setLocationIfAbsent(scope.getAgent().getLocation().toGamaPoint());
 		}
 		if (twoD) {
 			if (imageFile) {

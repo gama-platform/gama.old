@@ -15,7 +15,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -81,8 +81,8 @@ public class EventLayer extends AbstractLayer {
 
 	// We explicitly translate by the origin of the surface
 	@Override
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
-		if (xOnScreen == -1 && yOnScreen == -1) { return GamaPoint.create(0, 0); }
+	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+		if (xOnScreen == -1 && yOnScreen == -1) { return new GamaPoint(0, 0); }
 		return g.getModelCoordinates();
 	}
 
@@ -174,7 +174,7 @@ public class EventLayer extends AbstractLayer {
 					? executionScope.getSimulation() : executionScope.getExperiment();
 			final IExecutable executer = agent == null ? null : agent.getSpecies().getAction(actionName);
 			if (executer == null) { return; }
-			final GamaPoint pp = getModelCoordinatesFrom(x, y, surface);
+			final ILocation pp = getModelCoordinatesFrom(x, y, surface);
 			if (pp == null) { return; }
 			if (pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth()
 					|| pp.getY() >= surface.getEnvHeight()) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaContainerType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
- *
+ * msi.gaml.types.GamaContainerType.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -23,9 +23,9 @@ import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 11 nov. 2011
- *
+ * 
  * A generic type for containers. Tentative.
- *
+ * 
  */
 @type (
 		name = IKeyword.CONTAINER,
@@ -82,9 +82,8 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 	@Override
 	public IType<?> contentsTypeIfCasting(final IExpression exp) {
 		final IType<?> itemType = exp.getGamlType();
-		if (itemType.isContainer() || itemType.isAgentType() || itemType.isCompoundType()) {
-			return itemType.getContentType();
-		}
+		if (itemType.isContainer() || itemType.isAgentType()
+				|| itemType.isCompoundType()) { return itemType.getContentType(); }
 		return itemType;
 	}
 
@@ -100,21 +99,10 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 
 	@SuppressWarnings ("unchecked")
 	@Override
-	public IContainerType<?> of(final IType<?> sub1) {
-		final IType<?> kt = getKeyType();
-		IType<?> ct = sub1;
-		if (ct == Types.NO_TYPE) {
-			if (kt == Types.NO_TYPE) { return this; }
-			ct = getContentType();
-		}
-		return ParametricType.createParametricType((IContainerType<IContainer<?, ?>>) this, kt, ct);
-
-	}
-
-	@Override
-	public IContainerType<?> of(final IType<?> sub1, final IType<?> sub2) {
-		IType<?> kt = sub1;
-		IType<?> ct = sub2;
+	public IContainerType<?> of(final IType<?>... subs) {
+		if (subs.length == 0) { return this; }
+		IType<?> kt = subs.length == 1 ? getKeyType() : subs[0];
+		IType<?> ct = subs.length == 1 ? subs[0] : subs[1];
 		if (ct == Types.NO_TYPE) {
 			if (kt == Types.NO_TYPE) { return this; }
 			ct = getContentType();

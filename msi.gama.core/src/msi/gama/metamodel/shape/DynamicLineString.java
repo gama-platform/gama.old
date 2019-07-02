@@ -12,18 +12,20 @@ package msi.gama.metamodel.shape;
 
 import java.util.Objects;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateFilter;
-import org.locationtech.jts.geom.CoordinateSequence;
-import org.locationtech.jts.geom.CoordinateSequenceComparator;
-import org.locationtech.jts.geom.CoordinateSequenceFilter;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryComponentFilter;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.GeometryFilter;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateFilter;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequenceComparator;
+import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryComponentFilter;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.GeometryFilter;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+
+import msi.gama.common.geometry.GeometryUtils;
 
 /**
  * A dynamical geometry that represents a link between two IShape.
@@ -70,7 +72,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#getGeometryType()
+	 * @see com.vividsolutions.jts.geom.Geometry#getGeometryType()
 	 */
 	@Override
 	public String getGeometryType() {
@@ -80,21 +82,22 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#getCoordinate()
+	 * @see com.vividsolutions.jts.geom.Geometry#getCoordinate()
 	 */
 	@Override
 	public Coordinate getCoordinate() {
-		return source.getLocation();
+		return GeometryUtils.toCoordinate(source.getLocation());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#getCoordinates()
+	 * @see com.vividsolutions.jts.geom.Geometry#getCoordinates()
 	 */
 	@Override
 	public Coordinate[] getCoordinates() {
-		return new Coordinate[] { source.getLocation(), target.getLocation() };
+		return new Coordinate[] { GeometryUtils.toCoordinate(source.getLocation()),
+				GeometryUtils.toCoordinate(target.getLocation()) };
 	}
 
 	@Override
@@ -105,7 +108,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#getNumPoints()
+	 * @see com.vividsolutions.jts.geom.Geometry#getNumPoints()
 	 */
 	@Override
 	public int getNumPoints() {
@@ -115,7 +118,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#isEmpty()
+	 * @see com.vividsolutions.jts.geom.Geometry#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
@@ -125,7 +128,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#getDimension()
+	 * @see com.vividsolutions.jts.geom.Geometry#getDimension()
 	 */
 	@Override
 	public int getDimension() {
@@ -135,7 +138,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#getBoundary()
+	 * @see com.vividsolutions.jts.geom.Geometry#getBoundary()
 	 */
 	@Override
 	public Geometry getBoundary() {
@@ -149,13 +152,13 @@ public class DynamicLineString extends LineString {
 
 	@Override
 	public Point getEndPoint() {
-		return getFactory().createPoint(target.getLocation());
+		return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation()));
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#getBoundaryDimension()
+	 * @see com.vividsolutions.jts.geom.Geometry#getBoundaryDimension()
 	 */
 	@Override
 	public int getBoundaryDimension() {
@@ -165,7 +168,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#reverse()
+	 * @see com.vividsolutions.jts.geom.Geometry#reverse()
 	 */
 	@Override
 	public Geometry reverse() {
@@ -175,7 +178,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#equalsExact(org.locationtech.jts. geom.Geometry, double)
+	 * @see com.vividsolutions.jts.geom.Geometry#equalsExact(com.vividsolutions.jts. geom.Geometry, double)
 	 */
 	@Override
 	public boolean equalsExact(final Geometry other, final double tolerance) {
@@ -187,18 +190,18 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. CoordinateFilter)
+	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateFilter)
 	 */
 	@Override
 	public void apply(final CoordinateFilter filter) {
 		filter.filter(getCoordinate());
-		filter.filter(target.getLocation());
+		filter.filter(GeometryUtils.toCoordinate(target.getLocation()));
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. CoordinateSequenceFilter)
+	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateSequenceFilter)
 	 */
 	@Override
 	public void apply(final CoordinateSequenceFilter filter) {
@@ -214,7 +217,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. GeometryFilter)
+	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. GeometryFilter)
 	 */
 	@Override
 	public void apply(final GeometryFilter filter) {
@@ -224,7 +227,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. GeometryComponentFilter)
+	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. GeometryComponentFilter)
 	 */
 	@Override
 	public void apply(final GeometryComponentFilter filter) {
@@ -244,13 +247,13 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#normalize()
+	 * @see com.vividsolutions.jts.geom.Geometry#normalize()
 	 */
 	@Override
 	public void normalize() {}
 
 	@Override
-	public final DynamicLineString copy() {
+	public final Object clone() {
 		final DynamicLineString s = new DynamicLineString(getFactory(), source, target);
 		s.setUserData(getUserData());
 		return s;
@@ -259,7 +262,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#computeEnvelopeInternal()
+	 * @see com.vividsolutions.jts.geom.Geometry#computeEnvelopeInternal()
 	 */
 	@Override
 	protected Envelope computeEnvelopeInternal() {
@@ -270,7 +273,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#compareToSameClass(java.lang.Object)
+	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object)
 	 */
 	@Override
 	protected int compareToSameClass(final Object o) {
@@ -283,8 +286,8 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.locationtech.jts.geom.Geometry#compareToSameClass(java.lang.Object,
-	 * org.locationtech.jts.geom.CoordinateSequenceComparator)
+	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object,
+	 * com.vividsolutions.jts.geom.CoordinateSequenceComparator)
 	 */
 	@Override
 	protected int compareToSameClass(final Object o, final CoordinateSequenceComparator comp) {
@@ -310,14 +313,14 @@ public class DynamicLineString extends LineString {
 	@Override
 	public Point getPointN(final int n) {
 		if (n == 0) { return getFactory().createPoint(getCoordinate()); }
-		if (n == 1) { return getFactory().createPoint(target.getLocation()); }
+		if (n == 1) { return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation())); }
 		return null;
 	}
 
 	@Override
 	public Coordinate getCoordinateN(final int n) {
 		if (n == 0) { return getCoordinate(); }
-		if (n == 1) { return target.getLocation(); }
+		if (n == 1) { return GeometryUtils.toCoordinate(target.getLocation()); }
 		return null;
 
 	}

@@ -24,6 +24,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
@@ -47,7 +48,7 @@ import msi.gama.util.TOrderedHashMap;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceIndexer {
 
-	static SimpleDirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
+	static DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
 
 	static {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();

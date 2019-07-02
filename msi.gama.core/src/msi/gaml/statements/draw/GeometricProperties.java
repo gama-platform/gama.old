@@ -12,38 +12,20 @@ package msi.gaml.statements.draw;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Scaling3D;
-import msi.gama.common.interfaces.IDisposable;
-import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.PoolUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.shape.IShape.Type;
 
-public class GeometricProperties implements IDisposable {
+public class GeometricProperties implements Cloneable {
 
 	GamaPoint location;
 	Scaling3D size;
-	AxisAngle rotation;
-	Double depth, lineWidth;
-	IShape.Type type;
-	//
-	static PoolUtils.ObjectPool<GeometricProperties> POOL =
-			PoolUtils.create("GeometricProperties", true, () -> new GeometricProperties(), null);
 
 	public static GeometricProperties create() {
-		return POOL.get();
-		// return new GeometricProperties();
+		return new GeometricProperties(null, null);
 	}
 
-	@Override
-	public void dispose() {
-		location = null;
-		size = null;
-		rotation = null;
-		depth = null;
-		lineWidth = null;
-		type = null;
-		POOL.release(this);
+	GeometricProperties(final GamaPoint location, final Scaling3D size) {
+		this.location = location;
+		this.size = size;
 	}
 
 	GamaPoint getLocation() {
@@ -55,29 +37,11 @@ public class GeometricProperties implements IDisposable {
 	}
 
 	public AxisAngle getRotation() {
-		return rotation;
-	}
-
-	public Double getAngle() {
-		if (rotation == null) { return null; }
-		return rotation.angle;
-	}
-
-	public GamaPoint getAxis() {
-		if (rotation == null) { return null; }
-		return rotation.getAxis();
-	}
-
-	public Double getLineWidth() {
-		return lineWidth == null ? GamaPreferences.Displays.CORE_LINE_WIDTH.getValue() : lineWidth;
-	}
-
-	public void setLineWidth(final Double d) {
-		lineWidth = d;
+		return null;
 	}
 
 	Double getHeight() {
-		return depth;
+		return null;
 	}
 
 	GeometricProperties withLocation(final GamaPoint loc) {
@@ -91,21 +55,101 @@ public class GeometricProperties implements IDisposable {
 	}
 
 	GeometricProperties withRotation(final AxisAngle rotation) {
-		this.rotation = rotation;
-		return this;
+		if (rotation == null) { return this; }
+		return new WithRotation(location, size, rotation);
 	}
 
 	GeometricProperties withHeight(final Double depth) {
-		this.depth = depth;
-		return this;
+		if (depth == null) { return this; }
+		return new WithDepth(location, size, depth);
 	}
 
-	public IShape.Type getType() {
-		return type == null ? Type.POLYGON : type;
+	static class WithRotation extends GeometricProperties {
+		WithRotation(final GamaPoint location, final Scaling3D size, final AxisAngle rotation) {
+			super(location, size);
+			this.rotation = rotation;
+		}
+
+		AxisAngle rotation;
+
+		@Override
+		GeometricProperties withRotation(final AxisAngle rotation) {
+			if (rotation == null) { return new GeometricProperties(location, size); }
+			this.rotation = rotation;
+			return this;
+		}
+
+		@Override
+		GeometricProperties withHeight(final Double depth) {
+			if (depth == null) { return this; }
+			return new WithRotationAndDepth(location, size, rotation, depth);
+		}
+
+		@Override
+		public AxisAngle getRotation() {
+			return rotation;
+		}
+
 	}
 
-	public void setType(final Type type2) {
-		type = type2;
+	static class WithDepth extends GeometricProperties {
+
+		Double depth;
+
+		WithDepth(final GamaPoint location, final Scaling3D size, final Double depth) {
+			super(location, size);
+			this.depth = depth;
+		}
+
+		@Override
+		GeometricProperties withRotation(final AxisAngle rotation) {
+			if (rotation == null) { return this; }
+			return new WithRotationAndDepth(location, size, rotation, depth);
+		}
+
+		@Override
+		GeometricProperties withHeight(final Double depth) {
+			if (depth == null) { return new GeometricProperties(location, size); }
+			this.depth = depth;
+			return this;
+		}
+
+		@Override
+		Double getHeight() {
+			return depth;
+		}
+	}
+
+	static class WithRotationAndDepth extends WithRotation {
+		WithRotationAndDepth(final GamaPoint location, final Scaling3D size, final AxisAngle rotation,
+				final Double depth) {
+			super(location, size, rotation);
+			this.depth = depth;
+		}
+
+		Double depth;
+
+		@Override
+		GeometricProperties withRotation(final AxisAngle rotation) {
+			if (rotation == null) { return new WithDepth(location, size, depth); }
+			return super.withRotation(rotation);
+		}
+
+		@Override
+		GeometricProperties withHeight(final Double depth) {
+			if (depth == null) { return new WithRotation(location, size, rotation); }
+			this.depth = depth;
+			return this;
+		}
+
+		@Override
+		Double getHeight() {
+			return depth;
+		}
+	}
+
+	public GeometricProperties copy() throws CloneNotSupportedException {
+		return (GeometricProperties) super.clone();
 	}
 
 }

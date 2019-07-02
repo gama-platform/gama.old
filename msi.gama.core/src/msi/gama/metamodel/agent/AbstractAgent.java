@@ -15,13 +15,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.common.primitives.Ints;
-import org.locationtech.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -69,8 +69,8 @@ import msi.gaml.variables.IVariable;
 public abstract class AbstractAgent implements IAgent {
 
 	private final int index;
-	protected /* volatile */ boolean dead = false;
-	protected /* volatile */ boolean dying = false;
+	protected volatile boolean dead = false;
+	protected volatile boolean dying = false;
 
 	public AbstractAgent(final int index) {
 		this.index = index;
@@ -130,7 +130,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public double euclidianDistanceTo(final GamaPoint g) {
+	public double euclidianDistanceTo(final ILocation g) {
 		return getGeometry().euclidianDistanceTo(g);
 	}
 
@@ -148,7 +148,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(org.locationtech.jts.geom.Geometry)
+	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
 	 */
 	@Override
 	public void setInnerGeometry(final Geometry geom) {
@@ -322,12 +322,12 @@ public abstract class AbstractAgent implements IAgent {
 	public void setName(final String name) {}
 
 	@Override
-	public GamaPoint getLocation() {
+	public ILocation getLocation() {
 		return getGeometry().getLocation();
 	}
 
 	@Override
-	public void setLocation(final GamaPoint l) {
+	public void setLocation(final ILocation l) {
 		getGeometry().setLocation(l);
 	}
 
@@ -588,7 +588,7 @@ public abstract class AbstractAgent implements IAgent {
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override
-	public IList<? extends GamaPoint> getPoints() {
+	public IList<? extends ILocation> getPoints() {
 		if (getGeometry() == null) { return GamaListFactory.create(); }
 		return getGeometry().getPoints();
 	}

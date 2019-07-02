@@ -35,8 +35,8 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 
 import jogamp.opengl.glu.tessellator.GLUtessellatorImpl;
 import msi.gama.common.geometry.Envelope3D;
@@ -61,9 +61,9 @@ import ummisco.gama.opengl.renderer.caches.ITextureCache;
 import ummisco.gama.opengl.renderer.caches.TextureCache2;
 import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
+import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldDrawer;
 import ummisco.gama.opengl.scene.GeometryDrawer;
-import ummisco.gama.opengl.scene.LayerElement;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.ResourceDrawer;
 import ummisco.gama.opengl.scene.StringDrawer;
@@ -134,19 +134,19 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	final VertexVisitor glTesselatorDrawer;
 
 	// World
-	final GamaPoint ratios = GamaPoint.createEmpty();
+	final GamaPoint ratios = new GamaPoint();
 	Envelope3D roiEnvelope;
 	private boolean rotationMode;
 	private boolean isROISticky;
 
 	// Working objects
 	// final GamaPoint workingPoint = new GamaPoint();
-	final GamaPoint currentNormal = GamaPoint.createEmpty();
+	final GamaPoint currentNormal = new GamaPoint();
 	// final GamaPoint currentScale = new GamaPoint(1, 1, 1);
-	final GamaPoint textureCoords = GamaPoint.createEmpty();
+	final GamaPoint textureCoords = new GamaPoint();
 	final UnboundedCoordinateSequence workingVertices = new UnboundedCoordinateSequence();
 	private double currentZIncrement, currentZTranslation, savedZTranslation;
-	private boolean ZTranslationSuspended;
+	private volatile boolean ZTranslationSuspended;
 	private final boolean useJTSTriangulation = !GamaPreferences.Displays.OPENGL_TRIANGULATOR.getValue();
 
 	public OpenGL(final IOpenGLRenderer renderer) {
@@ -168,7 +168,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		resourceDrawer = new ResourceDrawer(this);
 	}
 
-	public ObjectDrawer<? extends LayerElement<?, ?>> getDrawerFor(final LayerElement.DrawerType type) {
+	public ObjectDrawer<? extends AbstractObject<?, ?>> getDrawerFor(final AbstractObject.DrawerType type) {
 		switch (type) {
 			case STRING:
 				return stringDrawer;
@@ -246,7 +246,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 			debugSizes(width, height, initialEnvWidth, initialEnvHeight, envWidthInPixels, envHeightInPixels,
 					getData().getZoomLevel(), xRatio, yRatio);
 		}
-		ratios.setLocation(xRatio, yRatio, 0);
+		ratios.setLocation(xRatio, yRatio);
 	}
 
 	private void debugSizes(final int width, final int height, final double initialEnvWidth,
@@ -317,13 +317,13 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		final double[] wcoord = new double[4];
 		final double x = (int) mouse.x, y = viewport[3] - (int) mouse.y;
 		glu.gluUnProject(x, y, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		final GamaPoint v1 = GamaPoint.create(wcoord[0], wcoord[1], wcoord[2]);
+		final GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 		glu.gluUnProject(x, y, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		final GamaPoint v2 = GamaPoint.create(wcoord[0], wcoord[1], wcoord[2]);
+		final GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 		final GamaPoint v3 = v2.minus(v1).normalized();
-		final double distance = camera.z / GamaPoint.dotProduct(GamaPoint.create(0.0, 0.0, -1.0), v3);
+		final double distance = camera.z / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3);
 		final GamaPoint worldCoordinates = camera.plus(v3.times(distance));
-		return GamaPoint.create(worldCoordinates.x, worldCoordinates.y);
+		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
 	public int getViewWidth() {
@@ -990,7 +990,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	// COMPLEX SHAPES
 
-	public void beginObject(final LayerElement object) {
+	public void beginObject(final AbstractObject object) {
 		setWireframe(isWireframe);
 		setLineWidth(object.getAttributes().getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
@@ -1001,7 +1001,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	}
 
-	public void endObject(final LayerElement object) {
+	public void endObject(final AbstractObject object) {
 		disableTextures();
 		translateByZIncrement();
 		if (object.isFilled() && !object.getAttributes().isSynthetic()) {

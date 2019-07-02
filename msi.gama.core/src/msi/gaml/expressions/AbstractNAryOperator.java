@@ -29,7 +29,6 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
-import msi.gaml.compilation.GamaGetter;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -313,7 +312,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 			for (int i = 0; i < values.length; i++) {
 				values[i] = prototype.lazy[i] ? exprs[i] : exprs[i].value(scope);
 			}
-			return ((GamaGetter.NAry) prototype.helper).get(scope, values);
+			return prototype.helper.get(scope, values);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));
 			throw e1;

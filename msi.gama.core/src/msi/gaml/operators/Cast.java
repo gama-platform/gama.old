@@ -15,7 +15,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -216,11 +216,11 @@ public class Cast {
 		return GamaStringType.staticCast(scope, val, false);
 	}
 
-	public static GamaPoint asPoint(final IScope scope, final Object val, final boolean copy) {
+	public static ILocation asPoint(final IScope scope, final Object val, final boolean copy) {
 		return GamaPointType.staticCast(scope, val, copy);
 	}
 
-	public static GamaPoint asPoint(final IScope scope, final Object val) {
+	public static ILocation asPoint(final IScope scope, final Object val) {
 		return asPoint(scope, val, false);
 	}
 
@@ -295,9 +295,9 @@ public class Cast {
 			comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
 			see = { IKeyword.MATRIX, "as_matrix" })
 	@test ("{2,2} matrix_with (1) = matrix([1,1],[1,1])")
-	public static IMatrix matrix_with(final IScope scope, final GamaPoint size, final IExpression init) {
+	public static IMatrix matrix_with(final IScope scope, final ILocation size, final IExpression init) {
 		if (size == null) { throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope); }
-		return GamaMatrixType.with(scope, init, size);
+		return GamaMatrixType.with(scope, init, (GamaPoint) size);
 	}
 
 	@operator (
@@ -323,7 +323,7 @@ public class Cast {
 			see = { IKeyword.MATRIX })
 	@test ("as_matrix('a', {2,3}) = matrix(['a','a','a'],['a','a','a'])")
 	@test ("as_matrix(1.0, {2,2}) = matrix([1.0,1.0],[1.0,1.0])")
-	public static IMatrix asMatrix(final IScope scope, final Object val, final GamaPoint size)
+	public static IMatrix asMatrix(final IScope scope, final Object val, final ILocation size)
 			throws GamaRuntimeException {
 		return GamaMatrixType.staticCast(scope, val, size, Types.NO_TYPE, false);
 	}

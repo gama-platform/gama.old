@@ -290,8 +290,7 @@ public class GAMA {
 	}
 
 	public static void pauseFrontmostExperiment() {
-		final IExperimentController controller = getFrontmostController();
-		if (controller != null) {
+		for (final IExperimentController controller : controllers) {
 			controller.directPause();
 		}
 	}

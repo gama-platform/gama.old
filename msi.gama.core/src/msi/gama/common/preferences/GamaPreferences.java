@@ -163,37 +163,41 @@ public class GamaPreferences {
 		public static final Pref<Boolean> EDITOR_PERSPECTIVE_HIDE = create("pref_editor_perspective_hide",
 				"Hide editors when switching to simulation perspectives (can be overriden in the 'layout' statement)",
 				true, IType.BOOL, false).in(Modeling.NAME, Modeling.OPTIONS);
-		public static Pref<String> OPERATORS_MENU_SORT =
-				create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING, false)
-						.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
+		public static Pref<String> OPERATORS_MENU_SORT = GamaPreferences
+				.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING, false)
+				.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
 		public static final Pref<Boolean> CORE_CLOSE_CURLY =
-				create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL, false).in(NAME, TEXT);
-		public static final Pref<Boolean> CORE_CLOSE_SQUARE =
-				create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL, false).in(NAME,
-						TEXT);
-		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES =
-				create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL, false).in(NAME, TEXT);
+				GamaPreferences.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL, false)
+						.in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences
+				.create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL, false)
+				.in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES = GamaPreferences
+				.create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL, false).in(NAME, TEXT);
 		public static final Pref<Boolean> EDITOR_CLEAN_UP =
-				create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL, false).in(NAME,
-						GamaPreferences.Modeling.OPTIONS);
+				GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL, false)
+						.in(NAME, GamaPreferences.Modeling.OPTIONS);
 		public static final Pref<Boolean> EDITOR_SAVE =
-				create("pref_editor_save_all", "Save all editors before lauching an experiment", true, IType.BOOL,
-						false).in(NAME, Modeling.OPTIONS).activates("pref_editor_ask_save");
-		public static final Pref<Boolean> EDITOR_DRAG_RESOURCES = create("pref_editor_drag_resources",
+				GamaPreferences
+						.create("pref_editor_save_all", "Save all editors before lauching an experiment", true,
+								IType.BOOL, false)
+						.in(NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
+		public static final Pref<Boolean> EDITOR_DRAG_RESOURCES = GamaPreferences.create("pref_editor_drag_resources",
 				"Drag files and resources as references in GAML files", true, IType.BOOL, false).in(NAME, OPTIONS);
 		public static final Pref<Boolean> EDITOR_SAVE_ASK =
-				create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL, false).in(NAME,
-						OPTIONS);
-		public static final Pref<Boolean> EDITBOX_ENABLED =
-				create("pref_editor_editbox_on", "Turn on colorization of code sections", false, IType.BOOL, false)
-						.in(NAME, TEXT);
-		public static final Pref<GamaFont> EDITOR_BASE_FONT =
-				create("pref_editor_font", "Font of editors", (GamaFont) null, IType.FONT, false).in(NAME, TEXT);
-		public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR = create("pref_editor_background_color",
-				"Background color of editors", (GamaColor) null, IType.COLOR, false).in(NAME, TEXT);
-		public static final Pref<Boolean> EDITOR_MARK_OCCURRENCES =
-				create("pref_editor_mark_occurrences", "Mark occurrences of symbols", true, IType.BOOL, false).in(NAME,
-						TEXT);
+				GamaPreferences.create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL, false)
+						.in(NAME, OPTIONS);
+		public static final Pref<Boolean> EDITBOX_ENABLED = GamaPreferences
+				.create("pref_editor_editbox_on", "Turn on colorization of code sections", false, IType.BOOL, false)
+				.in(NAME, TEXT);
+		public static final Pref<GamaFont> EDITOR_BASE_FONT = GamaPreferences
+				.create("pref_editor_font", "Font of editors", (GamaFont) null, IType.FONT, false).in(NAME, TEXT);
+		public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR =
+				GamaPreferences.create("pref_editor_background_color", "Background color of editors", (GamaColor) null,
+						IType.COLOR, false).in(NAME, TEXT);
+		public static final Pref<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
+				.create("pref_editor_mark_occurrences", "Mark occurrences of symbols", true, IType.BOOL, false)
+				.in(NAME, TEXT);
 
 		// .activates("pref_tests_period");
 		// public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
@@ -471,17 +475,9 @@ public class GamaPreferences {
 				"Optimize the path computation operators and goto action (but with possible 'jump' issues)", false,
 				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
-				"Optimize spatial queries: add agents only when necessary in the quadtree (experimental)", false,
+				"Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
 				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
-		public static final Pref<Boolean> OTHER_SPATIAL_INDEX = create("pref_other_spatial_index",
-				"Use a lightweight spatial index instead of the quadtree (experimental)", false, IType.BOOL, true)
-						.in(NAME, OPTIMIZATIONS).activates("pref_size_spatial_index");
-		public static final Pref<Integer> SPATIAL_INDEX_SIZE =
-				create("pref_size_spatial_index", "Dimension of the spatial index (experimental)", 40, IType.INT, true)
-						.between(1, 200).in(NAME, OPTIMIZATIONS).hidden();
-		public static final Pref<Boolean> USE_POOLING =
-				create("pref_use_object_pooling", "Use object pooling to reduce memory consumption (experimental)",
-						false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+
 		public static final Pref<Double> TOLERANCE_POINTS =
 				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT, true)
 						.in(NAME, OPTIMIZATIONS);

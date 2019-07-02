@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Points.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
- *
+ * msi.gaml.operators.Points.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -35,7 +36,6 @@ import msi.gaml.expressions.IExpression;
  * @todo Description
  *
  */
-@SuppressWarnings ("deprecation")
 public class Points {
 	public static class PointValidator implements IOperatorValidator {
 
@@ -58,7 +58,7 @@ public class Points {
 			internal = true)
 	@validator (PointValidator.class)
 	@no_test
-	public static GamaPoint toPoint(final IScope scope, final IExpression xExp, final IExpression yExp) {
+	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp) {
 		if (scope != null) {
 			scope.setHorizontalPixelContext();
 		}
@@ -67,7 +67,7 @@ public class Points {
 			scope.setVerticalPixelContext();
 		}
 		final double y = Cast.asFloat(scope, yExp.value(scope));
-		return GamaPoint.create(x, y);
+		return new GamaPoint(x, y);
 	}
 
 	@operator (
@@ -77,7 +77,7 @@ public class Points {
 			internal = true)
 	@validator (PointValidator.class)
 	@no_test
-	public static GamaPoint toPoint(final IScope scope, final IExpression xExp, final IExpression yExp,
+	public static ILocation toPoint(final IScope scope, final IExpression xExp, final IExpression yExp,
 			final IExpression zExp) {
 		if (scope != null) {
 			scope.setHorizontalPixelContext();
@@ -88,7 +88,7 @@ public class Points {
 		}
 		final double y = Cast.asFloat(scope, yExp.value(scope));
 		final double z = Cast.asFloat(scope, zExp.value(scope));
-		return GamaPoint.create(x, y, z);
+		return new GamaPoint(x, y, z);
 	}
 
 	@operator (
@@ -107,9 +107,9 @@ public class Points {
 									value = "{2,5} / 4",
 									equals = "{0.5,1.25}") }))
 	@test ("{5, 7.5} / 2.5 = {2,3}")
-	public static GamaPoint divide(final IScope scope, final GamaPoint p, final Double d) {
+	public static ILocation divide(final IScope scope, final GamaPoint p, final Double d) {
 		if (d == 0d) { throw GamaRuntimeException.error("Division by zero", scope); }
-		return GamaPoint.create(p.x / d, p.y / d, p.z / d);
+		return new GamaPoint(p.x / d, p.y / d, p.z / d);
 	}
 
 	@operator (
@@ -121,9 +121,9 @@ public class Points {
 			value = "Returns a point with coordinates divided by the number")
 	@test ("{2,5} / 4 = {0.5,1.25}")
 	@test ("is_error({2,5} / 0)")
-	public static GamaPoint divide(final IScope scope, final GamaPoint p, final Integer d) {
+	public static ILocation divide(final IScope scope, final GamaPoint p, final Integer d) {
 		if (d == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
-		return GamaPoint.create(p.x / d.doubleValue(), p.y / d.doubleValue(), p.z / d.doubleValue());
+		return new GamaPoint(p.x / d.doubleValue(), p.y / d.doubleValue(), p.z / d.doubleValue());
 	}
 
 	@operator (
@@ -135,9 +135,9 @@ public class Points {
 			value = "Returns a point with coordinates multiplied by a number.")
 	@test ("{2,5} * 4.0 = {8.0,20.0}")
 	@test ("{2,5} * 0.0 = {0.0,0.0}")
-	public static GamaPoint multiply(final GamaPoint p1, final Double d) {
-		if (p1 == null) { return GamaPoint.createEmpty(); }
-		return GamaPoint.create(p1.x * d, p1.y * d, p1.z * d);
+	public static ILocation multiply(final GamaPoint p1, final Double d) {
+		if (p1 == null) { return new GamaPoint(); }
+		return new GamaPoint(p1.x * d, p1.y * d, p1.z * d);
 	}
 
 	@operator (
@@ -158,9 +158,9 @@ public class Points {
 									equals = "{5.0, 10.0}") }))
 	@test ("{2,5} * 4 = {8,20}")
 	@test ("{2,5} * 0 = {0,0}")
-	public static GamaPoint multiply(final GamaPoint p1, final Integer d) {
-		if (p1 == null) { return GamaPoint.createEmpty(); }
-		return GamaPoint.create(p1.x * d.doubleValue(), p1.y * d.doubleValue(), p1.z * d.doubleValue());
+	public static ILocation multiply(final GamaPoint p1, final Integer d) {
+		if (p1 == null) { return new GamaPoint(); }
+		return new GamaPoint(p1.x * d.doubleValue(), p1.y * d.doubleValue(), p1.z * d.doubleValue());
 	}
 
 	// ATTENTION: produit scalaire.
@@ -221,10 +221,10 @@ public class Points {
 	@test (
 			value = "point p <- {1, 2}; p + {0, 0} = p",
 			warning = true)
-	public static GamaPoint add(final GamaPoint p1, final GamaPoint p) {
+	public static ILocation add(final GamaPoint p1, final GamaPoint p) {
 		if (p1 == null) { return p; }
 		if (p == null) { return p1; }
-		return GamaPoint.create(p1.x + p.x, p1.y + p.y, p1.z + p.z);
+		return new GamaPoint(p1.x + p.x, p1.y + p.y, p1.z + p.z);
 	}
 
 	@operator (
@@ -236,12 +236,12 @@ public class Points {
 			value = "Returns a point with coordinate summing of the two operands.",
 			usages = @usage (
 					value = "if the left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.",
-					examples = { @example (
-							value = "{1, 2} + 4.5",
-							equals = "{5.5, 6.5,4.5}") }))
-	public static GamaPoint add(final GamaPoint p1, final Double p) {
-		if (p1 == null) { return GamaPoint.create(p, p, p); }
-		return GamaPoint.create(p1.x + p, p1.y + p, p1.z + p);
+					examples = {@example (
+									value = "{1, 2} + 4.5",
+									equals = "{5.5, 6.5,4.5}") }))
+	public static ILocation add(final GamaPoint p1, final Double p) {
+		if (p1 == null) { return new GamaPoint(p, p, p); }
+		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
 
 	@operator (
@@ -253,10 +253,10 @@ public class Points {
 			value = "Returns a point with coordinate summing of the two operands.",
 			examples = { @example (
 					value = "{1, 2} + 4",
-					equals = "{5.0, 6.0,4.0}") })
-	public static GamaPoint add(final GamaPoint p1, final Integer p) {
-		if (p1 == null) { return GamaPoint.create(p, p, p); }
-		return GamaPoint.create(p1.x + p, p1.y + p, p1.z + p);
+					equals = "{5.0, 6.0,4.0}")})
+	public static ILocation add(final GamaPoint p1, final Integer p) {
+		if (p1 == null) { return new GamaPoint(p, p, p); }
+		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
 
 	@operator (
@@ -274,9 +274,9 @@ public class Points {
 							@example (
 									value = "{1, 2} - 4",
 									equals = "{-3.0,-2.0,-4.0}") }))
-	public static GamaPoint subtract(final GamaPoint p1, final Double p) {
-		if (p1 == null) { return GamaPoint.create(-p, -p, -p); }
-		return GamaPoint.create(p1.x - p, p1.y - p, p1.z - p);
+	public static ILocation subtract(final GamaPoint p1, final Double p) {
+		if (p1 == null) { return new GamaPoint(-p, -p, -p); }
+		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
 	@operator (
@@ -294,8 +294,8 @@ public class Points {
 							@example (
 									value = "-{1.0,6.0,7.0}",
 									equals = "{-1.0,-6.0,-7.0}") }))
-	public static GamaPoint subtract(final GamaPoint p) {
-		return GamaPoint.create(-p.x, -p.y, -p.z);
+	public static ILocation subtract(final GamaPoint p) {
+		return new GamaPoint(-p.x, -p.y, -p.z);
 	}
 
 	@operator (
@@ -310,10 +310,10 @@ public class Points {
 					examples = @example (
 							value = "{1, 2} - {4, 5}",
 							equals = "{-3.0, -3.0}")))
-	public static GamaPoint subtract(final GamaPoint p1, final GamaPoint p) {
+	public static ILocation subtract(final GamaPoint p1, final GamaPoint p) {
 		if (p == null) { return p1; }
 		if (p1 == null) { return p.negated(); }
-		return GamaPoint.create(p1.x - p.x, p1.y - p.y, p1.z - p.z);
+		return new GamaPoint(p1.x - p.x, p1.y - p.y, p1.z - p.z);
 	}
 
 	@operator (
@@ -323,13 +323,13 @@ public class Points {
 			concept = {})
 	@doc (
 			value = "Returns a point with coordinate resulting from the first operand minus the second operand.",
-			examples = { @example (
-					value = "{2.0,3.0,4.0} - 1",
-					equals = "{1.0,2.0,3.0}") })
+			examples = {
+					@example(value="{2.0,3.0,4.0} - 1", equals="{1.0,2.0,3.0}")
+			})
 	@test ("{2.0,3.0,4.0} - 1 = {1.0,2.0,3.0}")
-	public static GamaPoint subtract(final GamaPoint p1, final Integer p) {
-		if (p1 == null) { return GamaPoint.create(-p, -p, -p); }
-		return GamaPoint.create(p1.x - p, p1.y - p, p1.z - p);
+	public static ILocation subtract(final GamaPoint p1, final Integer p) {
+		if (p1 == null) { return new GamaPoint(-p, -p, -p); }
+		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
 	@operator (
@@ -342,9 +342,9 @@ public class Points {
 					value = "{12345.78943, 12345.78943, 12345.78943} with_precision 2 ",
 					equals = "{12345.79, 12345.79, 12345.79}") },
 			see = "round")
-	public static GamaPoint round(final GamaPoint v, final Integer precision) {
+	public static ILocation round(final ILocation v, final Integer precision) {
 		if (v == null) { return null; }
-		return GamaPoint.create(Maths.round(v.getX(), precision), Maths.round(v.getY(), precision),
+		return new GamaPoint(Maths.round(v.getX(), precision), Maths.round(v.getY(), precision),
 				Maths.round(v.getZ(), precision));
 	}
 
@@ -358,10 +358,10 @@ public class Points {
 					value = "{12345.78943,  12345.78943, 12345.78943} with_precision 2",
 					equals = "{12345.79,12345.79,12345.79}") },
 			see = "round")
-	@test ("{12345.78943,  12345.78943, 12345.78943} with_precision 2 = {12345.79,12345.79,12345.79}")
-	public static GamaPoint round(final GamaPoint v) {
+	@test("{12345.78943,  12345.78943, 12345.78943} with_precision 2 = {12345.79,12345.79,12345.79}")
+	public static ILocation round(final ILocation v) {
 		if (v == null) { return null; }
-		return GamaPoint.create(Maths.round(v.getX()), Maths.round(v.getY()), Maths.round(v.getZ()));
+		return new GamaPoint(Maths.round(v.getX()), Maths.round(v.getY()), Maths.round(v.getZ()));
 	}
 
 }

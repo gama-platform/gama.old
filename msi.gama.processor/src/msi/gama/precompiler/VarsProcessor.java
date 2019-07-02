@@ -109,7 +109,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 					final String param_class = checkPrim(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]);
 
 					setterHelper = concat("(s,a,t,v)->{if (t != null) ((", clazz, ") t).", method, "(",
-							scope ? "s," : "", isDynamic ? "a, " : "", "(" + param_class + ") v); return null; }");
+							scope ? "s," : "", isDynamic ? "a, " : "", "(" + param_class + ") v[0]); return null; }");
 				}
 			}
 		}
@@ -133,7 +133,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 					// AD: REMOVE THE DEFAULT BEHAVIOR WHEN NULL IS PASSED (which was wrong, see #2713)
 					// getterHelper = concat("(s, v)->(v==null||v.length==0)?", returnWhenNull(checkPrim(returns)),
 					// ":((", clazz, ")v[0]).", method, scope ? "(s)" : "()");
-					getterHelper = concat("(s, v)->((", clazz, ")v).", method, scope ? "(s)" : "()");
+					getterHelper = concat("(s, v)->((", clazz, ")v[0]).", method, scope ? "(s)" : "()");
 				} else {
 					getterHelper = concat("(s,a,t,v)->t==null?", returnWhenNull(checkPrim(returns)), ":((", clazz,
 							")t).", method, "(", scope ? "s" : "", dynamic ? (scope ? "," : "") + "a)" : ")");

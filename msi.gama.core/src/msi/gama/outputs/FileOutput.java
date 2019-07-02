@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.FileOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
- *
+ * msi.gama.outputs.FileOutput.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -21,6 +21,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -33,6 +35,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
@@ -121,8 +124,8 @@ public class FileOutput extends AbstractOutput {
 	String header = "";
 	String footer = "";
 	Object lastValue = null;
-	// List<String> loggedBatchParam = null;
-	// ParametersSet solution = null;
+	List<String> loggedBatchParam = null;
+	ParametersSet solution = null;
 	private String expressionText = null;
 	private IExpression data;
 	private static final String LOG_FOLDER = "log";
@@ -241,22 +244,22 @@ public class FileOutput extends AbstractOutput {
 		return true;
 	}
 
-	// public FileOutput(final String name, final String expr, final List<String> columns, final IExperimentPlan exp)
-	// throws GamaRuntimeException {
-	// // WARNING Created by the batch. Is it still necessary to keep this ?
-	// // TODO Should be deprecated in favor of a regular file output in the
-	// // permanent
-	// // outputs of the experiment.
-	// super(DescriptionFactory.create(IKeyword.FILE, IKeyword.DATA, expr, IKeyword.TYPE, IKeyword.CSV, IKeyword.NAME,
-	// name == null ? expr : name));
-	// // prepare(exp);
-	// expressionText = expr;
-	// refreshExpression();
-	// // this.setPermanent(true);
-	// this.setRefreshRate(0);
-	// this.setLoggedBatchParam(columns);
-	// this.writeHeaderAndClose();
-	// }
+	public FileOutput(final String name, final String expr, final List<String> columns, final IExperimentPlan exp)
+			throws GamaRuntimeException {
+		// WARNING Created by the batch. Is it still necessary to keep this ?
+		// TODO Should be deprecated in favor of a regular file output in the
+		// permanent
+		// outputs of the experiment.
+		super(DescriptionFactory.create(IKeyword.FILE, IKeyword.DATA, expr, IKeyword.TYPE, IKeyword.CSV, IKeyword.NAME,
+				name == null ? expr : name));
+		// prepare(exp);
+		expressionText = expr;
+		refreshExpression();
+		// this.setPermanent(true);
+		this.setRefreshRate(0);
+		this.setLoggedBatchParam(columns);
+		this.writeHeaderAndClose();
+	}
 
 	// public void prepare(final IExperimentPlan exp) throws
 	// GamaRuntimeException {
@@ -327,49 +330,49 @@ public class FileOutput extends AbstractOutput {
 		writeToFile(getScope().getClock().getCycle());
 	}
 
-	// public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness) throws GamaRuntimeException {
-	// setSolution(sol);
-	// if (fitness == null) {
-	// if (!getScope().step(this).passed()) { return; }
-	// } else {
-	// setLastValue(fitness);
-	// }
-	// // compute(getOwnScope(), 0l);
-	// switch (type) {
-	// case XML:
-	// break;
-	// case TEXT:
-	// try (FileWriter fileWriter = new FileWriter(file, true)) {
-	// if (getLastValue() != null) {
-	// fileWriter.write(getLastValue().toString());
-	// }
-	// fileWriter.flush();
-	// } catch (final IOException e) {
-	// e.printStackTrace();
-	// }
-	// break;
-	// case CSV:
-	//// if (solution == null) { return; }
-	//// final StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
-	//// for (final String var : loggedBatchParam) {
-	//// s.append(solution.get(var)).append(',');
-	//// }
-	// if (lastValue != null) {
-	// s.append(lastValue);
-	// } else {
-	// s.setLength(s.length() - 1);
-	// }
-	// s.append(System.getProperty("line.separator"));
-	// try (FileWriter fileWriter = new FileWriter(file, true)) {
-	// fileWriter.write(s.toString());
-	// fileWriter.flush();
-	// } catch (final IOException e) {
-	// e.printStackTrace();
-	// }
-	//
-	// break;
-	// }
-	// }
+	public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness) throws GamaRuntimeException {
+		setSolution(sol);
+		if (fitness == null) {
+			if (!getScope().step(this).passed()) { return; }
+		} else {
+			setLastValue(fitness);
+		}
+		// compute(getOwnScope(), 0l);
+		switch (type) {
+			case XML:
+				break;
+			case TEXT:
+				try (FileWriter fileWriter = new FileWriter(file, true)) {
+					if (getLastValue() != null) {
+						fileWriter.write(getLastValue().toString());
+					}
+					fileWriter.flush();
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			case CSV:
+				if (solution == null) { return; }
+				final StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
+				for (final String var : loggedBatchParam) {
+					s.append(solution.get(var)).append(',');
+				}
+				if (lastValue != null) {
+					s.append(lastValue);
+				} else {
+					s.setLength(s.length() - 1);
+				}
+				s.append(System.getProperty("line.separator"));
+				try (FileWriter fileWriter = new FileWriter(file, true)) {
+					fileWriter.write(s.toString());
+					fileWriter.flush();
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+
+				break;
+		}
+	}
 
 	void writeToFile(final long cycle) {
 		switch (type) {
@@ -429,22 +432,22 @@ public class FileOutput extends AbstractOutput {
 	public void setLastValue(final Object lastValue) {
 		this.lastValue = lastValue;
 	}
-	//
-	// public List<String> getLoggedBatchParam() {
-	// return loggedBatchParam;
-	// }
-	//
-	// public void setLoggedBatchParam(final List<String> loggedBatchParam) {
-	// this.loggedBatchParam = loggedBatchParam;
-	// }
-	//
-	// public ParametersSet getSolution() {
-	// return solution;
-	// }
-	//
-	// public void setSolution(final ParametersSet solution) {
-	// this.solution = solution;
-	// }
+
+	public List<String> getLoggedBatchParam() {
+		return loggedBatchParam;
+	}
+
+	public void setLoggedBatchParam(final List<String> loggedBatchParam) {
+		this.loggedBatchParam = loggedBatchParam;
+	}
+
+	public ParametersSet getSolution() {
+		return solution;
+	}
+
+	public void setSolution(final ParametersSet solution) {
+		this.solution = solution;
+	}
 
 	public void writeHeaderAndClose() {
 		switch (type) {
@@ -459,10 +462,10 @@ public class FileOutput extends AbstractOutput {
 				}
 				break;
 			case CSV:
-				final StringBuilder s = new StringBuilder();
-				// for (final String var : loggedBatchParam) {
-				// s.append(var).append(',');
-				// }
+				final StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
+				for (final String var : loggedBatchParam) {
+					s.append(var).append(',');
+				}
 				if (getFacet(IKeyword.DATA) != null) {
 					s.append(getLiteral(IKeyword.DATA));
 				} else {

@@ -22,7 +22,7 @@ import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
-import org.locationtech.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
@@ -377,7 +377,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		final int yInDisplay = yOnScreen - positionInPixels.y;
 		final double xInModel = xInDisplay / xScale;
 		final double yInModel = yInDisplay / yScale;
-		return GamaPoint.create(xInModel, yInModel);
+		return new GamaPoint(xInModel, yInModel);
 	}
 
 	@Override

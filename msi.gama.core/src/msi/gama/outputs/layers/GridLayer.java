@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GridLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
- *
+ * msi.gama.outputs.layers.GridLayer.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -66,7 +66,8 @@ public class GridLayer extends AbstractLayer {
 
 		final double[] gridValueMatrix = data.getElevationMatrix(scope);
 		final GamaImageFile textureFile = data.textureFile();
-		final FieldDrawingAttributes attributes = new FieldDrawingAttributes(getName());
+		final FieldDrawingAttributes attributes =
+				new FieldDrawingAttributes(getName(), lineColor, gridValueMatrix == null);
 		attributes.grayScaled = data.isGrayScaled();
 		final BufferedImage image = data.getImage();
 		if (textureFile != null) {

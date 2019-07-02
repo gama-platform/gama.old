@@ -16,7 +16,7 @@ import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.OpenGL;
 
-public abstract class ObjectDrawer<T extends LayerElement<?, ?>> {
+public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 
 	final OpenGL gl;
 
@@ -66,7 +66,7 @@ public abstract class ObjectDrawer<T extends LayerElement<?, ?>> {
 
 	}
 
-	private final GamaPoint loc = GamaPoint.createEmpty();
+	private final GamaPoint loc = new GamaPoint();
 
 	/**
 	 * Applies a translation to the gl context

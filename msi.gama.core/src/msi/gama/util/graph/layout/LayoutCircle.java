@@ -34,7 +34,7 @@ public class LayoutCircle {
 			final double angle = 360 * i++ / (double) graph.vertexSet().size();
 			final double x = Maths.cos(angle) * radius + envelopeGeometry.getCentroid().x;
 			final double y = Maths.sin(angle) * radius + envelopeGeometry.getCentroid().x;
-			v.setLocation(GamaPoint.create(x, y));
+			v.setLocation(new GamaPoint(x, y));
 		}
 
 	}

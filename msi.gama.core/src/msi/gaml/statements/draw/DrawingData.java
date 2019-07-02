@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.DrawingData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8)
- *
+ * msi.gaml.statements.draw.DrawingData.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -17,6 +17,7 @@ import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
@@ -43,11 +44,11 @@ public class DrawingData extends AttributeHolder {
 
 	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
 
-	final Attribute<GamaPoint> size;
+	final Attribute<ILocation> size;
 	final Attribute<Double> depth;
 	final Attribute<GamaPair<Double, GamaPoint>> rotation;
-	final Attribute<GamaPoint> location;
-	final Attribute<GamaPoint> anchor;
+	final Attribute<ILocation> location;
+	final Attribute<ILocation> anchor;
 	final Attribute<Boolean> empty;
 	final Attribute<GamaColor> border;
 	private final Attribute<IList<GamaColor>> colors;
@@ -65,7 +66,7 @@ public class DrawingData extends AttributeHolder {
 			if (exp.getGamlType().isNumber()) {
 				final double val = Cast.asFloat(scope, exp.value(scope));
 				// We do not consider the z ordinate -- see Issue #1539
-				return GamaPoint.create(val, val, 0);
+				return new GamaPoint(val, val, 0);
 			} else {
 				return (GamaPoint) exp.value(scope);
 			}
@@ -138,11 +139,11 @@ public class DrawingData extends AttributeHolder {
 	}
 
 	public GamaPoint getLocation() {
-		return location.get() == null ? null : location.get();
+		return location.get() == null ? null : location.get().toGamaPoint();
 	}
 
 	public GamaPoint getAnchor() {
-		return anchor.get() == null ? null : anchor.get();
+		return anchor.get() == null ? null : anchor.get().toGamaPoint();
 	}
 
 }

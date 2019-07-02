@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -48,7 +48,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 	IMatrix<?> matrixValue(IScope scope, IType<?> contentType, boolean copy);
 
-	IMatrix<?> matrixValue(IScope scope, IType<?> contentType, GamaPoint size, boolean copy);
+	IMatrix<?> matrixValue(IScope scope, IType<?> contentType, ILocation size, boolean copy);
 
 	GamaMap<?, ?> mapValue(IScope scope, IType<?> keyType, IType<?> contentType, boolean copy);
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.Distribution.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8)
- *
+ * msi.gama.outputs.layers.charts.Distribution.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -17,6 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
@@ -113,12 +114,10 @@ public class Distribution {
 		for (int k = 0; k < len; k++) {
 			nx = 0;
 			ny = 0;
-			while (thresholdsx[nx + 1] < doublelistorx[k] && nx + 2 < nbBarresx) {
+			while (thresholdsx[nx + 1] < doublelistorx[k] && nx + 2 < nbBarresx)
 				nx++;
-			}
-			while (thresholdsy[ny + 1] < doublelistory[k] && ny + 2 < nbBarresy) {
+			while (thresholdsy[ny + 1] < doublelistory[k] && ny + 2 < nbBarresy)
 				ny++;
-			}
 			distribInts[nx][ny]++;
 		}
 
@@ -307,12 +306,10 @@ public class Distribution {
 		for (int k = 0; k < len; k++) {
 			nx = 0;
 			ny = 0;
-			while (thresholdsx[nx + 1] < doublelistorx[k] && nx + 2 < nbBarresx) {
+			while (thresholdsx[nx + 1] < doublelistorx[k] && nx + 2 < nbBarresx)
 				nx++;
-			}
-			while (thresholdsy[ny + 1] < doublelistory[k] && ny + 2 < nbBarresy) {
+			while (thresholdsy[ny + 1] < doublelistory[k] && ny + 2 < nbBarresy)
 				ny++;
-			}
 			distribInts[nx][ny]++;
 		}
 
@@ -343,6 +340,7 @@ public class Distribution {
 	@operator (
 			value = { "distribution2d_of" },
 			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			index_type = IType.STRING,
 			content_type = IType.LIST,
@@ -362,13 +360,15 @@ public class Distribution {
 
 		if (valuesx == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvaluex = Cast.asList(scope, valuesx);
-		if (lvaluex.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvaluex.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 
 		int nbBarresx = 10;
 		nbBarresx = nbbarsx.intValue();
 
 		final IList lvaluey = Cast.asList(scope, valuesy);
-		if (lvaluey.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvaluey.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 
 		int nbBarresy = 10;
 		nbBarresy = nbbarsy.intValue();
@@ -380,6 +380,7 @@ public class Distribution {
 	@operator (
 			value = { "distribution2d_of" },
 			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			index_type = IType.STRING,
 			content_type = IType.LIST,
@@ -400,13 +401,15 @@ public class Distribution {
 
 		if (valuesx == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvaluex = Cast.asList(scope, valuesx);
-		if (lvaluex.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvaluex.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 
 		int nbBarresx = 10;
 		nbBarresx = nbbarsx.intValue();
 
 		final IList lvaluey = Cast.asList(scope, valuesy);
-		if (lvaluey.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvaluey.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 
 		int nbBarresy = 10;
 		nbBarresy = nbbarsy.intValue();
@@ -426,6 +429,7 @@ public class Distribution {
 	@operator (
 			value = { "distribution2d_of" },
 			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			index_type = IType.STRING,
 			content_type = IType.LIST,
@@ -446,9 +450,11 @@ public class Distribution {
 
 		if (valuesx == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvaluex = Cast.asList(scope, valuesx);
-		if (lvaluex.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvaluex.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 		final IList lvaluey = Cast.asList(scope, valuesy);
-		if (lvaluey.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvaluey.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 
 		final int nbBarres = 10;
 
@@ -572,8 +578,8 @@ public class Distribution {
 		}
 		Arrays.sort(doublelist);
 
-		final int scale = BigDecimal.valueOf(deuxpuissancek).scale();
-
+		int scale = BigDecimal.valueOf(deuxpuissancek).scale();
+		
 		double preval = newminInt;
 		double postval = 0;
 		int nba = 0;
@@ -586,11 +592,12 @@ public class Distribution {
 			while (nba < len && doublelist[nba] < postval) {
 				nba++;
 			}
+		
 
 			distribInts[i] = nba - nbaprec;
 			nbaprec = nba;
-			distribLegend[i] = "[" + Maths.round(preval, scale + 8) + ":" + Maths.round(postval, scale + 8) + "]";
-
+			distribLegend[i] = "[" + Maths.round(preval, scale+8)+ ":" + Maths.round(postval, scale+8) + "]";
+			 
 		}
 
 		distribParams[0] = 0;
@@ -611,6 +618,7 @@ public class Distribution {
 	@operator (
 			value = { "distribution_of" },
 			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			index_type = IType.STRING,
 			content_type = IType.LIST,
@@ -630,7 +638,8 @@ public class Distribution {
 
 		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvalue = Cast.asList(scope, values);
-		if (lvalue.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvalue.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 
 		int nbBarres = 10;
 		nbBarres = nbbars.intValue();
@@ -642,6 +651,7 @@ public class Distribution {
 	@operator (
 			value = { "distribution_of" },
 			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			index_type = IType.STRING,
 			content_type = IType.LIST,
@@ -661,7 +671,8 @@ public class Distribution {
 
 		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvalue = Cast.asList(scope, values);
-		if (lvalue.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvalue.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 
 		final int nbBarres = 10;
 
@@ -672,6 +683,7 @@ public class Distribution {
 	@operator (
 			value = { "distribution_of" },
 			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
 			index_type = IType.STRING,
 			content_type = IType.LIST,
@@ -692,7 +704,8 @@ public class Distribution {
 
 		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvalue = Cast.asList(scope, values);
-		if (lvalue.length(scope) < 1) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
+		if (lvalue.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
 
 		int nbBarres = 10;
 		nbBarres = nbbars.intValue();

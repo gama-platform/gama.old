@@ -42,17 +42,18 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.GLBuffers;
-import org.locationtech.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Envelope;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayData;
@@ -456,12 +457,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
 	 */
 	@Override
-	public GamaPoint getModelCoordinates() {
+	public ILocation getModelCoordinates() {
 		final Point mp = renderer.getCameraHelper().getMousePosition();
 		if (mp == null) { return null; }
 		final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
 		if (p == null) { return null; }
-		return GamaPoint.create(p.x, -p.y);
+		return new GamaPoint(p.x, -p.y);
 	}
 
 	@Override
@@ -477,7 +478,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			return;
 		}
 		// By default, returns the coordinates in the world.
-		final GamaPoint point = getModelCoordinates();
+		final ILocation point = getModelCoordinates();
 		final String x = point == null ? "N/A" : String.format("%8.6f", point.getX());
 		final String y = point == null ? "N/A" : String.format("%8.6f", point.getY());
 		final Object[] objects = new Object[] { x, y };
@@ -493,10 +494,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			final Point origin = new Point(0, 0);
 			int xc = -origin.x;
 			int yc = -origin.y;
-			e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
 			xc = xc + renderer.getCanvas().getSurfaceWidth();
 			yc = yc + renderer.getCanvas().getSurfaceHeight();
-			e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
 			currentLayer.getData().setVisibleRegion(e);
 		}
 		return e;
@@ -508,11 +509,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesFrom(int, int, java.awt.Point, java.awt.Point)
 	 */
 	@Override
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels) {
 		final Point mp = new Point(xOnScreen, yOnScreen);
 		final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
-		return GamaPoint.create(p.x, -p.y);
+		return new GamaPoint(p.x, -p.y);
 	}
 
 	/**
@@ -522,8 +523,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public Collection<IAgent> selectAgent(final int x, final int y) {
-		final GamaPoint pp = getModelCoordinatesFrom(x, y, null, null);
-		return scope.getRoot().getTopology().getNeighborsOf(scope, GamaPoint.create(pp.getX(), pp.getY()),
+		final ILocation pp = getModelCoordinatesFrom(x, y, null, null);
+		return scope.getRoot().getTopology().getNeighborsOf(scope, new GamaPoint(pp.getX(), pp.getY()),
 				renderer.getMaxEnvDim() / 100, Different.with());
 	}
 
@@ -609,9 +610,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				final GamaPoint pickedPoint = renderer
 						.getRealWorldPointFromWindowPoint(renderer.getCameraHelper().getLastMousePressedPosition());
 				ag = scope.getRoot().getPopulationFor(attributes.getSpeciesName()).getAgent(scope,
-						GamaPoint.create(pickedPoint.x, -pickedPoint.y));
+						new GamaPoint(pickedPoint.x, -pickedPoint.y));
 			} else {
-				ag = attributes.getAgent();
+				final AgentIdentifier id = attributes.getAgentIdentifier();
+				if (id != null) {
+					ag = id.getAgent(scope);
+				}
 			}
 		}
 		if (withHighlight) {
@@ -632,9 +636,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void selectionIn(final Envelope3D env) {
 
 		final Envelope3D envInWorld = Envelope3D.withYNegated(env);
-		final Set<IAgent> agents = new TLinkedHashSet<>();
-		scope.getTopology().getSpatialIndex().allInEnvelope(scope, envInWorld.centre(), envInWorld, new Different(),
-				false, agents);
+		final Collection<IAgent> agents = scope.getTopology().getSpatialIndex().allInEnvelope(scope,
+				envInWorld.centre(), envInWorld, new Different(), false);
 		final Map<String, Runnable> actions = new LinkedHashMap<>();
 		final Map<String, Image> images = new HashMap<>();
 		images.put(renderer.getOpenGLHelper().isStickyROI() ? "Hide region" : "Keep region visible",

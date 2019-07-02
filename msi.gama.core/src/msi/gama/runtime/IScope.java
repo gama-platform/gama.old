@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.IScope.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform (v. 1.8)
- *
+ * msi.gama.runtime.IScope.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -44,8 +44,173 @@ import msi.gaml.types.IType;
 public interface IScope extends Closeable, IBenchmarkable {
 
 	/**
-	 * Management of the scope state.
+	 * Use this class to accumulate a series of execution results. Only the last one marked as 'passed' will be returned
+	 * 
+	 * @author drogoul
 	 *
+	 */
+	public static class MutableResult extends ExecutionResultWithValue {
+
+		/**
+		 * Instantiates a new mutable result.
+		 */
+		public MutableResult() {
+			super(true, null);
+		}
+
+		/**
+		 * Accepts an execution result
+		 *
+		 * @param e
+		 *            the execution result
+		 * @return true, if successful
+		 */
+		public boolean accept(final ExecutionResult e) {
+			passed = passed && e.passed();
+			if (passed) {
+				this.value = e.getValue();
+			}
+			return passed;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see msi.gama.runtime.IScope.ExecutionResultWithValue#getValue()
+		 */
+		@Override
+		public Object getValue() {
+			return value;
+		}
+
+	}
+
+	/**
+	 * The result of executions. 'passed' represents the success or failure of the computation, value its result
+	 * 
+	 * @author drogoul
+	 *
+	 */
+
+	public abstract static class ExecutionResult {
+
+		/**
+		 * Passed.
+		 *
+		 * @return true, if successful
+		 */
+		public abstract boolean passed();
+
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
+		public Object getValue() {
+			return passed();
+		}
+
+	}
+
+	/**
+	 * The Class FailedExecutionResult.
+	 */
+	public static class FailedExecutionResult extends ExecutionResult {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see msi.gama.runtime.IScope.ExecutionResult#passed()
+		 */
+		@Override
+		public boolean passed() {
+			return false;
+		}
+
+	}
+
+	/**
+	 * The Class SuccessfulExecutionResult.
+	 */
+	public static class SuccessfulExecutionResult extends ExecutionResult {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see msi.gama.runtime.IScope.ExecutionResult#passed()
+		 */
+		@Override
+		public boolean passed() {
+			return true;
+		}
+
+	}
+
+	/**
+	 * The Class ExecutionResultWithValue.
+	 */
+	public static class ExecutionResultWithValue extends ExecutionResult {
+
+		/** The value. */
+		protected Object value;
+
+		/** The passed. */
+		protected boolean passed;
+
+		/**
+		 * Instantiates a new execution result with a given value.
+		 *
+		 * @param value
+		 *            the value
+		 */
+		public ExecutionResultWithValue(final Object value) {
+			this(true, value);
+		}
+
+		/**
+		 * Instantiates a new execution result with a flag indicating if the execution is a sucess and an object
+		 *
+		 * @param passed
+		 *            the passed
+		 * @param value
+		 *            the value
+		 */
+		public ExecutionResultWithValue(final boolean passed, final Object value) {
+			this.passed = passed;
+			this.value = value;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see msi.gama.runtime.IScope.ExecutionResult#getValue()
+		 */
+		@Override
+		public Object getValue() {
+			return value;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see msi.gama.runtime.IScope.ExecutionResult#passed()
+		 */
+		@Override
+		public boolean passed() {
+			return passed;
+		}
+
+	}
+
+	/** The Constant PASSED. */
+	public final static ExecutionResult PASSED = new SuccessfulExecutionResult();
+
+	/** The Constant FAILED. */
+	public final static ExecutionResult FAILED = new FailedExecutionResult();
+
+	/**
+	 * Management of the scope state.
+	 * 
 	 * clear() removes any contextual information from it. setOnUserHold() allows to suspend execution because the user
 	 * is asked for something. isOnUserHold() allows to know it. isPaused() allows to know if the execution is paused.
 	 * disableErrorReporting() allows to disable any output of exceptions during an execution. enableErrorReporting()
@@ -56,10 +221,10 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * this scope
 	 */
 
-	void clear();
+	public abstract void clear();
 
 	@Override
-	default void close() {
+	public default void close() {
 		clear();
 	}
 
@@ -69,38 +234,38 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param b
 	 *            the new state
 	 */
-	void setOnUserHold(boolean b);
+	public abstract void setOnUserHold(boolean b);
 
 	/**
 	 * Checks if the scope is on user hold.
 	 *
 	 * @return true, if is on user hold
 	 */
-	boolean isOnUserHold();
+	public abstract boolean isOnUserHold();
 
 	/**
 	 * Checks if the scope is paused.
 	 *
 	 * @return true, if is paused
 	 */
-	boolean isPaused();
+	public abstract boolean isPaused();
 
 	/**
 	 * Disable error reporting.
 	 */
-	void disableErrorReporting();
+	public abstract void disableErrorReporting();
 
 	/**
 	 * Enable error reporting.
 	 */
-	void enableErrorReporting();
+	public abstract void enableErrorReporting();
 
 	/**
 	 * Report errors.
 	 *
 	 * @return true, if successful
 	 */
-	boolean reportErrors();
+	public abstract boolean reportErrors();
 
 	/**
 	 * Sets whether to trace or not the execution
@@ -108,14 +273,14 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param trace
 	 *            the new trace
 	 */
-	void setTrace(boolean trace);
+	public abstract void setTrace(boolean trace);
 
 	/**
 	 * Gets the name.
 	 *
 	 * @return the name
 	 */
-	String getName();
+	public abstract String getName();
 
 	@Override
 	default String getNameForBenchmarks() {
@@ -129,23 +294,23 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the additional name
 	 * @return the i scope
 	 */
-	IScope copy(String additionalName);
+	public abstract IScope copy(String additionalName);
 
 	/**
 	 * Interrupted.
 	 *
 	 * @return true, if successful
 	 */
-	boolean interrupted();
+	public boolean interrupted();
 
 	/**
 	 * Sets the interrupted.
 	 */
-	void setInterrupted();
+	public void setInterrupted();
 
 	/**
 	 * Keeping track of symbols.
-	 *
+	 * 
 	 * setCurrentSymbol() indicates which symbol (statement, variable, output, ..) is currently executing. push() does
 	 * the same but creates a local context where variables can be manipulated. pop() discards this local context.
 	 * getCurrentSymbol() allows to retrieve the latest symbol that has been pushed or set
@@ -154,7 +319,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the symbol
 	 */
 
-	void push(ISymbol symbol);
+	public abstract void push(ISymbol symbol);
 
 	/**
 	 * Pop.
@@ -162,7 +327,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param symbol
 	 *            the symbol
 	 */
-	void pop(ISymbol symbol);
+	public abstract void pop(ISymbol symbol);
 
 	/**
 	 * Sets the current symbol.
@@ -170,18 +335,18 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param symbol
 	 *            the new current symbol
 	 */
-	void setCurrentSymbol(ISymbol symbol);
+	public abstract void setCurrentSymbol(ISymbol symbol);
 
 	/**
 	 * Gets the current symbol.
 	 *
 	 * @return the current symbol
 	 */
-	ISymbol getCurrentSymbol();
+	public abstract ISymbol getCurrentSymbol();
 
 	/**
 	 * Access to read attributes
-	 *
+	 * 
 	 * Manipulates a distinct stack where the attributes read from files, databases, etc. are temporarily stored.
 	 * pushReadAttributes() allows to store a new map of attributes. popReadAttributes() retieves the latest pushed
 	 * attributes (and removes them from the stack). peekReadAttributes() retrieves the latest without removing them.
@@ -189,64 +354,64 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param values
 	 *            the values
 	 */
-	void pushReadAttributes(Map values);
+	public abstract void pushReadAttributes(Map values);
 
 	/**
 	 * Pop read attributes.
 	 *
 	 * @return the map
 	 */
-	Map popReadAttributes();
+	public abstract Map popReadAttributes();
 
 	/**
 	 * Peek read attributes.
 	 *
 	 * @return the map
 	 */
-	Map peekReadAttributes();
+	public abstract Map peekReadAttributes();
 
 	/**
 	 * Access to various agents and objects
-	 *
+	 * 
 	 * setEach() allows to fix temporarily the value of the 'each' pseudo-variable, getEach() to retrieve it.
 	 *
 	 * @param value
 	 *            the new each
 	 */
 
-	void setEach(Object value);
+	public abstract void setEach(Object value);
 
 	/**
 	 * Gets the each.
 	 *
 	 * @return the each
 	 */
-	Object getEach();
+	public abstract Object getEach();
 
 	/**
 	 * Gets the root.
 	 *
 	 * @return the root
 	 */
-	ITopLevelAgent getRoot();
+	public abstract ITopLevelAgent getRoot();
 
 	/**
 	 * Gets the simulation.
 	 *
 	 * @return the simulation
 	 */
-	SimulationAgent getSimulation();
+	public abstract SimulationAgent getSimulation();
 
 	/**
 	 * Gets the experiment.
 	 *
 	 * @return the experiment
 	 */
-	IExperimentAgent getExperiment();
+	public abstract IExperimentAgent getExperiment();
 
 	/**
 	 * Current agent management.
-	 *
+	 * 
 	 * getAgentScope() returns the currently pushed agent. push() allos to keep trace of the current agent, while pop()
 	 * will retrieve it. getAgentScope() returns the currently pushed agent. getAgentsStack() returns a copy of the
 	 * stack of agents
@@ -255,7 +420,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the i agent
 	 */
 
-	void pop(IAgent iAgent);
+	public abstract void pop(IAgent iAgent);
 
 	/**
 	 * Push.
@@ -264,53 +429,53 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the i agent
 	 * @return true, if successful
 	 */
-	boolean push(IAgent iAgent);
+	public abstract boolean push(IAgent iAgent);
 
 	/**
 	 * Gets the agent.
 	 *
 	 * @return the agent
 	 */
-	IAgent getAgent();
+	public abstract IAgent getAgent();
 
 	/**
 	 * Gets the agents stack.
 	 *
 	 * @return the agents stack
 	 */
-	IAgent[] getAgentsStack();
+	public IAgent[] getAgentsStack();
 
 	/**
 	 * Access to utilities and runtime contexts
-	 *
+	 * 
 	 * getRandom() gives access to the current random number generator. getGui() returns the current user-interface
 	 * component being used.
 	 *
 	 * @return the random
 	 */
 
-	RandomUtils getRandom();
+	public abstract RandomUtils getRandom();
 
 	/**
 	 * Gets the gui.
 	 *
 	 * @return the gui
 	 */
-	IGui getGui();
+	public abstract IGui getGui();
 
 	/**
 	 * Gets the clock.
 	 *
 	 * @return the clock
 	 */
-	SimulationClock getClock();
+	public abstract SimulationClock getClock();
 
 	/**
 	 * Gets the topology.
 	 *
 	 * @return the topology
 	 */
-	ITopology getTopology();
+	public ITopology getTopology();
 
 	/**
 	 * Sets the topology.
@@ -319,7 +484,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the topology
 	 * @return the i topology
 	 */
-	ITopology setTopology(ITopology topology);
+	public ITopology setTopology(ITopology topology);
 
 	/**
 	 * Sets the graphics.
@@ -327,20 +492,20 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param val
 	 *            the new graphics
 	 */
-	void setGraphics(IGraphics val);
+	public abstract void setGraphics(IGraphics val);
 
 	/**
 	 * Gets the graphics.
 	 *
 	 * @return the graphics
 	 */
-	IGraphics getGraphics();
+	public abstract IGraphics getGraphics();
 
-	default ExecutionResult execute(final IExecutable executable) {
+	public default ExecutionResult execute(final IExecutable executable) {
 		return execute(executable, getAgent(), null);
 	}
 
-	default ExecutionResult execute(final IExecutable executable, final Arguments args) {
+	public default ExecutionResult execute(final IExecutable executable, final Arguments args) {
 		return execute(executable, getAgent(), args);
 	}
 
@@ -356,7 +521,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @return the execution result
 	 */
 
-	ExecutionResult execute(final IExecutable executable, final IAgent agent, final Arguments args);
+	public abstract ExecutionResult execute(final IExecutable executable, final IAgent agent, final Arguments args);
 
 	/**
 	 * Evaluate.
@@ -369,7 +534,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	ExecutionResult evaluate(IExpression expr, IAgent agent) throws GamaRuntimeException;
+	public abstract ExecutionResult evaluate(IExpression expr, IAgent agent) throws GamaRuntimeException;
 
 	/**
 	 * Access to variables (agent and context).
@@ -379,7 +544,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @return the var value
 	 */
 
-	Object getVarValue(String varName);
+	public abstract Object getVarValue(String varName);
 
 	/**
 	 * Gets the agent var value.
@@ -392,7 +557,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	Object getAgentVarValue(IAgent agent, String name) throws GamaRuntimeException;
+	public abstract Object getAgentVarValue(IAgent agent, String name) throws GamaRuntimeException;
 
 	/**
 	 * Sets the agent var value.
@@ -406,7 +571,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	void setAgentVarValue(IAgent agent, String name, Object v) throws GamaRuntimeException;
+	public abstract void setAgentVarValue(IAgent agent, String name, Object v) throws GamaRuntimeException;
 
 	/**
 	 * Gets the global var value.
@@ -417,15 +582,15 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	Object getGlobalVarValue(String name) throws GamaRuntimeException;
+	public abstract Object getGlobalVarValue(String name) throws GamaRuntimeException;
 
 	/**
 	 * Verifies that this scope has access to the global var value named 'name'
-	 *
+	 * 
 	 * @param name
 	 * @return
 	 */
-	boolean hasAccessToGlobalVar(String name);
+	public abstract boolean hasAccessToGlobalVar(String name);
 
 	/**
 	 * Sets the global var value.
@@ -437,7 +602,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	void setGlobalVarValue(String name, Object v) throws GamaRuntimeException;
+	public abstract void setGlobalVarValue(String name, Object v) throws GamaRuntimeException;
 
 	/**
 	 * Sets the var value.
@@ -447,7 +612,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param val
 	 *            the val
 	 */
-	void setVarValue(String varName, Object val);
+	public abstract void setVarValue(String varName, Object val);
 
 	/**
 	 * Save all var values in.
@@ -455,7 +620,12 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param varsToSave
 	 *            the vars to save
 	 */
-	void saveAllVarValuesIn(Map<String, Object> varsToSave);
+	public abstract void saveAllVarValuesIn(Map<String, Object> varsToSave);
+
+	/**
+	 * Removes the all vars.
+	 */
+	public abstract void removeAllVars();
 
 	/**
 	 * Adds the var with value.
@@ -465,7 +635,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param val
 	 *            the val
 	 */
-	void addVarWithValue(String varName, Object val);
+	public abstract void addVarWithValue(String varName, Object val);
 
 	/**
 	 * Access to arguments (of actions).
@@ -479,7 +649,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *             the gama runtime exception
 	 */
 
-	Object getArg(String string, int type) throws GamaRuntimeException;
+	public abstract Object getArg(String string, int type) throws GamaRuntimeException;
 
 	/**
 	 * Gets the int arg.
@@ -490,7 +660,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	Integer getIntArg(String string) throws GamaRuntimeException;
+	public abstract Integer getIntArg(String string) throws GamaRuntimeException;
 
 	/**
 	 * Gets the float arg.
@@ -501,7 +671,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	Double getFloatArg(String string) throws GamaRuntimeException;
+	public abstract Double getFloatArg(String string) throws GamaRuntimeException;
 
 	/**
 	 * Gets the list arg.
@@ -512,7 +682,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	IList getListArg(String string) throws GamaRuntimeException;
+	public abstract IList getListArg(String string) throws GamaRuntimeException;
 
 	/**
 	 * Gets the string arg.
@@ -523,7 +693,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	String getStringArg(String string) throws GamaRuntimeException;
+	public abstract String getStringArg(String string) throws GamaRuntimeException;
 
 	/**
 	 * Gets the bool arg.
@@ -534,7 +704,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	Boolean getBoolArg(String string) throws GamaRuntimeException;
+	public abstract Boolean getBoolArg(String string) throws GamaRuntimeException;
 
 	/**
 	 * Checks for arg.
@@ -543,7 +713,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the string
 	 * @return true, if successful
 	 */
-	boolean hasArg(String string);
+	public abstract boolean hasArg(String string);
 
 	/**
 	 * Gets the type.
@@ -552,39 +722,39 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the name
 	 * @return the type
 	 */
-	IType getType(final String name);
+	public IType getType(final String name);
 
 	/**
 	 * Gets the model.
 	 *
 	 * @return the model
 	 */
-	IModel getModel();
+	public abstract IModel getModel();
 
 	/**
 	 * Indicates that a loop is finishing : should clear any _loop_halted status present.
 	 */
-	void popLoop();
+	public abstract void popLoop();
 
 	/**
 	 * Indicates that an action is finishing : should clear any _action_halted status present.
 	 */
-	void popAction();
+	public abstract void popAction();
 
 	/**
 	 * Should set the _action_halted flag to true.
 	 */
-	void interruptAction();
+	public abstract void interruptAction();
 
 	/**
 	 * Should set the _agent_halted flag to true.
 	 */
-	void interruptAgent();
+	public abstract void interruptAgent();
 
 	/**
 	 * Should set the _loop_halted flag to true.
 	 */
-	void interruptLoop();
+	public abstract void interruptLoop();
 
 	/**
 	 * Inits the.
@@ -593,7 +763,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the agent
 	 * @return the execution result
 	 */
-	ExecutionResult init(final IStepable agent);
+	public abstract ExecutionResult init(final IStepable agent);
 
 	/**
 	 * Step.
@@ -602,7 +772,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the agent
 	 * @return the execution result
 	 */
-	ExecutionResult step(final IStepable agent);
+	public abstract ExecutionResult step(final IStepable agent);
 
 	/**
 	 * Stack arguments.
@@ -610,7 +780,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param actualArgs
 	 *            the actual args
 	 */
-	void stackArguments(Arguments actualArgs);
+	public abstract void stackArguments(Arguments actualArgs);
 
 	/**
 	 * Update.
@@ -619,28 +789,28 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *            the agent
 	 * @return the execution result
 	 */
-	ExecutionResult update(IAgent agent);
+	public abstract ExecutionResult update(IAgent agent);
 
-	IExecutionContext getExecutionContext();
+	public abstract IExecutionContext getExecutionContext();
 
-	boolean isInTryMode();
+	public abstract boolean isInTryMode();
 
-	void enableTryMode();
+	public void enableTryMode();
 
-	void disableTryMode();
+	public void disableTryMode();
 
 	/**
 	 * @return the current statement or null if none
 	 */
 
-	void setCurrentError(GamaRuntimeException g);
+	public abstract void setCurrentError(GamaRuntimeException g);
 
-	GamaRuntimeException getCurrentError();
+	public GamaRuntimeException getCurrentError();
 
-	void setHorizontalPixelContext();
+	public abstract void setHorizontalPixelContext();
 
-	void setVerticalPixelContext();
+	public abstract void setVerticalPixelContext();
 
-	boolean isHorizontalPixelContext();
+	public abstract boolean isHorizontalPixelContext();
 
 }

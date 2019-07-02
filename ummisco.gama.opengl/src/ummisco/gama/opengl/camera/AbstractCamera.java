@@ -40,9 +40,9 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean firsttimeMouseDown = true;
 	protected boolean cameraInteraction = true;
 
-	protected final GamaPoint position = GamaPoint.create(0, 0, 0);
-	protected final GamaPoint target = GamaPoint.create(0, 0, 0);
-	protected final GamaPoint upVector = GamaPoint.create(0, 0, 0);
+	protected final GamaPoint position = new GamaPoint(0, 0, 0);
+	protected final GamaPoint target = new GamaPoint(0, 0, 0);
+	protected final GamaPoint upVector = new GamaPoint(0, 0, 0);
 	protected GamaPoint initialPosition, initialTarget, initialUpVector;
 
 	protected double theta;
@@ -292,7 +292,7 @@ public abstract class AbstractCamera implements ICamera {
 		if (!renderer.useShader()) {
 			yCoordNormalized = 1 - yCoordNormalized;
 		}
-		return GamaPoint.create(xCoordNormalized, yCoordNormalized);
+		return new GamaPoint(xCoordNormalized, yCoordNormalized);
 	}
 
 	private int clickOnKeystone(final MouseEvent e) {
@@ -303,7 +303,7 @@ public abstract class AbstractCamera implements ICamera {
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone.
 		// final GamaPoint p = getNormalizedCoordinates(e);
-		return renderer.getKeystoneHelper().cornerSelected(GamaPoint.create(x, y));
+		return renderer.getKeystoneHelper().cornerSelected(new GamaPoint(x, y));
 	}
 
 	protected int hoverOnKeystone(final MouseEvent e) {
@@ -314,7 +314,7 @@ public abstract class AbstractCamera implements ICamera {
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone. Return 10 if click on the center.
 		// final GamaPoint p = getNormalizedCoordinates(e);
-		return renderer.getKeystoneHelper().cornerHovered(GamaPoint.create(x, y));
+		return renderer.getKeystoneHelper().cornerHovered(new GamaPoint(x, y));
 	}
 
 	protected void internalMouseDown(final MouseEvent e) {
@@ -338,7 +338,7 @@ public abstract class AbstractCamera implements ICamera {
 		lastMousePressedPosition = new Point(x, y);
 		// Activate Picking when press and right click
 		if (e.button == 3 && !keystoneMode) {
-			if (renderer.getOpenGLHelper().mouseInROI(GamaPoint.create(lastMousePressedPosition))) {
+			if (renderer.getOpenGLHelper().mouseInROI(new GamaPoint(lastMousePressedPosition))) {
 				renderer.getSurface().selectionIn(renderer.getOpenGLHelper().getROIEnvelope());
 			} else {
 				renderer.getPickingHelper().setPicking(true);
@@ -395,8 +395,8 @@ public abstract class AbstractCamera implements ICamera {
 	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
 		getMousePosition().x = PlatformHelper.scaleUpIfWin(e.x);
 		getMousePosition().y = PlatformHelper.scaleUpIfWin(e.y);
-		renderer.getOpenGLHelper().defineROI(GamaPoint.create(firstMousePressedPosition),
-				GamaPoint.create(getMousePosition()));
+		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
+				new GamaPoint(getMousePosition()));
 		ROICurrentlyDrawn = true;
 	}
 

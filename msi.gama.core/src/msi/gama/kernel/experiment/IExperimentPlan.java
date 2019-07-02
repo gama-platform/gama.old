@@ -16,6 +16,7 @@ import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -72,7 +73,7 @@ public interface IExperimentPlan extends ISpecies {
 
 	IExploration getExplorationAlgorithm();
 
-	// FileOutput getLog();
+	FileOutput getLog();
 
 	boolean isBatch();
 

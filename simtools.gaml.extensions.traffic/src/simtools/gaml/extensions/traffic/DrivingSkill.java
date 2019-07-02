@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.locationtech.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GraphTopology;
 import msi.gama.metamodel.topology.graph.ISpatialGraph;
@@ -274,7 +274,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@setter (CURRENT_TARGET)
-	public void setCurrentTarget(final IAgent agent, final GamaPoint point) {
+	public void setCurrentTarget(final IAgent agent, final ILocation point) {
 		agent.setAttribute(CURRENT_TARGET, point);
 	}
 
@@ -284,7 +284,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@setter (FINAL_TARGET)
-	public void setFinalTarget(final IAgent agent, final GamaPoint point) {
+	public void setFinalTarget(final IAgent agent, final ILocation point) {
 		agent.setAttribute(FINAL_TARGET, point);
 	}
 
@@ -321,12 +321,12 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@getter (TARGETS)
-	public List<GamaPoint> getTargets(final IAgent agent) {
-		return (List<GamaPoint>) agent.getAttribute(TARGETS);
+	public List<ILocation> getTargets(final IAgent agent) {
+		return (List<ILocation>) agent.getAttribute(TARGETS);
 	}
 
 	@setter (TARGETS)
-	public void setTargets(final IAgent agent, final List<GamaPoint> points) {
+	public void setTargets(final IAgent agent, final List<ILocation> points) {
 		agent.setAttribute(TARGETS, points);
 	}
 
@@ -629,15 +629,15 @@ public class DrivingSkill extends MovingSkill {
 		final Boolean rightSide = getRightSideDriving(driver);
 		final List<IAgent> priorityRoads = (List<IAgent>) theNode.getAttribute(RoadNodeSkill.PRIORITY_ROADS);
 		final boolean onPriorityRoad = priorityRoads != null && priorityRoads.contains(currentRoad);
-		final double angleRef = Punctal.angleInDegreesBetween(scope, theNode.getLocation(),
-				currentRoad.getLocation(), road.getLocation());
+		final double angleRef = Punctal.angleInDegreesBetween(scope, (GamaPoint) theNode.getLocation(),
+				(GamaPoint) currentRoad.getLocation(), (GamaPoint) road.getLocation());
 		final List<IAgent> roadsIn = (List) theNode.getAttribute(RoadNodeSkill.ROADS_IN);
 		if (!Random.opFlip(scope, getRespectPriorities(driver))) { return true; }
 		final double realSpeed = FastMath.max(0.5, getRealSpeed(driver) + getAccelerationMax(driver));
 		for (final IAgent rd : roadsIn) {
 			if (rd != currentRoad) {
-				final double angle = Punctal.angleInDegreesBetween(scope, theNode.getLocation(),
-						currentRoad.getLocation(), rd.getLocation());
+				final double angle = Punctal.angleInDegreesBetween(scope, (GamaPoint) theNode.getLocation(),
+						(GamaPoint) currentRoad.getLocation(), (GamaPoint) rd.getLocation());
 				final boolean isPriorityRoad = priorityRoads != null && priorityRoads.contains(rd);
 				final boolean hasPriority = onPriorityRoad && !isPriorityRoad;
 				final boolean shouldRespectPriority = !onPriorityRoad && isPriorityRoad;
@@ -743,12 +743,12 @@ public class DrivingSkill extends MovingSkill {
 
 		final IPath path = ((GraphTopology) graph.getTopology(scope)).pathBetween(scope, source, target, onRoad);
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
-			final List<GamaPoint> targets = getTargets(agent);
+			final List<ILocation> targets = getTargets(agent);
 			targets.clear();
 			for (final Object edge : path.getEdgeGeometry()) {
 				final IShape egGeom = (IShape) edge;
 				final Coordinate[] coords = egGeom.getInnerGeometry().getCoordinates();
-				final GamaPoint pt = GamaPoint.create(coords[coords.length - 1]);
+				final GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
 				targets.add(pt);
 			}
 
@@ -768,7 +768,7 @@ public class DrivingSkill extends MovingSkill {
 			return path;
 
 		}
-		setTargets(agent, GamaListFactory.<GamaPoint> create(Types.POINT));
+		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
 		setCurrentTarget(agent, null);
 		setFinalTarget(agent, null);
 		setCurrentPath(agent, (IPath) null);
@@ -820,12 +820,12 @@ public class DrivingSkill extends MovingSkill {
 		final IPath path = PathFactory.newInstance(graph, source, target, edges);
 		final IAgent agent = getCurrentAgent(scope);
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
-			final List<GamaPoint> targets = getTargets(agent);
+			final List<ILocation> targets = getTargets(agent);
 			targets.clear();
 			for (final Object edge : path.getEdgeGeometry()) {
 				final IShape egGeom = (IShape) edge;
 				final Coordinate[] coords = egGeom.getInnerGeometry().getCoordinates();
-				final GamaPoint pt = GamaPoint.create(coords[coords.length - 1]);
+				final GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
 				targets.add(pt);
 			}
 			setTargets(agent, targets);
@@ -838,7 +838,7 @@ public class DrivingSkill extends MovingSkill {
 			return path;
 
 		}
-		setTargets(agent, GamaListFactory.<GamaPoint> create(Types.POINT));
+		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
 		setCurrentTarget(agent, null);
 		setFinalTarget(agent, null);
 		setCurrentPath(agent, (IPath) null);
@@ -963,7 +963,7 @@ public class DrivingSkill extends MovingSkill {
 		final Arguments argsLC = new Arguments();
 		final IStatement.WithArgs actionSC = context.getAction("speed_choice");
 		final Arguments argsSC = new Arguments();
-		GamaPoint loc = agent.getLocation();
+		ILocation loc = agent.getLocation();
 		double x = loc.getX();
 		double y = loc.getY();
 
@@ -1262,7 +1262,7 @@ public class DrivingSkill extends MovingSkill {
 		final boolean moreSegment = !onLinkedRoad && segmentIndex <= aglanes.size() - 2;
 
 		final boolean contains = agents.contains(agent);
-		final GamaPoint targetLoc = GamaPoint.create(currentRoad.getInnerGeometry().getCoordinates()[segment + 1]);
+		final GamaPoint targetLoc = new GamaPoint(currentRoad.getInnerGeometry().getCoordinates()[segment + 1]);
 		// DEBUG.OUT("agent:" + agent + " theRoad: " +
 		// theRoad + " segment: " + segment + " targetLoc: " + targetLoc);
 		// if (changeLane && onLinkedRoad)
@@ -1280,7 +1280,7 @@ public class DrivingSkill extends MovingSkill {
 				final Collection<IAgent> ags = (Collection<IAgent>) aglanes.get(segment + 1);
 				final double length = currentRoad.getInnerGeometry().getCoordinates()[segment + 2].distance(targetLoc);
 				for (final IAgent ag : ags) {
-					final double distTG = getOnLinkedRoad(ag) ? distance2D(ag.getLocation(), targetLoc)
+					final double distTG = getOnLinkedRoad(ag) ? distance2D((GamaPoint) ag.getLocation(), targetLoc)
 							: getDistanceToGoal(ag);
 					final double vLa = 0.5 * vL + 0.5 * getVehiculeLength(ag);
 					if (length - distTG < vLa) { return distanceToGoal - (vLa - (length - distTG)); }
@@ -1310,7 +1310,7 @@ public class DrivingSkill extends MovingSkill {
 				if (ag == agent || ag == null) {
 					continue;
 				}
-				final double dist = distance2D(ag.getLocation(), targetLoc);
+				final double dist = distance2D((GamaPoint) ag.getLocation(), targetLoc);
 
 				final double diff = distanceToGoal - dist;
 				// if (changeLane && onLinkedRoad)
@@ -1335,7 +1335,7 @@ public class DrivingSkill extends MovingSkill {
 					continue;
 				}
 
-				final double dist = getOnLinkedRoad(ag) ? distance2D(ag.getLocation(), targetLoc)
+				final double dist = getOnLinkedRoad(ag) ? distance2D((GamaPoint) ag.getLocation(), targetLoc)
 						: getDistanceToGoal(ag);// distance2D((GamaPoint)
 												// ag.getLocation(), target);
 				final double diff = distanceToGoal - dist;
@@ -1373,7 +1373,7 @@ public class DrivingSkill extends MovingSkill {
 				// DEBUG.OUT("length: " + length);
 
 				for (final IAgent ag : ags) {
-					final double distTG = getOnLinkedRoad(ag) ? distance2D(ag.getLocation(), targetLoc)
+					final double distTG = getOnLinkedRoad(ag) ? distance2D((GamaPoint) ag.getLocation(), targetLoc)
 							: getDistanceToGoal(ag);
 					final double vLa = 0.5 * vL + 0.5 * getVehiculeLength(ag);
 					// DEBUG.OUT("distTG: " + distTG + " vLa:
@@ -1610,8 +1610,9 @@ public class DrivingSkill extends MovingSkill {
 			final Double probaChangeLaneDown, final Double probaUseLinkedRoad, final Boolean rightSide) {
 		int currentLane = lane;
 		// long t = java.lang.System.currentTimeMillis();
-		GamaPoint currentLocation = agent.getLocation().copy(scope);
-		final GamaPoint falseTarget = target == null ? GamaPoint.create(currentRoad.getInnerGeometry().getCoordinates()[currentRoad.getInnerGeometry().getCoordinates().length])
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
+		final GamaPoint falseTarget = target == null ? new GamaPoint(
+				currentRoad.getInnerGeometry().getCoordinates()[currentRoad.getInnerGeometry().getCoordinates().length])
 				: target;
 
 		/*
@@ -1645,7 +1646,7 @@ public class DrivingSkill extends MovingSkill {
 			// DEBUG.OUT("linked road - pt" + pt);
 
 			// } else {
-			pt = GamaPoint.create(coords[j + 1]);
+			pt = new GamaPoint(coords[j + 1]);
 			// DEBUG.OUT("pt" + pt);
 			// }
 			final double dist = pt.euclidianDistanceTo(currentLocation);
@@ -1668,7 +1669,7 @@ public class DrivingSkill extends MovingSkill {
 				final double ratio = distance / dist;
 				final double newX = currentLocation.getX() + ratio * (pt.getX() - currentLocation.getX());
 				final double newY = currentLocation.getY() + ratio * (pt.getY() - currentLocation.getY());
-				final GamaPoint npt = GamaPoint.create(newX, newY);
+				final GamaPoint npt = new GamaPoint(newX, newY);
 				realDistance += currentLocation.euclidianDistanceTo(npt);
 				currentLocation.setLocation(npt);
 				distance = 0;

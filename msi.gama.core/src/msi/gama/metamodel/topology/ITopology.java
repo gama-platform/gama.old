@@ -1,25 +1,26 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.ITopology.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8)
- *
+ * msi.gama.metamodel.topology.ITopology.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology;
 
 import java.util.Collection;
 import java.util.List;
 
-import org.locationtech.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.continuous.RootTopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -57,30 +58,31 @@ import msi.gaml.types.IType;
 })
 public interface ITopology extends IValue {
 
-	ISpatialIndex getSpatialIndex();
+	public abstract ISpatialIndex getSpatialIndex();
 
-	void initialize(IScope scope, IPopulation<? extends IAgent> pop) throws GamaRuntimeException;
+	public abstract void initialize(IScope scope, IPopulation<? extends IAgent> pop) throws GamaRuntimeException;
 
-	void updateAgent(IEnvelope previous, IAgent agent);
+	void updateAgent(Envelope previous, IAgent agent);
 
-	void removeAgent(final IAgent agent);
+	public abstract void removeAgent(final IAgent agent);
 
-	List<Geometry> listToroidalGeometries(final Geometry geom);
+	public abstract List<Geometry> listToroidalGeometries(final Geometry geom);
 
-	Collection<IAgent> getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter, int number);
+	public abstract Collection<IAgent> getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter, int number);
 
-	IAgent getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter);
+	public abstract IAgent getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter);
 
-	IAgent getAgentFarthestTo(IScope scope, final IShape source, IAgentFilter filter);
+	public abstract IAgent getAgentFarthestTo(IScope scope, final IShape source, IAgentFilter filter);
 
-	Collection<IAgent> getNeighborsOf(IScope scope, final IShape source, final Double distance, IAgentFilter filter)
-			throws GamaRuntimeException;
+	public abstract Collection<IAgent> getNeighborsOf(IScope scope, final IShape source, final Double distance,
+			IAgentFilter filter) throws GamaRuntimeException;
 
-	Collection<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f, boolean covered);
+	public abstract Collection<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f,
+			boolean covered);
 
-	boolean isTorus();
+	public abstract boolean isTorus();
 
-	boolean isContinuous();
+	public abstract boolean isContinuous();
 
 	/**
 	 * @throws GamaRuntimeException
@@ -93,13 +95,14 @@ public interface ITopology extends IValue {
 	 * @return a double representing the distance between the two geometries, or Double.MAX_VALUE if either one of them
 	 *         is not reachable from this topology
 	 */
-	Double distanceBetween(IScope scope, final IShape source, final IShape target);
+	public abstract Double distanceBetween(IScope scope, final IShape source, final IShape target);
 
-	Double distanceBetween(IScope scope, final GamaPoint source, final GamaPoint target);
+	public abstract Double distanceBetween(IScope scope, final ILocation source, final ILocation target);
 
-	GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target) throws GamaRuntimeException;
+	public abstract GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
+			throws GamaRuntimeException;
 
-	GamaSpatialPath pathBetween(IScope scope, final GamaPoint source, final GamaPoint target)
+	public abstract GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 			throws GamaRuntimeException;
 
 	/**
@@ -116,7 +119,7 @@ public interface ITopology extends IValue {
 	 *            tells wether to return the destination point or null if the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-	GamaPoint getDestination(final GamaPoint source, final double direction, final double distance,
+	public abstract ILocation getDestination(final ILocation source, final double direction, final double distance,
 			boolean nullIfOutside);
 
 	/**
@@ -133,8 +136,8 @@ public interface ITopology extends IValue {
 	 *            tells wether to return the destination point or null if the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-	GamaPoint getDestination3D(final GamaPoint source, final double heading, final double pitch, final double distance,
-			boolean nullIfOutside);
+	public abstract ILocation getDestination3D(final ILocation source, final double heading, final double pitch,
+			final double distance, boolean nullIfOutside);
 
 	/**
 	 * Return a random location inside the bounds of the environment's shape. The returned point is a valid local
@@ -142,7 +145,7 @@ public interface ITopology extends IValue {
 	 *
 	 * @return a point, or null if no random locations are available
 	 */
-	GamaPoint getRandomLocation(IScope scope);
+	public abstract ILocation getRandomLocation(IScope scope);
 
 	/**
 	 * Return the collection of places (IGeometry) defined by this topology. For continuous topologies, it is a GamaList
@@ -152,7 +155,7 @@ public interface ITopology extends IValue {
 	 * @return an instance of IGamaContainer, which geometries can be iterated.
 	 */
 	@getter (IKeyword.PLACES)
-	IContainer<?, IShape> getPlaces();
+	public abstract IContainer<?, IShape> getPlaces();
 
 	/**
 	 * Return the environment of this topology (i.e. the IGeometry that defines its boundaries).
@@ -160,7 +163,7 @@ public interface ITopology extends IValue {
 	 * @return an instance of IGeometry.
 	 */
 	@getter (IKeyword.ENVIRONMENT)
-	IShape getEnvironment();
+	public abstract IShape getEnvironment();
 
 	/**
 	 * Normalizes a location so that the returned location is inside the bounds of the topology. The returned point is a
@@ -172,7 +175,7 @@ public interface ITopology extends IValue {
 	 *            tells whether to return null or to coerce p if p is outside the bounds of the topology
 	 * @return a valid point or null if nullIfOutside is true and the point is outside
 	 */
-	GamaPoint normalizeLocation(final GamaPoint p, boolean nullIfOutside);
+	public abstract ILocation normalizeLocation(final ILocation p, boolean nullIfOutside);
 
 	/**
 	 * @throws GamaRuntimeException
@@ -185,15 +188,15 @@ public interface ITopology extends IValue {
 	 */
 	// public abstract void shapeChanged(IPopulation pop);
 
-	double getWidth();
+	public abstract double getWidth();
 
-	double getHeight();
+	public abstract double getHeight();
 
-	void dispose();
+	public abstract void dispose();
 
-	boolean isValidLocation(IScope scope, GamaPoint p);
+	public abstract boolean isValidLocation(IScope scope, ILocation p);
 
-	boolean isValidGeometry(IScope scope, IShape g);
+	public abstract boolean isValidGeometry(IScope scope, IShape g);
 
 	/**
 	 * @param scope
@@ -203,12 +206,12 @@ public interface ITopology extends IValue {
 	 * @param target
 	 * @return the direction or null if one these two geometries are invalid in this topology
 	 */
-	Double directionInDegreesTo(IScope scope, IShape source, IShape target);
+	public abstract Double directionInDegreesTo(IScope scope, IShape source, IShape target);
 
-	IList<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k);
+	public abstract IList<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k);
 
-	IList<GamaSpatialPath> KpathsBetween(IScope scope, GamaPoint source, GamaPoint target, int k);
+	public abstract IList<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source, ILocation target, int k);
 
-	void setRoot(IScope scope, RootTopology rt);
+	public abstract void setRoot(IScope scope, RootTopology rt);
 
 }

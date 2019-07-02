@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.scene.StringDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8)
- *
+ * ummisco.gama.opengl.scene.StringDrawer.java, in plugin ummisco.gama.opengl,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -16,7 +16,6 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 
 /**
@@ -28,14 +27,14 @@ import ummisco.gama.opengl.OpenGL;
  *
  */
 
-public class StringDrawer extends ObjectDrawer<LayerElement<String, TextDrawingAttributes>> {
+public class StringDrawer extends ObjectDrawer<StringObject> {
 
 	public StringDrawer(final OpenGL gl) {
 		super(gl);
 	}
 
 	@Override
-	protected void _draw(final LayerElement<String, TextDrawingAttributes> s) {
+	protected void _draw(final StringObject s) {
 		try {
 			gl.pushMatrix();
 			final AxisAngle rotation = s.getAttributes().getRotation();

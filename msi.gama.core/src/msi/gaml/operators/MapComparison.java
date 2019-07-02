@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -477,11 +477,11 @@ public class MapComparison {
 			final int nbCat, final Map<List<Integer>, Map<Double, Double>> XaPerTransition,
 			final Map<List<Integer>, Map<Double, Double>> XsPerTransition, final Set<Double> Xvals) {
 
-		final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
+		final IList<ILocation> locs = GamaListFactory.create(Types.POINT);
 		for (final IAgent ag : agents.iterable(scope)) {
 			locs.add(ag.getLocation());
 		}
-		final GamaPoint centralLoc = (GamaPoint) Containers.mean(scope, locs);
+		final ILocation centralLoc = (ILocation) Containers.mean(scope, locs);
 		if (filter != null) {
 			final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
 			final List<IAgent> neighbors = distance == 0 ? new ArrayList<IAgent>()
@@ -702,11 +702,11 @@ public class MapComparison {
 			final List<Double> rings, final Map<Double, Integer> ringsPn,
 			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents) {
 
-		final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
+		final IList<ILocation> locs = GamaListFactory.create(Types.POINT);
 		for (final IAgent ag : agents.iterable(scope)) {
 			locs.add(ag.getLocation());
 		}
-		final GamaPoint centralLoc = (GamaPoint) Containers.mean(scope, locs);
+		final ILocation centralLoc = (ILocation) Containers.mean(scope, locs);
 		final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
 		final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<IAgent>()
 				: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));

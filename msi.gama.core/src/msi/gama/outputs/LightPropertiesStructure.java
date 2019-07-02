@@ -17,16 +17,16 @@ public class LightPropertiesStructure {
 	public int id;
 	public boolean active = false;
 	public GamaColor color = new GamaColor(127, 127, 127, 255);
-	public GamaPoint position = GamaPoint.create(0, 0, 20);
+	public GamaPoint position = new GamaPoint(0, 0, 20);
 	public TYPE type = TYPE.DIRECTION;
 	public float linearAttenuation = 0;
 	public float quadraticAttenuation = 0;
 	public boolean drawLight = false;
-	public GamaPoint direction = GamaPoint.create(0.5, 0.5, -1);
+	public GamaPoint direction = new GamaPoint(0.5, 0.5, -1);
 	public float spotAngle = 45.0f;
 
 	public GamaPoint getColor() {
-		return GamaPoint.create(color.red() / 255.0, color.green() / 255.0, color.blue() / 255.0);
+		return new GamaPoint(color.red() / 255.0, color.green() / 255.0, color.blue() / 255.0);
 	}
 
 	public GamaPoint getPosition() {

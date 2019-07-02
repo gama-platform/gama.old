@@ -33,7 +33,6 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.util.PoolUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -383,6 +382,12 @@ public class InteractiveConsoleView extends GamaViewPart
 	}
 
 	@Override
+	public void clearLocalVars() {
+		temps.clear();
+
+	}
+
+	@Override
 	public void putLocalVar(final String name, final Object val) {
 		temps.put(name, val);
 
@@ -431,12 +436,6 @@ public class InteractiveConsoleView extends GamaViewPart
 	@Override
 	public boolean hasAttribute(final String name) {
 		return temps.containsKey(name);
-	}
-
-	@Override
-	public IExecutionContext init(final IScope scope, final IExecutionContext outer,
-			final PoolUtils.ObjectPool<IExecutionContext> pool) {
-		return this;
 	}
 
 }
