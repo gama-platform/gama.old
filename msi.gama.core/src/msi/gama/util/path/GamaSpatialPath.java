@@ -20,11 +20,10 @@ import static msi.gaml.operators.Spatial.Punctal._closest_point_to;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.jgrapht.Graph;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.GeometryUtils;
@@ -32,7 +31,6 @@ import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
@@ -45,7 +43,7 @@ import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings ({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked", "deprecation" })
 public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, IShape>> {
 
 	IList<IShape> segments;
@@ -121,7 +119,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 
 			} else {
 				final IShape lineEnd = edges.get(edges.size() - 1);
-				final GamaPoint falseTarget = (GamaPoint) _closest_point_to(getEndVertex().getLocation(), lineEnd);
+				final GamaPoint falseTarget = _closest_point_to(getEndVertex().getLocation(), lineEnd);
 				pt = start.euclidianDistanceTo(pt0) < falseTarget.euclidianDistanceTo(pt0) ? pt0 : pt1;
 			}
 			if (graph != null) {
@@ -151,17 +149,17 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					if (!threeD) {
 
 						if (cpt == 0 && !source.equals(pt)) {
-							GamaPoint falseSource = source.getLocation().toGamaPoint();
+							GamaPoint falseSource = source.getLocation();
 							if (source.euclidianDistanceTo(edge2) > min(0.01, edge2.getPerimeter() / 1000)) {
-								falseSource = (GamaPoint) _closest_point_to(source, edge2);
+								falseSource = _closest_point_to(source, edge2);
 								falseSource.z = zVal(falseSource, edge2);
 							}
 							edge2 = split_at(edge2, falseSource).get(1);
 						}
 						if (cpt == _edges.size() - 1 && !target.equals(getLastPointOf(edge2))) {
-							GamaPoint falseTarget = target.getLocation().toGamaPoint();
+							GamaPoint falseTarget = target.getLocation();
 							if (target.euclidianDistanceTo(edge2) > min(0.01, edge2.getPerimeter() / 1000)) {
-								falseTarget = (GamaPoint) _closest_point_to(target, edge2);
+								falseTarget = _closest_point_to(target, edge2);
 								falseTarget.z = zVal(falseTarget, edge2);
 							}
 							edge2 = split_at(edge2, falseTarget).get(0);
@@ -198,9 +196,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			final double distS = segment.distance(pointGeom);
 			if (distS < distanceS) {
 				distanceS = distS;
-				final GamaPoint pt0 = new GamaPoint(temp[0]);
-				final GamaPoint pt1 = new GamaPoint(temp[1]);
-				z = pt0.z + (pt1.z - pt0.z) * point.distance(pt0) / segment.getLength();
+				z = temp[0].z + (temp[1].z - temp[0].z) * point.distance(temp[0]) / segment.getLength();
 			}
 		}
 		return z;
@@ -210,7 +206,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		// FIXME call super super(param...);
 		// DEBUG.OUT("GamaSpatialPath nodes: " + nodes);
 		if (nodes.isEmpty()) {
-			source = new GamaPoint(0, 0);
+			source = GamaPoint.create(0, 0);
 			target = source;
 		} else {
 			source = nodes.get(0);
@@ -309,8 +305,8 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		final Coordinate[] coordsSource = segments.get(0).getInnerGeometry().getCoordinates();
 		final Coordinate[] coordsTarget = segments.get(getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
 		if (coordsSource.length == 0 || coordsTarget.length == 0) { return Double.MAX_VALUE; }
-		final GamaPoint sourceEdges = new GamaPoint(coordsSource[0]);
-		final GamaPoint targetEdges = new GamaPoint(coordsTarget[coordsTarget.length - 1]);
+		final GamaPoint sourceEdges = GamaPoint.create(coordsSource[0]);
+		final GamaPoint targetEdges = GamaPoint.create(coordsTarget[coordsTarget.length - 1]);
 		final boolean keepSource = source.getLocation().equals(sourceEdges);
 		final boolean keepTarget = target.getLocation().equals(targetEdges);
 		if (keepSource && keepTarget) {
@@ -327,7 +323,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		double distance = 0;
 		int index = 0;
 		int indexSegment = 0;
-		ILocation currentLocation = source.getLocation().copy(scope);
+		GamaPoint currentLocation = source.getLocation().copy(scope);
 		final int nb = segments.size();
 		if (!keepSource) {
 			double distanceS = Double.MAX_VALUE;
@@ -362,9 +358,9 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		}
 		final IShape lineEnd = segments.get(nb - 1);
 		int endIndexSegment = lineEnd.getInnerGeometry().getNumPoints();
-		GamaPoint falseTarget = target.getLocation().toGamaPoint();
+		GamaPoint falseTarget = target.getLocation();
 		if (!keepTarget) {
-			falseTarget = (GamaPoint) Punctal._closest_point_to(getEndVertex(), lineEnd);
+			falseTarget = Punctal._closest_point_to(getEndVertex(), lineEnd);
 			endIndexSegment = 1;
 			final Point pointGeom = (Point) falseTarget.getInnerGeometry();
 			if (lineEnd.getInnerGeometry().getNumPoints() >= 3) {
@@ -393,7 +389,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				if (i == nb - 1 && j == endIndexSegment) {
 					pt = falseTarget;
 				} else {
-					pt = new GamaPoint(coords[j]);
+					pt = GamaPoint.create(coords[j]);
 				}
 				final double dist = currentLocation.euclidianDistanceTo(pt);
 				currentLocation = pt;

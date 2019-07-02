@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -51,7 +51,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 		if (size == null) {
 			if (obj instanceof IContainer) { return ((IContainer) obj).matrixValue(scope, contentType, copy); }
-			return with(scope, obj, new GamaPoint(1, 1), contentType);
+			return with(scope, obj, GamaPoint.create(1, 1), contentType);
 		} else if (size.x <= 0 || size.y < 0) {
 			throw GamaRuntimeException.error("Dimensions of a matrix should be positive.", scope);
 		}
@@ -68,7 +68,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	}
 
 	public static IMatrix from(final IScope scope, final IList list, final IType desiredType,
-			final ILocation preferredSize) {
+			final GamaPoint preferredSize) {
 		if (list == null || list.isEmpty()) { return new GamaObjectMatrix(0, 0, desiredType); }
 		if (desiredType.id() == IType.INT) {
 			return new GamaIntMatrix(scope, list, preferredSize);
@@ -94,7 +94,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	 * @return
 	 */
 	public static IMatrix from(final IScope scope, final IMatrix matrix, final IType desiredType,
-			final ILocation preferredSize, final boolean copy) {
+			final GamaPoint preferredSize, final boolean copy) {
 		final IType contentsType = matrix.getGamlType().getContentType();
 		if (!GamaType.requiresCasting(desiredType, contentsType)) { return matrix.copy(scope, preferredSize, copy); }
 		int cols, rows;

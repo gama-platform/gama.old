@@ -20,8 +20,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
@@ -161,7 +161,7 @@ public class Projection implements IProjection {
 	/**
 	 * Method translate()
 	 *
-	 * @see msi.gama.metamodel.topology.projection.IProjection#translate(com.vividsolutions.jts.geom.Geometry)
+	 * @see msi.gama.metamodel.topology.projection.IProjection#translate(org.locationtech.jts.geom.Geometry)
 	 */
 	@Override
 	public void translate(final Geometry geom) {
@@ -173,7 +173,7 @@ public class Projection implements IProjection {
 	/**
 	 * Method inverseTranslate()
 	 *
-	 * @see msi.gama.metamodel.topology.projection.IProjection#inverseTranslate(com.vividsolutions.jts.geom.Geometry)
+	 * @see msi.gama.metamodel.topology.projection.IProjection#inverseTranslate(org.locationtech.jts.geom.Geometry)
 	 */
 	@Override
 	public void inverseTranslate(final Geometry geom) {

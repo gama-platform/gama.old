@@ -15,12 +15,12 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 // import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
@@ -128,9 +128,9 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 
 	double getDisplayHeight();
 
-	ILocation getModelCoordinates();
+	GamaPoint getModelCoordinates();
 
-	ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+	GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels);
 
 	Collection<IAgent> selectAgent(final int x, final int y);

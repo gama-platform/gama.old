@@ -15,14 +15,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 
 import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
 import de.micromata.opengis.kml.v_2_2_0.ColorMode;
@@ -40,7 +40,7 @@ import de.micromata.opengis.kml.v_2_2_0.Placemark;
 import de.micromata.opengis.kml.v_2_2_0.Scale;
 import de.micromata.opengis.kml.v_2_2_0.Style;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -260,7 +260,7 @@ public class GamaKmlExport{
 		 * @param description
 		 *            Description (only displayed on mouse click on the label)
 		 */
-		public void addLabel(IScope scope, ILocation loc, 
+		public void addLabel(IScope scope, GamaPoint loc, 
 				String beginDate, String endDate, String name, String description,
 				String styleName) {
 			Placemark placemark = fold.createAndAddPlacemark().withStyleUrl(
@@ -278,7 +278,7 @@ public class GamaKmlExport{
 		}
 
 		
-		public void add3DModel(IScope scope, ILocation loc, double orientation,
+		public void add3DModel(IScope scope, GamaPoint loc, double orientation,
 				double scale, String beginDate, String endDate, String daefile) {
 
 			Placemark placemark = fold.createAndAddPlacemark();

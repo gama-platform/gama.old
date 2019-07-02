@@ -13,7 +13,7 @@ package msi.gama.common.geometry;
 
 import java.io.Serializable;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -31,7 +31,7 @@ import msi.gaml.operators.fastmaths.FastMath;
  * @adapted from Apache maths3 library by A. Drogoul (2017), esp. to allow direct access to the fields and make the
  *          instances mutable in place (reducing the number of garbage during long rotation operations)
  */
-
+@SuppressWarnings ("deprecation")
 public class Rotation3D implements Serializable, Transformation3D {
 
 	public static class CenteredOn extends Rotation3D {
@@ -56,11 +56,11 @@ public class Rotation3D implements Serializable, Transformation3D {
 
 	}
 
-	public static final GamaPoint PLUS_I = new GamaPoint(1, 0, 0);
-	public static final GamaPoint MINUS_I = new GamaPoint(-1, 0, 0);
-	public static final GamaPoint PLUS_J = new GamaPoint(0, 1, 0);
+	public static final GamaPoint PLUS_I = GamaPoint.create(1, 0, 0);
+	public static final GamaPoint MINUS_I = GamaPoint.create(-1, 0, 0);
+	public static final GamaPoint PLUS_J = GamaPoint.create(0, 1, 0);
 	// public static final GamaPoint MINUS_J = new GamaPoint(0, -1, 0);
-	public static final GamaPoint PLUS_K = new GamaPoint(0, 0, 1);
+	public static final GamaPoint PLUS_K = GamaPoint.create(0, 0, 1);
 	// public static final GamaPoint MINUS_K = new GamaPoint(0, 0, -1);
 
 	/** Identity rotation. */
@@ -415,10 +415,10 @@ public class Rotation3D implements Serializable, Transformation3D {
 			final double sgn = +1;
 			if (q0 < 0) {
 				final double inverse = sgn / Math.sqrt(squaredSine);
-				return new GamaPoint(q1 * inverse, q2 * inverse, q3 * inverse);
+				return GamaPoint.create(q1 * inverse, q2 * inverse, q3 * inverse);
 			}
 			final double inverse = -sgn / Math.sqrt(squaredSine);
-			return new GamaPoint(q1 * inverse, q2 * inverse, q3 * inverse);
+			return GamaPoint.create(q1 * inverse, q2 * inverse, q3 * inverse);
 		}
 	}
 

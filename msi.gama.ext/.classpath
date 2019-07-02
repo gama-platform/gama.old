@@ -1,104 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/GeographicLib-Java-1.44.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/imageio-ext-geocore-1.1.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/imageio-ext-streams-1.1.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-coverage-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-brewer-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-cql-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-geojson-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jgridshift-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-contour-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-rangelookup-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-vectorize-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-warp-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-zonal-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-zonalstats-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-orderdither-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-piecewise-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-rescale-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-rlookup-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-scale-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-stats-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-translate-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-utils-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-vectorbin-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-vectorbinarize-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-crop-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-errordiffusion-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-format-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-imagefunction-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-iterators-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-lookup-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-mosaic-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-nullop-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-affine-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-algebra-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-bandcombine-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-bandmerge-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-bandselect-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-binarize-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-border-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-buffer-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-classifier-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-colorconvert-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-colorindexer-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="jfreechart-1.5.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="protobuf-java-3.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-impl.jar"/>
-	<classpathentry exported="true" kind="lib" path="streamex 0.6.7/streamex-0.6.8.jar" sourcepath="streamex 0.6.7/streamex-0.6.8-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-core-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/core-0.26.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-utilities-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/batik-transcoder-1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/commons-collections-3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/commons-dbcp-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/commons-pool-1.5.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/geodb-0.7-RC2.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-api-14.5.jar" sourcepath="/Users/drogoul/Downloads/geotools-14.5/modules/library/api"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-arcgrid-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-data-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-epsg-wkt-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-geotiff-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-grid-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-db2-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-mysql-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-oracle-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-postgis-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-spatialite-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-main-14.5.jar" sourcepath="/Users/drogoul/Downloads/geotools-14.5/modules/library/main"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-metadata-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-opengis-14.5.jar" sourcepath="/Users/drogoul/Downloads/geotools-14.5/modules/library/opengis"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-process-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-process-feature-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-process-geometry-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-referencing-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-render-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-shapefile-14.5.jar" sourcepath="/Users/drogoul/Downloads/geotools-14.5/modules/plugin/shapefile"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-transform-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/imageio-ext-arcgrid-1.1.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/imageio-ext-tiff-1.1.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/imageio-ext-utilities-1.1.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jai_codec-1.1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jai_core-1.1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jai_imageio-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jdom-1.1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/json-simple-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jsqlparser-0.3.14.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/jsr-275-1.0-beta-2.jar" sourcepath="/home/pataillandie/.m2/repository/net/java/dev/jsr-275/jsr-275/1.0-beta-2/jsr-275-1.0-beta-2-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/mysql-connector-java-5.1.17.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/postgresql-9.4-1201-jdbc41.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/spatialite-jdbc-3.7.2-2.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/sqlite-jdbc-3.8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="jtds 1.3.1/jars/jtds-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-beanutils-1.9.2-noclassprop.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-digester-1.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-io-2.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-jxpath-1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-lang3-3.8.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-text-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/disruptor-1.2.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/ejml-ddense-0.34.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-complex-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-xml-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-xsd-core-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-xsd-gml2-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-xsd-gml3-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/hsqldb-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-scale2-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/net.opengis.fes-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/net.opengis.ows-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/net.opengis.wfs-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/org.w3.xlink-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/picocontainer-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/xml-commons-resolver-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/xpp3_min-1.1.4c.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jts-core-1.16.1.jar" sourcepath="geotools 21.1/jts-jts-1.16.1.zip"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/batik-transcoder-1.10.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-collections-3.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-dbcp-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/commons-pool-1.5.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/geodb-0.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/GeographicLib-Java-1.49.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-app-schema-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-app-schema-resolver-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-arcgrid-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-brewer-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-coverage-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-cql-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-epsg-wkt-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-geojson-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-geojsondatastore-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-geotiff-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-grid-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-jdbc-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-jdbc-db2-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-jdbc-mysql-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-jdbc-postgis-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-main-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-metadata-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-opengis-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-process-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-process-feature-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-process-geometry-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-referencing-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-render-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/gt-shapefile-21.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/imageio-ext-arcgrid-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/imageio-ext-geocore-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/imageio-ext-imagereadmt-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/imageio-ext-kakadu-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/imageio-ext-streams-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/imageio-ext-tiff-1.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jackson-core-2.9.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jai_codec-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jai_core-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jai_imageio-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/javacsv-2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/javax.activation-api-1.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jaxb-api-2.4.0-b180830.0359.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jaxb-runtime-2.4.0-b180830.0438.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jaxen-1.1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jdom2-2.0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/json-simple-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jsqlparser-0.3.14.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jsr305-3.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-affine-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-algebra-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-bandcombine-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-bandmerge-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-bandselect-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-binarize-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-border-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-buffer-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-classbreaks-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-classifier-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-colorconvert-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-colorindexer-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-contour-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-crop-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-errordiffusion-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-format-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-imagefunction-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-iterators-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-jiffle-op-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-lookup-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-mosaic-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-nullop-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-orderdither-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-piecewise-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-rangelookup-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-rescale-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-rlookup-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-scale-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-stats-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-translate-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-utilities-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-utils-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-vectorbin-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-vectorbinarize-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-vectorize-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-warp-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-zonal-1.1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jt-zonalstats-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/jtds-1.3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/mysql-connector-java-5.1.46.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/postgresql-42.2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/si-quantity-0.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/si-units-java8-0.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/sqlite-jdbc-3.23.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/systems-common-java8-0.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/systems-quantity-0.7.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/unit-api-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/uom-lib-common-1.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 21.1/uom-se-1.0.8.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="commons-math3-3.6.1/jars/commons-math3-3.6.1.jar" sourcepath="commons-math3-3.6.1/commons-math3-3.6.1-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-core-1.14.0.jar" sourcepath="jts 1.14/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="rcaller 2.5/jars/RCaller-2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="trove 3.0.3/jars/trove-3.0.3.jar" sourcepath="trove 3.0.3/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="vecmath 1.5.2/jars/vecmath-1.5.2.jar" sourcepath="/Users/drogoul/.m2/repository/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2-sources.jar"/>
@@ -110,6 +136,13 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/msi.gama.ext/kml/JavaAPIforKml-2.2.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-example-1.14.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-impl.jar"/>
+	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="streamex 0.6.7/streamex-0.6.8.jar" sourcepath="streamex 0.6.7/streamex-0.6.8-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="jgrapht 1.3.0/jgrapht-core-1.3.0.jar" sourcepath="jgrapht 1.3.0/source.zip"/>
+	<classpathentry exported="true" kind="lib" path="jgrapht 1.3.0/jgrapht-io-1.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="jfreechart-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="protobuf-java-3.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

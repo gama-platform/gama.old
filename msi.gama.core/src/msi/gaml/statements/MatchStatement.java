@@ -11,7 +11,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -161,7 +161,7 @@ public class MatchStatement extends AbstractStatementSequence {
 			super.acceptValue();
 			if (constantValue != null) {
 				if (!(constantValue instanceof IContainer)) {
-					if (!(constantValue instanceof ILocation)) {
+					if (!(constantValue instanceof GamaPoint)) {
 						constantValue = Types.LIST.cast(null, constantValue, null, false);
 					}
 				}
@@ -176,11 +176,11 @@ public class MatchStatement extends AbstractStatementSequence {
 			if (!(switchValue instanceof Number)) { throw GamaRuntimeException.error(
 					"Can only match if a number is in an interval. " + switchValue + " is not a number", scope); }
 			Object val = value.value(scope);
-			if (!(val instanceof ILocation)) {
+			if (!(val instanceof GamaPoint)) {
 				val = Cast.asPoint(scope, val);
 			}
-			final double min = ((ILocation) val).getX();
-			final double max = ((ILocation) val).getY();
+			final double min = ((GamaPoint) val).getX();
+			final double max = ((GamaPoint) val).getY();
 			final double in = ((Number) switchValue).doubleValue();
 			return in >= min && in <= max;
 		}
@@ -192,7 +192,7 @@ public class MatchStatement extends AbstractStatementSequence {
 		public void acceptValue() {
 			super.acceptValue();
 			if (constantValue != null) {
-				if (!(constantValue instanceof ILocation)) {
+				if (!(constantValue instanceof GamaPoint)) {
 					constantValue = Types.POINT.cast(null, constantValue, null, false);
 				}
 			}

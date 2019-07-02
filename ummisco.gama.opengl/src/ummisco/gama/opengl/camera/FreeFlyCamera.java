@@ -23,9 +23,9 @@ import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public class FreeFlyCamera extends AbstractCamera {
 
-	private static final GamaPoint up = new GamaPoint(0.0f, 0.0f, 1.0f);
-	private final GamaPoint forward = new GamaPoint(0, 0, 0);
-	private final GamaPoint left = new GamaPoint(0, 0, 0);
+	private static final GamaPoint up = GamaPoint.create(0.0f, 0.0f, 1.0f);
+	private final GamaPoint forward = GamaPoint.create(0, 0, 0);
+	private final GamaPoint left = GamaPoint.create(0, 0, 0);
 	private final double speed = getRenderer().getMaxEnvDim() * 0.0001;
 
 	public FreeFlyCamera(final IOpenGLRenderer renderer) {
@@ -44,8 +44,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		final double factorT = theta * Maths.toRad;
 		final double r_temp = FastMath.cos(factorP);
 		forward.setLocation(r_temp * FastMath.cos(factorT), r_temp * FastMath.sin(factorT), FastMath.sin(factorP));
-		left.setLocation(new GamaPoint(up.y * forward.z - up.z * forward.y, up.z * forward.x - up.x * forward.z,
-				up.x * forward.y - up.y * forward.x).normalized());
+		left.setLocation(GamaPoint.create(up.y * forward.z - up.z * forward.y, up.z * forward.x - up.x * forward.z, up.x * forward.y - up.y * forward.x).normalized());
 		setTarget(forward.plus(position));
 	}
 
@@ -165,8 +164,8 @@ public class FreeFlyCamera extends AbstractCamera {
 				&& isViewInXYPlan()) {
 			getMousePosition().x = e.x;
 			getMousePosition().y = e.y;
-			getRenderer().getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
-					new GamaPoint(getMousePosition()));
+			getRenderer().getOpenGLHelper().defineROI(GamaPoint.create(firstMousePressedPosition),
+					GamaPoint.create(getMousePosition()));
 		} else {
 			final int horizMovement = e.x - getLastMousePressedPosition().x;
 			final int vertMovement = e.y - getLastMousePressedPosition().y;

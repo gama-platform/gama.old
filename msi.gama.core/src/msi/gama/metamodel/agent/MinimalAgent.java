@@ -1,27 +1,26 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.MinimalAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.agent.MinimalAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
 import java.util.Objects;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.IEnvelope;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -39,7 +38,7 @@ import msi.gaml.types.GamaGeometryType;
 /**
  * A concrete implementation of AbstractAgent that declares its own population, geometry and name. Base of most of the
  * concrete subclasses of GAMA agents
- * 
+ *
  * @author drogoul
  *
  */
@@ -82,10 +81,12 @@ public class MinimalAgent extends AbstractAgent {
 		// Addition to address Issue 817: if the new geometry is exactly the one
 		// possessed by the agent, no need to change anything.
 		if (newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead()
-				|| this.getSpecies().isGrid() && ((GamlSpecies) this.getSpecies()).belongsToAMicroModel()) { return; }
+				|| this.getSpecies().isGrid() && ((GamlSpecies) this.getSpecies()).belongsToAMicroModel()) {
+			return;
+		}
 
 		final ITopology topology = getTopology();
-		final ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
+		final GamaPoint newGeomLocation = newGeometry.getLocation().copy(getScope());
 
 		// if the old geometry is "shared" with another agent, we create a new
 		// one. otherwise, we copy it directly.
@@ -96,7 +97,7 @@ public class MinimalAgent extends AbstractAgent {
 		} else {
 			// If the agent is different, we do not copy the attributes present in the shape passed as argument (see
 			// Issue #2053).
-			newLocalGeom = new GamaShape((Geometry) newGeometry.getInnerGeometry().clone());
+			newLocalGeom = new GamaShape(newGeometry.getInnerGeometry().copy());
 			newLocalGeom.copyShapeAttributesFrom(newGeometry);
 		}
 		topology.normalizeLocation(newGeomLocation, false);
@@ -106,7 +107,7 @@ public class MinimalAgent extends AbstractAgent {
 		}
 
 		newLocalGeom.setAgent(this);
-		final Envelope previous = geometry.getEnvelope();
+		final IEnvelope previous = geometry.getEnvelope();
 		geometry.setGeometry(newLocalGeom);
 
 		topology.updateAgent(previous, this);
@@ -138,9 +139,9 @@ public class MinimalAgent extends AbstractAgent {
 
 	@SuppressWarnings ("rawtypes")
 	@Override
-	public/* synchronized */void setLocation(final ILocation point) {
+	public/* synchronized */void setLocation(final GamaPoint point) {
 		if (point == null || dead() || this.getSpecies().isGrid()) { return; }
-		final ILocation newLocation = point.copy(getScope());
+		final GamaPoint newLocation = point.copy(getScope());
 		final ITopology topology = getTopology();
 		if (topology == null) { return; }
 		topology.normalizeLocation(newLocation, false);
@@ -148,9 +149,9 @@ public class MinimalAgent extends AbstractAgent {
 		if (geometry == null || geometry.getInnerGeometry() == null) {
 			setGeometry(GamaGeometryType.createPoint(newLocation));
 		} else {
-			final ILocation previousPoint = geometry.getLocation();
+			final GamaPoint previousPoint = geometry.getLocation();
 			if (newLocation.equals(previousPoint)) { return; }
-			final Envelope previous = geometry.getEnvelope();
+			final IEnvelope previous = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
 			topology.updateAgent(previous, this);
 
@@ -175,11 +176,11 @@ public class MinimalAgent extends AbstractAgent {
 	}
 
 	@Override
-	public/* synchronized */ILocation getLocation() {
+	public/* synchronized */GamaPoint getLocation() {
 		if (geometry == null || geometry.getInnerGeometry() == null) {
 			final IScope scope = this.getScope();
 			final ITopology t = getTopology();
-			final ILocation randomLocation = t == null ? null : t.getRandomLocation(scope);
+			final GamaPoint randomLocation = t == null ? null : t.getRandomLocation(scope);
 			if (randomLocation == null) { return null; }
 			setGeometry(GamaGeometryType.createPoint(randomLocation));
 			return randomLocation;
@@ -197,7 +198,7 @@ public class MinimalAgent extends AbstractAgent {
 	/**
 	 * During the call to init, the agent will search for the action named _init_ and execute it. Its default
 	 * implementation is provided in this class as well (equivalent to a super.init())
-	 * 
+	 *
 	 * @see GamlAgent#_init_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
 	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
@@ -216,7 +217,7 @@ public class MinimalAgent extends AbstractAgent {
 	/**
 	 * During the call to doStep(), the agent will search for the action named _step_ and execute it. Its default
 	 * implementation is provided in this class as well (equivalent to a super.doStep());
-	 * 
+	 *
 	 * @see GamlAgent#_step_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
 	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
@@ -235,7 +236,7 @@ public class MinimalAgent extends AbstractAgent {
 	/**
 	 * The default init of agents consists in calling the super implementation of init() in order to realize the default
 	 * init sequence
-	 * 
+	 *
 	 * @param scope
 	 * @return
 	 */
@@ -248,7 +249,7 @@ public class MinimalAgent extends AbstractAgent {
 	/**
 	 * The default step of agents consists in calling the super implementation of doStep() in order to realize the
 	 * default step sequence
-	 * 
+	 *
 	 * @param scope
 	 * @return
 	 */
@@ -260,7 +261,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getArea(). Simply delegates to the geometry
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getArea()
 	 */
 	@Override
@@ -270,7 +271,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getVolume(). Simply delegates to the geometry
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getVolume()
 	 */
 	@Override
@@ -280,7 +281,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getPerimeter()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getPerimeter()
 	 */
 	@Override
@@ -290,7 +291,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getHoles()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getHoles()
 	 */
 	@Override
@@ -300,7 +301,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getCentroid()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getCentroid()
 	 */
 	@Override
@@ -310,7 +311,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getExteriorRing()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getExteriorRing()
 	 */
 	@Override
@@ -320,7 +321,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getWidth()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getWidth()
 	 */
 	@Override
@@ -330,7 +331,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getHeight()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getHeight()
 	 */
 	@Override
@@ -340,7 +341,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getDepth()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getDepth()
 	 */
 	@Override
@@ -350,7 +351,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method getGeometricEnvelope()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getGeometricEnvelope()
 	 */
 	@Override
@@ -365,7 +366,7 @@ public class MinimalAgent extends AbstractAgent {
 
 	/**
 	 * Method isMultiple()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#isMultiple()
 	 */
 	@Override

@@ -41,13 +41,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import com.vividsolutions.jts.awt.PointTransformation;
-import com.vividsolutions.jts.awt.ShapeWriter;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.Lineal;
-import com.vividsolutions.jts.geom.Puntal;
+import org.locationtech.jts.awt.PointTransformation;
+import org.locationtech.jts.awt.ShapeWriter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.Lineal;
+import org.locationtech.jts.geom.Puntal;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.GeometryUtils;
@@ -63,8 +63,8 @@ import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 
 /**
@@ -143,7 +143,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	/**
 	 * Implements PointTransformation.transform
 	 *
-	 * @see com.vividsolutions.jts.awt.PointTransformation#transform(com.vividsolutions.jts.geom.Coordinate,
+	 * @see org.locationtech.jts.awt.PointTransformation#transform(org.locationtech.jts.geom.Coordinate,
 	 *      java.awt.geom.Point2D)
 	 */
 	@Override
@@ -162,7 +162,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile<?, ?> file, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile<?, ?> file, final DrawingAttributes attributes) {
 		final IScope scope = surface.getScope();
 		if (file instanceof GamaImageFile) {
 			return drawImage(((GamaImageFile) file).getImage(scope, attributes.useCache()), attributes);
@@ -173,13 +173,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final AxisAngle rotation = attributes.getRotation();
 		shape = new GamaShape(shape, null, rotation, attributes.getLocation(), attributes.getSize(), true);
 		final GamaColor c = attributes.getColor();
-		return drawShape(shape.getInnerGeometry(), new ShapeDrawingAttributes(shape.getLocation().toGamaPoint(), c, c));
+		return drawShape(shape.getInnerGeometry(), new DrawingAttributes(shape.getLocation(), c, c));
 	}
 
 	AffineTransform imageTransform = new AffineTransform();
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
 		// final AffineTransform saved = currentRenderer.getTransform();
 		imageTransform.setToIdentity();
 		double curX, curY;
@@ -285,7 +285,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawShape(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+	public Rectangle2D drawShape(final Geometry geometry, final DrawingAttributes attributes) {
 		if (geometry == null) { return null; }
 		if (geometry instanceof GeometryCollection) {
 			final Rectangle2D result = new Rectangle2D.Double();

@@ -1,14 +1,15 @@
 sudo: required
 language: java
 jdk:
-  - oraclejdk8
+  - oraclejdk11
 before_install:
 - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
 - echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
 notifications:
   email:
     recipients:
-    - my.gama.bot@gmail.com
+    - hqnghi@ctu.edu.vn
+    - alexis.drogoul@gmail.com
     on_success: change
     on_failure: always
 cache:
@@ -17,8 +18,7 @@ cache:
 addons:
     apt:
         packages:      
-            - sshpass
-            - oracle-java8-installer
+            - sshpass 
     ssh_known_hosts:
       - 51.255.46.42
 script: 
@@ -30,4 +30,4 @@ after_success:
 - bash ./travis/publish.sh
 branches:
   only:
-    - master
+    - GAMA_1.9

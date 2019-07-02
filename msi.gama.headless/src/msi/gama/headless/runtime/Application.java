@@ -35,7 +35,7 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
 
-import com.vividsolutions.jts.util.Debug;
+import org.locationtech.jts.util.Debug;
 
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
 import msi.gama.headless.batch.test.ModelLibraryTester;

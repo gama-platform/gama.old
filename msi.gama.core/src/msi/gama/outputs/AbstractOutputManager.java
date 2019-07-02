@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
+import msi.gama.common.util.JavaUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
@@ -223,11 +224,16 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean step(final IScope scope) {
-		final List<IOutput> copy = new ArrayList<>(outputs.values());
-		final Iterable<IOutput> filtered =
-				Iterables.filter(copy, each -> each.isRefreshable() && each.getScope().step(each).passed());
-		for (final IOutput o : filtered) {
-			o.update();
+		final List<IOutput> copy = JavaUtils.LIST_POOL.get();
+		try {
+			copy.addAll(outputs.values());
+			final Iterable<IOutput> filtered =
+					Iterables.filter(copy, each -> each.isRefreshable() && each.getScope().step(each).passed());
+			for (final IOutput o : filtered) {
+				o.update();
+			}
+		} finally {
+			JavaUtils.LIST_POOL.release(copy);
 		}
 		return true;
 	}

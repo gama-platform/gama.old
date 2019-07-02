@@ -71,9 +71,9 @@ import ummisco.gama.ui.views.toolbar.Selector;
 public class GamaPreferencesView {
 
 	static Pref<GamaPoint> DIALOG_LOCATION = GamaPreferences.create("dialog_location",
-			"Location of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT, false).hidden();
+			"Location of the preferences dialog on screen", GamaPoint.create(-1, -1), IType.POINT, false).hidden();
 	static Pref<GamaPoint> DIALOG_SIZE = GamaPreferences.create("dialog_size",
-			"Size of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT, false).hidden();
+			"Size of the preferences dialog on screen", GamaPoint.create(-1, -1), IType.POINT, false).hidden();
 	static Pref<Integer> DIALOG_TAB = GamaPreferences
 			.create("dialog_tab", "Tab selected in the preferences dialog", -1, IType.INT, false).hidden();
 
@@ -442,12 +442,12 @@ public class GamaPreferencesView {
 
 	private void saveLocation() {
 		final Point p = shell.getLocation();
-		DIALOG_LOCATION.set(new GamaPoint(p.x, p.y)).save();
+		DIALOG_LOCATION.set(GamaPoint.create(p.x, p.y)).save();
 	}
 
 	private void saveSize() {
 		final Point s = shell.getSize();
-		DIALOG_SIZE.set(new GamaPoint(s.x, s.y)).save();
+		DIALOG_SIZE.set(GamaPoint.create(s.x, s.y)).save();
 	}
 
 	private void saveTab() {

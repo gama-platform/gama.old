@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.IAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.agent.IAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.IStepable;
 import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -73,10 +73,10 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 *
 	 * @return
 	 */
-	public abstract ITopology getTopology();
+	ITopology getTopology();
 
 	@setter (IKeyword.PEERS)
-	public abstract void setPeers(IList<IAgent> peers);
+	void setPeers(IList<IAgent> peers);
 
 	/**
 	 * Returns agents having the same species and sharing the same direct host with this agent.
@@ -84,37 +84,37 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * @return
 	 */
 	@getter (IKeyword.PEERS)
-	public abstract IList<IAgent> getPeers() throws GamaRuntimeException;
+	IList<IAgent> getPeers() throws GamaRuntimeException;
 
 	@Override
 	@getter (
 			value = IKeyword.NAME,
 			initializer = true)
-	public abstract String getName();
+	String getName();
 
 	@Override
 	@setter (IKeyword.NAME)
-	public abstract void setName(String name);
+	void setName(String name);
 
 	@Override
 	@getter (
 			value = IKeyword.LOCATION,
 			initializer = true)
-	public ILocation getLocation();
+	GamaPoint getLocation();
 
 	@Override
 	@setter (IKeyword.LOCATION)
-	public void setLocation(final ILocation l);
+	void setLocation(final GamaPoint l);
 
 	@Override
 	@getter (IKeyword.SHAPE)
-	public IShape getGeometry();
+	IShape getGeometry();
 
 	@Override
 	@setter (IKeyword.SHAPE)
-	public void setGeometry(final IShape newGeometry);
+	void setGeometry(final IShape newGeometry);
 
-	public abstract boolean dead();
+	boolean dead();
 
 	/**
 	 * Returns the agent which hosts the population of this agent.
@@ -122,39 +122,39 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * @return
 	 */
 	@getter (IKeyword.HOST)
-	public abstract IMacroAgent getHost();
+	IMacroAgent getHost();
 
 	@setter (IKeyword.HOST)
-	public abstract void setHost(final IMacroAgent macroAgent);
+	void setHost(final IMacroAgent macroAgent);
 
-	public abstract void schedule(IScope scope);
+	void schedule(IScope scope);
 
 	/**
 	 * Allows to set attributes that will be accessed by the "read" or "get" operators. Used for GIS/CSV attributes
-	 * 
+	 *
 	 * @param map
 	 */
-	public abstract void setExtraAttributes(final Map<String, Object> map);
+	void setExtraAttributes(final Map<String, Object> map);
 
-	public abstract int getIndex();
+	int getIndex();
 
-	public String getSpeciesName();
+	String getSpeciesName();
 
-	public abstract ISpecies getSpecies();
+	ISpecies getSpecies();
 
-	public IPopulation<? extends IAgent> getPopulation();
+	IPopulation<? extends IAgent> getPopulation();
 
-	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
+	boolean isInstanceOf(final ISpecies s, boolean direct);
 
-	public abstract Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
+	Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
 
-	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
+	void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
 
-	public abstract List<IAgent> getMacroAgents();
+	List<IAgent> getMacroAgents();
 
-	public IModel getModel();
+	IModel getModel();
 
-	public abstract boolean isInstanceOf(String skill, boolean direct);
+	boolean isInstanceOf(String skill, boolean direct);
 
 	/**
 	 * @throws GamaRuntimeException
@@ -167,7 +167,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * @param microSpecies
 	 * @return
 	 */
-	public abstract IPopulation<? extends IAgent> getPopulationFor(final ISpecies microSpecies);
+	IPopulation<? extends IAgent> getPopulationFor(final ISpecies microSpecies);
 
 	/**
 	 * @throws GamaRuntimeException
@@ -181,7 +181,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 *            the name of the species
 	 * @return
 	 */
-	public abstract IPopulation<? extends IAgent> getPopulationFor(final String speciesName);
+	IPopulation<? extends IAgent> getPopulationFor(final String speciesName);
 
-	public void updateWith(final IScope s, final SavedAgent sa);
+	void updateWith(final IScope s, final SavedAgent sa);
 }

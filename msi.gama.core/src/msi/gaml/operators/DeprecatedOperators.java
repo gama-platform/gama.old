@@ -553,7 +553,7 @@ public class DeprecatedOperators {
 	// @doc (
 	// deprecated = "Use the standard construction {x,y,z} instead. ")
 	// @no_test
-	// public static ILocation add_z(final GamaPoint p, final Double z) {
+	// public static GamaPoint add_z(final GamaPoint p, final Double z) {
 	// return new GamaPoint(p.x, p.y, z);
 	// }
 
@@ -565,7 +565,7 @@ public class DeprecatedOperators {
 	// @doc (
 	// deprecated = " Use the standard construction {x,y,z} instead. ")
 	// @no_test
-	// public static ILocation add_z(final GamaPoint p, final Integer z) {
+	// public static GamaPoint add_z(final GamaPoint p, final Integer z) {
 	// return new GamaPoint(p.x, p.y, z);
 	// }
 	//
@@ -868,7 +868,7 @@ public class DeprecatedOperators {
 	// "triangle" })
 	// public static IShape rgbcube(final IScope scope, final Double side_size)
 	// {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( side_size <= 0 ) { return new GamaShape(location); }
@@ -891,7 +891,7 @@ public class DeprecatedOperators {
 	// "square" })
 	// public static IShape rgbtriangle(final IScope scope, final Double
 	// side_size) {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( side_size <= 0 ) { return new GamaShape(location); }
@@ -918,7 +918,7 @@ public class DeprecatedOperators {
 	// "triangle", "hemisphere", "pie3D" })
 	// public static IShape hemisphere(final IScope scope, final Double radius,
 	// final Double ratio) {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( radius <= 0 ) { return new GamaShape(location); }
@@ -943,7 +943,7 @@ public class DeprecatedOperators {
 	// "triangle", "hemisphere", "pie3D" })
 	// public static IShape hemispherePac(final IScope scope, final Double
 	// radius, final Double ratio) {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( radius <= 0 ) { return new GamaShape(location); }
@@ -968,7 +968,7 @@ public class DeprecatedOperators {
 	// "triangle", "hemisphere", "pie3D" })
 	// public static IShape hemisphereMan(final IScope scope, final Double
 	// radius, final Double ratio) {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( radius <= 0 ) { return new GamaShape(location); }
@@ -994,7 +994,7 @@ public class DeprecatedOperators {
 	// "triangle", "hemisphere", "pie3D" })
 	// public static IShape pieSphere(final IScope scope, final Double radius,
 	// final IList<Double> ratio) {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( radius <= 0 ) { return new GamaShape(location); }
@@ -1031,7 +1031,7 @@ public class DeprecatedOperators {
 	// public static IShape pieSphere(final IScope scope, final Double radius,
 	// final IList<Double> ratio,
 	// final IList<GamaColor> colors) {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( radius <= 0 ) { return new GamaShape(location); }
@@ -1073,7 +1073,7 @@ public class DeprecatedOperators {
 	// "polyline", "rectangle", "square",
 	// "triangle", "hemisphere", "pie3D" })
 	// public static IShape pacMan(final IScope scope, final Double radius) {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( radius <= 0 ) { return new GamaShape(location); }
@@ -1098,7 +1098,7 @@ public class DeprecatedOperators {
 	// "triangle", "hemisphere", "pie3D" })
 	// public static IShape pacMan(final IScope scope, final Double radius,
 	// final Double ratio) {
-	// ILocation location;
+	// GamaPoint location;
 	// final IAgent a = scope.getAgentScope();
 	// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 	// if ( radius <= 0 ) { return new GamaShape(location); }

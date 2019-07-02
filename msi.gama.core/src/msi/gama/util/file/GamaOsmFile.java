@@ -45,7 +45,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.hash.TLongHashSet;
@@ -312,9 +312,9 @@ public class GamaOsmFile extends GamaGisFile {
 						final Node node = (Node) entity;
 						nodes.add(node);
 						final Geometry g = gis == null
-								? new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry()
+								? GamaPoint.create(node.getLongitude(), node.getLatitude()).getInnerGeometry()
 								: gis.transform(
-										new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry());
+										GamaPoint.create(node.getLongitude(), node.getLatitude()).getInnerGeometry());
 						nodesPt.put(node.getId(), new GamaShape(g));
 					} else if (entity instanceof Way) {
 						if (toFilter) {

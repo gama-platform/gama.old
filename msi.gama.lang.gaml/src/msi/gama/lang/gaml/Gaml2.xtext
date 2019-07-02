@@ -1,0 +1,354 @@
+grammar msi.gama.lang.gaml.Gaml hidden(WS, ML_COMMENT, SL_COMMENT)
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+generate gaml "http://www.gama.msi/lang/gaml/Gaml"
+
+Entry:
+	->Model | StringEvaluator | StandaloneBlock | S_ExperimentDefinition;
+
+StandaloneBlock:
+	'__synthetic__' block=Block
+;
+
+StringEvaluator:
+	toto=ID "<-" expr=Expression;
+
+
+Model:
+	(pragmas +=Pragma)* 'model' name=ID  (imports+=Import)* block=ModelBlock;
+
+
+Import:
+	'import' importURI=STRING ("as" name=ID)?; // must be named importURI
+	
+Pragma:
+	'@' name=ID
+;
+
+/**
+ * Blocks. An ordered list of statements inside curly brackets
+ */
+ 
+ModelBlock returns Block:
+	{Block} (statements+=S_TopLevelStatement)*
+; 
+ 
+Block:
+	{Block} '{' (statements+=Statement)* '}'
+;
+
+EquationsBlock returns Block: 
+	{Block} '{' (statements+=S_Equation ';')* '}'
+;
+	
+
+Statement: 
+	=>S_Assignment | 
+	S_Regular  | 
+	S_VoidActionDefinition | 
+	S_If | 
+	S_Special | 
+	S_Equations | 
+	=>(=>S_VarDefinition | 
+	S_TypedActionDefinition)
+;
+
+
+/**
+ * SPECIAL STATEMENT SYNTAXES (try, break, return...)
+ */
+S_Special returns Statement: 
+	S_Try | S_Return | S_Break
+;
+
+S_Try returns Statement:
+	{S_Try} key='try' block=Block (-> 'catch' catch=Block) ?
+;
+
+S_Break returns Statement:
+	{S_Break} key='break' ";"
+;
+
+S_Return returns Statement:
+	{S_Return} key='return' (expr=Expression)? ';'
+;
+
+/**
+ * TOP LEVEL STATEMENTS (global, species, grid, experiment...)
+ */
+ 
+S_TopLevelStatement:
+	S_Global | S_SpeciesDefinition | S_ExperimentDefinition
+;
+
+S_Global:
+	key="global" (facets+=Facet)* (block=Block | ';')
+;
+
+S_SpeciesDefinition: 
+	key=("species"|"grid") name=ID (facets+=Facet)* (block=Block | ";")
+;
+
+S_ExperimentDefinition :
+	key="experiment" name=(ID | STRING) ('model:' importURI=STRING) ? (facets+=Facet)* (block=Block | ';');
+
+/**
+ * DECLARATION STATEMENTS (action, vars, equations, loop, aspect...)
+ */
+
+S_Declaration:
+	S_VoidActionDefinition | =>(=>S_VarDefinition | 
+	S_TypedActionDefinition) | S_Equations | S_Loop | S_Aspect 
+;
+
+S_TypedActionDefinition returns Statement: 
+	{S_TypedActionDefinition} type=TypeRef name=ID ('(' (args=ActionArguments)? ')' (facets+=Facet)* block=Block)
+;
+
+
+S_VoidActionDefinition returns Statement: 
+	{S_VoidActionDefinition} key="action" name=ID ('(' (args=ActionArguments)? ')' (facets+=Facet)* block=Block)
+;
+
+S_VarDefinition returns Statement: 
+	{S_VarDefinition} type=TypeRef name=ID (facets+=Facet)* ';'
+;
+
+S_Regular returns Statement:
+	key=ID (=>name=ID | (expr=Expression)) (facets+=Facet)* (block=Block | ";");
+	
+S_Assignment returns Statement: 
+	{S_Assignment} ((expr = Access)|=>(expr= VariableRef)) key=_AssignmentKey value=Expression (facets+=Facet)* ";"
+;
+
+S_If returns Statement:
+	{S_If} key='if' expr=Expression block=Block (-> 'else' else=(S_If | Block))?;
+
+S_Equations returns Statement:
+	{S_Equations} key="equation" name=ID (facets+=Facet)* (block=EquationsBlock | ';');
+
+S_Equation returns S_Assignment:
+	{S_Equation} expr=(Function|VariableRef) key="=" value=Expression;
+
+
+
+/**
+ * Statement keys
+ */
+
+
+
+_AssignmentKey:
+	"<-" | "<<" | '>' '>' | "<<+" | '>''>-' | "+<-" | "<+" | ">-" ;
+
+/**
+ * Parameters and arguments
+ */
+
+ActionArguments:
+	args+=ArgumentDefinition (',' args+=ArgumentDefinition)*;
+
+ArgumentDefinition:
+	type=(TypeRef) name=ID ('<-' default=Expression)?;
+
+/**
+ * Facets
+ */
+Facet:
+	key=ClassicFacetKey  expr=Expression  ;
+
+
+ClassicFacetKey: (ID ':');
+
+
+	/**
+ * Expressions
+ */
+Expression:
+	Pair ;
+	
+BinaryOperator returns Expression:
+	Or | And | Cast | Comparison | Addition | Multiplication | Exponentiation | Binary | Pair | Unit
+;
+
+
+Pair returns Expression:
+	If
+	({BinaryOperator.left=current}
+	op='::'
+	right=If)?;
+
+If returns Expression:
+	Or
+	({If.left=current}
+	op='?'
+	right=Or
+	(':'
+	ifFalse=Or))?;
+
+
+Or returns Expression:
+	And
+	({BinaryOperator.left=current}
+	op='or'
+	right=And)*;
+
+And returns Expression:
+	Cast
+	({BinaryOperator.left=current}
+	op='and'
+	right=Cast)*;
+
+Cast returns Expression:
+	Comparison
+	(({BinaryOperator.left = current}
+		op='as'
+) ((right= TypeRef) | ('(' right=TypeRef ')') ))?
+;
+
+Comparison returns Expression:
+	Addition
+	(({BinaryOperator.left=current}
+	op=('!=' | '=' | '>=' | '<=' | '<' | '>'))
+	right=Addition)?;
+
+Addition returns Expression:
+	Multiplication
+	(({BinaryOperator.left=current} op=('+' | '-'))
+	right=Multiplication)*;
+
+Multiplication returns Expression:
+	Exponentiation
+	(({BinaryOperator.left=current} op=('*' | '/' )) right=Exponentiation)*;
+
+Exponentiation returns Expression:
+	Binary
+	(({BinaryOperator.left=current} op=('^')) right=Binary)*;
+
+Binary returns Expression:
+	Unit
+	(({BinaryOperator.left=current} op=(ID)) right=Unit)*;
+
+Unit returns Expression:
+	Unary
+	(({Unit.left=current} op='#') right=UnitRef)?;
+
+Unary returns Expression:
+	Access |
+	{Unary} ((op='#' right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
+	right=Unary));
+
+Access returns Expression:
+	Primary ({Access.left = current} (
+		(op='[' right=ExpressionList? ']') | (op="." right=(AbstractRef|StringLiteral))
+	))*;
+
+Primary returns Expression:
+	TerminalExpression |
+	AbstractRef |
+	'[' {Array} exprs=ExpressionList? ']' |
+	'{' {Point} left=Expression op=',' right=Expression (',' z=Expression)? '}';
+
+AbstractRef returns Expression:
+	=>Function | VariableRef;
+
+Function returns Expression:
+	{Function} (left=ActionRef) (type=TypeInfo)? '(' right=ExpressionList? ')';
+
+ExpressionList:
+	(exprs+=Expression (',' exprs+=Expression)*) | (exprs+=Parameter (',' exprs+=Parameter)*);
+	
+Parameter returns Expression:
+	{Parameter} left=VariableRef ':' right=Expression;
+
+UnitRef returns Expression:
+	{UnitName} ref=[UnitFakeDefinition|ID];
+
+VariableRef:
+	{VariableRef} ref=[VarDefinition|ID];
+
+TypeRef returns Expression:
+	 {TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo) ;
+
+TypeInfo:
+	('<' first=TypeRef ("," second=TypeRef)? ->'>') 
+;
+SkillRef returns Expression:
+	{SkillRef} ref=[SkillFakeDefinition|ID];
+
+ActionRef returns Expression:
+	{ActionRef} ref=[ActionDefinition|ID];
+
+GamlDefinition:
+	 TypeDefinition | VarDefinition | UnitFakeDefinition | SkillFakeDefinition | ActionDefinition;
+
+TypeDefinition:
+	TypeFakeDefinition | S_SpeciesDefinition | S_ExperimentDefinition ;
+
+VarDefinition:
+	VarFakeDefinition | S_VarDefinition | Model | /*ArgumentDefinition |*/  Import ;
+
+ActionDefinition:
+	 ActionFakeDefinition | S_TypedActionDefinition | S_VoidActionDefinition;
+
+	// Fake Definitions produced by the global scope provider
+UnitFakeDefinition:
+	'**unit*' name=ID;
+
+TypeFakeDefinition:
+	'**type*' name=ID;
+
+ActionFakeDefinition:
+	'**action*' name=ID;
+
+SkillFakeDefinition:
+	'**skill*' name=ID;
+
+VarFakeDefinition:
+	'**var*' name=ID;
+
+/**
+ * Terminals
+ */
+TerminalExpression:
+	StringLiteral |
+	{IntLiteral} op=INTEGER |
+	{DoubleLiteral} op=DOUBLE |
+	{BooleanLiteral} op=BOOLEAN |
+	{ReservedLiteral} op=KEYWORD;
+	
+StringLiteral:
+	op=STRING
+;
+
+terminal KEYWORD:
+	'each' | 'self' | 'myself' | 'nil' | 'super' ;
+
+terminal INTEGER:
+	'0' | ('1'..'9' ('0'..'9')*);
+
+terminal BOOLEAN:
+	'true' | 'false';
+
+terminal ID:
+	('a'..'z' | 'A'..'Z' | '_' | '$') ('a'..'z' | 'A'..'Z' | '_' | '$' | '0'..'9')*;
+
+terminal DOUBLE:
+	'1'..'9' ('0'..'9')* ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? | '0' ('.' '0'..'9'+)? (('E' | 'e') ('+' |
+'-')? '0'..'9'+)?;
+
+terminal STRING:
+	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | '\\') | !('\\' | '"'))* '"' | "'" ('\\' ('b' | 't' | 'n' | 'f' |
+	'r' | 'u' | "'" | '\\') | !('\\' | "'"))* "'";
+
+terminal ML_COMMENT:
+	'/*'->'*/';
+
+terminal SL_COMMENT:
+	'//' !('\n' | '\r')* ('\r'? '\n')?;
+
+terminal WS:
+	(' ' | '\t' | '\r' | '\n')+;
+
+terminal ANY_OTHER:
+	.;

@@ -20,7 +20,7 @@ import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -516,10 +516,9 @@ public class GraphsGraphstream {
 		final double THETA = 2 * CmnFastMath.PI / size;
 		int i = 0;
 		final IList<GamlAgent> listVertex = g.getVertices();
-		final ILocation locEnv = scope.getSimulation().getGeometry().getLocation();
+		final GamaPoint locEnv = scope.getSimulation().getGeometry().getLocation();
 		for (final GamlAgent e : listVertex) {
-			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
-					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
+			e.setLocation(GamaPoint.create(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i), locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
 			scope.getGui().getConsole(scope).informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
 					scope.getRoot());
 			i++;
@@ -566,10 +565,9 @@ public class GraphsGraphstream {
 		final double THETA = 2 * CmnFastMath.PI / nodes.size();
 		int i = 0;
 		final IList<GamlAgent> listVertex = g.getVertices();
-		final ILocation locEnv = scope.getSimulation().getGeometry().getLocation();
+		final GamaPoint locEnv = scope.getSimulation().getGeometry().getLocation();
 		for (final GamlAgent e : listVertex) {
-			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
-					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
+			e.setLocation(GamaPoint.create(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i), locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
 			scope.getGui().getConsole(scope).informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
 					scope.getRoot());
 			i++;

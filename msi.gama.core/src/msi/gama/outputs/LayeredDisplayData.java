@@ -12,11 +12,12 @@ package msi.gama.outputs;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
@@ -26,7 +27,6 @@ import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterCha
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
@@ -102,13 +102,13 @@ public class LayeredDisplayData {
 	private double envWidth = 0d;
 	private double envHeight = 0d;
 	private boolean isAntialiasing = GamaPreferences.Displays.CORE_ANTIALIAS.getValue();
-	private ILocation imageDimension = new GamaPoint(-1, -1);
+	private GamaPoint imageDimension = GamaPoint.create(-1, -1);
 	private Double zoomLevel = INITIAL_ZOOM;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
 	public static final ICoordinates KEYSTONE_IDENTITY =
 			ICoordinates.ofLength(4).setTo(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
 
-	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
+	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.copy();
 	private double zRotationAngleDelta = 0;
 	private double currentRotationAboutZ = 0;
 	private boolean isOpenGL;
@@ -283,14 +283,17 @@ public class LayeredDisplayData {
 
 	// Change lights to a possibly null structure instead of generating an array for each data
 	public List<LightPropertiesStructure> getDiffuseLights() {
-		final ArrayList<LightPropertiesStructure> result = new ArrayList<>();
+		ArrayList<LightPropertiesStructure> result = null;
 		for (final LightPropertiesStructure lightProp : lights) {
 			if (lightProp != null) {
 				// TODO : check if the light is active
+				if (result == null) {
+					result = new ArrayList<>();
+				}
 				result.add(lightProp);
 			}
 		}
-		return result;
+		return result == null ? Collections.EMPTY_LIST : result;
 	}
 
 	public void setLightActive(final int lightId, final boolean value) {
@@ -395,7 +398,7 @@ public class LayeredDisplayData {
 				cameraPos.setLocation(c);
 			}
 		} else {
-			cameraPos = new GamaPoint(c);
+			cameraPos = GamaPoint.create(c);
 		}
 
 		notifyListeners(Changes.CAMERA_POS, cameraPos);
@@ -422,7 +425,7 @@ public class LayeredDisplayData {
 				cameraLookPos.setLocation(c);
 			}
 		} else {
-			cameraLookPos = new GamaPoint(c);
+			cameraLookPos = GamaPoint.create(c);
 		}
 
 		notifyListeners(Changes.CAMERA_TARGET, cameraLookPos);
@@ -449,7 +452,7 @@ public class LayeredDisplayData {
 				cameraUpVector.setLocation(c);
 			}
 		} else {
-			cameraUpVector = new GamaPoint(c);
+			cameraUpVector = GamaPoint.create(c);
 		}
 
 		notifyListeners(Changes.CAMERA_UP, cameraUpVector);
@@ -492,7 +495,7 @@ public class LayeredDisplayData {
 	/**
 	 * @return the imageDimension
 	 */
-	public ILocation getImageDimension() {
+	public GamaPoint getImageDimension() {
 		return imageDimension;
 	}
 
@@ -500,7 +503,7 @@ public class LayeredDisplayData {
 	 * @param imageDimension
 	 *            the imageDimension to set
 	 */
-	public void setImageDimension(final ILocation imageDimension) {
+	public void setImageDimension(final GamaPoint imageDimension) {
 		this.imageDimension = imageDimension;
 	}
 
@@ -818,7 +821,7 @@ public class LayeredDisplayData {
 		// this facet is deprecated...
 		if (light3 != null) {
 			setLightActive(1, true);
-			setLightDirection(1, (GamaPoint) Cast.asPoint(scope, light3.value(scope)));
+			setLightDirection(1, Cast.asPoint(scope, light3.value(scope)));
 		}
 
 		final IExpression drawLights = facets.getExpr(IKeyword.DRAW_DIFFUSE_LIGHT);
@@ -853,7 +856,7 @@ public class LayeredDisplayData {
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraUp = facets.getExpr(IKeyword.CAMERA_UP_VECTOR);
 		if (cameraUp != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraUp.value(scope));
+			final GamaPoint location = Cast.asPoint(scope, cameraUp.value(scope));
 			location.setY(-location.getY()); // y component need to be reverted
 			setCameraUpVector(location, true);
 		}
@@ -900,7 +903,7 @@ public class LayeredDisplayData {
 
 		final IExpression camera = facets.getExpr(IKeyword.CAMERA_POS);
 		if (camera != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
+			final GamaPoint location = Cast.asPoint(scope, camera.value(scope));
 			location.y = -location.y; // y component need to be reverted
 			setCameraPos(location);
 			constantCamera = camera.isConst();
@@ -909,7 +912,7 @@ public class LayeredDisplayData {
 
 		final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_LOOK_POS);
 		if (cameraLook != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
+			final GamaPoint location = Cast.asPoint(scope, cameraLook.value(scope));
 			location.setY(-location.getY()); // y component need to be reverted
 			setCameraLookPos(location);
 			constantCameraLook = cameraLook.isConst();
@@ -963,7 +966,7 @@ public class LayeredDisplayData {
 		if (!constantCamera) {
 			final IExpression camera = facets.getExpr(IKeyword.CAMERA_POS);
 			if (camera != null) {
-				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
+				final GamaPoint location = Cast.asPoint(scope, camera.value(scope));
 				if (location != null) {
 					location.y = -location.y; // y component need to be
 				}
@@ -976,7 +979,7 @@ public class LayeredDisplayData {
 		if (!constantCameraLook) {
 			final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_LOOK_POS);
 			if (cameraLook != null) {
-				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
+				final GamaPoint location = Cast.asPoint(scope, cameraLook.value(scope));
 				if (location != null) {
 					location.setY(-location.getY()); // y component need to be
 				}

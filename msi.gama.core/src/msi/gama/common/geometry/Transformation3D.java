@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import com.vividsolutions.jts.geom.CoordinateFilter;
+import org.locationtech.jts.geom.CoordinateFilter;
 
 import msi.gama.metamodel.shape.GamaPoint;
 

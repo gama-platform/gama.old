@@ -12,8 +12,8 @@ package msi.gaml.statements;
 
 import com.google.common.collect.FluentIterable;
 
+import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;

@@ -15,15 +15,20 @@ import static msi.gaml.operators.Maths.round;
 
 import java.awt.Point;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.util.NumberUtil;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.util.NumberUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.topology.IEnvelope;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.variable;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
@@ -39,14 +44,53 @@ import msi.gaml.types.Types;
  *
  * @author drogoul 11 oct. 07
  */
-@SuppressWarnings ({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes", "deprecation" })
+@vars ({ @variable (
+		name = IKeyword.X,
+		type = IType.FLOAT,
+		doc = { @doc ("Returns the x ordinate of this point") }),
+		@variable (
+				name = IKeyword.Y,
+				type = IType.FLOAT,
+				doc = { @doc ("Returns the y ordinate of this point") }),
+		@variable (
+				name = IKeyword.Z,
+				type = IType.FLOAT,
+				doc = { @doc ("Returns the z ordinate of this point") }) })
+public class GamaPoint extends Coordinate implements IShape, IEnvelope {
 
-public class GamaPoint extends Coordinate implements ILocation {
+	// FACTORY METHODS
 
-	private static final double[] EMPTY = new double[] {};
-	public static final GamaPoint NULL_POINT = new GamaPoint(0d, 0d, 0d) {
-		@Override
-		public void setLocation(final ILocation al) {}
+	public static GamaPoint createEmpty() {
+		return new GamaPoint();
+	}
+
+	public static GamaPoint create(final double x, final double y) {
+		return new GamaPoint(x, y);
+	}
+
+	public static GamaPoint create(final double x, final double y, final double z) {
+		return new GamaPoint(x, y, z);
+	}
+
+	public static GamaPoint create(final Point point) {
+		if (point == null) { return createEmpty(); }
+		return new GamaPoint(point.x, point.y);
+	}
+
+	public static GamaPoint create(final Coordinate c) {
+		if (c == null) { return createEmpty(); }
+		return new GamaPoint(c.x, c.y, c.z);
+	}
+
+	public static GamaPoint create(final GamaPoint c) {
+		if (c == null) { return createEmpty(); }
+		return new GamaPoint(c.x, c.y, c.z);
+	}
+
+	// Unmodifiable null point
+
+	public static final GamaPoint NULL_POINT = new GamaPoint() {
 
 		@Override
 		public GamaPoint add(final double ax, final double ay, final double az) {
@@ -105,7 +149,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 		public void setGeometry(final IShape g) {}
 
 		@Override
-		public void setLocation(final double... coords) {}
+		public GamaPoint setLocation(final double[] coords) {
+			return this;
+		}
 
 		@Override
 		public GamaPoint setLocation(final double x, final double y, final double z) {
@@ -113,9 +159,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		}
 
 		@Override
-		public GamaPoint setLocation(final GamaPoint al) {
-			return this;
-		}
+		public void setLocation(final GamaPoint al) {}
 
 		@Override
 		public void setOrdinate(final int i, final double v) {}
@@ -133,47 +177,24 @@ public class GamaPoint extends Coordinate implements ILocation {
 		public void copyShapeAttributesFrom(final IShape other) {}
 	};
 
-	{
-		x = 0.0d;
-		y = 0.0d;
-		z = 0.0d;
+	private GamaPoint() {
+		this(0d, 0d, 0d);
+	}
+
+	//
+	private GamaPoint(final double x, final double y) {
+		this(x, y, 0d);
+	}
+
+	//
+	private GamaPoint(final double x, final double y, final double z) {
+		setLocation(x, y, z);
 	}
 
 	@Override
-	public GamaPoint toGamaPoint() {
-		return this;
-	}
-
-	public GamaPoint(final double... coords) {
-		setLocation(coords);
-	}
-
-	public GamaPoint(final Coordinate coord) {
-		this(coord.x, coord.y, coord.z);
-	}
-
-	public GamaPoint(final GamaPoint point) {
-		this((Coordinate) point);
-	}
-
-	public GamaPoint(final ILocation point) {
-		this(point == null ? EMPTY : new double[] { point.getX(), point.getY(), point.getZ() });
-	}
-
-	public GamaPoint(final Point point) {
-		this(point == null ? EMPTY : new double[] { point.getX(), point.getY() });
-	}
-
-	@Override
-	public void setLocation(final ILocation al) {
+	public void setLocation(final GamaPoint al) {
+		if (al == null) { return; }
 		setLocation(al.getX(), al.getY(), al.getZ());
-	}
-
-	public GamaPoint setLocation(final GamaPoint al) {
-		x = al.x;
-		y = al.y;
-		z = al.z;
-		return this;
 	}
 
 	public GamaPoint setLocation(final double x, final double y, final double z) {
@@ -183,12 +204,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return this;
 	}
 
-	@Override
-	public void setLocation(final double... coords) {
+	public GamaPoint setLocation(final double[] coords) {
 		final int n = coords.length;
 		switch (n) {
 			case 0:
-				return;
+				return this;
 			case 1:
 				setX(coords[0]);
 				setY(coords[0]);
@@ -203,6 +223,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 				setY(coords[1]);
 				setZ(coords[2]);
 		}
+		return this;
 	}
 
 	@Override
@@ -288,13 +309,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return "{" + x + "," + y + "," + z + "}";
 	}
 
-	@Override
-	public void add(final ILocation loc) {
-		setX(x + loc.getX());
-		setY(y + loc.getY());
-		setZ(z + loc.getZ());
-	}
-
 	public GamaPoint add(final GamaPoint loc) {
 		x += loc.x;
 		y += loc.y;
@@ -332,7 +346,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public GamaPoint copy(final IScope scope) {
-		return new GamaPoint(x, y, z);
+		return create(x, y, z);
 	}
 
 	@Override
@@ -368,7 +382,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public boolean equals(final Object o) {
-
 		if (o instanceof GamaPoint) {
 			final double tolerance = GamaPreferences.External.TOLERANCE_POINTS.getValue();
 			if (tolerance > 0.0) { return equalsWithTolerance((GamaPoint) o, tolerance); }
@@ -377,7 +390,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return super.equals(o);
 	}
 
-	@Override
 	public boolean equalsWithTolerance(final Coordinate c, final double tolerance) {
 		if (tolerance == 0.0) { return equals3D(c); }
 		if (!NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)) { return false; }
@@ -408,15 +420,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public double euclidianDistanceTo(final ILocation p) {
+	public double euclidianDistanceTo(final GamaPoint p) {
 		final double dx = p.getX() - x;
 		final double dy = p.getY() - y;
 		final double dz = p.getZ() - z;
 		return sqrt(dx * dx + dy * dy + dz * dz);
-	}
-
-	public double euclidianDistanceTo(final GamaPoint p) {
-		return distance3D(p);
 	}
 
 	/**
@@ -447,17 +455,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void setAgent(final IAgent agent) {}
-	//
-	// /**
-	// * @see msi.gama.interfaces.IGeometry#getPerimeter()
-	// */
-	// @Override
-	// public double getPerimeter() {
-	// return 0d;
-	// }
 
 	/**
-	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
+	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(org.locationtech.jts.geom.Geometry)
 	 */
 	@Override
 	public void setInnerGeometry(final Geometry point) {
@@ -505,27 +505,27 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public GamaPoint times(final double d) {
-		return new GamaPoint(x * d, y * d, z * d);
+		return create(x * d, y * d, z * d);
 	}
 
 	public GamaPoint dividedBy(final double d) {
-		return new GamaPoint(x / d, y / d, z / d);
+		return create(x / d, y / d, z / d);
 	}
 
 	public GamaPoint minus(final GamaPoint other) {
-		return new GamaPoint(x - other.x, y - other.y, z - other.z);
+		return create(x - other.x, y - other.y, z - other.z);
 	}
 
 	public GamaPoint minus(final double ax, final double ay, final double az) {
-		return new GamaPoint(x - ax, y - ay, z - az);
+		return create(x - ax, y - ay, z - az);
 	}
 
 	public GamaPoint plus(final GamaPoint other) {
-		return new GamaPoint(x + other.x, y + other.y, z + other.z);
+		return create(x + other.x, y + other.y, z + other.z);
 	}
 
 	public GamaPoint plus(final double ax, final double ay, final double az) {
-		return new GamaPoint(x + ax, y + ay, z + az);
+		return create(x + ax, y + ay, z + az);
 	}
 
 	public double norm() {
@@ -543,8 +543,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	public GamaPoint normalized() {
 		final double r = this.norm();
-		if (r == 0d) { return new GamaPoint(0, 0, 0); }
-		return new GamaPoint(this.x / r, this.y / r, this.z / r);
+		if (r == 0d) { return create(0, 0, 0); }
+		return create(this.x / r, this.y / r, this.z / r);
 	}
 
 	public GamaPoint normalize() {
@@ -557,7 +557,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public GamaPoint negated() {
-		return new GamaPoint(-x, -y, -z);
+		return create(-x, -y, -z);
 	}
 
 	public void negate() {
@@ -571,7 +571,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public final static GamaPoint cross(final GamaPoint v1, final GamaPoint v2) {
-		return new GamaPoint(v1.y * v2.z - v1.z * v2.y, v2.x * v1.z - v2.z * v1.x, v1.x * v2.y - v1.y * v2.x);
+		return create(v1.y * v2.z - v1.z * v2.y, v2.x * v1.z - v2.z * v1.x, v1.x * v2.y - v1.y * v2.x);
 	}
 
 	/**
@@ -580,7 +580,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override
-	public IList<? extends ILocation> getPoints() {
+	public IList<? extends GamaPoint> getPoints() {
 		final IList result = GamaListFactory.create(Types.POINT);
 		result.add(this);
 		return result;
@@ -589,9 +589,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 	/**
 	 * @return the point with y negated (for OpenGL, for example), without side effect on the point.
 	 */
-	@Override
 	public GamaPoint yNegated() {
-		return new GamaPoint(x, -y, z);
+		return create(x, -y, z);
 	}
 
 	@Override
@@ -752,23 +751,64 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 		if (Math.abs(x) <= threshold) {
 			final double inverse = 1 / sqrt(y * y + z * z);
-			return new GamaPoint(0, inverse * z, -inverse * y);
+			return create(0, inverse * z, -inverse * y);
 		} else if (Math.abs(y) <= threshold) {
 			final double inverse = 1 / sqrt(x * x + z * z);
-			return new GamaPoint(-inverse * z, 0, inverse * x);
+			return create(-inverse * z, 0, inverse * x);
 		}
 		final double inverse = 1 / sqrt(x * x + y * y);
-		return new GamaPoint(inverse * y, -inverse * x, 0);
+		return create(inverse * y, -inverse * x, 0);
 
+	}
+
+	public GamaPoint withPrecision(final int i) {
+		return create(round(x, i), round(y, i), round(z, i));
 	}
 
 	@Override
-	public GamaPoint withPrecision(final int i) {
-		return new GamaPoint(round(x, i), round(y, i), round(z, i));
-	}
-
 	public boolean isNull() {
 		return this.equals(NULL_POINT);
+	}
+
+	@Override
+	public boolean intersects(final IEnvelope bounds) {
+		if (bounds.isPoint()) { return this.equals(bounds.getLocation()); }
+		return bounds.intersects(this);
+	}
+
+	@Override
+	public double getMaxX() {
+		return getX();
+	}
+
+	@Override
+	public double getMaxY() {
+		return getY();
+	}
+
+	@Override
+	public double getMinX() {
+		return getX();
+	}
+
+	@Override
+	public double getMinY() {
+		return getY();
+	}
+
+	@Override
+	public boolean covers(final IEnvelope bounds) {
+		if (bounds.isPoint()) { return this.equals(bounds.getLocation()); }
+		return false;
+	}
+
+	@Override
+	public int compareTo(final Coordinate other) {
+		final int result = super.compareTo(other);
+		if (result != 0 || Double.isNaN(z)) { return result; }
+		if (z < other.z) { return -1; }
+		if (z > other.z) { return 1; }
+		return 0;
 	}
 
 }

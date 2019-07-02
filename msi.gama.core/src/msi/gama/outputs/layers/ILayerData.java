@@ -12,10 +12,10 @@ package msi.gama.outputs.layers;
 
 import java.awt.Point;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -34,7 +34,7 @@ public interface ILayerData {
 
 	public abstract Double getTransparency(final IScope scope);
 
-	public abstract void setSize(final ILocation p);
+	public abstract void setSize(final GamaPoint p);
 
 	public abstract void setSize(final double width, final double height, final double depth);
 
@@ -42,15 +42,15 @@ public interface ILayerData {
 
 	public abstract boolean isRelativeSize();
 
-	public abstract void setPosition(final ILocation p);
+	public abstract void setPosition(final GamaPoint p);
 
 	public abstract void setPosition(final double x, final double y, final double z);
 
 	public abstract void setRefresh(final Boolean r);
 
-	public abstract ILocation getPosition();
+	public abstract GamaPoint getPosition();
 
-	public abstract ILocation getSize();
+	public abstract GamaPoint getSize();
 
 	public abstract Boolean getRefresh();
 

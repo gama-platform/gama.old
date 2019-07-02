@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -196,7 +196,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 			final Object pn = prefuseNode.get(GraphUtilsPrefuse.PREFUSE_ATTRIBUTE_GAMA_OBJECT);
 			if (pn instanceof IShape) {
 				final IShape gamaNode = (IShape) pn;
-				final ILocation newloc = new GamaPoint(prefuseNode.getX(), prefuseNode.getY());
+				final GamaPoint newloc = GamaPoint.create(prefuseNode.getX(), prefuseNode.getY());
 				gamaNode.setLocation(newloc);
 
 			}

@@ -25,8 +25,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
@@ -314,7 +313,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		final VariableDescription shape = attributes.get(SHAPE);
 		final Collection<VariableDescription> shapeDependencies =
 				shape == null ? Collections.EMPTY_SET : shape.getDependencies(facetsToConsider, false, true);
-		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		final DefaultDirectedGraph dependencies = new DefaultDirectedGraph(Object.class);
 		if (shape != null) {
 			dependencies.addVertex(shape);
 		}
@@ -360,7 +359,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected boolean verifyAttributeCycles() {
 		if (attributes == null || attributes.size() <= 1) { return true; }
 		final VariableDescription shape = attributes.get(SHAPE);
-		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		final DefaultDirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
 			dependencies.addVertex(shape);
 		}
@@ -397,7 +396,8 @@ public abstract class TypeDescription extends SymbolDescription {
 			}
 			return false;
 		}
-		final DirectedGraph<VariableDescription, Object> fDependencies = new DefaultDirectedGraph<>(Object.class);
+		final DefaultDirectedGraph<VariableDescription, Object> fDependencies =
+				new DefaultDirectedGraph<>(Object.class);
 		attributes.forEachEntry((aName, var) -> {
 			if (!var.hasFacet(FUNCTION)) { return true; }
 			fDependencies.addVertex(var);

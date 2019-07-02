@@ -1,53 +1,100 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.DrawingAttributes.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.draw.DrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
-import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
-import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.metamodel.agent.AgentIdentifier;
+import msi.gama.common.interfaces.IDisposable;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gaml.operators.IUnits;
 
-public abstract class DrawingAttributes {
+public class DrawingAttributes implements IDisposable {
 
 	private static int INDEX = 0;
-	static final GamaColor SELECTED_COLOR = new GamaColor(Color.red);
-	private final int uniqueIndex;
-	protected final ColorProperties colorProperties = new ColorProperties();
-	protected GeometricProperties geometryProperties = GeometricProperties.create();
+
+	private final int uniqueIndex = INDEX++;
+	protected final ColorProperties colorProperties = ColorProperties.create();
+	protected final GeometricProperties geometryProperties = GeometricProperties.create();
+	protected IAgent agent;
 	protected boolean selected;
 	protected boolean synthetic; // if the attributes have been built on the fly
-	protected GamaColor highlight;
+
+	public DrawingAttributes() {}
 
 	public DrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation, final GamaPoint location,
 			final GamaColor color, final GamaColor border, final Boolean lighting) {
 		setBorder(border);
 		setColor(color);
 		setSize(size);
-		setLocation(location == null ? null : new GamaPoint(location));
+		setLocation(location == null ? null : GamaPoint.create(location));
 		if (rotation != null) {
 			setRotation(rotation.key, rotation.value);
 		}
-		withLighting(lighting);
-		uniqueIndex = INDEX++;
+		setLighting(lighting);
+	}
+
+	public DrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation, final GamaPoint location,
+			final GamaColor color, final GamaColor border, final IAgent agent, final Double lineWidth,
+			final boolean isImage, final Boolean lighting) {
+		this(size, rotation, location, color, border, lighting);
+		this.agent = agent;
+		setLineWidth(lineWidth);
+		setType(isImage ? IShape.Type.POLYGON : IShape.Type.THREED_FILE);
+	}
+
+	public DrawingAttributes(final Scaling3D size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
+			final GamaPoint location, final Boolean empty, final GamaColor color, final List<GamaColor> colors,
+			final GamaColor border, final List textures, final GamaMaterial material, final IAgent agent,
+			final IShape.Type type, final Double lineWidth, final Boolean lighting) {
+		this(size, rotation, location, color, border, agent, lineWidth, false, lighting);
+		setHeightIfAbsent(depth);
+		setEmpty(empty);
+		setTextures(textures);
+		setType(type);
+		setColors(colors);
+	}
+
+	public DrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border) {
+		this(location, color, border, (IShape.Type) null);
+	}
+
+	public DrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border,
+			final IShape.Type type) {
+		this(null, null, null, location, color == null, color, null, border, null, null, null, type, null, null);
+	}
+
+	public DrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color, final GamaColor border) {
+		this(shape, agent, color, border, shape.getGeometricalType(), null);
+	}
+
+	public DrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color, final GamaColor border,
+			final IShape.Type type, final Double lineWidth) {
+		this(null, null, null, shape.getLocation(), color == null, color, null, border, null, null, agent, type,
+				lineWidth, null);
+	}
+
+	@Override
+	public void dispose() {
+		colorProperties.dispose();
+		geometryProperties.dispose();
 	}
 
 	public int getIndex() {
@@ -70,7 +117,13 @@ public abstract class DrawingAttributes {
 		selected = b;
 	}
 
-	public abstract IShape.Type getType();
+	public IShape.Type getType() {
+		return geometryProperties.getType();
+	}
+
+	public void setType(final Type type) {
+		geometryProperties.setType(type);
+	}
 
 	public DrawingAttributes(final GamaPoint location, final GamaColor color) {
 		this(null, null, location, color, null, true);
@@ -80,10 +133,8 @@ public abstract class DrawingAttributes {
 		colorProperties.withFill(fill);
 	}
 
-	public DrawingAttributes withLighting(final Boolean lighting) {
-		if (lighting == null) { return this; }
+	public void setLighting(final Boolean lighting) {
 		colorProperties.withLighting(lighting);
-		return this;
 	}
 
 	protected void setColors(final List<GamaColor> cc) {
@@ -107,22 +158,22 @@ public abstract class DrawingAttributes {
 	}
 
 	public void setSize(final Scaling3D size) {
-		geometryProperties = geometryProperties.withSize(size);
+		geometryProperties.withSize(size);
 	}
 
 	public void setRotation(final Double angle, final GamaPoint axis) {
 		if (angle == null || axis != null && axis.isNull()) {
-			geometryProperties = geometryProperties.withRotation(null);
+			geometryProperties.withRotation(null);
 		} else if (axis == null) {
-			geometryProperties = geometryProperties.withRotation(new AxisAngle(Rotation3D.PLUS_K, angle));
+			geometryProperties.withRotation(new AxisAngle(Rotation3D.PLUS_K, angle));
 		} else {
-			geometryProperties = geometryProperties.withRotation(new AxisAngle(axis, angle));
+			geometryProperties.withRotation(new AxisAngle(axis, angle));
 		}
 	}
 
 	public final GamaColor getColor() {
-		if (selected) { return SELECTED_COLOR; }
-		if (highlight != null) { return highlight; }
+		if (selected) { return ColorProperties.SELECTED_COLOR; }
+
 		return colorProperties.getFillColor();
 	}
 
@@ -143,7 +194,13 @@ public abstract class DrawingAttributes {
 	}
 
 	public void setHeight(final Double d) {
-		geometryProperties = geometryProperties.withHeight(d);
+		geometryProperties.withHeight(d);
+	}
+
+	public void setHeightIfAbsent(final Double d) {
+		if (getHeight() == null) {
+			setHeight(d);
+		}
 	}
 
 	public void setLocationIfAbsent(final GamaPoint point) {
@@ -152,25 +209,28 @@ public abstract class DrawingAttributes {
 		}
 	}
 
-	@SuppressWarnings ("rawtypes")
 	public List getTextures() {
 		return colorProperties.getTextures();
 	}
 
-	public abstract AgentIdentifier getAgentIdentifier();
+	public void setTextures(final List textures) {
+		colorProperties.withTextures(textures);
+	}
+
+	public IAgent getAgent() {
+		return agent;
+	}
 
 	public GamaColor[] getColors() {
 		return colorProperties.getColors();
 	}
-
-	public abstract GamaMaterial getMaterial();
 
 	public String getSpeciesName() {
 		return null;
 	}
 
 	public void setLocation(final GamaPoint location) {
-		geometryProperties = geometryProperties.withLocation(location);
+		geometryProperties.withLocation(location);
 	}
 
 	public AxisAngle getRotation() {
@@ -179,21 +239,23 @@ public abstract class DrawingAttributes {
 
 	/**
 	 * Returns the angle of the rotation in degrees (or null if no rotation is defined)
-	 * 
+	 *
 	 * @return
 	 */
 	public Double getAngle() {
-		if (geometryProperties.getRotation() == null) { return null; }
-		return geometryProperties.getRotation().angle;
+		return geometryProperties.getAngle();
 	}
 
 	public GamaPoint getAxis() {
-		if (geometryProperties.getRotation() == null) { return null; }
-		return geometryProperties.getRotation().getAxis();
+		return geometryProperties.getAxis();
 	}
 
 	public Double getLineWidth() {
-		return GamaPreferences.Displays.CORE_LINE_WIDTH.getValue();
+		return geometryProperties.getLineWidth();
+	}
+
+	public void setLineWidth(final Double d) {
+		geometryProperties.setLineWidth(d);
 	}
 
 	public void setTexture(final Object o) {
@@ -202,11 +264,10 @@ public abstract class DrawingAttributes {
 		} else {
 			colorProperties.withTextures(Arrays.asList(o));
 		}
-
 	}
 
 	public void setHighlighted(final GamaColor color) {
-		highlight = color;
+		colorProperties.highlight = color;
 	}
 
 	public void markSelected(final int pickedIndex) {
@@ -217,20 +278,20 @@ public abstract class DrawingAttributes {
 		return colorProperties.isAnimated();
 	}
 
-	public int getFrameCount() {
-		return colorProperties.getFrameCount();
-	}
-
-	public int getAverageDelay() {
-		return colorProperties.getAverageDelay();
-	}
-
 	public GamaPoint getAnchor() {
 		return IUnits.bottom_left;
 	}
 
 	public boolean isLighting() {
 		return colorProperties.isLighting();
+	}
+
+	public boolean useCache() {
+		return colorProperties.useCache;
+	}
+
+	public void setUseCache(final boolean b) {
+		colorProperties.useCache = b;
 	}
 
 }

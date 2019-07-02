@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
+import static com.google.common.collect.Ordering.natural;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,9 +23,10 @@ import com.google.common.collect.Ordering;
 
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.util.JavaUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
 import msi.gama.metamodel.topology.ITopology;
@@ -77,7 +80,7 @@ public class GraphTopology extends AbstractTopology {
 
 	private IShape optimizedClosestTo(final IShape source, final List<IShape> candidates) {
 		IShape result = null;
-		final ILocation loc = source.getLocation();
+		final GamaPoint loc = source.getLocation();
 		double distMin = Double.MAX_VALUE;
 		for (final IShape c : candidates) {
 			final double dist = loc.euclidianDistanceTo(c.getLocation());
@@ -97,7 +100,7 @@ public class GraphTopology extends AbstractTopology {
 	@SuppressWarnings ("null")
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target) {
-		// final ILocation source = sourceShape.getLocation();
+		// final GamaPoint source = sourceShape.getLocation();
 		final GamaSpatialGraph graph = (GamaSpatialGraph) getPlaces();
 		IShape sourceN = source;
 		IShape targetN = target;
@@ -617,7 +620,7 @@ public class GraphTopology extends AbstractTopology {
 		IList<IShape> edges;
 
 		if (!sourceNode && !targetNode && edgeS.equals(edgeT)) {
-			final GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
+			final GamaPoint ptS = GamaPoint.create(edgeS.getInnerGeometry().getCoordinates()[0]);
 			if (source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS)) {
 				edges = GamaListFactory.create(Types.GEOMETRY);
 				edges.add(edgeS);
@@ -671,7 +674,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {
+	public GamaSpatialPath pathBetween(final IScope scope, final GamaPoint source, final GamaPoint target) {
 		return pathBetween(scope, (IShape) source, (IShape) target);
 	}
 
@@ -712,7 +715,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#isValidLocation(msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public boolean isValidLocation(final IScope scope, final ILocation p) {
+	public boolean isValidLocation(final IScope scope, final GamaPoint p) {
 		return isValidGeometry(scope, p.getGeometry());
 	}
 
@@ -753,7 +756,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
+	public Double distanceBetween(final IScope scope, final GamaPoint source, final GamaPoint target) {
 		final GamaSpatialPath path = this.pathBetween(scope, source, target);
 		if (path == null) { return Double.MAX_VALUE; }
 		if (path.getEdgeList().isEmpty()) { return 0.0; }
@@ -863,7 +866,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final GamaPoint source, final GamaPoint target,
 			final int k) {
 		return KpathsBetween(scope, source.getGeometry(), target.getGeometry(), k);
 	}
@@ -918,7 +921,7 @@ public class GraphTopology extends AbstractTopology {
 			final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode, final int k) {
 		final IList results = GamaListFactory.create(Types.PATH);
 		if (edgeS.equals(edgeT)) {
-			final GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
+			final GamaPoint ptS = GamaPoint.create(edgeS.getInnerGeometry().getCoordinates()[0]);
 			if (source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS)) {
 				final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
 				edges.add(edgeS);
@@ -1078,7 +1081,7 @@ public class GraphTopology extends AbstractTopology {
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
 		// A better solution is required !!! this solution is just here to
 		// ensure the consistency of the closest operator on graph !
-		final List<IAgent> listAgents = new ArrayList();
+		final List<IAgent> listAgents = JavaUtils.LIST_POOL.get();
 		listAgents.addAll(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
 		listAgents.remove(source);
 		IAgent closest = null;
@@ -1094,6 +1097,7 @@ public class GraphTopology extends AbstractTopology {
 			}
 
 		}
+		JavaUtils.LIST_POOL.release(listAgents);
 		return closest;
 	}
 
@@ -1103,14 +1107,18 @@ public class GraphTopology extends AbstractTopology {
 		// A better solution is required !!! this solution is just here to
 		// ensure the consistency of the closest operator on graph !
 
-		final List<IAgent> listAgents = new ArrayList();
-		listAgents.addAll(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
-
-		listAgents.remove(source);
-		if (listAgents.size() <= number) { return GamaListFactory.createWithoutCasting(Types.AGENT, listAgents); }
-		scope.getRandom().shuffle(listAgents);
-		final Ordering<IAgent> ordering = Ordering.natural().onResultOf(input -> distanceBetween(scope, source, input));
-		return GamaListFactory.createWithoutCasting(Types.AGENT, ordering.leastOf(listAgents, number));
+		List<IAgent> listAgents = null;
+		try {
+			listAgents = JavaUtils.LIST_POOL.get();
+			listAgents.addAll(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
+			listAgents.remove(source);
+			if (listAgents.size() <= number) { return GamaListFactory.createWithoutCasting(Types.AGENT, listAgents); }
+			scope.getRandom().shuffleInPlace(listAgents);
+			final Ordering<IAgent> ordering = natural().onResultOf(input -> distanceBetween(scope, source, input));
+			return GamaListFactory.createWithoutCasting(Types.AGENT, ordering.leastOf(listAgents, number));
+		} finally {
+			JavaUtils.LIST_POOL.release(listAgents);
+		}
 
 	}
 }

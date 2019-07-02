@@ -25,7 +25,6 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.FileOutput;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.GAMA;
@@ -138,15 +137,15 @@ public class BatchAgent extends ExperimentAgent {
 
 	public void memorizeFitnessAndCloseSimulation(final IAgent sim) {
 		final IExpression fitness = getSpecies().getExplorationAlgorithm().getFitnessExpression();
-		final FileOutput output = getSpecies().getLog();
+		// final FileOutput output = getSpecies().getLog();
 		double lastFitnessValue = 0;
 		if (fitness != null) {
 			lastFitnessValue = Cast.asFloat(sim.getScope(), fitness.value(sim.getScope()));
 			fitnessValues.add(lastFitnessValue);
 		}
-		if (output != null) {
-			getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
-		}
+		// if (output != null) {
+		// getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
+		// }
 		sim.dispose();
 	}
 

@@ -12,9 +12,10 @@ package msi.gama.common.geometry;
 
 import java.util.Iterator;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+
 import com.google.common.collect.Iterators;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
@@ -24,12 +25,13 @@ import msi.gama.metamodel.shape.GamaPoint;
  * @author drogoul
  *
  */
+@SuppressWarnings ("deprecation")
 public class UniqueCoordinateSequence implements ICoordinates {
 
 	final GamaPoint point;
 
 	public UniqueCoordinateSequence(final Coordinate coord) {
-		point = new GamaPoint(coord);
+		point = GamaPoint.create(coord);
 	}
 
 	public UniqueCoordinateSequence(final boolean copy, final GamaPoint gamaPoint) {
@@ -48,7 +50,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public Coordinate getCoordinateCopy(final int i) {
-		return new GamaPoint((Coordinate) point);
+		return GamaPoint.create((Coordinate) point);
 	}
 
 	@Override
@@ -107,8 +109,8 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public final ICoordinates clone() {
-		return new UniqueCoordinateSequence(new GamaPoint((Coordinate) point));
+	public final ICoordinates copy() {
+		return new UniqueCoordinateSequence(GamaPoint.create((Coordinate) point));
 	}
 
 	@Override
@@ -165,7 +167,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public GamaPoint directionBetweenLastPointAndOrigin() {
-		return new GamaPoint();
+		return GamaPoint.createEmpty();
 	}
 
 	@Override
@@ -198,7 +200,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public boolean isCoveredBy(final Envelope3D env) {
-		return env.covers(point);
+		return env.covers((Coordinate) point);
 	}
 
 	@Override
@@ -207,22 +209,11 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	}
 
-	// @Override
-	// public void visitCounterClockwise(final VertexVisitor v) {
-	// v.process(point.x, point.y, point.z);
-	//
-	// }
-
 	@Override
 	public void visitYNegatedCounterClockwise(final VertexVisitor v) {
 		v.process(point.x, -point.y, point.z);
 
 	}
-	//
-	// @Override
-	// public void visitYNegatedClockwise(final VertexVisitor v) {
-	// v.process(point.x, -point.y, point.z);
-	// }
 
 	@Override
 	public boolean isClockwise() {
@@ -240,6 +231,12 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	@Override
 	public void ensureClockwiseness() {
 
+	}
+
+	@SuppressWarnings ("deprecation")
+	@Override
+	public Object clone() {
+		return copy();
 	}
 
 }

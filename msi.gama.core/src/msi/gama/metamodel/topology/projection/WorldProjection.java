@@ -1,21 +1,20 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.projection.WorldProjection.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.projection.WorldProjection.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
-import javax.measure.converter.UnitConverter;
+import javax.measure.UnitConverter;
 
+import org.locationtech.jts.geom.CoordinateFilter;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.runtime.IScope;
@@ -23,7 +22,7 @@ import msi.gama.runtime.IScope;
 public class WorldProjection extends Projection {
 
 	public CoordinateFilter gisToAbsoluteTranslation, absoluteToGisTranslation;
-	
+
 	public CoordinateFilter otherUnitToMeter, meterToOtherUnit;
 
 	public WorldProjection(final IScope scope, final CoordinateReferenceSystem crs, final Envelope3D env,
@@ -51,19 +50,18 @@ public class WorldProjection extends Projection {
 			geom.geometryChanged();
 		}
 	}
-	
 
 	@Override
-	public void convertUnit(Geometry geom) {
+	public void convertUnit(final Geometry geom) {
 		if (otherUnitToMeter != null) {
 			geom.apply(otherUnitToMeter);
 			geom.geometryChanged();
 		}
-		
+
 	}
 
 	@Override
-	public void inverseConvertUnit(Geometry geom) {
+	public void inverseConvertUnit(final Geometry geom) {
 		if (meterToOtherUnit != null) {
 			geom.apply(meterToOtherUnit);
 			geom.geometryChanged();
@@ -76,10 +74,11 @@ public class WorldProjection extends Projection {
 		}
 		createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
 	}
-	
+
 	public void updateUnit(final UnitConverter unitConverter) {
-		if (unitConverter != null)
+		if (unitConverter != null) {
 			createUnitTransformations(unitConverter);
+		}
 	}
 
 	public void createTranslations(final double minX, final double height, final double minY) {
@@ -92,6 +91,7 @@ public class WorldProjection extends Projection {
 			coord.y = -coord.y + height + minY;
 		};
 	}
+
 	public void createUnitTransformations(final UnitConverter unitConverter) {
 		otherUnitToMeter = coord -> {
 			coord.x = unitConverter.convert(coord.x);
@@ -104,7 +104,5 @@ public class WorldProjection extends Projection {
 			coord.z = unitConverter.inverse().convert(coord.z);
 		};
 	}
-	
-	
 
 }

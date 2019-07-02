@@ -12,7 +12,7 @@ package msi.gama.outputs.display;
 
 import java.awt.geom.Rectangle2D;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
@@ -24,7 +24,7 @@ import msi.gama.outputs.layers.OverlayLayer;
 public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
-	protected static final GamaPoint origin = new GamaPoint(0, 0);
+	protected static final GamaPoint origin = GamaPoint.create(0, 0);
 	protected double currentLayerAlpha = 1;
 	public LayeredDisplayData data;
 	protected IDisplaySurface surface;

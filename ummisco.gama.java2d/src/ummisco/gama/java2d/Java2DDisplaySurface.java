@@ -45,7 +45,7 @@ import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
@@ -56,7 +56,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.Changes;
@@ -436,7 +436,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public ILocation getModelCoordinates() {
+	public GamaPoint getModelCoordinates() {
 		final Point origin = getOrigin();
 		final Point mouse = getMousePosition();
 		if (mouse == null) { return null; }
@@ -552,7 +552,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int yInDisplay = yOnScreen - positionInPixels.y;
 		final double xInModel = xInDisplay / xScale;
 		final double yInModel = yInDisplay / yScale;
-		return new GamaPoint(xInModel, yInModel);
+		return GamaPoint.create(xInModel, yInModel);
 	}
 
 	@Override
@@ -562,10 +562,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final Point origin = getOrigin();
 		int xc = -origin.x;
 		int yc = -origin.y;
-		e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+		e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 		xc = xc + getIGraphics().getViewWidth();
 		yc = yc + getIGraphics().getViewHeight();
-		e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+		e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 		return e;
 	}
 

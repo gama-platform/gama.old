@@ -21,7 +21,7 @@ import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
@@ -147,7 +147,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	}
 
 	@Override
-	public SimulationAgent getAgent(final IScope scope, final ILocation value) {
+	public SimulationAgent getAgent(final IScope scope, final GamaPoint value) {
 		return get(null, 0);
 	}
 

@@ -20,13 +20,12 @@ import org.geotools.gml.GMLFilterDocument;
 import org.geotools.gml.GMLFilterFeature;
 import org.geotools.gml.GMLFilterGeometry;
 import org.geotools.gml.GMLReceiver;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaGisGeometry;

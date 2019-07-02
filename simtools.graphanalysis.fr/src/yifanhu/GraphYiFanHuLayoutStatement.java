@@ -4,7 +4,7 @@ import org.gephi.layout.plugin.force.StepDisplacement;
 import org.gephi.layout.plugin.force.yifanHu.YifanHuLayout;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -129,8 +129,8 @@ public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 			layout.goAlgo();
 		}
 		if (bp1 != null && bp2 != null) {
-			final ILocation p1 = Cast.asPoint(scope, bp1);
-			final ILocation p2 = Cast.asPoint(scope, bp2);
+			final GamaPoint p1 = Cast.asPoint(scope, bp1);
+			final GamaPoint p2 = Cast.asPoint(scope, bp2);
 			Update_locations(g, Math.min(p1.getX(), p2.getX()), Math.min(p1.getY(), p2.getY()),
 					Math.max(p1.getX(), p2.getX()), Math.max(p1.getY(), p2.getY()));
 		} else {

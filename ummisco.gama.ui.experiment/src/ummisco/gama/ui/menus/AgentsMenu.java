@@ -32,9 +32,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.ValuedDisplayOutputFactory;
+import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
@@ -224,7 +224,7 @@ public class AgentsMenu extends ContributionItem {
 			final MenuItem source = (MenuItem) e.widget;
 			final IAgent a = (IAgent) source.getData("agent");
 			final IStatement c = (IStatement) source.getData("command");
-			// final ILocation p = (ILocation) source.getData("location");
+			// final GamaPoint p = (GamaPoint) source.getData("location");
 
 			// We run into the scope provided by the simulation to which this
 			// agent belongs

@@ -12,9 +12,14 @@ package msi.gama.common.util;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Random;
+import java.util.RandomAccess;
+import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -28,6 +33,10 @@ import ummisco.gama.dev.utils.DEBUG;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RandomUtils {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The seed. */
 	protected Double seed;
@@ -240,7 +249,7 @@ public class RandomUtils {
 		}
 	}
 
-	public void shuffle2(final Collection list) {
+	public void shuffleInPlace(final Collection list) {
 		final int size = list.size();
 		if (size < 2) { return; }
 		final Object[] a = list.toArray(new Object[size]);
@@ -281,13 +290,27 @@ public class RandomUtils {
 		}
 	}
 
-	public List shuffle(final List list) {
-		for (int i = list.size(); i > 1; i--) {
-			final int i1 = i - 1;
-			final int j = between(0, i - 1);
-			final Object tmp = list.get(i1);
-			list.set(i1, list.get(j));
-			list.set(j, tmp);
+	public List shuffleInPlace(final List list) {
+		final int size = list.size();
+		if (size < 2) { return list; }
+		if (size < 5 || list instanceof RandomAccess) {
+			for (int i = size; i > 1; i--) {
+				final int i1 = i - 1;
+				list.set(i1, list.set(between(0, i1), list.get(i1)));
+			}
+		} else {
+			final Object arr[] = list.toArray();
+			for (int i = size; i > 1; i--) {
+				final Object tmp = arr[i];
+				final int j = this.between(0, i - 1);
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
+			final ListIterator it = list.listIterator();
+			for (final Object element : arr) {
+				it.next();
+				it.set(element);
+			}
 		}
 		return list;
 	}
@@ -546,21 +569,36 @@ public class RandomUtils {
 		return generator;
 	}
 
-	// public static void main(final String[] args) {
-	// USE_BITWISE = false;
-	// RandomUtils r1 = new RandomUtils(1.0, "mersenne1");
-	// RandomUtils r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
-	// RandomUtils r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
-	// for (int i = 0; i < 3; i++) {
-	// DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
-	// }
-	// USE_BITWISE = true;
-	// r1 = new RandomUtils(1.0, "mersenne1");
-	// r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
-	// r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
-	// for (int i = 0; i < 3; i++) {
-	// DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
-	// }
-	// }
+	public static void main(final String[] args) {
+		final List<Object> objects = new ArrayList<>();
+		for (int i = 0; i < 100000; i++) {
+			objects.add(new Object());
+		}
+		final Set<Object> objects2 = new HashSet<>();
+		for (int i = 0; i < 100000; i++) {
+			objects2.add(new Object());
+		}
+		final RandomUtils r1 = new RandomUtils(1.0, "mersenne1");
+		DEBUG.TIMER("Shuffle list: ", () -> {
+			for (int i = 0; i < 10000; i++) {
+				r1.shuffleInPlace(objects);
+			}
+		});
+		DEBUG.TIMER("Shuffle set: ", () -> {
+			for (int i = 0; i < 10000; i++) {
+				r1.shuffleInPlace(objects2);
+			}
+		});
+		// DEBUG.TIMER("Old shuffle: ", () -> {
+		// for (int i = 0; i < 10000; i++) {
+		// r1.shuffle(objects);
+		// }
+		// });
+		// DEBUG.TIMER("Java Shuffle: ", () -> {
+		// for (int i = 0; i < 10000; i++) {
+		// r1.shuffleInPlace(objects);
+		// }
+		// });
+	}
 
 }

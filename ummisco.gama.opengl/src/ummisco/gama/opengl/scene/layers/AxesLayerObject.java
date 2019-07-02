@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.scene.layers.AxesLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of
  * the GAMA modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
@@ -31,8 +31,8 @@ import msi.gama.util.GamaFont;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.StringObject;
+import ummisco.gama.opengl.scene.LayerElement;
+import ummisco.gama.opengl.scene.LayerElement.DrawerType;
 
 public class AxesLayerObject extends StaticLayerObject.World {
 
@@ -42,8 +42,8 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			new AxisAngle[] { new AxisAngle(PLUS_J, 90), new AxisAngle(MINUS_I, 90), null };
 	public final static GamaColor[] COLORS =
 			new GamaColor[] { getNamed("gamared"), getNamed("gamaorange"), getNamed("gamablue") };
-	protected final static GamaPoint DEFAULT_SCALE = new GamaPoint(.15, .15, .15);
-	protected final static GamaPoint ORIGIN = new GamaPoint(0, 0, 0);
+	protected final static GamaPoint DEFAULT_SCALE = GamaPoint.create(.15, .15, .15);
+	protected final static GamaPoint ORIGIN = GamaPoint.create(0, 0, 0);
 	protected final static GamaFont AXES_FONT = new GamaFont("Helvetica", 0, 18);
 	final GamaShape arrow;
 	final GamaPoint[] dirs;
@@ -55,7 +55,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 		scale.setLocation(DEFAULT_SCALE);
 		final double max = renderer.getMaxEnvDim();
 		arrow = (GamaShape) buildCone3D(max / 15, max / 6, ORIGIN);
-		dirs = new GamaPoint[] { new GamaPoint(max, 0, 0), new GamaPoint(0, max, 0), new GamaPoint(0, 0, max) };
+		dirs = new GamaPoint[] { GamaPoint.create(max, 0, 0), GamaPoint.create(0, max, 0), GamaPoint.create(0, 0, max) };
 		for (int i = 0; i < 3; i++) {
 			axes[i] = (GamaShape) buildLineCylinder(ORIGIN, dirs[i], max / 40);
 		}
@@ -73,11 +73,11 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	@Override
 	public void draw(final OpenGL gl) {
 		if (renderer.getOpenGLHelper().isInRotationMode()) {
-			final GamaPoint pivotPoint = (GamaPoint) renderer.getCameraTarget();
+			final GamaPoint pivotPoint = renderer.getCameraTarget();
 			setOffset(pivotPoint.yNegated());
 			final double size = renderer.getOpenGLHelper().sizeOfRotationElements();
 			final double ratio = size / renderer.getMaxEnvDim();
-			setScale(new GamaPoint(ratio, ratio, ratio));
+			setScale(GamaPoint.create(ratio, ratio, ratio));
 		} else {
 			setOffset(null);
 			setScale(null);
@@ -86,7 +86,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	}
 
 	@Override
-	public void fillWithObjects(final List<AbstractObject<?, ?>> list) {
+	public void fillWithObjects(final List<LayerElement<?, ?>> list) {
 		for (int i = 0; i < 3; i++) {
 			final GamaPoint p = dirs[i];
 			// build axis
@@ -94,7 +94,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			// build labels
 			final TextDrawingAttributes text = new TextDrawingAttributes(of(1), null, p.times(1.3).yNegated(),
 					ANCHORS[i], COLORS[i], AXES_FONT, false);
-			list.add(new StringObject(LABELS[i], text));
+			list.add(LayerElement.createLayerElement(LABELS[i], text, DrawerType.STRING));
 			// build arrows
 			final GamaShape s = new GamaShape(arrow, null, ROTATIONS[i], p.times(0.98));
 			addSyntheticObject(list, s, COLORS[i], IShape.Type.CONE, false);

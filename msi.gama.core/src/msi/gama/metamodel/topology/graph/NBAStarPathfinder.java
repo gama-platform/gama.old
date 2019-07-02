@@ -327,8 +327,8 @@ public final class NBAStarPathfinder<V, E> {
 
 	public double estimateDistanceBetween(final V node1, final V node2) {
 		if (isSpatialGraph) {
-			final GamaPoint pt1 = (GamaPoint) ((IShape) node1).getLocation();
-			final GamaPoint pt2 = (GamaPoint) ((IShape) node2).getLocation();
+			final GamaPoint pt1 = ((IShape) node1).getLocation();
+			final GamaPoint pt2 = ((IShape) node2).getLocation();
 			return pt1.euclidianDistanceTo(pt2);
 
 		}

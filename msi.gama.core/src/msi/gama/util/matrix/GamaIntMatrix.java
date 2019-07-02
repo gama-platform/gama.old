@@ -24,7 +24,7 @@ import com.google.common.primitives.Ints;
 
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.IScope;
@@ -111,7 +111,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		matrix = mat;
 	}
 
-	public GamaIntMatrix(final IScope scope, final List objects, final ILocation preferredSize) {
+	public GamaIntMatrix(final IScope scope, final List objects, final GamaPoint preferredSize) {
 		super(scope, objects, preferredSize, Types.INT);
 		matrix = new int[numRows * numCols];
 		if (preferredSize != null) {
@@ -290,7 +290,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type,
+	protected IMatrix _matrixValue(final IScope scope, final GamaPoint preferredSize, final IType type,
 			final boolean copy) {
 		return GamaMatrixType.from(scope, this, type, preferredSize, copy);
 	}
@@ -307,7 +307,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public GamaIntMatrix copy(final IScope scope, final ILocation preferredSize, final boolean copy) {
+	public GamaIntMatrix copy(final IScope scope, final GamaPoint preferredSize, final boolean copy) {
 		if (preferredSize == null) {
 			if (copy) {
 				return new GamaIntMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length));

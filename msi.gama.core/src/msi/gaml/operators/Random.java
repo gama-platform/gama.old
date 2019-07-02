@@ -13,7 +13,7 @@ package msi.gaml.operators;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -219,7 +219,7 @@ public class Random {
 			return GamaListFactory.create(target == null ? Types.NO_TYPE : target.getGamlType().getContentType());
 		}
 		final IList list = (IList) target.listValue(scope, target.getGamlType().getContentType(), false).copy(scope);
-		RANDOM(scope).shuffle(list);
+		RANDOM(scope).shuffleInPlace(list);
 		return list;
 	}
 
@@ -373,7 +373,7 @@ public class Random {
 		final double x = opRnd(scope, min.x, max.x);
 		final double y = opRnd(scope, min.y, max.y);
 		final double z = opRnd(scope, min.z, max.z);
-		return new GamaPoint(x, y, z);
+		return GamaPoint.create(x, y, z);
 	}
 
 	@operator (
@@ -392,10 +392,10 @@ public class Random {
 		final double x = opRnd(scope, min.x, max.x, step);
 		final double y = opRnd(scope, min.y, max.y, step);
 		final double z = opRnd(scope, min.z, max.z, step);
-		return new GamaPoint(x, y, z);
+		return GamaPoint.create(x, y, z);
 	}
 
-	static GamaPoint NULL_POINT = new GamaPoint(0, 0, 0);
+	static GamaPoint NULL_POINT = GamaPoint.create(0, 0, 0);
 
 	@operator (
 			value = "rnd",
@@ -409,7 +409,7 @@ public class Random {
 					equals = "{x,y} with x in [0.0,2.0], y in [0.0,3.0], z = 0.0",
 					test = false) })
 	@test ("seed <- 1.0; rnd ({2.5,3, 1.0}) = {1.935030382553449,2.3551192220022856,0.5087825199078746}")
-	public static ILocation opRnd(final IScope scope, final GamaPoint max) {
+	public static GamaPoint opRnd(final IScope scope, final GamaPoint max) {
 		return opRnd(scope, NULL_POINT, max);
 	}
 

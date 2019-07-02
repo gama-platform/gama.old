@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import msi.gama.common.util.StringUtils;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
@@ -85,7 +85,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * @see msi.gaml.attributes.interfaces.IGamaValue#matrixValue(msi.gaml.types. GamaPoint)
 	 */
 	@Override
-	public IMatrix<E> matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	public IMatrix<E> matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) {
 		return GamaMatrixType.from(scope, this, contentsType, preferredSize);
 	}

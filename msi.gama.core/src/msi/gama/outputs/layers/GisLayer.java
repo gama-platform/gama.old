@@ -24,7 +24,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.types.IType;
 
 public class GisLayer extends AbstractLayer {
@@ -46,8 +46,8 @@ public class GisLayer extends AbstractLayer {
 		if (shapes != null) {
 			for (final IShape geom : shapes) {
 				if (geom != null) {
-					final ShapeDrawingAttributes attributes =
-							new ShapeDrawingAttributes(geom, (IAgent) null, color, new GamaColor(Color.black));
+					final DrawingAttributes attributes =
+							new DrawingAttributes(geom, (IAgent) null, color, new GamaColor(Color.black));
 					g.drawShape(geom.getInnerGeometry(), attributes);
 				}
 			}

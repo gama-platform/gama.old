@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.ISkill;
 import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -523,7 +523,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IMatrix<? extends IAgent> matrixValue(final IScope scope, final IType contentsType,
-			final ILocation preferredSize, final boolean copy) throws GamaRuntimeException {
+			final GamaPoint preferredSize, final boolean copy) throws GamaRuntimeException {
 		final IPopulation<? extends IAgent> pop = getPopulation(scope);
 		return pop == null ? null : pop.matrixValue(scope, contentsType, preferredSize, copy);
 	}
