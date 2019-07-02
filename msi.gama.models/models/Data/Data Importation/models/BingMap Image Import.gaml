@@ -13,14 +13,15 @@ global
 	map
 	answers <- user_input("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", ["Address"::""]);
 	string center_text <- answers["Address"]; 
-	int zoom_text <- 10;
+	int zoom_text <- 15;
+	geometry shape<-square(500);
 	action load_map
 	{ 
 		string zoom <- "zoom=" + zoom_text;
 		string center <- "center=" + center_text;
-		write "https://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/"+center_text+"/15?mapSize=500,500&pp="+center_text+";21;AA&pp="+center_text+";;AB&pp="+center_text+";22&key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln";
-		static_map_request <-
-		image_file("https://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/"+center_text+"/15?mapSize=500,500&pp="+center_text+";21;AA&pp="+center_text+";;AB&pp="+center_text+";22&key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln");
+		string rest_link<- "https://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/"+center_text+"/"+zoom_text+"?mapSize="+int(world.shape.width)+","+int(world.shape.height)+"&key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln";
+		write rest_link;
+		static_map_request <- image_file(rest_link);
 		
 		
 	}
@@ -42,7 +43,7 @@ experiment Display
 	 
 	output
 	{
-		display "Google Map" type: opengl
+		display "Bing Map" type: opengl
 		{
 			image static_map_request;
 		}

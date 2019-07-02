@@ -16,4 +16,36 @@
 		<nature>msi.gama.application.gamaNature</nature>
 		<nature>msi.gama.application.builtinNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>external/10</name>
+			<type>1</type>
+			<locationURI>CACHE_LOC/dev.virtualearth.net+_++_+REST+_+v1+_+Imagery+_+Map+_+AerialWithLabels+_+47.619385,-122.351485+_+10</locationURI>
+		</link>
+		<link>
+			<name>external/14</name>
+			<type>1</type>
+			<locationURI>CACHE_LOC/dev.virtualearth.net+_++_+REST+_+v1+_+Imagery+_+Map+_+AerialWithLabels+_+47.619385,-122.351485+_+14</locationURI>
+		</link>
+		<link>
+			<name>external/15</name>
+			<type>1</type>
+			<locationURI>CACHE_LOC/dev.virtualearth.net+_++_+REST+_+v1+_+Imagery+_+Map+_+AerialWithLabels+_+48.8566140,2.3522219+_+15</locationURI>
+		</link>
+		<link>
+			<name>external/copy of 10</name>
+			<type>1</type>
+			<locationURI>CACHE_LOC/dev.virtualearth.net+_++_+REST+_+v1+_+Imagery+_+Map+_+AerialWithLabels+_+48.8566140,2.3522219+_+10</locationURI>
+		</link>
+		<link>
+			<name>external/copy of 15</name>
+			<type>1</type>
+			<locationURI>CACHE_LOC/dev.virtualearth.net+_++_+REST+_+v1+_+Imagery+_+Map+_+AerialWithLabels+_+47.619385,-122.351485+_+15</locationURI>
+		</link>
+		<link>
+			<name>external/getmap</name>
+			<type>1</type>
+			<locationURI>CACHE_LOC/www.mapquestapi.com+_++_+staticmap+_+v4+_+getmap</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
