@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.util.PoolUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -45,6 +46,9 @@ import msi.gaml.operators.Maths;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaQuadTree implements ISpatialIndex {
+
+	private final PoolUtils.ObjectPool<Envelope3D> envelopePool =
+			PoolUtils.create("Envelope 3D in Quad Tree", true, () -> new Envelope3D(), null);
 
 	public static final int NW = 0;
 	public static final int NE = 1;
@@ -117,46 +121,61 @@ public class GamaQuadTree implements ISpatialIndex {
 			final IAgentFilter f) {
 		// TODO filter result by topology's bounds
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = new Envelope3D(source.getEnvelope());
+		final Envelope3D env = envelopePool.get();
+		env.init(source.getEnvelope());
 		env.expandBy(exp);
-		final Collection<IAgent> result = findIntersects(scope, source, env, f);
-		if (result.isEmpty()) { return Collections.EMPTY_LIST; }
-		result.removeIf(each -> source.euclidianDistanceTo(each) > dist);
-		return result;
+		try {
+			final Collection<IAgent> result = findIntersects(scope, source, env, f);
+			if (result.isEmpty()) { return Collections.EMPTY_LIST; }
+			result.removeIf(each -> source.euclidianDistanceTo(each) > dist);
+			return result;
+		} finally {
+			envelopePool.release(env);
+		}
 	}
 
 	@Override
 	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
 			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = new Envelope3D(source.getEnvelope());
+		final Envelope3D env = envelopePool.get();
+		env.init(source.getEnvelope());
 		env.expandBy(exp);
-		final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
-		in_square.removeAll(alreadyChosen);
-		if (in_square.isEmpty()) { return GamaListFactory.create(); }
+		try {
+			final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
+			in_square.removeAll(alreadyChosen);
+			if (in_square.isEmpty()) { return GamaListFactory.create(); }
 
-		if (in_square.size() <= number) { return in_square; }
-		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
-		return ordering.leastOf(in_square, number);
+			if (in_square.size() <= number) { return in_square; }
+			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+			return ordering.leastOf(in_square, number);
+		} finally {
+			envelopePool.release(env);
+		}
 	}
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = new Envelope3D(source.getEnvelope());
+		final Envelope3D env = envelopePool.get();
+		env.init(source.getEnvelope());
 		env.expandBy(exp);
-		final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
-		if (in_square.isEmpty()) { return null; }
-		double min_distance = dist;
-		IAgent min_agent = null;
-		for (final IAgent a : in_square) {
-			final Double dd = source.euclidianDistanceTo(a);
-			if (dd < min_distance) {
-				min_distance = dd;
-				min_agent = a;
+		try {
+			final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
+			if (in_square.isEmpty()) { return null; }
+			double min_distance = dist;
+			IAgent min_agent = null;
+			for (final IAgent a : in_square) {
+				final Double dd = source.euclidianDistanceTo(a);
+				if (dd < min_distance) {
+					min_distance = dd;
+					min_agent = a;
+				}
 			}
+			return min_agent;
+		} finally {
+			envelopePool.release(env);
 		}
-		return min_agent;
 	}
 
 	@Override
