@@ -564,6 +564,11 @@ public class Variable extends Symbol implements IVariable {
 	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		if (getter != null) { return getter.run(scope, agent, gSkill == null ? agent : gSkill); }
 		if (functionExpression != null) { return scope.evaluate(functionExpression, agent).getValue(); }
+		if (!agent.hasAttribute(name)) {
+			// Var not yet initialized. May happen when asking for its value while initializing an editor
+			// See Issue #2781
+			if (isNotModifiable) { return getInitialValue(scope); }
+		}
 		return agent.getAttribute(name);
 	}
 
