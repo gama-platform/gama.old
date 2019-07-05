@@ -1,14 +1,18 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.ExecutionScope.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.ExecutionScope.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
+
+import static msi.gama.runtime.ExecutionResult.FAILED;
+import static msi.gama.runtime.ExecutionResult.PASSED;
+import static msi.gama.runtime.ExecutionResult.withValue;
 
 import java.util.Collections;
 import java.util.Map;
@@ -156,7 +160,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method clear()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#clear()
 	 */
 	@Override
@@ -208,7 +212,7 @@ public class ExecutionScope implements IScope {
 	/**
 	 *
 	 * Method interrupted(). Returns true if the scope is currently marked as interrupted.
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#interrupted()
 	 */
 	@Override
@@ -260,7 +264,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method push()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
@@ -285,7 +289,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method pop()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
@@ -298,7 +302,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method push()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#push(msi.gaml.statements.IStatement)
 	 */
 	@Override
@@ -343,7 +347,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method pop()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#pop(msi.gaml.statements.IStatement)
 	 */
 	@Override
@@ -361,7 +365,7 @@ public class ExecutionScope implements IScope {
 	/**
 	 * Method execute(). Asks the scope to manage the execution of a statement on an agent, taking care of pushing the
 	 * agent on the stack, verifying the runtime state, etc. This method accepts optional arguments (which can be null)
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -381,10 +385,10 @@ public class ExecutionScope implements IScope {
 				// We push the caller to the remote sequence (will be cleaned when the remote sequence leaves its scope)
 				((RemoteSequence) statement).setMyself(caller);
 			}
-			return new ExecutionResultWithValue(statement.executeOn(this));
+			return withValue(statement.executeOn(ExecutionScope.this));
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
-			return FAILED;
+			return ExecutionResult.FAILED;
 		} finally {
 			// We clean the caller that may have been set previously so as to keep the arguments clean
 			if (args != null) {
@@ -426,23 +430,21 @@ public class ExecutionScope implements IScope {
 	@Override
 	public ExecutionResult step(final IStepable agent) {
 		if (agent == null || interrupted()) { return FAILED; }
-		return agent instanceof IAgent
-				? pushRunAndCatch((IAgent) agent, (a) -> new ExecutionResultWithValue(agent.step(this)))
-				: runAndCatch(agent, (a) -> new ExecutionResultWithValue(agent.step(this)));
+		return agent instanceof IAgent ? pushRunAndCatch((IAgent) agent, (a) -> withValue(agent.step(this)))
+				: runAndCatch(agent, (a) -> withValue(agent.step(this)));
 	}
 
 	@Override
 	public ExecutionResult init(final IStepable agent) {
 		if (agent == null || interrupted()) { return FAILED; }
-		return agent instanceof IAgent
-				? pushRunAndCatch((IAgent) agent, (a) -> new ExecutionResultWithValue(agent.init(this)))
-				: runAndCatch(agent, (a) -> new ExecutionResultWithValue(agent.init(this)));
+		return agent instanceof IAgent ? pushRunAndCatch((IAgent) agent, (a) -> withValue(agent.init(this)))
+				: runAndCatch(agent, (a) -> withValue(agent.init(this)));
 	}
 
 	@Override
 	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
 		if (agent == null || interrupted()) { return FAILED; }
-		return pushRunAndCatch(agent, (a) -> new ExecutionResultWithValue(expr.value(this)));
+		return pushRunAndCatch(agent, (a) -> withValue(expr.value(this)));
 	}
 
 	private ExecutionResult pushRunAndCatch(final IAgent a, final Function<IAgent, ExecutionResult> f) {
@@ -474,7 +476,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getVarValue(java.lang.String)
 	 */
 	@Override
@@ -485,7 +487,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setVarValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -497,7 +499,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method saveAllVarValuesIn()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#saveAllVarValuesIn(java.util.Map)
 	 */
 	@Override
@@ -509,7 +511,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method removeAllVars()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#removeAllVars()
 	 */
 	@Override
@@ -521,7 +523,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method addVarWithValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#addVarWithValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -533,7 +535,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setEach()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setEach(java.lang.Object)
 	 */
 	@Override
@@ -544,7 +546,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getEach()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getEach()
 	 */
 	@Override
@@ -554,13 +556,14 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getArg()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getArg(java.lang.String, int)
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		if (executionContext != null) { return Types.get(type).cast(this, executionContext.getLocalVar(string), null,
-				false); }
+		if (executionContext != null) {
+			return Types.get(type).cast(this, executionContext.getLocalVar(string), null, false);
+		}
 		return null;
 	}
 
@@ -591,7 +594,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method hasArg()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#hasArg(java.lang.String)
 	 */
 	@Override
@@ -602,7 +605,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getAgentVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String)
 	 */
 	@Override
@@ -620,7 +623,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setAgentVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String,
 	 *      java.lang.Object)
 	 */
@@ -656,7 +659,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getGlobalVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getGlobalVarValue(java.lang.String)
 	 */
 	@Override
@@ -676,7 +679,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setGlobalVarValue()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setGlobalVarValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -688,7 +691,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getName()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getName()
 	 */
 
@@ -704,7 +707,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getTopology()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getTopology()
 	 */
 	@Override
@@ -717,7 +720,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setTopology()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setTopology(msi.gama.metamodel.topology.ITopology)
 	 */
 	@Override
@@ -729,7 +732,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method setGraphics()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#setGraphics(msi.gama.common.interfaces.IGraphics)
 	 */
 	@Override
@@ -739,7 +742,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getGraphics()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getGraphics()
 	 */
 	@Override
@@ -749,7 +752,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getAgentScope()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getAgent()
 	 */
 	@Override
@@ -760,7 +763,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getSimulationScope()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getSimulation()
 	 */
 	@Override
@@ -779,7 +782,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getModel()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getModel()
 	 */
 	@Override
@@ -800,7 +803,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getClock()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getClock()
 	 */
 	@Override
@@ -824,7 +827,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method pushReadAttributes()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#pushReadAttributes(java.util.Map)
 	 */
 	@Override
@@ -834,7 +837,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method popReadAttributes()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#popReadAttributes()
 	 */
 	@Override
@@ -887,7 +890,7 @@ public class ExecutionScope implements IScope {
 
 	/**
 	 * Method getRandom()
-	 * 
+	 *
 	 * @see msi.gama.runtime.IScope#getRandom()
 	 */
 	@Override

@@ -34,7 +34,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.ValuedDisplayOutputFactory;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.IScope.ExecutionResult;
+import msi.gama.runtime.ExecutionResult;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;

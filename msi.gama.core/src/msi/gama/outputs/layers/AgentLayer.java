@@ -1,32 +1,28 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.AgentLayer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.AgentLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
@@ -48,7 +44,7 @@ public class AgentLayer extends AbstractLayer {
 	protected final THashMap<IAgent, Rectangle2D> shapes = new THashMap<>();
 	protected static final Rectangle2D DUMMY_RECT = new Rectangle2D.Double();
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	protected void fillShapes(final IScope scope) {
 		shapes.clear();
 		final Object o = ((AgentLayerStatement) definition).getAgentsExpr().value(scope);
@@ -111,14 +107,12 @@ public class AgentLayer extends AbstractLayer {
 		final Rectangle2D selection = new Rectangle2D.Double();
 		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
 				y + IDisplaySurface.SELECTION_SIZE / 2);
-		shapes.forEachEntry(new TObjectObjectProcedure<IAgent, Rectangle2D> () {
-
-			@Override
-			public boolean execute(IAgent a, Rectangle2D b) {
-				if (b.intersects(selection)) selectedAgents.add(a);
-				return true;
-			}});
-
+		shapes.forEachEntry((a, b) -> {
+			if (b.intersects(selection)) {
+				selectedAgents.add(a);
+			}
+			return true;
+		});
 
 		return selectedAgents;
 	}
@@ -127,9 +121,7 @@ public class AgentLayer extends AbstractLayer {
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		if (geometry instanceof IAgent) {
 			final Rectangle2D r = shapes.get(geometry);
-			if (r != null) {
-				return r;
-			}
+			if (r != null) { return r; }
 		}
 		return super.focusOn(geometry, s);
 	}
