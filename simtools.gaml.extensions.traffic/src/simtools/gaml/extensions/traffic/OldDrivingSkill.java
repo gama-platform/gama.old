@@ -486,7 +486,7 @@ public class OldDrivingSkill extends MovingSkill {
 					final double ratio = distance / dist;
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
 					final double newY = currentLocation.y + ratio * (pt.y - currentLocation.y);
-					currentLocation.setLocation(newX, newY);
+					currentLocation.setLocation(newX, newY, 0d);
 					distance = 0;
 					break;
 				} else if (distance > dist) {
@@ -575,7 +575,7 @@ public class OldDrivingSkill extends MovingSkill {
 					final double ratio = distance / dist;
 					final double newX = pto.x + ratio * (pt.x - pto.x);
 					final double newY = pto.y + ratio * (pt.y - pto.y);
-					currentLocation.setLocation(newX, newY);
+					currentLocation.setLocation(newX, newY, 0d);
 					final IShape gl = GamaGeometryType.buildLine(pto, currentLocation);
 					final IAgent a = line.getAgent();
 					if (a != null) {
