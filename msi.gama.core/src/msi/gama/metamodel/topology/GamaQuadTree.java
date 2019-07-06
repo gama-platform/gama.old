@@ -27,7 +27,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.ICollector;
@@ -58,20 +57,22 @@ public class GamaQuadTree implements ISpatialIndex {
 	final QuadNode root;
 	final static int maxCapacity = 100;
 	double minSize = 10;
+	boolean parallel;
 
-	public static ISpatialIndex create(final Envelope envelope) {
+	public static ISpatialIndex create(final Envelope envelope, final boolean parallel) {
 		// if (GamaPreferences.GRID_OPTIMIZATION.getValue())
 		// return new GamaParallelQuadTree(envelope);
 		// else
-		return new GamaQuadTree(envelope);
+		return new GamaQuadTree(envelope, parallel);
 	}
 
-	private GamaQuadTree(final Envelope bounds) {
+	private GamaQuadTree(final Envelope bounds, final boolean parallel) {
 		// AD To address Issue 804, explictely converts the bounds to an
 		// Envelope 2D, so that all computations are made
 		// in 2D in the QuadTree
 		root = new QuadNode(new Envelope(bounds));
 		minSize = bounds.getWidth() / 100d;
+		this.parallel = parallel;
 	}
 
 	@Override
@@ -198,8 +199,8 @@ public class GamaQuadTree implements ISpatialIndex {
 		private volatile QuadNode[] nodes = null;
 		// ** Addresses part of Issue 722 -- Need to keep the agents ordered
 		// (by insertion order) **
-		private final Map<IAgent, Envelope> objects = GamaExecutorService.CONCURRENCY_SPECIES.getValue()
-				? new ConcurrentHashMap(maxCapacity) : new TOrderedHashMap<>(maxCapacity);
+		private final Map<IAgent, Envelope> objects =
+				parallel ? new ConcurrentHashMap(maxCapacity) : new TOrderedHashMap<>(maxCapacity);
 		private final boolean canSplit;
 
 		public QuadNode(final Envelope bounds) {
@@ -317,6 +318,11 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		}
 
+	}
+
+	@Override
+	public boolean isParallel() {
+		return parallel;
 	}
 
 }

@@ -2090,4 +2090,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return optimizer;
 	}
 
+	@Override
+	public boolean isParallel() {
+		return false;
+	}
+
 }

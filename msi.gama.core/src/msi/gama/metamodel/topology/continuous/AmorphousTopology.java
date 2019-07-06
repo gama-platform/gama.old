@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.continuous.AmorphousTopology.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.continuous.AmorphousTopology.java, in plugin msi.gama.core, is part of the source code of
+ * the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.continuous;
 
@@ -50,7 +50,7 @@ import msi.gaml.types.Types;
 public class AmorphousTopology implements ITopology {
 
 	IShape expandableEnvironment = GamaGeometryType.createPoint(new GamaPoint(0, 0));
-	ISpatialIndex index = GamaQuadTree.create(expandableEnvironment.getEnvelope());
+	ISpatialIndex index = GamaQuadTree.create(expandableEnvironment.getEnvelope(), false);
 
 	/**
 	 * @see msi.gama.interfaces.IValue#type()
@@ -127,12 +127,13 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getAgentClosestTo(msi.gama.interfaces.IGeometry,
 	 *      msi.gama.environment.IAgentFilter)
 	 */
-	
+
 	@Override
-	public IList<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter, final int number) {
+	public IList<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter,
+			final int number) {
 		return GamaListFactory.create();
 	}
-	
+
 	@Override
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
 		return null;
@@ -203,8 +204,8 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getDestination(msi.gama.util.GamaPoint, int, double, boolean)
 	 */
 	@Override
-	public ILocation getDestination3D(final ILocation source, final double heading, final double pitch, final double distance,
-			final boolean nullIfOutside) {
+	public ILocation getDestination3D(final ILocation source, final double heading, final double pitch,
+			final double distance, final boolean nullIfOutside) {
 		final double x = distance * Maths.cos(pitch) * Maths.cos(heading);
 		final double y = distance * Maths.cos(pitch) * Maths.sin(heading);
 		final double z = distance * Maths.sin(pitch);
@@ -302,7 +303,7 @@ public class AmorphousTopology implements ITopology {
 		final double dx = x2 - source.getX();
 		final double dy = y2 - source.getY();
 		final double result = Maths.atan2(dy, dx);
-		return Maths.checkHeading( result);
+		return Maths.checkHeading(result);
 	}
 
 	/**

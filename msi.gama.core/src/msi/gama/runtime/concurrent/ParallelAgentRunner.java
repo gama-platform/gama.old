@@ -32,7 +32,7 @@ public abstract class ParallelAgentRunner<T> extends RecursiveTask<T> implements
 
 	public static <A extends IShape> Boolean step(final IScope scope, final A[] array, final int threshold)
 			throws GamaRuntimeException {
-		final ParallelAgentRunner<Boolean> runner = from(scope, array, threshold);
+		final ParallelAgentStepper runner = from(scope, array, threshold);
 		if (array.length <= threshold) { return runner.executeOn(scope); }
 		return execute(runner);
 	}
@@ -47,7 +47,7 @@ public abstract class ParallelAgentRunner<T> extends RecursiveTask<T> implements
 		}
 	}
 
-	private static <A extends IShape> ParallelAgentRunner<Boolean> from(final IScope scope, final A[] array,
+	private static <A extends IShape> ParallelAgentStepper from(final IScope scope, final A[] array,
 			final int threshold) {
 		return new ParallelAgentStepper(scope, AgentSpliterator.of(array, threshold));
 	}

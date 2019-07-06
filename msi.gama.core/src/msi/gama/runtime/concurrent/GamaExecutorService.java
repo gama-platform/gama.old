@@ -233,16 +233,17 @@ public abstract class GamaExecutorService {
 						}
 						if (!scope.step((IAgent) agent).passed()) { return false; }
 					}
-					return true;
+					break;
 				case 1:
 					for (final A agent : array) {
 						executeThreaded(() -> scope.step((IAgent) agent));
 					}
-					return true;
+					break;
 				default:
-					return ParallelAgentRunner.step(scope, array, threshold);
+					ParallelAgentRunner.step(scope, array, threshold);
 			}
 		}
+		return true;
 	}
 
 	public static <A extends IShape> void execute(final IScope scope, final IExecutable executable, final A[] array,

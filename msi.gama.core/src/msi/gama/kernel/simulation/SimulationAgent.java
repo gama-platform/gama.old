@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import static msi.gama.runtime.concurrent.GamaExecutorService.getParallelism;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +52,8 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
+import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
@@ -235,7 +239,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		} else {
 			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);
 			final boolean torus = expr != null && Cast.asBool(scope, expr.value(scope));
-			setTopology(new RootTopology(scope, shape, torus));
+			final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue() };
+			if (!parallel[0]) {
+				getSpecies().getDescription().visitMicroSpecies((s) -> {
+					parallel[0] = getParallelism(scope, s.getFacetExpr(IKeyword.PARALLEL), Caller.SPECIES) > 0;
+					return !parallel[0];
+				});
+			}
+			setTopology(new RootTopology(scope, shape, torus, parallel[0]));
 		}
 	}
 

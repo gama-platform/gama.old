@@ -13,7 +13,6 @@ package msi.gama.runtime.concurrent;
 import java.util.Spliterator;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.AccumulatingExecutionResult;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -25,13 +24,13 @@ public class ParallelAgentStepper extends ParallelAgentRunner<Boolean> {
 
 	@Override
 	public Boolean executeOn(final IScope scope) throws GamaRuntimeException {
-		final AccumulatingExecutionResult result = new AccumulatingExecutionResult();
+		final Boolean[] mutableBoolean = { Boolean.TRUE };
 		agents.forEachRemaining(each -> {
-			if (result.passed()) {
-				result.accept(scope.step(each));
+			if (mutableBoolean[0].booleanValue()) {
+				mutableBoolean[0] = Boolean.valueOf(scope.step(each).passed());
 			}
 		});
-		return result.passed();
+		return mutableBoolean[0];
 	}
 
 	@Override
