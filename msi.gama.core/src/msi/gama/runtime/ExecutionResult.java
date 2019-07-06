@@ -32,10 +32,6 @@ public interface ExecutionResult {
 		return value ? PASSED : FAILED;
 	}
 
-	static AccumulatingExecutionResult accumulate() {
-		return new AccumulatingExecutionResult();
-	}
-
 	/** The Constant PASSED. */
 	ExecutionResult PASSED = () -> true;
 
