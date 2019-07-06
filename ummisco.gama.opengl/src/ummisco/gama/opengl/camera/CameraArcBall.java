@@ -459,11 +459,9 @@ public class CameraArcBall extends AbstractCamera {
 		} else if (shiftPressed && isViewInXYPlan()) {
 			getMousePosition().x = PlatformHelper.scaleUpIfWin(x);
 			getMousePosition().y = PlatformHelper.scaleUpIfWin(y);
-			getRenderer().getOpenGLHelper().defineROI(
-					new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y),
-					new GamaPoint(getMousePosition().x, getMousePosition().y));
-		} else if (getRenderer().getOpenGLHelper()
-				.mouseInROI(new GamaPoint(getMousePosition().x, getMousePosition().y))) {
+			getRenderer().getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
+					new GamaPoint(getMousePosition()));
+		} else if (getRenderer().getOpenGLHelper().mouseInROI(new GamaPoint(getMousePosition()))) {
 			GamaPoint p = getRenderer().getRealWorldPointFromWindowPoint(getMousePosition());
 			p = p.minus(getRenderer().getOpenGLHelper().getROIEnvelope().centre());
 			getRenderer().getOpenGLHelper().getROIEnvelope().translate(p.x, p.y);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.ILocation.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
- *
+ * msi.gama.metamodel.shape.ILocation.java, in plugin msi.gama.core,
+ * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
+ * 
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -43,36 +43,37 @@ import msi.gaml.types.IType;
 public interface ILocation extends IShape, Comparable {
 
 	@getter (IKeyword.X)
-	double getX();
+	public abstract double getX();
 
-	void setX(double x);
+	public abstract void setX(double x);
 
 	@getter (IKeyword.Y)
-	double getY();
+	public abstract double getY();
 
-	void setY(double y);
+	public abstract void setY(double y);
 
+	// public abstract boolean equals(final Coordinate o);
 	@getter (IKeyword.Z)
-	double getZ();
+	public abstract double getZ();
 
-	void setZ(double z);
+	public abstract void setZ(double z);
 
-	void setLocation(final double[] coords);
+	public abstract void setLocation(final double... coords);
 
-	void add(ILocation p);
-
-	@Override
-	double euclidianDistanceTo(ILocation targ);
+	public abstract void add(ILocation p);
 
 	@Override
-	ILocation copy(IScope scope);
+	public abstract double euclidianDistanceTo(ILocation targ);
 
-	GamaPoint toGamaPoint();
+	@Override
+	public ILocation copy(IScope scope);
 
-	ILocation yNegated();
+	public abstract GamaPoint toGamaPoint();
 
-	boolean equalsWithTolerance(Coordinate c, double tolerance);
+	public abstract ILocation yNegated();
 
-	ILocation withPrecision(int i);
+	public boolean equalsWithTolerance(Coordinate c, double tolerance);
+
+	public ILocation withPrecision(int i);
 
 }
