@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaFileType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaFileType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -65,7 +65,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 *            an array of allowed extensions for files of this type
 	 */
 	public static void addFileTypeDefinition(final String alias, final IType<?> bufferType, final IType<?> keyType,
-			final IType<?> contentType, final Class clazz, final GamaGetter<IGamaFile<?, ?>> builder,
+			final IType<?> contentType, final Class clazz, final GamaGetter.Unary<IGamaFile<?, ?>> builder,
 			final String[] extensions, final String plugin) {
 		// Added to ensure that extensions do not begin with a "." or contain
 		// blank characters
@@ -136,8 +136,9 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		if (path.endsWith(".gif") || path.endsWith(".GIF")) {
 			if (contents == null) {
 				return new GamaGifFile(scope, path);
-			} else if (contents instanceof IMatrix) { return new GamaGifFile(scope, path,
-					(IMatrix<Integer>) contents); }
+			} else if (contents instanceof IMatrix) {
+				return new GamaGifFile(scope, path, (IMatrix<Integer>) contents);
+			}
 		} else if (contents == null) {
 			return new GamaImageFile(scope, path);
 		} else if (contents instanceof IMatrix) { return new GamaImageFile(scope, path, (IMatrix<Integer>) contents); }
@@ -153,8 +154,9 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		if (obj instanceof IGamaFile) { return (IGamaFile) obj; }
 		if (obj instanceof String) {
 			if (param == null) { return createFile(scope, (String) obj, null); }
-			if (param instanceof IModifiableContainer) { return createFile(scope, (String) obj,
-					(IModifiableContainer) param); }
+			if (param instanceof IModifiableContainer) {
+				return createFile(scope, (String) obj, (IModifiableContainer) param);
+			}
 		}
 		return getDefault();
 	}

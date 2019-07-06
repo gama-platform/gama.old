@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.GamaHelper.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.GamaHelper.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -38,7 +38,7 @@ public class GamaHelper<T> implements IGamaHelper<T> {
 	}
 
 	@Override
-	public T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill, final Object... values) {
+	public T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill, final Object values) {
 		if (delegate == null) { return null; }
 		return delegate.run(scope, agent, skill, values);
 	}

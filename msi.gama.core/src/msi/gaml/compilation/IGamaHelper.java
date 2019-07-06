@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.IGamaHelper.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.IGamaHelper.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -25,11 +25,16 @@ import msi.gama.runtime.IScope;
 @FunctionalInterface
 public interface IGamaHelper<T> {
 
+	Object[] EMPTY_VALUES = new Object[0];
+
 	default Class getSkillClass() {
 		return null;
 	}
 
-	public abstract T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill,
-			final Object... values);
+	default T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill) {
+		return run(scope, agent, skill, EMPTY_VALUES);
+	}
+
+	T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill, final Object values);
 
 }
