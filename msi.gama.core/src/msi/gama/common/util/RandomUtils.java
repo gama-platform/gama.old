@@ -546,6 +546,22 @@ public class RandomUtils {
 		return generator;
 	}
 
+	public <K> K oneOf(final Collection<K> c) {
+		if (c == null || c.isEmpty()) { return null; }
+		return (K) oneOf(c.toArray());
+	}
+
+	public <K> K oneOf(final List<K> c) {
+		if (c == null || c.isEmpty()) { return null; }
+		return c.get(between(0, c.size() - 1));
+	}
+
+	public <K> K oneOf(final K[] c) {
+		if (c == null || c.length == 0) { return null; }
+		return c[between(0, c.length - 1)];
+
+	}
+
 	// public static void main(final String[] args) {
 	// USE_BITWISE = false;
 	// RandomUtils r1 = new RandomUtils(1.0, "mersenne1");
