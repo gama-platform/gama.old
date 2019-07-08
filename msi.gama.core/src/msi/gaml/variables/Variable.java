@@ -278,8 +278,9 @@ public class Variable extends Symbol implements IVariable {
 					return;
 				}
 				if (!amongExpression.isContextIndependant()) {
-					vd.error("Facet 'among:' can only accept a constant list for its definition ", IGamlIssue.NOT_CONST,
-							AMONG);
+					vd.warning(
+							"Facet 'among:' should only be provided with a literal constant list for its definition. Proceed at your own risk with this variable",
+							IGamlIssue.NOT_CONST, AMONG);
 				}
 			}
 		}
