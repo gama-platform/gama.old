@@ -562,6 +562,21 @@ public class RandomUtils {
 
 	}
 
+	public int oneOf(final int[] c) {
+		if (c == null || c.length == 0) { return -1; }
+		return c[between(0, c.length - 1)];
+	}
+
+	public double oneOf(final double[] c) {
+		if (c == null || c.length == 0) { return -1; }
+		return c[between(0, c.length - 1)];
+	}
+
+	public boolean oneOf(final boolean[] c) {
+		if (c == null || c.length == 0) { return false; }
+		return c[between(0, c.length - 1)];
+	}
+
 	// public static void main(final String[] args) {
 	// USE_BITWISE = false;
 	// RandomUtils r1 = new RandomUtils(1.0, "mersenne1");
