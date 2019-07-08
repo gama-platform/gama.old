@@ -50,7 +50,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -611,10 +610,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				ag = scope.getRoot().getPopulationFor(attributes.getSpeciesName()).getAgent(scope,
 						new GamaPoint(pickedPoint.x, -pickedPoint.y));
 			} else {
-				final AgentIdentifier id = attributes.getAgentIdentifier();
-				if (id != null) {
-					ag = id.getAgent(scope);
-				}
+				ag = attributes.getAgentIdentifier();
 			}
 		}
 		if (withHighlight) {
