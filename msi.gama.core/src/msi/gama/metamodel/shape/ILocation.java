@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.ILocation.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.shape.ILocation.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -43,37 +43,35 @@ import msi.gaml.types.IType;
 public interface ILocation extends IShape, Comparable {
 
 	@getter (IKeyword.X)
-	public abstract double getX();
+	double getX();
 
-	public abstract void setX(double x);
+	void setX(double x);
 
 	@getter (IKeyword.Y)
-	public abstract double getY();
+	double getY();
 
-	public abstract void setY(double y);
+	void setY(double y);
 
 	// public abstract boolean equals(final Coordinate o);
 	@getter (IKeyword.Z)
-	public abstract double getZ();
+	double getZ();
 
-	public abstract void setZ(double z);
+	void setZ(double z);
 
-	public abstract void setLocation(final double... coords);
-
-	public abstract void add(ILocation p);
+	void add(ILocation p);
 
 	@Override
-	public abstract double euclidianDistanceTo(ILocation targ);
+	double euclidianDistanceTo(ILocation targ);
 
 	@Override
-	public ILocation copy(IScope scope);
+	ILocation copy(IScope scope);
 
-	public abstract GamaPoint toGamaPoint();
+	GamaPoint toGamaPoint();
 
-	public abstract ILocation yNegated();
+	ILocation yNegated();
 
-	public boolean equalsWithTolerance(Coordinate c, double tolerance);
+	boolean equalsWithTolerance(Coordinate c, double tolerance);
 
-	public ILocation withPrecision(int i);
+	ILocation withPrecision(int i);
 
 }

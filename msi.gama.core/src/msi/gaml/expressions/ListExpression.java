@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.ListExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.ListExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -75,8 +75,10 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	public boolean containsValue(final Object o) {
 		if (o == null) { return false; }
 		for (final IExpression exp : elements) {
-			if (exp == null) continue;
-			if (!(exp.isConst())) { return false; }
+			if (exp == null) {
+				continue;
+			}
+			if (!exp.isConst()) { return false; }
 			final Object e = exp.getConstValue();
 			if (o.equals(e)) { return true; }
 		}
@@ -97,20 +99,27 @@ public class ListExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public IList _value(final IScope scope) throws GamaRuntimeException {
+		final IList result = GamaListFactory.createWithoutCasting(getGamlType().getContentType());
+		for (final IExpression exp : elements) {
+			if (exp != null) {
+				result.add(exp.value(scope));
+			}
+		}
+		return result;
 		// if ( isConst && computed ) { return
 		// GamaListFactory.createWithoutCasting(getType().getContentType(),
 		// values); }
-		final Object[] values = new Object[elements.length];
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] == null) {
-				// computed = false;
-				return GamaListFactory.create();
-			}
-			values[i] = elements[i].value(scope);
-		}
-		// computed = true;
-		// Important NOT to return the reference to values (but a copy of it).
-		return GamaListFactory.createWithoutCasting(getGamlType().getContentType(), values);
+		// final Object[] values = new Object[elements.length];
+		// for (int i = 0; i < elements.length; i++) {
+		// if (elements[i] == null) {
+		// // computed = false;
+		// return GamaListFactory.create();
+		// }
+		// values[i] = elements[i].value(scope);
+		// }
+		// // computed = true;
+		// // Important NOT to return the reference to values (but a copy of it).
+		// return GamaListFactory.createWithoutCasting(getGamlType().getContentType(), values);
 	}
 
 	@Override
@@ -157,7 +166,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 
 	/**
 	 * Method collectPlugins()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override

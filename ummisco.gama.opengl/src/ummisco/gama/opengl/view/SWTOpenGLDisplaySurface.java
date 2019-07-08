@@ -481,8 +481,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final ILocation point = getModelCoordinates();
 		final String x = point == null ? "N/A" : String.format("%8.6f", point.getX());
 		final String y = point == null ? "N/A" : String.format("%8.6f", point.getY());
-		final Object[] objects = new Object[] { x, y };
-		sb.append(String.format("X%15s | Y%15s", objects));
+		sb.append(String.format("X%15s | Y%15s", x, y));
 	}
 
 	@Override

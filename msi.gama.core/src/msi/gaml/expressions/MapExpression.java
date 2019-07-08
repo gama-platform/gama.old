@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.MapExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.MapExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -155,7 +155,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 				sb.append(',');
 			}
 			if (keys[i] == null || vals[i] == null) {
-				sb.append("nill::nil");
+				continue;
 			} else {
 				sb.append(keys[i].serialize(includingBuiltIn));
 				sb.append("::");
@@ -202,7 +202,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 
 	/**
 	 * Method collectPlugins()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override

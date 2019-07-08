@@ -13,8 +13,6 @@ package msi.gama.metamodel.shape;
 import static java.lang.Math.sqrt;
 import static msi.gaml.operators.Maths.round;
 
-import java.awt.Point;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.util.NumberUtil;
@@ -43,7 +41,6 @@ import msi.gaml.types.Types;
 
 public class GamaPoint extends Coordinate implements ILocation {
 
-	private static final double[] EMPTY = new double[] {};
 	public static final GamaPoint NULL_POINT = new GamaPoint(0d, 0d, 0d) {
 		@Override
 		public void setLocation(final ILocation al) {}
@@ -133,23 +130,31 @@ public class GamaPoint extends Coordinate implements ILocation {
 		public void copyShapeAttributesFrom(final IShape other) {}
 	};
 
-	{
-		x = 0.0d;
-		y = 0.0d;
-		z = 0.0d;
-	}
-
 	@Override
 	public GamaPoint toGamaPoint() {
 		return this;
 	}
 
-	public GamaPoint(final double... coords) {
-		setLocation(coords);
+	public GamaPoint() {
+		x = 0.0d;
+		y = 0.0d;
+		z = 0.0d;
+	}
+
+	public GamaPoint(final double x, final double y) {
+		setLocation(x, y, 0d);
+	}
+
+	public GamaPoint(final double x, final double y, final double z) {
+		setLocation(x, y, z);
 	}
 
 	public GamaPoint(final Coordinate coord) {
-		this(coord.x, coord.y, coord.z);
+		if (coord == null) {
+			setLocation(0d, 0d, 0d);
+		} else {
+			setLocation(coord.x, coord.y, coord.z);
+		}
 	}
 
 	public GamaPoint(final GamaPoint point) {
@@ -157,11 +162,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public GamaPoint(final ILocation point) {
-		this(point == null ? EMPTY : new double[] { point.getX(), point.getY(), point.getZ() });
-	}
-
-	public GamaPoint(final Point point) {
-		this(point == null ? EMPTY : new double[] { point.getX(), point.getY() });
+		this(point == null ? NULL_POINT : point.toGamaPoint());
 	}
 
 	@Override
@@ -170,9 +171,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public GamaPoint setLocation(final GamaPoint al) {
-		x = al.x;
-		y = al.y;
-		z = al.z;
+		setLocation(al.x, al.y, al.z);
 		return this;
 	}
 
@@ -183,25 +182,19 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return this;
 	}
 
-	@Override
 	public void setLocation(final double... coords) {
 		final int n = coords.length;
 		switch (n) {
 			case 0:
 				return;
 			case 1:
-				setX(coords[0]);
-				setY(coords[0]);
-				setZ(coords[0]);
+				setLocation(coords[0], coords[0], coords[0]);
 				break;
 			case 2:
-				setX(coords[0]);
-				setY(coords[1]);
+				setLocation(coords[0], coords[1], 0d);
 				break;
 			default:
-				setX(coords[0]);
-				setY(coords[1]);
-				setZ(coords[2]);
+				setLocation(coords[0], coords[1], coords[2]);
 		}
 	}
 
@@ -595,9 +588,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public void setDepth(final double depth) {
-		// TODO Auto-generated method stub
-	}
+	public void setDepth(final double depth) {}
 
 	/**
 	 * Method getType()

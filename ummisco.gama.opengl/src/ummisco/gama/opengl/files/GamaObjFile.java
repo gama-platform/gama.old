@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.files;
@@ -79,40 +79,44 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	 * @param pathName
 	 * @throws GamaRuntimeException
 	 */
-	@doc (value= "This file constructor allows to read an obj file. The associated mlt file have to have the same name as the file to be read.",
-			examples = {
-				@example(value = "file f <- obj_file(\"file.obj\");", isExecutable = false)
-			})
-	
+	@doc (
+			value = "This file constructor allows to read an obj file. The associated mlt file have to have the same name as the file to be read.",
+			examples = { @example (
+					value = "file f <- obj_file(\"file.obj\");",
+					isExecutable = false) })
+
 	public GamaObjFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, (GamaPair<Double, GamaPoint>) null);
 	}
 
-	@doc (value= "This file constructor allows to read an obj file and apply an init rotation to it. The rotation"
-			+ "is a pair angle::rotation vector. The associated mlt file have to have the same name as the file to be read.",
-			examples = {
-				@example(value = "file f <- obj_file(\"file.obj\", 90.0::{-1,0,0});", isExecutable = false)
-			})
-	
+	@doc (
+			value = "This file constructor allows to read an obj file and apply an init rotation to it. The rotation"
+					+ "is a pair angle::rotation vector. The associated mlt file have to have the same name as the file to be read.",
+			examples = { @example (
+					value = "file f <- obj_file(\"file.obj\", 90.0::{-1,0,0});",
+					isExecutable = false) })
+
 	public GamaObjFile(final IScope scope, final String pathName, final GamaPair<Double, GamaPoint> initRotation)
 			throws GamaRuntimeException {
 		this(scope, pathName, pathName.replace(".obj", ".mtl"), initRotation);
 	}
 
-	@doc (value= "This file constructor allows to read an obj file, using a specific mlt file",
-			examples = {
-				@example(value = "file f <- obj_file(\"file.obj\",\"file.mlt\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read an obj file, using a specific mlt file",
+			examples = { @example (
+					value = "file f <- obj_file(\"file.obj\",\"file.mlt\");",
+					isExecutable = false) })
 	public GamaObjFile(final IScope scope, final String pathName, final String mtlPath) {
 		this(scope, pathName, mtlPath, null);
 	}
 
-	@doc (value= "This file constructor allows to read an obj file, using a specific mlt file, and apply an init rotation to it. The rotation"
-			+ "is a pair angle::rotation vector",
-			examples = {
-				@example(value = "file f <- obj_file(\"file.obj\",\"file.mlt\", 90.0::{-1,0,0});", isExecutable = false)
-			})
-	
+	@doc (
+			value = "This file constructor allows to read an obj file, using a specific mlt file, and apply an init rotation to it. The rotation"
+					+ "is a pair angle::rotation vector",
+			examples = { @example (
+					value = "file f <- obj_file(\"file.obj\",\"file.mlt\", 90.0::{-1,0,0});",
+					isExecutable = false) })
+
 	public GamaObjFile(final IScope scope, final String pathName, final String mtlPath,
 			final GamaPair<Double, GamaPoint> initRotation) {
 		super(scope, pathName, initRotation);
@@ -293,7 +297,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	/**
 	 * Method fillBuffer(). Fills the buffer with the polygons built from the .obj vertices + faces
-	 * 
+	 *
 	 * @see msi.gama.util.file.GamaFile#fillBuffer(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -334,7 +338,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	/**
 	 * Method flushBuffer()
-	 * 
+	 *
 	 * @see msi.gama.util.file.GamaFile#flushBuffer() //
 	 */
 	// @Override
@@ -441,7 +445,8 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					normal.setLocation(setOfVertexNormals.get(norms[w] - 1));
 				}
 				if (hasTex) {
-					tex.setLocation(setOfVertexTextures.get(texs[w] - 1));
+					final double[] ordinates = setOfVertexTextures.get(texs[w] - 1);
+					tex.setLocation(ordinates[0], ordinates[1]);
 					if (1d >= tex.y && -tex.y <= 0) {
 						tex.y = 1d - tex.y;
 					} else {

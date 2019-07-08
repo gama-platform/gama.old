@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.RandomUtils;
@@ -54,12 +53,13 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	protected Map<String, IPopulation> setOfPopulations;
 	protected IContainerType type = Types.LIST.of(Types.AGENT);
 
-	public MetaPopulation(final IPopulationSet... pop) {
-		populationSets = Lists.newArrayList(pop);
+	public MetaPopulation() {
+		populationSets = new ArrayList();
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
+		getMapOfPopulations(scope);
 		if (setOfPopulations.size() == 1) { return setOfPopulations.values().iterator().next(); }
 		return null;
 	}
@@ -73,6 +73,10 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 * @param pop
 	 */
 	public void addPopulation(final IPopulation pop) {
+		populationSets.add(pop);
+	}
+
+	public void addPopulationSet(final IPopulationSet pop) {
 		populationSets.add(pop);
 	}
 
@@ -143,7 +147,11 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public IValue copy(final IScope scope) throws GamaRuntimeException {
-		return new MetaPopulation(populationSets.toArray(new IPopulationSet[populationSets.size()]));
+		final MetaPopulation mp = new MetaPopulation();
+		for (final IPopulationSet ps : populationSets) {
+			mp.populationSets.add(ps);
+		}
+		return mp;
 	}
 
 	/**

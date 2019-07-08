@@ -111,10 +111,10 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	}
 
-	private void drawRectangle(final OpenGL openGL, final double[] center, final double width, final double height,
-			final Color fill) {
+	private void drawRectangle(final OpenGL openGL, final double centerX, final double centerY, final double centerZ,
+			final double width, final double height, final Color fill) {
 		openGL.pushMatrix();
-		openGL.translateBy(center);
+		openGL.translateBy(centerX, centerY, centerY);
 		openGL.setCurrentColor(fill);
 		openGL.scaleBy(Scaling3D.of(width, height, 1));
 		openGL.drawCachedGeometry(IShape.Type.SQUARE, true, null);
@@ -163,8 +163,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			// Drawing the background of labels
 			final double xLabelIn01 = x + (id == 0 || id == 1 ? labelWidthIn01 / 2 : -labelWidthIn01 / 2);
 			final double yLabelIn01 = y + (id == 0 || id == 3 ? labelHeightIn01 / 2 : -labelHeightIn01 / 2);
-			drawRectangle(openGL, new double[] { xLabelIn01, yLabelIn01, z }, labelWidthIn01, labelHeightIn01,
-					FILL_COLORS[fill]);
+			drawRectangle(openGL, xLabelIn01, yLabelIn01, z, labelWidthIn01, labelHeightIn01, FILL_COLORS[fill]);
 
 			// Setting back the color to white
 			gl.glColor3d(1, 1, 1);

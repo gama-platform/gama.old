@@ -246,7 +246,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 			debugSizes(width, height, initialEnvWidth, initialEnvHeight, envWidthInPixels, envHeightInPixels,
 					getData().getZoomLevel(), xRatio, yRatio);
 		}
-		ratios.setLocation(xRatio, yRatio);
+		ratios.setLocation(xRatio, yRatio, 0d);
 	}
 
 	private void debugSizes(final int width, final int height, final double initialEnvWidth,

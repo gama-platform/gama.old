@@ -855,7 +855,9 @@ public class Containers {
 	public static IContainer plus(final IScope scope, final IContainer c1, final IContainer c2) {
 		// special case for the addition of two populations or meta-populations
 		if (c1 instanceof IPopulationSet && c2 instanceof IPopulationSet) {
-			return new MetaPopulation((IPopulationSet) c1, (IPopulationSet) c2);
+			final MetaPopulation mp = new MetaPopulation();
+			mp.addPopulationSet((IPopulationSet) c1);
+			mp.addPopulationSet((IPopulationSet) c2);
 		}
 		return (IContainer) stream(scope, c1).append(stream(scope, c2)).toCollection(listLike(c1, c2));
 	}

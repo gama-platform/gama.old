@@ -338,7 +338,8 @@ public abstract class AbstractCamera implements ICamera {
 		lastMousePressedPosition = new Point(x, y);
 		// Activate Picking when press and right click
 		if (e.button == 3 && !keystoneMode) {
-			if (renderer.getOpenGLHelper().mouseInROI(new GamaPoint(lastMousePressedPosition))) {
+			if (renderer.getOpenGLHelper()
+					.mouseInROI(new GamaPoint(lastMousePressedPosition.x, lastMousePressedPosition.y))) {
 				renderer.getSurface().selectionIn(renderer.getOpenGLHelper().getROIEnvelope());
 			} else {
 				renderer.getPickingHelper().setPicking(true);
@@ -395,8 +396,8 @@ public abstract class AbstractCamera implements ICamera {
 	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
 		getMousePosition().x = PlatformHelper.scaleUpIfWin(e.x);
 		getMousePosition().y = PlatformHelper.scaleUpIfWin(e.y);
-		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition),
-				new GamaPoint(getMousePosition()));
+		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y),
+				new GamaPoint(getMousePosition().x, getMousePosition().y));
 		ROICurrentlyDrawn = true;
 	}
 
