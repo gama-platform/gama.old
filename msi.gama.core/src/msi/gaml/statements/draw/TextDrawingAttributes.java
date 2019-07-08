@@ -11,7 +11,7 @@
 package msi.gaml.statements.draw;
 
 import msi.gama.common.geometry.Scaling3D;
-import msi.gama.metamodel.agent.AgentIdentifier;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
@@ -61,7 +61,7 @@ public class TextDrawingAttributes extends DrawingAttributes implements Cloneabl
 	}
 
 	@Override
-	public AgentIdentifier getAgentIdentifier() {
+	public IAgent getAgentIdentifier() {
 		return null;
 	}
 

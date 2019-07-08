@@ -2,17 +2,16 @@
  *
  * msi.gaml.statements.draw.FileDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -22,7 +21,7 @@ import msi.gama.util.GamaPair;
 
 public class FileDrawingAttributes extends DrawingAttributes {
 
-	public final AgentIdentifier agentIdentifier;
+	public final IAgent agentIdentifier;
 	public double lineWidth;
 	public final boolean isImage;
 	public boolean useCache = true;
@@ -31,7 +30,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 			final GamaPoint location, final GamaColor color, final GamaColor border, final IAgent agent,
 			final Double lineWidth, final boolean isImage, final Boolean lighting) {
 		super(size, rotation, location, color, border, lighting);
-		this.agentIdentifier = AgentIdentifier.of(agent);
+		this.agentIdentifier = agent;
 		setLineWidth(lineWidth == null ? GamaPreferences.Displays.CORE_LINE_WIDTH.getValue() : lineWidth);
 		this.isImage = isImage;
 	}
@@ -58,7 +57,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 
 	/**
 	 * Method getMaterial()
-	 * 
+	 *
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
 	 */
 	@Override
@@ -72,7 +71,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	}
 
 	@Override
-	public AgentIdentifier getAgentIdentifier() {
+	public IAgent getAgentIdentifier() {
 		return agentIdentifier;
 	}
 

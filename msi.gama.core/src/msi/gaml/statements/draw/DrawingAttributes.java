@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.DrawingAttributes.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.draw.DrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -18,7 +18,7 @@ import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.metamodel.agent.AgentIdentifier;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
@@ -157,7 +157,7 @@ public abstract class DrawingAttributes {
 		return colorProperties.getTextures();
 	}
 
-	public abstract AgentIdentifier getAgentIdentifier();
+	public abstract IAgent getAgentIdentifier();
 
 	public GamaColor[] getColors() {
 		return colorProperties.getColors();
@@ -179,7 +179,7 @@ public abstract class DrawingAttributes {
 
 	/**
 	 * Returns the angle of the rotation in degrees (or null if no rotation is defined)
-	 * 
+	 *
 	 * @return
 	 */
 	public Double getAngle() {

@@ -252,7 +252,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public boolean hasMembers() {
 		if (dead() || getAttributes() == null) { return false; }
-		for (final Object pop : getAttributes().getRawValues()) {
+		for (final Object pop : getAttributes().values()) {
 			if (pop instanceof IPopulation && ((IPopulation<? extends IAgent>) pop).size() > 0) { return true; }
 		}
 		return false;
@@ -263,7 +263,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if (dead() || getAttributes() == null) { return GamaListFactory.create(); }
 		final MetaPopulation mp = new MetaPopulation();
 		for (final Object pop : getAttributes().values()) {
-			if (pop instanceof IPopulation && ((IPopulation<? extends IAgent>) pop).size() > 0) {
+			if (pop instanceof IPopulation && ((IPopulation) pop).size() > 0) {
 				mp.addPopulation((IPopulation<? extends IAgent>) pop);
 			}
 		}

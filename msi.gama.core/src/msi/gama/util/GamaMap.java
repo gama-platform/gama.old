@@ -452,14 +452,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 		return result;
 	}
 
-	/**
-	 * WARNING: exposes raw internal values WARNING The values are not ordered as they would be when accessing the map
-	 * (cause of Issue #1335) Never use this method unless you are sure of what you are doing
-	 */
-	public Object[] getRawValues() {
-		return _values;
-	}
-
 	@Override
 	public boolean containsKey(final IScope scope, final Object o) throws GamaRuntimeException {
 		return index(o) >= 0;
