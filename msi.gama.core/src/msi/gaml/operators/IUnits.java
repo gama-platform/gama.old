@@ -39,70 +39,69 @@ public interface IUnits {
 			value = "rk4",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("rk4 solver")) public final static String rk4 = "rk4";
+			doc = @doc ("rk4 solver")) String rk4 = "rk4";
 
 	@constant (
 			value = "Euler",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("Euler solver")) public final static String Euler = "Euler";
+			doc = @doc ("Euler solver")) String Euler = "Euler";
 
 	@constant (
 			value = "ThreeEighthes",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("ThreeEighthes solver")) public final static String ThreeEighthes = "ThreeEighthes";
+			doc = @doc ("ThreeEighthes solver")) String ThreeEighthes = "ThreeEighthes";
 
 	@constant (
 			value = "Midpoint",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("Midpoint solver")) public final static String Midpoint = "Midpoint";
+			doc = @doc ("Midpoint solver")) String Midpoint = "Midpoint";
 	@constant (
 			value = "Gill",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("Gill solver")) public final static String Gill = "Gill";
+			doc = @doc ("Gill solver")) String Gill = "Gill";
 
 	@constant (
 			value = "Luther",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("Luther solver")) public final static String Luther = "Luther";
+			doc = @doc ("Luther solver")) String Luther = "Luther";
 
 	@constant (
 			value = "dp853",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("dp853 solver")) public final static String dp853 = "dp853";
+			doc = @doc ("dp853 solver")) String dp853 = "dp853";
 	@constant (
 			value = "AdamsBashforth",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("AdamsBashforth solver")) public final static String AdamsBashforth = "AdamsBashforth";
+			doc = @doc ("AdamsBashforth solver")) String AdamsBashforth = "AdamsBashforth";
 
 	@constant (
 			value = "AdamsMoulton",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("AdamsMoulton solver")) public final static String AdamsMoulton = "AdamsMoulton";
+			doc = @doc ("AdamsMoulton solver")) String AdamsMoulton = "AdamsMoulton";
 
 	@constant (
 			value = "DormandPrince54",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("DormandPrince54 solver")) public final static String DormandPrince54 = "DormandPrince54";
+			doc = @doc ("DormandPrince54 solver")) String DormandPrince54 = "DormandPrince54";
 	@constant (
 			value = "GraggBulirschStoer",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("GraggBulirschStoer solver")) public final static String GraggBulirschStoer =
-					"GraggBulirschStoer";
+			doc = @doc ("GraggBulirschStoer solver")) String GraggBulirschStoer = "GraggBulirschStoer";
 	@constant (
 			value = "HighamHall54",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
-			doc = @doc ("HighamHall54 solver")) public final static String HighamHall54 = "HighamHall54";
+			doc = @doc ("HighamHall54 solver")) String HighamHall54 = "HighamHall54";
 
 	/**
 	 * Buffer constants
@@ -111,21 +110,19 @@ public interface IUnits {
 			value = "round",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GEOMETRY, IConcept.CONSTANT },
-			doc = @doc ("This constant represents a round line buffer end cap style")) public final static int round =
-					1;
+			doc = @doc ("This constant represents a round line buffer end cap style")) int round = 1;
 
 	@constant (
 			value = "flat",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GEOMETRY, IConcept.CONSTANT },
-			doc = @doc ("This constant represents a flat line buffer end cap style")) public final static int flat = 2;
+			doc = @doc ("This constant represents a flat line buffer end cap style")) int flat = 2;
 
 	@constant (
 			value = "square",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GEOMETRY, IConcept.CONSTANT },
-			doc = @doc ("This constant represents a square line buffer end cap style")) public final static int square =
-					3;
+			doc = @doc ("This constant represents a square line buffer end cap style")) int square = 3;
 
 	/**
 	 * Anchor constants
@@ -134,63 +131,63 @@ public interface IUnits {
 			value = "center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the text to draw")) public final static GamaPoint center =
+			doc = @doc ("Represents an anchor situated at the center of the text to draw")) GamaPoint center =
 					new GamaPoint(0.5, 0.5);
 
 	@constant (
 			value = "top_left",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the top left corner of the text to draw")) public final static GamaPoint top_left =
+			doc = @doc ("Represents an anchor situated at the top left corner of the text to draw")) GamaPoint top_left =
 					new GamaPoint(0, 1);
 
 	@constant (
 			value = "left_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the left side of the text to draw")) public final static GamaPoint left_center =
+			doc = @doc ("Represents an anchor situated at the center of the left side of the text to draw")) GamaPoint left_center =
 					new GamaPoint(0, 0.5);
 
 	@constant (
 			value = "bottom_left",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the bottom left corner of the text to draw")) public final static GamaPoint bottom_left =
+			doc = @doc ("Represents an anchor situated at the bottom left corner of the text to draw")) GamaPoint bottom_left =
 					new GamaPoint(0, 0);
 
 	@constant (
 			value = "bottom_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the bottom side of the text to draw")) public final static GamaPoint bottom_center =
+			doc = @doc ("Represents an anchor situated at the center of the bottom side of the text to draw")) GamaPoint bottom_center =
 					new GamaPoint(0.5, 0);
 
 	@constant (
 			value = "bottom_right",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the bottom right corner of the text to draw")) public final static GamaPoint bottom_right =
+			doc = @doc ("Represents an anchor situated at the bottom right corner of the text to draw")) GamaPoint bottom_right =
 					new GamaPoint(1, 0);
 
 	@constant (
 			value = "right_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the right side of the text to draw")) public final static GamaPoint right_center =
+			doc = @doc ("Represents an anchor situated at the center of the right side of the text to draw")) GamaPoint right_center =
 					new GamaPoint(1, 0.5);
 
 	@constant (
 			value = "top_right",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the top right corner of the text to draw")) public final static GamaPoint top_right =
+			doc = @doc ("Represents an anchor situated at the top right corner of the text to draw")) GamaPoint top_right =
 					new GamaPoint(1, 1);
 
 	@constant (
 			value = "top_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("Represents an anchor situated at the center of the top side of the text to draw")) public final static GamaPoint top_center =
+			doc = @doc ("Represents an anchor situated at the center of the top side of the text to draw")) GamaPoint top_center =
 					new GamaPoint(0.5, 1);
 
 	/**
@@ -201,31 +198,29 @@ public interface IUnits {
 			value = "none",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("This constant represents the absence of a predefined layout")) public final static int none =
-					0;
+			doc = @doc ("This constant represents the absence of a predefined layout")) int none = 0;
 	@constant (
 			value = "stack",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("This constant represents a layout where all display views are stacked")) public final static int stack =
-					1;
+			doc = @doc ("This constant represents a layout where all display views are stacked")) int stack = 1;
 	@constant (
 			value = "split",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("This constant represents a layout where all display views are split in a grid-like structure")) public final static int split =
+			doc = @doc ("This constant represents a layout where all display views are split in a grid-like structure")) int split =
 					2;
 	@constant (
 			value = "horizontal",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("This constant represents a layout where all display views are aligned horizontally")) public final static int horizontal =
+			doc = @doc ("This constant represents a layout where all display views are aligned horizontally")) int horizontal =
 					3;
 	@constant (
 			value = "vertical",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
-			doc = @doc ("This constant represents a layout where all display views are aligned vertically")) public final static int vertical =
+			doc = @doc ("This constant represents a layout where all display views are aligned vertically")) int vertical =
 					4;
 
 	/**
@@ -236,22 +231,21 @@ public interface IUnits {
 			value = "bold",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GRAPHIC, IConcept.TEXT },
-			doc = @doc ("This constant allows to build a font with a bold face. Can be combined with #italic")) public final static int bold =
+			doc = @doc ("This constant allows to build a font with a bold face. Can be combined with #italic")) int bold =
 					Font.BOLD; /* 1 */
 
 	@constant (
 			value = "italic",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GRAPHIC, IConcept.TEXT },
-			doc = @doc ("This constant allows to build a font with an italic face. Can be combined with #bold")) public final static int italic =
+			doc = @doc ("This constant allows to build a font with an italic face. Can be combined with #bold")) int italic =
 					Font.ITALIC; /* 2 */
 
 	@constant (
 			value = "plain",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GRAPHIC, IConcept.TEXT },
-			doc = @doc ("This constant allows to build a font with a plain face")) public final static int plain =
-					Font.PLAIN;
+			doc = @doc ("This constant allows to build a font with a plain face")) int plain = Font.PLAIN;
 	/**
 	 * Special units
 	 */
@@ -260,35 +254,35 @@ public interface IUnits {
 			value = "user_location",
 			category = IConstantCategory.GRAPHIC,
 			concept = { IConcept.DISPLAY },
-			doc = @doc ("This unit contains in permanence the location of the mouse on the display in which it is situated. The latest location is provided when it is out of a display")) public final static GamaPoint user_location =
-					GamaPoint.NULL_POINT;
+			doc = @doc ("This unit contains in permanence the location of the mouse on the display in which it is situated. The latest location is provided when it is out of a display")) GamaPoint user_location =
+					new GamaPoint();
 
 	@constant (
 			value = "camera_location",
 			category = IConstantCategory.GRAPHIC,
 			concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT, IConcept.THREED },
-			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current position of the camera as a point")) public final static GamaPoint camera_location =
-					GamaPoint.NULL_POINT;
+			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current position of the camera as a point")) GamaPoint camera_location =
+					new GamaPoint();
 
 	@constant (
 			value = "camera_target",
 			category = IConstantCategory.GRAPHIC,
 			concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT, IConcept.THREED },
-			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current target of the camera as a point")) public final static GamaPoint camera_target =
-					GamaPoint.NULL_POINT;
+			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current target of the camera as a point")) GamaPoint camera_target =
+					new GamaPoint();
 
 	@constant (
 			value = "camera_orientation",
 			category = IConstantCategory.GRAPHIC,
 			concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT, IConcept.THREED },
-			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current orientation of the camera as a point")) public final static GamaPoint camera_orientation =
-					GamaPoint.NULL_POINT;
+			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current orientation of the camera as a point")) GamaPoint camera_orientation =
+					new GamaPoint();
 
 	@constant (
 			value = "zoom",
 			category = IConstantCategory.GRAPHIC,
 			concept = { IConcept.GRAPHIC, IConcept.DISPLAY },
-			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current zoom level of the display as a positive float, where 1.0 represent the neutral zoom (100%)")) public final static double zoom =
+			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current zoom level of the display as a positive float, where 1.0 represent the neutral zoom (100%)")) double zoom =
 					1;
 
 	@constant (
@@ -296,27 +290,27 @@ public interface IUnits {
 			altNames = { "px" },
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
-			doc = @doc ("This unit, only available when running aspects or declaring displays,  returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units.")) public final static double pixels =
+			doc = @doc ("This unit, only available when running aspects or declaring displays,  returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units.")) double pixels =
 					1d, px = pixels;
 	@constant (
 			value = "display_width",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
-			doc = @doc ("This constant is only accessible in a graphical context: display, graphics...")) public final static double display_width =
+			doc = @doc ("This constant is only accessible in a graphical context: display, graphics...")) double display_width =
 					1;
 
 	@constant (
 			value = "display_height",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
-			doc = @doc ("This constant is only accessible in a graphical context: display, graphics...")) public final static double display_height =
+			doc = @doc ("This constant is only accessible in a graphical context: display, graphics...")) double display_height =
 					1;
 
 	@constant (
 			value = "now",
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DATE, IConcept.TIME },
-			doc = @doc ("This value represents the current date")) public final static double now = 1;
+			doc = @doc ("This value represents the current date")) double now = 1;
 
 	/**
 	 * Mathematical constants
@@ -326,62 +320,60 @@ public interface IUnits {
 			value = "pi",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT, IConcept.MATH },
-			doc = @doc ("The PI constant")) public final static double pi = Math.PI;
+			doc = @doc ("The PI constant")) double pi = Math.PI;
 
 	@constant (
 			value = "e",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT, IConcept.MATH },
-			doc = @doc ("The e constant")) public final static double e = Math.E;
+			doc = @doc ("The e constant")) double e = Math.E;
 
 	@constant (
 			value = "to_deg",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the value to convert radians into degrees")) public final static double to_deg =
-					180d / Math.PI;
+			doc = @doc ("A constant holding the value to convert radians into degrees")) double to_deg = 180d / Math.PI;
 	@constant (
 			value = "to_rad",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the value to convert degrees into radians")) public final static double to_rad =
-					Math.PI / 180d;
+			doc = @doc ("A constant holding the value to convert degrees into radians")) double to_rad = Math.PI / 180d;
 
 	@constant (
 			value = "nan",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding a Not-a-Number (NaN) value of type float (Java Double.POSITIVE_INFINITY)")) public final static double nan =
+			doc = @doc ("A constant holding a Not-a-Number (NaN) value of type float (Java Double.POSITIVE_INFINITY)")) double nan =
 					Double.NaN;
 	@constant (
 			value = "infinity",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the positive infinity of type float (Java Double.POSITIVE_INFINITY)")) public final static double infinity =
+			doc = @doc ("A constant holding the positive infinity of type float (Java Double.POSITIVE_INFINITY)")) double infinity =
 					Double.POSITIVE_INFINITY;
 	@constant (
 			value = "min_float",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the smallest positive nonzero value of type float (Java Double.MIN_VALUE)")) public final static double min_float =
+			doc = @doc ("A constant holding the smallest positive nonzero value of type float (Java Double.MIN_VALUE)")) double min_float =
 					Double.MIN_VALUE;
 	@constant (
 			value = "max_float",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the largest positive finite value of type float (Java Double.MAX_VALUE)")) public final static double max_float =
+			doc = @doc ("A constant holding the largest positive finite value of type float (Java Double.MAX_VALUE)")) double max_float =
 					Double.MAX_VALUE;
 	@constant (
 			value = "min_int",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the minimum value an int can have (Java Integer.MIN_VALUE)")) public final static double min_int =
+			doc = @doc ("A constant holding the minimum value an int can have (Java Integer.MIN_VALUE)")) double min_int =
 					Integer.MIN_VALUE;
 	@constant (
 			value = "max_int",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the maximum value an int can have (Java Integer.MAX_VALUE)")) public final static double max_int =
+			doc = @doc ("A constant holding the maximum value an int can have (Java Integer.MAX_VALUE)")) double max_int =
 					Integer.MAX_VALUE;
 	/*
 	 *
@@ -393,7 +385,7 @@ public interface IUnits {
 			altNames = { "meter", "meters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = @doc ("meter: the length basic unit")) public final static double m = 1, meter = m, meters = m;
+			doc = @doc ("meter: the length basic unit")) double m = 1, meter = m, meters = m;
 
 	/** The Constant cm. */
 	@constant (
@@ -401,8 +393,7 @@ public interface IUnits {
 			altNames = { "centimeter", "centimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("centimeter unit") }) public final static double cm = 0.01d * m, centimeter = cm,
-					centimeters = cm;
+			doc = { @doc ("centimeter unit") }) double cm = 0.01d * m, centimeter = cm, centimeters = cm;
 
 	/** The Constant dm. */
 	@constant (
@@ -410,8 +401,7 @@ public interface IUnits {
 			altNames = { "decimeter", "decimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("decimeter unit") }) public final static double dm = 0.1d * m, decimeter = dm,
-					decimeters = dm;
+			doc = { @doc ("decimeter unit") }) double dm = 0.1d * m, decimeter = dm, decimeters = dm;
 
 	/** The Constant mm. */
 	@constant (
@@ -419,24 +409,21 @@ public interface IUnits {
 			altNames = { "milimeter", "milimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("millimeter unit") }) public final static double mm = cm / 10d, millimeter = mm,
-					millimeters = mm;
+			doc = { @doc ("millimeter unit") }) double mm = cm / 10d, millimeter = mm, millimeters = mm;
 
 	@constant (
 			value = "µm",
 			altNames = { "micrometer", "micrometers" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("micrometer unit") }) public final static double µm = mm / 1000d, micrometer = µm,
-					micrometers = µm;
+			doc = { @doc ("micrometer unit") }) double µm = mm / 1000d, micrometer = µm, micrometers = µm;
 
 	@constant (
 			value = "nm",
 			altNames = { "nanometer", "nanometers" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("nanometer unit") }) public final static double nm = µm / 1000d, nanometer = nm,
-					nanometers = nm;
+			doc = { @doc ("nanometer unit") }) double nm = µm / 1000d, nanometer = nm, nanometers = nm;
 
 	/** The Constant km. */
 	@constant (
@@ -444,8 +431,7 @@ public interface IUnits {
 			altNames = { "kilometer", "kilometers" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("kilometer unit") }) public final static double km = 1000 * m, kilometer = km,
-					kilometers = km;
+			doc = { @doc ("kilometer unit") }) double km = 1000 * m, kilometer = km, kilometers = km;
 
 	/** The Constant mile. */
 	@constant (
@@ -453,7 +439,7 @@ public interface IUnits {
 			altNames = { "miles" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("mile unit") }) public final static double mile = 1.609344d * km, miles = mile;
+			doc = { @doc ("mile unit") }) double mile = 1.609344d * km, miles = mile;
 
 	/** The Constant yard. */
 	@constant (
@@ -461,7 +447,7 @@ public interface IUnits {
 			altNames = { "yards" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("yard unit") }) public final static double yard = 0.9144d * m, yards = yard;
+			doc = { @doc ("yard unit") }) double yard = 0.9144d * m, yards = yard;
 
 	/** The Constant inch. */
 	@constant (
@@ -469,7 +455,7 @@ public interface IUnits {
 			altNames = { "inches" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("inch unit") }) public final static double inch = 2.54d * cm, inches = inch;
+			doc = { @doc ("inch unit") }) double inch = 2.54d * cm, inches = inch;
 
 	/** The Constant foot. */
 	@constant (
@@ -477,7 +463,7 @@ public interface IUnits {
 			altNames = { "feet", "ft" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("foot unit") }) public final static double foot = 30.48d * cm, feet = foot, ft = foot;
+			doc = { @doc ("foot unit") }) double foot = 30.48d * cm, feet = foot, ft = foot;
 
 	/*
 	 *
@@ -489,35 +475,35 @@ public interface IUnits {
 			value = "iso_local",
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = @doc ("iso_local: the standard ISO 8601 output / parsing format for local dates (i.e. with no time-zone information)")) public final static String iso_local =
+			doc = @doc ("iso_local: the standard ISO 8601 output / parsing format for local dates (i.e. with no time-zone information)")) String iso_local =
 					Dates.ISO_LOCAL_KEY;
 
 	@constant (
 			value = "iso_zoned",
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = @doc ("iso_zoned: the standard ISO 8601 output / parsing format for dates with a time zone")) public final static String iso_zoned =
+			doc = @doc ("iso_zoned: the standard ISO 8601 output / parsing format for dates with a time zone")) String iso_zoned =
 					Dates.ISO_ZONED_KEY;
 
 	@constant (
 			value = "iso_offset",
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = @doc ("iso_offset: the standard ISO 8601 output / parsing format for dates with a time offset")) public final static String iso_offset =
+			doc = @doc ("iso_offset: the standard ISO 8601 output / parsing format for dates with a time offset")) String iso_offset =
 					Dates.ISO_OFFSET_KEY;
 
 	@constant (
 			value = "iso-simple",
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = @doc ("iso: a simplified and readable version of the standard ISO 8601 output / parsing format for dates, e.g '16-03-30 10:12:11'")) public final static String iso_simple =
+			doc = @doc ("iso: a simplified and readable version of the standard ISO 8601 output / parsing format for dates, e.g '16-03-30 10:12:11'")) String iso_simple =
 					Dates.ISO_SIMPLE_KEY;
 
 	@constant (
 			value = "custom",
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = @doc ("custom: a custom date/time pattern that can be defined in the preferences of GAMA and reused in models")) public final static String custom =
+			doc = @doc ("custom: a custom date/time pattern that can be defined in the preferences of GAMA and reused in models")) String custom =
 					Dates.CUSTOM_KEY;
 
 	/** The Constant cycle. */
@@ -526,7 +512,7 @@ public interface IUnits {
 			altNames = { "cycles" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = @doc ("cycle: the discrete measure of time in the simulation. Used to force a temporal expression to be expressed in terms of cycles rather than seconds")) public final static int cycle =
+			doc = @doc ("cycle: the discrete measure of time in the simulation. Used to force a temporal expression to be expressed in terms of cycles rather than seconds")) int cycle =
 					1, cycles = cycle;
 
 	/** The Constant s. */
@@ -535,7 +521,7 @@ public interface IUnits {
 			altNames = { "second", "seconds", "s" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = @doc ("second: the time basic unit, with a fixed value of 1. All other durations are expressed with respect to it")) public final static double sec =
+			doc = @doc ("second: the time basic unit, with a fixed value of 1. All other durations are expressed with respect to it")) double sec =
 					1d, second = sec, seconds = sec, s = sec;
 
 	/** The Constant mn. */
@@ -544,8 +530,8 @@ public interface IUnits {
 			altNames = { "minutes", "mn" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("minute time unit: defined an exact duration of 60 seconds") }) public final static double minute =
-					60d * sec, minutes = minute, mn = minute;
+			doc = { @doc ("minute time unit: defined an exact duration of 60 seconds") }) double minute = 60d * sec,
+					minutes = minute, mn = minute;
 
 	/** The Constant h. */
 	@constant (
@@ -553,8 +539,8 @@ public interface IUnits {
 			altNames = { "hour", "hours" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("hour time unit: defines an exact duration of 60 minutes") }) public final static double h =
-					60d * minute, hour = h, hours = h;
+			doc = { @doc ("hour time unit: defines an exact duration of 60 minutes") }) double h = 60d * minute,
+					hour = h, hours = h;
 
 	/** The Constant d. */
 	@constant (
@@ -562,8 +548,8 @@ public interface IUnits {
 			altNames = { "days" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("day time unit: defines an exact duration of 24 hours") }) public final static double day =
-					24d * h, days = day, d = day;
+			doc = { @doc ("day time unit: defines an exact duration of 24 hours") }) double day = 24d * h, days = day,
+					d = day;
 
 	/** The Constant week */
 	@constant (
@@ -571,8 +557,8 @@ public interface IUnits {
 			altNames = { "weeks" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("week time unit: defines an exact duration of 7 days") }) public final static double week =
-					7d * day, weeks = week;
+			doc = { @doc ("week time unit: defines an exact duration of 7 days") }) double week = 7d * day,
+					weeks = week;
 
 	/** The Constant month. */
 	@constant (
@@ -581,7 +567,7 @@ public interface IUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc (
-					value = "month time unit: defines an exact duration of 30 days. WARNING: this duration is of course not correct in terms of calendar")) public final static double month =
+					value = "month time unit: defines an exact duration of 30 days. WARNING: this duration is of course not correct in terms of calendar")) double month =
 							30 * day, months = month;
 
 	/** The Constant y. */
@@ -591,7 +577,7 @@ public interface IUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc (
-					value = "year time unit: defines an exact duration of 365 days. WARNING: this duration is of course not correct in terms of calendar")) public final static double year =
+					value = "year time unit: defines an exact duration of 365 days. WARNING: this duration is of course not correct in terms of calendar")) double year =
 							365 * day, years = year, y = year;
 
 	/** The Constant msec. */
@@ -600,7 +586,7 @@ public interface IUnits {
 			altNames = { "millisecond", "milliseconds", "ms" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("millisecond time unit: defines an exact duration of 0.001 second") }) public final static double msec =
+			doc = { @doc ("millisecond time unit: defines an exact duration of 0.001 second") }) double msec =
 					sec / 1000d, millisecond = msec, milliseconds = msec, ms = msec;
 
 	/** The Constant msec. */
@@ -608,7 +594,7 @@ public interface IUnits {
 			value = "epoch",
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DATE, IConcept.TIME },
-			doc = { @doc ("The epoch default starting date as defined by the ISO format (1970-01-01T00:00Z)") }) public final static GamaDate epoch =
+			doc = { @doc ("The epoch default starting date as defined by the ISO format (1970-01-01T00:00Z)") }) GamaDate epoch =
 					GamaDateType.EPOCH;
 
 	/*
@@ -622,8 +608,7 @@ public interface IUnits {
 			altNames = { "kilo", "kilogram", "kilos" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = @doc ("second: the basic unit for weights")) public final static double kg = 1, kilo = kg,
-					kilogram = kg, kilos = kg;
+			doc = @doc ("second: the basic unit for weights")) double kg = 1, kilo = kg, kilogram = kg, kilos = kg;
 
 	/** The Constant g. */
 	@constant (
@@ -631,7 +616,7 @@ public interface IUnits {
 			altNames = { "grams" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("gram unit") }) public final static double gram = kg / 1000, grams = gram;
+			doc = { @doc ("gram unit") }) double gram = kg / 1000, grams = gram;
 
 	/** The Constant ton. */
 	@constant (
@@ -639,7 +624,7 @@ public interface IUnits {
 			altNames = { "tons" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("ton unit") }) public final static double ton = 1000 * kg, tons = ton;
+			doc = { @doc ("ton unit") }) double ton = 1000 * kg, tons = ton;
 
 	/** The Constant ounce. */
 	@constant (
@@ -647,8 +632,7 @@ public interface IUnits {
 			altNames = { "oz", "ounces" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("ounce unit") }) public final static double ounce = 28.349523125 * gram, oz = ounce,
-					ounces = ounce;
+			doc = { @doc ("ounce unit") }) double ounce = 28.349523125 * gram, oz = ounce, ounces = ounce;
 
 	/** The Constant pound. */
 	@constant (
@@ -656,8 +640,7 @@ public interface IUnits {
 			altNames = { "lb", "pounds", "lbm" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("pound unit") }) public final static double pound = 0.45359237 * kg, lb = pound,
-					pounds = pound, lbm = pound;
+			doc = { @doc ("pound unit") }) double pound = 0.45359237 * kg, lb = pound, pounds = pound, lbm = pound;
 
 	/** The Constant stone. */
 	@constant (
@@ -665,7 +648,7 @@ public interface IUnits {
 			altNames = { "st" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("stone unit") }) public final static double stone = 14 * pound, st = stone;
+			doc = { @doc ("stone unit") }) double stone = 14 * pound, st = stone;
 
 	/** The Constant short ton. */
 	@constant (
@@ -673,7 +656,7 @@ public interface IUnits {
 			altNames = { "ston" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("short ton unit") }) public final static double shortton = 2000 * pound, ston = shortton;
+			doc = { @doc ("short ton unit") }) double shortton = 2000 * pound, ston = shortton;
 
 	/** The Constant long ton. */
 	@constant (
@@ -681,7 +664,7 @@ public interface IUnits {
 			altNames = { "lton" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("short ton unit") }) public final static double longton = 2240 * pound, lton = longton;
+			doc = { @doc ("short ton unit") }) double longton = 2240 * pound, lton = longton;
 
 	/*
 	 *
@@ -692,7 +675,7 @@ public interface IUnits {
 			value = "m3",
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = @doc ("cube meter: the basic unit for volumes")) public final static double m3 = 1;
+			doc = @doc ("cube meter: the basic unit for volumes")) double m3 = 1;
 
 	/** Constant field dm3. */
 	@constant (
@@ -700,7 +683,7 @@ public interface IUnits {
 			altNames = { "liter", "liters", "dm3" },
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = { @doc ("liter unit") }) public final static double l = m3 / 1000, liter = l, liters = l, dm3 = l;
+			doc = { @doc ("liter unit") }) double l = m3 / 1000, liter = l, liters = l, dm3 = l;
 
 	/** The Constant cl. */
 	@constant (
@@ -708,8 +691,7 @@ public interface IUnits {
 			altNames = { "centiliter", "centiliters" },
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = { @doc ("centiliter unit") }) public final static double cl = l / 100, centiliter = cl,
-					centiliters = cl;
+			doc = { @doc ("centiliter unit") }) double cl = l / 100, centiliter = cl, centiliters = cl;
 
 	/** The Constant dl. */
 	@constant (
@@ -717,7 +699,7 @@ public interface IUnits {
 			altNames = { "deciliter", "deciliters" },
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = { @doc ("deciliter unit") }) public final static double dl = l / 10, deciliter = dl, deciliters = dl;
+			doc = { @doc ("deciliter unit") }) double dl = l / 10, deciliter = dl, deciliters = dl;
 
 	/** The Constant hl. */
 	@constant (
@@ -725,8 +707,7 @@ public interface IUnits {
 			altNames = { "hectoliter", "hectoliters" },
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = { @doc ("hectoliter unit") }) public final static double hl = l * 100, hectoliter = hl,
-					hectoliters = hl;
+			doc = { @doc ("hectoliter unit") }) double hl = l * 100, hectoliter = hl, hectoliters = hl;
 	/*
 	 *
 	 * Surface conversions
@@ -736,8 +717,8 @@ public interface IUnits {
 			value = "m2",
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
-			doc = @doc ("square meter: the basic unit for surfaces")) public final static double m2 = m * m,
-					square_meter = m2, square_meters = m2;
+			doc = @doc ("square meter: the basic unit for surfaces")) double m2 = m * m, square_meter = m2,
+					square_meters = m2;
 
 	/** The Constant square inch. */
 	@constant (
@@ -745,8 +726,7 @@ public interface IUnits {
 			altNames = { "square_inch", "square_inches" },
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
-			doc = { @doc ("square inch unit") }) public final static double sqin = inch * inch, square_inch = sqin,
-					square_inches = sqin;
+			doc = { @doc ("square inch unit") }) double sqin = inch * inch, square_inch = sqin, square_inches = sqin;
 
 	/** The Constant square foot. */
 	@constant (
@@ -754,8 +734,7 @@ public interface IUnits {
 			altNames = { "square_foot", "square_feet" },
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
-			doc = { @doc ("square foot unit") }) public final static double sqft = foot * foot, square_foot = sqft,
-					square_feet = sqft;
+			doc = { @doc ("square foot unit") }) double sqft = foot * foot, square_foot = sqft, square_feet = sqft;
 
 	/** The Constant square mile. */
 	@constant (
@@ -763,8 +742,7 @@ public interface IUnits {
 			altNames = { "square_mile", "square_miles" },
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
-			doc = { @doc ("square mile unit") }) public final static double sqmi = mile * mile, square_mile = sqmi,
-					square_miles = sqmi;
+			doc = { @doc ("square mile unit") }) double sqmi = mile * mile, square_mile = sqmi, square_miles = sqmi;
 	/*
 	 * Others
 	 */
@@ -773,13 +751,13 @@ public interface IUnits {
 			altNames = {},
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.ACTION },
-			doc = { @doc ("The text of the last error thrown during the current execution") }) public final static String current_error =
+			doc = { @doc ("The text of the last error thrown during the current execution") }) String current_error =
 					"";
 
-	public final static Map<String, UnitConstantExpression> UNITS_EXPR = new HashMap<>();
+	Map<String, UnitConstantExpression> UNITS_EXPR = new HashMap<>();
 
 	@SuppressWarnings ("rawtypes")
-	public static Object add(final String name, final Object value, final String doc, final String deprec,
+	static Object add(final String name, final Object value, final String doc, final String deprec,
 			final boolean isTime, final String[] names) {
 		if (UNITS_EXPR.containsKey(name)) { return null; }
 		final IType t = Types.get(value.getClass());
@@ -794,7 +772,7 @@ public interface IUnits {
 		return value;
 	}
 
-	public static void initialize() {
+	static void initialize() {
 		for (final Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet()) {
 			final GamaColor c = entry.getValue();
 			final String doc = "standard CSS color corresponding to " + "rgb (" + c.red() + ", " + c.green() + ", "
