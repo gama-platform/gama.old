@@ -135,7 +135,10 @@ public class GamaShape implements IShape {
 	public void copyAttributesOf(final IAttributed source) {
 		if (source instanceof GamaShape) {
 			final GamaShape shape = (GamaShape) source;
-			attributes.putAll(shape.attributes);
+			if (shape.attributes != null) {
+				getOrCreateAttributes();
+				attributes.putAll(shape.attributes);
+			}
 		} else {
 			IShape.super.copyAttributesOf(source);
 		}
