@@ -381,10 +381,9 @@ public class GAMA {
 	 */
 	public static final void runAndUpdateAll(final Runnable r) {
 		r.run();
-		SimulationAgent sim = getSimulation();
-		
-		if(sim.isPaused(sim.getScope()))
-			getExperiment().refreshAllOutputs();
+	//	SimulationAgent sim = getSimulation();
+	//	if(sim.isPaused(sim.getScope()))
+		getExperiment().refreshAllOutputs();
 	}
 
 	public static IGui getGui() {
