@@ -408,7 +408,8 @@ public class GamaOsmFile extends GamaGisFile {
 				}
 				if (hasAttributes) {
 					geometries.add(pt);
-					for (final Object att : pt.getAttributes().keySet()) {
+					pt.forEachAttribute((att, val) -> {
+
 						if (featureTypes.contains(att)) {
 							final String idType = att + " (point)";
 							List objs = layers.get(idType);
@@ -421,9 +422,27 @@ public class GamaOsmFile extends GamaGisFile {
 								final String id = idType + ";" + v;
 								attributes.put(id, atts.get(v));
 							}
-							break;
+							return false;
 						}
-					}
+
+						return true;
+					});
+					// for (final Object att : pt.getAttributes().keySet()) {
+					// if (featureTypes.contains(att)) {
+					// final String idType = att + " (point)";
+					// List objs = layers.get(idType);
+					// if (objs == null) {
+					// objs = GamaListFactory.create(Types.GEOMETRY);
+					// layers.put(idType, objs);
+					// }
+					// objs.add(pt);
+					// for (final String v : atts.keySet()) {
+					// final String id = idType + ";" + v;
+					// attributes.put(id, atts.get(v));
+					// }
+					// break;
+					// }
+					// }
 				}
 			}
 		}
@@ -484,24 +503,42 @@ public class GamaOsmFile extends GamaGisFile {
 						geom.setAttribute(entry.getKey(), entry.getValue());
 					}
 					geometries.add(geom);
-					if (geom.getAttributes() != null) {
-						for (final Object att : geom.getAttributes().keySet()) {
-							final String idType = att + " (polygon)";
-							if (featureTypes.contains(att)) {
-								List objs = layers.get(idType);
-								if (objs == null) {
-									objs = GamaListFactory.create(Types.GEOMETRY);
-									layers.put(idType, objs);
-								}
-								objs.add(geom);
-								for (final String v : atts.keySet()) {
-									final String id = idType + ";" + v;
-									attributes.put(id, atts.get(v));
-								}
-								break;
+					// if (geom.getAttributes() != null) {}
+
+					geom.forEachAttribute((att, val) -> {
+						final String idType = att + " (polygon)";
+						if (featureTypes.contains(att)) {
+							List objs = layers.get(idType);
+							if (objs == null) {
+								objs = GamaListFactory.create(Types.GEOMETRY);
+								layers.put(idType, objs);
 							}
+							objs.add(geom);
+							for (final String v : atts.keySet()) {
+								final String id = idType + ";" + v;
+								attributes.put(id, atts.get(v));
+							}
+							return false;
 						}
-					}
+						return true;
+					});
+					// for (final Object att : geom.getAttributes().keySet()) {
+					// final String idType = att + " (polygon)";
+					// if (featureTypes.contains(att)) {
+					// List objs = layers.get(idType);
+					// if (objs == null) {
+					// objs = GamaListFactory.create(Types.GEOMETRY);
+					// layers.put(idType, objs);
+					// }
+					// objs.add(geom);
+					// for (final String v : atts.keySet()) {
+					// final String id = idType + ";" + v;
+					// attributes.put(id, atts.get(v));
+					// }
+					// break;
+					// }
+					// }
+
 				}
 			}
 

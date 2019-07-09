@@ -123,21 +123,29 @@ public class SavedAgent extends GamaMap<String, Object> {
 				final GamaShape shape =
 						new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
 
-				if (agent.getAttributes() != null) {
-					for (final String keyAttr : agent.getAttributes().keySet()) {
-						final String attrName = keyAttr;
-						if (UNSAVABLE_VARIABLES.contains(attrName)) {
-							continue;
-						}
-						if (species.getVarNames().contains(attrName)) {
-							continue;
-						}
-						if (agent.getAttribute(keyAttr) instanceof IPopulation) {
-							continue;
-						}
-						shape.setAttribute(attrName, agent.getAttribute(keyAttr));
-					}
-				}
+				// if (agent.getAttributes() != null) {}
+
+				agent.forEachAttribute((attrName, val) -> {
+					if (UNSAVABLE_VARIABLES.contains(attrName)) { return true; }
+					if (species.getVarNames().contains(attrName)) { return true; }
+					if (val instanceof IPopulation) { return true; }
+					shape.setAttribute(attrName, val);
+					return true;
+				});
+				// for (final String keyAttr : agent.getAttributes().keySet()) {
+				// final String attrName = keyAttr;
+				// if (UNSAVABLE_VARIABLES.contains(attrName)) {
+				// continue;
+				// }
+				// if (species.getVarNames().contains(attrName)) {
+				// continue;
+				// }
+				//
+				// if (agent.getAttribute(keyAttr) instanceof IPopulation) {
+				// continue;
+				// }
+				// shape.setAttribute(attrName, agent.getAttribute(keyAttr));
+				// }
 
 				put(specVar, shape);
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.CreateFromGeometriesDelegate.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.CreateFromGeometriesDelegate.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -43,8 +43,11 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 	public boolean acceptSource(final IScope scope, final Object source) {
 		// THIS CONDITION MUST BE CHECKED : bypass a condition that belong to
 		// the case createFromDatabase
-		if (source instanceof IList && !((IList) source).isEmpty() && ((IList) source).get(0) instanceof IList) { return false; }
-		return source instanceof IList && ((IList) source).getGamlType().getContentType().isAssignableFrom(Types.GEOMETRY)
+		if (source instanceof IList && !((IList) source).isEmpty() && ((IList) source).get(0) instanceof IList) {
+			return false;
+		}
+		return source instanceof IList
+				&& ((IList) source).getGamlType().getContentType().isAssignableFrom(Types.GEOMETRY)
 
 				|| source instanceof GamaGeometryFile;
 
@@ -69,7 +72,7 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 			final GamaShape g = container.get(scope, i);
 			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
-			map.put(IKeyword.SHAPE, g);
+			g.setAttribute(IKeyword.SHAPE, g);
 			// GIS attributes are mixed with the attributes of agents
 			statement.fillWithUserInit(scope, map);
 			inits.add(map);
@@ -79,7 +82,7 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 
 	/**
 	 * Method fromFacetType()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ICreateDelegate#fromFacetType()
 	 */
 	@Override

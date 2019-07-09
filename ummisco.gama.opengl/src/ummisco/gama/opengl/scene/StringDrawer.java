@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.scene.StringDrawer.java, in plugin ummisco.gama.opengl,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * ummisco.gama.opengl.scene.StringDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -38,14 +38,14 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 		try {
 			gl.pushMatrix();
 			final AxisAngle rotation = s.getAttributes().getRotation();
-			GamaPoint p = s.getAttributes().getLocation();
+			final GamaPoint p = s.getAttributes().getLocation();
 			if (rotation != null) {
 				gl.translateBy(p.x, p.y, p.z);
 				final GamaPoint axis = rotation.getAxis();
 				// AD Change to a negative rotation to fix Issue #1514
 				gl.rotateBy(-rotation.getAngle(), axis.x, axis.y, axis.z);
 				// Voids the location so as to make only one translation
-				p = GamaPoint.NULL_POINT;
+				p.setLocation(0, 0, 0);
 			}
 			if (s.getAttributes().font != null && s.getAttributes().perspective) {
 				final Font f = s.getAttributes().font;

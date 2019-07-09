@@ -310,7 +310,7 @@ public class LayerObject {
 		final GamaPoint newLoc = loc == null ? size.toGamaPoint().dividedBy(2) : loc;
 		// We build a rectangle that will serve as a "support" for the image (which will become its texture)
 		final Geometry geometry =
-				GamaGeometryType.buildRectangle(size.getX(), size.getY(), GamaPoint.NULL_POINT).getInnerGeometry();
+				GamaGeometryType.buildRectangle(size.getX(), size.getY(), new GamaPoint()).getInnerGeometry();
 
 		attributes.setLocation(newLoc);
 		attributes.setTexture(o);

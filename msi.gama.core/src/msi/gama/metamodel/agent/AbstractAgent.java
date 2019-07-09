@@ -200,20 +200,25 @@ public abstract class AbstractAgent implements IAgent {
 		if (map == null) { return; }
 		getOrCreateAttributes().putAll(map);
 	}
+	//
+	// @Override
+	// public GamaMap<String, Object> getAttributes() {
+	// return (GamaMap<String, Object>) getGeometry().getAttributes();
+	// }
 
 	@Override
-	public GamaMap<String, Object> getAttributes() {
-		return (GamaMap<String, Object>) getGeometry().getAttributes();
-	}
-
-	@Override
-	public Map<String, Object> getOrCreateAttributes() {
-		return getGeometry().getOrCreateAttributes();
+	public GamaMap<String, Object> getOrCreateAttributes() {
+		return (GamaMap<String, Object>) getGeometry().getOrCreateAttributes();
 	}
 
 	@Override
 	public boolean hasAttribute(final String key) {
 		return getGeometry().hasAttribute(key);
+	}
+
+	@Override
+	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		return getGeometry().forEachAttribute(visitor);
 	}
 
 	@Override

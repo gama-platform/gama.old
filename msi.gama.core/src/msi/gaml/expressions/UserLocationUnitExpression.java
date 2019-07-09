@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.UserLocationUnitExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.UserLocationUnitExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -18,7 +18,7 @@ import msi.gaml.types.Types;
 public class UserLocationUnitExpression extends UnitConstantExpression {
 
 	public UserLocationUnitExpression(final String doc) {
-		super(GamaPoint.NULL_POINT, Types.POINT, "user_location", doc, null);
+		super(new GamaPoint(), Types.POINT, "user_location", doc, null);
 	}
 
 	@Override

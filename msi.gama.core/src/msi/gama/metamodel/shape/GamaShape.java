@@ -18,8 +18,6 @@ import static msi.gama.util.GamaListFactory.create;
 import static msi.gama.util.GamaListFactory.createWithoutCasting;
 import static msi.gaml.types.Types.POINT;
 
-import java.util.Map;
-
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -36,6 +34,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.Scaling3D;
+import msi.gama.common.interfaces.IAttributed;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
@@ -53,13 +52,16 @@ import msi.gaml.types.Types;
  *
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaShape implements IShape /* , IContainer */ {
+public class GamaShape implements IShape {
+
+	class ShapeData {
+		private Double depth;
+		private Type type;
+	}
 
 	protected Geometry geometry;
 	private IAgent agent;
-	protected GamaMap attributes;
-	private Double depth;
-	private Type type;
+	protected GamaMap<String, Object> attributes;
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -101,14 +103,43 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 */
 	private void mixAttributes(final IShape source) {
 		if (source == null) { return; }
-		final GamaMap<String, Object> attr = (GamaMap<String, Object>) source.getAttributes();
+		// final GamaMap<String, Object> attr = (GamaMap<String, Object>) source.getAttributes();
 		copyShapeAttributesFrom(source);
-		if (attr == null) { return; }
-		for (final Map.Entry<String, Object> entry : attr.entrySet()) {
-			if (entry.getValue() != source) {
-				setAttribute(entry.getKey(), entry.getValue());
+		if (source instanceof GamaShape) {
+			final GamaShape shape = (GamaShape) source;
+			if (shape.attributes != null) {
+				getOrCreateAttributes();
+				shape.attributes.forEach((key, val) -> {
+					if (val != source) {
+						attributes.put(key, val);
+					}
+				});
 			}
+		} else {
+			// if (attr == null) { return; }
+			source.forEachAttribute((key, val) -> {
+				if (val != source) {
+					setAttribute(key, val);
+				}
+				return true;
+			});
+			// for (final Map.Entry<String, Object> entry : attr.entrySet()) {
+			// if (entry.getValue() != source) {
+			// setAttribute(entry.getKey(), entry.getValue());
+			// }
+			// }
 		}
+	}
+
+	@Override
+	public void copyAttributesOf(final IAttributed source) {
+		if (source instanceof GamaShape) {
+			final GamaShape shape = (GamaShape) source;
+			attributes.putAll(shape.attributes);
+		} else {
+			IShape.super.copyAttributesOf(source);
+		}
+
 	}
 
 	/**
@@ -383,6 +414,21 @@ public class GamaShape implements IShape /* , IContainer */ {
 		return new GamaShape(result);
 	}
 
+	private ShapeData getData(final boolean createIt) {
+		final Geometry g = getInnerGeometry();
+		if (g == null) { return null; }
+		Object o = g.getUserData();
+		if (o == null) {
+			if (createIt) {
+				o = new ShapeData();
+				g.setUserData(o);
+			} else {
+				return null;
+			}
+		}
+		return (ShapeData) o;
+	}
+
 	@Override
 	public Double getWidth() {
 		return getEnvelope().getWidth();
@@ -395,20 +441,16 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public Double getDepth() {
-		return depth;
-		// return (Double) getAttribute(DEPTH_ATTRIBUTE);
-		// final Geometry g = getInnerGeometry();
-		// if (g == null) { return null; }
-		// return ((ShapeData) g.getUserData()).depth;
+		final ShapeData data = getData(false);
+		return data == null ? null : data.depth;
 	}
 
 	@Override
 	public void setDepth(final double depth) {
-		this.depth = depth;
-		// setAttribute(DEPTH_ATTRIBUTE, depth);
-		// final Geometry g = getInnerGeometry();
-		// if (g == null) { return; }
-		// ((ShapeData) g.getUserData()).depth = depth;
+		final ShapeData data = getData(true);
+		if (data != null) {
+			data.depth = depth;
+		}
 	}
 
 	@Override
@@ -633,10 +675,10 @@ public class GamaShape implements IShape /* , IContainer */ {
 		return attributes;
 	}
 
-	@Override
-	public GamaMap getAttributes() {
-		return attributes;
-	}
+	// @Override
+	// public GamaMap getAttributes() {
+	// return attributes;
+	// }
 
 	@Override
 	public boolean hasAttribute(final String key) {
@@ -650,12 +692,17 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 */
 	@Override
 	public Type getGeometricalType() {
+		final ShapeData data = getData(false);
+		Type type = data == null ? null : data.type;
 		if (type == null) {
 			final String tt = getInnerGeometry().getGeometryType();
 			if (JTS_TYPES.containsKey(tt)) {
 				type = JTS_TYPES.get(tt);
 			} else {
 				type = Type.NULL;
+			}
+			if (data != null) {
+				data.type = type;
 			}
 		}
 		return type;
@@ -672,8 +719,17 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public void setGeometricalType(final Type t) {
-		type = t;
-		// setAttribute(TYPE_ATTRIBUTE, t);
+		final ShapeData data = getData(true);
+		if (data != null) {
+			data.type = t;
+		}
+	}
+
+	@Override
+	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		if (attributes == null) { return true; }
+		final GamaMap<String, Object> map = getOrCreateAttributes();
+		return map.forEachEntry((k, v) -> visitor.process(k, v));
 	}
 
 }

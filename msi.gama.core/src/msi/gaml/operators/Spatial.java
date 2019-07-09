@@ -2008,13 +2008,15 @@ public abstract class Spatial {
 					lines.add(new GamaShape(g));
 				}
 			}
-			if (geom.getAttributes() != null) {
-				for (final IShape li : lines) {
-					for (final String at : geom.getAttributes().keySet()) {
-						li.setAttribute(at, geom.getAttribute(at));
-					}
-				}
+			// if (geom.getAttributes() != null) {
+			for (final IShape li : lines) {
+				li.copyAttributesOf(geom);
+				// geom.forEachAttribute((s, at) -> {
+				// li.setAttribute(s, at);
+				// return true;
+				// });
 			}
+			// }
 
 			return lines;
 		}
@@ -3112,9 +3114,10 @@ public abstract class Spatial {
 							final Geometry g = nodedLineStrings.getGeometryN(i);
 							if (g instanceof LineString) {
 								final IShape gS = new GamaShape(g);
-								if (l.getAttributes() != null) {
-									gS.getAttributes().putAll(l.getAttributes());
-								}
+								gS.copyAttributesOf(l);
+								// if (l.getAttributes() != null) {
+								// gS.getAttributes().putAll(l.getAttributes());
+								// }
 								lines2.add(new GamaShape(g));
 							}
 						}

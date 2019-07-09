@@ -72,10 +72,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation<? extends IAgent>[] getMicroPopulations() {
-		if (getAttributes() == null) { return NO_POP; }
+		// if (getAttributes() == null) { return NO_POP; }
 		if (microPopulations == null) {
 			final List<IPopulation<?>> pops = new ArrayList<>();
-			getAttributes().forEachEntry((s, o) -> {
+			forEachAttribute((s, o) -> {
 				if (isPopulation(s)) {
 					pops.add((IPopulation<?>) o);
 				}
@@ -84,8 +84,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			microPopulations = pops.toArray(new IPopulation[pops.size()]);
 			if (microPopulations.length == 0) {
 				microPopulations = NO_POP;
+			} else {
+				Arrays.sort(microPopulations, (p1, p2) -> p1.isGrid() ? p2.isGrid() ? 0 : 1 : p2.isGrid() ? -1 : 0);
 			}
-			Arrays.sort(microPopulations, (p1, p2) -> p1.isGrid() ? p2.isGrid() ? 0 : 1 : p2.isGrid() ? -1 : 0);
 		}
 		return microPopulations;
 	}
@@ -236,37 +237,37 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public synchronized IPopulation<? extends IAgent> getMicroPopulation(final String microSpeciesName) {
-		if (getAttributes() == null) { return null; }
-		final Object o = getAttributes().get(microSpeciesName);
+		final Object o = getAttribute(microSpeciesName);
 		if (o instanceof IPopulation) { return (IPopulation<? extends IAgent>) o; }
 		return null;
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getMicroPopulation(final ISpecies microSpecies) {
-		if (getAttributes() == null) { return null; }
-		final Object o = getAttributes().get(microSpecies.getName());
+		final Object o = getAttribute(microSpecies.getName());
 		return o instanceof IPopulation ? (IPopulation<IAgent>) o : null;
 	}
 
 	@Override
 	public boolean hasMembers() {
-		if (dead() || getAttributes() == null) { return false; }
-		for (final Object pop : getAttributes().values()) {
-			if (pop instanceof IPopulation && ((IPopulation<? extends IAgent>) pop).size() > 0) { return true; }
+		if (dead()) { return false; }
+		for (final IPopulation pop : getMicroPopulations()) {
+			if (pop.size() > 0) { return true; }
 		}
 		return false;
 	}
 
 	@Override
 	public IContainer<?, IAgent> getMembers(final IScope scope) {
-		if (dead() || getAttributes() == null) { return GamaListFactory.create(); }
-		final MetaPopulation mp = new MetaPopulation();
-		for (final Object pop : getAttributes().values()) {
-			if (pop instanceof IPopulation && ((IPopulation) pop).size() > 0) {
-				mp.addPopulation((IPopulation<? extends IAgent>) pop);
-			}
-		}
+		if (dead()) { return GamaListFactory.create(); }
+		final MetaPopulation mp = new MetaPopulation(getMicroPopulations());
+		// forEachAttribute((s, pop) -> {
+		// if (pop instanceof IPopulation && ((IPopulation) pop).size() > 0) {
+		// mp.addPopulation((IPopulation<? extends IAgent>) pop);
+		// }
+		// return true;
+		// });
+
 		return mp;
 	}
 
@@ -280,13 +281,15 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 	@Override
 	public int getMembersSize(final IScope scope) {
-		int result = 0;
-		for (final Object pop : getAttributes().values()) {
-			if (pop instanceof IPopulation) {
-				result += ((IPopulation<? extends IAgent>) pop).length(scope);
-			}
-		}
-		return result;
+		return getMembers(scope).length(scope);
+		// final int[] result = { 0 };
+		// forEachAttribute((s, pop) -> {
+		// if (pop instanceof IPopulation) {
+		// result[0] += ((IPopulation<? extends IAgent>) pop).length(scope);
+		// }
+		// return true;
+		// });
+		// return result[0];
 	}
 
 	@Override

@@ -274,12 +274,12 @@ public class ReferenceAgent implements IReference, IAgent {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Map<String, Object> getAttributes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	//
+	// @Override
+	// public Map<String, Object> getAttributes() {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 	@Override
 	public Object getAttribute(final String key) {
@@ -494,6 +494,12 @@ public class ReferenceAgent implements IReference, IAgent {
 	@Override
 	public void updateWith(final IScope s, final SavedAgent sa) {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		return false;
 
 	}
 }

@@ -19,13 +19,13 @@ import msi.gaml.types.Types;
 public class CameraOrientationUnitExpression extends UnitConstantExpression {
 
 	public CameraOrientationUnitExpression(final String doc) {
-		super(GamaPoint.NULL_POINT, Types.POINT, "camera_orientation", doc, null);
+		super(new GamaPoint(), Types.POINT, "camera_orientation", doc, null);
 	}
 
 	@Override
 	public ILocation _value(final IScope scope) {
 		final IGraphics g = scope.getGraphics();
-		if (g == null || g.is2D()) { return GamaPoint.NULL_POINT; }
+		if (g == null || g.is2D()) { return (ILocation) getConstValue(); }
 		return ((IGraphics.ThreeD) g).getCameraOrientation();
 	}
 

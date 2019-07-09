@@ -147,7 +147,7 @@ public class NetworkSkill extends MessagingSkill {
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"), }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
-		if (!scope.getExperiment().getAttributes().keySet().contains(REGISTRED_SERVER)) {
+		if (!scope.getExperiment().hasAttribute(REGISTRED_SERVER)) {
 			this.startSkill(scope);
 		}
 		final IAgent agt = scope.getAgent();

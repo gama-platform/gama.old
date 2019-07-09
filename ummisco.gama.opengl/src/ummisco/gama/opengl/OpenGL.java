@@ -313,7 +313,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	public GamaPoint getWorldPositionFrom(final GamaPoint mouse) {
 		final GamaPoint camera = getData().getCameraPos();
-		if (gl == null) { return GamaPoint.NULL_POINT; }
+		if (gl == null) { return new GamaPoint(); }
 		final double[] wcoord = new double[4];
 		final double x = (int) mouse.x, y = viewport[3] - (int) mouse.y;
 		glu.gluUnProject(x, y, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);

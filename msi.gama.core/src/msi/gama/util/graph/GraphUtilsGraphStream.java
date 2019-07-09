@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.GraphUtilsGraphStream.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.graph.GraphUtilsGraphStream.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -27,9 +27,9 @@ import msi.gama.util.graph.graphstream_copy.Node;
 
 /**
  * Graph utilities for the use of the graphstream library.
- * 
+ *
  * @author Samuel Thiriot
- * 
+ *
  */
 @SuppressWarnings ({ "rawtypes" })
 public class GraphUtilsGraphStream {
@@ -37,7 +37,7 @@ public class GraphUtilsGraphStream {
 	/**
 	 * Preprocess a gama object before exportation. Filters gama objects that have no meaning out of gama; notably GAMA
 	 * colors are translated to RGB values.
-	 * 
+	 *
 	 * @param gamaValue
 	 * @return
 	 */
@@ -55,7 +55,7 @@ public class GraphUtilsGraphStream {
 	/**
 	 * Takes a gama graph as an input, returns a graphstream graph as close as possible. Preserves double links (multi
 	 * graph).
-	 * 
+	 *
 	 * @param gamaGraph
 	 * @return
 	 */
@@ -63,8 +63,7 @@ public class GraphUtilsGraphStream {
 
 		final Graph g = new MultiGraph("tmpGraph", true, false);
 
-		final Map<Object, Node> gamaNode2graphStreamNode =
-				new HashMap<>(gamaGraph._internalNodesSet().size());
+		final Map<Object, Node> gamaNode2graphStreamNode = new HashMap<>(gamaGraph._internalNodesSet().size());
 
 		// add nodes
 		for (final Object v : gamaGraph._internalVertexMap().keySet()) {
@@ -76,14 +75,18 @@ public class GraphUtilsGraphStream {
 
 			if (v instanceof IAgent) {
 				final IAgent a = (IAgent) v;
-				for (final Object key : a.getAttributes().keySet()) {
-
-					final Object value = preprocessGamaValue(a.getAttributes().get(key));
-
-					// standard attribute
-					n.setAttribute(key.toString(), value.toString());
-
-				}
+				a.forEachAttribute((key, value) -> {
+					n.setAttribute(key.toString(), preprocessGamaValue(value).toString());
+					return true;
+				});
+				// for (final Object key : a.getAttributes().keySet()) {
+				//
+				// final Object value = preprocessGamaValue(a.getAttributes().get(key));
+				//
+				// // standard attribute
+				// n.setAttribute(key.toString(), value.toString());
+				//
+				// }
 			}
 
 			if (v instanceof IShape) {
@@ -103,25 +106,17 @@ public class GraphUtilsGraphStream {
 
 			try {
 				final Edge e = g.addEdgeToNodes(edgeObj.toString(), gamaNode2graphStreamNode.get(edge.getSource()),
-						gamaNode2graphStreamNode.get(edge.getTarget()), gamaGraph.isDirected() // till
-																								// now,
-																								// directionality
-																								// of
-																								// an
-																								// edge
-																								// depends
-																								// on
-																								// the
-																								// whole
-																								// gama
-																								// graph
-				);
+						gamaNode2graphStreamNode.get(edge.getTarget()), gamaGraph.isDirected());
 				if (edgeObj instanceof IAgent) {
 					final IAgent a = (IAgent) edgeObj;
-					for (final Object key : a.getAttributes().keySet()) {
-						final Object value = preprocessGamaValue(a.getAttributes().get(key));
-						e.setAttribute(key.toString(), value.toString());
-					}
+					a.forEachAttribute((key, value) -> {
+						e.setAttribute(key.toString(), preprocessGamaValue(value).toString());
+						return true;
+					});
+					// for (final Object key : a.getAttributes().keySet()) {
+					// final Object value = preprocessGamaValue(a.getAttributes().get(key));
+					// e.setAttribute(key.toString(), value.toString());
+					// }
 				}
 			} catch (final EdgeRejectedException e) {
 				GAMA.reportError(GAMA.getRuntimeScope(),

@@ -275,9 +275,11 @@ public class Containers {
 			throws GamaRuntimeException {
 		// TODO How to test if the index is correct ?
 		if (shape == null) { return null; }
-		final GamaMap map = (GamaMap) shape.getAttributes();
-		if (map == null) { return null; }
-		return map.getFromIndicesList(scope, indices);
+		final String key = Cast.asString(scope, indices.get(0));
+		return shape.getAttribute(key);
+		// final GamaMap map = (GamaMap) shape.getAttributes();
+		// if (map == null) { return null; }
+		// return map.getFromIndicesList(scope, indices);
 	}
 
 	@operator (

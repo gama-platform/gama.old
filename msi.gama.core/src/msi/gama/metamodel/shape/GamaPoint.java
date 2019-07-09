@@ -19,6 +19,7 @@ import com.vividsolutions.jts.util.NumberUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -40,85 +41,6 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 
 public class GamaPoint extends Coordinate implements ILocation {
-
-	public static final GamaPoint NULL_POINT = new GamaPoint(0d, 0d, 0d) {
-		@Override
-		public void setLocation(final ILocation al) {}
-
-		@Override
-		public GamaPoint add(final double ax, final double ay, final double az) {
-			return this;
-		}
-
-		@Override
-		public GamaPoint add(final GamaPoint loc) {
-			return this;
-		}
-
-		@Override
-		public GamaPoint divideBy(final double value) {
-			return this;
-		}
-
-		@Override
-		public GamaPoint multiplyBy(final double value) {
-			return this;
-		}
-
-		@Override
-		public void negate() {}
-
-		@Override
-		public GamaPoint normalize() {
-			return this;
-		}
-
-		@Override
-		public void setAgent(final IAgent agent) {}
-
-		@Override
-		public void setAttribute(final String key, final Object value) {}
-
-		@Override
-		public void setCoordinate(final Coordinate c) {}
-
-		@Override
-		public void setDepth(final double depth) {}
-
-		@Override
-		public void setInnerGeometry(final Geometry point) {}
-
-		@Override
-		public GamaPoint subtract(final GamaPoint loc) {
-			return this;
-		}
-
-		@Override
-		public void setGeometry(final IShape g) {}
-
-		@Override
-		public GamaPoint setLocation(final double x, final double y, final double z) {
-			return this;
-		}
-
-		@Override
-		public GamaPoint setLocation(final GamaPoint al) {
-			return this;
-		}
-
-		@Override
-		public void setOrdinate(final int i, final double v) {}
-
-		@Override
-		public void setX(final double xx) {}
-
-		@Override
-		public void setY(final double yy) {}
-
-		@Override
-		public void setZ(final double zz) {}
-
-	};
 
 	@Override
 	public GamaPoint toGamaPoint() {
@@ -406,14 +328,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void setAgent(final IAgent agent) {}
-	//
-	// /**
-	// * @see msi.gama.interfaces.IGeometry#getPerimeter()
-	// */
-	// @Override
-	// public double getPerimeter() {
-	// return 0d;
-	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
@@ -430,10 +344,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public void dispose() {}
 
-	@Override
-	public GamaMap getAttributes() {
-		return null;
-	}
+	// @Override
+	// public GamaMap getAttributes() {
+	// return null;
+	// }
 
 	@Override
 	public GamaMap getOrCreateAttributes() {
@@ -705,7 +619,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public GamaPoint orthogonal() {
 		final double threshold = 0.6 * norm();
 		if (threshold == 0) { return this; }
-
 		if (Math.abs(x) <= threshold) {
 			final double inverse = 1 / sqrt(y * y + z * z);
 			return new GamaPoint(0, inverse * z, -inverse * y);
@@ -729,5 +642,18 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public GamaPoint clone() {
 		return new GamaPoint(x, y, z);
 	}
+
+	// @Override
+	// public Map<String, Object> getAttributes() {
+	// return null;
+	// }
+
+	@Override
+	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		return true;
+	}
+
+	@Override
+	public void copyAttributesOf(final IAttributed source) {}
 
 }

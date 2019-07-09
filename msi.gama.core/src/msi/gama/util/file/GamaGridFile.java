@@ -228,38 +228,37 @@ public class GamaGridFile extends GamaGisFile {
 					} else {
 						rect = new GamaShape(gis.transform(rect.getInnerGeometry()));
 					}
-					rect.getOrCreateAttributes();
 					if (doubleValues) {
 						final double[] vd = (double[]) vals;
 						if (i == 0) {
 							nbBands = vd.length;
 						}
-						rect.getAttributes().put("grid_value", vd[0]);
-						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vd));
+						rect.setAttribute("grid_value", vd[0]);
+						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vd));
 					} else if (intValues) {
 						final int[] vi = (int[]) vals;
 						if (i == 0) {
 							nbBands = vi.length;
 						}
 						final double v = Double.valueOf(vi[0]);
-						rect.getAttributes().put("grid_value", v);
-						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
+						rect.setAttribute("grid_value", v);
+						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (longValues) {
 						final long[] vi = (long[]) vals;
 						if (i == 0) {
 							nbBands = vi.length;
 						}
 						final double v = Double.valueOf(vi[0]);
-						rect.getAttributes().put("grid_value", v);
-						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
+						rect.setAttribute("grid_value", v);
+						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (floatValues) {
 						final float[] vi = (float[]) vals;
 						if (i == 0) {
 							nbBands = vi.length;
 						}
 						final double v = Double.valueOf(vi[0]);
-						rect.getAttributes().put("grid_value", v);
-						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
+						rect.setAttribute("grid_value", v);
+						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (byteValues) {
 						final byte[] bv = (byte[]) vals;
 						if (i == 0) {
@@ -267,14 +266,14 @@ public class GamaGridFile extends GamaGisFile {
 						}
 						if (bv.length == 1) {
 							final double v = Double.valueOf(((byte[]) vals)[0]);
-							rect.getAttributes().put("grid_value", v);
+							rect.setAttribute("grid_value", v);
 						} else if (bv.length == 3) {
 							final int red = bv[0] < 0 ? 256 + bv[0] : bv[0];
 							final int green = bv[0] < 0 ? 256 + bv[1] : bv[1];
 							final int blue = bv[0] < 0 ? 256 + bv[2] : bv[2];
-							rect.getAttributes().put("grid_value", (red + green + blue) / 3.0);
+							rect.setAttribute("grid_value", (red + green + blue) / 3.0);
 						}
-						rect.getAttributes().put("bands", GamaListFactory.create(scope, Types.FLOAT, bv));
+						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, bv));
 					}
 					((IList) getBuffer()).add(rect);
 				}

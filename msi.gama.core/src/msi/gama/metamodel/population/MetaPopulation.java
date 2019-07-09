@@ -57,6 +57,13 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 		populationSets = new ArrayList();
 	}
 
+	public MetaPopulation(final IPopulation<? extends IAgent>[] pops) {
+		this();
+		for (final IPopulation<? extends IAgent> pop : pops) {
+			addPopulation(pop);
+		}
+	}
+
 	@Override
 	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
 		getMapOfPopulations(scope);

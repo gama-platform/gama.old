@@ -62,7 +62,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	// geometry is a sphere, a
 	// cube, etc...). Can be reused by subclasses (for example to store GIS
 	// information)
-	protected GamaMap attributes;
+	protected GamaMap<String, Object> attributes;
 
 	public GamaProxyGeometry(final ILocation loc) {
 		setLocation(loc);
@@ -71,6 +71,12 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	@Override
 	public IType getGamlType() {
 		return Types.GEOMETRY;
+	}
+
+	@Override
+	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		if (attributes == null) { return true; }
+		return attributes.forEachEntry((k, v) -> visitor.process(k, v));
 	}
 
 	/**
@@ -137,11 +143,11 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 *
 	 * @see msi.gama.common.interfaces.IAttributed#getAttributes()
 	 */
-	@Override
-	public GamaMap getAttributes() {
-		return attributes;
-		// return getReferenceGeometry().getAttributes();
-	}
+	// @Override
+	// public GamaMap getAttributes() {
+	// return attributes;
+	// // return getReferenceGeometry().getAttributes();
+	// }
 
 	/**
 	 * Method getOrCreateAttributes()
