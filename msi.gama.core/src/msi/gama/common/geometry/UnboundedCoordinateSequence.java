@@ -73,7 +73,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public Coordinate getCoordinateCopy(final int i) {
-		return (Coordinate) points[i].clone();
+		return points[i].clone();
 	}
 
 	@Override

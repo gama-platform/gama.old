@@ -2,11 +2,11 @@
  *
  * msi.gaml.statements.draw.ShapeExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -16,7 +16,6 @@ import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
 import static msi.gama.common.geometry.GeometryUtils.rotate;
 import static msi.gama.common.geometry.GeometryUtils.translate;
 import static msi.gama.common.geometry.Scaling3D.of;
-import static msi.gama.metamodel.shape.IShape.DEPTH_ATTRIBUTE;
 import static msi.gama.util.GamaListFactory.create;
 import static msi.gaml.operators.Cast.asFloat;
 import static msi.gaml.operators.Cast.asGeometry;
@@ -140,7 +139,7 @@ class ShapeExecuter extends DrawExecuter {
 				data.border.get(), data.texture.get(), data.material.get(), scope.getAgent(),
 				shape.getGeometricalType(), data.lineWidth.get(), data.lighting.get());
 		// We push the depth of the geometry if none have been specified already
-		attributes.setHeightIfAbsent((Double) shape.getAttribute(DEPTH_ATTRIBUTE));
+		attributes.setHeightIfAbsent(shape.getDepth());
 		return attributes;
 	}
 

@@ -11,11 +11,13 @@
 package msi.gama.metamodel.shape;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTWriter;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.interfaces.ILocated;
@@ -26,7 +28,6 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
 
@@ -98,51 +99,46 @@ import msi.gaml.types.IType;
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the polyline representing the contour of this geometry") }) })
 public interface IShape extends ILocated, IValue, IAttributed {
+	Map<String, Type> JTS_TYPES = new THashMap<>();
+	Set<Type> THREED_TYPES = new THashSet<>();
 
 	enum Type {
-		BOX,
-		CIRCLE,
-		CONE,
-		CUBE,
-		SQUARE,
-		ROUNDED,
-		CYLINDER,
-		ENVIRONMENT,
-		GRIDLINE,
+		BOX("3D"),
+		CIRCLE("3D"),
+		CONE("3D"),
+		CUBE("3D"),
+		SQUARE("3D"),
+		ROUNDED(""),
+		CYLINDER("3D"),
+		GRIDLINE(""),
 		LINEARRING("LinearRing"),
 		LINESTRING("LineString"),
 		MULTILINESTRING("MultiLineString"),
 		MULTIPOINT("MultiPoint"),
 		MULTIPOLYGON("MultiPolygon"),
-		NULL,
-		PLAN,
+		NULL(""),
+		PLAN("3D"),
 		POINT("Point"),
 		POLYGON("Polygon"),
-		POLYHEDRON,
-		POLYPLAN,
-		PYRAMID,
-		SPHERE,
-		TEAPOT,
-		LINECYLINDER,
-		THREED_FILE;
-
-		Type() {}
+		POLYHEDRON("3D"),
+		POLYPLAN("3D"),
+		PYRAMID("3D"),
+		SPHERE("3D"),
+		TEAPOT("3D"),
+		LINECYLINDER("3D"),
+		THREED_FILE("");
 
 		Type(final String name) {
-			JTS_TYPES.put(name, this);
+			if (name.isEmpty()) { return; }
+			if (name.equals("3D")) {
+				THREED_TYPES.add(this);
+			} else {
+				JTS_TYPES.put(name, this);
+			}
 		}
 	}
 
 	WKTWriter SHAPE_WRITER = new WKTWriter();
-
-	String DEPTH_ATTRIBUTE = "_shape_internal_depth";
-	Map<String, Type> JTS_TYPES = new THashMap<>();
-	// public static final String TEXTURE_ATTRIBUTE = "_shape_internal_texture";
-	String TYPE_ATTRIBUTE = "_shape_internal_type";
-	// public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";
-	// public static final String COLOR_LIST_ATTRIBUTE =
-	// "_shape_internal_color_list";
-	// public static final String ROTATE_ATTRIBUTE = "_shape_internal_rotate";
 
 	@Override
 	IShape copy(IScope scope);
@@ -190,7 +186,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	@Override
 	@getter ("attributes")
-	GamaMap<String, Object> getOrCreateAttributes();
+	Map<String, Object> getOrCreateAttributes();
 
 	@getter ("multiple")
 	boolean isMultiple();
@@ -237,12 +233,16 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	 * @param other
 	 */
 	default void copyShapeAttributesFrom(final IShape other) {
-		if (other.hasAttribute(DEPTH_ATTRIBUTE)) {
-			this.setAttribute(DEPTH_ATTRIBUTE, other.getAttribute(DEPTH_ATTRIBUTE));
+		final Double d = other.getDepth();
+		if (d != null) {
+			setDepth(d);
 		}
-		if (other.hasAttribute(TYPE_ATTRIBUTE)) {
-			this.setAttribute(TYPE_ATTRIBUTE, other.getAttribute(TYPE_ATTRIBUTE));
+		final Type t = other.getGeometricalType();
+		if (THREED_TYPES.contains(t)) {
+			setGeometricalType(t);
 		}
 	}
+
+	void setGeometricalType(Type t);
 
 }

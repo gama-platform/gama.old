@@ -817,7 +817,7 @@ public class MovingSkill extends Skill {
 			final ILocation end = ((IShape) path.getEndVertex()).getLocation();
 			final GamaPoint[] points = getPointsOf(lineEnd);
 			if (contains(points, end)) {
-				falseTarget = new GamaPoint(end);
+				falseTarget = new GamaPoint(end.toGamaPoint());
 				endIndexSegment = indexOf(points, end) + 1;
 			} else {
 				falseTarget = (GamaPoint) Punctal._closest_point_to(end, lineEnd);

@@ -442,18 +442,20 @@ public class GamaObjFile extends Gama3DGeometryFile {
 				final boolean hasNormal = norms[w] != 0;
 				final boolean hasTex = texs[w] != 0;
 				if (hasNormal) {
-					normal.setLocation(setOfVertexNormals.get(norms[w] - 1));
+					final double[] temp_coords = setOfVertexNormals.get(norms[w] - 1);
+					normal.setLocation(temp_coords[0], temp_coords[1], temp_coords[2]);
 				}
 				if (hasTex) {
 					final double[] ordinates = setOfVertexTextures.get(texs[w] - 1);
-					tex.setLocation(ordinates[0], ordinates[1]);
+					tex.setLocation(ordinates[0], ordinates[1], ordinates[2]);
 					if (1d >= tex.y && -tex.y <= 0) {
 						tex.y = 1d - tex.y;
 					} else {
 						tex.y = Math.abs(tex.y);
 					}
 				}
-				vertex.setLocation(setOfVertex.get(tempfaces[w] - 1));
+				final double[] temp_coords = setOfVertex.get(tempfaces[w] - 1);
+				vertex.setLocation(temp_coords[0], temp_coords[1], temp_coords[2]);
 				gl.drawVertex(vertex, hasNormal ? normal : null, hasTex ? tex : null);
 			}
 

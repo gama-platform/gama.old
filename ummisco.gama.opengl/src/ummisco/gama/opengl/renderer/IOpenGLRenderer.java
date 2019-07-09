@@ -1,7 +1,5 @@
 package ummisco.gama.opengl.renderer;
 
-import java.awt.Point;
-
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.swt.GLCanvas;
 
@@ -28,10 +26,10 @@ public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 
 	double getHeight();
 
-	GamaPoint getRealWorldPointFromWindowPoint(final Point mouse);
+	GamaPoint getRealWorldPointFromWindowPoint(final GamaPoint mouse);
 
 	@Override
-	public SWTOpenGLDisplaySurface getSurface();
+	SWTOpenGLDisplaySurface getSurface();
 
 	CameraHelper getCameraHelper();
 

@@ -207,7 +207,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public GamaMap<String, Object> getOrCreateAttributes() {
+	public Map<String, Object> getOrCreateAttributes() {
 		return getGeometry().getOrCreateAttributes();
 	}
 

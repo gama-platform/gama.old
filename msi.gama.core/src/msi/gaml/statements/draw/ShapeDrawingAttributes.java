@@ -2,11 +2,11 @@
  *
  * msi.gaml.statements.draw.ShapeDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -78,14 +78,14 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	}
 
 	public void setHeightIfAbsent(final Double d) {
-		if (getHeight() == null) {
+		if (getHeight() == null && d != null) {
 			setHeight(d);
 		}
 	}
 
 	/**
 	 * Method getMaterial()
-	 * 
+	 *
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
 	 */
 	@Override

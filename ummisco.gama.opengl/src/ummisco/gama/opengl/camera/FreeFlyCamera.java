@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
 
-import java.awt.Point;
-
 import org.eclipse.swt.SWT;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -169,9 +167,9 @@ public class FreeFlyCamera extends AbstractCamera {
 					new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y),
 					new GamaPoint(getMousePosition().x, getMousePosition().y));
 		} else {
-			final int horizMovement = e.x - getLastMousePressedPosition().x;
-			final int vertMovement = e.y - getLastMousePressedPosition().y;
-			lastMousePressedPosition = new Point(e.x, e.y);
+			final int horizMovement = e.x - (int) getLastMousePressedPosition().x;
+			final int vertMovement = e.y - (int) getLastMousePressedPosition().y;
+			lastMousePressedPosition.setLocation(e.x, e.y, 0);
 			this.theta = theta - horizMovement * getSensivity();
 			this.phi = phi - vertMovement * getSensivity();
 			updateCartesianCoordinatesFromAngles();

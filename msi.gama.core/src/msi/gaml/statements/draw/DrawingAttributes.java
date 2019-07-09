@@ -111,7 +111,7 @@ public abstract class DrawingAttributes {
 	}
 
 	public void setRotation(final Double angle, final GamaPoint axis) {
-		if (angle == null || axis != null && axis.isNull()) {
+		if (angle == null || axis != null && axis.x == 0d && axis.y == 0d && axis.z == 0d) {
 			geometryProperties = geometryProperties.withRotation(null);
 		} else if (axis == null) {
 			geometryProperties = geometryProperties.withRotation(new AxisAngle(Rotation3D.PLUS_K, angle));

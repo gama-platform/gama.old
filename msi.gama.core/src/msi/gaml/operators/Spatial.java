@@ -1939,11 +1939,11 @@ public abstract class Spatial {
 				for (int i = 0; i <= indexTarget; i++) {
 					coords1[i] = coords[i];
 				}
-				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation());
+				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation().toGamaPoint());
 
 				nbSp = coords.length - indexTarget;
 				final Coordinate[] coords2 = new Coordinate[nbSp];
-				coords2[0] = new GamaPoint(pt.getLocation());
+				coords2[0] = new GamaPoint(pt.getLocation().toGamaPoint());
 				int k = 1;
 				for (int i = indexTarget + 1; i < coords.length; i++) {
 					coords2[k] = coords[i];
@@ -1967,7 +1967,8 @@ public abstract class Spatial {
 					}
 				}
 				final Coordinate[] coords = ((LineString) geom2).getCoordinates();
-				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(new GamaPoint(pt.getLocation()));
+				final Point pt1 =
+						GeometryUtils.GEOMETRY_FACTORY.createPoint(new GamaPoint(pt.getLocation().toGamaPoint()));
 				final int nb = coords.length;
 				int indexTarget = -1;
 				double distanceT = Double.MAX_VALUE;
@@ -1987,11 +1988,11 @@ public abstract class Spatial {
 				for (int i = 0; i <= indexTarget; i++) {
 					coords1[i] = coords[i];
 				}
-				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation());
+				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation().toGamaPoint());
 
 				nbSp = coords.length - indexTarget;
 				final Coordinate[] coords2 = new Coordinate[nbSp];
-				coords2[0] = new GamaPoint(pt.getLocation());
+				coords2[0] = new GamaPoint(pt.getLocation().toGamaPoint());
 				int k = 1;
 				for (int i = indexTarget + 1; i < coords.length; i++) {
 					coords2[k] = coords[i];
@@ -3219,9 +3220,9 @@ public abstract class Spatial {
 			if (geoms.isEmpty()) { return GamaListFactory.create(); }
 			if (splitlines) {
 				geoms = Transformations.split_lines(scope, geoms, true);
-				geoms.removeIf(
-						a -> a.getPerimeter() < tolerance || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
-				
+				geoms.removeIf(a -> a.getPerimeter() < tolerance || !a.getInnerGeometry().isValid()
+						|| a.getInnerGeometry().isEmpty());
+
 			}
 			IList<IShape> results = GamaListFactory.create();
 
@@ -3254,7 +3255,7 @@ public abstract class Spatial {
 			}
 			results.removeIf(
 					a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
-			
+
 			if (keepMainGraph) {
 				IGraph graph = Graphs.spatialFromEdges(scope, results);
 				graph = Graphs.ReduceToMainconnectedComponentOf(scope, graph);

@@ -1463,6 +1463,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			super(loc);
 		}
 
+		@Override
+		public void setGeometricalType(final Type t) {}
+
 		/**
 		 * Method getReferenceGeometry(). Directly refers to the reference shape declared by the matrix.
 		 *
@@ -1869,6 +1872,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					supportImagePixels[getIndex()] = color.getRGB();
 				}
 			}
+
+			@Override
+			public void setGeometricalType(final Type t) {}
 
 			@Override
 			public final int getX() {

@@ -197,7 +197,7 @@ public class LayerSideControls {
 				});
 		cameraUp = EditorFactory.create(scope, contents, "Orientation:", data.getCameraUpVector(),
 				(EditorListener<ILocation>) newValue -> {
-					data.setCameraUpVector((GamaPoint) newValue, true);
+					data.setCameraUpVector((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
 		preset.setActive(!cameraLocked);
@@ -264,8 +264,8 @@ public class LayerSideControls {
 		for (@SuppressWarnings ("unused") final GamaPoint p : points) {
 			final int j = i;
 			i++;
-			point[j] = EditorFactory.create(scope, contents, "Point " + j + ":",
-					(GamaPoint) data.getKeystone().at(j).clone(), (EditorListener<ILocation>) newValue -> {
+			point[j] = EditorFactory.create(scope, contents, "Point " + j + ":", data.getKeystone().at(j).clone(),
+					(EditorListener<ILocation>) newValue -> {
 						data.getKeystone().at(j).setLocation(newValue);
 						data.setKeystone(data.getKeystone());
 						ds.updateDisplay(true);
@@ -524,11 +524,12 @@ public class LayerSideControls {
 	}
 
 	private String cameraDefinitionToCopy() {
-		String text =
-				IKeyword.CAMERA_POS + ": " + cameraPos.getCurrentValue().yNegated().withPrecision(4).serialize(false);
-		text += " " + IKeyword.CAMERA_LOOK_POS + ": "
-				+ cameraTarget.getCurrentValue().yNegated().withPrecision(4).serialize(false);
-		text += " " + IKeyword.CAMERA_UP_VECTOR + ": " + cameraUp.getCurrentValue().withPrecision(4).serialize(false);
+		String text = IKeyword.CAMERA_POS + ": "
+				+ new GamaPoint(cameraPos.getCurrentValue().toGamaPoint()).yNegated().withPrecision(4).serialize(false);
+		text += " " + IKeyword.CAMERA_LOOK_POS + ": " + new GamaPoint(cameraTarget.getCurrentValue().toGamaPoint())
+				.yNegated().withPrecision(4).serialize(false);
+		text += " " + IKeyword.CAMERA_UP_VECTOR + ": "
+				+ new GamaPoint(cameraUp.getCurrentValue().toGamaPoint()).withPrecision(4).serialize(false);
 		return text;
 	}
 

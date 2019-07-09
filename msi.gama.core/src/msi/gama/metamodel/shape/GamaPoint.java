@@ -56,11 +56,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		}
 
 		@Override
-		public Object clone() {
-			return this;
-		}
-
-		@Override
 		public GamaPoint divideBy(final double value) {
 			return this;
 		}
@@ -102,9 +97,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		public void setGeometry(final IShape g) {}
 
 		@Override
-		public void setLocation(final double... coords) {}
-
-		@Override
 		public GamaPoint setLocation(final double x, final double y, final double z) {
 			return this;
 		}
@@ -126,8 +118,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		@Override
 		public void setZ(final double zz) {}
 
-		@Override
-		public void copyShapeAttributesFrom(final IShape other) {}
 	};
 
 	@Override
@@ -157,22 +147,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 		}
 	}
 
-	public GamaPoint(final GamaPoint point) {
-		this((Coordinate) point);
-	}
-
-	public GamaPoint(final ILocation point) {
-		this(point == null ? NULL_POINT : point.toGamaPoint());
-	}
-
 	@Override
 	public void setLocation(final ILocation al) {
+		if (al == this) { return; }
 		setLocation(al.getX(), al.getY(), al.getZ());
 	}
 
 	public GamaPoint setLocation(final GamaPoint al) {
-		setLocation(al.x, al.y, al.z);
-		return this;
+		if (al == this) { return this; }
+		return setLocation(al.x, al.y, al.z);
 	}
 
 	public GamaPoint setLocation(final double x, final double y, final double z) {
@@ -180,22 +163,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		this.y = y;
 		setZ(z);
 		return this;
-	}
-
-	public void setLocation(final double... coords) {
-		final int n = coords.length;
-		switch (n) {
-			case 0:
-				return;
-			case 1:
-				setLocation(coords[0], coords[0], coords[0]);
-				break;
-			case 2:
-				setLocation(coords[0], coords[1], 0d);
-				break;
-			default:
-				setLocation(coords[0], coords[1], coords[2]);
-		}
 	}
 
 	@Override
@@ -361,7 +328,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public boolean equals(final Object o) {
-
 		if (o instanceof GamaPoint) {
 			final double tolerance = GamaPreferences.External.TOLERANCE_POINTS.getValue();
 			if (tolerance > 0.0) { return equalsWithTolerance((GamaPoint) o, tolerance); }
@@ -575,7 +541,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public IList<? extends ILocation> getPoints() {
 		final IList result = GamaListFactory.create(Types.POINT);
-		result.add(this);
+		result.add(clone());
 		return result;
 	}
 
@@ -687,7 +653,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public Double getDepth() {
-		return 0d;
+		return null;
 	}
 
 	/**
@@ -737,7 +703,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void copyShapeAttributesFrom(final IShape other) {}
 
 	public GamaPoint orthogonal() {
-
 		final double threshold = 0.6 * norm();
 		if (threshold == 0) { return this; }
 
@@ -750,7 +715,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		}
 		final double inverse = 1 / sqrt(x * x + y * y);
 		return new GamaPoint(inverse * y, -inverse * x, 0);
-
 	}
 
 	@Override
@@ -758,8 +722,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(round(x, i), round(y, i), round(z, i));
 	}
 
-	public boolean isNull() {
-		return this.equals(NULL_POINT);
+	@Override
+	public void setGeometricalType(final Type t) {}
+
+	@Override
+	public GamaPoint clone() {
+		return new GamaPoint(x, y, z);
 	}
 
 }

@@ -246,11 +246,11 @@ public class WorkbenchHelper {
 
 	public static void copy(final String o) {
 		final Runnable r = () -> getClipboard().setContents(new String[] { o }, TRANSFERS);
-		if (isDisplayThread()) {
-			r.run();
-		} else {
-			asyncRun(r);
-		}
+		// if (isDisplayThread()) {
+		// r.run();
+		// } else {
+		asyncRun(r);
+		// }
 	}
 
 	/**

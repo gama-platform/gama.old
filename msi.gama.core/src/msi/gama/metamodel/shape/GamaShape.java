@@ -18,10 +18,7 @@ import static msi.gama.util.GamaListFactory.create;
 import static msi.gama.util.GamaListFactory.createWithoutCasting;
 import static msi.gaml.types.Types.POINT;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -60,13 +57,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	protected Geometry geometry;
 	private IAgent agent;
-
-	// Property map to add all kinds of information (e.g to specify if the
-	// geometry is a sphere, a
-	// cube, etc...). Can be reused by subclasses (for example to store GIS
-	// information)
 	protected GamaMap attributes;
-	// private Envelope3D envelope;
+	private Double depth;
+	private Type type;
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -95,15 +88,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 * @param copyAttributes
 	 */
 
-	public GamaShape(final IShape source, final Geometry geom, final boolean copyAttributes) {
-		this((Geometry) (geom == null ? source.getInnerGeometry().clone() : geom));
-		if (copyAttributes) {
-			mixAttributes(source);
-		}
-	}
-
 	public GamaShape(final IShape source, final Geometry geom) {
-		this(source, geom, true);
+		this((Geometry) (geom == null ? source.getInnerGeometry().clone() : geom));
+		mixAttributes(source);
 	}
 
 	/**
@@ -115,6 +102,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	private void mixAttributes(final IShape source) {
 		if (source == null) { return; }
 		final GamaMap<String, Object> attr = (GamaMap<String, Object>) source.getAttributes();
+		copyShapeAttributesFrom(source);
 		if (attr == null) { return; }
 		for (final Map.Entry<String, Object> entry : attr.entrySet()) {
 			if (entry.getValue() != source) {
@@ -147,7 +135,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 			if (normalZ != null) {
 				final Double normalZ2 = getContourCoordinates(geometry).getNormal(true).z;
 				if (normalZ > 0 && normalZ2 < 0) {
-					setAttribute(DEPTH_ATTRIBUTE, -(Double) getAttribute(DEPTH_ATTRIBUTE));
+					setDepth(-getDepth());
 				}
 			}
 		}
@@ -186,8 +174,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 			}
 			setLocation(previous);
 			if (is3D()) {
-				setAttribute(IShape.DEPTH_ATTRIBUTE,
-						isBoundingBox ? bounds.getZ() : (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * bounds.getZ());
+				setDepth(isBoundingBox ? bounds.getZ() : getDepth() * bounds.getZ());
 			}
 		}
 	}
@@ -212,7 +199,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 			geometry.apply(Scaling3D.of(scaling));
 			setLocation(previous);
 			if (is3D()) {
-				setAttribute(IShape.DEPTH_ATTRIBUTE, (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
+				setDepth(getDepth() * scaling);
 			}
 		}
 	}
@@ -223,7 +210,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	}
 
 	public boolean is3D() {
-		return hasAttribute(DEPTH_ATTRIBUTE);
+		return getDepth() != null;
 	}
 
 	@Override
@@ -321,7 +308,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if (d == 0) {
 			return 0d;
 		} else {
-			final Type shapeType = Type.valueOf(getAttribute(IShape.TYPE_ATTRIBUTE).toString());
+			final Type shapeType = getGeometricalType();
 			// TODO : should put any specific shape volume calculation here !!!
 			switch (shapeType) {
 				case SPHERE:
@@ -408,13 +395,20 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public Double getDepth() {
-		return (Double) this.getAttribute(DEPTH_ATTRIBUTE);
+		return depth;
+		// return (Double) getAttribute(DEPTH_ATTRIBUTE);
+		// final Geometry g = getInnerGeometry();
+		// if (g == null) { return null; }
+		// return ((ShapeData) g.getUserData()).depth;
 	}
 
 	@Override
 	public void setDepth(final double depth) {
-		this.setAttribute(DEPTH_ATTRIBUTE, depth);
-		// this.setEnvelope(null);
+		this.depth = depth;
+		// setAttribute(DEPTH_ATTRIBUTE, depth);
+		// final Geometry g = getInnerGeometry();
+		// if (g == null) { return; }
+		// ((ShapeData) g.getUserData()).depth = depth;
 	}
 
 	@Override
@@ -517,10 +511,12 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public GamaShape copy(final IScope scope) {
-		return new GamaShape(this, (Geometry) geometry.clone());
+		final Geometry gg = (Geometry) geometry.clone();
+		return new GamaShape(this, gg);
 	}
 
 	/**
+	 *
 	 * @see msi.gama.interfaces.IGeometry#covers(msi.gama.interfaces.IGeometry)
 	 */
 	@Override
@@ -654,23 +650,30 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 */
 	@Override
 	public Type getGeometricalType() {
-		if (hasAttribute(TYPE_ATTRIBUTE)) { return (Type) getAttribute(TYPE_ATTRIBUTE); }
-		if (getInnerGeometry() == null) { return Type.NULL; }
-		final String type = getInnerGeometry().getGeometryType();
-		if (JTS_TYPES.containsKey(type)) { return JTS_TYPES.get(type); }
-		return Type.NULL;
+		if (type == null) {
+			final String tt = getInnerGeometry().getGeometryType();
+			if (JTS_TYPES.containsKey(tt)) {
+				type = JTS_TYPES.get(tt);
+			} else {
+				type = Type.NULL;
+			}
+		}
+		return type;
 	}
-
-	public static Set<Type> PREDEFINED_PROPERTIES = new HashSet(Arrays.asList(Type.BOX, Type.CUBE, Type.CYLINDER,
-			Type.CONE, Type.CIRCLE, Type.PLAN, Type.PYRAMID, Type.SPHERE, Type.TEAPOT, Type.POLYPLAN));
 
 	/**
 	 * Invoked when a geometrical primitive undergoes an operation (like minus(), plus()) that makes it change
 	 */
 	public void losePredefinedProperty() {
-		if (PREDEFINED_PROPERTIES.contains(getGeometricalType())) {
-			setAttribute(TYPE_ATTRIBUTE, Type.POLYHEDRON);
+		if (THREED_TYPES.contains(getGeometricalType())) {
+			setGeometricalType(Type.POLYHEDRON);
 		}
+	}
+
+	@Override
+	public void setGeometricalType(final Type t) {
+		type = t;
+		// setAttribute(TYPE_ATTRIBUTE, t);
 	}
 
 }

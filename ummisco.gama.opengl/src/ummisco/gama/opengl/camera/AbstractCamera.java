@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
 
-import java.awt.Point;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 
@@ -22,6 +20,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
@@ -29,14 +28,18 @@ import ummisco.gama.ui.utils.PlatformHelper;
 
 public abstract class AbstractCamera implements ICamera {
 
+	static {
+		DEBUG.ON();
+	}
+
 	protected final IOpenGLRenderer renderer;
 	private final GLU glu;
 	protected boolean initialized;
 
 	// Mouse
-	private Point mousePosition;
-	protected Point lastMousePressedPosition = new Point(0, 0);
-	protected Point firstMousePressedPosition;
+	private final GamaPoint mousePosition = new GamaPoint(0, 0);
+	protected final GamaPoint lastMousePressedPosition = new GamaPoint(0, 0);
+	protected final GamaPoint firstMousePressedPosition = new GamaPoint(0, 0);
 	protected boolean firsttimeMouseDown = true;
 	protected boolean cameraInteraction = true;
 
@@ -70,7 +73,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	public AbstractCamera(final IOpenGLRenderer renderer2) {
 		this.renderer = renderer2;
-		setMousePosition(new Point(0, 0));
 		setUpVector(0.0, 1.0, 0.0);
 		glu = new GLU();
 	}
@@ -100,6 +102,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void updateOrientation() {
+		DEBUG.OUT("Upvector updatd as " + upVector);
 		upVector.setLocation(renderer.getData().getCameraUpVector());
 	}
 
@@ -126,19 +129,21 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void setPosition(final double xPos, final double yPos, final double zPos) {
+
 		position.setLocation(xPos, yPos, zPos);
-		getRenderer().getData().setCameraPos((GamaPoint) position.clone());
+		getRenderer().getData().setCameraPos(new GamaPoint(position));
 	}
 
 	public void setTarget(final double xLPos, final double yLPos, final double zLPos) {
 		target.setLocation(xLPos, yLPos, zLPos);
-		getRenderer().getData().setCameraLookPos((GamaPoint) target.clone());
+		getRenderer().getData().setCameraLookPos(new GamaPoint(target));
 	}
 
 	@Override
 	public void setUpVector(final double xPos, final double yPos, final double zPos) {
 		upVector.setLocation(xPos, yPos, zPos);
-		getRenderer().getData().setCameraUpVector((GamaPoint) upVector.clone(), true);
+		DEBUG.OUT("Upvector modified as " + upVector);
+		getRenderer().getData().setCameraUpVector(new GamaPoint(upVector));
 	}
 
 	/* -------Get commands--------- */
@@ -223,8 +228,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected void internalMouseMove(final MouseEvent e) {
-		getMousePosition().x = PlatformHelper.scaleUpIfWin(e.x);
-		getMousePosition().y = PlatformHelper.scaleUpIfWin(e.y);
+		mousePosition.x = PlatformHelper.scaleUpIfWin(e.x);
+		mousePosition.y = PlatformHelper.scaleUpIfWin(e.y);
 		setCtrlPressed(GamaKeyBindings.ctrl(e));
 		setShiftPressed(GamaKeyBindings.shift(e));
 	}
@@ -277,16 +282,13 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
 		invokeOnGLThread(drawable -> {
-			// if (cameraInteraction) {
-			// PlatformHelper.scaleUpIfWin(e);
 			internalMouseDown(e);
-			// }
 			return false;
 		});
 
 	}
 
-	protected GamaPoint getNormalizedCoordinates(final int x, final int y) {
+	protected GamaPoint getNormalizedCoordinates(final double x, final double y) {
 		final double xCoordNormalized = x / getRenderer().getWidth();
 		double yCoordNormalized = y / getRenderer().getHeight();
 		if (!renderer.useShader()) {
@@ -321,7 +323,7 @@ public abstract class AbstractCamera implements ICamera {
 		final int x = PlatformHelper.scaleUpIfWin(e.x);
 		final int y = PlatformHelper.scaleUpIfWin(e.y);
 		if (firsttimeMouseDown) {
-			firstMousePressedPosition = new Point(x, y);
+			firstMousePressedPosition.setLocation(x, y, 0);
 			firsttimeMouseDown = false;
 		}
 		if (keystoneMode) {
@@ -335,11 +337,10 @@ public abstract class AbstractCamera implements ICamera {
 			}
 		}
 
-		lastMousePressedPosition = new Point(x, y);
+		lastMousePressedPosition.setLocation(x, y, 0);
 		// Activate Picking when press and right click
 		if (e.button == 3 && !keystoneMode) {
-			if (renderer.getOpenGLHelper()
-					.mouseInROI(new GamaPoint(lastMousePressedPosition.x, lastMousePressedPosition.y))) {
+			if (renderer.getOpenGLHelper().mouseInROI(lastMousePressedPosition)) {
 				renderer.getSurface().selectionIn(renderer.getOpenGLHelper().getROIEnvelope());
 			} else {
 				renderer.getPickingHelper().setPicking(true);
@@ -396,8 +397,7 @@ public abstract class AbstractCamera implements ICamera {
 	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
 		getMousePosition().x = PlatformHelper.scaleUpIfWin(e.x);
 		getMousePosition().y = PlatformHelper.scaleUpIfWin(e.y);
-		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y),
-				new GamaPoint(getMousePosition().x, getMousePosition().y));
+		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition), new GamaPoint(mousePosition));
 		ROICurrentlyDrawn = true;
 	}
 
@@ -423,12 +423,8 @@ public abstract class AbstractCamera implements ICamera {
 	// }
 
 	@Override
-	public Point getMousePosition() {
+	public GamaPoint getMousePosition() {
 		return mousePosition;
-	}
-
-	protected void setMousePosition(final Point mousePosition) {
-		this.mousePosition = mousePosition;
 	}
 
 	public boolean isViewInXYPlan() {
@@ -437,7 +433,7 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	@Override
-	public Point getLastMousePressedPosition() {
+	public GamaPoint getLastMousePressedPosition() {
 		return lastMousePressedPosition;
 	}
 

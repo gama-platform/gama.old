@@ -1,6 +1,5 @@
 package ummisco.gama.opengl.renderer.helpers;
 
-import java.awt.Point;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	public final static GamaPoint UNDEFINED = new GamaPoint();
-	public final static Point NULL_POINT = new Point();
+	public final static GamaPoint NULL_POINT = new GamaPoint();
 	public static Map<String, CameraPreset> PRESETS = new LinkedHashMap<>();
 	ICamera camera;
 
@@ -212,13 +211,13 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	}
 
 	@Override
-	public Point getMousePosition() {
+	public GamaPoint getMousePosition() {
 		if (camera != null) { return camera.getMousePosition(); }
 		return NULL_POINT;
 	}
 
 	@Override
-	public Point getLastMousePressedPosition() {
+	public GamaPoint getLastMousePressedPosition() {
 		if (camera != null) { return camera.getLastMousePressedPosition(); }
 		return NULL_POINT;
 	}

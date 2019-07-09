@@ -457,7 +457,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public ILocation getModelCoordinates() {
-		final Point mp = renderer.getCameraHelper().getMousePosition();
+		final GamaPoint mp = renderer.getCameraHelper().getMousePosition();
 		if (mp == null) { return null; }
 		final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
 		if (p == null) { return null; }
@@ -509,7 +509,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels) {
-		final Point mp = new Point(xOnScreen, yOnScreen);
+		final GamaPoint mp = new GamaPoint(xOnScreen, yOnScreen);
 		final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
 		return new GamaPoint(p.x, -p.y);
 	}
@@ -614,11 +614,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			}
 		}
 		if (withHighlight) {
-			menuManager.buildMenu(renderer.getCameraHelper().getMousePosition().x,
-					renderer.getCameraHelper().getMousePosition().y, ag, cleanup, AgentsMenu.getHighlightActionFor(ag));
+			menuManager.buildMenu((int) renderer.getCameraHelper().getMousePosition().x,
+					(int) renderer.getCameraHelper().getMousePosition().y, ag, cleanup,
+					AgentsMenu.getHighlightActionFor(ag));
 		} else {
-			menuManager.buildMenu(renderer.getCameraHelper().getMousePosition().x,
-					renderer.getCameraHelper().getMousePosition().y, ag, cleanup);
+			menuManager.buildMenu((int) renderer.getCameraHelper().getMousePosition().x,
+					(int) renderer.getCameraHelper().getMousePosition().y, ag, cleanup);
 		}
 	}
 
@@ -642,8 +643,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				() -> renderer.getOpenGLHelper().toogleROI());
 		actions.put("Focus on region", () -> renderer.getCameraHelper().zoomFocus(env));
 		WorkbenchHelper.run(() -> {
-			final Menu menu = menuManager.buildROIMenu(renderer.getCameraHelper().getMousePosition().x,
-					renderer.getCameraHelper().getMousePosition().y, agents, actions, images);
+			final Menu menu = menuManager.buildROIMenu((int) renderer.getCameraHelper().getMousePosition().x,
+					(int) renderer.getCameraHelper().getMousePosition().y, agents, actions, images);
 			menu.addMenuListener(new MenuListener() {
 
 				@Override
@@ -806,9 +807,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public void dispatchMouseEvent(final int swtMouseEvent) {
-		final Point p = renderer.getCameraHelper().getMousePosition();
-		final int x = p.x;
-		final int y = p.y;
+		final GamaPoint p = renderer.getCameraHelper().getMousePosition();
+		final int x = (int) p.x;
+		final int y = (int) p.y;
 		for (final IEventLayerListener gl : listeners) {
 			switch (swtMouseEvent) {
 				case SWT.MouseDown:

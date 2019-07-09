@@ -36,10 +36,15 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  */
 public class LayeredDisplayData {
+
+	static {
+		DEBUG.ON();
+	}
 
 	public enum Changes {
 		SPLIT_LAYER,
@@ -439,13 +444,14 @@ public class LayeredDisplayData {
 	 * @param cameraUpVector
 	 *            the cameraUpVector to set
 	 */
-	public void setCameraUpVector(final GamaPoint point, final boolean notify) {
+	public void setCameraUpVector(final GamaPoint point) {
 		if (point == null) { return; }
 		final GamaPoint c = point;
 		if (cameraUpVector != null) {
 			if (c.equals(cameraUpVector)) {
 				return;
 			} else {
+				DEBUG.OUT("UpVectors different: x " + point.x + " != " + cameraUpVector.x);
 				cameraUpVector.setLocation(c);
 			}
 		} else {
@@ -855,7 +861,7 @@ public class LayeredDisplayData {
 		if (cameraUp != null) {
 			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraUp.value(scope));
 			location.setY(-location.getY()); // y component need to be reverted
-			setCameraUpVector(location, true);
+			setCameraUpVector(location);
 		}
 
 		// Set the up vector of the opengl Camera (see gluPerspective)

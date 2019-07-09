@@ -2,11 +2,11 @@
  *
  * msi.gama.metamodel.shape.GamaProxyGeometry.java, in plugin msi.gama.core, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -75,7 +75,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method setLocation()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ILocated#setLocation(msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
@@ -85,7 +85,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getLocation()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ILocated#getLocation()
 	 */
 	@Override
@@ -95,7 +95,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method stringValue()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IValue#stringValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -112,7 +112,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method copy()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IValue#copy(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -122,7 +122,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method toGaml()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlable#toGaml()
 	 */
 	@Override
@@ -134,7 +134,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	/**
 	 * Method getAttributes(). The attributes are shared by all the translated geometries. Another option would be to
 	 * maintain a map of attributes in each translated shape, but it is costly.
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IAttributed#getAttributes()
 	 */
 	@Override
@@ -145,7 +145,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getOrCreateAttributes()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IAttributed#getOrCreateAttributes()
 	 */
 	@Override
@@ -159,7 +159,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getAttribute()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IAttributed#getAttribute(java.lang.Object)
 	 */
 	@Override
@@ -171,7 +171,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method setAttribute()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IAttributed#setAttribute(java.lang.Object, java.lang.Object)
 	 */
 	@Override
@@ -182,7 +182,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method hasAttribute()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IAttributed#hasAttribute(java.lang.Object)
 	 */
 	@Override
@@ -193,7 +193,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getAgent()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getAgent()
 	 */
 	@Override
@@ -204,7 +204,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method setAgent()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#setAgent(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -214,7 +214,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getGeometry()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getGeometry()
 	 */
 	@Override
@@ -224,7 +224,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method setGeometry()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#setGeometry(msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
@@ -234,7 +234,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method isPoint()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#isPoint()
 	 */
 	@Override
@@ -249,7 +249,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getInnerGeometry()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getInnerGeometry()
 	 */
 	@Override
@@ -262,7 +262,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	/**
 	 * Method getEnvelope(). Computed dynamically. A subclass may choose to cache this (often used) information by
 	 * redefining this method
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getEnvelope()
 	 */
 	@Override
@@ -279,7 +279,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method covers()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#covers(msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
@@ -290,7 +290,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method crosses()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#crosses(msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
@@ -300,7 +300,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method euclidianDistanceTo()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#euclidianDistanceTo(msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
@@ -311,7 +311,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method euclidianDistanceTo()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#euclidianDistanceTo(msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
@@ -326,7 +326,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method intersects()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#intersects(msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
@@ -336,7 +336,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getPerimeter()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getPerimeter()
 	 */
 	@Override
@@ -346,7 +346,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method setInnerGeometry()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
 	 */
 	@Override
@@ -354,7 +354,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method dispose()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#dispose()
 	 */
 	@Override
@@ -372,7 +372,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getPoints()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override
@@ -387,17 +387,17 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method setDepth()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#setDepth(double)
 	 */
 	@Override
 	public void setDepth(final double depth) {
-		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		// this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
 	}
 
 	/**
 	 * Method getArea()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getArea()
 	 */
 	@Override
@@ -407,7 +407,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getVolume()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getVolume()
 	 */
 	@Override
@@ -417,7 +417,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getHoles()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getHoles()
 	 */
 	@Override
@@ -437,7 +437,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getCentroid()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getCentroid()
 	 */
 	@Override
@@ -447,7 +447,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getExteriorRing()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getExteriorRing()
 	 */
 	@Override
@@ -457,7 +457,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getWidth()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getWidth()
 	 */
 	@Override
@@ -467,7 +467,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getHeight()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getHeight()
 	 */
 	@Override
@@ -477,7 +477,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getDepth()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getDepth()
 	 */
 	@Override
@@ -487,7 +487,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	/**
 	 * Method getGeometricEnvelope()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
 	 */
 	@Override

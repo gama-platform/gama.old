@@ -4,12 +4,10 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
-
-import java.awt.Point;
 
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -29,60 +27,60 @@ import msi.gama.metamodel.shape.GamaPoint;
 public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListener, MouseMoveListener,
 		MouseTrackListener, MouseWheelListener {
 	@FunctionalInterface
-	public static interface CameraPreset {
+	public interface CameraPreset {
 		void applyTo(AbstractCamera camera);
 	}
 
 	// Positions
 
-	public abstract GamaPoint getPosition();
+	GamaPoint getPosition();
 
-	public abstract GamaPoint getOrientation();
+	GamaPoint getOrientation();
 
-	public abstract GamaPoint getTarget();
+	GamaPoint getTarget();
 
-	public abstract Point getMousePosition();
+	GamaPoint getMousePosition();
 
-	public abstract Point getLastMousePressedPosition();
+	GamaPoint getLastMousePressedPosition();
 
 	// Commands
 
-	public void setDistance(final double distance);
+	void setDistance(final double distance);
 
-	public abstract void initialize();
+	void initialize();
 
-	public abstract void update();
+	void update();
 
-	public abstract void updatePosition();
+	void updatePosition();
 
-	public abstract void updateTarget();
+	void updateTarget();
 
-	public abstract void updateOrientation();
+	void updateOrientation();
 
-	public abstract void animate();
+	void animate();
 
-	public abstract void applyPreset(String preset);
+	void applyPreset(String preset);
 
 	// Zoom
 
-	public abstract Double zoomLevel();
+	Double zoomLevel();
 
-	public abstract void zoom(boolean in);
+	void zoom(boolean in);
 
-	public abstract void zoom(double level);
+	void zoom(double level);
 
-	public abstract void zoomFocus(Envelope3D env);
+	void zoomFocus(Envelope3D env);
 
-	public abstract void setPosition(double x, double d, double e);
+	void setPosition(double x, double d, double e);
 
-	public abstract void setUpVector(double i, double j, double k);
+	void setUpVector(double i, double j, double k);
 
-	public abstract double getDistance();
+	double getDistance();
 
-	public void updateCartesianCoordinatesFromAngles();
+	void updateCartesianCoordinatesFromAngles();
 
 	default void updateSphericalCoordinatesFromLocations() {}
 
-	public abstract void setInitialZFactorCorrector(double factor);
+	void setInitialZFactorCorrector(double factor);
 
 }

@@ -13,7 +13,6 @@ package ummisco.gama.opengl.renderer;
 import static ummisco.gama.ui.utils.PlatformHelper.scaleDownIfMac;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -357,7 +356,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		// Multiline: Issue #780
 		if (string.contains("\n")) {
 			int i = 0;
-			double shift = attributes.font.getSize() / this.getyRatioBetweenPixelsAndModelUnits();
+			final double shift = attributes.font.getSize() / this.getyRatioBetweenPixelsAndModelUnits();
 			for (final String s : string.split("\n")) {
 				// DEBUG.OUT("Attributes Font Size: " + attributes.font.getSize());
 				// DEBUG.OUT("Get Y Ratio: " + getyRatioBetweenPixelsAndModelUnits());
@@ -440,7 +439,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getRealWorldPointFromWindowPoint (java.awt.Point)
 	 */
 	@Override
-	public GamaPoint getRealWorldPointFromWindowPoint(final Point mouse) {
+	public GamaPoint getRealWorldPointFromWindowPoint(final GamaPoint mouse) {
 		return openGL.getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y));
 	}
 

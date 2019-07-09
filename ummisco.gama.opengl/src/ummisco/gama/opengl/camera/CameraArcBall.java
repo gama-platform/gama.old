@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.camera;
 
-import java.awt.Point;
-
 import org.eclipse.swt.SWT;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -225,7 +223,7 @@ public class CameraArcBall extends AbstractCamera {
 		} else {
 			data.setCameraPos(initialPosition);
 			data.setCameraLookPos(initialTarget);
-			data.setCameraUpVector(initialUpVector, true);
+			data.setCameraUpVector(initialUpVector);
 		}
 	}
 
@@ -397,10 +395,10 @@ public class CameraArcBall extends AbstractCamera {
 
 		super.internalMouseMove(e);
 		if ((e.stateMask & SWT.BUTTON_MASK) == 0) { return; }
-		final Point newPoint = new Point(PlatformHelper.scaleUpIfWin(x), PlatformHelper.scaleUpIfWin(y));
+		final GamaPoint newPoint = new GamaPoint(PlatformHelper.scaleUpIfWin(x), PlatformHelper.scaleUpIfWin(y));
 		if (cameraInteraction && GamaKeyBindings.ctrl(e)) {
-			final int horizMovement = PlatformHelper.scaleUpIfWin(x) - lastMousePressedPosition.x;
-			final int vertMovement = PlatformHelper.scaleUpIfWin(y) - lastMousePressedPosition.y;
+			final int horizMovement = (int) (newPoint.x - lastMousePressedPosition.x);
+			final int vertMovement = (int) (newPoint.y - lastMousePressedPosition.y);
 			// if (flipped) {
 			// horizMovement = -horizMovement;
 			// vertMovement = -vertMovement;
@@ -409,7 +407,7 @@ public class CameraArcBall extends AbstractCamera {
 			final double horizMovement_real = horizMovement;
 			final double vertMovement_real = vertMovement;
 
-			lastMousePressedPosition = newPoint;
+			lastMousePressedPosition.setLocation(newPoint);
 			theta = theta - horizMovement_real * getSensivity();
 
 			if (flipped) {
@@ -469,8 +467,8 @@ public class CameraArcBall extends AbstractCamera {
 			getRenderer().getOpenGLHelper().getROIEnvelope().translate(p.x, p.y);
 
 		} else if (cameraInteraction) {
-			int horizMovement = PlatformHelper.scaleUpIfWin(x) - lastMousePressedPosition.x;
-			int vertMovement = PlatformHelper.scaleUpIfWin(y) - lastMousePressedPosition.y;
+			int horizMovement = (int) (PlatformHelper.scaleUpIfWin(x) - lastMousePressedPosition.x);
+			int vertMovement = (int) (PlatformHelper.scaleUpIfWin(y) - lastMousePressedPosition.y);
 			if (flipped) {
 				horizMovement = -horizMovement;
 				vertMovement = -vertMovement;
@@ -481,7 +479,7 @@ public class CameraArcBall extends AbstractCamera {
 
 			translateCameraFromScreenPlan(horizMovement_real, vertMovement_real);
 
-			lastMousePressedPosition = newPoint;
+			lastMousePressedPosition.setLocation(newPoint);
 		}
 
 	}
@@ -494,11 +492,6 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	protected void drawRotationHelper() {
 		renderer.getOpenGLHelper().isInRotationMode(ctrlPressed && cameraInteraction);
-		// if (ctrlPressed) {
-		// renderer.getSceneHelper().beginRotationMode();
-		// } else {
-		// renderer.getSceneHelper().stopRotationMode();
-		// }
 	}
 
 	@Override
