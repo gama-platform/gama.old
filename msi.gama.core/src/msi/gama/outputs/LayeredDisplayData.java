@@ -43,7 +43,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class LayeredDisplayData {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	public enum Changes {

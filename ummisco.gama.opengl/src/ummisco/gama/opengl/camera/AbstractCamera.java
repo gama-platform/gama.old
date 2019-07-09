@@ -29,7 +29,7 @@ import ummisco.gama.ui.utils.PlatformHelper;
 public abstract class AbstractCamera implements ICamera {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	protected final IOpenGLRenderer renderer;
