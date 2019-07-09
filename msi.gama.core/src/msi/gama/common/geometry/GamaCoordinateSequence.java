@@ -129,7 +129,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 */
 	@Override
 	public GamaPoint getCoordinateCopy(final int i) {
-		return new GamaPoint((Coordinate) points[i]);
+		return new GamaPoint(points[i]);
 	}
 
 	/**

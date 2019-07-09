@@ -48,7 +48,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public Coordinate getCoordinateCopy(final int i) {
-		return new GamaPoint((Coordinate) point);
+		return new GamaPoint(point);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public final ICoordinates clone() {
-		return new UniqueCoordinateSequence(new GamaPoint((Coordinate) point));
+		return new UniqueCoordinateSequence(new GamaPoint(point));
 	}
 
 	@Override
