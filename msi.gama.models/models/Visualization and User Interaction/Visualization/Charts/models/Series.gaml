@@ -44,6 +44,18 @@ experiment "Different series" type: gui
 
 		}
 
+		display "style_cumulative_style_chart_without_axes" type: java2D
+		{
+			chart "Style Cumulative chart Without axes" type: series 
+				y_tick_values_visible: false y_tick_line_visible: false x_tick_values_visible: false x_tick_line_visible: false
+			{
+				data "Spline" value: cos(100 * cycle) color: # orange style: spline;
+				data "area" value: cos(100 * cycle) * 0.3 color: # red style: "area";
+				data "dot" value: cos(100 * cycle + 60) color: # green style: dot;
+			}
+
+		}
+
 		display "datalist_xy_chart" type: java2D
 		{
 			chart "datalist_xy_cumulative_chart" type: xy
@@ -101,6 +113,13 @@ experiment "Different series" type: gui
 				cos(cycle * 100) * 3;
 			}
 
+		}
+		
+		display "double axes" {
+			chart "double Y axes" y_label: "axis 1" y2_label: "axis 2" y_range: {-1,1} y2_range: {0,1000} y2_log_scale: true {
+				data "cos" value: cos(100 * cycle) color: #red;
+				data "cycle" value: cycle color: #green use_second_y_axis: true;
+			}
 		}
 
 	}
