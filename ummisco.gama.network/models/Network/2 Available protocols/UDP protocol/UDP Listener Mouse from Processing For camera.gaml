@@ -28,7 +28,7 @@ global skills:[network] {
 	reflex fetch when:has_more_message() {	
 		loop while:has_more_message()
 		{
-			message s <- last(mailbox);
+			message s <- fetch_message();
 			list coordinates <- string(s.contents) split_with(";");
 			location <- {int(coordinates[0]),int(coordinates[1])};
 			cam_loc <- {int(coordinates[0]),int(coordinates[1])};
