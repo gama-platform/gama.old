@@ -33,6 +33,13 @@ public class GamaListCollectionWrapper<E> extends ForwardingCollection<E> implem
 	}
 
 	@Override
+	public boolean equals(final Object other) {
+		if (other == this) { return true; }
+		if (!(other instanceof IList)) { return false; }
+		return GamaListFactory.equals(this, (IList) other);
+	}
+
+	@Override
 	public IContainerType<?> getGamlType() {
 		return type;
 	}

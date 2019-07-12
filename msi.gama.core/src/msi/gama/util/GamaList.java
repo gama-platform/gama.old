@@ -41,6 +41,13 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
+	public boolean equals(final Object other) {
+		if (other == this) { return true; }
+		if (!(other instanceof IList)) { return false; }
+		return GamaListFactory.equals(this, (IList) other);
+	}
+
+	@Override
 	public StreamEx<E> stream(final IScope scope) {
 		return StreamEx.<E> of((ArrayList<E>) this);
 	}

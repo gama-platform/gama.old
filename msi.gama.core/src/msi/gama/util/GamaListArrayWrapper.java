@@ -35,6 +35,13 @@ public class GamaListArrayWrapper<E> extends AbstractList<E> implements IList<E>
 	}
 
 	@Override
+	public boolean equals(final Object other) {
+		if (other == this) { return true; }
+		if (!(other instanceof IList)) { return false; }
+		return GamaListFactory.equals(this, (IList) other);
+	}
+
+	@Override
 	@SuppressWarnings ("unchecked")
 	public <T> T[] toArray(final T[] a) {
 		final int size = size();

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -358,6 +359,16 @@ public class GamaListFactory {
 	 */
 	public static <E> IList<E> wrap(final IType contentType, final Collection<E> wrapped) {
 		return new GamaListCollectionWrapper(wrapped, contentType);
+	}
+
+	public static boolean equals(final IList one, final IList two) {
+		if (one.size() != two.size()) { return false; }
+		final Iterator<Object> it1 = one.iterator();
+		final Iterator<Object> it2 = two.iterator();
+		while (it1.hasNext() && it2.hasNext()) {
+			if (!Objects.equals(it1.next(), it2.next())) { return false; }
+		}
+		return true;
 	}
 
 }
