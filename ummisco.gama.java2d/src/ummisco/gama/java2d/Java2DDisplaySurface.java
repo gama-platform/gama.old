@@ -446,7 +446,9 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		for (final ILayer layer : layers) {
 			if (layer.isProvidingWorldCoordinates()) { return layer.getModelCoordinatesFrom(xc, yc, this); }
 		}
-		return null;
+		// See Issue #2783: we dont return null but 0,0.
+		// return null;
+		return new GamaPoint();
 	}
 
 	@Override
