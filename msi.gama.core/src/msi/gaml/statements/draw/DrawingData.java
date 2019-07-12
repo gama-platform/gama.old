@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.DrawingData.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.draw.DrawingData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -106,7 +106,7 @@ public class DrawingData extends AttributeHolder {
 			switch (exp.getGamlType().id()) {
 				case IType.COLOR:
 					final GamaColor currentColor = (GamaColor) exp.value(scope);
-					return GamaListFactory.createWithoutCasting(Types.COLOR, currentColor);
+					return GamaListFactory.wrap(Types.COLOR, currentColor);
 				case IType.LIST:
 					return (IList) exp.value(scope);
 				default:
@@ -119,7 +119,7 @@ public class DrawingData extends AttributeHolder {
 			if (exp.getGamlType().getGamlType() == Types.LIST) {
 				return GamaListType.staticCast(scope, exp.value(scope), Types.STRING, false);
 			} else {
-				return GamaListFactory.createWithoutCasting(Types.NO_TYPE, exp.value(scope));
+				return GamaListFactory.wrap(Types.NO_TYPE, exp.value(scope));
 			}
 		}, Types.LIST, null);
 		this.material = create(IKeyword.MATERIAL, Types.MATERIAL, null);

@@ -11,13 +11,13 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import org.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator;
 
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 
 public class DormandPrince54Solver extends Solver {
 
 	public DormandPrince54Solver(final double minStep, final double maxStep, final double scalAbsoluteTolerance,
-			final double scalRelativeTolerance, final GamaMap<String, IList<Double>> integrated_val) {
+			final double scalRelativeTolerance, final IMap<String, IList<Double>> integrated_val) {
 		super((minStep + maxStep) / 2,
 				new DormandPrince54Integrator(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance),
 				integrated_val);

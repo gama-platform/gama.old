@@ -16,7 +16,6 @@ import java.util.HashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -204,7 +203,7 @@ public class ChartDataSeries {
 
 		if (!uselist) { return o; }
 
-		if (o instanceof GamaList) {
+		if (o instanceof IList) {
 			final IList ol = Cast.asList(scope, o);
 			if (ol.size() < listvalue) { return null; }
 			return ol.get(listvalue);
@@ -230,7 +229,7 @@ public class ChartDataSeries {
 		if (barvalues.containsKey(IKeyword.COLOR)) {
 			final Object o = getlistvalue(scope, barvalues, IKeyword.COLOR, listvalue);
 			if (o != null) {
-				if (o instanceof GamaList) {
+				if (o instanceof IList) {
 					final IList ol = Cast.asList(scope, o);
 					if (ol.size() == 1) {
 						this.setMycolor(Cast.asColor(scope, ol.get(0)));
@@ -266,7 +265,7 @@ public class ChartDataSeries {
 		if (this.isUseYErrValues()) {
 			final Object o = getlistvalue(scope, barvalues, ChartDataStatement.YERR_VALUES, listvalue);
 			if (o != null) {
-				if (o instanceof GamaList) {
+				if (o instanceof IList) {
 					final IList ol = Cast.asList(scope, o);
 					if (ol.size() > 1) {
 						this.yerrvaluesmin.add(Cast.asFloat(scope, ol.get(0)));
@@ -287,7 +286,7 @@ public class ChartDataSeries {
 		if (this.isUseXErrValues()) {
 			final Object o = getlistvalue(scope, barvalues, ChartDataStatement.XERR_VALUES, listvalue);
 			if (o != null) {
-				if (o instanceof GamaList) {
+				if (o instanceof IList) {
 					final IList ol = Cast.asList(scope, o);
 					if (ol.size() > 1) {
 						this.xerrvaluesmin.add(Cast.asFloat(scope, ol.get(0)));
@@ -325,7 +324,7 @@ public class ChartDataSeries {
 		if (barvalues.containsKey(IKeyword.COLOR)) {
 			final Object o = getlistvalue(scope, barvalues, IKeyword.COLOR, listvalue);
 			if (o != null) {
-				if (o instanceof GamaList) {
+				if (o instanceof IList) {
 					final IList ol = Cast.asList(scope, o);
 					if (ol.size() == 1) {
 						this.setMycolor(Cast.asColor(scope, ol.get(0)));
@@ -360,7 +359,7 @@ public class ChartDataSeries {
 		if (this.isUseYErrValues()) {
 			final Object o = getlistvalue(scope, barvalues, ChartDataStatement.YERR_VALUES, listvalue);
 			if (o != null) {
-				if (o instanceof GamaList) {
+				if (o instanceof IList) {
 					final IList ol = Cast.asList(scope, o);
 					if (ol.size() > 1) {
 						this.yerrvaluesmin.add(Cast.asFloat(scope, ol.get(0)));

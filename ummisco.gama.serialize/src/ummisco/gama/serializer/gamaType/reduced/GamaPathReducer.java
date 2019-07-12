@@ -2,7 +2,7 @@ package ummisco.gama.serializer.gamaType.reduced;
 
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gama.util.IReference;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.path.GamaPath;
@@ -14,13 +14,13 @@ public class GamaPathReducer {
 	IGraph<Object, Object> g;
 	Object start;
 	Object target;
-	GamaList<Object> edges;
+	IList<Object> edges;
 
 	public GamaPathReducer(final GamaPath p) {
 		g = p.getGraph();
 		start = p.getStartVertex();
 		target = p.getEndVertex();
-		edges = (GamaList<Object>) p.getEdgeList();
+		edges = p.getEdgeList();
 	}
 
 	@SuppressWarnings ("unchecked")
@@ -28,7 +28,7 @@ public class GamaPathReducer {
 		g = (IGraph) IReference.getObjectWithoutReference(g, sim);
 		start = IReference.getObjectWithoutReference(start, sim);
 		target = IReference.getObjectWithoutReference(target, sim);
-		edges = (GamaList) IReference.getObjectWithoutReference(edges, sim);
+		edges = (IList) IReference.getObjectWithoutReference(edges, sim);
 	}
 
 	public GamaPath constructObject(final IScope scope) {

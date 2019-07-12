@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.continuous.ContinuousTopology.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.continuous.ContinuousTopology.java, in plugin msi.gama.core, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.continuous;
 
@@ -37,7 +37,7 @@ public class ContinuousTopology extends AbstractTopology {
 	 */
 	public ContinuousTopology(final IScope scope, final IShape environment) {
 		super(scope, environment, null);
-		places = GamaListFactory.createWithoutCasting(Types.GEOMETRY, environment);
+		places = GamaListFactory.wrap(Types.GEOMETRY, environment);
 	}
 
 	/**
@@ -85,9 +85,7 @@ public class ContinuousTopology extends AbstractTopology {
 		// TODO Attention : calcul fait uniquement sur les locations. Il
 		// conviendrait plutot de
 		// faire une DistanceOp().getNearestPoints()
-		if (g1 == null || g2 == null) {
-			return null;
-		}
+		if (g1 == null || g2 == null) { return null; }
 		ILocation source = g1.getLocation();
 		ILocation target = g2.getLocation();
 		if (isTorus()) {
@@ -112,23 +110,15 @@ public class ContinuousTopology extends AbstractTopology {
 
 	@Override
 	public Double distanceBetween(final IScope scope, final IShape g1, final IShape g2) {
-		if (g1 == g2) {
-			return 0d;
-		}
-		if (isTorus()) {
-			return returnToroidalGeom(g1).distance(returnToroidalGeom(g2));
-		}
+		if (g1 == g2) { return 0d; }
+		if (isTorus()) { return returnToroidalGeom(g1).distance(returnToroidalGeom(g2)); }
 		return g1.euclidianDistanceTo(g2);
 	}
 
 	@Override
 	public Double distanceBetween(final IScope scope, final ILocation g1, final ILocation g2) {
-		if (g1 == g2) {
-			return 0d;
-		}
-		if (isTorus()) {
-			return returnToroidalGeom(g1).distance(returnToroidalGeom(g2));
-		}
+		if (g1 == g2) { return 0d; }
+		if (isTorus()) { return returnToroidalGeom(g1).distance(returnToroidalGeom(g2)); }
 		return g1.euclidianDistanceTo(g2);
 	}
 

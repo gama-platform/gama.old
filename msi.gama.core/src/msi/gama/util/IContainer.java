@@ -50,7 +50,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 	IMatrix<?> matrixValue(IScope scope, IType<?> contentType, ILocation size, boolean copy);
 
-	GamaMap<?, ?> mapValue(IScope scope, IType<?> keyType, IType<?> contentType, boolean copy);
+	<D, C> IMap<C, D> mapValue(IScope scope, IType<C> keyType, IType<D> contentType, boolean copy);
 
 	java.lang.Iterable<? extends ValueType> iterable(final IScope scope);
 

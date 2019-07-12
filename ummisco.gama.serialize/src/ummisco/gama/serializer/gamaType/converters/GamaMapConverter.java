@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'GamaMapConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaMapConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
@@ -17,10 +16,10 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.agent.SavedAgent;
-import msi.gama.util.GamaMap;
+import msi.gama.util.IMap;
 import ummisco.gama.serializer.gamaType.reduced.GamaMapReducer;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class GamaMapConverter implements Converter {
 
 	ConverterScope convertScope;
@@ -31,15 +30,13 @@ public class GamaMapConverter implements Converter {
 
 	@Override
 	public boolean canConvert(final Class arg0) {
-		if (GamaMap.class.equals(arg0)&&!(SavedAgent.class.equals(arg0))) {
-			return true;
-		}
+		if (IMap.class.isAssignableFrom(arg0) && !SavedAgent.class.equals(arg0)) { return true; }
 		return false;
 	}
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
-		final GamaMap mp = (GamaMap) arg0;
+		final IMap mp = (IMap) arg0;
 		// GamaMapReducer m = new GamaMapReducer(mp);
 		// writer.startNode("GamaMap");
 		//

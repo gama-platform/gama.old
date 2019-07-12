@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.display.LayerManager.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.display.LayerManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.display;
 
@@ -132,7 +132,7 @@ public class LayerManager implements ILayerManager {
 
 	/**
 	 * Method focusOn()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ILayerManager#focusOn(msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
@@ -242,7 +242,7 @@ public class LayerManager implements ILayerManager {
 
 	/**
 	 * Allows the layers to do some cleansing when the output of the display changes
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ILayerManager#outputChanged()
 	 */
 	@Override
@@ -265,7 +265,7 @@ public class LayerManager implements ILayerManager {
 
 	/**
 	 * Method makeItemSelectable()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#makeItemSelectable(java.lang.Object, boolean)
 	 */
 	@Override
@@ -275,7 +275,7 @@ public class LayerManager implements ILayerManager {
 
 	/**
 	 * Method makeItemVisible()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#makeItemVisible(java.lang.Object, boolean)
 	 */
 	@Override
@@ -296,7 +296,7 @@ public class LayerManager implements ILayerManager {
 
 	/**
 	 * Method handleMenu()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override

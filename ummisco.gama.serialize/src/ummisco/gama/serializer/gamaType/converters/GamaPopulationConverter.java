@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import ummisco.gama.dev.utils.DEBUG;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
@@ -63,7 +63,7 @@ public class GamaPopulationConverter implements Converter {
 		context.convertAnother(pop.getAgents(convertScope.getScope()));
 		writer.endNode();
 
-	//	System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");
+		// System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");
 		DEBUG.OUT("===========END ConvertAnother : GamaSavedAgentConverter");
 	}
 
@@ -71,7 +71,7 @@ public class GamaPopulationConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 
 		reader.moveDown();
-		final GamaList<IAgent> listAgetFromPopulation = (GamaList<IAgent>) context.convertAnother(null, GamaList.class);
+		final IList<IAgent> listAgetFromPopulation = (IList<IAgent>) context.convertAnother(null, IList.class);
 		reader.moveUp();
 
 		return listAgetFromPopulation;

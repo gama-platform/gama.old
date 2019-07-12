@@ -29,7 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
+import msi.gama.util.IMap;
 import msi.gama.util.path.IPath;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -201,9 +201,9 @@ public class MovingSkill3D extends MovingSkill {
 			Double newHeading = null;
 			if (on != null && on instanceof GamaSpatialGraph) {
 				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
-				GamaMap<IShape, Double> probaDeplacement = null;
+				IMap<IShape, Double> probaDeplacement = null;
 				if (scope.hasArg("proba_edges")) {
-					probaDeplacement = (GamaMap<IShape, Double>) scope.getVarValue("proba_edges");
+					probaDeplacement = (IMap<IShape, Double>) scope.getVarValue("proba_edges");
 				}
 				moveToNextLocAlongPathSimplified(scope, agent, graph, dist, probaDeplacement);
 				return;

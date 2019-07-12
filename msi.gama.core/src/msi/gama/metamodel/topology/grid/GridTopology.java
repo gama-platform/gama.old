@@ -239,8 +239,9 @@ public class GridTopology extends AbstractTopology {
 		final boolean normalFilter = filter.getSpecies() != null || !(filter instanceof Different);
 		final IAgentFilter fDL = normalFilter ? filter
 				: new DifferentList(getPlaces().getCellSpecies().listValue(scope, Types.NO_TYPE, false));
-		final Collection<IAgent> agents = getAgentsIn(scope, GamaGeometryType.geometriesToGeometry(scope,
-				GamaListFactory.createWithoutCasting(Types.AGENT, placesConcerned)), fDL, false);
+		final Collection<IAgent> agents = getAgentsIn(scope,
+				GamaGeometryType.geometriesToGeometry(scope, GamaListFactory.wrap(Types.AGENT, placesConcerned)), fDL,
+				false);
 		if (!normalFilter) {
 			agents.addAll(placesConcerned);
 		}

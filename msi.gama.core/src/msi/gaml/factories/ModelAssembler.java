@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -191,9 +190,7 @@ public class ModelAssembler {
 		model.buildTypes();
 		// hqnghi build micro-models as types
 		if (mm != null) {
-			for (final Entry<String, ModelDescription> entry : mm.entrySet()) {
-				model.getTypesManager().alias(entry.getValue().getName(), entry.getKey());
-			}
+			mm.forEach((k, v) -> model.getTypesManager().alias(v.getName(), k));
 			// end-hqnghi
 		}
 

@@ -13,8 +13,8 @@ import java.util.ArrayList;
 
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.IReference;
 import msi.gaml.types.IType;
 import ummisco.gama.serializer.gamaType.reference.ReferenceList;
@@ -24,7 +24,7 @@ public class GamaListReducer {
 	private ArrayList<Object> valuesListReducer = new ArrayList<>();
 	private final IType contentTypeListReducer;
 
-	public GamaListReducer(final GamaList l) {
+	public GamaListReducer(final IList l) {
 		contentTypeListReducer = l.getGamlType().getContentType();
 
 		for (final Object p : l) {
@@ -32,7 +32,7 @@ public class GamaListReducer {
 		}
 	}
 
-	public GamaList constructObject(final IScope scope) {
+	public IList constructObject(final IScope scope) {
 
 		boolean isReference = false;
 		int i = 0;
@@ -42,7 +42,7 @@ public class GamaListReducer {
 		}
 
 		return isReference ? new ReferenceList(this)
-				: (GamaList) GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
+				: GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
 	}
 
 	public ArrayList<Object> getValuesListReducer() {

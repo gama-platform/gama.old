@@ -18,7 +18,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
@@ -256,20 +255,20 @@ public class ChartDataSource {
 			if (l1value.length(scope) == 0) { return this.DATA_TYPE_MATRIX_DOUBLE; }
 			final Object o2 = l1value.get(scope, 0, 0);
 			if (o2 instanceof GamaPoint) { return this.DATA_TYPE_MATRIX_POINT; }
-			if (o2 instanceof GamaList) { return this.DATA_TYPE_MATRIX_LIST_DOUBLE; }
+			if (o2 instanceof IList) { return this.DATA_TYPE_MATRIX_LIST_DOUBLE; }
 			return this.DATA_TYPE_MATRIX_DOUBLE;
 		}
-		if (o instanceof GamaList) {
+		if (o instanceof IList) {
 
 			final IList l1value = Cast.asList(scope, o);
 			if (l1value.length(scope) == 0) { return this.DATA_TYPE_LIST_DOUBLE_N; }
 			final Object o2 = l1value.get(0);
 			if (o2 instanceof GamaPoint) { return this.DATA_TYPE_LIST_POINT; }
-			if (o2 instanceof GamaList) {
+			if (o2 instanceof IList) {
 				final IList l2value = Cast.asList(scope, o2);
 				if (l2value.length(scope) == 0) { return this.DATA_TYPE_LIST_LIST_DOUBLE_N; }
 				final Object o3 = l2value.get(0);
-				if (o3 instanceof GamaList) { return this.DATA_TYPE_LIST_LIST_LIST_DOUBLE; }
+				if (o3 instanceof IList) { return this.DATA_TYPE_LIST_LIST_LIST_DOUBLE; }
 				if (o3 instanceof GamaPoint) { return this.DATA_TYPE_LIST_LIST_POINT; }
 				if (l2value.length(scope) == 1) { return this.DATA_TYPE_LIST_LIST_DOUBLE_12; }
 				if (l2value.length(scope) == 2) { return this.DATA_TYPE_LIST_LIST_DOUBLE_12; }

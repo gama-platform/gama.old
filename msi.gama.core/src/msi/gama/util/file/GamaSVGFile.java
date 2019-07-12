@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaSVGFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaSVGFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -58,18 +58,20 @@ public class GamaSVGFile extends GamaGeometryFile {
 
 	Scaling3D size;
 
-	@doc (value= "This file constructor allows to read a svg file",
-			examples = {
-					@example(value = "file f <-svg_file(\"file.svg\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a svg file",
+			examples = { @example (
+					value = "file f <-svg_file(\"file.svg\");",
+					isExecutable = false) })
 	public GamaSVGFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
-	@doc (value= "This file constructor allows to read a svg file, specifying the size of the bounding box",
-			examples = {
-					@example(value = "file f <-svg_file(\"file.svg\", {10,10});", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a svg file, specifying the size of the bounding box",
+			examples = { @example (
+					value = "file f <-svg_file(\"file.svg\", {10,10});",
+					isExecutable = false) })
 	public GamaSVGFile(final IScope scope, final String pathName, final GamaPoint size) throws GamaRuntimeException {
 		super(scope, pathName);
 		this.size = Scaling3D.of(size);
@@ -106,7 +108,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 			// if ( size != null ) {
 			// gs = Spatial.Transformations.scaled_to(scope, gs, size);
 			// }
-			setBuffer(GamaListFactory.createWithoutCasting(Types.GEOMETRY, gs));
+			setBuffer(GamaListFactory.wrap(Types.GEOMETRY, gs));
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 			// e.printStackTrace();

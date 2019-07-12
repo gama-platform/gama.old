@@ -15,10 +15,9 @@ import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.types.IType;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -50,7 +49,7 @@ public class Operators {
 					value = "predicate(\"people to meet\", people1 )",
 					isExecutable = false))
 	@no_test
-	public static Predicate newPredicate(final String name, final GamaMap values) throws GamaRuntimeException {
+	public static Predicate newPredicate(final String name, final IMap values) throws GamaRuntimeException {
 		return new Predicate(name, values);
 	}
 
@@ -95,26 +94,26 @@ public class Operators {
 					value = "predicate(\"people to meet\", [\"time\"::10], true)",
 					isExecutable = false))
 	@no_test
-	public static Predicate newPredicate(final String name, final GamaMap values, final Boolean truth)
+	public static Predicate newPredicate(final String name, final IMap values, final Boolean truth)
 			throws GamaRuntimeException {
 		return new Predicate(name, values, truth);
 	}
 
-//	@operator (
-//			value = "new_predicate",
-//			can_be_const = true,
-//			category = { "BDI" },
-//			concept = { IConcept.BDI })
-//	@doc (
-//			value = "a new predicate with the given properties (name, values, lifetime)",
-//			examples = @example (
-//					value = "predicate(\"people to meet\", [\"time\"::10], true)",
-//					isExecutable = false))
-//	@no_test
-//	public static Predicate newPredicate(final String name, final GamaMap values, final int lifetime)
-//			throws GamaRuntimeException {
-//		return new Predicate(name, values, lifetime);
-//	}
+	// @operator (
+	// value = "new_predicate",
+	// can_be_const = true,
+	// category = { "BDI" },
+	// concept = { IConcept.BDI })
+	// @doc (
+	// value = "a new predicate with the given properties (name, values, lifetime)",
+	// examples = @example (
+	// value = "predicate(\"people to meet\", [\"time\"::10], true)",
+	// isExecutable = false))
+	// @no_test
+	// public static Predicate newPredicate(final String name, final IMap values, final int lifetime)
+	// throws GamaRuntimeException {
+	// return new Predicate(name, values, lifetime);
+	// }
 
 	@operator (
 			value = "new_predicate",
@@ -127,7 +126,7 @@ public class Operators {
 					value = "predicate(\"people to meet\", [\"time\"::10], agentA)",
 					isExecutable = false))
 	@no_test
-	public static Predicate newPredicate(final String name, final GamaMap values, final IAgent agent)
+	public static Predicate newPredicate(final String name, final IMap values, final IAgent agent)
 			throws GamaRuntimeException {
 		return new Predicate(name, values, agent);
 	}
@@ -143,8 +142,8 @@ public class Operators {
 					value = "predicate(\"people to meet\", [\"time\"::10], true, agentA)",
 					isExecutable = false))
 	@no_test
-	public static Predicate newPredicate(final String name, final GamaMap values, final Boolean truth,
-			final IAgent agent) throws GamaRuntimeException {
+	public static Predicate newPredicate(final String name, final IMap values, final Boolean truth, final IAgent agent)
+			throws GamaRuntimeException {
 		return new Predicate(name, values, truth, agent);
 	}
 
@@ -193,7 +192,7 @@ public class Operators {
 					value = "predicate with_values [\"time\"::10]",
 					isExecutable = false))
 	@no_test
-	public static Predicate withValues(final Predicate predicate, final GamaMap values) throws GamaRuntimeException {
+	public static Predicate withValues(final Predicate predicate, final IMap values) throws GamaRuntimeException {
 		final Predicate temp = predicate.copy();
 		temp.setValues(values);
 		return temp;
@@ -210,9 +209,9 @@ public class Operators {
 					value = "predicate add_values [\"time\"::10]",
 					isExecutable = false))
 	@no_test
-	public static Predicate addValues(final Predicate predicate, final GamaMap values) throws GamaRuntimeException {
+	public static Predicate addValues(final Predicate predicate, final IMap values) throws GamaRuntimeException {
 		final Predicate temp = predicate.copy();
-		Map<String, Object> tempValues = temp.getValues();
+		final Map<String, Object> tempValues = temp.getValues();
 		final Set<String> keys = values.keySet();
 		for (final String k : keys) {
 			tempValues.put(k, values.get(k));
@@ -220,7 +219,7 @@ public class Operators {
 		temp.setValues(tempValues);
 		return temp;
 	}
-	
+
 	@operator (
 			value = "not",
 			can_be_const = true,
@@ -251,7 +250,7 @@ public class Operators {
 	@no_test
 	public static Predicate and(final Predicate pred1, final Predicate pred2) {
 		final Predicate tempPred = new Predicate(pred1.getName() + "_and_" + pred2.getName());
-		final List<MentalState> tempList = new ArrayList<MentalState>();
+		final List<MentalState> tempList = new ArrayList<>();
 		final MentalState tempPred1 = new MentalState("Intention", pred1);
 		final MentalState tempPred2 = new MentalState("Intention", pred2);
 		tempList.add(tempPred1);
@@ -276,7 +275,7 @@ public class Operators {
 	@no_test
 	public static Predicate or(final Predicate pred1, final Predicate pred2) {
 		final Predicate tempPred = new Predicate(pred1.getName() + "_or_" + pred2.getName());
-		final List<MentalState> tempList = new ArrayList<MentalState>();
+		final List<MentalState> tempList = new ArrayList<>();
 		final MentalState tempPred1 = new MentalState("Intention", pred1);
 		final MentalState tempPred2 = new MentalState("Intention", pred2);
 		tempList.add(tempPred1);
@@ -347,7 +346,8 @@ public class Operators {
 			can_be_const = true,
 			category = { "BDI" },
 			concept = { IConcept.BDI })
-	@doc(value = "evaluate the agent_cause value of a predicate",
+	@doc (
+			value = "evaluate the agent_cause value of a predicate",
 			examples = @example (
 					value = "get_agent_cause(pred1)",
 					isExecutable = false))
@@ -365,7 +365,8 @@ public class Operators {
 			can_be_const = true,
 			category = { "BDI" },
 			concept = { IConcept.BDI })
-	@doc(value = "return the map values of a predicate",
+	@doc (
+			value = "return the map values of a predicate",
 			examples = @example (
 					value = "get_values(pred1)",
 					isExecutable = false))
@@ -641,8 +642,8 @@ public class Operators {
 			examples = @example (
 					value = "get_intensity(emo1)",
 					isExecutable = false))
-	@test("get_intensity(new_emotion('joy',1.0))=1.0")
-	@test("get_intensity(new_emotion('joy',1.0,0.5))=1.0")
+	@test ("get_intensity(new_emotion('joy',1.0))=1.0")
+	@test ("get_intensity(new_emotion('joy',1.0,0.5))=1.0")
 	public static Double getIntensity(final Emotion emotion) {
 		if (emotion != null) {
 			return emotion.intensity;
@@ -661,7 +662,7 @@ public class Operators {
 			examples = @example (
 					value = "get_decay(emotion)",
 					isExecutable = false))
-	@test("get_decay(new_emotion('joy',1.0,0.5))=0.5")
+	@test ("get_decay(new_emotion('joy',1.0,0.5))=0.5")
 	public static Double getDecay(final Emotion emotion) {
 		if (emotion != null) {
 			return emotion.decay;
@@ -837,7 +838,7 @@ public class Operators {
 		}
 		return social;
 	}
-	
+
 	@operator (
 			value = "set_trust",
 			can_be_const = true,
@@ -849,8 +850,7 @@ public class Operators {
 					value = "social_link set_familiarity 0.4",
 					isExecutable = false))
 	@no_test
-	public static SocialLink setTrust(final SocialLink social, final Double trust)
-			throws GamaRuntimeException {
+	public static SocialLink setTrust(final SocialLink social, final Double trust) throws GamaRuntimeException {
 		if (trust >= -1.0 && trust <= 1.0) {
 			social.setTrust(trust);
 		}
@@ -951,7 +951,7 @@ public class Operators {
 			return null;
 		}
 	}
-	
+
 	@operator (
 			value = "get_trust",
 			can_be_const = true,
@@ -1447,7 +1447,7 @@ public class Operators {
 			examples = @example (
 					value = "get_modality(mental_state1)",
 					isExecutable = false))
-	@test("get_modality(new_mental_state('Belief',new_predicate('test1')))='Belief'")
+	@test ("get_modality(new_mental_state('Belief',new_predicate('test1')))='Belief'")
 	public static String getModality(final MentalState mental) {
 		if (mental != null) {
 			return mental.getModality();
@@ -1485,7 +1485,7 @@ public class Operators {
 			examples = @example (
 					value = "get_strength(mental_state1)",
 					isExecutable = false))
-	@test("get_strength(new_mental_state('Belief',new_predicate('test1')))=1.0")
+	@test ("get_strength(new_mental_state('Belief',new_predicate('test1')))=1.0")
 	public static Double getStrength(final MentalState mental) {
 		if (mental != null) {
 			return mental.getStrength();
@@ -1504,7 +1504,7 @@ public class Operators {
 			examples = @example (
 					value = "get_lifetime(mental_state1)",
 					isExecutable = false))
-	@test("get_lifetime(new_mental_state('Belief',new_predicate('test1'),4))=4")
+	@test ("get_lifetime(new_mental_state('Belief',new_predicate('test1'),4))=4")
 	public static int getLifetime(final MentalState mental) {
 		if (mental != null) {
 			return mental.getLifeTime();
@@ -1531,27 +1531,29 @@ public class Operators {
 			return null;
 		}
 	}
-	
-	//example of transformation of actions to operator
+
+	// example of transformation of actions to operator
 	@operator (
 			value = "get_beliefs_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the list of beliefs in the belief base which predicate has the given name.",
-					returns = "the list of beliefs (mental state).",
-					examples = { @example (value="get_beliefs_with_name_op(self,\"has_water\")", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the list of beliefs in the belief base which predicate has the given name.",
+			returns = "the list of beliefs (mental state).",
+			examples = { @example (
+					value = "get_beliefs_with_name_op(self,\"has_water\")",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getBeliefsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
+	public static IList<MentalState> getBeliefsName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("belief_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					predicates.add(mental);
 				}
 			}
@@ -1561,99 +1563,105 @@ public class Operators {
 
 	@operator (
 			value = "get_belief_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the belief in the belief base with the given name.",
-					returns = "the belief (mental state).",
-					examples = { @example (value="get_belief_with_name_op(self,\"has_water\")", equals="nil") })
-	public static MentalState getBeliefName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the belief in the belief base with the given name.",
+			returns = "the belief (mental state).",
+			examples = { @example (
+					value = "get_belief_with_name_op(self,\"has_water\")",
+					equals = "nil") })
+	public static MentalState getBeliefName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("belief_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					return mental;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_belief_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the belief in the belief base with the given predicate.",
-					returns = "the belief (mental state).",
-					examples = { @example (value="get_belief_op(self,predicate(\"has_water\"))", equals="nil") })
-	public static MentalState getBelief(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the belief in the belief base with the given predicate.",
+			returns = "the belief (mental state).",
+			examples = { @example (
+					value = "get_belief_op(self,predicate(\"has_water\"))",
+					equals = "nil") })
+	public static MentalState getBelief(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("belief_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
-					return mental;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_beliefs_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the beliefs in the belief base with the given predicate.",
-					returns = "the list of belief (mental state).",
-					examples = { @example (value="get_beliefs_op(self,predicate(\"has_water\"))", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the beliefs in the belief base with the given predicate.",
+			returns = "the list of belief (mental state).",
+			examples = { @example (
+					value = "get_beliefs_op(self,predicate(\"has_water\"))",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getBeliefs(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+	public static IList<MentalState> getBeliefs(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("belief_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					predicates.add(mental);
 				}
 			}
 		}
 		return predicates;
 	}
-	
+
 	@operator (
 			value = "get_desires_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the list of desires in the desire base which predicate has the given name.",
-					returns = "the list of desires (mental state).",
-					examples = { @example (value="get_desires_with_name_op(self,\"has_water\")", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the list of desires in the desire base which predicate has the given name.",
+			returns = "the list of desires (mental state).",
+			examples = { @example (
+					value = "get_desires_with_name_op(self,\"has_water\")",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getDesiresName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
+	public static IList<MentalState> getDesiresName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("desire_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					predicates.add(mental);
 				}
 			}
@@ -1663,99 +1671,105 @@ public class Operators {
 
 	@operator (
 			value = "get_desire_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the desire in the desire base with the given name.",
-					returns = "the desire (mental state).",
-					examples = { @example (value="get_desire_with_name_op(self,\"has_water\")", equals="nil") })
-	public static MentalState getDesireName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the desire in the desire base with the given name.",
+			returns = "the desire (mental state).",
+			examples = { @example (
+					value = "get_desire_with_name_op(self,\"has_water\")",
+					equals = "nil") })
+	public static MentalState getDesireName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("desire_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					return mental;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_desire_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the desire in the desire base with the given predicate.",
-					returns = "the belief (mental state).",
-					examples = { @example (value="get_belief_op(self,predicate(\"has_water\"))", equals="nil") })
-	public static MentalState getDesire(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the desire in the desire base with the given predicate.",
+			returns = "the belief (mental state).",
+			examples = { @example (
+					value = "get_belief_op(self,predicate(\"has_water\"))",
+					equals = "nil") })
+	public static MentalState getDesire(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("desire_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
-					return mental;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_desires_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the desires in the desire base with the given predicate.",
-					returns = "the list of desire (mental state).",
-					examples = { @example (value="get_desires_op(self,predicate(\"has_water\"))", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the desires in the desire base with the given predicate.",
+			returns = "the list of desire (mental state).",
+			examples = { @example (
+					value = "get_desires_op(self,predicate(\"has_water\"))",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getDesires(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+	public static IList<MentalState> getDesires(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("desire_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					predicates.add(mental);
 				}
 			}
 		}
 		return predicates;
 	}
-	
+
 	@operator (
 			value = "get_uncertainties_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the list of uncertainties in the uncertainty base which predicate has the given name.",
-					returns = "the list of uncertainties (mental state).",
-					examples = { @example (value="get_uncertainties_with_name_op(self,\"has_water\")", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the list of uncertainties in the uncertainty base which predicate has the given name.",
+			returns = "the list of uncertainties (mental state).",
+			examples = { @example (
+					value = "get_uncertainties_with_name_op(self,\"has_water\")",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getUncertaintiesName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
+	public static IList<MentalState> getUncertaintiesName(final IScope scope, final IAgent ag,
+			final String predicateName) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("uncertainty_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					predicates.add(mental);
 				}
 			}
@@ -1765,99 +1779,105 @@ public class Operators {
 
 	@operator (
 			value = "get_uncertainty_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the uncertainty in the uncertainty base with the given name.",
-					returns = "the unertainty (mental state).",
-					examples = { @example (value="get_uncertainty_with_name_op(self,\"has_water\")", equals="nil") })
-	public static MentalState getUncertaintyName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the uncertainty in the uncertainty base with the given name.",
+			returns = "the unertainty (mental state).",
+			examples = { @example (
+					value = "get_uncertainty_with_name_op(self,\"has_water\")",
+					equals = "nil") })
+	public static MentalState getUncertaintyName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("uncertainty_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					return mental;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_uncertainty_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the uncertainty in the uncertainty base with the given predicate.",
-					returns = "the uncertainty (mental state).",
-					examples = { @example (value="get_uncertainty_op(self,predicate(\"has_water\"))", equals="nil") })
-	public static MentalState getUncertainty(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the uncertainty in the uncertainty base with the given predicate.",
+			returns = "the uncertainty (mental state).",
+			examples = { @example (
+					value = "get_uncertainty_op(self,predicate(\"has_water\"))",
+					equals = "nil") })
+	public static MentalState getUncertainty(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("uncertainty_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
-					return mental;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_uncertainties_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the uncertainties in the uncertainty base with the given predicate.",
-					returns = "the list of uncertainties (mental state).",
-					examples = { @example (value="get_uncertainties_op(self,predicate(\"has_water\"))", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the uncertainties in the uncertainty base with the given predicate.",
+			returns = "the list of uncertainties (mental state).",
+			examples = { @example (
+					value = "get_uncertainties_op(self,predicate(\"has_water\"))",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getUncertainties(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+	public static IList<MentalState> getUncertainties(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("uncertainty_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					predicates.add(mental);
 				}
 			}
 		}
 		return predicates;
 	}
-	
+
 	@operator (
 			value = "get_ideals_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the list of ideals in the ideal base which predicate has the given name.",
-					returns = "the list of ideals (mental state).",
-					examples = { @example (value="get_ideals_with_name_op(self,\"has_water\")", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the list of ideals in the ideal base which predicate has the given name.",
+			returns = "the list of ideals (mental state).",
+			examples = { @example (
+					value = "get_ideals_with_name_op(self,\"has_water\")",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getIdealsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
+	public static IList<MentalState> getIdealsName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("ideal_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					predicates.add(mental);
 				}
 			}
@@ -1867,99 +1887,105 @@ public class Operators {
 
 	@operator (
 			value = "get_ideal_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the ideal in the ideal base with the given name.",
-					returns = "the ideal (mental state).",
-					examples = { @example (value="get_ideal_with_name_op(self,\"has_water\")", equals="nil") })
-	public static MentalState getIdealName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the ideal in the ideal base with the given name.",
+			returns = "the ideal (mental state).",
+			examples = { @example (
+					value = "get_ideal_with_name_op(self,\"has_water\")",
+					equals = "nil") })
+	public static MentalState getIdealName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("ideal_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					return mental;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_ideal_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the ideal in the ideal base with the given name.",
-					returns = "the ideal (mental state).",
-					examples = { @example (value="get_ideal_op(self,predicate(\"has_water\"))", equals="nil") })
-	public static MentalState getIdeal(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the ideal in the ideal base with the given name.",
+			returns = "the ideal (mental state).",
+			examples = { @example (
+					value = "get_ideal_op(self,predicate(\"has_water\"))",
+					equals = "nil") })
+	public static MentalState getIdeal(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("ideal_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
-					return mental;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_ideals_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the ideal in the ideal base with the given name.",
-					returns = "the list of ideals (mental state).",
-					examples = { @example (value="get_ideals_op(self,predicate(\"has_water\"))", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the ideal in the ideal base with the given name.",
+			returns = "the list of ideals (mental state).",
+			examples = { @example (
+					value = "get_ideals_op(self,predicate(\"has_water\"))",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getIdeals(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+	public static IList<MentalState> getIdeals(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("ideal_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					predicates.add(mental);
 				}
 			}
 		}
 		return predicates;
 	}
-	
+
 	@operator (
 			value = "get_obligations_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the list of obligations in the obligation base which predicate has the given name.",
-					returns = "the list of obligations (mental state).",
-					examples = { @example (value="get_obligations_with_name_op(self,\"has_water\")", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the list of obligations in the obligation base which predicate has the given name.",
+			returns = "the list of obligations (mental state).",
+			examples = { @example (
+					value = "get_obligations_with_name_op(self,\"has_water\")",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getObligationsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
+	public static IList<MentalState> getObligationsName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("obligation_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					predicates.add(mental);
 				}
 			}
@@ -1969,99 +1995,105 @@ public class Operators {
 
 	@operator (
 			value = "get_obligation_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the obligation in the obligation base with the given name.",
-					returns = "the obligation (mental state).",
-					examples = { @example (value="get_obligation_with_name_op(self,\"has_water\")", equals="nil") })
-	public static MentalState getObligationName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the obligation in the obligation base with the given name.",
+			returns = "the obligation (mental state).",
+			examples = { @example (
+					value = "get_obligation_with_name_op(self,\"has_water\")",
+					equals = "nil") })
+	public static MentalState getObligationName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("obligation_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					return mental;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_obligation_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the obligation in the obligation base with the given predicate.",
-					returns = "the obligation (mental state).",
-					examples = { @example (value="get_obligation_op(self,predicate(\"has_water\"))", equals= "nil") })
-	public static MentalState getObligation(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the obligation in the obligation base with the given predicate.",
+			returns = "the obligation (mental state).",
+			examples = { @example (
+					value = "get_obligation_op(self,predicate(\"has_water\"))",
+					equals = "nil") })
+	public static MentalState getObligation(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("obligation_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
-					return mental;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_obligations_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the obligations in the obligation base with the given predicate.",
-					returns = "the list of obligations (mental state).",
-					examples = { @example (value="get_obligations_op(self,predicate(\"has_water\"))", isExecutable=false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the obligations in the obligation base with the given predicate.",
+			returns = "the list of obligations (mental state).",
+			examples = { @example (
+					value = "get_obligations_op(self,predicate(\"has_water\"))",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getObligations(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+	public static IList<MentalState> getObligations(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("obligation_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					predicates.add(mental);
 				}
 			}
 		}
 		return predicates;
 	}
-	
+
 	@operator (
 			value = "get_intentions_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the list of intentions in the intention base which predicate has the given name.",
-					returns = "the list of intentions (mental state).",
-					examples = { @example (value="get_intentions_with_name_op(self,\"has_water\")", isExecutable=false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the list of intentions in the intention base which predicate has the given name.",
+			returns = "the list of intentions (mental state).",
+			examples = { @example (
+					value = "get_intentions_with_name_op(self,\"has_water\")",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getIntentionsName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
+	public static IList<MentalState> getIntentionsName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("intention_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					predicates.add(mental);
 				}
 			}
@@ -2071,401 +2103,429 @@ public class Operators {
 
 	@operator (
 			value = "get_intention_with_name_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the intention in the intention base with the given name.",
-					returns = "the intention (mental state).",
-					examples = { @example (value="get_intention_with_name_op(self,\"has_water\")", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the intention in the intention base with the given name.",
+			returns = "the intention (mental state).",
+			examples = { @example (
+					value = "get_intention_with_name_op(self,\"has_water\")",
+					isExecutable = false) })
 	@no_test
-	public static MentalState getIntentionName(final IScope scope, final IAgent ag, final String predicateName ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+	public static MentalState getIntentionName(final IScope scope, final IAgent ag, final String predicateName)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (predicateName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("intention_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
 					return mental;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_intention_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the intention in the intention base with the given predicate.",
-					returns = "the intention (mental state).",
-					examples = { @example (value="get_intention_op(self,predicate(\"has_water\"))", isExecutable = false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the intention in the intention base with the given predicate.",
+			returns = "the intention (mental state).",
+			examples = { @example (
+					value = "get_intention_op(self,predicate(\"has_water\"))",
+					isExecutable = false) })
 	@no_test
-	public static MentalState getIntention(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
+	public static MentalState getIntention(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("intention_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
-					return mental;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
 			}
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "get_intentions_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the intentions in the intention base with the given predicate.",
-					returns = "the list of intentions (mental state).",
-					examples = { @example (value="get_intentions_op(self,predicate(\"has_water\"))", isExecutable=false) })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the intentions in the intention base with the given predicate.",
+			returns = "the list of intentions (mental state).",
+			examples = { @example (
+					value = "get_intentions_op(self,predicate(\"has_water\"))",
+					isExecutable = false) })
 	@no_test
-	public static IList<MentalState> getIntentions(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+	public static IList<MentalState> getIntentions(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return predicates;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("intention_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					predicates.add(mental);
 				}
 			}
 		}
 		return predicates;
 	}
-	
+
 	@operator (
 			value = "get_current_intention_op",
-					can_be_const = true,
-					content_type = MentalStateType.id,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "get the current intention.",
-					returns = "the current intention (mental state).",
-					examples = { @example (value="get_current_intention_op(self)", equals = "nil") })
+			can_be_const = true,
+			content_type = MentalStateType.id,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "get the current intention.",
+			returns = "the current intention (mental state).",
+			examples = { @example (
+					value = "get_current_intention_op(self)",
+					equals = "nil") })
 	public static MentalState getCurrentIntention(final IScope scope, final IAgent ag) throws GamaRuntimeException {
-//		final MentalState predicate = new MentalState("Belief");
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return null;
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("intention_base");
-//			if (beliefs == null) { return null; }
-			if (!beliefs.isEmpty()) {
-				return beliefs.lastValue(scope); }
-			return null;
+		// final MentalState predicate = new MentalState("Belief");
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
+		// if (beliefs == null) { return null; }
+		if (!beliefs.isEmpty()) { return beliefs.lastValue(scope); }
+		return null;
 	}
-	
+
 	@operator (
 			value = "has_belief_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is a belief about the given predicate.",
-					returns = "true if a belief already exists.",
-					examples = { @example (value="has_belief_op(self,predicate(\"has_water\"))", equals="false") })
-	public static Boolean hasBelief(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is a belief about the given predicate.",
+			returns = "true if a belief already exists.",
+			examples = { @example (
+					value = "has_belief_op(self,predicate(\"has_water\"))",
+					equals = "false") })
+	public static Boolean hasBelief(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("belief_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_belief_with_name_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is a belief about the given name.",
-					returns = "true if a belief already exists.",
-					examples = { @example (value="has_belief_with_name_op(self,\"has_water\")", equals="false") })
-	public static Boolean hasBeliefName(final IScope scope, final IAgent ag, final String predName ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is a belief about the given name.",
+			returns = "true if a belief already exists.",
+			examples = { @example (
+					value = "has_belief_with_name_op(self,\"has_water\")",
+					equals = "false") })
+	public static Boolean hasBeliefName(final IScope scope, final IAgent ag, final String predName)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (predName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("belief_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predName.equals(mental.getPredicate().getName())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_desire_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is a desire about the given predicate.",
-					returns = "true if a desire already exists.",
-					examples = { @example (value="has_desire_op(self,predicate(\"has_water\"))", equals="false") })
-	public static Boolean hasDesire(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is a desire about the given predicate.",
+			returns = "true if a desire already exists.",
+			examples = { @example (
+					value = "has_desire_op(self,predicate(\"has_water\"))",
+					equals = "false") })
+	public static Boolean hasDesire(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("desire_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_desire_with_name_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is a desire about the given name.",
-					returns = "true if a desire already exists.",
-					examples = { @example (value="has_desire_with_name_op(self,\"has_water\")", equals="false") })
-	public static Boolean hasDesireName(final IScope scope, final IAgent ag, final String predName ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is a desire about the given name.",
+			returns = "true if a desire already exists.",
+			examples = { @example (
+					value = "has_desire_with_name_op(self,\"has_water\")",
+					equals = "false") })
+	public static Boolean hasDesireName(final IScope scope, final IAgent ag, final String predName)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (predName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("desire_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predName.equals(mental.getPredicate().getName())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_uncertainty_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is an uncertainty about the given predicate.",
-					returns = "true if an uncertainty already exists.",
-					examples = { @example (value="has_uncertainty_op(self,predicate(\"has_water\"))", equals="false") })
-	public static Boolean hasUncertainty(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is an uncertainty about the given predicate.",
+			returns = "true if an uncertainty already exists.",
+			examples = { @example (
+					value = "has_uncertainty_op(self,predicate(\"has_water\"))",
+					equals = "false") })
+	public static Boolean hasUncertainty(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("uncertainty_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_uncertainty_with_name_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is an uncertainty about the given name.",
-					returns = "true if an uncertainty already exists.",
-					examples = { @example (value="has_uncertainty_with_name_op(self,\"has_water\")", equals="false") })
-	public static Boolean hasUncertaintyName(final IScope scope, final IAgent ag, final String predName ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is an uncertainty about the given name.",
+			returns = "true if an uncertainty already exists.",
+			examples = { @example (
+					value = "has_uncertainty_with_name_op(self,\"has_water\")",
+					equals = "false") })
+	public static Boolean hasUncertaintyName(final IScope scope, final IAgent ag, final String predName)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (predName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("uncertainty_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predName.equals(mental.getPredicate().getName())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_ideal_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is an ideal about the given predicate.",
-					returns = "true if an ideal already exists.",
-					examples = { @example (value="has_ideal_op(self,predicate(\"has_water\"))", equals="false") })
-	public static Boolean hasIdeal(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is an ideal about the given predicate.",
+			returns = "true if an ideal already exists.",
+			examples = { @example (
+					value = "has_ideal_op(self,predicate(\"has_water\"))",
+					equals = "false") })
+	public static Boolean hasIdeal(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("ideal_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_ideal_with_name_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is an ideal about the given name.",
-					returns = "true if an ideal already exists.",
-					examples = { @example (value="has_ideal_with_name_op(self,\"has_water\")", equals="false") })
-	public static Boolean hasIdealName(final IScope scope, final IAgent ag, final String predName ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is an ideal about the given name.",
+			returns = "true if an ideal already exists.",
+			examples = { @example (
+					value = "has_ideal_with_name_op(self,\"has_water\")",
+					equals = "false") })
+	public static Boolean hasIdealName(final IScope scope, final IAgent ag, final String predName)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (predName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("ideal_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predName.equals(mental.getPredicate().getName())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_intention_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is an intention about the given predicate.",
-					returns = "true if an intention already exists.",
-					examples = { @example (value="has_intention_op(self,predicate(\"has_water\"))", equals="false") })
-	public static Boolean hasIntention(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is an intention about the given predicate.",
+			returns = "true if an intention already exists.",
+			examples = { @example (
+					value = "has_intention_op(self,predicate(\"has_water\"))",
+					equals = "false") })
+	public static Boolean hasIntention(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("intention_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_intention_with_name_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is an intention about the given name.",
-					returns = "true if an intention already exists.",
-					examples = { @example (value="has_intention_with_name_op(self,\"has_water\")", equals="false") })
-	public static Boolean hasIntentionName(final IScope scope, final IAgent ag, final String predName ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is an intention about the given name.",
+			returns = "true if an intention already exists.",
+			examples = { @example (
+					value = "has_intention_with_name_op(self,\"has_water\")",
+					equals = "false") })
+	public static Boolean hasIntentionName(final IScope scope, final IAgent ag, final String predName)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (predName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("intention_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predName.equals(mental.getPredicate().getName())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_obligation_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is an obligation about the given predicate.",
-					returns = "true if an obligation already exists.",
-					examples = { @example (value="has_obligation_op(self,predicate(\"has_water\"))", equals="false") })
-	public static Boolean hasObligation(final IScope scope, final IAgent ag, final Predicate pred ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is an obligation about the given predicate.",
+			returns = "true if an obligation already exists.",
+			examples = { @example (
+					value = "has_obligation_op(self,predicate(\"has_water\"))",
+					equals = "false") })
+	public static Boolean hasObligation(final IScope scope, final IAgent ag, final Predicate pred)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (pred != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("obligation_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && pred.equals(mental.getPredicate())) {
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 	@operator (
 			value = "has_obligation_with_name_op",
-					can_be_const = true,
-					content_type = IType.BOOL,
-					category = { "BDI" },
-					concept = { IConcept.BDI })
-		@doc (
-					value = "indicates if there already is an obligation about the given name.",
-					returns = "true if an obligation already exists.",
-					examples = { @example (value="has_obligation_with_name_op(self,\"has_water\")", equals="false") })
-	public static Boolean hasObligationName(final IScope scope, final IAgent ag, final String predName ) throws GamaRuntimeException {
+			can_be_const = true,
+			content_type = IType.BOOL,
+			category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc (
+			value = "indicates if there already is an obligation about the given name.",
+			returns = "true if an obligation already exists.",
+			examples = { @example (
+					value = "has_obligation_with_name_op(self,\"has_water\")",
+					equals = "false") })
+	public static Boolean hasObligationName(final IScope scope, final IAgent ag, final String predName)
+			throws GamaRuntimeException {
 		Boolean result = false;
-		if (! (ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) 
-			return result;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
 		if (predName != null) {
-			IList<MentalState> beliefs =  (GamaList<MentalState>) ag.getAttribute("obligation_base");
+			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate()!=null && predName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predName.equals(mental.getPredicate().getName())) {
 					result = true;
 				}
 			}
 		}
 		return result;
 	}
-	
+
 }

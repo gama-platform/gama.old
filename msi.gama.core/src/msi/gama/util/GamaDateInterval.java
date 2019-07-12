@@ -169,19 +169,9 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	}
 
 	@Override
-	public IList<GamaDate> listValue(final IScope scope, final IType<?> contentType, final boolean copy) {
+	public IList<GamaDate> listValue(final IScope scope, final IType contentType, final boolean copy) {
 		if (copy) { return GamaListFactory.createWithoutCasting(Types.DATE, this); }
 		return this;
-	}
-
-	@Override
-	public GamaMap<GamaDate, GamaDate> mapValue(final IScope scope, final IType<?> keyType, final IType<?> contentType,
-			final boolean copy) {
-		final GamaMap<GamaDate, GamaDate> map = GamaMapFactory.create(Types.DATE, Types.DATE, this.size());
-		for (final GamaDate date : this) {
-			map.put(date, date);
-		}
-		return map;
 	}
 
 	@Override
@@ -251,7 +241,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	public void setValueAtIndex(final IScope scope, final Object index, final GamaDate value) {}
 
 	@Override
-	public void addValues(final IScope scope, final IContainer<?, ?> values) {}
+	public void addValues(final IScope scope, final IContainer values) {}
 
 	@Override
 	public void setAllValues(final IScope scope, final GamaDate value) {}
@@ -266,7 +256,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	public void removeIndexes(final IScope scope, final IContainer<?, ?> index) {}
 
 	@Override
-	public void removeValues(final IScope scope, final IContainer<?, ?> values) {}
+	public void removeValues(final IScope scope, final IContainer values) {}
 
 	@Override
 	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {}
@@ -277,8 +267,8 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	}
 
 	@Override
-	public GamaDate getFromIndicesList(final IScope scope, final IList<Integer> indices) throws GamaRuntimeException {
-		return get(scope, indices.get(0));
+	public GamaDate getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
+		return get(scope, (Integer) indices.get(0));
 	}
 
 	@Override
@@ -425,18 +415,28 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	}
 
 	@Override
-	public IMatrix<GamaDate> matrixValue(final IScope scope, final IType<?> contentType, final ILocation size,
+	public IMatrix<GamaDate> matrixValue(final IScope scope, final IType contentType, final ILocation size,
 			final boolean copy) {
-		return GamaListFactory.createWithoutCasting(Types.DATE, this).matrixValue(scope, contentType, copy);
+		return GamaListFactory.wrap(Types.DATE, this).matrixValue(scope, contentType, copy);
 	}
 
 	@Override
-	public IMatrix<GamaDate> matrixValue(final IScope scope, final IType<?> contentType, final boolean copy) {
-		return GamaListFactory.createWithoutCasting(Types.DATE, this).matrixValue(scope, contentType, copy);
+	public IMatrix<GamaDate> matrixValue(final IScope scope, final IType contentType, final boolean copy) {
+		return GamaListFactory.wrap(Types.DATE, this).matrixValue(scope, contentType, copy);
 	}
 
 	public IList<GamaDate> step(final Double step) {
 		return new GamaDateInterval(start, end, Duration.of((long) step.doubleValue(), ChronoUnit.SECONDS));
+	}
+
+	@SuppressWarnings ("unchecked")
+	@Override
+	public IMap mapValue(final IScope scope, final IType keyType, final IType contentType, final boolean copy) {
+		final IMap<GamaDate, GamaDate> map = GamaMapFactory.create(Types.DATE, Types.DATE, this.size());
+		for (final GamaDate date : this) {
+			map.put(date, date);
+		}
+		return map;
 	}
 
 }

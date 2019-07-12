@@ -41,10 +41,9 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -169,8 +168,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		// problem if the shape
 		// is not in the z plan it is totally wrong.
 
-		final GamaList<Double> velocity =
-				(GamaList<Double>) Cast.asList(GAMA.getRuntimeScope(), geom.getAttribute("velocity"));
+		final IList<Double> velocity = Cast.asList(GAMA.getRuntimeScope(), geom.getAttribute("velocity"));
 		final Vector3f _velocity =
 				new Vector3f(velocity.get(0).floatValue(), velocity.get(1).floatValue(), velocity.get(2).floatValue());
 
@@ -180,7 +178,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		final Double lin_damping = (Double) geom.getAttribute("lin_damping");
 		final Double ang_damping = (Double) geom.getAttribute("ang_damping");
 		Vector3f position = new Vector3f(0, 0, 0);
-		final GamaMap<String, ?> collisionBound = geom.hasAttribute("collisionBound")
+		final IMap<String, ?> collisionBound = geom.hasAttribute("collisionBound")
 				? Cast.asMap(null, geom.getAttribute("collisionBound"), false) : null;
 
 		if (collisionBound == null) { // Default collision uses the shape of the object: only work for convex objects

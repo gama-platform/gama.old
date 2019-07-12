@@ -25,7 +25,6 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
@@ -43,7 +42,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * created date: 22-Feb-2012 Modified: 24-Sep-2012: Add methods: - boolean isconnected() - select(String select) -
  * executeUpdate(String updateComm) - getParameter: return connection Parameter; Delete method: selectDB,
  * executeUpdateDB 25-Sep-2012: Add methods: timeStamp, helloWorld 18-Feb-2013: Add public int insert(final IScope
- * scope) throws GamaRuntimeException 21-Feb-2013: Modify public GamaList<Object> select(final IScope scope) throws
+ * scope) throws GamaRuntimeException 21-Feb-2013: Modify public IList<Object> select(final IScope scope) throws
  * GamaRuntimeException Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException Modify public
  * int insert(final IScope scope) throws GamaRuntimeException 10-Mar-2013: Modify select method: Add transform parameter
  * Modify insert method: Add transform parameter 29-Apr-2013 Remove import msi.gama.database.SqlConnection; Add import
@@ -173,7 +172,7 @@ public class SQLSkill extends Skill {
 
 		// final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		final String updateComm = (String) scope.getArg("updateComm", IType.STRING);
-		final GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
+		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		int row_count = -1;
 		SqlConnection sqlConn;
 		try {
@@ -236,8 +235,8 @@ public class SQLSkill extends Skill {
 		SqlConnection sqlConn;
 		// final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		final String table_name = (String) scope.getArg("into", IType.STRING);
-		final GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
-		final GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
+		final IList<Object> cols = (IList<Object>) scope.getArg("columns", IType.LIST);
+		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		int rec_no = -1;
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
@@ -265,7 +264,7 @@ public class SQLSkill extends Skill {
 	 * "database":"database name", "user": "user name", "passwd": "password" ]; arg select value:
 	 * "select string with question marks"; arg values value [List of values that are used to replace question marks] }
 	 *
-	 * @return GamaList<GamaList<Object>>
+	 * @return IList<IList<Object>>
 	 */
 	@action (
 			name = "select",
@@ -358,10 +357,10 @@ public class SQLSkill extends Skill {
 		try {
 			final boolean getName = scope.hasArg("getName") ? (Boolean) scope.getArg("getName", IType.BOOL) : true;
 			final boolean getType = scope.hasArg("getType") ? (Boolean) scope.getArg("getType", IType.BOOL) : false;
-			final GamaList<Object> value = (GamaList<Object>) scope.getArg("param", IType.LIST);
-			final GamaList<Object> columnNames = (GamaList<Object>) value.get(0);
-			final GamaList<Object> columnTypes = (GamaList<Object>) value.get(1);
-			final GamaList<Object> records = (GamaList<Object>) value.get(2);
+			final IList<Object> value = (IList<Object>) scope.getArg("param", IType.LIST);
+			final IList<Object> columnNames = (IList<Object>) value.get(0);
+			final IList<Object> columnTypes = (IList<Object>) value.get(1);
+			final IList<Object> records = (IList<Object>) value.get(2);
 			final int columnSize = columnNames.size();
 			final int lineSize = records.size();
 
@@ -381,7 +380,7 @@ public class SQLSkill extends Skill {
 			}
 			// Add Records to Matrix
 			for (int i = 0; i < lineSize; i++) {
-				final GamaList<Object> record = (GamaList<Object>) records.get(i);
+				final IList<Object> record = (IList<Object>) records.get(i);
 				for (int j = 0; j < columnSize; j++) {
 					matrix.set(scope, j, i + (getType ? 1 : 0) + (getName ? 1 : 0), record.get(j));
 				}

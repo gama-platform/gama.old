@@ -17,7 +17,6 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaFile;
@@ -110,7 +109,7 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 	}
 
 	@doc ("Constructor for saved simulation files from a list of agents: it is used with aim of saving a simulation agent.")
-	public GamaSavedSimulationFile(final IScope scope, final String pathName, final GamaList<IAgent> contents) {
+	public GamaSavedSimulationFile(final IScope scope, final String pathName, final IList<IAgent> contents) {
 		super(scope, pathName, null);
 		final IAgent agent = contents.firstValue(scope);
 

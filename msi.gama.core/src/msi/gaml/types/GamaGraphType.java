@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaGraphType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaGraphType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -21,9 +21,9 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.expressions.VariableExpression;
@@ -60,13 +60,13 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 			return (IGraph) ((VariableExpression) obj).value(scope);
 		}
 
-		if (obj instanceof GamaMap) { return from(scope, (GamaMap) obj, spatial); }
+		if (obj instanceof IMap) { return from(scope, (IMap) obj, spatial); }
 		// TODO Matrix, Pair ?
 
 		return null;
 	}
 
-	public static IGraph from(final IScope scope, final GamaMap<?, ?> obj, final boolean spatial) {
+	public static IGraph from(final IScope scope, final IMap<?, ?> obj, final boolean spatial) {
 		final IGraph result = spatial
 				? new GamaSpatialGraph(GamaListFactory.create(Types.NO_TYPE), false, false, null, null, scope,
 						obj.getGamlType().getKeyType(), Types.NO_TYPE)
@@ -87,21 +87,20 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 				: new GamaGraph(scope, obj, false, false, null, null, nodeType, Types.NO_TYPE);
 	}
 
-	//GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
-	//		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope, final IType nodeType,
-	//		final IType edgeType) {	
-	
-	// 	public GamaGraph(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+	// GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+	// final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope, final IType nodeType,
+	// final IType edgeType) {
+
+	// public GamaGraph(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge, final boolean
+	// directed,
 	// final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType, final IType edgeType) {
-	
-	public static IGraph from(final IScope scope, final IList edgesOrVertices, 
-			final boolean byEdge, final boolean directed, final boolean spatial, final IType nodeType,
-			final IType edgeType) {
-		return spatial ? 
-				new GamaSpatialGraph(edgesOrVertices, byEdge, directed, null, null, scope, nodeType, edgeType)
+
+	public static IGraph from(final IScope scope, final IList edgesOrVertices, final boolean byEdge,
+			final boolean directed, final boolean spatial, final IType nodeType, final IType edgeType) {
+		return spatial ? new GamaSpatialGraph(edgesOrVertices, byEdge, directed, null, null, scope, nodeType, edgeType)
 				: new GamaGraph(scope, edgesOrVertices, byEdge, directed, null, null, nodeType, edgeType);
-	}	
-	
+	}
+
 	public static IGraph useChacheForShortestPath(final IGraph source, final boolean useCache) {
 		source.setSaveComputedShortestPaths(useCache);
 		return source; // TODO Clone ?

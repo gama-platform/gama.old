@@ -15,11 +15,10 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.types.Types;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.MessageFactory;
@@ -38,8 +37,8 @@ public class ClientServiceThread extends Thread {
 
 		myAgent = a;
 		myClientSocket = s;
-		final GamaList<String> msgs = (GamaList<String>) GamaListFactory.create(String.class);
-		GamaMap<String, IList<String>> m = (GamaMap<String, IList<String>>) myAgent.getAttribute("messages");
+		final IList<String> msgs = GamaListFactory.create(String.class);
+		IMap<String, IList<String>> m = (IMap<String, IList<String>>) myAgent.getAttribute("messages");
 		if (m == null) {
 			m = GamaMapFactory.create(Types.STRING, Types.LIST);
 		}
@@ -80,10 +79,9 @@ public class ClientServiceThread extends Thread {
 
 				// GamaMap<String, Object> m = (GamaMap<String, Object>)
 				// myAgent.getAttribute("messages" + myAgent);
-				GamaList<ConnectorMessage> msgs =
-						(GamaList<ConnectorMessage>) myAgent.getAttribute("messages" + myAgent);
+				IList<ConnectorMessage> msgs = (IList<ConnectorMessage>) myAgent.getAttribute("messages" + myAgent);
 				if (msgs == null) {
-					msgs = (GamaList<ConnectorMessage>) GamaListFactory.create(ConnectorMessage.class);
+					msgs = GamaListFactory.create(ConnectorMessage.class);
 				}
 				if (myAgent.dead()) {
 					this.interrupt();

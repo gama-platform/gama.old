@@ -111,6 +111,7 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IContainerType<?> of(final IType<?> sub1, final IType<?> sub2) {
 		IType<?> kt = sub1;

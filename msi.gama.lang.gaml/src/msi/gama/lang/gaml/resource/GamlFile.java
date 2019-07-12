@@ -24,8 +24,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
@@ -117,7 +117,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 		final IExperimentPlan experiment = createExperiment(experimentName);
 
 		if (param_input != null) {
-			final GamaMap in = Cast.asMap(scope, param_input.value(scope), true);
+			final IMap in = Cast.asMap(scope, param_input.value(scope), true);
 			for (int i = 0; i < in.getKeys().size(); i++) {
 				experiment.getModel().getVar(in.getKeys().get(i).toString()).setValue(null, in.getValues().get(i));
 			}

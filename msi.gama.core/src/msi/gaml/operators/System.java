@@ -34,8 +34,8 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
@@ -125,9 +125,8 @@ public class System {
 	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")
 	@no_test
 	public static String console(final IScope scope, final String s, final String directory,
-			final GamaMap<String, String> environment) {
-		if (s == null || s.isEmpty())
-			return "";
+			final IMap<String, String> environment) {
+		if (s == null || s.isEmpty()) { return ""; }
 		final StringBuilder output = new StringBuilder();
 		final List<String> commands = new ArrayList<>();
 		commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "cmd.exe" : "/bin/bash");
@@ -144,8 +143,7 @@ public class System {
 		b.environment().putAll(environment);
 		try {
 			final Process p = b.start();
-			if (nonBlocking)
-				return "";
+			if (nonBlocking) { return ""; }
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			final int returnValue = p.waitFor();
 			String line = "";
@@ -242,11 +240,12 @@ public class System {
 					@example (
 							value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
 							isExecutable = false) })
-	public static GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
+	public static IMap<String, Object> userInput(final IScope scope, final IExpression map) {
 		final IAgent agent = scope.getAgent();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@operator (
 			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -258,7 +257,7 @@ public class System {
 					@example (
 							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
 							isExecutable = false) })
-	public static GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
+	public static IMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
 		Map<String, Object> initialValues = new TOrderedHashMap<>();
 		final Map<String, IType<?>> initialTypes = new TOrderedHashMap<>();
 		if (expr instanceof MapExpression) {
@@ -276,7 +275,7 @@ public class System {
 			}
 		}
 		if (initialValues.isEmpty()) { return GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
-		return GamaMapFactory.create(scope, Types.STRING, Types.NO_TYPE,
+		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
 				scope.getGui().openUserInputDialog(scope, title, initialValues, initialTypes));
 	}
 

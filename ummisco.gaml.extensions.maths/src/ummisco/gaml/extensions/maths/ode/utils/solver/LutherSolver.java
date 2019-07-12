@@ -15,12 +15,12 @@ import java.util.List;
 
 import org.apache.commons.math3.ode.nonstiff.LutherIntegrator;
 
-import msi.gama.util.GamaMap;
+import msi.gama.util.IMap;
 import msi.gama.util.IList;
 
 public class LutherSolver extends Solver {
 
-	public LutherSolver(final double step, final GamaMap<String, IList<Double>> integrated_val) {
+	public LutherSolver(final double step, final IMap<String, IList<Double>> integrated_val) {
 		super(step, new LutherIntegrator(step), integrated_val);
 	}
 

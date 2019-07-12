@@ -29,6 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.types.IType;
 
 /**
@@ -186,7 +187,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	@Override
 	@getter ("attributes")
-	Map<String, Object> getOrCreateAttributes();
+	IMap<String, Object> getOrCreateAttributes();
 
 	@getter ("multiple")
 	boolean isMultiple();

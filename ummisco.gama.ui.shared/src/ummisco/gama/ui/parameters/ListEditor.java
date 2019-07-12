@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Button;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
@@ -31,9 +31,9 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List<?>> {
 	@SuppressWarnings ("rawtypes")
 	@Override
 	public void applyEdit() {
-		if (currentValue instanceof GamaList) {
+		if (currentValue instanceof IList) {
 			final ListEditorDialog d =
-					new ListEditorDialog(WorkbenchHelper.getShell(), (GamaList) currentValue, param.getName());
+					new ListEditorDialog(WorkbenchHelper.getShell(), (IList) currentValue, param.getName());
 			if (d.open() == IDialogConstants.OK_ID) {
 				modifyAndDisplayValue(d.getList(ListEditor.this));
 			}
@@ -44,7 +44,7 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List<?>> {
 	protected void checkButtons() {
 		final Button edit = items[EDIT];
 		if (edit != null && !edit.isDisposed()) {
-			edit.setEnabled(currentValue instanceof GamaList);
+			edit.setEnabled(currentValue instanceof IList);
 		}
 	}
 

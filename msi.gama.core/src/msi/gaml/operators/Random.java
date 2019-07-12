@@ -65,7 +65,7 @@ public class Random {
 			see = { "gauss" })
 	@test ("seed <- 1.0; TGauss({0,0.3}) = 0.10073201959421514")
 	public static Double opTGauss(final IScope scope, final GamaPoint p) {
-		return opTGauss(scope, GamaListFactory.createWithoutCasting(Types.FLOAT, p.x, p.y));
+		return opTGauss(scope, GamaListFactory.wrap(Types.FLOAT, p.x, p.y));
 	}
 
 	@operator (
@@ -218,7 +218,7 @@ public class Random {
 		if (target == null || target.isEmpty(scope)) {
 			return GamaListFactory.create(target == null ? Types.NO_TYPE : target.getGamlType().getContentType());
 		}
-		final IList list = (IList) target.listValue(scope, target.getGamlType().getContentType(), false).copy(scope);
+		final IList list = target.listValue(scope, target.getGamlType().getContentType(), false).copy(scope);
 		RANDOM(scope).shuffle(list);
 		return list;
 	}
@@ -509,7 +509,7 @@ public class Random {
 					.create(new RuntimeException("The number of elements of the sample should be positive."), scope);
 		}
 		final IList result = GamaListFactory.create(x.getGamlType());
-		final IList source = (IList) (replacement ? x : x.copy(scope));
+		final IList source = replacement ? x : x.copy(scope);
 		while (result.size() < nb && !source.isEmpty()) {
 			final int i = scope.getRandom().between(0, source.size() - 1);
 			if (replacement) {
@@ -547,8 +547,8 @@ public class Random {
 					"The number of weights should be equal to the number of elements of the source."), scope);
 		}
 		final IList result = GamaListFactory.create(x.getGamlType());
-		final IList source = (IList) (replacement ? x : x.copy(scope));
-		final IList weights_s = (IList) (replacement ? weights : weights.copy(scope));
+		final IList source = replacement ? x : x.copy(scope);
+		final IList weights_s = replacement ? weights : weights.copy(scope);
 		while (result.size() < nb && !source.isEmpty()) {
 			final int i = opRndChoice(scope, weights_s);
 			if (replacement) {

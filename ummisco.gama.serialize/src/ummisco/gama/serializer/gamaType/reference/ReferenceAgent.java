@@ -20,8 +20,8 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.IReference;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -174,7 +174,7 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public GamaMap<String, Object> getOrCreateAttributes() {
+	public IMap<String, Object> getOrCreateAttributes() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -498,8 +498,5 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
-		return false;
-
-	}
+	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {}
 }

@@ -58,12 +58,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaListFactory.GamaListSupplier;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaMapFactory.GamaMapSupplier;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.GAML;
@@ -142,7 +142,7 @@ public class Containers {
 	}
 
 	private static Function<Object, IList<?>> toLists =
-			a -> a instanceof IList ? (IList) a : GamaListFactory.createWithoutCasting(Types.NO_TYPE, a);
+			a -> a instanceof IList ? (IList) a : GamaListFactory.wrap(Types.NO_TYPE, a);
 
 	private static StreamEx stream(final IScope scope, final IContainer c) {
 		return notNull(scope, c).stream(scope);
@@ -175,7 +175,7 @@ public class Containers {
 				value = "Allows to build a list of int representing all contiguous values from zero to the argument. The range can be increasing or decreasing. Passing 0 will return a singleton list with 0")
 		@test ("range(2) = [0,1,2]")
 		public static IList range(final IScope scope, final Integer end) {
-			if (end == 0) { return GamaListFactory.createWithoutCasting(Types.INT, Integer.valueOf(0)); }
+			if (end == 0) { return GamaListFactory.wrap(Types.INT, Integer.valueOf(0)); }
 			return range(scope, 0, end);
 		}
 
@@ -206,7 +206,7 @@ public class Containers {
 		@test ("range(0,6,2) = [0,2,4,6]")
 		public static IList range(final IScope scope, final Integer start, final Integer end, final Integer step) {
 			if (step == 0) { throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope); }
-			if (start.equals(end)) { return GamaListFactory.createWithoutCasting(Types.INT, start); }
+			if (start.equals(end)) { return GamaListFactory.wrap(Types.INT, start); }
 			if (end > start) {
 				if (step < 0) {
 					throw GamaRuntimeException.error("Negative step would result in an infinite range", scope);
@@ -277,7 +277,7 @@ public class Containers {
 		if (shape == null) { return null; }
 		final String key = Cast.asString(scope, indices.get(0));
 		return shape.getAttribute(key);
-		// final GamaMap map = (GamaMap) shape.getAttributes();
+		// final IMap map = (IMap) shape.getAttributes();
 		// if (map == null) { return null; }
 		// return map.getFromIndicesList(scope, indices);
 	}
@@ -527,7 +527,7 @@ public class Containers {
 					value = "[1::2, 3::4, 5::6] index_of 4",
 					equals = "3") })
 	@test ("[1::2, 3::4, 5::6] index_of 4 = 3")
-	public static Object index_of(final IScope scope, final GamaMap<?, ?> c, final Object o) {
+	public static Object index_of(final IScope scope, final IMap<?, ?> c, final Object o) {
 		for (final Map.Entry<?, ?> k : notNull(scope, c).entrySet()) {
 			if (k.getValue().equals(o)) { return k.getKey(); }
 		}
@@ -629,7 +629,7 @@ public class Containers {
 							value = "[1::2, 3::4, 5::4] last_index_of 4",
 							equals = "5") }))
 	@test ("[1::2, 3::4, 5::4] last_index_of 4 = 5")
-	public static Object last_index_of(final IScope scope, final GamaMap<?, ?> c, final Object o) {
+	public static Object last_index_of(final IScope scope, final IMap<?, ?> c, final Object o) {
 		for (final Map.Entry<?, ?> k : Lists.reverse(new ArrayList<>(notNull(scope, c).entrySet()))) {
 			if (k.getValue().equals(o)) { return k.getKey(); }
 		}
@@ -697,8 +697,8 @@ public class Containers {
 			see = { "" + IKeyword.PLUS })
 	@test ("[1,2,3,4,5,6] - [0,8] = [1,2,3,4,5,6]")
 	public static IList minus(final IScope scope, final IContainer source, final IContainer l) {
-		final IList result = (IList) notNull(scope, source)
-				.listValue(scope, source.getGamlType().getContentType(), false).copy(scope);
+		final IList result =
+				notNull(scope, source).listValue(scope, source.getGamlType().getContentType(), false).copy(scope);
 		result.removeAll(notNull(scope, l).listValue(scope, Types.NO_TYPE, false));
 		return result;
 	}
@@ -724,7 +724,7 @@ public class Containers {
 									equals = "[1,2,3,4,5,6]") }) })
 	@test ("[1,2,3,4,5,6] - 0 = [1,2,3,4,5,6]")
 	public static IList minus(final IScope scope, final IList l1, final Object object) {
-		final IList result = (IList) notNull(scope, l1).copy(scope);
+		final IList result = notNull(scope, l1).copy(scope);
 		result.remove(object);
 		return result;
 	}
@@ -884,7 +884,7 @@ public class Containers {
 									equals = "[1,2,3,4,5,6,0]") }))
 	@test ("[1,2,3,4,5,6] + 2 = [1,2,3,4,5,6,2]")
 	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
-		final IList result = (IList) notNull(scope, l1).listValue(scope, Types.NO_TYPE, false).copy(scope);
+		final IList result = notNull(scope, l1).listValue(scope, Types.NO_TYPE, false).copy(scope);
 		result.add(l);
 		return result;
 	}
@@ -947,9 +947,9 @@ public class Containers {
 			see = { "first_with", "last_with", "where" })
 	@test ("[1,2,3,4,5,6,7,8] group_by (each > 3) = [false::[1, 2, 3], true::[4, 5, 6, 7, 8]]")
 	@test ("[1::2, 3::4, 5::6] group_by (each > 4) = [false::[2, 4], true::[6]]")
-	public static GamaMap group_by(final IScope scope, final IContainer c, final IExpression e) {
+	public static IMap group_by(final IScope scope, final IContainer c, final IExpression e) {
 		final IType ct = notNull(scope, c).getGamlType().getContentType();
-		return (GamaMap) stream(scope, c).groupingTo(with(scope, e), asMapOf(e.getGamlType(), Types.LIST.of(ct)),
+		return (IMap) stream(scope, c).groupingTo(with(scope, e), asMapOf(e.getGamlType(), Types.LIST.of(ct)),
 				listOf(ct));
 	}
 
@@ -1718,11 +1718,11 @@ public class Containers {
 					value = "[1,2,3,4,5,6,7,8] index_by (each - 1)",
 					equals = "[0::1, 1::2, 2::3, 3::4, 4::5, 5::6, 6::7, 7::8]") },
 			see = {})
-	public static GamaMap index_by(final IScope scope, final IContainer original, final IExpression keyProvider) {
+	public static IMap index_by(final IScope scope, final IContainer original, final IExpression keyProvider) {
 
 		final StreamEx s = original.stream(scope);
 		final IType contentsType = original.getGamlType().getContentType();
-		return (GamaMap) s.collect(Collectors.toMap(with(scope, keyProvider), (a) -> a, (a, b) -> a,
+		return (IMap) s.collect(Collectors.toMap(with(scope, keyProvider), (a) -> a, (a, b) -> a,
 				asMapOf(keyProvider.getGamlType(), contentsType)));
 	}
 
@@ -1747,7 +1747,7 @@ public class Containers {
 							returnType = "map<int,int>",
 							equals = "[2::4, 4::8, 6::12] ") },
 			see = {})
-	public static GamaMap as_map(final IScope scope, final IContainer original, final IExpression filter) {
+	public static IMap as_map(final IScope scope, final IContainer original, final IExpression filter) {
 		if (!(filter instanceof BinaryOperator)) {
 			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
 		}
@@ -1757,7 +1757,7 @@ public class Containers {
 		}
 		final IExpression key = pair.arg(0);
 		final IExpression value = pair.arg(1);
-		return (GamaMap) stream(scope, original).collect(Collectors.toMap(with(scope, key), with(scope, value),
+		return (IMap) stream(scope, original).collect(Collectors.toMap(with(scope, key), with(scope, value),
 				(a, b) -> a, asMapOf(key.getGamlType(), value.getGamlType())));
 	}
 
@@ -1787,7 +1787,7 @@ public class Containers {
 							returnType = "map<string,float>",
 							equals = "['a'::1.0,'b'::2.0,'c'::3.0]") },
 			see = {})
-	public static GamaMap create_map(final IScope scope, final IList keys, final IList values) {
+	public static IMap create_map(final IScope scope, final IList keys, final IList values) {
 		if (keys.length(scope) != values.length(scope)) {
 			GamaRuntimeException.warning("'create_map' expects two lists of the same length", scope);
 		}
@@ -1814,9 +1814,9 @@ public class Containers {
 							value = "['a'::1,'b'::2] + [5::3.0]",
 							equals = "['a'::1,'b'::2,5::3.0]") },
 			see = { "" + IKeyword.MINUS })
-	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaMap m2) {
+	public static IMap plus(final IScope scope, final IMap m1, final IMap m2) {
 		final IType type = GamaType.findCommonType(notNull(scope, m1).getGamlType(), notNull(scope, m2).getGamlType());
-		final GamaMap res = GamaMapFactory.createWithoutCasting(type.getKeyType(), type.getContentType(), m1);
+		final IMap res = GamaMapFactory.createWithoutCasting(type.getKeyType(), type.getContentType(), m1);
 		res.putAll(m2);
 		return res;
 	}
@@ -1837,9 +1837,9 @@ public class Containers {
 							value = "['a'::1,'b'::2] + ('c'::3)",
 							equals = "['a'::1,'b'::2,'c'::3]") },
 			see = { "" + IKeyword.MINUS })
-	public static GamaMap plus(final IScope scope, final GamaMap m1, final GamaPair m2) {
+	public static IMap plus(final IScope scope, final IMap m1, final GamaPair m2) {
 		final IType type = GamaType.findCommonType(notNull(scope, m1).getGamlType(), notNull(scope, m2).getGamlType());
-		final GamaMap res = GamaMapFactory.createWithoutCasting(type.getKeyType(), type.getContentType(), m1);
+		final IMap res = GamaMapFactory.createWithoutCasting(type.getKeyType(), type.getContentType(), m1);
 		res.put(m2.key, m2.value);
 		return res;
 	}
@@ -1860,8 +1860,8 @@ public class Containers {
 							value = "['a'::1,'b'::2] - ['b'::2,'c'::3]",
 							equals = "['a'::1]") },
 			see = { "" + IKeyword.MINUS })
-	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaMap m2) {
-		final GamaMap res = notNull(scope, m1).copy(scope);
+	public static IMap minus(final IScope scope, final IMap m1, final IMap m2) {
+		final IMap res = notNull(scope, m1).copy(scope);
 		res.removeValues(scope, m2);
 		return res;
 	}
@@ -1882,8 +1882,8 @@ public class Containers {
 							value = "['a'::1,'b'::2] - ('c'::3)",
 							equals = "['a'::1,'b'::2]") },
 			see = { "" + IKeyword.MINUS })
-	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaPair m2) {
-		final GamaMap res = notNull(scope, m1).copy(scope);
+	public static IMap minus(final IScope scope, final IMap m1, final GamaPair m2) {
+		final IMap res = notNull(scope, m1).copy(scope);
 		res.remove(m2.getKey());
 		return res;
 	}

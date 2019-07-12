@@ -8,8 +8,8 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.database.sql.SqlUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Activator implements BundleActivator {
@@ -18,8 +18,8 @@ public class Activator implements BundleActivator {
 	public void start(final BundleContext context) throws Exception {
 		GeometryUtils.addEnvelopeComputer((scope, obj) -> {
 
-			if (!(obj instanceof GamaMap)) { return null; }
-			final GamaMap<String, Object> params = (GamaMap<String, Object>) obj;
+			if (!(obj instanceof IMap)) { return null; }
+			final IMap<String, Object> params = (IMap<String, Object>) obj;
 			SqlConnection sqlConn;
 			Envelope3D env = null;
 			// create connection

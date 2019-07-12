@@ -26,12 +26,12 @@ import msi.gama.precompiler.tests.TestProcessor;
 
 public interface Constants {
 
-	public static String capitalizeFirstLetter(final String original) {
+	static String capitalizeFirstLetter(final String original) {
 		if (original == null || original.length() == 0) { return original; }
 		return original.substring(0, 1).toUpperCase() + original.substring(1);
 	}
 
-	public static String capitalizeAllWords(final String str) {
+	static String capitalizeAllWords(final String str) {
 		if (str == null || str.length() == 0) { return str; }
 		final int strLen = str.length();
 		final StringBuffer buffer = new StringBuffer(strLen);
@@ -52,7 +52,7 @@ public interface Constants {
 
 	}
 
-	public static String getAlphabetOrder(final String name) {
+	static String getAlphabetOrder(final String name) {
 		String order = "";
 		final String lastChar = "z";
 
@@ -61,7 +61,8 @@ public interface Constants {
 			final Character c = cuttingLettersOperatorDoc[i];
 
 			if (i == 0 && name.toLowerCase().compareTo(c.toString().toLowerCase()) < 0
-					|| name.toLowerCase().compareTo(previousChar.toString().toLowerCase()) >= 0 && name.toLowerCase().compareTo(c.toString().toLowerCase()) < 0) {
+					|| name.toLowerCase().compareTo(previousChar.toString().toLowerCase()) >= 0
+							&& name.toLowerCase().compareTo(c.toString().toLowerCase()) < 0) {
 				order = previousChar.toString() + ((Character) Character.toChars(c - 1)[0]).toString();
 			}
 		}
@@ -72,26 +73,25 @@ public interface Constants {
 		return order;
 	}
 
-	public static final String BASIC_SKILL = "msi.gaml.skills.Skill";
+	String BASIC_SKILL = "msi.gaml.skills.Skill";
 
-	public static final Character[] cuttingLettersOperatorDoc = { 'b', 'd', 'i', 'n', 's' };
+	Character[] cuttingLettersOperatorDoc = { 'b', 'd', 'i', 'n', 's' };
 
-	public final static String DOC_SEP = "~";
+	String DOC_SEP = "~";
 
-	static String ln = "\n";
-	static String tab = "\t";
-	static String in = ln;
-	final static String IAGENT = "IAgent", IPOPULATION = "IPopulation", ISIMULATION = "ISimulation", ISKILL = "ISkill",
+	String ln = "\n";
+	String tab = "\t";
+	String in = ln;
+	String IAGENT = "IAgent", IPOPULATION = "IPopulation", ISIMULATION = "ISimulation", ISKILL = "ISkill",
 			ISYMBOL = "ISymbol", IDESC = "IDescription", ISCOPE = "IScope", OBJECT = "Object", IVALUE = "IValue",
 			IEXPRESSION = "IExpression", INTEGER = "Integer", DOUBLE = "Double", BOOLEAN = "Boolean";
 
-	public final static String[] EXPLICIT_IMPORTS =
-			new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths", "msi.gaml.operators.Points",
-					"msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
+	String[] EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
+			"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
-	final static List<String> ss1 = Arrays.asList("const", "true", "false", "name", "type");
-	final static List<String> ss2 = Arrays.asList("CONST", "TRUE", "FALSE", "NAME", "TYPE");
-	final static Map<String, String> CLASS_NAMES = new HashMap<String, String>() {
+	List<String> ss1 = Arrays.asList("const", "true", "false", "name", "type");
+	List<String> ss2 = Arrays.asList("CONST", "TRUE", "FALSE", "NAME", "TYPE");
+	Map<String, String> CLASS_NAMES = new HashMap<String, String>() {
 		{
 			put("IAgent", "IA");
 			put("IGamlAgent", "IG");
@@ -132,7 +132,7 @@ public interface Constants {
 
 		}
 	};
-	final static Map<String, String> RETURN_WHEN_NULL = new HashMap<String, String>() {
+	Map<String, String> RETURN_WHEN_NULL = new HashMap<String, String>() {
 		{
 			put(DOUBLE, " 0d");
 			put(INTEGER, " 0");
@@ -140,7 +140,7 @@ public interface Constants {
 		}
 	};
 
-	final static Map<String, String> CHECK_PRIM = new HashMap<String, String>() {
+	Map<String, String> CHECK_PRIM = new HashMap<String, String>() {
 		{
 			put("int", INTEGER);
 			put("short", INTEGER);
@@ -151,9 +151,9 @@ public interface Constants {
 		}
 	};
 
-	final static String PACKAGE_NAME = "gaml.additions";
+	String PACKAGE_NAME = "gaml.additions";
 
-	final static Map<Class<? extends Annotation>, IProcessor<?>> processors =
+	Map<Class<? extends Annotation>, IProcessor<?>> processors =
 			new LinkedHashMap<Class<? extends Annotation>, IProcessor<?>>() {
 				{
 					// Order is important

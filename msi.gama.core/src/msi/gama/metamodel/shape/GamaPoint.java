@@ -25,9 +25,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -350,7 +350,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	// }
 
 	@Override
-	public GamaMap getOrCreateAttributes() {
+	public IMap<String, Object> getOrCreateAttributes() {
 		return GamaMapFactory.create();
 	}
 
@@ -587,7 +587,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public IList<? extends IShape> getGeometries() {
-		return GamaListFactory.createWithoutCasting(Types.GEOMETRY, new GamaShape(this));
+		return GamaListFactory.wrap(Types.GEOMETRY, new GamaShape(this));
 	}
 
 	/**
@@ -649,9 +649,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	// }
 
 	@Override
-	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
-		return true;
-	}
+	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {}
 
 	@Override
 	public void copyAttributesOf(final IAttributed source) {}

@@ -12,7 +12,6 @@ package msi.gaml.expressions;
 
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.get;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.util.Arrays;
@@ -41,6 +40,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The static class ExpressionFactory.
@@ -207,6 +207,10 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
+		final boolean isReverse = op.equals("reverse");
+		if (isReverse) {
+			DEBUG.OUT("");
+		}
 		if (!hasOperator(op, context, eObject, args)) {
 			final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 			final Signature userSignature = new Signature(args).simplified();
@@ -225,15 +229,15 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		final Signature originalUserSignature = userSignature;
 		// If the signature is not present in the registry
 		if (!ops.containsKey(userSignature)) {
-			final Iterable<Signature> matching =
-					filter(ops.keySet(), s -> originalUserSignature.matchesDesiredSignature(s));
-			final int size = Iterables.size(matching);
+			final Signature[] matching = Iterables.toArray(
+					filter(ops.keySet(), s -> originalUserSignature.matchesDesiredSignature(s)), Signature.class);
+			final int size = matching.length;
 			if (size == 0) {
 				// It is a varArg, we call recursively the method
 				return createOperator(op, context, eObject, createList(args));
 			} else if (size == 1) {
 				// Only one choice
-				userSignature = get(matching, 0);
+				userSignature = matching[0];
 			} else {
 				// Several choices, we take the closest
 				int distance = Integer.MAX_VALUE;
@@ -278,6 +282,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	private IExpression createDirectly(final IDescription context, final EObject eObject, final OperatorProto proto,
 			final IExpression... args) {
 		// We finally make an instance of the operator and init it with the arguments
+		if (proto.getName().equals("reverse")) {
+			DEBUG.OUT("");
+		}
 		final IExpression copy = proto.create(context, eObject, args);
 		if (copy != null) {
 			// We verify that it is not deprecated

@@ -15,7 +15,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IContainer;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.compilation.GAML;
@@ -290,7 +289,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	private IContainer.Modifiable identifyContainer(final IScope scope) throws GamaRuntimeException {
 		final Object cont = list.value(scope);
 		if (isDirect) { return (IContainer.Modifiable) cont; }
-		if (cont instanceof IShape) { return (GamaMap) ((IShape) cont).getOrCreateAttributes(); }
+		if (cont instanceof IShape) { return ((IShape) cont).getOrCreateAttributes(); }
 		throw GamaRuntimeException.warning("Cannot use " + list.serialize(false) + ", of type "
 				+ list.getGamlType().toString() + ", as a container", scope);
 	}

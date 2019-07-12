@@ -21,10 +21,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.http.Webb;
 import msi.gama.util.file.http.WebbException;
@@ -399,7 +399,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	@Override
-	public GamaMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
+	public IMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().mapValue(scope, keyType, contentsType, copy);

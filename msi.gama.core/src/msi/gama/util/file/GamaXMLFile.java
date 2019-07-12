@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaXMLFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaXMLFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -30,9 +30,9 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -40,7 +40,7 @@ import msi.gaml.types.Types;
 /**
  * Class GamaXMLFile. TODO: Everything ! What kind of buffer should be returned from here ? The current implementation
  * does not make any sense at all.
- * 
+ *
  * @author drogoul
  * @since 9 janv. 2014
  *
@@ -51,17 +51,18 @@ import msi.gaml.types.Types;
 		buffer_type = IType.MAP,
 		concept = { IConcept.FILE, IConcept.XML },
 		doc = @doc ("Represents XML files. The internal representation is a list of strings"))
-public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
+public class GamaXMLFile extends GamaFile<IMap<String, String>, String> {
 
 	/**
 	 * @param scope
 	 * @param pathName
 	 * @throws GamaRuntimeException
 	 */
-	@doc (value= "This file constructor allows to read a xml file",
-			examples = {
-					@example(value = "file f <-xml_file(\"file.xml\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a xml file",
+			examples = { @example (
+					value = "file f <-xml_file(\"file.xml\");",
+					isExecutable = false) })
 	public GamaXMLFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
@@ -92,7 +93,7 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
 
 	/**
 	 * Method computeEnvelope()
-	 * 
+	 *
 	 * @see msi.gama.util.file.IGamaFile#computeEnvelope(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -102,14 +103,14 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String> {
 
 	/**
 	 * Method fillBuffer()
-	 * 
+	 *
 	 * @see msi.gama.util.file.GamaFile#fillBuffer(msi.gama.runtime.IScope)
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if (getBuffer() != null) { return; }
 		try (final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
-			final GamaMap<String, String> allLines = GamaMapFactory.create(Types.STRING, Types.STRING);
+			final IMap<String, String> allLines = GamaMapFactory.create(Types.STRING, Types.STRING);
 			String str;
 			str = in.readLine();
 			while (str != null) {

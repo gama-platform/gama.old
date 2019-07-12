@@ -66,7 +66,7 @@ public interface IAttributed {
 	 * Allows to visit the attributes like a map. Returns true if all the attributes have been visited, false otherwise.
 	 */
 
-	boolean forEachAttribute(BiConsumerWithPruning<String, Object> visitor);
+	void forEachAttribute(BiConsumerWithPruning<String, Object> visitor);
 
 	/**
 	 * Copy all the attributes of the other instance of IAttributed

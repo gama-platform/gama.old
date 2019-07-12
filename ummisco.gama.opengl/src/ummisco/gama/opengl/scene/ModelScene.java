@@ -10,9 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.util.Collection;
-import java.util.Map;
-
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -71,13 +68,12 @@ public class ModelScene {
 	 *            Called every new iteration when updateDisplay() is called on the surface
 	 */
 	public void wipe(final OpenGL gl) {
-
-		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
-			final LayerObject obj = entry.getValue();
+		layers.forEach((name, obj) -> {
 			if (obj != null && (!obj.isStatic() || obj.isInvalid())) {
 				obj.clear(gl);
 			}
-		}
+		});
+
 		// Wipe the textures.
 		gl.deleteVolatileTextures();
 	}
@@ -87,7 +83,7 @@ public class ModelScene {
 		gl.push(GL2.GL_MODELVIEW);
 		gl.setZIncrement(zIncrement);
 
-		for (final LayerObject layer : layers.values()) {
+		layers.forEach((name, layer) -> {
 			if (layer != null && !layer.isInvalid()) {
 				try {
 					layer.draw(gl);
@@ -97,7 +93,7 @@ public class ModelScene {
 					r.printStackTrace();
 				}
 			}
-		}
+		});
 		gl.setZIncrement(0);
 		rendered = true;
 		gl.pop(GL2.GL_MODELVIEW);
@@ -197,12 +193,12 @@ public class ModelScene {
 	 */
 	public ModelScene copyStatic() {
 		final ModelScene newScene = new ModelScene(renderer, false);
-		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
-			final LayerObject layer = entry.getValue();
+		layers.forEach((name, layer) -> {
 			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) {
-				newScene.layers.put(entry.getKey(), layer);
+				newScene.layers.put(name, layer);
 			}
-		}
+		});
+
 		return newScene;
 	}
 
@@ -210,29 +206,27 @@ public class ModelScene {
 	 *
 	 */
 	public void invalidateLayers() {
-		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
-			entry.getValue().invalidate();
-		}
-	}
-
-	public Collection<LayerObject> getLayers() {
-		return layers.values();
+		layers.forEach((name, layer) -> {
+			layer.invalidate();
+		});
 	}
 
 	public void layerOffsetChanged() {
-		for (final LayerObject layer : getLayers()) {
+		layers.forEach((name, layer) -> {
 			if (layer.canSplit()) {
 				layer.computeOffset();
 			}
-		}
+		});
+
 	}
 
 	public void recomputeLayoutDimensions() {
-		for (final LayerObject layer : getLayers()) {
+		layers.forEach((name, layer) -> {
 			if (layer.isOverlay()) {
 				layer.forceRedraw();
 			}
-		}
+		});
+
 	}
 
 }

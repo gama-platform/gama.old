@@ -202,9 +202,11 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		if (sp == null) {
 			sp = getExperiment(speciesName);
 			if (sp == null) {
-				for (final ISpecies mm : getAllSpecies().values()) {
+				for (final Map.Entry<String, ISpecies> entry : getAllSpecies().entrySet()) {
+					final ISpecies mm = entry.getValue();
 					if (mm instanceof GamlModelSpecies) {
 						sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
+						if (sp != null) { return sp; }
 					}
 				}
 			}
@@ -220,7 +222,8 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		// get experiementSpecies in any model
 		ISpecies sp = getExperiment(speciesName);
 		if (sp == null) {
-			for (final ISpecies mm : getAllSpecies().values()) {
+			for (final Map.Entry<String, ISpecies> entry : getAllSpecies().entrySet()) {
+				final ISpecies mm = entry.getValue();
 				if (mm instanceof GamlModelSpecies && specDes.getOriginName().equals(mm.getName())) {
 					sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
 					if (sp != null) { return sp; }
@@ -235,7 +238,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	public Map<String, ISpecies> getAllSpecies() {
 		if (allSpecies == null) {
 			allSpecies = new TOrderedHashMap();
-			final Deque<ISpecies> speciesStack = new ArrayDeque<ISpecies>();
+			final Deque<ISpecies> speciesStack = new ArrayDeque<>();
 			speciesStack.push(this);
 			ISpecies currentSpecies;
 			while (!speciesStack.isEmpty()) {
@@ -287,8 +290,9 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 		final List<TestStatement> tests = new ArrayList<>();
 		final Consumer<IStatement> filter = t -> {
-			if (t instanceof TestStatement)
+			if (t instanceof TestStatement) {
 				tests.add((TestStatement) t);
+			}
 		};
 		// Fix Issue #2659
 		// getBehaviors().forEach(filter);

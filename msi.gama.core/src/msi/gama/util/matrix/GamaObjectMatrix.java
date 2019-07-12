@@ -252,7 +252,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	@Override
 	protected IList<Object> _listValue(final IScope scope, final IType contentsType, final boolean cast) {
 		return cast ? GamaListFactory.create(scope, contentsType, getMatrix())
-				: GamaListFactory.createWithoutCasting(contentsType, getMatrix());
+				: GamaListFactory.wrap(contentsType, getMatrix());
 	}
 
 	@Override

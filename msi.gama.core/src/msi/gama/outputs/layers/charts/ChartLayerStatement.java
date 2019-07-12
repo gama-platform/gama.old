@@ -34,7 +34,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -531,9 +531,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				chartoutput.setXRangeInterval(scope, ((Number) range).doubleValue());
 			} else if (range instanceof GamaPoint) {
 				chartoutput.setXRangeMinMax(scope, ((GamaPoint) range).getX(), ((GamaPoint) range).getY());
-			} else if (range instanceof GamaList) {
-				chartoutput.setXRangeMinMax(scope, Cast.asFloat(scope, ((GamaList<?>) range).get(0)),
-						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
+			} else if (range instanceof IList) {
+				chartoutput.setXRangeMinMax(scope, Cast.asFloat(scope, ((IList<?>) range).get(0)),
+						Cast.asFloat(scope, ((IList<?>) range).get(1)));
 			}
 		}
 
@@ -545,9 +545,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				chartoutput.setYRangeInterval(scope, ((Number) range).doubleValue());
 			} else if (range instanceof GamaPoint) {
 				chartoutput.setYRangeMinMax(scope, ((GamaPoint) range).getX(), ((GamaPoint) range).getY());
-			} else if (range instanceof GamaList) {
-				chartoutput.setYRangeMinMax(scope, Cast.asFloat(scope, ((GamaList<?>) range).get(0)),
-						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
+			} else if (range instanceof IList) {
+				chartoutput.setYRangeMinMax(scope, Cast.asFloat(scope, ((IList<?>) range).get(0)),
+						Cast.asFloat(scope, ((IList<?>) range).get(1)));
 			}
 		}
 		expr = getFacet(Y2RANGE);
@@ -558,9 +558,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				chartoutput.setY2RangeInterval(scope, ((Number) range).doubleValue());
 			} else if (range instanceof GamaPoint) {
 				chartoutput.setY2RangeMinMax(scope, ((GamaPoint) range).getX(), ((GamaPoint) range).getY());
-			} else if (range instanceof GamaList) {
-				chartoutput.setY2RangeMinMax(scope, Cast.asFloat(scope, ((GamaList<?>) range).get(0)),
-						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
+			} else if (range instanceof IList) {
+				chartoutput.setY2RangeMinMax(scope, Cast.asFloat(scope, ((IList<?>) range).get(0)),
+						Cast.asFloat(scope, ((IList<?>) range).get(1)));
 			}
 		}
 		IExpression expr2 = getFacet(XTICKUNIT);

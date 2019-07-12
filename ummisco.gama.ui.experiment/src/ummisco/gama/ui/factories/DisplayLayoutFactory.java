@@ -27,9 +27,9 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 
 	@Override
 	public void applyLayout(final Object layout) {
-		WorkbenchHelper.run(() -> {
-
-		});
+		// WorkbenchHelper.run(() -> {
+		//
+		// });
 
 		WorkbenchHelper.runInUI("Arranging views", 0, (m) -> {
 			// WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);

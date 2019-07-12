@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaAttributesType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaAttributesType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -21,8 +21,8 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 
 @type (
@@ -39,17 +39,17 @@ public class GamaAttributesType extends GamaMapType {
 	@Override
 	public SavedAgent cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 			final IType contentType, final boolean copy) throws GamaRuntimeException {
-		if (obj instanceof IAgent)
-			return new SavedAgent(scope, (IAgent) obj);
+		if (obj instanceof IAgent) { return new SavedAgent(scope, (IAgent) obj); }
 		if (obj instanceof SavedAgent) {
-			if (copy)
+			if (copy) {
 				return ((SavedAgent) obj).clone();
-			else
+			} else {
 				return (SavedAgent) obj;
+			}
 		}
 		if (obj instanceof Map) {
-			final GamaMap<String, Object> map =
-					GamaMapFactory.create(scope, Types.STRING, Types.NO_TYPE, (Map<String, Object>) obj);
+			final IMap<String, Object> map =
+					GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE, (Map<String, Object>) obj);
 			return new SavedAgent(map);
 		}
 		return null;

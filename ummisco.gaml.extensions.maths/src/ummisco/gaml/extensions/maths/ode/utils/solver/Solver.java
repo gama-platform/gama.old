@@ -21,9 +21,9 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
@@ -35,8 +35,7 @@ public abstract class Solver {
 	int count;
 	final double step;
 
-	Solver(final double step, final FirstOrderIntegrator integrator,
-			final GamaMap<String, IList<Double>> integrated_val) {
+	Solver(final double step, final FirstOrderIntegrator integrator, final IMap<String, IList<Double>> integrated_val) {
 		this.step = step;
 		this.integrator = integrator;
 		if (integrated_val != null) {
@@ -59,13 +58,13 @@ public abstract class Solver {
 	// Call the integrator, which should call computeDerivatives on the system
 	// of equations;
 	public void solve(final IScope scope, final SystemOfEquationsStatement seq, final double initialTime,
-			final double finalTime, final GamaMap<String, IList<Double>> integrationValues) {
+			final double finalTime, final IMap<String, IList<Double>> integrationValues) {
 
 		seq.executeInScope(scope, () -> {
 			final Map<Integer, IAgent> equationAgents = seq.getEquationAgents(scope);
 
 			// GamaMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = seq.getEquations(scope.getAgent());
-			final GamaMap<Integer, GamaPair<IAgent, IExpression>> myVar = seq.getVariableDiff(scope.getAgent());
+			final IMap<Integer, GamaPair<IAgent, IExpression>> myVar = seq.getVariableDiff(scope.getAgent());
 			/*
 			 * prepare initial value of variables 1. loop through variables expression 2. if its equaAgents != null, it
 			 * mean variable of external equation, set current scope to this agent scope 3. get value 4. return to
@@ -124,7 +123,7 @@ public abstract class Solver {
 
 	}
 
-	void storeValues(final double time, final double[] y, final GamaMap<String, IList<Double>> integrationValues) {
+	void storeValues(final double time, final double[] y, final IMap<String, IList<Double>> integrationValues) {
 		if (integrationValues != null) {
 			for (int i = 0; i < y.length; i++) {
 				integrationValues.valueAt(i).add(y[i]);

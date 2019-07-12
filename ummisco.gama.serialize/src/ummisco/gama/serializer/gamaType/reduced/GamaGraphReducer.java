@@ -9,19 +9,18 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.reduced;
 
-import java.util.ArrayList;
-
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.IReference;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.types.GamaGraphType;
-import msi.gaml.types.GamaPairType;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import ummisco.gama.serializer.gamaType.reference.ReferenceGraph;
 
 @SuppressWarnings ({ "rawtypes" })
@@ -30,11 +29,12 @@ public class GamaGraphReducer {
 	private final IType edgeTypeGraphReducer;
 
 	// private GamaMap valuesGraphReducer;
-	private GamaList edgesGraphReducer;
-	private GamaMap<Object, Object> edgesWeightsGraphReducer;
+	private IList edgesGraphReducer;
+	private IMap edgesWeightsGraphReducer;
 	private final boolean spatial;
 	private final boolean directed;
 
+	@SuppressWarnings ("unchecked")
 	public GamaGraphReducer(final IScope scope, final GamaGraph<?, ?> g) {
 		spatial = g instanceof GamaSpatialGraph;
 		directed = g.isDirected();
@@ -44,12 +44,11 @@ public class GamaGraphReducer {
 
 		// Map of keys = pair(source,target), values = edge
 		// valuesGraphReducer = g.mapValue(scope, nodeTypeGraphReducer, edgeTypeGraphReducer, false);
-		edgesGraphReducer =
-				(GamaList) GamaListFactory.create(scope, edgeTypeGraphReducer, new ArrayList<Object>(g.edgeSet()));
+		edgesGraphReducer = GamaListFactory.create(scope, edgeTypeGraphReducer, g.edgeSet());
 
 		// edgesWeightsGraphReducer = new GamaMap<>(valuesGraphReducer.capacity(), edgeTypeGraphReducer, new
 		// GamaPairType());
-		edgesWeightsGraphReducer = new GamaMap<>(edgesGraphReducer.size(), edgeTypeGraphReducer, new GamaPairType());
+		edgesWeightsGraphReducer = GamaMapFactory.create(edgeTypeGraphReducer, Types.PAIR, edgesGraphReducer.size());
 
 		// for (final Object edge : valuesGraphReducer.values()) {
 		for (final Object edge : edgesGraphReducer) {
@@ -60,20 +59,20 @@ public class GamaGraphReducer {
 	}
 
 	// public GamaMap getValuesGraphReducer() {return valuesGraphReducer; }
-	public GamaList getEdgesGraphReducer() {
+	public IList getEdgesGraphReducer() {
 		return edgesGraphReducer;
 	}
 
-	public GamaMap getWeightsGraphReducer() {
+	public IMap getWeightsGraphReducer() {
 		return edgesWeightsGraphReducer;
 	}
 
 	// public void setValuesGraphReducer(GamaMap m) { valuesGraphReducer = m; }
-	public void setEdgesGraphReducer(final GamaList m) {
+	public void setEdgesGraphReducer(final IList m) {
 		edgesGraphReducer = m;
 	}
 
-	public void setEdgesWeightsGraphReducer(final GamaMap<Object, Object> w) {
+	public void setEdgesWeightsGraphReducer(final IMap<Object, Object> w) {
 		edgesWeightsGraphReducer = w;
 	}
 
@@ -100,8 +99,8 @@ public class GamaGraphReducer {
 	@SuppressWarnings ("unchecked")
 	public void unreferenceReducer(final SimulationAgent sim) {
 		// valuesGraphReducer = (GamaMap)IReference.getObjectWithoutReference(valuesGraphReducer,sim);
-		edgesGraphReducer = (GamaList) IReference.getObjectWithoutReference(edgesGraphReducer, sim);
-		edgesWeightsGraphReducer = (GamaMap) IReference.getObjectWithoutReference(edgesWeightsGraphReducer, sim);
+		edgesGraphReducer = (IList) IReference.getObjectWithoutReference(edgesGraphReducer, sim);
+		edgesWeightsGraphReducer = (IMap) IReference.getObjectWithoutReference(edgesWeightsGraphReducer, sim);
 	}
 }
 

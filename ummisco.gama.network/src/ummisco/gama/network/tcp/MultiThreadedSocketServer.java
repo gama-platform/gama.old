@@ -14,7 +14,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.skills.INetworkSkill;
@@ -77,8 +77,8 @@ public class MultiThreadedSocketServer extends Thread {
 				DEBUG.OUT(clientSocket + " connected");
 
 				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
-					final GamaList<String> list_net_agents = (GamaList<String>) Cast.asList(myAgent.getScope(),
-							myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
+					final IList<String> list_net_agents =
+							Cast.asList(myAgent.getScope(), myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
 					if (list_net_agents != null && !list_net_agents.contains(clientSocket.toString())) {
 						list_net_agents.addValue(myAgent.getScope(), clientSocket.toString());
 						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.concurrent.SimulationRunner.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.concurrent.SimulationRunner.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
@@ -69,8 +69,9 @@ public class SimulationRunner {
 			// getActiveThreadCount() always overestimates the number of threads
 			return Math.min(concurrency, ((ForkJoinPool) executor).getActiveThreadCount());
 		}
-		if (executor instanceof ThreadPoolExecutor) { return Math.min(concurrency,
-				((ThreadPoolExecutor) executor).getActiveCount()); }
+		if (executor instanceof ThreadPoolExecutor) {
+			return Math.min(concurrency, ((ThreadPoolExecutor) executor).getActiveCount());
+		}
 		return 1;
 	}
 

@@ -20,9 +20,9 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 
 /**
  * Written by drogoul Modified on 1 ao�t 2010
@@ -61,8 +61,8 @@ public class GamaPairType extends GamaContainerType<GamaPair> {
 			final DynamicLineString g = (DynamicLineString) ((GamaShape) obj).getInnerGeometry();
 			key = g.getSource();
 			value = g.getTarget();
-		} else if (obj instanceof GamaMap) {
-			final GamaMap m = (GamaMap) obj;
+		} else if (obj instanceof IMap) {
+			final IMap m = (IMap) obj;
 			key = GamaListFactory.create(scope, m.getGamlType().getKeyType(), m.keySet());
 			value = GamaListFactory.create(scope, m.getGamlType().getContentType(), m.values());
 		} else if (obj instanceof IList) {

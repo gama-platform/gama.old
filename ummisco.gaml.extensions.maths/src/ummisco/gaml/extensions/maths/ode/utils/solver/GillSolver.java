@@ -12,12 +12,12 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import org.apache.commons.math3.ode.nonstiff.GillIntegrator;
 
-import msi.gama.util.GamaMap;
+import msi.gama.util.IMap;
 import msi.gama.util.IList;
 
 public class GillSolver extends Solver {
 
-	public GillSolver(final double step, final GamaMap<String, IList<Double>> integrated_val) {
+	public GillSolver(final double step, final IMap<String, IList<Double>> integrated_val) {
 		super(step, new GillIntegrator(step), integrated_val);
 	}
 

@@ -15,7 +15,6 @@ import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
 import static msi.gama.common.geometry.GeometryUtils.rotate;
 import static msi.gama.common.geometry.GeometryUtils.translate;
 import static msi.gama.util.GamaListFactory.create;
-import static msi.gama.util.GamaListFactory.createWithoutCasting;
 import static msi.gaml.types.Types.POINT;
 
 import com.vividsolutions.jts.algorithm.PointLocator;
@@ -38,9 +37,9 @@ import msi.gama.common.interfaces.IAttributed;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -61,7 +60,7 @@ public class GamaShape implements IShape {
 
 	protected Geometry geometry;
 	private IAgent agent;
-	protected GamaMap<String, Object> attributes;
+	protected IMap<String, Object> attributes;
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -284,11 +283,9 @@ public class GamaShape implements IShape {
 		final IList<GamaShape> holes = getHoles();
 		String result = "";
 		if (getInnerGeometry() instanceof LineString) {
-			result = "polyline ("
-					+ GamaListFactory.createWithoutCasting(Types.POINT, getPoints()).serialize(includingBuiltIn) + ")";
+			result = "polyline (" + getPoints().serialize(includingBuiltIn) + ")";
 		} else {
-			result = "polygon ("
-					+ GamaListFactory.createWithoutCasting(Types.POINT, getPoints()).serialize(includingBuiltIn) + ")";
+			result = "polygon (" + getPoints().serialize(includingBuiltIn) + ")";
 		}
 		if (holes.isEmpty()) { return result; }
 		for (final GamaShape g : holes) {
@@ -464,7 +461,7 @@ public class GamaShape implements IShape {
 	@Override
 	public IList<? extends ILocation> getPoints() {
 		if (getInnerGeometry() == null) { return create(POINT); }
-		return (IList<? extends ILocation>) createWithoutCasting(POINT, getInnerGeometry().getCoordinates());
+		return (IList<? extends ILocation>) GamaListFactory.wrap(POINT, getInnerGeometry().getCoordinates());
 	}
 
 	@Override
@@ -671,7 +668,7 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public GamaMap getOrCreateAttributes() {
+	public IMap<String, Object> getOrCreateAttributes() {
 		if (attributes == null) {
 			attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		}
@@ -729,10 +726,9 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
-		if (attributes == null) { return true; }
-		final GamaMap<String, Object> map = getOrCreateAttributes();
-		return map.forEachEntry((k, v) -> visitor.process(k, v));
+	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		if (attributes == null) { return; }
+		attributes.forEachPair(visitor);
 	}
 
 }

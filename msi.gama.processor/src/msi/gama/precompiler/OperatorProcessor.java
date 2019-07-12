@@ -192,7 +192,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		String warning = null;
 		switch (string) {
 			case "Map":
-				warning = "it is safer to use the GamaMap type";
+				warning = "it is safer to use the IMap type";
 				break;
 			case "ArrayList":
 			case "List":

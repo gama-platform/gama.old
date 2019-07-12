@@ -25,7 +25,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.file.Gama3DGeometryFile;
@@ -116,7 +115,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		}
 		for (final Obj obj : objects) {
 			final Geometry g = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(obj.faces);
-			((GamaList<IShape>) getBuffer()).add(new GamaShape(g));
+			getBuffer().add(new GamaShape(g));
 		}
 
 	}

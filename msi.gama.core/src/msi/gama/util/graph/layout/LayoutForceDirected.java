@@ -14,15 +14,14 @@ import msi.gaml.operators.Points;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.Types;
 
+public class LayoutForceDirected {
 
-public class LayoutForceDirected  {
-
-	private Graph<IShape, IShape> graph;
-	private boolean equi;
-	private double criterion;
-	private double coolingRate;
-	private int maxit;
-	private double coeffForce;
+	private final Graph<IShape, IShape> graph;
+	private final boolean equi;
+	private final double criterion;
+	private final double coolingRate;
+	private final int maxit;
+	private final double coeffForce;
 	IShape bounds;
 
 	private int iteration = 0;
@@ -32,17 +31,18 @@ public class LayoutForceDirected  {
 	private double t;
 
 	private boolean equilibriumReached = false;
-	private Map<IShape, GamaPoint> disp;
-	private Map<IShape, GamaPoint> loc;
-	
+	private final Map<IShape, GamaPoint> disp;
+	private final Map<IShape, GamaPoint> loc;
+
 	/**
 	 * Creates a new Simulation.
-	 * 
+	 *
 	 * @param graph
 	 * @param p
 	 * @throws ParseException
 	 */
-	public LayoutForceDirected(Graph<IShape, IShape> graph, IShape bounds, double coeffForce, double coolingRate, int maxit, boolean isEquilibriumCriterion, double criterion)  {
+	public LayoutForceDirected(final Graph<IShape, IShape> graph, final IShape bounds, final double coeffForce,
+			final double coolingRate, final int maxit, final boolean isEquilibriumCriterion, final double criterion) {
 		this.graph = graph;
 		this.bounds = bounds;
 		this.equi = isEquilibriumCriterion;
@@ -52,15 +52,15 @@ public class LayoutForceDirected  {
 		this.coeffForce = coeffForce;
 		this.disp = new IdentityHashMap<>();
 		this.loc = new IdentityHashMap<>();
-		
+
 	}
 
 	/**
 	 * Starts the simulation.
-	 * 
+	 *
 	 * @return number of iterations used until criterion is met
 	 */
-	public int startSimulation(IScope scope) {
+	public int startSimulation(final IScope scope) {
 
 		iteration = 0;
 		equilibriumReached = false;
@@ -69,11 +69,10 @@ public class LayoutForceDirected  {
 		k = coeffForce * Math.sqrt(area / graph.vertexSet().size());
 		t = bounds.getWidth() / 10;
 
-		for (IShape v : graph.vertexSet()) {
+		for (final IShape v : graph.vertexSet()) {
 			disp.put(v, new GamaPoint());
 			loc.put(v, v.getCentroid().copy(scope));
 		}
-		
 
 		if (equi) {
 			// simulate until mechanical equilibrium
@@ -86,7 +85,7 @@ public class LayoutForceDirected  {
 				simulateStep(scope);
 			}
 		}
-		for (IShape v : graph.vertexSet()) {
+		for (final IShape v : graph.vertexSet()) {
 			v.setLocation(loc.get(v));
 		}
 		return iteration;
@@ -95,74 +94,76 @@ public class LayoutForceDirected  {
 	/**
 	 * Simulates a single step.
 	 */
-	private void simulateStep(IScope scope) {
-		double toleranceCenter = Math.sqrt(area) / 10.0;
-		double distanceMinCenter = Math.sqrt(area) / 3.0;
+	private void simulateStep(final IScope scope) {
+		final double toleranceCenter = Math.sqrt(area) / 10.0;
+		final double distanceMinCenter = Math.sqrt(area) / 3.0;
 		// calculate repulsive forces (from every vertex to every other)
-		for (IShape v : graph.vertexSet()) {
+		for (final IShape v : graph.vertexSet()) {
 			// reset displacement vector for new calculation
-			GamaPoint vDisp = disp.get(v);
+			final GamaPoint vDisp = disp.get(v);
 			vDisp.setLocation(0, 0, 0);
-			for (IShape u : graph.vertexSet()) {
+			for (final IShape u : graph.vertexSet()) {
 				if (!v.equals(u)) {
 					// normalized difference position vector of v and u
-					GamaPoint deltaPos =Points.subtract(loc.get(v), loc.get(u)).toGamaPoint();
-					double length = Points.norm(scope, deltaPos);
-					
-					if (length != 0)
-						deltaPos = Points.multiply(deltaPos, forceRepulsive(length, k) /length).toGamaPoint();
+					GamaPoint deltaPos = Points.subtract(loc.get(v), loc.get(u)).toGamaPoint();
+					final double length = Points.norm(scope, deltaPos);
+
+					if (length != 0) {
+						deltaPos = Points.multiply(deltaPos, forceRepulsive(length, k) / length).toGamaPoint();
+					}
 
 					vDisp.add(deltaPos);
-					
-					
+
 				}
 			}
 		}
 
 		// calculate attractive forces (only between neighbors)
-		for (IShape e : graph.edgeSet()) {
-			IShape u = graph.getEdgeSource(e);
-			IShape v = graph.getEdgeTarget(e);
+		for (final IShape e : graph.edgeSet()) {
+			final IShape u = graph.getEdgeSource(e);
+			final IShape v = graph.getEdgeTarget(e);
 			// normalized difference position vector of v and u
-			GamaPoint deltaPos =Points.subtract(loc.get(v), loc.get(u)).toGamaPoint();
-			double length = Points.norm(scope, deltaPos);
-			
-			if (length != 0)
-				deltaPos = Points.multiply(deltaPos, forceAttractive(length, k) /length).toGamaPoint();
-		
+			GamaPoint deltaPos = Points.subtract(loc.get(v), loc.get(u)).toGamaPoint();
+			final double length = Points.norm(scope, deltaPos);
+
+			if (length != 0) {
+				deltaPos = Points.multiply(deltaPos, forceAttractive(length, k) / length).toGamaPoint();
+			}
+
 			disp.get(v).minus(deltaPos);
 			disp.get(u).add(deltaPos);
-			
+
 		}
 
 		// assume equilibrium
 		equilibriumReached = true;
 
-		for (IShape v : graph.vertexSet()) {
+		for (final IShape v : graph.vertexSet()) {
 
 			GamaPoint d = new GamaPoint(disp.get(v));
-			double length =  Points.norm(scope, d);
+			final double length = Points.norm(scope, d);
 
 			// no equilibrium if one vertex has too high net force
 			if (length > criterion) {
 				equilibriumReached = false;
 			}
 			// limit maximum displacement by temperature t
-			if (length != 0)
-				d = Points.multiply(d, Math.min(length, t) /length).toGamaPoint();
-			GamaPoint l = loc.get(v);
+			if (length != 0) {
+				d = Points.multiply(d, Math.min(length, t) / length).toGamaPoint();
+			}
+			final GamaPoint l = loc.get(v);
 			l.add(d);
 			if (!bounds.intersects(l)) {
 				loc.put(v, Punctal._closest_point_to(l, bounds).toGamaPoint());
 			}
 
 		}
-		GamaPoint center = (GamaPoint) Containers.mean(scope, GamaListFactory.createWithoutCasting(Types.POINT, loc.values().toArray()));
+		final GamaPoint center = (GamaPoint) Containers.mean(scope, GamaListFactory.wrap(Types.POINT, loc.values()));
 		if (center.distance3D(bounds.getCentroid()) > toleranceCenter) {
-			GamaPoint d = Points.subtract(bounds.getCentroid(), center).toGamaPoint();
+			final GamaPoint d = Points.subtract(bounds.getCentroid(), center).toGamaPoint();
 			d.multiplyBy(0.5);
-			for (IShape v : graph.vertexSet()) {
-				GamaPoint l = loc.get(v);
+			for (final IShape v : graph.vertexSet()) {
+				final GamaPoint l = loc.get(v);
 				l.add(d);
 				if (!bounds.intersects(l)) {
 					loc.put(v, Punctal._closest_point_to(l, bounds).toGamaPoint());
@@ -171,51 +172,48 @@ public class LayoutForceDirected  {
 		}
 		double maxDist = graph.vertexSet().stream().mapToDouble(v -> v.euclidianDistanceTo(center)).max().getAsDouble();
 		if (maxDist < distanceMinCenter) {
-			maxDist = (distanceMinCenter - maxDist);
-			for (IShape v : graph.vertexSet()) {
-				GamaPoint l = loc.get(v);
-				GamaPoint d = Points.subtract(l,center).toGamaPoint();
-				double len = d.norm();
-				if (len > 0)
-					d.multiplyBy(maxDist /d.norm());
+			maxDist = distanceMinCenter - maxDist;
+			for (final IShape v : graph.vertexSet()) {
+				final GamaPoint l = loc.get(v);
+				final GamaPoint d = Points.subtract(l, center).toGamaPoint();
+				final double len = d.norm();
+				if (len > 0) {
+					d.multiplyBy(maxDist / d.norm());
+				}
 				l.add(d);
 				if (!bounds.intersects(l)) {
 					loc.put(v, Punctal._closest_point_to(l, bounds).toGamaPoint());
 				}
 			}
 		}
-		
+
 		t = Math.max(t * (1 - coolingRate), 1);
 
-		
 		iteration++;
 	}
 
 	/**
-	 * Calculates the amount of the attractive force between vertices using the
-	 * expression entered by the user.
-	 * 
+	 * Calculates the amount of the attractive force between vertices using the expression entered by the user.
+	 *
 	 * @param d
 	 *            the distance between the two vertices
 	 * @param k
 	 * @return amount of force
 	 */
-	private double forceAttractive(double d, double k) {
-		return k == 0 ? 1 :((d * d) / k);
+	private double forceAttractive(final double d, final double k) {
+		return k == 0 ? 1 : d * d / k;
 	}
 
 	/**
-	 * Calculates the amount of the repulsive force between vertices using the
-	 * expression entered by the user.
-	 * 
+	 * Calculates the amount of the repulsive force between vertices using the expression entered by the user.
+	 *
 	 * @param d
 	 *            the distance between the two vertices
 	 * @param k
 	 * @return amount of force
 	 */
-	private double forceRepulsive(double d, double k) {
-		return d == 0 ? 1 : ((k * k) / d);
+	private double forceRepulsive(final double d, final double k) {
+		return d == 0 ? 1 : k * k / d;
 	}
 
-	
 }

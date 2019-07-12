@@ -49,13 +49,12 @@ import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.metamodel.topology.graph.NBAStarPathfinder;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.GamaFloatMatrix;
@@ -884,7 +883,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	private void saveShortestPaths(final List<E> edges, final V source, final V target) {
 		V s = source;
 		final IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getGamlType().getContentType()));
-		spl.add(GamaListFactory.createWithoutCasting(getGamlType().getContentType(), edges));
+		spl.add(GamaListFactory.wrap(getGamlType().getContentType(), edges));
 		shortestPathComputed.put(new Pair<>(source, target), spl);
 		final List<E> edges2 = GamaListFactory.create(graphScope, getGamlType().getContentType(), edges);
 		for (int i = 0; i < edges.size(); i++) {
@@ -900,7 +899,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			final Pair<V, V> pp = new Pair<>(nwS, target);
 			if (!shortestPathComputed.containsKey(pp)) {
 				final IList<IList<E>> spl2 = GamaListFactory.create(getGamlType().getContentType());
-				spl2.add(GamaListFactory.createWithoutCasting(getGamlType().getContentType(), edges2));
+				spl2.add(GamaListFactory.wrap(getGamlType().getContentType(), edges2));
 				shortestPathComputed.put(pp, spl2);
 			}
 			s = nwS;
@@ -991,8 +990,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
-		final GamaMap m = GamaMapFactory.create(Types.PAIR.of(getGamlType().getKeyType(), getGamlType().getKeyType()),
+	public IMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
+		final IMap m = GamaMapFactory.create(Types.PAIR.of(getGamlType().getKeyType(), getGamlType().getKeyType()),
 				getGamlType().getContentType());
 		// WARNING Does not respect the contract regarding keyType and
 		// contentsType
@@ -1060,12 +1059,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IList getEdges() {
-		return GamaListFactory.createWithoutCasting(getGamlType().getContentType(), edgeSet());
+		return GamaListFactory.wrap(getGamlType().getContentType(), edgeSet());
 	}
 
 	@Override
 	public IList getVertices() {
-		return GamaListFactory.createWithoutCasting(getGamlType().getKeyType(), vertexSet());
+		return GamaListFactory.wrap(getGamlType().getKeyType(), vertexSet());
 	}
 
 	@Override
@@ -1270,7 +1269,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public IList<E> getShortestPathFromMatrix(final V s, final V t) {
-		final GamaList<V> vertices = (GamaList<V>) getVertices();
+		final IList<V> vertices = getVertices();
 		final IList<E> edges = GamaListFactory.create(getGamlType().getContentType());
 		V vs = s;
 		final int indexS = vertices.indexOf(vs);
@@ -1324,7 +1323,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * spl); } } }
 	 */
 
-	public IList getPath(final int M[], final GamaList vertices, final int nbvertices, final Object v1, final Object vt,
+	public IList getPath(final int M[], final IList vertices, final int nbvertices, final Object v1, final Object vt,
 			final int i, final int j) {
 		// VertexPair vv = new VertexPair(v1, vt);
 		final IList<E> edges = GamaListFactory.create(getGamlType().getContentType());
@@ -1355,7 +1354,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		return edges;
 	}
 
-	public IList savePaths(final int M[], final GamaList vertices, final int nbvertices, final Object v1, final int i,
+	public IList savePaths(final int M[], final IList vertices, final int nbvertices, final Object v1, final int i,
 			final int t) {
 		IList edgesVertices = GamaListFactory.create(getGamlType().getContentType());
 		for (int j = 0; j < nbvertices; j++) {
@@ -1403,8 +1402,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public GamaIntMatrix saveShortestPaths(final IScope scope) {
-		final GamaMap<V, Integer> indexVertices = GamaMapFactory.create(getGamlType().getKeyType(), Types.INT);
-		final GamaList<V> vertices = (GamaList<V>) getVertices();
+		final IMap<V, Integer> indexVertices = GamaMapFactory.create(getGamlType().getKeyType(), Types.INT);
+		final IList<V> vertices = getVertices();
 
 		for (int i = 0; i < vertexMap.size(); i++) {
 			indexVertices.put(vertices.get(i), i);
@@ -1484,8 +1483,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	}
 
-	private Integer nextVertice(final IScope scope, final E edge, final V source,
-			final GamaMap<V, Integer> indexVertices, final boolean isDirected) {
+	private Integer nextVertice(final IScope scope, final E edge, final V source, final IMap<V, Integer> indexVertices,
+			final boolean isDirected) {
 		if (isDirected) { return indexVertices.get(scope, (V) this.getEdgeTarget(edge)); }
 
 		final V target = (V) this.getEdgeTarget(edge);

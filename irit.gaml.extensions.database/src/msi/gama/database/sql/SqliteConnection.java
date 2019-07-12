@@ -29,7 +29,6 @@ import com.vividsolutions.jts.io.WKTReader;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import ummisco.gama.dev.utils.DEBUG;
@@ -320,7 +319,7 @@ class SqliteConnection extends SqlConnection {
 		final IList<Object> columnType = GamaListFactory.create();
 		final String sqlStr = "PRAGMA table_info(" + tableName + ");";
 		final IList<? super IList<? super IList>> result = selectDB(scope, conn, sqlStr);
-		final GamaList<? extends GamaList<Object>> data = (GamaList<? extends GamaList<Object>>) result.get(2);
+		final IList<? extends IList<Object>> data = (IList<? extends IList<Object>>) result.get(2);
 
 		try (final Statement st = conn.createStatement()) {
 			st.executeQuery(sqlStr);
@@ -328,7 +327,7 @@ class SqliteConnection extends SqlConnection {
 			for (int i = 0; i < numberOfColumns; i++) {
 				final String colName = ((String) columns.get(i)).trim();
 				for (int j = 0; j < numRows; ++j) {
-					final GamaList<Object> row = data.get(j);
+					final IList<Object> row = data.get(j);
 					final String name = ((String) row.get(1)).trim();
 					final String type = ((String) row.get(2)).trim();
 					if (colName.equalsIgnoreCase(name)) {

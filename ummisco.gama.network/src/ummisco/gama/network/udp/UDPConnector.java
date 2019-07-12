@@ -21,7 +21,7 @@ import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
@@ -47,9 +47,7 @@ public class UDPConnector extends Connector {
 	@Override
 	public Map<IAgent, LinkedList<ConnectorMessage>> fetchAllMessages() {
 		for (final IAgent agt : this.receivedMessage.keySet()) {
-			GamaList<ConnectorMessage> m = null;
-
-			m = (GamaList<ConnectorMessage>) agt.getAttribute("messages" + agt);
+			final IList<ConnectorMessage> m = (IList<ConnectorMessage>) agt.getAttribute("messages" + agt);
 			if (m != null) {
 				for (final ConnectorMessage cm : m) {
 					receivedMessage.get(agt).add(cm);

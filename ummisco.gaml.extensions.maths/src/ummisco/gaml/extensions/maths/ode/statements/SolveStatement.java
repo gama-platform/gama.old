@@ -30,8 +30,9 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
@@ -216,8 +217,7 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		// solverName = sn == null ? "rk4" : sn.literalValue();
 		solverExp = getFacet(IKeyword.METHOD);
 		stepExp = getFacet("step_size") == null
-				? (getFacet("step") == null ? new ConstantExpression(0.005d) : getFacet("step"))
-				: getFacet("step_size");
+				? getFacet("step") == null ? new ConstantExpression(0.005d) : getFacet("step") : getFacet("step_size");
 		nStepsExp = getFacet("nSteps");
 		minStepExp = getFacet("min_step");
 		maxStepExp = getFacet("max_step");
@@ -228,7 +228,7 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 	}
 
 	private boolean initSystemOfEquations(final IScope scope) {
-		if (solverName == null)
+		if (solverName == null) {
 			if (solverExp == null) {
 				solverName = "rk4";
 			} else {
@@ -246,6 +246,7 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 				}
 
 			}
+		}
 
 		if (systemOfEquations == null)
 
@@ -268,18 +269,16 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		// if agent not null
 		final IAgent a = Cast.asAgent(scope, agent.value(scope));
 		// if a not null
-		final GamaMap<String, IList<Double>> result =
-				(GamaMap<String, IList<Double>>) a.getAttribute("__integrated_values");
+		final IMap<String, IList<Double>> result = (IMap<String, IList<Double>>) a.getAttribute("__integrated_values");
 		if (result != null) { return result.get(a + var.getName()); }
 		return GamaListFactory.create();
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if (!initSystemOfEquations(scope))
-			return null;
+		if (!initSystemOfEquations(scope)) { return null; }
 
-		double simStepDurationFromUnit = scope.getSimulation().getTimeStep(scope);
+		final double simStepDurationFromUnit = scope.getSimulation().getTimeStep(scope);
 		double stepSize = Cast.asFloat(scope, stepExp.value(scope));
 		// FIXME Must deprecate and remove facet Step, which is replaced by step_size
 		if (getFacet(IKeyword.STEP) == null && getFacet("step_size") == null) {
@@ -287,8 +286,7 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		}
 
 		final Solver solver = createSolver(scope, stepSize);
-		if (solver == null)
-			return null;
+		if (solver == null) { return null; }
 		final double timeInit =
 				timeInitExp == null ? scope.getSimulation().getClock().getCycle() * simStepDurationFromUnit
 						: Cast.asFloat(scope, timeInitExp.value(scope));
@@ -301,7 +299,7 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 	}
 
 	private Solver createSolver(final IScope scope, final double step) {
-		final GamaMap<String, IList<Double>> integratedValues = getIntegratedValues(scope);
+		final IMap<String, IList<Double>> integratedValues = getIntegratedValues(scope);
 		int nSteps = 2;
 		double minStep = 0.1, maxStep = 0.1, scalAbsoluteTolerance = 0.1, scalRelativeTolerance = 0.1;
 
@@ -363,11 +361,11 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		}
 	}
 
-	private GamaMap<String, IList<Double>> getIntegratedValues(final IScope scope) {
-		GamaMap<String, IList<Double>> result =
-				(GamaMap<String, IList<Double>>) scope.getAgent().getAttribute("__integrated_values");
+	private IMap<String, IList<Double>> getIntegratedValues(final IScope scope) {
+		IMap<String, IList<Double>> result =
+				(IMap<String, IList<Double>>) scope.getAgent().getAttribute("__integrated_values");
 		if (result == null) {
-			result = new GamaMap<String, IList<Double>>(0, Types.STRING, Types.LIST);
+			result = GamaMapFactory.create(Types.STRING, Types.LIST, 0);
 			scope.getAgent().setAttribute("__integrated_values", result);
 		}
 		return result;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaPropertyFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaPropertyFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -23,9 +23,9 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
@@ -39,21 +39,23 @@ import msi.gaml.types.Types;
 		buffer_index = IType.STRING,
 		concept = { IConcept.FILE },
 		doc = @doc ("Represents property files"))
-public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String> {
+public class GamaPropertyFile extends GamaFile<IMap<String, String>, String> {
 
-	@doc (value= "This file constructor allows to read a property file (.properties)",
-			examples = {
-					@example(value = "file f <-property_file(\"file.properties\");", isExecutable = false)
-			})
+	@doc (
+			value = "This file constructor allows to read a property file (.properties)",
+			examples = { @example (
+					value = "file f <-property_file(\"file.properties\");",
+					isExecutable = false) })
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
-	@doc (value= "This file constructor allows to store a map in a property file (it does not save it - just store it in memory)",
-			examples = {
-					@example(value = "file f <-property_file(\"file.properties\", map([\"param1\"::1.0,\"param3\"::10.0 ]));", isExecutable = false)
-			})
-	public GamaPropertyFile(final IScope scope, final String pathName, final GamaMap<String, String> buffer)
+	@doc (
+			value = "This file constructor allows to store a map in a property file (it does not save it - just store it in memory)",
+			examples = { @example (
+					value = "file f <-property_file(\"file.properties\", map([\"param1\"::1.0,\"param3\"::10.0 ]));",
+					isExecutable = false) })
+	public GamaPropertyFile(final IScope scope, final String pathName, final IMap<String, String> buffer)
 			throws GamaRuntimeException {
 		super(scope, pathName, buffer);
 	}
@@ -67,7 +69,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String> 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		final Properties p = new Properties();
-		final GamaMap m = GamaMapFactory.create(Types.STRING, Types.STRING);
+		final IMap m = GamaMapFactory.create(Types.STRING, Types.STRING);
 		try (FileReader f = new FileReader(getFile(scope))) {
 			p.load(f);
 		} catch (final IOException e) {
@@ -91,11 +93,11 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String> 
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final Properties p = new Properties();
-		if (getBuffer() != null && !getBuffer().isEmpty())
-			getBuffer().forEachEntry((a, b) -> {
+		if (getBuffer() != null && !getBuffer().isEmpty()) {
+			getBuffer().forEach((a, b) -> {
 				p.setProperty(a, b);
-				return true;
 			});
+		}
 		try (FileWriter fw = new FileWriter(getFile(scope))) {
 			p.store(fw, null);
 		} catch (final IOException e) {}

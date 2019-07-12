@@ -11,14 +11,14 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import org.apache.commons.math3.ode.nonstiff.AdamsBashforthIntegrator;
 
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 
 public class AdamsBashforthSolver extends Solver {
 
 	public AdamsBashforthSolver(final int nSteps, final double minStep, final double maxStep,
 			final double scalAbsoluteTolerance, final double scalRelativeTolerance,
-			final GamaMap<String, IList<Double>> integrated_val) {
+			final IMap<String, IList<Double>> integrated_val) {
 		super((minStep + maxStep) / 2,
 				new AdamsBashforthIntegrator(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance),
 				integrated_val);

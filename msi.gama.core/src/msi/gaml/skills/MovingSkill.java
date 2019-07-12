@@ -51,10 +51,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.path.GamaPath;
 import msi.gama.util.path.GamaSpatialPath;
@@ -347,9 +347,9 @@ public class MovingSkill extends Skill {
 			Double newHeading = null;
 			if (on instanceof GamaSpatialGraph) {
 				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
-				GamaMap<IShape, Double> probaDeplacement = null;
+				IMap<IShape, Double> probaDeplacement = null;
 				if (scope.hasArg("proba_edges")) {
-					probaDeplacement = (GamaMap<IShape, Double>) scope.getVarValue("proba_edges");
+					probaDeplacement = (IMap<IShape, Double>) scope.getVarValue("proba_edges");
 				}
 				moveToNextLocAlongPathSimplified(scope, agent, graph, dist, probaDeplacement);
 				return;
@@ -475,7 +475,7 @@ public class MovingSkill extends Skill {
 		final IAgent agent = getCurrentAgent(scope);
 		final double dist = computeDistance(scope, agent);
 		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.BOOL);
-		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
+		final IMap weigths = (IMap) computeMoveWeights(scope);
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.PATH) : null;
 		if (path != null && !path.getEdgeList().isEmpty()) {
 			if (returnPath != null && returnPath) {
@@ -558,11 +558,11 @@ public class MovingSkill extends Skill {
 					((IList) on).addAll(ags);
 					onV = ((IAgent) ags.get(0)).getSpecies();
 				}
-			} else if (onV instanceof GamaMap) {
-				on = GamaMapFactory.createWithoutCasting(Types.AGENT, Types.NO_TYPE, (GamaMap) onV);
-				onV = ((IAgent) ((GamaMap) onV).getKeys().get(scope, 0)).getSpecies();
+			} else if (onV instanceof IMap) {
+				on = GamaMapFactory.wrap(Types.AGENT, Types.NO_TYPE, (IMap) onV);
+				onV = ((IAgent) ((IMap) onV).getKeys().get(scope, 0)).getSpecies();
 			}
-			rt = Cast.asTopology(scope, onV instanceof GamaMap ? ((GamaMap) onV).keySet() : onV);
+			rt = Cast.asTopology(scope, onV instanceof IMap ? ((IMap) onV).keySet() : onV);
 		}
 
 		if (on != null && on.isEmpty(scope)) {
@@ -619,8 +619,8 @@ public class MovingSkill extends Skill {
 				if (topo instanceof GridTopology) {
 					if (on instanceof IList) {
 						path = ((GridTopology) topo).pathBetween(scope, source, goal, (IList) on);
-					} else if (on instanceof GamaMap) {
-						path = ((GridTopology) topo).pathBetween(scope, source, goal, (GamaMap) on);
+					} else if (on instanceof IMap) {
+						path = ((GridTopology) topo).pathBetween(scope, source, goal, (IMap) on);
 					}
 
 				} else {
@@ -645,7 +645,7 @@ public class MovingSkill extends Skill {
 			return null;
 		}
 
-		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
+		final IMap weigths = (IMap) computeMoveWeights(scope);
 		if (returnPath) {
 			final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, maxDist, weigths);
 			if (pathFollowed == null) {
@@ -939,7 +939,7 @@ public class MovingSkill extends Skill {
 	}
 
 	public void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final GamaSpatialGraph graph,
-			final double d, final GamaMap probaEdge) {
+			final double d, final IMap probaEdge) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final IList indexVals = initMoveAlongPath(scope, agent, graph, currentLocation);
 		if (indexVals == null) { return; }
@@ -1050,7 +1050,7 @@ public class MovingSkill extends Skill {
 	}
 
 	private void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final IPath path,
-			final double d, final GamaMap weigths) {
+			final double d, final IMap weigths) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final IList indexVals = ((GamaSpatialPath) path).isThreeD() ? initMoveAlongPath3D(agent, path, currentLocation)
 				: initMoveAlongPath(agent, path, currentLocation);
@@ -1153,7 +1153,7 @@ public class MovingSkill extends Skill {
 	}
 
 	private IPath moveToNextLocAlongPath(final IScope scope, final IAgent agent, final IPath path, final double d,
-			final GamaMap weigths) {
+			final IMap weigths) {
 		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
 
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);

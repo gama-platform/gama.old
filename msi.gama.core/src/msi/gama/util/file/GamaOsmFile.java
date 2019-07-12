@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
@@ -60,11 +59,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.osmosis_copy.Bound;
 import msi.gama.util.file.osmosis_copy.Entity;
@@ -215,9 +213,7 @@ public class GamaOsmFile extends GamaGisFile {
 						.append(Strings.LN);
 				if (!attributes.isEmpty()) {
 					sb.append("Attributes: ").append(Strings.LN);
-					for (final Map.Entry<String, String> entry : attributes.entrySet()) {
-						sb.append("<li>").append(entry.getKey()).append(" (" + entry.getValue() + ")").append("</li>");
-					}
+					attributes.forEach((k, v) -> sb.append("<li>").append(k).append(" (" + v + ")").append("</li>"));
 				}
 			}
 			return sb.toString();
@@ -237,10 +233,10 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 	}
 
-	GamaMap<String, GamaList> filteringOptions;
+	IMap<String, IList> filteringOptions;
 	Map<String, String> attributes = new HashMap<>();
 
-	final Map<String, List<IShape>> layers = GamaMapFactory.create(Types.STRING, Types.LIST);
+	final IMap<String, List<IShape>> layers = GamaMapFactory.create(Types.STRING, Types.LIST);
 	final static List<String> featureTypes = Arrays.asList("aerialway", "aeroway", "amenity", "barrier", "boundary",
 			"building", "craft", "emergency", "geological", "highway", "historic", "landuse", "leisure", "man_made",
 			"military", "natural", "office", "place", "power", "public_transport", "railway", "route", "shop", "sport",
@@ -274,7 +270,7 @@ public class GamaOsmFile extends GamaGisFile {
 							+ "and all the objects that have the attribute 'aminity' (whatever the value).",
 					isExecutable = false) })
 
-	public GamaOsmFile(final IScope scope, final String pathName, final GamaMap<String, GamaList> filteringOptions) {
+	public GamaOsmFile(final IScope scope, final String pathName, final IMap<String, IList> filteringOptions) {
 		super(scope, pathName, (Integer) null);
 		this.filteringOptions = filteringOptions;
 	}
@@ -320,7 +316,7 @@ public class GamaOsmFile extends GamaGisFile {
 						if (toFilter) {
 							boolean keepObject = false;
 							for (final String keyN : filteringOptions.getKeys()) {
-								final GamaList valsPoss = filteringOptions.get(keyN);
+								final IList valsPoss = filteringOptions.get(keyN);
 								for (final Tag tagN : ((Way) entity).getTags()) {
 									if (keyN.equals(tagN.getKey())) {
 										if (valsPoss == null || valsPoss.isEmpty()
@@ -499,9 +495,7 @@ public class GamaOsmFile extends GamaGisFile {
 				final IShape geom = GamaGeometryType.buildPolygon(points);
 				if (geom != null && geom.getInnerGeometry() != null && !geom.getInnerGeometry().isEmpty()
 						&& geom.getInnerGeometry().getArea() > 0) {
-					for (final Entry<String, Object> entry : values.entrySet()) {
-						geom.setAttribute(entry.getKey(), entry.getValue());
-					}
+					values.forEach((k, v) -> geom.setAttribute(k, v));
 					geometries.add(geom);
 					// if (geom.getAttributes() != null) {}
 

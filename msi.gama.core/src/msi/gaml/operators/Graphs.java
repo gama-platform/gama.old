@@ -51,11 +51,11 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.GraphAlgorithmsHandmade;
@@ -359,11 +359,11 @@ public class Graphs {
 	/*
 	 * TO DO : CHECK THE VALIDITY OF THESE OPERATORS FOR ALL KINDS OF PATH
 	 *
-	 * @operator(value = "vertices") public static GamaList nodesOfPath(final GamaPath path) { if ( path == null ) {
-	 * return new GamaList(); } return path.getVertexList(); }
+	 * @operator(value = "vertices") public static IList nodesOfPath(final GamaPath path) { if ( path == null ) { return
+	 * new IList(); } return path.getVertexList(); }
 	 *
-	 * @operator(value = "edges") public static GamaList edgesOfPath(final GamaPath path) { if ( path == null ) { return
-	 * new GamaList(); } return path.getEdgeList(); }
+	 * @operator(value = "edges") public static IList edgesOfPath(final GamaPath path) { if ( path == null ) { return
+	 * new IList(); } return path.getEdgeList(); }
 	 */
 
 	@operator (
@@ -961,11 +961,11 @@ public class Graphs {
 			see = {})
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " betweenness_centrality(g) = [{10.0,5.0,0.0}::5,{20.0,3.0,0.0}::0,{30.0,30.0,0.0}::2,{80.0,35.0,0.0}::4,{40.0,60.0,0.0}::0,{50.0,50.0,0.0}::0] ")
-	public static GamaMap betweennessCentrality(final IScope scope, final IGraph graph) {
+	public static IMap betweennessCentrality(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
-		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
-		final GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
+		final IMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
+		final IList vertices = Cast.asList(scope, graph.vertexSet());
 		for (final Object v : vertices) {
 			mapResult.put(v, 0);
 		}
@@ -1013,15 +1013,15 @@ public class Graphs {
 							test = false) },
 			see = {})
 	@no_test
-	public static GamaMap edgeBetweenness(final IScope scope, final IGraph graph) {
+	public static IMap edgeBetweenness(final IScope scope, final IGraph graph) {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		// DEBUG.OUT("result.getRaw() : " + result.getRaw());
 
-		final GamaMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
+		final IMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
 		for (final Object v : graph.edgeSet()) {
 			mapResult.put(v, 0);
 		}
-		final GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
+		final IList vertices = Cast.asList(scope, graph.vertexSet());
 		final boolean directed = graph.isDirected();
 		for (int i = 0; i < vertices.size(); i++) {
 			for (int j = directed ? 0 : i + 1; j < vertices.size(); j++) {
@@ -1200,7 +1200,7 @@ public class Graphs {
 							test = false)))
 	@test (" graph<geometry,geometry> g <- as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]); "
 			+ " length(g.vertices) = 3 and length(g.edges) = 2")
-	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
+	public static IGraph spatialFromEdges(final IScope scope, final IMap edges) {
 		// Edges are represented by pairs of vertex::vertex
 
 		return GamaGraphType.from(scope, edges, true);
@@ -1342,7 +1342,7 @@ public class Graphs {
 			value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
 			see = { "as_intersection_graph", "as_edge_graph" })
 	@no_test
-	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final GamaMap params) {
+	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final IMap params) {
 		final Double distance = (Double) params.get("distance");
 		final ISpecies edgeSpecies = (ISpecies) params.get("species");
 		final IType edgeType = edgeSpecies == null ? Types.GEOMETRY : scope.getType(edgeSpecies.getName());
@@ -1431,7 +1431,7 @@ public class Graphs {
 							value = "graph_from_edges (list(ant) as_map each::one_of (list(ant))) with_weights (list(ant) as_map each::each.food)",
 							isExecutable = false)))
 	@no_test
-	public static IGraph withWeights(final IScope scope, final IGraph graph, final GamaMap weights) {
+	public static IGraph withWeights(final IScope scope, final IGraph graph, final IMap weights) {
 		graph.setWeights(weights);
 		graph.incVersion();
 		if (graph instanceof GamaSpatialGraph) {
@@ -1646,11 +1646,11 @@ public class Graphs {
 					value = "max_flow_between(my_graph, vertice1, vertice2)",
 					isExecutable = false) })
 	@no_test
-	public static GamaMap<Object, Double> maxFlowBetween(final IScope scope, final GamaGraph graph, final Object source,
+	public static IMap<Object, Double> maxFlowBetween(final IScope scope, final GamaGraph graph, final Object source,
 			final Object sink) throws GamaRuntimeException {
 		final EdmondsKarpMFImpl ek = new EdmondsKarpMFImpl(graph);
 		final MaximumFlow<IShape> mf = ek.getMaximumFlow(source, sink);
-		final GamaMap<Object, Double> result = GamaMapFactory.create();
+		final IMap<Object, Double> result = GamaMapFactory.create();
 		result.putAll(mf.getFlow());
 		return result;
 	}
@@ -1668,7 +1668,7 @@ public class Graphs {
 					equals = "a path road1->road2->road3 of my_graph",
 					isExecutable = false) })
 	@no_test
-	public static IPath as_path(final IScope scope, final GamaList<IShape> edgesNodes, final GamaGraph graph)
+	public static IPath as_path(final IScope scope, final IList<IShape> edgesNodes, final GamaGraph graph)
 			throws GamaRuntimeException {
 		final IPath path = GamaPathType.staticCast(scope, edgesNodes, null, false);
 		path.setGraph(graph);
@@ -2067,8 +2067,8 @@ public class Graphs {
 	@doc (
 			value = "retur for each edge, its strahler number")
 	@no_test
-	public static GamaMap strahlerNumber(final IScope scope, final GamaGraph graph) {
-		final GamaMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
+	public static IMap strahlerNumber(final IScope scope, final GamaGraph graph) {
+		final IMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
 		if (graph == null || graph.isEmpty(scope)) { return results; }
 		if (!graph.getConnected() || graph.hasCycle()) {
 			throw GamaRuntimeException

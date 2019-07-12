@@ -25,7 +25,6 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
@@ -319,7 +318,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			// final String statementKeyword = c.getDescription().getKeyword();
 			_rules.add((RuleStatement) c);
 			_rulesNumber++;
-		}else if (c instanceof CopingStatement) {
+		} else if (c instanceof CopingStatement) {
 			// final String statementKeyword = c.getDescription().getKeyword();
 			_coping.add((CopingStatement) c);
 			_copingNumber++;
@@ -418,9 +417,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				agent.setAttribute(NORM_BASE, _norms);
 				agent.setAttribute(SANCTION_BASE, _sanctions);
 				final Boolean usingPersistence = (Boolean) agent.getAttribute(USE_PERSISTENCE);
-				final GamaList<MentalState> intentionBase =
-						(GamaList<MentalState>) (scope.hasArg(INTENTION_BASE) ? scope.getListArg(INTENTION_BASE)
-								: (GamaList<MentalState>) agent.getAttribute(INTENTION_BASE));
+				final IList<MentalState> intentionBase = scope.hasArg(INTENTION_BASE) ? scope.getListArg(INTENTION_BASE)
+						: (IList<MentalState>) agent.getAttribute(INTENTION_BASE);
 				Double persistenceCoefficientPlans = 1.0;
 				Double persistenceCoefficientintention = 1.0;
 				if (usingPersistence) {
@@ -625,8 +623,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 			}
-			final GamaList<MentalState> desireBase = getBase(scope, DESIRE_BASE);
-			final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
+			final IList<MentalState> desireBase = getBase(scope, DESIRE_BASE);
+			final IList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 			if (desireBase.size() > 0) {
 				MentalState newIntention = desireBase.get(0)/* .anyValue(scope) */;
 				double newIntStrength;
@@ -676,7 +674,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 		} else {
 			final List<MentalState> desireBaseTest = GamaListFactory.create();
-			for (final MentalState tempDesire : (GamaList<MentalState>) scope.getSimulation().getRandomGenerator()
+			for (final MentalState tempDesire : (IList<MentalState>) scope.getSimulation().getRandomGenerator()
 					.shuffle(getBase(scope, DESIRE_BASE))) {
 				if (listPlans != null) {
 					for (final BDIPlan tempPlan : listPlans) {
@@ -707,8 +705,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 				}
 			}
-			final GamaList<MentalState> desireBase = getBase(scope, DESIRE_BASE);
-			final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
+			final IList<MentalState> desireBase = getBase(scope, DESIRE_BASE);
+			final IList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 			double maxpriority = Double.MIN_VALUE;
 			if (desireBaseTest.size() > 0 && intentionBase != null) {
 				MentalState newIntention = null;// desireBase.anyValue(scope);
@@ -775,8 +773,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 				}
-				final GamaList<MentalState> obligationBase = getBase(scope, OBLIGATION_BASE);
-				final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
+				final IList<MentalState> obligationBase = getBase(scope, OBLIGATION_BASE);
+				final IList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 				if (obligationBase.size() > 0) {
 					MentalState newIntention = obligationBase.get(0)/* .anyValue(scope) */;
 					double newIntStrength;
@@ -827,8 +825,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			} else {
 				final List<MentalState> obligationBaseTest = GamaListFactory.create();
-				for (final MentalState tempObligation : (GamaList<MentalState>) scope.getSimulation()
-						.getRandomGenerator().shuffle(getBase(scope, OBLIGATION_BASE))) {
+				for (final MentalState tempObligation : (IList<MentalState>) scope.getSimulation().getRandomGenerator()
+						.shuffle(getBase(scope, OBLIGATION_BASE))) {
 					for (final Norm tempNorm : listNorm) {
 						if (tempNorm == null) {
 							continue;
@@ -849,8 +847,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 				}
-				final GamaList<MentalState> obligationBase = getBase(scope, OBLIGATION_BASE);
-				final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
+				final IList<MentalState> obligationBase = getBase(scope, OBLIGATION_BASE);
+				final IList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 				double maxpriority = Double.MIN_VALUE;
 				if (obligationBaseTest.size() > 0 && intentionBase != null) {
 					MentalState newIntention = null;// desireBase.anyValue(scope);
@@ -952,7 +950,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				for (final Object statement : temp_plan) {
 					if (((BDIPlan) statement).getPlanStatement().hasFacet(PRIORITY)) {
 						priorities.add(msi.gaml.operators.Cast.asFloat(scope,
-								(((BDIPlan) statement).getPlanStatement().getPriorityExpression().value(scope))));
+								((BDIPlan) statement).getPlanStatement().getPriorityExpression().value(scope)));
 					} else {
 						priorities.add(1.0);
 					}
@@ -1240,15 +1238,15 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// }
 	// }
 
-	public GamaList<String> getThoughts(final IScope scope) {
+	public IList<String> getThoughts(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
-		final GamaList<String> thoughts = (GamaList<String>) agent.getAttribute(LAST_THOUGHTS);
+		final IList<String> thoughts = (IList<String>) agent.getAttribute(LAST_THOUGHTS);
 		return thoughts;
 	}
 
 	public IList<String> addThoughts(final IScope scope, final String think) {
 		final IAgent agent = getCurrentAgent(scope);
-		final GamaList<String> thoughts = (GamaList<String>) agent.getAttribute(LAST_THOUGHTS);
+		final IList<String> thoughts = (IList<String>) agent.getAttribute(LAST_THOUGHTS);
 		final IList newthoughts = GamaListFactory.create(Types.STRING);
 		newthoughts.add(think);
 		if (thoughts != null && thoughts.size() > 0) {
@@ -1267,8 +1265,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				final Object cond = intention.getPredicate().onHoldUntil;
 				if (cond instanceof ArrayList) {
 					if (((ArrayList) cond).size() == 0) {
-						final GamaList desbase = getBase(scope, DESIRE_BASE);
-						final GamaList intentionbase = getBase(scope, INTENTION_BASE);
+						final IList desbase = getBase(scope, DESIRE_BASE);
+						final IList intentionbase = getBase(scope, INTENTION_BASE);
 						desbase.remove(intention);
 						intentionbase.remove(intention);
 						for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
@@ -1297,8 +1295,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				final Object cond = intention.getPredicate().onHoldUntil;
 				if (cond instanceof ArrayList) {
 					if (((ArrayList) cond).size() <= 1) {
-						final GamaList desbase = getBase(scope, DESIRE_BASE);
-						final GamaList intentionbase = getBase(scope, INTENTION_BASE);
+						final IList desbase = getBase(scope, DESIRE_BASE);
+						final IList intentionbase = getBase(scope, INTENTION_BASE);
 						desbase.remove(intention);
 						intentionbase.remove(intention);
 						if (((ArrayList) cond).size() == 1) {
@@ -1331,7 +1329,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 		final Object cond = intention.onHoldUntil;
 		if (cond instanceof ArrayList) {
-			final GamaList desbase = getBase(scope, DESIRE_BASE);
+			final IList desbase = getBase(scope, DESIRE_BASE);
 			if (desbase.isEmpty()) { return false; }
 			for (final Object subintention : (ArrayList) cond) {
 				if (desbase.contains(subintention)) { return true; }
@@ -1435,37 +1433,34 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				: (List<Sanction>) agent.getAttribute(SANCTION_BASE);
 	}
 
-	public static GamaList<MentalState> getBase(final IScope scope, final String basename) {
+	public static IList<MentalState> getBase(final IScope scope, final String basename) {
 		final IAgent agent = scope.getAgent();
-		return (GamaList<MentalState>) (scope.hasArg(basename) ? scope.getListArg(basename)
-				: (GamaList<MentalState>) agent.getAttribute(basename));
+		return scope.hasArg(basename) ? scope.getListArg(basename) : (IList<MentalState>) agent.getAttribute(basename);
 	}
 
-	public static GamaList<Emotion> getEmotionBase(final IScope scope, final String basename) {
+	public static IList<Emotion> getEmotionBase(final IScope scope, final String basename) {
 		final IAgent agent = scope.getAgent();
-		return (GamaList<Emotion>) (scope.hasArg(basename) ? scope.getListArg(basename)
-				: (GamaList<Emotion>) agent.getAttribute(basename));
+		return scope.hasArg(basename) ? scope.getListArg(basename) : (IList<Emotion>) agent.getAttribute(basename);
 	}
 
-	public static GamaList<SocialLink> getSocialBase(final IScope scope, final String basename) {
+	public static IList<SocialLink> getSocialBase(final IScope scope, final String basename) {
 		final IAgent agent = scope.getAgent();
-		return (GamaList<SocialLink>) (scope.hasArg(basename) ? scope.getListArg(basename)
-				: (GamaList<SocialLink>) agent.getAttribute(basename));
+		return scope.hasArg(basename) ? scope.getListArg(basename) : (IList<SocialLink>) agent.getAttribute(basename);
 	}
 
 	public static boolean removeFromBase(final IScope scope, final MentalState predicateItem,
 			final String factBaseName) {
-		final GamaList<MentalState> factBase = getBase(scope, factBaseName);
+		final IList<MentalState> factBase = getBase(scope, factBaseName);
 		return factBase.remove(predicateItem);
 	}
 
 	public static boolean removeFromBase(final IScope scope, final Emotion emotionItem, final String factBaseName) {
-		final GamaList<Emotion> factBase = getEmotionBase(scope, factBaseName);
+		final IList<Emotion> factBase = getEmotionBase(scope, factBaseName);
 		return factBase.remove(emotionItem);
 	}
 
 	public static boolean removeFromBase(final IScope scope, final SocialLink socialItem, final String factBaseName) {
-		final GamaList<SocialLink> factBase = getSocialBase(scope, factBaseName);
+		final IList<SocialLink> factBase = getSocialBase(scope, factBaseName);
 		return factBase.remove(socialItem);
 	}
 
@@ -1492,7 +1487,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static boolean addToBase(final IScope scope, final MentalState mentalItem,
-			final GamaList<MentalState> factBase) {
+			final IList<MentalState> factBase) {
 		if (!factBase.contains(mentalItem)) {
 			// factBase.remove(mentalItem);
 
@@ -1502,7 +1497,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
-	public static boolean addToBase(final IScope scope, final Emotion predicateItem, final GamaList<Emotion> factBase) {
+	public static boolean addToBase(final IScope scope, final Emotion predicateItem, final IList<Emotion> factBase) {
 		factBase.remove(predicateItem);
 		// if(!factBase.contains(predicateItem)){
 		return factBase.add(predicateItem);
@@ -1510,8 +1505,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		// return false;
 	}
 
-	public static boolean addToBase(final IScope scope, final SocialLink socialItem,
-			final GamaList<SocialLink> factBase) {
+	public static boolean addToBase(final IScope scope, final SocialLink socialItem, final IList<SocialLink> factBase) {
 		factBase.remove(socialItem);
 		// if(!factBase.contains(socialItem)){
 		return factBase.add(socialItem);
@@ -2060,7 +2054,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "the current intention",
 					examples = { @example ("") }))
 	public MentalState currentIntention(final IScope scope) throws GamaRuntimeException {
-		final GamaList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
+		final IList<MentalState> intentionBase = getBase(scope, INTENTION_BASE);
 		if (intentionBase == null) { return null; }
 		if (!intentionBase.isEmpty()) { return intentionBase.lastValue(scope); }
 		return null;
@@ -2616,7 +2610,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				(Predicate) (scope.hasArg("old_predicate") ? scope.getArg("old_predicate", PredicateType.id) : null);
 		boolean ok = true;
 		if (oldPredicate != null) {
-			ok = getBase(scope, BELIEF_BASE).remove(new MentalState("Belief",oldPredicate));
+			ok = getBase(scope, BELIEF_BASE).remove(new MentalState("Belief", oldPredicate));
 		} else {
 			ok = false;
 		}
@@ -2625,11 +2619,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (newPredicate != null) {
 			final MentalState temp = new MentalState("Belief", newPredicate);
 			// Predicate current_intention = currentIntention(scope);
-			if (getBase(scope, SimpleBdiArchitecture.INTENTION_BASE).contains(new MentalState("Intention",newPredicate))) {
+			if (getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)
+					.contains(new MentalState("Intention", newPredicate))) {
 				removeFromBase(scope, temp, DESIRE_BASE);
 				removeFromBase(scope, temp, INTENTION_BASE);
 			}
-			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(new MentalState("Desire",newPredicate))) {
+			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(new MentalState("Desire", newPredicate))) {
 				removeFromBase(scope, temp, DESIRE_BASE);
 			}
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
@@ -3548,8 +3543,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		if (predicateDirect.getPredicate() != null) {
-			final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
-					.cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
+			final IList<Emotion> emoTemps = GamaListFactory.create(scope,
+					getEmotionBase(scope, EMOTION_BASE).getGamlType(), getEmotionBase(scope, EMOTION_BASE)); // ??
 			for (final Emotion emo : emoTemps) {
 				if (emo.getName().equals("hope")) {
 					if (emo.getAbout() != null && emo.getAbout().equalsEmotions(predicateDirect.getPredicate())) {
@@ -3714,7 +3709,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// final IAgent agent = getCurrentAgent(scope);
 	// final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 	// : (Boolean) agent.getAttribute(USE_PERSONALITY);
-	// final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+	// final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
 	// .cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
 	// for (final Emotion emo : emoTemps) {
 	// if (emo.getName().equals("hope")) {
@@ -3766,7 +3761,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// final IAgent agent = getCurrentAgent(scope);
 	// final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 	// : (Boolean) agent.getAttribute(USE_PERSONALITY);
-	// final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+	// final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
 	// .cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
 	// for (final Emotion emo : emoTemps) {
 	// if (emo.getName().equals("fear")) {
@@ -3819,7 +3814,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// final IAgent agent = getCurrentAgent(scope);
 	// final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 	// : (Boolean) agent.getAttribute(USE_PERSONALITY);
-	// final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+	// final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
 	// .cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
 	// for (final Emotion emo : emoTemps) {
 	// if (emo.getName().equals("fear")) {
@@ -3874,7 +3869,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// final IAgent agent = getCurrentAgent(scope);
 	// final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 	// : (Boolean) agent.getAttribute(USE_PERSONALITY);
-	// final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+	// final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
 	// .cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
 	// for (final Emotion emo : emoTemps) {
 	// if (emo.getName().equals("hope")) {
@@ -4308,8 +4303,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private static void createGratificationGratitudeFromJoy(final IScope scope, final Emotion emo) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
-		final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
-				.cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
+		final IList<Emotion> emoTemps = GamaListFactory.create(scope, getEmotionBase(scope, EMOTION_BASE).getGamlType(),
+				getEmotionBase(scope, EMOTION_BASE)); // ??
 		for (final Emotion emoTemp : emoTemps) {
 			if (emoTemp.getName().equals("pride")) {
 				if (emoTemp.getAbout() != null && emo.getAbout() != null && emo.getAbout().getAgentCause() != null) {
@@ -4363,8 +4358,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private static void createRemorseAngerFromSadness(final IScope scope, final Emotion emo) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
-		final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
-				.cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
+		final IList<Emotion> emoTemps = GamaListFactory.create(scope, getEmotionBase(scope, EMOTION_BASE).getGamlType(),
+				getEmotionBase(scope, EMOTION_BASE)); // ??
 		for (final Emotion emoTemp : emoTemps) {
 			if (emoTemp.getName().equals("shame")) {
 				if (emoTemp.getAbout() != null && emo.getAbout() != null && emo.getAbout().getAgentCause() != null) {
@@ -4418,7 +4413,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// final IAgent agent = getCurrentAgent(scope);
 	// final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 	// : (Boolean) agent.getAttribute(USE_PERSONALITY);
-	// final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+	// final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
 	// .cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
 	// for (final Emotion emo : emoTemps) {
 	// if (emo.getName().equals("pride")) {
@@ -4445,7 +4440,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// final IAgent agent = getCurrentAgent(scope);
 	// final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 	// : (Boolean) agent.getAttribute(USE_PERSONALITY);
-	// final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+	// final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
 	// .cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
 	// for (final Emotion emo : emoTemps) {
 	// if (emo.getName().equals("shame")) {
@@ -4472,7 +4467,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// final IAgent agent = getCurrentAgent(scope);
 	// final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 	// : (Boolean) agent.getAttribute(USE_PERSONALITY);
-	// final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+	// final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
 	// .cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
 	// for (final Emotion emo : emoTemps) {
 	// if (emo.getName().equals("admiration")) {
@@ -4499,7 +4494,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// final IAgent agent = getCurrentAgent(scope);
 	// final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 	// : (Boolean) agent.getAttribute(USE_PERSONALITY);
-	// final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+	// final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
 	// .cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getGamlType());
 	// for (final Emotion emo : emoTemps) {
 	// if (emo.getName().equals("reproach")) {

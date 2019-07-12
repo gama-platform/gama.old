@@ -10,25 +10,15 @@
  ********************************************************************************************************/
 package msi.gama.util;
 
-import static msi.gama.util.GamaMapFactory.createWithoutCasting;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
 
+import msi.gama.common.interfaces.IAttributed.BiConsumerWithPruning;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.GamlAnnotations.test;
-import msi.gama.precompiler.GamlAnnotations.variable;
-import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.IOperatorCategory;
-import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.GamaObjectMatrix;
@@ -40,26 +30,11 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * The Class GamaMap.
+ * The Class GamaMap. Use GamaMapFactory to create GamaMaps
  */
-@vars ({ @variable (
-		name = GamaMap.KEYS,
-		type = IType.LIST,
-		of = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
-		doc = { @doc ("Returns the list of keys of this map (in their order of insertion)") }),
-		@variable (
-				name = GamaMap.VALUES,
-				type = IType.LIST,
-				of = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-				doc = { @doc ("Returns the list of values of this map (in their order of insertion)") }),
-		@variable (
-				name = GamaMap.PAIRS,
-				type = IType.LIST,
-				of = IType.PAIR,
-				doc = { @doc ("Returns the list of pairs (key, value) that compose this map") }) })
+
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaMap<K, V> extends TOrderedHashMap<K, V>
-		implements IModifiableContainer<K, V, K, V>, IAddressableContainer<K, V, K, V> {
+public class GamaMap<K, V> extends TOrderedHashMap<K, V> implements IMap<K, V> {
 
 	public static final String KEYS = "keys";
 	public static final String VALUES = "values";
@@ -67,7 +42,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 	IContainerType type;
 
-	public GamaMap(final int capacity, final IType key, final IType content) {
+	protected GamaMap(final int capacity, final IType key, final IType content) {
 		super(capacity);
 		type = Types.MAP.of(key, content);
 	}
@@ -94,6 +69,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	@Override
 	public IList<V> listValue(final IScope scope, final IType contentsType, final boolean copy) {
 		if (!GamaType.requiresCasting(contentsType, type.getContentType())) {
+			if (!copy) { return GamaListFactory.wrap(contentsType, values()); }
 			return GamaListFactory.createWithoutCasting(contentsType, values());
 		} else {
 			return GamaListFactory.create(scope, contentsType, values());
@@ -132,11 +108,11 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
+	public IMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
 		final boolean coerceKey = GamaType.requiresCasting(keyType, type.getKeyType());
 		final boolean coerceValue = GamaType.requiresCasting(contentsType, type.getContentType());
 		if (coerceKey || coerceValue) {
-			final GamaMap result = GamaMapFactory.create(keyType, contentsType, size());
+			final IMap result = GamaMapFactory.create(keyType, contentsType, size());
 			for (final Map.Entry<K, V> entry : super.entrySet()) {
 				result.put(coerceKey ? result.buildIndex(scope, entry.getKey()) : entry.getKey(),
 						coerceValue ? result.buildValue(scope, entry.getValue()) : entry.getValue());
@@ -144,8 +120,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 			return result;
 		} else {
 			if (copy) {
-				final GamaMap result = copy(scope);
-				result.type = Types.MAP.of(keyType, contentsType);
+				final IMap result = copy(scope);
 				return result;
 			} else {
 				return this;
@@ -300,55 +275,39 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 		return /* containsKey(o) || */containsValue(o);
 	}
 
-	@operator (
-			value = "reverse",
-			can_be_const = true,
-			type = IType.MAP,
-			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2,
-			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-			category = { IOperatorCategory.CONTAINER },
-			concept = { IConcept.CONTAINER })
-	@doc (
-			value = "Specialization of the reverse operator for maps. Reverses keys and values",
-			comment = "",
-			examples = { @example ("map<int,int> m <- [1::111,2::222, 3::333, 4::444];"), @example (
-					value = "reverse(m)",
-					equals = "map([111::1,222::2,333::3,444::4])") })
-
-	@test ("map<int,int> m <- [1::111,2::222, 3::333, 4::444]; reverse(m) = map([111::1,222::2,333::3,444::4])")
-
 	@Override
-	public IContainer reverse(final IScope scope) {
+	public GamaMap reverse(final IScope scope) {
 		final GamaMap map = new GamaMap(size(), getGamlType().getContentType(), getGamlType().getKeyType());
-		for (final Map.Entry<K, V> entry : entrySet()) {
-			map.put(entry.getValue(), entry.getKey());
-		}
+		forEach((k, v) -> map.put(v, k));
 		return map;
 	}
 
+	@Override
 	@getter ("keys")
 	public IList<K> getKeys() {
-		return GamaListFactory.<K> createWithoutCasting(getGamlType().getKeyType(), keySet());
+		return GamaListFactory.<K> wrap(getGamlType().getKeyType(), keySet());
 	}
 
+	@Override
 	@getter ("values")
 	public IList<V> getValues() {
-		return GamaListFactory.<V> createWithoutCasting(getGamlType().getContentType(), values());
+		return GamaListFactory.<V> wrap(getGamlType().getContentType(), values());
 	}
 
+	@Override
 	@getter ("pairs")
-	public GamaPairList getPairs() {
+	public IPairList getPairs() {
 		// FIXME: in the future, this method will be directly operating upon the
 		// entry set (so as to
 		// avoir duplications). See GamaPair
-		final GamaPairList pairs = new GamaPairList();
+		final GamaPairList pairs = new GamaPairList(this);
 		forEachEntry((key, value) -> pairs.add(new GamaPair(key, value, type.getKeyType(), type.getContentType())));
 		return pairs;
 	}
 
 	@Override
-	public GamaMap copy(final IScope scope) {
-		return createWithoutCasting(getGamlType().getKeyType(), getGamlType().getContentType(), this);
+	public IMap copy(final IScope scope) {
+		return GamaMapFactory.createWithoutCasting(getGamlType().getKeyType(), getGamlType().getContentType(), this);
 	}
 
 	@Override
@@ -367,20 +326,17 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	}
 
 	@Override
+	public Set<Map.Entry<K, V>> entrySet() {
+		return super.entrySet();
+	}
+
+	@Override
 	public V getFromIndicesList(final IScope scope, final IList<K> indices) throws GamaRuntimeException {
 		if (indices == null || indices.isEmpty()) { return null; }
 		return get(scope, indices.get(0));
 		// We do not consider the case where multiple indices are used. Maybe
 		// could be used in the
 		// future to return a list of values ?
-	}
-
-	public class GamaPairList extends GamaList<Map.Entry<K, V>> implements Set<Map.Entry<K, V>> {
-
-		GamaPairList() {
-			super(GamaMap.this.size(), Types.PAIR.of(type.getKeyType(), type.getContentType()));
-		}
-
 	}
 
 	/**
@@ -411,7 +367,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object,
 	 *      msi.gaml.types.IContainerType)
 	 */
-	protected V buildValue(final IScope scope, final Object object) {
+	@Override
+	public V buildValue(final IScope scope, final Object object) {
 		// If we pass a pair to this method, but the content type is not a pair,
 		// then it is is interpreted as a key + a value by addValue()
 		if (object instanceof GamaPair) {
@@ -430,7 +387,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer,
 	 *      msi.gaml.types.IContainerType)
 	 */
-	protected IContainer<?, GamaPair<K, V>> buildValues(final IScope scope, final IContainer objects) {
+	@Override
+	public IContainer<?, GamaPair<K, V>> buildValues(final IScope scope, final IContainer objects) {
 		return GamaMapType.staticCast(scope, objects, type.getKeyType(), type.getContentType(), false);
 	}
 
@@ -440,7 +398,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object,
 	 *      msi.gaml.types.IContainerType)
 	 */
-	protected K buildIndex(final IScope scope, final Object object) {
+	@Override
+	public K buildIndex(final IScope scope, final Object object) {
 		return (K) type.getKeyType().cast(scope, object, null, false);
 	}
 
@@ -455,6 +414,24 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	@Override
 	public boolean containsKey(final IScope scope, final Object o) throws GamaRuntimeException {
 		return index(o) >= 0;
+	}
+
+	@SuppressWarnings ("unchecked")
+	@Override
+	public void forEachPair(final BiConsumerWithPruning<K, V> procedure) {
+		final Object[] keys = _set;
+		final V[] values = _values;
+		final int[] inserts = _indicesByInsertOrder;
+		for (int i = 0; i <= _lastInsertOrderIndex; i++) {
+			final int index = inserts[i];
+			if (index == EMPTY) {
+				continue;
+			}
+			if (keys[index] != FREE && keys[index] != REMOVED) {
+				if (!procedure.process((K) keys[index], values[index])) { return; }
+			}
+		}
+
 	}
 
 }

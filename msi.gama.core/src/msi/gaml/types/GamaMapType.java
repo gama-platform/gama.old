@@ -19,48 +19,33 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
+import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 
 @type (
 		name = IKeyword.MAP,
 		id = IType.MAP,
-		wraps = { GamaMap.class },
+		wraps = { IMap.class },
 		kind = ISymbolKind.Variable.CONTAINER,
 		concept = { IConcept.TYPE, IConcept.CONTAINER, IConcept.MAP },
 		doc = @doc ("Represents lists of pairs key::value, where each key is unique in the map. Maps are ordered by the insertion order of elements"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaMapType extends GamaContainerType<GamaMap> {
+public class GamaMapType extends GamaContainerType<IMap> {
 
 	@Override
-	public GamaMap cast(final IScope scope, final Object obj, final Object param, final IType keyType,
+	public IMap cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 			final IType contentType, final boolean copy) throws GamaRuntimeException {
 		return staticCast(scope, obj, keyType, contentType, copy);
 	}
 
-	public static GamaMap staticCast(final IScope scope, final Object obj, final IType keyType,
-			final IType contentsType, final boolean copy) {
+	public static IMap staticCast(final IScope scope, final Object obj, final IType keyType, final IType contentsType,
+			final boolean copy) {
 		if (obj == null) { return GamaMapFactory.create(keyType, contentsType); }
-		if (obj instanceof IAgent) {
-			return new SavedAgent(scope, (IAgent) obj);
-			// We collect all the variables / attributes of the agent
-			// final IAgent agent = (IAgent) obj;
-			// final GamaMap<String, Object> map = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
-			// for (final String s : agent.getSpecies().getVarNames()) {
-			// map.put(s, agent.getDirectVarValue(scope, s));
-			// }
-			// map.putAll(agent.getAttributes());
-			// final GamaMap shapeAttr = (GamaMap) agent.getGeometry().getAttributes();
-			// if (shapeAttr != null) {
-			// map.putAll(shapeAttr);
-			// }
-			// final IType kt = keyType == null || keyType == Types.NO_TYPE ? Types.STRING : keyType;
-			// return map.mapValue(scope, kt, contentsType, false);
-		}
+		if (obj instanceof IAgent) { return new SavedAgent(scope, (IAgent) obj); }
 		if (obj instanceof IContainer) { return ((IContainer) obj).mapValue(scope, keyType, contentsType, copy); }
-		final GamaMap result = GamaMapFactory.create(keyType, contentsType);
+		final IMap result = GamaMapFactory.create(keyType, contentsType);
 		result.setValueAtIndex(scope, obj, obj);
 		return result;
 	}

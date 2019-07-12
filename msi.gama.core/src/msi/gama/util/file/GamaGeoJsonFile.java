@@ -132,7 +132,7 @@ public class GamaGeoJsonFile extends GamaGisFile {
 			attributes.put(desc.getName().getLocalPart(), type);
 		}
 
-		return GamaListFactory.createWithoutCasting(Types.STRING, attributes.keySet());
+		return GamaListFactory.wrap(Types.STRING, attributes.keySet());
 	}
 
 	@Override

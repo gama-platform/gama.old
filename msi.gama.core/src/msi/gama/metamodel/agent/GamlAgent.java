@@ -21,10 +21,10 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
@@ -40,7 +40,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	// hqnghi manipulate micro-models AD put it to null to have lazy
 	// initialization (saves some bytes in each agent)
-	protected GamaMap<String, IPopulation<? extends IAgent>> externMicroPopulations;
+	protected IMap<String, IPopulation<? extends IAgent>> externMicroPopulations;
 	// Added to optimize the traversal of "non-minimal" agents that contain
 	// micropopulations
 	protected IPopulation<? extends IAgent>[] microPopulations;

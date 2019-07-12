@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -136,16 +137,24 @@ public class GamlResourceServices {
 	}
 
 	public static void removeResourceListener(final IGamlBuilderListener listener) {
-		URI toRemove = null;
-		for (final Map.Entry<URI, IGamlBuilderListener> entry : resourceListeners.entrySet()) {
+		// URI toRemove = null;
+		final Iterator<Map.Entry<URI, IGamlBuilderListener>> it = resourceListeners.entrySet().iterator();
+		while (it.hasNext()) {
+			final Map.Entry<URI, IGamlBuilderListener> entry = it.next();
 			if (entry.getValue() == listener) {
-				toRemove = properlyEncodedURI(entry.getKey());
+				it.remove();
+				return;
 			}
 		}
-		if (toRemove != null) {
-			resourceListeners.remove(toRemove);
-			documentationCache.invalidate(toRemove);
-		}
+		// for (final Map.Entry<URI, IGamlBuilderListener> entry : resourceListeners.entrySet()) {
+		// if (entry.getValue() == listener) {
+		// toRemove = properlyEncodedURI(entry.getKey());
+		// }
+		// }
+		// if (toRemove != null) {
+		// resourceListeners.remove(toRemove);
+		// documentationCache.invalidate(toRemove);
+		// }
 
 	}
 

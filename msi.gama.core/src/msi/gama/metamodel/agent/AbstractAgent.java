@@ -31,8 +31,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -207,8 +207,8 @@ public abstract class AbstractAgent implements IAgent {
 	// }
 
 	@Override
-	public GamaMap<String, Object> getOrCreateAttributes() {
-		return (GamaMap<String, Object>) getGeometry().getOrCreateAttributes();
+	public IMap<String, Object> getOrCreateAttributes() {
+		return getGeometry().getOrCreateAttributes();
 	}
 
 	@Override
@@ -217,8 +217,8 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
-		return getGeometry().forEachAttribute(visitor);
+	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		getGeometry().forEachAttribute(visitor);
 	}
 
 	@Override
@@ -304,6 +304,7 @@ public abstract class AbstractAgent implements IAgent {
 		// "peers" is read-only attribute
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
 		if (getHost() == null) { return GamaListFactory.create(); }
@@ -311,7 +312,7 @@ public abstract class AbstractAgent implements IAgent {
 		if (pop != null) {
 			final IScope scope = getScope();
 			final IList<IAgent> retVal =
-					GamaListFactory.<IAgent> createWithoutCasting(scope.getType(getSpeciesName()), pop.toArray());
+					GamaListFactory.<IAgent> createWithoutCasting(scope.getType(getSpeciesName()), (List<IAgent>) pop);
 			retVal.remove(this);
 			return retVal;
 		}

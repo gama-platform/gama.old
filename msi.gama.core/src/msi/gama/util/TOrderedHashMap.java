@@ -238,12 +238,23 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		return true;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
-	public void forEach(final BiConsumer<? super K, ? super V> action) {
-		forEachEntry((TObjectObjectProcedure<? super K, ? super V>) (k, v) -> {
-			action.accept(k, v);
-			return true;
-		});
+	public void forEach(final BiConsumer<? super K, ? super V> procedure) {
+
+		final Object[] keys = _set;
+		final V[] values = _values;
+		final int[] inserts = _indicesByInsertOrder;
+		for (int i = 0; i <= _lastInsertOrderIndex; i++) {
+			final int index = inserts[i];
+			if (index == EMPTY) {
+				continue;
+			}
+			if (keys[index] != FREE && keys[index] != REMOVED) {
+				procedure.accept((K) keys[index], values[index]);
+			}
+		}
+
 	}
 
 	@Override
@@ -750,13 +761,6 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	int maxSize() {
 		return _maxSize;
-	}
-
-	public V anyValue(final IScope scope) {
-		final int size = _size;
-		if (size == 0) { return null; }
-		final int i = scope.getRandom().between(0, _size - 1);
-		return valueAt(i);
 	}
 
 	// Zero-based access

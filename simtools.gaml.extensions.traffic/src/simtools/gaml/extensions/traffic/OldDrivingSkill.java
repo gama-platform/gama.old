@@ -41,10 +41,9 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.path.GamaPath;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
@@ -129,12 +128,12 @@ public class OldDrivingSkill extends MovingSkill {
 	}
 
 	@getter (OBSTACLE_SPECIES)
-	public GamaList<ISpecies> getObstacleSpecies(final IAgent agent) {
-		return (GamaList<ISpecies>) agent.getAttribute(OBSTACLE_SPECIES);
+	public IList<ISpecies> getObstacleSpecies(final IAgent agent) {
+		return (IList<ISpecies>) agent.getAttribute(OBSTACLE_SPECIES);
 	}
 
 	@setter (OBSTACLE_SPECIES)
-	public void setObstacleSpecies(final IAgent agent, final GamaList<ISpecies> os) {
+	public void setObstacleSpecies(final IAgent agent, final IList<ISpecies> os) {
 		agent.setAttribute(OBSTACLE_SPECIES, os);
 	}
 
@@ -142,10 +141,9 @@ public class OldDrivingSkill extends MovingSkill {
 		return scope.hasArg(LANES_ATTRIBUTE) ? scope.getStringArg(LANES_ATTRIBUTE) : getLanesAttribute(agent);
 	}
 
-	protected GamaList<ISpecies> computeObstacleSpecies(final IScope scope, final IAgent agent)
+	protected IList<ISpecies> computeObstacleSpecies(final IScope scope, final IAgent agent)
 			throws GamaRuntimeException {
-		return (GamaList<ISpecies>) (scope.hasArg(OBSTACLE_SPECIES) ? scope.getListArg(OBSTACLE_SPECIES)
-				: getObstacleSpecies(agent));
+		return scope.hasArg(OBSTACLE_SPECIES) ? scope.getListArg(OBSTACLE_SPECIES) : getObstacleSpecies(agent);
 	}
 
 	protected double computeTolerance(final IScope scope, final IAgent agent) throws GamaRuntimeException {
@@ -204,8 +202,8 @@ public class OldDrivingSkill extends MovingSkill {
 		final double tolerance = computeTolerance(scope, agent);
 		final double livingSpace = computeLivingSpace(scope, agent);
 		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
-		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
-		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
+		final IMap weigths = (IMap) computeMoveWeights(scope);
+		final IList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 		String laneAttributes = computeLanesNumber(scope, agent);
 		if (laneAttributes == null || "".equals(laneAttributes)) {
 			laneAttributes = "lanes_number";
@@ -294,7 +292,7 @@ public class OldDrivingSkill extends MovingSkill {
 		final double maxDist = computeDistance(scope, agent);
 		final double tolerance = computeTolerance(scope, agent);
 		final double livingSpace = computeLivingSpace(scope, agent);
-		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
+		final IList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 		String laneAttributes = computeLanesNumber(scope, agent);
 		if (laneAttributes == null || "".equals(laneAttributes)) {
 			laneAttributes = "lanes_number";
@@ -329,7 +327,7 @@ public class OldDrivingSkill extends MovingSkill {
 			return null;
 		}
 		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
-		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
+		final IMap weigths = (IMap) computeMoveWeights(scope);
 		if (returnPath != null && returnPath) {
 			final IPath pathFollowed = moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths, livingSpace,
 					tolerance, laneAttributes, obsSpecies);
@@ -363,7 +361,7 @@ public class OldDrivingSkill extends MovingSkill {
 
 	private double avoidCollision(final IScope scope, final IAgent agent, final double distance,
 			final double livingSpace, final double tolerance, final GamaPoint currentLocation, final GamaPoint target,
-			final int nbLanes, final GamaList<ISpecies> obsSpecies) {
+			final int nbLanes, final IList<ISpecies> obsSpecies) {
 		// Collision avoiding
 
 		// 2. Selects the agents before the agent on the segment
@@ -424,8 +422,8 @@ public class OldDrivingSkill extends MovingSkill {
 	}
 
 	private void moveToNextLocAlongPathSimplifiedTraffic(final IScope scope, final IAgent agent, final IPath path,
-			final double _distance, final GamaMap weigths, final double livingSpace, final double tolerance,
-			final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
+			final double _distance, final IMap weigths, final double livingSpace, final double tolerance,
+			final String laneAttributes, final IList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		if (indexVals == null) { return; }
@@ -525,8 +523,8 @@ public class OldDrivingSkill extends MovingSkill {
 	}
 
 	private IPath moveToNextLocAlongPathTraffic(final IScope scope, final IAgent agent, final IPath path,
-			final double _distance, final GamaMap weigths, final double livingSpace, final double tolerance,
-			final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
+			final double _distance, final IMap weigths, final double livingSpace, final double tolerance,
+			final String laneAttributes, final IList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		if (indexVals == null) { return null; }

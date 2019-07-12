@@ -209,9 +209,7 @@ public class GamaShapeFile extends GamaGisFile {
 					.append(Strings.LN);
 			if (!attributes.isEmpty()) {
 				sb.append("Attributes: ").append(Strings.LN);
-				for (final Map.Entry<String, String> entry : attributes.entrySet()) {
-					sb.append("<li>").append(entry.getKey()).append(" (" + entry.getValue() + ")").append("</li>");
-				}
+				attributes.forEach((k, v) -> sb.append("<li>").append(k).append(" (" + v + ")").append("</li>"));
 			}
 			return sb.toString();
 		}
@@ -328,7 +326,7 @@ public class GamaShapeFile extends GamaGisFile {
 				return GamaListFactory.create();
 			}
 		}
-		return GamaListFactory.createWithoutCasting(Types.STRING, s.attributes.keySet());
+		return GamaListFactory.wrap(Types.STRING, s.attributes.keySet());
 	}
 
 	@Override

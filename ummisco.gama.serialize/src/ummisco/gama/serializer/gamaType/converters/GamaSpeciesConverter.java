@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'GamaSpeciesConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaSpeciesConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
@@ -18,12 +17,12 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.species.AbstractSpecies;
 import msi.gaml.species.GamlSpecies;
 import ummisco.gama.dev.utils.DEBUG;
 
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings ({ "unchecked" })
 public class GamaSpeciesConverter implements Converter {
 	ConverterScope convertScope;
 
@@ -38,17 +37,17 @@ public class GamaSpeciesConverter implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-	//	System.out.println("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
+		// System.out.println("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
 		DEBUG.OUT("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
 		final AbstractSpecies spec = (AbstractSpecies) arg0;
-		final GamaPopulation<? extends IAgent> pop = (GamaPopulation<? extends IAgent>) spec
-				.getPopulation(convertScope.getScope());
+		final GamaPopulation<? extends IAgent> pop =
+				(GamaPopulation<? extends IAgent>) spec.getPopulation(convertScope.getScope());
 
 		writer.startNode("agentSetFromPopulation");
 		context.convertAnother(pop.getAgents(convertScope.getScope()));
 		writer.endNode();
 
-	//	System.out.println("===========END ConvertAnother : ConvertGamaSpecies");
+		// System.out.println("===========END ConvertAnother : ConvertGamaSpecies");
 		DEBUG.OUT("===========END ConvertAnother : ConvertGamaSpecies");
 	}
 
@@ -56,7 +55,7 @@ public class GamaSpeciesConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 
 		reader.moveDown();
-		final GamaList<IAgent> listAgetFromPopulation = (GamaList<IAgent>) context.convertAnother(null, GamaList.class);
+		final IList<IAgent> listAgetFromPopulation = (IList<IAgent>) context.convertAnother(null, IList.class);
 		reader.moveUp();
 
 		return listAgetFromPopulation;

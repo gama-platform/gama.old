@@ -21,7 +21,7 @@ import java.util.Map;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
@@ -147,9 +147,7 @@ public class TCPConnector extends Connector {
 	public Map<IAgent, LinkedList<ConnectorMessage>> fetchAllMessages() {
 		for (final IAgent agt : this.receivedMessage.keySet()) {
 			// IScope scope = agt.getScope();
-			GamaList<ConnectorMessage> m = null;
-
-			m = (GamaList<ConnectorMessage>) agt.getAttribute("messages" + agt);
+			final IList<ConnectorMessage> m = (IList<ConnectorMessage>) agt.getAttribute("messages" + agt);
 			if (m != null) {
 				// receivedMessage.get(agt).addAll(m);
 				for (final ConnectorMessage cm : m) {

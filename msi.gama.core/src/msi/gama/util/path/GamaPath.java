@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.path.GamaPath.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.path.GamaPath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.path;
 
@@ -34,7 +34,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	V source, target;
 	IList<E> edges;
-	
+
 	double weight = 0.0;
 
 	// The graph attribute is override in GamaSpatialPath by a GamaSpatialGraph
@@ -131,10 +131,8 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	public IList<E> getEdgeList() {
 		return edges;
 	}
-	
-	
 
-	public void setWeight(double weight) {
+	public void setWeight(final double weight) {
 		this.weight = weight;
 	}
 
@@ -171,7 +169,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	@Override
 	public IList<V> getVertexList() {
 		if (graph == null) { return GamaListFactory.create(); }
-		return GamaListFactory.<V> createWithoutCasting(getGamlType().getKeyType(), GraphPath.super.getVertexList());
+		return GamaListFactory.<V> wrap(getGamlType().getKeyType(), GraphPath.super.getVertexList());
 	}
 
 	// TODO :to check

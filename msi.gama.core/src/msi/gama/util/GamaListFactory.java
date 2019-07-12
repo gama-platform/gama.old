@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaListFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.GamaListFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -101,6 +102,10 @@ public class GamaListFactory {
 
 	}
 
+	public static <T> IList<T> create(final IType t, final Stream<T> stream) {
+		return (IList<T>) stream.collect(TO_GAMA_LIST);
+	}
+
 	/**
 	 * Create a GamaList from an array of objects, but does not attempt casting its values.
 	 *
@@ -109,28 +114,34 @@ public class GamaListFactory {
 	 * @warning ***WARNING*** This operation can end up putting values of the wrong type into the list
 	 * @return
 	 */
-
-	// public static <T> IList<T> create(final IType t, final Stream<T> stream)
-	// {
-	// return (IList<T>) createWithoutCasting(t, stream.toArray());
-	// }
-
-	public static <T> IList<T> create(final IType t, final Stream<T> stream) {
-		return (IList<T>) stream.collect(TO_GAMA_LIST);
-	}
-
 	public static <T> IList<T> createWithoutCasting(final IType contentType, final T... objects) {
 		final IList<T> list = create(contentType, objects.length);
 		list.addAll(Arrays.asList(objects));
 		return list;
 	}
 
+	/**
+	 * Create a GamaList from an array of ints, but does not attempt casting its values.
+	 *
+	 * @param contentType
+	 * @param collection
+	 * @warning ***WARNING*** This operation can end up putting values of the wrong type into the list
+	 * @return
+	 */
 	public static IList<Integer> createWithoutCasting(final IType contentType, final int[] objects) {
 		final IList<Integer> list = create(contentType, objects.length);
 		list.addAll(Arrays.asList(ArrayUtils.toObject(objects)));
 		return list;
 	}
 
+	/**
+	 * Create a GamaList from an array of floats, but does not attempt casting its values.
+	 *
+	 * @param contentType
+	 * @param collection
+	 * @warning ***WARNING*** This operation can end up putting values of the wrong type into the list
+	 * @return
+	 */
 	public static IList<Double> createWithoutCasting(final IType contentType, final double[] objects) {
 		final IList<Double> list = create(contentType, objects.length);
 		list.addAll(Arrays.asList(ArrayUtils.toObject(objects)));
@@ -289,12 +300,64 @@ public class GamaListFactory {
 		return create(contentType, DEFAULT_SIZE);
 	}
 
+	/**
+	 * Create a IList with no type and no elements
+	 *
+	 * @param clazz,
+	 *            the class from which the contents type
+	 * @return a new IList
+	 */
 	public static <T> IList<T> create(final Class<T> clazz) {
 		return create(Types.get(clazz));
 	}
 
+	/**
+	 * Create a IList with no type and no elements
+	 *
+	 * @return a new IList
+	 */
 	public static IList create() {
 		return create(Types.NO_TYPE);
+	}
+
+	/**
+	 * Wraps the parameter into an IList. Every change in the wrapped list is reflected immediately and every change to
+	 * the IList is reflected in the wrapped list. No copy is made, , only a thin layer is created to wrap the parameter
+	 *
+	 * @param contentType
+	 * @param wrapped
+	 * @return
+	 */
+	public static <E> IList<E> wrap(final IType contentType, final List<E> wrapped) {
+		return new GamaListWrapper(wrapped, contentType);
+	}
+
+	/**
+	 * Wraps the array into an IList. Every change in the wrapped array is reflected immediately and every change to the
+	 * IList is reflected in the array, exluding add and remove (as well as addAll and removeAll) operations, which
+	 * yield a runtime exception. No copy of the array is made, only a thin layer is created to wrap the array
+	 *
+	 * @param contentType
+	 * @param wrapped
+	 * @return
+	 */
+	public static <E> IList<E> wrap(final IType contentType, final E... wrapped) {
+		return new GamaListArrayWrapper(wrapped, contentType);
+	}
+
+	/**
+	 * Wraps the parameter Collection into an IList. Every change in the wrapped Set is reflected immediately and every
+	 * change to the IList is reflected in the wrapped Collection. No copy is made, only a thin layer is created to wrap
+	 * the parameter. Some operations (esp. those using indices) are not really meaningful for collections; they are
+	 * emulated in the best possible way by this wrapper
+	 *
+	 * @param contentType
+	 *            s
+	 * @param wrapped
+	 * @return
+	 */
+	public static <E> IList<E> wrap(final IType contentType, final Collection<E> wrapped) {
+		return new GamaListCollectionWrapper(wrapped, contentType);
 	}
 
 }

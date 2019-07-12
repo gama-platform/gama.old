@@ -19,7 +19,6 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
@@ -189,9 +188,9 @@ public class MessageBroker {
 	}
 
 	public void addConversation(final Conversation c) {
-		final List<IAgent> members = GamaListFactory.create(Types.AGENT);
+		final IList<IAgent> members = GamaListFactory.create(Types.AGENT);
 		members.add(c.getIntitiator());
-		for (final IAgent m : (GamaList<IAgent>) c.getParticipants()) {
+		for (final IAgent m : c.getParticipants()) {
 			members.add(m);
 		}
 

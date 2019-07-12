@@ -22,9 +22,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -62,7 +62,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	// geometry is a sphere, a
 	// cube, etc...). Can be reused by subclasses (for example to store GIS
 	// information)
-	protected GamaMap<String, Object> attributes;
+	protected IMap<String, Object> attributes;
 
 	public GamaProxyGeometry(final ILocation loc) {
 		setLocation(loc);
@@ -74,9 +74,9 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	}
 
 	@Override
-	public boolean forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
-		if (attributes == null) { return true; }
-		return attributes.forEachEntry((k, v) -> visitor.process(k, v));
+	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		if (attributes == null) { return; }
+		attributes.forEachPair(visitor);
 	}
 
 	/**
@@ -155,7 +155,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.common.interfaces.IAttributed#getOrCreateAttributes()
 	 */
 	@Override
-	public GamaMap getOrCreateAttributes() {
+	public IMap<String, Object> getOrCreateAttributes() {
 		if (attributes == null) {
 			attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		}

@@ -38,7 +38,6 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
@@ -1257,7 +1256,7 @@ public class DrivingSkill extends MovingSkill {
 		// RoadSkill.getLinkedRoad(currentRoad) : currentRoad;
 		final int segment =
 				onLinkedRoad ? currentRoad.getInnerGeometry().getNumPoints() - 2 - segmentIndex : segmentIndex;
-		final IList aglanes = (IList) ((GamaList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
+		final IList aglanes = (IList) ((IList) currentRoad.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
 		final Collection<IAgent> agents = (IList<IAgent>) aglanes.get(segment);
 		final boolean moreSegment = !onLinkedRoad && segmentIndex <= aglanes.size() - 2;
 
@@ -1616,8 +1615,8 @@ public class DrivingSkill extends MovingSkill {
 				: target;
 
 		/*
-		 * final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation, falseTarget, currentRoad); // t31
-		 * += java.lang.System.currentTimeMillis() - t; // t = java.lang.System.currentTimeMillis();
+		 * final IList indexVals = initMoveAlongPath(agent, path, currentLocation, falseTarget, currentRoad); // t31 +=
+		 * java.lang.System.currentTimeMillis() - t; // t = java.lang.System.currentTimeMillis();
 		 *
 		 * if ( indexVals == null ) { return 0.0; } int indexSegment = (Integer) indexVals.get(0); final int
 		 * endIndexSegment = (Integer) indexVals.get(1);

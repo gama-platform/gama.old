@@ -29,9 +29,6 @@ public class ExperimentScheduler implements Runnable {
 	// Flag indicating that the experiment is set to pause (it should be alive
 	// unless the application is shutting down)
 	public volatile boolean paused = true;
-	// Flag indicating that the thread is set to be on hold, waiting for a user
-	// input
-	// public volatile boolean on_user_hold = false;
 	/* The stepables that need to be stepped */
 	private final Map<IStepable, IScope> toStep = new TOrderedHashMap<>();
 	private volatile Set<IStepable> toStop = new THashSet<>();
@@ -72,9 +69,6 @@ public class ExperimentScheduler implements Runnable {
 		}
 	}
 
-	private IStepable[] stepables = null;
-	private IScope[] scopes = null;
-
 	public void step() {
 		if (!experiment.isHeadless() && paused) {
 			try {
@@ -85,18 +79,11 @@ public class ExperimentScheduler implements Runnable {
 			}
 		}
 
-		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
-		scopes = toStep.values().toArray(new IScope[toStep.size()]);
-		for (int i = 0; i < stepables.length; i++) {
-			final IScope scope = scopes[i];
-			try {
-				if (!scope.step(stepables[i]).passed()) {
-					toStop.add(stepables[i]);
-				}
-			} catch (final Exception e) {
-				e.printStackTrace();
+		toStep.forEach((stepable, scope) -> {
+			if (!scope.step(stepable).passed()) {
+				toStop.add(stepable);
 			}
-		}
+		});
 	}
 
 	private void clean() {
@@ -138,7 +125,7 @@ public class ExperimentScheduler implements Runnable {
 	public void stepBack() {
 		paused = true;
 		// lock.release();
-		experiment.getAgent().backward(scopes[0]);
+		experiment.getAgent().backward(experiment.getExperimentScope());// ?? scopes[0]);
 	}
 
 	public void start() {

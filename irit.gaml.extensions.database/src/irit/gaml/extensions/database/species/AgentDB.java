@@ -23,7 +23,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
@@ -41,7 +40,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * created date: 22-Feb-2012 Modified: 24-Sep-2012: Add methods: - boolean isconnected() - select(String select) -
  * executeUpdate(String updateComm) - getParameter: return connection Parameter; Delete method: selectDB,
  * executeUpdateDB 25-Sep-2012: Add methods: timeStamp, helloWorld 18-Feb-2013: Add public int insert(final IScope
- * scope) throws GamaRuntimeException 21-Feb-2013: Modify public GamaList<Object> select(final IScope scope) throws
+ * scope) throws GamaRuntimeException 21-Feb-2013: Modify public IList<Object> select(final IScope scope) throws
  * GamaRuntimeException Modify public int executeUpdate(final IScope scope) throws GamaRuntimeException Modify public
  * int insert(final IScope scope) throws GamaRuntimeException 10-Mar-2013: Modify select method: Add transform parameter
  * Modify insert method: Add transform parameter 29-Apr-2013: Remove import msi.gama.database.SqlConnection; Add import
@@ -174,7 +173,7 @@ public class AgentDB extends GamlAgent {
 	 * @syntax do action: select { arg select value: "select string with question marks"; arg values value [List of
 	 * values that are used to replace question marks] }
 	 *
-	 * @return GamaList<GamaList<Object>>
+	 * @return IList<IList<Object>>
 	 */
 	@action (
 			name = "select",
@@ -253,7 +252,7 @@ public class AgentDB extends GamlAgent {
 			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
 		}
 		final String updateComm = (String) scope.getArg("updateComm", IType.STRING);
-		final GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
+		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 
 		int row_count = -1;
 		// get data
@@ -341,8 +340,8 @@ public class AgentDB extends GamlAgent {
 			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
 		}
 		final String table_name = (String) scope.getArg("into", IType.STRING);
-		final GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
-		final GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
+		final IList<Object> cols = (IList<Object>) scope.getArg("columns", IType.LIST);
+		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		// thai.truongminh@gmail.com
 		// Move transform arg of select to a key in params
 		// boolean transform = scope.hasArg("transform") ? (Boolean)

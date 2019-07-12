@@ -238,7 +238,7 @@ public class GamaPair<K, V>
 	 */
 	@Override
 	public IList listValue(final IScope scope, final IType contentType, final boolean copy) {
-		return GamaListFactory.createWithoutCasting(contentType, contentType.cast(scope, key, null, copy),
+		return GamaListFactory.wrap(contentType, contentType.cast(scope, key, null, copy),
 				contentType.cast(scope, value, null, copy));
 	}
 
@@ -269,8 +269,8 @@ public class GamaPair<K, V>
 	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope, msi.gaml.types.IType, msi.gaml.types.IType)
 	 */
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentType, final boolean copy) {
-		final GamaMap result = GamaMapFactory.create(keyType, contentType);
+	public IMap mapValue(final IScope scope, final IType keyType, final IType contentType, final boolean copy) {
+		final IMap result = GamaMapFactory.create(keyType, contentType);
 		result.setValueAtIndex(scope, key, value);
 		return result;
 	}

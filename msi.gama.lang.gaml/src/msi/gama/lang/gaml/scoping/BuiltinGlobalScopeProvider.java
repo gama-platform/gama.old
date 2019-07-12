@@ -200,9 +200,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		 */
 		@Override
 		public void putAll(final Map<? extends String, ? extends String> m) {
-			for (final Map.Entry<? extends String, ? extends String> entry : m.entrySet()) {
-				put(entry.getKey(), entry.getValue());
-			}
+			m.forEach((k, v) -> put(k, v));
 		}
 
 		/**

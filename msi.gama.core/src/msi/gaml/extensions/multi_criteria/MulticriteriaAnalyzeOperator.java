@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.MulticriteriaAnalyzeOperator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.extensions.multi_criteria.MulticriteriaAnalyzeOperator.java, in plugin msi.gama.core, is part of the source
+ * code of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
@@ -29,8 +29,8 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 
@@ -67,7 +67,7 @@ public class MulticriteriaAnalyzeOperator {
 		}
 		int cpt = 0;
 		double utilityMax = -Double.MAX_VALUE;
-		IList<Integer> bestCands = GamaListFactory.create(Types.INT);
+		final IList<Integer> bestCands = GamaListFactory.create(Types.INT);
 		for (final List cand : cands) {
 			int i = 0;
 			double utility = 0;
@@ -114,7 +114,7 @@ public class MulticriteriaAnalyzeOperator {
 					equals = "0") },
 			see = { "promethee_DM", "electre_DM", "evidence_theory_DM" })
 	public static Integer FuzzyChoquetDecisionMaking(final IScope scope, final IList<List> cands,
-			final IList<String> criteria, final GamaMap criteriaWeights) throws GamaRuntimeException {
+			final IList<String> criteria, final IMap criteriaWeights) throws GamaRuntimeException {
 		if (cands == null || cands.isEmpty()) { return -1; }
 		final Map<String, Double> critWeight = new HashMap<>();
 		final Map<Set<String>, Double> weight = new HashMap<>();
@@ -253,8 +253,10 @@ public class MulticriteriaAnalyzeOperator {
 		}
 		final LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
 		if (candsFilter.isEmpty()) { return scope.getRandom().between(0, candidates.size() - 1); }
-		if (candsFilter.size() == 1) { return ((Candidate) GamaListFactory
-				.create(scope, Types.NO_TYPE, (Iterable) candsFilter).firstValue(scope)).getIndex(); }
+		if (candsFilter.size() == 1) {
+			return ((Candidate) GamaListFactory.create(scope, Types.NO_TYPE, (Iterable) candsFilter).firstValue(scope))
+					.getIndex();
+		}
 		final Candidate decision = promethee.decision(candsFilter);
 		return decision.getIndex();
 
@@ -348,10 +350,9 @@ public class MulticriteriaAnalyzeOperator {
 			examples = { @example (
 					value = "evidence_theory_DM([[1.0, 7.0],[4.0,2.0],[3.0, 3.0]], [[\"name\"::\"utility\", \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true],[\"name\"::\"price\",  \"s1\" :: 0.0,\"s2\"::1.0, \"v1p\"::0.0, \"v2p\"::1.0, \"v1c\"::0.0, \"v2c\"::0.0, \"maximize\" :: true]])",
 					equals = "0") },
-			
+
 			usages = { @usage (
-					value = "if the operator is used with only 2 operands (the candidates and the criteria), the last parameter (use simple method) is set to true"),
-					})
+					value = "if the operator is used with only 2 operands (the candidates and the criteria), the last parameter (use simple method) is set to true"), })
 	public static Integer evidenceTheoryDecisionMaking(final IScope scope, final IList<List> cands,
 			final IList<Map<String, Object>> criteriaMap) throws GamaRuntimeException {
 		return evidenceTheoryDecisionMaking(scope, cands, criteriaMap, true);
@@ -429,7 +430,8 @@ public class MulticriteriaAnalyzeOperator {
 		}
 		// DEBUG.LOG("candidates : " + candidates.size());
 		final LinkedList<Candidate> candsFilter = filtering(candidates, maximizeCrit);
-		if (candsFilter.isEmpty()) { return scope.getRandom().between(0, candidates.size() - 1);
+		if (candsFilter.isEmpty()) {
+			return scope.getRandom().between(0, candidates.size() - 1);
 
 		}
 		// DEBUG.LOG("candfilter : " + candsFilter);

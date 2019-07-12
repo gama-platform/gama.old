@@ -12,7 +12,6 @@ package msi.gama.outputs;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
@@ -223,12 +222,17 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean step(final IScope scope) {
-		final List<IOutput> copy = new ArrayList<>(outputs.values());
-		final Iterable<IOutput> filtered =
-				Iterables.filter(copy, each -> each.isRefreshable() && each.getScope().step(each).passed());
-		for (final IOutput o : filtered) {
-			o.update();
-		}
+		outputs.forEach((name, each) -> {
+			if (each.isRefreshable() && each.getScope().step(each).passed()) {
+				each.update();
+			}
+		});
+		// final List<IOutput> copy = new ArrayList<>(outputs.values());
+		// final Iterable<IOutput> filtered =
+		// Iterables.filter(copy, each -> each.isRefreshable() && each.getScope().step(each).passed());
+		// for (final IOutput o : filtered) {
+		// o.update();
+		// }
 		return true;
 	}
 

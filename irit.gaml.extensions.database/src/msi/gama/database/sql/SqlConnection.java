@@ -29,7 +29,6 @@ import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.metamodel.topology.projection.Projection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
@@ -185,13 +184,13 @@ public abstract class SqlConnection {
 			throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException;
 
 	/*
-	 * @Method:resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs)
+	 * @Method:resultSet2IList(ResultSetMetaData rsmd, ResultSet rs)
 	 *
-	 * @Description: Convert RecordSet to GamaList
+	 * @Description: Convert RecordSet to IList
 	 *
 	 * @param ResultSetMetaData,ResultSet
 	 *
-	 * @return GamaList<GamaList<Object>>
+	 * @return IList<IList<Object>>
 	 */
 	protected abstract IList<IList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs);
 
@@ -215,7 +214,7 @@ public abstract class SqlConnection {
 	 *
 	 * @param ResultSetMetaData
 	 *
-	 * @return GamaList<String>
+	 * @return IList<String>
 	 *
 	 * @throws SQLException
 	 */
@@ -236,7 +235,7 @@ public abstract class SqlConnection {
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 *
-	 * @return GamaList<GamaList<Object>>
+	 * @return IList<IList<Object>>
 	 */
 	public IList<? super IList<? super IList>> selectDB(final IScope scope, final String selectComm) {
 		try (Connection conn = connectDB();) {
@@ -250,19 +249,19 @@ public abstract class SqlConnection {
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 *
-	 * @return GamaList<GamaList<Object>>
+	 * @return IList<IList<Object>>
 	 */
-	// public GamaList<GamaList<Object>> selectDB(String selectComm)
+	// public IList<IList<Object>> selectDB(String selectComm)
 	public IList<? super IList<? super IList>> selectDB(final IScope scope, final Connection conn,
 			final String selectComm) {
 		;
 		// ResultSet rs;
 		IList<? super IList<? super IList>> result =
 				GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
-		// GamaList<? extends GamaList<? super GamaList>> result = new
-		// GamaList();
+		// IList<? extends IList<? super IList>> result = new
+		// IList();
 
-		// GamaList<Object> rowList = new GamaList<Object>();
+		// IList<Object> rowList = new IList<Object>();
 		IList repRequest;
 		try (final Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(selectComm);) {
 
@@ -389,7 +388,7 @@ public abstract class SqlConnection {
 	 *
 	 * @param ResultSetMetaData
 	 *
-	 * @return GamaList<String>
+	 * @return IList<String>
 	 *
 	 * @throws SQLException
 	 */
@@ -415,38 +414,38 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: getBounds( GamaList<Object> gamaList)
+	 * @Method: getBounds( IList<Object> IList)
 	 *
 	 * @Description: Get Envelope of a set of geometry
 	 *
-	 * @param GamaList<Object> gamaList: gamalist is a set of geometry type
+	 * @param IList<Object> IList: IList is a set of geometry type
 	 *
 	 * @return Envelope: Envelope/boundary of the geometry set.
 	 *
 	 * @throws Exception
 	 */
 
-	// public static Envelope getBounds(final GamaList<? extends GamaList<?
-	// super GamaList>> gamaList) {
-	public static Envelope3D getBounds(final IList<? super IList<? super IList>> gamaList) {
+	// public static Envelope getBounds(final IList<? extends IList<?
+	// super IList>> IList) {
+	public static Envelope3D getBounds(final IList<? super IList<? super IList>> IList) {
 
 		Envelope3D envelope;
 		// get Column name
-		// final IList colNames = (IList) gamaList.get(0);
+		// final IList colNames = (IList) IList.get(0);
 		// get Column type
-		final IList colTypes = (IList) gamaList.get(1);
+		final IList colTypes = (IList) IList.get(1);
 		final int index = colTypes.indexOf(GEOMETRYTYPE);
 		if (index < 0) {
 			return null;
 		} else {
 			// Get ResultSet
-			final GamaList initValue = (GamaList) gamaList.get(2);
+			final IList initValue = (IList) IList.get(2);
 			final int n = initValue.size();
 			// int max = number == null ? Integer.MAX_VALUE : numberOfAgents;
 			if (n == 0) {
 				return null;
 			} else {
-				GamaList<Object> rowList = (GamaList<Object>) initValue.get(0);
+				IList<Object> rowList = (IList<Object>) initValue.get(0);
 				Geometry geo = (Geometry) rowList.get(index);
 				envelope = Envelope3D.of(geo);
 				double maxX = envelope.getMaxX();
@@ -454,7 +453,7 @@ public abstract class SqlConnection {
 				double minX = envelope.getMinX();
 				double minY = envelope.getMinY();
 				for (int i = 1; i < n && i < Integer.MAX_VALUE; i++) {
-					rowList = (GamaList<Object>) initValue.get(i);
+					rowList = (IList<Object>) initValue.get(i);
 					geo = (Geometry) rowList.get(index);
 					envelope = Envelope3D.of(geo);
 					final double maxX1 = envelope.getMaxX();
@@ -478,8 +477,8 @@ public abstract class SqlConnection {
 	 * Make Insert a reccord into table
 	 *
 	 */
-	public int insertDB(final IScope scope, final Connection conn, final String table_name, final GamaList<Object> cols,
-			final GamaList<Object> values) throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final Connection conn, final String table_name, final IList<Object> cols,
+			final IList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
 		if (values.size() != cols.size()) {
 			throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
@@ -513,8 +512,8 @@ public abstract class SqlConnection {
 	 *  Insert a reccord into table
 	 *
 	 */
-	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> cols,
-			final GamaList<Object> values) throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final String table_name, final IList<Object> cols,
+			final IList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
 		try (Connection conn = connectDB();) {
 			rec_no = insertDB(scope, conn, table_name, cols, values);
@@ -527,8 +526,8 @@ public abstract class SqlConnection {
 	/*
 	 * Insert a reccord into table
 	 */
-	public int insertDB(final IScope scope, final Connection conn, final String table_name,
-			final GamaList<Object> values) throws GamaRuntimeException {
+	public int insertDB(final IScope scope, final Connection conn, final String table_name, final IList<Object> values)
+			throws GamaRuntimeException {
 		int rec_no = -1;
 		try (final Statement st = conn.createStatement();) {
 			// Get Insert command
@@ -550,7 +549,7 @@ public abstract class SqlConnection {
 	/*
 	 * Insert a reccord into table
 	 */
-	public int insertDB(final IScope scope, final String table_name, final GamaList<Object> values)
+	public int insertDB(final IScope scope, final String table_name, final IList<Object> values)
 			throws GamaRuntimeException {
 		int rec_no = -1;
 		try (Connection conn = connectDB();) {
@@ -562,7 +561,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: executeQueryDB(Connection conn,String queryStr, GamaList<Object> condition_value)
+	 * @Method: executeQueryDB(Connection conn,String queryStr, IList<Object> condition_value)
 	 *
 	 * @Description: Executes the SQL query in this PreparedStatement object and returns the ResultSet object generated
 	 * by the query
@@ -619,7 +618,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: ExecuteQueryDB(Connection conn,String queryStr, GamaList<Object> condition_values)
+	 * @Method: ExecuteQueryDB(Connection conn,String queryStr, IList<Object> condition_values)
 	 *
 	 * @Description: Executes the SQL query in this PreparedStatement object and returns the ResultSet object generated
 	 * by the query
@@ -649,7 +648,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_value)
+	 * @Method: executeUpdateDB(Connection conn,String queryStr, IList<Object> condition_value)
 	 *
 	 * @Description: Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or
 	 * DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
@@ -666,7 +665,7 @@ public abstract class SqlConnection {
 	 * @throws GamaRuntimeException
 	 */
 	public int executeUpdateDB(final IScope scope, final Connection conn, final String queryStr,
-			final GamaList<Object> condition_values) throws GamaRuntimeException {
+			final IList<Object> condition_values) throws GamaRuntimeException {
 		int row_count = -1;
 		final int condition_count = condition_values.size();
 		try (final PreparedStatement pstmt = conn.prepareStatement(queryStr);) {
@@ -690,7 +689,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_value)
+	 * @Method: executeUpdateDB(Connection conn,String queryStr, IList<Object> condition_value)
 	 *
 	 * @Description: Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or
 	 * DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
@@ -704,7 +703,7 @@ public abstract class SqlConnection {
 	 *
 	 * @throws GamaRuntimeException
 	 */
-	public int executeUpdateDB(final IScope scope, final String queryStr, final GamaList<Object> condition_values)
+	public int executeUpdateDB(final IScope scope, final String queryStr, final IList<Object> condition_values)
 			throws GamaRuntimeException {
 		int row_count = -1;
 		try (Connection conn = connectDB();) {

@@ -24,7 +24,6 @@ import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
@@ -162,8 +161,8 @@ public class SqlUtils {
 	 *
 	 * Gis2Absolute: transform all absolute geometry values in GAMA to geometry
 	 */
-	// public static GamaList<Object> transform(final GisUtils gis, final
-	// GamaList<? extends GamaList<Object>> dataset,
+	// public static IList<Object> transform(final GisUtils gis, final
+	// IList<? extends IList<Object>> dataset,
 	// final boolean fromAbsoluteToGis) throws GamaRuntimeException {
 	static IList<Object> transform(final IScope scope, final IProjection gis,
 			final IList<? super IList<Object>> dataset, final boolean fromAbsoluteToGis) throws GamaRuntimeException {
@@ -171,13 +170,13 @@ public class SqlUtils {
 		try {
 			final IList<Object> response = GamaListFactory.create();
 			final IList<Object> records_new = GamaListFactory.create();
-			// GamaList<Object> columnNames = dataset.get(0);
-			// GamaList<Object> columnTypes = dataset.get(1);
-			// GamaList<Object> records = dataset.get(2);
+			// IList<Object> columnNames = dataset.get(0);
+			// IList<Object> columnTypes = dataset.get(1);
+			// IList<Object> records = dataset.get(2);
 
-			final IList<Object> columnNames = (GamaList<Object>) dataset.get(0);
-			final IList<Object> columnTypes = (GamaList<Object>) dataset.get(1);
-			final IList<Object> records = (GamaList<Object>) dataset.get(2);
+			final IList<Object> columnNames = (IList<Object>) dataset.get(0);
+			final IList<Object> columnTypes = (IList<Object>) dataset.get(1);
+			final IList<Object> records = (IList<Object>) dataset.get(2);
 
 			final int columnSize = columnNames.size();
 			final int lineSize = records.size();
@@ -187,7 +186,7 @@ public class SqlUtils {
 
 			// transform
 			for (int i = 0; i < lineSize; i++) {
-				final IList<Object> rec_old = (GamaList<Object>) records.get(i);
+				final IList<Object> rec_old = (IList<Object>) records.get(i);
 				final IList<Object> rec_new = GamaListFactory.create();
 				for (int j = 0; j < columnSize; j++) {
 					if (((String) columnTypes.get(j)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE)) {

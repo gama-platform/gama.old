@@ -22,10 +22,10 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
@@ -34,7 +34,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class Distribution {
 
-	public static GamaMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey,
+	public static IMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey,
 			final int nbBarresx, final double vminx, final double vmaxx, final int nbBarresy, final double vminy,
 			final double vmaxy) {
 		int len = lvaluex.length(scope);
@@ -131,7 +131,7 @@ public class Distribution {
 		// DEBUG.LOG("fin " + mytlist);
 		final IList vallist = GamaListFactory.create(scope, Types.LIST, mytlist);
 
-		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		final IMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		final IList parlist = GamaListFactory.create(scope, Types.INT, distribParamsx);
 		final IList leglist = GamaListFactory.create(scope, Types.STRING, distribLegendx);
 		final IList parlisty = GamaListFactory.create(scope, Types.INT, distribParamsy);
@@ -146,7 +146,7 @@ public class Distribution {
 
 	}
 
-	public static GamaMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey,
+	public static IMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey,
 			final int nbBarresx, final int nbBarresy) {
 		int len = lvaluex.length(scope);
 		final int leny = lvaluey.length(scope);
@@ -325,7 +325,7 @@ public class Distribution {
 		// DEBUG.LOG("fin "+mytlist);
 		final IList vallist = GamaListFactory.create(scope, Types.LIST, mytlist);
 
-		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		final IMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		final IList parlist = GamaListFactory.create(scope, Types.INT, distribParamsx);
 		final IList leglist = GamaListFactory.create(scope, Types.STRING, distribLegendx);
 		final IList parlisty = GamaListFactory.create(scope, Types.INT, distribParamsy);
@@ -357,7 +357,7 @@ public class Distribution {
 					isExecutable = false) },
 			see = "as_map")
 	@no_test
-	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy,
+	public static IMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy,
 			final Integer nbbarsx, final Integer nbbarsy) throws GamaRuntimeException {
 
 		if (valuesx == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
@@ -394,7 +394,7 @@ public class Distribution {
 					isExecutable = false) },
 			see = "as_map")
 	@no_test
-	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy,
+	public static IMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy,
 			final Integer nbbarsx, final Double startvaluex, final Double endvaluex, final Integer nbbarsy,
 			final Double startvaluey, final Double endvaluey) throws GamaRuntimeException {
 
@@ -441,7 +441,7 @@ public class Distribution {
 					isExecutable = false) },
 			see = "as_map")
 	@no_test
-	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy)
+	public static IMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy)
 			throws GamaRuntimeException {
 
 		if (valuesx == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
@@ -456,7 +456,7 @@ public class Distribution {
 
 	}
 
-	public static GamaMap computeDistrib(final IScope scope, final IList lvalue, final int nbBarres) {
+	public static IMap computeDistrib(final IScope scope, final IList lvalue, final int nbBarres) {
 		final int len = lvalue.length(scope);
 		final double[] doublelist = new double[lvalue.length(scope)];
 		final int[] distribInts = new int[nbBarres];
@@ -543,7 +543,7 @@ public class Distribution {
 		distribParams[0] = twoExponent;
 		distribParams[1] = startMultiplier;
 
-		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		final IMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		final IList vallist = GamaListFactory.create(scope, Types.INT, distribInts);
 		final IList parlist = GamaListFactory.create(scope, Types.INT, distribParams);
 		final IList leglist = GamaListFactory.create(scope, Types.STRING, distribLegend);
@@ -555,7 +555,7 @@ public class Distribution {
 
 	}
 
-	public static GamaMap computeDistrib(final IScope scope, final IList lvalue, final int nbBarres, final double vmin,
+	public static IMap computeDistrib(final IScope scope, final IList lvalue, final int nbBarres, final double vmin,
 			final double vmax) {
 		final int len = lvalue.length(scope);
 		final double[] doublelist = new double[lvalue.length(scope)];
@@ -596,7 +596,7 @@ public class Distribution {
 		distribParams[0] = 0;
 		distribParams[1] = 0;
 
-		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		final IMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 		final IList vallist = GamaListFactory.create(scope, Types.INT, distribInts);
 		final IList parlist = GamaListFactory.create(scope, Types.INT, distribParams);
 		final IList leglist = GamaListFactory.create(scope, Types.STRING, distribLegend);
@@ -625,7 +625,7 @@ public class Distribution {
 					isExecutable = false) },
 			see = "as_map")
 	@no_test
-	public static GamaMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars)
+	public static IMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars)
 			throws GamaRuntimeException {
 
 		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
@@ -657,7 +657,7 @@ public class Distribution {
 					isExecutable = false) },
 			see = "as_map")
 	@no_test
-	public static GamaMap DistributionOf(final IScope scope, final IContainer values) throws GamaRuntimeException {
+	public static IMap DistributionOf(final IScope scope, final IContainer values) throws GamaRuntimeException {
 
 		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvalue = Cast.asList(scope, values);
@@ -687,7 +687,7 @@ public class Distribution {
 					isExecutable = false) },
 			see = "as_map")
 	@no_test
-	public static GamaMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars,
+	public static IMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars,
 			final Double startvalue, final Double endvalue) throws GamaRuntimeException {
 
 		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }

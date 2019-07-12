@@ -1105,12 +1105,15 @@ public class GraphTopology extends AbstractTopology {
 
 		final List<IAgent> listAgents = new ArrayList();
 		listAgents.addAll(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
-
 		listAgents.remove(source);
-		if (listAgents.size() <= number) { return GamaListFactory.createWithoutCasting(Types.AGENT, listAgents); }
 		scope.getRandom().shuffle(listAgents);
 		final Ordering<IAgent> ordering = Ordering.natural().onResultOf(input -> distanceBetween(scope, source, input));
-		return GamaListFactory.createWithoutCasting(Types.AGENT, ordering.leastOf(listAgents, number));
+		if (listAgents.size() <= number) {
+			Collections.sort(listAgents, ordering);
+			return GamaListFactory.wrap(Types.AGENT, listAgents);
+		}
+
+		return GamaListFactory.wrap(Types.AGENT, ordering.leastOf(listAgents, number));
 
 	}
 }

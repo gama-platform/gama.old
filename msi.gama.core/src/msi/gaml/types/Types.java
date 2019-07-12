@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.Types.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.Types.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -94,7 +94,7 @@ public class Types {
 				LIST = (IContainerType) instance;
 				break;
 			case IType.MAP:
-				MAP = (IContainerType) instance;
+				MAP = (GamaMapType) instance;
 				break;
 			case IType.GRAPH:
 				GRAPH = (IContainerType) instance;
@@ -103,7 +103,7 @@ public class Types {
 				FILE = (IContainerType) instance;
 				break;
 			case IType.PAIR:
-				PAIR = (IContainerType) instance;
+				PAIR = (GamaPairType) instance;
 				break;
 			case IType.AGENT:
 				AGENT = instance;
@@ -112,7 +112,7 @@ public class Types {
 				PATH = instance;
 				break;
 			case IType.MATRIX:
-				MATRIX = (IContainerType) instance;
+				MATRIX = (GamaMatrixType) instance;
 				break;
 			case IType.CONTAINER:
 				CONTAINER = (IContainerType) instance;
@@ -307,7 +307,7 @@ public class Types {
 
 	/**
 	 * Tests whether constant list expressions can still be compatible with a receiver even if their actual types differ
-	 * 
+	 *
 	 * @param receiverType
 	 * @param assignedType
 	 * @param expr2

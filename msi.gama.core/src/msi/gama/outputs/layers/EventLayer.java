@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.EventLayer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.EventLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -29,9 +29,9 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 
 public class EventLayer extends AbstractLayer {
-	
+
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	EventListener listener;
@@ -180,14 +180,14 @@ public class EventLayer extends AbstractLayer {
 					|| pp.getY() >= surface.getEnvHeight()) {
 				if (MOUSE_EXITED != listenedEvent && MOUSE_ENTERED != listenedEvent) { return; }
 			}
-			//DEBUG.OUT("Coordinates in env " + pp);
+			DEBUG.OUT("Coordinates in env " + pp);
 			GAMA.runAndUpdateAll(() -> executionScope.execute(executer, agent, null));
 
 		}
 
 		/**
 		 * Method keyPressed()
-		 * 
+		 *
 		 * @see msi.gama.outputs.layers.IEventLayerListener#keyPressed(java.lang.Character)
 		 */
 		@Override

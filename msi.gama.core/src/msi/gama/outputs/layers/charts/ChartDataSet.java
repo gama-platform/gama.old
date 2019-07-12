@@ -21,7 +21,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -347,7 +346,7 @@ public class ChartDataSet {
 				xlab = ysource.resolveAgainst(scope).value(scope);
 			}
 
-			if (xval instanceof GamaList) {
+			if (xval instanceof IList) {
 				final IList<?> xv2 = Cast.asList(scope, xval);
 				final IList<?> xl2 = Cast.asList(scope, xlab);
 
@@ -462,7 +461,7 @@ public class ChartDataSet {
 				xlab = xsource.resolveAgainst(scope).value(scope);
 			}
 
-			if (xval instanceof GamaList) {
+			if (xval instanceof IList) {
 				final IList<?> xv2 = Cast.asList(scope, xval);
 				final IList<?> xl2 = Cast.asList(scope, xlab);
 

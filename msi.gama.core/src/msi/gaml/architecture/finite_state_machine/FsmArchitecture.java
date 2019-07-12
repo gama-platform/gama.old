@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.finite_state_machine.FsmArchitecture.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.architecture.finite_state_machine.FsmArchitecture.java, in plugin msi.gama.core, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.finite_state_machine;
 
@@ -79,7 +79,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 			value = IKeyword.STATES,
 			initializer = true)
 	public IList<String> getStateNames(final IAgent agent) {
-		return GamaListFactory.createWithoutCasting(Types.STRING, states.keySet());
+		return GamaListFactory.wrap(Types.STRING, states.keySet());
 	}
 
 	@setter (IKeyword.STATES)

@@ -39,7 +39,7 @@ public class Electre {
 	// public Electre(final Electre electre) {
 	// this.seuilCoupe = electre.seuilCoupe;
 	// this.seuilCoupe = electre.seuilCoupe;
-	// poids = new GamaMap<String, Double>();
+	// poids = new IMap<String, Double>();
 	// for ( String param : electre.poids.keySet() ) {
 	// poids.put(param, electre.poids.get(param));
 	// preference.put(param, electre.preference.get(param));

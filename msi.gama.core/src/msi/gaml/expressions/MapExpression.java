@@ -17,10 +17,10 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.ICollector;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -82,7 +82,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 		type = Types.MAP.of(keyType, contentsType);
 	}
 
-	MapExpression(final GamaMap<IExpression, IExpression> pairs) {
+	MapExpression(final IMap<IExpression, IExpression> pairs) {
 		keys = new IExpression[pairs.size()];
 		vals = new IExpression[pairs.size()];
 		int i = 0;
@@ -100,7 +100,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		final GamaMap result = GamaMapFactory.create(type.getKeyType(), type.getContentType(), keys.length);
+		final IMap result = GamaMapFactory.create(type.getKeyType(), type.getContentType(), keys.length);
 		for (int i = 0; i < keys.length; i++) {
 			if (keys[i] == null || vals[i] == null) {
 				continue;
@@ -112,9 +112,9 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public GamaMap _value(final IScope scope) throws GamaRuntimeException {
+	public IMap _value(final IScope scope) throws GamaRuntimeException {
 		// if ( isConst && computed ) { return (GamaMap) values.clone(); }
-		final GamaMap values = GamaMapFactory.create(type.getKeyType(), type.getContentType());
+		final IMap values = GamaMapFactory.create(type.getKeyType(), type.getContentType());
 		for (int i = 0; i < keys.length; i++) {
 			if (keys[i] == null || vals[i] == null) {
 				// computed = false;
@@ -174,9 +174,9 @@ public class MapExpression extends AbstractExpression implements IOperator {
 		return vals;
 	}
 
-	public GamaMap<IExpression, IExpression> getElements() {
+	public IMap<IExpression, IExpression> getElements() {
 		// TODO Verify the key and content types in that case...
-		final GamaMap result = GamaMapFactory.create(type.getKeyType(), type.getContentType(), keys.length);
+		final IMap result = GamaMapFactory.create(type.getKeyType(), type.getContentType(), keys.length);
 		for (int i = 0; i < keys.length; i++) {
 			if (keys[i] == null) {
 				continue;

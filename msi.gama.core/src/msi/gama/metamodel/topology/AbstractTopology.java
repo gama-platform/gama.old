@@ -194,8 +194,7 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
 			throws GamaRuntimeException {
-		return PathFactory.newInstance(scope, this, GamaListFactory.createWithoutCasting(Types.POINT, source, target),
-				0.0);
+		return PathFactory.newInstance(scope, this, GamaListFactory.wrap(Types.POINT, source, target), 0.0);
 	}
 
 	@Override
@@ -382,7 +381,7 @@ public abstract class AbstractTopology implements ITopology {
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Map<Geometry, IAgent> agents = getTororoidalAgents(source, scope, filter);
 		agents.remove(g0);
-		if (agents.keySet().size() <= number) { return agents.values(); }
+		if (agents.size() <= number) { return agents.values(); }
 		final List<Geometry> ggs = new ArrayList<>(agents.keySet());
 		scope.getRandom().shuffle(ggs);
 		final Ordering<Geometry> ordering = Ordering.natural().onResultOf(input -> g0.distance(input));

@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -90,7 +89,7 @@ public class ChartDataSourceList extends ChartDataSource {
 			// lastvalue??
 		} else {
 			// TODO Matrix case
-			if (o instanceof GamaList) {
+			if (o instanceof IList) {
 				final IList<?> lval = Cast.asList(scope, o);
 
 				if (lval.size() > 0) {
@@ -119,7 +118,7 @@ public class ChartDataSourceList extends ChartDataSource {
 			// lastvalue??
 		} else {
 
-			if (oname instanceof GamaList) {
+			if (oname instanceof IList) {
 				final IList<?> lvaln = Cast.asList(scope, oname);
 				currentseries = new ArrayList<>();
 
@@ -195,7 +194,7 @@ public class ChartDataSourceList extends ChartDataSource {
 
 		final Object on = getNameExp().value(scope);
 
-		if (on instanceof GamaList) {
+		if (on instanceof IList) {
 			final IList<?> lval = Cast.asList(scope, on);
 			currentseries = new ArrayList<>();
 
@@ -233,7 +232,7 @@ public class ChartDataSourceList extends ChartDataSource {
 		int type_val = ChartDataSource.DATA_TYPE_NULL;
 		if (this.getValue() != null) {
 			o = this.getValue().value(scope);
-			if (o instanceof GamaList && Cast.asList(scope, o).size() > 0) {
+			if (o instanceof IList && Cast.asList(scope, o).size() > 0) {
 				final Object o2 = Cast.asList(scope, o).get(0);
 				type_val = get_data_type(scope, o2);
 			}

@@ -290,6 +290,7 @@ public class AdjacencyListGraph extends AbstractGraph {
 
 	NodeIterator nodeIterator;
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public <T extends Node> Iterator<T> getNodeIterator() {
 		if (nodeIterator == null) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaDXFFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaDXFFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -71,22 +71,25 @@ public class GamaDXFFile extends GamaGeometryFile {
 	Double unit;
 	double x_t;
 	double y_t;
-	@doc (value= "This file constructor allows to read a dxf (.dxf) file",
-			examples = {
-				@example(value = "file f <- dxf_file(\"file.dxf\");", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a dxf (.dxf) file",
+			examples = { @example (
+					value = "file f <- dxf_file(\"file.dxf\");",
+					isExecutable = false) })
 	public GamaDXFFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
-	@doc (value= "This file constructor allows to read a dxf (.dxf) file and specify the unit (meter by default)",
-			examples = {
-				@example(value = "file f <- dxf_file(\"file.dxf\",#m);", isExecutable = false)
-			})
+
+	@doc (
+			value = "This file constructor allows to read a dxf (.dxf) file and specify the unit (meter by default)",
+			examples = { @example (
+					value = "file f <- dxf_file(\"file.dxf\",#m);",
+					isExecutable = false) })
 	public GamaDXFFile(final IScope scope, final String pathName, final Double unit) throws GamaRuntimeException {
 		super(scope, pathName);
 		this.unit = unit;
 	}
-
 
 	@Override
 	protected IShape buildGeometry(final IScope scope) {
@@ -219,11 +222,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 		final double xmax = (doc.getBounds().getMaximumX() - doc.getBounds().getMinimumX()) * (unit == null ? 1 : unit);
 		final double ymax = (doc.getBounds().getMaximumY() - doc.getBounds().getMinimumY()) * (unit == null ? 1 : unit);
 
-		final IShape env = GamaGeometryType.buildPolygon(
-				GamaListFactory.createWithoutCasting(Types.POINT, new GamaPoint(0, 0), new GamaPoint(xmax, 0),
-						new GamaPoint(xmax, ymax), new GamaPoint(0, ymax), new GamaPoint(0, 0)));
+		final IShape env = GamaGeometryType.buildPolygon(GamaListFactory.wrap(Types.POINT, new GamaPoint(0, 0),
+				new GamaPoint(xmax, 0), new GamaPoint(xmax, ymax), new GamaPoint(0, ymax), new GamaPoint(0, 0)));
 		final Iterator it = doc.getDXFLayerIterator();
-		final List<IShape> entities = new ArrayList<IShape>();
+		final List<IShape> entities = new ArrayList<>();
 		while (it.hasNext()) {
 			final DXFLayer layer = (DXFLayer) it.next();
 			final Iterator ittype = layer.getDXFEntityTypeIterator();

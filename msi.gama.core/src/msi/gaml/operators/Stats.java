@@ -43,13 +43,12 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaRegression;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -859,11 +858,10 @@ public class Stats {
 					value = "[1, 2, 3, 3, 4, 4, 5, 3, 3, 4] frequency_of each",
 					equals = "map([1::1,2::1,3::4,4::3,5::1])") })
 
-	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
+	public static IMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 			throws GamaRuntimeException {
 		if (original == null) { return GamaMapFactory.create(Types.NO_TYPE, Types.INT); }
-		final GamaMap<Object, Integer> result =
-				GamaMapFactory.create(original.getGamlType().getContentType(), Types.INT);
+		final IMap<Object, Integer> result = GamaMapFactory.create(original.getGamlType().getContentType(), Types.INT);
 		for (final Object each : original.iterable(scope)) {
 			scope.setEach(each);
 			final Object key = filter.value(scope);
@@ -1009,13 +1007,13 @@ public class Stats {
 			examples = { @example (
 					value = "dbscan ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],10,2)",
 					equals = "[[0,1,2,3]]") })
-	public static IList<GamaList> DBscanApache(final IScope scope, final GamaList data, final Double eps,
+	public static IList<IList> DBscanApache(final IScope scope, final IList data, final Double eps,
 			final Integer minPts) throws GamaRuntimeException {
 		final IList<Integer> remainingData = GamaListFactory.create(Types.INT);
 		final DBSCANClusterer<DoublePoint> dbscan = new DBSCANClusterer(eps, minPts);
 		final List<DoublePoint> instances = new ArrayList<>();
 		for (int i = 0; i < data.size(); i++) {
-			final GamaList d = (GamaList) data.get(i);
+			final IList d = (IList) data.get(i);
 			final double point[] = new double[d.size()];
 			for (int j = 0; j < d.size(); j++) {
 				point[j] = Cast.asFloat(scope, d.get(j));
@@ -1025,9 +1023,9 @@ public class Stats {
 		}
 		final List<Cluster<DoublePoint>> clusters = dbscan.cluster(instances);
 
-		final GamaList results = (GamaList) GamaListFactory.create();
+		final IList results = GamaListFactory.create();
 		for (final Cluster<DoublePoint> cl : clusters) {
-			final GamaList clG = (GamaList) GamaListFactory.create();
+			final IList clG = GamaListFactory.create();
 			for (final DoublePoint pt : cl.getPoints()) {
 				final Integer id = ((Instance) pt).getId();
 				clG.addValue(scope, id);
@@ -1036,7 +1034,7 @@ public class Stats {
 			results.add(clG);
 		}
 		for (final Integer id : remainingData) {
-			final GamaList clG = (GamaList) GamaListFactory.create();
+			final IList clG = GamaListFactory.create();
 			clG.add(id);
 			results.add(clG);
 		}
@@ -1058,13 +1056,13 @@ public class Stats {
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)",
 					equals = "[[0,2,3],[1]]") })
-	public static GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k,
+	public static IList<IList> KMeansPlusplusApache(final IScope scope, final IList data, final Integer k,
 			final Integer maxIt) throws GamaRuntimeException {
 		final MersenneTwister rand = new MersenneTwister(scope.getRandom().getSeed().longValue());
 
 		final List<DoublePoint> instances = new ArrayList<>();
 		for (int i = 0; i < data.size(); i++) {
-			final GamaList d = (GamaList) data.get(i);
+			final IList d = (IList) data.get(i);
 			final double point[] = new double[d.size()];
 			for (int j = 0; j < d.size(); j++) {
 				point[j] = Cast.asFloat(scope, d.get(j));
@@ -1074,9 +1072,9 @@ public class Stats {
 		final KMeansPlusPlusClusterer<DoublePoint> kmeans =
 				new KMeansPlusPlusClusterer<>(k, maxIt, new EuclideanDistance(), rand);
 		final List<CentroidCluster<DoublePoint>> clusters = kmeans.cluster(instances);
-		final GamaList results = (GamaList) GamaListFactory.create();
+		final IList results = GamaListFactory.create();
 		for (final Cluster<DoublePoint> cl : clusters) {
-			final GamaList clG = (GamaList) GamaListFactory.create();
+			final IList clG = GamaListFactory.create();
 			for (final DoublePoint pt : cl.getPoints()) {
 				clG.addValue(scope, ((Instance) pt).getId());
 			}
@@ -1226,7 +1224,7 @@ public class Stats {
 			examples = { @example (
 					value = "skewness ([1,2,3,4,5])",
 					equals = "0.0") })
-	public static Double skewness(final IScope scope, final GamaList data) throws GamaRuntimeException {
+	public static Double skewness(final IScope scope, final IList data) throws GamaRuntimeException {
 		final Skewness sk = new Skewness();
 		final double[] values = new double[data.length(scope)];
 		for (int i = 0; i < values.length; i++) {
@@ -1248,7 +1246,7 @@ public class Stats {
 			examples = { @example (
 					value = "kurtosis ([1,2,3,4,5])",
 					equals = "-1.200000000000002") })
-	public static Double kurtosis(final IScope scope, final GamaList data) throws GamaRuntimeException {
+	public static Double kurtosis(final IScope scope, final IList data) throws GamaRuntimeException {
 		final Kurtosis k = new Kurtosis();
 		final double[] values = new double[data.length(scope)];
 		for (int i = 0; i < values.length; i++) {
@@ -1272,7 +1270,7 @@ public class Stats {
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)",
 					equals = "[[0,2,3],[1]]") })
-	public static GamaList<GamaList> KMeansPlusplusApache(final IScope scope, final GamaList data, final Integer k)
+	public static IList<IList> KMeansPlusplusApache(final IScope scope, final IList data, final Integer k)
 			throws GamaRuntimeException {
 		return KMeansPlusplusApache(scope, data, k, -1);
 	}
@@ -1314,7 +1312,7 @@ public class Stats {
 					isExecutable = false) })
 	@test ("predict(build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]])),[1,2,3,2] ) = 2.1818181818181817")
 	public static Double predictFromRegression(final IScope scope, final GamaRegression regression,
-			final GamaList instance) {
+			final IList instance) {
 		return regression.predict(scope, instance);
 	}
 

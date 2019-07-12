@@ -25,10 +25,10 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaPointType;
@@ -352,11 +352,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public GamaMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType,
-			final boolean copy) {
+	public IMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
 		final IType kt = GamaType.findSpecificType(keyType, type.getContentType());
 		final IType ct = GamaType.findSpecificType(contentsType, type.getContentType());
-		final GamaMap result = GamaMapFactory.create(kt, ct);
+		final IMap result = GamaMapFactory.create(kt, ct);
 		for (int i = 0; i < numRows; i++) {
 			// in case the matrix rows < 2, put null in value
 			result.put(GamaType.toType(scope, get(scope, 0, i), kt, copy),

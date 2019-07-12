@@ -99,7 +99,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public IList _value(final IScope scope) throws GamaRuntimeException {
-		final IList result = GamaListFactory.createWithoutCasting(getGamlType().getContentType());
+		final IList<Object> result = GamaListFactory.create(getGamlType().getContentType());
 		for (final IExpression exp : elements) {
 			if (exp != null) {
 				result.add(exp.value(scope));

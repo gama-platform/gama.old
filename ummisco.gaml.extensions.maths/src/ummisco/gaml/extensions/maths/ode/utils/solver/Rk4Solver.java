@@ -12,12 +12,12 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 
-import msi.gama.util.GamaMap;
+import msi.gama.util.IMap;
 import msi.gama.util.IList;
 
 public class Rk4Solver extends Solver {
 
-	public Rk4Solver(final double step, final GamaMap<String, IList<Double>> integrated_val) {
+	public Rk4Solver(final double step, final IMap<String, IList<Double>> integrated_val) {
 		super(step, new ClassicalRungeKuttaIntegrator(step), integrated_val);
 	}
 

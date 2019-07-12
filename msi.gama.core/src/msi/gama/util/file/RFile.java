@@ -25,10 +25,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.IContainerType;
@@ -47,7 +47,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		concept = { IConcept.FILE, IConcept.R },
 		doc = @doc ("Represents an R file. The internal representation is a map of lists (the result of the evaluation)"))
 @SuppressWarnings ({ "rawtypes" })
-public class RFile extends GamaFile<GamaMap, Object> {
+public class RFile extends GamaFile<IMap, Object> {
 
 	// GamaMap<String, IList>, IList, String, IList
 	private final IContainer parameters;
@@ -68,7 +68,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 					value = "file f <-R_file(\"file.r\",map([\"param1\"::1.0,\"param2\"::10.0 ]));",
 					isExecutable = false) })
 
-	public RFile(final IScope scope, final String pathName, final GamaMap p) {
+	public RFile(final IScope scope, final String pathName, final IMap p) {
 		super(scope, pathName, p);
 		parameters = p;
 	}
@@ -153,7 +153,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 			}
 			caller.setRCode(c);
 
-			final GamaMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
+			final IMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
 
 			final String var = computeVariable(R_statements.get(R_statements.size() - 1));
 			caller.runAndReturnResult(var);
@@ -232,7 +232,7 @@ public class RFile extends GamaFile<GamaMap, Object> {
 			}
 			caller.setRCode(c);
 
-			final GamaMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
+			final IMap<String, IList> result = GamaMapFactory.create(Types.STRING, Types.LIST);
 
 			final String var = computeVariable(R_statements.get(R_statements.size() - 1));
 			caller.runAndReturnResult(var);

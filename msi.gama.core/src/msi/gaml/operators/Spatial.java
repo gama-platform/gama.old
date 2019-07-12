@@ -88,13 +88,12 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGisFile;
 import msi.gama.util.file.GamaImageFile;
@@ -457,7 +456,7 @@ public abstract class Spatial {
 			final double max_point_y = originy + Maths.sin(max_angle) * max;
 			final ILocation maxPoint = new GamaPoint(max_point_x, max_point_y);
 
-			return polygon(scope, GamaListFactory.createWithoutCasting(Types.POINT, origin, minPoint, maxPoint));
+			return polygon(scope, GamaListFactory.wrap(Types.POINT, origin, minPoint, maxPoint));
 		}
 
 		@operator (
@@ -1834,7 +1833,7 @@ public abstract class Spatial {
 						geoms.add(new GamaShape(gg));
 					}
 				}
-				final GamaList geomsVisible = (GamaList) GamaListFactory.create();
+				final IList geomsVisible = GamaListFactory.create();
 				final PreparedGeometry ref = PreparedGeometryFactory.prepare(locG);
 
 				for (final IShape geom : geoms) {
@@ -2113,7 +2112,7 @@ public abstract class Spatial {
 								equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment",
 								test = false)))
 		@no_test (Reason.DEPRECATED)
-		public static IShape enlarged_by(final IScope scope, final IShape g, final GamaMap parameters) {
+		public static IShape enlarged_by(final IScope scope, final IShape g, final IMap parameters) {
 			final Double distance = Cast.asFloat(scope, parameters.get("distance"));
 			final Integer quadrantSegments = Cast.asInt(scope, parameters.get("quadrantSegments"));
 			final Integer endCapStyle = Cast.asInt(scope, parameters.get("endCapStyle"));
@@ -2290,7 +2289,7 @@ public abstract class Spatial {
 		// }
 		@test ("normalized_rotation(rotation_composition(38.0::{1,1,1},90.0::{1,0,0}))=normalized_rotation(115.22128507898108::{0.9491582126366207,0.31479943993669307,-0.0})")
 		public static GamaPair<Double, GamaPoint> rotation_composition(final IScope scope,
-				final GamaList<GamaPair> rotation_list) {
+				final IList<GamaPair> rotation_list) {
 			Rotation3D rotation = new Rotation3D(new GamaPoint(1, 0, 0), 0.0);
 			for (final GamaPair element : rotation_list) {
 				final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
@@ -3218,7 +3217,7 @@ public abstract class Spatial {
 		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, final double tolerance,
 				final boolean splitlines, final boolean keepMainGraph) {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }
-			IList<IShape> geoms = (IList<IShape>) polylines.copy(scope);
+			IList<IShape> geoms = polylines.copy(scope);
 			geoms.removeIf(a -> !a.getGeometry().isLine());
 			if (geoms.isEmpty()) { return GamaListFactory.create(); }
 			if (splitlines) {
@@ -3229,7 +3228,7 @@ public abstract class Spatial {
 			}
 			IList<IShape> results = GamaListFactory.create();
 
-			IList<IShape> geomsTmp = (IList<IShape>) geoms.copy(scope);
+			IList<IShape> geomsTmp = geoms.copy(scope);
 			boolean modif = true;
 			if (tolerance > 0) {
 
@@ -3269,7 +3268,7 @@ public abstract class Spatial {
 
 		private static boolean connectLine(final IScope scope, final GamaPoint pt, final IShape shape,
 				final boolean first, final IList<IShape> geoms, final IList<IShape> results, final double tolerance) {
-			final IList<IShape> tot = (IList<IShape>) geoms.copy(scope);
+			final IList<IShape> tot = geoms.copy(scope);
 			tot.addAll(results);
 			tot.remove(shape);
 			final IShape closest = Queries.closest_to(scope, tot, pt);
@@ -3563,7 +3562,7 @@ public abstract class Spatial {
 						equals = "A path between ag1 and ag2 and ag3 passing through the given cell_grid agents with minimal cost",
 						isExecutable = false) })
 		@no_test // test already done in Spatial tests models
-		public static IPath path_between(final IScope scope, final GamaMap<IAgent, Object> cells,
+		public static IPath path_between(final IScope scope, final IMap<IAgent, Object> cells,
 				final IContainer<?, IShape> nodes) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
 
@@ -3647,7 +3646,7 @@ public abstract class Spatial {
 						equals = "A path between ag1 and ag2 passing through the given cell_grid agents with a minimal cost",
 						isExecutable = false) })
 		@no_test // test already done in Spatial tests models
-		public static IPath path_between(final IScope scope, final GamaMap<IAgent, Object> cells, final IShape source,
+		public static IPath path_between(final IScope scope, final IMap<IAgent, Object> cells, final IShape source,
 				final IShape target) throws GamaRuntimeException {
 			if (cells == null || cells.isEmpty()) { return null; }
 			final ITopology topo = cells.getKeys().get(0).getTopology();
@@ -4123,7 +4122,7 @@ public abstract class Spatial {
 				see = { "any_location_in", "any_point_in", "farthest_point_to", "points_at" })
 		public static IList<GamaPoint> closest_points_with(final IShape a, final IShape b) {
 			final Coordinate[] coors = DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
-			return GamaListFactory.createWithoutCasting(Types.POINT, new GamaPoint(coors[0]), new GamaPoint(coors[1]));
+			return GamaListFactory.wrap(Types.POINT, new GamaPoint(coors[0]), new GamaPoint(coors[1]));
 		}
 
 		@operator (
@@ -4528,7 +4527,7 @@ public abstract class Spatial {
 			if (shapes.size() <= number) { return shapes; }
 			scope.getRandom().shuffle(shapes);
 			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
-			return GamaListFactory.createWithoutCasting(Types.GEOMETRY, ordering.leastOf(shapes, number));
+			return GamaListFactory.wrap(Types.GEOMETRY, ordering.leastOf(shapes, number));
 		}
 
 		public static IShape geomFarthestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
@@ -4648,7 +4647,7 @@ public abstract class Spatial {
 				final boolean inside) {
 			if (filter == null || source == null) { return GamaListFactory.create(); }
 			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
-			return GamaListFactory.createWithoutCasting(type,
+			return GamaListFactory.wrap(type,
 					scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, inside));
 		}
 
@@ -4677,8 +4676,8 @@ public abstract class Spatial {
 				final Object distance, final ITopology t) {
 			if (filter == null || source == null) { return GamaListFactory.create(); }
 			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
-			return GamaListFactory.createWithoutCasting(type, t.getNeighborsOf(scope,
-					Cast.asGeometry(scope, source, false), Cast.asFloat(scope, distance), filter));
+			return GamaListFactory.wrap(type, t.getNeighborsOf(scope, Cast.asGeometry(scope, source, false),
+					Cast.asFloat(scope, distance), filter));
 		}
 
 	}
@@ -4850,9 +4849,9 @@ public abstract class Spatial {
 		@test ("map<point, float> mapLocationPoints <- [{0,0}::10.0,{0,10}::-3.0];\r\n"
 				+ "		list<point> queryPoint <- [{0,5}];\r\n"
 				+ "		float((IDW(list(geometry(queryPoint)),mapLocationPoints,1)).pairs[0].value) with_precision 1 = 3.5")
-		public static GamaMap<IShape, Double> primIDW(final IScope scope,
-				final IContainer<?, ? extends IShape> geometries, final GamaMap points, final int power) {
-			final GamaMap<IShape, Double> results = GamaMapFactory.create(Types.GEOMETRY, Types.FLOAT);
+		public static IMap<IShape, Double> primIDW(final IScope scope, final IContainer<?, ? extends IShape> geometries,
+				final IMap points, final int power) {
+			final IMap<IShape, Double> results = GamaMapFactory.create(Types.GEOMETRY, Types.FLOAT);
 			if (points == null || points.isEmpty()) { return null; }
 			if (geometries == null || geometries.isEmpty(scope)) { return results; }
 			for (final IShape geom : geometries.iterable(scope)) {

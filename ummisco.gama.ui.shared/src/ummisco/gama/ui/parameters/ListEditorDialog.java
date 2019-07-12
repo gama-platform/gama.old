@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Text;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.compilation.GAML;
@@ -47,7 +46,7 @@ public class ListEditorDialog extends Dialog {
 	List list = null;
 	String listname = null;
 
-	protected ListEditorDialog(final Shell parentShell, final GamaList list, final String listname) {
+	protected ListEditorDialog(final Shell parentShell, final IList list, final String listname) {
 		super(parentShell);
 		this.listname = listname;
 		for (final Object o : list) {
@@ -299,7 +298,7 @@ public class ListEditorDialog extends Dialog {
 		}
 		tmp.append("]");
 		try {
-			return (GamaList) GAML.evaluateExpression(tmp.toString(), editor.getAgent());
+			return (IList) GAML.evaluateExpression(tmp.toString(), editor.getAgent());
 		} catch (final GamaRuntimeException e) {
 			return GamaListFactory.create();
 		}

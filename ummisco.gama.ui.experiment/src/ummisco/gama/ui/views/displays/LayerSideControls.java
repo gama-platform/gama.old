@@ -534,7 +534,7 @@ public class LayerSideControls {
 	}
 
 	private String keystoneDefinitionToCopy(final IScope scope, final LayeredDisplayData data) {
-		final IList<GamaPoint> pp = GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
+		final IList<ILocation> pp = GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
 		final String text = IKeyword.KEYSTONE + ": " + pp.serialize(false);
 		return text;
 	}

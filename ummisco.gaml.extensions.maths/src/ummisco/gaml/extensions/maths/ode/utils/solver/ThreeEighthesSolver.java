@@ -12,12 +12,12 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import org.apache.commons.math3.ode.nonstiff.ThreeEighthesIntegrator;
 
-import msi.gama.util.GamaMap;
+import msi.gama.util.IMap;
 import msi.gama.util.IList;
 
 public class ThreeEighthesSolver extends Solver {
 
-	public ThreeEighthesSolver(final double step, final GamaMap<String, IList<Double>> integrated_val) {
+	public ThreeEighthesSolver(final double step, final IMap<String, IList<Double>> integrated_val) {
 		super(step, new ThreeEighthesIntegrator(step), integrated_val);
 	}
 

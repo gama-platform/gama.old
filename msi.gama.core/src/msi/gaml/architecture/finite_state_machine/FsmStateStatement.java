@@ -17,7 +17,6 @@ import java.util.Map;
 
 import com.google.common.collect.FluentIterable;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -31,6 +30,8 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.architecture.finite_state_machine.FsmStateStatement.StateValidator;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
@@ -272,14 +273,12 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		final IAgent agent = scope.getAgent();
 		if (scope.interrupted()) { return false; }
 		final Boolean enter = (Boolean) agent.getAttribute(ENTER);
-		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
+		IMap<String, Object> memory = (IMap) agent.getAttribute(STATE_MEMORY);
 		if (enter || memory == null) {
-			memory = new THashMap<>();
+			memory = GamaMapFactory.create();
 			agent.setAttribute(STATE_MEMORY, memory);
 		} else {
-			for (final Map.Entry<String, Object> entry : memory.entrySet()) {
-				scope.addVarWithValue(entry.getKey(), entry.getValue());
-			}
+			memory.forEach((k, v) -> scope.addVarWithValue(k, v));
 		}
 		if (enter) {
 			if (enterActions != null) {

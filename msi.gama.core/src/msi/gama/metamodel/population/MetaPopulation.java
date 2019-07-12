@@ -26,9 +26,9 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.species.ISpecies;
@@ -297,41 +297,6 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	}
 
 	/**
-	 * Method checkBounds()
-	 *
-	 * @see msi.gama.util.IContainer#checkBounds(java.lang.Object, boolean)
-	 */
-	// @Override
-	// public boolean checkBounds(final Integer index, final boolean forAdding)
-	// {
-	// return false;
-	// }
-
-	/**
-	 * Method add()
-	 *
-	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, java.lang.Object,
-	 *      boolean, boolean)
-	 */
-	// @Override
-	// public void add(final IScope scope, final Integer index, final Object
-	// value, final Object parameter,
-	// final boolean all, final boolean add) {
-	// // Not allowed
-	// }
-
-	/**
-	 * Method remove()
-	 *
-	 * @see msi.gama.util.IContainer#remove(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, boolean)
-	 */
-	// @Override
-	// public void remove(final IScope scope, final Object index, final Object
-	// value, final boolean all) {
-	// // Not allowed
-	// }
-
-	/**
 	 * Method listValue()
 	 *
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
@@ -371,7 +336,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
+	public IMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		return listValue(scope, contentsType, false).mapValue(scope, keyType, contentsType, false);
 	}
@@ -426,19 +391,5 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
 		return getMapOfPopulations(scope).values();
 	}
-
-	/**
-	 * Method iterator()
-	 *
-	 * @see java.lang.Iterable#iterator()
-	 */
-	// @Override
-	// public Iterator<IAgent> iterator() {
-	// List<Iterator<? extends IAgent>> iterators = new ArrayList<>();
-	// for ( IPopulationSet p : populationSets ) {
-	// iterators.add(p.iterator());
-	// }
-	// return Iterators.concat(iterators.iterator());
-	// }
 
 }

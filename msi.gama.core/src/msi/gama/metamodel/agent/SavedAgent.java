@@ -23,6 +23,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
+import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
 
@@ -72,7 +73,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 		innerPopulations = inPop;
 	}
 
-	public SavedAgent(final GamaMap<String, Object> map) {
+	public SavedAgent(final IMap<String, Object> map) {
 		this();
 		putAll(map);
 	}

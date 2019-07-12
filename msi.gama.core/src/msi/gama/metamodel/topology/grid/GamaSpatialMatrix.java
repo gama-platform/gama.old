@@ -617,7 +617,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if (actualNumberOfCells == 0) { return GamaListFactory.create(); }
 		if (cellSpecies == null) {
 			return cast ? GamaListFactory.create(scope, contentType, matrix)
-					: GamaListFactory.createWithoutCasting(contentType, matrix);
+					: GamaListFactory.wrap(contentType, matrix);
 		} else {
 			final IList result = GamaListFactory.create(contentType, actualNumberOfCells);
 			for (final IShape a : matrix) {

@@ -30,9 +30,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
@@ -224,8 +224,8 @@ public class Cast {
 		return asPoint(scope, val, false);
 	}
 
-	public static GamaMap asMap(final IScope scope, final Object val, final boolean copy) throws GamaRuntimeException {
-		return (GamaMap) Types.MAP.cast(scope, val, null, copy);
+	public static IMap asMap(final IScope scope, final Object val, final boolean copy) throws GamaRuntimeException {
+		return (IMap) Types.MAP.cast(scope, val, null, copy);
 	}
 
 	@operator (

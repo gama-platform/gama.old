@@ -5,8 +5,8 @@ import java.net.DatagramSocket;
 import java.net.SocketTimeoutException;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.MessageFactory;
@@ -17,7 +17,7 @@ public class MultiThreadedUDPSocketServer extends Thread {
 	static {
 		DEBUG.ON();
 	}
-	
+
 	private final IAgent myAgent;
 	private volatile boolean closed = false;
 	private DatagramSocket myUDPServerSocket;
@@ -42,7 +42,7 @@ public class MultiThreadedUDPSocketServer extends Thread {
 		myUDPServerSocket = ss;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void run() {
 		// Successfully created Server Socket. Now wait for connections.
@@ -58,10 +58,9 @@ public class MultiThreadedUDPSocketServer extends Thread {
 				myUDPServerSocket.receive(receivePacket);
 				final String sentence = new String(receivePacket.getData());
 
-				GamaList<ConnectorMessage> msgs = (GamaList<ConnectorMessage>) myAgent
-						.getAttribute("messages" + myAgent);
+				IList<ConnectorMessage> msgs = (IList<ConnectorMessage>) myAgent.getAttribute("messages" + myAgent);
 				if (msgs == null) {
-					msgs = (GamaList<ConnectorMessage>) GamaListFactory.create(ConnectorMessage.class);
+					msgs = GamaListFactory.create(ConnectorMessage.class);
 				}
 				if (myAgent.dead()) {
 					this.interrupt();
@@ -87,4 +86,4 @@ public class MultiThreadedUDPSocketServer extends Thread {
 
 		}
 	}
-}	
+}

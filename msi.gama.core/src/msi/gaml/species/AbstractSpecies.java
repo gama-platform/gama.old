@@ -27,10 +27,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gama.util.matrix.IMatrix;
@@ -139,12 +139,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public GamaMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
+	public IMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		final IList<IAgent> agents = listValue(scope, contentsType, false);
 		// Default behavior : Returns a map containing the names of agents as
 		// keys and the agents themselves as values
-		final GamaMap result = GamaMapFactory.create(Types.STRING, scope.getType(getName()));
+		final IMap result = GamaMapFactory.create(Types.STRING, scope.getType(getName()));
 		for (final IAgent agent : agents.iterable(scope)) {
 			result.put(agent.getName(), agent);
 		}
@@ -336,7 +336,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList<String> getAspectNames() {
-		return GamaListFactory.createWithoutCasting(Types.STRING, (Iterable<String>) aspects.keySet());
+		return GamaListFactory.wrap(Types.STRING, aspects.keySet());
 	}
 
 	@Override
