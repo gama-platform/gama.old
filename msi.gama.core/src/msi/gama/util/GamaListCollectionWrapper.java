@@ -130,4 +130,9 @@ public class GamaListCollectionWrapper<E> extends ForwardingCollection<E> implem
 		return wrapped.spliterator();
 	}
 
+	@Override
+	public int hashCode() {
+		return wrapped.hashCode();
+	}
+
 }

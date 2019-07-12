@@ -362,13 +362,12 @@ public class GamaListFactory {
 	}
 
 	public static boolean equals(final IList one, final IList two) {
-		if (one.size() != two.size()) { return false; }
 		final Iterator<Object> it1 = one.iterator();
 		final Iterator<Object> it2 = two.iterator();
 		while (it1.hasNext() && it2.hasNext()) {
 			if (!Objects.equals(it1.next(), it2.next())) { return false; }
 		}
-		return true;
+		return !(it1.hasNext() || it2.hasNext());
 	}
 
 }
