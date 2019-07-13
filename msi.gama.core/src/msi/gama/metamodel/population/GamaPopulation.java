@@ -594,7 +594,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public void killMembers() throws GamaRuntimeException {
 		final T[] ag = toArray();
-		for (final T a : ag) {
+		for (final IAgent a : ag) {
 			if (a != null) {
 				a.dispose();
 			}

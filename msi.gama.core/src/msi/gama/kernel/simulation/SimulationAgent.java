@@ -388,7 +388,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		IShape geom = g;
 		if (geom == null) {
 			geom = GamaGeometryType.buildBox(100, 100, 100, new GamaPoint(50, 50, 50));
+		} else {
+			// See Issue #2787
+			geom.setInnerGeometry(geom.getEnvelope().toGeometry());
 		}
+
 		final Envelope3D env = geom.getEnvelope();
 		if (getProjectionFactory().getWorld() == null) {
 			projectionFactory.setWorldProjectionEnv(GAMA.getRuntimeScope(), env);

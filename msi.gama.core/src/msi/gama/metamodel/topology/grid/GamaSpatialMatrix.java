@@ -1653,14 +1653,14 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			// Topology is already known. Nothing to do
 		}
 
-		// @Override
-		// public void killMembers() throws GamaRuntimeException {
-		// for ( final IShape a : GamaSpatialMatrix.this.matrix ) {
-		// if ( a != null ) {
-		// a.dispose();
-		// }
-		// }
-		// }
+		@Override
+		public void killMembers() throws GamaRuntimeException {
+			for (final IShape a : GamaSpatialMatrix.this.matrix) {
+				if (a != null) {
+					a.dispose();
+				}
+			}
+		}
 
 		@Override
 		public synchronized G[] toArray() {
