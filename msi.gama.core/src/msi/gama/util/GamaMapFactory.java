@@ -11,6 +11,7 @@
 package msi.gama.util;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import msi.gama.runtime.IScope;
@@ -67,7 +68,8 @@ public class GamaMapFactory {
 	}
 
 	public static IMap create(final IType key, final IType contents, final int size) {
-		return new GamaMap(size, key, contents);
+		return new GamaMap<>(size, key, contents);
+		// return new GamaMapWrapper<>(new LinkedHashMap(size), key, contents);
 	}
 
 	/**
@@ -95,6 +97,15 @@ public class GamaMapFactory {
 		for (int i = 0; i < Math.min(keys.length(scope), values.length(scope)); i++) {
 			result.put(keys.get(i), values.get(i));
 		}
+		return result;
+	}
+
+	public static boolean equals(final IMap one, final IMap two) {
+		if (one.size() != two.size()) { return false; }
+		final boolean result = one.forEachPair((k1, v1) -> {
+			if (!Objects.equals(v1, two.get(k1))) { return false; }
+			return true;
+		});
 		return result;
 	}
 }

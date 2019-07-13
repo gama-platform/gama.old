@@ -207,10 +207,6 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 			if (!getGamlType().getContentType().isTranslatableInto(Types.PAIR)) { return (V) object; }
 		}
 		return (V) getGamlType().getContentType().cast(scope, object, null, false);
-
-		// GamaPairType.staticCast(scope, object, type.getKeyType(),
-		// type.getContentType(), false);
-
 	}
 
 	/**
@@ -262,6 +258,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	@Override
 	default IList<V> listValue(final IScope scope, final IType contentsType, final boolean copy) {
 		if (!GamaType.requiresCasting(contentsType, getGamlType().getContentType())) {
+			if (!copy) { return GamaListFactory.wrap(contentsType, values()); }
 			return GamaListFactory.createWithoutCasting(contentsType, values());
 		} else {
 			return GamaListFactory.create(scope, contentsType, values());
@@ -425,12 +422,13 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 		return pairs;
 	}
 
-	default void forEachPair(final BiConsumerWithPruning<K, V> visitor) {
+	default boolean forEachPair(final BiConsumerWithPruning<K, V> visitor) {
 		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
 		while (it.hasNext()) {
 			final Map.Entry<K, V> entry = it.next();
-			if (!visitor.process(entry.getKey(), entry.getValue())) { return; }
+			if (!visitor.process(entry.getKey(), entry.getValue())) { return false; }
 		}
+		return true;
 	}
 
 }

@@ -317,7 +317,7 @@ public class GamaListFactory {
 	 *
 	 * @return a new IList
 	 */
-	public static IList create() {
+	public static <T> IList<T> create() {
 		return create(Types.NO_TYPE);
 	}
 
@@ -347,10 +347,10 @@ public class GamaListFactory {
 	}
 
 	/**
-	 * Wraps the parameter Collection into an IList. Every change in the wrapped Set is reflected immediately and every
-	 * change to the IList is reflected in the wrapped Collection. No copy is made, only a thin layer is created to wrap
-	 * the parameter. Some operations (esp. those using indices) are not really meaningful for collections; they are
-	 * emulated in the best possible way by this wrapper
+	 * Wraps the parameter Collection into an IList. Every change in the wrapped Collection is reflected immediately and
+	 * every change to the IList is reflected in the wrapped Collection. No copy is made, only a thin layer is created
+	 * to wrap the parameter. Some operations (esp. those using indices) are not really meaningful for collections; they
+	 * are emulated in the best possible way by this wrapper
 	 *
 	 * @param contentType
 	 *            s

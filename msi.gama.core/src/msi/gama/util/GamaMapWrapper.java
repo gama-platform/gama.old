@@ -20,6 +20,13 @@ public class GamaMapWrapper<K, V> extends ForwardingMap<K, V> implements IMap<K,
 	}
 
 	@Override
+	public boolean equals(final Object o) {
+		if (o == this) { return true; }
+		if (!(o instanceof IMap)) { return false; }
+		return GamaMapFactory.equals(this, (IMap) o);
+	}
+
+	@Override
 	protected Map<K, V> delegate() {
 		return wrapped;
 	}
