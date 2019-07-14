@@ -176,4 +176,6 @@ public interface IGui {
 
 	void refreshNavigator();
 
+	boolean isInDisplayThread();
+
 }

@@ -221,6 +221,7 @@ public class GAMA {
 				|| controller.getExperiment().getAgent() == null) {
 			return false;
 		}
+		DEBUG.LOG("report error : " + g.getMessage());
 		// Returns whether or not to continue
 		if (!(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors()) {
 			// AD: we still throw exceptions related to files (Issue #1281)
@@ -248,7 +249,7 @@ public class GAMA {
 			return;
 		}
 
-		// DEBUG.LOG("reportAndThrowIfNeeded : " + g.getMessage());
+		DEBUG.LOG("reportAndThrowIfNeeded : " + g.getMessage());
 		if (scope != null && scope.getAgent() != null) {
 			final String name = scope.getAgent().getName();
 			if (!g.getAgentsNames().contains(name)) {
@@ -291,7 +292,12 @@ public class GAMA {
 
 	public static void pauseFrontmostExperiment() {
 		for (final IExperimentController controller : controllers) {
-			controller.directPause();
+			// Dont block display threads (see #
+			if (getGui().isInDisplayThread()) {
+				controller.userPause();
+			} else {
+				controller.directPause();
+			}
 		}
 	}
 
@@ -381,8 +387,8 @@ public class GAMA {
 	 */
 	public static final void runAndUpdateAll(final Runnable r) {
 		r.run();
-	//	SimulationAgent sim = getSimulation();
-	//	if(sim.isPaused(sim.getScope()))
+		// SimulationAgent sim = getSimulation();
+		// if(sim.isPaused(sim.getScope()))
 		getExperiment().refreshAllOutputs();
 	}
 

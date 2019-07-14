@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -661,6 +663,11 @@ public class SwtGui implements IGui {
 			refresh.completeRefresh(null);
 		}
 
+	}
+
+	@Override
+	public boolean isInDisplayThread() {
+		return EventQueue.isDispatchThread() || Display.getCurrent() != null;
 	}
 
 }
