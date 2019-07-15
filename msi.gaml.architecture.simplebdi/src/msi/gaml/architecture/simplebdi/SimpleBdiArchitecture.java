@@ -3543,8 +3543,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
 		if (predicateDirect.getPredicate() != null) {
-			final IList<Emotion> emoTemps = GamaListFactory.create(scope,
-					getEmotionBase(scope, EMOTION_BASE).getGamlType(), getEmotionBase(scope, EMOTION_BASE)); // ??
+			final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE).copy(scope);
 			for (final Emotion emo : emoTemps) {
 				if (emo.getName().equals("hope")) {
 					if (emo.getAbout() != null && emo.getAbout().equalsEmotions(predicateDirect.getPredicate())) {
@@ -4303,8 +4302,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private static void createGratificationGratitudeFromJoy(final IScope scope, final Emotion emo) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
-		final IList<Emotion> emoTemps = GamaListFactory.create(scope, getEmotionBase(scope, EMOTION_BASE).getGamlType(),
-				getEmotionBase(scope, EMOTION_BASE)); // ??
+		final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE).copy(scope); 
 		for (final Emotion emoTemp : emoTemps) {
 			if (emoTemp.getName().equals("pride")) {
 				if (emoTemp.getAbout() != null && emo.getAbout() != null && emo.getAbout().getAgentCause() != null) {
@@ -4358,8 +4356,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private static void createRemorseAngerFromSadness(final IScope scope, final Emotion emo) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
-		final IList<Emotion> emoTemps = GamaListFactory.create(scope, getEmotionBase(scope, EMOTION_BASE).getGamlType(),
-				getEmotionBase(scope, EMOTION_BASE)); // ??
+		final IList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE).copy(scope); 
 		for (final Emotion emoTemp : emoTemps) {
 			if (emoTemp.getName().equals("shame")) {
 				if (emoTemp.getAbout() != null && emo.getAbout() != null && emo.getAbout().getAgentCause() != null) {
