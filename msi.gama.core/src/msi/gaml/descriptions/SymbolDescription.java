@@ -116,7 +116,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public boolean hasFacet(final String string) {
-		return hasFacets() && facets.contains(string);
+		return hasFacets() && facets.containsKey(string);
 	}
 
 	@Override
@@ -154,11 +154,11 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public final boolean visitFacets(final Set<String> names, final IFacetVisitor visitor) {
 		if (!hasFacets()) { return true; }
-		if (names == null) { return facets.forEachEntry(visitor); }
+		if (names == null) { return facets.forEachFacet(visitor); }
 		for (final String s : names) {
 			final IExpressionDescription exp = facets.get(s);
 			if (exp != null) {
-				if (!visitor.visit(s, exp)) { return false; }
+				if (!visitor.process(s, exp)) { return false; }
 			}
 		}
 		return true;
@@ -422,7 +422,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
 		return true;
 	}
 

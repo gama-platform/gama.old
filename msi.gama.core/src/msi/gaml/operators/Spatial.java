@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +56,6 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
@@ -4704,7 +4704,7 @@ public abstract class Spatial {
 					GamaListFactory.create(Types.LIST.of(agents.getGamlType().getContentType()));
 			final IAgentFilter filter = In.list(scope, agents);
 			if (filter == null) { return groups; }
-			final Set<IAgent> clusteredCells = new THashSet<>();
+			final Set<IAgent> clusteredCells = new HashSet<>();
 			for (final IAgent ag : agents.iterable(scope)) {
 				if (!clusteredCells.contains(ag)) {
 					groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
@@ -4768,7 +4768,7 @@ public abstract class Spatial {
 				final IList g1 = groups.get(i);
 				for (int j = i + 1; j < nb; j++) {
 					final IList g2 = groups.get(j);
-					final Set<IList> distGp = new THashSet<>();
+					final Set<IList> distGp = new HashSet<>();
 					distGp.add(g1);
 					distGp.add(g2);
 					final IAgent a = (IAgent) g1.get(0);
@@ -4798,7 +4798,7 @@ public abstract class Spatial {
 				groupeF.add(g1);
 
 				for (final IList groupe : groups) {
-					final Set<IList> newDistGp = new THashSet<>();
+					final Set<IList> newDistGp = new HashSet<>();
 					newDistGp.add(groupe);
 					newDistGp.add(g1);
 					double dist1 = Double.MAX_VALUE;

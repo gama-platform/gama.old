@@ -1,18 +1,18 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.ActionStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.ActionStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -44,7 +44,7 @@ import msi.gaml.types.Types;
 
 /**
  * The Class ActionCommand.
- * 
+ *
  * @author drogoul
  */
 @symbol (
@@ -197,7 +197,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -211,8 +211,8 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		private void assertReturnedValueIsOk(final StatementDescription cd) {
 			final IType at = cd.getGamlType();
 			if (at == Types.NO_TYPE) { return; }
-			final Set<StatementDescription> returns = new TLinkedHashSet<>();
-			final DescriptionVisitor finder = (desc) -> {
+			final Set<StatementDescription> returns = new LinkedHashSet<>();
+			final DescriptionVisitor<IDescription> finder = (desc) -> {
 				if (desc.getKeyword().equals(RETURN)) {
 					returns.add((StatementDescription) desc);
 				}
@@ -221,7 +221,8 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 			cd.visitOwnChildrenRecursively(finder);
 			if (returns.isEmpty()) {
 				if (cd instanceof ActionDescription && !((ActionDescription) cd).isAbstract()) {
-					cd.error("Action " + cd.getName() + " must return a result of type " + at, IGamlIssue.MISSING_RETURN);
+					cd.error("Action " + cd.getName() + " must return a result of type " + at,
+							IGamlIssue.MISSING_RETURN);
 					return;
 				}
 			}
@@ -256,7 +257,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 
 	/**
 	 * The Constructor.
-	 * 
+	 *
 	 * @param actionDesc
 	 *            the action desc
 	 * @param sim

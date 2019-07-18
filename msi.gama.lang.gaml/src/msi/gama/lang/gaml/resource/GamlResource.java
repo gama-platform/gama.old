@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -34,12 +33,13 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.runtime.IExecutionContext;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
@@ -84,8 +84,9 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public ISyntacticElement getSyntacticContents() {
-		if (element == null)
+		if (element == null) {
 			setElement(GamlResourceServices.buildSyntacticContents(this));
+		}
 		return element;
 	}
 
@@ -112,16 +113,16 @@ public class GamlResource extends LazyLinkingResource {
 		// If there are no micro-models
 		final Set<String> keySet = resources.keySet();
 		if (keySet.size() == 1 && keySet.contains(null)) {
-			final Iterable<ISyntacticElement> selfAndImports = Iterables.concat(
-					Collections.singleton(getSyntacticContents()),
-					Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
+			final Iterable<ISyntacticElement> selfAndImports =
+					Iterables.concat(Collections.singleton(getSyntacticContents()),
+							Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
 			return f.createModelDescription(projectPath, modelPath, selfAndImports, context, isEdited, null);
 		}
 		final ListMultimap<String, ISyntacticElement> models = ArrayListMultimap.create();
 		models.put(null, getSyntacticContents());
 		models.putAll(Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS));
 		final List<ISyntacticElement> ownImports = models.removeAll(null);
-		final Map<String, ModelDescription> compiledMicroModels = new THashMap<String, ModelDescription>();
+		final IMap<String, ModelDescription> compiledMicroModels = GamaMapFactory.createUnordered();
 		for (final String aliasName : models.keySet()) {
 			final ModelDescription mic = GAML.getModelFactory().createModelDescription(projectPath, modelPath,
 					models.get(aliasName), context, isEdited, null);
@@ -143,8 +144,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public ModelDescription buildCompleteDescription() {
-		if (MEMOIZE_DESCRIPTION && description != null)
-			return description;
+		if (MEMOIZE_DESCRIPTION && description != null) { return description; }
 		final LinkedHashMultimap<String, GamlResource> imports = GamlResourceIndexer.validateImportsOf(this);
 		if (hasErrors() || hasSemanticErrors()) {
 			setDescription(null);
@@ -161,15 +161,13 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	/**
-	 * Validates the resource by compiling its contents into a ModelDescription and
-	 * discarding this ModelDescription afterwards
-	 * 
-	 * @note The errors will be available as part of the ValidationContext, which
-	 *       can later be retrieved from the resource, and which contains semantic
-	 *       errors (as opposed to the ones obtained via resource.getErrors(), which
-	 *       are syntactic errors), This collector can be probed for compilation
-	 *       errors via its hasErrors(), hasInternalErrors(), hasImportedErrors()
-	 *       methods
+	 * Validates the resource by compiling its contents into a ModelDescription and discarding this ModelDescription
+	 * afterwards
+	 *
+	 * @note The errors will be available as part of the ValidationContext, which can later be retrieved from the
+	 *       resource, and which contains semantic errors (as opposed to the ones obtained via resource.getErrors(),
+	 *       which are syntactic errors), This collector can be probed for compilation errors via its hasErrors(),
+	 *       hasInternalErrors(), hasImportedErrors() methods
 	 *
 	 */
 	public void validate() {
@@ -187,12 +185,13 @@ public class GamlResource extends LazyLinkingResource {
 			model.validate(edited);
 			updateWith(model, true);
 		} finally {
-			if (!MEMOIZE_DESCRIPTION)
+			if (!MEMOIZE_DESCRIPTION) {
 				if (edited) {
 					GamlResourceServices.getResourceDocumenter().addCleanupTask(model);
 				} else {
 					model.dispose();
 				}
+			}
 		}
 	}
 
@@ -218,26 +217,25 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	private void setDescription(final ModelDescription model) {
-		if (!MEMOIZE_DESCRIPTION)
-			return;
-		if (model == description)
-			return;
-		if (description != null)
+		if (!MEMOIZE_DESCRIPTION) { return; }
+		if (model == description) { return; }
+		if (description != null) {
 			description.dispose();
+		}
 		description = model;
 	}
 
 	private void setElement(final ISyntacticElement model) {
-		if (model == element)
-			return;
-		if (element != null)
+		if (model == element) { return; }
+		if (element != null) {
 			element.dispose();
+		}
 		element = model;
 	}
 
 	/**
 	 * In the case of synthetic resources, pass the URI they depend on
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void loadSynthetic(final InputStream is, final IExecutionContext additionalLinkingContext)
@@ -266,7 +264,7 @@ public class GamlResource extends LazyLinkingResource {
 		// If the imports are not correctly updated, we cannot proceed
 		final EObject faulty = GamlResourceIndexer.updateImports(this);
 		if (faulty != null) {
-			System.out.println(getURI()+" cannot import "+faulty);
+			System.out.println(getURI() + " cannot import " + faulty);
 			final EAttribute attribute = getContents().get(0) instanceof Model ? GamlPackage.Literals.IMPORT__IMPORT_URI
 					: GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI;
 			getErrors().add(new EObjectDiagnosticImpl(Severity.ERROR, IGamlIssue.IMPORT_ERROR,

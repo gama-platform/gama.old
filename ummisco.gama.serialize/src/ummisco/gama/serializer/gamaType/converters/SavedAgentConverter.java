@@ -20,10 +20,10 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.SavedAgent;
+import msi.gama.util.IMap;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SavedAgentConverter implements Converter {
@@ -93,7 +93,7 @@ public class SavedAgentConverter implements Converter {
 
 		if (reader.hasMoreChildren()) {
 			reader.moveDown();
-			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, THashMap.class);
+			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, IMap.class);
 			reader.moveUp();
 		}
 

@@ -24,7 +24,6 @@ import java.util.Map;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -1161,7 +1160,7 @@ public class MovingSkill extends Skill {
 				: initMoveAlongPath(agent, path, currentLocation);
 		if (indexVals == null) { return null; }
 		final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
-		final THashMap agents = new THashMap<>();
+		final IMap agents = GamaMapFactory.createUnordered();
 
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);

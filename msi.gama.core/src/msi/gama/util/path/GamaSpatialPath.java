@@ -26,7 +26,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.agent.IAgent;
@@ -38,7 +37,9 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Punctal;
@@ -51,7 +52,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	IList<IShape> segments;
 	IShape shape = null;
 	boolean threeD = false;
-	THashMap<IShape, IShape> realObjects; // key = part of the geometry
+	IMap<IShape, IShape> realObjects; // key = part of the geometry
 
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
 			final IList<IShape> _edges) {
@@ -89,7 +90,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		this.target = target;
 		this.graph = g;
 		this.segments = GamaListFactory.create(Types.GEOMETRY);
-		realObjects = new THashMap<>();
+		realObjects = GamaMapFactory.createUnordered();
 		graphVersion = 0;
 		final Geometry firstLine = _edges == null || _edges.isEmpty() ? null : _edges.get(0).getInnerGeometry();
 		GamaPoint pt = null, pt0 = null, pt1 = null;
@@ -217,7 +218,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			target = nodes.get(nodes.size() - 1);
 		}
 		segments = GamaListFactory.<IShape> create(Types.GEOMETRY);
-		realObjects = new THashMap<>();
+		realObjects = GamaMapFactory.createUnordered();
 		graph = g;
 
 		for (int i = 0, n = nodes.size(); i < n - 1; i++) {
@@ -416,7 +417,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	}
 
 	@Override
-	public void setRealObjects(final THashMap<IShape, IShape> realObjects) {
+	public void setRealObjects(final IMap<IShape, IShape> realObjects) {
 		this.realObjects = realObjects;
 	}
 

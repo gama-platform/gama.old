@@ -11,7 +11,8 @@ import java.util.Spliterator;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterators;
 
-import msi.gama.common.interfaces.IAttributed.BiConsumerWithPruning;
+import msi.gama.common.interfaces.BiConsumerWithPruning;
+import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -316,7 +317,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	@Override
 	default IMap<K, V> copy(final IScope scope) {
 		return createWithoutCasting((IType<K>) getGamlType().getKeyType(), (IType<V>) getGamlType().getContentType(),
-				this);
+				this, isOrdered());
 	}
 
 	/**
@@ -427,6 +428,26 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 		while (it.hasNext()) {
 			final Map.Entry<K, V> entry = it.next();
 			if (!visitor.process(entry.getKey(), entry.getValue())) { return false; }
+		}
+		return true;
+	}
+
+	boolean isOrdered();
+
+	default boolean forEachValue(final ConsumerWithPruning<? super V> visitor) {
+		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+		while (it.hasNext()) {
+			final Map.Entry<K, ? extends V> entry = it.next();
+			if (!visitor.process(entry.getValue())) { return false; }
+		}
+		return true;
+	}
+
+	default boolean forEachKey(final ConsumerWithPruning<K> visitor) {
+		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+		while (it.hasNext()) {
+			final Map.Entry<K, V> entry = it.next();
+			if (!visitor.process(entry.getKey())) { return false; }
 		}
 		return true;
 	}

@@ -30,6 +30,7 @@ import msi.gama.util.GamaDate;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
@@ -80,7 +81,7 @@ public interface IGamlAdditions {
 	Class<?> S = String.class;
 	Class<?> IE = IExpression.class;
 	Class<?> IS = IShape.class;
-	// public final static Class<?> GM = GamaMap.class;
+	Class<?> GM = IMap.class;
 	// public final static Class<?> GL = GamaList.class;
 	Class<?> P = GamaPoint.class;
 	Class<?> IC = IContainer.class;

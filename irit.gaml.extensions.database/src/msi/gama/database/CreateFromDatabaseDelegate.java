@@ -16,11 +16,11 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.CreateStatement;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -82,7 +82,7 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 			final IList<Object> colTypes, final IList<Object> colNames, final Arguments init)
 			throws GamaRuntimeException {
 		if (init == null) { return; }
-		for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
+		for (final Facet f : init.getFacets()) {
 			if (f != null) {
 				final IExpression valueExpr = f.getValue().getExpression();
 				// get parameter

@@ -63,7 +63,7 @@ import msi.gama.lang.gaml.gaml.impl.S_EquationsImpl;
 import msi.gama.lang.gaml.gaml.impl.S_IfImpl;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.IGamlEcoreUtils;
 import msi.gaml.compilation.ast.SyntacticFactory;
 
@@ -156,7 +156,7 @@ public class EGaml implements IGamlEcoreUtils {
 	public Map<String, Facet> getFacetsMapOf(final EObject s) {
 		final List<? extends EObject> list = getFacetsOf(s);
 		if (list.isEmpty()) { return Collections.EMPTY_MAP; }
-		final Map<String, Facet> map = new TOrderedHashMap<>();
+		final Map<String, Facet> map = GamaMapFactory.create();
 		for (final EObject f : list) {
 			if (f instanceof Facet) {
 				map.put(getKeyOf(f), (Facet) f);

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaTree<T> {
@@ -98,7 +98,7 @@ public class GamaTree<T> {
 
 	public Map<GamaNode<T>, Integer> mapByDepth(final Order traversalOrder) {
 		if (root == null) { return Collections.EMPTY_MAP; }
-		final Map<GamaNode<T>, Integer> returnMap = new TOrderedHashMap<>();
+		final Map<GamaNode<T>, Integer> returnMap = GamaMapFactory.create();
 		if (traversalOrder == Order.PRE_ORDER) {
 			mapPreOrderWithDepth(root, returnMap, 0);
 		} else if (traversalOrder == Order.POST_ORDER) {

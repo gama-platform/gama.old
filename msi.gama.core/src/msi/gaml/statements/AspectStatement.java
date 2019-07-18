@@ -12,9 +12,9 @@ package msi.gaml.statements;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 
-import gnu.trove.impl.Constants;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -87,7 +87,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 	boolean isHighlightAspect;
 
-	static final TObjectIntHashMap<String> SHAPES = new TObjectIntHashMap<String>() {
+	static final Map<String, Integer> SHAPES = new HashMap<String, Integer>() {
 
 		{
 			put("circle", 1);
@@ -118,10 +118,10 @@ public class AspectStatement extends AbstractStatementSequence {
 					color = GamaColor.getInt(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB());
 				}
 				final String defaultShape = GamaPreferences.Displays.CORE_SHAPE.getValue();
-				final int index = SHAPES.get(defaultShape);
+				final Integer index = SHAPES.get(defaultShape);
 				IShape ag;
 
-				if (index != Constants.DEFAULT_INT_NO_ENTRY_VALUE) {
+				if (index != null) {
 					final Double defaultSize = GamaPreferences.Displays.CORE_SIZE.getValue();
 					final ILocation point = agent.getLocation();
 

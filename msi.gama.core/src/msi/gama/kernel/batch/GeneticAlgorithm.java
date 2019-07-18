@@ -10,11 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -204,7 +204,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		List<Chromosome> population = initPop.initializePop(scope, variables, this);
 		int nbGen = 1;
 		while (nbGen <= maxGenerations) {
-			Set<Chromosome> children = new THashSet<>();
+			Set<Chromosome> children = new HashSet<>();
 			for (final Chromosome chromosome : population) {
 				if (scope.getRandom().next() < crossoverProb && !variables.isEmpty()) {
 					children.addAll(crossOverOp.crossOver(scope, chromosome,
@@ -214,7 +214,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			population.addAll(children);
 			children = null;
 
-			Set<Chromosome> mutatePop = new THashSet<>();
+			Set<Chromosome> mutatePop = new HashSet<>();
 			for (final Chromosome chromosome : population) {
 				if (scope.getRandom().next() < mutationProb && !variables.isEmpty()) {
 					mutatePop.add(mutationOp.mutate(scope, chromosome, variables));

@@ -16,7 +16,6 @@ import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
 import static msi.gama.common.geometry.GeometryUtils.rotate;
 import static msi.gama.common.geometry.GeometryUtils.translate;
 import static msi.gama.common.geometry.Scaling3D.of;
-import static msi.gama.util.GamaListFactory.create;
 import static msi.gaml.operators.Cast.asFloat;
 import static msi.gaml.operators.Cast.asGeometry;
 import static msi.gaml.types.GamaFileType.createFile;
@@ -40,7 +39,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.Types;
 
 class ShapeExecuter extends DrawExecuter {
 
@@ -150,10 +148,7 @@ class ShapeExecuter extends DrawExecuter {
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	private void addTextures(final IScope scope, final ShapeDrawingAttributes attributes) {
 		if (attributes.getTextures() == null) { return; }
-		final List textures = create(Types.STRING);
-		textures.addAll(attributes.getTextures());
-		attributes.getTextures().clear();
-		for (final Object s : textures) {
+		attributes.getTextures().replaceAll((s) -> {
 			GamaImageFile image = null;
 			if (s instanceof GamaImageFile) {
 				image = (GamaImageFile) s;
@@ -162,10 +157,10 @@ class ShapeExecuter extends DrawExecuter {
 			}
 			if (image == null || !image.exists(scope)) {
 				throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
-			} else {
-				attributes.getTextures().add(image);
 			}
-		}
+			return image;
+
+		});
 	}
 
 	/**

@@ -11,7 +11,6 @@
 package msi.gaml.descriptions;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -25,6 +24,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -120,7 +120,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			}
 		}
 
-		for (final Map.Entry<String, IExpressionDescription> arg : names.entrySet()) {
+		for (final Facet arg : names.getFacets()) {
 			// A null value indicates a previous compilation error in the
 			// arguments
 			if (arg != null) {

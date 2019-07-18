@@ -10,9 +10,9 @@
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -90,7 +90,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		final Set<String> result = new THashSet<>();
+		final Set<String> result = new HashSet<>();
 		final StringBuilder b = new StringBuilder();
 		for (final char c : value.toCharArray()) {
 			switch (c) {

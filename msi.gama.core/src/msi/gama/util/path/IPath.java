@@ -1,16 +1,15 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.path.IPath.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.path.IPath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.path;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
@@ -23,6 +22,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.types.IType;
 
@@ -81,65 +81,65 @@ import msi.gaml.types.IType;
 public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends IShape {
 
 	@getter (IKeyword.SOURCE)
-	public abstract V getStartVertex();
+	V getStartVertex();
 
 	@getter (IKeyword.TARGET)
-	public abstract V getEndVertex();
+	V getEndVertex();
 
 	@getter (IKeyword.GRAPH)
-	public abstract G getGraph();
+	G getGraph();
 
 	@getter (IKeyword.SEGMENTS)
-	public abstract IList<IShape> getEdgeGeometry();
+	IList<IShape> getEdgeGeometry();
 
 	@getter ("vertices")
-	public abstract IList<V> getVertexList();
+	IList<V> getVertexList();
 
 	@getter ("edges")
-	public abstract IList<E> getEdgeList();
+	IList<E> getEdgeList();
 
 	@getter ("shape")
-	public abstract IShape getGeometry();
+	IShape getGeometry();
 
 	// @getter(IKeyword.AGENTS)
 	// public abstract List<IShape> getAgentList();
 
 	@getter ("weight")
-	public abstract double getWeight();
+	double getWeight();
 
-	public abstract double getWeight(final IShape line) throws GamaRuntimeException;
+	double getWeight(final IShape line) throws GamaRuntimeException;
 
-	public abstract void acceptVisitor(final IAgent agent);
+	void acceptVisitor(final IAgent agent);
 
-	public abstract void forgetVisitor(final IAgent agent);
+	void forgetVisitor(final IAgent agent);
 
-	public abstract int indexOf(final IAgent a);
+	int indexOf(final IAgent a);
 
-	public abstract int indexSegmentOf(final IAgent a);
+	int indexSegmentOf(final IAgent a);
 
-	public abstract boolean isVisitor(final IAgent a);
+	boolean isVisitor(final IAgent a);
 
-	public abstract void setIndexOf(final IAgent a, final int index);
+	void setIndexOf(final IAgent a, final int index);
 
-	public abstract void setIndexSegementOf(final IAgent a, final int indexSegement);
+	void setIndexSegementOf(final IAgent a, final int indexSegement);
 
-	public abstract int getLength();
+	int getLength();
 
 	@getter ("distance")
-	public abstract double getDistance(IScope scope);
+	double getDistance(IScope scope);
 
-	public abstract ITopology getTopology(IScope scope);
+	ITopology getTopology(IScope scope);
 
-	public abstract void setRealObjects(final THashMap<IShape, IShape> realObjects);
+	void setRealObjects(final IMap<IShape, IShape> realObjects);
 
-	public abstract IShape getRealObject(final Object obj);
+	IShape getRealObject(final Object obj);
 
-	public void setSource(V source);
+	void setSource(V source);
 
-	public void setTarget(V target);
+	void setTarget(V target);
 
-	public int getGraphVersion();
+	int getGraphVersion();
 
-	public abstract void setGraph(G graph);
+	void setGraph(G graph);
 
 }

@@ -246,7 +246,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						att == null ? WITH : ATTRIBUTES);
 			} else {
 				if (args != null) {
-					args.forEachEntry((name, exp) -> {
+					args.forEachFacet((name, exp) -> {
 						if (!species.hasAttribute(name)) {
 							desc.error(
 									"Attribute " + name + " is not defined for the agents of " + data.serialize(false),
@@ -805,8 +805,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 			}
 		} else {
-			withFacet.forEach((key, value) -> {
+			withFacet.forEachFacet((key, value) -> {
 				values.put(value.getExpression().literalValue(), species.getVarExpr(key, false));
+				return true;
 			});
 		}
 	}

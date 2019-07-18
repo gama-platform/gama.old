@@ -28,7 +28,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.ISourceProviderService;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.application.workbench.PerspectiveHelper.SimulationPerspectiveDescriptor;
 import msi.gama.common.interfaces.IConsoleDisplayer;
@@ -60,6 +59,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.Symbol;
@@ -266,7 +267,7 @@ public class SwtGui implements IGui {
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
-		final Map<String, Object> result = new THashMap<>();
+		final IMap<String, Object> result = GamaMapFactory.createUnordered();
 		WorkbenchHelper.run(() -> {
 			final EditorsDialog dialog =
 					new EditorsDialog(scope, WorkbenchHelper.getShell(), initialValues, types, title);

@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,8 +33,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IExperimentAgentCreator;
@@ -45,20 +44,21 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
-import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.PrimitiveDescription;
 import msi.gaml.descriptions.SkillDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.descriptions.TypeDescription;
@@ -91,7 +91,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
 	// public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS =
 	// new THashMap<>();
-	public final static Map<String, String> TEMPORARY_BUILT_IN_VARS_DOCUMENTATION = new THashMap<>();
+	public final static Map<String, String> TEMPORARY_BUILT_IN_VARS_DOCUMENTATION = new HashMap<>();
 
 	protected static String[] S(final String... strings) {
 		return strings;
@@ -221,7 +221,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		for (final String keyword : keywords) {
 			final String kw = keyword;
 			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, new THashMap<>());
+				OPERATORS.put(kw, GamaMapFactory.createUnordered());
 			}
 			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if (!map.containsKey(signature)) {
@@ -257,7 +257,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		for (final String keyword : keywords) {
 			final String kw = keyword;
 			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, new THashMap<>());
+				OPERATORS.put(kw, GamaMapFactory.createUnordered());
 			}
 			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if (!map.containsKey(signature)) {
@@ -301,7 +301,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		for (final String keyword : keywords) {
 			final String kw = keyword;
 			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, new THashMap<>());
+				OPERATORS.put(kw, GamaMapFactory.createUnordered());
 			}
 			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if (!map.containsKey(signature)) {
@@ -444,7 +444,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public static Map<String, OperatorProto> getAllFields(final Class clazz) {
 		final List<Class> classes =
 				JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, FIELDS.keySet());
-		final Map<String, OperatorProto> fieldsMap = new TOrderedHashMap();
+		final Map<String, OperatorProto> fieldsMap = GamaMapFactory.create();
 		for (final Class c : classes) {
 			for (final OperatorProto desc : FIELDS.get(c)) {
 				fieldsMap.put(desc.getName(), desc);
@@ -464,15 +464,15 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Collection<IDescription> getAllVars() {
-		final THashSet<IDescription> result = new THashSet<>();
+		final HashSet<IDescription> result = new HashSet<>();
 
-		final DescriptionVisitor varVisitor = desc -> {
+		final DescriptionVisitor<IDescription> varVisitor = desc -> {
 			result.add(desc);
 			return true;
 		};
 
-		final DescriptionVisitor actionVisitor = desc -> {
-			Iterables.addAll(result, ((ActionDescription) desc).getFormalArgs());
+		final DescriptionVisitor<IDescription> actionVisitor = desc -> {
+			Iterables.addAll(result, ((StatementDescription) desc).getFormalArgs());
 			return true;
 		};
 
@@ -502,9 +502,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Collection<IDescription> getAllActions() {
-		final THashMap<String, IDescription> result = new THashMap<>();
+		final IMap<String, IDescription> result = GamaMapFactory.createUnordered();
 
-		final DescriptionVisitor visitor = desc -> {
+		final DescriptionVisitor<IDescription> visitor = desc -> {
 			result.putIfAbsent(desc.getName(), desc);
 			return true;
 		};

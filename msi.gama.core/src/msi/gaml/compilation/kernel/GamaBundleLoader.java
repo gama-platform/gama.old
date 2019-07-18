@@ -35,7 +35,6 @@ import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gaml.compilation.IGamlAdditions;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
@@ -214,18 +213,7 @@ public class GamaBundleLoader {
 
 			// We reinit the type hierarchy to gather additional types
 			Types.init();
-			performStaticInitializations();
-			//
 		});
-	}
-
-	private static void performStaticInitializations() {
-		IExpressionCompiler.OPERATORS.forEachValue(object -> {
-			object.compact();
-			return true;
-		});
-		IExpressionCompiler.OPERATORS.compact();
-
 	}
 
 	@SuppressWarnings ("unchecked")

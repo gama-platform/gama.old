@@ -35,9 +35,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 
-import gnu.trove.iterator.TIntIterator;
-import gnu.trove.set.hash.THashSet;
-import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.JavaUtils;
@@ -60,9 +57,9 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
@@ -314,7 +311,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		xmin += cellWidth / 2.0;
 		ymin += cellHeight / 2.0;
 		// numCols = (int) (width / cellWidth);
-		hexAgentToLoc = new TOrderedHashMap();
+		hexAgentToLoc = GamaMapFactory.create();
 		int i = 0;
 		for (int l = 0; l < numRows; l++) {
 			for (int c = 0; c < numCols; c = c + 2) {
@@ -365,7 +362,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		xmin += cellWidth / 2.0;
 		ymin += cellHeight / 2.0;
 		// numCols = (int) (width / cellWidth);
-		hexAgentToLoc = new TOrderedHashMap();
+		hexAgentToLoc = GamaMapFactory.create();
 		int i = 0;
 		for (int l = 0; l < numRows; l = l + 2) {
 			for (int c = 0; c < numCols; c++) {
@@ -516,12 +513,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			int i = getPlaceIndexAt(xx, yy);
 			if (matrix[i] == null) { return -1; }
 			if (matrix[i].getLocation() == p) { return i; }
-			final TIntHashSet toObserve =
+			final Set<Integer> toObserve =
 					((GridHexagonalNeighborhood) getNeighborhood()).getNeighborsAtRadius1(i, numCols, numRows, isTorus);
 			toObserve.add(i);
 			double dMin = Double.MAX_VALUE;
 			int x = 0, y = 0;
-			final TIntIterator it = toObserve.iterator();
+			final Iterator<Integer> it = toObserve.iterator();
 			while (it.hasNext()) {
 				final int id = it.next();
 
@@ -827,7 +824,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				scope.getRandom().shuffle(getNeighborhoods(scope, startAg, cells, new ArrayList<IAgent>()));
 		while (cpt < this.numCols * this.numRows) {
 			cpt++;
-			final Set<IAgent> neighb2 = new THashSet<>();
+			final Set<IAgent> neighb2 = new HashSet<>();
 			for (final IAgent ag : neighb) {
 				agT = testPlace(scope, source, filter, ag);
 				if (agT != null) { return agT; }

@@ -43,7 +43,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
 import msi.gama.util.GamaFont;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
@@ -712,7 +712,7 @@ public class GamaPreferences {
 	}
 
 	public static Map<String, Map<String, List<Pref>>> organizePrefs() {
-		final Map<String, Map<String, List<Pref>>> result = new TOrderedHashMap();
+		final Map<String, Map<String, List<Pref>>> result = GamaMapFactory.create();
 		for (final Pref e : prefs.values()) {
 			if (e.isHidden()) {
 				continue;
@@ -720,7 +720,7 @@ public class GamaPreferences {
 			final String tab = e.tab;
 			Map<String, List<Pref>> groups = result.get(tab);
 			if (groups == null) {
-				groups = new TOrderedHashMap();
+				groups = GamaMapFactory.create();
 				result.put(tab, groups);
 			}
 			final String group = e.group;

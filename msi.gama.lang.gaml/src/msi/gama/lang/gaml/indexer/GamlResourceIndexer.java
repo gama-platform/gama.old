@@ -34,7 +34,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.inject.Singleton;
 
-import gnu.trove.procedure.TObjectObjectProcedure;
+import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
@@ -42,7 +42,8 @@ import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -59,14 +60,14 @@ public class GamlResourceIndexer {
 		}, IResourceChangeEvent.PRE_BUILD);
 	}
 
-	protected final static TOrderedHashMap EMPTY_MAP = new TOrderedHashMap();
+	protected final static IMap EMPTY_MAP = GamaMapFactory.create();
 
 	public static final Object IMPORTED_URIS = "ImportedURIs";
 
-	protected static TOrderedHashMap<URI, String> getImportsAsAbsoluteURIS(final URI baseURI, final Model m) {
-		TOrderedHashMap<URI, String> result = EMPTY_MAP;
+	protected static IMap<URI, String> getImportsAsAbsoluteURIS(final URI baseURI, final Model m) {
+		IMap<URI, String> result = EMPTY_MAP;
 		if (((ModelImpl) m).eIsSet(GamlPackage.MODEL__IMPORTS)) {
-			result = new TOrderedHashMap();
+			result = GamaMapFactory.create();
 			for (final Import e : m.getImports()) {
 				final String u = e.getImportURI();
 				if (u != null) {
@@ -80,9 +81,8 @@ public class GamlResourceIndexer {
 		return result;
 	}
 
-	protected static TOrderedHashMap<URI, String> getImportsAsAbsoluteURIS(final URI baseURI,
-			final ExperimentFileStructure m) {
-		final TOrderedHashMap<URI, String> result = new TOrderedHashMap();
+	protected static IMap<URI, String> getImportsAsAbsoluteURIS(final URI baseURI, final ExperimentFileStructure m) {
+		final IMap<URI, String> result = GamaMapFactory.create();
 		final String u = m.getExp().getImportURI();
 		if (u != null) {
 			URI uri = URI.createURI(u, true);
@@ -93,7 +93,7 @@ public class GamlResourceIndexer {
 		return result;
 	}
 
-	public static TOrderedHashMap<URI, String> allLabeledImportsOf(final GamlResource r) {
+	public static IMap<URI, String> allLabeledImportsOf(final GamlResource r) {
 		return r.getCache().get(IMPORTED_URIS, r, () -> allLabeledImportsOf(r.getURI()));
 	}
 
@@ -148,7 +148,7 @@ public class GamlResourceIndexer {
 		if (contents == null) { return null; }
 		final boolean isModel = contents instanceof Model;
 		final boolean isExpe = contents instanceof ExperimentFileStructure;
-		final TOrderedHashMap<URI, String> added;
+		final IMap<URI, String> added;
 		if (isModel) {
 			added = getImportsAsAbsoluteURIS(baseURI, (Model) contents);
 		} else if (isExpe) {
@@ -157,10 +157,10 @@ public class GamlResourceIndexer {
 			return null;
 		}
 		final EObject[] faulty = new EObject[1];
-		if (added.forEachEntry(new TObjectObjectProcedure<URI, String>() {
+		if (added.forEachPair(new BiConsumerWithPruning<URI, String>() {
 
 			@Override
-			public boolean execute(final URI uri, final String b) {
+			public boolean process(final URI uri, final String b) {
 				if (baseURI.equals(uri)) { return true; }
 				final Iterator<Edge> iterator = edges.iterator();
 				boolean found = false;
@@ -218,11 +218,11 @@ public class GamlResourceIndexer {
 	}
 
 	public static LinkedHashMultimap<String, GamlResource> validateImportsOf(final GamlResource resource) {
-		final TOrderedHashMap<URI, String> uris = allLabeledImportsOf(resource);
+		final IMap<URI, String> uris = allLabeledImportsOf(resource);
 		uris.remove(GamlResourceServices.properlyEncodedURI(resource.getURI()));
 		if (!uris.isEmpty()) {
 			final LinkedHashMultimap<String, GamlResource> imports = LinkedHashMultimap.create();
-			if (uris.forEachEntry((a, b) -> {
+			if (uris.forEachPair((a, b) -> {
 				final GamlResource r = (GamlResource) resource.getResourceSet().getResource(a, true);
 				if (r.hasErrors()) {
 					resource.invalidate(r, "Errors detected");
@@ -254,9 +254,9 @@ public class GamlResourceIndexer {
 		return Collections.EMPTY_SET;
 	}
 
-	private static TOrderedHashMap<URI, String> allLabeledImportsOf(final URI uri) {
+	private static IMap<URI, String> allLabeledImportsOf(final URI uri) {
 		final URI newURI = GamlResourceServices.properlyEncodedURI(uri);
-		final TOrderedHashMap<URI, String> result = new TOrderedHashMap();
+		final IMap<URI, String> result = GamaMapFactory.create();
 		allLabeledImports(newURI, null, result);
 		return result;
 	}

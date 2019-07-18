@@ -10,8 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.util.graph.writer;
 
-import msi.gama.util.graph.graphstream_copy.FileSink;
-import msi.gama.util.graph.graphstream_copy.FileSinkDGS;
+import msi.gama.ext.graphstream.FileSink;
+import msi.gama.ext.graphstream.FileSinkDGS;
 
 /**
  * @see http://graphstream-project.org/doc/Advanced-Concepts/The-DGS-File-Format/

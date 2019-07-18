@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -57,8 +56,8 @@ import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IReference;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -593,7 +592,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			final IDescription des = ((ISymbol) iOutputManager).getDescription();
 			if (des == null) { return; }
 			outputs = (SimulationOutputManager) des.compile();
-			final Map<String, IOutput> mm = new TOrderedHashMap<>();
+			final Map<String, IOutput> mm = GamaMapFactory.create();
 			for (final Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet()) {
 				final IOutput output = entry.getValue();
 				String keyName, newOutputName;
@@ -780,12 +779,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 					// Build a map name::innerPopAgentSavedAgt :
 					// For each agent from the simulation innerPop, it will be
 					// updated from the corresponding agent
-					final Map<String, SavedAgent> mapSavedAgtName = new THashMap<>();
+					final Map<String, SavedAgent> mapSavedAgtName = GamaMapFactory.createUnordered();
 					for (final SavedAgent localSA : savedAgentInnerPop.get(savedAgentMicroPopName)) {
 						mapSavedAgtName.put((String) localSA.getAttributeValue("name"), localSA);
 					}
 
-					final Map<String, IAgent> mapSimuAgtName = new THashMap<>();
+					final Map<String, IAgent> mapSimuAgtName = GamaMapFactory.createUnordered();
 
 					for (final IAgent agt : simuMicroPop.toArray()) {
 						mapSimuAgtName.put(agt.getName(), agt);

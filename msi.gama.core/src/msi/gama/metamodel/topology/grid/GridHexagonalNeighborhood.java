@@ -1,17 +1,18 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.GridHexagonalNeighborhood.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.grid.GridHexagonalNeighborhood.java, in plugin msi.gama.core, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import gnu.trove.iterator.TIntIterator;
-import gnu.trove.set.hash.TIntHashSet;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public abstract class GridHexagonalNeighborhood extends GridNeighborhood {
 
@@ -23,11 +24,11 @@ public abstract class GridHexagonalNeighborhood extends GridNeighborhood {
 	}
 
 	@Override
-	protected TIntHashSet getNeighborsAtRadius(final int placeIndex, final int radius) {
-		final TIntHashSet neigh2 = new TIntHashSet();
-		final TIntHashSet neigh =
+	protected Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius) {
+		final Set<Integer> neigh2 = new HashSet<>();
+		final Set<Integer> neigh =
 				getNeighborsAtRadius(placeIndex, radius, matrix.numCols, matrix.numRows, matrix.isTorus);
-		final TIntIterator it = neigh.iterator();
+		final Iterator<Integer> it = neigh.iterator();
 		while (it.hasNext()) {
 			final int id = it.next();
 			if (matrix.matrix[id] != null) {
@@ -59,13 +60,13 @@ public abstract class GridHexagonalNeighborhood extends GridNeighborhood {
 		return y * xSize + x;
 	}
 
-	public TIntHashSet getNeighborsAtRadius(final int placeIndex, final int radius, final int xSize, final int ySize,
+	public Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius, final int xSize, final int ySize,
 			final boolean isTorus) {
-		final TIntHashSet currentNeigh = new TIntHashSet();
+		final Set<Integer> currentNeigh = new HashSet<>();
 		currentNeigh.add(placeIndex);
 		for (int i = 0; i < radius; i++) {
-			final TIntHashSet newNeigh = new TIntHashSet();
-			final TIntIterator it = currentNeigh.iterator();
+			final Set<Integer> newNeigh = new HashSet<>();
+			final Iterator<Integer> it = currentNeigh.iterator();
 			while (it.hasNext()) {
 				newNeigh.addAll(getNeighborsAtRadius1(it.next(), xSize, ySize, isTorus));
 			}
@@ -76,7 +77,7 @@ public abstract class GridHexagonalNeighborhood extends GridNeighborhood {
 
 	}
 
-	public abstract TIntHashSet getNeighborsAtRadius1(final int placeIndex, final int xSize, final int ySize,
+	public abstract Set<Integer> getNeighborsAtRadius1(final int placeIndex, final int xSize, final int ySize,
 			final boolean isTorus);
 
 	@Override

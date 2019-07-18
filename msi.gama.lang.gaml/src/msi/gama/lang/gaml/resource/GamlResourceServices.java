@@ -32,7 +32,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
@@ -41,7 +40,8 @@ import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -58,24 +58,24 @@ public class GamlResourceServices {
 	private static int resourceCount = 0;
 	private static IDocManager documenter = new GamlResourceDocumenter();
 	private static GamlSyntacticConverter converter = new GamlSyntacticConverter();
-	private static final Map<URI, IGamlBuilderListener> resourceListeners = new THashMap<>();
-	private static final Map<URI, ValidationContext> resourceErrors = new THashMap<>();
+	private static final Map<URI, IGamlBuilderListener> resourceListeners = GamaMapFactory.createUnordered();
+	private static final Map<URI, ValidationContext> resourceErrors = GamaMapFactory.createUnordered();
 	private static final XtextResourceSet poolSet = new XtextResourceSet() {
 		{
 			setClasspathURIContext(GamlResourceServices.class);
 		}
 
 	};
-	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache =
-			CacheBuilder.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
+	private static final LoadingCache<URI, IMap<EObject, IGamlDescription>> documentationCache =
+			CacheBuilder.newBuilder().build(new CacheLoader<URI, IMap<EObject, IGamlDescription>>() {
 
 				@Override
-				public THashMap load(final URI key) throws Exception {
-					return new THashMap<>();
+				public IMap load(final URI key) throws Exception {
+					return GamaMapFactory.createUnordered();
 				}
 			});
 
-	public static THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource r) {
+	public static IMap<EObject, IGamlDescription> getDocumentationCache(final Resource r) {
 		return documentationCache.getUnchecked(properlyEncodedURI(r.getURI()));
 	}
 
@@ -240,7 +240,7 @@ public class GamlResourceServices {
 		final URI uri = URI.createURI(IKeyword.SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false);
 		// TODO Modifier le cache de la resource ici ?
 		final GamlResource result = (GamlResource) rs.createResource(uri);
-		final TOrderedHashMap<URI, String> imports = new TOrderedHashMap();
+		final IMap<URI, String> imports = GamaMapFactory.create();
 		imports.put(uri, null);
 		if (r != null) {
 			imports.put(r.getURI(), null);

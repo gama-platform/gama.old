@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
@@ -28,7 +30,6 @@ import org.opengis.referencing.FactoryException;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -69,7 +70,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 	public static class ImageInfo extends GamaFileMetaData {
 
-		public final static TIntObjectHashMap<String> formatsShortNames = new TIntObjectHashMap() {
+		public final static Map<Integer, String> formatsShortNames = new HashMap<Integer, String>() {
 
 			{
 				// Hack: Corresponds to SWT.IMAGE_xxx + ImagePropertyPage
@@ -112,7 +113,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		}
 
 		public String getShortLabel(final int type) {
-			return formatsShortNames.contains(type) ? formatsShortNames.get(type) : formatsShortNames.get(-1);
+			return formatsShortNames.containsKey(type) ? formatsShortNames.get(type) : formatsShortNames.get(-1);
 		}
 
 		// public void setThumbnail(final Object thumb) {

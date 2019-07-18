@@ -20,13 +20,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.ISymbolConstructor;
 import msi.gaml.compilation.IValidator;
@@ -59,8 +58,7 @@ public class SymbolProto extends AbstractProto {
 	private final boolean isPrimitive;
 	private final boolean isVar;
 
-	static final TIntHashSet ids =
-			new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID });
+	static final List<Integer> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID);
 
 	public SymbolProto(final Class clazz, final boolean hasSequence, final boolean hasArgs, final int kind,
 			final boolean doesNotHaveScope, final FacetProto[] possibleFacets, final String omissible,
@@ -83,7 +81,7 @@ public class SymbolProto extends AbstractProto {
 		this.hasScope = !doesNotHaveScope;
 		if (possibleFacets != null) {
 			final Builder<String> builder = ImmutableSet.builder();
-			this.possibleFacets = new THashMap<>();
+			this.possibleFacets = GamaMapFactory.createUnordered();
 			for (final FacetProto f : possibleFacets) {
 				this.possibleFacets.put(f.name, f);
 				f.setOwner(getTitle());
@@ -170,18 +168,19 @@ public class SymbolProto extends AbstractProto {
 
 	@Override
 	public doc getDocAnnotation() {
-		if (support == null)
-			return null;
+		if (support == null) { return null; }
 		doc d = super.getDocAnnotation();
 		if (d == null) {
 			if (support.isAnnotationPresent(action.class)) {
-				doc[] docs = support.getAnnotation(action.class).doc();
-				if (docs.length > 0)
+				final doc[] docs = support.getAnnotation(action.class).doc();
+				if (docs.length > 0) {
 					d = docs[0];
+				}
 			} else if (support.isAnnotationPresent(symbol.class)) {
-				doc[] docs = support.getAnnotation(symbol.class).doc();
-				if (docs.length > 0)
+				final doc[] docs = support.getAnnotation(symbol.class).doc();
+				if (docs.length > 0) {
 					d = docs[0];
+				}
 			}
 		}
 

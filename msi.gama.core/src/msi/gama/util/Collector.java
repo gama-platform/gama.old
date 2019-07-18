@@ -1,19 +1,21 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.Collector.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.Collector.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Spliterator;
@@ -22,13 +24,9 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
 
-import gnu.trove.set.hash.THashSet;
-import gnu.trove.set.hash.TLinkedHashSet;
-
 /**
- * A generic class that forwards additions to a set and prevents creating the
- * set if no additions occur
- * 
+ * A generic class that forwards additions to a set and prevents creating the set if no additions occur
+ *
  * @author drogoul
  *
  * @param <E>
@@ -38,29 +36,25 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	@Override
 	public boolean removeIf(final Predicate<? super E> filter) {
-		if (collect != null)
-			return collect.removeIf(filter);
+		if (collect != null) { return collect.removeIf(filter); }
 		return ICollector.super.removeIf(filter);
 	}
 
 	@Override
 	public Spliterator<E> spliterator() {
-		if (collect != null)
-			return collect.spliterator();
+		if (collect != null) { return collect.spliterator(); }
 		return ICollector.super.spliterator();
 	}
 
 	@Override
 	public Stream<E> stream() {
-		if (collect != null)
-			return collect.stream();
+		if (collect != null) { return collect.stream(); }
 		return ICollector.super.stream();
 	}
 
 	@Override
 	public Stream<E> parallelStream() {
-		if (collect != null)
-			return collect.parallelStream();
+		if (collect != null) { return collect.parallelStream(); }
 		return ICollector.super.parallelStream();
 	}
 
@@ -76,15 +70,13 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 			@Override
 			public boolean remove(final Object o) {
-				if (o == null)
-					return false;
+				if (o == null) { return false; }
 				return super.remove(o);
 			}
 
 			@Override
 			public boolean removeAll(final Collection<?> o) {
-				if (o == null)
-					return false;
+				if (o == null) { return false; }
 				return super.removeAll(o);
 			}
 		}
@@ -92,7 +84,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		@Override
 		protected void initCollect() {
 			if (collect == null) {
-				collect = new THashSet<>();
+				collect = new HashSet<>();
 			}
 		}
 
@@ -122,7 +114,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		@Override
 		protected void initCollect() {
 			if (collect == null) {
-				collect = new TLinkedHashSet<>();
+				collect = new LinkedHashSet<>();
 			}
 		}
 
@@ -130,36 +122,31 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	@Override
 	public int size() {
-		if (collect == null)
-			return 0;
+		if (collect == null) { return 0; }
 		return collect.size();
 	}
 
 	@Override
 	public boolean contains(final Object o) {
-		if (collect == null)
-			return false;
+		if (collect == null) { return false; }
 		return collect.contains(o);
 	}
 
 	@Override
 	public Object[] toArray() {
-		if (collect == null)
-			return new Object[0];
+		if (collect == null) { return new Object[0]; }
 		return collect.toArray();
 	}
 
 	@Override
 	public <T> T[] toArray(final T[] a) {
-		if (collect == null)
-			return a;
+		if (collect == null) { return a; }
 		return collect.toArray(a);
 	}
 
 	@Override
 	public boolean containsAll(final Collection<?> c) {
-		if (collect == null)
-			return false;
+		if (collect == null) { return false; }
 		return collect.containsAll(c);
 	}
 
@@ -171,15 +158,13 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	@Override
 	public boolean removeAll(final Collection<?> c) {
-		if (collect == null)
-			return false;
+		if (collect == null) { return false; }
 		return collect.removeAll(c);
 	}
 
 	@Override
 	public boolean retainAll(final Collection<?> c) {
-		if (collect == null)
-			return false;
+		if (collect == null) { return false; }
 		return collect.retainAll(c);
 	}
 
@@ -187,7 +172,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.ICollector#add(E)
 	 */
 	@Override
@@ -200,7 +185,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.ICollector#items()
 	 */
 	@Override
@@ -213,19 +198,18 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.ICollector#remove(E)
 	 */
 	@Override
 	public boolean remove(final Object e) {
-		if (collect == null)
-			return false;
+		if (collect == null) { return false; }
 		return collect.remove(e);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.ICollector#isEmpty()
 	 */
 	@Override
@@ -235,7 +219,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.util.ICollector#clear()
 	 */
 	@Override

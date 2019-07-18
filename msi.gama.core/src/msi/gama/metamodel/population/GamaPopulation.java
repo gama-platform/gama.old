@@ -30,6 +30,7 @@ import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,8 +41,6 @@ import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -65,6 +64,7 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
@@ -131,7 +131,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		@Override
 		public Object executeOn(final IScope scope) throws GamaRuntimeException {
 			final IPopulation<T> pop = GamaPopulation.this;
-			final Set<IAgent> targets = new THashSet<IAgent>(Cast.asList(scope, listOfTargetAgents.value(scope)));
+			final Set<IAgent> targets = new HashSet<IAgent>(Cast.asList(scope, listOfTargetAgents.value(scope)));
 			final List<IAgent> toKill = new ArrayList<>();
 			for (final IAgent agent : pop.iterable(scope)) {
 				final IAgent target = Cast.asAgent(scope, agent.getAttribute(TARGET));
@@ -146,7 +146,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			}
 			final List<Map<String, Object>> attributes = new ArrayList<>();
 			for (final IAgent target : targets) {
-				final Map<String, Object> att = new THashMap<>();
+				final Map<String, Object> att = GamaMapFactory.createUnordered();
 				att.put(TARGET, target);
 				attributes.add(att);
 			}

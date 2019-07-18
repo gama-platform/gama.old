@@ -12,7 +12,6 @@ package msi.gaml.architecture.finite_state_machine;
 
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -25,6 +24,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.species.ISpecies;
@@ -53,7 +53,7 @@ import msi.gaml.types.Types;
 		doc = @doc ("The Finite State Machine architecture, that allows to program agents using a finite set of states and conditional transitions between them"))
 public class FsmArchitecture extends ReflexArchitecture {
 
-	protected final Map<String, FsmStateStatement> states = new THashMap<>();
+	protected final Map<String, FsmStateStatement> states = GamaMapFactory.createUnordered();
 	protected FsmStateStatement initialState;
 
 	@Override

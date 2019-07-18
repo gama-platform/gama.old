@@ -19,6 +19,7 @@ import com.vividsolutions.jts.util.NumberUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;

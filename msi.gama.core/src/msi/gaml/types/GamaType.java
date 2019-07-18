@@ -11,12 +11,12 @@
 package msi.gaml.types;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -414,7 +414,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public static IType<?> findCommonType(final IExpression[] elements, final int kind) {
 		final IType<?> result = Types.NO_TYPE;
 		if (elements.length == 0) { return result; }
-		final Set<IType<?>> types = new TLinkedHashSet<>();
+		final Set<IType<?>> types = new LinkedHashSet<>();
 		for (final IExpression e : elements) {
 			// TODO Indicates a previous error in compiling expressions. Maybe
 			// we should cut this

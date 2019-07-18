@@ -56,7 +56,7 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 	}
 
 	@Override
-	public boolean visit(final SpeciesDescription species) {
+	public boolean process(final SpeciesDescription species) {
 		addSpeciesType(species);
 		return true;
 	}

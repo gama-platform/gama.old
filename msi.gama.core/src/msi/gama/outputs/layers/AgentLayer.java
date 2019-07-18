@@ -13,10 +13,9 @@ package msi.gama.outputs.layers;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.IAgent;
@@ -24,7 +23,9 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;
@@ -41,7 +42,7 @@ public class AgentLayer extends AbstractLayer {
 		super(layer);
 	}
 
-	protected final THashMap<IAgent, Rectangle2D> shapes = new THashMap<>();
+	protected final IMap<IAgent, Rectangle2D> shapes = GamaMapFactory.createUnordered();
 	protected static final Rectangle2D DUMMY_RECT = new Rectangle2D.Double();
 
 	@SuppressWarnings ("unchecked")
@@ -103,11 +104,11 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		final Set<IAgent> selectedAgents = new THashSet<>();
+		final Set<IAgent> selectedAgents = new HashSet<>();
 		final Rectangle2D selection = new Rectangle2D.Double();
 		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
 				y + IDisplaySurface.SELECTION_SIZE / 2);
-		shapes.forEachEntry((a, b) -> {
+		shapes.forEachPair((a, b) -> {
 			if (b.intersects(selection)) {
 				selectedAgents.add(a);
 			}

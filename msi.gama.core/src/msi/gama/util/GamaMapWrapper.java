@@ -12,11 +12,13 @@ public class GamaMapWrapper<K, V> extends ForwardingMap<K, V> implements IMap<K,
 
 	final Map<K, V> wrapped;
 	final IType keyType, contentsType;
+	boolean ordered;
 
-	GamaMapWrapper(final Map<K, V> wrapped, final IType key, final IType contents) {
+	GamaMapWrapper(final Map<K, V> wrapped, final IType key, final IType contents, final boolean isOrdered) {
 		this.wrapped = wrapped;
 		this.contentsType = contents;
 		this.keyType = key;
+		this.ordered = isOrdered;
 	}
 
 	@Override
@@ -34,6 +36,11 @@ public class GamaMapWrapper<K, V> extends ForwardingMap<K, V> implements IMap<K,
 	@Override
 	public IContainerType<?> getGamlType() {
 		return msi.gaml.types.Types.MAP.of(keyType, contentsType);
+	}
+
+	@Override
+	public boolean isOrdered() {
+		return ordered;
 	}
 
 }

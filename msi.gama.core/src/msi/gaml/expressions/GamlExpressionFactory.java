@@ -22,11 +22,11 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IExecutionContext;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -193,7 +193,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		}
 		// If the operator is not known, we have no match
 		if (!OPERATORS.containsKey(op)) { return false; }
-		final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+		final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 		final Signature sig = new Signature(args).simplified();
 		// Does any known operator signature match with the signatue of the expressions ?
 		boolean matches = any(ops.keySet(), s -> sig.matchesDesiredSignature(s));
@@ -212,7 +212,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			DEBUG.OUT("");
 		}
 		if (!hasOperator(op, context, eObject, args)) {
-			final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+			final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 			final Signature userSignature = new Signature(args).simplified();
 			String msg = "No operator found for applying '" + op + "' to " + userSignature;
 			if (ops != null) {
@@ -222,7 +222,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			return null;
 		}
 		// We get the possible sets of types registered in OPERATORS
-		final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+		final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 		// We create the signature corresponding to the arguments
 		// 19/02/14 Only the simplified signature is used now
 		Signature userSignature = new Signature(args).simplified();

@@ -1,21 +1,17 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaMaterial.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.GamaMaterial.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
 import java.util.Map;
 
-import gnu.trove.TCollections;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -31,18 +27,20 @@ import msi.gaml.types.Types;
  *
  * @author mazarsju
  */
-@vars({ @variable(name = IKeyword.DAMPER, type = IType.FLOAT, doc = {
-		@doc("Returns the shine damper component of the material") }),
-		@variable(name = IKeyword.REFLECTIVITY, type = IType.FLOAT, doc = {
-				@doc("Returns the reflectivity of the material (between 0 and 1)") }) })
+@vars ({ @variable (
+		name = IKeyword.DAMPER,
+		type = IType.FLOAT,
+		doc = { @doc ("Returns the shine damper component of the material") }),
+		@variable (
+				name = IKeyword.REFLECTIVITY,
+				type = IType.FLOAT,
+				doc = { @doc ("Returns the reflectivity of the material (between 0 and 1)") }) })
 public class GamaMaterial implements IValue {
 
 	private final double damper;
 	private final double reflectivity;
 
-	public final static Map<String, GamaMaterial> materials = new THashMap<String, GamaMaterial>();
-	public final static TIntObjectMap<GamaMaterial> int_materials = TCollections
-			.synchronizedMap(new TIntObjectHashMap<GamaMaterial>());
+	public final static Map<String, GamaMaterial> materials = GamaMapFactory.createUnordered();
 
 	static {
 		final GamaMaterial steel = new NamedGamaMaterial("steelMaterial", 5, 1);
@@ -123,12 +121,12 @@ public class GamaMaterial implements IValue {
 		return "material (damper value : " + getDamper() + ", reflectivity value : " + getReflectivity() + ")";
 	}
 
-	@getter(IKeyword.REFLECTIVITY)
+	@getter (IKeyword.REFLECTIVITY)
 	public Double reflectivity() {
 		return reflectivity;
 	}
 
-	@getter(IKeyword.DAMPER)
+	@getter (IKeyword.DAMPER)
 	public Double damper() {
 		return damper;
 	}
@@ -140,7 +138,7 @@ public class GamaMaterial implements IValue {
 
 	/**
 	 * Method getType()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override

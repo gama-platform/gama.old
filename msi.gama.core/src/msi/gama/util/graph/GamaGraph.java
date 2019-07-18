@@ -13,6 +13,7 @@ package msi.gama.util.graph;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,6 @@ import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -55,7 +55,6 @@ import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
@@ -105,15 +104,15 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<>();
 
-	private final Set<IAgent> generatedEdges = new TLinkedHashSet<>();
+	private final Set<IAgent> generatedEdges = new LinkedHashSet<>();
 	protected int version;
 
 	protected ISpecies vertexSpecies;
 
 	public GamaGraph(final IScope scope, final boolean directed, final IType nodeType, final IType vertexType) {
 		this.directed = directed;
-		vertexMap = new TOrderedHashMap<>();
-		edgeMap = new TOrderedHashMap<>();
+		vertexMap = GamaMapFactory.create();
+		edgeMap = GamaMapFactory.create();
 		edgeBased = false;
 		vertexRelation = null;
 		version = 1;
@@ -125,8 +124,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	public GamaGraph(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
 			final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType, final IType edgeType) {
-		vertexMap = new TOrderedHashMap();
-		edgeMap = new TOrderedHashMap();
+		vertexMap = GamaMapFactory.create();
+		edgeMap = GamaMapFactory.create();
 		shortestPathComputed = new ConcurrentHashMap<>();
 		this.graphScope = scope;
 		// WARNING TODO Verify this
@@ -140,8 +139,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public GamaGraph(final IScope scope, final IType nodeType, final IType vertexType) {
-		vertexMap = new TOrderedHashMap();
-		edgeMap = new TOrderedHashMap();
+		vertexMap = GamaMapFactory.create();
+		edgeMap = GamaMapFactory.create();
 		shortestPathComputed = new ConcurrentHashMap<>();
 		this.graphScope = scope;
 		type = Types.GRAPH.of(nodeType, vertexType);
@@ -415,7 +414,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
 		if (edgeSpecies == null) { return generateEdgeObject(v1, v2); }
-		final Map<String, Object> map = new TOrderedHashMap();
+		final IMap<String, Object> map = GamaMapFactory.create();
 		final List initVal = new ArrayList<>();
 		map.put(IKeyword.SOURCE, v1);
 		map.put(IKeyword.TARGET, v2);
@@ -539,7 +538,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Set getAllEdges(final Object v1, final Object v2) {
-		final Set s = new TLinkedHashSet();
+		final Set s = new LinkedHashSet();
 		if (!containsVertex(v1) || !containsVertex(v2)) { return s; }
 		s.addAll(getVertex(v1).edgesTo(v2));
 		if (!directed) {
@@ -629,7 +628,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Set removeAllEdges(final Object v1, final Object v2) {
-		final Set result = new TLinkedHashSet();
+		final Set result = new LinkedHashSet();
 		Object edge = removeEdge(v1, v2);
 		while (edge != null) {
 			result.add(edge);

@@ -13,6 +13,7 @@ package msi.gama.metamodel.topology;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,7 +21,6 @@ import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.PoolUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -29,8 +29,8 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.operators.Maths;
 
 /**
@@ -47,7 +47,7 @@ import msi.gaml.operators.Maths;
 public class GamaQuadTree implements ISpatialIndex {
 
 	private final PoolUtils.ObjectPool<Envelope3D> envelopePool =
-			PoolUtils.create("Envelope 3D in Quad Tree", true, () -> new Envelope3D(), null);
+			PoolUtils.create("Envelope 3D in Quad Tree", false, () -> new Envelope3D(), null);
 
 	public static final int NW = 0;
 	public static final int NE = 1;
@@ -187,7 +187,7 @@ public class GamaQuadTree implements ISpatialIndex {
 
 	@Override
 	public Collection<IAgent> allAgents() {
-		final Collection<IAgent> result = new TLinkedHashSet();
+		final Collection<IAgent> result = new LinkedHashSet();
 		root.findIntersects(root.bounds, result);
 		return result;
 	}
@@ -200,7 +200,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		// ** Addresses part of Issue 722 -- Need to keep the agents ordered
 		// (by insertion order) **
 		private final Map<IAgent, Envelope> objects =
-				parallel ? new ConcurrentHashMap(maxCapacity) : new TOrderedHashMap<>(maxCapacity);
+				parallel ? new ConcurrentHashMap(maxCapacity) : GamaMapFactory.create();
 		private final boolean canSplit;
 
 		public QuadNode(final Envelope bounds) {

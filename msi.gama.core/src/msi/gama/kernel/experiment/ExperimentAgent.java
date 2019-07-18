@@ -51,8 +51,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
@@ -146,7 +147,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private final IScope ownScope;
 	final ActionExecuter executer;
-	final Map<String, Object> extraParametersMap = new TOrderedHashMap<>();
+	final IMap<String, Object> extraParametersMap = GamaMapFactory.createOrdered();
 	protected RandomUtils random;
 	protected Double initialMinimumDuration = null;
 	protected Double currentMinimumDuration = 0d;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.ast.AbstractSyntacticElement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.ast.AbstractSyntacticElement.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.ast;
 
@@ -22,10 +22,10 @@ import msi.gaml.statements.Facets;
 
 /**
  * Class AbstractSyntacticElement.
- * 
+ *
  * @author drogoul
  * @since 15 sept. 2013
- * 
+ *
  */
 public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
@@ -62,7 +62,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#getElement()
 	 */
 	@Override
@@ -72,17 +72,17 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return getKeyword() + " " + getName() + " " + (facets == null ? "" : facets.keySet().toString());
+		return getKeyword() + " " + getName() + " " + (facets == null ? "" : facets.getFacets().toString());
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#addChild(msi.gaml.compilation.ast.ISyntacticElement)
 	 */
 	@Override
@@ -92,7 +92,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#setKeyword(java.lang.String)
 	 */
 	@Override
@@ -102,7 +102,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#getKeyword()
 	 */
 	@Override
@@ -112,7 +112,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#hasFacets()
 	 */
 	@Override
@@ -122,17 +122,17 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#hasFacet(java.lang.String)
 	 */
 	@Override
 	public final boolean hasFacet(final String name) {
-		return facets != null && facets.contains(name);
+		return facets != null && facets.containsKey(name);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#getExpressionAt(java.lang.String)
 	 */
 	@Override
@@ -142,7 +142,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#copyFacets(msi.gaml.descriptions.SymbolProto)
 	 */
 	@Override
@@ -162,7 +162,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#setFacet(java.lang.String,
 	 * msi.gaml.descriptions.IExpressionDescription)
 	 */
@@ -177,7 +177,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#getName()
 	 */
 	@Override
@@ -203,7 +203,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#isSpecies()
 	 */
 	@Override
@@ -213,7 +213,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#isExperiment()
 	 */
 	@Override
@@ -223,7 +223,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#computeStats(java.util.Map)
 	 */
 	@Override
@@ -240,18 +240,18 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#visitFacets(msi.gaml.descriptions.IDescription.IFacetVisitor)
 	 */
 	@Override
 	public void visitFacets(final IFacetVisitor visitor) {
 		if (facets == null) { return; }
-		facets.forEachEntry(visitor);
+		facets.forEachFacet(visitor);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#compact()
 	 */
 	@Override
@@ -266,7 +266,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#visitThisAndAllChildrenRecursively(msi.gaml.compilation.ast.
 	 * ISyntacticElement.SyntacticVisitor)
 	 */
@@ -277,7 +277,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#visitChildren(msi.gaml.compilation.ast.ISyntacticElement.
 	 * SyntacticVisitor)
 	 */
@@ -286,7 +286,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#visitSpecies(msi.gaml.compilation.ast.ISyntacticElement.
 	 * SyntacticVisitor)
 	 */
@@ -295,7 +295,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#visitExperiments(msi.gaml.compilation.ast.ISyntacticElement.
 	 * SyntacticVisitor)
 	 */
@@ -304,7 +304,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#visitGrids(msi.gaml.compilation.ast.ISyntacticElement.
 	 * SyntacticVisitor)
 	 */
@@ -313,7 +313,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#visitAllChildren(msi.gaml.compilation.ast.ISyntacticElement.
 	 * SyntacticVisitor)
 	 */
@@ -327,7 +327,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisposable#dispose()
 	 */
 	@Override

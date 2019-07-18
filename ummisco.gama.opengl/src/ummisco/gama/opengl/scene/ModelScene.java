@@ -14,7 +14,8 @@ import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
@@ -41,7 +42,7 @@ public class ModelScene {
 	public static final String AXES_KEY = "__axes__0";
 	public static final String FRAME_KEY = "__frame__0";
 
-	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<>();
+	protected final IMap<String, LayerObject> layers = GamaMapFactory.create();
 	protected LayerObject currentLayer;
 	protected final IOpenGLRenderer renderer;
 	private volatile boolean rendered = false;

@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.kernel.model.GamlModelSpecies;
@@ -31,7 +30,6 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.architecture.IArchitecture;
@@ -62,11 +60,11 @@ import msi.gaml.variables.IVariable;
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	protected final boolean isGrid, isGraph;
-	protected final Map<String, ISpecies> microSpecies = new THashMap<>();
-	private final Map<String, IVariable> variables = new TOrderedHashMap<>();
-	private final Map<String, AspectStatement> aspects = new TOrderedHashMap<>();
-	private final Map<String, ActionStatement> actions = new TOrderedHashMap<>();
-	private final Map<String, UserCommandStatement> userCommands = new TOrderedHashMap();
+	protected final Map<String, ISpecies> microSpecies = GamaMapFactory.createUnordered();
+	private final Map<String, IVariable> variables = GamaMapFactory.createOrdered();
+	private final Map<String, AspectStatement> aspects = GamaMapFactory.createOrdered();
+	private final Map<String, ActionStatement> actions = GamaMapFactory.createOrdered();
+	private final Map<String, UserCommandStatement> userCommands = GamaMapFactory.createOrdered();
 	private final List<IStatement> behaviors = new ArrayList<>();
 	protected ISpecies macroSpecies, parentSpecies;
 	private boolean isInitOverriden, isStepOverriden;

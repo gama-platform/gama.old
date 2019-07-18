@@ -21,9 +21,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
@@ -46,9 +48,20 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.set.hash.TLongHashSet;
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.ext.osmosis.Bound;
+import msi.gama.ext.osmosis.Entity;
+import msi.gama.ext.osmosis.EntityContainer;
+import msi.gama.ext.osmosis.Node;
+import msi.gama.ext.osmosis.OsmHandler;
+import msi.gama.ext.osmosis.OsmosisReader;
+import msi.gama.ext.osmosis.Relation;
+import msi.gama.ext.osmosis.RelationMember;
+import msi.gama.ext.osmosis.RunnableSource;
+import msi.gama.ext.osmosis.Sink;
+import msi.gama.ext.osmosis.Tag;
+import msi.gama.ext.osmosis.Way;
+import msi.gama.ext.osmosis.WayNode;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
@@ -63,20 +76,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.TOrderedHashMap;
-import msi.gama.util.file.osmosis_copy.Bound;
-import msi.gama.util.file.osmosis_copy.Entity;
-import msi.gama.util.file.osmosis_copy.EntityContainer;
-import msi.gama.util.file.osmosis_copy.Node;
-import msi.gama.util.file.osmosis_copy.OsmHandler;
-import msi.gama.util.file.osmosis_copy.OsmosisReader;
-import msi.gama.util.file.osmosis_copy.Relation;
-import msi.gama.util.file.osmosis_copy.RelationMember;
-import msi.gama.util.file.osmosis_copy.RunnableSource;
-import msi.gama.util.file.osmosis_copy.Sink;
-import msi.gama.util.file.osmosis_copy.Tag;
-import msi.gama.util.file.osmosis_copy.Way;
-import msi.gama.util.file.osmosis_copy.WayNode;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
@@ -285,12 +284,12 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
-		final TLongObjectHashMap<GamaShape> nodesPt = new TLongObjectHashMap<>();
+		final Map<Long, GamaShape> nodesPt = new HashMap<>();
 		final List<Node> nodes = new ArrayList<>();
 		final List<Way> ways = new ArrayList<>();
 		final List<Relation> relations = new ArrayList<>();
-		final TLongHashSet intersectionNodes = new TLongHashSet();
-		final TLongHashSet usedNodes = new TLongHashSet();
+		final Set<Long> intersectionNodes = new HashSet<>();
+		final Set<Long> usedNodes = new HashSet<>();
 
 		final Sink sinkImplementation = new Sink() {
 
@@ -381,7 +380,7 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	public IList<IShape> buildGeometries(final List<Node> nodes, final List<Way> ways, final List<Relation> relations,
-			final TLongHashSet intersectionNodes, final TLongObjectHashMap<GamaShape> nodesPt) {
+			final Set<Long> intersectionNodes, final Map<Long, GamaShape> nodesPt) {
 		final IList<IShape> geometries = GamaListFactory.create(Types.GEOMETRY);
 
 		final Map<Long, Entity> geomMap = new HashMap<>();
@@ -444,8 +443,8 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 		for (final Way way : ways) {
 			geomMap.put(way.getId(), way);
-			final Map<String, Object> values = new TOrderedHashMap<>();
-			final Map<String, String> atts = new HashMap<>();
+			final IMap<String, Object> values = GamaMapFactory.create();
+			final Map<String, String> atts = GamaMapFactory.createUnordered();
 
 			for (final Tag tg : way.getTags()) {
 				final String key = tg.getKey().split(":")[0];
@@ -538,7 +537,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 		}
 		for (final Relation relation : relations) {
-			final Map<String, Object> values = new TOrderedHashMap<>();
+			final Map<String, Object> values = GamaMapFactory.create();
 
 			for (final Tag tg : relation.getTags()) {
 				final String key = tg.getKey().split(":")[0];
@@ -550,7 +549,7 @@ public class GamaOsmFile extends GamaGisFile {
 				final Entity entity = geomMap.get(member.getMemberId());
 				if (entity instanceof Way) {
 					final List<WayNode> relationWays = ((Way) entity).getWayNodes();
-					final Map<String, Object> wayValues = new TOrderedHashMap<>();
+					final Map<String, Object> wayValues = GamaMapFactory.create();
 					wayValues.put("entity_order", order++);
 					// TODO FIXME AD: What's that ??
 					wayValues.put("gama_bus_line", values.get("name"));
@@ -583,7 +582,7 @@ public class GamaOsmFile extends GamaGisFile {
 	}
 
 	public List<IShape> createSplitRoad(final List<WayNode> wayNodes, final Map<String, Object> values,
-			final TLongHashSet intersectionNodes, final TLongObjectHashMap<GamaShape> nodesPt) {
+			final Set<Long> intersectionNodes, final Map<Long, GamaShape> nodesPt) {
 		final List<List<IShape>> pointsList = GamaListFactory.create(Types.LIST.of(Types.GEOMETRY));
 		List<IShape> points = GamaListFactory.create(Types.GEOMETRY);
 		final IList<IShape> geometries = GamaListFactory.create(Types.GEOMETRY);
@@ -630,7 +629,7 @@ public class GamaOsmFile extends GamaGisFile {
 		return null;
 	}
 
-	void registerHighway(final Way way, final TLongHashSet usedNodes, final TLongHashSet intersectionNodes) {
+	void registerHighway(final Way way, final Set<Long> usedNodes, final Set<Long> intersectionNodes) {
 		for (final Tag tg : way.getTags()) {
 			final String key = tg.getKey();
 			if (key.equals("highway")) {

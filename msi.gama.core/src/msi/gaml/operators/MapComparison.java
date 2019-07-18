@@ -29,10 +29,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
@@ -93,7 +93,7 @@ public class MapComparison {
 			}
 		}
 
-		final Map<Object, Integer> categoriesId = new TOrderedHashMap<Object, Integer>();
+		final Map<Object, Integer> categoriesId = GamaMapFactory.create();
 		for (int i = 0; i < nbCat; i++) {
 			categoriesId.put(categories.get(i), i);
 		}
@@ -169,7 +169,7 @@ public class MapComparison {
 				contigencyOS[j][k] = 0;
 			}
 		}
-		final Map<Object, Integer> categoriesId = new TOrderedHashMap<Object, Integer>();
+		final Map<Object, Integer> categoriesId = GamaMapFactory.create();
 		for (int i = 0; i < nbCat; i++) {
 			categoriesId.put(categories.get(i), i);
 		}
@@ -257,7 +257,7 @@ public class MapComparison {
 		final double[][] fuzzyVector2 = new double[nb][nbCat];
 		final double[] X = new double[nbCat];
 		final double[] Y = new double[nbCat];
-		final Map<Object, Integer> categoriesId = new TOrderedHashMap<Object, Integer>();
+		final Map<Object, Integer> categoriesId = GamaMapFactory.create();
 		for (int i = 0; i < nbCat; i++) {
 			categoriesId.put(categories.get(i), i);
 		}
@@ -268,8 +268,8 @@ public class MapComparison {
 		final double meanSimilarity = computeSimilarity(scope, filter, distance, vals1, vals2, agents, nbCat, nb,
 				crispVector1, crispVector2, sim, fuzzyVector1, fuzzyVector2, similarities, weights);
 
-		final List<Double> rings = new ArrayList<Double>();
-		final Map<Double, Integer> ringsPn = new TOrderedHashMap<Double, Integer>();
+		final List<Double> rings = new ArrayList<>();
+		final Map<Double, Integer> ringsPn = GamaMapFactory.create();
 		final int nbRings = buildRings(scope, filter, distance, rings, ringsPn, agents);
 		final double similarityExpected = computeExpectedSim(nbCat, X, Y, nbRings, rings, ringsPn);
 		if (similarityExpected == 1) { return 1; }
@@ -322,13 +322,11 @@ public class MapComparison {
 		final double[] nbInit = new double[nbCat];
 		final double[][] nbInitObs = new double[nbCat][nbCat];
 		final double[][] nbInitSim = new double[nbCat][nbCat];
-		final Map<Object, Integer> categoriesId = new TOrderedHashMap<Object, Integer>();
+		final Map<Object, Integer> categoriesId = GamaMapFactory.create();
 
-		final Map<List<Integer>, Map<Double, Double>> XaPerTransition =
-				new TOrderedHashMap<List<Integer>, Map<Double, Double>>();
-		final Map<List<Integer>, Map<Double, Double>> XsPerTransition =
-				new TOrderedHashMap<List<Integer>, Map<Double, Double>>();
-		final Set<Double> Xvals = new HashSet<Double>();
+		final Map<List<Integer>, Map<Double, Double>> XaPerTransition = GamaMapFactory.create();
+		final Map<List<Integer>, Map<Double, Double>> XsPerTransition = GamaMapFactory.create();
+		final Set<Double> Xvals = new HashSet<>();
 		for (int i = 0; i < nbCat; i++) {
 			categoriesId.put(categories.get(i), i);
 		}
@@ -365,7 +363,7 @@ public class MapComparison {
 		for (int i = 0; i < nbCat; i++) {
 			for (int j = 0; j < nbCat; j++) {
 				for (int k = 0; k < nbCat; k++) {
-					final List<Integer> ca = new ArrayList<Integer>();
+					final List<Integer> ca = new ArrayList<>();
 					ca.add(i);
 					ca.add(j);
 					ca.add(k);
@@ -393,7 +391,7 @@ public class MapComparison {
 			final IList<Object> valsInit, final IList<Object> valsObs, final IList<Object> valsSim,
 			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final int nbCat, final int nb,
 			final IList<Double> similarities, final IList<Object> weights) {
-		final Map<IAgent, Integer> agsId = new TOrderedHashMap<IAgent, Integer>();
+		final Map<IAgent, Integer> agsId = GamaMapFactory.create();
 		for (int i = 0; i < agents.length(scope); i++) {
 			agsId.put(agents.get(scope, i), i);
 		}
@@ -431,10 +429,10 @@ public class MapComparison {
 		double xs = 0.0;
 		final double[] XaXs = new double[2];
 		final double sizeNorm = FastMath.sqrt(agent.getEnvelope().getArea());
-		final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<IAgent>()
-				: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, agent, distance, filter));
+		final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<>()
+				: new ArrayList<>(scope.getTopology().getNeighborsOf(scope, agent, distance, filter));
 
-		final Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
+		final Map<IAgent, Double> distancesCoeff = GamaMapFactory.create();
 		distancesCoeff.put(agent, 1.0);
 		for (final IAgent ag : neighbors) {
 			final double euclidDist = agent.getLocation().euclidianDistanceTo(ag.getLocation());
@@ -484,11 +482,11 @@ public class MapComparison {
 		final ILocation centralLoc = (ILocation) Containers.mean(scope, locs);
 		if (filter != null) {
 			final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
-			final List<IAgent> neighbors = distance == 0 ? new ArrayList<IAgent>()
-					: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));
+			final List<IAgent> neighbors = distance == 0 ? new ArrayList<>()
+					: new ArrayList<>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));
 			final double sizeNorm = FastMath.sqrt(centralAg.getEnvelope().getArea());
 
-			final Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
+			final Map<IAgent, Double> distancesCoeff = GamaMapFactory.create();
 			distancesCoeff.put(centralAg, 1.0);
 			for (final IAgent ag : neighbors) {
 				final double euclidDist = centralAg.getLocation().euclidianDistanceTo(ag.getLocation());
@@ -521,7 +519,7 @@ public class MapComparison {
 
 							Map<Double, Double> mapxa = XaPerTransition.get(ca);
 							if (mapxa == null) {
-								mapxa = new TOrderedHashMap<Double, Double>();
+								mapxa = GamaMapFactory.create();
 								mapxa.put(xa, 1.0);
 								XaPerTransition.put(ca, mapxa);
 							} else {
@@ -536,7 +534,7 @@ public class MapComparison {
 						if (xs > 0) {
 							Map<Double, Double> mapxs = XsPerTransition.get(ca);
 							if (mapxs == null) {
-								mapxs = new TOrderedHashMap<Double, Double>();
+								mapxs = GamaMapFactory.create();
 								mapxs.put(xs, 1.0);
 								XsPerTransition.put(ca, mapxs);
 							} else {
@@ -595,7 +593,7 @@ public class MapComparison {
 			final double[][] crispVector1, final double[][] crispVector2, final boolean[] sim,
 			final double[][] fuzzyVector1, final double[][] fuzzyVector2, final IList<Double> similarities,
 			final IList<Object> weights) {
-		final Map<IAgent, Integer> agsId = new TOrderedHashMap<IAgent, Integer>();
+		final Map<IAgent, Integer> agsId = GamaMapFactory.create();
 		for (int i = 0; i < agents.length(scope); i++) {
 			agsId.put(agents.get(scope, i), i);
 		}
@@ -607,10 +605,10 @@ public class MapComparison {
 				final IAgent agent = agents.get(scope, i);
 				// double sizeNorm = agent.getPerimeter() / 4.0;
 				final double sizeNorm = FastMath.sqrt(agent.getEnvelope().getArea());
-				final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<IAgent>()
-						: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, agent, distance, filter));
+				final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<>()
+						: new ArrayList<>(scope.getTopology().getNeighborsOf(scope, agent, distance, filter));
 
-				final Map<IAgent, Double> distancesCoeff = new TOrderedHashMap<IAgent, Double>();
+				final Map<IAgent, Double> distancesCoeff = GamaMapFactory.create();
 				distancesCoeff.put(agent, 1.0);
 				for (final IAgent ag : neighbors) {
 					final double euclidDist = agent.getLocation().euclidianDistanceTo(ag.getLocation());
@@ -708,8 +706,8 @@ public class MapComparison {
 		}
 		final ILocation centralLoc = (ILocation) Containers.mean(scope, locs);
 		final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
-		final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<IAgent>()
-				: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));
+		final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<>()
+				: new ArrayList<>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));
 
 		for (final IAgent ag : neighbors) {
 			final double dist = centralLoc.euclidianDistanceTo(ag.getLocation());

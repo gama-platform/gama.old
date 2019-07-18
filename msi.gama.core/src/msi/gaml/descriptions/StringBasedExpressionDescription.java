@@ -10,11 +10,11 @@
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gaml.types.IType;
@@ -55,7 +55,7 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		final Set<String> result = new THashSet<>();
+		final Set<String> result = new HashSet<>();
 		final StringBuilder b = new StringBuilder();
 		for (final char c : string.toCharArray()) {
 			switch (c) {

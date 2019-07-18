@@ -13,6 +13,7 @@ package msi.gama.metamodel.topology;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +26,6 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.geom.util.AffineTransformation;
 
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.preferences.GamaPreferences;
@@ -40,9 +40,9 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Maths;
@@ -107,7 +107,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	public Map<Geometry, IAgent> toroidalGeoms(final IScope scope, final IContainer<?, ? extends IShape> shps) {
-		final Map<Geometry, IAgent> geoms = new TOrderedHashMap<>();
+		final Map<Geometry, IAgent> geoms = GamaMapFactory.create();
 		for (final IShape ag : shps.iterable(scope)) {
 			final IAgent agent = ag.getAgent();
 			if (agent != null) {
@@ -482,7 +482,7 @@ public abstract class AbstractTopology implements ITopology {
 		// FOR TORUS ENVIRONMENTS ONLY
 
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
-		final Set<IAgent> agents = new THashSet<>();
+		final Set<IAgent> agents = new HashSet<>();
 		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(source, scope, filter);
 		final IAgent sourceAgent = source.getAgent();
 		for (final Geometry g1 : agentsMap.keySet()) {
@@ -533,7 +533,7 @@ public abstract class AbstractTopology implements ITopology {
 			});
 			return shapes;
 		}
-		final Set<IAgent> result = new THashSet<>();
+		final Set<IAgent> result = new HashSet<>();
 
 		for (final IShape sourceSub : source.getGeometries()) {
 			final Geometry sourceTo = returnToroidalGeom(sourceSub);

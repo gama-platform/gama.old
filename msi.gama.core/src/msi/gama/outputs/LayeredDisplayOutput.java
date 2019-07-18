@@ -381,7 +381,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		private void handleInheritance(final IDescription child, final IDescription parent) {
 			final Facets childFacets = child.getFacets();
-			final boolean hasVirtual = childFacets.contains(VIRTUAL);
+			final boolean hasVirtual = childFacets.containsKey(VIRTUAL);
 			final Facets parentFacets = parent.getFacets();
 			childFacets.complementWith(parentFacets);
 			if (!hasVirtual) {

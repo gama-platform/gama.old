@@ -10,9 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.util.graph.loader;
 
-import msi.gama.util.graph.graphstream_copy.FileSource;
-import msi.gama.util.graph.graphstream_copy.FileSourceDOT;
-import msi.gama.util.graph.graphstream_copy.FileSourceLGL;
+import msi.gama.ext.graphstream.FileSource;
+import msi.gama.ext.graphstream.FileSourceDOT;
+import msi.gama.ext.graphstream.FileSourceLGL;
 
 public class GraphstreamGraphParserDOT extends GraphStreamGraphParserAbstract {
 

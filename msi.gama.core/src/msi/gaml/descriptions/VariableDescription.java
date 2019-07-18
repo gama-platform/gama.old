@@ -19,10 +19,10 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.ImmutableSet;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.Collector;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GAML;
@@ -51,7 +51,7 @@ public class VariableDescription extends SymbolDescription {
 	//
 	// }
 
-	private static Map<String, Collection<String>> dependencies = new THashMap<>();
+	private static Map<String, Collection<String>> dependencies = GamaMapFactory.createUnordered();
 	public final static Set<String> INIT_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE, AMONG).build();
 	public final static Set<String> UPDATE_DEPENDENCIES_FACETS =

@@ -1,18 +1,17 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.PlatformFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.factories.PlatformFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.factories;
 
 import static msi.gama.precompiler.ISymbolKind.PLATFORM;
 
-import java.util.List;
 import java.util.Set;
 
 import msi.gama.precompiler.GamlAnnotations.factory;
@@ -24,10 +23,6 @@ import msi.gaml.statements.Facets;
 @factory (
 		handles = { PLATFORM })
 public class PlatformFactory extends SpeciesFactory {
-
-	public PlatformFactory(final List<Integer> handles) {
-		super(handles);
-	}
 
 	public PlatformFactory(final int... handles) {
 		super(handles);

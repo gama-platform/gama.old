@@ -13,7 +13,8 @@ package msi.gama.runtime;
 import java.util.Collections;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gaml.types.Types;
 
 public class ExecutionContext implements IExecutionContext {
 
@@ -62,11 +63,12 @@ public class ExecutionContext implements IExecutionContext {
 		return local.get(name);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public ExecutionContext createCopyContext() {
 		final ExecutionContext r = new ExecutionContext(scope, outer);
 		if (local != null) {
-			r.local = new THashMap<>(local);
+			r.local = GamaMapFactory.createWithoutCasting(Types.NO_TYPE, Types.NO_TYPE, local, false);
 		}
 		return r;
 	}
@@ -89,7 +91,7 @@ public class ExecutionContext implements IExecutionContext {
 	@Override
 	public void putLocalVar(final String varName, final Object val) {
 		if (local == null) {
-			local = new THashMap<>();
+			local = GamaMapFactory.createUnordered();
 		}
 		local.put(varName, val);
 	}

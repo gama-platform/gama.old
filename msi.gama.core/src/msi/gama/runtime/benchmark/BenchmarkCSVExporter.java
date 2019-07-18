@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.benchmark.BenchmarkCSVExporter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.runtime.benchmark.BenchmarkCSVExporter.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.benchmark;
 
@@ -21,10 +21,12 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.file.CsvWriter;
 import msi.gama.util.tree.GamaTree.Order;
 import msi.gaml.operators.Files;
+import msi.gaml.types.Types;
 
 public class BenchmarkCSVExporter {
 	private static final String exportFolder = "benchmarks";
@@ -39,7 +41,7 @@ public class BenchmarkCSVExporter {
 			e1.printStackTrace();
 			return;
 		}
-		final TOrderedHashMap<IScope, Benchmark.ScopeRecord> scopes = new TOrderedHashMap<>(records);
+		final IMap<IScope, Benchmark.ScopeRecord> scopes = GamaMapFactory.wrap(Types.NO_TYPE, Types.NO_TYPE, records);
 		final String exportFileName = FileUtils.constructAbsoluteFilePath(scope, exportFolder + "/"
 				+ experiment.getModel().getName() + "_benchmark_" + Instant.now().toString() + ".csv", false);
 

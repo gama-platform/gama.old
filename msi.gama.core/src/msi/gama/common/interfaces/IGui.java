@@ -13,7 +13,6 @@ package msi.gama.common.interfaces;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
@@ -25,6 +24,7 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.statements.test.CompoundSummary;
@@ -46,7 +46,7 @@ public interface IGui {
 	int NEUTRAL = 3;
 	int USER = 4;
 
-	Map<String, DisplayDescription> DISPLAYS = new THashMap<>();
+	Map<String, DisplayDescription> DISPLAYS = GamaMapFactory.createUnordered();
 	String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
 	String INTERACTIVE_CONSOLE_VIEW_ID = "msi.gama.application.view.InteractiveConsoleView";
 	String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";

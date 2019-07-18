@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +23,6 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 
-import gnu.trove.set.hash.THashSet;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
@@ -174,7 +174,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) { return Collections.EMPTY_LIST; }
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
 		if (id == rootIndex) {
-			final Set<IAgent> agents = new THashSet<>();
+			final Set<IAgent> agents = new HashSet<>();
 			for (final ISpatialIndex si : getAllSpatialIndexes()) {
 				agents.addAll(si.allAtDistance(scope, source, dist, f));
 			}
@@ -189,7 +189,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) { return Collections.EMPTY_LIST; }
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
 		if (id == rootIndex) {
-			final Set<IAgent> agents = new THashSet<>();
+			final Set<IAgent> agents = new HashSet<>();
 			for (final ISpatialIndex si : getAllSpatialIndexes()) {
 				agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
 			}

@@ -15,11 +15,11 @@ import static msi.gama.runtime.ExecutionResult.PASSED;
 import static msi.gama.runtime.ExecutionResult.withValue;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStepable;
@@ -412,7 +412,7 @@ public class ExecutionScope implements IScope {
 			callerPushed = push(caller);
 		}
 		try {
-			actualArgs.forEachEntry((a, b) -> {
+			actualArgs.forEachFacet((a, b) -> {
 				final IExpression e = b.getExpression();
 				if (e != null) {
 					addVarWithValue(a, e.value(ExecutionScope.this));
@@ -815,7 +815,7 @@ public class ExecutionScope implements IScope {
 
 	@Override
 	public IAgent[] getAgentsStack() {
-		final Set<IAgent> agents = new TLinkedHashSet<>();
+		final Set<IAgent> agents = new LinkedHashSet<>();
 		AgentExecutionContext current = agentContext;
 		if (current == null) { return new IAgent[0]; }
 		while (current != null) {

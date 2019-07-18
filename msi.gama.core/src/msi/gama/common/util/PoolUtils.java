@@ -1,17 +1,17 @@
 package msi.gama.common.util;
 
+import java.util.LinkedHashSet;
 import java.util.Queue;
 import java.util.Set;
 
 import com.google.common.collect.Queues;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IDisposable;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class PoolUtils {
 
-	static Set<ObjectPool> POOLS = new TLinkedHashSet<>();
+	static Set<ObjectPool> POOLS = new LinkedHashSet<>();
 	static boolean POOL = false;
 	static {
 		DEBUG.OFF();

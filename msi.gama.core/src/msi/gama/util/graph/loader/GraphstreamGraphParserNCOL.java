@@ -10,8 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.util.graph.loader;
 
-import msi.gama.util.graph.graphstream_copy.FileSource;
-import msi.gama.util.graph.graphstream_copy.FileSourceNCol;
+import msi.gama.ext.graphstream.FileSource;
+import msi.gama.ext.graphstream.FileSourceNCol;
 
 public class GraphstreamGraphParserNCOL extends GraphStreamGraphParserAbstract {
 

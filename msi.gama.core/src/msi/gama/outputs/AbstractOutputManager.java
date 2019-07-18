@@ -19,7 +19,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 import msi.gama.runtime.IScope;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
@@ -34,8 +35,8 @@ import msi.gaml.descriptions.IDescription;
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
 	LayoutStatement layout;
-	protected final TOrderedHashMap<String, IOutput> outputs = new TOrderedHashMap<>();
-	protected final Map<String, IOutput> virtualOutputs = new TOrderedHashMap<>();
+	protected final IMap<String, IOutput> outputs = GamaMapFactory.create();
+	protected final IMap<String, IOutput> virtualOutputs = GamaMapFactory.create();
 
 	protected int displayIndex;
 

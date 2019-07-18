@@ -45,7 +45,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
@@ -85,6 +84,7 @@ import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
@@ -133,7 +133,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	// To disable reentrant parsing (Issue 782)
 	private IExpressionDescription currentExpressionDescription;
 	private ITypesManager currentTypesManager;
-	private final static Map<String, IExpression> constantSyntheticExpressions = new THashMap<>();
+	private final static Map<String, IExpression> constantSyntheticExpressions = GamaMapFactory.createUnordered();
 	private static final ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
 	/*
@@ -144,7 +144,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IDescription currentContext;
 
 	static {
-		IExpressionCompiler.OPERATORS.put(MY, new THashMap<>());
+		IExpressionCompiler.OPERATORS.put(MY, GamaMapFactory.createUnordered());
 	}
 
 	@Override

@@ -37,7 +37,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
@@ -118,7 +118,7 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 @SuppressWarnings ({ "rawtypes" })
 public class SingleEquationStatement extends AbstractStatement {
 
-	public static final Map<String, Integer> orderNames = new TOrderedHashMap<>();
+	public static final Map<String, Integer> orderNames = GamaMapFactory.create();
 	static {
 		orderNames.put(ZERO, 0);
 		orderNames.put(DIFF, 1);

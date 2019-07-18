@@ -18,8 +18,8 @@ import java.util.Set;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph._Edge;
 import msi.gama.util.graph._Vertex;
@@ -29,8 +29,8 @@ public class AStar<V, E> {
 	protected GamaGraph<V, E> graph;
 	protected V source;
 	protected V target;
-	protected Map<V, ASNode> openMap = new TOrderedHashMap<>();
-	protected Map<V, ASNode> closedMap = new TOrderedHashMap<>();
+	protected Map<V, ASNode> openMap = GamaMapFactory.create();
+	protected Map<V, ASNode> closedMap = GamaMapFactory.create();
 
 	protected List<E> result;
 	protected boolean isSpatialGraph;

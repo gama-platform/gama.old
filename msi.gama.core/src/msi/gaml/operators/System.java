@@ -36,7 +36,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -258,8 +257,8 @@ public class System {
 							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
 							isExecutable = false) })
 	public static IMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
-		Map<String, Object> initialValues = new TOrderedHashMap<>();
-		final Map<String, IType<?>> initialTypes = new TOrderedHashMap<>();
+		Map<String, Object> initialValues = GamaMapFactory.create();
+		final Map<String, IType<?>> initialTypes = GamaMapFactory.create();
 		if (expr instanceof MapExpression) {
 			final MapExpression map = (MapExpression) expr;
 			for (final Map.Entry<IExpression, IExpression> entry : map.getElements().entrySet()) {

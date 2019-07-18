@@ -11,14 +11,13 @@
 package msi.gaml.descriptions;
 
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
 
-import gnu.trove.procedure.TObjectObjectProcedure;
-import gnu.trove.procedure.TObjectProcedure;
+import msi.gama.common.interfaces.BiConsumerWithPruning;
+import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
@@ -86,72 +85,18 @@ public interface IDescription
 	 *            the generic type
 	 */
 	@FunctionalInterface
-	public interface DescriptionVisitor<T extends IDescription> extends TObjectProcedure<T> {
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see gnu.trove.procedure.TObjectProcedure#execute(java.lang.Object)
-		 */
-		@Override
-		default boolean execute(final T desc) {
-			return visit(desc);
-		}
-
-		/**
-		 * Visit.
-		 *
-		 * @param desc
-		 *            the desc
-		 * @return true, if successful
-		 */
-		boolean visit(T desc);
-
-	}
+	public interface DescriptionVisitor<T extends IDescription> extends ConsumerWithPruning<T> {}
 
 	/**
 	 * The Interface IFacetVisitor.
 	 */
 	@FunctionalInterface
-	public interface IFacetVisitor
-			extends TObjectObjectProcedure<String, IExpressionDescription>, BiConsumer<String, IExpressionDescription> {
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see gnu.trove.procedure.TObjectObjectProcedure#execute(java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		default boolean execute(final String name, final IExpressionDescription exp) {
-			return visit(name, exp);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see java.util.function.BiConsumer#accept(java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		default void accept(final String name, final IExpressionDescription exp) {
-			visit(name, exp);
-		}
-
-		/**
-		 * Returns whether or not the visit should continue after this facet.
-		 *
-		 * @param name
-		 *            the name
-		 * @param exp
-		 *            the exp
-		 * @return true, if successful
-		 */
-		boolean visit(String name, IExpressionDescription exp);
-	}
+	public interface IFacetVisitor extends BiConsumerWithPruning<String, IExpressionDescription> {}
 
 	/**
 	 * The Constant VALIDATING_VISITOR.
 	 */
-	DescriptionVisitor VALIDATING_VISITOR = desc -> {
+	DescriptionVisitor<IDescription> VALIDATING_VISITOR = desc -> {
 		return desc.validate() != null;
 
 	};
@@ -159,7 +104,7 @@ public interface IDescription
 	/**
 	 * The Constant DISPOSING_VISITOR.
 	 */
-	DescriptionVisitor DISPOSING_VISITOR = desc -> {
+	DescriptionVisitor<IDescription> DISPOSING_VISITOR = desc -> {
 		desc.dispose();
 		return true;
 
@@ -645,7 +590,7 @@ public interface IDescription
 	 *            the visitor
 	 * @return true, if successful
 	 */
-	boolean visitChildren(DescriptionVisitor visitor);
+	boolean visitChildren(DescriptionVisitor<IDescription> visitor);
 
 	/**
 	 * Visit own children recursively.
@@ -654,7 +599,7 @@ public interface IDescription
 	 *            the visitor
 	 * @return true, if successful
 	 */
-	boolean visitOwnChildrenRecursively(DescriptionVisitor visitor);
+	boolean visitOwnChildrenRecursively(DescriptionVisitor<IDescription> visitor);
 
 	/**
 	 * Visit own children.
@@ -663,7 +608,7 @@ public interface IDescription
 	 *            the visitor
 	 * @return true, if successful
 	 */
-	boolean visitOwnChildren(DescriptionVisitor visitor);
+	boolean visitOwnChildren(DescriptionVisitor<IDescription> visitor);
 
 	/**
 	 * Document.
