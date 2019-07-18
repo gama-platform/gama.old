@@ -155,18 +155,17 @@ public class GamaGridFile extends GamaGisFile {
 				final CoordinateReferenceSystem crs = getExistingCRS(scope);
 				if (isTiff(scope)) {
 					if (crs == null) {
-						store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true));
+						store = new GeoTiffReader(getFile(scope));
 					} else {
-						store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true,
-								Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+						store = new GeoTiffReader(getFile(scope),
+								new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
 					noData = ((GeoTiffReader) store).getMetadata().getNoData();
 				} else {
 					if (crs == null) {
-						store = new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, true));
+						store = new ArcGridReader(fis);
 					} else {
-						store = new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, true,
-								Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+						store = new ArcGridReader(fis, new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
 				}
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
@@ -406,7 +405,7 @@ public class GamaGridFile extends GamaGisFile {
 			}
 		} else if (isTiff(scope)) {
 			try {
-				final GeoTiffReader store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true));
+				final GeoTiffReader store = new GeoTiffReader(getFile(scope));
 				return store.getCoordinateReferenceSystem();
 			} catch (final DataSourceException e) {
 				e.printStackTrace();

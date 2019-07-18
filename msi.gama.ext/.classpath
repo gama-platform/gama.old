@@ -21,7 +21,7 @@
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-arcgrid-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-data-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-epsg-wkt-14.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-geotiff-14.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-geotiff-14.5.jar" sourcepath="/Users/drogoul/Downloads/geotools-14.5/modules"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-grid-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-14.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/gt-jdbc-db2-14.5.jar"/>
