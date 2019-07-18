@@ -24,8 +24,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.operators.Containers;
 import msi.gaml.operators.Stats;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 
 @SuppressWarnings ({ "rawtypes" })
@@ -575,7 +573,7 @@ public class Stats2 extends Stats {
 			// freedom. This is a two-tailed test so we just double the right
 			// tail which is given by studentT of -|tstat|.
 
-			final double x = FastMath.abs(tstat);
+			final double x = Math.abs(tstat);
 			try {
 				final double p = Probability.studentT(df, -x);
 				return 2.0 * p;
@@ -762,9 +760,9 @@ public class Stats2 extends Stats {
 			// Returns the probability of x in the normal distribution with the
 			// given mean and standard deviation.
 			final double var = sd * sd;
-			final double c = 1.0 / FastMath.sqrt(2.0 * CmnFastMath.PI * var);
+			final double c = 1.0 / Math.sqrt(2.0 * Math.PI * var);
 			final double b = (x - mean) * (x - mean) / (2.0 * var);
-			return c * FastMath.exp(-b);
+			return c * Math.exp(-b);
 		}
 
 		/**
@@ -793,7 +791,7 @@ public class Stats2 extends Stats {
 			// Returns "n choose k" as a double. Note the "integerization" of
 			// the double return value.
 			try {
-				return FastMath.rint(Arithmetic.binomial(n, k));
+				return Math.rint(Arithmetic.binomial(n, k));
 			} catch (final IllegalArgumentException ex) {
 				throw GamaRuntimeException.error("colt .Arithmetic.binomial reports: " + ex, scope);
 			} catch (final ArithmeticException ex) {

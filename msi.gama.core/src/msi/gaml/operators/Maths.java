@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Maths.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.Maths.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -22,7 +22,6 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * The Class GamaMath.
@@ -58,9 +57,9 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "Returns the value (always a float) of the left operand raised to the power of the right operand.")
-			@test ("4.0^2 = 16.0")
-			@test ("8.0^0 = 1.0")
-			@test ("8.0^1 = 8.0")
+	@test ("4.0^2 = 16.0")
+	@test ("8.0^0 = 1.0")
+	@test ("8.0^1 = 8.0")
 	public static Double pow(final Double a, final Integer b) {
 		return pow(a, b.doubleValue());
 	}
@@ -94,7 +93,7 @@ public class Maths {
 							equals = "2.2") }) })
 	@test ("16.81^0.5 = sqrt(16.81)")
 	public static Double pow(final Double a, final Double b) {
-		return FastMath.pow(a, b);
+		return Math.pow(a, b);
 	}
 
 	// ==== Operators
@@ -167,7 +166,7 @@ public class Maths {
 	@test ("not(is_number(acos(-10.0)))")
 	@test ("not(is_number(acos(10.0)))")
 	public static Double acos(final Double rv) {
-		return FastMath.acos(rv) * toDeg;
+		return Math.acos(rv) * toDeg;
 	}
 
 	@operator (
@@ -183,7 +182,7 @@ public class Maths {
 	@test ("not(is_number(acos(-10)))")
 	@test ("not(is_number(acos(10)))")
 	public static Double acos(final Integer rv) {
-		return FastMath.acos(rv) * toDeg;
+		return Math.acos(rv) * toDeg;
 	}
 
 	@operator (
@@ -205,7 +204,7 @@ public class Maths {
 	@test ("not(is_number(asin(-10.0)))")
 	@test ("not(is_number(asin(10.0)))")
 	public static Double asin(final Double rv) {
-		return FastMath.asin(rv) * toDeg;
+		return Math.asin(rv) * toDeg;
 	}
 
 	@operator (
@@ -227,7 +226,7 @@ public class Maths {
 	@test ("not(is_number(asin(-10)))")
 	@test ("not(is_number(asin(10)))")
 	public static Double asin(final Integer rv) {
-		return FastMath.asin(rv) * toDeg;
+		return Math.asin(rv) * toDeg;
 	}
 
 	@operator (
@@ -246,7 +245,7 @@ public class Maths {
 	@test ("atan(-1.0) = -45.0")
 	@test ("atan(1.0) = 45.0")
 	public static Double atan(final Double rv) {
-		return FastMath.atan(rv) * toDeg;
+		return Math.atan(rv) * toDeg;
 	}
 
 	@operator (
@@ -260,7 +259,7 @@ public class Maths {
 	@test ("atan(-1) = -45.0")
 	@test ("atan(1) = 45.0")
 	public static Double atan(final Integer rv) {
-		return FastMath.atan(rv) * toDeg;
+		return Math.atan(rv) * toDeg;
 	}
 
 	@operator (
@@ -277,7 +276,7 @@ public class Maths {
 							value = "tanh(100)",
 							equals = "1.0") })
 	public static Double tanh(final Double rv) {
-		return FastMath.tanh(rv);
+		return Math.tanh(rv);
 	}
 
 	@operator (
@@ -290,7 +289,7 @@ public class Maths {
 	@test ("tanh(100) = 1.0")
 	@test ("tanh(0) = 0.0")
 	public static Double tanh(final Integer rv) {
-		return FastMath.tanh(rv);
+		return Math.tanh(rv);
 	}
 
 	// hqnghi & Tri 14/04/2013
@@ -311,7 +310,7 @@ public class Maths {
 							value = "cos_rad(#pi)",
 							equals = "-1.0") })
 	public static Double cos_rad(final Double rv) {
-		return FastMath.cos(rv);
+		return Math.cos(rv);
 	}
 
 	@operator (
@@ -330,7 +329,7 @@ public class Maths {
 							equals = "1.0") },
 			see = { "cos_rad", "tan_rad" })
 	public static Double sin_rad(final Double rv) {
-		return FastMath.sin(rv);
+		return Math.sin(rv);
 	}
 
 	@operator (
@@ -341,12 +340,12 @@ public class Maths {
 	@doc (
 			value = "Returns the value (in [-1,1]) of the trigonometric tangent of the operand (in radians). ",
 			masterDoc = true,
-					examples = { @example (
-							value = "tan_rad(0)",
-							equals = "0.0") },
+			examples = { @example (
+					value = "tan_rad(0)",
+					equals = "0.0") },
 			see = { "cos_rad", "sin_rad" })
 	public static Double tan_rad(final Double v) {
-		return FastMath.tan(v);
+		return Math.tan(v);
 	}
 
 	// end hqnghi & Tri 14/04/2013
@@ -360,18 +359,18 @@ public class Maths {
 			value = "Returns the value (in [-1,1]) of the cosinus of the operand (in decimal degrees).  The argument is casted to an int before being evaluated.",
 			masterDoc = true,
 			special_cases = "Operand values out of the range [0-359] are normalized.",
-					examples = { @example (
-							value = "cos (0.0)",
+			examples = { @example (
+					value = "cos (0.0)",
+					equals = "1.0"),
+					@example (
+							value = "cos(360.0)",
 							equals = "1.0"),
-							@example (
-									value = "cos(360.0)",
-									equals = "1.0"),
-							@example (
-									value = "cos(-720.0)",
-									equals = "1.0")},
+					@example (
+							value = "cos(-720.0)",
+							equals = "1.0") },
 			see = { "sin", "tan" })
 	public static Double cos(final Double rv) {
-		return FastMath.cos(rv * toRad);
+		return Math.cos(rv * toRad);
 	}
 
 	@operator (
@@ -391,9 +390,9 @@ public class Maths {
 							value = "cos(-720)",
 							equals = "1.0") })
 	public static Double cos(final Integer rv) {
-		return FastMath.cos(rv * toRad);
+		return Math.cos(rv * toRad);
 		// double rad = toRad * rv;
-		// return FastMath.cos(rad);
+		// return Math.cos(rad);
 	}
 
 	@operator (
@@ -410,7 +409,7 @@ public class Maths {
 					equals = "0.0") },
 			see = { "cos", "tan" })
 	public static Double sin(final Double rv) {
-		return FastMath.sin(rv * toRad);
+		return Math.sin(rv * toRad);
 	}
 
 	@operator (
@@ -425,9 +424,9 @@ public class Maths {
 					equals = "0.0") })
 	public static Double sin(final Integer rv) {
 		// double rad = toRad * rv;
-		return FastMath.sin(rv * toRad);
-		// double rad = rv / 180 * FastMath.PI;
-		// return FastMath.sin(rad);
+		return Math.sin(rv * toRad);
+		// double rad = rv / 180 * Math.PI;
+		// return Math.sin(rad);
 	}
 
 	@operator (
@@ -445,9 +444,9 @@ public class Maths {
 			see = { "cos", "sin" })
 	@test ("tan(90.0) = 1.633123935319537E16")
 	@test ("tan(0.0) = 0.0")
-	
+
 	public static Double tan(final Double v) {
-		return FastMath.tan(toRad * v);
+		return Math.tan(toRad * v);
 	}
 
 	@operator (
@@ -464,7 +463,7 @@ public class Maths {
 							value = "tan(90)",
 							equals = "1.633123935319537E16") })
 	public static Double tan(final Integer v) {
-		return FastMath.tan(toRad * v);
+		return Math.tan(toRad * v);
 	}
 
 	@operator (
@@ -503,7 +502,7 @@ public class Maths {
 					equals = "1.0"),
 			see = "ln")
 	public static Double exp(final Double rv) {
-		return FastMath.exp(rv);
+		return Math.exp(rv);
 	}
 
 	@operator (
@@ -514,9 +513,9 @@ public class Maths {
 	@doc (
 			value = "returns Euler's number e raised to the power of the operand.",
 			special_cases = "the operand is casted to a float before being evaluated.")
-		@test ("exp (0) = 1.0")
+	@test ("exp (0) = 1.0")
 	public static Double exp(final Integer rv) {
-		return FastMath.exp(rv.doubleValue());
+		return Math.exp(rv.doubleValue());
 	}
 
 	@operator (
@@ -554,11 +553,11 @@ public class Maths {
 					equals = "1.0"),
 			see = "exp")
 	public static Double ln(final IScope scope, final Double x) {
-		if (x <= 0) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs",
-				scope);
-		// return Double.MAX_VALUE; // A compromise...
+		if (x <= 0) {
+			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
+			// return Double.MAX_VALUE; // A compromise...
 		}
-		return FastMath.log(x);
+		return Math.log(x);
 	}
 
 	@operator (
@@ -572,11 +571,11 @@ public class Maths {
 					value = "ln(1)",
 					equals = "0.0"))
 	public static Double ln(final IScope scope, final Integer x) {
-		if (x <= 0) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs",
-				scope);
-		// return Double.MAX_VALUE; // A compromise...
+		if (x <= 0) {
+			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
+			// return Double.MAX_VALUE; // A compromise...
 		}
-		return FastMath.log(x);
+		return Math.log(x);
 	}
 
 	@operator (
@@ -593,11 +592,11 @@ public class Maths {
 					equals = "1.0"),
 			see = "ln")
 	public static Double log(final IScope scope, final Double x) {
-		if (x <= 0) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs",
-				scope);
-		// return Double.MAX_VALUE; // A compromise...
+		if (x <= 0) {
+			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
+			// return Double.MAX_VALUE; // A compromise...
 		}
-		return Double.valueOf(FastMath.log10(x.doubleValue()));
+		return Double.valueOf(Math.log10(x.doubleValue()));
 	}
 
 	@operator (
@@ -611,11 +610,11 @@ public class Maths {
 					value = "log(1)",
 					equals = "0.0"))
 	public static Double log(final IScope scope, final Integer x) {
-		if (x <= 0) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs",
-				scope);
-		// return Double.MAX_VALUE; // A compromise...
+		if (x <= 0) {
+			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
+			// return Double.MAX_VALUE; // A compromise...
 		}
-		return FastMath.log10(x);
+		return Math.log10(x);
 	}
 
 	@operator (
@@ -681,7 +680,7 @@ public class Maths {
 	@doc (
 			special_cases = "if the operand is an int, round returns it")
 	@test ("round (100) = 100")
-	
+
 	public static Integer round(final Integer v) {
 		return v;
 	}
@@ -701,7 +700,7 @@ public class Maths {
 					equals = "2.0"))
 	public static Double sqrt(final IScope scope, final Integer v) throws GamaRuntimeException {
 		if (v < 0) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs", scope); }
-		return FastMath.sqrt(v);
+		return Math.sqrt(v);
 	}
 
 	@operator (
@@ -716,7 +715,7 @@ public class Maths {
 					equals = "2.0"))
 	public static Double sqrt(final IScope scope, final Double v) throws GamaRuntimeException {
 		if (v < 0) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs", scope); }
-		return FastMath.sqrt(v);
+		return Math.sqrt(v);
 	}
 
 	@operator (
@@ -835,7 +834,7 @@ public class Maths {
 	@test ("2.0 * 2.0 = 4.0")
 	@test ("1.5 * (- 1.0) = -1.5")
 	@test ("1.5 * 0.0 = 0.0")
-	
+
 	public static Double opTimes(final Double a, final Double b) {
 		return a * b;
 	}
@@ -864,8 +863,9 @@ public class Maths {
 	@doc (
 			usages = { @usage (
 					value = "if one operand is a matrix and the other a number (float or int), performs a normal arithmetic product of the number with each element of the matrix (results are float if the number is a float.",
-					examples = {
-							@example (value = "2 * matrix([[2,5],[3,4]])", equals = "matrix([[4,10],[6,8]])") }) })
+					examples = { @example (
+							value = "2 * matrix([[2,5],[3,4]])",
+							equals = "matrix([[4,10],[6,8]])") }) })
 	public static IMatrix opTimes(final Integer a, final IMatrix b) {
 		return b.times(a);
 	}
@@ -877,7 +877,7 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = { IConcept.MATRIX },
 			doc = @doc ("Multiply all the elements in the matrix operand by the first operand"))
-	@test("2.0 * matrix([[2,5],[3,4]]) =  matrix([[4.0,10.0],[6.0,8.0]])")
+	@test ("2.0 * matrix([[2,5],[3,4]]) =  matrix([[4.0,10.0],[6.0,8.0]])")
 	public static IMatrix opTimes(final Double a, final IMatrix b) {
 		return b.times(a);
 	}
@@ -1040,12 +1040,12 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "the difference of the two operands",
-					examples = { @example (
-							value = "1 - 1.0",
-							equals = "0.0"),
-							@example (
-									value = "3 - 1.2",
-									equals = "1.8") })
+			examples = { @example (
+					value = "1 - 1.0",
+					equals = "0.0"),
+					@example (
+							value = "3 - 1.2",
+							equals = "1.8") })
 	public static Double opMinus(final Integer a, final Double b) {
 		return a - b;
 	}
@@ -1077,8 +1077,8 @@ public class Maths {
 	@doc (
 			value = "the difference of the two operands",
 			examples = { @example (
-							value = "(10.0 - (3.0 as_matrix({2,3})))",
-							equals = "matrix([[7.0,7.0,7.0],[7.0,7.0,7.0]])") })
+					value = "(10.0 - (3.0 as_matrix({2,3})))",
+					equals = "matrix([[7.0,7.0,7.0],[7.0,7.0,7.0]])") })
 	public static IMatrix opMinus(final Double a, final IMatrix b) {
 		return b.times(-1).plus(a);
 	}
@@ -1146,7 +1146,7 @@ public class Maths {
 							equals = "-5.0") },
 			see = { "ceil", "round" })
 	public static final double floor(final double d) {
-		return FastMath.floor(d);
+		return Math.floor(d);
 	}
 
 	@operator (
@@ -1166,7 +1166,7 @@ public class Maths {
 							equals = "-4.0") },
 			see = { "floor", "round" })
 	public static final double ceil(final double d) {
-		return FastMath.ceil(d);
+		return Math.ceil(d);
 	}
 
 	@operator (
@@ -1274,16 +1274,16 @@ public class Maths {
 	/** Constant field PREC_MIN_1. */
 	public final static int PREC_MIN_1 = PRECISION - 1;
 
-	public static final double SQRT2 = FastMath.sqrt(2);
+	public static final double SQRT2 = Math.sqrt(2);
 	/** Constant field toDeg. */
-	public static final double toDeg = 180d / FastMath.PI;
+	public static final double toDeg = 180d / Math.PI;
 	/** Constant field toRad. */
-	public static final double toRad = FastMath.PI / 180d;
+	public static final double toRad = Math.PI / 180d;
 	public static final long[] TENS = new long[100];
 
 	static {
 		for (int i = 0; i < TENS.length; i++) {
-			TENS[i] = (long) FastMath.pow(10, i);
+			TENS[i] = (long) Math.pow(10, i);
 		}
 	}
 
@@ -1301,7 +1301,7 @@ public class Maths {
 					equals = "0.0"),
 			see = { "atan", "acos", "asin" })
 	public static double atan2(final double y, final double x) {
-		return FastMath.atan2(y, x) * toDeg;
+		return Math.atan2(y, x) * toDeg;
 	}
 
 	/**
@@ -1351,7 +1351,7 @@ public class Maths {
 					value = "hypot(0,1,0,1)",
 					equals = "sqrt(2)"))
 	public static double hypot(final IScope scope, final double x1, final double x2, final double y1, final double y2) {
-		// return FastMath.hypot(x2 - x1, y2 - y1); VERY SLOW !
+		// return Math.hypot(x2 - x1, y2 - y1); VERY SLOW !
 		final double dx = x2 - x1;
 		final double dy = y2 - y1;
 		return sqrt(scope, dx * dx + dy * dy);

@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
-import msi.gaml.operators.fastmaths.FastMath;
-
 public class PreferenceType6 implements FonctionPreference {
 
 	private final double s;
@@ -21,7 +19,7 @@ public class PreferenceType6 implements FonctionPreference {
 	public double valeur(final double diff) {
 		if (diff <= 0) { return 0; }
 
-		return 1 - FastMath.exp(diff * diff / valSquare);
+		return 1 - Math.exp(diff * diff / valSquare);
 	}
 
 	public PreferenceType6(final double s) {

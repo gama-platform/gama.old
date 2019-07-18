@@ -43,8 +43,6 @@ import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.GraphAndPopulationsSynchronizer;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
@@ -514,13 +512,13 @@ public class GraphsGraphstream {
 		final IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_species,
 				new FullGenerator(), size - 1, isSychronized);
 
-		final double THETA = 2 * CmnFastMath.PI / size;
+		final double THETA = 2 * Math.PI / size;
 		int i = 0;
 		final IList<GamlAgent> listVertex = g.getVertices();
 		final ILocation locEnv = scope.getSimulation().getGeometry().getLocation();
 		for (final GamlAgent e : listVertex) {
-			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
-					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
+			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
+					locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
 			scope.getGui().getConsole(scope).informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
 					scope.getRoot());
 			i++;
@@ -564,13 +562,13 @@ public class GraphsGraphstream {
 		final IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_species, new FullGenerator(),
 				nodes.size() - 1, isSychronized);
 
-		final double THETA = 2 * CmnFastMath.PI / nodes.size();
+		final double THETA = 2 * Math.PI / nodes.size();
 		int i = 0;
 		final IList<GamlAgent> listVertex = g.getVertices();
 		final ILocation locEnv = scope.getSimulation().getGeometry().getLocation();
 		for (final GamlAgent e : listVertex) {
-			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
-					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
+			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
+					locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
 			scope.getGui().getConsole(scope).informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
 					scope.getRoot());
 			i++;

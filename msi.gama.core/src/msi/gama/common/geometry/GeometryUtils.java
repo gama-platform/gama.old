@@ -70,7 +70,6 @@ import msi.gaml.operators.Graphs;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.ThreeD;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
@@ -308,7 +307,7 @@ public class GeometryUtils {
 
 	public static IList<IShape> squareDiscretization(final Geometry geom, final int nb_squares, final boolean overlaps,
 			final double coeff_precision) {
-		double size = FastMath.sqrt(geom.getArea() / nb_squares);
+		double size = Math.sqrt(geom.getArea() / nb_squares);
 		List<IShape> rectToRemove = new ArrayList<>();
 		IList<IShape> squares = discretization(geom, size, size, overlaps, rectToRemove);
 		if (squares.size() < nb_squares) {
@@ -535,7 +534,7 @@ public class GeometryUtils {
 
 	public static void iterateOverTriangles(final Polygon polygon, final Consumer<Geometry> action) {
 		final double elevation = getContourCoordinates(polygon).averageZ();
-		final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
+		final double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
 		final DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
 		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(polygon.buffer(sizeTol, 5, 0));
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());

@@ -105,8 +105,6 @@ import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.compilation.annotations.depends_on;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.GamaType;
@@ -1189,7 +1187,7 @@ public abstract class Spatial {
 
 		private static double cubicBezier(final double v0, final double v1, final double v2, final double v3,
 				final double t) {
-			return FastMath.pow(1 - t, 3) * v0 + 3 * (1 - t) * (1 - t) * t * v1 + 3 * (1 - t) * t * t * v2
+			return Math.pow(1 - t, 3) * v0 + 3 * (1 - t) * (1 - t) * t * v1 + 3 * (1 - t) * t * t * v2
 					+ Math.pow(t, 3) * v3;
 		}
 
@@ -4094,12 +4092,12 @@ public abstract class Spatial {
 			}
 			final IList<ILocation> locations = GamaListFactory.create(Types.POINT);
 			final ILocation loc = scope.getAgent().getLocation();
-			final double angle1 = scope.getRandom().between(0, 2 * CmnFastMath.PI);
+			final double angle1 = scope.getRandom().between(0, 2 * Math.PI);
 
 			for (int i = 0; i < nbLoc; i++) {
 				final GamaPoint p = new GamaPoint(
-						loc.getX() + distance * FastMath.cos(angle1 + (double) i / nbLoc * 2 * CmnFastMath.PI),
-						loc.getY() + distance * FastMath.sin(angle1 + (double) i / nbLoc * 2 * CmnFastMath.PI));
+						loc.getX() + distance * Math.cos(angle1 + (double) i / nbLoc * 2 * Math.PI),
+						loc.getY() + distance * Math.sin(angle1 + (double) i / nbLoc * 2 * Math.PI));
 				locations.add(p);
 			}
 			return locations;
@@ -4811,7 +4809,7 @@ public abstract class Spatial {
 					if (distances.containsKey(newDistGp)) {
 						dist2 = distances.remove(newDistGp).doubleValue();
 					}
-					final double dist = FastMath.min(dist1, dist2);
+					final double dist = Math.min(dist1, dist2);
 					if (dist <= distance) {
 						newDistGp.remove(g2);
 						newDistGp.add(groupeF);
@@ -4867,7 +4865,7 @@ public abstract class Spatial {
 						sumNull += Cast.asFloat(scope, points.get(pt));
 					}
 					if (nbNull == 0) {
-						final double w = 1 / FastMath.pow(dist, power);
+						final double w = 1 / Math.pow(dist, power);
 						weight += w;
 						sum += w * Cast.asFloat(scope, points.get(pt));
 					}

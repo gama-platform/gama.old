@@ -40,7 +40,6 @@ import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -432,14 +431,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		} else if (type.id() == IType.FLOAT) {
 			final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 			final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-			final double removeZ = FastMath.max(100000.0, 1.0 / theStep);
+			final double removeZ = Math.max(100000.0, 1.0 / theStep);
 			final double val = Cast.asFloat(null, value(scope));
 			if (val >= theMin + theStep) {
-				final double valLow = FastMath.round((val - theStep) * removeZ) / removeZ;
+				final double valLow = Math.round((val - theStep) * removeZ) / removeZ;
 				neighborValues.add(valLow);
 			}
 			if (val <= theMax - theStep) {
-				final double valHigh = FastMath.round((val + theStep) * removeZ) / removeZ;
+				final double valHigh = Math.round((val + theStep) * removeZ) / removeZ;
 				neighborValues.add(valHigh);
 			}
 		}

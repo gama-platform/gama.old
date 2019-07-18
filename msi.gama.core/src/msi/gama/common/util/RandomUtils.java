@@ -23,7 +23,6 @@ import msi.gama.util.random.GamaRNG;
 import msi.gama.util.random.JavaRNG;
 import msi.gama.util.random.MersenneTwisterRNG;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.dev.utils.DEBUG;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
@@ -323,7 +322,7 @@ public class RandomUtils {
 		// the step
 		final double val = between(min, max);
 		final int nbStep = (int) ((val - min) / step);
-		final double valSup = FastMath.min(max, min + (nbStep + 1.0) * step);
+		final double valSup = Math.min(max, min + (nbStep + 1.0) * step);
 		final double valMin = min + nbStep * step;
 		final int precision = BigDecimal.valueOf(step).scale() + 5;
 
@@ -378,7 +377,7 @@ public class RandomUtils {
 		for (int i = 0; i < 100; i++) {
 			final double val = r.between(min, max);
 			final int nbStep = (int) ((val - min) / step);
-			final double high = (int) (FastMath.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
+			final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
 			final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
 			DEBUG.LOG(val - low < high - val ? low : high, false);
 			DEBUG.LOG(" | ", false);

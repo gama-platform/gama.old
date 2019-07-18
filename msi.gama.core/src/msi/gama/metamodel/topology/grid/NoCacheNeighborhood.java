@@ -18,7 +18,6 @@ import java.util.Set;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 
 public class NoCacheNeighborhood implements INeighborhood {
 
@@ -92,11 +91,11 @@ public class NoCacheNeighborhood implements INeighborhood {
 		final List<Integer> v = new ArrayList<>(radius << 2);
 		int p;
 		for (int i = -radius; i < radius; i++) {
-			p = matrix.getPlaceIndexAt(x - i, y - CmnFastMath.abs(i) + radius);
+			p = matrix.getPlaceIndexAt(x - i, y - Math.abs(i) + radius);
 			if (p != -1) {
 				v.add(p);
 			}
-			p = matrix.getPlaceIndexAt(x + i, y + CmnFastMath.abs(i) - radius);
+			p = matrix.getPlaceIndexAt(x + i, y + Math.abs(i) - radius);
 			if (p != -1) {
 				v.add(p);
 			}

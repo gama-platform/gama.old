@@ -16,7 +16,6 @@ import java.io.Serializable;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * This class implements rotations in a three-dimensional space. A reimplementation of class Rotation of the Apache
@@ -163,7 +162,7 @@ public class Rotation3D implements Serializable, Transformation3D {
 	 * @param description
 	 */
 	public Rotation3D(final AxisAngle description) {
-		this(description.axis, FastMath.toRadians(description.angle));
+		this(description.axis, Math.toRadians(description.angle));
 	}
 
 	/**

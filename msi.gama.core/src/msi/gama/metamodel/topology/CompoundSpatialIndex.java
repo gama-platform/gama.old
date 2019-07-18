@@ -31,7 +31,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.ICollector;
-import msi.gaml.operators.fastmaths.FastMath;
 
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
 
@@ -45,8 +44,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		spatialIndexes = new HashMap<>();
 		rootIndex = GamaQuadTree.create(bounds, parallel);
 		uniqueIndexes = Sets.newHashSet(rootIndex);
-		final double biggest = FastMath.max(bounds.getWidth(), bounds.getHeight());
-		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * FastMath.sqrt(2) };
+		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
+		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * Math.sqrt(2) };
 	}
 
 	private ISpatialIndex findSpatialIndex(final IPopulation<? extends IAgent> s) {

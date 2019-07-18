@@ -17,7 +17,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.statements.Facets.Facet;
@@ -63,7 +62,7 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 		// Get ResultSet
 		final IList<IList<Object>> initValue = (IList) input.get(2);
 		// set initialValues to generate species
-		final int num = max == null ? initValue.length(scope) : CmnFastMath.min(max, initValue.length(scope));
+		final int num = max == null ? initValue.length(scope) : Math.min(max, initValue.length(scope));
 		for (int i = 0; i < num; i++) {
 			final IList<Object> rowList = initValue.get(i);
 			final Map map = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);

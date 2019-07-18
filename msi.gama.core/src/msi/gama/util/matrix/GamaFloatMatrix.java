@@ -34,7 +34,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
@@ -89,12 +88,12 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	public GamaFloatMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows);
-		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, CmnFastMath.min(objects.length, rows * cols));
+		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
 	}
 
 	public GamaFloatMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows);
-		for (int i = 0, n = CmnFastMath.min(objects.length, rows * cols); i < n; i++) {
+		for (int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++) {
 			matrix[i] = objects[i];
 		}
 		// java.lang.System.arraycopy(objects, 0, getMatrix(), 0,
@@ -103,7 +102,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	public GamaFloatMatrix(final IScope scope, final int cols, final int rows, final Object[] objects) {
 		this(cols, rows);
-		for (int i = 0, n = CmnFastMath.min(objects.length, rows * cols); i < n; i++) {
+		for (int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++) {
 			matrix[i] = Cast.asFloat(scope, objects[i]);
 		}
 	}
@@ -113,7 +112,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		super(scope, objects, preferredSize, Types.FLOAT);
 		setMatrix(new double[numRows * numCols]);
 		if (preferredSize != null) {
-			for (int i = 0, stop = CmnFastMath.min(getMatrix().length, objects.size()); i < stop; i++) {
+			for (int i = 0, stop = Math.min(getMatrix().length, objects.size()); i < stop; i++) {
 				getMatrix()[i] = Cast.asFloat(scope, objects.get(i));
 			}
 		} else if (GamaMatrix.isFlat(objects)) {

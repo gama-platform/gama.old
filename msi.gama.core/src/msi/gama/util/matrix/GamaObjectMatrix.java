@@ -27,7 +27,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -62,7 +61,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	public GamaObjectMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows, Types.FLOAT);
-		final int n = CmnFastMath.min(objects.length, rows * cols);
+		final int n = Math.min(objects.length, rows * cols);
 		for (int i = 0; i < n; i++) {
 			matrix[i] = objects[i];
 		}
@@ -72,7 +71,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	public GamaObjectMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows, Types.INT);
-		final int n = CmnFastMath.min(objects.length, rows * cols);
+		final int n = Math.min(objects.length, rows * cols);
 		for (int i = 0; i < n; i++) {
 			matrix[i] = objects[i];
 		}
@@ -80,7 +79,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	public GamaObjectMatrix(final int cols, final int rows, final Object[] objects, final IType<?> contentsType) {
 		this(cols, rows, contentsType);
-		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, CmnFastMath.min(objects.length, rows * cols));
+		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
 	}
 
 	public GamaObjectMatrix(final IScope scope, final IList<?> objects, final ILocation preferredSize,
@@ -89,7 +88,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		setMatrix(new Object[numRows * numCols]);
 		final boolean requiresCasting = GamaType.requiresCasting(contentsType, objects.getGamlType().getContentType());
 		if (preferredSize != null) {
-			for (int i = 0, stop = CmnFastMath.min(getMatrix().length, objects.size()); i < stop; i++) {
+			for (int i = 0, stop = Math.min(getMatrix().length, objects.size()); i < stop; i++) {
 				getMatrix()[i] =
 						requiresCasting ? contentsType.cast(scope, objects.get(i), null, false) : objects.get(i);
 			}

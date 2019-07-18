@@ -50,7 +50,6 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaOsmFile;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
@@ -141,8 +140,8 @@ public class OSMFileViewer extends GISFileViewer {
 		String s = "";
 		try {
 			s = featureSource.getFeatures().size() + " objects | "
-					+ (int) (featureSource.getBounds().getWidth() * (CmnFastMath.PI / 180) * 6378137) + "m x "
-					+ (int) (featureSource.getBounds().getHeight() * (CmnFastMath.PI / 180) * 6378137) + "m";
+					+ (int) (featureSource.getBounds().getWidth() * (Math.PI / 180) * 6378137) + "m x "
+					+ (int) (featureSource.getBounds().getHeight() * (Math.PI / 180) * 6378137) + "m";
 		} catch (final IOException e1) {
 			e1.printStackTrace();
 		}
@@ -181,8 +180,8 @@ public class OSMFileViewer extends GISFileViewer {
 					m2 = new MenuItem(menu, SWT.NONE);
 					m2.setEnabled(false);
 					// approximation
-					m2.setText("     - dimensions : " + (int) (env.getWidth() * (CmnFastMath.PI / 180) * 6378137)
-							+ "m x " + (int) (env.getHeight() * (CmnFastMath.PI / 180) * 6378137) + "m");
+					m2.setText("     - dimensions : " + (int) (env.getWidth() * (Math.PI / 180) * 6378137) + "m x "
+							+ (int) (env.getHeight() * (Math.PI / 180) * 6378137) + "m");
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}

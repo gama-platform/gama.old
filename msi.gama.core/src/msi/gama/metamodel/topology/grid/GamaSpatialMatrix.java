@@ -69,7 +69,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Spatial;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
@@ -325,7 +324,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				matrix[i] = poly;
 				hexAgentToLoc.put(poly, new GamaPoint(c, l));
 				actualNumberOfCells++;
-				lastCell = CmnFastMath.max(lastCell, i);
+				lastCell = Math.max(lastCell, i);
 				// }
 			}
 		}
@@ -344,7 +343,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				matrix[i] = poly;
 				hexAgentToLoc.put(poly, new GamaPoint(c, l));
 				actualNumberOfCells++;
-				lastCell = CmnFastMath.max(lastCell, i);
+				lastCell = Math.max(lastCell, i);
 				// }
 			}
 		}
@@ -377,7 +376,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				matrix[i] = poly;
 				hexAgentToLoc.put(poly, new GamaPoint(c, l));
 				actualNumberOfCells++;
-				lastCell = CmnFastMath.max(lastCell, i);
+				lastCell = Math.max(lastCell, i);
 				// }
 			}
 		}
@@ -396,7 +395,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				matrix[i] = poly;
 				hexAgentToLoc.put(poly, new GamaPoint(c, l));
 				actualNumberOfCells++;
-				lastCell = CmnFastMath.max(lastCell, i);
+				lastCell = Math.max(lastCell, i);
 				// }
 			}
 		}
@@ -731,10 +730,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 		}
 
-		final int dx = CmnFastMath.abs(s1.getX() - s2.getX());
-		final int dy = CmnFastMath.abs(s1.getY() - s2.getY());
+		final int dx = Math.abs(s1.getX() - s2.getX());
+		final int dy = Math.abs(s1.getY() - s2.getY());
 		if (usesVN) { return dx + dy; }
-		return CmnFastMath.max(dx, dy);
+		return Math.max(dx, dy);
 	}
 
 	/**

@@ -77,7 +77,6 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.operators.Strings;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -131,8 +130,8 @@ public class GamaOsmFile extends GamaGisFile {
 			} finally {
 
 				// approximation of the width and height in meters.
-				width = env2 != null ? env2.getWidth() * (FastMath.PI / 180) * 6378137 : 0;
-				height = env2 != null ? env2.getHeight() * (FastMath.PI / 180) * 6378137 : 0;
+				width = env2 != null ? env2.getWidth() * (Math.PI / 180) * 6378137 : 0;
+				height = env2 != null ? env2.getHeight() * (Math.PI / 180) * 6378137 : 0;
 				itemNumber = number;
 				this.crs = crs;
 			}
@@ -206,7 +205,7 @@ public class GamaOsmFile extends GamaGisFile {
 			} else {
 				sb.append("OSM file").append(Strings.LN);
 				sb.append(itemNumber).append(" objects").append(Strings.LN);
-				sb.append("Dimensions: ").append(FastMath.round(width) + "m x " + FastMath.round(height) + "m")
+				sb.append("Dimensions: ").append(Math.round(width) + "m x " + Math.round(height) + "m")
 						.append(Strings.LN);
 				sb.append("Coordinate Reference System: ").append(crs == null ? "No CRS" : crs.getName().getCode())
 						.append(Strings.LN);

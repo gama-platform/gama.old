@@ -13,8 +13,6 @@ package msi.gama.metamodel.topology.grid;
 import java.util.HashSet;
 import java.util.Set;
 
-import msi.gaml.operators.fastmaths.CmnFastMath;
-
 /**
  * Written by drogoul Modified on 8 mars 2011
  *
@@ -38,11 +36,11 @@ public class GridVonNeumannNeighborhood extends GridNeighborhood {
 		final Set<Integer> v = new HashSet<>(radius << 2);
 		int p;
 		for (int i = -radius; i < radius; i++) {
-			p = matrix.getPlaceIndexAt(x - i, y - CmnFastMath.abs(i) + radius);
+			p = matrix.getPlaceIndexAt(x - i, y - Math.abs(i) + radius);
 			if (p != -1) {
 				v.add(p);
 			}
-			p = matrix.getPlaceIndexAt(x + i, y + CmnFastMath.abs(i) - radius);
+			p = matrix.getPlaceIndexAt(x + i, y + Math.abs(i) - radius);
 			if (p != -1) {
 				v.add(p);
 			}

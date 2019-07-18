@@ -47,7 +47,6 @@ import msi.gama.util.IMap;
 import msi.gama.util.path.GamaPath;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
@@ -404,7 +403,7 @@ public class OldDrivingSkill extends MovingSkill {
 					}
 				}
 				if (nbAg >= nbLanes && currentDistance < minDist) {
-					minDist = FastMath.max(0, currentDistance);
+					minDist = Math.max(0, currentDistance);
 				}
 
 			}

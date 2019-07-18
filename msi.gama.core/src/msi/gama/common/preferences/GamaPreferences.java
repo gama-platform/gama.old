@@ -466,8 +466,8 @@ public class GamaPreferences {
 		public static final Pref<Boolean> AGENT_OPTIMIZATION =
 				create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL, true).in(NAME,
 						OPTIMIZATIONS);
-		public static final Pref<Boolean> MATH_OPTIMIZATION = create("pref_optimize_math_functions",
-				"Use faster (but less accurate) arithmetic functions", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+		// public static final Pref<Boolean> MATH_OPTIMIZATION = create("pref_optimize_math_functions",
+		// "Use faster (but less accurate) arithmetic functions", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
 				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL, true)
 						.in(NAME, OPTIMIZATIONS);

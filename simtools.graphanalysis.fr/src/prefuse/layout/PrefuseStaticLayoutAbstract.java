@@ -29,8 +29,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.GamaGraph;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -54,10 +52,10 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 	private void resetThermometer(final int nbtuples) {
 		lastNode2measures = null;
-		count_measures = CmnFastMath.min(FastMath.max(nbtuples / 20, // ideal:
-																		// measure
-																		// 5% of
-																		// nodes
+		count_measures = Math.min(Math.max(nbtuples / 20, // ideal:
+																	// measure
+																	// 5% of
+																	// nodes
 				10 // measure at least 10, even if the network is small !
 		), nbtuples - 1 // but don't try to measure more than existing..;
 		);
@@ -94,7 +92,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 					final double prev = lastNode2measures.get(i);
 					final double novel = i.getX() + i.getY();
 					newMeasures.put(i, novel);
-					temperature += FastMath.pow(prev - novel, 2);
+					temperature += Math.pow(prev - novel, 2);
 				}
 
 				lastNode2measures = newMeasures;
@@ -144,9 +142,9 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 		viz.setRendererFactory(new DefaultRendererFactory());
 
 		final Display display = new Display(viz);
-		display.setSize((int) FastMath.ceil(bounds.getWidth()), (int) FastMath.ceil(bounds.getHeight())); // set
-																											// display
-																											// size
+		display.setSize((int) Math.ceil(bounds.getWidth()), (int) Math.ceil(bounds.getHeight())); // set
+																									// display
+																									// size
 
 		// init positions
 		Iterator itPrefuseNodes = viz.getVisualGroup(PREFUSE_GRAPH + ".nodes").tuples();

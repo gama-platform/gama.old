@@ -49,8 +49,6 @@ import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.Spatial.Queries;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.Arguments;
@@ -632,7 +630,7 @@ public class DrivingSkill extends MovingSkill {
 				(GamaPoint) currentRoad.getLocation(), (GamaPoint) road.getLocation());
 		final List<IAgent> roadsIn = (List) theNode.getAttribute(RoadNodeSkill.ROADS_IN);
 		if (!Random.opFlip(scope, getRespectPriorities(driver))) { return true; }
-		final double realSpeed = FastMath.max(0.5, getRealSpeed(driver) + getAccelerationMax(driver));
+		final double realSpeed = Math.max(0.5, getRealSpeed(driver) + getAccelerationMax(driver));
 		for (final IAgent rd : roadsIn) {
 			if (rd != currentRoad) {
 				final double angle = Punctal.angleInDegreesBetween(scope, (GamaPoint) theNode.getLocation(),
@@ -654,7 +652,7 @@ public class DrivingSkill extends MovingSkill {
 								final double dist = pp.euclidianDistanceTo(driver);
 
 								if (Maths.round(getRealSpeed(pp), 1) > 0.0 && 0.5
-										+ secDistCoeff * FastMath.max(0, realSpeed - rp2) > dist - (vL2 / 2 + vL / 2)) {
+										+ secDistCoeff * Math.max(0, realSpeed - rp2) > dist - (vL2 / 2 + vL / 2)) {
 									// rp2 * (7.0 / realSpeed + secDistCoeff) >
 									// dist - vL2 / 2 - vL / 2 ) {
 									// DEBUG.LOG("driver : " + driver +
@@ -845,7 +843,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	private Double speedChoice(final IAgent agent, final IAgent road) {
-		return FastMath.min(getMaxSpeed(agent), FastMath.min(getRealSpeed(agent) + getAccelerationMax(agent),
+		return Math.min(getMaxSpeed(agent), Math.min(getRealSpeed(agent) + getAccelerationMax(agent),
 				getSpeedCoeff(agent) * (Double) road.getAttribute(RoadSkill.MAXSPEED)));
 	}
 
@@ -1132,7 +1130,7 @@ public class DrivingSkill extends MovingSkill {
 			// }
 			return lane;
 		}
-		final int cvTmp = CmnFastMath.min(currentLane, lanes - 1);
+		final int cvTmp = Math.min(currentLane, lanes - 1);
 		int cv = testBlockNode || nextRoadTestLane(driver, road, cvTmp, secDistCoeff, vL) ? cvTmp : -1;
 
 		if (cv != -1) {
@@ -1316,7 +1314,7 @@ public class DrivingSkill extends MovingSkill {
 				// DEBUG.OUT("dist:" + dist + " diff: " +
 				// diff);
 
-				if (changeLane && FastMath.abs(diff) < vL) { return 0; }
+				if (changeLane && Math.abs(diff) < vL) { return 0; }
 				if (diff <= 0.0) {
 					continue;
 				}
@@ -1339,7 +1337,7 @@ public class DrivingSkill extends MovingSkill {
 												// ag.getLocation(), target);
 				final double diff = distanceToGoal - dist;
 				// DEBUG.OUT("ag: " + ag + " dist: " + dist);
-				if (changeLane && FastMath.abs(diff) < vL) { return 0; }
+				if (changeLane && Math.abs(diff) < vL) { return 0; }
 				if (diff <= 0.0) {
 					continue;
 				}
@@ -1385,17 +1383,17 @@ public class DrivingSkill extends MovingSkill {
 		}
 		double secDistance = 0.0;
 		if (getOnLinkedRoad(nextAgent) == getOnLinkedRoad(agent)) {
-			secDistance = FastMath.max(min_safety_distance,
-					security_distance * FastMath.min(getRealSpeed(agent), getRealSpeed(nextAgent)));
+			secDistance = Math.max(min_safety_distance,
+					security_distance * Math.min(getRealSpeed(agent), getRealSpeed(nextAgent)));
 		} else {
-			secDistance = FastMath.max(min_safety_distance,
-					security_distance * FastMath.max(getRealSpeed(agent), getRealSpeed(nextAgent)));
+			secDistance = Math.max(min_safety_distance,
+					security_distance * Math.max(getRealSpeed(agent), getRealSpeed(nextAgent)));
 		}
-		double realDist = FastMath.min(distance, minDiff - secDistance - 0.5 * vL - 0.5 * getVehiculeLength(nextAgent));
+		double realDist = Math.min(distance, minDiff - secDistance - 0.5 * vL - 0.5 * getVehiculeLength(nextAgent));
 		// t345+= java.lang.System.currentTimeMillis() - t;
 
 		if (changeLane && realDist < vL) { return 0; }
-		realDist = FastMath.max(0.0, (int) (min_safety_distance + realDist * 1000) / 1000.0);
+		realDist = Math.max(0.0, (int) (min_safety_distance + realDist * 1000) / 1000.0);
 		// DEBUG.OUT("realDist" + realDist + " secDistance: "
 		// + secDistance);
 

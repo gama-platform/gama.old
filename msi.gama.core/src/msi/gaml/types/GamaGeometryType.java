@@ -66,7 +66,6 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Spatial;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -254,7 +253,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildTriangle(final double side_size, final ILocation location) {
-		final double h = FastMath.sqrt(3) / 2 * side_size;
+		final double h = Math.sqrt(3) / 2 * side_size;
 		final Coordinate[] points = new Coordinate[4];
 		final double x = location == null ? 0 : location.getX();
 		final double y = location == null ? 0 : location.getY();
@@ -538,7 +537,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
-	private static double theta = FastMath.tan(0.423d);
+	private static double theta = Math.tan(0.423d);
 
 	public static IShape buildArrow(final GamaPoint head, final double size) {
 		return buildArrow(new GamaPoint(), head, size, size, true);

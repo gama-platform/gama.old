@@ -51,7 +51,6 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import rcaller.RCaller;
@@ -147,8 +146,8 @@ public class Stats {
 			total += value;
 			product *= value;
 			reciprocalSum += 1 / value;
-			minimum = FastMath.min(minimum, value);
-			maximum = FastMath.max(maximum, value);
+			minimum = Math.min(minimum, value);
+			maximum = Math.max(maximum, value);
 		}
 
 		/**
@@ -1339,7 +1338,7 @@ public class Stats {
 			sumXi += xi;
 			for (int j = 0; j < N; j++) {
 				final double yi = vals.get(j);
-				G += FastMath.abs(xi - yi);
+				G += Math.abs(xi - yi);
 			}
 		}
 		G /= 2 * N * sumXi;

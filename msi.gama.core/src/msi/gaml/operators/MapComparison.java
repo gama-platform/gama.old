@@ -34,7 +34,6 @@ import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaMatrix;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -406,7 +405,7 @@ public class MapComparison {
 			final IAgent agent = agents.get(scope, i);
 			final double[] XaXs = computeXaXs(scope, filter, categoriesId, agsId, valObsId, valSimId, valInitId,
 					fuzzytransitions, distance, agent, valsInit, valsObs, valsSim, agents, nbCat);
-			similarities.add(FastMath.min(XaXs[0], XaXs[1]));
+			similarities.add(Math.min(XaXs[0], XaXs[1]));
 		}
 		double meanSimilarity = 0;
 		double total = 0;
@@ -428,7 +427,7 @@ public class MapComparison {
 		double xa = 0.0;
 		double xs = 0.0;
 		final double[] XaXs = new double[2];
-		final double sizeNorm = FastMath.sqrt(agent.getEnvelope().getArea());
+		final double sizeNorm = Math.sqrt(agent.getEnvelope().getArea());
 		final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<>()
 				: new ArrayList<>(scope.getTopology().getNeighborsOf(scope, agent, distance, filter));
 
@@ -484,7 +483,7 @@ public class MapComparison {
 			final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
 			final List<IAgent> neighbors = distance == 0 ? new ArrayList<>()
 					: new ArrayList<>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));
-			final double sizeNorm = FastMath.sqrt(centralAg.getEnvelope().getArea());
+			final double sizeNorm = Math.sqrt(centralAg.getEnvelope().getArea());
 
 			final Map<IAgent, Double> distancesCoeff = GamaMapFactory.create();
 			distancesCoeff.put(centralAg, 1.0);
@@ -558,7 +557,7 @@ public class MapComparison {
 		if (dist > 0.0) {
 			n = ringsPn.get(dist);
 		}
-		return (1 - FastMath.pow(1 - X[a], n)) * (1 - FastMath.pow(1 - Y[b], n));
+		return (1 - Math.pow(1 - X[a], n)) * (1 - Math.pow(1 - Y[b], n));
 	}
 
 	private static double computeExpectedSim(final int nbCat, final double[] X, final double[] Y, final int nbRings,
@@ -572,7 +571,7 @@ public class MapComparison {
 		for (int p = 0; p < nbRings; p++) {
 			final double dist1 = dist;
 			dist = rings.get(p);
-			final double Mdi = FastMath.pow(2, dist / -2);
+			final double Mdi = Math.pow(2, dist / -2);
 			double Ei = 0;
 			for (int a = 0; a < nbCat; a++) {
 				final double Ya = Y[a];
@@ -604,7 +603,7 @@ public class MapComparison {
 			} else {
 				final IAgent agent = agents.get(scope, i);
 				// double sizeNorm = agent.getPerimeter() / 4.0;
-				final double sizeNorm = FastMath.sqrt(agent.getEnvelope().getArea());
+				final double sizeNorm = Math.sqrt(agent.getEnvelope().getArea());
 				final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<>()
 						: new ArrayList<>(scope.getTopology().getNeighborsOf(scope, agent, distance, filter));
 
@@ -636,8 +635,8 @@ public class MapComparison {
 				double s2Max = -1 * Double.MAX_VALUE;
 
 				for (int j = 0; j < nbCat; j++) {
-					final double s1 = FastMath.min(fuzzyVector1[i][j], crispVector2[i][j]);
-					final double s2 = FastMath.min(fuzzyVector2[i][j], crispVector1[i][j]);
+					final double s1 = Math.min(fuzzyVector1[i][j], crispVector2[i][j]);
+					final double s2 = Math.min(fuzzyVector2[i][j], crispVector1[i][j]);
 					if (s1 > s1Max) {
 						s1Max = s1;
 					}
@@ -645,7 +644,7 @@ public class MapComparison {
 						s2Max = s2;
 					}
 				}
-				similarities.add(FastMath.min(s1Max, s2Max));
+				similarities.add(Math.min(s1Max, s2Max));
 			}
 		}
 		double meanSimilarity = 0;
@@ -754,7 +753,7 @@ public class MapComparison {
 			final double val1 = Cast.asFloat(scope, vals1.get(i));
 			final double val2 = Cast.asFloat(scope, vals2.get(i));
 			coeff += val1;
-			sum += FastMath.abs(val1 - val2) * 100.0;
+			sum += Math.abs(val1 - val2) * 100.0;
 		}
 		if (coeff == 0) { return 0; }
 		return sum / coeff;

@@ -199,9 +199,6 @@ init {
 	//Optimize constant expressions (experimental)
 	write sample(gama.pref_optimize_constant_expressions);
 
-	//Use faster (but less accurate) arithmetic functions
-	write sample(gama.pref_optimize_math_functions);
-
 	//Optimize the path computation operators and goto action (but with possible 'jump' issues)
 	write sample(gama.pref_optimize_path_computation);
 
@@ -456,9 +453,6 @@ init {
 
 	//Optimize constant expressions (experimental)
 	gama.pref_optimize_constant_expressions <- false;
-
-	//Use faster (but less accurate) arithmetic functions
-	gama.pref_optimize_math_functions <- false;
 
 	//Optimize the path computation operators and goto action (but with possible 'jump' issues)
 	gama.pref_optimize_path_computation <- false;

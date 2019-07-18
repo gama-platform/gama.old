@@ -31,7 +31,6 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
@@ -177,7 +176,7 @@ public class RoadSkill extends Skill {
 				onLinkedRoad = true;
 				lane = nbLanesLinked - nbLanes - lane + 1;
 
-				lane = CmnFastMath.max(0, CmnFastMath.min(lane, nbLanesLinked - 1));
+				lane = Math.max(0, Math.min(lane, nbLanesLinked - 1));
 				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, true);
 
 				final List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
@@ -185,7 +184,7 @@ public class RoadSkill extends Skill {
 				((List) ags.get(ags.size() - 1)).add(driver);
 				getAgents(road).add(driver);
 			} else {
-				lane = CmnFastMath.min(lane, nbLanes - 1);
+				lane = Math.min(lane, nbLanes - 1);
 				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, false);
 				indexSegment = getSegmentIndex(road, driver);
 				final List agentsOn = (List) road.getAttribute(AGENTS_ON);
@@ -274,7 +273,7 @@ public class RoadSkill extends Skill {
 				final int nbLanesLinked = (Integer) linkedRoad.getAttribute(LANES);
 				lane = nbLanesLinked - nbLanes - lane + 1;
 
-				lane = CmnFastMath.max(0, CmnFastMath.min(lane, nbLanesLinked - 1));
+				lane = Math.max(0, Math.min(lane, nbLanesLinked - 1));
 				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, true);
 
 				final List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
@@ -282,7 +281,7 @@ public class RoadSkill extends Skill {
 				((List) ags.get(ags.size() - 1)).add(driver);
 				getAgents(road).add(driver);
 			} else {
-				lane = CmnFastMath.min(lane, nbLanes - 1);
+				lane = Math.min(lane, nbLanes - 1);
 				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, false);
 				indexSegment = getSegmentIndex(road, driver);
 				final List agentsOn = (List) road.getAttribute(AGENTS_ON);
