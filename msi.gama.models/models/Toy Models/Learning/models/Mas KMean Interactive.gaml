@@ -22,8 +22,8 @@ global {
 	list<file> images <- [
 		file("../images/dot.jpg"),
 		file("../images/cross.png"),
-		file("../images/eraser.jpg")
-		
+		file("../images/eraser.jpg"),
+		file("../images/empty.png")
 	]; 
 	
 	reflex pauseAtConvergence when: converged { }
