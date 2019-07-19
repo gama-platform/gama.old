@@ -240,7 +240,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		} else {
 			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);
 			final boolean torus = expr != null && Cast.asBool(scope, expr.value(scope));
-			final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue() };
+			final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue()
+					|| GamaPreferences.External.QUADTREE_SYNCHRONIZATION.getValue() };
 			if (!parallel[0]) {
 				getSpecies().getDescription().visitMicroSpecies((s) -> {
 					parallel[0] = getParallelism(scope, s.getFacetExpr(IKeyword.PARALLEL), Caller.SPECIES) > 0;
