@@ -14,7 +14,7 @@ global {
 	bool advanced_user_control <- false;
 	init {
 		create cell number: nbAgent {
-			color <-°green;
+			color <-#green;
 		}
 		create user;
 	}
@@ -41,7 +41,7 @@ species user control:user_only {
       }
       user_command "Create one cell" {
         create cell { 
-			color <-°green; 
+			color <-#green; 
 		}
       } 
       transition to: "Default" when: true;                    
@@ -49,13 +49,15 @@ species user control:user_only {
    user_panel "Advanced Control" {
       user_command "Kill cells" color: #red continue: true{
         user_input "Number" returns: number type: int <- 10;
-        ask (number among list(cell)){
+        ask (number among cell){
            do die;
         }
       }
       user_command "Create cells" color: #green {
         user_input "Number" returns: number type: int <- 10;
-        create cell number: number ;
+        create cell number: number{ 
+			color <-#green; 
+		}
       } 
       transition to: "Default" when: true;        
    }
