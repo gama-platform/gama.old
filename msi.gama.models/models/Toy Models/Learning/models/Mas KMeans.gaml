@@ -132,8 +132,8 @@ species centroids
 	float myIntraDistance <- 0.0;
 	aspect kmeans_aspect2D
 	{
-		
-		loop pt over: mypoints
+		// explicitly loops over a copy of the points to avoid concurrency issues with the simulation
+		loop pt over: copy(mypoints)
 		{
 			draw line([location, pt]) + 0.1 color: color_kmeans;
 		}
@@ -161,6 +161,7 @@ experiment clustering2D type: gui
 	point target <- { 20, 95 };
 	output
 	{
+		
 		display map_kmeans 
 		{
 			species datapoints aspect: kmeans_aspect2D transparency:0.4;
@@ -205,7 +206,8 @@ experiment clustering3D type: gui
 	
 	output
 	{
-		display map_kmeans type: opengl
+		// The display is explicitly synchronized to avoid concurrency issues (if the points are changed in the simulation while being displayed)
+		display map_kmeans type: opengl synchronized: true
 		{
 			species datapoints aspect: kmeans_aspect3D transparency:0.4;
 			species centroids aspect: kmeans_aspect3D;
