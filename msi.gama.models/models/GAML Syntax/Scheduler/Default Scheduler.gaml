@@ -38,7 +38,7 @@ species without_scheduler
 	int nb_generated;
 	reflex sayHello
 	{
-		write "hello, i'm without "+nb_generated;
+		write "hello, i'm without scheduler "+nb_generated;
 	}
 }
 
@@ -47,7 +47,7 @@ species scheduler_species schedules:scheduler_species
 	int nb_generated;
 	reflex sayHello
 	{
-		write "hello, i'm scheduler "+nb_generated;
+		write "hello, i'm scheduled "+nb_generated;
 	}
 }
 experiment example_default_scheduler type:gui
