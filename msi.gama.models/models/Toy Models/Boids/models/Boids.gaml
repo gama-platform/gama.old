@@ -209,7 +209,7 @@ species obstacle skills: [moving] {
 }
 
 
-experiment boids_basic type: gui {
+experiment "Basic" type: gui {
 	parameter 'Number of agents' var: number_of_agents;
 	parameter 'Number of obstacles' var: number_of_obstacles;
 	parameter 'Maximal speed' var: maximal_speed;
@@ -241,7 +241,7 @@ experiment boids_basic type: gui {
 }
 
 
-experiment boids_interactif type: gui autorun: true{
+experiment "Interactive" type: gui autorun: true{
 	parameter 'Number of agents' var: number_of_agents;
 	parameter 'Number of obstacles' var: number_of_obstacles;
 	parameter 'Maximal speed' var: maximal_speed;
@@ -257,6 +257,16 @@ experiment boids_interactif type: gui autorun: true{
 	parameter 'Apply Wind ?' var: apply_wind ;     
 	parameter 'Moving Obstacles ?' var: moving_obstacles  ;    
 	parameter 'Direction of the wind' var: wind_vector ;  
+	bool previous_state <- gama.pref_synchronize_quadtree;
+	
+	init {
+		// The preference is explicitly set so as to avoid concurrency problems 
+		gama.pref_synchronize_quadtree <- true;
+	}
+	
+	abort {
+		gama.pref_synchronize_quadtree <- previous_state;
+	}
 	
 	//Minimum duration of a step to better see the movements
 	float minimum_cycle_duration <- 0.01;

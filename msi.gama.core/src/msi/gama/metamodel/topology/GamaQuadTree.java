@@ -11,17 +11,19 @@
 
 package msi.gama.metamodel.topology;
 
+import static java.util.Collections.synchronizedMap;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.PoolUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
@@ -66,13 +68,17 @@ public class GamaQuadTree implements ISpatialIndex {
 		return new GamaQuadTree(envelope, parallel);
 	}
 
-	private GamaQuadTree(final Envelope bounds, final boolean parallel) {
+	private GamaQuadTree(final Envelope bounds, final boolean sync) {
 		// AD To address Issue 804, explictely converts the bounds to an
 		// Envelope 2D, so that all computations are made
 		// in 2D in the QuadTree
+		this.parallel = sync;
 		root = new QuadNode(new Envelope(bounds));
 		minSize = bounds.getWidth() / 100d;
-		this.parallel = parallel;
+		GamaPreferences.External.QUADTREE_SYNCHRONIZATION.onChange((v) -> {
+			parallel = v;
+			root.synchronizeChanged();
+		});
 	}
 
 	@Override
@@ -201,11 +207,12 @@ public class GamaQuadTree implements ISpatialIndex {
 		private volatile QuadNode[] nodes = null;
 		// ** Addresses part of Issue 722 -- Need to keep the agents ordered
 		// (by insertion order) **
-		private final Map<IAgent, Envelope> objects =
-				parallel ? new ConcurrentHashMap(maxCapacity) : GamaMapFactory.create();
+		private Map<IAgent, Envelope> objects;
 		private final boolean canSplit;
 
 		public QuadNode(final Envelope bounds) {
+			final Map<IAgent, Envelope> map = GamaMapFactory.create();
+			objects = parallel ? synchronizedMap(map) : map;
 			this.bounds = bounds;
 			final double hw = bounds.getWidth();
 			final double hh = bounds.getHeight();
@@ -214,8 +221,20 @@ public class GamaQuadTree implements ISpatialIndex {
 			canSplit = hw > minSize && hh > minSize;
 		}
 
+		public void synchronizeChanged() {
+			synchronized (objects) {
+				objects = parallel ? synchronizedMap(objects) : objects;
+			}
+			if (nodes != null) {
+				for (final QuadNode n : nodes) {
+					n.synchronizeChanged();
+				}
+			}
+		}
+
 		public void dispose() {
 			objects.clear();
+			objects = null;
 			if (nodes != null) {
 				for (final QuadNode n : nodes) {
 					n.dispose();
