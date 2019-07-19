@@ -389,7 +389,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 
 	@getter ("keys")
 	default IList<K> getKeys() {
-		return GamaListFactory.<K> wrap(getGamlType().getKeyType(), keySet());
+		// See issue #2792. key can be used to modify the map...
+		return GamaListFactory.<K> createWithoutCasting(getGamlType().getKeyType(), keySet());
 	}
 
 	@getter ("values")
