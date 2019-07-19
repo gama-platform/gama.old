@@ -84,6 +84,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
@@ -769,6 +770,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			}
 
+		} catch (final IOException io) {
+			// Could catch the exception when multiple threads try to access the file
+			// See Issue #2796. But it'd be a bad idea.
+			// DEBUG.OUT("Ignoring IOException");
+			throw GamaRuntimeFileException.create(io, scope);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {
