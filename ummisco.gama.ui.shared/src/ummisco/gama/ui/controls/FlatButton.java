@@ -125,7 +125,9 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public void doButtonDown() {
 		if (!enabled) { return; }
 		down = true;
-		redraw();
+		if (!isDisposed()) {
+			redraw();
+		}
 	}
 
 	private void doButtonUp() {
@@ -136,12 +138,16 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		e.type = SWT.Selection;
 		notifyListeners(SWT.Selection, e);
 		down = false;
-		redraw();
+		if (!isDisposed()) {
+			redraw();
+		}
 	}
 
 	private void doHover(final boolean hover) {
 		hovered = hover;
-		redraw();
+		if (!isDisposed()) {
+			redraw();
+		}
 	}
 
 	private void drawBackground(final GC gc, final Rectangle rect) {
