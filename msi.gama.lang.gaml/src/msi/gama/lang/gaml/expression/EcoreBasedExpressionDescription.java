@@ -1,11 +1,10 @@
 /*********************************************************************************************
  *
- * 'EcoreBasedExpressionDescription.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'EcoreBasedExpressionDescription.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.expression;
@@ -52,9 +51,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 	@Override
 	public Collection<String> getStrings(final IDescription context, final boolean skills) {
-		if (target == null) {
-			return Collections.EMPTY_SET;
-		}
+		if (target == null) { return Collections.EMPTY_SET; }
 		if (!(target instanceof Array)) {
 			final String type = skills ? "skill" : "attribute";
 
@@ -77,7 +74,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 			}
 			return Collections.EMPTY_SET;
 		}
-		final ICollector<String> result = new Collector.UniqueOrdered<String>();
+		final ICollector<String> result = Collector.getUniqueOrdered();
 		final Array array = (Array) target;
 		for (final Expression expr : EGaml.getInstance().getExprsOf(array.getExprs())) {
 			final String type = skills ? "skill" : "attribute";
@@ -89,7 +86,9 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				result.add(name);
 			}
 		}
-		return result.items();
+		final Collection<String> rr = result.items();
+		Collector.release(result);
+		return rr;
 	}
 
 }

@@ -12,9 +12,9 @@ import ummisco.gama.dev.utils.DEBUG;
 public class PoolUtils {
 
 	static Set<ObjectPool> POOLS = new LinkedHashSet<>();
-	static boolean POOL = false;
+	static boolean POOL = true;
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 		// GamaPreferences.External.USE_POOLING.onChange(v -> {
 		// POOLS.forEach((p) -> p.dispose());
 		// POOL = v;

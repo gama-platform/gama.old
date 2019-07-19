@@ -39,7 +39,6 @@ public class Arguments extends Facets {
 	public Arguments cleanCopy() {
 		final Arguments result = new Arguments(this);
 		result.transformValues(cleanCopy);
-		result.compact();
 		return result;
 	}
 
@@ -53,7 +52,7 @@ public class Arguments extends Facets {
 
 	@Override
 	public void dispose() {
-		clear();
+		super.dispose();
 		caller.set(null);
 	}
 

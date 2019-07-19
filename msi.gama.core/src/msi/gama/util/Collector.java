@@ -24,6 +24,8 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Sets;
 
+import msi.gama.common.util.PoolUtils;
+
 /**
  * A generic class that forwards additions to a set and prevents creating the set if no additions occur
  *
@@ -33,6 +35,40 @@ import com.google.common.collect.Sets;
  */
 
 public abstract class Collector<E, C extends Collection<E>> implements ICollector<E>, Collection<E> {
+
+	private static final PoolUtils.ObjectPool<ICollector<?>> ORDERED =
+			PoolUtils.create("Ordered Collectors", true, () -> new Collector.Ordered<>(), c -> c.clear());
+
+	private static final PoolUtils.ObjectPool<ICollector<?>> UNIQUE =
+			PoolUtils.create("Unique Collectors", true, () -> new Collector.Unique<>(), c -> c.clear());
+
+	private static final PoolUtils.ObjectPool<ICollector<?>> UNIQUE_ORDERED =
+			PoolUtils.create("Unique Ordered Collectors", true, () -> new Collector.UniqueOrdered<>(), c -> c.clear());
+
+	@SuppressWarnings ("unchecked")
+	public static final <T> Collector.Ordered<T> getOrdered() {
+		return (Ordered<T>) ORDERED.get();
+	}
+
+	@SuppressWarnings ("unchecked")
+	public static final <T> Collector.Unique<T> getUnique() {
+		return (Unique<T>) UNIQUE.get();
+	}
+
+	@SuppressWarnings ("unchecked")
+	public static final <T> Collector.UniqueOrdered<T> getUniqueOrdered() {
+		return (UniqueOrdered<T>) UNIQUE_ORDERED.get();
+	}
+
+	public static final <T> void release(final ICollector<T> coll) {
+		if (coll instanceof Ordered) {
+			ORDERED.release(coll);
+		} else if (coll instanceof UniqueOrdered) {
+			UNIQUE_ORDERED.release(coll);
+		} else if (coll instanceof Unique) {
+			UNIQUE.release(coll);
+		}
+	}
 
 	@Override
 	public boolean removeIf(final Predicate<? super E> filter) {
@@ -59,6 +95,8 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 	}
 
 	public static class Unique<E> extends Collector<E, Set<E>> {
+
+		protected Unique() {}
 
 		public static class Concurrent<E> extends Unique<E> {
 			@Override
@@ -96,6 +134,8 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	public static class Ordered<E> extends Collector<E, List<E>> {
 
+		protected Ordered() {}
+
 		@Override
 		protected void initCollect() {
 			if (collect == null) {
@@ -107,9 +147,18 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		public List<E> items() {
 			return collect == null ? Collections.EMPTY_LIST : collect;
 		}
+
+		public void setSize(final int size) {
+			if (size > 0 && collect == null) {
+				collect = new ArrayList<>(size);
+			}
+
+		}
 	}
 
 	public static class UniqueOrdered<E> extends Unique<E> {
+
+		protected UniqueOrdered() {}
 
 		@Override
 		protected void initCollect() {

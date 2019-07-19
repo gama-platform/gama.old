@@ -258,10 +258,10 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	public void compact() {
 		if (facets == null) { return; }
 		if (facets.isEmpty()) {
+			facets.dispose();
 			facets = null;
 			return;
 		}
-		facets.compact();
 	}
 
 	/*

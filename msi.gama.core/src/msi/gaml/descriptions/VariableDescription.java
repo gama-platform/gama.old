@@ -210,7 +210,7 @@ public class VariableDescription extends SymbolDescription {
 	public Collection<VariableDescription> getDependencies(final Set<String> facetsToVisit, final boolean includingThis,
 			final boolean includingSpecies) {
 
-		final ICollector<VariableDescription> result = new Collector.Unique<>();
+		final ICollector<VariableDescription> result = Collector.getUnique();
 		final Collection<String> deps = dependencies.get(getName());
 		if (deps != null) {
 			for (final String s : deps) {
@@ -240,7 +240,9 @@ public class VariableDescription extends SymbolDescription {
 			result.removeIf(v -> v.isSyntheticSpeciesContainer());
 		}
 		result.remove(null);
-		return result.items();
+		final Collection<VariableDescription> r = result.items();
+		Collector.release(result);
+		return r;
 	}
 
 	public boolean isUpdatable() {

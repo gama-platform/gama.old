@@ -24,7 +24,6 @@ import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.Collector;
-import msi.gama.util.ICollector;
 import msi.gaml.compilation.GamlCompilationError;
 import one.util.streamex.StreamEx;
 
@@ -33,7 +32,7 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	final static int MAX_SIZE = 1000;
 	public static final ValidationContext NULL = new ValidationContext(null, false, IDocManager.NULL);
 	final URI resourceURI;
-	final ICollector<GamlCompilationError> importedErrors = new Collector.Ordered<>();
+	final Collector.Ordered<GamlCompilationError> importedErrors = Collector.getOrdered();
 	private boolean noWarning, noInfo, hasSyntaxErrors, noExperiment;
 	private final IDocManager docDelegate;
 
@@ -104,7 +103,7 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	@Override
 	public void clear() {
 		super.clear();
-		importedErrors.clear();
+		Collector.release(importedErrors);
 		hasSyntaxErrors = false;
 	}
 

@@ -11,7 +11,7 @@
 package msi.gaml.statements;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import msi.gama.common.interfaces.BiConsumerWithPruning;
@@ -26,6 +26,7 @@ import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 27 ao�t 2010
@@ -34,13 +35,16 @@ import msi.gaml.types.Types;
  *
  */
 public class Facets implements IGamlable {
+	{
+		DEBUG.ON();
+	}
 
 	static Function<IExpressionDescription, IExpressionDescription> cleanCopy = value -> value.cleanCopy();
 
 	public static class Facet {
 
-		String key;
-		IExpressionDescription value;
+		public String key;
+		public IExpressionDescription value;
 
 		Facet(final String s, final IExpressionDescription e) {
 			key = s;
@@ -52,20 +56,6 @@ public class Facets implements IGamlable {
 			return key + " : " + value;
 		}
 
-		public String getKey() {
-			return key;
-		}
-
-		public IExpressionDescription getValue() {
-			return value;
-		}
-
-		public IExpressionDescription setValue(final IExpressionDescription value) {
-			final IExpressionDescription old = this.value;
-			this.value = value;
-			return old;
-		}
-
 		public Facet cleanCopy() {
 			return new Facet(key, value.cleanCopy());
 		}
@@ -73,12 +63,19 @@ public class Facets implements IGamlable {
 
 	public static final Facets NULL = new Facets();
 
-	final Collector<Facet, List<Facet>> facets = new Collector.Ordered<>();
+	Collector.Ordered<Facet> facets;
 
-	public Facets() {}
+	public Facets() {
+		this(0);
+	}
+
+	protected Facets(final int size) {
+		facets = Collector.getOrdered();
+		facets.setSize(size);
+	}
 
 	public Facets(final String... strings) {
-		this();
+		this(strings == null ? 0 : strings.length % 2);
 		if (strings != null) {
 			int index = strings.length % 2 != 0 ? 1 : 0;
 			for (; index < strings.length; index += 2) {
@@ -88,8 +85,10 @@ public class Facets implements IGamlable {
 	}
 
 	public Facets(final Facets other) {
-		this();
-		this.facets.addAll(other.facets);
+		this(other == null ? 0 : other.size());
+		if (other != null) {
+			this.facets.addAll(other.facets);
+		}
 	}
 
 	@Override
@@ -98,10 +97,7 @@ public class Facets implements IGamlable {
 	}
 
 	public boolean containsKey(final String key) {
-		for (final Facet f : facets) {
-			if (f.key.equals(key)) { return true; }
-		}
-		return false;
+		return getFacet(key) != null;
 	}
 
 	/**
@@ -122,7 +118,6 @@ public class Facets implements IGamlable {
 		for (final Facet f : newFacets.facets) {
 			putIfAbsent(f.key, f.value);
 		}
-
 	}
 
 	public void remove(final String key) {
@@ -138,10 +133,9 @@ public class Facets implements IGamlable {
 	}
 
 	public IExpressionDescription getDescr(final String... keys) {
-		for (final Facet f : facets) {
-			for (final String key : keys) {
-				if (f.key.equals(key)) { return f.value; }
-			}
+		for (final String key : keys) {
+			final IExpressionDescription result = get(key);
+			if (result != null) { return result; }
 		}
 		return null;
 
@@ -171,17 +165,17 @@ public class Facets implements IGamlable {
 		return f.getExpression();
 	}
 
-	public IExpressionDescription putAsLabel(final String key, final String desc) {
-		return put(key, LabelExpressionDescription.create(desc));
+	public void putAsLabel(final String key, final String desc) {
+		put(key, LabelExpressionDescription.create(desc));
 	}
 
-	public IExpressionDescription put(final String key, final IExpression expr) {
+	public void put(final String key, final IExpression expr) {
 		final IExpressionDescription result = get(key);
 		if (result != null) {
 			result.setExpression(expr);
-			return result;
+		} else {
+			add(key, new BasicExpressionDescription(expr));
 		}
-		return add(key, new BasicExpressionDescription(expr));
 	}
 
 	/**
@@ -197,12 +191,13 @@ public class Facets implements IGamlable {
 		return expr;
 	}
 
-	public IExpressionDescription put(final String key, final IExpressionDescription expr) {
-		final IExpressionDescription existing = get(key);
+	public void put(final String key, final IExpressionDescription expr) {
+		final Facet existing = getFacet(key);
 		if (existing != null) {
-			remove(key);
+			existing.value = expr;
+		} else {
+			add(key, expr);
 		}
-		return add(key, expr);
 
 	}
 
@@ -219,7 +214,7 @@ public class Facets implements IGamlable {
 	 * @return
 	 */
 	public Facets cleanCopy() {
-		final Facets result = new Facets();
+		final Facets result = new Facets(size());
 		for (final Facet f : facets) {
 			result.facets.add(f.cleanCopy());
 		}
@@ -235,14 +230,24 @@ public class Facets implements IGamlable {
 				facet.value.dispose();
 			}
 		}
-		clear();
+		Collector.release(facets);
+		facets = null;
 	}
-
-	public void compact() {}
 
 	public boolean forEachFacet(final BiConsumerWithPruning<String, IExpressionDescription> visitor) {
 		for (final Facet f : facets) {
 			if (!visitor.process(f.key, f.value)) { return false; }
+		}
+		return true;
+	}
+
+	public boolean forEachFacetIn(final Set<String> names,
+			final BiConsumerWithPruning<String, IExpressionDescription> visitor) {
+		if (names == null) { return forEachFacet(visitor); }
+		for (final Facet f : facets) {
+			if (names.contains(f.key)) {
+				if (!visitor.process(f.key, f.value)) { return false; }
+			}
 		}
 		return true;
 	}
@@ -290,4 +295,12 @@ public class Facets implements IGamlable {
 	public Collection<Facet> getFacets() {
 		return facets;
 	}
+
+	protected Facet getFacet(final String key) {
+		for (final Facet f : facets) {
+			if (f.key.equals(key)) { return f; }
+		}
+		return null;
+	}
+
 }

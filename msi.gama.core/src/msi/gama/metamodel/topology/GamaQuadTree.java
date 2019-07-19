@@ -46,8 +46,8 @@ import msi.gaml.operators.Maths;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaQuadTree implements ISpatialIndex {
 
-	private final PoolUtils.ObjectPool<Envelope3D> envelopePool =
-			PoolUtils.create("Envelope 3D in Quad Tree", false, () -> new Envelope3D(), null);
+	private final static PoolUtils.ObjectPool<Envelope3D> ENVELOPES =
+			PoolUtils.create("Envelope 3D in Quad Tree", true, () -> new Envelope3D(), null);
 
 	public static final int NW = 0;
 	public static final int NE = 1;
@@ -109,12 +109,14 @@ public class GamaQuadTree implements ISpatialIndex {
 			final IAgentFilter filter) {
 		// Adresses Issue 722 by explicitly shuffling the results with GAMA
 		// random procedures and removing duplicates
-		final ICollector<IAgent> list = new Collector.UniqueOrdered<>();
+		final ICollector<IAgent> list = Collector.getUniqueOrdered();
 		root.findIntersects(r, list);
 		if (list.isEmpty()) { return Collections.EMPTY_LIST; }
 		filter.filter(scope, source, list);
 		scope.getRandom().shuffle2(list);
-		return list;
+		final Collection<IAgent> result = list.items();
+		Collector.release(list);
+		return result;
 	}
 
 	@Override
@@ -122,7 +124,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			final IAgentFilter f) {
 		// TODO filter result by topology's bounds
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = envelopePool.get();
+		final Envelope3D env = ENVELOPES.get();
 		env.init(source.getEnvelope());
 		env.expandBy(exp);
 		try {
@@ -131,7 +133,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			result.removeIf(each -> source.euclidianDistanceTo(each) > dist);
 			return result;
 		} finally {
-			envelopePool.release(env);
+			ENVELOPES.release(env);
 		}
 	}
 
@@ -139,7 +141,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
 			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = envelopePool.get();
+		final Envelope3D env = ENVELOPES.get();
 		env.init(source.getEnvelope());
 		env.expandBy(exp);
 		try {
@@ -151,14 +153,14 @@ public class GamaQuadTree implements ISpatialIndex {
 			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
 			return ordering.leastOf(in_square, number);
 		} finally {
-			envelopePool.release(env);
+			ENVELOPES.release(env);
 		}
 	}
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = envelopePool.get();
+		final Envelope3D env = ENVELOPES.get();
 		env.init(source.getEnvelope());
 		env.expandBy(exp);
 		try {
@@ -175,7 +177,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 			return min_agent;
 		} finally {
-			envelopePool.release(env);
+			ENVELOPES.release(env);
 		}
 	}
 

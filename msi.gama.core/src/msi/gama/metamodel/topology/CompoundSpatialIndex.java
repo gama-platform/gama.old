@@ -238,11 +238,13 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public Collection<IAgent> allAgents() {
-		final ICollector<IAgent> set = new Collector.UniqueOrdered<>();
+		final ICollector<IAgent> set = Collector.getUniqueOrdered();
 		for (final ISpatialIndex i : getAllSpatialIndexes()) {
 			set.addAll(i.allAgents());
 		}
-		return set;
+		final Collection<IAgent> result = set.items();
+		Collector.release(set);
+		return result;
 	}
 
 	public Collection<ISpatialIndex> getAllSpatialIndexes() {

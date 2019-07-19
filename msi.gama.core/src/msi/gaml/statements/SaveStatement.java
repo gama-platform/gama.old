@@ -36,10 +36,11 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.referencing.CRS;
+import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
@@ -318,6 +319,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		String path = "";
 		if (file == null) { return null; }
 		path = FileUtils.constructAbsoluteFilePath(scope, Cast.asString(scope, file.value(scope)), false);
+
 		if (path.equals("")) { return null; }
 		final File fileToSave = new File(path);
 		try {
@@ -488,6 +490,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			path += ".png";
 		}
 		final File f = new File(path);
+
 		if (f.exists()) {
 			f.delete();
 		}
@@ -553,7 +556,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
 			try {
-				final GeoTiffWriter writer = new GeoTiffWriter(f);
+
+				final GeoTiffFormat format = new GeoTiffFormat();
+				final GridCoverageWriter writer = format.getWriter(f);
 				writer.write(coverage, null);
 				/*
 				 * final WorldImageWriter writer = new WorldImageWriter(f); writer.write(coverage, null);

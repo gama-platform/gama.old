@@ -17,6 +17,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.util.PoolUtils;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -172,6 +173,7 @@ public class GAMA {
 			closeController(controller);
 		}
 		getGui().closeSimulationViews(null, andOpenModelingPerspective, immediately);
+		PoolUtils.WriteStats();
 
 	}
 

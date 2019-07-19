@@ -95,7 +95,7 @@ public class ModelAssembler {
 			if (currentModel != null) {
 				if (currentModel.hasFacets()) {
 					if (globalFacets == null) {
-						globalFacets = new Facets(currentModel.copyFacets(null));
+						globalFacets = currentModel.copyFacets(null);
 					} else {
 						globalFacets.putAll(currentModel.copyFacets(null));
 					}

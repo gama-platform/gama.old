@@ -20,7 +20,6 @@ import com.google.common.collect.Iterables;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
-import msi.gama.util.ICollector;
 import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
@@ -31,7 +30,7 @@ import msi.gaml.types.IType;
 public class StatementWithChildrenDescription extends StatementDescription {
 
 	protected IMap<String, IVarExpression> temps;
-	protected final ICollector<IDescription> children = new Collector.Ordered<>();
+	protected final Collector.Ordered<IDescription> children = Collector.getOrdered();
 
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
@@ -74,7 +73,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public void dispose() {
 		super.dispose();
-		children.clear();
+		Collector.release(children);
 		if (temps != null) {
 			temps.forEachValue(object -> {
 				object.dispose();

@@ -124,25 +124,25 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			// A null value indicates a previous compilation error in the
 			// arguments
 			if (arg != null) {
-				final String the_name = arg.getKey();
+				final String the_name = arg.key;
 				if (!allArgs.contains(the_name)) {
 					caller.error("Unknown argument " + the_name + " in call to " + getName(),
-							IGamlIssue.UNKNOWN_ARGUMENT, arg.getValue().getTarget(), arg.getKey());
+							IGamlIssue.UNKNOWN_ARGUMENT, arg.value.getTarget(), arg.key);
 					return false;
-				} else if (arg.getValue() != null && arg.getValue().getExpression() != null) {
+				} else if (arg.value != null && arg.value.getExpression() != null) {
 					final IDescription formalArg =
 							Iterables.find(formalArgs, input -> input.getName().equals(the_name));
 					final IType<?> formalType = formalArg.getGamlType();
-					final IType<?> callerType = arg.getValue().getExpression().getGamlType();
+					final IType<?> callerType = arg.value.getExpression().getGamlType();
 					if (Types.intFloatCase(formalType, callerType)) {
 						caller.warning("The argument " + the_name + " (of type " + callerType + ") will be casted to "
-								+ formalType, IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
+								+ formalType, IGamlIssue.WRONG_TYPE, arg.value.getTarget());
 					} else {
 						boolean accepted = formalType == Types.NO_TYPE || callerType.isTranslatableInto(formalType);
 						accepted = accepted || callerType == Types.NO_TYPE && formalType.getDefault() == null;
 						if (!accepted) {
 							caller.error("The type of argument " + the_name + " should be " + formalType,
-									IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());
+									IGamlIssue.WRONG_TYPE, arg.value.getTarget());
 							return false;
 						}
 					}

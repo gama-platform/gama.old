@@ -154,14 +154,7 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public final boolean visitFacets(final Set<String> names, final IFacetVisitor visitor) {
 		if (!hasFacets()) { return true; }
-		if (names == null) { return facets.forEachFacet(visitor); }
-		for (final String s : names) {
-			final IExpressionDescription exp = facets.get(s);
-			if (exp != null) {
-				if (!visitor.process(s, exp)) { return false; }
-			}
-		}
-		return true;
+		return facets.forEachFacetIn(names, visitor);
 	}
 
 	public IType<?> getTypeDenotedByFacet(final String... s) {

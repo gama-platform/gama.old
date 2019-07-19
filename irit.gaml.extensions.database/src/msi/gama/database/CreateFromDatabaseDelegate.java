@@ -83,7 +83,7 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 		if (init == null) { return; }
 		for (final Facet f : init.getFacets()) {
 			if (f != null) {
-				final IExpression valueExpr = f.getValue().getExpression();
+				final IExpression valueExpr = f.value.getExpression();
 				// get parameter
 				final String columnName = valueExpr.value(scope).toString().toUpperCase();
 				// get column number of parameter
@@ -95,9 +95,9 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 				}
 				if (((String) colTypes.get(val)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE)) {
 					final Geometry geom = (Geometry) rowList.get(val);
-					values.put(f.getKey(), new GamaShape(geom));
+					values.put(f.key, new GamaShape(geom));
 				} else {
-					values.put(f.getKey(), rowList.get(val));
+					values.put(f.key, rowList.get(val));
 				}
 
 			}
