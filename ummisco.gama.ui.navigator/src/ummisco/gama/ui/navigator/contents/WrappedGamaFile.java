@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
@@ -19,6 +20,7 @@ import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.descriptions.IExpressionDescription;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaIcons;
 
@@ -114,7 +116,12 @@ public class WrappedGamaFile extends WrappedFile {
 				if (!GamlFileExtension.isExperiment(path)) {
 					l.add(new WrappedModelContent(this, element));
 				}
-				element.visitExperiments(exp -> l.add(new WrappedExperimentContent(this, exp)));
+				element.visitExperiments(exp -> {
+					final IExpressionDescription d = exp.getExpressionAt(IKeyword.VIRTUAL);
+					if (d == null || !d.equalsString("true")) {
+						l.add(new WrappedExperimentContent(this, exp));
+					}
+				});
 			}
 			if (!info.getImports().isEmpty()) {
 				final Category wf = new Category(this, info.getImports(), "Imports");
