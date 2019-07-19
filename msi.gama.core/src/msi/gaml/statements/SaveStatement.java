@@ -319,6 +319,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (file == null) { return null; }
 		path = FileUtils.constructAbsoluteFilePath(scope, Cast.asString(scope, file.value(scope)), false);
 		if (path.equals("")) { return null; }
+		final File fileToSave = new File(path);
+		try {
+			createParents(fileToSave);
+		} catch (final Exception e) {
+			throw GamaRuntimeException.create(e, scope);
+		}
 		String type = "text";
 		if (typeExp != null) {
 			type = typeExp;
