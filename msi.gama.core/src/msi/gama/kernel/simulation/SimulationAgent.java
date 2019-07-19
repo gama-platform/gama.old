@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -388,8 +390,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		if (geom == null) {
 			geom = GamaGeometryType.buildBox(100, 100, 100, new GamaPoint(50, 50, 50));
 		} else {
-			// See Issue #2787
+			// See Issue #2787, #2795
+			final Geometry gg = geom.getInnerGeometry();
+			Object savedData = null;
+			if (gg != null) {
+				savedData = gg.getUserData();
+			}
 			geom.setInnerGeometry(geom.getEnvelope().toGeometry());
+			geom.getInnerGeometry().setUserData(savedData);
 		}
 
 		final Envelope3D env = geom.getEnvelope();
