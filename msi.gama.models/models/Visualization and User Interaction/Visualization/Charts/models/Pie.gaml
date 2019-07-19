@@ -15,6 +15,8 @@ experiment "Different Pies" type: gui
 {
 	output
 	{
+		layout #split parameters: false navigator: false editors: false consoles: false ;	
+		
 		display "data_pie_chart" type: java2D synchronized: true
 		{
 			chart "Nice Ring Pie Chart" type: pie style: ring background: # darkblue color: # lightgreen axes: # yellow title_font: 'Serif' title_font_size: 32.0 title_font_style: 'italic'

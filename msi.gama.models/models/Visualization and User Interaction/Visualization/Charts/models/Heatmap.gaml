@@ -58,6 +58,8 @@ experiment "Different heatmaps" type: gui
 {
 	output
 	{
+		layout #split parameters: false navigator: false editors: false consoles: false toolbars: false tray: false tabs: false;	
+		
 		display "NIce Heatmap" type: java2D synchronized: true
 		{
 			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style: 'italic' tick_font:
