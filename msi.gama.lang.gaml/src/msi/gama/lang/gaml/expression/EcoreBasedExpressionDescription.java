@@ -74,21 +74,20 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 			}
 			return Collections.EMPTY_SET;
 		}
-		final ICollector<String> result = Collector.getUniqueOrdered();
-		final Array array = (Array) target;
-		for (final Expression expr : EGaml.getInstance().getExprsOf(array.getExprs())) {
-			final String type = skills ? "skill" : "attribute";
+		try (final ICollector<String> result = Collector.getUniqueOrdered()) {
+			final Array array = (Array) target;
+			for (final Expression expr : EGaml.getInstance().getExprsOf(array.getExprs())) {
+				final String type = skills ? "skill" : "attribute";
 
-			final String name = EGaml.getInstance().getKeyOf(expr);
-			if (skills && !GamaSkillRegistry.INSTANCE.hasSkill(name)) {
-				context.error("Unknown " + type + " " + name, IGamlIssue.UNKNOWN_SKILL, expr);
-			} else {
-				result.add(name);
+				final String name = EGaml.getInstance().getKeyOf(expr);
+				if (skills && !GamaSkillRegistry.INSTANCE.hasSkill(name)) {
+					context.error("Unknown " + type + " " + name, IGamlIssue.UNKNOWN_SKILL, expr);
+				} else {
+					result.add(name);
+				}
 			}
+			return result.items();
 		}
-		final Collection<String> rr = result.items();
-		Collector.release(result);
-		return rr;
 	}
 
 }

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,7 +154,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
 		// TODO -- Verify : dist not taken into account here. Normal ?
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
-		if (id != null) { return firstAtDistance(scope, source, f, id, number, alreadyChosen); }
+		if (id != null && id != rootIndex) { return firstAtDistance(scope, source, f, id, number, alreadyChosen); }
 		return firstAtDistance(scope, source, f, number, alreadyChosen);
 	}
 
@@ -163,7 +162,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// TODO -- Verify : dist not taken into account here. Normal ?
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
-		if (id != null) { return firstAtDistance(scope, source, f, id); }
+		if (id != null && id != rootIndex) { return firstAtDistance(scope, source, f, id); }
 		return firstAtDistance(scope, source, f);
 	}
 
@@ -173,11 +172,12 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) { return Collections.EMPTY_LIST; }
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
 		if (id == rootIndex) {
-			final Set<IAgent> agents = new HashSet<>();
-			for (final ISpatialIndex si : getAllSpatialIndexes()) {
-				agents.addAll(si.allAtDistance(scope, source, dist, f));
+			try (final ICollector<IAgent> agents = Collector.getUnique()) {
+				for (final ISpatialIndex si : getAllSpatialIndexes()) {
+					agents.addAll(si.allAtDistance(scope, source, dist, f));
+				}
+				return agents.items();
 			}
-			return agents;
 		}
 		return id.allAtDistance(scope, source, dist, f);
 	}
@@ -188,11 +188,12 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) { return Collections.EMPTY_LIST; }
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
 		if (id == rootIndex) {
-			final Set<IAgent> agents = new HashSet<>();
-			for (final ISpatialIndex si : getAllSpatialIndexes()) {
-				agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
+			try (final ICollector<IAgent> agents = Collector.getUnique()) {
+				for (final ISpatialIndex si : getAllSpatialIndexes()) {
+					agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
+				}
+				return agents.items();
 			}
-			return agents;
 		}
 		return id.allInEnvelope(scope, source, envelope, f, contained);
 	}
@@ -238,13 +239,12 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public Collection<IAgent> allAgents() {
-		final ICollector<IAgent> set = Collector.getUniqueOrdered();
-		for (final ISpatialIndex i : getAllSpatialIndexes()) {
-			set.addAll(i.allAgents());
+		try (final ICollector<IAgent> set = Collector.getUniqueOrdered()) {
+			for (final ISpatialIndex i : getAllSpatialIndexes()) {
+				set.addAll(i.allAgents());
+			}
+			return set.items();
 		}
-		final Collection<IAgent> result = set.items();
-		Collector.release(set);
-		return result;
 	}
 
 	public Collection<ISpatialIndex> getAllSpatialIndexes() {

@@ -45,6 +45,7 @@ global {
 	}
 	
 	action cell_management {
+		write agents;
 		switch action_type {
 			match 0 {
 				create datapoints with:(location : #user_location);
@@ -59,12 +60,13 @@ global {
 		
 				
 			match 2 {
-				list<agent> close_ag <- agents overlapping (circle(5) at_location #user_location);
+				list<agent> close_ag <- (datapoints+centroids) overlapping (circle(5) at_location #user_location);
 				if not empty(close_ag) {
 					ask close_ag closest_to #user_location {
-						if (species(self) = datapoints ) {
-							ask datapoints(self).mycenter {
-								mypoints >> myself;
+						if (self is datapoints ) {
+							centroids c <- datapoints(self).mycenter;
+							if (c != nil) {
+								c.mypoints >> self;
 							}
 						} else {
 							ask centroids(self).mypoints {

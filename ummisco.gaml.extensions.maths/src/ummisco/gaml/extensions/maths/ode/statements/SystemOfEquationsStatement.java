@@ -11,6 +11,7 @@ package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -377,7 +378,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private Set<IAgent> getExternalAgents(final IScope scope) {
-		if (scope.getAgent() == null) { return new HashSet(); }
+		if (scope.getAgent() == null) { return Collections.EMPTY_SET; }
 		Set<IAgent> result = (Set<IAgent>) scope.getAgent().getAttribute("__externalAgents");
 		if (result == null) {
 			result = new HashSet();

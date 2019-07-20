@@ -115,14 +115,13 @@ public class GamaQuadTree implements ISpatialIndex {
 			final IAgentFilter filter) {
 		// Adresses Issue 722 by explicitly shuffling the results with GAMA
 		// random procedures and removing duplicates
-		final ICollector<IAgent> list = Collector.getUniqueOrdered();
-		root.findIntersects(r, list);
-		if (list.isEmpty()) { return Collections.EMPTY_LIST; }
-		filter.filter(scope, source, list);
-		scope.getRandom().shuffle2(list);
-		final Collection<IAgent> result = list.items();
-		Collector.release(list);
-		return result;
+		try (final ICollector<IAgent> list = Collector.getUniqueOrdered()) {
+			root.findIntersects(r, list);
+			if (list.isEmpty()) { return Collections.EMPTY_LIST; }
+			filter.filter(scope, source, list);
+			scope.getRandom().shuffle2(list);
+			return list.items();
+		}
 	}
 
 	@Override

@@ -210,39 +210,38 @@ public class VariableDescription extends SymbolDescription {
 	public Collection<VariableDescription> getDependencies(final Set<String> facetsToVisit, final boolean includingThis,
 			final boolean includingSpecies) {
 
-		final ICollector<VariableDescription> result = Collector.getUnique();
-		final Collection<String> deps = dependencies.get(getName());
-		if (deps != null) {
-			for (final String s : deps) {
-				final VariableDescription vd = getSpeciesContext().getAttribute(s);
-				if (vd != null) {
-					result.add(vd);
+		try (final ICollector<VariableDescription> result = Collector.getUnique()) {
+			final Collection<String> deps = dependencies.get(getName());
+			if (deps != null) {
+				for (final String s : deps) {
+					final VariableDescription vd = getSpeciesContext().getAttribute(s);
+					if (vd != null) {
+						result.add(vd);
+					}
 				}
 			}
-		}
 
-		this.visitFacets(facetsToVisit, (fName, exp) -> {
-			final IExpression expression = exp.getExpression();
-			if (expression != null) {
-				expression.collectUsedVarsOf(getSpeciesContext(), result);
+			this.visitFacets(facetsToVisit, (fName, exp) -> {
+				final IExpression expression = exp.getExpression();
+				if (expression != null) {
+					expression.collectUsedVarsOf(getSpeciesContext(), result);
+				}
+				return true;
+			});
+			if (isSyntheticSpeciesContainer()) {
+				final SpeciesDescription mySpecies = (SpeciesDescription) getEnclosingDescription();
+				final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
+				sd.collectUsedVarsOf(mySpecies, result);
 			}
-			return true;
-		});
-		if (isSyntheticSpeciesContainer()) {
-			final SpeciesDescription mySpecies = (SpeciesDescription) getEnclosingDescription();
-			final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
-			sd.collectUsedVarsOf(mySpecies, result);
+			if (!includingThis) {
+				result.remove(this);
+			}
+			if (!includingSpecies) {
+				result.removeIf(v -> v.isSyntheticSpeciesContainer());
+			}
+			result.remove(null);
+			return result.items();
 		}
-		if (!includingThis) {
-			result.remove(this);
-		}
-		if (!includingSpecies) {
-			result.removeIf(v -> v.isSyntheticSpeciesContainer());
-		}
-		result.remove(null);
-		final Collection<VariableDescription> r = result.items();
-		Collector.release(result);
-		return r;
 	}
 
 	public boolean isUpdatable() {
