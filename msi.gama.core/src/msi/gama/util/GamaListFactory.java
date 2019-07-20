@@ -332,6 +332,7 @@ public class GamaListFactory {
 	 * @return
 	 */
 	public static <E> IList<E> wrap(final IType contentType, final List<E> wrapped) {
+		// return createWithoutCasting(contentType, wrapped);
 		return new GamaListWrapper(wrapped, contentType);
 	}
 
@@ -345,6 +346,7 @@ public class GamaListFactory {
 	 * @return
 	 */
 	public static <E> IList<E> wrap(final IType contentType, final E... wrapped) {
+		// return createWithoutCasting(contentType, wrapped);
 		return new GamaListArrayWrapper(wrapped, contentType);
 	}
 
@@ -360,6 +362,7 @@ public class GamaListFactory {
 	 * @return
 	 */
 	public static <E> IList<E> wrap(final IType contentType, final Collection<E> wrapped) {
+		// return createWithoutCasting(contentType, wrapped);
 		return new GamaListCollectionWrapper(wrapped, contentType);
 	}
 

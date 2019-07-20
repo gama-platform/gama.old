@@ -882,7 +882,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	private void saveShortestPaths(final List<E> edges, final V source, final V target) {
 		V s = source;
 		final IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getGamlType().getContentType()));
-		spl.add(GamaListFactory.wrap(getGamlType().getContentType(), edges));
+		spl.add(GamaListFactory.createWithoutCasting(getGamlType().getContentType(), edges));
 		shortestPathComputed.put(new Pair<>(source, target), spl);
 		final List<E> edges2 = GamaListFactory.create(graphScope, getGamlType().getContentType(), edges);
 		for (int i = 0; i < edges.size(); i++) {
@@ -898,7 +898,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			final Pair<V, V> pp = new Pair<>(nwS, target);
 			if (!shortestPathComputed.containsKey(pp)) {
 				final IList<IList<E>> spl2 = GamaListFactory.create(getGamlType().getContentType());
-				spl2.add(GamaListFactory.wrap(getGamlType().getContentType(), edges2));
+				spl2.add(GamaListFactory.createWithoutCasting(getGamlType().getContentType(), edges2));
 				shortestPathComputed.put(pp, spl2);
 			}
 			s = nwS;
