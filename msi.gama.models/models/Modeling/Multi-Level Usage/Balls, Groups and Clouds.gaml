@@ -473,13 +473,13 @@ global {
 	
 	species group_agents_viewer  { 
 		aspect default {
-			draw ('Number of groups: ' + (string (length (world.agents of_generic_species group)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: #blue size: 40  ;
+			draw ('Number of groups: ' + (string (length (group)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: #blue size: 40  ;
 		}
 	}
 
 	species cloud_agents_viewer  { 
 		aspect default {
-			draw ('Number of clouds: ' + (string (length (list(cloud))))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: #green size: 40 ;
+			draw ('Number of clouds: ' + (string (length (cloud)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: #green size: 40 ;
 		}
 	} 
 
