@@ -33,7 +33,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -84,6 +83,7 @@ import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.ast.SyntacticFactory;
@@ -859,52 +859,54 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final boolean isMatrix = Types.MATRIX.isAssignableFrom(contType);
 		final IType keyType = contType.getKeyType();
 		final List<? extends Expression> list = EGaml.getInstance().getExprsOf(object.getRight());
-		final List<IExpression> result = new ArrayList<>();
-		final int size = list.size();
-		for (int i = 0; i < size; i++) {
-			final Expression eExpr = list.get(i);
-			final IExpression e = compile(eExpr);
-			if (e != null) {
-				final IType elementType = e.getGamlType();
-				if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(elementType)) {
-					if (!(isMatrix && elementType.id() == IType.INT)) {
-						getContext().warning("a " + contType.toString() + " should not be accessed using a "
-								+ elementType.toString() + " index", IGamlIssue.WRONG_TYPE, eExpr);
+		try (final Collector.AsList<IExpression> result = Collector.getList()) {
+			// final List<IExpression> result = new ArrayList<>();
+			final int size = list.size();
+			for (int i = 0; i < size; i++) {
+				final Expression eExpr = list.get(i);
+				final IExpression e = compile(eExpr);
+				if (e != null) {
+					final IType elementType = e.getGamlType();
+					if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(elementType)) {
+						if (!(isMatrix && elementType.id() == IType.INT)) {
+							getContext().warning("a " + contType.toString() + " should not be accessed using a "
+									+ elementType.toString() + " index", IGamlIssue.WRONG_TYPE, eExpr);
+						}
+						// if (!(isMatrix && elementType.id() == IType.INT && size > 1)) {
+						//
+						// }
 					}
-					// if (!(isMatrix && elementType.id() == IType.INT && size > 1)) {
-					//
-					// }
-				}
-				result.add(e);
-			}
-		}
-		if (size > 2) {
-			final String end = !isMatrix ? " only 1 index" : " 1 or 2 indices";
-			getContext().warning("a " + contType.toString() + " should be accessed using" + end,
-					IGamlIssue.DIFFERENT_ARGUMENTS, object);
-		}
-
-		final IExpression indices = getFactory().createList(result);
-
-		IVarExpression varDiff = null;
-		if (container instanceof IVarExpression.Agent && ((IVarExpression.Agent) container).getOwner() != null) {
-			varDiff = ((IVarExpression.Agent) container).getVar();
-
-			final SpeciesDescription species =
-					((IVarExpression.Agent) varDiff).getDefinitionDescription().getSpeciesContext();
-			if (species != null) {
-				final Iterable<IDescription> equations = species.getChildrenWithKeyword(IKeyword.EQUATION);
-				for (final IDescription equation : equations) {
-					if (equation.manipulatesVar(varDiff.getName())) {
-						return getFactory().createOperator("internal_integrated_value", getContext(), object,
-								((IVarExpression.Agent) container).getOwner(), varDiff);
-					}
-
+					result.add(e);
 				}
 			}
-		}
+			if (size > 2) {
+				final String end = !isMatrix ? " only 1 index" : " 1 or 2 indices";
+				getContext().warning("a " + contType.toString() + " should be accessed using" + end,
+						IGamlIssue.DIFFERENT_ARGUMENTS, object);
+			}
 
-		return getFactory().createOperator("internal_at", getContext(), object, container, indices);
+			final IExpression indices = getFactory().createList(result.items());
+
+			IVarExpression varDiff = null;
+			if (container instanceof IVarExpression.Agent && ((IVarExpression.Agent) container).getOwner() != null) {
+				varDiff = ((IVarExpression.Agent) container).getVar();
+
+				final SpeciesDescription species =
+						((IVarExpression.Agent) varDiff).getDefinitionDescription().getSpeciesContext();
+				if (species != null) {
+					final Iterable<IDescription> equations = species.getChildrenWithKeyword(IKeyword.EQUATION);
+					for (final IDescription equation : equations) {
+						if (equation.manipulatesVar(varDiff.getName())) {
+							return getFactory().createOperator("internal_integrated_value", getContext(), object,
+									((IVarExpression.Agent) container).getOwner(), varDiff);
+						}
+
+					}
+				}
+			}
+
+			return getFactory().createOperator("internal_at", getContext(), object, container, indices);
+		}
 	}
 
 	@Override
@@ -1221,10 +1223,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public List<IDescription> compileBlock(final String string, final IDescription actionContext,
 			final IExecutionContext tempContext) throws GamaRuntimeException {
-		final List<IDescription> result = new ArrayList<>();
 		final String s = "__synthetic__ {" + string + "}";
 		final GamlResource resource = GamlResourceServices.getTemporaryResource(getContext());
-		try {
+		try (final Collector.AsList<IDescription> result = Collector.getList()) {
 			final InputStream is = new ByteArrayInputStream(s.getBytes());
 			try {
 				resource.loadSynthetic(is, tempContext);
@@ -1250,7 +1251,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				final Resource.Diagnostic d = resource.getErrors().get(0);
 				throw GamaRuntimeException.error(d.getMessage(), tempContext.getScope());
 			}
-			return result;
+			return result.items();
 		} finally {
 			GamlResourceServices.discardTemporaryResource(resource);
 		}

@@ -1,22 +1,19 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaGisFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GamaGisFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -24,7 +21,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.geometry.GamaCoordinateSequenceFactory;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -33,14 +29,15 @@ import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gaml.types.GamaGeometryType;
 
 /**
  * Class GamaGisFile.
- * 
+ *
  * @author drogoul
  * @since 12 déc. 2013
- * 
+ *
  */
 public abstract class GamaGisFile extends GamaGeometryFile {
 
@@ -56,7 +53,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	/**
 	 * Returns the CRS defined with this file (in a ".prj" file or elsewhere)
-	 * 
+	 *
 	 * @return
 	 */
 	protected CoordinateReferenceSystem getExistingCRS(final IScope scope) {
@@ -93,41 +90,40 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected abstract CoordinateReferenceSystem getOwnCRS(IScope scope);
 
 	protected void computeProjection(final IScope scope, final Envelope3D env) {
-		if (scope == null ) { return; }
+		if (scope == null) { return; }
 		final CoordinateReferenceSystem crs = getExistingCRS(scope);
-		final ProjectionFactory pf = scope.getSimulation() == null ?  new ProjectionFactory() : scope.getSimulation().getProjectionFactory();
+		final ProjectionFactory pf =
+				scope.getSimulation() == null ? new ProjectionFactory() : scope.getSimulation().getProjectionFactory();
 		gis = pf.fromCRS(scope, crs, env);
 	}
 
-	protected Geometry multiPolygonManagement(Geometry geom) {
+	protected Geometry multiPolygonManagement(final Geometry geom) {
 		if (geom instanceof MultiPolygon) {
-				Polygon gs[] = new Polygon[geom.getNumGeometries()];
-				for (int i = 0; i < geom.getNumGeometries(); i++ ) {
-					Polygon p = (Polygon) geom.getGeometryN(i);
-					ICoordinates coords = GeometryUtils.getContourCoordinates(p);
-					LinearRing lr = GEOMETRY_FACTORY.createLinearRing(coords.toCoordinateArray());
-				
-					List<LinearRing> holes = new ArrayList<>();
+			final Polygon gs[] = new Polygon[geom.getNumGeometries()];
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				final Polygon p = (Polygon) geom.getGeometryN(i);
+				final ICoordinates coords = GeometryUtils.getContourCoordinates(p);
+				final LinearRing lr = GEOMETRY_FACTORY.createLinearRing(coords.toCoordinateArray());
+				try (final Collector.AsList<LinearRing> holes = Collector.getList()) {
 					for (int j = 0; j < p.getNumInteriorRing(); j++) {
-						LinearRing h = (LinearRing) p.getInteriorRingN(j);
-						if (!hasNullElements(h.getCoordinates()))
+						final LinearRing h = (LinearRing) p.getInteriorRingN(j);
+						if (!hasNullElements(h.getCoordinates())) {
 							holes.add(h);
-					}	
+						}
+					}
 					LinearRing[] stockArr = new LinearRing[holes.size()];
-					stockArr = holes.toArray(stockArr);
-
+					stockArr = holes.items().toArray(stockArr);
 					gs[i] = GEOMETRY_FACTORY.createPolygon(lr, stockArr);
 				}
-				return GEOMETRY_FACTORY.createMultiPolygon(gs);
+			}
+			return GEOMETRY_FACTORY.createMultiPolygon(gs);
 		}
 		return geom;
 	}
-	
-	protected static boolean hasNullElements(Object[] array) {
-		for (int i = 0; i < array.length; i++) {
-			if (array[i] == null) {
-				return true;
-			}
+
+	protected static boolean hasNullElements(final Object[] array) {
+		for (final Object element : array) {
+			if (element == null) { return true; }
 		}
 		return false;
 	}

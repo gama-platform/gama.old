@@ -4,12 +4,11 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.scoping;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -28,9 +27,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
+import msi.gama.util.Collector;
+
 /**
  * This class contains custom scoping description.
- * 
+ *
  * see : http://www.eclipse.org/Xtext/documentation/latest/xtext.html#scoping on how and when to use it
  *
  */
@@ -95,19 +96,17 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 
 	@Override
 	protected ISelectable getAllDescriptions(final Resource resource) {
-		List<IEObjectDescription> descriptions = null;
-		final Iterator<EObject> iterator = resource.getAllContents();
-		while (iterator.hasNext()) {
-			final EObject from = iterator.next();
-			final QualifiedName qualifiedName = getNameProvider().apply(from);
-			if (qualifiedName != null) {
-				if (descriptions == null) {
-					descriptions = new ArrayList<>();
+		try (final Collector.AsList<IEObjectDescription> descriptions = Collector.getList()) {
+			final Iterator<EObject> iterator = resource.getAllContents();
+			while (iterator.hasNext()) {
+				final EObject from = iterator.next();
+				final QualifiedName qualifiedName = getNameProvider().apply(from);
+				if (qualifiedName != null) {
+					descriptions.add(new EObjectDescription(qualifiedName, from, null));
 				}
-				descriptions.add(new EObjectDescription(qualifiedName, from, null));
 			}
+			return new MultimapBasedSelectable(descriptions.items());
 		}
-		return new MultimapBasedSelectable(descriptions);
 
 	}
 }

@@ -25,6 +25,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
@@ -104,11 +105,12 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
-		final List<java.lang.Iterable<? extends IAgent>> result = new ArrayList<>();
-		for (final IPopulationSet p : populationSets) {
-			result.add(p.iterable(scope));
+		try (final Collector.AsList<java.lang.Iterable<? extends IAgent>> result = Collector.getList()) {
+			for (final IPopulationSet p : populationSets) {
+				result.add(p.iterable(scope));
+			}
+			return GamaListFactory.create(scope, Types.AGENT, Iterables.concat(result.items()));
 		}
-		return GamaListFactory.create(scope, Types.AGENT, Iterables.concat(result));
 	}
 
 	/**
@@ -348,11 +350,12 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public java.lang.Iterable<? extends IAgent> iterable(final IScope scope) {
-		final List<java.lang.Iterable<? extends IAgent>> result = new ArrayList<>();
-		for (final IPopulationSet p : populationSets) {
-			result.add(p.iterable(scope));
+		try (final Collector.AsList<java.lang.Iterable<? extends IAgent>> result = Collector.getList()) {
+			for (final IPopulationSet p : populationSets) {
+				result.add(p.iterable(scope));
+			}
+			return Iterables.concat(result.items());
 		}
-		return Iterables.concat(result);
 	}
 
 	/**
