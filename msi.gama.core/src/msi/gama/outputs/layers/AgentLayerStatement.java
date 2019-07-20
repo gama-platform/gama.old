@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.AgentLayerStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.AgentLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -148,7 +148,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -156,6 +156,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 			// Should be broken down in subclasses
 			IExpressionDescription ed = description.getFacet(VALUE);
 			SpeciesDescription target = null;
+			if (ed == null || ed.getExpression() == null) { return; }
 			target = ed.getExpression().getGamlType().getContentType().getSpecies();
 			if (target == null) {
 				// Already caught by the type checking

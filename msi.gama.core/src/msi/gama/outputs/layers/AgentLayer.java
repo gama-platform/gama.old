@@ -65,7 +65,8 @@ public class AgentLayer extends AbstractLayer {
 		fillShapes(scope);
 		final String aspectName = ((AgentLayerStatement) definition).getAspectName();
 
-		shapes.forEachKey((a) -> {
+		shapes.entrySet().forEach((entry) -> {
+			final IAgent a = entry.getKey();
 			IExecutable aspect = null;
 			if (a != null) {
 				if (a == scope.getGui().getHighlightedAgent()) {
@@ -81,12 +82,11 @@ public class AgentLayer extends AbstractLayer {
 				}
 
 				final ExecutionResult result = scope.execute(aspect, a, null);
-				final Rectangle2D r = (Rectangle2D) result.getValue();
-				if (r != null) {
-					shapes.put(a, r);
+				final Object r = result.getValue();
+				if (r instanceof Rectangle2D) {
+					entry.setValue((Rectangle2D) r);
 				}
 			}
-			return true;
 		});
 
 	}
