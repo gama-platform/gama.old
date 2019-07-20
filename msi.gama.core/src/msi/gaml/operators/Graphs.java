@@ -695,8 +695,7 @@ public class Graphs {
 		ci = new ConnectivityInspector((DirectedGraph) graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
-			results.add(GamaListFactory.create(scope, graph.getGamlType().getContentType(), (Set) obj));
-
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
 		}
 		return results;
 	}
