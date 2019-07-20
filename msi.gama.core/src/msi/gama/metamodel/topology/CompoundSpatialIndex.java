@@ -153,16 +153,20 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
 			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
 		// TODO -- Verify : dist not taken into account here. Normal ?
-		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
-		if (id != null && id != rootIndex) { return firstAtDistance(scope, source, f, id, number, alreadyChosen); }
+		final IPopulation<? extends IAgent> pop = f.getPopulation(scope);
+		if (pop == null) { return firstAtDistance(scope, source, f, number, alreadyChosen); }
+		final ISpatialIndex id = findSpatialIndex(pop);
+		if (id != null) { return firstAtDistance(scope, source, f, id, number, alreadyChosen); }
 		return firstAtDistance(scope, source, f, number, alreadyChosen);
 	}
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// TODO -- Verify : dist not taken into account here. Normal ?
-		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
-		if (id != null && id != rootIndex) { return firstAtDistance(scope, source, f, id); }
+		final IPopulation<? extends IAgent> pop = f.getPopulation(scope);
+		if (pop == null) { return firstAtDistance(scope, source, f); }
+		final ISpatialIndex id = findSpatialIndex(pop);
+		if (id != null) { return firstAtDistance(scope, source, f, id); }
 		return firstAtDistance(scope, source, f);
 	}
 

@@ -420,7 +420,7 @@ public class SwtGui implements IGui {
 					WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
 					WorkbenchHelper.hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
 				} else {
-					getConsole(scope).showConsoleView(exp.getAgent());
+					getConsole().showConsoleView(exp.getAgent());
 				}
 				if (showParameters != null && !showParameters) {
 					WorkbenchHelper.hideView(IGui.PARAMETER_VIEW_ID);
@@ -456,10 +456,10 @@ public class SwtGui implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentPlan)
 	 */
 	@Override
-	public void cleanAfterExperiment(final IScope scope) {
+	public void cleanAfterExperiment() {
 		WorkbenchHelper.hideView(PARAMETER_VIEW_ID);
 		hideMonitorView();
-		getConsole(null).eraseConsole(true);
+		getConsole().eraseConsole(true);
 		final IGamaView icv = (IGamaView) WorkbenchHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
 		if (icv != null) {
 			icv.reset();
@@ -595,7 +595,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IConsoleDisplayer getConsole(final IScope scope) {
+	public IConsoleDisplayer getConsole() {
 		return WorkbenchHelper.getService(IConsoleDisplayer.class);
 	}
 

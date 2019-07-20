@@ -4,7 +4,7 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.factories;
@@ -66,14 +66,16 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 			if (console != null) {
 				WorkbenchHelper.run(() -> console.reset());
 			}
+			consoleBuffer.setLength(0);
 		}
 
 		@Override
 		public void showConsoleView(final ITopLevelAgent agent) {
 			final IGamaView.Console icv = (Console) GAMA.getGui().showView(null, IGui.INTERACTIVE_CONSOLE_VIEW_ID, null,
 					IWorkbenchPage.VIEW_VISIBLE);
-			if (icv != null)
+			if (icv != null) {
 				icv.append(null, agent, null);
+			}
 			final IGamaView.Console console =
 					(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 			if (consoleBuffer.length() > 0 && console != null) {
