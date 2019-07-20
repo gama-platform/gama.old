@@ -15,7 +15,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -23,6 +22,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
@@ -91,9 +91,10 @@ public class GridLayer extends AbstractLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		final Set<IAgent> result = new HashSet<>();
-		result.add(getData().getGrid().getAgentAt(getModelCoordinatesFrom(x, y, g)));
-		return result;
+		try (Collector.AsSet<IAgent> result = Collector.getSet()) {
+			result.add(getData().getGrid().getAgentAt(getModelCoordinatesFrom(x, y, g)));
+			return result.items();
+		}
 	}
 
 	@Override

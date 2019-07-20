@@ -13,7 +13,6 @@ package msi.gama.outputs.layers;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -23,6 +22,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
@@ -104,18 +104,19 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		final Set<IAgent> selectedAgents = new HashSet<>();
-		final Rectangle2D selection = new Rectangle2D.Double();
-		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
-				y + IDisplaySurface.SELECTION_SIZE / 2);
-		shapes.forEachPair((a, b) -> {
-			if (b.intersects(selection)) {
-				selectedAgents.add(a);
-			}
-			return true;
-		});
+		try (final Collector.AsSet<IAgent> selectedAgents = Collector.getSet()) {
+			final Rectangle2D selection = new Rectangle2D.Double();
+			selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
+					y + IDisplaySurface.SELECTION_SIZE / 2);
+			shapes.forEachPair((a, b) -> {
+				if (b.intersects(selection)) {
+					selectedAgents.add(a);
+				}
+				return true;
+			});
 
-		return selectedAgents;
+			return selectedAgents.items();
+		}
 	}
 
 	@Override

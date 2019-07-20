@@ -15,7 +15,6 @@ import static java.util.Collections.synchronizedMap;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 import com.google.common.collect.Ordering;
@@ -115,7 +114,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			final IAgentFilter filter) {
 		// Adresses Issue 722 by explicitly shuffling the results with GAMA
 		// random procedures and removing duplicates
-		try (final ICollector<IAgent> list = Collector.getUniqueOrdered()) {
+		try (final ICollector<IAgent> list = Collector.getOrderedSet()) {
 			root.findIntersects(r, list);
 			if (list.isEmpty()) { return Collections.EMPTY_LIST; }
 			filter.filter(scope, source, list);
@@ -194,9 +193,10 @@ public class GamaQuadTree implements ISpatialIndex {
 
 	@Override
 	public Collection<IAgent> allAgents() {
-		final Collection<IAgent> result = new LinkedHashSet();
-		root.findIntersects(root.bounds, result);
-		return result;
+		try (final ICollector<IAgent> result = Collector.getOrderedSet()) {
+			root.findIntersects(root.bounds, result);
+			return result.items();
+		}
 	}
 
 	private class QuadNode {

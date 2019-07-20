@@ -13,6 +13,8 @@ package msi.gama.util;
 import java.io.Closeable;
 import java.util.Collection;
 
+import msi.gama.common.util.RandomUtils;
+
 public interface ICollector<E> extends Collection<E>, Closeable {
 
 	Collection<E> items();
@@ -21,5 +23,7 @@ public interface ICollector<E> extends Collection<E>, Closeable {
 	default void close() {
 		Collector.release(this);
 	}
+
+	void shuffleInPlaceWith(RandomUtils random);
 
 }

@@ -88,6 +88,7 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
@@ -4095,9 +4096,9 @@ public abstract class Spatial {
 			final double angle1 = scope.getRandom().between(0, 2 * Math.PI);
 
 			for (int i = 0; i < nbLoc; i++) {
-				final GamaPoint p = new GamaPoint(
-						loc.getX() + distance * Math.cos(angle1 + (double) i / nbLoc * 2 * Math.PI),
-						loc.getY() + distance * Math.sin(angle1 + (double) i / nbLoc * 2 * Math.PI));
+				final GamaPoint p =
+						new GamaPoint(loc.getX() + distance * Math.cos(angle1 + (double) i / nbLoc * 2 * Math.PI),
+								loc.getY() + distance * Math.sin(angle1 + (double) i / nbLoc * 2 * Math.PI));
 				locations.add(p);
 			}
 			return locations;
@@ -4702,17 +4703,18 @@ public abstract class Spatial {
 					GamaListFactory.create(Types.LIST.of(agents.getGamlType().getContentType()));
 			final IAgentFilter filter = In.list(scope, agents);
 			if (filter == null) { return groups; }
-			final Set<IAgent> clusteredCells = new HashSet<>();
-			for (final IAgent ag : agents.iterable(scope)) {
-				if (!clusteredCells.contains(ag)) {
-					groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
+			try (Collector.AsSet<IAgent> clusteredCells = Collector.getSet()) {
+				for (final IAgent ag : agents.iterable(scope)) {
+					if (!clusteredCells.contains(ag)) {
+						groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
+					}
 				}
+				return groups;
 			}
-			return groups;
 		}
 
 		public static IList<IAgent> simpleClusteringByDistanceRec(final IScope scope, final IAgentFilter filter,
-				final Double distance, final Set<IAgent> clusteredAgs, final IAgent currentAg) {
+				final Double distance, final Collection<IAgent> clusteredAgs, final IAgent currentAg) {
 			final IList<IAgent> group = GamaListFactory.create(Types.AGENT);
 			final List<IAgent> ags =
 					new ArrayList<>(scope.getTopology().getNeighborsOf(scope, currentAg, distance, filter));

@@ -11,7 +11,6 @@
 package msi.gama.kernel.experiment;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +28,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
@@ -406,43 +406,44 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Set<Object> neighborValues(final IScope scope) throws GamaRuntimeException {
-		final Set<Object> neighborValues = new HashSet<>();
-		if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
-			final int index = getAmongValue(scope).indexOf(this.value(scope));
-			if (index > 0) {
-				neighborValues.add(getAmongValue(scope).get(index - 1));
+		try (Collector.AsSet<Object> neighborValues = Collector.getSet()) {
+			if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
+				final int index = getAmongValue(scope).indexOf(this.value(scope));
+				if (index > 0) {
+					neighborValues.add(getAmongValue(scope).get(index - 1));
+				}
+				if (index < getAmongValue(scope).size() - 1) {
+					neighborValues.add(getAmongValue(scope).get(index + 1));
+				}
+				return neighborValues.items();
 			}
-			if (index < getAmongValue(scope).size() - 1) {
-				neighborValues.add(getAmongValue(scope).get(index + 1));
+			final double theStep = stepValue == null ? 1.0 : stepValue.doubleValue();
+			if (type.id() == IType.INT) {
+				final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
+				final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
+				final int val = Cast.asInt(scope, value(scope));
+				if (val >= theMin + (int) theStep) {
+					neighborValues.add(val - (int) theStep);
+				}
+				if (val <= theMax - (int) theStep) {
+					neighborValues.add(val + (int) theStep);
+				}
+			} else if (type.id() == IType.FLOAT) {
+				final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
+				final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
+				final double removeZ = Math.max(100000.0, 1.0 / theStep);
+				final double val = Cast.asFloat(null, value(scope));
+				if (val >= theMin + theStep) {
+					final double valLow = Math.round((val - theStep) * removeZ) / removeZ;
+					neighborValues.add(valLow);
+				}
+				if (val <= theMax - theStep) {
+					final double valHigh = Math.round((val + theStep) * removeZ) / removeZ;
+					neighborValues.add(valHigh);
+				}
 			}
-			return neighborValues;
+			return neighborValues.items();
 		}
-		final double theStep = stepValue == null ? 1.0 : stepValue.doubleValue();
-		if (type.id() == IType.INT) {
-			final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
-			final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			final int val = Cast.asInt(scope, value(scope));
-			if (val >= theMin + (int) theStep) {
-				neighborValues.add(val - (int) theStep);
-			}
-			if (val <= theMax - (int) theStep) {
-				neighborValues.add(val + (int) theStep);
-			}
-		} else if (type.id() == IType.FLOAT) {
-			final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
-			final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-			final double removeZ = Math.max(100000.0, 1.0 / theStep);
-			final double val = Cast.asFloat(null, value(scope));
-			if (val >= theMin + theStep) {
-				final double valLow = Math.round((val - theStep) * removeZ) / removeZ;
-				neighborValues.add(valLow);
-			}
-			if (val <= theMax - theStep) {
-				final double valHigh = Math.round((val + theStep) * removeZ) / removeZ;
-				neighborValues.add(valHigh);
-			}
-		}
-		return neighborValues;
 	}
 
 	@Override

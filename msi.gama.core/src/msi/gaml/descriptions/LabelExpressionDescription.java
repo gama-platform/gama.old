@@ -10,12 +10,12 @@
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -90,24 +90,25 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		final Set<String> result = new HashSet<>();
-		final StringBuilder b = new StringBuilder();
-		for (final char c : value.toCharArray()) {
-			switch (c) {
-				case '[':
-				case ' ':
-					break;
-				case ']':
-				case ',': {
-					result.add(b.toString());
-					b.setLength(0);
-					break;
+		try (Collector.AsSet<String> result = Collector.getSet()) {
+			final StringBuilder b = new StringBuilder();
+			for (final char c : value.toCharArray()) {
+				switch (c) {
+					case '[':
+					case ' ':
+						break;
+					case ']':
+					case ',': {
+						result.add(b.toString());
+						b.setLength(0);
+						break;
+					}
+					default:
+						b.append(c);
 				}
-				default:
-					b.append(c);
 			}
+			return result.items();
 		}
-		return result;
 	}
 
 	public static IExpressionDescription create(final String s) {

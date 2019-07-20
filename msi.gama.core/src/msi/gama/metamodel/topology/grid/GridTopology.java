@@ -11,7 +11,6 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +30,9 @@ import msi.gama.metamodel.topology.filter.DifferentList;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.ICollector;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
@@ -223,13 +224,14 @@ public class GridTopology extends AbstractTopology {
 				return placesConcerned;
 			} else {
 				// otherwise, we return only the accepted cells
-				final Set<IAgent> agents = new HashSet<>();
-				for (final IAgent ag : placesConcerned) {
-					if (filter.accept(scope, null, ag)) {
-						agents.add(ag);
+				try (ICollector<IAgent> agents = Collector.getSet()) {
+					for (final IAgent ag : placesConcerned) {
+						if (filter.accept(scope, null, ag)) {
+							agents.add(ag);
+						}
 					}
+					return agents.items();
 				}
-				return agents;
 			}
 
 		}

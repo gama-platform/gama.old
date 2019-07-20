@@ -12,6 +12,7 @@ package msi.gama.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +51,7 @@ import msi.gaml.types.Types;
 public class GamaListFactory {
 
 	private static final int DEFAULT_SIZE = 4;
+	public static final IList EMPTY_LIST = wrap(Types.NO_TYPE, Collections.EMPTY_LIST);
 	static Set<Collector.Characteristics> CH =
 			ImmutableSet.<Collector.Characteristics> of(Collector.Characteristics.IDENTITY_FINISH);
 

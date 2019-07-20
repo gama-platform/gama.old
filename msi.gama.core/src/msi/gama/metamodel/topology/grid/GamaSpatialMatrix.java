@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -55,9 +54,11 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.ICollector;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
@@ -823,15 +824,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				scope.getRandom().shuffle(getNeighborhoods(scope, startAg, cells, new ArrayList<IAgent>()));
 		while (cpt < this.numCols * this.numRows) {
 			cpt++;
-			final Set<IAgent> neighb2 = new HashSet<>();
-			for (final IAgent ag : neighb) {
-				agT = testPlace(scope, source, filter, ag);
-				if (agT != null) { return agT; }
-				cells.add(ag.getIndex());
-				neighb2.addAll(getNeighborhoods(scope, ag, cells, neighb));
+			try (ICollector<IAgent> neighb2 = Collector.getSet()) {
+				for (final IAgent ag : neighb) {
+					agT = testPlace(scope, source, filter, ag);
+					if (agT != null) { return agT; }
+					cells.add(ag.getIndex());
+					neighb2.addAll(getNeighborhoods(scope, ag, cells, neighb));
 
+				}
+				neighb = new ArrayList<>(neighb2.items());
 			}
-			neighb = new ArrayList<>(neighb2);
 
 		}
 		return null;
@@ -1115,89 +1117,89 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public Set<IAgent> getNeighborsPrune(final IScope scope, final IAgent node, final IAgent parent,
 			final boolean[] open) {
 		if (parent == null) { return getNeighborhood().getNeighborsIn(scope, node.getIndex(), 1); }
-		;
-		final Set<IAgent> neighbors = new HashSet<>();
-		final int x = ((IGridAgent) node).getX();
-		final int y = ((IGridAgent) node).getY();
+		try (Collector.AsSet<IAgent> neighbors = Collector.getSet()) {
+			final int x = ((IGridAgent) node).getX();
+			final int y = ((IGridAgent) node).getY();
 
-		int px, py, dx, dy;
+			int px, py, dx, dy;
 
-		px = ((IGridAgent) parent).getX();
-		py = ((IGridAgent) parent).getY();
+			px = ((IGridAgent) parent).getX();
+			py = ((IGridAgent) parent).getY();
 
-		dx = (x - px) / Math.max(Math.abs(x - px), 1);
-		dy = (y - py) / Math.max(Math.abs(y - py), 1);
+			dx = (x - px) / Math.max(Math.abs(x - px), 1);
+			dy = (y - py) / Math.max(Math.abs(y - py), 1);
 
-		if (dx != 0 && dy != 0) {
-			final IAgent nei1 = (IAgent) this.get(scope, x, y + dy);
-			if (nei1 != null && open[nei1.getIndex()]) {
-				neighbors.add(nei1);
-			}
-			final IAgent nei2 = (IAgent) this.get(scope, x + dx, y);
-			if (nei2 != null && open[nei2.getIndex()]) {
-				neighbors.add(nei2);
-			}
-			final IAgent nei3 = (IAgent) this.get(scope, x + dx, y + dy);
-			if (nei3 != null && open[nei3.getIndex()]) {
-				neighbors.add(nei3);
-			}
-			final IAgent neidx = (IAgent) this.get(scope, x - dx, y);
-			if (neidx != null && !open[neidx.getIndex()]) {
-				final IAgent neidiag = (IAgent) this.get(scope, x - dx, y + dy);
-				if (neidiag != null && open[neidiag.getIndex()]) {
-					neighbors.add(neidiag);
+			if (dx != 0 && dy != 0) {
+				final IAgent nei1 = (IAgent) this.get(scope, x, y + dy);
+				if (nei1 != null && open[nei1.getIndex()]) {
+					neighbors.add(nei1);
 				}
-			}
-			final IAgent neidy = (IAgent) this.get(scope, x, y - dy);
-			if (neidy != null && !open[neidy.getIndex()]) {
-				final IAgent neidiag = (IAgent) this.get(scope, x + dx, y - dy);
-				if (neidiag != null && open[neidiag.getIndex()]) {
-					neighbors.add(neidiag);
+				final IAgent nei2 = (IAgent) this.get(scope, x + dx, y);
+				if (nei2 != null && open[nei2.getIndex()]) {
+					neighbors.add(nei2);
 				}
-			}
-
-		} else {
-			if (dy == 0) {
-				final IAgent nei = (IAgent) this.get(scope, x + dx, y);
-				if (nei != null && open[nei.getIndex()]) {
-					neighbors.add(nei);
+				final IAgent nei3 = (IAgent) this.get(scope, x + dx, y + dy);
+				if (nei3 != null && open[nei3.getIndex()]) {
+					neighbors.add(nei3);
 				}
-				final IAgent neiup = (IAgent) this.get(scope, x, y + 1);
-				if (neiup != null && !open[neiup.getIndex()]) {
-					final IAgent neidiag = (IAgent) this.get(scope, x + dx, y + 1);
+				final IAgent neidx = (IAgent) this.get(scope, x - dx, y);
+				if (neidx != null && !open[neidx.getIndex()]) {
+					final IAgent neidiag = (IAgent) this.get(scope, x - dx, y + dy);
 					if (neidiag != null && open[neidiag.getIndex()]) {
 						neighbors.add(neidiag);
 					}
 				}
-				final IAgent neidown = (IAgent) this.get(scope, x, y - 1);
-				if (neidown != null && !open[neidown.getIndex()]) {
-					final IAgent neidiag = (IAgent) this.get(scope, x + dx, y - 1);
+				final IAgent neidy = (IAgent) this.get(scope, x, y - dy);
+				if (neidy != null && !open[neidy.getIndex()]) {
+					final IAgent neidiag = (IAgent) this.get(scope, x + dx, y - dy);
 					if (neidiag != null && open[neidiag.getIndex()]) {
 						neighbors.add(neidiag);
 					}
 				}
+
 			} else {
-				final IAgent nei = (IAgent) this.get(scope, x, y + dy);
-				if (nei != null && open[nei.getIndex()]) {
-					neighbors.add(nei);
-				}
-				final IAgent neiright = (IAgent) this.get(scope, x + 1, y);
-				if (neiright != null && !open[neiright.getIndex()]) {
-					final IAgent neidiag = (IAgent) this.get(scope, x + 1, y + dy);
-					if (neidiag != null && open[neidiag.getIndex()]) {
-						neighbors.add(neidiag);
+				if (dy == 0) {
+					final IAgent nei = (IAgent) this.get(scope, x + dx, y);
+					if (nei != null && open[nei.getIndex()]) {
+						neighbors.add(nei);
 					}
-				}
-				final IAgent neileft = (IAgent) this.get(scope, x - 1, y);
-				if (neileft != null && !open[neileft.getIndex()]) {
-					final IAgent neidiag = (IAgent) this.get(scope, x - 1, y + dy);
-					if (neidiag != null && open[neidiag.getIndex()]) {
-						neighbors.add(neidiag);
+					final IAgent neiup = (IAgent) this.get(scope, x, y + 1);
+					if (neiup != null && !open[neiup.getIndex()]) {
+						final IAgent neidiag = (IAgent) this.get(scope, x + dx, y + 1);
+						if (neidiag != null && open[neidiag.getIndex()]) {
+							neighbors.add(neidiag);
+						}
+					}
+					final IAgent neidown = (IAgent) this.get(scope, x, y - 1);
+					if (neidown != null && !open[neidown.getIndex()]) {
+						final IAgent neidiag = (IAgent) this.get(scope, x + dx, y - 1);
+						if (neidiag != null && open[neidiag.getIndex()]) {
+							neighbors.add(neidiag);
+						}
+					}
+				} else {
+					final IAgent nei = (IAgent) this.get(scope, x, y + dy);
+					if (nei != null && open[nei.getIndex()]) {
+						neighbors.add(nei);
+					}
+					final IAgent neiright = (IAgent) this.get(scope, x + 1, y);
+					if (neiright != null && !open[neiright.getIndex()]) {
+						final IAgent neidiag = (IAgent) this.get(scope, x + 1, y + dy);
+						if (neidiag != null && open[neidiag.getIndex()]) {
+							neighbors.add(neidiag);
+						}
+					}
+					final IAgent neileft = (IAgent) this.get(scope, x - 1, y);
+					if (neileft != null && !open[neileft.getIndex()]) {
+						final IAgent neidiag = (IAgent) this.get(scope, x - 1, y + dy);
+						if (neidiag != null && open[neidiag.getIndex()]) {
+							neighbors.add(neidiag);
+						}
 					}
 				}
 			}
+			return neighbors.items();
 		}
-		return neighbors;
 	}
 
 	@Override

@@ -28,7 +28,6 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.ICollector;
 
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
@@ -74,19 +73,19 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	private Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
 			final ISpatialIndex index, final int number, final Collection<IAgent> alreadyChosen) {
-		final Collection<IAgent> closestEnt = GamaListFactory.create();
-		closestEnt.addAll(alreadyChosen);
-		for (final double step : steps) {
-			final Collection<IAgent> firsts =
-					index.firstAtDistance(scope, source, step, filter, number - closestEnt.size(), closestEnt);
-			if (firsts.isEmpty()) {
-				continue;
+		try (final ICollector<IAgent> closestEnt = Collector.getList()) {
+			closestEnt.addAll(alreadyChosen);
+			for (final double step : steps) {
+				final Collection<IAgent> firsts =
+						index.firstAtDistance(scope, source, step, filter, number - closestEnt.size(), closestEnt);
+				if (firsts.isEmpty()) {
+					continue;
+				}
+				closestEnt.addAll(firsts);
+				if (closestEnt.size() == number) { return closestEnt.items(); }
 			}
-
-			closestEnt.addAll(firsts);
-			if (closestEnt.size() == number) { return closestEnt; }
+			return closestEnt.items();
 		}
-		return closestEnt;
 	}
 
 	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
@@ -120,32 +119,33 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter) {
 		if (disposed) { return null; }
-		final List<IAgent> shapes = new ArrayList<>();
-		for (final double step : steps) {
-			for (final ISpatialIndex si : getAllSpatialIndexes()) {
-				final IAgent first = si.firstAtDistance(scope, source, step, filter);
-				if (first != null) {
-					shapes.add(first);
+		try (final Collector.AsList<IAgent> shapes = Collector.getList()) {
+			for (final double step : steps) {
+				for (final ISpatialIndex si : getAllSpatialIndexes()) {
+					final IAgent first = si.firstAtDistance(scope, source, step, filter);
+					if (first != null) {
+						shapes.add(first);
+					}
+				}
+				if (!shapes.isEmpty()) {
+					break;
 				}
 			}
-			if (!shapes.isEmpty()) {
-				break;
+			if (shapes.items().size() == 1) { return shapes.items().get(0); }
+			// Adresses Issue 722 by shuffling the returned list using GAMA random
+			// procedure
+			shapes.shuffleInPlaceWith(scope.getRandom());
+			double min_dist = Double.MAX_VALUE;
+			IAgent min_agent = null;
+			for (final IAgent s : shapes) {
+				final double dd = source.euclidianDistanceTo(s);
+				if (dd < min_dist) {
+					min_dist = dd;
+					min_agent = s;
+				}
 			}
+			return min_agent;
 		}
-		if (shapes.size() == 1) { return shapes.get(0); }
-		// Adresses Issue 722 by shuffling the returned list using GAMA random
-		// procedure
-		scope.getRandom().shuffle(shapes);
-		double min_dist = Double.MAX_VALUE;
-		IAgent min_agent = null;
-		for (final IAgent s : shapes) {
-			final double dd = source.euclidianDistanceTo(s);
-			if (dd < min_dist) {
-				min_dist = dd;
-				min_agent = s;
-			}
-		}
-		return min_agent;
 
 	}
 
@@ -172,7 +172,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) { return Collections.EMPTY_LIST; }
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
 		if (id == rootIndex) {
-			try (final ICollector<IAgent> agents = Collector.getUnique()) {
+			try (final ICollector<IAgent> agents = Collector.getSet()) {
 				for (final ISpatialIndex si : getAllSpatialIndexes()) {
 					agents.addAll(si.allAtDistance(scope, source, dist, f));
 				}
@@ -188,7 +188,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) { return Collections.EMPTY_LIST; }
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
 		if (id == rootIndex) {
-			try (final ICollector<IAgent> agents = Collector.getUnique()) {
+			try (final ICollector<IAgent> agents = Collector.getSet()) {
 				for (final ISpatialIndex si : getAllSpatialIndexes()) {
 					agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
 				}
@@ -239,7 +239,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public Collection<IAgent> allAgents() {
-		try (final ICollector<IAgent> set = Collector.getUniqueOrdered()) {
+		try (final ICollector<IAgent> set = Collector.getOrderedSet()) {
 			for (final ISpatialIndex i : getAllSpatialIndexes()) {
 				set.addAll(i.allAgents());
 			}

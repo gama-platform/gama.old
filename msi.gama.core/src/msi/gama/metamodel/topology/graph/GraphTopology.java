@@ -31,7 +31,9 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.ICollector;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.path.GamaPath;
@@ -970,108 +972,110 @@ public class GraphTopology extends AbstractTopology {
 		final ISpatialGraph graph = this.getPlaces();
 		boolean searchEdges = false;
 		boolean searchVertices = false;
-		final Set<IAgent> agents = new HashSet<>();
-		IShape realS = null;
-		IShape tcr = null;
-		if (graph.containsEdge(source)) {
-			realS = source;
-		} else {
-			double minDist = Double.POSITIVE_INFINITY;
-			for (final IShape e : graph.getEdges()) {
-				final double d = e.euclidianDistanceTo(source);
-				if (d < minDist) {
-					minDist = d;
-					tcr = e;
-				}
-			}
-			if (source.euclidianDistanceTo(graph.getEdgeSource(tcr)) < source
-					.euclidianDistanceTo(graph.getEdgeTarget(tcr))) {
-				realS = graph.getEdgeSource(tcr);
+		try (ICollector<IAgent> agents = Collector.getSet()) {
+			IShape realS = null;
+			IShape tcr = null;
+			if (graph.containsEdge(source)) {
+				realS = source;
 			} else {
-				realS = graph.getEdgeTarget(tcr);
-			}
-		}
-		if (filter.getSpecies() != null) {
-			searchEdges = filter.getSpecies() == graph.getEdgeSpecies();
-			searchVertices = filter.getSpecies() == graph.getVertexSpecies();
-		}
-		if (searchEdges) {
-			final Set<IShape> edgs = getNeighborsOfRec(scope, realS, true, distance, graph, new HashSet<IShape>());
-			for (final IShape ed : edgs) {
-				agents.add(ed.getAgent());
-			}
-			return agents;
-		} else if (searchVertices) {
-			final Set<IShape> nds = getNeighborsOfRec(scope, realS, false, distance, graph, new HashSet<IShape>());
-			for (final IShape nd : nds) {
-				agents.add(nd.getAgent());
-			}
-			return agents;
-		}
-		IContainer agentsTotest = null;
-		if (filter.getSpecies() != null) {
-			agentsTotest = filter.getSpecies().getAgents(scope);
-		} else {
-			agentsTotest = scope.getSimulation().getAgents(scope);
-		}
-		final Set<IShape> edges = getNeighborsOfRec(scope, realS, true, distance, graph, new HashSet<IShape>());
-		for (final Object ob : agentsTotest.iterable(scope)) {
-			final IShape ag = (IShape) ob;
-			if (filter.accept(scope, source, ag)) {
-				IShape rd = null;
-				if (graph.getEdges().contains(ag)) {
-					rd = ag;
-				} else {
-					double minDist = Double.POSITIVE_INFINITY;
-					for (final IShape e : graph.getEdges()) {
-						final double d = e.euclidianDistanceTo(ag);
-						if (d < minDist) {
-							minDist = d;
-							rd = e;
-						}
+				double minDist = Double.POSITIVE_INFINITY;
+				for (final IShape e : graph.getEdges()) {
+					final double d = e.euclidianDistanceTo(source);
+					if (d < minDist) {
+						minDist = d;
+						tcr = e;
 					}
 				}
-
-				if (edges.contains(rd) && this.distanceBetween(scope, source, ag) <= distance) {
-					agents.add(ag.getAgent());
+				if (source.euclidianDistanceTo(graph.getEdgeSource(tcr)) < source
+						.euclidianDistanceTo(graph.getEdgeTarget(tcr))) {
+					realS = graph.getEdgeSource(tcr);
+				} else {
+					realS = graph.getEdgeTarget(tcr);
 				}
-
 			}
-		}
+			if (filter.getSpecies() != null) {
+				searchEdges = filter.getSpecies() == graph.getEdgeSpecies();
+				searchVertices = filter.getSpecies() == graph.getVertexSpecies();
+			}
+			if (searchEdges) {
+				final Set<IShape> edgs = getNeighborsOfRec(scope, realS, true, distance, graph, new HashSet<IShape>());
+				for (final IShape ed : edgs) {
+					agents.add(ed.getAgent());
+				}
+				return agents.items();
+			} else if (searchVertices) {
+				final Set<IShape> nds = getNeighborsOfRec(scope, realS, false, distance, graph, new HashSet<IShape>());
+				for (final IShape nd : nds) {
+					agents.add(nd.getAgent());
+				}
+				return agents.items();
+			}
+			IContainer agentsTotest = null;
+			if (filter.getSpecies() != null) {
+				agentsTotest = filter.getSpecies().getAgents(scope);
+			} else {
+				agentsTotest = scope.getSimulation().getAgents(scope);
+			}
+			final Set<IShape> edges = getNeighborsOfRec(scope, realS, true, distance, graph, new HashSet<IShape>());
+			for (final Object ob : agentsTotest.iterable(scope)) {
+				final IShape ag = (IShape) ob;
+				if (filter.accept(scope, source, ag)) {
+					IShape rd = null;
+					if (graph.getEdges().contains(ag)) {
+						rd = ag;
+					} else {
+						double minDist = Double.POSITIVE_INFINITY;
+						for (final IShape e : graph.getEdges()) {
+							final double d = e.euclidianDistanceTo(ag);
+							if (d < minDist) {
+								minDist = d;
+								rd = e;
+							}
+						}
+					}
 
-		return agents;
+					if (edges.contains(rd) && this.distanceBetween(scope, source, ag) <= distance) {
+						agents.add(ag.getAgent());
+					}
+
+				}
+			}
+
+			return agents.items();
+		}
 
 	}
 
 	public Set<IShape> getNeighborsOfRec(final IScope scope, final IShape currentSource, final boolean edge,
 			final double currentDist, final ISpatialGraph graph, final Set<IShape> alr) throws GamaRuntimeException {
-		final Set<IShape> edges = new HashSet<>();
-		final Set<IShape> eds =
-				graph.isDirected() ? graph.outgoingEdgesOf(currentSource) : graph.edgesOf(currentSource);
-		if (!edge) {
-			edges.add(currentSource.getAgent());
-		}
-		for (final IShape ed : eds) {
-			if (alr.contains(ed)) {
-				continue;
+		try (Collector.AsSet<IShape> edges = Collector.getSet()) {
+			final Set<IShape> eds =
+					graph.isDirected() ? graph.outgoingEdgesOf(currentSource) : graph.edgesOf(currentSource);
+			if (!edge) {
+				edges.add(currentSource.getAgent());
 			}
-			alr.add(ed);
-			final double dist = getPlaces().getEdgeWeight(ed);
-			if (edge) {
-				edges.add(ed);
-			}
-			if (currentDist - dist > 0) {
-				IShape nextNode = null;
-				if (graph.isDirected()) {
-					nextNode = graph.getEdgeTarget(ed);
-				} else {
-					nextNode = currentSource == graph.getEdgeTarget(ed) ? graph.getEdgeSource(ed)
-							: graph.getEdgeTarget(ed);
+			for (final IShape ed : eds) {
+				if (alr.contains(ed)) {
+					continue;
 				}
-				edges.addAll(getNeighborsOfRec(scope, nextNode, edge, currentDist - dist, graph, alr));
+				alr.add(ed);
+				final double dist = getPlaces().getEdgeWeight(ed);
+				if (edge) {
+					edges.add(ed);
+				}
+				if (currentDist - dist > 0) {
+					IShape nextNode = null;
+					if (graph.isDirected()) {
+						nextNode = graph.getEdgeTarget(ed);
+					} else {
+						nextNode = currentSource == graph.getEdgeTarget(ed) ? graph.getEdgeSource(ed)
+								: graph.getEdgeTarget(ed);
+					}
+					edges.addAll(getNeighborsOfRec(scope, nextNode, edge, currentDist - dist, graph, alr));
+				}
 			}
+			return edges.items();
 		}
-		return edges;
 	}
 
 	@Override

@@ -72,7 +72,7 @@ public class _Vertex<E, V> extends GraphObject<GamaGraph<E, V>, E, V> {
 	}
 
 	public Set edgesTo(final Object v2) {
-		try (Collector.Unique result = Collector.getUnique()) {
+		try (Collector.AsSet result = Collector.getSet()) {
 			for (final Object e : outEdges) {
 				final _Edge<V, E> edge = (_Edge<V, E>) graph.edgeMap.get(e);
 				if (edge.getTarget().equals(v2)) {

@@ -210,7 +210,7 @@ public class VariableDescription extends SymbolDescription {
 	public Collection<VariableDescription> getDependencies(final Set<String> facetsToVisit, final boolean includingThis,
 			final boolean includingSpecies) {
 
-		try (final ICollector<VariableDescription> result = Collector.getUnique()) {
+		try (final ICollector<VariableDescription> result = Collector.getSet()) {
 			final Collection<String> deps = dependencies.get(getName());
 			if (deps != null) {
 				for (final String s : deps) {

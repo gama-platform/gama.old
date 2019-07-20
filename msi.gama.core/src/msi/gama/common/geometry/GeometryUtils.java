@@ -61,7 +61,9 @@ import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.ICollector;
 import msi.gama.util.IList;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
@@ -205,14 +207,15 @@ public class GeometryUtils {
 	}
 
 	public static int nbCommonPoints(final Geometry p1, final Geometry p2) {
-		final Set<Coordinate> cp = new HashSet<>();
-		final List<Coordinate> coords = Arrays.asList(p1.getCoordinates());
-		for (final Coordinate pt : p2.getCoordinates()) {
-			if (coords.contains(pt)) {
-				cp.add(pt);
+		try (final ICollector<Coordinate> cp = Collector.getSet()) {
+			final List<Coordinate> coords = Arrays.asList(p1.getCoordinates());
+			for (final Coordinate pt : p2.getCoordinates()) {
+				if (coords.contains(pt)) {
+					cp.add(pt);
+				}
 			}
+			return cp.size();
 		}
-		return cp.size();
 	}
 
 	public static Coordinate[] extractPoints(final IShape triangle, final Set<IShape> connectedNodes) {

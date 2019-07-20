@@ -1,19 +1,16 @@
 /*********************************************************************************************
  *
- * 'GamlResourceDescriptionManager.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlResourceDescriptionManager.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -27,13 +24,15 @@ import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 
 /**
  * The class GamlResourceDescriptionManager.
- * 
+ *
  * @author drogoul
  * @since 20 avr. 2012
- * 
+ *
  */
 public class GamlResourceDescriptionManager extends DefaultResourceDescriptionManager
 		implements IResourceDescription.Manager.AllChangeAware {
@@ -53,18 +52,17 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 			final IResourceDescriptions context) {
 		// final boolean result = false;
 		final URI newUri = candidate.getURI();
-		final Set<URI> deltaUris = new HashSet<>();
-		for (final Delta d : deltas) {
-			deltaUris.add(GamlResourceServices.properlyEncodedURI(d.getUri()));
-		}
-		final Iterator<URI> it = GamlResourceIndexer.allImportsOf(newUri);
-		while (it.hasNext()) {
-			final URI next = it.next();
-			if (deltaUris.contains(next)) {
-				return true;
+		try (ICollector<URI> deltaUris = Collector.getSet()) {
+			for (final Delta d : deltas) {
+				deltaUris.add(GamlResourceServices.properlyEncodedURI(d.getUri()));
 			}
+			final Iterator<URI> it = GamlResourceIndexer.allImportsOf(newUri);
+			while (it.hasNext()) {
+				final URI next = it.next();
+				if (deltaUris.contains(next)) { return true; }
+			}
+			return super.isAffected(deltas, candidate, context);
 		}
-		return super.isAffected(deltas, candidate, context);
 	}
 
 	@Override

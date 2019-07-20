@@ -30,7 +30,7 @@ import msi.gaml.types.IType;
 public class StatementWithChildrenDescription extends StatementDescription {
 
 	protected IMap<String, IVarExpression> temps;
-	protected final Collector.Ordered<IDescription> children = Collector.getOrdered();
+	protected final Collector.AsList<IDescription> children = Collector.getList();
 
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,

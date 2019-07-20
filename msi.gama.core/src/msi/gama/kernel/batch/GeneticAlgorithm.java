@@ -10,9 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -32,6 +30,8 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -204,24 +204,24 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		List<Chromosome> population = initPop.initializePop(scope, variables, this);
 		int nbGen = 1;
 		while (nbGen <= maxGenerations) {
-			Set<Chromosome> children = new HashSet<>();
-			for (final Chromosome chromosome : population) {
-				if (scope.getRandom().next() < crossoverProb && !variables.isEmpty()) {
-					children.addAll(crossOverOp.crossOver(scope, chromosome,
-							population.get(scope.getRandom().between(0, population.size() - 1))));
+			try (ICollector<Chromosome> children = Collector.getSet()) {
+				for (final Chromosome chromosome : population) {
+					if (scope.getRandom().next() < crossoverProb && !variables.isEmpty()) {
+						children.addAll(crossOverOp.crossOver(scope, chromosome,
+								population.get(scope.getRandom().between(0, population.size() - 1))));
+					}
 				}
+				population.addAll(children.items());
 			}
-			population.addAll(children);
-			children = null;
 
-			Set<Chromosome> mutatePop = new HashSet<>();
-			for (final Chromosome chromosome : population) {
-				if (scope.getRandom().next() < mutationProb && !variables.isEmpty()) {
-					mutatePop.add(mutationOp.mutate(scope, chromosome, variables));
+			try (ICollector<Chromosome> mutatePop = Collector.getSet()) {
+				for (final Chromosome chromosome : population) {
+					if (scope.getRandom().next() < mutationProb && !variables.isEmpty()) {
+						mutatePop.add(mutationOp.mutate(scope, chromosome, variables));
+					}
 				}
+				population.addAll(mutatePop.items());
 			}
-			population.addAll(mutatePop);
-			mutatePop = null;
 			computePopFitness(scope, population);
 			population = population.stream().distinct().collect(Collectors.toList());
 			population = selectionOp.select(scope, population, populationDim, isMaximize());

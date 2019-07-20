@@ -27,12 +27,12 @@ import msi.gama.util.Collector;
 import msi.gaml.compilation.GamlCompilationError;
 import one.util.streamex.StreamEx;
 
-public class ValidationContext extends Collector.Ordered<GamlCompilationError> implements IDocManager {
+public class ValidationContext extends Collector.AsList<GamlCompilationError> implements IDocManager {
 
 	final static int MAX_SIZE = 1000;
 	public static final ValidationContext NULL = new ValidationContext(null, false, IDocManager.NULL);
 	final URI resourceURI;
-	final Collector.Ordered<GamlCompilationError> importedErrors = Collector.getOrdered();
+	final Collector.AsList<GamlCompilationError> importedErrors = Collector.getList();
 	private boolean noWarning, noInfo, hasSyntaxErrors, noExperiment;
 	private final IDocManager docDelegate;
 

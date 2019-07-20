@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,10 +48,12 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
+import msi.gama.util.ICollector;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
@@ -166,16 +167,16 @@ public class Graphs {
 
 				return nb == 2;
 			}
-
-			final Set<ILocation> cp = new HashSet<>();
-			final GamaPoint[] lp1 = GeometryUtils.getPointsOf(p1);
-			for (final GamaPoint pt : GeometryUtils.getPointsOf(p2)) {
-				if (ArrayUtils.contains(lp1, pt)) {
-					cp.add(pt);
+			try (ICollector<ILocation> cp = Collector.getSet()) {
+				final GamaPoint[] lp1 = GeometryUtils.getPointsOf(p1);
+				for (final GamaPoint pt : GeometryUtils.getPointsOf(p2)) {
+					if (ArrayUtils.contains(lp1, pt)) {
+						cp.add(pt);
+					}
 				}
-			}
 
-			return cp.size() == 2;
+				return cp.size() == 2;
+			}
 		}
 
 		@Override

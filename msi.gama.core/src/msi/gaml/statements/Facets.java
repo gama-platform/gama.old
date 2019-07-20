@@ -63,14 +63,14 @@ public class Facets implements IGamlable {
 
 	public static final Facets NULL = new Facets();
 
-	Collector.Ordered<Facet> facets;
+	Collector.AsList<Facet> facets;
 
 	public Facets() {
 		this(0);
 	}
 
 	protected Facets(final int size) {
-		facets = Collector.getOrdered();
+		facets = Collector.getList();
 		facets.setSize(size);
 	}
 
