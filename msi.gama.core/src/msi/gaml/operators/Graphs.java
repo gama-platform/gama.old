@@ -1017,7 +1017,7 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		// DEBUG.OUT("result.getRaw() : " + result.getRaw());
 
-		final IMap mapResult = GamaMapFactory.create(graph.getGamlType().getKeyType(), Types.INT);
+		final IMap mapResult = GamaMapFactory.create(graph.getGamlType().getContentType(), Types.INT);
 		for (final Object v : graph.edgeSet()) {
 			mapResult.put(v, 0);
 		}
