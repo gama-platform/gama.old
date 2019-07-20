@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.factories;
 
+import java.util.ConcurrentModificationException;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
@@ -52,7 +54,13 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 		}
 
 		private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaColor color) {
-			final IGamaView.Console console = (Console) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
+			IGamaView.Console console = null;
+			try {
+				console = (Console) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
+			} catch (final ConcurrentModificationException e) {
+				// See Issue #2812. With concurrent views opening, the view might be impossible to find
+				// e.printStackTrace();
+			}
 			if (console != null) {
 				console.append(msg, root, color);
 			} else {
