@@ -15,6 +15,8 @@
 model TraficGroup
 
 global {
+	
+	float monit <- sum(section collect each.current_concentration) update: sum(section collect each.current_concentration);
 		
 	float road_size <- 10 #km ; 						// Size of the road
 	
@@ -166,9 +168,9 @@ experiment TraficGroup type: gui {
         
 	output {
 		
-		// A monitor gives the number of cars on the road at every time step.
+		// A monitor can give the number of cars on the road at every time step.
 		
-		monitor "Sum Concentrations" value: sum(section collect each.current_concentration);
+		//monitor "Sum Concentrations" value: sum(section collect each.current_concentration);
 		
 		// A display shows the road. Section width depend on their concentration.
 		layout #split;

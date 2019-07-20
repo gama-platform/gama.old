@@ -134,8 +134,14 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 			getJFChart().setTextAntiAlias(antiAlias);
 		}
 		final Graphics2D g2D = getGraphics(sizeX, sizeY);
-		chart.draw(g2D, r, info);
-		g2D.dispose();
+		try {
+			chart.draw(g2D, r, info);
+		} catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
+			// Do nothing. See #1605
+			// e.printStackTrace();
+		} finally {
+			g2D.dispose();
+		}
 		return cache;
 
 	}

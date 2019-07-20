@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartLayer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.charts.ChartLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -21,9 +21,9 @@ import msi.gama.runtime.IScope;
 
 /**
  * Written by drogoul Modified on 1 avr. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public class ChartLayer extends AbstractLayer {
 
@@ -47,12 +47,7 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDraw(final IScope scope, final IGraphics dg) {
-
-		try {
-			dg.drawChart(getChart());
-		} catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-			// Do nothing. See Issue #1605
-		}
+		dg.drawChart(getChart());
 	}
 
 	@Override
