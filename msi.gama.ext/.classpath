@@ -66,7 +66,7 @@
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-impl.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="jfreechart-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="jfreechart-1.5.0.jar" sourcepath="jfreechart-1.5.0.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-affine-1.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-algebra-1.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-bandcombine-1.0.9.jar"/>
