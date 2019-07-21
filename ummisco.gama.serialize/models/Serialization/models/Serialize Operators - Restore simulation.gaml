@@ -46,7 +46,7 @@ species toto {
 	}
 }
 
-experiment Model4 type: gui {
+experiment RepeatedSimulations type: gui {
 
 	string saved_step <- "";
 

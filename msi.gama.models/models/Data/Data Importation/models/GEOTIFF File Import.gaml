@@ -2,6 +2,9 @@
 * Name: GeoTIFF file to Grid of Cells 
 * Author:  Patrick Taillandier
 * Description: Model which shows how to create a grid of cells by using a GeoTIFF File. 
+*   It is important to notice that GAMA can only read GeoTIFF files with Bytes data type (files that are often displayed in grayscale)
+*   The GeoTIFF files with Float32 or Float64 data type cannot be read for the moments.
+*   Their metadata can neither been read in the Model library explorer.
 * Tags:  load_file, tif, gis, grid
 */
 

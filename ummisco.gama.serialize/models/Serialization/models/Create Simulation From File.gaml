@@ -43,17 +43,3 @@ experiment reloadSimu type: gui {
 		}
 	}	
 }
-
-experiment reloadSavedSimuOnly type: gui {
-	
-	action _init_ {
-		create simulation from: saved_simulation_file("saveSimu.gsim");	
-	}
-
-	output {
-		display main_display {
-			species road aspect: geom;
-			species people aspect: base;						
-		}
-	}	
-}
