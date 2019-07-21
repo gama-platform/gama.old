@@ -11,6 +11,8 @@
 package msi.gaml.statements;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.media.jai.RasterFactory;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -43,6 +46,7 @@ import org.geotools.referencing.CRS;
 import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -555,7 +559,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			Envelope2D refEnvelope;
 			refEnvelope = new Envelope2D(crs, x, y, width, height);
 
-			final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+			// In order to fix issue #2793, it seems that (before the GAMA 1.8 release), GAMA is only able,
+			// to read GeoTiff files with Byte format data.
+			// The use of the following create from org.geotools.coverage.grid.GridCoverageFactory, will produce a dataset of floats.
+			// This is perfectly possible for the GeoTiff, but as GAMA can only read Byte format GeoTiff files, we limit the save to this 
+			// specific format of data.
+//			final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+			final GridCoverage2D coverage = createCoverageByteFromFloat("data", imagePixelData, refEnvelope);
+			
 			try {
 
 				final GeoTiffFormat format = new GeoTiffFormat();
@@ -566,10 +577,46 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				 */
 			} catch (final Exception e) {
 				e.printStackTrace();
-			}
+			} 
 		}
 	}
 
+	// Inspired by the code of public GridCoverage2D create(final CharSequence name, final float[][]    matrix, final Envelope envelope)
+	// from org.geotools.coverage.grid.GridCoverageFactory
+	public static GridCoverage2D createCoverageByteFromFloat(
+			final CharSequence name,
+            final float[][]    matrix,
+            final Envelope     envelope) {
+		
+        int width  = 0;
+        int height = matrix.length;
+        for (int j=0; j<height; j++) {
+            final float[] row = matrix[j];
+            if (row != null) {
+                if (row.length > width) {
+                    width = row.length;
+                }
+            }
+        }	
+                
+	    final WritableRaster raster;
+	    raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_BYTE, width, height, 1, null);
+	    for (int j=0; j<height; j++) {
+	        int i = 0;
+	        final float[] row = matrix[j];
+	        if (row != null) {
+	            for (; i<row.length; i++) {
+	                raster.setSample(i, j, 0, (byte) Math.round(row[i]));
+	            }
+	        }
+	        for (; i<width; i++) {
+	            raster.setSample(i, j, 0, (byte)255);
+	        }
+	    }
+	    	    
+	    return new GridCoverageFactory().create(name, raster, envelope);
+	}	
+	
 	public static String getGeometryType(final List<? extends IShape> agents) {
 		String geomType = "";
 		for (final IShape be : agents) {
