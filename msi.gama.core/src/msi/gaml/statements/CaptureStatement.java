@@ -48,7 +48,7 @@ import msi.gaml.types.Types;
 @symbol (
 		name = { IKeyword.CAPTURE },
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
-		with_sequence = false,
+		with_sequence = true,
 		concept = { IConcept.MULTI_LEVEL },
 		remote_context = true)
 @inside (
