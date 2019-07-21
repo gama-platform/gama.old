@@ -2,6 +2,7 @@ model SIR_ABM
 
 global{
 	geometry shape<-envelope(square(100));
+	list<rgb> the_color<-[#green, #red, #yellow];
 	float beta <- 0.8 ; 	 
 	float alpha <- 0.06;
 	init{
@@ -13,7 +14,6 @@ global{
 
 species Host skills:[moving]{
 	int state<-0;
-	list<rgb> color<-[#green, #red, #yellow];
 	reflex moving{
 		do wander;
 	}
@@ -35,7 +35,9 @@ species Host skills:[moving]{
     
             
 	aspect base{
-		draw circle(1) color: color[state];
+		if(!dead(self)){			
+			draw circle(1) color: the_color[state];
+		}
 	}
 }
 experiment SIR_ABM_exp type:gui{
