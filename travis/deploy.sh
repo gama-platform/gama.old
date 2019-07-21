@@ -34,7 +34,7 @@ if [[ $MSG == *"ci fullbuild"* ]]; then
 	cd msi.gama.parent 
 	mvn deploy -DskipTests -T 8C -P p2Repo --settings ../travis/settings.xml
 	cd -
-	return 0
+	exit 0
 fi
 
 	
