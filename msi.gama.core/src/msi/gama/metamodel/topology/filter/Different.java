@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.filter.Different.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.filter.Different.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.filter;
 
@@ -38,7 +38,7 @@ public class Different implements IAgentFilter {
 	 */
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
@@ -50,16 +50,15 @@ public class Different implements IAgentFilter {
 	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
 		return null;
 	}
-	
+
 	@Override
 	public boolean hasAgentList() {
 		return false;
 	}
 
-
 	/**
 	 * Method filter()
-	 * 
+	 *
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(java.util.Collection)
 	 */
 	@Override

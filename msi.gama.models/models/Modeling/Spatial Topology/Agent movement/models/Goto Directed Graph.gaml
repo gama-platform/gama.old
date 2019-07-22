@@ -39,7 +39,6 @@ global {
 			//The operator any_location_in returns a random point located in one of the road agents
 			target <- any_location_in(one_of (road)) ;
 			location <- any_location_in (one_of(road));
-			source <- location;
 		} 
 	}
 }
@@ -55,9 +54,6 @@ species road {
 species people skills: [moving] {
 	point target;
 	path my_path; 
-	point source;
-	string r_s;
-	string r_t; 
 	aspect circle {
 		draw circle(10) color: #green;
 	}
@@ -71,7 +67,6 @@ species people skills: [moving] {
 		//If the agent arrived to its target location, then it choose randomly an other target on the road
 		if (target = location) {			
 			target <- any_location_in(one_of (road)) ;
-			source <- location;
 		}
 	}
 }

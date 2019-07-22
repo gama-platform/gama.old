@@ -308,7 +308,7 @@ public abstract class AbstractAgent implements IAgent {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		if (getHost() == null) { return GamaListFactory.create(); }
+		if (getHost() == null) { return GamaListFactory.EMPTY_LIST; }
 		final IPopulation<? extends IAgent> pop = getHost().getPopulationFor(this.getSpecies());
 		if (pop != null) {
 			final IScope scope = getScope();
@@ -317,7 +317,7 @@ public abstract class AbstractAgent implements IAgent {
 			retVal.remove(this);
 			return retVal;
 		}
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
@@ -596,7 +596,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public IList<? extends ILocation> getPoints() {
-		if (getGeometry() == null) { return GamaListFactory.create(); }
+		if (getGeometry() == null) { return GamaListFactory.EMPTY_LIST; }
 		return getGeometry().getPoints();
 	}
 

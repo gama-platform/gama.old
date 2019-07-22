@@ -145,7 +145,7 @@ public class GamaGMLFile extends GamaGisFile {
 
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override

@@ -10,9 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -25,6 +22,8 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
@@ -211,38 +210,40 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		private void assertReturnedValueIsOk(final StatementDescription cd) {
 			final IType at = cd.getGamlType();
 			if (at == Types.NO_TYPE) { return; }
-			final Set<StatementDescription> returns = new LinkedHashSet<>();
-			final DescriptionVisitor<IDescription> finder = (desc) -> {
-				if (desc.getKeyword().equals(RETURN)) {
-					returns.add((StatementDescription) desc);
+			try (final ICollector<StatementDescription> returns = Collector.getOrderedSet()) {
+				final DescriptionVisitor<IDescription> finder = (desc) -> {
+					if (desc.getKeyword().equals(RETURN)) {
+						returns.add((StatementDescription) desc);
+					}
+					return true;
+				};
+				cd.visitOwnChildrenRecursively(finder);
+				if (returns.isEmpty()) {
+					if (cd instanceof ActionDescription && !((ActionDescription) cd).isAbstract()) {
+						cd.error("Action " + cd.getName() + " must return a result of type " + at,
+								IGamlIssue.MISSING_RETURN);
+						return;
+					}
 				}
-				return true;
-			};
-			cd.visitOwnChildrenRecursively(finder);
-			if (returns.isEmpty()) {
-				if (cd instanceof ActionDescription && !((ActionDescription) cd).isAbstract()) {
-					cd.error("Action " + cd.getName() + " must return a result of type " + at,
-							IGamlIssue.MISSING_RETURN);
-					return;
-				}
-			}
-			for (final StatementDescription ret : returns) {
-				final IExpression ie = ret.getFacetExpr(VALUE);
-				if (ie == null) {
-					continue;
-				}
-				if (ie.equals(IExpressionFactory.NIL_EXPR)) {
-					if (at.getDefault() != null) {
-						ret.error("'nil' is not an acceptable return value. A valid " + at + " is expected instead.",
-								IGamlIssue.WRONG_TYPE, VALUE);
-					} else {
+				for (final StatementDescription ret : returns) {
+					final IExpression ie = ret.getFacetExpr(VALUE);
+					if (ie == null) {
 						continue;
 					}
-				} else {
-					final IType<?> rt = ie.getGamlType();
-					if (!rt.isTranslatableInto(at)) {
-						ret.error("Action " + cd.getName() + " must return a result of type " + at + " (and not " + rt
-								+ ")", IGamlIssue.SHOULD_CAST, VALUE, at.toString());
+					if (ie.equals(IExpressionFactory.NIL_EXPR)) {
+						if (at.getDefault() != null) {
+							ret.error(
+									"'nil' is not an acceptable return value. A valid " + at + " is expected instead.",
+									IGamlIssue.WRONG_TYPE, VALUE);
+						} else {
+							continue;
+						}
+					} else {
+						final IType<?> rt = ie.getGamlType();
+						if (!rt.isTranslatableInto(at)) {
+							ret.error("Action " + cd.getName() + " must return a result of type " + at + " (and not "
+									+ rt + ")", IGamlIssue.SHOULD_CAST, VALUE, at.toString());
+						}
 					}
 				}
 			}

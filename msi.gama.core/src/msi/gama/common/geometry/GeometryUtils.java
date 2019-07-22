@@ -815,34 +815,32 @@ public class GeometryUtils {
 	// Modified: 03-Jan-2014
 
 	public static Envelope3D computeEnvelopeFrom(final IScope scope, final Object obj) {
-		Envelope3D result = new Envelope3D();
+		Envelope3D result = null;
 		if (obj instanceof ISpecies) {
 			return computeEnvelopeFrom(scope, ((ISpecies) obj).getPopulation(scope));
 		} else if (obj instanceof Number) {
 			final double size = ((Number) obj).doubleValue();
-			result = new Envelope3D(0, size, 0, size, 0, size);
+			result = Envelope3D.of(0, size, 0, size, 0, size);
 		} else if (obj instanceof ILocation) {
 			final ILocation size = (ILocation) obj;
-			result = new Envelope3D(0, size.getX(), 0, size.getY(), 0, size.getZ());
+			result = Envelope3D.of(0, size.getX(), 0, size.getY(), 0, size.getZ());
 		} else if (obj instanceof IShape) {
 			result = ((IShape) obj).getEnvelope();
 		} else if (obj instanceof Envelope) {
-			result = new Envelope3D((Envelope) obj);
+			result = Envelope3D.of((Envelope) obj);
 		} else if (obj instanceof String) {
 			result = computeEnvelopeFrom(scope, Files.from(scope, (String) obj));
 		} else if (obj instanceof IGamaFile) {
 			result = ((IGamaFile) obj).computeEnvelope(scope);
 		} else if (obj instanceof IList) {
-			Envelope3D boundsEnv = null;
 			for (final Object bounds : (IList) obj) {
 				final Envelope3D env = computeEnvelopeFrom(scope, bounds);
-				if (boundsEnv == null) {
-					boundsEnv = env;
+				if (result == null) {
+					result = Envelope3D.of(env);
 				} else {
-					boundsEnv.expandToInclude(env);
+					result.expandToInclude(env);
 				}
 			}
-			result = boundsEnv;
 		} else {
 			for (final IEnvelopeComputer ec : envelopeComputers) {
 				result = ec.computeEnvelopeFrom(scope, obj);

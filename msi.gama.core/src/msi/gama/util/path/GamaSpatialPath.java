@@ -36,6 +36,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.runtime.IScope;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
@@ -475,34 +476,36 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	@Override
 	public IList<IShape> getVertexList() {
 		if (graph == null) {
-			final IList<IShape> vertices = GamaListFactory.create();
-			IShape g = null;
-			for (final Object ed : getEdgeList()) {
-				g = (IShape) ed;
-				vertices.add(GeometryUtils.getFirstPointOf(g));
+			try (final Collector.AsList<IShape> vertices = Collector.getList()) {
+				IShape g = null;
+				for (final Object ed : getEdgeList()) {
+					g = (IShape) ed;
+					vertices.add(GeometryUtils.getFirstPointOf(g));
+				}
+				if (g != null) {
+					vertices.add(GeometryUtils.getLastPointOf(g));
+				}
+				return vertices.items();
 			}
-			if (g != null) {
-				vertices.add(GeometryUtils.getLastPointOf(g));
-			}
-			return vertices;
 		}
 		return getPathVertexList();
 	}
 
 	public IList<IShape> getPathVertexList() {
 		final Graph<IShape, IShape> g = getGraph();
-		final IList<IShape> list = GamaListFactory.create();
-		IShape v = getStartVertex();
-		list.add(v);
-		IShape vPrev = null;
-		for (final IShape e : getEdgeList()) {
-			vPrev = v;
-			v = getOppositeVertex(g, e, v);
-			if (!v.equals(vPrev)) {
-				list.add(v);
+		try (final Collector.AsList<IShape> list = Collector.getList()) {
+			IShape v = getStartVertex();
+			list.add(v);
+			IShape vPrev = null;
+			for (final IShape e : getEdgeList()) {
+				vPrev = v;
+				v = getOppositeVertex(g, e, v);
+				if (!v.equals(vPrev)) {
+					list.add(v);
+				}
 			}
+			return list.items();
 		}
-		return list;
 	}
 
 	public static IShape getOppositeVertex(final Graph<IShape, IShape> g, final IShape e, final IShape v) {

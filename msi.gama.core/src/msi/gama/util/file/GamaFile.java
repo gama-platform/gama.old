@@ -469,7 +469,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO what to return ?
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	/**

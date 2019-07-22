@@ -49,6 +49,7 @@ import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.metamodel.topology.graph.NBAStarPathfinder;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
@@ -1119,8 +1120,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IGraph copy(final IScope scope) {
-		final GamaGraph g = new GamaGraph(scope, GamaListFactory.create(), true, directed, vertexRelation, edgeSpecies,
-				type.getKeyType(), type.getContentType());
+		final GamaGraph g = new GamaGraph(scope, GamaListFactory.EMPTY_LIST, true, directed, vertexRelation,
+				edgeSpecies, type.getKeyType(), type.getContentType());
 
 		Graphs.addAllVertices(g, this.getVertices());
 		Graphs.addAllEdges(g, this, this.edgeSet());
@@ -1543,17 +1544,18 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public IContainer<?, msi.gaml.operators.Graphs.GraphObjectToAdd> buildValues(final IScope scope,
 			final IContainer objects) {
-		final IList list = GamaListFactory.create();
-		if (!(objects instanceof msi.gaml.operators.Graphs.NodesToAdd)) {
-			for (final Object o : objects.iterable(scope)) {
-				list.add(buildValue(scope, o));
+		try (final Collector.AsList list = Collector.getList()) {
+			if (!(objects instanceof msi.gaml.operators.Graphs.NodesToAdd)) {
+				for (final Object o : objects.iterable(scope)) {
+					list.add(buildValue(scope, o));
+				}
+			} else {
+				for (final Object o : objects.iterable(scope)) {
+					list.add(buildValue(scope, new msi.gaml.operators.Graphs.NodeToAdd(o)));
+				}
 			}
-		} else {
-			for (final Object o : objects.iterable(scope)) {
-				list.add(buildValue(scope, new msi.gaml.operators.Graphs.NodeToAdd(o)));
-			}
+			return list.items();
 		}
-		return list;
 	}
 
 	/**

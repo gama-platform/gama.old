@@ -299,7 +299,7 @@ public class GamaOsmFile extends GamaGisFile {
 				if (entity instanceof Bound) {
 					final Bound bound = (Bound) entity;
 					final Envelope3D env =
-							new Envelope3D(bound.getLeft(), bound.getRight(), bound.getBottom(), bound.getTop(), 0, 0);
+							Envelope3D.of(bound.getLeft(), bound.getRight(), bound.getBottom(), bound.getTop(), 0, 0);
 					computeProjection(scope, env);
 				} else if (returnIt) {
 					if (entity instanceof Node) {

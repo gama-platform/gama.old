@@ -10,14 +10,14 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import org.opengis.geometry.MismatchedDimensionException;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.Polygon;
 
+import msi.gama.common.interfaces.IDisposable;
+import msi.gama.common.util.PoolUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gaml.operators.Comparison;
@@ -33,7 +33,16 @@ import msi.gaml.types.GamaGeometryType;
  * @adapted for GAMA by A. Drogoul
  *
  */
-public class Envelope3D extends Envelope {
+public class Envelope3D extends Envelope implements IDisposable {
+
+	private final static PoolUtils.ObjectPool<Envelope3D> POOL =
+			PoolUtils.create("Envelope 3D", true, () -> new Envelope3D(), null);
+
+	public static final Envelope3D EMPTY = create();
+
+	public static Envelope3D create() {
+		return POOL.get();
+	}
 
 	public static Envelope3D of(final Geometry g) {
 		if (g instanceof GeometryCollection) { return of((GeometryCollection) g); }
@@ -43,7 +52,7 @@ public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final GeometryCollection g) {
 		final int i = g.getNumGeometries();
-		if (i == 0) { return new Envelope3D(); }
+		if (i == 0) { return EMPTY; }
 		final Envelope3D result = of(g.getGeometryN(0));
 		for (int j = 1; j < i; j++) {
 			result.expandToInclude(of(g.getGeometryN(j)));
@@ -56,22 +65,35 @@ public class Envelope3D extends Envelope {
 	}
 
 	public static Envelope3D of(final Envelope e) {
-		final Envelope3D env = new Envelope3D();
+		final Envelope3D env = create();
 		env.init(e);
 		return env;
 	}
 
 	public static Envelope3D withYNegated(final Envelope e) {
-		final Envelope3D env = new Envelope3D();
+		final Envelope3D env = create();
 		env.init(e);
 		env.init(env.getMinX(), env.getMaxX(), -env.getMinY(), -env.getMaxY(), env.minz, env.maxz);
 		return env;
 	}
 
 	public static Envelope3D of(final Coordinate p) {
-		final Envelope3D env = new Envelope3D();
+		final Envelope3D env = create();
 		env.init(p);
 		return env;
+	}
+
+	public static Envelope3D of(final double x1, final double x2, final double y1, final double y2, final double z1,
+			final double z2) {
+		final Envelope3D env = create();
+		env.init(x1, x2, y1, y2, z1, z2);
+		return env;
+	}
+
+	@Override
+	public void dispose() {
+		setToNull();
+		POOL.release(this);
 	}
 
 	/**
@@ -458,61 +480,8 @@ public class Envelope3D extends Envelope {
 
 	// ---------------------------------------------------------------------------------------------------------------
 
-	public Envelope3D() {
+	private Envelope3D() {
 		super();
-	}
-
-	/**
-	 * Creates an envelope for a region defined by maximum and minimum values.
-	 *
-	 * @param x1
-	 *            The first x-value (minx)
-	 * @param x2
-	 *            The second x-value (maxx)
-	 * @param y1
-	 *            The first y-value (miny)
-	 * @param y2
-	 *            The second y-value (maxy)
-	 * @param z1
-	 *            The first z-value (minz)
-	 * @param z2
-	 *            The second z-value (maxz)
-	 *
-	 */
-	public Envelope3D(final double x1, final double x2, final double y1, final double y2, final double z1,
-			final double z2) {
-		init(x1, x2, y1, y2, z1, z2);
-	}
-
-	/**
-	 * Creates a new envelope from an existing envelope.
-	 *
-	 * @param envelope
-	 *            The envelope to initialize from
-	 * @throws MismatchedDimensionException
-	 *             if the CRS dimension is not valid.
-	 *
-	 */
-	public Envelope3D(final Envelope3D envelope) {
-		init(envelope);
-	}
-
-	/**
-	 * Creates a new envelope from an existing JTS envelope.
-	 *
-	 * @param envelope
-	 *            The envelope to initialize from.
-	 * @param crs
-	 *            The coordinate reference system.
-	 * @throws MismatchedDimensionExceptionif
-	 *             the CRS dimension is not valid.
-	 */
-	public Envelope3D(final Envelope envelope) {
-		super(envelope);
-		if (envelope instanceof Envelope3D) {
-			this.minz = ((Envelope3D) envelope).getMinZ();
-			this.maxz = ((Envelope3D) envelope).getMaxZ();
-		}
 	}
 
 	/**
@@ -525,13 +494,13 @@ public class Envelope3D extends Envelope {
 	 */
 	@Override
 	public Envelope3D intersection(final Envelope env) {
-		if (isNull() || env.isNull() || !intersects(env)) { return new Envelope3D(); }
+		if (isNull() || env.isNull() || !intersects(env)) { return EMPTY; }
 		final Envelope xyInt = super.intersection(env);
 		final double otherMinZ = getMinZOf(env);
 		final double intMinZ = minz > otherMinZ ? minz : otherMinZ;
 		final double otherMaxZ = getMaxZOf(env);
 		final double intMaxZ = maxz < otherMaxZ ? maxz : otherMaxZ;
-		return new Envelope3D(xyInt.getMinX(), xyInt.getMaxX(), xyInt.getMinY(), xyInt.getMaxY(), intMinZ, intMaxZ);
+		return of(xyInt.getMinX(), xyInt.getMaxX(), xyInt.getMinY(), xyInt.getMaxY(), intMinZ, intMaxZ);
 	}
 
 	/**
@@ -626,7 +595,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	public Envelope3D yNegated() {
-		return new Envelope3D(getMinX(), getMaxX(), -getMaxY(), -getMinY(), minz, maxz);
+		return of(getMinX(), getMaxX(), -getMaxY(), -getMinY(), minz, maxz);
 	}
 
 	public Envelope3D rotate(final AxisAngle rotation) {
@@ -636,17 +605,5 @@ public class Envelope3D extends Envelope {
 		init(se.getEnvelope());
 		return this;
 	}
-
-	// a: minx, miny, minz / b : minx, maxy / c: maxx maxy maxz
-	//
-	// public final GamaPoint normal(final int direction) {
-	// // Avoids the creation of GamaPoints by not calling intermediate operations like minus() or times()
-	// final double x = ((maxy - miny) * (c.z - a.z) - (b.z - a.z) * (c.y - a.y)) * direction;
-	// final double y = ((b.z - a.z) * (c.x - a.x) - (b.x - a.x) * (c.z - a.z)) * direction;
-	// final double z = ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) * direction;
-	// final double r1 = Math.sqrt(x * x + y * y + z * z);
-	// if (r1 == 0d) { return new GamaPoint(0, 0, 0); }
-	// return new GamaPoint(x / r1, y / r1, z / r1);
-	// }
 
 }

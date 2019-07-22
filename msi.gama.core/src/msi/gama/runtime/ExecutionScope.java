@@ -15,9 +15,7 @@ import static msi.gama.runtime.ExecutionResult.PASSED;
 import static msi.gama.runtime.ExecutionResult.withValue;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 import msi.gama.common.interfaces.IGraphics;
@@ -36,6 +34,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.ModelDescription;
@@ -103,31 +102,6 @@ public class ExecutionScope implements IScope {
 
 	}
 
-	class AgentExecutionContext {
-
-		final IAgent agent;
-		final AgentExecutionContext outer;
-
-		public AgentExecutionContext(final IAgent agent, final AgentExecutionContext outer) {
-			this.outer = outer;
-			this.agent = agent;
-		}
-
-		public IAgent getAgent() {
-			return agent;
-		}
-
-		@Override
-		public String toString() {
-			return "context of " + agent;
-		}
-
-		public AgentExecutionContext getOuterContext() {
-			return outer;
-		}
-
-	}
-
 	public ExecutionScope(final ITopLevelAgent root) {
 		this(root, null);
 	}
@@ -149,13 +123,13 @@ public class ExecutionScope implements IScope {
 		}
 		name += otherName == null || otherName.isEmpty() ? "" : " (" + otherName + ")";
 		this.scopeName = name;
-		this.executionContext = context == null ? new ExecutionContext(this) : context.createCopyContext();
-		this.agentContext = agentContext == null ? new AgentExecutionContext(root, null) : agentContext;
+		this.executionContext = context == null ? ExecutionContext.create(this) : context.createCopy();
+		this.agentContext = agentContext == null ? AgentExecutionContext.create(root, null) : agentContext;
 		this.additionalContext.copyFrom(specialContext);
 	}
 
 	public AgentExecutionContext createChildContext(final IAgent agent) {
-		return new AgentExecutionContext(agent, agentContext);
+		return AgentExecutionContext.create(agent, agentContext);
 	};
 
 	/**
@@ -165,7 +139,13 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void clear() {
+		if (executionContext != null) {
+			executionContext.dispose();
+		}
 		executionContext = null;
+		if (agentContext != null) {
+			agentContext.dispose();
+		}
 		agentContext = null;
 		additionalContext.clear();
 		currentSymbol = null;
@@ -296,7 +276,9 @@ public class ExecutionScope implements IScope {
 	@Override
 	public void pop(final IAgent agent) {
 		if (agentContext == null) { throw GamaRuntimeException.warning("Agents stack is empty", this); }
+		final AgentExecutionContext previous = agentContext;
 		agentContext = agentContext.getOuterContext();
+		previous.dispose();
 		_agent_halted = false;
 	}
 
@@ -311,7 +293,7 @@ public class ExecutionScope implements IScope {
 		if (executionContext != null) {
 			executionContext = executionContext.createChildContext();
 		} else {
-			executionContext = new ExecutionContext(this);
+			executionContext = ExecutionContext.create(this);
 		}
 	}
 
@@ -353,7 +335,9 @@ public class ExecutionScope implements IScope {
 	@Override
 	public void pop(final ISymbol symbol) {
 		if (executionContext != null) {
+			final IExecutionContext previous = executionContext;
 			executionContext = executionContext.getOuterContext();
+			previous.dispose();
 		}
 	}
 
@@ -815,14 +799,15 @@ public class ExecutionScope implements IScope {
 
 	@Override
 	public IAgent[] getAgentsStack() {
-		final Set<IAgent> agents = new LinkedHashSet<>();
-		AgentExecutionContext current = agentContext;
-		if (current == null) { return new IAgent[0]; }
-		while (current != null) {
-			agents.add(current.getAgent());
-			current = current.getOuterContext();
+		try (final Collector.AsOrderedSet<IAgent> agents = Collector.getOrderedSet()) {
+			AgentExecutionContext current = agentContext;
+			if (current == null) { return new IAgent[0]; }
+			while (current != null) {
+				agents.add(current.getAgent());
+				current = current.getOuterContext();
+			}
+			return agents.items().stream().toArray(IAgent[]::new);
 		}
-		return agents.stream().toArray(IAgent[]::new);
 	}
 
 	/**
@@ -903,8 +888,8 @@ public class ExecutionScope implements IScope {
 	@Override
 	public IScope copy(final String additionalName) {
 		final ExecutionScope scope = new ExecutionScope(getRoot(), additionalName);
-		scope.executionContext = executionContext.createCopyContext();
-		scope.agentContext = agentContext;
+		scope.executionContext = executionContext.createCopy();
+		scope.agentContext = agentContext.createCopy();
 		scope.additionalContext.copyFrom(additionalContext);
 		return scope;
 	}

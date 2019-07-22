@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -305,7 +304,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries) {
 		final int number = geometries.length(scope);
-		if (number == 0) { return GamaListFactory.create(); }
+		if (number == 0) { return GamaListFactory.EMPTY_LIST; }
 		final IList<T> list = GamaListFactory.create(getGamlType().getContentType(), number);
 		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
 		for (final IShape geom : geometries.iterable(scope)) {
@@ -349,7 +348,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public IList<T> createAgents(final IScope scope, final int number,
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 			final boolean toBeScheduled) throws GamaRuntimeException {
-		if (number == 0) { return GamaListFactory.create(); }
+		if (number == 0) { return GamaListFactory.EMPTY_LIST; }
 		final IList<T> list = GamaListFactory.create(getGamlType().getContentType(), number);
 		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
 		for (int i = 0; i < number; i++) {
@@ -497,7 +496,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final IType<?> edgeType = scope.getType(edgeName);
 			final IType<?> nodeType = getGamlType().getContentType();
 			// TODO Specifier directed quelque part dans l'espece
-			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.create(), false, false,
+			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, false, false,
 					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope, nodeType, edgeType);
 			this.addListener(g);
 			g.postRefreshManagementAction(scope);
@@ -694,11 +693,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	protected <T extends IAgent> void fireAgentsAdded(final IScope scope, final IList<T> container) {
 		if (!hasListeners()) { return; }
 		// create list
-		final Collection<T> agents = new LinkedList<>();
-		final Iterator<T> it = container.iterator();
-		while (it.hasNext()) {
-			agents.add(it.next());
-		}
+		final Collection<T> agents = new LinkedList<>(container);
 		// send event
 		try {
 			for (final IPopulation.Listener l : listeners) {

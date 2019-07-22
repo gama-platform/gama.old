@@ -70,7 +70,7 @@ public final class NBAStarPathfinder<V, E> {
 	}
 
 	public IList<E> search(final V sourceNode, final V targetNode) {
-		if (sourceNode.equals(targetNode)) { return GamaListFactory.create(); }
+		if (sourceNode.equals(targetNode)) { return GamaListFactory.EMPTY_LIST; }
 
 		init(sourceNode, targetNode);
 
@@ -82,7 +82,7 @@ public final class NBAStarPathfinder<V, E> {
 			}
 		}
 
-		if (touchNode == null) { return GamaListFactory.create(); }
+		if (touchNode == null) { return GamaListFactory.EMPTY_LIST; }
 
 		return tracebackPath();
 	}

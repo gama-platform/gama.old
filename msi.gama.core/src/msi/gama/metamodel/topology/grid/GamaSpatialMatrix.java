@@ -611,7 +611,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	protected IList _listValue(final IScope scope, final IType contentType, final boolean cast) {
-		if (actualNumberOfCells == 0) { return GamaListFactory.create(); }
+		if (actualNumberOfCells == 0) { return GamaListFactory.EMPTY_LIST; }
 		if (cellSpecies == null) {
 			return cast ? GamaListFactory.create(scope, contentType, matrix)
 					: GamaListFactory.wrap(contentType, matrix);
@@ -1356,38 +1356,50 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public Set<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = new Envelope3D(source.getEnvelope());
-		env.expandBy(exp);
-		final Set<IAgent> result = allInEnvelope(scope, source, env, f, false);
-		result.removeIf(each -> source.euclidianDistanceTo(each) >= dist);
-		return result;
+		final Envelope3D env = Envelope3D.of(source.getEnvelope());
+		try {
+			env.expandBy(exp);
+			final Set<IAgent> result = allInEnvelope(scope, source, env, f, false);
+			result.removeIf(each -> source.euclidianDistanceTo(each) >= dist);
+			return result;
+		} finally {
+			env.dispose();
+		}
 	}
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = new Envelope3D(source.getEnvelope());
-		env.expandBy(exp);
-		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
-		final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
-		if (shapes.isEmpty()) { return null; }
-		return ordering.min(shapes);
+		final Envelope3D env = Envelope3D.of(source.getEnvelope());
+		try {
+			env.expandBy(exp);
+			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+			final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
+			if (shapes.isEmpty()) { return null; }
+			return ordering.min(shapes);
+		} finally {
+			env.dispose();
+		}
 	}
 
 	@Override
 	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
 			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
 		final double exp = dist * Maths.SQRT2;
-		final Envelope3D env = new Envelope3D(source.getEnvelope());
-		env.expandBy(exp);
-		final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
-		shapes.removeAll(alreadyChosen);
-		if (shapes.size() <= number) { return shapes; }
-		final boolean gridSpe = f.getSpecies() != null && f.getSpecies().isGrid();
-		final Ordering<IShape> ordering =
-				gridSpe ? Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input.getLocation()))
-						: Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
-		return ordering.leastOf(shapes, number);
+		final Envelope3D env = Envelope3D.of(source.getEnvelope());
+		try {
+			env.expandBy(exp);
+			final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
+			shapes.removeAll(alreadyChosen);
+			if (shapes.size() <= number) { return shapes; }
+			final boolean gridSpe = f.getSpecies() != null && f.getSpecies().isGrid();
+			final Ordering<IShape> ordering =
+					gridSpe ? Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input.getLocation()))
+							: Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+			return ordering.leastOf(shapes, number);
+		} finally {
+			env.dispose();
+		}
 	}
 
 	private Set<IAgent> inEnvelope(final Envelope env) {

@@ -518,7 +518,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public IList<GamaShape> getHoles() {
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	/**

@@ -11,13 +11,13 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 
 public class NoCacheNeighborhood implements INeighborhood {
 
@@ -44,16 +44,17 @@ public class NoCacheNeighborhood implements INeighborhood {
 	}
 
 	private Set<IAgent> computeNeighborsFrom(final IScope scope, final int placeIndex, final int begin, final int end) {
-		final Set<IAgent> result = new LinkedHashSet<>();
-		for (int i = begin; i <= end; i++) {
-			for (final Integer index : matrix.usesVN ? get4NeighborsAtRadius(placeIndex, i)
-					: get8NeighborsAtRadius(placeIndex, i)) {
-				result.add(matrix.matrix[index].getAgent());
+		try (final Collector.AsOrderedSet<IAgent> result = Collector.getOrderedSet()) {
+			for (int i = begin; i <= end; i++) {
+				for (final Integer index : matrix.usesVN ? get4NeighborsAtRadius(placeIndex, i)
+						: get8NeighborsAtRadius(placeIndex, i)) {
+					result.add(matrix.matrix[index].getAgent());
+				}
 			}
+			// Addresses Issue 1071 by explicitly shuffling the result
+			scope.getRandom().shuffle2(result);
+			return result.items();
 		}
-		// Addresses Issue 1071 by explicitly shuffling the result
-		scope.getRandom().shuffle2(result);
-		return result;
 	}
 
 	protected List<Integer> get8NeighborsAtRadius(final int placeIndex, final int radius) {

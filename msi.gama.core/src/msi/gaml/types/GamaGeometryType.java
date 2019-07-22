@@ -59,6 +59,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
@@ -665,13 +666,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildMultiGeometry(final IShape... shapes) {
-		final IList<IShape> list = GamaListFactory.create();
-		for (final IShape shape : shapes) {
-			if (shape != null) {
-				list.add(shape);
+		try (final Collector.AsList<IShape> list = Collector.getList()) {
+			for (final IShape shape : shapes) {
+				if (shape != null) {
+					list.add(shape);
+				}
 			}
+			return buildMultiGeometry(list.items());
 		}
-		return buildMultiGeometry(list);
 	}
 
 	public static IShape buildCross(final Double xRadius, final Double width, final GamaPoint location) {

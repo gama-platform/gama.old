@@ -109,7 +109,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	// Textures
 	private final ITextureCache textureCache = new TextureCache2(this);
-	private final Envelope3D textureEnvelope = new Envelope3D();
+	private final Envelope3D textureEnvelope = Envelope3D.create();
 	private final Rotation3D currentTextureRotation = Rotation3D.identity();
 	private boolean textured;
 	private int primaryTexture = NO_TEXTURE;
@@ -1168,7 +1168,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	public void defineROI(final GamaPoint mouseStart, final GamaPoint mouseEnd) {
 		final GamaPoint start = getWorldPositionFrom(mouseStart);
 		final GamaPoint end = getWorldPositionFrom(mouseEnd);
-		roiEnvelope = new Envelope3D(start.x, end.x, start.y, end.y, 0, getMaxEnvDim() / 20d);
+		roiEnvelope = Envelope3D.of(start.x, end.x, start.y, end.y, 0, getMaxEnvDim() / 20d);
 	}
 
 	public boolean mouseInROI(final GamaPoint mousePosition) {

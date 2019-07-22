@@ -130,7 +130,7 @@ public class AmorphousTopology implements ITopology {
 	@Override
 	public IList<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter,
 			final int number) {
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override

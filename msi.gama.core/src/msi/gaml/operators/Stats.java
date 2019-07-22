@@ -42,6 +42,7 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
@@ -1022,22 +1023,23 @@ public class Stats {
 		}
 		final List<Cluster<DoublePoint>> clusters = dbscan.cluster(instances);
 
-		final IList results = GamaListFactory.create();
-		for (final Cluster<DoublePoint> cl : clusters) {
-			final IList clG = GamaListFactory.create();
-			for (final DoublePoint pt : cl.getPoints()) {
-				final Integer id = ((Instance) pt).getId();
-				clG.addValue(scope, id);
-				remainingData.remove(id);
+		try (final Collector.AsList results = Collector.getList()) {
+			for (final Cluster<DoublePoint> cl : clusters) {
+				final IList clG = GamaListFactory.create();
+				for (final DoublePoint pt : cl.getPoints()) {
+					final Integer id = ((Instance) pt).getId();
+					clG.addValue(scope, id);
+					remainingData.remove(id);
+				}
+				results.add(clG);
 			}
-			results.add(clG);
+			for (final Integer id : remainingData) {
+				final IList clG = GamaListFactory.create();
+				clG.add(id);
+				results.add(clG);
+			}
+			return results.items();
 		}
-		for (final Integer id : remainingData) {
-			final IList clG = GamaListFactory.create();
-			clG.add(id);
-			results.add(clG);
-		}
-		return results;
 	}
 
 	@operator (
@@ -1071,15 +1073,16 @@ public class Stats {
 		final KMeansPlusPlusClusterer<DoublePoint> kmeans =
 				new KMeansPlusPlusClusterer<>(k, maxIt, new EuclideanDistance(), rand);
 		final List<CentroidCluster<DoublePoint>> clusters = kmeans.cluster(instances);
-		final IList results = GamaListFactory.create();
-		for (final Cluster<DoublePoint> cl : clusters) {
-			final IList clG = GamaListFactory.create();
-			for (final DoublePoint pt : cl.getPoints()) {
-				clG.addValue(scope, ((Instance) pt).getId());
+		try (final Collector.AsList results = Collector.getList()) {
+			for (final Cluster<DoublePoint> cl : clusters) {
+				final IList clG = GamaListFactory.create();
+				for (final DoublePoint pt : cl.getPoints()) {
+					clG.addValue(scope, ((Instance) pt).getId());
+				}
+				results.add(clG);
 			}
-			results.addValue(scope, clG);
+			return results.items();
 		}
-		return results;
 	}
 
 	@operator (

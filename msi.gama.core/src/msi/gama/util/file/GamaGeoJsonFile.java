@@ -197,7 +197,7 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	public Envelope3D computeEnvelope(final IScope scope) {
 		if (gis == null) {
 			final SimpleFeatureCollection store = getFeatureCollection(scope);
-			if (store == null) { return new Envelope3D(); }
+			if (store == null) { return Envelope3D.EMPTY; }
 			final Envelope3D env = Envelope3D.of(store.getBounds());
 			computeProjection(scope, env);
 		}

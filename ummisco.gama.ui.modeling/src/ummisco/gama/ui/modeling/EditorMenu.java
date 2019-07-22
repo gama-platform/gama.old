@@ -4,14 +4,13 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.modeling;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +48,7 @@ import msi.gama.lang.gaml.ui.reference.ColorReferenceMenu;
 import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.lang.gaml.ui.reference.TemplateReferenceMenu;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.Collector;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import ummisco.gama.ui.access.ModelsFinder;
 import ummisco.gama.ui.interfaces.IRefreshHandler;
@@ -342,17 +342,18 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	}
 
 	private static Set<URI> getImporters(final GamlEditor editor) {
-		final Set<URI> map = new LinkedHashSet<>();
-		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+		try (final Collector.AsOrderedSet<URI> map = Collector.getOrderedSet()) {
+			editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
-			@Override
-			public void process(final XtextResource resource) throws Exception {
-				final String platformString = resource.getURI().toPlatformString(true);
-				final URI uri = URI.createPlatformResourceURI(platformString, false);
-				map.addAll(GamlResourceIndexer.directImportersOf(uri));
-			}
-		});
-		return map;
+				@Override
+				public void process(final XtextResource resource) throws Exception {
+					final String platformString = resource.getURI().toPlatformString(true);
+					final URI uri = URI.createPlatformResourceURI(platformString, false);
+					map.addAll(GamlResourceIndexer.directImportersOf(uri));
+				}
+			});
+			return map.items();
+		}
 	}
 
 	/**
@@ -377,7 +378,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createBoxToggle(final Menu menu) {
 		final MenuItem box = new MenuItem(menu, SWT.CHECK);
@@ -397,7 +398,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createMarkToggle(final Menu menu) {
 		final MenuItem mark = new MenuItem(menu, SWT.CHECK);
@@ -435,7 +436,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createFoldingToggle(final Menu menu) {
 		final MenuItem folding = new MenuItem(menu, SWT.CHECK);
@@ -453,7 +454,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createLineToggle(final Menu menu) {
 		final MenuItem line = new MenuItem(menu, SWT.CHECK);

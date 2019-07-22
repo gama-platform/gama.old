@@ -18,20 +18,18 @@ global {
 
 	//Pedestrians parameters
 	rgb pedestrian_color <- #green;
-	float pedestrian_speed <- 2.5;
+	float pedestrian_speed <- 3.0;
 
 	//Wall parameters
 	float corridor_width <- environment_width / 1.5;
 	int corridor_wall_height <- 800;
 	geometry corridor_wall_0_shape <- rectangle({corridor_width, corridor_wall_height}) at_location {environment_width / 2, corridor_wall_height / 2};
 	geometry corridor_wall_1_shape <- rectangle({corridor_width, corridor_wall_height}) at_location {environment_width / 2, environment_height - (corridor_wall_height / 2)};
+	
 
 	//Corridor parameters
 	float corridor_left_bounds <- (location.x - (corridor_width / 2));
 	float corridor_right_bounds <- (location.x + (corridor_width / 2));
-
-	//Generation of new pedestrians parameters
-	int new_pedestian_generate_frequency <- 2;
 
 	init {
 		create corridor;
@@ -41,15 +39,14 @@ global {
 		pedestrian_color <- rnd_color(255);
 	}
 
-	//Reflex to generate new pedestrians according to the frequency generation parameter
-	reflex generate_pedestrians when: every(5 #cycle) {
+	reflex generate_pedestrians when: every(4 #cycle) {
 		create pedestrian number: 5 with: [color::pedestrian_color] {
 			do init_location({0, rnd(environment_height)});
 		}
 	}
 }
 
-//Species pedestrian which will move from one side of the experiments to another and destroy itself once the other side is reached
+//Species pedestrian which will move from one side of the experiment to another and destroy itself once the other side is reached
 species pedestrian skills: [moving] topology: (topology(shape - (corridor_wall_0_shape + corridor_wall_1_shape))) {
 	point target_location;
 	rgb color;
@@ -60,7 +57,7 @@ species pedestrian skills: [moving] topology: (topology(shape - (corridor_wall_0
 	}
 
 	//Reflex to make the agent move to its target_location
-	reflex move_left {
+	reflex move {
 		point previous_location <- location;
 		speed <- pedestrian_speed;
 		if (location.y < corridor_wall_height) and (location.x <= (environment_width / 2)) {
@@ -70,13 +67,9 @@ species pedestrian skills: [moving] topology: (topology(shape - (corridor_wall_0
 		} else {
 			do move heading: self towards target_location;
 		}
-
-		//do goto(target: target_location);
-		if (location.x = previous_location.x) {
-		// No move
+		if (location.x = previous_location.x) { // No move detected
 			do move heading: self towards {environment_width, world.shape.location.y};
 		}
-
 	}
 
 	reflex arrived when: location.x >= target_location.x {
@@ -114,11 +107,14 @@ species corridor {
 			}
 
 		}
-
-	} }
+	}
+}
 
 experiment "Corridor" type: gui autorun: true {
 	point button_location;
+	bool button_hover;
+	geometry corridor_wall_0_display <- rectangle({corridor_width-30, corridor_wall_height-30}) at_location {environment_width / 2, corridor_wall_height / 2};
+	geometry corridor_wall_1_display <- rectangle({corridor_width-30, corridor_wall_height-30}) at_location {environment_width / 2, environment_height - (corridor_wall_height / 2)};
 	
 	init {
 		button_location <- {simulation.corridor_left_bounds + 100, 100};  
@@ -127,8 +123,8 @@ experiment "Corridor" type: gui autorun: true {
 		display defaut_display background: #black fullscreen: true toolbar: false {
 			graphics back {
 				draw shape color: #black empty: false;
-				draw corridor_wall_0_shape color: #darkgray empty: false;
-				draw corridor_wall_1_shape color: #darkgray empty: false;
+				draw corridor_wall_0_display color: #gray empty: true;
+				draw corridor_wall_1_display color: #gray empty: true ;
 			}
 
 			species corridor {
@@ -140,25 +136,28 @@ experiment "Corridor" type: gui autorun: true {
 			}
 
 			species pedestrian {
-				draw square(30) empty: false color: color;
+				draw square(20) empty: false color: color;
 			}
 
 			graphics front {
-				draw (capture_pedestrians ? "Capturing":"Not capturing") anchor: #left_center at: {corridor_left_bounds + 200, 100} color: !capture_pedestrians ? #darkred : #darkgreen font: font("Helvetica", 20 * #zoom, #bold);
-				draw ("Captured: " + length(corridor(0).captured_pedestrian)) anchor: #left_center at: {corridor_left_bounds + 200, 250} color: #white font: font("Helvetica", 20 * #zoom, #bold);
-				draw ("Pedestrians: " + length(pedestrian)) anchor: #left_center at: {corridor_left_bounds + 200, 400} color: #white font: font("Helvetica", 20 * #zoom, #bold);
-				draw ("Step duration (ms): " + (average_duration copy_between (0, 4))) anchor: #left_center at: {corridor_left_bounds + 200, 550} color: #white font: font("Helvetica", 20 * #zoom, #bold);
+				draw (capture_pedestrians ? "Capturing":"Not capturing") anchor: #left_center at: {corridor_left_bounds + 200, 100} color: !capture_pedestrians ? #darkred : #darkgreen font: font("Helvetica", 20 * #zoom, 0);
+				draw ("Captured: " + length(corridor(0).captured_pedestrian)) anchor: #left_center at: {corridor_left_bounds + 200, 250} color: #white font: font("Helvetica", 20 * #zoom, 0);
+				draw ("Pedestrians: " + length(pedestrian)) anchor: #left_center at: {corridor_left_bounds + 200, 400} color: #white font: font("Helvetica", 20 * #zoom, 0);
+				draw ("Step duration (ms): " + (duration copy_between (0, 4))) anchor: #left_center at: {corridor_left_bounds + 200, 550} color: #white font: font("Helvetica", 20 * #zoom, 0);
 			}
 
 			graphics button {
-				draw circle(40) color: #black at: button_location;
-				draw circle(40) color: !capture_pedestrians ? #darkred : #darkgreen at:  button_location+ (capture_pedestrians ? {8,8}:{-8,-8});
+				draw circle(50) color: #darkgray at: button_location;
+				draw circle(40) color: !capture_pedestrians ? (button_hover ? #red : #darkred) : (button_hover ? #lightgreen : #darkgreen) at:  button_location;
 			}
 
 			event mouse_down action: {
 				if (button_location distance_to #user_location <= 40) {
 					capture_pedestrians <- !capture_pedestrians;
 				}
+			};
+			event mouse_move action: {
+				button_hover <- (button_location distance_to #user_location <= 40);
 			};
 		}
 	}

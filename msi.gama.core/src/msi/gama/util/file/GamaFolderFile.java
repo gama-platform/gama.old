@@ -69,7 +69,8 @@ public class GamaFolderFile extends GamaFile<IList<String>, String> {
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if (getBuffer() != null) { return; }
 		final String[] list = getFile(scope).list();
-		final IList<String> result = list == null ? GamaListFactory.create() : createWithoutCasting(Types.STRING, list);
+		final IList<String> result =
+				list == null ? GamaListFactory.EMPTY_LIST : createWithoutCasting(Types.STRING, list);
 		setBuffer(result);
 	}
 

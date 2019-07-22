@@ -18,6 +18,8 @@ import java.util.Random;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 import msi.gama.util.random.CellularAutomatonRNG;
 import msi.gama.util.random.GamaRNG;
 import msi.gama.util.random.JavaRNG;
@@ -251,6 +253,14 @@ public class RandomUtils {
 			a[change] = helper;
 			list.add(a[i]);
 		}
+	}
+
+	public void shuffle2(final Collector.AsList list) {
+		shuffle(list.items());
+	}
+
+	public void shuffle2(final ICollector list) {
+		shuffle2(list.items());
 	}
 
 	public <T> void shuffleInPlace(final T[] a) {

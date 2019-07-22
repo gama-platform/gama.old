@@ -1403,12 +1403,16 @@ public abstract class Spatial {
 
 		)
 		public static IShape envelope(final IScope scope, final Object obj) {
-			Envelope3D env = new Envelope3D(GeometryUtils.computeEnvelopeFrom(scope, obj));
-			if (env.isNull()) {
-				env = new Envelope3D(0, 100, 0, 100, 0, 100);
+			Envelope3D env = Envelope3D.of(GeometryUtils.computeEnvelopeFrom(scope, obj));
+			try {
+				if (env.isNull()) {
+					env = Envelope3D.of(0, 100, 0, 100, 0, 100);
+				}
+				return GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
+						env.centre().toGamaPoint());
+			} finally {
+				env.dispose();
 			}
-			return GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
-					env.centre().toGamaPoint());
 		}
 	}
 
@@ -3218,7 +3222,7 @@ public abstract class Spatial {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }
 			IList<IShape> geoms = polylines.copy(scope);
 			geoms.removeIf(a -> !a.getGeometry().isLine());
-			if (geoms.isEmpty()) { return GamaListFactory.create(); }
+			if (geoms.isEmpty()) { return GamaListFactory.EMPTY_LIST; }
 			if (splitlines) {
 				geoms = Transformations.split_lines(scope, geoms, true);
 				geoms.removeIf(a -> a.getPerimeter() < tolerance || !a.getInnerGeometry().isValid()
@@ -4295,15 +4299,16 @@ public abstract class Spatial {
 					final ITopology topo = scope.getTopology();
 					if (topo.isContinuous() && !topo.isTorus()) {
 						if ((double) list.length(scope) / (double) scope.getSimulation().getMembersSize(scope) < 0.1) {
-							final IList<IAgent> results = GamaListFactory.create();
-							final IAgent ag = scope.getAgent();
-							for (final IShape sp : list.iterable(scope)) {
-								if (ag.euclidianDistanceTo(sp) <= distance) {
-									results.add((IAgent) sp);
+							try (final Collector.AsList<IAgent> results = Collector.getList()) {
+								final IAgent ag = scope.getAgent();
+								for (final IShape sp : list.iterable(scope)) {
+									if (ag.euclidianDistanceTo(sp) <= distance) {
+										results.add((IAgent) sp);
+									}
 								}
+								results.remove(ag);
+								return results.items();
 							}
-							results.remove(ag);
-							return results;
 						}
 					}
 
@@ -4358,7 +4363,7 @@ public abstract class Spatial {
 			if (contentType.isAgentType()) {
 				return _gather(scope, In.list(scope, list), source, true);
 			} else if (contentType == Types.GEOMETRY) { return geomOverlapping(scope, list, source, true); }
-			return GamaListFactory.create();
+			return GamaListFactory.EMPTY_LIST;
 		}
 
 		@operator (
@@ -4385,7 +4390,7 @@ public abstract class Spatial {
 			if (contentType.isAgentType()) {
 				return _gather(scope, In.list(scope, list), source, false);
 			} else if (contentType == Types.GEOMETRY) { return geomOverlapping(scope, list, source, false); }
-			return GamaListFactory.create();
+			return GamaListFactory.EMPTY_LIST;
 		}
 
 		public static IList<? extends IShape> geomOverlapping(final IScope scope,
@@ -4461,7 +4466,7 @@ public abstract class Spatial {
 		@no_test // already done in Spatial tests Models
 		public static IList<IShape> closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source, final int number) {
-			if (list == null || list.isEmpty(scope)) { return GamaListFactory.create(); }
+			if (list == null || list.isEmpty(scope)) { return GamaListFactory.EMPTY_LIST; }
 			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return (IList) _closest(scope, In.list(scope, list), source, number);
@@ -4644,7 +4649,7 @@ public abstract class Spatial {
 
 		private static IList<IAgent> _gather(final IScope scope, final IAgentFilter filter, final Object source,
 				final boolean inside) {
-			if (filter == null || source == null) { return GamaListFactory.create(); }
+			if (filter == null || source == null) { return GamaListFactory.EMPTY_LIST; }
 			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
 			return GamaListFactory.wrap(type,
 					scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, inside));
@@ -4673,7 +4678,7 @@ public abstract class Spatial {
 
 		static IList<IAgent> _neighbors(final IScope scope, final IAgentFilter filter, final Object source,
 				final Object distance, final ITopology t) {
-			if (filter == null || source == null) { return GamaListFactory.create(); }
+			if (filter == null || source == null) { return GamaListFactory.EMPTY_LIST; }
 			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
 			return GamaListFactory.wrap(type, t.getNeighborsOf(scope, Cast.asGeometry(scope, source, false),
 					Cast.asFloat(scope, distance), filter));

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GenericFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.file.GenericFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -46,7 +46,7 @@ public class GenericFile extends GamaFile<IList<String>, String> {
 
 	@Override
 	public Envelope3D computeEnvelope(final IScope scope) {
-		return new Envelope3D();
+		return Envelope3D.EMPTY;
 	}
 
 	@Override
@@ -55,19 +55,20 @@ public class GenericFile extends GamaFile<IList<String>, String> {
 		if (OldFileUtils.isBinaryFile(scope, getFile(scope))) {
 			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException
 					.warning("Problem identifying the contents of " + getFile(scope).getAbsolutePath(), scope), false);
-			setBuffer(GamaListFactory.create());
-		}
-		try (final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
-			final IList<String> allLines = GamaListFactory.create(Types.STRING);
-			String str;
-			str = in.readLine();
-			while (str != null) {
-				allLines.add(str);
+			setBuffer(GamaListFactory.EMPTY_LIST);
+		} else {
+			try (final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
+				final IList<String> allLines = GamaListFactory.create(Types.STRING);
+				String str;
 				str = in.readLine();
+				while (str != null) {
+					allLines.add(str);
+					str = in.readLine();
+				}
+				setBuffer(allLines);
+			} catch (final IOException e) {
+				throw GamaRuntimeException.create(e, scope);
 			}
-			setBuffer(allLines);
-		} catch (final IOException e) {
-			throw GamaRuntimeException.create(e, scope);
 		}
 
 	}

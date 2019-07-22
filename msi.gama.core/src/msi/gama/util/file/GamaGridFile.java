@@ -70,7 +70,7 @@ public class GamaGridFile extends GamaGisFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	private GamaGridReader createReader(final IScope scope, final boolean fillBuffer) {
@@ -171,8 +171,7 @@ public class GamaGridFile extends GamaGisFile {
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
-				final Envelope3D env = new Envelope3D(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1),
-						genv.getMaximum(1), 0, 0);
+				final Envelope3D env = Envelope3D.of(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1), 0, 0);
 				computeProjection(scope, env);
 				final Envelope envP = gis.getProjectedEnvelope();
 				final double cellHeight = envP.getHeight() / numRows;

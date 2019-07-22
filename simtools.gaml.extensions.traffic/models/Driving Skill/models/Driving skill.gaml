@@ -266,7 +266,7 @@ experiment experiment_city type: gui {
 		];
 	}
 	output {
-		display carte_principale type: opengl synchronized: true background: #gray{
+		display Main type: opengl synchronized: true background: #gray{
 			species road ;
 			species intersection ;
 			species people ;
@@ -286,7 +286,7 @@ experiment experiment_ring type: gui {
 		];
 	}
 	output {
-		display carte_principale type: opengl synchronized: true background: #gray{
+		display Main type: opengl synchronized: true background: #gray{
 			species road ;
 			species intersection ;
 			species people ;

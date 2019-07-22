@@ -376,7 +376,9 @@ public abstract class AbstractTopology implements ITopology {
 			final int number) {
 		insertAgents(scope, filter);
 		if (!isTorus()) {
-			return getSpatialIndex().firstAtDistance(scope, source, 0, filter, number, GamaListFactory.create());
+			try (ICollector<IAgent> alreadyChosen = Collector.getList()) {
+				return getSpatialIndex().firstAtDistance(scope, source, 0, filter, number, alreadyChosen);
+			}
 		}
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final Map<Geometry, IAgent> agents = getTororoidalAgents(source, scope, filter);

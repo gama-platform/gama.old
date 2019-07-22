@@ -427,7 +427,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 		// First, we compute the number of agents to create
 		final Integer max = number == null ? null : Cast.asInt(scope, number.value(scope));
-		if (from == null && max != null && max <= 0) { return GamaListFactory.create(); }
+		if (from == null && max != null && max <= 0) { return GamaListFactory.EMPTY_LIST; }
 
 		// Next, we compute the species to instantiate
 		final IPopulation pop = findPopulation(scope);
@@ -482,7 +482,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation<? extends IAgent> population,
 			final List<Map<String, Object>> inits) {
-		if (population == null) { return GamaListFactory.create(); }
+		if (population == null) { return GamaListFactory.EMPTY_LIST; }
 		// final boolean hasSequence = sequence != null && !sequence.isEmpty();
 		boolean shouldBeScheduled = false;
 		// If we create simulations within a single experiment, we must schedule

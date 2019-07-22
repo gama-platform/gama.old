@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +59,18 @@ public class GamaMapFactory {
 	 */
 	public static <K, V> IMap<K, V> wrap(final IType key, final IType contents, final Map<K, V> wrapped) {
 		return new GamaMapWrapper(wrapped, key, contents, true);
+	}
+
+	public static <K, V> IMap<K, V> wrap(final IType key, final IType contents, final boolean isOrdered,
+			final Map<K, V> wrapped) {
+		return new GamaMapWrapper(wrapped, key, contents, isOrdered);
+	}
+
+	public static <K, V> IMap<K, V> synchronizedMap(final IMap<K, V> target) {
+		final IType key = target.getGamlType().getKeyType();
+		final IType contents = target.getGamlType().getContentType();
+		final boolean isOrdered = target.isOrdered();
+		return wrap(key, contents, isOrdered, Collections.synchronizedMap(target));
 	}
 
 	public static IMap create() {

@@ -323,7 +323,7 @@ public class GamaShapeFile extends GamaGisFile {
 			try {
 				s = new ShapeInfo(scope, getFile(scope).toURI().toURL(), 0);
 			} catch (final MalformedURLException e) {
-				return GamaListFactory.create();
+				return GamaListFactory.EMPTY_LIST;
 			}
 		}
 		return GamaListFactory.wrap(Types.STRING, s.attributes.keySet());
@@ -425,7 +425,7 @@ public class GamaShapeFile extends GamaGisFile {
 				final Envelope3D env = Envelope3D.of(store.getFeatureSource().getBounds());
 				computeProjection(scope, env);
 			} catch (final IOException e) {
-				return new Envelope3D();
+				return Envelope3D.EMPTY;
 			} finally {
 				if (store != null) {
 					store.dispose();

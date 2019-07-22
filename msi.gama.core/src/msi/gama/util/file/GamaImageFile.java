@@ -219,7 +219,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
@@ -468,7 +468,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 				}
 				isGeoreferenced = true;
-				return new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
+				return Envelope3D.of(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 			}
 
 		}
@@ -488,7 +488,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 			maxCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
 		}
 
-		return new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
+		return Envelope3D.of(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 
 	}
 

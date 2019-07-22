@@ -736,7 +736,7 @@ public class LayeredDisplayData {
 		if (sim != null) {
 			env = sim.getEnvelope();
 		} else {
-			env = new Envelope3D(0, 100, 0, 100, 0, 0);
+			env = Envelope3D.of(0, 100, 0, 100, 0, 0);
 		}
 		setEnvWidth(env.getWidth());
 		setEnvHeight(env.getHeight());

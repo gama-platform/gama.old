@@ -10,11 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import msi.gama.util.Collector;
 
 /**
  * Written by drogoul Modified on 8 mars 2011
@@ -107,12 +107,13 @@ public abstract class GridNeighborhood implements INeighborhood {
 		}
 		final int[] nn = neighbors[placeIndex];
 		final int nnSize = neighborsIndexes[placeIndex][radius - 1];
-		final Set<IAgent> result = new LinkedHashSet<>();
-		for (int i = 0; i < nnSize; i++) {
-			result.add(matrix.matrix[nn[i]].getAgent());
+		try (final Collector.AsOrderedSet<IAgent> result = Collector.getOrderedSet()) {
+			for (int i = 0; i < nnSize; i++) {
+				result.add(matrix.matrix[nn[i]].getAgent());
+			}
+			scope.getRandom().shuffle2(result);
+			return result.items();
 		}
-		scope.getRandom().shuffle2(result);
-		return result;
 	}
 
 	@Override

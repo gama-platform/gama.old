@@ -87,7 +87,7 @@ public class GamaPropertyFile extends GamaFile<IMap<String, String>, String> {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO return the keys of the map as "attributes"
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
