@@ -68,13 +68,10 @@ global {
 		//Clustering of the balls according to their distance with at least a minimal number of balls in a group
 			list<list<ball>> satisfying_ball_groups <- (free_balls simple_clustering_by_distance group_creation_distance) where ((length(each)) > min_group_member);
 			loop one_group over: satisfying_ball_groups {
-				create group returns: new_groups;
-
-				//Capture by the new groups created of the different balls present in the list one_group
-				ask (new_groups at 0) as: group {
+				create group {
 					capture one_group as: ball_in_group;
 				}
-
+				//Capture by the new groups created of the different balls present in the list one_group
 			}
 
 		}
@@ -91,17 +88,14 @@ global {
 
 		//Creation of the different clouds using the groups satisfying both conditions
 		loop one_group over: satisfying_groups {
-			create cloud returns: rets {
+			create cloud  {
 				capture one_group as: group_delegation {
 					migrate ball_in_group target: ball_in_cloud;
 				}
 				color <- one_of(group_delegation).color.darker;
 			}
-
 		}
-
 	}
-
 }
 
 //Species with a specified type of control architecture, here the final state machine FSM
@@ -131,8 +125,8 @@ species ball control: fsm {
 		float repulsive_dx <- 0.0;
 		float repulsive_dy <- 0.0;
 		loop nb over: nearby_balls {
-			float repulsive_distance <- ball_separation - (location distance_to (nb).location);
-			float repulsive_direction <- ((nb).location) towards (location);
+			float repulsive_distance <- ball_separation - (location distance_to nb.location);
+			float repulsive_direction <- (nb.location) towards (location);
 			repulsive_dx <- repulsive_dx + (repulsive_distance * (cos(repulsive_direction)));
 			repulsive_dy <- repulsive_dy + (repulsive_distance * (sin(repulsive_direction)));
 		}
@@ -151,8 +145,8 @@ species ball control: fsm {
 			speed <- ball_speed;
 		}
 
-		ball nearest_free_ball <- ((ball - self) where ((each.state) = 'follow_nearest_ball')) closest_to self;
-		if nearest_free_ball != nil {
+		ball nearest_free_ball <- (ball where ((each.state) = 'follow_nearest_ball')) closest_to self;
+		if nearest_free_ball != self {
 			float heading <- self towards (nearest_free_ball);
 			float step_distance <- speed * step;
 			float step_x <- step_distance * (cos(heading));
@@ -196,28 +190,25 @@ species ball control: fsm {
 	//Species representing the group of balls
 species group {
 	rgb color <- rgb([rnd(255), rnd(255), rnd(255)]);
-	geometry shape <- polygon(ball_in_group) buffer 10;
+	geometry shape <- polygon(ball_in_group) buffer 10 update: convex_hull(polygon(ball_in_group collect each.location));
 	float speed update: float(group_base_speed);
 
 	//Parameter to capture the balls contains in the perception range
 	float perception_range update: float(base_perception_range + (rnd(5)));
-	ball nearest_free_ball update: (ball where ((each.state = 'follow_nearest_ball'))) closest_to self;
-	group nearest_smaller_group update: (((group as list) - self) where ((length(each.members)) < (length(members)))) closest_to self;
 	agent target update: get_nearer_target();
 
 	//Function to return the closest ball or small group of balls that the agent could capture
 	agent get_nearer_target {
+		int size <- length(members);
+		ball nearest_free_ball <- (ball where ((each.state = 'follow_nearest_ball'))) closest_to self;
+		group nearest_smaller_group <- ((group - self) where ((length(each.members)) < size)) closest_to self;
 		if (nearest_free_ball = nil) and (nearest_smaller_group = nil) {
 			return nil;
 		}
 
 		float distance_to_ball <- (nearest_free_ball != nil) ? (self distance_to nearest_free_ball) : MAX_DISTANCE;
 		float distance_to_group <- (nearest_smaller_group != nil) ? (self distance_to nearest_smaller_group) : MAX_DISTANCE;
-		if (distance_to_ball < distance_to_group) {
-			return nearest_free_ball;
-		}
-
-		return nearest_smaller_group;
+		return (distance_to_ball < distance_to_group) ?  nearest_free_ball :  nearest_smaller_group;
 	}
 
 	//Action to use when the group of balls explode
@@ -341,7 +332,7 @@ species group {
 			com.location <- com.location + {dx, dy};
 		}
 
-		shape <- convex_hull((polygon(ball_in_group collect each.location)) + 2.0);
+		//shape <- convex_hull((polygon(ball_in_group collect each.location)) + 2.0);
 	}
 	//Reflex to disaggregate the group if it is too important ie the number of balls is greater than 80% of the total ball number
 	reflex self_disaggregate {
