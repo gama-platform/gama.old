@@ -19,16 +19,16 @@ global {
 	float prey_speed <- 1.0;
 	rgb prey_flee_color <- #orange;
 	float prey_invisible_speed <- 3 * prey_speed;
-	rgb prey_invisible_color <- #black;  
+	rgb prey_invisible_color <- #darkgray;  
 	int prey_in_shelter_max_time min: 1 init: 200;
 	int prey_invisible_max_time min: 1 max: 100 init: 70; 
-	int number_of_preys min: 1 max: 1000 init: 100;
+	int number_of_preys min: 1 max: 1000 init: 500;
 	
 	//Parameters for the predator species
 	rgb predator_color <- #red const: true;
 	float predator_perception <- 3.0;
 	float predator_size <- 4.0;
-	float predator_speed <- 1.0;
+	float predator_speed <- 1.5;
 	int number_of_predators min: 1 max: 100 init: 30; 
 	geometry shape <- square(400);
 	
@@ -44,9 +44,9 @@ global {
 	init {
 		create prey number: number_of_preys;
 		create predator number: number_of_predators; 
-		create shelter number: number_of_shelter returns: shelters;
-		(shelters at 0).shape <- shelter_shape at_location {150, 250};
-		(shelters at 1).shape <- shelter_shape at_location {350, 250};
+		create shelter number: number_of_shelter {
+			shape <- shelter_shape at_location any_point_in(world);
+		}
 	}
 }
 //Species prey which can move using the skill moving and its operators
@@ -55,7 +55,7 @@ species prey skills: [moving] control: fsm {
 	rgb color <- prey_color;
 	
 	//List of all predators inside the perception of the prey
-	list nearby_predators update: (agents_overlapping (shape + prey_perception)) of_species predator ;
+	list nearby_predators update:  predator overlapping (shape + prey_perception) ;
 	int invisible_time min: 1 <- int(time);
 
 	shelter nearest_shelter;		
@@ -63,10 +63,9 @@ species prey skills: [moving] control: fsm {
 	//State to make the prey move randomly when there isn't any predator, if so, change the state to flee
 	state move_around initial: true {
 		enter {
-			speed <- prey_speed;
 			color <- prey_color;
 		}
-		do wander; 
+		do wander speed: prey_speed; 
 		
 		transition to: flee_predator when: !(empty (nearby_predators)); 
 	}
@@ -75,7 +74,7 @@ species prey skills: [moving] control: fsm {
 	state flee_predator {
 		enter {
 			color <- prey_flee_color;
-			nearest_shelter <- first ( (list (shelter)) sort_by ( each distance_to (self)) );
+			nearest_shelter <- shelter closest_to self;
 		}
 		if !(empty (nearby_predators)) { do move heading: (self) towards (nearest_shelter) speed: prey_speed;}
 		
@@ -84,12 +83,12 @@ species prey skills: [moving] control: fsm {
 	//State to make the prey invisible during a certain time when it is released by the shelters
 	state invisible {
 		enter {
-			speed <- prey_invisible_speed;
 			color <- prey_invisible_color;
 			invisible_time <- int(time);
 			heading <- rnd (360.0) ;
 		}
-		do move; 
+
+		do move speed:prey_invisible_speed heading: heading ;
 		transition to: move_around when: ( (time - invisible_time) > prey_invisible_max_time );
 	}
 	
@@ -129,10 +128,6 @@ species shelter skills: [moving]  frequency: 2 {
 	//List of all preys which are being chased and inside the shelter but not captured yet
 	list<prey> chased_preys update: (prey) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
 	
-	reflex move_around {
-		//do wander speed: shelter_speed; 
-	}
-	 
 	//Capture all the chased preys inside the shelter and change their species to prey_in_shelter
 	reflex capture_chased_preys when: !(empty (chased_preys)) { 
 		capture chased_preys as: prey_in_shelter {
@@ -166,13 +161,13 @@ species shelter skills: [moving]  frequency: 2 {
 	
 	aspect default {
 		draw shape color: shelter_color;
-		draw 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 6 at: {(location).x - 20, (location).y};
+		draw (string (length ((members)))) color: rgb ('white') size: 6 at: location anchor: #center font: font("Helvetica", 12*#zoom, #bold);
 	}
 }
 
 experiment default_experiment type: gui {
 	output {
-		display default_display type: opengl{
+		display default_display background: #black{
 			species prey aspect: default;
 			species predator transparency: 0.5 aspect: default;
 			species shelter transparency: 0.5 aspect: default { 
