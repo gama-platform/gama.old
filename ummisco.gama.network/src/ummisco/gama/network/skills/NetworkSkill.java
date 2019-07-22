@@ -223,7 +223,7 @@ public class NetworkSkill extends MessagingSkill {
 			serverList = new ArrayList<>();
 			agt.setAttribute(INetworkSkill.NET_AGENT_SERVER, serverList);
 		}
-		System.out.println("connector " + connector);
+		DEBUG.OUT("connector " + connector);
 		connector.connect(agt);
 
 		serverList.add(serverKey);
@@ -231,7 +231,7 @@ public class NetworkSkill extends MessagingSkill {
 		// register connected agent to global groups;
 		for (final String grp : INetworkSkill.DEFAULT_GROUP) {
 			this.joinAGroup(scope, agt, grp);
-			System.out.println(grp);
+			DEBUG.OUT(grp);
 			// connector.joinAGroup(agt, grp);
 		}
 		;

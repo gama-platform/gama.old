@@ -1254,7 +1254,7 @@ public class Stats {
 		for (int i = 0; i < values.length; i++) {
 			values[i] = Cast.asFloat(scope, data.get(i));
 		}
-		java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
+//		java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
 		return k.evaluate(values);
 	}
 
