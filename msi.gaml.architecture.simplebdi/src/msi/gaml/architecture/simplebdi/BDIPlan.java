@@ -105,14 +105,14 @@ public class BDIPlan implements IValue {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "BDIPlan(" + planstatement
+		return "BDIPlan(" + planstatement.getName()
 		// +(values == null ? "" : "," + values) +
 				+ ")";
 	}
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return "BDIPlan(" + planstatement
+		return "BDIPlan(" + planstatement.getName()+")"
 		// +(values == null ? "" : "," + values)
 		;
 	}
