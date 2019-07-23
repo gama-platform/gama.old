@@ -524,14 +524,14 @@ public class SwtGui implements IGui {
 	public void closeSimulationViews(final IScope scope, final boolean openModelingPerspective,
 			final boolean immediately) {
 		WorkbenchHelper.run(() -> {
-			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			final IWorkbenchPage page = WorkbenchHelper.getPage();
 			final IViewReference[] views = page.getViewReferences();
 
 			for (final IViewReference view : views) {
 				final IViewPart part = view.getView(false);
 				if (part instanceof IGamaView) {
+					DEBUG.OUT("Closing " + view.getId());
 					((IGamaView) part).close(scope);
-
 				}
 			}
 			if (openModelingPerspective) {

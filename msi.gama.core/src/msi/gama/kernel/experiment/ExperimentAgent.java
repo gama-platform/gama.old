@@ -59,6 +59,7 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  *
@@ -140,6 +141,10 @@ import msi.gaml.types.Types;
 @doc ("Experiments that declare a graphical user interface")
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
+	static {
+		DEBUG.ON();
+	}
+
 	public static final String MODEL_PATH = "model_path";
 
 	public static final String PROJECT_PATH = "project_path";
@@ -164,7 +169,18 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ownScope = new ExperimentAgentScope();
 		ownClock = new ExperimentClock(ownScope);
 		executer = new ActionExecuter(ownScope);
-		reset();
+		DEBUG.OUT("Creation of " + this);
+		// Should not perform a whole reset as it shuts down UI outputs in comodels (see #2813)
+		if (s.getSpecies().getDescription().belongsToAMicroModel()) {
+			initialize();
+		} else {
+			reset();
+		}
+	}
+
+	private void initialize() {
+		createSimulationPopulation();
+		random = new RandomUtils(getDefinedSeed(), getDefinedRng());
 	}
 
 	@Override
