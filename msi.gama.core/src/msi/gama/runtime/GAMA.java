@@ -13,6 +13,7 @@ package msi.gama.runtime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
@@ -58,7 +59,7 @@ public class GAMA {
 	private static IGui regularGui;
 	private static IGui headlessGui = new HeadlessListener();
 	// hqnghi: add several controllers to have multi-thread experiments
-	private final static List<IExperimentController> controllers = new ArrayList<>();
+	private final static List<IExperimentController> controllers = new CopyOnWriteArrayList<>();
 
 	public static List<IExperimentController> getControllers() {
 		return controllers;

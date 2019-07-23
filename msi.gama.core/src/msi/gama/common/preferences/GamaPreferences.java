@@ -460,7 +460,7 @@ public class GamaPreferences {
 		/**
 		 * Optimizations
 		 */
-		public static final String OPTIMIZATIONS = "Operators options";
+		public static final String OPTIMIZATIONS = "Optimizations";
 		public static final Pref<Boolean> CONSTANT_OPTIMIZATION = create("pref_optimize_constant_expressions",
 				"Optimize constant expressions (experimental)", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> AGENT_OPTIMIZATION =
@@ -476,10 +476,13 @@ public class GamaPreferences {
 				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
 				"Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
-				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+				IType.BOOL, true).in(NAME, OPTIMIZATIONS).hidden();
 		public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
-				"Forces the spatial index to synchronize its operations. Useful for interactive models where the user may move agents",
+				"Forces the spatial index to synchronize its operations. Useful for interactive models where the user may interfere.",
 				true, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+		public static final Pref<Boolean> USE_POOLING =
+				create("pref_use_pooling", "Use object pooling to reduce memory usage (still experimental)", false,
+						IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Double> TOLERANCE_POINTS =
 				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT, true)
 						.in(NAME, OPTIMIZATIONS);

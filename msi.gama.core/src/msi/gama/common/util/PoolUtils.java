@@ -7,18 +7,19 @@ import java.util.Set;
 import com.google.common.collect.Queues;
 
 import msi.gama.common.interfaces.IDisposable;
+import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class PoolUtils {
 
 	static Set<ObjectPool> POOLS = new LinkedHashSet<>();
-	static boolean POOL = true;
+	static boolean POOL = GamaPreferences.External.USE_POOLING.getValue();
 	static {
 		DEBUG.ON();
-		// GamaPreferences.External.USE_POOLING.onChange(v -> {
-		// POOLS.forEach((p) -> p.dispose());
-		// POOL = v;
-		// });
+		GamaPreferences.External.USE_POOLING.onChange(v -> {
+			POOLS.forEach((p) -> p.dispose());
+			POOL = v;
+		});
 	}
 
 	public static void WriteStats() {
@@ -89,9 +90,9 @@ public class PoolUtils {
 		final ObjectPool<T> result = new ObjectPool<>(factory, cleaner);
 		result.active = active;
 		result.name = name;
-		if (DEBUG.IS_ON()) {
-			POOLS.add(result);
-		}
+		// if (DEBUG.IS_ON()) {
+		POOLS.add(result);
+		// }
 		return result;
 	}
 
