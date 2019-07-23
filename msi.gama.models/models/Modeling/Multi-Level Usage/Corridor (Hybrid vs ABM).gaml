@@ -14,21 +14,15 @@ global
 	
 	//Parameters of the environment
 	int environment_width <- 200 const: true;
-	int environment_height <- 200 const: true;
+	int environment_height <- 100 const: true;
 	geometry shape <- rectangle(environment_width, environment_height);	
 	
 	
-	//Parameters of the pedestrian agents
-	rgb pedestrian_green <- #green;
-	
-	float pedestrian_size <- 1.0;
-	geometry pedestrian_shape <- circle (pedestrian_size) ;
 	float pedestrian_speed <- 2.0;
  
  	//Parameters of the corridors
-	rgb corridor_color <- rgb ('blue');
 	int corridor_width <- 160 ;
-	int corridor_height <- (int(environment_height * 0.05));
+	int corridor_height <- (int(environment_height * 0.1));
 
 	point corridor_location_0 <- {environment_width / 2, environment_height / 4};
 	geometry corridor_shape_0 <- ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_0) ;
@@ -37,7 +31,7 @@ global
 	geometry corridor_shape_1 <- ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location_1) ;
 
 	//Parameters of pedestrian generation
-	int new_pedestian_generate_frequency <- 8;
+	int new_pedestian_generate_frequency <- 2 update: rnd(10) + 1;
 	point pedestrian_source_0 <- {0, corridor_location_0.y} ;
 	point pedestrian_source_1 <- {0, corridor_location_1.y} ;
 	 
@@ -78,17 +72,17 @@ global
 
 //Species for the pedestrians which can move
 species pedestrian skills: [moving] {
-	geometry shape <- circle(pedestrian_size);
-	rgb color;
 	corridor last_corridor;
 	point target_location;
 	float speed <- pedestrian_speed;
+	rgb color;
 	
 	//Initialisation of the target location according to its generation location
 	action init_location (point loc) {
 		location <- loc;
 		target_location <- {environment_width, location.y};
-		heading <- self towards (target_location);
+		int i <- rnd(255);
+		color <- rgb(i,i,i);
 	}
 
 	//Reflex to move the agent to its target location and make it die once it reached its target
@@ -102,10 +96,6 @@ species pedestrian skills: [moving] {
 		}
 	}
 	 
-	aspect default 
-	{
-		draw shape color: color;
-	}
 }
 
 //Species for the corridor which can capture pedestrians
@@ -175,11 +165,7 @@ species corridor  {
 			}
 		}
 	}
-		
-	aspect default 
-	{
-		draw shape color: corridor_color;
-	}
+
 }
  
 species corridor_info_drawer 
@@ -190,24 +176,29 @@ species corridor_info_drawer
 	{
 		if target.capture_pedestrians 
 		{
-			draw 'Hybrid model (coupling: ABM and Mathematical Model)' color: #blue size: 7 at: {(target.location).x - 50, (target.location).y - 10};
-			draw  'Aggregated agents: ' + string(length(target.members)) color: #black size: 7 at: {(target.location).x - 30, (target.location).y + 2};
+			draw 'Hybrid model (coupling: ABM and Mathematical Model)' color: #yellow at: {(target.location).x - target.shape.width/2, (target.location).y - 10} font: font("Helvetica", 20 * #zoom, #bold);
+			draw  'Captured agents: ' + string(length(target.members)) color: #yellow at: {(target.location).x + 1 - target.shape.width/2, (target.location).y + 1} font: font("Helvetica", 20 * #zoom, 0);
 		} 
 		else 
 		{
-			draw 'Agent-Based Model (ABM)' color: #blue size: 7 at: {(target.location).x - 40, (target.location).y - 10};
+			draw 'Agent-Based Model (ABM)' color: #yellow size: 7 at: {(target.location).x - target.shape.width/2, (target.location).y - 10} font: font("Helvetica", 20 * #zoom, #bold);
 		}
 	}
 }
 
-experiment default_experiment type: gui 
+experiment default_experiment type: gui autorun: true
 {
+	float minimum_cycle_duration <- 10 #msec;
 	output 
 	{
-		display default_display 
+		display default_display background: #black toolbar: false fullscreen: true
 		{
-			species pedestrian;
-			species corridor transparency: 0.8;
+			species pedestrian {
+				draw circle(2) color: color;
+			}
+			species corridor {
+				draw shape empty: true color: #white;
+			}
 			species corridor_info_drawer aspect: base;
 		}
 	}
