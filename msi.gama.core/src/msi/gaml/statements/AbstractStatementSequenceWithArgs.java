@@ -24,7 +24,6 @@ import msi.gaml.statements.IStatement.WithArgs;
  */
 public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence implements WithArgs {
 
-	// final Map<IScope, Arguments> actualArgs = new ConcurrentHashMap<>();
 	final ThreadLocal<Arguments> actualArgs = new ThreadLocal<>();
 
 	/**
@@ -49,6 +48,7 @@ public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence
 	 */
 	@Override
 	public void setRuntimeArgs(final IScope scope, final Arguments args) {
+		// TODO Verify that this copy of the arguments is required or not.
 		actualArgs.set(new Arguments(args));
 	}
 

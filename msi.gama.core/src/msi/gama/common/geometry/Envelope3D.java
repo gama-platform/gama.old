@@ -20,6 +20,8 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.util.PoolUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Comparison;
 import msi.gaml.types.GamaGeometryType;
 
@@ -60,8 +62,12 @@ public class Envelope3D extends Envelope implements IDisposable {
 		return result;
 	}
 
-	public static Envelope3D of(final GamaShape s) {
+	public static Envelope3D of(final IShape s) {
 		return of(s.getInnerGeometry());
+	}
+
+	public static Envelope3D of(final ILocation s) {
+		return of((Coordinate) s);
 	}
 
 	public static Envelope3D of(final Envelope e) {

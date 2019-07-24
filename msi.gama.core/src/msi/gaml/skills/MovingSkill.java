@@ -421,7 +421,6 @@ public class MovingSkill extends Skill {
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
 		if (loc == null) {
 			setHeading(agent, heading - 180);
-			// pathFollowed = null;
 		} else {
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if (bounds != null) {
@@ -430,8 +429,6 @@ public class MovingSkill extends Skill {
 					loc = computeLocationForward(scope, dist, loc, geom);
 				}
 			}
-			// pathFollowed = new GamaPath(this.getTopology(agent),
-			// GamaList.with(location, loc));
 			setLocation(agent, loc);
 		}
 		if (loc != null) {
@@ -440,8 +437,6 @@ public class MovingSkill extends Skill {
 		} else {
 			agent.setAttribute(IKeyword.REAL_SPEED, 0.0);
 		}
-		// scope.setStatus(loc == null ? ExecutionStatus.failure :
-		// ExecutionStatus.success);
 		return null;
 	}
 
@@ -481,21 +476,16 @@ public class MovingSkill extends Skill {
 			if (returnPath != null && returnPath) {
 				final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, dist, weigths);
 				if (pathFollowed == null) {
-					// scope.setStatus(ExecutionStatus.failure);
 					notMoving(agent);
 
 					return null;
 				}
-				// scope.setStatus(ExecutionStatus.success);
 				return pathFollowed;
 			}
 			moveToNextLocAlongPathSimplified(scope, agent, path, dist, weigths);
-			// scope.setStatus(ExecutionStatus.success);
 			return null;
 		}
 		notMoving(agent);
-
-		// scope.setStatus(ExecutionStatus.failure);
 		return null;
 	}
 
@@ -652,11 +642,9 @@ public class MovingSkill extends Skill {
 				return PathFactory.newInstance(scope, topo, source, source,
 						GamaListFactory.<IShape> create(Types.GEOMETRY), false);
 			}
-			// scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
 		moveToNextLocAlongPathSimplified(scope, agent, path, maxDist, weigths);
-		// scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
 
@@ -778,7 +766,6 @@ public class MovingSkill extends Skill {
 						line = edges.get(i);
 						final double distS =
 								distancePointLine(currentLocation, getFirstPointOf(line), getLastPointOf(line));
-						// final double distS = line.euclidianDistanceTo(currentLocation);
 						if (distS < distanceS) {
 							distanceS = distS;
 							index = i;

@@ -69,6 +69,7 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -111,6 +112,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	protected final IVariable[] updatableVars;
 	protected int currentAgentIndex;
 	private final int hashCode;
+	private final boolean isInitOverriden, isStepOverriden;
 
 	/**
 	 * Listeners, created in a lazy way
@@ -172,6 +174,20 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			host.getScope().getSimulation().postEndAction(new MirrorPopulationManagement(species.getFacet(MIRRORS)));
 		}
 		hashCode = Objects.hash(getSpecies(), getHost());
+		final boolean[] result = { false, false };
+		species.getDescription().visitChildren((d) -> {
+			if (d instanceof ActionDescription && !d.isBuiltIn()) {
+				final String name = d.getName();
+				if (name.equals(ISpecies.initActionName)) {
+					result[0] = true;
+				} else if (name.equals(ISpecies.stepActionName)) {
+					result[1] = true;
+				}
+			}
+			return true;
+		});
+		isInitOverriden = result[0];
+		isStepOverriden = result[1];
 
 	}
 
@@ -814,4 +830,25 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public static <T extends IAgent> Iterable<T> allLivingAgents(final Iterable<T> iterable) {
 		return Iterables.filter(iterable, isLiving);
 	}
+
+	/**
+	 * Method isInitOverriden()
+	 *
+	 * @see msi.gaml.species.ISpecies#isInitOverriden()
+	 */
+	@Override
+	public boolean isInitOverriden() {
+		return isInitOverriden;
+	}
+
+	/**
+	 * Method isStepOverriden()
+	 *
+	 * @see msi.gaml.species.ISpecies#isStepOverriden()
+	 */
+	@Override
+	public boolean isStepOverriden() {
+		return isStepOverriden;
+	}
+
 }

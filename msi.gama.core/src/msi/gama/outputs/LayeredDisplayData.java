@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import com.vividsolutions.jts.geom.Envelope;
-
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.interfaces.IKeyword;
@@ -732,7 +730,7 @@ public class LayeredDisplayData {
 			sim = exp.getSimulation();
 		}
 		// end-hqnghi
-		Envelope env = null;
+		Envelope3D env = null;
 		if (sim != null) {
 			env = sim.getEnvelope();
 		} else {
@@ -740,6 +738,7 @@ public class LayeredDisplayData {
 		}
 		setEnvWidth(env.getWidth());
 		setEnvHeight(env.getHeight());
+		env.dispose();
 
 		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
 		if (auto != null) {

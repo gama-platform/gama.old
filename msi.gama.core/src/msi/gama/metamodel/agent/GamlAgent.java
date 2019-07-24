@@ -74,7 +74,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation<? extends IAgent>[] getMicroPopulations() {
-		// if (getAttributes() == null) { return NO_POP; }
 		if (microPopulations == null) {
 			final List<IPopulation<?>> pops = new ArrayList<>();
 			forEachAttribute((s, o) -> {

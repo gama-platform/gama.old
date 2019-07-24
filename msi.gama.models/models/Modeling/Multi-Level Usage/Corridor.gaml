@@ -18,7 +18,7 @@ global {
 
 	//Pedestrians parameters
 	rgb pedestrian_color <- #green;
-	float pedestrian_speed <- 3.0;
+	float pedestrian_speed <- 10.0;
 
 	//Wall parameters
 	float corridor_width <- environment_width / 1.5;
@@ -40,7 +40,7 @@ global {
 	}
 
 	reflex generate_pedestrians when: every(4 #cycle) {
-		create pedestrian number: 5 with: [color::pedestrian_color] {
+		create pedestrian number: 30 with: [color::pedestrian_color] {
 			do init_location({0, rnd(environment_height)});
 		}
 	}
@@ -54,12 +54,18 @@ species pedestrian skills: [moving] topology: (topology(shape - (corridor_wall_0
 	action init_location (point loc) {
 		location <- loc;
 		target_location <- {environment_width, loc.y};
+		speed <- rnd(pedestrian_speed - 5) + 5.0;
+	}
+	
+	
+	reflex change_speed when: every(rnd(200) #cycle) {
+			speed <- rnd(pedestrian_speed - 5) + 5.0;
 	}
 
 	//Reflex to make the agent move to its target_location
 	reflex move {
 		point previous_location <- location;
-		speed <- pedestrian_speed;
+
 		if (location.y < corridor_wall_height) and (location.x <= (environment_width / 2)) {
 			do move heading: self towards {(environment_width / 2) - (corridor_width / 2), corridor_wall_height};
 		} else if (location.y > environment_height - corridor_wall_height) and (location.x <= (environment_width / 2)) {
@@ -93,7 +99,7 @@ species corridor {
 	//We update the time during which a pedestrian is captured according to the time the pedestrian
 	// should need to pass through the corridor if it wasn't captured
 		capture (pedestrian where (p: p.location.x between (corridor_left_bounds, corridor_right_bounds))) as: captured_pedestrian {
-			release_time <- time + ((corridor_width - (location.x - ((environment_width / 2) - (corridor_width / 2)))) / pedestrian_speed);
+			release_time <- time + ((corridor_width - (location.x - ((environment_width / 2) - (corridor_width / 2)))) / (pedestrian_speed - 2.5));
 		} }
 
 		//Reflex to release pedestrians which have already passed enough time in the corridor
@@ -102,7 +108,6 @@ species corridor {
 		list tobe_released_pedestrians <- captured_pedestrian where (time >= each.release_time);
 		if !(empty(tobe_released_pedestrians)) {
 			release tobe_released_pedestrians as: pedestrian in: world {
-				speed <- pedestrian_speed;
 				location <- {((environment_width / 2) + (corridor_width / 2)), (location).y};
 			}
 

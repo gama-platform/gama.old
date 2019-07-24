@@ -28,6 +28,7 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
@@ -117,11 +118,15 @@ class ShapeExecuter extends DrawExecuter {
 
 		// XXX EXPERIMENTAL See Issue #1521
 		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue() && !scope.getExperiment().isHeadless()) {
-			final Envelope e = shape.getEnvelope();
-			final Envelope visible = gr.getVisibleRegion();
-			if (visible != null) {
-				if (!visible.intersects(e)) { return null; }
-				// XXX EXPERIMENTAL
+			final Envelope3D e = shape.getEnvelope();
+			try {
+				final Envelope visible = gr.getVisibleRegion();
+				if (visible != null) {
+					if (!visible.intersects(e)) { return null; }
+					// XXX EXPERIMENTAL
+				}
+			} finally {
+				e.dispose();
 			}
 		}
 

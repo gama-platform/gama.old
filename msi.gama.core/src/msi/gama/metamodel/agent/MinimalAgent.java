@@ -13,9 +13,9 @@ package msi.gama.metamodel.agent;
 import java.util.Objects;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -113,7 +113,7 @@ public class MinimalAgent extends AbstractAgent {
 		}
 
 		newLocalGeom.setAgent(this);
-		final Envelope previous = geometry.getEnvelope();
+		final Envelope3D previous = Envelope3D.of(geometry);
 		geometry.setGeometry(newLocalGeom);
 
 		topology.updateAgent(previous, this);
@@ -157,7 +157,7 @@ public class MinimalAgent extends AbstractAgent {
 		} else {
 			final ILocation previousPoint = geometry.getLocation();
 			if (newLocation.equals(previousPoint)) { return; }
-			final Envelope previous = geometry.getEnvelope();
+			final Envelope3D previous = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
 			topology.updateAgent(previous, this);
 
@@ -212,7 +212,7 @@ public class MinimalAgent extends AbstractAgent {
 	 */
 	@Override
 	public boolean init(final IScope scope) {
-		if (!getSpecies().isInitOverriden()) {
+		if (!getPopulation().isInitOverriden()) {
 			_init_(scope);
 		} else {
 			scope.execute(getSpecies().getAction(ISpecies.initActionName), this, null);
@@ -231,7 +231,7 @@ public class MinimalAgent extends AbstractAgent {
 	 */
 	@Override
 	public boolean doStep(final IScope scope) {
-		if (!getSpecies().isStepOverriden()) {
+		if (!getPopulation().isStepOverriden()) {
 			super.doStep(scope);
 			return !scope.interrupted();
 		} else {

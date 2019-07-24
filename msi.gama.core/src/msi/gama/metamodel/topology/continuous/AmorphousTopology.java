@@ -18,6 +18,7 @@ import java.util.Set;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -110,7 +111,7 @@ public class AmorphousTopology implements ITopology {
 	// }
 	//
 	@Override
-	public void updateAgent(final Envelope previous, final IAgent agent) {
+	public void updateAgent(final Envelope3D previous, final IAgent agent) {
 		final IShape ng =
 				Spatial.Operators.union(agent.getScope(), expandableEnvironment.getGeometry(), agent.getGeometry());
 		expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));
@@ -339,7 +340,7 @@ public class AmorphousTopology implements ITopology {
 			public void insert(final IAgent agent) {}
 
 			@Override
-			public void remove(final Envelope previous, final IAgent agent) {}
+			public void remove(final Envelope3D previous, final IAgent agent) {}
 
 			@Override
 			public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist,

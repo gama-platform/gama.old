@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import msi.gama.runtime.IScope;
@@ -73,24 +74,29 @@ public class GamaMapFactory {
 		return wrap(key, contents, isOrdered, Collections.synchronizedMap(target));
 	}
 
+	public static <K, V> IMap<K, V> concurrentMap() {
+		return wrap(Types.NO_TYPE, Types.NO_TYPE, false, new ConcurrentHashMap<>());
+	}
+
 	public static IMap create() {
 		return createOrdered();
 	}
 
 	public static IMap createOrdered() {
-		final Map map = new GamaMap(DEFAULT_SIZE, Types.NO_TYPE, Types.NO_TYPE);
-		return new GamaMapSimpleWrapper() {
-
-			@Override
-			public boolean isOrdered() {
-				return true;
-			}
-
-			@Override
-			protected Map delegate() {
-				return map;
-			}
-		};
+		final IMap map = new GamaMap(DEFAULT_SIZE, Types.NO_TYPE, Types.NO_TYPE);
+		return map;
+		// return new GamaMapSimpleWrapper() {
+		//
+		// @Override
+		// public boolean isOrdered() {
+		// return true;
+		// }
+		//
+		// @Override
+		// protected Map delegate() {
+		// return map;
+		// }
+		// };
 	}
 
 	public static IMap createUnordered() {

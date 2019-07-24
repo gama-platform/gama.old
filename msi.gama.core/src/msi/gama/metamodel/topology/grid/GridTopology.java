@@ -14,8 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Envelope;
-
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -47,7 +46,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public void updateAgent(final Envelope previous, final IAgent agent) {}
+	public void updateAgent(final Envelope3D previous, final IAgent agent) {}
 
 	@Override
 	public void initialize(final IScope scope, final IPopulation<? extends IAgent> pop) throws GamaRuntimeException {
