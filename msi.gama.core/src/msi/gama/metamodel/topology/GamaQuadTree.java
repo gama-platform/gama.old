@@ -202,13 +202,19 @@ public class GamaQuadTree implements ISpatialIndex {
 		private final boolean canSplit;
 
 		public QuadNode(final Envelope bounds) {
-			objects = parallel ? GamaMapFactory.concurrentMap() : GamaMapFactory.create();
 			this.bounds = bounds;
 			final double hw = bounds.getWidth();
 			final double hh = bounds.getHeight();
 			halfx = bounds.getMinX() + hw / 2;
 			halfy = bounds.getMinY() + hh / 2;
 			canSplit = hw > minSize && hh > minSize;
+		}
+
+		private IMap<IAgent, Envelope3D> getOrCreateObjects() {
+			if (objects == null) {
+				objects = parallel ? GamaMapFactory.concurrentMap() : GamaMapFactory.create();
+			}
+			return objects;
 		}
 
 		// public void synchronizeChanged() {
@@ -223,12 +229,14 @@ public class GamaQuadTree implements ISpatialIndex {
 		// }
 
 		public void dispose() {
-			objects.forEach((a, e) -> {
-				if (e != null) {
-					e.dispose();
-				}
-			});
-			objects.clear();
+			if (objects != null) {
+				objects.forEach((a, e) -> {
+					if (e != null) {
+						e.dispose();
+					}
+				});
+				objects.clear();
+			}
 			objects = null;
 			if (nodes != null) {
 				for (final QuadNode n : nodes) {
@@ -240,9 +248,11 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		public void remove(final Coordinate p, final IShape a) {
 			if (nodes == null) {
-				final Envelope3D env = objects.remove(a);
-				if (env != null) {
-					env.dispose();
+				if (objects != null) {
+					final Envelope3D env = objects.remove(a);
+					if (env != null) {
+						env.dispose();
+					}
 				}
 			} else {
 				nodes[quadrant(p)].remove(p, a);
@@ -251,7 +261,9 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		public void remove(final Envelope env, final IShape a) {
 			if (nodes == null) {
-				objects.remove(a);
+				if (objects != null) {
+					objects.remove(a);
+				}
 			} else {
 				for (final QuadNode node : nodes) {
 					if (node.bounds.intersects(env)) {
@@ -262,7 +274,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 
 		public boolean shouldSplit() {
-			return canSplit && nodes == null && objects.size() >= maxCapacity;
+			return canSplit && nodes == null && objects != null && objects.size() >= maxCapacity;
 		}
 
 		public void add(final Coordinate p, final IAgent a) {
@@ -270,7 +282,7 @@ public class GamaQuadTree implements ISpatialIndex {
 				split();
 			}
 			if (nodes == null) {
-				objects.put(a, Envelope3D.of(p));
+				getOrCreateObjects().put(a, Envelope3D.of(p));
 			} else {
 				nodes[quadrant(p)].add(p, a);
 			}
@@ -281,7 +293,7 @@ public class GamaQuadTree implements ISpatialIndex {
 				split();
 			}
 			if (nodes == null) {
-				objects.put(a, env);
+				getOrCreateObjects().put(a, env);
 			} else {
 				for (final QuadNode node : nodes) {
 					if (node.bounds.intersects(env)) {
@@ -306,27 +318,31 @@ public class GamaQuadTree implements ISpatialIndex {
 					new QuadNode(new Envelope(halfx, maxx, miny, halfy)),
 					new QuadNode(new Envelope(minx, halfx, halfy, maxy)),
 					new QuadNode(new Envelope(halfx, maxx, halfy, maxy)) };
-
-			for (final Map.Entry<IAgent, Envelope3D> entry : objects.entrySet()) {
-				final IAgent agent = entry.getKey();
-				if (agent != null && !agent.dead()) {
-					final IShape g = agent.getGeometry();
-					if (g.isPoint()) {
-						add((Coordinate) g.getLocation(), agent);
-					} else {
-						add(g.getEnvelope(), agent);
+			if (objects != null) {
+				for (final Map.Entry<IAgent, Envelope3D> entry : objects.entrySet()) {
+					final IAgent agent = entry.getKey();
+					if (agent != null && !agent.dead()) {
+						final IShape g = agent.getGeometry();
+						if (g.isPoint()) {
+							add((Coordinate) g.getLocation(), agent);
+						} else {
+							add(g.getEnvelope(), agent);
+						}
 					}
 				}
+				objects.clear();
+				objects = null;
 			}
-			objects.clear();
 		}
 
 		public void findIntersects(final Envelope r, final Collection<IAgent> result) {
 			if (bounds.intersects(r)) {
-				for (final Map.Entry<IAgent, Envelope3D> entry : objects.entrySet()) {
-					final Envelope3D env = entry.getValue();
-					if (env != null && env.intersects(r)) {
-						result.add(entry.getKey());
+				if (objects != null) {
+					for (final Map.Entry<IAgent, Envelope3D> entry : objects.entrySet()) {
+						final Envelope3D env = entry.getValue();
+						if (env != null && env.intersects(r)) {
+							result.add(entry.getKey());
+						}
 					}
 				}
 

@@ -25,6 +25,8 @@ public abstract class GridHexagonalNeighborhood extends GridNeighborhood {
 
 	@Override
 	protected Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius) {
+		// TODO: verify the use of HashSet here, contradictory with the policy of GAMA to not use unordered Sets or
+		// Maps.
 		final Set<Integer> neigh2 = new HashSet<>();
 		final Set<Integer> neigh =
 				getNeighborsAtRadius(placeIndex, radius, matrix.numCols, matrix.numRows, matrix.isTorus);
@@ -62,6 +64,7 @@ public abstract class GridHexagonalNeighborhood extends GridNeighborhood {
 
 	public Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius, final int xSize, final int ySize,
 			final boolean isTorus) {
+		// TODO: verify the use of HashSet here, contradictory with the policy of GAMA to not use unordered Sets or
 		final Set<Integer> currentNeigh = new HashSet<>();
 		currentNeigh.add(placeIndex);
 		for (int i = 0; i < radius; i++) {

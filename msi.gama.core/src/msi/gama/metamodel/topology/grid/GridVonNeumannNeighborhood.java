@@ -32,7 +32,7 @@ public class GridVonNeumannNeighborhood extends GridNeighborhood {
 	protected Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / matrix.numCols;
 		final int x = placeIndex - y * matrix.numCols;
-
+		// TODO: verify the use of HashSet here, contradictory with the policy of GAMA to not use unordered Sets or maps
 		final Set<Integer> v = new HashSet<>(radius << 2);
 		int p;
 		for (int i = -radius; i < radius; i++) {
