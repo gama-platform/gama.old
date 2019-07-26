@@ -180,7 +180,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private void initialize() {
 		createSimulationPopulation();
-		random = new RandomUtils(getDefinedSeed(), getDefinedRng());
+		if (random == null) {
+			random = new RandomUtils();
+		} else {
+			random = new RandomUtils(getDefinedSeed(), getDefinedRng());
+		}
 	}
 
 	@Override
