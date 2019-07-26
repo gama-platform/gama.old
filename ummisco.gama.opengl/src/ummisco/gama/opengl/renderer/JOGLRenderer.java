@@ -33,6 +33,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
@@ -243,7 +244,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile file, final DrawingAttributes attributes) {
 		if (file == null) { return null; }
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) { return null; }
@@ -285,7 +286,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 * openGl.
 	 */
 	@Override
-	public Rectangle2D drawShape(final Geometry shape, final ShapeDrawingAttributes attributes) {
+	public Rectangle2D drawShape(final Geometry shape, final DrawingAttributes attributes) {
 		if (shape == null) { return null; }
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) { return null; }
@@ -295,7 +296,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
 		if (img == null) { return null; }
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) { return null; }
@@ -321,7 +322,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		return rect;
 	}
 
-	protected void tryToHighlight(final FileDrawingAttributes attributes) {
+	protected void tryToHighlight(final DrawingAttributes attributes) {
 		if (highlight) {
 			attributes.setHighlighted(data.getHighlightColor());
 		}
@@ -334,7 +335,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		final double cellWidth = getEnvHeight() / dimensions.x;
 		final double cellHeight = getEnvWidth() / dimensions.y;
 		final GamaColor color = GamaColor.getInt(lineColor.getRGB());
-		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
+		final DrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
 		attributes.setEmpty(true);
 		for (double i = 0; i < dimensions.x; i++) {
 			for (double j = 0; j < dimensions.y; j++) {

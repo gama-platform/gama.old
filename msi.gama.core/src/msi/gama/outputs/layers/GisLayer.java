@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GisLayer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.GisLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -24,6 +24,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.IType;
 
@@ -46,7 +47,7 @@ public class GisLayer extends AbstractLayer {
 		if (shapes != null) {
 			for (final IShape geom : shapes) {
 				if (geom != null) {
-					final ShapeDrawingAttributes attributes =
+					final DrawingAttributes attributes =
 							new ShapeDrawingAttributes(geom, (IAgent) null, color, new GamaColor(Color.black));
 					g.drawShape(geom.getInnerGeometry(), attributes);
 				}

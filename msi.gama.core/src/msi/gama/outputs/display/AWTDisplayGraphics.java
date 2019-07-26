@@ -62,8 +62,8 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 
@@ -162,7 +162,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile<?, ?> file, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawFile(final GamaFile<?, ?> file, final DrawingAttributes attributes) {
 		final IScope scope = surface.getScope();
 		if (file instanceof GamaImageFile) {
 			return drawImage(((GamaImageFile) file).getImage(scope, attributes.useCache()), attributes);
@@ -173,13 +173,14 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final AxisAngle rotation = attributes.getRotation();
 		shape = new GamaShape(shape, null, rotation, attributes.getLocation(), attributes.getSize(), true);
 		final GamaColor c = attributes.getColor();
-		return drawShape(shape.getInnerGeometry(), new ShapeDrawingAttributes(shape.getLocation().toGamaPoint(), c, c));
+		return drawShape(shape.getInnerGeometry(),
+				new ShapeDrawingAttributes(shape.getLocation().toGamaPoint(), c, c, (IShape.Type) null));
 	}
 
 	AffineTransform imageTransform = new AffineTransform();
 
 	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
+	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
 		// final AffineTransform saved = currentRenderer.getTransform();
 		imageTransform.setToIdentity();
 		double curX, curY;
@@ -285,7 +286,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawShape(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+	public Rectangle2D drawShape(final Geometry geometry, final DrawingAttributes attributes) {
 		if (geometry == null) { return null; }
 		if (geometry instanceof GeometryCollection) {
 			final Rectangle2D result = new Rectangle2D.Double();
@@ -299,7 +300,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			border = attributes.getColor();
 		}
 		if (highlight) {
-			attributes.setColor(GamaColor.getInt(data.getHighlightColor().getRGB()));
+			attributes.setFill(GamaColor.getInt(data.getHighlightColor().getRGB()));
 			if (border != null) {
 				border = attributes.getColor();
 			}

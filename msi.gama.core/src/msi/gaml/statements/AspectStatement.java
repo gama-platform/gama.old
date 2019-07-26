@@ -36,6 +36,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
@@ -152,7 +153,7 @@ public class AspectStatement extends AbstractStatementSequence {
 				}
 
 				final IShape ag2 = ag.copy(scope);
-				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
+				final DrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
 				return g.drawShape(ag2.getInnerGeometry(), attributes);
 			} catch (final GamaRuntimeException e) {
 				// cf. Issue 1052: exceptions are not thrown, just displayed

@@ -319,10 +319,9 @@ public class DrawStatement extends AbstractStatementSequence {
 		final IGraphics g = scope.getGraphics();
 		if (g == null) { return null; }
 		try {
-			// final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture,
-			// material, perspective, lineWidth);
-			data.get().refresh(scope);
-			final Rectangle2D result = executer.executeOn(scope, g, data.get());
+			final DrawingData d = data.get();
+			d.refresh(scope);
+			final Rectangle2D result = executer.executeOn(scope, g, d);
 			if (result != null) {
 				g.accumulateTemporaryEnvelope(result);
 			}

@@ -13,7 +13,6 @@ import java.awt.EventQueue;
 import java.awt.Frame;
 
 import javax.swing.JApplet;
-import javax.swing.JComponent;
 import javax.swing.LayoutFocusTraversalPolicy;
 
 import org.eclipse.swt.SWT;
@@ -49,6 +48,20 @@ public abstract class SwingControl extends Composite {
 		}));
 	}
 
+	@Override
+	public void checkWidget() {}
+
+	@Override
+	public boolean isFocusControl() {
+		boolean result = false;
+		try {
+			result = super.isFocusControl();
+		} catch (final Exception e) {
+			// Nothing. Eliminates annoying exceptions when closing Java2D displays.
+		}
+		return result;
+	}
+
 	protected void populate() {
 		if (isDisposed()) { return; }
 		if (!populated) {
@@ -60,7 +73,7 @@ public abstract class SwingControl extends Composite {
 					applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
 				}
 				frame.add(applet);
-				Java2DDisplaySurface surface = createSwingComponent();
+				final Java2DDisplaySurface surface = createSwingComponent();
 				applet.getRootPane().getContentPane().add(surface);
 				WorkaroundForIssue2476.installOn(applet, surface);
 				WorkbenchHelper.asyncRun(() -> SwingControl.this.getParent().layout(true, true));

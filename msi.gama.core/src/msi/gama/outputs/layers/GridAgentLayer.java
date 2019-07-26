@@ -22,6 +22,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 
 public class GridAgentLayer extends AgentLayer {
@@ -53,7 +54,7 @@ public class GridAgentLayer extends AgentLayer {
 				final GamaColor color = Cast.asColor(sc, agent.getDirectVarValue(sc, IKeyword.COLOR));
 				final IShape ag = agent.getGeometry();
 				final IShape ag2 = ag.copy(sc);
-				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
+				final DrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
 				return g.drawShape(ag2.getInnerGeometry(), attributes);
 			} catch (final GamaRuntimeException e) {
 				// cf. Issue 1052: exceptions are not thrown, just displayed

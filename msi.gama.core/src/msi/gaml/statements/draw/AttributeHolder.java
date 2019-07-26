@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.AttributeHolder.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.draw.AttributeHolder.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -20,7 +20,7 @@ import msi.gaml.types.IType;
 
 /**
  * A class that facilitates the development of classes holding attributes declared in symbols' facets
- * 
+ *
  * @author drogoul
  *
  */
@@ -31,13 +31,13 @@ public abstract class AttributeHolder {
 
 	public interface Attribute<V> extends IExpression {
 
-		public void refresh(final IScope scope);
+		void refresh(final IScope scope);
 
-		public V get();
+		V get();
 	}
 
 	public interface IExpressionWrapper<V> {
-		public V value(IScope scope, IExpression facet);
+		V value(IScope scope, IExpression facet);
 	}
 
 	public class ConstantAttribute<V> implements Attribute<V> {
@@ -157,8 +157,9 @@ public abstract class AttributeHolder {
 			final T type, final V def) {
 		final IExpression exp = symbol.getFacet(facet);
 		Attribute<V> result;
-		if (exp == null) {
-			result = new ConstantAttribute<>(def);
+		if (exp == null || exp.isConst() && exp.isContextIndependant()) {
+			final V val = exp == null ? def : (V) exp.getConstValue();
+			result = new ConstantAttribute<>(val);
 		} else {
 			result = new ExpressionEvaluator<>(ev, exp);
 		}

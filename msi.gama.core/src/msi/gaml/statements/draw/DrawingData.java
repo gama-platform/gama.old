@@ -11,7 +11,6 @@
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
-import java.util.List;
 
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -50,8 +49,8 @@ public class DrawingData extends AttributeHolder {
 	final Attribute<ILocation> location;
 	final Attribute<ILocation> anchor;
 	final Attribute<Boolean> empty;
-	final Attribute<GamaColor> border;
-	private final Attribute<IList<GamaColor>> colors;
+	final Attribute<GamaColor> border, color;
+	// private final Attribute<IList<GamaColor>> colors;
 	final Attribute<GamaFont> font;
 	final Attribute<IList> texture;
 	final Attribute<GamaMaterial> material;
@@ -102,18 +101,18 @@ public class DrawingData extends AttributeHolder {
 				return (GamaColor) exp.value(scope);
 			}
 		}, Types.COLOR, null);
-		this.colors = create(IKeyword.COLOR, (scope, exp) -> {
+		this.color = create(IKeyword.COLOR, (scope, exp) -> {
 			switch (exp.getGamlType().id()) {
 				case IType.COLOR:
-					final GamaColor currentColor = (GamaColor) exp.value(scope);
-					return GamaListFactory.wrap(Types.COLOR, currentColor);
-				case IType.LIST:
-					return (IList) exp.value(scope);
+					return (GamaColor) exp.value(scope);
+				// return GamaListFactory.wrap(Types.COLOR, currentColor);
+				// case IType.LIST:
+				// return (IList) exp.value(scope);
 				default:
 					return null;
 			}
 
-		}, Types.LIST, null);
+		}, Types.COLOR, null);
 		this.font = create(IKeyword.FONT, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
 		this.texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			if (exp.getGamlType().getGamlType() == Types.LIST) {
@@ -126,16 +125,6 @@ public class DrawingData extends AttributeHolder {
 		this.perspective = create(IKeyword.PERSPECTIVE, Types.BOOL, true);
 		this.lineWidth = create(IKeyword.WIDTH, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 
-	}
-
-	public GamaColor getCurrentColor() {
-		if (colors.get() == null || colors.get().isEmpty()) { return null; }
-		return colors.get().get(0);
-	}
-
-	public List<GamaColor> getColors() {
-		if (colors.get() == null || colors.get().isEmpty() || colors.get().size() == 1) { return null; }
-		return colors.get();
 	}
 
 	public GamaPoint getLocation() {

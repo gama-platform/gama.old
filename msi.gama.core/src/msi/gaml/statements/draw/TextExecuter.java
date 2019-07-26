@@ -14,7 +14,6 @@ import java.awt.geom.Rectangle2D;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -40,9 +39,11 @@ class TextExecuter extends DrawExecuter {
 	TextDrawingAttributes computeAttributes(final IScope scope, final DrawingData data) {
 		final TextDrawingAttributes attributes =
 				new TextDrawingAttributes(Scaling3D.of(data.size.get()), data.rotation.get(), data.getLocation(),
-						data.getAnchor(), data.getCurrentColor(), data.font.get(), data.perspective.get());
+						data.getAnchor(), data.color.get(), data.font.get(), data.perspective.get());
 		// We push the location of the agent if none has been provided
-		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation().toGamaPoint()));
+		if (attributes.getLocation() == null) {
+			attributes.setLocation(scope.getAgent().getLocation().toGamaPoint().clone());
+		}
 		return attributes;
 	}
 }

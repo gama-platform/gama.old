@@ -605,13 +605,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public void saveShape(final IList<? extends IShape> agents, final File f, final IScope scope, final boolean geoJson)
 			throws GamaRuntimeException {
-		// Patrick: NO IDEA WHY THERE WAS THIS CODE ???? - SO, I COMMENTED IT....
-		/*
-		 * if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) { final
-		 * GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry(); final IList<IShape> shapes
-		 * = GamaListFactory.create(); for (int i = 0; i < collec.getNumGeometries(); i++) { shapes.add(new
-		 * GamaShape(collec.getGeometryN(i))); } saveShape(shapes, path, scope, geoJson); return; }
-		 */
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = getGeometryType(agents);
 		specs.append("geometry:" + geomType);
@@ -634,11 +627,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					specs.append(',').append(name).append(':').append(type);
 				}
 			}
-
+			final IProjection proj = defineProjection(scope, f);
 			if (!geoJson) {
-				saveShapeFile(scope, f, agents, specs.toString(), attributes, defineProjection(scope, f));
+				saveShapeFile(scope, f, agents, specs.toString(), attributes, proj);
 			} else {
-				saveGeoJSonFile(scope, f, agents, specs.toString(), attributes, defineProjection(scope, f));
+				saveGeoJSonFile(scope, f, agents, specs.toString(), attributes, proj);
 			}
 		} catch (final GamaRuntimeException e) {
 			throw e;
@@ -726,8 +719,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					final Collection<String> attributeNames = sd.getAttributeNames();
 					attributeNames.removeAll(NON_SAVEABLE_ATTRIBUTE_NAMES);
 					if (header) {
-						// final IAgent ag0 = Cast.asAgent(scope,
-						// values.get(0));
 						fw.write("cycle;name;location.x;location.y;location.z");
 						for (final String v : attributeNames) {
 							fw.write(";" + v);
@@ -990,9 +981,17 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					break;
 				}
 			}
-			// store.dispose();
+			// Writes the prj file
 			if (gis != null) {
-				writePRJ(scope, f, gis);
+				final CoordinateReferenceSystem crs = gis.getInitialCRS(scope);
+				if (crs != null) {
+					try (FileWriter fw1 = new FileWriter(f.getAbsolutePath().replace(".shp", ".prj"))) {
+						fw1.write(crs.toString());
+						// fw.close();
+					} catch (final IOException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		} catch (final ClassCastException e) {
 			throw GamaRuntimeException.error(
@@ -1044,18 +1043,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 		}
 		return gg;
-	}
-
-	private static void writePRJ(final IScope scope, final File f, final IProjection gis) {
-		final CoordinateReferenceSystem crs = gis.getInitialCRS(scope);
-		if (crs != null) {
-			try (FileWriter fw = new FileWriter(f.getAbsolutePath().replace(".shp", ".prj"))) {
-				fw.write(crs.toString());
-				// fw.close();
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override
