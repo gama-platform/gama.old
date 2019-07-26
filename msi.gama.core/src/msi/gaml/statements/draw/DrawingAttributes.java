@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import msi.gama.common.geometry.AxisAngle;
-import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
@@ -23,7 +22,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
-import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaGifFile;
 import msi.gaml.operators.IUnits;
 
@@ -49,18 +47,26 @@ public class DrawingAttributes {
 
 	}
 
-	public DrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation, final GamaPoint location,
+	public DrawingAttributes(final Scaling3D size, final AxisAngle rotation, final GamaPoint location,
 			final GamaColor color, final GamaColor border, final Boolean lighting) {
 		this();
 		setBorder(border);
 		setFill(color);
 		setSize(size);
 		setLocation(location == null ? null : new GamaPoint(location));
-		if (rotation != null) {
-			setRotation(rotation.key, rotation.value);
-		}
+		setRotation(rotation);
 		setLighting(lighting);
 	}
+	//
+	// public void setRotation(final Double angle, final GamaPoint axis) {
+	// if (angle == null || axis != null && axis.x == 0d && axis.y == 0d && axis.z == 0d) {
+	// setRotation(null);
+	// } else if (axis == null) {
+	// setRotation(new AxisAngle(Rotation3D.PLUS_K, angle));
+	// } else {
+	// setRotation(new AxisAngle(axis, angle));
+	// }
+	// }
 
 	public int getIndex() {
 		return uniqueIndex;
@@ -74,10 +80,6 @@ public class DrawingAttributes {
 		return synthetic;
 	}
 
-	public DrawingAttributes(final GamaPoint location, final GamaColor color) {
-		this(null, null, location, color, null, true);
-	}
-
 	public void setLighting(final Boolean lighting) {
 		if (lighting == null) { return; }
 		this.lighting = lighting;
@@ -88,16 +90,6 @@ public class DrawingAttributes {
 			setFilled();
 		} else {
 			setEmpty();
-		}
-	}
-
-	public void setRotation(final Double angle, final GamaPoint axis) {
-		if (angle == null || axis != null && axis.x == 0d && axis.y == 0d && axis.z == 0d) {
-			setRotation(null);
-		} else if (axis == null) {
-			setRotation(new AxisAngle(Rotation3D.PLUS_K, angle));
-		} else {
-			setRotation(new AxisAngle(axis, angle));
 		}
 	}
 

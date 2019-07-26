@@ -10,21 +10,21 @@
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaPair;
 
 public class FileDrawingAttributes extends DrawingAttributes {
 
 	public final IAgent agentIdentifier;
 	public boolean useCache = true;
 
-	public FileDrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation,
-			final GamaPoint location, final GamaColor color, final GamaColor border, final IAgent agent,
-			final Double lineWidth, final boolean isImage, final Boolean lighting) {
+	public FileDrawingAttributes(final Scaling3D size, final AxisAngle rotation, final GamaPoint location,
+			final GamaColor color, final GamaColor border, final IAgent agent, final Double lineWidth,
+			final boolean isImage, final Boolean lighting) {
 		super(size, rotation, location, color, border, lighting);
 		this.agentIdentifier = agent;
 		setLineWidth(lineWidth);

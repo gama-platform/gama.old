@@ -12,6 +12,7 @@ package msi.gaml.statements.draw;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
@@ -133,20 +134,16 @@ public abstract class AttributeHolder {
 
 	protected <T extends IType<V>, V> Attribute<V> create(final String facet, final T type, final V def) {
 		final IExpression exp = symbol.getFacet(facet);
-		return create(facet, exp, type, def);
+		return create(facet, exp, type, def, (e) -> type.cast(null, e.getConstValue(), null, true));
 	}
 
 	protected <T extends IType<V>, V> Attribute<V> create(final String facet, final IExpression exp, final T type,
-			final V def) {
+			final V def, final Function<IExpression, V> constCaster) {
 		Attribute<V> result;
-		if (exp != null) {
-			if (exp.isConst()) {
-				result = new ConstantAttribute<>(type.cast(null, exp.getConstValue(), null, true));
-			} else {
-				result = new ExpressionAttribute<>(type, exp);
-			}
+		if (exp == null || exp.isConst() && exp.isContextIndependant()) {
+			result = new ConstantAttribute<>(exp == null ? def : constCaster.apply(exp));
 		} else {
-			result = new ConstantAttribute<>(def);
+			result = new ExpressionAttribute<>(type, exp);
 		}
 		attributes.put(facet, result);
 		return result;
@@ -154,12 +151,11 @@ public abstract class AttributeHolder {
 	}
 
 	protected <T extends IType<V>, V> Attribute<V> create(final String facet, final IExpressionWrapper<V> ev,
-			final T type, final V def) {
+			final T type, final V def, final Function<IExpression, V> constCaster) {
 		final IExpression exp = symbol.getFacet(facet);
 		Attribute<V> result;
 		if (exp == null || exp.isConst() && exp.isContextIndependant()) {
-			final V val = exp == null ? def : (V) exp.getConstValue();
-			result = new ConstantAttribute<>(val);
+			result = new ConstantAttribute<>(exp == null ? def : constCaster != null ? constCaster.apply(exp) : def);
 		} else {
 			result = new ExpressionEvaluator<>(ev, exp);
 		}

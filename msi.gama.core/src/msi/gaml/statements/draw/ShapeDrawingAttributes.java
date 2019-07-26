@@ -12,19 +12,19 @@ package msi.gaml.statements.draw;
 
 import java.util.List;
 
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
-import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaImageFile;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class ShapeDrawingAttributes extends FileDrawingAttributes {
 
-	public ShapeDrawingAttributes(final Scaling3D size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
+	public ShapeDrawingAttributes(final Scaling3D size, final Double depth, final AxisAngle rotation,
 			final GamaPoint location, final Boolean empty, final GamaColor color, /* final List<GamaColor> colors, */
 			final GamaColor border, final List<GamaImageFile> textures, final GamaMaterial material, final IAgent agent,
 			final IShape.Type type, final Double lineWidth, final Boolean lighting) {
