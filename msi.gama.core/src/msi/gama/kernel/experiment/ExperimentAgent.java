@@ -179,7 +179,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	private void initialize() {
+		// We initialize the population that will host the simulation
 		createSimulationPopulation();
+		// We initialize a new random number generator
 		if (random == null) {
 			random = new RandomUtils();
 		} else {
@@ -195,15 +197,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void reset() {
 		ownClock.reset();
 		// We close any simulation that might be running
-		closeSimulations();
-		// We initialize the population that will host the simulation
-		createSimulationPopulation();
-		// We initialize a new random number generator
-		if (random == null) {
-			random = new RandomUtils();
-		} else {
-			random = new RandomUtils(getDefinedSeed(), getDefinedRng());
-		}
+		closeSimulations(); 
+		
+		initialize();
 	}
 
 	public String getDefinedRng() {
