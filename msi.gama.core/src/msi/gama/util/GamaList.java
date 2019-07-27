@@ -50,6 +50,10 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		return GamaListFactory.equals(this, (IList) other);
 	}
 
+	protected GamaList() {
+		this(0, Types.NO_TYPE);
+	}
+
 	protected GamaList(final int capacity, final IType contentType) {
 		super(capacity);
 		this.type = Types.LIST.of(contentType);

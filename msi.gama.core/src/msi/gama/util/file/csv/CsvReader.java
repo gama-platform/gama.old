@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.util.file;
+package msi.gama.util.file.csv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -94,7 +94,7 @@ public class CsvReader {
 	public static final int ESCAPE_MODE_BACKSLASH = 2;
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.
+	 * Creates a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a file as the data source.
 	 *
 	 * @param fileName
 	 *            The path to the file to use as the data source.
@@ -118,7 +118,7 @@ public class CsvReader {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.&nbsp;Uses ISO-8859-1
+	 * Creates a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a file as the data source.&nbsp;Uses ISO-8859-1
 	 * as the {@link java.nio.charset.Charset Charset}.
 	 *
 	 * @param fileName
@@ -131,7 +131,7 @@ public class CsvReader {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.&nbsp;Uses a comma as
+	 * Creates a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a file as the data source.&nbsp;Uses a comma as
 	 * the column delimiter and ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
 	 *
 	 * @param fileName
@@ -142,7 +142,7 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader Reader} object as the
+	 * Constructs a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader Reader} object as the
 	 * data source.
 	 *
 	 * @param inputStream
@@ -161,7 +161,7 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader Reader} object as the
+	 * Constructs a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader Reader} object as the
 	 * data source.&nbsp;Uses a comma as the column delimiter.
 	 *
 	 * @param inputStream
@@ -172,7 +172,7 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using an {@link java.io.InputStream InputStream}
+	 * Constructs a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using an {@link java.io.InputStream InputStream}
 	 * object as the data source.&nbsp;Uses a comma as the column delimiter.
 	 *
 	 * @param inputStream
@@ -393,10 +393,10 @@ public class CsvReader {
 	}
 
 	/**
-	 * Gets the count of headers read in by a previous call to {@link com.csvreader.CsvReader#readHeaders
+	 * Gets the count of headers read in by a previous call to {@link msi.gama.util.file.csv.csvreader.CsvReader#readHeaders
 	 * readHeaders()}.
 	 *
-	 * @return The count of headers read in by a previous call to {@link com.csvreader.CsvReader#readHeaders
+	 * @return The count of headers read in by a previous call to {@link msi.gama.util.file.csv.csvreader.CsvReader#readHeaders
 	 *         readHeaders()}.
 	 */
 	public int getHeaderCount() {

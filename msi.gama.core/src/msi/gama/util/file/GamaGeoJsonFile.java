@@ -11,15 +11,12 @@
 package msi.gama.util.file;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
@@ -143,11 +140,9 @@ public class GamaGeoJsonFile extends GamaGisFile {
 
 	protected SimpleFeatureCollection getFeatureCollection(final IScope scope) {
 		try (FileReader fileReader = new FileReader(getFile(scope))) {
-			final JSONParser parser = new JSONParser();
-			final Object obj = parser.parse(fileReader);
 			final FeatureJSON fJSON = new FeatureJSON();
-			return (SimpleFeatureCollection) fJSON.readFeatureCollection(obj.toString());
-		} catch (final IOException | ParseException e) {
+			return (SimpleFeatureCollection) fJSON.readFeatureCollection(fileReader);
+		} catch (final Exception e) {
 			GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 		}
 		return null;
