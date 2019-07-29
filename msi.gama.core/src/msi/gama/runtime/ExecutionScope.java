@@ -206,7 +206,7 @@ public class ExecutionScope implements IScope {
 	 * @return true if the root agent of the scope is marked as interrupted (i.e. dead)
 	 */
 
-	protected boolean _root_interrupted() {
+	public boolean _root_interrupted() {
 		return _interrupted || getRoot() == null || getRoot().dead();
 	}
 

@@ -197,8 +197,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void reset() {
 		ownClock.reset();
 		// We close any simulation that might be running
-		closeSimulations(); 
-		
+		closeSimulations();
+
 		initialize();
 	}
 
@@ -661,7 +661,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		volatile boolean interrupted = false;
 
 		@Override
-		protected boolean _root_interrupted() {
+		public boolean _root_interrupted() {
 			return interrupted || ExperimentAgent.this.dead();
 		}
 

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Strings;
@@ -267,8 +268,9 @@ public class GamaRuntimeException extends RuntimeException {
 		return sb.toString();
 	}
 
+	// If the simulation or experiment is dead, no need to report errors
 	public boolean isInvalid() {
-		return scope == null || scope.interrupted();
+		return scope == null || scope instanceof ExecutionScope && ((ExecutionScope) scope)._root_interrupted();
 	}
 
 }
