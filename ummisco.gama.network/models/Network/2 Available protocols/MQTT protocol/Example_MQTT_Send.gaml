@@ -25,7 +25,7 @@ global {
 			do connect  with_name:"sender";
 			
 			// default ActiveMQ MQTT login is "admin", the password is "admin" and the port is 1883
-			// do connect to:"localhost" with_name:name login:"admin" password:"admin" port: 1883;
+			// do connect to:"localhost" with_name:"sender" login:"admin" password:"admin" port: 1883;
 		}
 	}
 }
@@ -52,7 +52,8 @@ species NetworkingAgent skills:[network]{
 	{
 		write "sending message: " + self;
 		do send to:"sender" contents:self;
-		do send to:"receiver" contents:self;
+// 		
+//		do send to:"receiver" contents:self;
 	}
 	
 	reflex receive
