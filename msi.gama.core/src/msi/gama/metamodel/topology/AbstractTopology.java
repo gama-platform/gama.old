@@ -364,8 +364,9 @@ public abstract class AbstractTopology implements ITopology {
 			if (filter.getSpecies() != null) {
 				insertSpecies(scope, filter.getSpecies());
 			} else {
-				for (final IAgent ag : filter.getPopulation(scope)) {
-					insertSpecies(scope, ag.getSpecies());
+				final IPopulation<? extends IAgent> pop = filter.getPopulation(scope);
+				if (pop != null) {
+					insertSpecies(scope, pop.getSpecies());
 				}
 			}
 		}
