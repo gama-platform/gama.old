@@ -22,15 +22,17 @@ global
 
 	init
 	{
-		int id <-0;
 		//create Ping agent
-		create People number:10
+		create People number: nb_agents
 		{
-			name <- "Person "+id;
-			do connect  with_name:name;
-			//default ActiveMQ mqtt login is "admin", the password is "password"
-			//do connect to:"localhost" with_name:name login:"admin" password:"password";
-			id <-  id + 1;
+			// The name attribute of each agent being unique, we use it as an id in the connection to the server	
+			do connect  with_name:name ;
+			//default ActiveMQ MQTT login is "admin", the password is "admin" and the port is 1883
+			// do connect to:"localhost" with_name:name login:"admin" password:"admin" port: 1883;
+		}
+		
+		ask one_of(People) {
+			is_sender <- true;
 		}
 	}
 }

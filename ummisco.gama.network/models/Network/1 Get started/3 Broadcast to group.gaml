@@ -22,21 +22,18 @@ global
 	{
 		create Teacher with:[name::"Victoria"]{
 			do connect  with_name:name ;
-			//default ActiveMQ mqtt login is "admin", the password is "password"
-			//do connect to:"localhost" with_name:name login:"admin" password:"password";
+			//default ActiveMQ MQTT login is "admin", the password is "admin" and the port is 1883
+			//do connect to:"localhost" with_name:name login:"admin" password:"admin" port: 1883;
 		}
-		int id <-0;
+
 		create Student number:nb_student {
-			name <- "Student "+ id;
-			id <- id + 1;
+			// The name attribute of each agent being unique, we use it as an id in the connection to the server	
 			do connect  with_name:name ;
 			
-	/**
-	 * Define here the groups of agents. An agent could join or leave several group.
-	 */		
+	 		// Define here the groups of agents. An agent could join or leave several group.
 	 		do join_group with_name:"students";
-			//default ActiveMQ mqtt login is "admin", the password is "password"
-			//do connect to:"localhost" with_name:name login:"admin" password:"password";
+			//default ActiveMQ MQTT login is "admin", the password is "admin" and the port is 1883
+			//do connect to:"localhost" with_name:name login:"admin" password:"admin" port: 1883;
 		}		
 	}
 }
