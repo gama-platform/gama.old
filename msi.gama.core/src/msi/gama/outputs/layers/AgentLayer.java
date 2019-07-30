@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.IAgent;
@@ -24,7 +22,10 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;
@@ -41,7 +42,7 @@ public class AgentLayer extends AbstractLayer {
 		super(layer);
 	}
 
-	protected final THashMap<IAgent, Rectangle2D> shapes = new THashMap<>();
+	protected final IMap<IAgent, Rectangle2D> shapes = GamaMapFactory.createUnordered();
 	protected static final Rectangle2D DUMMY_RECT = new Rectangle2D.Double();
 
 	@SuppressWarnings ("unchecked")
@@ -64,7 +65,8 @@ public class AgentLayer extends AbstractLayer {
 		fillShapes(scope);
 		final String aspectName = ((AgentLayerStatement) definition).getAspectName();
 
-		shapes.forEachKey((a) -> {
+		shapes.entrySet().forEach((entry) -> {
+			final IAgent a = entry.getKey();
 			IExecutable aspect = null;
 			if (a != null) {
 				if (a == scope.getGui().getHighlightedAgent()) {
@@ -80,12 +82,11 @@ public class AgentLayer extends AbstractLayer {
 				}
 
 				final ExecutionResult result = scope.execute(aspect, a, null);
-				final Rectangle2D r = (Rectangle2D) result.getValue();
-				if (r != null) {
-					shapes.put(a, r);
+				final Object r = result.getValue();
+				if (r instanceof Rectangle2D) {
+					entry.setValue((Rectangle2D) r);
 				}
 			}
-			return true;
 		});
 
 	}
@@ -103,18 +104,19 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		final Set<IAgent> selectedAgents = new THashSet<>();
-		final Rectangle2D selection = new Rectangle2D.Double();
-		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
-				y + IDisplaySurface.SELECTION_SIZE / 2);
-		shapes.forEachEntry((a, b) -> {
-			if (b.intersects(selection)) {
-				selectedAgents.add(a);
-			}
-			return true;
-		});
+		try (final Collector.AsSet<IAgent> selectedAgents = Collector.getSet()) {
+			final Rectangle2D selection = new Rectangle2D.Double();
+			selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
+					y + IDisplaySurface.SELECTION_SIZE / 2);
+			shapes.forEachPair((a, b) -> {
+				if (b.intersects(selection)) {
+					selectedAgents.add(a);
+				}
+				return true;
+			});
 
-		return selectedAgents;
+			return selectedAgents.items();
+		}
 	}
 
 	@Override

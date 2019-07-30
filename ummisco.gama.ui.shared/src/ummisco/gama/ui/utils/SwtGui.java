@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -26,7 +28,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.ISourceProviderService;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.application.workbench.PerspectiveHelper.SimulationPerspectiveDescriptor;
 import msi.gama.common.interfaces.IConsoleDisplayer;
@@ -58,6 +59,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.Symbol;
@@ -264,7 +267,7 @@ public class SwtGui implements IGui {
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
-		final Map<String, Object> result = new THashMap<>();
+		final IMap<String, Object> result = GamaMapFactory.createUnordered();
 		WorkbenchHelper.run(() -> {
 			final EditorsDialog dialog =
 					new EditorsDialog(scope, WorkbenchHelper.getShell(), initialValues, types, title);
@@ -417,7 +420,7 @@ public class SwtGui implements IGui {
 					WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
 					WorkbenchHelper.hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
 				} else {
-					getConsole(scope).showConsoleView(exp.getAgent());
+					getConsole().showConsoleView(exp.getAgent());
 				}
 				if (showParameters != null && !showParameters) {
 					WorkbenchHelper.hideView(IGui.PARAMETER_VIEW_ID);
@@ -453,10 +456,10 @@ public class SwtGui implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentPlan)
 	 */
 	@Override
-	public void cleanAfterExperiment(final IScope scope) {
+	public void cleanAfterExperiment() {
 		WorkbenchHelper.hideView(PARAMETER_VIEW_ID);
 		hideMonitorView();
-		getConsole(null).eraseConsole(true);
+		getConsole().eraseConsole(true);
 		final IGamaView icv = (IGamaView) WorkbenchHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
 		if (icv != null) {
 			icv.reset();
@@ -521,14 +524,14 @@ public class SwtGui implements IGui {
 	public void closeSimulationViews(final IScope scope, final boolean openModelingPerspective,
 			final boolean immediately) {
 		WorkbenchHelper.run(() -> {
-			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			final IWorkbenchPage page = WorkbenchHelper.getPage();
 			final IViewReference[] views = page.getViewReferences();
 
 			for (final IViewReference view : views) {
 				final IViewPart part = view.getView(false);
 				if (part instanceof IGamaView) {
+					DEBUG.OUT("Closing " + view.getId());
 					((IGamaView) part).close(scope);
-
 				}
 			}
 			if (openModelingPerspective) {
@@ -592,7 +595,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IConsoleDisplayer getConsole(final IScope scope) {
+	public IConsoleDisplayer getConsole() {
 		return WorkbenchHelper.getService(IConsoleDisplayer.class);
 	}
 
@@ -661,6 +664,11 @@ public class SwtGui implements IGui {
 			refresh.completeRefresh(null);
 		}
 
+	}
+
+	@Override
+	public boolean isInDisplayThread() {
+		return EventQueue.isDispatchThread() || Display.getCurrent() != null;
 	}
 
 }

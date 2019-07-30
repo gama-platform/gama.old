@@ -28,6 +28,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
@@ -85,6 +87,13 @@ public class InteractiveConsoleView extends GamaViewPart
 		controlToDisplayInFullScreen.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		super.createPartControl(controlToDisplayInFullScreen);
 
+	}
+
+	@Override
+	public void init(final IViewSite site) throws PartInitException {
+		super.init(site);
+		// Issue #2816
+		this.setTitleImage(GamaIcons.create("view.interactive2").image());
 	}
 
 	@Override
@@ -414,7 +423,7 @@ public class InteractiveConsoleView extends GamaViewPart
 	}
 
 	@Override
-	public IExecutionContext createCopyContext() {
+	public IExecutionContext createCopy() {
 		return this;
 	}
 

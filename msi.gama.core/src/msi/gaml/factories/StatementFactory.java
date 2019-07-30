@@ -1,16 +1,14 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.StatementFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.factories.StatementFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.factories;
-
-import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -37,10 +35,6 @@ import msi.gaml.statements.Facets;
 				ISymbolKind.ACTION, ISymbolKind.LAYER, ISymbolKind.BATCH_METHOD, ISymbolKind.OUTPUT })
 public class StatementFactory extends SymbolFactory implements IKeyword {
 
-	public StatementFactory(final List<Integer> handles) {
-		super(handles);
-	}
-
 	public StatementFactory(final int... handles) {
 		super(handles);
 	}
@@ -51,8 +45,10 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		if (proto.isPrimitive()) { return new PrimitiveDescription(enclosing, element, children, facets, null); }
 		if (keyword.equals(ACTION)) { return new ActionDescription(keyword, enclosing, children, element, facets); }
 		if (proto.hasSequence() && children != null) {
-			if (proto.isRemoteContext()) { return new StatementRemoteWithChildrenDescription(keyword, enclosing,
-					children, proto.hasArgs(), element, facets, null); }
+			if (proto.isRemoteContext()) {
+				return new StatementRemoteWithChildrenDescription(keyword, enclosing, children, proto.hasArgs(),
+						element, facets, null);
+			}
 			return new StatementWithChildrenDescription(keyword, enclosing, children, proto.hasArgs(), element, facets,
 					null);
 		}

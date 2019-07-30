@@ -19,10 +19,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
@@ -62,7 +62,7 @@ public class GamlResourceDocumenter implements IDocManager {
 		}
 	};
 
-	final DescriptionVisitor documentingVisitor = desc -> {
+	final DescriptionVisitor<IDescription> documentingVisitor = desc -> {
 		document(desc);
 		return true;
 
@@ -81,7 +81,7 @@ public class GamlResourceDocumenter implements IDocManager {
 		documentationJob.schedule(50);
 	}
 
-	THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource resource) {
+	IMap<EObject, IGamlDescription> getDocumentationCache(final Resource resource) {
 		if (resource == null) { return null; }
 		return GamlResourceServices.getDocumentationCache(resource);
 	}
@@ -111,7 +111,7 @@ public class GamlResourceDocumenter implements IDocManager {
 	@Override
 	public IGamlDescription getGamlDocumentation(final EObject object) {
 		if (object == null) { return null; }
-		final THashMap<EObject, IGamlDescription> map = getDocumentationCache(object.eResource());
+		final IMap<EObject, IGamlDescription> map = getDocumentationCache(object.eResource());
 		if (map == null) { return null; }
 		return map.get(object);
 	}

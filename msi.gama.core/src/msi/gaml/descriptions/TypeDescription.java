@@ -33,10 +33,9 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Facets;
@@ -55,8 +54,8 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	// AD 08/16 : actions and attributes are now inherited dynamically and built
 	// lazily
-	protected THashMap<String, ActionDescription> actions;
-	protected TOrderedHashMap<String, VariableDescription> attributes;
+	protected IMap<String, ActionDescription> actions;
+	protected IMap<String, VariableDescription> attributes;
 	protected TypeDescription parent;
 	protected final boolean isAbstract;
 
@@ -124,7 +123,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public Collection<String> getAttributeNames() {
 		final Collection<String> accumulator =
-				parent != null && parent != this ? parent.getAttributeNames() : new TLinkedHashSet<>();
+				parent != null && parent != this ? parent.getAttributeNames() : new LinkedHashSet<>();
 		if (attributes != null) {
 			attributes.forEachKey(s -> {
 				if (accumulator.contains(s)) {
@@ -144,7 +143,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean redefinesAttribute(final String vn) {
-		if (!attributes.contains(name)) { return false; }
+		if (!attributes.containsKey(name)) { return false; }
 		if (parent == null || parent == this) { return false; }
 		return parent.hasAttribute(name);
 	}
@@ -168,7 +167,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	protected void addAttributeNoCheck(final VariableDescription vd) {
 		if (attributes == null) {
-			attributes = new TOrderedHashMap();
+			attributes = GamaMapFactory.create();
 		}
 		// synchronized (this) {
 		attributes.put(vd.getName(), vd);
@@ -304,7 +303,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
 		// TODO Do it once for built-in species
 		final Collection<String> accumulator = parent != null && parent != this
-				? parent.getOrderedAttributeNames(facetsToConsider) : new TLinkedHashSet<>();
+				? parent.getOrderedAttributeNames(facetsToConsider) : new LinkedHashSet<>();
 		if (attributes == null) { return accumulator; }
 		if (attributes.size() <= 1) {
 			accumulator.addAll(attributes.keySet());
@@ -318,7 +317,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (shape != null) {
 			dependencies.addVertex(shape);
 		}
-		attributes.forEachEntry((an, var) -> {
+		attributes.forEachPair((an, var) -> {
 			dependencies.addVertex(var);
 			final Collection<VariableDescription> varDependencies = var.getDependencies(facetsToConsider, false, true);
 			for (final VariableDescription newVar : varDependencies) {
@@ -367,7 +366,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		final Collection<VariableDescription> shapeDependencies =
 				shape == null ? Collections.EMPTY_SET : shape.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
 
-		attributes.forEachEntry((aName, var) -> {
+		attributes.forEachPair((aName, var) -> {
 			dependencies.addVertex(var);
 			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
 				dependencies.addEdge(shape, var);
@@ -398,7 +397,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			return false;
 		}
 		final DirectedGraph<VariableDescription, Object> fDependencies = new DefaultDirectedGraph<>(Object.class);
-		attributes.forEachEntry((aName, var) -> {
+		attributes.forEachPair((aName, var) -> {
 			if (!var.hasFacet(FUNCTION)) { return true; }
 			fDependencies.addVertex(var);
 			for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false)) {
@@ -450,13 +449,13 @@ public abstract class TypeDescription extends SymbolDescription {
 				duplicateInfo(newAction, existing);
 			}
 		} else {
-			actions = new THashMap<>();
+			actions = GamaMapFactory.createUnordered();
 		}
 		actions.put(actionName, newAction);
 	}
 
 	public boolean redefinesAction(final String theName) {
-		if (!actions.contains(theName)) { return false; }
+		if (!actions.containsKey(theName)) { return false; }
 		if (parent == null || parent == this) { return false; }
 		return parent.hasAction(theName, false);
 	}
@@ -689,49 +688,49 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
-	public boolean visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : getAttributes()) {
-			if (!visitor.visit(d)) { return false; }
+			if (!visitor.process(d)) { return false; }
 		}
 		for (final IDescription d : getActions()) {
-			if (!visitor.visit(d)) { return false; }
+			if (!visitor.process(d)) { return false; }
 		}
 		return true;
 	}
 
 	@Override
-	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
 		if (!visitOwnAttributes(visitor)) { return false; }
 		return visitOwnActions(visitor);
 	}
 
 	@Override
-	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
 		if (!visitOwnAttributes(visitor)) { return false; }
 		return visitOwnActionsRecursively(visitor);
 	}
 
-	public boolean visitAllAttributes(final DescriptionVisitor visitor) {
+	public boolean visitAllAttributes(final DescriptionVisitor<IDescription> visitor) {
 		if (parent != null && parent != this) {
 			if (!parent.visitAllAttributes(visitor)) { return false; }
 		}
 		return visitOwnAttributes(visitor);
 	}
 
-	public boolean visitOwnAttributes(final DescriptionVisitor visitor) {
+	public boolean visitOwnAttributes(final DescriptionVisitor<IDescription> visitor) {
 		if (attributes == null) { return true; }
 		return attributes.forEachValue(visitor);
 	}
 
-	public boolean visitOwnActions(final DescriptionVisitor visitor) {
+	public boolean visitOwnActions(final DescriptionVisitor<IDescription> visitor) {
 		if (actions == null) { return true; }
 		return actions.forEachValue(visitor);
 	}
 
-	public boolean visitOwnActionsRecursively(final DescriptionVisitor visitor) {
+	public boolean visitOwnActionsRecursively(final DescriptionVisitor<IDescription> visitor) {
 		if (actions == null) { return true; }
 		return actions.forEachValue(each -> {
-			if (!visitor.visit(each)) { return false; }
+			if (!visitor.process(each)) { return false; }
 			return each.visitOwnChildrenRecursively(visitor);
 		});
 	}

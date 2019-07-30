@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.Arguments.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.Arguments.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -30,15 +30,15 @@ public class Arguments extends Facets {
 
 	public Arguments(final Arguments args) {
 		super(args);
-		if (args != null)
+		if (args != null) {
 			setCaller(args.caller.get());
+		}
 	}
 
 	@Override
 	public Arguments cleanCopy() {
 		final Arguments result = new Arguments(this);
 		result.transformValues(cleanCopy);
-		result.compact();
 		return result;
 	}
 
@@ -52,7 +52,7 @@ public class Arguments extends Facets {
 
 	@Override
 	public void dispose() {
-		clear();
+		super.dispose();
 		caller.set(null);
 	}
 

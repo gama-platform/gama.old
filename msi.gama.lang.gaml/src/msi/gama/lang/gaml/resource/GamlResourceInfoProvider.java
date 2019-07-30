@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -33,7 +34,6 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.inject.Singleton;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.S_Experiment;
@@ -59,7 +59,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		final Set<URI> uris = GamlResourceIndexer.directImportsOf(originalURI);
 		for (final URI u : uris) {
 			if (imports == null) {
-				imports = new TLinkedHashSet();
+				imports = new LinkedHashSet();
 			}
 			imports.add(u.deresolve(originalURI).toString());
 		}
@@ -93,7 +93,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 					final String ext = u.fileExtension();
 					if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(ext)) {
 						if (uses == null) {
-							uses = new TLinkedHashSet();
+							uses = new LinkedHashSet();
 						}
 						uses.add(s);
 					}
@@ -108,7 +108,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				}
 
 				if (exps == null) {
-					exps = new TLinkedHashSet();
+					exps = new LinkedHashSet();
 				}
 				exps.add(s);
 			} else if (e instanceof HeadlessExperiment) {
@@ -119,7 +119,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				}
 
 				if (exps == null) {
-					exps = new TLinkedHashSet();
+					exps = new LinkedHashSet();
 				}
 				exps.add(s);
 			}

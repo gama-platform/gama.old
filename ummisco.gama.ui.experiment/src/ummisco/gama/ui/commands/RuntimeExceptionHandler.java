@@ -86,9 +86,9 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 			}
 			firstEx.setReported();
 			if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
-				final List<GamaRuntimeException> newList = new ArrayList<>();
-				newList.add(firstEx);
-				updateUI(newList);
+				final List<GamaRuntimeException> exceptions = new ArrayList<>();
+				exceptions.add(firstEx);
+				updateUI(exceptions);
 			}
 
 		} else if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
@@ -119,12 +119,8 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 
 	public void updateUI(final List<GamaRuntimeException> newExceptions) {
 		if (newExceptions != null) {
-			for (final GamaRuntimeException exception : new ArrayList<>(newExceptions)) {
-				if (exception.isInvalid()) {
-					newExceptions.remove(exception);
-				}
-			}
-			cleanExceptions = newExceptions;
+			newExceptions.removeIf((e) -> e.isInvalid());
+			cleanExceptions = new ArrayList<>(newExceptions);
 		}
 
 		GAMA.getGui().displayErrors(null, newExceptions);

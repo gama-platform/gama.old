@@ -19,7 +19,8 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
-import gnu.trove.map.hash.THashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import msi.gama.util.tree.GamaTree.Order;
@@ -56,7 +57,7 @@ public class Types {
 	public static GamaTopologyType TOPOLOGY;
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
 
-	public static final THashMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = new THashMap(10, 0.95f);
+	public static final IMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = GamaMapFactory.createUnordered();
 
 	public static void cache(final int id, final IType instance) {
 		switch (id) {
@@ -203,7 +204,7 @@ public class Types {
 		boolean newEntry = false;
 		if (t[0] == Types.NO_TYPE) {
 			if (!type.isInterface()) {
-				newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE.forEachEntry((support, id) -> {
+				newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE.forEachPair((support, id) -> {
 					if (support != Object.class && support.isAssignableFrom(type)) {
 						t[0] = (IType<T>) builtInTypes.get(id);
 						return false;

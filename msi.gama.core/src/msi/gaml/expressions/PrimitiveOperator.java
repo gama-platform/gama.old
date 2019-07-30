@@ -1,25 +1,20 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.PrimitiveOperator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.PrimitiveOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
-
-import java.util.Map;
-
-import com.google.common.collect.Iterables;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
@@ -120,16 +115,15 @@ public class PrimitiveOperator implements IExpression, IOperator {
 
 	protected String argsToGaml(final StringBuilder sb, final boolean includingBuiltIn) {
 		if (parameters == null || parameters.isEmpty()) { return ""; }
-		for (final Map.Entry<String, IExpressionDescription> entry : parameters.entrySet()) {
-			final String name = entry.getKey();
-			final IExpressionDescription expr = entry.getValue();
+		parameters.forEachFacet((name, expr) -> {
 			if (Strings.isGamaNumber(name)) {
 				sb.append(expr.serialize(false));
 			} else {
 				sb.append(name).append(":").append(expr.serialize(includingBuiltIn));
 			}
 			sb.append(", ");
-		}
+			return true;
+		});
 		if (sb.length() > 0) {
 			sb.setLength(sb.length() - 2);
 		}
@@ -138,7 +132,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 
 	/**
 	 * Method collectPlugins()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override
@@ -158,7 +152,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
 		if (parameters != null) {
-			parameters.forEachEntry((name, exp) -> {
+			parameters.forEachFacet((name, exp) -> {
 				final IExpression expression = exp.getExpression();
 				if (expression != null) {
 					expression.collectUsedVarsOf(species, result);
@@ -202,11 +196,12 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	@Override
 	public void visitSuboperators(final IOperatorVisitor visitor) {
 		if (parameters != null) {
-			parameters.forEach((name, exp) -> {
+			parameters.forEachFacet((name, exp) -> {
 				final IExpression expr = exp.getExpression();
 				if (expr instanceof IOperator) {
 					visitor.visit((IOperator) expr);
 				}
+				return true;
 			});
 		}
 
@@ -216,7 +211,8 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	@Override
 	public IExpression arg(final int i) {
 		if (i < 0 || i > parameters.size()) { return null; }
-		return Iterables.get(parameters.values(), i).getExpression();
+		return parameters.getExpr(i);
+		// return Iterables.get(parameters.values(), i).getExpression();
 	}
 
 	@Override

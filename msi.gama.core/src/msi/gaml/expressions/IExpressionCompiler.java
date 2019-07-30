@@ -10,15 +10,16 @@
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.runtime.IExecutionContext;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -34,8 +35,8 @@ import msi.gaml.types.Signature;
  */
 public interface IExpressionCompiler<T> extends IDisposable {
 
-	THashMap<String, THashMap<Signature, OperatorProto>> OPERATORS = new THashMap<>();
-	Set<String> ITERATORS = new THashSet<>();
+	IMap<String, IMap<Signature, OperatorProto>> OPERATORS = GamaMapFactory.createUnordered();
+	Set<String> ITERATORS = new HashSet<>();
 
 	IExpression compile(final IExpressionDescription s, final IDescription parsingContext);
 

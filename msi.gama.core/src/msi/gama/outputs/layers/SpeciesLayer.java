@@ -97,9 +97,7 @@ public class SpeciesLayer extends AgentLayer {
 			}
 			if (result != null && result.getValue() instanceof Rectangle2D) {
 				final Rectangle2D r = (Rectangle2D) result.getValue();
-				if (r != null) {
-					shapes.put(a, r);
-				}
+				shapes.put(a, r);
 			}
 			if (!(a instanceof IMacroAgent)) {
 				continue;

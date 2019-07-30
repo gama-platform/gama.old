@@ -9,6 +9,10 @@
  **********************************************************************************************/
 package ummisco.gama.ui.metadata;
 
+import static javax.imageio.ImageIO.createImageInputStream;
+import static javax.imageio.ImageIO.read;
+import static msi.gama.common.util.ImageUtils.toCompatibleImage;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,19 +21,17 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
-
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReader;
 
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import msi.gama.common.util.ImageUtils;
@@ -43,6 +45,8 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  */
 public class ImageDataLoader {
+
+	private final static TIFFImageReaderSpi READER_SPI = new TIFFImageReaderSpi();
 
 	public static final int IMAGE_ASC = 8, IMAGE_PGM = 9;
 
@@ -61,34 +65,53 @@ public class ImageDataLoader {
 				} else if ("pgm".equals(ext)) {
 					imageData = readPGM(in);
 				} else if (ext.contains("tif")) {
-					final BufferedImage tif = ImageIO.read(in);
-					imageData = convertToSWT(tif);
+					imageData = new ImageData(in);
+					final PaletteData palette = imageData.palette;
+					if (!((imageData.depth == 1 || imageData.depth == 2 || imageData.depth == 4 || imageData.depth == 8)
+							&& !palette.isDirect || imageData.depth == 8
+							|| (imageData.depth == 16 || imageData.depth == 24 || imageData.depth == 32)
+									&& palette.isDirect)) {
+						imageData = null;
+					}
 					if (imageData == null) {
-						TIFFImageReader reader;
-						final ImageReaderSpi spi = new TIFFImageReaderSpi();
-						reader = new TIFFImageReader(spi);
+						final BufferedImage tif = ImageIO.read(in);
+						imageData = convertToSWT(tif);
+					}
+					if (imageData == null) {
 						try (ImageInputStream is =
-								new FileImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()));) {
+								createImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()))) {
+							final ImageReader reader = READER_SPI.createReaderInstance();
 							reader.setInput(is);
-							BufferedImage image;
-							try {
-								image = ImageUtils.toCompatibleImage(reader.read(0));
-
-								imageData = ImageDataLoader.convertToSWT(image);
-								image.flush();
-								imageData.type = SWT.IMAGE_TIFF;
-							} catch (final IOException e) {
-								e.printStackTrace();
-							}
+							final BufferedImage image = toCompatibleImage(reader.read(0));
+							imageData = convertToSWT(image);
+							image.flush();
+							imageData.type = SWT.IMAGE_TIFF;
 						} catch (final IOException e1) {
 							e1.printStackTrace();
 						}
 
 					}
 				} else {
-					imageData = new ImageData(in);
+					try {
+						imageData = new ImageData(in);
+					} catch (final SWTException e) {
+						// Bad format. Can happen for PNG. See #2825
+						if ("png".equals(ext) || "jpg".equals(ext)) {
+							try {
+								final BufferedImage image = toCompatibleImage(
+										read(new File(file.getLocation().toFile().getAbsolutePath())));
+								imageData = convertToSWT(image);
+								image.flush();
+								imageData.type = "png".equals(ext) ? SWT.IMAGE_PNG: SWT.IMAGE_JPEG;
+							} catch (final IOException e1) {
+								e1.printStackTrace();
+							}
+						}
+					}
 				}
-			} catch (final Exception ex) {}
+			} catch (final Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		if (imageData == null) {
 			DEBUG.ERR("null image data");

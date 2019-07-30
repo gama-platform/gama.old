@@ -171,7 +171,7 @@ public class HeadlessListener implements IGui {
 	public void setSelectedAgent(final IAgent a) {}
 
 	@Override
-	public void cleanAfterExperiment(final IScope scope) {
+	public void cleanAfterExperiment() {
 		// DEBUG.LOG("[Headless] Clean after experiment.");
 		try {
 			outputWriter.get().flush();
@@ -386,7 +386,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public IConsoleDisplayer getConsole(final IScope scope) {
+	public IConsoleDisplayer getConsole() {
 		return console;
 	}
 
@@ -477,6 +477,12 @@ public class HeadlessListener implements IGui {
 	public void refreshNavigator() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean isInDisplayThread() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

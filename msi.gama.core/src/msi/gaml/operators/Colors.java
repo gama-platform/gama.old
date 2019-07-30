@@ -37,7 +37,6 @@ import msi.gaml.compilation.IOperatorValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.GamaColorType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -369,7 +368,7 @@ public class Colors {
 	@test ("seed <- 1.0; int(rnd_color(255)) = -3749758")
 	public static GamaColor random_color(final IScope scope, final Integer max) {
 		final RandomUtils r = scope.getRandom();
-		final int realMax = CmnFastMath.max(0, CmnFastMath.min(max, 255));
+		final int realMax = Math.max(0, Math.min(max, 255));
 		return new GamaColor(r.between(0, realMax), r.between(0, realMax), r.between(0, realMax), 255);
 	}
 
@@ -388,8 +387,8 @@ public class Colors {
 	@test ("seed <- 1.0; int(rnd_color(100, 200)) = -5065833")
 	public static GamaColor random_color(final IScope scope, final Integer min, final Integer max) {
 		final RandomUtils r = scope.getRandom();
-		final int realMax = CmnFastMath.max(0, CmnFastMath.min(max, 255));
-		final int realMin = CmnFastMath.max(0, CmnFastMath.min(min, realMax));
+		final int realMax = Math.max(0, Math.min(max, 255));
+		final int realMin = Math.max(0, Math.min(min, realMax));
 		return new GamaColor(r.between(realMin, realMax), r.between(realMin, realMax), r.between(realMin, realMax),
 				255);
 	}

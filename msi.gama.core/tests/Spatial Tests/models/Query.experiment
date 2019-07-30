@@ -76,7 +76,7 @@ experiment QueryTests type: test {
 			cl <-  (agent_closest_to (dummy(8)));
 		}
 		write cl;
-		assert cl = dummy(4);
+		assert cl = cell(73);
 	}
 	
 	test "agent_farthest_to" {

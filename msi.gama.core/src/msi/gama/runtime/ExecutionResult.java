@@ -22,20 +22,20 @@ public interface ExecutionResult {
 	}
 
 	// FACTORY METHODS
-
 	static ExecutionResult withValue(final Object value) {
 		if (value == null) { return PASSED_WITH_NULL; }
 		return (WithValue) () -> value;
 	}
 
 	static ExecutionResult withValue(final boolean value) {
-		return value ? PASSED : FAILED;
+		return value ? PASSED : PASSED_WITH_FALSE;
 	}
 
 	/** The Constant PASSED. */
 	ExecutionResult PASSED = () -> true;
 
 	ExecutionResult PASSED_WITH_NULL = (WithValue) () -> null;
+	ExecutionResult PASSED_WITH_FALSE = (WithValue) () -> false;
 
 	/** The Constant FAILED. */
 	ExecutionResult FAILED = () -> false;

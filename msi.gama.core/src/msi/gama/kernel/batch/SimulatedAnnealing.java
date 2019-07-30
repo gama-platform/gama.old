@@ -33,7 +33,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 
 @symbol (
@@ -175,8 +174,8 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 				}
 
 				if (isMaximize() && (neighborFitness >= currentFitness
-						|| scope.getRandom().next() < FastMath.exp((neighborFitness - currentFitness) / temperature))
-						|| !isMaximize() && (neighborFitness <= currentFitness || scope.getRandom().next() < FastMath
+						|| scope.getRandom().next() < Math.exp((neighborFitness - currentFitness) / temperature))
+						|| !isMaximize() && (neighborFitness <= currentFitness || scope.getRandom().next() < Math
 								.exp((currentFitness - neighborFitness) / temperature))) {
 					bestSolutionAlgo = neighborSol;
 					currentFitness = neighborFitness;

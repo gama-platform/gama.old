@@ -86,6 +86,7 @@ public class ReverseOperators {
 		return 1;
 	}
 
+	// TODO : This should become a part of the save statement 
 	@operator (
 			value = "save_agent")
 	@doc (
@@ -103,7 +104,15 @@ public class ReverseOperators {
 
 		FileWriter fw = null;
 		try {
+			if (path.equals("")) { return -1; }
+			
 			final File f = new File(path);
+			
+			final File parent = f.getParentFile();
+			if (!parent.exists()) {
+				parent.mkdirs();
+			}
+									
 			if (!f.exists()) {
 				f.createNewFile();
 			}

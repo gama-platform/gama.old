@@ -9,8 +9,8 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +39,7 @@ import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
@@ -234,27 +235,27 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 							getFacet(IKeyword.PARAMS));
 			}
 		}
-
-		final List<ISymbol> others = new ArrayList<>();
-		for (final ISymbol s : cmd) {
-			if (s instanceof SingleEquationStatement) {
-				((SingleEquationStatement) s).establishVar();
-				for (int i = 0; i < ((SingleEquationStatement) s).getVars().size(); i++) {
-					final IExpression v = ((SingleEquationStatement) s).getVar(i);
-					if (((SingleEquationStatement) s).getOrder() > 0) {
-						final GamaPair p1 = new GamaPair<IAgent, SingleEquationStatement>(null,
-								(SingleEquationStatement) s, Types.AGENT, Types.NO_TYPE);
-						equations.put(equations.size(), p1);
-						final GamaPair p2 = new GamaPair<IAgent, IExpression>(null, v, Types.AGENT, Types.NO_TYPE);
-						variables_diff.put(variables_diff.size(), p2);
+		try (final Collector.AsList<ISymbol> others = Collector.getList()) {
+			for (final ISymbol s : cmd) {
+				if (s instanceof SingleEquationStatement) {
+					((SingleEquationStatement) s).establishVar();
+					for (int i = 0; i < ((SingleEquationStatement) s).getVars().size(); i++) {
+						final IExpression v = ((SingleEquationStatement) s).getVar(i);
+						if (((SingleEquationStatement) s).getOrder() > 0) {
+							final GamaPair p1 = new GamaPair<IAgent, SingleEquationStatement>(null,
+									(SingleEquationStatement) s, Types.AGENT, Types.NO_TYPE);
+							equations.put(equations.size(), p1);
+							final GamaPair p2 = new GamaPair<IAgent, IExpression>(null, v, Types.AGENT, Types.NO_TYPE);
+							variables_diff.put(variables_diff.size(), p2);
+						}
 					}
+					variable_time = ((SingleEquationStatement) s).getVarTime();
+				} else {
+					others.add(s);
 				}
-				variable_time = ((SingleEquationStatement) s).getVarTime();
-			} else {
-				others.add(s);
 			}
+			super.setChildren(others.items());
 		}
-		super.setChildren(others);
 	}
 
 	// static {
@@ -377,7 +378,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private Set<IAgent> getExternalAgents(final IScope scope) {
-		if (scope.getAgent() == null) { return new HashSet(); }
+		if (scope.getAgent() == null) { return Collections.EMPTY_SET; }
 		Set<IAgent> result = (Set<IAgent>) scope.getAgent().getAttribute("__externalAgents");
 		if (result == null) {
 			result = new HashSet();

@@ -11,7 +11,8 @@ import java.util.Spliterator;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterators;
 
-import msi.gama.common.interfaces.IAttributed.BiConsumerWithPruning;
+import msi.gama.common.interfaces.BiConsumerWithPruning;
+import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -207,10 +208,6 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 			if (!getGamlType().getContentType().isTranslatableInto(Types.PAIR)) { return (V) object; }
 		}
 		return (V) getGamlType().getContentType().cast(scope, object, null, false);
-
-		// GamaPairType.staticCast(scope, object, type.getKeyType(),
-		// type.getContentType(), false);
-
 	}
 
 	/**
@@ -262,6 +259,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	@Override
 	default IList<V> listValue(final IScope scope, final IType contentsType, final boolean copy) {
 		if (!GamaType.requiresCasting(contentsType, getGamlType().getContentType())) {
+			if (!copy) { return GamaListFactory.wrap(contentsType, values()); }
 			return GamaListFactory.createWithoutCasting(contentsType, values());
 		} else {
 			return GamaListFactory.create(scope, contentsType, values());
@@ -319,7 +317,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	@Override
 	default IMap<K, V> copy(final IScope scope) {
 		return createWithoutCasting((IType<K>) getGamlType().getKeyType(), (IType<V>) getGamlType().getContentType(),
-				this);
+				this, isOrdered());
 	}
 
 	/**
@@ -391,7 +389,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 
 	@getter ("keys")
 	default IList<K> getKeys() {
-		return GamaListFactory.<K> wrap(getGamlType().getKeyType(), keySet());
+		// See issue #2792. key can be used to modify the map...
+		return GamaListFactory.<K> createWithoutCasting(getGamlType().getKeyType(), keySet());
 	}
 
 	@getter ("values")
@@ -425,12 +424,33 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 		return pairs;
 	}
 
-	default void forEachPair(final BiConsumerWithPruning<K, V> visitor) {
+	default boolean forEachPair(final BiConsumerWithPruning<K, V> visitor) {
 		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
 		while (it.hasNext()) {
 			final Map.Entry<K, V> entry = it.next();
-			if (!visitor.process(entry.getKey(), entry.getValue())) { return; }
+			if (!visitor.process(entry.getKey(), entry.getValue())) { return false; }
 		}
+		return true;
+	}
+
+	boolean isOrdered();
+
+	default boolean forEachValue(final ConsumerWithPruning<? super V> visitor) {
+		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+		while (it.hasNext()) {
+			final Map.Entry<K, ? extends V> entry = it.next();
+			if (!visitor.process(entry.getValue())) { return false; }
+		}
+		return true;
+	}
+
+	default boolean forEachKey(final ConsumerWithPruning<K> visitor) {
+		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+		while (it.hasNext()) {
+			final Map.Entry<K, V> entry = it.next();
+			if (!visitor.process(entry.getKey())) { return false; }
+		}
+		return true;
 	}
 
 }

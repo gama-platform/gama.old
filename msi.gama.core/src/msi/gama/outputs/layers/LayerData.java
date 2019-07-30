@@ -63,17 +63,28 @@ public class LayerData extends AttributeHolder implements ILayerData {
 		super(def);
 		final IExpression sizeExp = def.getFacet(SIZE);
 		sizeIsInPixels = sizeExp != null && sizeExp.findAny((p) -> p instanceof PixelUnitExpression);
-		size = create(SIZE, sizeExp, POINT, new GamaPoint(1, 1, 1));
+		size = create(SIZE, sizeExp, POINT, new GamaPoint(1, 1, 1), (e) -> {
+			return Cast.asPoint(null, e.getConstValue());
+		});
 		final IExpression posExp = def.getFacet(POSITION);
 		positionIsInPixels = posExp != null && posExp.findAny((p) -> p instanceof PixelUnitExpression);
-		position = create(POSITION, posExp, POINT, new GamaPoint());
-		refresh = create(REFRESH, def.getRefreshFacet(), BOOL, true);
+		position = create(POSITION, posExp, POINT, new GamaPoint(), (e) -> {
+			return Cast.asPoint(null, e.getConstValue());
+		});
+		refresh = create(REFRESH, def.getRefreshFacet(), BOOL, true, (e) -> {
+			return Cast.asBool(null, e.getConstValue());
+		});
 		fading = create(FADING, BOOL, false);
 		trace = create(TRACE, (scope, exp) -> exp.getGamlType() == BOOL && Cast.asBool(scope, exp.value(scope))
-				? Integer.MAX_VALUE : Cast.asInt(scope, exp.value(scope)), INT, 0);
+				? Integer.MAX_VALUE : Cast.asInt(scope, exp.value(scope)), INT, 0, (e) -> {
+					return e.getGamlType() == BOOL && Cast.asBool(null, e.getConstValue()) ? Integer.MAX_VALUE
+							: Cast.asInt(null, e.getConstValue());
+				});
 		selectable = create(SELECTABLE, BOOL, true);
 		transparency = create(TRANSPARENCY,
-				(scope, exp) -> Math.min(Math.max(Cast.asFloat(scope, exp.value(scope)), 0d), 1d), FLOAT, 0d);
+				(scope, exp) -> Math.min(Math.max(Cast.asFloat(scope, exp.value(scope)), 0d), 1d), FLOAT, 0d, (e) -> {
+					return Math.min(Math.max(Cast.asFloat(null, e.getConstValue()), 0d), 1d);
+				});
 
 	}
 

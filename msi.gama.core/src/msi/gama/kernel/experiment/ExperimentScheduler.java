@@ -10,17 +10,17 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
 
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class ExperimentScheduler implements Runnable {
@@ -30,8 +30,8 @@ public class ExperimentScheduler implements Runnable {
 	// unless the application is shutting down)
 	public volatile boolean paused = true;
 	/* The stepables that need to be stepped */
-	private final Map<IStepable, IScope> toStep = new TOrderedHashMap<>();
-	private volatile Set<IStepable> toStop = new THashSet<>();
+	private final Map<IStepable, IScope> toStep = GamaMapFactory.create();
+	private volatile Set<IStepable> toStop = new HashSet<>();
 	private Thread executionThread;
 	volatile Semaphore lock = new Semaphore(1);
 	final IExperimentPlan experiment;

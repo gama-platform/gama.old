@@ -20,9 +20,9 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 
 import msi.gama.runtime.GAMA;
-import msi.gama.util.file.CsvReader;
-import msi.gama.util.file.CsvWriter;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
+import msi.gama.util.file.csv.CsvReader;
+import msi.gama.util.file.csv.CsvWriter;
 import msi.gama.util.file.IGamaFileMetaData;
 import ummisco.gama.dev.utils.DEBUG;
 

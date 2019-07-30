@@ -59,6 +59,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
@@ -66,7 +67,6 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Spatial;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -254,7 +254,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildTriangle(final double side_size, final ILocation location) {
-		final double h = FastMath.sqrt(3) / 2 * side_size;
+		final double h = Math.sqrt(3) / 2 * side_size;
 		final Coordinate[] points = new Coordinate[4];
 		final double x = location == null ? 0 : location.getX();
 		final double y = location == null ? 0 : location.getY();
@@ -538,7 +538,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
-	private static double theta = FastMath.tan(0.423d);
+	private static double theta = Math.tan(0.423d);
 
 	public static IShape buildArrow(final GamaPoint head, final double size) {
 		return buildArrow(new GamaPoint(), head, size, size, true);
@@ -666,13 +666,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildMultiGeometry(final IShape... shapes) {
-		final IList<IShape> list = GamaListFactory.create();
-		for (final IShape shape : shapes) {
-			if (shape != null) {
-				list.add(shape);
+		try (final Collector.AsList<IShape> list = Collector.getList()) {
+			for (final IShape shape : shapes) {
+				if (shape != null) {
+					list.add(shape);
+				}
 			}
+			return buildMultiGeometry(list.items());
 		}
-		return buildMultiGeometry(list);
 	}
 
 	public static IShape buildCross(final Double xRadius, final Double width, final GamaPoint location) {

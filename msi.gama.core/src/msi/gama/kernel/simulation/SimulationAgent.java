@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import gnu.trove.map.hash.THashMap;
+import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -57,8 +58,8 @@ import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IReference;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -239,7 +240,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		} else {
 			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);
 			final boolean torus = expr != null && Cast.asBool(scope, expr.value(scope));
-			final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue() };
+			final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue()
+					|| GamaPreferences.External.QUADTREE_SYNCHRONIZATION.getValue() };
 			if (!parallel[0]) {
 				getSpecies().getDescription().visitMicroSpecies((s) -> {
 					parallel[0] = getParallelism(scope, s.getFacetExpr(IKeyword.PARALLEL), Caller.SPECIES) > 0;
@@ -388,7 +390,17 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		IShape geom = g;
 		if (geom == null) {
 			geom = GamaGeometryType.buildBox(100, 100, 100, new GamaPoint(50, 50, 50));
+		} else {
+			// See Issue #2787, #2795
+			final Geometry gg = geom.getInnerGeometry();
+			Object savedData = null;
+			if (gg != null) {
+				savedData = gg.getUserData();
+			}
+			geom.setInnerGeometry(geom.getEnvelope().toGeometry());
+			geom.getInnerGeometry().setUserData(savedData);
 		}
+
 		final Envelope3D env = geom.getEnvelope();
 		if (getProjectionFactory().getWorld() == null) {
 			projectionFactory.setWorldProjectionEnv(GAMA.getRuntimeScope(), env);
@@ -589,7 +601,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			final IDescription des = ((ISymbol) iOutputManager).getDescription();
 			if (des == null) { return; }
 			outputs = (SimulationOutputManager) des.compile();
-			final Map<String, IOutput> mm = new TOrderedHashMap<>();
+			final Map<String, IOutput> mm = GamaMapFactory.create();
 			for (final Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet()) {
 				final IOutput output = entry.getValue();
 				String keyName, newOutputName;
@@ -776,12 +788,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 					// Build a map name::innerPopAgentSavedAgt :
 					// For each agent from the simulation innerPop, it will be
 					// updated from the corresponding agent
-					final Map<String, SavedAgent> mapSavedAgtName = new THashMap<>();
+					final Map<String, SavedAgent> mapSavedAgtName = GamaMapFactory.createUnordered();
 					for (final SavedAgent localSA : savedAgentInnerPop.get(savedAgentMicroPopName)) {
 						mapSavedAgtName.put((String) localSA.getAttributeValue("name"), localSA);
 					}
 
-					final Map<String, IAgent> mapSimuAgtName = new THashMap<>();
+					final Map<String, IAgent> mapSimuAgtName = GamaMapFactory.createUnordered();
 
 					for (final IAgent agt : simuMicroPop.toArray()) {
 						mapSimuAgtName.put(agt.getName(), agt);

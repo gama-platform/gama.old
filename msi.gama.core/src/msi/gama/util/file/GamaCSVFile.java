@@ -29,6 +29,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.csv.CsvReader;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
@@ -252,11 +253,11 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 		if (getBuffer() == null) {
 			final CSVInfo info = getInfo(scope, null);
 			if (info != null) {
-				return info.header ? GamaListFactory.wrap(Types.STRING, info.headers) : GamaListFactory.create();
+				return info.header ? GamaListFactory.wrap(Types.STRING, info.headers) : GamaListFactory.EMPTY_LIST;
 			}
 		}
 		fillBuffer(scope);
-		return headers == null ? GamaListFactory.create() : headers;
+		return headers == null ? GamaListFactory.EMPTY_LIST : headers;
 	}
 
 	private CSVInfo getInfo(final IScope scope, final String CSVSep) {

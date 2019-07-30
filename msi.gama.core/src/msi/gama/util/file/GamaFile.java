@@ -16,6 +16,8 @@ import java.net.URL;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
+import msi.gama.ext.webb.Webb;
+import msi.gama.ext.webb.WebbException;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -26,8 +28,6 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.IModifiableContainer;
-import msi.gama.util.file.http.Webb;
-import msi.gama.util.file.http.WebbException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -469,7 +469,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO what to return ?
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	/**

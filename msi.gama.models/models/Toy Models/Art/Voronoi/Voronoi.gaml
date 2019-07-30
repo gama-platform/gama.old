@@ -10,10 +10,13 @@ model voronoi
 global {
 // Parameters 
 //Number of points
-	int num_points <- 30 min: 1 max: 1000;
+	int num_points <- 15 min: 1 max: 1000;
 	//Size of the environment
-	int env_width <- 100 min: 10 max: 400;
-	int env_height <- 100 min: 10 max: 400;
+	int env_width <- 150 min: 10 max: 400;
+	int env_height <- 150 min: 10 max: 400;
+	int num_neighbours <- 4 among: [4, 8];
+	string palette <- 'PRGn' among: brewer_palettes(15);
+	list<rgb> colors <- brewer_colors(palette);
 	bool blur1 <- false;
 	bool blur2 <- false;
 	topology w;
@@ -31,17 +34,17 @@ global {
 
 }
 //Grid for the voronoi clustering
-grid cell width: env_width height: env_height neighbors: 4 use_neighbors_cache: true use_individual_shapes: false use_regular_agents: false parallel: true {
+grid cell width: env_width height: env_height neighbors: num_neighbours use_neighbors_cache: true use_individual_shapes: false use_regular_agents: false parallel: true {
 // Note: since GAMA 1.7, the topology needs to be specified for this computation to use continuous distances
 	rgb color <- #white update: ((center closest_to location) using w).color;
 
 	reflex when: blur1 {
-		color <- blend(color, one_of(neighbors).color);
+		color <- blend(color, one_of(neighbors).color, 0.7);
 	}
 
 	reflex when: blur2 {
 		loop n over: neighbors {
-			color <- blend(color, n.color);
+			color <- blend(color, n.color, 0.8);
 		}
 
 	}
@@ -49,7 +52,7 @@ grid cell width: env_width height: env_height neighbors: 4 use_neighbors_cache: 
 }
 //Species representing the center of a Voronoi polygon
 species center skills: [moving] {
-	rgb color <- rnd_color(255);
+	rgb color <- colors[int(self) mod length(colors)]; //rnd_color(255);
 	//Make the center of the cluster wander in the environment       
 	reflex wander {
 		do wander amplitude: 90.0;
@@ -62,14 +65,32 @@ species center skills: [moving] {
 }
 
 experiment voronoi type: gui autorun: true {
-	parameter 'Number of points:' var: num_points;
+	parameter 'Number of points:' var: num_points on_change: {
+		if (num_points > length(center)) {
+			create center number: num_points - length(center);
+		} else {
+			ask (length(center) - num_points) among center {
+				do die;
+			}
+
+		}
+
+	};
+	parameter 'Number of neighbours in the grid:' var: num_neighbours;
+	parameter 'Color palette' var: palette on_change: {
+		colors <- brewer_colors(palette);
+		ask center {
+			color <- colors[int(self) mod length(colors)];
+		}
+
+	};
 	parameter 'Width of the environment:' var: env_width;
 	parameter 'Height of the environment:' var: env_height;
 	parameter "Simple blur" var: blur1;
 	parameter "Complex blur" var: blur2;
 	output {
-		layout #split navigator: false tray: false toolbars: false consoles: false editors: false ;
-		display "Voronoi 2D" {
+		layout #split navigator: false tray: false toolbars: false consoles: false editors: false;
+		display "Voronoi 2D" background: #black{
 			grid cell;
 		}
 

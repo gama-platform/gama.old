@@ -15,7 +15,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
@@ -40,8 +39,8 @@ public class FreeFlyCamera extends AbstractCamera {
 		}
 		final double factorP = phi * Maths.toRad;
 		final double factorT = theta * Maths.toRad;
-		final double r_temp = FastMath.cos(factorP);
-		forward.setLocation(r_temp * FastMath.cos(factorT), r_temp * FastMath.sin(factorT), FastMath.sin(factorP));
+		final double r_temp = Math.cos(factorP);
+		forward.setLocation(r_temp * Math.cos(factorT), r_temp * Math.sin(factorT), Math.sin(factorP));
 		left.setLocation(new GamaPoint(up.y * forward.z - up.z * forward.y, up.z * forward.x - up.x * forward.z,
 				up.x * forward.y - up.y * forward.x).normalized());
 		setTarget(forward.plus(position));
@@ -130,7 +129,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void zoom(final boolean in) {
-		final float step = FastMath.abs(getPosition().getZ() != 0 ? (float) position.getZ() / 10 : 0.1f);
+		final float step = Math.abs(getPosition().getZ() != 0 ? (float) position.getZ() / 10 : 0.1f);
 		final GamaPoint vector = forward.times(speed * 800 + step);
 		setPosition(getPosition().plus(in ? vector : vector.negated()));
 		setTarget(forward.plus(getPosition()));

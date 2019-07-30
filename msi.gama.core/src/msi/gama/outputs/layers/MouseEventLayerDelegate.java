@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.MouseEventLayerDelegate.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.MouseEventLayerDelegate.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -36,25 +36,7 @@ public class MouseEventLayerDelegate implements IEventLayerDelegate {
 
 	@Override
 	public Set<String> getEvents() {
-		// TODO Auto-generated method stub
 		return EVENTS;
 	}
-
-//	@Override
-//	public boolean acceptEvent(final String event) {
-//		return EVENTS.contains(event);
-//	}
-//
-//	@Override
-//	public void enableOn(final IScope scope, final String event, final EventLayer layer) {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public void disableOn(final IScope scope, final String event, final EventLayer layer) {
-//		// TODO Auto-generated method stub
-//
-//	}
 
 }

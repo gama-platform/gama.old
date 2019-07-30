@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.IGraphics.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.interfaces.IGraphics.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -22,9 +22,9 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.util.file.GamaFile;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 
 /**
@@ -35,86 +35,86 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
  */
 public interface IGraphics {
 
-	public static interface ThreeD extends IGraphics {
+	public interface ThreeD extends IGraphics {
 
 		@Override
 		default boolean is2D() {
 			return false;
 		}
 
-		public abstract ILocation getCameraPos();
+		ILocation getCameraPos();
 
-		public abstract ILocation getCameraTarget();
+		ILocation getCameraTarget();
 
-		public abstract ILocation getCameraOrientation();
+		ILocation getCameraOrientation();
 	}
 
-	public static final RenderingHints QUALITY_RENDERING = new RenderingHints(null);
-	public static final RenderingHints SPEED_RENDERING = new RenderingHints(null);
-	public static final RenderingHints MEDIUM_RENDERING = new RenderingHints(null);
+	RenderingHints QUALITY_RENDERING = new RenderingHints(null);
+	RenderingHints SPEED_RENDERING = new RenderingHints(null);
+	RenderingHints MEDIUM_RENDERING = new RenderingHints(null);
 
-	public void setDisplaySurface(final IDisplaySurface surface);
+	void setDisplaySurface(final IDisplaySurface surface);
 
-	public abstract int getDisplayWidth();
+	int getDisplayWidth();
 
-	public abstract int getDisplayHeight();
+	int getDisplayHeight();
 
-	public abstract Rectangle2D drawFile(GamaFile<?, ?> file, FileDrawingAttributes attributes);
+	Rectangle2D drawFile(GamaFile<?, ?> file, DrawingAttributes attributes);
 
-	public abstract Rectangle2D drawField(final double[] values, final FieldDrawingAttributes attributes);
+	Rectangle2D drawField(final double[] values, final FieldDrawingAttributes attributes);
 
-	public abstract Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes);
+	Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes);
 
-	public abstract Rectangle2D drawChart(ChartOutput chart);
+	Rectangle2D drawChart(ChartOutput chart);
 
-	public abstract Rectangle2D drawString(final String string, final TextDrawingAttributes attributes);
+	Rectangle2D drawString(final String string, final TextDrawingAttributes attributes);
 
-	public abstract Rectangle2D drawShape(final Geometry shape, final ShapeDrawingAttributes attributes);
+	Rectangle2D drawShape(final Geometry shape, final DrawingAttributes attributes);
 
-	public abstract void setOpacity(double i);
+	void setOpacity(double i);
 
-	public abstract void fillBackground(Color bgColor, double opacity);
+	void fillBackground(Color bgColor, double opacity);
 
-	public abstract boolean beginDrawingLayers();
+	boolean beginDrawingLayers();
 
-	public abstract void beginDrawingLayer(ILayer layer);
+	void beginDrawingLayer(ILayer layer);
 
-	public abstract void beginOverlay(OverlayLayer layer);
+	void beginOverlay(OverlayLayer layer);
 
-	public abstract void endOverlay();
+	void endOverlay();
 
-	public abstract double getyRatioBetweenPixelsAndModelUnits();
+	double getyRatioBetweenPixelsAndModelUnits();
 
-	public abstract double getxRatioBetweenPixelsAndModelUnits();
+	double getxRatioBetweenPixelsAndModelUnits();
 
 	/*
 	 * Returns the region of the current layer (in model units) that is visible on screen
 	 */
-	public abstract Envelope getVisibleRegion();
+	Envelope getVisibleRegion();
 
-	public abstract void endDrawingLayer(ILayer layer);
+	void endDrawingLayer(ILayer layer);
 
-	public abstract void endDrawingLayers();
+	void endDrawingLayers();
 
-	public abstract void beginHighlight();
+	void beginHighlight();
 
-	public abstract void endHighlight();
+	void endHighlight();
 
-	public double getXOffsetInPixels();
+	double getXOffsetInPixels();
 
-	public double getYOffsetInPixels();
+	double getYOffsetInPixels();
 
-	public abstract Double getZoomLevel();
+	Double getZoomLevel();
 
 	default boolean is2D() {
 		return true;
 	}
 
-	public abstract int getViewWidth();
+	int getViewWidth();
 
-	public abstract int getViewHeight();
+	int getViewHeight();
 
-	public IDisplaySurface getSurface();
+	IDisplaySurface getSurface();
 
 	default double getMaxEnvDim() {
 		return getSurface().getData().getMaxEnvDim();
@@ -128,20 +128,20 @@ public interface IGraphics {
 		return getSurface().getData().getEnvHeight();
 	}
 
-	public void dispose();
+	void dispose();
 
 	boolean cannotDraw();
 
-	public abstract boolean isNotReadyToUpdate();
+	boolean isNotReadyToUpdate();
 
 	/**
 	 * Ask the IGraphics instance to accumulate temporary envelopes
-	 * 
+	 *
 	 * @param env
 	 */
-	public default void accumulateTemporaryEnvelope(final Rectangle2D env) {}
+	default void accumulateTemporaryEnvelope(final Rectangle2D env) {}
 
-	public default Rectangle2D getAndWipeTemporaryEnvelope() {
+	default Rectangle2D getAndWipeTemporaryEnvelope() {
 		return null;
 	}
 

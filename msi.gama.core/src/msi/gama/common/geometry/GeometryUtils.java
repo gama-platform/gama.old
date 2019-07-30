@@ -61,7 +61,9 @@ import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.ICollector;
 import msi.gama.util.IList;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
@@ -70,7 +72,6 @@ import msi.gaml.operators.Graphs;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.ThreeD;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
@@ -206,14 +207,15 @@ public class GeometryUtils {
 	}
 
 	public static int nbCommonPoints(final Geometry p1, final Geometry p2) {
-		final Set<Coordinate> cp = new HashSet<>();
-		final List<Coordinate> coords = Arrays.asList(p1.getCoordinates());
-		for (final Coordinate pt : p2.getCoordinates()) {
-			if (coords.contains(pt)) {
-				cp.add(pt);
+		try (final ICollector<Coordinate> cp = Collector.getSet()) {
+			final List<Coordinate> coords = Arrays.asList(p1.getCoordinates());
+			for (final Coordinate pt : p2.getCoordinates()) {
+				if (coords.contains(pt)) {
+					cp.add(pt);
+				}
 			}
+			return cp.size();
 		}
-		return cp.size();
 	}
 
 	public static Coordinate[] extractPoints(final IShape triangle, final Set<IShape> connectedNodes) {
@@ -308,7 +310,7 @@ public class GeometryUtils {
 
 	public static IList<IShape> squareDiscretization(final Geometry geom, final int nb_squares, final boolean overlaps,
 			final double coeff_precision) {
-		double size = FastMath.sqrt(geom.getArea() / nb_squares);
+		double size = Math.sqrt(geom.getArea() / nb_squares);
 		List<IShape> rectToRemove = new ArrayList<>();
 		IList<IShape> squares = discretization(geom, size, size, overlaps, rectToRemove);
 		if (squares.size() < nb_squares) {
@@ -506,23 +508,27 @@ public class GeometryUtils {
 		final Geometry bufferClip = sizeTol != 0.0 ? clip.buffer(sizeTol, 5, 0) : clip;
 		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(bufferClip);
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
-		for (int i = 0; i < geom.getNumGeometries(); i++) {
-			final Geometry gg = geom.getGeometryN(i);
-			final Coordinate[] coord = gg.getCoordinates();
-			boolean cond = env.covers(gg.getCentroid().getCoordinate());
-			cond = cond && (approxClipping
-					? buffered.covers(gg.getCentroid()) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[0]))
-							&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[1]))
-							&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[2]))
-					: bufferClip.covers(gg));
-			if (cond) {
-				if (setZ) {
-					final ICoordinates cc = getContourCoordinates(gg);
-					cc.setAllZ(elevation);
-					gg.geometryChanged();
+		try {
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				final Geometry gg = geom.getGeometryN(i);
+				final Coordinate[] coord = gg.getCoordinates();
+				boolean cond = env.covers(gg.getCentroid().getCoordinate());
+				cond = cond && (approxClipping
+						? buffered.covers(gg.getCentroid()) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[0]))
+								&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[1]))
+								&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[2]))
+						: bufferClip.covers(gg));
+				if (cond) {
+					if (setZ) {
+						final ICoordinates cc = getContourCoordinates(gg);
+						cc.setAllZ(elevation);
+						gg.geometryChanged();
+					}
+					result.add(new GamaShape(gg));
 				}
-				result.add(new GamaShape(gg));
 			}
+		} finally {
+			env.dispose();
 		}
 		/*
 		 * applyToInnerGeometries(geom, (gg) -> { final ICoordinates cc = getContourCoordinates(gg); if
@@ -535,7 +541,7 @@ public class GeometryUtils {
 
 	public static void iterateOverTriangles(final Polygon polygon, final Consumer<Geometry> action) {
 		final double elevation = getContourCoordinates(polygon).averageZ();
-		final double sizeTol = FastMath.sqrt(polygon.getArea()) / 100.0;
+		final double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
 		final DelaunayTriangulationBuilder dtb = new DelaunayTriangulationBuilder();
 		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(polygon.buffer(sizeTol, 5, 0));
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
@@ -555,6 +561,8 @@ public class GeometryUtils {
 			GamaRuntimeException.warning("Impossible to triangulate: " + new WKTWriter().write(polygon), scope);
 			iterateOverTriangles((Polygon) DouglasPeuckerSimplifier.simplify(polygon, 0.1), action);
 			return;
+		} finally {
+			env.dispose();
 		}
 	}
 
@@ -813,34 +821,32 @@ public class GeometryUtils {
 	// Modified: 03-Jan-2014
 
 	public static Envelope3D computeEnvelopeFrom(final IScope scope, final Object obj) {
-		Envelope3D result = new Envelope3D();
+		Envelope3D result = null;
 		if (obj instanceof ISpecies) {
 			return computeEnvelopeFrom(scope, ((ISpecies) obj).getPopulation(scope));
 		} else if (obj instanceof Number) {
 			final double size = ((Number) obj).doubleValue();
-			result = new Envelope3D(0, size, 0, size, 0, size);
+			result = Envelope3D.of(0, size, 0, size, 0, size);
 		} else if (obj instanceof ILocation) {
 			final ILocation size = (ILocation) obj;
-			result = new Envelope3D(0, size.getX(), 0, size.getY(), 0, size.getZ());
+			result = Envelope3D.of(0, size.getX(), 0, size.getY(), 0, size.getZ());
 		} else if (obj instanceof IShape) {
 			result = ((IShape) obj).getEnvelope();
 		} else if (obj instanceof Envelope) {
-			result = new Envelope3D((Envelope) obj);
+			result = Envelope3D.of((Envelope) obj);
 		} else if (obj instanceof String) {
 			result = computeEnvelopeFrom(scope, Files.from(scope, (String) obj));
 		} else if (obj instanceof IGamaFile) {
 			result = ((IGamaFile) obj).computeEnvelope(scope);
 		} else if (obj instanceof IList) {
-			Envelope3D boundsEnv = null;
 			for (final Object bounds : (IList) obj) {
 				final Envelope3D env = computeEnvelopeFrom(scope, bounds);
-				if (boundsEnv == null) {
-					boundsEnv = env;
+				if (result == null) {
+					result = Envelope3D.of(env);
 				} else {
-					boundsEnv.expandToInclude(env);
+					result.expandToInclude(env);
 				}
 			}
-			result = boundsEnv;
 		} else {
 			for (final IEnvelopeComputer ec : envelopeComputers) {
 				result = ec.computeEnvelopeFrom(scope, obj);

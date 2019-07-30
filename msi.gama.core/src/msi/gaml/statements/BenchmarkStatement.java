@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.BenchmarkStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.BenchmarkStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -27,10 +27,10 @@ import msi.gaml.types.IType;
 
 /**
  * Class TraceStatement.
- * 
+ *
  * @author drogoul
  * @since 23 févr. 2014
- * 
+ *
  */
 @symbol (
 		name = "benchmark",
@@ -94,7 +94,7 @@ public class BenchmarkStatement extends AbstractStatementSequence {
 		final String result = title + " (over " + repeatTimes + " iteration(s)): min = " + min + " ms (iteration #"
 				+ timeOfMin + ") | max = " + max + " ms (iteration #" + timeOfMax + ") | average = "
 				+ total / repeatTimes + "ms";
-		scope.getGui().getConsole(scope).informConsole(result, scope.getRoot(), null);
+		scope.getGui().getConsole().informConsole(result, scope.getRoot(), null);
 		return result;
 	}
 

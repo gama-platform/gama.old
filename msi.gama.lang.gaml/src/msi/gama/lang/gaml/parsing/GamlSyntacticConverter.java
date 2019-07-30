@@ -58,7 +58,6 @@ import static msi.gama.common.interfaces.IKeyword.WHEN;
 import static msi.gama.common.interfaces.IKeyword.WITH;
 import static msi.gama.common.interfaces.IKeyword.ZERO;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -106,6 +105,7 @@ import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.util.Collector;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
@@ -202,13 +202,14 @@ public class GamlSyntacticConverter {
 	private List<String> collectPragmas(final ModelImpl m) {
 		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) { return null; }
 		final List<Pragma> pragmas = m.getPragmas();
-		final List<String> result = new ArrayList<>();
 		if (pragmas.isEmpty()) { return null; }
-		for (int i = 0; i < pragmas.size(); i++) {
-			final String pragma = pragmas.get(i).getName();
-			result.add(pragma);
+		try (final Collector.AsList<String> result = Collector.getList()) {
+			for (int i = 0; i < pragmas.size(); i++) {
+				final String pragma = pragmas.get(i).getName();
+				result.add(pragma);
+			}
+			return result.items();
 		}
-		return result;
 	}
 
 	private boolean doesNotDefineAttributes(final String keyword) {

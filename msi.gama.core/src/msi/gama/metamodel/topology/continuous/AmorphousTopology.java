@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.continuous;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -17,13 +18,13 @@ import java.util.Set;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.GamaQuadTree;
 import msi.gama.metamodel.topology.ISpatialIndex;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -50,7 +51,6 @@ import msi.gaml.types.Types;
 public class AmorphousTopology implements ITopology {
 
 	IShape expandableEnvironment = GamaGeometryType.createPoint(new GamaPoint(0, 0));
-	ISpatialIndex index = GamaQuadTree.create(expandableEnvironment.getEnvelope(), false);
 
 	/**
 	 * @see msi.gama.interfaces.IValue#type()
@@ -111,7 +111,7 @@ public class AmorphousTopology implements ITopology {
 	// }
 	//
 	@Override
-	public void updateAgent(final Envelope previous, final IAgent agent) {
+	public void updateAgent(final Envelope3D previous, final IAgent agent) {
 		final IShape ng =
 				Spatial.Operators.union(agent.getScope(), expandableEnvironment.getGeometry(), agent.getGeometry());
 		expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));
@@ -131,7 +131,7 @@ public class AmorphousTopology implements ITopology {
 	@Override
 	public IList<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter,
 			final int number) {
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
@@ -334,7 +334,51 @@ public class AmorphousTopology implements ITopology {
 
 	@Override
 	public ISpatialIndex getSpatialIndex() {
-		return index;
+		return new ISpatialIndex() {
+
+			@Override
+			public void insert(final IAgent agent) {}
+
+			@Override
+			public void remove(final Envelope3D previous, final IAgent agent) {}
+
+			@Override
+			public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist,
+					final IAgentFilter f) {
+				return null;
+			}
+
+			@Override
+			public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
+					final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
+				return Collections.EMPTY_LIST;
+			}
+
+			@Override
+			public Collection<IAgent> allInEnvelope(final IScope scope, final IShape source, final Envelope envelope,
+					final IAgentFilter f, final boolean contained) {
+				return Collections.EMPTY_LIST;
+			}
+
+			@Override
+			public Collection<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist,
+					final IAgentFilter f) {
+				return Collections.EMPTY_LIST;
+			}
+
+			@Override
+			public void dispose() {}
+
+			@Override
+			public Collection<IAgent> allAgents() {
+				return Collections.EMPTY_LIST;
+			}
+
+			@Override
+			public boolean isParallel() {
+				return false;
+			}
+		};
 	}
 
 	@Override

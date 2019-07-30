@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
@@ -22,9 +22,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.Signature;
@@ -32,10 +32,10 @@ import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * The class EditToolbarTemplateMenu.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class OperatorsReferenceMenu extends GamlReferenceMenu {
@@ -73,7 +73,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 	}
 
 	protected void fillMenuByName() {
-		final Map<String, THashMap<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
+		final IMap<String, IMap<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
 		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
 		for (final String name : nn) {
@@ -105,7 +105,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 	}
 
 	protected void fillMenuByCategory() {
-		final Map<String, THashMap<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
+		final IMap<String, IMap<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
 		final Map<String, Map<String, Map<OperatorProto, Template>>> categories = new LinkedHashMap();
 		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);

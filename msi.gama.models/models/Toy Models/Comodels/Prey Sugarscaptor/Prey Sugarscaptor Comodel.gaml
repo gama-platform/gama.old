@@ -60,7 +60,20 @@ global
 		}
 		
 	}
+	
+	
+	list<agent> veg_cells;
+	list<agent> sug_cells;
+	list<prey> all_preys;
+	list<agent> all_animals;
 
+
+	reflex update {
+		veg_cells <- Preydator.Adapter2 accumulate each.simulation.vegetation_cell;
+		sug_cells <- Sugar.Adapter accumulate each.simulation.sugar_cell;
+		all_preys <- Preydator.Adapter2 accumulate each.simulation.prey;
+		all_animals <- Sugar.Adapter accumulate each.simulation.animal;
+	}
 }
 
 grid G width: grid_size_Preydator height: grid_size_Preydator
@@ -84,13 +97,13 @@ experiment main type: gui
 
 				grid G lines: # red transparency:0.2;				
 				
-				agents "vegetation_cell" value: Preydator.Adapter2 accumulate each.simulation.vegetation_cell ;
+				agents "vegetation_cell" value: veg_cells ;
 				
-				agents "sugar_cell" value: Sugar.Adapter accumulate each.simulation.sugar_cell transparency:0.7;
+				agents "sugar_cell" value: sug_cells transparency:0.7;
 
-				agents "prey" value: Preydator.Adapter2 accumulate each.simulation.prey aspect:base;
+				agents "prey" value: all_preys aspect:base;
 						
-				agents "animal" value: Sugar.Adapter accumulate each.simulation.animal aspect:default;
+				agents "animal" value: all_animals;
 				
 		}
 

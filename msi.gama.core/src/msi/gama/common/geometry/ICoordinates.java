@@ -198,7 +198,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * @return a new Envelope3D containing all the points
 	 */
 	default Envelope3D getEnvelope() {
-		return getEnvelopeInto(new Envelope3D());
+		return getEnvelopeInto(Envelope3D.create());
 	}
 
 	/**

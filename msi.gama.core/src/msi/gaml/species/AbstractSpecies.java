@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.kernel.model.GamlModelSpecies;
@@ -31,7 +30,6 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.architecture.IArchitecture;
@@ -62,14 +60,13 @@ import msi.gaml.variables.IVariable;
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	protected final boolean isGrid, isGraph;
-	protected final Map<String, ISpecies> microSpecies = new THashMap<>();
-	private final Map<String, IVariable> variables = new TOrderedHashMap<>();
-	private final Map<String, AspectStatement> aspects = new TOrderedHashMap<>();
-	private final Map<String, ActionStatement> actions = new TOrderedHashMap<>();
-	private final Map<String, UserCommandStatement> userCommands = new TOrderedHashMap();
+	protected final Map<String, ISpecies> microSpecies = GamaMapFactory.createUnordered();
+	private final Map<String, IVariable> variables = GamaMapFactory.createOrdered();
+	private final Map<String, AspectStatement> aspects = GamaMapFactory.createOrdered();
+	private final Map<String, ActionStatement> actions = GamaMapFactory.createOrdered();
+	private final Map<String, UserCommandStatement> userCommands = GamaMapFactory.createOrdered();
 	private final List<IStatement> behaviors = new ArrayList<>();
 	protected ISpecies macroSpecies, parentSpecies;
-	private boolean isInitOverriden, isStepOverriden;
 	final IArchitecture control;
 
 	public AbstractSpecies(final IDescription description) {
@@ -359,14 +356,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			} else if (s instanceof AspectStatement) {
 				aspects.put(s.getName(), (AspectStatement) s);
 			} else if (s instanceof ActionStatement) {
-				if (!s.getDescription().isBuiltIn()) {
-					final String name = s.getName();
-					if (name.equals(initActionName)) {
-						isInitOverriden = true;
-					} else if (name.equals(stepActionName)) {
-						isStepOverriden = true;
-					}
-				}
 				s.setEnclosing(this);
 				actions.put(s.getName(), (ActionStatement) s);
 			} else if (s instanceof UserCommandStatement) {
@@ -444,26 +433,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public Boolean implementsSkill(final String skill) {
 		return getDescription().implementsSkill(skill);
-	}
-
-	/**
-	 * Method isInitOverriden()
-	 *
-	 * @see msi.gaml.species.ISpecies#isInitOverriden()
-	 */
-	@Override
-	public boolean isInitOverriden() {
-		return isInitOverriden;
-	}
-
-	/**
-	 * Method isStepOverriden()
-	 *
-	 * @see msi.gaml.species.ISpecies#isStepOverriden()
-	 */
-	@Override
-	public boolean isStepOverriden() {
-		return isStepOverriden;
 	}
 
 	@Override

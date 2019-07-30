@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.documentation;
@@ -12,8 +12,8 @@ package msi.gama.lang.gaml.documentation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.util.IMap;
 import ummisco.gama.dev.utils.DEBUG;
 
 class DocumentationTask {
@@ -44,7 +44,7 @@ class DocumentationTask {
 		}
 		if (node != null) {
 			try {
-				final THashMap<EObject, IGamlDescription> map = documenter.getDocumentationCache(key);
+				final IMap<EObject, IGamlDescription> map = documenter.getDocumentationCache(key);
 				if (map != null) {
 					map.put(object, node);
 				}

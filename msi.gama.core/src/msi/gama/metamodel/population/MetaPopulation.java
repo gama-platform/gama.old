@@ -25,11 +25,12 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IContainerType;
@@ -50,7 +51,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	protected final List<IPopulationSet<? extends IAgent>> populationSets;
 	// We cache the value in case.
-	protected Map<String, IPopulation> setOfPopulations;
+	protected IMap<String, IPopulation> setOfPopulations;
 	protected IContainerType type = Types.LIST.of(Types.AGENT);
 
 	public MetaPopulation() {
@@ -104,11 +105,12 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
-		final List<java.lang.Iterable<? extends IAgent>> result = new ArrayList<>();
-		for (final IPopulationSet p : populationSets) {
-			result.add(p.iterable(scope));
+		try (final Collector.AsList<java.lang.Iterable<? extends IAgent>> result = Collector.getList()) {
+			for (final IPopulationSet p : populationSets) {
+				result.add(p.iterable(scope));
+			}
+			return GamaListFactory.create(scope, Types.AGENT, Iterables.concat(result.items()));
 		}
-		return GamaListFactory.create(scope, Types.AGENT, Iterables.concat(result));
 	}
 
 	/**
@@ -348,11 +350,12 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public java.lang.Iterable<? extends IAgent> iterable(final IScope scope) {
-		final List<java.lang.Iterable<? extends IAgent>> result = new ArrayList<>();
-		for (final IPopulationSet p : populationSets) {
-			result.add(p.iterable(scope));
+		try (final Collector.AsList<java.lang.Iterable<? extends IAgent>> result = Collector.getList()) {
+			for (final IPopulationSet p : populationSets) {
+				result.add(p.iterable(scope));
+			}
+			return Iterables.concat(result.items());
 		}
-		return Iterables.concat(result);
 	}
 
 	/**
@@ -367,7 +370,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	private Map<String, IPopulation> getMapOfPopulations(final IScope scope) {
 		if (setOfPopulations == null) {
-			setOfPopulations = new TOrderedHashMap<>();
+			setOfPopulations = GamaMapFactory.create();
 			for (final IPopulationSet pop : populationSets) {
 				if (pop instanceof MetaPopulation) {
 					setOfPopulations.putAll(((MetaPopulation) pop).getMapOfPopulations(scope));

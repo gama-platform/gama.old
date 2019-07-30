@@ -20,7 +20,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -67,7 +66,7 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 			final Object input, final Arguments init, final CreateStatement statement) {
 		final IAddressableContainer<Integer, GamaShape, Integer, GamaShape> container =
 				(IAddressableContainer<Integer, GamaShape, Integer, GamaShape>) input;
-		final int num = max == null ? container.length(scope) : CmnFastMath.min(container.length(scope), max);
+		final int num = max == null ? container.length(scope) : Math.min(container.length(scope), max);
 		for (int i = 0; i < num; i++) {
 			final GamaShape g = container.get(scope, i);
 			final Map map = g.getOrCreateAttributes();

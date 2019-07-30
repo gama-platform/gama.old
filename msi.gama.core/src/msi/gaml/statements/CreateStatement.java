@@ -55,7 +55,6 @@ import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
@@ -68,6 +67,7 @@ import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CreateStatement.CreateSerializer;
 import msi.gaml.statements.CreateStatement.CreateValidator;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -316,8 +316,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				}
 			}
 			final Facets facets = cd.getPassedArgs();
-			for (final String att : facets.keySet()) {
-				if (!sd.isExperiment() && !sd.hasAttribute(att)) {
+			for (final Facet att : facets.getFacets()) {
+				if (!sd.isExperiment() && !sd.hasAttribute(att.key)) {
 					cd.error("Attribute " + att + " is not defined in species " + species.getName(), UNKNOWN_VAR);
 					return;
 				}
@@ -335,7 +335,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			final Facets args = desc.getPassedArgs();
 			if (args == null || args.isEmpty()) { return; }
 			sb.append("with: [");
-			args.forEachEntry((name, exp) -> {
+			args.forEachFacet((name, exp) -> {
 				sb.append(name).append("::").append(exp.serialize(false));
 				sb.append(", ");
 				return true;
@@ -427,7 +427,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 		// First, we compute the number of agents to create
 		final Integer max = number == null ? null : Cast.asInt(scope, number.value(scope));
-		if (from == null && max != null && max <= 0) { return GamaListFactory.create(); }
+		if (from == null && max != null && max <= 0) { return GamaListFactory.EMPTY_LIST; }
 
 		// Next, we compute the species to instantiate
 		final IPopulation pop = findPopulation(scope);
@@ -482,7 +482,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation<? extends IAgent> population,
 			final List<Map<String, Object>> inits) {
-		if (population == null) { return GamaListFactory.create(); }
+		if (population == null) { return GamaListFactory.EMPTY_LIST; }
 		// final boolean hasSequence = sequence != null && !sequence.isEmpty();
 		boolean shouldBeScheduled = false;
 		// If we create simulations within a single experiment, we must schedule
@@ -536,11 +536,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		if (init == null) { return; }
 		scope.pushReadAttributes(values);
 		try {
-			for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
-				if (f != null) {
-					values.put(f.getKey(), f.getValue().getExpression().value(scope));
-				}
-			}
+			init.forEachFacet((k, v) -> {
+				values.put(k, v.getExpression().value(scope));
+				return true;
+			});
 		} finally {
 			scope.popReadAttributes();
 		}

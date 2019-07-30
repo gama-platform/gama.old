@@ -19,9 +19,7 @@ import java.util.Map;
  */
 public interface IAttributed {
 
-	interface BiConsumerWithPruning<K, V> {
-		boolean process(K k, V v);
-	}
+	
 
 	/**
 	 * Allows to retrieve the attributes of the object as a Map

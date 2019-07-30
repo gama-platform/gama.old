@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.scoping;
@@ -20,15 +20,14 @@ import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 
-import gnu.trove.map.hash.THashMap;
+import msi.gama.util.IMap;
 
 public class TerminalMapBasedScope implements IScope {
 
-	private final THashMap<QualifiedName, IEObjectDescription> elements;
+	private final IMap<QualifiedName, IEObjectDescription> elements;
 
-	protected TerminalMapBasedScope(final THashMap<QualifiedName, IEObjectDescription> elements) {
+	protected TerminalMapBasedScope(final IMap<QualifiedName, IEObjectDescription> elements) {
 		this.elements = elements;
-		// elements.compact();
 	}
 
 	@Override
@@ -58,7 +57,7 @@ public class TerminalMapBasedScope implements IScope {
 	public List<IEObjectDescription> getElements(final EObject object) {
 		final URI uri = EcoreUtil2.getPlatformResourceOrNormalizedURI(object);
 		final IEObjectDescription[] result = new IEObjectDescription[1];
-		elements.forEachValue(input -> {
+		elements.forEachPair((s, input) -> {
 			if (input.getEObjectOrProxy() == object || uri.equals(input.getEObjectURI())) {
 				result[0] = input;
 				return false;

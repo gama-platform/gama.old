@@ -207,7 +207,7 @@ public class StatementDescription extends SymbolDescription {
 
 	public Arguments validatePassedArgs() {
 		final IDescription superDesc = getEnclosingDescription();
-		passedArgs.forEachEntry((nm, exp) -> {
+		passedArgs.forEachFacet((nm, exp) -> {
 			if (exp != null) {
 				exp.compile(superDesc);
 			}
@@ -230,7 +230,7 @@ public class StatementDescription extends SymbolDescription {
 			}
 			return;
 		}
-		ca.forEachEntry((nm, exp) -> {
+		ca.forEachFacet((nm, exp) -> {
 			// hqnghi check attribute is not exist in both main model and
 			// micro-model
 			if (!denotedSpecies.hasAttribute(nm) && denotedSpecies instanceof ExperimentDescription
@@ -334,12 +334,12 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public boolean visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		return true;
 	}
 
 	@Override
-	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
 		return true;
 	}
 

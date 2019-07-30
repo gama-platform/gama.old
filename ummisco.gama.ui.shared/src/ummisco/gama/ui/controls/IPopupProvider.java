@@ -4,15 +4,16 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
 
+import java.util.LinkedHashMap;
+
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
-import msi.gama.util.TOrderedHashMap;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
@@ -24,7 +25,7 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
  */
 public interface IPopupProvider {
 
-	public static class PopupText extends TOrderedHashMap<String, GamaUIColor> {
+	public static class PopupText extends LinkedHashMap<String, GamaUIColor> {
 
 		public static PopupText with(final GamaUIColor color, final String text) {
 			final PopupText p = new PopupText();
@@ -38,13 +39,13 @@ public interface IPopupProvider {
 
 	}
 
-	public PopupText getPopupText();
+	PopupText getPopupText();
 
-	public Shell getControllingShell();
+	Shell getControllingShell();
 
-	public Point getAbsoluteOrigin();
+	Point getAbsoluteOrigin();
 
-	public default int getPopupWidth() {
+	default int getPopupWidth() {
 		return 0;
 	}
 

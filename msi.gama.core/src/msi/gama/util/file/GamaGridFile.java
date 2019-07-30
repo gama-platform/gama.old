@@ -70,7 +70,7 @@ public class GamaGridFile extends GamaGisFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	private GamaGridReader createReader(final IScope scope, final boolean fillBuffer) {
@@ -155,25 +155,23 @@ public class GamaGridFile extends GamaGisFile {
 				final CoordinateReferenceSystem crs = getExistingCRS(scope);
 				if (isTiff(scope)) {
 					if (crs == null) {
-						store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true));
+						store = new GeoTiffReader(getFile(scope));
 					} else {
-						store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true,
-								Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+						store = new GeoTiffReader(getFile(scope),
+								new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
 					noData = ((GeoTiffReader) store).getMetadata().getNoData();
 				} else {
 					if (crs == null) {
-						store = new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, true));
+						store = new ArcGridReader(fis);
 					} else {
-						store = new ArcGridReader(fis, new Hints(Hints.USE_JAI_IMAGEREAD, true,
-								Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+						store = new ArcGridReader(fis, new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
 				}
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
-				final Envelope3D env = new Envelope3D(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1),
-						genv.getMaximum(1), 0, 0);
+				final Envelope3D env = Envelope3D.of(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1), 0, 0);
 				computeProjection(scope, env);
 				final Envelope envP = gis.getProjectedEnvelope();
 				final double cellHeight = envP.getHeight() / numRows;
@@ -406,7 +404,7 @@ public class GamaGridFile extends GamaGisFile {
 			}
 		} else if (isTiff(scope)) {
 			try {
-				final GeoTiffReader store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true));
+				final GeoTiffReader store = new GeoTiffReader(getFile(scope));
 				return store.getCoordinateReferenceSystem();
 			} catch (final DataSourceException e) {
 				e.printStackTrace();

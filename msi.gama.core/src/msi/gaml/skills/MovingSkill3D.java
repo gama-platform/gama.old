@@ -32,7 +32,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IMap;
 import msi.gama.util.path.IPath;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 
@@ -267,7 +266,7 @@ public class MovingSkill3D extends MovingSkill {
 		if (signumX == 0) {
 			setHeading(agent, signumY == 0 ? 0 : signumY > 0 ? 90 : 270);
 		} else {
-			setHeading(agent, FastMath.atan(diff.y / diff.x) * Maths.toDeg + (signumX > 0 ? 0 : 180));
+			setHeading(agent, Math.atan(diff.y / diff.x) * Maths.toDeg + (signumX > 0 ? 0 : 180));
 		}
 
 		// Pitch
@@ -275,7 +274,7 @@ public class MovingSkill3D extends MovingSkill {
 			final int signumZ = Maths.signum(diff.z);
 			setPitch(agent, signumZ == 0 ? 0 : signumZ > 0 ? 90 : 270);
 		} else {
-			setPitch(agent, FastMath.atan(diff.z / FastMath.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg);
+			setPitch(agent, Math.atan(diff.z / Math.sqrt(diff.x * diff.x + diff.y * diff.y)) * Maths.toDeg);
 		}
 
 		return null;

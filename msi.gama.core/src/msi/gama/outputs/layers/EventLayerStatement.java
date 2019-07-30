@@ -11,10 +11,7 @@
 package msi.gama.outputs.layers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -137,19 +134,16 @@ import msi.gaml.types.IType;
 				IKeyword.OVERLAY, IKeyword.POPULATION, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
-//	public static Set<String> EVENTS =
-//			new HashSet<>(Arrays.asList("mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit"));
-
 	public static class EventLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
 		public void validate(final StatementDescription description) {
-			String name = description.getLitteral(NAME);
+			final String name = description.getLitteral(NAME);
 			if (name.length() > 1) {
-				String error="";
+				String error = "";
 				boolean foundEventName = false;
 				for (final IEventLayerDelegate delegate : delegates) {
-					error+=delegate.getEvents()+" ";
+					error += delegate.getEvents() + " ";
 					if (delegate.getEvents().contains(name)) {
 						foundEventName = true;
 					}
@@ -160,7 +154,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 					return;
 				}
 			}
-			
+
 			final String actionName = description.getLitteral(ACTION);
 			StatementDescription sd = description.getModelDescription().getAction(actionName);
 			if (sd == null) {

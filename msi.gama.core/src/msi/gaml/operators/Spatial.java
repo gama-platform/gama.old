@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +56,6 @@ import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
@@ -88,6 +88,7 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
@@ -105,8 +106,6 @@ import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.compilation.annotations.depends_on;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.GamaType;
@@ -1189,7 +1188,7 @@ public abstract class Spatial {
 
 		private static double cubicBezier(final double v0, final double v1, final double v2, final double v3,
 				final double t) {
-			return FastMath.pow(1 - t, 3) * v0 + 3 * (1 - t) * (1 - t) * t * v1 + 3 * (1 - t) * t * t * v2
+			return Math.pow(1 - t, 3) * v0 + 3 * (1 - t) * (1 - t) * t * v1 + 3 * (1 - t) * t * t * v2
 					+ Math.pow(t, 3) * v3;
 		}
 
@@ -1404,12 +1403,16 @@ public abstract class Spatial {
 
 		)
 		public static IShape envelope(final IScope scope, final Object obj) {
-			Envelope3D env = new Envelope3D(GeometryUtils.computeEnvelopeFrom(scope, obj));
-			if (env.isNull()) {
-				env = new Envelope3D(0, 100, 0, 100, 0, 100);
+			Envelope3D env = Envelope3D.of(GeometryUtils.computeEnvelopeFrom(scope, obj));
+			try {
+				if (env.isNull()) {
+					env = Envelope3D.of(0, 100, 0, 100, 0, 100);
+				}
+				return GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
+						env.centre().toGamaPoint());
+			} finally {
+				env.dispose();
 			}
-			return GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
-					env.centre().toGamaPoint());
 		}
 	}
 
@@ -3219,7 +3222,7 @@ public abstract class Spatial {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }
 			IList<IShape> geoms = polylines.copy(scope);
 			geoms.removeIf(a -> !a.getGeometry().isLine());
-			if (geoms.isEmpty()) { return GamaListFactory.create(); }
+			if (geoms.isEmpty()) { return GamaListFactory.EMPTY_LIST; }
 			if (splitlines) {
 				geoms = Transformations.split_lines(scope, geoms, true);
 				geoms.removeIf(a -> a.getPerimeter() < tolerance || !a.getInnerGeometry().isValid()
@@ -4094,12 +4097,12 @@ public abstract class Spatial {
 			}
 			final IList<ILocation> locations = GamaListFactory.create(Types.POINT);
 			final ILocation loc = scope.getAgent().getLocation();
-			final double angle1 = scope.getRandom().between(0, 2 * CmnFastMath.PI);
+			final double angle1 = scope.getRandom().between(0, 2 * Math.PI);
 
 			for (int i = 0; i < nbLoc; i++) {
-				final GamaPoint p = new GamaPoint(
-						loc.getX() + distance * FastMath.cos(angle1 + (double) i / nbLoc * 2 * CmnFastMath.PI),
-						loc.getY() + distance * FastMath.sin(angle1 + (double) i / nbLoc * 2 * CmnFastMath.PI));
+				final GamaPoint p =
+						new GamaPoint(loc.getX() + distance * Math.cos(angle1 + (double) i / nbLoc * 2 * Math.PI),
+								loc.getY() + distance * Math.sin(angle1 + (double) i / nbLoc * 2 * Math.PI));
 				locations.add(p);
 			}
 			return locations;
@@ -4296,15 +4299,16 @@ public abstract class Spatial {
 					final ITopology topo = scope.getTopology();
 					if (topo.isContinuous() && !topo.isTorus()) {
 						if ((double) list.length(scope) / (double) scope.getSimulation().getMembersSize(scope) < 0.1) {
-							final IList<IAgent> results = GamaListFactory.create();
-							final IAgent ag = scope.getAgent();
-							for (final IShape sp : list.iterable(scope)) {
-								if (ag.euclidianDistanceTo(sp) <= distance) {
-									results.add((IAgent) sp);
+							try (final Collector.AsList<IAgent> results = Collector.getList()) {
+								final IAgent ag = scope.getAgent();
+								for (final IShape sp : list.iterable(scope)) {
+									if (ag.euclidianDistanceTo(sp) <= distance) {
+										results.add((IAgent) sp);
+									}
 								}
+								results.remove(ag);
+								return results.items();
 							}
-							results.remove(ag);
-							return results;
 						}
 					}
 
@@ -4359,7 +4363,7 @@ public abstract class Spatial {
 			if (contentType.isAgentType()) {
 				return _gather(scope, In.list(scope, list), source, true);
 			} else if (contentType == Types.GEOMETRY) { return geomOverlapping(scope, list, source, true); }
-			return GamaListFactory.create();
+			return GamaListFactory.EMPTY_LIST;
 		}
 
 		@operator (
@@ -4386,7 +4390,7 @@ public abstract class Spatial {
 			if (contentType.isAgentType()) {
 				return _gather(scope, In.list(scope, list), source, false);
 			} else if (contentType == Types.GEOMETRY) { return geomOverlapping(scope, list, source, false); }
-			return GamaListFactory.create();
+			return GamaListFactory.EMPTY_LIST;
 		}
 
 		public static IList<? extends IShape> geomOverlapping(final IScope scope,
@@ -4462,7 +4466,7 @@ public abstract class Spatial {
 		@no_test // already done in Spatial tests Models
 		public static IList<IShape> closest_to(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source, final int number) {
-			if (list == null || list.isEmpty(scope)) { return GamaListFactory.create(); }
+			if (list == null || list.isEmpty(scope)) { return GamaListFactory.EMPTY_LIST; }
 			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) {
 				return (IList) _closest(scope, In.list(scope, list), source, number);
@@ -4645,7 +4649,7 @@ public abstract class Spatial {
 
 		private static IList<IAgent> _gather(final IScope scope, final IAgentFilter filter, final Object source,
 				final boolean inside) {
-			if (filter == null || source == null) { return GamaListFactory.create(); }
+			if (filter == null || source == null) { return GamaListFactory.EMPTY_LIST; }
 			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
 			return GamaListFactory.wrap(type,
 					scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, inside));
@@ -4674,7 +4678,7 @@ public abstract class Spatial {
 
 		static IList<IAgent> _neighbors(final IScope scope, final IAgentFilter filter, final Object source,
 				final Object distance, final ITopology t) {
-			if (filter == null || source == null) { return GamaListFactory.create(); }
+			if (filter == null || source == null) { return GamaListFactory.EMPTY_LIST; }
 			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
 			return GamaListFactory.wrap(type, t.getNeighborsOf(scope, Cast.asGeometry(scope, source, false),
 					Cast.asFloat(scope, distance), filter));
@@ -4704,17 +4708,18 @@ public abstract class Spatial {
 					GamaListFactory.create(Types.LIST.of(agents.getGamlType().getContentType()));
 			final IAgentFilter filter = In.list(scope, agents);
 			if (filter == null) { return groups; }
-			final Set<IAgent> clusteredCells = new THashSet<>();
-			for (final IAgent ag : agents.iterable(scope)) {
-				if (!clusteredCells.contains(ag)) {
-					groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
+			try (Collector.AsSet<IAgent> clusteredCells = Collector.getSet()) {
+				for (final IAgent ag : agents.iterable(scope)) {
+					if (!clusteredCells.contains(ag)) {
+						groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
+					}
 				}
+				return groups;
 			}
-			return groups;
 		}
 
 		public static IList<IAgent> simpleClusteringByDistanceRec(final IScope scope, final IAgentFilter filter,
-				final Double distance, final Set<IAgent> clusteredAgs, final IAgent currentAg) {
+				final Double distance, final Collection<IAgent> clusteredAgs, final IAgent currentAg) {
 			final IList<IAgent> group = GamaListFactory.create(Types.AGENT);
 			final List<IAgent> ags =
 					new ArrayList<>(scope.getTopology().getNeighborsOf(scope, currentAg, distance, filter));
@@ -4768,7 +4773,7 @@ public abstract class Spatial {
 				final IList g1 = groups.get(i);
 				for (int j = i + 1; j < nb; j++) {
 					final IList g2 = groups.get(j);
-					final Set<IList> distGp = new THashSet<>();
+					final Set<IList> distGp = new HashSet<>();
 					distGp.add(g1);
 					distGp.add(g2);
 					final IAgent a = (IAgent) g1.get(0);
@@ -4798,7 +4803,7 @@ public abstract class Spatial {
 				groupeF.add(g1);
 
 				for (final IList groupe : groups) {
-					final Set<IList> newDistGp = new THashSet<>();
+					final Set<IList> newDistGp = new HashSet<>();
 					newDistGp.add(groupe);
 					newDistGp.add(g1);
 					double dist1 = Double.MAX_VALUE;
@@ -4811,7 +4816,7 @@ public abstract class Spatial {
 					if (distances.containsKey(newDistGp)) {
 						dist2 = distances.remove(newDistGp).doubleValue();
 					}
-					final double dist = FastMath.min(dist1, dist2);
+					final double dist = Math.min(dist1, dist2);
 					if (dist <= distance) {
 						newDistGp.remove(g2);
 						newDistGp.add(groupeF);
@@ -4867,7 +4872,7 @@ public abstract class Spatial {
 						sumNull += Cast.asFloat(scope, points.get(pt));
 					}
 					if (nbNull == 0) {
-						final double w = 1 / FastMath.pow(dist, power);
+						final double w = 1 / Math.pow(dist, power);
 						weight += w;
 						sum += w * Cast.asFloat(scope, points.get(pt));
 					}

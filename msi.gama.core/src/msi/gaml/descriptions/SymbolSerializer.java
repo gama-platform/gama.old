@@ -239,7 +239,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				final Facets passedArgs = desc.getPassedArgs();
 				if (passedArgs.isEmpty()) { return; }
 				sb.append("(");
-				passedArgs.forEachEntry((name, value) -> {
+				passedArgs.forEachFacet((name, value) -> {
 					if (Strings.isGamaNumber(name)) {
 						sb.append(value.serialize(includingBuiltIn));
 					} else {

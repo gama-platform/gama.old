@@ -29,7 +29,7 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * The class IList.
+ * The class IList. Interface for classes representing various lists in GAML (list, population, etc.)
  *
  * @author drogoul
  * @since 14 d�c. 2011

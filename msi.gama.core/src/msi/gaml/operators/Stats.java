@@ -42,6 +42,7 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
@@ -51,7 +52,6 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import rcaller.RCaller;
@@ -147,8 +147,8 @@ public class Stats {
 			total += value;
 			product *= value;
 			reciprocalSum += 1 / value;
-			minimum = FastMath.min(minimum, value);
-			maximum = FastMath.max(maximum, value);
+			minimum = Math.min(minimum, value);
+			maximum = Math.max(maximum, value);
 		}
 
 		/**
@@ -1023,22 +1023,23 @@ public class Stats {
 		}
 		final List<Cluster<DoublePoint>> clusters = dbscan.cluster(instances);
 
-		final IList results = GamaListFactory.create();
-		for (final Cluster<DoublePoint> cl : clusters) {
-			final IList clG = GamaListFactory.create();
-			for (final DoublePoint pt : cl.getPoints()) {
-				final Integer id = ((Instance) pt).getId();
-				clG.addValue(scope, id);
-				remainingData.remove(id);
+		try (final Collector.AsList results = Collector.getList()) {
+			for (final Cluster<DoublePoint> cl : clusters) {
+				final IList clG = GamaListFactory.create();
+				for (final DoublePoint pt : cl.getPoints()) {
+					final Integer id = ((Instance) pt).getId();
+					clG.addValue(scope, id);
+					remainingData.remove(id);
+				}
+				results.add(clG);
 			}
-			results.add(clG);
+			for (final Integer id : remainingData) {
+				final IList clG = GamaListFactory.create();
+				clG.add(id);
+				results.add(clG);
+			}
+			return results.items();
 		}
-		for (final Integer id : remainingData) {
-			final IList clG = GamaListFactory.create();
-			clG.add(id);
-			results.add(clG);
-		}
-		return results;
 	}
 
 	@operator (
@@ -1072,15 +1073,16 @@ public class Stats {
 		final KMeansPlusPlusClusterer<DoublePoint> kmeans =
 				new KMeansPlusPlusClusterer<>(k, maxIt, new EuclideanDistance(), rand);
 		final List<CentroidCluster<DoublePoint>> clusters = kmeans.cluster(instances);
-		final IList results = GamaListFactory.create();
-		for (final Cluster<DoublePoint> cl : clusters) {
-			final IList clG = GamaListFactory.create();
-			for (final DoublePoint pt : cl.getPoints()) {
-				clG.addValue(scope, ((Instance) pt).getId());
+		try (final Collector.AsList results = Collector.getList()) {
+			for (final Cluster<DoublePoint> cl : clusters) {
+				final IList clG = GamaListFactory.create();
+				for (final DoublePoint pt : cl.getPoints()) {
+					clG.addValue(scope, ((Instance) pt).getId());
+				}
+				results.add(clG);
 			}
-			results.addValue(scope, clG);
+			return results.items();
 		}
-		return results;
 	}
 
 	@operator (
@@ -1252,7 +1254,7 @@ public class Stats {
 		for (int i = 0; i < values.length; i++) {
 			values[i] = Cast.asFloat(scope, data.get(i));
 		}
-		java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
+//		java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
 		return k.evaluate(values);
 	}
 
@@ -1339,7 +1341,7 @@ public class Stats {
 			sumXi += xi;
 			for (int j = 0; j < N; j++) {
 				final double yi = vals.get(j);
-				G += FastMath.abs(xi - yi);
+				G += Math.abs(xi - yi);
 			}
 		}
 		G /= 2 * N * sumXi;

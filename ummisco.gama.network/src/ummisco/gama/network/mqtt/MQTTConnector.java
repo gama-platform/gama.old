@@ -78,7 +78,7 @@ public final class MQTTConnector extends Connector {
 	protected void sendMessage(final IAgent sender, final String receiver, final String content) {
 		final MqttMessage mm = new MqttMessage(content.getBytes());
 		try {
-			System.out.println("is connected "+sendConnection.isConnected());
+			DEBUG.OUT("is connected "+sendConnection.isConnected());
 			sendConnection.publish(receiver, mm);
 		} catch (final MqttException e) {
 			DEBUG.OUT(GamaNetworkException.cannotSendMessage(sender.getScope(), receiver));
@@ -139,7 +139,7 @@ public final class MQTTConnector extends Connector {
 				connOpts.setUserName(userName);
 				connOpts.setPassword(password.toCharArray());
 				sendConnection.connect(connOpts);
-				System.out.println("is connected  start "+sendConnection.isConnected());
+				DEBUG.OUT("is connected  start "+sendConnection.isConnected());
 				
 			} catch (final MqttException e) {
 				throw GamaNetworkException.cannotBeConnectedFailure(simulationScope);

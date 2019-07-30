@@ -2,11 +2,11 @@
  *
  * ummisco.gama.opengl.scene.ObjectDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
  * modeling and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -33,7 +33,7 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 	/**
 	 * Applies a scaling to the gl context if a size is defined. The scaling is done with respect of the envelope of the
 	 * geometrical object
-	 * 
+	 *
 	 * @param object
 	 *            the object defining the size and the original envelope of the geometry
 	 * @param returns
@@ -45,21 +45,25 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 		if (size != null) {
 			final Envelope3D env = object.getEnvelope(gl);
 			if (env != null) {
-				final boolean in2D = isDrawing2D(size, env, object);
-				double factor = 0.0;
-				if (in2D) {
-					factor = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
-				} else {
-					final double min_xy = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
-					factor = Math.min(min_xy, size.getZ() / env.getDepth());
-				}
-				if (factor != 1d) {
-					object.getTranslationForScalingInto(loc);
-					gl.translateBy(loc.x * (1 - factor), -loc.y * (1 - factor), loc.z * (1 - factor));
-					gl.scaleBy(factor, factor, factor);
+				try {
+					final boolean in2D = isDrawing2D(size, env, object);
+					double factor = 0.0;
+					if (in2D) {
+						factor = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
+					} else {
+						final double min_xy = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
+						factor = Math.min(min_xy, size.getZ() / env.getDepth());
+					}
+					if (factor != 1d) {
+						object.getTranslationForScalingInto(loc);
+						gl.translateBy(loc.x * (1 - factor), -loc.y * (1 - factor), loc.z * (1 - factor));
+						gl.scaleBy(factor, factor, factor);
 
+					}
+					return true;
+				} finally {
+					env.dispose();
 				}
-				return true;
 			}
 		}
 		return false;
@@ -70,7 +74,7 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 
 	/**
 	 * Applies a translation to the gl context
-	 * 
+	 *
 	 * @param object
 	 *            the object defining the translation
 	 * @return true if a translation occured, false otherwise
@@ -88,7 +92,7 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 	/**
 	 * Applies either the rotation defined by the modeler in the draw statement and/or the initial rotation imposed to
 	 * geometries read from 3D files to the gl context
-	 * 
+	 *
 	 * @param object
 	 *            the object specifying the rotations
 	 * @return true if one of the 2 rotations is applied, false otherwise

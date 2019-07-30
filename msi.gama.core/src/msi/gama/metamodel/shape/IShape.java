@@ -10,14 +10,13 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTWriter;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.interfaces.ILocated;
@@ -28,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.types.IType;
@@ -100,8 +100,8 @@ import msi.gaml.types.IType;
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the polyline representing the contour of this geometry") }) })
 public interface IShape extends ILocated, IValue, IAttributed {
-	Map<String, Type> JTS_TYPES = new THashMap<>();
-	Set<Type> THREED_TYPES = new THashSet<>();
+	Map<String, Type> JTS_TYPES = GamaMapFactory.createUnordered();
+	Set<Type> THREED_TYPES = new HashSet<>();
 
 	enum Type {
 		BOX("3D"),

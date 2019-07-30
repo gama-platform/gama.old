@@ -11,12 +11,10 @@
 package msi.gama.util;
 
 import java.awt.Color;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-import gnu.trove.TCollections;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.constant;
@@ -68,9 +66,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 			doc = @doc ("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}")) public final static Object[] array =
 					ColorCSS.array;
 
-	public final static Map<String, GamaColor> colors = new THashMap<>();
-	public final static TIntObjectMap<GamaColor> int_colors =
-			TCollections.synchronizedMap(new TIntObjectHashMap<GamaColor>());
+	public final static Map<String, GamaColor> colors = GamaMapFactory.createUnordered();
+	public final static Map<Integer, GamaColor> int_colors = Collections.synchronizedMap(new HashMap<>());
 
 	public static GamaColor getInt(final int rgb) {
 		GamaColor result = int_colors.get(rgb);

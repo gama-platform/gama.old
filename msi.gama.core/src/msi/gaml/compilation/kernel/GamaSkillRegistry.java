@@ -1,26 +1,29 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.kernel.GamaSkillRegistry.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.kernel.GamaSkillRegistry.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.kernel;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.ISkill;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
@@ -31,8 +34,8 @@ import msi.gaml.descriptions.VariableDescription;
 public class GamaSkillRegistry {
 
 	public final static GamaSkillRegistry INSTANCE = new GamaSkillRegistry();
-	private final THashMap<String, SkillDescription> skills = new THashMap<>();
-	private final THashMap<Class, String> classSkillNames = new THashMap<>();
+	private final IMap<String, SkillDescription> skills = GamaMapFactory.createUnordered();
+	private final Map<Class, String> classSkillNames = new HashMap<>();
 	private List<String> architectureNames = null;
 	private List<String> skillNames = null;
 
@@ -62,8 +65,7 @@ public class GamaSkillRegistry {
 
 	public SkillDescription get(final Class clazz) {
 		final String name = classSkillNames.get(clazz);
-		if (name == null)
-			return null;
+		if (name == null) { return null; }
 		return skills.get(name);
 	}
 
@@ -90,8 +92,7 @@ public class GamaSkillRegistry {
 	}
 
 	public Collection<String> getSkillNames() {
-		if (skillNames != null)
-			return skillNames;
+		if (skillNames != null) { return skillNames; }
 		final Set<String> result = new LinkedHashSet();
 		for (final String s : getAllSkillNames()) {
 			final SkillDescription c = skills.get(s);
@@ -104,8 +105,7 @@ public class GamaSkillRegistry {
 	}
 
 	public Collection<String> getArchitectureNames() {
-		if (architectureNames != null)
-			return architectureNames;
+		if (architectureNames != null) { return architectureNames; }
 		final Set<String> result = new LinkedHashSet();
 		for (final String s : getAllSkillNames()) {
 			final SkillDescription c = skills.get(s);
@@ -120,15 +120,13 @@ public class GamaSkillRegistry {
 
 	public Iterable<? extends IDescription> getVariablesForSkill(final String s) {
 		final SkillDescription sd = skills.get(s);
-		if (sd == null)
-			return Collections.EMPTY_LIST;
+		if (sd == null) { return Collections.EMPTY_LIST; }
 		return sd.getOwnAttributes();
 	}
 
 	public Iterable<? extends IDescription> getActionsForSkill(final String s) {
 		final SkillDescription sd = skills.get(s);
-		if (sd == null)
-			return Collections.EMPTY_LIST;
+		if (sd == null) { return Collections.EMPTY_LIST; }
 		return sd.getOwnActions();
 	}
 

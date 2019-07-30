@@ -14,11 +14,12 @@ import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
@@ -41,7 +42,7 @@ public class ModelScene {
 	public static final String AXES_KEY = "__axes__0";
 	public static final String FRAME_KEY = "__frame__0";
 
-	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<>();
+	protected final IMap<String, LayerObject> layers = GamaMapFactory.create();
 	protected LayerObject currentLayer;
 	protected final IOpenGLRenderer renderer;
 	private volatile boolean rendered = false;
@@ -124,19 +125,19 @@ public class ModelScene {
 		}
 	}
 
-	public void addGeometryFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
+	public void addGeometryFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addFile(file, attributes);
 		}
 	}
 
-	public void addImage(final Object img, final FileDrawingAttributes attributes) {
+	public void addImage(final Object img, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addImage(img, attributes);
 		}
 	}
 
-	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addGeometry(geometry, attributes);
 		}

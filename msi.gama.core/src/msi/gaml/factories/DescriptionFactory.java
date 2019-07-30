@@ -26,8 +26,6 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TIntProcedure;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
@@ -57,15 +55,14 @@ public class DescriptionFactory {
 		// DEBUG.ON();
 	}
 
-	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
+	static Map<Integer, SymbolFactory> FACTORIES = new HashMap();
 	static ArrayListMultimap<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = ArrayListMultimap.create();
 	static Map<String, SymbolProto> VAR_KEYWORDS_PROTOS = new HashMap();
-	static TIntObjectHashMap<SymbolProto> KINDS_PROTOS = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
+	static Map<Integer, SymbolProto> KINDS_PROTOS = new HashMap();
 
 	public static void addFactory(final SymbolFactory factory) {
-		factory.getHandles().forEach((TIntProcedure) i -> {
+		factory.getHandles().forEach(i -> {
 			FACTORIES.put(i, factory);
-			return true;
 		});
 
 	}

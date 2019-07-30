@@ -17,7 +17,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.IType;
 
 @symbol (
@@ -212,8 +211,8 @@ public class GraphForceAtlasLayoutStatement extends AbstractGraphLayoutStatement
 		if (bp1 != null && bp2 != null) {
 			final ILocation p1 = Cast.asPoint(scope, bp1);
 			final ILocation p2 = Cast.asPoint(scope, bp2);
-			Update_locations(g, FastMath.min(p1.getX(), p2.getX()), FastMath.min(p1.getY(), p2.getY()),
-					FastMath.max(p1.getX(), p2.getX()), FastMath.max(p1.getY(), p2.getY()));
+			Update_locations(g, Math.min(p1.getX(), p2.getX()), Math.min(p1.getY(), p2.getY()),
+					Math.max(p1.getX(), p2.getX()), Math.max(p1.getY(), p2.getY()));
 		} else {
 			Update_locations(g);
 		}

@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.common.util.Diagnostic;
@@ -28,49 +26,38 @@ import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.util.Collector;
 
 public class GamlResourceValidator implements IResourceValidator {
 
 	@Inject IDiagnosticConverter converter;
 	private static ErrorToDiagnoticTranslator errorTranslator = new ErrorToDiagnoticTranslator();
 
-	class LazyAcceptor implements IAcceptor<Issue> {
-		List<Issue> result;
-
-		@Override
-		public void accept(final Issue t) {
-			if (t == null) { return; }
-			if (result == null) {
-				result = new ArrayList<>();
-			}
-			result.add(t);
-		}
-	}
-
 	@Override
 	public List<Issue> validate(final Resource resource, final CheckMode mode, final CancelIndicator indicator) {
 		// DEBUG.OUT("GamlResourceValidato begginning validation job of " + resource.getURI().lastSegment());
+		try (final Collector.AsList<Issue> result = Collector.getList();) {
+			final IAcceptor<Issue> acceptor = t -> result.add(t);
+			// We resolve the cross references
+			EcoreUtil2.resolveLazyCrossReferences(resource, indicator);
+			// DEBUG.OUT("Cross references resolved for " + resource.getURI().lastSegment());
+			// And collect the syntax / linking issues
+			for (int i = 0; i < resource.getErrors().size(); i++) {
+				converter.convertResourceDiagnostic(resource.getErrors().get(i), Severity.ERROR, acceptor);
+			}
 
-		final LazyAcceptor acceptor = new LazyAcceptor();
-		// We resolve the cross references
-		EcoreUtil2.resolveLazyCrossReferences(resource, indicator);
-		// DEBUG.OUT("Cross references resolved for " + resource.getURI().lastSegment());
-		// And collect the syntax / linking issues
-		for (int i = 0; i < resource.getErrors().size(); i++) {
-			converter.convertResourceDiagnostic(resource.getErrors().get(i), Severity.ERROR, acceptor);
+			// We then ask the resource to validate itself
+			final GamlResource r = (GamlResource) resource;
+			r.validate();
+			// DEBUG.OUT("Resource has been validated: " + resource.getURI().lastSegment());
+			// And collect the semantic errors from its error collector
+			for (final Diagnostic d : errorTranslator.translate(r.getValidationContext(), r, mode).getChildren()) {
+				converter.convertValidatorDiagnostic(d, acceptor);
+			}
+			GamlResourceServices.discardValidationContext(r);
+			// DEBUG.OUT("Validation context has been discarded: " + resource.getURI().lastSegment());
+			return result.items();
 		}
-
-		// We then ask the resource to validate itself
-		final GamlResource r = (GamlResource) resource;
-		r.validate();
-		// DEBUG.OUT("Resource has been validated: " + resource.getURI().lastSegment());
-		// And collect the semantic errors from its error collector
-		for (final Diagnostic d : errorTranslator.translate(r.getValidationContext(), r, mode).getChildren()) {
-			converter.convertValidatorDiagnostic(d, acceptor);
-		}
-		GamlResourceServices.discardValidationContext(r);
-		// DEBUG.OUT("Validation context has been discarded: " + resource.getURI().lastSegment());
-		return acceptor.result == null ? Collections.EMPTY_LIST : acceptor.result;
 	}
 
 }

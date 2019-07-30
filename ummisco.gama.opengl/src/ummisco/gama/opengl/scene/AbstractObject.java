@@ -31,9 +31,11 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 	private final ATT attributes;
 	protected final int[] textures;
 	protected final T object;
+	public final DrawerType type;
 
-	public AbstractObject(final T object, final ATT attributes) {
+	public AbstractObject(final T object, final ATT attributes, final DrawerType type) {
 		this.object = object;
+		this.type = type;
 		this.attributes = attributes;
 		if (attributes.getTextures() != null) {
 			textures = new int[attributes.getTextures().size()];
@@ -49,8 +51,6 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 	public T getObject() {
 		return object;
 	}
-
-	public abstract DrawerType getDrawerType();
 
 	/**
 	 * Returns the id of the texture at index 1

@@ -19,10 +19,10 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.ImmutableSet;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.Collector;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GAML;
@@ -51,7 +51,7 @@ public class VariableDescription extends SymbolDescription {
 	//
 	// }
 
-	private static Map<String, Collection<String>> dependencies = new THashMap<>();
+	private static Map<String, Collection<String>> dependencies = GamaMapFactory.createUnordered();
 	public final static Set<String> INIT_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE, AMONG).build();
 	public final static Set<String> UPDATE_DEPENDENCIES_FACETS =
@@ -210,37 +210,38 @@ public class VariableDescription extends SymbolDescription {
 	public Collection<VariableDescription> getDependencies(final Set<String> facetsToVisit, final boolean includingThis,
 			final boolean includingSpecies) {
 
-		final ICollector<VariableDescription> result = new Collector.Unique<>();
-		final Collection<String> deps = dependencies.get(getName());
-		if (deps != null) {
-			for (final String s : deps) {
-				final VariableDescription vd = getSpeciesContext().getAttribute(s);
-				if (vd != null) {
-					result.add(vd);
+		try (final ICollector<VariableDescription> result = Collector.getSet()) {
+			final Collection<String> deps = dependencies.get(getName());
+			if (deps != null) {
+				for (final String s : deps) {
+					final VariableDescription vd = getSpeciesContext().getAttribute(s);
+					if (vd != null) {
+						result.add(vd);
+					}
 				}
 			}
-		}
 
-		this.visitFacets(facetsToVisit, (fName, exp) -> {
-			final IExpression expression = exp.getExpression();
-			if (expression != null) {
-				expression.collectUsedVarsOf(getSpeciesContext(), result);
+			this.visitFacets(facetsToVisit, (fName, exp) -> {
+				final IExpression expression = exp.getExpression();
+				if (expression != null) {
+					expression.collectUsedVarsOf(getSpeciesContext(), result);
+				}
+				return true;
+			});
+			if (isSyntheticSpeciesContainer()) {
+				final SpeciesDescription mySpecies = (SpeciesDescription) getEnclosingDescription();
+				final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
+				sd.collectUsedVarsOf(mySpecies, result);
 			}
-			return true;
-		});
-		if (isSyntheticSpeciesContainer()) {
-			final SpeciesDescription mySpecies = (SpeciesDescription) getEnclosingDescription();
-			final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
-			sd.collectUsedVarsOf(mySpecies, result);
+			if (!includingThis) {
+				result.remove(this);
+			}
+			if (!includingSpecies) {
+				result.removeIf(v -> v.isSyntheticSpeciesContainer());
+			}
+			result.remove(null);
+			return result.items();
 		}
-		if (!includingThis) {
-			result.remove(this);
-		}
-		if (!includingSpecies) {
-			result.removeIf(v -> v.isSyntheticSpeciesContainer());
-		}
-		result.remove(null);
-		return result.items();
 	}
 
 	public boolean isUpdatable() {

@@ -11,6 +11,9 @@ package ummisco.gama.ui.navigator.contents;
 
 import static ummisco.gama.ui.resources.IGamaIcons.OVERLAY_OK;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -19,7 +22,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -33,7 +35,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 
 	public static ILabelProvider DEFAULT_LABEL_PROVIDER = WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider();
 
-	public static final TIntObjectHashMap<ImageDescriptor> DESCRIPTORS = new TIntObjectHashMap<ImageDescriptor>() {
+	public static final Map<Integer, ImageDescriptor> DESCRIPTORS = new HashMap<Integer, ImageDescriptor>() {
 		{
 
 			put(CLOSED, GamaIcons.create("navigator/overlay.closed2").descriptor());

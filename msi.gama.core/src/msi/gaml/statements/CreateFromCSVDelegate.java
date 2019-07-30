@@ -22,7 +22,6 @@ import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -70,7 +69,7 @@ public class CreateFromCSVDelegate implements ICreateDelegate {
 		}
 		int rows = mat.getRows(scope);
 		final int cols = mat.getCols(scope);
-		rows = max == null ? rows : CmnFastMath.min(rows, max);
+		rows = max == null ? rows : Math.min(rows, max);
 
 		List<String> headers;
 		if (hasHeader) {

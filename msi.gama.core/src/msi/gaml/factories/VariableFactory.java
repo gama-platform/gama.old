@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.VariableFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.factories.VariableFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.factories;
 
@@ -14,7 +14,6 @@ import static msi.gama.common.interfaces.IKeyword.ON_CHANGE;
 import static msi.gama.common.interfaces.IKeyword.PARAMETER;
 import static msi.gama.common.interfaces.IKeyword.VAR;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
@@ -37,10 +36,6 @@ import msi.gaml.statements.Facets;
 		handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER, ISymbolKind.Variable.REGULAR,
 				ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
-
-	public VariableFactory(final List<Integer> handles) {
-		super(handles);
-	}
 
 	public VariableFactory(final int... handles) {
 		super(handles);

@@ -7,6 +7,7 @@ import java.util.Map;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;

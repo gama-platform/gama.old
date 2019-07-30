@@ -32,7 +32,6 @@ import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.operators.Strings;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.types.Types;
 
 /**
@@ -97,7 +96,7 @@ public class GamlTemplateFactory {
 			if (index == -1) {
 				index = doc.length();
 			}
-			desc += doc.substring(0, CmnFastMath.min(index, 150)) + " [...]";
+			desc += doc.substring(0, Math.min(index, 150)) + " [...]";
 		}
 		menuPath = menu + "." + menuPath.substring(0, menuPath.length() - 1);
 		if (isExample) {

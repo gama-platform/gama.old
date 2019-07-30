@@ -51,13 +51,15 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  *
@@ -139,6 +141,10 @@ import msi.gaml.types.Types;
 @doc ("Experiments that declare a graphical user interface")
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
+	static {
+		DEBUG.ON();
+	}
+
 	public static final String MODEL_PATH = "model_path";
 
 	public static final String PROJECT_PATH = "project_path";
@@ -146,7 +152,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private final IScope ownScope;
 	final ActionExecuter executer;
-	final Map<String, Object> extraParametersMap = new TOrderedHashMap<>();
+	final IMap<String, Object> extraParametersMap = GamaMapFactory.createOrdered();
 	protected RandomUtils random;
 	protected Double initialMinimumDuration = null;
 	protected Double currentMinimumDuration = 0d;
@@ -163,7 +169,24 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ownScope = new ExperimentAgentScope();
 		ownClock = new ExperimentClock(ownScope);
 		executer = new ActionExecuter(ownScope);
-		reset();
+		DEBUG.OUT("Creation of " + this);
+		// Should not perform a whole reset as it shuts down UI outputs in comodels (see #2813)
+		if (s.getSpecies().getDescription().belongsToAMicroModel()) {
+			initialize();
+		} else {
+			reset();
+		}
+	}
+
+	private void initialize() {
+		// We initialize the population that will host the simulation
+		createSimulationPopulation();
+		// We initialize a new random number generator
+		if (random == null) {
+			random = new RandomUtils();
+		} else {
+			random = new RandomUtils(getDefinedSeed(), getDefinedRng());
+		}
 	}
 
 	@Override
@@ -175,14 +198,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ownClock.reset();
 		// We close any simulation that might be running
 		closeSimulations();
-		// We initialize the population that will host the simulation
-		createSimulationPopulation();
-		// We initialize a new random number generator
-		if (random == null) {
-			random = new RandomUtils();
-		} else {
-			random = new RandomUtils(getDefinedSeed(), getDefinedRng());
-		}
+
+		initialize();
 	}
 
 	public String getDefinedRng() {
@@ -644,7 +661,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		volatile boolean interrupted = false;
 
 		@Override
-		protected boolean _root_interrupted() {
+		public boolean _root_interrupted() {
 			return interrupted || ExperimentAgent.this.dead();
 		}
 

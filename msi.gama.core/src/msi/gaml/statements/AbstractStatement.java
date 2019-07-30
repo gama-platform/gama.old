@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AbstractStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.AbstractStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -36,15 +36,14 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		Object result = null;
 		try {
 			scope.setCurrentSymbol(this);
-			result = privateExecuteIn(scope);
+			return privateExecuteIn(scope);
 		} catch (final GamaRuntimeException e) {
 			e.addContext(this);
 			GAMA.reportAndThrowIfNeeded(scope, e, true);
+			return null;
 		}
-		return result;
 	}
 
 	protected abstract Object privateExecuteIn(IScope scope) throws GamaRuntimeException;

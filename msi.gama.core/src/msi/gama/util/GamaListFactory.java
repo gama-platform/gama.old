@@ -12,6 +12,7 @@ package msi.gama.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +51,7 @@ import msi.gaml.types.Types;
 public class GamaListFactory {
 
 	private static final int DEFAULT_SIZE = 4;
+	public static final IList EMPTY_LIST = wrap(Types.NO_TYPE, Collections.EMPTY_LIST);
 	static Set<Collector.Characteristics> CH =
 			ImmutableSet.<Collector.Characteristics> of(Collector.Characteristics.IDENTITY_FINISH);
 
@@ -317,7 +319,7 @@ public class GamaListFactory {
 	 *
 	 * @return a new IList
 	 */
-	public static IList create() {
+	public static <T> IList<T> create() {
 		return create(Types.NO_TYPE);
 	}
 
@@ -330,6 +332,7 @@ public class GamaListFactory {
 	 * @return
 	 */
 	public static <E> IList<E> wrap(final IType contentType, final List<E> wrapped) {
+		// return createWithoutCasting(contentType, wrapped);
 		return new GamaListWrapper(wrapped, contentType);
 	}
 
@@ -343,14 +346,15 @@ public class GamaListFactory {
 	 * @return
 	 */
 	public static <E> IList<E> wrap(final IType contentType, final E... wrapped) {
+		// return createWithoutCasting(contentType, wrapped);
 		return new GamaListArrayWrapper(wrapped, contentType);
 	}
 
 	/**
-	 * Wraps the parameter Collection into an IList. Every change in the wrapped Set is reflected immediately and every
-	 * change to the IList is reflected in the wrapped Collection. No copy is made, only a thin layer is created to wrap
-	 * the parameter. Some operations (esp. those using indices) are not really meaningful for collections; they are
-	 * emulated in the best possible way by this wrapper
+	 * Wraps the parameter Collection into an IList. Every change in the wrapped Collection is reflected immediately and
+	 * every change to the IList is reflected in the wrapped Collection. No copy is made, only a thin layer is created
+	 * to wrap the parameter. Some operations (esp. those using indices) are not really meaningful for collections; they
+	 * are emulated in the best possible way by this wrapper
 	 *
 	 * @param contentType
 	 *            s
@@ -358,6 +362,7 @@ public class GamaListFactory {
 	 * @return
 	 */
 	public static <E> IList<E> wrap(final IType contentType, final Collection<E> wrapped) {
+		// return createWithoutCasting(contentType, wrapped);
 		return new GamaListCollectionWrapper(wrapped, contentType);
 	}
 

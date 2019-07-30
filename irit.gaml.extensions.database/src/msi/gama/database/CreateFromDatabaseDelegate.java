@@ -16,11 +16,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.CreateStatement;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -63,7 +62,7 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 		// Get ResultSet
 		final IList<IList<Object>> initValue = (IList) input.get(2);
 		// set initialValues to generate species
-		final int num = max == null ? initValue.length(scope) : CmnFastMath.min(max, initValue.length(scope));
+		final int num = max == null ? initValue.length(scope) : Math.min(max, initValue.length(scope));
 		for (int i = 0; i < num; i++) {
 			final IList<Object> rowList = initValue.get(i);
 			final Map map = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
@@ -82,9 +81,9 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 			final IList<Object> colTypes, final IList<Object> colNames, final Arguments init)
 			throws GamaRuntimeException {
 		if (init == null) { return; }
-		for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
+		for (final Facet f : init.getFacets()) {
 			if (f != null) {
-				final IExpression valueExpr = f.getValue().getExpression();
+				final IExpression valueExpr = f.value.getExpression();
 				// get parameter
 				final String columnName = valueExpr.value(scope).toString().toUpperCase();
 				// get column number of parameter
@@ -96,9 +95,9 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 				}
 				if (((String) colTypes.get(val)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE)) {
 					final Geometry geom = (Geometry) rowList.get(val);
-					values.put(f.getKey(), new GamaShape(geom));
+					values.put(f.key, new GamaShape(geom));
 				} else {
-					values.put(f.getKey(), rowList.get(val));
+					values.put(f.key, rowList.get(val));
 				}
 
 			}

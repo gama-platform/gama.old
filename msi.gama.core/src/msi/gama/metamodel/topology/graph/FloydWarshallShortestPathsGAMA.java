@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA.java, in plugin msi.gama.core, is part of the source
+ * code of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
@@ -20,8 +20,9 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.GraphWalk;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.matrix.GamaIntMatrix;
 
@@ -39,13 +40,13 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 	private double[][] d = null;
 	private int[][] backtrace = null;
 	private GamaIntMatrix matrix = null;
-	private THashMap<Pair<V, V>, GraphPath<V, E>> paths = null;
+	private IMap<Pair<V, V>, GraphPath<V, E>> paths = null;
 
 	// ~ Constructors -----------------------------------------------------------
 
 	public FloydWarshallShortestPathsGAMA(final GamaGraph<V, E> graph) {
 		this.graph = graph;
-		this.vertices = new ArrayList<V>(graph.getVertexMap().keySet());
+		this.vertices = new ArrayList<>(graph.getVertexMap().keySet());
 
 	}
 
@@ -53,8 +54,8 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 	public FloydWarshallShortestPathsGAMA(final GamaGraph<V, E> graph, final GamaIntMatrix matrix) {
 		this.graph = graph;
-		this.vertices = new ArrayList<V>(graph.getVertexMap().keySet());
-		this.paths = new THashMap<Pair<V, V>, GraphPath<V, E>>();
+		this.vertices = new ArrayList<>(graph.getVertexMap().keySet());
+		this.paths = GamaMapFactory.createUnordered();
 		nShortestPaths = 0;
 		this.matrix = matrix;
 	}
@@ -187,12 +188,12 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 	/**
 	 * Get the shortest path between two vertices. Note: The paths are calculated using a recursive algorithm. It *will*
 	 * give problems on paths longer than the stack allows.
-	 * 
+	 *
 	 * @param a
 	 *            From vertice
 	 * @param b
 	 *            To vertice
-	 * 
+	 *
 	 * @return the path, or null if none found
 	 */
 	public GraphPath<V, E> getShortestPath(final V a, final V b) {
@@ -204,7 +205,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 		int v_a = vertices.indexOf(a);
 		final int v_b = vertices.indexOf(b);
 		int prev = v_a;
-		final List<E> edges = new ArrayList<E>();
+		final List<E> edges = new ArrayList<>();
 		if (matrix != null) {
 			v_a = matrix.get(GAMA.getRuntimeScope(), v_b, v_a);
 			if (v_a != -1) {
@@ -236,12 +237,12 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 		// no path, return null
 		if (edges.size() < 1) { return null; }
-		final GraphWalk<V, E> path = new GraphWalk<V, E>(graph, a, b, edges, edges.size());
+		final GraphWalk<V, E> path = new GraphWalk<>(graph, a, b, edges, edges.size());
 		if (graph.isSaveComputedShortestPaths()) {
 			final V v_i = vertices.get(v_a);
 			final V v_j = vertices.get(v_b);
 
-			paths.put(new Pair<V, V>(v_i, v_j), path);
+			paths.put(new Pair<>(v_i, v_j), path);
 			nShortestPaths++;
 		}
 		return path;
@@ -256,7 +257,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 		lazyCalculateMatrix();
 
-		this.paths = new THashMap<Pair<V, V>, GraphPath<V, E>>();
+		this.paths = GamaMapFactory.createUnordered();
 
 		nShortestPaths = 0;
 

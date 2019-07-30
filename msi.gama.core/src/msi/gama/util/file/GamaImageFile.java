@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
@@ -28,7 +30,6 @@ import org.opengis.referencing.FactoryException;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -49,7 +50,6 @@ import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Spatial.Projections;
 import msi.gaml.operators.Strings;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IContainerType;
@@ -69,7 +69,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 	public static class ImageInfo extends GamaFileMetaData {
 
-		public final static TIntObjectHashMap<String> formatsShortNames = new TIntObjectHashMap() {
+		public final static Map<Integer, String> formatsShortNames = new HashMap<Integer, String>() {
 
 			{
 				// Hack: Corresponds to SWT.IMAGE_xxx + ImagePropertyPage
@@ -112,7 +112,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		}
 
 		public String getShortLabel(final int type) {
-			return formatsShortNames.contains(type) ? formatsShortNames.get(type) : formatsShortNames.get(-1);
+			return formatsShortNames.containsKey(type) ? formatsShortNames.get(type) : formatsShortNames.get(-1);
 		}
 
 		// public void setThumbnail(final Object thumb) {
@@ -219,7 +219,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
@@ -468,7 +468,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 				}
 				isGeoreferenced = true;
-				return new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
+				return Envelope3D.of(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 			}
 
 		}
@@ -479,16 +479,16 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		final double x2 = xllcorner + cellSizeX * nbCols;
 		final double y1 = yllcorner;
 		final double y2 = yllcorner + cellSizeY * nbRows;
-		GamaPoint minCorner = new GamaPoint(xNeg ? FastMath.max(x1, x2) : FastMath.min(x1, x2),
-				yNeg ? FastMath.max(y1, y2) : FastMath.min(y1, y2));
-		GamaPoint maxCorner = new GamaPoint(xNeg ? FastMath.min(x1, x2) : FastMath.max(x1, x2),
-				yNeg ? FastMath.min(y1, y2) : FastMath.max(y1, y2));
+		GamaPoint minCorner =
+				new GamaPoint(xNeg ? Math.max(x1, x2) : Math.min(x1, x2), yNeg ? Math.max(y1, y2) : Math.min(y1, y2));
+		GamaPoint maxCorner =
+				new GamaPoint(xNeg ? Math.min(x1, x2) : Math.max(x1, x2), yNeg ? Math.min(y1, y2) : Math.max(y1, y2));
 		if (geodataFile != null) {
 			minCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, minCorner).getLocation();
 			maxCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
 		}
 
-		return new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
+		return Envelope3D.of(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 
 	}
 

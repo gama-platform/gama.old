@@ -10,7 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import gnu.trove.set.hash.TIntHashSet;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GridHexagonalNeighborhoodVertical extends GridHexagonalNeighborhood {
 
@@ -22,11 +23,11 @@ public class GridHexagonalNeighborhoodVertical extends GridHexagonalNeighborhood
 	}
 
 	@Override
-	public TIntHashSet getNeighborsAtRadius1(final int placeIndex, final int xSize, final int ySize,
+	public Set<Integer> getNeighborsAtRadius1(final int placeIndex, final int xSize, final int ySize,
 			final boolean isTorus) {
 		final int y = placeIndex / xSize;
 		final int x = placeIndex - y * xSize;
-		final TIntHashSet neigh = new TIntHashSet();
+		final Set<Integer> neigh = new HashSet<>();
 		int id = getIndexAt(x, y - 1, xSize, ySize, isTorus);
 		if (id != -1) {
 			neigh.add(id);

@@ -316,7 +316,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 				getBuffer().add(GamaGeometryType.buildPolygon(face));
 			}
 		}
-		envelope = new Envelope3D(leftpoint, rightpoint, bottompoint, toppoint, nearpoint, farpoint);
+		envelope = Envelope3D.of(leftpoint, rightpoint, bottompoint, toppoint, nearpoint, farpoint);
 
 	}
 

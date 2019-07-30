@@ -1,16 +1,14 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.CritereFctCroyancesBasique.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.extensions.multi_criteria.CritereFctCroyancesBasique.java, in plugin msi.gama.core, is part of the source
+ * code of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
-
-import msi.gaml.operators.fastmaths.FastMath;
 
 public class CritereFctCroyancesBasique extends CritereFonctionsCroyances {
 
@@ -26,7 +24,7 @@ public class CritereFctCroyancesBasique extends CritereFonctionsCroyances {
 	private final double rContre;
 
 	public CritereFctCroyancesBasique(final String nom, final double s1, final double v2Pour, final double v1Pour,
-		final double v1Contre, final double v2Contre, final double s2) {
+			final double v1Contre, final double v2Contre, final double s2) {
 		super(nom);
 		this.s1 = s1;
 		this.v2Pour = v2Pour;
@@ -90,22 +88,22 @@ public class CritereFctCroyancesBasique extends CritereFonctionsCroyances {
 
 	@Override
 	public double masseCroyanceContre(final double a) {
-		if ( s2 - s1 == 0 ) { return v1Contre; }
-		if ( a <= s1 ) { return v1Contre; }
-		if ( a >= s2 ) { return v2Contre; }
+		if (s2 - s1 == 0) { return v1Contre; }
+		if (a <= s1) { return v1Contre; }
+		if (a >= s2) { return v2Contre; }
 		return a * cdContre + rContre;
 	}
 
 	@Override
 	public double masseCroyanceIgnorance(final double a) {
-		return FastMath.max(0, 1 - (masseCroyancePour(a) + masseCroyanceContre(a)));
+		return Math.max(0, 1 - (masseCroyancePour(a) + masseCroyanceContre(a)));
 	}
 
 	@Override
 	public double masseCroyancePour(final double a) {
-		if ( s2 - s1 == 0 ) { return v1Pour; }
-		if ( a <= s1 ) { return v1Pour; }
-		if ( a >= s2 ) { return v2Pour; }
+		if (s2 - s1 == 0) { return v1Pour; }
+		if (a <= s1) { return v1Pour; }
+		if (a >= s2) { return v2Pour; }
 		return a * cdPour + rPour;
 	}
 

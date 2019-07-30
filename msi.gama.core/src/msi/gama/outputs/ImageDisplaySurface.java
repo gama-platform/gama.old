@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.ImageDisplaySurface.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.ImageDisplaySurface.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -89,7 +89,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Save this surface into an image passed as a parameter
-	 * 
+	 *
 	 * @param actionScope
 	 * @param image
 	 */
@@ -319,7 +319,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	//
 	/**
 	 * Method getModelCoordinates()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
 	 */
 	@Override
@@ -329,7 +329,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method followAgent()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -337,7 +337,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getZoomLevel()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getZoomLevel()
 	 */
 	@Override
@@ -347,7 +347,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method setSize()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setSize(int, int)
 	 */
 	@Override
@@ -357,7 +357,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method removeMouseListener()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
@@ -382,7 +382,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public IList<IAgent> selectAgent(final int xc, final int yc) {
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 		// final IList<IAgent> result = GamaListFactory.create(Types.AGENT);
 		// final List<ILayer> layers = getManager().getLayersIntersecting(xc,
 		// yc);
@@ -399,7 +399,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getOutput()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
 	@Override
@@ -409,7 +409,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method waitForUpdateAndRun()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#waitForUpdateAndRun(java.lang.Runnable)
 	 */
 	@Override
@@ -419,7 +419,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getData()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getData()
 	 */
 	@Override
@@ -429,7 +429,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method setSWTMenuManager()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
 	 */
 	// @Override
@@ -438,7 +438,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method layersChanged()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#layersChanged()
 	 */
 	@Override
@@ -446,7 +446,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method changed()
-	 * 
+	 *
 	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(msi.gama.outputs.LayeredDisplayData.Changes,
 	 *      boolean)
 	 */
@@ -455,7 +455,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getVisibleRegionForLayer()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getVisibleRegionForLayer(msi.gama.common.interfaces.ILayer)
 	 */
 	@Override
@@ -465,7 +465,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getFPS()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getFPS()
 	 */
 	@Override
@@ -480,7 +480,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method isRendered()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#isRendered()
 	 */
 	@Override
@@ -495,7 +495,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesInfo()
 	 */
 	@Override

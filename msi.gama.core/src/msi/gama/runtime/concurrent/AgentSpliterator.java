@@ -25,7 +25,7 @@ public class AgentSpliterator implements Spliterator<IAgent> {
 		return new AgentSpliterator(agents, 0, agents.length, threshold);
 	}
 
-	public static Spliterator<IAgent> of(final List<? extends IAgent> agents, final int threshold) {
+	public static Spliterator<IAgent> of(final List<? extends IShape> agents, final int threshold) {
 		final int size = agents.size();
 		return new AgentSpliterator(agents.toArray(new IAgent[size]), 0, size, threshold);
 	}

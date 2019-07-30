@@ -271,7 +271,7 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		// if a not null
 		final IMap<String, IList<Double>> result = (IMap<String, IList<Double>>) a.getAttribute("__integrated_values");
 		if (result != null) { return result.get(a + var.getName()); }
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override

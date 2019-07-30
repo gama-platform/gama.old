@@ -21,11 +21,11 @@ species people {
 	list<int> lo <- [1,2,3];
 }
 
-experiment Model3 type: gui {
+experiment SaveSimulation type: gui {
 	
 	reflex store {
 		write "================ START SAVE + self " + " - " + cycle ;		
-		write "Save of simulation : " + save_simulation('file.gsim');
+		write "Save of simulation : " + save_simulation('../result/file.gsim');
 		write "================ END SAVE + self " + " - " + cycle ;			
 	}
 }

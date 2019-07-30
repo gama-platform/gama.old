@@ -1,20 +1,20 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.SymbolFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.factories.SymbolFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.factories;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.set.hash.TIntHashSet;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
@@ -28,17 +28,16 @@ import msi.gaml.statements.Facets;
 // @factory(handles = { ISymbolKind.ENVIRONMENT })
 public abstract class SymbolFactory {
 
-	protected final TIntHashSet kindsHandled;
-
-	public SymbolFactory(final List<Integer> handles) {
-		kindsHandled = new TIntHashSet(handles);
-	}
+	protected final Set<Integer> kindsHandled;
 
 	public SymbolFactory(final int... handles) {
-		kindsHandled = new TIntHashSet(handles);
+		kindsHandled = new HashSet<>(handles.length);
+		for (final int i : handles) {
+			kindsHandled.add(i);
+		}
 	}
 
-	TIntHashSet getHandles() {
+	Set<Integer> getHandles() {
 		return kindsHandled;
 	}
 

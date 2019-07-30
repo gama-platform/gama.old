@@ -20,7 +20,7 @@ import org.eclipse.emf.common.util.URI;
 
 import com.google.common.base.Objects;
 
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
 import one.util.streamex.StreamEx;
 
 /**
@@ -37,7 +37,7 @@ import one.util.streamex.StreamEx;
  */
 public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSummary<?>> extends AbstractSummary<S> {
 
-	public final Map<String, T> summaries = new TOrderedHashMap<>();
+	public final Map<String, T> summaries = GamaMapFactory.create();
 	public boolean aborted;
 	public String stringSummary;
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AbstractStatementSequence.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.AbstractStatementSequence.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -14,17 +14,20 @@ import com.google.common.collect.FluentIterable;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.ExecutionResult;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.StatementDescription;
+import one.util.streamex.StreamEx;
 
 public class AbstractStatementSequence extends AbstractStatement {
 
 	protected IStatement[] commands;
+	final boolean isTopLevel;
 
 	public AbstractStatementSequence(final IDescription desc) {
 		super(desc);
+		isTopLevel = desc != null && desc.getMeta().isTopLevel();
 	}
 
 	@Override
@@ -39,13 +42,11 @@ public class AbstractStatementSequence extends AbstractStatement {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		enterScope(scope);
-		Object result;
 		try {
-			result = super.executeOn(scope);
+			return super.executeOn(scope);
 		} finally {
 			leaveScope(scope);
 		}
-		return result;
 	}
 
 	@Override
@@ -62,8 +63,7 @@ public class AbstractStatementSequence extends AbstractStatement {
 	public void leaveScope(final IScope scope) {
 		// Clears any action_halted status in case we are a top-level behavior
 		// (reflex, init, state, etc.)
-		final StatementDescription description = getDescription();
-		if (description != null && description.getMeta().isTopLevel()) {
+		if (isTopLevel) {
 			scope.popAction();
 		}
 		scope.pop(this);

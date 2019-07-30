@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.species.ISpecies.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.species.ISpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.species;
 
@@ -87,33 +87,33 @@ import one.util.streamex.StreamEx;
 public interface ISpecies
 		extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet<IAgent> {
 
-	public static final String stepActionName = "_step_";
-	public static final String initActionName = "_init_";
-	public static final String POPULATION = "population";
-	public static final String SUBSPECIES = "subspecies";
-	public static final String MICROSPECIES = "microspecies";
-	public static final String ACTIONS = "actions";
-	public static final String ASPECTS = "aspects";
+	String stepActionName = "_step_";
+	String initActionName = "_init_";
+	String POPULATION = "population";
+	String SUBSPECIES = "subspecies";
+	String MICROSPECIES = "microspecies";
+	String ACTIONS = "actions";
+	String ASPECTS = "aspects";
 
-	public abstract IExpression getFrequency();
+	IExpression getFrequency();
 
-	public abstract IExpression getSchedule();
+	IExpression getSchedule();
 
-	public abstract IExpression getConcurrency();
+	IExpression getConcurrency();
 
-	public abstract boolean extendsSpecies(final ISpecies s);
+	boolean extendsSpecies(final ISpecies s);
 
-	public abstract boolean isGrid();
+	boolean isGrid();
 
-	public abstract boolean isGraph();
+	boolean isGraph();
 
 	/**
 	 * Return all the direct subspecies of this species, properly typed for GAMA
-	 * 
+	 *
 	 * @return
 	 */
 
-	public abstract IList<ISpecies> getSubSpecies(IScope scope);
+	IList<ISpecies> getSubSpecies(IScope scope);
 
 	@SuppressWarnings ("unchecked")
 	@getter (SUBSPECIES)
@@ -125,7 +125,7 @@ public interface ISpecies
 
 	@Override
 	@getter (IKeyword.NAME)
-	public abstract String getName();
+	String getName();
 
 	/**
 	 * Returns all the micro-species. Micro-species includes: 1. the "direct" micro-species; 2. the micro-species of the
@@ -133,7 +133,7 @@ public interface ISpecies
 	 *
 	 * @return
 	 */
-	public abstract IList<ISpecies> getMicroSpecies();
+	IList<ISpecies> getMicroSpecies();
 
 	/**
 	 * Returns a micro-species with the specified name or null otherwise.
@@ -141,14 +141,14 @@ public interface ISpecies
 	 * @param microSpeciesName
 	 * @return a species or null
 	 */
-	public abstract ISpecies getMicroSpecies(String microSpeciesName);
+	ISpecies getMicroSpecies(String microSpeciesName);
 
 	/**
 	 * Verifies if this species has micro-species or not.
 	 *
 	 * @return true if this species has micro-species false otherwise
 	 */
-	public abstract boolean hasMicroSpecies();
+	boolean hasMicroSpecies();
 
 	/**
 	 * Verifies of the specified species is a micro-species of this species of not.
@@ -156,7 +156,7 @@ public interface ISpecies
 	 * @param species
 	 * @return
 	 */
-	public abstract boolean containMicroSpecies(ISpecies species);
+	boolean containMicroSpecies(ISpecies species);
 
 	/**
 	 * Returns the parent species.
@@ -165,7 +165,7 @@ public interface ISpecies
 	 */
 	@getter (IKeyword.PARENT)
 	@doc ("Returns the direct parent of the species. Experiments, models and species with no explicit parents will return nil")
-	public abstract ISpecies getParentSpecies();
+	ISpecies getParentSpecies();
 
 	/**
 	 * Verifies that if this species is the peer species of other species.
@@ -173,16 +173,16 @@ public interface ISpecies
 	 * @param other
 	 * @return
 	 */
-	public abstract boolean isPeer(ISpecies other);
+	boolean isPeer(ISpecies other);
 
-	public abstract List<ISpecies> getSelfWithParents();
+	List<ISpecies> getSelfWithParents();
 
-	public abstract Collection<UserCommandStatement> getUserCommands();
+	Collection<UserCommandStatement> getUserCommands();
 
 	// Huynh Quang Nghi 29/01/13
-	public abstract <T extends IStatement> T getStatement(Class<T> clazz, String name);
+	<T extends IStatement> T getStatement(Class<T> clazz, String name);
 
-	public abstract IStatement.WithArgs getAction(final String name);
+	IStatement.WithArgs getAction(final String name);
 
 	@getter (ACTIONS)
 	@doc ("retuns the list of actions defined in this species (incl. the ones inherited from its parent)")
@@ -191,31 +191,31 @@ public interface ISpecies
 				StreamEx.of(getActions()).map((each) -> each.getName()).toList());
 	}
 
-	public Collection<ActionStatement> getActions();
+	Collection<ActionStatement> getActions();
 
-	public abstract IExecutable getAspect(final String n);
+	IExecutable getAspect(final String n);
 
-	public Collection<? extends IExecutable> getAspects();
+	Collection<? extends IExecutable> getAspects();
 
 	@getter (ASPECTS)
 	@doc ("retuns the list of aspects defined in this species")
-	public abstract IList<String> getAspectNames();
+	IList<String> getAspectNames();
 
-	public abstract IArchitecture getArchitecture();
+	IArchitecture getArchitecture();
 
-	public abstract String getArchitectureName();
+	String getArchitectureName();
 
-	public abstract ISpecies getMacroSpecies();
+	ISpecies getMacroSpecies();
 
-	public abstract String getParentName();
+	String getParentName();
 
-	public abstract IVariable getVar(final String n);
+	IVariable getVar(final String n);
 
-	public abstract Collection<String> getVarNames();
+	Collection<String> getVarNames();
 
 	/**
 	 * Similar to getVarNames(), but returns a correctly initialized IList of attribute names
-	 * 
+	 *
 	 * @param scope
 	 * @return the list of all the attributes defined in this species
 	 */
@@ -225,29 +225,25 @@ public interface ISpecies
 		return GamaListFactory.create(scope, Types.STRING, getVarNames());
 	}
 
-	public abstract Collection<IVariable> getVars();
+	Collection<IVariable> getVars();
 
-	public abstract boolean hasAspect(final String n);
+	boolean hasAspect(final String n);
 
-	public abstract boolean hasVar(final String name);
+	boolean hasVar(final String name);
 
-	public abstract void setMacroSpecies(final ISpecies macroSpecies);
+	void setMacroSpecies(final ISpecies macroSpecies);
 
-	public abstract boolean isMirror();
+	boolean isMirror();
 
-	public abstract Boolean implementsSkill(String skill);
+	Boolean implementsSkill(String skill);
 
 	@getter (MICROSPECIES)
 	@doc ("Returns all the direct microspecies names of this species")
-	public abstract Collection<String> getMicroSpeciesNames();
-
-	public abstract boolean isInitOverriden();
-
-	public abstract boolean isStepOverriden();
+	Collection<String> getMicroSpeciesNames();
 
 	/**
 	 * Returns the population of agents that belong to this species and that are hosted in the same host
-	 * 
+	 *
 	 * @param scope
 	 * @return
 	 *
@@ -255,15 +251,15 @@ public interface ISpecies
 	@Override
 	@getter (POPULATION)
 	@doc ("Returns the population of agents that belong to this species")
-	public abstract IPopulation<? extends IAgent> getPopulation(IScope scope);
+	IPopulation<? extends IAgent> getPopulation(IScope scope);
 
-	public abstract void addTemporaryAction(ActionStatement a);
+	void addTemporaryAction(ActionStatement a);
 
-	public abstract Collection<IStatement> getBehaviors();
+	Collection<IStatement> getBehaviors();
 
-	public abstract void removeTemporaryAction();
+	void removeTemporaryAction();
 
 	@Override
-	public abstract SpeciesDescription getDescription();
+	SpeciesDescription getDescription();
 
 }

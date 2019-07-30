@@ -12,9 +12,9 @@ package msi.gaml.statements;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 
-import gnu.trove.impl.Constants;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -36,6 +36,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
@@ -87,7 +88,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 	boolean isHighlightAspect;
 
-	static final TObjectIntHashMap<String> SHAPES = new TObjectIntHashMap<String>() {
+	static final Map<String, Integer> SHAPES = new HashMap<String, Integer>() {
 
 		{
 			put("circle", 1);
@@ -118,10 +119,10 @@ public class AspectStatement extends AbstractStatementSequence {
 					color = GamaColor.getInt(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB());
 				}
 				final String defaultShape = GamaPreferences.Displays.CORE_SHAPE.getValue();
-				final int index = SHAPES.get(defaultShape);
+				final Integer index = SHAPES.get(defaultShape);
 				IShape ag;
 
-				if (index != Constants.DEFAULT_INT_NO_ENTRY_VALUE) {
+				if (index != null) {
 					final Double defaultSize = GamaPreferences.Displays.CORE_SIZE.getValue();
 					final ILocation point = agent.getLocation();
 
@@ -152,7 +153,7 @@ public class AspectStatement extends AbstractStatementSequence {
 				}
 
 				final IShape ag2 = ag.copy(scope);
-				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
+				final DrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
 				return g.drawShape(ag2.getInnerGeometry(), attributes);
 			} catch (final GamaRuntimeException e) {
 				// cf. Issue 1052: exceptions are not thrown, just displayed

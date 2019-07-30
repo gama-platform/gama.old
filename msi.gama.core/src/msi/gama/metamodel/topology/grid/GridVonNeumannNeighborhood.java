@@ -1,17 +1,17 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.GridVonNeumannNeighborhood.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.topology.grid.GridVonNeumannNeighborhood.java, in plugin msi.gama.core, is part of the source code
+ * of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import gnu.trove.set.hash.TIntHashSet;
-import msi.gaml.operators.fastmaths.CmnFastMath;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Written by drogoul Modified on 8 mars 2011
@@ -21,7 +21,6 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
  */
 public class GridVonNeumannNeighborhood extends GridNeighborhood {
 
-
 	/**
 	 * @param gamaSpatialMatrix
 	 */
@@ -30,19 +29,19 @@ public class GridVonNeumannNeighborhood extends GridNeighborhood {
 	}
 
 	@Override
-	protected TIntHashSet getNeighborsAtRadius(final int placeIndex, final int radius) {
+	protected Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / matrix.numCols;
 		final int x = placeIndex - y * matrix.numCols;
-
-		final TIntHashSet v = new TIntHashSet(radius << 2);
+		// TODO: verify the use of HashSet here, contradictory with the policy of GAMA to not use unordered Sets or maps
+		final Set<Integer> v = new HashSet<>(radius << 2);
 		int p;
-		for ( int i = -radius; i < radius; i++ ) {
-			p = matrix.getPlaceIndexAt(x - i, y - CmnFastMath.abs(i) + radius);
-			if ( p != -1 ) {
+		for (int i = -radius; i < radius; i++) {
+			p = matrix.getPlaceIndexAt(x - i, y - Math.abs(i) + radius);
+			if (p != -1) {
 				v.add(p);
 			}
-			p = matrix.getPlaceIndexAt(x + i, y + CmnFastMath.abs(i) - radius);
-			if ( p != -1 ) {
+			p = matrix.getPlaceIndexAt(x + i, y + Math.abs(i) - radius);
+			if (p != -1) {
 				v.add(p);
 			}
 		}

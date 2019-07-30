@@ -1,244 +1,170 @@
 /**
 * Name: Corridor Multi-Level Architecture
-* Author: Vo Duc An; Ngoc Anh; JD Zucker
+* Author: Vo Duc An; Ngoc Anh; JD Zucker; A. Drogoul
 * Description: This model shows how to use multi-level architecture. A corridor can capture pedestrians going from left to right side if 
 *	they are inside the corridor. This will result in changing their species from pedestrian to captured_pedestrian which will not be 
 *	displayed. Once they pass enought time to consider they reach the exit of the corridor, they will be released by the corridor agent 
 *	as pedestrians, letting them been displayed and going to their target. 
 * Tags: multi_level, agent_movement
 */
-
 model corridor
 
-global {	
-	//Capture pedestrians parameter to define if wall will capture pedestrians
-	bool capture_pedestrians <- false parameter: 'Capture pedestrians?';
-	
-	int environment_size init: 2000;
-	point environment_bounds init: {environment_size, environment_size} ;
-	geometry shape <- rectangle(environment_bounds) ;		
-	
+global {
+//Capture pedestrians parameter to define if wall will capture pedestrians
+	bool capture_pedestrians <- false;
+	int environment_width init: 8000;
+	int environment_height init: 3000;
+	geometry shape <- rectangle(environment_width, environment_height);
+
 	//Pedestrians parameters
-	float pedestrian_size init: 4.0;
-	geometry pedestrian_shape <- circle (pedestrian_size);
-	rgb pedestrian_color <- #green; 
-	float pedestrian_speed <- 2.0;
-	
-	
+	rgb pedestrian_color <- #green;
+	float pedestrian_speed <- 10.0;
+
 	//Wall parameters
-	rgb corridor_wall_color <- #black;
-	int corridor_wall_width <- int(environment_size / 2);
-	int corridor_wall_height <- 200;
-	geometry corridor_wall_0_shape <- rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, corridor_wall_height / 2};
-	geometry corridor_wall_1_shape <- rectangle ( {corridor_wall_width, corridor_wall_height} ) at_location {environment_size / 2, environment_size - (corridor_wall_height / 2)};
+	float corridor_width <- environment_width / 1.5;
+	int corridor_wall_height <- 800;
+	geometry corridor_wall_0_shape <- rectangle({corridor_width, corridor_wall_height}) at_location {environment_width / 2, corridor_wall_height / 2};
+	geometry corridor_wall_1_shape <- rectangle({corridor_width, corridor_wall_height}) at_location {environment_width / 2, environment_height - (corridor_wall_height / 2)};
 	
+
 	//Corridor parameters
-	rgb corridor_color <- #blue;
-	int corridor_width <- int(environment_size / 2) ;
-	int corridor_height <- environment_size ;
-	point corridor_location <- {environment_size / 2, environment_size / 2} ;
-	geometry corridor_shape <- ( (rectangle ({corridor_width, corridor_height})) at_location corridor_location) - (corridor_wall_0_shape + corridor_wall_1_shape);
-	int corridor_left_bounds <- (int(corridor_location.x - (corridor_width / 2))) ;
-	int corridor_right_bounds <- (int(corridor_location.x + (corridor_width / 2))) ;
-	
-	//Generation of new pedestrians parameters
-	int new_pedestrian_rate <- 10;
-	int new_pedestian_generate_frequency <- 1;
-	int new_pedestrian_y_distance <- int(environment_size / new_pedestrian_rate);
-	
-	list<pedestrian> pedestrians  update: list(pedestrian); 
-	float start_time <- machine_time;
-	
+	float corridor_left_bounds <- (location.x - (corridor_width / 2));
+	float corridor_right_bounds <- (location.x + (corridor_width / 2));
+
 	init {
 		create corridor;
-		 
-		create corridor_wall number: 2 returns: corridor_walls; 
-		(corridor_walls at 0).shape <- corridor_wall_0_shape;
-		(corridor_walls at 1).shape <- corridor_wall_1_shape;
-		
 	}
-	
-	//Reflex to generate new pedestrians according to the frequency generation parameter
-	reflex generate_pedestrians when: ((cycle mod new_pedestian_generate_frequency) = 0) {
-		create pedestrian number: new_pedestrian_rate returns: new_pedestrians; 
-		
-		int loop_times <- 0;
-		loop p over: new_pedestrians {
-			int y_coor <- rnd (new_pedestrian_y_distance);
-			ask p as: pedestrian {
-				do init_location loc: { 0, (loop_times * new_pedestrian_y_distance) + y_coor };
-			}
-			loop_times <- loop_times + 1;
+
+	reflex change_color when: every(200 #cycle) {
+		pedestrian_color <- rnd_color(255);
+	}
+
+	reflex generate_pedestrians when: every(4 #cycle) {
+		create pedestrian number: 30 with: [color::pedestrian_color] {
+			do init_location({0, rnd(environment_height)});
 		}
 	}
+}
 
-} 
-
-//Species pedestrian which will move from one side of the experiments to another and destroy itself once the other side is reached
-species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall_0_shape + corridor_wall_1_shape)) ){
-	geometry shape <-  circle (pedestrian_size);
-	point initial_location;
+//Species pedestrian which will move from one side of the experiment to another and destroy itself once the other side is reached
+species pedestrian skills: [moving] topology: (topology(shape - (corridor_wall_0_shape + corridor_wall_1_shape))) {
 	point target_location;
-	float heading;
-	float speed <- 2.0;
-	
+	rgb color;
+
 	action init_location (point loc) {
 		location <- loc;
-		initial_location <- loc;
-		target_location <- {environment_size, loc.y};
-		heading <- (self) towards (target_location);
+		target_location <- {environment_width, loc.y};
+		speed <- rnd(pedestrian_speed - 5) + 5.0;
 	}
 	
+	
+	reflex change_speed when: every(rnd(200) #cycle) {
+			speed <- rnd(pedestrian_speed - 5) + 5.0;
+	}
+
 	//Reflex to make the agent move to its target_location
-	reflex move_left {
-		float update_heading <- (self) towards (target_location);
-		
-		point current_location <- location;
-		
-		//Conditions to know if the agent doesn't move, in this case we take care of it if it is bcause of the walls 
-	
-			if  (location.y <= corridor_wall_height) and (location.x <=  (environment_size / 2)) {
-				do move heading: self towards {(environment_size / 2) - (corridor_width / 2), corridor_wall_height}; 
-			}
-			if (location.y >= environment_size - corridor_wall_height) and (location.x <=  (environment_size / 2))
-			{
-				do move heading: self towards {(environment_size / 2) - (corridor_width / 2), environment_size - corridor_wall_height}; 
-			}
-		
-		
-		do move heading: update_heading ;
-		
-		 
-		//Conditions to know if the agent doesn't move, in this case we take care of it if it is bcause of the walls 
-		if (current_location = location) {
-			if ( (location.y <= corridor_wall_height) or (location.y >= environment_size - corridor_wall_height) ) {
-				do move heading: self towards {(environment_size / 2) - (corridor_width / 2), environment_size / 2}; 
-			} else {
-				do move heading: self towards {environment_size / 2, environment_size / 2}; 
-			}
+	reflex move {
+		point previous_location <- location;
+
+		if (location.y < corridor_wall_height) and (location.x <= (environment_width / 2)) {
+			do move heading: self towards {(environment_width / 2) - (corridor_width / 2), corridor_wall_height};
+		} else if (location.y > environment_height - corridor_wall_height) and (location.x <= (environment_width / 2)) {
+			do move heading: self towards {(environment_width / 2) - (corridor_width / 2), environment_height - corridor_wall_height};
+		} else {
+			do move heading: self towards target_location;
 		}
-		
-		if( (target_location.x - location.x) <= speed ) { 
-			do die;
+		if (location.x = previous_location.x) { // No move detected
+			do move heading: self towards {environment_width, world.shape.location.y};
 		}
 	}
-	 
-	aspect my_aspect {
-		draw shape color: pedestrian_color;
+
+	reflex arrived when: location.x >= target_location.x {
+		do die;
 	}
+
 }
 
 //Species which represents the corridor
-species corridor  {
-	geometry shape <- corridor_shape;
-	
+species corridor {
+	geometry shape <- ((rectangle({corridor_width, environment_height})) at_location world.location) - (corridor_wall_0_shape + corridor_wall_1_shape);
+
 	//Subspecies for the multi-level architectures : captured pedestrians in this case
 	species captured_pedestrian parent: pedestrian schedules: [] {
-		float released_time;
-		
-		aspect my_aspect { }
+		float release_time;
 	}
-	
-	init {
-		create corridor_info_drawer number: 1 with: [target :: self];
-	}
-	
+
 	//Reflex to capture pedestrians if the parameter is checked
 	reflex aggregate when: capture_pedestrians {
-		//List to get all the pedestrians inside the corridor
-		list<pedestrian> tobe_captured_pedestrians <- (pedestrian overlapping shape);
-		
-		//If we have pedestrians inside the corridor, we capture them
-		if !(empty (tobe_captured_pedestrians)) {
-			capture tobe_captured_pedestrians as: captured_pedestrian returns: cps;
-			
-			//We update the time during which a pedestrian is captured according to the time the pedestrian
-			// should need to pass through the corridor if it wasn't captured
-			loop cp over: cps {
-				cp.released_time <- time + ( ( corridor_width - ( (((cp).location).x) - ((environment_size / 2) - (corridor_width / 2)) ) ) / pedestrian_speed) ;
-			}
-		}
-	}
-	
-	//Reflex to release pedestrians which have already passed enough time in the corridor
+	//If we have pedestrians inside the corridor, we capture them
+	//We update the time during which a pedestrian is captured according to the time the pedestrian
+	// should need to pass through the corridor if it wasn't captured
+		capture (pedestrian where (p: p.location.x between (corridor_left_bounds, corridor_right_bounds))) as: captured_pedestrian {
+			release_time <- time + ((corridor_width - (location.x - ((environment_width / 2) - (corridor_width / 2)))) / (pedestrian_speed - 2.5));
+		} }
+
+		//Reflex to release pedestrians which have already passed enough time in the corridor
 	// which means if they weren't captured by the corridor, they would have finish passing through it
-	reflex disaggregate  {
-		list tobe_released_pedestrians <- members where (time >= (captured_pedestrian (each)).released_time);
-		if !(empty (tobe_released_pedestrians)) {
+	reflex disaggregate {
+		list tobe_released_pedestrians <- captured_pedestrian where (time >= each.release_time);
+		if !(empty(tobe_released_pedestrians)) {
 			release tobe_released_pedestrians as: pedestrian in: world {
-				location <- {((environment_size / 2) + (corridor_width / 2)) + (2 * pedestrian_size), (location).y};
+				location <- {((environment_width / 2) + (corridor_width / 2)), (location).y};
 			}
+
 		}
 	}
-	
-	aspect my_aspect {
-		draw shape color: corridor_color;
-	}
 }
 
-species corridor_wall {
-	init {
-		create corridor_wall_info_drawer number: 1 with: [target :: self];
-	}
-	
-	aspect  my_aspect {
-		draw shape color: corridor_wall_color;
-	}
-}
-
-species corridor_info_drawer {
-	corridor target;
-	
-	aspect my_aspect {
-		draw string("Captured pedestrians: " + (string (length (target.members)))) at: {environment_size / 3.9,corridor_wall_height/2} color: #blue font: font("SansSerif", 24, #bold);
-		//draw  'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 32°px at: {(target.location).x - 480, (target.location).y};
-		draw string("Pedestrians: " + (string (length (list (pedestrian))))) at: {environment_size / 3.9,corridor_wall_height/1.1} color: #blue font: font("SansSerif", 24, #bold);
-		
-		//draw  'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 32°px at: {(target.location).x - 135, (target.location).y + 100};
-	}
-}
-
-species corridor_wall_info_drawer {
-	corridor_wall target;
+experiment "Corridor" type: gui autorun: true {
+	point button_location;
+	bool button_hover;
+	geometry corridor_wall_0_display <- rectangle({corridor_width-30, corridor_wall_height-30}) at_location {environment_width / 2, corridor_wall_height / 2};
+	geometry corridor_wall_1_display <- rectangle({corridor_width-30, corridor_wall_height-30}) at_location {environment_width / 2, environment_height - (corridor_wall_height / 2)};
 	
 	init {
-		location <- target.location;
+		button_location <- {simulation.corridor_left_bounds + 100, 100};  
 	}
-	
-	aspect my_aspect { 
-		draw string("WALL") at: {environment_size / 2 , environment_size - corridor_wall_height/2} color: #black font: font("SansSerif", 36, #bold);
-	}
-}
-
-
-experiment corridor_expr type: gui{
 	output {
-		
-		//layout horizontal([vertical([1::5000,2::5000])::5000,0::5000]) tabs:true editors: false;
-		layout horizontal([vertical([1::5000,2::5000])::2942,0::7058]) tabs:true editors: false;
-		display defaut_display {
-			species pedestrian aspect: my_aspect;
-			
-			species corridor aspect: my_aspect transparency: 0.8 {
-				species captured_pedestrian;
+		display defaut_display background: #black fullscreen: true toolbar: false {
+			graphics back {
+				draw shape color: #black empty: false;
+				draw corridor_wall_0_display color: #gray empty: true;
+				draw corridor_wall_1_display color: #gray empty: true ;
 			}
-			
-			species corridor_wall aspect: my_aspect transparency: 0.7;
-			species corridor_info_drawer aspect: my_aspect;
-			species corridor_wall_info_drawer aspect: my_aspect;
-		}
 
-		display Execution_Time refresh: every(25#cycles) {
-			chart 'Simulation step length' type: series background: #white {
-				data 'simulation_step_length_in_mili_second' value: machine_time - start_time color: (rgb ('green'));
+			species corridor {
+				draw shape color: #black;
 			}
-		}
-	 	
-		display Captured_Pedestrians refresh: every(25#cycles){
-			chart 'Captured Pedestrian' type: series background: #white {
-				data 'captured_pedestrians' value: length ( ((list (corridor)) at 0).members ) color: rgb ('blue');
-				data 'pedestrians' value: length (list (pedestrian)) color: rgb ('white');  
+			
+			agents "Captured" value: list(corridor(0).captured_pedestrian) transparency: 0.5 {
+				draw square(30) empty: false color: #white;
 			}
+
+			species pedestrian {
+				draw square(20) empty: false color: color;
+			}
+
+			graphics front {
+				draw (capture_pedestrians ? "Capturing":"Not capturing") anchor: #left_center at: {corridor_left_bounds + 200, 100} color: !capture_pedestrians ? #darkred : #darkgreen font: font("Helvetica", 20 * #zoom, 0);
+				draw ("Captured: " + length(corridor(0).captured_pedestrian)) anchor: #left_center at: {corridor_left_bounds + 200, 250} color: #white font: font("Helvetica", 20 * #zoom, 0);
+				draw ("Pedestrians: " + length(pedestrian)) anchor: #left_center at: {corridor_left_bounds + 200, 400} color: #white font: font("Helvetica", 20 * #zoom, 0);
+				draw ("Step duration (ms): " + (duration copy_between (0, 4))) anchor: #left_center at: {corridor_left_bounds + 200, 550} color: #white font: font("Helvetica", 20 * #zoom, 0);
+			}
+
+			graphics button {
+				draw circle(50) color: #darkgray at: button_location;
+				draw circle(40) color: !capture_pedestrians ? (button_hover ? #red : #darkred) : (button_hover ? #lightgreen : #darkgreen) at:  button_location;
+			}
+
+			event mouse_down action: {
+				if (button_location distance_to #user_location <= 40) {
+					capture_pedestrians <- !capture_pedestrians;
+				}
+			};
+			event mouse_move action: {
+				button_hover <- (button_location distance_to #user_location <= 40);
+			};
 		}
 	}
+
 }

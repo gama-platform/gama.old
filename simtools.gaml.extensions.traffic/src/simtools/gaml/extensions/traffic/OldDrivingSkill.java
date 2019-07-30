@@ -16,7 +16,6 @@ import java.util.Collections;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -42,12 +41,12 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.path.GamaPath;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
@@ -404,7 +403,7 @@ public class OldDrivingSkill extends MovingSkill {
 					}
 				}
 				if (nbAg >= nbLanes && currentDistance < minDist) {
-					minDist = FastMath.max(0, currentDistance);
+					minDist = Math.max(0, currentDistance);
 				}
 
 			}
@@ -538,7 +537,7 @@ public class OldDrivingSkill extends MovingSkill {
 		double distance = _distance;
 		final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final THashMap agents = new THashMap<>();
+		final IMap agents = GamaMapFactory.createUnordered();
 		for (int i = index; i < nb; i++) {
 			final IShape line = edges.get(i);
 			final IShape lineAg = path.getRealObject(line);

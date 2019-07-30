@@ -104,13 +104,12 @@ public interface Constants {
 			put("Boolean", "B");
 			put("IExpression", "IE");
 			put("IShape", "IS");
-			put("GamaMap", "GM");
+			put("IMap", "GM");
 			put("IContainer", "IC");
 			put("GamaPoint", "IL");
 			put("IMatrix", "IM");
 			put("String", "S");
 			put("GamaPoint", "P");
-			put("GamaList", "GL");
 			put("MovingSkill", "MSK");
 			put("WorldSkill", "WSK");
 			put("GridSkill", "GSK");

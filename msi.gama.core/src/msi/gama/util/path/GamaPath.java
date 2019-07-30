@@ -12,7 +12,6 @@ package msi.gama.util.path;
 
 import org.jgrapht.GraphPath;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
@@ -21,6 +20,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
@@ -168,7 +168,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public IList<V> getVertexList() {
-		if (graph == null) { return GamaListFactory.create(); }
+		if (graph == null) { return GamaListFactory.EMPTY_LIST; }
 		return GamaListFactory.<V> wrap(getGamlType().getKeyType(), GraphPath.super.getVertexList());
 	}
 
@@ -266,7 +266,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	}
 
 	@Override
-	public void setRealObjects(final THashMap<IShape, IShape> realObjects) {
+	public void setRealObjects(final IMap<IShape, IShape> realObjects) {
 		;
 	}
 

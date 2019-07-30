@@ -13,20 +13,40 @@ package msi.gama.runtime;
 import java.util.Collections;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
+import msi.gama.common.util.PoolUtils;
+import msi.gama.util.GamaMapFactory;
+import msi.gaml.types.Types;
 
 public class ExecutionContext implements IExecutionContext {
 
-	Map<String, Object> local;
-	final IExecutionContext outer;
-	IScope scope;
+	private static final PoolUtils.ObjectPool<ExecutionContext> POOL =
+			PoolUtils.create("Execution Context", true, () -> new ExecutionContext(), null);
 
-	public ExecutionContext(final IScope scope) {
-		this(scope, (IExecutionContext) null);
+	public static ExecutionContext create(final IExecutionContext outer) {
+		return create(outer.getScope(), outer);
 	}
 
-	public ExecutionContext(final IExecutionContext outer) {
-		this(outer.getScope(), outer);
+	public static ExecutionContext create(final IScope scope) {
+		return create(scope, null);
+	}
+
+	public static ExecutionContext create(final IScope scope, final IExecutionContext outer) {
+		final ExecutionContext result = POOL.get();
+		result.scope = scope;
+		result.outer = outer;
+		return result;
+	}
+
+	Map<String, Object> local;
+	IExecutionContext outer;
+	IScope scope;
+
+	@Override
+	public void dispose() {
+		local = null;
+		outer = null;
+		scope = null;
+		POOL.release(this);
 	}
 
 	@Override
@@ -34,10 +54,7 @@ public class ExecutionContext implements IExecutionContext {
 		return scope;
 	}
 
-	ExecutionContext(final IScope scope, final IExecutionContext outer) {
-		this.outer = outer;
-		this.scope = scope;
-	}
+	ExecutionContext() {}
 
 	@Override
 	public final IExecutionContext getOuterContext() {
@@ -62,18 +79,19 @@ public class ExecutionContext implements IExecutionContext {
 		return local.get(name);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
-	public ExecutionContext createCopyContext() {
-		final ExecutionContext r = new ExecutionContext(scope, outer);
+	public ExecutionContext createCopy() {
+		final ExecutionContext r = create(scope, outer);
 		if (local != null) {
-			r.local = new THashMap<>(local);
+			r.local = GamaMapFactory.createWithoutCasting(Types.NO_TYPE, Types.NO_TYPE, local, false);
 		}
 		return r;
 	}
 
 	@Override
 	public ExecutionContext createChildContext() {
-		return new ExecutionContext(this);
+		return create(this);
 	}
 
 	@Override
@@ -89,7 +107,7 @@ public class ExecutionContext implements IExecutionContext {
 	@Override
 	public void putLocalVar(final String varName, final Object val) {
 		if (local == null) {
-			local = new THashMap<>();
+			local = GamaMapFactory.createUnordered();
 		}
 		local.put(varName, val);
 	}

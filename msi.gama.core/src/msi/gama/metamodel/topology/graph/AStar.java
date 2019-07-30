@@ -17,9 +17,9 @@ import java.util.Set;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.util.GamaListFactory;
+import msi.gama.util.Collector;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph._Edge;
 import msi.gama.util.graph._Vertex;
@@ -29,8 +29,8 @@ public class AStar<V, E> {
 	protected GamaGraph<V, E> graph;
 	protected V source;
 	protected V target;
-	protected Map<V, ASNode> openMap = new TOrderedHashMap<>();
-	protected Map<V, ASNode> closedMap = new TOrderedHashMap<>();
+	protected Map<V, ASNode> openMap = GamaMapFactory.create();
+	protected Map<V, ASNode> closedMap = GamaMapFactory.create();
 
 	protected List<E> result;
 	protected boolean isSpatialGraph;
@@ -75,28 +75,29 @@ public class AStar<V, E> {
 	}
 
 	public IList<E> buildPath(final ASNode target) {
-		final IList<E> path = GamaListFactory.create();
+		try (final Collector.AsList<E> path = Collector.getList();
 
-		final IList<ASNode> thePath = GamaListFactory.create();
-		ASNode node = target;
+				final Collector.AsList<ASNode> thePath = Collector.getList();) {
+			ASNode node = target;
 
-		while (node != null) {
-			thePath.add(node);
-			node = node.parent;
-		}
-
-		final int n = thePath.size();
-
-		if (n > 1) {
-			ASNode follow = thePath.get(n - 2);
-			path.add(follow.edge);
-			for (int i = n - 3; i >= 0; i--) {
-				follow = thePath.get(i);
-				path.add(follow.edge);
+			while (node != null) {
+				thePath.add(node);
+				node = node.parent;
 			}
-		}
 
-		return path;
+			final int n = thePath.size();
+
+			if (n > 1) {
+				ASNode follow = thePath.items().get(n - 2);
+				path.add(follow.edge);
+				for (int i = n - 3; i >= 0; i--) {
+					follow = thePath.items().get(i);
+					path.add(follow.edge);
+				}
+			}
+
+			return path.items();
+		}
 	}
 
 	protected void cleanAll() {

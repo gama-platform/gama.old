@@ -12,10 +12,9 @@ package msi.gama.metamodel.topology.grid;
 
 import java.util.Set;
 
-import gnu.trove.set.hash.TIntHashSet;
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import msi.gama.util.Collector;
 
 /**
  * Written by drogoul Modified on 8 mars 2011
@@ -55,28 +54,26 @@ public abstract class GridNeighborhood implements INeighborhood {
 		return neighbors[placeIndex];
 	}
 
-	protected abstract TIntHashSet getNeighborsAtRadius(final int placeIndex, final int radius);
+	protected abstract Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius);
 
 	private void computeNeighborsFrom(final int placeIndex, final int begin, final int end) {
 		for (int i = begin; i <= end; i++) {
 			// final int previousIndex = i == 1 ? 0 :
 			// neighborsIndexes[placeIndex].get(i - 2);
 			final int previousIndex = i == 1 ? 0 : neighborsIndexes[placeIndex][i - 2];
-			final TIntHashSet list = getNeighborsAtRadius(placeIndex, i);
-			final int[] listArray = list.toArray();
+			final Set<Integer> list = getNeighborsAtRadius(placeIndex, i);
+			final int[] listArray = new int[list.size()];
+			int index = 0;
+			for (final Integer ii : list) {
+				listArray[index++] = ii.intValue();
+			}
 			final int size = listArray.length;
-			// final int size = list.size();
-			// final int[] listArray = new int[size];
-			// for ( int j = 0; j < size; j++ ) {
-			// listArray[j] = list.get(j);
-			// }
 			final int[] newArray = new int[neighbors[placeIndex].length + size];
 			if (neighbors[placeIndex].length != 0) {
 				java.lang.System.arraycopy(neighbors[placeIndex], 0, newArray, 0, neighbors[placeIndex].length);
 			}
 			java.lang.System.arraycopy(listArray, 0, newArray, neighbors[placeIndex].length, size);
 			neighbors[placeIndex] = newArray;
-			// neighborsIndexes[placeIndex].add(previousIndex + size);
 			addToNeighborsIndex(placeIndex, previousIndex + size);
 		}
 	}
@@ -110,12 +107,13 @@ public abstract class GridNeighborhood implements INeighborhood {
 		}
 		final int[] nn = neighbors[placeIndex];
 		final int nnSize = neighborsIndexes[placeIndex][radius - 1];
-		final Set<IAgent> result = new TLinkedHashSet<>();
-		for (int i = 0; i < nnSize; i++) {
-			result.add(matrix.matrix[nn[i]].getAgent());
+		try (final Collector.AsOrderedSet<IAgent> result = Collector.getOrderedSet()) {
+			for (int i = 0; i < nnSize; i++) {
+				result.add(matrix.matrix[nn[i]].getAgent());
+			}
+			scope.getRandom().shuffle2(result);
+			return result.items();
 		}
-		scope.getRandom().shuffle2(result);
-		return result;
 	}
 
 	@Override

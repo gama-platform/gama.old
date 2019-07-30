@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.kernel.GamaMetaModel.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.compilation.kernel.GamaMetaModel.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.kernel;
 
@@ -15,6 +15,7 @@ import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
 import static msi.gama.common.interfaces.IKeyword.MODEL;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -22,13 +23,11 @@ import java.util.Set;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IExperimentAgentCreator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.PlatformSpeciesDescription;
@@ -43,8 +42,8 @@ public class GamaMetaModel {
 
 	public final static GamaMetaModel INSTANCE = new GamaMetaModel();
 
-	private final Map<String, IExperimentAgentCreator> experimentCreators = new THashMap<>();
-	private final Map<String, SpeciesProto> tempSpecies = new TOrderedHashMap();
+	private final Map<String, IExperimentAgentCreator> experimentCreators = new HashMap<>();
+	private final Map<String, SpeciesProto> tempSpecies = new HashMap();
 	private final Multimap<String, String> speciesSkills = HashMultimap.create();
 	private GamlModelSpecies abstractModelSpecies;
 	public volatile boolean isInitialized;
@@ -166,8 +165,9 @@ public class GamaMetaModel {
 
 	public PlatformSpeciesDescription getPlatformSpeciesDescription() {
 		final IType platform = Types.get(IKeyword.PLATFORM);
-		if (platform != null
-				&& platform != Types.NO_TYPE) { return (PlatformSpeciesDescription) platform.getSpecies(); }
+		if (platform != null && platform != Types.NO_TYPE) {
+			return (PlatformSpeciesDescription) platform.getSpecies();
+		}
 		return null;
 	}
 

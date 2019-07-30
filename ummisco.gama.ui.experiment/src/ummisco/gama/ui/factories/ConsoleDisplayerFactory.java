@@ -4,10 +4,12 @@
  * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.factories;
+
+import java.util.ConcurrentModificationException;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -52,7 +54,13 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 		}
 
 		private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaColor color) {
-			final IGamaView.Console console = (Console) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
+			IGamaView.Console console = null;
+			try {
+				console = (Console) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
+			} catch (final ConcurrentModificationException e) {
+				// See Issue #2812. With concurrent views opening, the view might be impossible to find
+				// e.printStackTrace();
+			}
 			if (console != null) {
 				console.append(msg, root, color);
 			} else {
@@ -66,14 +74,16 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 			if (console != null) {
 				WorkbenchHelper.run(() -> console.reset());
 			}
+			consoleBuffer.setLength(0);
 		}
 
 		@Override
 		public void showConsoleView(final ITopLevelAgent agent) {
 			final IGamaView.Console icv = (Console) GAMA.getGui().showView(null, IGui.INTERACTIVE_CONSOLE_VIEW_ID, null,
 					IWorkbenchPage.VIEW_VISIBLE);
-			if (icv != null)
+			if (icv != null) {
 				icv.append(null, agent, null);
+			}
 			final IGamaView.Console console =
 					(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 			if (consoleBuffer.length() > 0 && console != null) {

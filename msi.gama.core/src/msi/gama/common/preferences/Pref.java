@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -287,7 +287,7 @@ public class Pref<T> implements IParameter {
 	}
 
 	public void save() {
-		final Map<String, Object> map = new THashMap<>();
+		final Map<String, Object> map = GamaMapFactory.createUnordered();
 		map.put(getName(), getValue());
 		GamaPreferences.setNewPreferences(map);
 	}

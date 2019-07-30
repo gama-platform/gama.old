@@ -963,7 +963,7 @@ public class FIPASkill extends MessagingSkill {
 	 */
 	private IList<FIPAMessage> filter(final IScope scope, final IAgent agent, final Performative performative) {
 		final IList<FIPAMessage> inBox = getMessages(scope, agent);
-		if (inBox.isEmpty()) { return GamaListFactory.create(); }
+		if (inBox.isEmpty()) { return GamaListFactory.EMPTY_LIST; }
 		final IList<FIPAMessage> result = GamaListFactory.create(scope.getType(GamaMessageType.MESSAGE_STR));
 		for (final FIPAMessage m : inBox) {
 			final boolean unread = m.isUnread();

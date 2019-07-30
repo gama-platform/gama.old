@@ -34,6 +34,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -194,10 +195,10 @@ public abstract class GamaExecutorService {
 		AGENT_PARALLEL_EXECUTOR.invoke(ForkJoinTask.adapt(r));
 	}
 
-	public static Boolean step(final IScope scope, final List<? extends IAgent> pop, final ISpecies species)
+	public static <A extends IAgent> Boolean step(final IScope scope, final IList<A> pop, final ISpecies species)
 			throws GamaRuntimeException {
 		final IExpression schedule = species.getSchedule();
-		final List<? extends IAgent> agents = schedule == null ? pop : Cast.asList(scope, schedule.value(scope));
+		final IList<? extends IAgent> agents = schedule == null ? pop : Cast.asList(scope, schedule.value(scope));
 		final int threshold =
 				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
 		return doStep(scope, agents.toArray(new IAgent[agents.size()]), threshold, species);
@@ -210,8 +211,8 @@ public abstract class GamaExecutorService {
 		if (schedule == null) {
 			scheduledAgents = array;
 		} else {
-			final List<IShape> agents = Cast.asList(scope, schedule.value(scope));
-			scheduledAgents = agents.toArray(new IShape[agents.size()]);
+			final List<IAgent> agents = Cast.asList(scope, schedule.value(scope));
+			scheduledAgents = agents.toArray(new IAgent[agents.size()]);
 		}
 		final int threshold =
 				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
@@ -227,11 +228,12 @@ public abstract class GamaExecutorService {
 			}
 			switch (concurrency) {
 				case 0:
-					for (final A agent : array) {
-						if (((IAgent) agent).dead()) {
+					for (final A aa : array) {
+						final IAgent agent = (IAgent) aa;
+						if (agent.dead()) {
 							continue; // add this condition to avoid the activation of dead agents
 						}
-						if (!scope.step((IAgent) agent).passed()) { return false; }
+						if (!scope.step(agent).passed()) { return false; }
 					}
 					break;
 				case 1:

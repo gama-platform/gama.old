@@ -18,6 +18,7 @@ import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
@@ -307,7 +308,7 @@ public abstract class AbstractAgent implements IAgent {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		if (getHost() == null) { return GamaListFactory.create(); }
+		if (getHost() == null) { return GamaListFactory.EMPTY_LIST; }
 		final IPopulation<? extends IAgent> pop = getHost().getPopulationFor(this.getSpecies());
 		if (pop != null) {
 			final IScope scope = getScope();
@@ -316,7 +317,7 @@ public abstract class AbstractAgent implements IAgent {
 			retVal.remove(this);
 			return retVal;
 		}
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
@@ -497,7 +498,7 @@ public abstract class AbstractAgent implements IAgent {
 					doc = @doc ("The message to display")) })
 	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
 		final String m = (String) scope.getArg("message", IType.STRING);
-		scope.getGui().getConsole(scope).debugConsole(scope.getClock().getCycle(),
+		scope.getGui().getConsole().debugConsole(scope.getClock().getCycle(),
 				m + "\nsender: " + Cast.asMap(scope, this, false), scope.getRoot());
 		return m;
 	}
@@ -514,7 +515,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Deprecated
 	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
 		final String s = (String) scope.getArg("message", IType.STRING);
-		scope.getGui().getConsole(scope).informConsole(s, scope.getRoot());
+		scope.getGui().getConsole().informConsole(s, scope.getRoot());
 		return s;
 	}
 
@@ -595,7 +596,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public IList<? extends ILocation> getPoints() {
-		if (getGeometry() == null) { return GamaListFactory.create(); }
+		if (getGeometry() == null) { return GamaListFactory.EMPTY_LIST; }
 		return getGeometry().getPoints();
 	}
 

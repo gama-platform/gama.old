@@ -299,7 +299,9 @@ public class GifDecoder {
 			if (is != null) {
 				is.close();
 			}
-		} catch (final IOException e) {}
+		} catch (final IOException e) {
+
+		}
 		return status;
 	}
 
@@ -566,7 +568,7 @@ public class GifDecoder {
 					status = STATUS_FORMAT_ERROR;
 			}
 		}
-		if (frameCount > 0) {
+		if (frameCount > 0 && getDuration() > 0) {
 			timer = new Timer(true);
 			timer.scheduleAtFixedRate(task, 0, getDuration() / frameCount);
 		}

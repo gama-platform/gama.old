@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
@@ -30,7 +31,7 @@ public interface ISpatialIndex {
 
 	void insert(IAgent agent);
 
-	void remove(final Envelope previous, final IAgent agent);
+	void remove(final Envelope3D previous, final IAgent agent);
 
 	IAgent firstAtDistance(IScope scope, final IShape source, final double dist, final IAgentFilter f);
 

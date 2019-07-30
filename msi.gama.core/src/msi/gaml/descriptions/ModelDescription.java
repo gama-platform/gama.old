@@ -13,6 +13,7 @@ package msi.gaml.descriptions;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -21,11 +22,12 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.TLinkedHashSet;
+import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
@@ -44,7 +46,7 @@ public class ModelDescription extends SpeciesDescription {
 	// TODO Move elsewhere
 	public static final String MODEL_SUFFIX = "_model";
 	public static volatile ModelDescription ROOT;
-	private THashMap<String, ExperimentDescription> experiments;
+	private IMap<String, ExperimentDescription> experiments;
 	final ITypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
@@ -52,7 +54,7 @@ public class ModelDescription extends SpeciesDescription {
 	private final ValidationContext validationContext;
 	protected volatile boolean document;
 	// hqnghi new attribute manipulate micro-models
-	private THashMap<String, ModelDescription> microModels;
+	private IMap<String, ModelDescription> microModels;
 	private String alias = "";
 	boolean isStartingDateDefined = false;
 	private Collection<String> importedModelNames;
@@ -244,7 +246,7 @@ public class ModelDescription extends SpeciesDescription {
 		if (child instanceof ModelDescription) {
 			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
 			if (microModels == null) {
-				microModels = new THashMap();
+				microModels = GamaMapFactory.createUnordered();
 			}
 			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
 		} // no else as models are also species, which should be added after.
@@ -252,7 +254,7 @@ public class ModelDescription extends SpeciesDescription {
 		if (child instanceof ExperimentDescription) {
 			final String s = child.getName();
 			if (experiments == null) {
-				experiments = new THashMap();
+				experiments = GamaMapFactory.createUnordered();
 			}
 			experiments.put(s, (ExperimentDescription) child);
 		} else {
@@ -320,13 +322,13 @@ public class ModelDescription extends SpeciesDescription {
 
 	public Set<String> getExperimentNames() {
 		if (experiments == null) { return Collections.EMPTY_SET; }
-		return new TLinkedHashSet(experiments.keySet());
+		return new LinkedHashSet(experiments.keySet());
 	}
 
 	public Set<String> getExperimentTitles() {
-		final Set<String> strings = new TLinkedHashSet();
+		final Set<String> strings = new LinkedHashSet();
 		if (experiments != null) {
-			experiments.forEachEntry((a, b) -> {
+			experiments.forEachPair((a, b) -> {
 				if (b.getOriginName().equals(getName())) {
 					strings.add(b.getExperimentTitleFacet());
 				}
@@ -353,7 +355,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public boolean visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		boolean result = super.visitChildren(visitor);
 		if (result && experiments != null) {
 			result &= experiments.forEachValue(visitor);
@@ -362,7 +364,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
 		if (!super.visitOwnChildren(visitor)) { return false; }
 		if (experiments != null) {
 			if (!experiments.forEachValue(visitor)) { return false; }
@@ -371,9 +373,9 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
-		final DescriptionVisitor recursiveVisitor = each -> {
-			if (!visitor.visit(each)) { return false; }
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
+		final DescriptionVisitor<IDescription> recursiveVisitor = each -> {
+			if (!visitor.process(each)) { return false; }
 			return each.visitOwnChildrenRecursively(visitor);
 		};
 		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
@@ -428,13 +430,13 @@ public class ModelDescription extends SpeciesDescription {
 	 * @return
 	 */
 
-	public void visitAllSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
-		visitor.visit(this);
+	public void visitAllSpecies(final ConsumerWithPruning<SpeciesDescription> visitor) {
+		visitor.process(this);
 		if (!visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
-			public boolean visit(final SpeciesDescription desc) {
-				visitor.visit(desc);
+			public boolean process(final SpeciesDescription desc) {
+				visitor.process(desc);
 				return desc.visitMicroSpecies(this);
 			}
 		})) { return; }

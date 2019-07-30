@@ -19,13 +19,13 @@ import org.eclipse.core.runtime.Path;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.GamaFolderFile;
 import msi.gama.util.file.GamaGifFile;
@@ -49,8 +49,8 @@ import msi.gaml.expressions.IExpression;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
-	public static Map<String, ParametricFileType> extensionsToFullType = new THashMap<>();
-	static Map<String, ParametricFileType> aliasesToFullType = new THashMap<>();
+	public static Map<String, ParametricFileType> extensionsToFullType = GamaMapFactory.createUnordered();
+	static Map<String, ParametricFileType> aliasesToFullType = GamaMapFactory.createUnordered();
 	static Multimap<String, String> aliasesToExtensions = HashMultimap.<String, String> create();
 	static int currentFileTypeIndex = 1000;
 

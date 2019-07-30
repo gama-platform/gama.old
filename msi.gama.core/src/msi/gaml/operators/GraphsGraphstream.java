@@ -13,9 +13,15 @@ package msi.gaml.operators;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.ext.graphstream.BarabasiAlbertGenerator;
+import msi.gama.ext.graphstream.BaseGenerator;
+import msi.gama.ext.graphstream.FullGenerator;
+import msi.gama.ext.graphstream.Sink;
+import msi.gama.ext.graphstream.SinkAdapter;
+import msi.gama.ext.graphstream.WattsStrogatzGenerator;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -31,19 +37,12 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.GraphAndPopulationsSynchronizer;
 import msi.gama.util.graph.IGraph;
-import msi.gama.util.graph.graphstream_copy.BarabasiAlbertGenerator;
-import msi.gama.util.graph.graphstream_copy.BaseGenerator;
-import msi.gama.util.graph.graphstream_copy.FullGenerator;
-import msi.gama.util.graph.graphstream_copy.Sink;
-import msi.gama.util.graph.graphstream_copy.SinkAdapter;
-import msi.gama.util.graph.graphstream_copy.WattsStrogatzGenerator;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
@@ -80,8 +79,8 @@ public class GraphsGraphstream {
 
 		private final List<IAgent> existingNodes;
 
-		private final Map<String, IAgent> nodeId2agent = new THashMap<>();
-		private final Map<String, IAgent> edgeId2agent = new THashMap<>();
+		private final Map<String, IAgent> nodeId2agent = GamaMapFactory.createUnordered();
+		private final Map<String, IAgent> edgeId2agent = GamaMapFactory.createUnordered();
 
 		public GraphStreamGamaGraphSink(final IGraph gamaGraph, final IScope scope, final IPopulation populationNodes,
 				final IPopulation populationEdges, final IList<IAgent> existingNodes) {
@@ -91,7 +90,7 @@ public class GraphsGraphstream {
 			this.populationEdges = populationEdges;
 
 			this.initialValues = new LinkedList<>();
-			final Map<String, Object> map = new THashMap();
+			final Map<String, Object> map = GamaMapFactory.createUnordered();
 			initialValues.add(map);
 
 			this.existingNodes = existingNodes;
@@ -212,17 +211,17 @@ public class GraphsGraphstream {
 		generator.addSink(ourSink);
 
 		// load the graph
-
+		final Random random = scope.getRandom().getGenerator();
 		if (maxLinks < 0) {
-			generator.begin();
-			while (generator.nextEvents()) {
+			generator.begin(random);
+			while (generator.nextEvents(random)) {
 				// nothing to do
 			}
 			generator.end();
 		} else {
-			generator.begin();
+			generator.begin(random);
 			for (int i = 0; i < maxLinks; i++) {
-				generator.nextEvents();
+				generator.nextEvents(random);
 			}
 			generator.end();
 		}
@@ -254,17 +253,17 @@ public class GraphsGraphstream {
 		generator.addSink(ourSink);
 
 		// load the graph
-
+		final Random random = scope.getRandom().getGenerator();
 		if (maxLinks < 0) {
-			generator.begin();
-			while (generator.nextEvents()) {
+			generator.begin(random);
+			while (generator.nextEvents(random)) {
 				// nothing to do
 			}
 			generator.end();
 		} else {
-			generator.begin();
+			generator.begin(random);
 			for (int i = 0; i < maxLinks; i++) {
-				generator.nextEvents();
+				generator.nextEvents(random);
 			}
 			generator.end();
 		}
@@ -513,14 +512,14 @@ public class GraphsGraphstream {
 		final IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_species,
 				new FullGenerator(), size - 1, isSychronized);
 
-		final double THETA = 2 * CmnFastMath.PI / size;
+		final double THETA = 2 * Math.PI / size;
 		int i = 0;
 		final IList<GamlAgent> listVertex = g.getVertices();
 		final ILocation locEnv = scope.getSimulation().getGeometry().getLocation();
 		for (final GamlAgent e : listVertex) {
-			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
-					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
-			scope.getGui().getConsole(scope).informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
+			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
+					locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
+			scope.getGui().getConsole().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
 					scope.getRoot());
 			i++;
 		}
@@ -563,14 +562,14 @@ public class GraphsGraphstream {
 		final IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_species, new FullGenerator(),
 				nodes.size() - 1, isSychronized);
 
-		final double THETA = 2 * CmnFastMath.PI / nodes.size();
+		final double THETA = 2 * Math.PI / nodes.size();
 		int i = 0;
 		final IList<GamlAgent> listVertex = g.getVertices();
 		final ILocation locEnv = scope.getSimulation().getGeometry().getLocation();
 		for (final GamlAgent e : listVertex) {
-			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
-					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
-			scope.getGui().getConsole(scope).informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
+			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i),
+					locEnv.getY() + layoutRadius * Math.sin(THETA * i), locEnv.getZ()));
+			scope.getGui().getConsole().informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA,
 					scope.getRoot());
 			i++;
 		}

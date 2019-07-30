@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.console;
@@ -29,7 +29,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -95,7 +94,7 @@ public class ConsoleView extends GamaViewPart
 
 	/**
 	 * Append the text to the console.
-	 * 
+	 *
 	 * @param text
 	 *            to display in the console
 	 */
@@ -123,7 +122,7 @@ public class ConsoleView extends GamaViewPart
 				if (maxMemorized == -1) {
 					maxMemorized = maxDisplayed;
 				} else {
-					maxMemorized = CmnFastMath.min(maxMemorized, maxDisplayed);
+					maxMemorized = Math.min(maxMemorized, maxDisplayed);
 				}
 			}
 			if (maxMemorized > 0) {
@@ -210,7 +209,7 @@ public class ConsoleView extends GamaViewPart
 	 * As ConsoleView is automatically opened by moving to the simulation perspective, the automatic closing can cause
 	 * problems. So the view is stated as accepting an "experiment-less" mode. See Issue #1361 Method
 	 * shouldBeClosedWhenNoExperiments()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.GamaViewPart#shouldBeClosedWhenNoExperiments()
 	 */
 	@Override
@@ -225,7 +224,7 @@ public class ConsoleView extends GamaViewPart
 
 	/**
 	 * Method synchronizeChanged()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override

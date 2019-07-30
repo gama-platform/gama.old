@@ -12,11 +12,9 @@ package msi.gaml.types;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -24,6 +22,8 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 import msi.gama.util.IContainer;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
@@ -414,19 +414,20 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public static IType<?> findCommonType(final IExpression[] elements, final int kind) {
 		final IType<?> result = Types.NO_TYPE;
 		if (elements.length == 0) { return result; }
-		final Set<IType<?>> types = new TLinkedHashSet<>();
-		for (final IExpression e : elements) {
-			// TODO Indicates a previous error in compiling expressions. Maybe
-			// we should cut this
-			// part
-			if (e == null) {
-				continue;
+		try (final ICollector<IType<?>> types = Collector.getOrderedSet()) {
+			for (final IExpression e : elements) {
+				// TODO Indicates a previous error in compiling expressions. Maybe
+				// we should cut this
+				// part
+				if (e == null) {
+					continue;
+				}
+				final IType<?> eType = e.getGamlType();
+				types.add(kind == TYPE ? eType : kind == CONTENT ? eType.getContentType() : eType.getKeyType());
 			}
-			final IType<?> eType = e.getGamlType();
-			types.add(kind == TYPE ? eType : kind == CONTENT ? eType.getContentType() : eType.getKeyType());
+			final IType<?>[] array = types.items().toArray(new IType[types.size()]);
+			return findCommonType(array);
 		}
-		final IType<?>[] array = types.toArray(new IType[types.size()]);
-		return findCommonType(array);
 	}
 
 	public static IType<?> findCommonType(final IType<?>... types) {

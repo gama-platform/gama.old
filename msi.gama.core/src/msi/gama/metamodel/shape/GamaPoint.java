@@ -19,6 +19,7 @@ import com.vividsolutions.jts.util.NumberUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
@@ -245,7 +246,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public Envelope3D getEnvelope() {
-		return Envelope3D.of(this);
+		return Envelope3D.of((Coordinate) this);
 	}
 
 	@Override
@@ -517,7 +518,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public IList<GamaShape> getHoles() {
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	/**

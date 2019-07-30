@@ -22,7 +22,8 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.statements.Facets;
 
@@ -30,7 +31,7 @@ import msi.gaml.statements.Facets;
 
 public class ExperimentDescription extends SpeciesDescription {
 
-	private TOrderedHashMap<String, VariableDescription> parameters;
+	private IMap<String, VariableDescription> parameters;
 	private StatementDescription output;
 	private StatementDescription permanent;
 
@@ -47,7 +48,7 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	private void addParameterNoCheck(final VariableDescription var) {
 		if (parameters == null) {
-			parameters = new TOrderedHashMap<>(5);
+			parameters = GamaMapFactory.create();
 		}
 
 		parameters.put(var.getName(), var);
@@ -125,30 +126,30 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
 		if (!super.visitOwnChildren(visitor)) { return false; }
 		if (parameters != null) {
 			if (!parameters.forEachValue(visitor)) { return false; }
 		}
 		if (output != null) {
-			if (!visitor.visit(output)) { return false; }
+			if (!visitor.process(output)) { return false; }
 		}
 		if (permanent != null) {
-			if (!visitor.visit(permanent)) { return false; }
+			if (!visitor.process(permanent)) { return false; }
 		}
 		return true;
 	}
 
 	@Override
-	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
-		final DescriptionVisitor recursiveVisitor = each -> {
-			if (!visitor.visit(each)) { return false; }
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
+		final DescriptionVisitor<IDescription> recursiveVisitor = each -> {
+			if (!visitor.process(each)) { return false; }
 			return each.visitOwnChildrenRecursively(visitor);
 		};
 		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
 		if (parameters != null && !parameters.forEachValue(recursiveVisitor)) { return false; }
-		if (output != null && !recursiveVisitor.visit(output)) { return false; }
-		if (permanent != null && !recursiveVisitor.visit(permanent)) { return false; }
+		if (output != null && !recursiveVisitor.process(output)) { return false; }
+		if (permanent != null && !recursiveVisitor.process(permanent)) { return false; }
 		return true;
 	}
 
@@ -161,7 +162,7 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public boolean visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		boolean result = super.visitChildren(visitor);
 		if (!result) { return false; }
 		if (parameters != null) {
@@ -169,11 +170,11 @@ public class ExperimentDescription extends SpeciesDescription {
 		}
 		if (!result) { return false; }
 		if (output != null) {
-			result &= visitor.visit(output);
+			result &= visitor.process(output);
 		}
 		if (!result) { return false; }
 		if (permanent != null) {
-			result &= visitor.visit(permanent);
+			result &= visitor.process(permanent);
 		}
 		return result;
 	}

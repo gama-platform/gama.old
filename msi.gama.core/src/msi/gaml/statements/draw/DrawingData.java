@@ -11,8 +11,9 @@
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
-import java.util.List;
+import java.util.function.Function;
 
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -24,6 +25,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.GamaFontType;
@@ -46,12 +48,12 @@ public class DrawingData extends AttributeHolder {
 
 	final Attribute<ILocation> size;
 	final Attribute<Double> depth;
-	final Attribute<GamaPair<Double, GamaPoint>> rotation;
+	final Attribute<AxisAngle> rotation;
 	final Attribute<ILocation> location;
 	final Attribute<ILocation> anchor;
 	final Attribute<Boolean> empty;
-	final Attribute<GamaColor> border;
-	private final Attribute<IList<GamaColor>> colors;
+	final Attribute<GamaColor> border, color;
+	// private final Attribute<IList<GamaColor>> colors;
 	final Attribute<GamaFont> font;
 	final Attribute<IList> texture;
 	final Attribute<GamaMaterial> material;
@@ -61,7 +63,15 @@ public class DrawingData extends AttributeHolder {
 
 	public DrawingData(final DrawStatement symbol) {
 		super(symbol);
-
+		final Function<IExpression, ILocation> constSizeCaster = (exp) -> {
+			if (exp.getGamlType().isNumber()) {
+				final double val = Cast.asFloat(null, exp.getConstValue());
+				// We do not consider the z ordinate -- see Issue #1539
+				return new GamaPoint(val, val, 0);
+			} else {
+				return (GamaPoint) exp.getConstValue();
+			}
+		};
 		this.size = create(IKeyword.SIZE, (scope, exp) -> {
 			if (exp.getGamlType().isNumber()) {
 				final double val = Cast.asFloat(scope, exp.value(scope));
@@ -70,29 +80,44 @@ public class DrawingData extends AttributeHolder {
 			} else {
 				return (GamaPoint) exp.value(scope);
 			}
-		}, Types.POINT, null);
+		}, Types.POINT, null, constSizeCaster);
 		this.lighting = create(IKeyword.LIGHTED, Types.BOOL, true);
 		this.depth = create(IKeyword.DEPTH, Types.FLOAT, null);
+		final Function<IExpression, AxisAngle> constRotationCaster = (exp) -> {
+			if (exp.getGamlType().getGamlType() == Types.PAIR) {
+				final GamaPair currentRotation = Cast.asPair(null, exp.getConstValue(), true);
+				return new AxisAngle((GamaPoint) Cast.asPoint(null, currentRotation.value),
+						Cast.asFloat(null, currentRotation.key));
+			} else {
+				return new AxisAngle(Rotation3D.PLUS_K, Cast.asFloat(null, exp.getConstValue()));
+			}
+		};
 		this.rotation = create(IKeyword.ROTATE, (scope, exp) -> {
 			if (exp.getGamlType().getGamlType() == Types.PAIR) {
 				final GamaPair currentRotation = Cast.asPair(scope, exp.value(scope), true);
-				currentRotation.key = Cast.asFloat(scope, currentRotation.key);
-				return currentRotation;
+				return new AxisAngle((GamaPoint) Cast.asPoint(scope, currentRotation.value),
+						Cast.asFloat(scope, currentRotation.key));
 			} else {
-				final GamaPair currentRotation =
-						new GamaPair(scope, exp.value(scope), Rotation3D.PLUS_K, Types.FLOAT, Types.POINT);
-				currentRotation.key = Cast.asFloat(scope, currentRotation.key);
-				return currentRotation;
+				return new AxisAngle(Rotation3D.PLUS_K, Cast.asFloat(scope, exp.value(scope)));
 			}
-		}, Types.PAIR, null);
+		}, Types.NO_TYPE, null, constRotationCaster);
 		this.anchor = create(IKeyword.ANCHOR, (scope, exp) -> {
-			final GamaPoint p = (GamaPoint) exp.value(scope);
+			final GamaPoint p = (GamaPoint) Cast.asPoint(scope, exp.value(scope));
 			p.x = Math.min(1d, Math.max(p.x, 0d));
 			p.y = Math.min(1d, Math.max(p.y, 0d));
 			return p;
-		}, Types.POINT, IUnits.bottom_left);
+		}, Types.POINT, IUnits.bottom_left, (e) -> Cast.asPoint(null, e.getConstValue()));
 		this.location = create(IKeyword.AT, Types.POINT, null);
 		this.empty = create(IKeyword.EMPTY, Types.BOOL, false);
+		final Function<IExpression, GamaColor> constBorderCaster = (exp) -> {
+			if (exp.getGamlType() == Types.BOOL) {
+				final boolean hasBorder = (boolean) exp.getConstValue();
+				if (hasBorder) { return DEFAULT_BORDER_COLOR; }
+				return null;
+			} else {
+				return (GamaColor) exp.getConstValue();
+			}
+		};
 		this.border = create(IKeyword.BORDER, (scope, exp) -> {
 			if (exp.getGamlType() == Types.BOOL) {
 				final boolean hasBorder = Cast.asBool(scope, exp.value(scope));
@@ -101,41 +126,43 @@ public class DrawingData extends AttributeHolder {
 			} else {
 				return (GamaColor) exp.value(scope);
 			}
-		}, Types.COLOR, null);
-		this.colors = create(IKeyword.COLOR, (scope, exp) -> {
+		}, Types.COLOR, null, constBorderCaster);
+
+		this.color = create(IKeyword.COLOR, (scope, exp) -> {
 			switch (exp.getGamlType().id()) {
 				case IType.COLOR:
-					final GamaColor currentColor = (GamaColor) exp.value(scope);
-					return GamaListFactory.wrap(Types.COLOR, currentColor);
-				case IType.LIST:
-					return (IList) exp.value(scope);
+					return Cast.asColor(scope, exp.value(scope));
 				default:
 					return null;
 			}
 
-		}, Types.LIST, null);
+		}, Types.COLOR, null, (e) -> {
+			switch (e.getGamlType().id()) {
+				case IType.COLOR:
+					return Cast.asColor(null, e.getConstValue());
+				default:
+					return null;
+			}
+		});
 		this.font = create(IKeyword.FONT, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
+		final Function<IExpression, IList> constTextureCaster = (exp) -> {
+			if (exp.getGamlType().getGamlType() == Types.LIST) {
+				return GamaListType.staticCast(null, exp.getConstValue(), Types.STRING, false);
+			} else {
+				return GamaListFactory.wrap(Types.NO_TYPE, exp.getConstValue());
+			}
+		};
 		this.texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			if (exp.getGamlType().getGamlType() == Types.LIST) {
 				return GamaListType.staticCast(scope, exp.value(scope), Types.STRING, false);
 			} else {
 				return GamaListFactory.wrap(Types.NO_TYPE, exp.value(scope));
 			}
-		}, Types.LIST, null);
+		}, Types.LIST, null, constTextureCaster);
 		this.material = create(IKeyword.MATERIAL, Types.MATERIAL, null);
 		this.perspective = create(IKeyword.PERSPECTIVE, Types.BOOL, true);
 		this.lineWidth = create(IKeyword.WIDTH, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 
-	}
-
-	public GamaColor getCurrentColor() {
-		if (colors.get() == null || colors.get().isEmpty()) { return null; }
-		return colors.get().get(0);
-	}
-
-	public List<GamaColor> getColors() {
-		if (colors.get() == null || colors.get().isEmpty() || colors.get().size() == 1) { return null; }
-		return colors.get();
 	}
 
 	public GamaPoint getLocation() {

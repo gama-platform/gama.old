@@ -17,10 +17,10 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.Collector;
-import msi.gama.util.ICollector;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.statements.Arguments;
@@ -29,8 +29,8 @@ import msi.gaml.types.IType;
 
 public class StatementWithChildrenDescription extends StatementDescription {
 
-	protected THashMap<String, IVarExpression> temps;
-	protected final ICollector<IDescription> children = new Collector.Ordered<>();
+	protected IMap<String, IVarExpression> temps;
+	protected final Collector.AsList<IDescription> children = Collector.getList();
 
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
@@ -40,17 +40,17 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	}
 
 	@Override
-	public boolean visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.visit(d)) { return false; }
+			if (!visitor.process(d)) { return false; }
 		}
 		return true;
 	}
 
 	@Override
-	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.visit(d)) { return false; }
+			if (!visitor.process(d)) { return false; }
 			if (!d.visitOwnChildrenRecursively(visitor)) { return false; }
 		}
 		return true;
@@ -58,9 +58,9 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	}
 
 	@Override
-	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.visit(d)) { return false; }
+			if (!visitor.process(d)) { return false; }
 		}
 		return true;
 	}
@@ -73,7 +73,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public void dispose() {
 		super.dispose();
-		children.clear();
+		Collector.release(children);
 		if (temps != null) {
 			temps.forEachValue(object -> {
 				object.dispose();
@@ -110,7 +110,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		final String kw = getKeyword();
 		final String facet = LET.equals(kw) || LOOP.equals(kw) ? NAME : RETURNS;
 		if (temps == null) {
-			temps = new THashMap<>();
+			temps = GamaMapFactory.createUnordered();
 		}
 		if (temps.containsKey(name) && !name.equals(MYSELF)) {
 			declaration.warning("This declaration of " + name + " shadows a previous declaration",

@@ -14,14 +14,11 @@ global {
 	float evaporation_per_cycle <- 5.0 min: 0.0 max: 240.0 ;
 	//Diffusion rate for the pheromons
 	float diffusion_rate <- 1.0 min: 0.0 max: 1.0 ;
-	bool use_icons <- true ;
-	bool display_state <- true;
 	//Size of the grid
 	int gridsize <- 75 ;
 	//Center of the grid to put the location of the nest
 	point center const: true <- { (gridsize / 2),  (gridsize / 2)} ;
 	file types const: true <- (pgm_file('../images/environment75x75.pgm')) ;
-	string ant_shape_empty const: true <- '../icons/ant.png' ;
 	int food_gathered <- 0 ;   
 	geometry shape <- square(gridsize);
 	init{  
@@ -117,8 +114,6 @@ experiment "Experiment" type: gui {
 	parameter 'Number of ants:' var: ants_number category: 'Model' ;
 	parameter 'Evaporation of the signal (unit/cycle):' var: evaporation_per_cycle category: 'Model' ;
 	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model' ;
-	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
-	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 
 	list<list<int>> nbants<-[[0]];
 	list<string> statesnames<-["wandering"];

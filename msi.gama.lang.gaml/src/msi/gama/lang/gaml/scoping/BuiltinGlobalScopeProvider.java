@@ -13,6 +13,7 @@ package msi.gama.lang.gaml.scoping;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +37,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
@@ -47,7 +46,9 @@ import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
@@ -80,11 +81,11 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		DEBUG.ON();
 	}
 
-	static final THashMap EMPTY_MAP = new THashMap<>();
-	private static THashMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = new THashMap<>();
-	private static THashSet<QualifiedName> allNames;
-	private static THashMap<EClass, Resource> resources;
-	private static THashMap<EClass, THashMap<QualifiedName, IEObjectDescription>> descriptions = null;
+	static final IMap EMPTY_MAP = GamaMapFactory.createUnordered();
+	private static IMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = GamaMapFactory.createUnordered();
+	private static Set<QualifiedName> allNames;
+	private static IMap<EClass, Resource> resources;
+	private static IMap<EClass, IMap<QualifiedName, IEObjectDescription>> descriptions = null;
 	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
 	static XtextResourceSet rs = new XtextResourceSet();
@@ -218,7 +219,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		 */
 		@Override
 		public Set<String> keySet() {
-			final THashSet<String> keys = new THashSet<>();
+			final HashSet<String> keys = new HashSet<>();
 			for (int i = 0; i < contents.length; i += 2) {
 				keys.add(contents[i]);
 			}
@@ -232,7 +233,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		 */
 		@Override
 		public Collection<String> values() {
-			final THashSet<String> values = new THashSet<>();
+			final HashSet<String> values = new HashSet<>();
 			for (int i = 1; i < contents.length; i += 2) {
 				values.add(contents[i]);
 			}
@@ -246,7 +247,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		 */
 		@Override
 		public Set<java.util.Map.Entry<String, String>> entrySet() {
-			final THashSet<Map.Entry<String, String>> keys = new THashSet<>();
+			final HashSet<Map.Entry<String, String>> keys = new HashSet<>();
 			for (int i = 0; i < contents.length; i += 2) {
 				final Map.Entry<String, String> entry =
 						new GamaPair<>(contents[i], contents[i + 1], Types.STRING, Types.STRING);
@@ -291,21 +292,21 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
 		eEquation = GamlPackage.eINSTANCE.getEquationDefinition();
-		resources = new THashMap<>();
+		resources = GamaMapFactory.createUnordered();
 		resources.put(eType, createResource("types.xmi"));
 		resources.put(eVar, createResource("vars.xmi"));
 		resources.put(eSkill, createResource("skills.xmi"));
 		resources.put(eUnit, createResource("units.xmi"));
 		resources.put(eAction, createResource("actions.xmi"));
 		resources.put(eEquation, createResource("equations.xmi"));
-		descriptions = new THashMap<>();
-		descriptions.put(eVar, new THashMap<>());
-		descriptions.put(eType, new THashMap<>());
-		descriptions.put(eSkill, new THashMap<>());
-		descriptions.put(eUnit, new THashMap<>());
-		descriptions.put(eAction, new THashMap<>());
-		descriptions.put(eEquation, new THashMap<>());
-		allNames = new THashSet<>();
+		descriptions = GamaMapFactory.createUnordered();
+		descriptions.put(eVar, GamaMapFactory.createUnordered());
+		descriptions.put(eType, GamaMapFactory.createUnordered());
+		descriptions.put(eSkill, GamaMapFactory.createUnordered());
+		descriptions.put(eUnit, GamaMapFactory.createUnordered());
+		descriptions.put(eAction, GamaMapFactory.createUnordered());
+		descriptions.put(eEquation, GamaMapFactory.createUnordered());
+		allNames = new HashSet<>();
 	}
 
 	public boolean contains(final QualifiedName name) {
@@ -407,20 +408,19 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	/**
 	 * Get the object descriptions for the built-in types.
 	 */
-	public THashMap<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
+	public IMap<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
 		createDescriptions();
 		return descriptions.get(eClass);
 	}
 
 	public TerminalMapBasedScope getGlobalScope(final EClass eClass) {
-		if (GLOBAL_SCOPES.contains(eClass)) { return GLOBAL_SCOPES.get(eClass); }
-		THashMap<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eClass);
+		if (GLOBAL_SCOPES.containsKey(eClass)) { return GLOBAL_SCOPES.get(eClass); }
+		IMap<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eClass);
 		if (descriptions == null) {
 			descriptions = EMPTY_MAP;
 		}
 		final TerminalMapBasedScope result = new TerminalMapBasedScope(descriptions);
 		GLOBAL_SCOPES.put(eClass, result);
-		GLOBAL_SCOPES.compact();
 		return result;
 	}
 
@@ -459,20 +459,16 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 				GamlResourceServices.getResourceDocumenter().setGamlDocumentation(def, t, true, true);
 			}
 			final OperatorProto[] p = new OperatorProto[1];
-			IExpressionCompiler.OPERATORS.forEachEntry((a, b) -> {
+			IExpressionCompiler.OPERATORS.forEachPair((a, b) -> {
 				p[0] = null;
-				b.forEachValue(object -> {
+				b.forEachPair((string, object) -> {
 					p[0] = object;
 					return false;
 				});
 				add(eAction, a, p[0]);
 				return true;
 			});
-			descriptions.forEachValue(object -> {
-				object.compact();
-				return true;
-			});
-			descriptions.compact();
+
 		}
 	}
 

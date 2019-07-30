@@ -99,7 +99,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO are there attributes ?
-		return GamaListFactory.create();
+		return GamaListFactory.EMPTY_LIST;
 	}
 
 	public IShape createPolyline(final IScope scope, final IList pts) {

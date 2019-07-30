@@ -13,17 +13,17 @@ package msi.gama.util.graph;
 import java.util.HashMap;
 import java.util.Map;
 
+import msi.gama.ext.graphstream.Edge;
+import msi.gama.ext.graphstream.EdgeRejectedException;
+import msi.gama.ext.graphstream.Graph;
+import msi.gama.ext.graphstream.IdAlreadyInUseException;
+import msi.gama.ext.graphstream.MultiGraph;
+import msi.gama.ext.graphstream.Node;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.graph.graphstream_copy.Edge;
-import msi.gama.util.graph.graphstream_copy.EdgeRejectedException;
-import msi.gama.util.graph.graphstream_copy.Graph;
-import msi.gama.util.graph.graphstream_copy.IdAlreadyInUseException;
-import msi.gama.util.graph.graphstream_copy.MultiGraph;
-import msi.gama.util.graph.graphstream_copy.Node;
 
 /**
  * Graph utilities for the use of the graphstream library.

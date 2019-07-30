@@ -11,14 +11,15 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graphs;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -53,10 +54,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 */
 	private ITopology topology;
 	private double tolerance = 0;
-	private final TIntObjectHashMap<IShape> verticesBuilt; // only used for
-															// optimization
-															// purpose of
-															// spatial graph
+	private final Map<Integer, IShape> verticesBuilt; // only used for
+														// optimization
+														// purpose of
+														// spatial graph
 
 	// building.
 
@@ -103,12 +104,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	public GamaSpatialGraph(final IScope scope, final IType nodeType, final IType edgeType) {
 		super(scope, nodeType, edgeType);
-		verticesBuilt = new TIntObjectHashMap();
+		verticesBuilt = new HashMap();
 	}
 
 	@Override
 	public GamaSpatialGraph copy(final IScope scope) {
-		final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.create(), true, directed, vertexRelation,
+		final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, true, directed, vertexRelation,
 				edgeSpecies, scope, type.getKeyType(), type.getContentType());
 
 		Graphs.addAllVertices(g, this.getVertices());

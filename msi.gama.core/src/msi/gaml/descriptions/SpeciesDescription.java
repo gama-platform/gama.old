@@ -21,8 +21,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.preferences.GamaPreferences;
@@ -33,7 +31,8 @@ import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GamlGridAgent;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
 import msi.gama.precompiler.ITypeProvider;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GAML;
@@ -53,11 +52,11 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SpeciesDescription extends TypeDescription {
 	// AD 08/16: Behaviors are now inherited dynamically
-	private TOrderedHashMap<String, StatementDescription> behaviors;
+	private IMap<String, StatementDescription> behaviors;
 	// AD 08/16: Aspects are now inherited dynamically
-	private THashMap<String, StatementDescription> aspects;
-	private TOrderedHashMap<String, SpeciesDescription> microSpecies;
-	protected TLinkedHashSet<SkillDescription> skills;
+	private IMap<String, StatementDescription> aspects;
+	private IMap<String, SpeciesDescription> microSpecies;
+	protected LinkedHashSet<SkillDescription> skills;
 	protected SkillDescription control;
 	private IAgentConstructor agentConstructor;
 	private SpeciesConstantExpression speciesExpr;
@@ -89,7 +88,7 @@ public class SpeciesDescription extends TypeDescription {
 	protected void addSkill(final SkillDescription sk) {
 		if (sk == null) { return; }
 		if (skills == null) {
-			skills = new TLinkedHashSet();
+			skills = new LinkedHashSet();
 		}
 		skills.add(sk);
 	}
@@ -313,7 +312,7 @@ public class SpeciesDescription extends TypeDescription {
 	protected void addBehavior(final StatementDescription r) {
 		final String behaviorName = r.getName();
 		if (behaviors == null) {
-			behaviors = new TOrderedHashMap<>();
+			behaviors = GamaMapFactory.create();
 		}
 		final StatementDescription existing = behaviors.get(behaviorName);
 		if (existing != null) {
@@ -347,7 +346,7 @@ public class SpeciesDescription extends TypeDescription {
 			duplicateInfo(ce, getAspect(aspectName));
 		}
 		if (aspects == null) {
-			aspects = new THashMap<>();
+			aspects = GamaMapFactory.createUnordered();
 		}
 		aspects.put(aspectName, ce);
 	}
@@ -594,7 +593,7 @@ public class SpeciesDescription extends TypeDescription {
 		visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
-			public boolean visit(final SpeciesDescription desc) {
+			public boolean process(final SpeciesDescription desc) {
 				if (desc == parent) {
 					result[0] = true;
 					return false;
@@ -686,27 +685,7 @@ public class SpeciesDescription extends TypeDescription {
 			// Calling sortAttributes later (in compilation)
 		}
 
-		compact();
-
 		return true;
-	}
-
-	void compact() {
-		if (attributes != null) {
-			attributes.compact();
-		}
-		if (actions != null) {
-			actions.compact();
-		}
-		if (aspects != null) {
-			aspects.compact();
-		}
-		if (behaviors != null) {
-			behaviors.compact();
-		}
-		if (microSpecies != null) {
-			microSpecies.compact();
-		}
 	}
 
 	/**
@@ -759,9 +738,9 @@ public class SpeciesDescription extends TypeDescription {
 		return microSpecies != null;
 	}
 
-	public TOrderedHashMap<String, SpeciesDescription> getMicroSpecies() {
+	public IMap<String, SpeciesDescription> getMicroSpecies() {
 		if (microSpecies == null) {
-			microSpecies = new TOrderedHashMap<>();
+			microSpecies = GamaMapFactory.create();
 		}
 		return microSpecies;
 	}
@@ -822,7 +801,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
 		if (!super.visitOwnChildren(visitor)) { return false; }
 		if (microSpecies != null && !microSpecies.forEachValue(visitor)) { return false; }
 		if (behaviors != null && !behaviors.forEachValue(visitor)) { return false; }
@@ -831,9 +810,9 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	public boolean visitOwnChildrenRecursively(final DescriptionVisitor visitor) {
-		final DescriptionVisitor recursiveVisitor = each -> {
-			if (!visitor.visit(each)) { return false; }
+	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
+		final DescriptionVisitor<IDescription> recursiveVisitor = each -> {
+			if (!visitor.process(each)) { return false; }
 			return each.visitOwnChildrenRecursively(visitor);
 		};
 		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
@@ -855,7 +834,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	public boolean visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		boolean result = super.visitChildren(visitor);
 		if (!result) { return false; }
 		if (hasMicroSpecies()) {
@@ -863,11 +842,11 @@ public class SpeciesDescription extends TypeDescription {
 		}
 		if (!result) { return false; }
 		for (final IDescription d : getBehaviors()) {
-			result &= visitor.visit(d);
+			result &= visitor.process(d);
 			if (!result) { return false; }
 		}
 		for (final IDescription d : getAspects()) {
-			result &= visitor.visit(d);
+			result &= visitor.process(d);
 			if (!result) { return false; }
 		}
 		return result;

@@ -23,7 +23,7 @@ species people {
 	list<int> lo <- [1,2,3];
 }
 
-experiment Model1 type: gui {
+experiment SerializeSimulation type: gui {
 
 	reflex store { 
 		write "================ Serialize simulation " + self + " - " + cycle;

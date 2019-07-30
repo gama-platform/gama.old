@@ -32,10 +32,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
@@ -66,9 +66,8 @@ public class ModelAssembler {
 			final Iterable<ISyntacticElement> allModels, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {
 		final ImmutableList<ISyntacticElement> models = ImmutableList.copyOf(allModels);
-		final TOrderedHashMap<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
-		final TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>>[] experimentNodes =
-				new TOrderedHashMap[1];
+		final IMap<String, ISyntacticElement> speciesNodes = GamaMapFactory.create();
+		final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes = new IMap[1];
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		final ISyntacticElement source = models.get(0);
 		Facets globalFacets = null;
@@ -89,14 +88,14 @@ public class ModelAssembler {
 			}
 
 		}
-		final Map<String, SpeciesDescription> tempSpeciesCache = new THashMap<>();
+		final Map<String, SpeciesDescription> tempSpeciesCache = GamaMapFactory.createUnordered();
 
 		for (final ISyntacticElement cm : models.reverse()) {
 			final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
 			if (currentModel != null) {
 				if (currentModel.hasFacets()) {
 					if (globalFacets == null) {
-						globalFacets = new Facets(currentModel.copyFacets(null));
+						globalFacets = currentModel.copyFacets(null);
 					} else {
 						globalFacets.putAll(currentModel.copyFacets(null));
 					}
@@ -110,7 +109,7 @@ public class ModelAssembler {
 				currentModel.visitGrids(visitor);
 				visitor = element -> {
 					if (experimentNodes[0] == null) {
-						experimentNodes[0] = new TOrderedHashMap();
+						experimentNodes[0] = GamaMapFactory.create();
 					}
 					addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
 
@@ -160,7 +159,7 @@ public class ModelAssembler {
 			return true;
 		});
 		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachEntry((s, b) -> {
+			experimentNodes[0].forEachPair((s, b) -> {
 				b.forEachValue(experimentNode -> {
 					addExperiment(s, model, experimentNode, tempSpeciesCache);
 					return true;
@@ -177,7 +176,7 @@ public class ModelAssembler {
 		});
 
 		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachEntry((s, b) -> {
+			experimentNodes[0].forEachPair((s, b) -> {
 				b.forEachValue(experimentNode -> {
 					parentExperiment(model, experimentNode);
 					return true;
@@ -204,7 +203,7 @@ public class ModelAssembler {
 		});
 
 		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachEntry((s, b) -> {
+			experimentNodes[0].forEachPair((s, b) -> {
 				b.forEachValue(experimentNode -> {
 					complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
 					return true;
@@ -290,8 +289,7 @@ public class ModelAssembler {
 	}
 
 	void addExperimentNode(final ISyntacticElement element, final String modelName,
-			final Map<String, TOrderedHashMap<String, ISyntacticElement>> experimentNodes,
-			final ValidationContext collector) {
+			final Map<String, IMap<String, ISyntacticElement>> experimentNodes, final ValidationContext collector) {
 		// First we verify that this experiment has not been declared previously
 		final String experimentName = element.getName();
 		for (final String otherModel : experimentNodes.keySet()) {
@@ -308,7 +306,7 @@ public class ModelAssembler {
 		}
 
 		if (!experimentNodes.containsKey(modelName)) {
-			experimentNodes.put(modelName, new TOrderedHashMap());
+			experimentNodes.put(modelName, GamaMapFactory.create());
 		}
 		final Map<String, ISyntacticElement> nodes = experimentNodes.get(modelName);
 		if (nodes.containsKey(experimentName)) {

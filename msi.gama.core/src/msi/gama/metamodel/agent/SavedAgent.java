@@ -16,13 +16,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
@@ -164,7 +164,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 * @throws GamaRuntimeException
 	 */
 	private void saveMicroAgents(final IScope scope, final IMacroAgent agent) throws GamaRuntimeException {
-		innerPopulations = new THashMap<>();
+		innerPopulations = GamaMapFactory.createUnordered();
 
 		for (final IPopulation<? extends IAgent> microPop : agent.getMicroPopulations()) {
 			final List<SavedAgent> savedAgents = new ArrayList<>();

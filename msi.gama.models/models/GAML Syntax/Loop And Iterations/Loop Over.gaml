@@ -146,7 +146,8 @@ global {
 		// but without any information on it location in the container.
 		// When we need to know this information, we can loop over a container (in particular list or matrix) through an index value.
 		// Reminder: in GAML, lists and matrices index starts at 0 and ends at (number of elements in the container) - 1.
-
+		write sample(matrix_of_string[2,1])	;
+		
 		write "----------------------------------";
 		write "Loop over the list: " + list_of_string;
 		write "----------------------------------";			
@@ -165,8 +166,6 @@ global {
 				write "The element at row: " + (index_row+1) + " and column: " + (index_column+1) + " of the matrix is: " + matrix_of_string[index_column,index_row];				
 			}
 		}	
-		write "****************************************";
-		write sample(matrix_of_string[2,6])	;
 	}
 	
 				

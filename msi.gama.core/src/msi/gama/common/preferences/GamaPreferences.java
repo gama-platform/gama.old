@@ -43,7 +43,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
 import msi.gama.util.GamaFont;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
@@ -460,14 +460,14 @@ public class GamaPreferences {
 		/**
 		 * Optimizations
 		 */
-		public static final String OPTIMIZATIONS = "Operators options";
+		public static final String OPTIMIZATIONS = "Optimizations";
 		public static final Pref<Boolean> CONSTANT_OPTIMIZATION = create("pref_optimize_constant_expressions",
 				"Optimize constant expressions (experimental)", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> AGENT_OPTIMIZATION =
 				create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL, true).in(NAME,
 						OPTIMIZATIONS);
-		public static final Pref<Boolean> MATH_OPTIMIZATION = create("pref_optimize_math_functions",
-				"Use faster (but less accurate) arithmetic functions", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+		// public static final Pref<Boolean> MATH_OPTIMIZATION = create("pref_optimize_math_functions",
+		// "Use faster (but less accurate) arithmetic functions", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
 				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL, true)
 						.in(NAME, OPTIMIZATIONS);
@@ -476,8 +476,13 @@ public class GamaPreferences {
 				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
 				"Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
-				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
-
+				IType.BOOL, true).in(NAME, OPTIMIZATIONS).hidden();
+		public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
+				"Forces the spatial index to synchronize its operations. Useful for interactive models where the user may interfere.",
+				true, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+		public static final Pref<Boolean> USE_POOLING =
+				create("pref_use_pooling", "Use object pooling to reduce memory usage (still experimental)", false,
+						IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Double> TOLERANCE_POINTS =
 				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT, true)
 						.in(NAME, OPTIMIZATIONS);
@@ -712,7 +717,7 @@ public class GamaPreferences {
 	}
 
 	public static Map<String, Map<String, List<Pref>>> organizePrefs() {
-		final Map<String, Map<String, List<Pref>>> result = new TOrderedHashMap();
+		final Map<String, Map<String, List<Pref>>> result = GamaMapFactory.create();
 		for (final Pref e : prefs.values()) {
 			if (e.isHidden()) {
 				continue;
@@ -720,7 +725,7 @@ public class GamaPreferences {
 			final String tab = e.tab;
 			Map<String, List<Pref>> groups = result.get(tab);
 			if (groups == null) {
-				groups = new TOrderedHashMap();
+				groups = GamaMapFactory.create();
 				result.put(tab, groups);
 			}
 			final String group = e.group;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.model.IModel.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.kernel.model.IModel.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.model;
 
@@ -26,32 +26,32 @@ import msi.gaml.statements.test.TestStatement;
 
 /**
  * Written by drogoul Modified on 29 d�c. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 public interface IModel extends ISpecies {
 
-	public abstract ISpecies getSpecies(String speciesName);
+	ISpecies getSpecies(String speciesName);
 
-	public abstract ISpecies getSpecies(String speciesName, SpeciesDescription specDes);
+	ISpecies getSpecies(String speciesName, SpeciesDescription specDes);
 
-	public abstract IExperimentPlan getExperiment(final String s);
+	IExperimentPlan getExperiment(final String s);
 
-	public abstract String getWorkingPath();
+	String getWorkingPath();
 
-	public abstract String getFilePath();
+	String getFilePath();
 
-	public abstract String getProjectPath();
+	String getProjectPath();
 
-	public abstract Map<String, ISpecies> getAllSpecies();
+	Map<String, ISpecies> getAllSpecies();
 
-	public abstract Collection<String> getImportedPaths();
+	Collection<String> getImportedPaths();
 
-	public abstract List<TestStatement> getAllTests();
+	List<TestStatement> getAllTests();
 
 	@Override
-	public default URI getURI() {
+	default URI getURI() {
 		final ModelDescription md = (ModelDescription) getDescription();
 		if (md == null) { return null; }
 		final EObject o = md.getUnderlyingElement();

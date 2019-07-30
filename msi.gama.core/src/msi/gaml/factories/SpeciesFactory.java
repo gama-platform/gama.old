@@ -1,18 +1,17 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.SpeciesFactory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.factories.SpeciesFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.factories;
 
 import static msi.gama.precompiler.ISymbolKind.SPECIES;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -35,10 +34,6 @@ import msi.gaml.statements.Facets;
 		handles = { SPECIES })
 @SuppressWarnings ({ "rawtypes" })
 public class SpeciesFactory extends SymbolFactory {
-
-	public SpeciesFactory(final List<Integer> handles) {
-		super(handles);
-	}
 
 	public SpeciesFactory(final int... handles) {
 		super(handles);

@@ -31,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.util.TOrderedHashMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -112,8 +112,8 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlModelSpecies extends GamlSpecies implements IModel {
 
-	protected final Map<String, IExperimentPlan> experiments = new TOrderedHashMap();
-	protected final Map<String, IExperimentPlan> titledExperiments = new TOrderedHashMap();
+	protected final Map<String, IExperimentPlan> experiments = GamaMapFactory.create();
+	protected final Map<String, IExperimentPlan> titledExperiments = GamaMapFactory.create();
 	protected Map<String, ISpecies> allSpecies;
 
 	public GamlModelSpecies(final IDescription description) {
@@ -237,7 +237,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	@Override
 	public Map<String, ISpecies> getAllSpecies() {
 		if (allSpecies == null) {
-			allSpecies = new TOrderedHashMap();
+			allSpecies = GamaMapFactory.create();
 			final Deque<ISpecies> speciesStack = new ArrayDeque<>();
 			speciesStack.push(this);
 			ISpecies currentSpecies;

@@ -39,13 +39,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.ext.webb.Webb;
+import msi.gama.ext.webb.WebbException;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.CacheLocationProvider;
-import msi.gama.util.file.http.Webb;
-import msi.gama.util.file.http.WebbException;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
