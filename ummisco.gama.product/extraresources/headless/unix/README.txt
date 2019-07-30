@@ -1,6 +1,6 @@
 *******************************************************************
-*GAMA version 1.8.0                                               *
-*http://gama-platform.googlecode.com                              *
+*GAMA version 1.8                                                 *
+*http://gama-platform.org			                              *
 *(c) 2007-2019 UMI 209 UMMISCO IRD/SU & Partners                  *
 *******************************************************************
 

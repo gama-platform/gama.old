@@ -58,12 +58,12 @@ REM ~ if %inputFile% EQU -m (goto memory) else ( set inputFile=%~f1 )
 
 
  set CLASSPATH=
- for /R ..\plugins %%a in (*.jar) do (
+ for /R ..\plugins %%a in (org.eclipse.equinox.launcher*) do (
    set CLASSPATH=%%a;!CLASSPATH!
  )
- set CLASSPATH=!CLASSPATH!"
+ set CLASSPATH="!CLASSPATH!"
  echo GAMA is starting...
-call java  -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%outputFile%/.work" !param! "%inputFile%" "%outputFile%"
+call java  -cp %CLASSPATH% -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%outputFile%/.work" !param! "%inputFile%" "%outputFile%"
  goto end
  
 :help
@@ -88,4 +88,3 @@ call java  -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.laun
 	goto end
 	
 :end
- 
