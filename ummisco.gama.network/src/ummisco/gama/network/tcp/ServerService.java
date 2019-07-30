@@ -50,13 +50,12 @@ public abstract class ServerService extends Thread implements SocketService {
 		this.start();
 	}
 
-	@SuppressWarnings ("unchecked")
 	@Override
 	public void run() {
 		while (this.isAlive) {
 			isOnline = true;
 			try {
-				System.out.println("before accept wait...");
+				DEBUG.OUT("before accept wait...");
 				currentSocket = this.serverSocket.accept();
 				String msg = "";
 				do {

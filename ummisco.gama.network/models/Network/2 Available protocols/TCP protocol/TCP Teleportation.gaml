@@ -21,9 +21,7 @@ global {
 	{
 		name <- prefixName+simulation_id;
 		
-		int id <- 0;
 		create Pong number:10{
-			name <- "Pong_"+id;
 			myColor <- rnd_color(255);
 		}
 		create Buffer with:[zone::0];

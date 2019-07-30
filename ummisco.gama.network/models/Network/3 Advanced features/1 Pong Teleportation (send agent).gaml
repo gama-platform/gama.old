@@ -26,11 +26,8 @@ global {
 	init
 	{
 		name <- prefixName+simulation_id;
-		int id <- 0;
 		create Pong number:10{
-			name <- "Pong_"+id;
-			myColor <- rnd_color(255);
-		
+			myColor <- rnd_color(255);		
 		}
 		create Buffer with:[zone::0];
 		create Buffer with:[zone::1];
@@ -118,9 +115,7 @@ experiment start
 	// number of simulations running in parallel.
 	int nb_simul <- 3;
 	
-	init
-	{
-		
+	init {	
 		simulation_id <- 0;
 		seed <- 1.0;
 		loop i from:1 to: nb_simul -1
