@@ -1,1 +1,0 @@
-java -Xms40m -Xmx512m -jar ./plugins/org.eclipse.equinox.launcher_1.2.0.v20110502.jar -Djava.awt.headless=true  -consoleLog  -nosplash  -application msi.gama.headless.id4 $1 $2

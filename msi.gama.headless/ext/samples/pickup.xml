@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Simulation id="2" driver="msi.gama.headless.runtime.GamaSimulator" sourcePath="./Miro/models/modelTC.gaml" finalstep="10000">
-  <Parameters>
-  </Parameters>
-  <Outputs>
-    <Output id="1" name="city_display" framerate="400" />
-  </Outputs>
-</Simulation>

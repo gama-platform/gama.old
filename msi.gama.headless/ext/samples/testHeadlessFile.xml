@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Simulation id="2" driver="msi.gama.headless.runtime.GamaSimulator" sourcePath="./testHeadlessFile/models/model1.gaml" finalstep="10" experiment="road_traffic">
-  <Parameters>
-  </Parameters>
-  <Outputs>
-  </Outputs>
-</Simulation>

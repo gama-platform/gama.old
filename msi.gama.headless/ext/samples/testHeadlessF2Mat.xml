@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Simulation id="2" driver="msi.gama.headless.runtime.GamaSimulator" sourcePath="./testHeadlessFile/models/TestFile2Mat.gaml" finalstep="1000" experiment="TestFile2Mat">
-  <Parameters>
-  </Parameters>
-  <Outputs>
-  </Outputs>
-</Simulation>
