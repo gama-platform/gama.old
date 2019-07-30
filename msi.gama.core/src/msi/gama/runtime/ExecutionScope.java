@@ -361,8 +361,9 @@ public class ExecutionScope implements IScope {
 			// arguments if the statement expects them
 			if (args != null) {
 				args.setCaller(caller);
-				statement.setRuntimeArgs(this, args);
 			}
+			// See issue #2815: we also push args even if they are null
+			statement.setRuntimeArgs(this, args);
 			// We push the caller to the remote sequence (will be cleaned when the remote sequence leaves its scope)
 			statement.setMyself(caller);
 			return withValue(statement.executeOn(ExecutionScope.this));
