@@ -178,7 +178,7 @@ public class Reader {
 		final String experimentName = getAttributeWithoutCase(e, XmlTAG.EXPERIMENT_NAME_TAG);
 		final String seed = getAttributeWithoutCase(e, XmlTAG.SEED_TAG);
 		final double selectedSeed = seed == null || seed.length() == 0 ? 0l : Double.valueOf(seed).doubleValue();
-		if (sourcePath.charAt(0) != '/' && sourcePath.charAt(0) != '\\') {
+		if (sourcePath.charAt(0) != '/' && sourcePath.charAt(0) != '\\' && sourcePath.charAt(1) != ':') {
 			String pr;
 			if (fileName != null) {
 				String prt;

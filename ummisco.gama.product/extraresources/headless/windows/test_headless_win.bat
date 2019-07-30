@@ -1,32 +1,32 @@
 @echo off
 >result.txt (
-@echo "gama-headless.bat -help"
-gama-headless.bat -help
+@echo "%1 -help"
+%1 -help
 
-@echo "gama-headless.bat -version"
-gama-headless.bat -version 
+@echo "%1 -version"
+%1 -version 
 
-@echo "gama-headless.bat -validate"
-gama-headless.bat -validate 
+@echo "%1 -validate"
+%1 -validate 
 
-@echo "gama-headless.bat -test"
-gama-headless.bat -test 
+@echo "%1 -test"
+%1 -test 
 
-@echo "gama-headless.bat samples/predatorPrey.xml outputFolder"
-gama-headless.bat samples/predatorPrey.xml outputFolder 
+@echo "%1 samples/predatorPrey.xml outputFolder"
+%1 samples/predatorPrey.xml outputFolder 
  
-@echo "gama-headless.bat -m 12000m samples/predatorPrey.xml outputFolder"
-gama-headless.bat -m 12000m samples/predatorPrey.xml outputFolder 
+@echo "%1 -m 12000m samples/predatorPrey.xml outputFolder"
+%1 -m 12000m samples/predatorPrey.xml outputFolder 
 
-@echo "gama-headless.bat -hpc 3 samples/predatorPrey.xml outputFolder"
-gama-headless.bat -hpc 3 samples/predatorPrey.xml outputFolder 
+@echo "%1 -hpc 3 samples/predatorPrey.xml outputFolder"
+%1 -hpc 3 samples/predatorPrey.xml outputFolder 
 
-@echo "gama-headless.bat samples/predatorPrey.xml outputFolder"
-gama-headless.bat samples/predatorPrey.xml outputFolder 
+@echo "%1 samples/predatorPrey.xml outputFolder"
+%1 samples/predatorPrey.xml outputFolder 
 
-@echo "gama-headless.bat -xml prey_predatorExp samples/predatorPrey/pr\edatorPrey.gaml t.xml"
-gama-headless.bat -xml prey_predatorExp samples/predatorPrey/predatorPrey.gaml t.xml 
+@echo "%1 -xml prey_predatorExp samples/predatorPrey/pr\edatorPrey.gaml t.xml"
+%1 -xml prey_predatorExp samples/predatorPrey/predatorPrey.gaml t.xml 
 
-@echo "gama-headless.bat t.xml out"
-gama-headless.bat t.xml out 
+@echo "%1 t.xml out"
+%1 t.xml out 
 )
