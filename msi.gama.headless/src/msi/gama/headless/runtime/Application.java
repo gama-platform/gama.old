@@ -39,6 +39,7 @@ import com.vividsolutions.jts.util.Debug;
 
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
 import msi.gama.headless.batch.test.ModelLibraryTester;
+import msi.gama.headless.batch.validation.ModelLibraryRunner;
 import msi.gama.headless.batch.validation.ModelLibraryValidator;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
@@ -66,6 +67,7 @@ public class Application implements IApplication {
 	final public static String BUILD_XML_PARAMETER = "-xml";
 	final public static String CHECK_MODEL_PARAMETER = "-check";
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
+	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
 
 	public static boolean headLessSimulation = false;
@@ -181,7 +183,7 @@ public class Application implements IApplication {
 	public Object start(final IApplicationContext context) throws Exception {
 
 //		Logger.getRootLogger().setLevel(Level.WARN); 
-		SystemLogger.removeDisplay();
+//		SystemLogger.removeDisplay();
 		
 		
 		final Map<String, String[]> mm = context.getArguments();
@@ -195,6 +197,8 @@ public class Application implements IApplication {
 			SystemLogger.removeDisplay();
 			
 			DEBUG.LOG(showHelp());
+		} else if (args.contains(RUN_LIBRARY_PARAMETER)) {
+			return ModelLibraryRunner.getInstance().start(args);
 		} else if (args.contains(VALIDATE_LIBRARY_PARAMETER)) {
 			return ModelLibraryValidator.getInstance().start(args);
 		} else if (args.contains(TEST_LIBRARY_PARAMETER)) {
