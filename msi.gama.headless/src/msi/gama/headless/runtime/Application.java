@@ -183,7 +183,7 @@ public class Application implements IApplication {
 	public Object start(final IApplicationContext context) throws Exception {
 
 //		Logger.getRootLogger().setLevel(Level.WARN); 
-//		SystemLogger.removeDisplay();
+		SystemLogger.removeDisplay();
 		
 		
 		final Map<String, String[]> mm = context.getArguments();
