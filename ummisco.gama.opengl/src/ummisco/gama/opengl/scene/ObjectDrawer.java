@@ -45,27 +45,28 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 		if (size != null) {
 			final Envelope3D env = object.getEnvelope(gl);
 			if (env != null) {
-				try {
-					final boolean in2D = isDrawing2D(size, env, object);
-					double factor = 0.0;
-					if (in2D) {
-						factor = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
-					} else {
-						final double min_xy = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
-						factor = Math.min(min_xy, size.getZ() / env.getDepth());
-					}
-					if (factor != 1d) {
-						object.getTranslationForScalingInto(loc);
-						gl.translateBy(loc.x * (1 - factor), -loc.y * (1 - factor), loc.z * (1 - factor));
-						gl.scaleBy(factor, factor, factor);
-
-					}
-					return true;
-				} finally {
-					env.dispose();
+				// try {
+				final boolean in2D = isDrawing2D(size, env, object);
+				double factor = 0.0;
+				if (in2D) {
+					factor = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
+				} else {
+					final double min_xy = Math.min(size.getX() / env.getWidth(), size.getY() / env.getHeight());
+					factor = Math.min(min_xy, size.getZ() / env.getDepth());
 				}
+				if (factor != 1d) {
+					object.getTranslationForScalingInto(loc);
+					gl.translateBy(loc.x * (1 - factor), -loc.y * (1 - factor), loc.z * (1 - factor));
+					gl.scaleBy(factor, factor, factor);
+
+				}
+				return true;
 			}
+			// finally {
+			// env.dispose();
+			// }
 		}
+		// }
 		return false;
 
 	}
