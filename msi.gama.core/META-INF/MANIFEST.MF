@@ -235,6 +235,8 @@ Export-Package: msi.gama.common,
    msi.gama.util.matrix,
    msi.gama.metamodel.shape,
    msi.gaml.types",
+ msi.gama.util.file.csv,
+ msi.gama.util.file.json,
  msi.gama.util.graph,
  msi.gama.util.graph.writer;
   uses:="org.jgrapht,
