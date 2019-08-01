@@ -123,9 +123,5 @@ else
 		embed_jdk
 		release_continuous
 	fi	
-	if  [[ ${MESSAGE} == *"ci official"* ]] || [[ $MSG == *"ci official"* ]]; then
-		embed_jdk		
-		release_official 
-	fi	
 fi
 

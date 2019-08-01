@@ -2,11 +2,11 @@
  *
  * msi.gaml.statements.draw.FileExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
  * and simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -18,6 +18,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFile;
@@ -49,7 +50,7 @@ class FileExecuter extends DrawExecuter {
 			final Scaling3D size = attributes.getSize();
 			if (size != null) {
 				// if a size is provided
-				final Envelope3D expected = Envelope3D.of(attributes.getLocation());
+				final Envelope3D expected = Envelope3D.of((ILocation) attributes.getLocation());
 				expected.expandBy(size.getX() / 2, size.getY() / 2);
 				final Envelope visible = g.getVisibleRegion();
 				if (visible != null) {
@@ -65,12 +66,12 @@ class FileExecuter extends DrawExecuter {
 	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile,
 			final boolean gisFile, final boolean twoD) {
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(Scaling3D.of(data.size.get()),
-				data.rotation.get(), data.getLocation(), data.getCurrentColor(), data.border.get(), scope.getAgent(),
+				data.rotation.get(), data.getLocation(), data.color.get(), data.border.get(), scope.getAgent(),
 				data.lineWidth.get(), imageFile, data.lighting.get());
 		// We push the location of the agent if none has been provided and if it is not a GIS file (where coordinates
 		// are already provided, see Issue #2165)
-		if (!gisFile) {
-			attributes.setLocationIfAbsent(scope.getAgent().getLocation().toGamaPoint());
+		if (!gisFile && attributes.getLocation() == null) {
+			attributes.setLocation(scope.getAgent().getLocation().toGamaPoint().clone());
 		}
 		if (twoD) {
 			if (imageFile) {

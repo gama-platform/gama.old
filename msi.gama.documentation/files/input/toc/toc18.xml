@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toc title="Full Documentation of GAMA 7">
+	<part name="Platform">		
+		<subpart name="Installation and Launching" file="References/PlatformDocumentation/InstallationAndLaunching">	
+			<chapter name="1.1 Installation" file="References/PlatformDocumentation/InstallationAndLaunching/Installation"/>	
+		</subpart>
+	</part>
+</toc>		

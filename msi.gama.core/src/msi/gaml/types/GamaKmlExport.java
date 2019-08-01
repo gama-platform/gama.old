@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaKmlExport.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.types.GamaKmlExport.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -43,51 +43,43 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
 import msi.gaml.operators.Spatial;
 
-
-public class GamaKmlExport{
-	private Kml kml;
-	private Document doc;
+public class GamaKmlExport {
+	private final Kml kml;
+	private final Document doc;
 	private KmlFolder defolder; // Default folder in case we need one.
-	private HashMap<String, KmlFolder> folders;
-	
+	private final HashMap<String, KmlFolder> folders;
 
 	public GamaKmlExport() {
 		kml = new Kml();
 		doc = kml.createAndSetDocument();
-		folders = new HashMap<String, KmlFolder>();
+		folders = new HashMap<>();
 	}
-	
-	public KmlFolder addFolder(String label, GamaDate beginDate, GamaDate endDate) {
-		KmlFolder kf = new KmlFolder(doc, label, dateToKml(beginDate),
-				dateToKml(endDate));
+
+	public KmlFolder addFolder(final String label, final GamaDate beginDate, final GamaDate endDate) {
+		final KmlFolder kf = new KmlFolder(doc, label, dateToKml(beginDate), dateToKml(endDate));
 		folders.put(label, kf);
 		return kf;
 	}
 
-
-	public void add3DModel(IScope scope, GamaPoint loc, double orientation,
-			double scale, GamaDate beginDate, GamaDate endDate, String daefile) {
-		getDefaultFolder().add3DModel(scope,loc, orientation, scale,
-				dateToKml(beginDate), dateToKml(endDate), daefile);
+	public void add3DModel(final IScope scope, final GamaPoint loc, final double orientation, final double scale,
+			final GamaDate beginDate, final GamaDate endDate, final String daefile) {
+		getDefaultFolder().add3DModel(scope, loc, orientation, scale, dateToKml(beginDate), dateToKml(endDate),
+				daefile);
 	}
 
-	
-	public void addGeometry(IScope scope,String label, GamaDate beginDate, GamaDate endDate,
-			IShape geom, String styleName, double height) {
-		getDefaultFolder().addGeometry(scope, label, dateToKml(beginDate),
-				dateToKml(endDate), geom, styleName, height);
+	public void addGeometry(final IScope scope, final String label, final GamaDate beginDate, final GamaDate endDate,
+			final IShape geom, final String styleName, final double height) {
+		getDefaultFolder().addGeometry(scope, label, dateToKml(beginDate), dateToKml(endDate), geom, styleName, height);
 	}
-
-
 
 	/**
 	 * Defines a new style to be used with addStyledRecord
-	 * 
+	 *
 	 * @param name
 	 *            Style name. Must be unique.
 	 * @param lineWidth
@@ -97,96 +89,86 @@ public class GamaKmlExport{
 	 * @param fillColor
 	 *            Polygon fill color.
 	 */
-	public void defStyle(String name, double lineWidth, GamaColor lineColor,
-			GamaColor fillColor) {
-		Style style = doc.createAndAddStyle().withId(name);
-		style.createAndSetLineStyle().withColor(kmlColor(lineColor))
-				.withWidth(lineWidth);
-		style.createAndSetPolyStyle().withColor(kmlColor(fillColor))
-				.withColorMode(ColorMode.NORMAL);
+	public void defStyle(final String name, final double lineWidth, final GamaColor lineColor,
+			final GamaColor fillColor) {
+		final Style style = doc.createAndAddStyle().withId(name);
+		style.createAndSetLineStyle().withColor(kmlColor(lineColor)).withWidth(lineWidth);
+		style.createAndSetPolyStyle().withColor(kmlColor(fillColor)).withColorMode(ColorMode.NORMAL);
 	}
 
-
-	private static String toHex2Digit(int a) {
+	private static String toHex2Digit(final int a) {
 		String prefix = "";
-		if (a % 256 < 16)
+		if (a % 256 < 16) {
 			prefix = "0";
+		}
 		return prefix + Integer.toHexString(a % 256);
 	}
 
 	/**
 	 * Produces a Kml String representation of the Color given in argument
-	 * 
+	 *
 	 * @param c
 	 *            A Color
 	 * @return A String in ABGR Hex text format
 	 */
-	public String kmlColor(GamaColor c) {
-		return toHex2Digit(c.alpha())+toHex2Digit(c.blue())+toHex2Digit(c.green())+toHex2Digit(c.red());
+	public String kmlColor(final GamaColor c) {
+		return toHex2Digit(c.alpha()) + toHex2Digit(c.blue()) + toHex2Digit(c.green()) + toHex2Digit(c.red());
 	}
 
 	/**
 	 * Defines a new IconStyle to be used with addStyledRecord
-	 * 
+	 *
 	 * @param name
 	 *            Style name. Must be unique.
 	 * @param iconFile
-	 *            Name of an image (png) file. The path is relative to the
-	 *            location where the KML file will be saved.
+	 *            Name of an image (png) file. The path is relative to the location where the KML file will be saved.
 	 * @param scale
-	 *            Scale factor applied to the image. Choose 1.0 if you don't
-	 *            know.
+	 *            Scale factor applied to the image. Choose 1.0 if you don't know.
 	 * @param heading
-	 *            Orientation heading of the icon. Should be a value between 0.0
-	 *            and 360.0. 0.0 is the normal orientation of the icon. Higher
-	 *            numbers apply a clockwise rotation of the icon.
+	 *            Orientation heading of the icon. Should be a value between 0.0 and 360.0. 0.0 is the normal
+	 *            orientation of the icon. Higher numbers apply a clockwise rotation of the icon.
 	 */
 
-	public void defIconStyle(String name, String iconFile, double scale,
-			double heading) {
-		Style style = doc.createAndAddStyle().withId(name);
-		IconStyle iconstyle = style.createAndSetIconStyle().withScale(scale)
-				.withHeading(heading);
+	public void defIconStyle(final String name, final String iconFile, final double scale, final double heading) {
+		final Style style = doc.createAndAddStyle().withId(name);
+		final IconStyle iconstyle = style.createAndSetIconStyle().withScale(scale).withHeading(heading);
 		iconstyle.createAndSetIcon().withHref(iconFile);
 	}
 
-
-	public void saveAsKml(IScope scope, String filename) {
+	public void saveAsKml(final IScope scope, final String filename) {
 		try {
-			if (!filename.isEmpty())
+			if (!filename.isEmpty()) {
 				kml.marshal(new File(filename));
-			else
-				System.out
-						.println("Failed to save the kml file : no valid file name was provided.");
-		} catch (FileNotFoundException e) {
-			GamaRuntimeException.error("Failed to open " + filename + " for saving to KML.", scope); 
+			} else {
+				System.out.println("Failed to save the kml file : no valid file name was provided.");
+			}
+		} catch (final FileNotFoundException e) {
+			GamaRuntimeFileException.error("Failed to open " + filename + " for saving to KML.", scope);
 		}
 	}
 
-	public void saveAsKmz(IScope scope, String filename) {
+	public void saveAsKmz(final IScope scope, final String filename) {
 		try {
-			if (!filename.isEmpty())
+			if (!filename.isEmpty()) {
 				kml.marshalAsKmz(filename);
-			else
-				System.out
-						.println("Failed to save the kmz file : no valid file name was provided.");
-		} catch (IOException e) {
-			GamaRuntimeException.error("Failed to open " + filename + " for saving to KMZ.", scope); 
+			} else {
+				System.out.println("Failed to save the kmz file : no valid file name was provided.");
+			}
+		} catch (final IOException e) {
+			GamaRuntimeFileException.error("Failed to open " + filename + " for saving to KMZ.", scope);
 		}
 	}
 
+	public void hideFolder(final String folname) {
+		final KmlFolder kf = getFolder(folname);
+		kf.setVisibility(false);
+	}
 
-   public void hideFolder(String folname) {
-	   KmlFolder kf = getFolder(folname);
-	   kf.setVisibility(false);
-   }	
-	
-   public void showFolder(String folname) {
-	   KmlFolder kf = getFolder(folname);
-	   kf.setVisibility(true);
-   }	
-	
-	
+	public void showFolder(final String folname) {
+		final KmlFolder kf = getFolder(folname);
+		kf.setVisibility(true);
+	}
+
 	protected KmlFolder getDefaultFolder() {
 		if (defolder == null) {
 			defolder = new KmlFolder(doc, "kml");
@@ -195,7 +177,7 @@ public class GamaKmlExport{
 		return defolder;
 	}
 
-	protected KmlFolder getFolder(String folname) {
+	protected KmlFolder getFolder(final String folname) {
 		KmlFolder kf = folders.get(folname);
 		if (kf == null) {
 			kf = new KmlFolder(doc, folname);
@@ -205,46 +187,40 @@ public class GamaKmlExport{
 
 	}
 
-	protected String dateToKml(GamaDate d) {
+	protected String dateToKml(final GamaDate d) {
 		return d.toISOString();
-		//("yyyy-MM-dd") + "T" + d.toString("HH:mm:ss");
+		// ("yyyy-MM-dd") + "T" + d.toString("HH:mm:ss");
 	}
 
-	
-	public void addLabel(IScope scope, GamaPoint loc, 
-			GamaDate beginDate, GamaDate endDate, String name, String description,
-			String styleName) {
-		getDefaultFolder().addLabel(scope,loc, dateToKml(beginDate),
-				dateToKml(endDate), name, description, styleName);
+	public void addLabel(final IScope scope, final GamaPoint loc, final GamaDate beginDate, final GamaDate endDate,
+			final String name, final String description, final String styleName) {
+		getDefaultFolder().addLabel(scope, loc, dateToKml(beginDate), dateToKml(endDate), name, description, styleName);
 	}
 
-	
-	public void addLabel(IScope scope, String foldname, GamaPoint loc, GamaDate beginDate, GamaDate endDate, String name,
-			String description, String styleName) {
-		getFolder(foldname).addLabel(scope,loc, dateToKml(beginDate),
-				dateToKml(endDate), name, description, styleName);
+	public void addLabel(final IScope scope, final String foldname, final GamaPoint loc, final GamaDate beginDate,
+			final GamaDate endDate, final String name, final String description, final String styleName) {
+		getFolder(foldname).addLabel(scope, loc, dateToKml(beginDate), dateToKml(endDate), name, description,
+				styleName);
 	}
+
 	public class KmlFolder {
 		public Folder fold;
 		static final String ERR_HEADER = "Kml Export: ";
 
-		public KmlFolder(Document doc, String label, String beginDate,
-				String endDate) {
+		public KmlFolder(final Document doc, final String label, final String beginDate, final String endDate) {
 			this.fold = doc.createAndAddFolder();
-			fold.withName(label).createAndSetTimeSpan().withBegin(beginDate)
-					.withEnd(endDate);
+			fold.withName(label).createAndSetTimeSpan().withBegin(beginDate).withEnd(endDate);
 		}
 
-		public KmlFolder(Document doc, String label) {
+		public KmlFolder(final Document doc, final String label) {
 			this.fold = doc.createAndAddFolder();
 			fold.withName(label);
 		}
-		
+
 		/**
-		 * Adds a KML Extruded Label (see
-		 * https://kml-samples.googlecode.com/svn/trunk
+		 * Adds a KML Extruded Label (see https://kml-samples.googlecode.com/svn/trunk
 		 * /interactive/index.html#./Point_Placemarks/Point_Placemarks.Extruded.kml)
-		 * 
+		 *
 		 * @param xpos
 		 *            Latitude or X position, units depending on the CRS used in the model
 		 * @param ypos
@@ -260,34 +236,32 @@ public class GamaKmlExport{
 		 * @param description
 		 *            Description (only displayed on mouse click on the label)
 		 */
-		public void addLabel(IScope scope, ILocation loc, 
-				String beginDate, String endDate, String name, String description,
-				String styleName) {
-			Placemark placemark = fold.createAndAddPlacemark().withStyleUrl(
-					"#" + styleName);
+		public void addLabel(final IScope scope, final ILocation loc, final String beginDate, final String endDate,
+				final String name, final String description, final String styleName) {
+			final Placemark placemark = fold.createAndAddPlacemark().withStyleUrl("#" + styleName);
 			placemark.createAndSetTimeSpan().withBegin(beginDate).withEnd(endDate);
-			de.micromata.opengis.kml.v_2_2_0.Point ls = placemark
-					.createAndSetPoint();
+			final de.micromata.opengis.kml.v_2_2_0.Point ls = placemark.createAndSetPoint();
 			ls.setExtrude(true);
 			ls.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-			GamaPoint locTM = Spatial.Projections.transform_CRS(scope, loc, "EPSG:4326").getCentroid();
-		
-			ls.addToCoordinates(locTM.x,locTM.y,locTM.z);
+			final GamaPoint locTM = Spatial.Projections.transform_CRS(scope, loc, "EPSG:4326").getCentroid();
+
+			ls.addToCoordinates(locTM.x, locTM.y, locTM.z);
 			placemark.setName(name);
 			placemark.setDescription(description);
 		}
 
-		
-		public void add3DModel(IScope scope, ILocation loc, double orientation,
-				double scale, String beginDate, String endDate, String daefile) {
+		public void add3DModel(final IScope scope, final ILocation loc, final double orientation, final double scale,
+				final String beginDate, final String endDate, final String daefile) {
 
-			Placemark placemark = fold.createAndAddPlacemark();
+			final Placemark placemark = fold.createAndAddPlacemark();
 			placemark.createAndSetTimeSpan().withBegin(beginDate).withEnd(endDate);
-			Model model = placemark.createAndSetModel();
+			final Model model = placemark.createAndSetModel();
 			model.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-			GamaPoint locTM = Spatial.Projections.transform_CRS(scope, loc, "EPSG:4326").getCentroid();
-			Location locKML = new Location();
-			locKML.setLongitude(locTM.x); locKML.setLatitude(locTM.y); locKML.setAltitude(locTM.z);
+			final GamaPoint locTM = Spatial.Projections.transform_CRS(scope, loc, "EPSG:4326").getCentroid();
+			final Location locKML = new Location();
+			locKML.setLongitude(locTM.x);
+			locKML.setLatitude(locTM.y);
+			locKML.setAltitude(locTM.z);
 			model.setLocation(locKML);
 			model.setScale(new Scale().withX(scale).withY(scale).withZ(scale));
 			model.setLink(new Link().withHref(daefile));
@@ -295,13 +269,11 @@ public class GamaKmlExport{
 		}
 
 		/**
-		 * Add a placemark with a geometry object.The geometry can be a Point, a
-		 * Line, a Polygon or any Multi-geometry. Points will be represented by an
-		 * icon and linear or surface objects will be drawn.
-		 * 
+		 * Add a placemark with a geometry object.The geometry can be a Point, a Line, a Polygon or any Multi-geometry.
+		 * Points will be represented by an icon and linear or surface objects will be drawn.
+		 *
 		 * @param label
-		 *            The title of the folder that will be created for this
-		 *            ShpRecord
+		 *            The title of the folder that will be created for this ShpRecord
 		 * @param beginDate
 		 *            Begining date of the timespan
 		 * @param endDate
@@ -309,121 +281,114 @@ public class GamaKmlExport{
 		 * @param geom
 		 *            Geometry object to be drawn
 		 * @param height
-		 *            Height of the feature to draw. If > 0 the feature will be
-		 *            shown extruded to the given height (relative to the ground
-		 *            level). If <= 0 the feature will be drawn flat on the ground.
+		 *            Height of the feature to draw. If > 0 the feature will be shown extruded to the given height
+		 *            (relative to the ground level). If <= 0 the feature will be drawn flat on the ground.
 		 */
-		public void addGeometry(IScope scope, String label, String beginDate, String endDate,
-				IShape shape, String styleName, double height) {
-			Placemark placemark = fold.createAndAddPlacemark().withStyleUrl(
-					"#" + styleName);
+		public void addGeometry(final IScope scope, final String label, final String beginDate, final String endDate,
+				final IShape shape, final String styleName, final double height) {
+			final Placemark placemark = fold.createAndAddPlacemark().withStyleUrl("#" + styleName);
 			placemark.setName(label);
 			placemark.createAndSetTimeSpan().withBegin(beginDate).withEnd(endDate);
-			
-			IShape shapeTM = Spatial.Projections.transform_CRS(scope, shape, "EPSG:4326");
-			Geometry geom = shapeTM.getInnerGeometry();
-			
-			if (geom instanceof Point)
-				addPoint(placemark, ((Point) geom), height);
-			else if (geom instanceof LineString)
-				addLine(placemark, ((LineString) geom), height);
-			else if (geom instanceof Polygon)
-				addPolygon(placemark, ((Polygon) geom), height);
-			else if (geom instanceof MultiPoint)
-				addMultiPoint(placemark, ((MultiPoint) geom), height);
-			else if (geom instanceof MultiLineString)
-					addMultiLine(placemark, ((MultiLineString) geom), height);
-			else if (geom instanceof MultiPolygon)
-				addMultiPolygon(placemark, ((MultiPolygon) geom),height);
-		}
-		
-		
-		public void setVisibility(boolean value) {
-			this.fold.setVisibility(value);
-			for (Feature f:this.fold.getFeature()) {
-			  f.setVisibility(value);
+
+			final IShape shapeTM = Spatial.Projections.transform_CRS(scope, shape, "EPSG:4326");
+			final Geometry geom = shapeTM.getInnerGeometry();
+
+			if (geom instanceof Point) {
+				addPoint(placemark, (Point) geom, height);
+			} else if (geom instanceof LineString) {
+				addLine(placemark, (LineString) geom, height);
+			} else if (geom instanceof Polygon) {
+				addPolygon(placemark, (Polygon) geom, height);
+			} else if (geom instanceof MultiPoint) {
+				addMultiPoint(placemark, (MultiPoint) geom, height);
+			} else if (geom instanceof MultiLineString) {
+				addMultiLine(placemark, (MultiLineString) geom, height);
+			} else if (geom instanceof MultiPolygon) {
+				addMultiPolygon(placemark, (MultiPolygon) geom, height);
 			}
 		}
-		
 
-		public void addPoint(Placemark pm, Point point, double height) {
-			de.micromata.opengis.kml.v_2_2_0.Point kmlpoint = pm
-					.createAndSetPoint();
+		public void setVisibility(final boolean value) {
+			this.fold.setVisibility(value);
+			for (final Feature f : this.fold.getFeature()) {
+				f.setVisibility(value);
+			}
+		}
+
+		public void addPoint(final Placemark pm, final Point point, final double height) {
+			final de.micromata.opengis.kml.v_2_2_0.Point kmlpoint = pm.createAndSetPoint();
 			fillPoint(kmlpoint, point, height);
 		}
 
-		public void fillPoint(de.micromata.opengis.kml.v_2_2_0.Point kmlpoint,
-				Point point, double height) {
-			Coordinate pos = point.getCoordinate();
+		public void fillPoint(final de.micromata.opengis.kml.v_2_2_0.Point kmlpoint, final Point point,
+				final double height) {
+			final Coordinate pos = point.getCoordinate();
 			if (height > 0.0) {
 				kmlpoint.setExtrude(true);
 				kmlpoint.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
 				kmlpoint.addToCoordinates(pos.x, pos.y, height);
-			} else
+			} else {
 				kmlpoint.addToCoordinates(pos.x, pos.y);
+			}
 		}
 
-		public void addLine(Placemark pm, LineString line, double height) {
-			de.micromata.opengis.kml.v_2_2_0.LineString kmlline = pm
-					.createAndSetLineString();
+		public void addLine(final Placemark pm, final LineString line, final double height) {
+			final de.micromata.opengis.kml.v_2_2_0.LineString kmlline = pm.createAndSetLineString();
 			fillLine(kmlline, line, height);
 		}
 
-		public void fillLine(de.micromata.opengis.kml.v_2_2_0.LineString kmlline,
-				LineString line, double height) {
+		public void fillLine(final de.micromata.opengis.kml.v_2_2_0.LineString kmlline, final LineString line,
+				final double height) {
 			if (height > 0.0) {
 				kmlline.setExtrude(true);
 				kmlline.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-				for (Coordinate pos : line.getCoordinates()) {
+				for (final Coordinate pos : line.getCoordinates()) {
 					kmlline.addToCoordinates(pos.x, pos.y, height);
 				}
 			} else {
-				for (Coordinate pos : line.getCoordinates()) {
+				for (final Coordinate pos : line.getCoordinates()) {
 					kmlline.addToCoordinates(pos.x, pos.y);
 				}
 			}
 		}
 
-		public void addPolygon(Placemark pm, Polygon poly, double height) {
-			de.micromata.opengis.kml.v_2_2_0.Polygon kmlpoly = pm
-					.createAndSetPolygon();
+		public void addPolygon(final Placemark pm, final Polygon poly, final double height) {
+			final de.micromata.opengis.kml.v_2_2_0.Polygon kmlpoly = pm.createAndSetPolygon();
 			fillPolygon(kmlpoly, poly, height);
 		}
 
-		public void fillPolygon(de.micromata.opengis.kml.v_2_2_0.Polygon kmlpoly,
-				Polygon poly, double height) {
+		public void fillPolygon(final de.micromata.opengis.kml.v_2_2_0.Polygon kmlpoly, final Polygon poly,
+				final double height) {
 
 			// Shell ring
-			de.micromata.opengis.kml.v_2_2_0.LinearRing kmlring = kmlpoly
-					.createAndSetOuterBoundaryIs().createAndSetLinearRing();
+			final de.micromata.opengis.kml.v_2_2_0.LinearRing kmlring =
+					kmlpoly.createAndSetOuterBoundaryIs().createAndSetLinearRing();
 			if (height > 0.0) {
 				kmlpoly.setExtrude(true);
 				kmlpoly.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-				for (Coordinate pos : poly.getExteriorRing().getCoordinates()) {
+				for (final Coordinate pos : poly.getExteriorRing().getCoordinates()) {
 					kmlring.addToCoordinates(pos.x, pos.y, height);
 				}
 			} else {
 				kmlpoly.setTessellate(true);
-				for (Coordinate pos : poly.getExteriorRing().getCoordinates()) {
+				for (final Coordinate pos : poly.getExteriorRing().getCoordinates()) {
 					kmlring.addToCoordinates(pos.x, pos.y);
 				}
 			}
 
 			// Holes
 			for (int hi = 0; hi < poly.getNumInteriorRing(); hi++) {
-				de.micromata.opengis.kml.v_2_2_0.LinearRing kmlhole = kmlpoly
-						.createAndAddInnerBoundaryIs().createAndSetLinearRing();
+				final de.micromata.opengis.kml.v_2_2_0.LinearRing kmlhole =
+						kmlpoly.createAndAddInnerBoundaryIs().createAndSetLinearRing();
 				if (height > 0.0) {
 					kmlpoly.setExtrude(true);
 					kmlpoly.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-					for (Coordinate pos : poly.getInteriorRingN(hi)
-							.getCoordinates()) {
+					for (final Coordinate pos : poly.getInteriorRingN(hi).getCoordinates()) {
 						kmlhole.addToCoordinates(pos.x, pos.y, height);
 					}
 				} else {
 					kmlpoly.setTessellate(true);
-					for (Coordinate pos : poly.getInteriorRingN(hi)
-							.getCoordinates()) {
+					for (final Coordinate pos : poly.getInteriorRingN(hi).getCoordinates()) {
 						kmlhole.addToCoordinates(pos.x, pos.y);
 					}
 					;
@@ -431,32 +396,29 @@ public class GamaKmlExport{
 			}
 		}
 
-		public void addMultiPoint(Placemark pm, MultiPoint mpoint, double height) {
-			int ng = mpoint.getNumGeometries();
-			MultiGeometry mg = pm.createAndSetMultiGeometry();
+		public void addMultiPoint(final Placemark pm, final MultiPoint mpoint, final double height) {
+			final int ng = mpoint.getNumGeometries();
+			final MultiGeometry mg = pm.createAndSetMultiGeometry();
 			for (int gx = 0; gx < ng; gx++) {
-				de.micromata.opengis.kml.v_2_2_0.Point kmlpoint = mg
-						.createAndAddPoint();
+				final de.micromata.opengis.kml.v_2_2_0.Point kmlpoint = mg.createAndAddPoint();
 				fillPoint(kmlpoint, (Point) mpoint.getGeometryN(gx), height);
 			}
 		}
 
-		public void addMultiLine(Placemark pm, MultiLineString mline, double height) {
-			int ng = mline.getNumGeometries();
-			MultiGeometry mg = pm.createAndSetMultiGeometry();
+		public void addMultiLine(final Placemark pm, final MultiLineString mline, final double height) {
+			final int ng = mline.getNumGeometries();
+			final MultiGeometry mg = pm.createAndSetMultiGeometry();
 			for (int gx = 0; gx < ng; gx++) {
-				de.micromata.opengis.kml.v_2_2_0.LineString kmlline = mg
-						.createAndAddLineString();
+				final de.micromata.opengis.kml.v_2_2_0.LineString kmlline = mg.createAndAddLineString();
 				fillLine(kmlline, (LineString) mline.getGeometryN(gx), height);
 			}
 		}
 
-		public void addMultiPolygon(Placemark pm, MultiPolygon mpoly, double height) {
-			int ng = mpoly.getNumGeometries();
-			MultiGeometry mg = pm.createAndSetMultiGeometry();
+		public void addMultiPolygon(final Placemark pm, final MultiPolygon mpoly, final double height) {
+			final int ng = mpoly.getNumGeometries();
+			final MultiGeometry mg = pm.createAndSetMultiGeometry();
 			for (int gx = 0; gx < ng; gx++) {
-				de.micromata.opengis.kml.v_2_2_0.Polygon kmlpoly = mg
-						.createAndAddPolygon();
+				final de.micromata.opengis.kml.v_2_2_0.Polygon kmlpoly = mg.createAndAddPolygon();
 				fillPolygon(kmlpoly, (Polygon) mpoly.getGeometryN(gx), height);
 			}
 		}

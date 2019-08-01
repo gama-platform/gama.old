@@ -13,11 +13,9 @@ global {
 		write "A MQTT server should run." color: #red;
 		write "Another instance of GAMA should run the model Example_MQTT_Receive.gaml, too show how agents receive messages.";
 		
-		int i <- 0;
 		create NetworkingAgent number:1{
 			name <-clients[0];
 			dest <- clients[1];
-			i <- i + 1;
 			/**
 			 * Demo connection based on the demo gama server. 
 			 * Using the demo gama server requires an available internet connection. Depending on your web access, It could be slow down the simulation. 
@@ -26,8 +24,8 @@ global {
 			 */
 			do connect  with_name:"sender";
 			
-			//default ActiveMQ mqtt login is "admin", the password is "admin"
-			// do connect to:"localhost" with_name:"sender" login: "admin" password: "admin";
+			// default ActiveMQ MQTT login is "admin", the password is "admin" and the port is 1883
+			// do connect to:"localhost" with_name:"sender" login:"admin" password:"admin" port: 1883;
 		}
 	}
 }
@@ -54,7 +52,8 @@ species NetworkingAgent skills:[network]{
 	{
 		write "sending message: " + self;
 		do send to:"sender" contents:self;
-		do send to:"receiver" contents:self;
+// 		
+//		do send to:"receiver" contents:self;
 	}
 	
 	reflex receive

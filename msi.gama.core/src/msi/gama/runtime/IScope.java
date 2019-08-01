@@ -776,6 +776,24 @@ public interface IScope extends Closeable, IBenchmarkable {
 	ExecutionResult step(final IStepable agent);
 
 	/**
+	 * Inits the.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the execution result
+	 */
+	ExecutionResult init(final IAgent agent);
+
+	/**
+	 * Step.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the execution result
+	 */
+	ExecutionResult step(final IAgent agent);
+
+	/**
 	 * Stack arguments.
 	 *
 	 * @param actualArgs

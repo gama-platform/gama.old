@@ -1350,7 +1350,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public void insert(final IAgent a) {}
 
 	@Override
-	public void remove(final Envelope previous, final IAgent a) {}
+	public void remove(final Envelope3D previous, final IAgent a) {}
 
 	//
 	@Override

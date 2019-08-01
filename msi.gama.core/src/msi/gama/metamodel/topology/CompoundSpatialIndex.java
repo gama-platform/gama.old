@@ -22,6 +22,7 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
@@ -62,7 +63,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	@Override
-	public void remove(final Envelope previous, final IAgent o) {
+	public void remove(final Envelope3D previous, final IAgent o) {
 		final IAgent a = o.getAgent();
 		if (a == null) { return; }
 		final ISpatialIndex si = findSpatialIndex(a.getPopulation());

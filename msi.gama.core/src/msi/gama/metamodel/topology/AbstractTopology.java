@@ -214,7 +214,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public void updateAgent(final Envelope previous, final IAgent agent) {
+	public void updateAgent(final Envelope3D previous, final IAgent agent) {
 		if (GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
 			if (speciesInserted.contains(agent.getSpecies())) {
 				updateAgentBase(previous, agent);
@@ -224,7 +224,7 @@ public abstract class AbstractTopology implements ITopology {
 		}
 	}
 
-	public void updateAgentBase(final Envelope previous, final IAgent agent) {
+	public void updateAgentBase(final Envelope3D previous, final IAgent agent) {
 		if (previous != null && !previous.isNull()) {
 			getSpatialIndex().remove(previous, agent);
 		}
@@ -364,8 +364,9 @@ public abstract class AbstractTopology implements ITopology {
 			if (filter.getSpecies() != null) {
 				insertSpecies(scope, filter.getSpecies());
 			} else {
-				for (final IAgent ag : filter.getPopulation(scope)) {
-					insertSpecies(scope, ag.getSpecies());
+				final IPopulation<? extends IAgent> pop = filter.getPopulation(scope);
+				if (pop != null) {
+					insertSpecies(scope, pop.getSpecies());
 				}
 			}
 		}
@@ -527,14 +528,18 @@ public abstract class AbstractTopology implements ITopology {
 		insertAgents(scope, f);
 		if (!isTorus()) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
-			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
-			final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
-			shapes.removeIf(each -> {
-				if (each.dead()) { return true; }
-				final Geometry geom = each.getInnerGeometry();
-				return !(covered ? pg.covers(geom) : pg.intersects(geom));
-			});
-			return shapes;
+			try {
+				final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
+				final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
+				shapes.removeIf(each -> {
+					if (each.dead()) { return true; }
+					final Geometry geom = each.getInnerGeometry();
+					return !(covered ? pg.covers(geom) : pg.intersects(geom));
+				});
+				return shapes;
+			} finally {
+				envelope.dispose();
+			}
 		}
 		try (final ICollector<IAgent> result = Collector.getSet()) {
 

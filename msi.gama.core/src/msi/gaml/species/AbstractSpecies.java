@@ -67,7 +67,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	private final Map<String, UserCommandStatement> userCommands = GamaMapFactory.createOrdered();
 	private final List<IStatement> behaviors = new ArrayList<>();
 	protected ISpecies macroSpecies, parentSpecies;
-	private boolean isInitOverriden, isStepOverriden;
 	final IArchitecture control;
 
 	public AbstractSpecies(final IDescription description) {
@@ -357,14 +356,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			} else if (s instanceof AspectStatement) {
 				aspects.put(s.getName(), (AspectStatement) s);
 			} else if (s instanceof ActionStatement) {
-				if (!s.getDescription().isBuiltIn()) {
-					final String name = s.getName();
-					if (name.equals(initActionName)) {
-						isInitOverriden = true;
-					} else if (name.equals(stepActionName)) {
-						isStepOverriden = true;
-					}
-				}
 				s.setEnclosing(this);
 				actions.put(s.getName(), (ActionStatement) s);
 			} else if (s instanceof UserCommandStatement) {
@@ -442,26 +433,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public Boolean implementsSkill(final String skill) {
 		return getDescription().implementsSkill(skill);
-	}
-
-	/**
-	 * Method isInitOverriden()
-	 *
-	 * @see msi.gaml.species.ISpecies#isInitOverriden()
-	 */
-	@Override
-	public boolean isInitOverriden() {
-		return isInitOverriden;
-	}
-
-	/**
-	 * Method isStepOverriden()
-	 *
-	 * @see msi.gaml.species.ISpecies#isStepOverriden()
-	 */
-	@Override
-	public boolean isStepOverriden() {
-		return isStepOverriden;
 	}
 
 	@Override

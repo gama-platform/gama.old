@@ -32,8 +32,8 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.PixelUnitExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
@@ -254,7 +254,7 @@ public class LayerObject {
 		final ImmutableList<AbstractObject> l = ImmutableList.copyOf(list);
 		gl.setCurrentObjectAlpha(alpha);
 		for (final AbstractObject object : l) {
-			object.draw(gl, gl.getDrawerFor(object.getDrawerType()), picking);
+			object.draw(gl, gl.getDrawerFor(object.type), picking);
 		}
 	}
 
@@ -295,11 +295,11 @@ public class LayerObject {
 		currentList.add(new StringObject(string, attributes));
 	}
 
-	public void addFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
+	public void addFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
 		currentList.add(new ResourceObject(file, attributes));
 	}
 
-	public void addImage(final Object o, final FileDrawingAttributes attributes) {
+	public void addImage(final Object o, final DrawingAttributes attributes) {
 		// If no dimensions have been defined, then the image is considered as wide and tall as the environment
 		Scaling3D size = attributes.getSize();
 		if (size == null) {
@@ -322,7 +322,7 @@ public class LayerObject {
 		currentList.add(new FieldObject(fieldValues, attributes));
 	}
 
-	public void addGeometry(final Geometry geometry, final FileDrawingAttributes attributes) {
+	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
 		isAnimated = attributes.isAnimated();
 		currentList.add(new GeometryObject(geometry, attributes));
 	}
@@ -399,11 +399,11 @@ public class LayerObject {
 
 	protected void addSyntheticObject(final List<AbstractObject<?, ?>> list, final IShape shape, final GamaColor color,
 			final IShape.Type type, final boolean empty) {
-		final ShapeDrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
+		final DrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
 				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 		att.setEmpty(empty);
 		att.setHeight(shape.getDepth());
-		att.withLighting(false);
+		att.setLighting(false);
 		list.add(new GeometryObject(shape.getInnerGeometry(), att));
 	}
 

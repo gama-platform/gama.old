@@ -16,7 +16,6 @@ import static msi.gama.runtime.ExecutionResult.withValue;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.function.Function;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
@@ -42,8 +41,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IExecutable;
-import msi.gaml.statements.IStatement;
-import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
@@ -209,7 +206,7 @@ public class ExecutionScope implements IScope {
 	 * @return true if the root agent of the scope is marked as interrupted (i.e. dead)
 	 */
 
-	protected boolean _root_interrupted() {
+	public boolean _root_interrupted() {
 		return _interrupted || getRoot() == null || getRoot().dead();
 	}
 
@@ -362,13 +359,13 @@ public class ExecutionScope implements IScope {
 		try (StopWatch w = GAMA.benchmark(this, statement)) {
 			// Otherwise we compute the result of the statement, pushing the
 			// arguments if the statement expects them
-			if (args != null && statement instanceof IStatement.WithArgs) {
+			if (args != null) {
 				args.setCaller(caller);
-				((IStatement.WithArgs) statement).setRuntimeArgs(this, args);
-			} else if (statement instanceof RemoteSequence) {
-				// We push the caller to the remote sequence (will be cleaned when the remote sequence leaves its scope)
-				((RemoteSequence) statement).setMyself(caller);
 			}
+			// See issue #2815: we also push args even if they are null
+			statement.setRuntimeArgs(this, args);
+			// We push the caller to the remote sequence (will be cleaned when the remote sequence leaves its scope)
+			statement.setMyself(caller);
 			return withValue(statement.executeOn(ExecutionScope.this));
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
@@ -414,38 +411,8 @@ public class ExecutionScope implements IScope {
 	@Override
 	public ExecutionResult step(final IStepable agent) {
 		if (agent == null || interrupted()) { return FAILED; }
-		return agent instanceof IAgent ? pushRunAndCatch((IAgent) agent, (a) -> withValue(agent.step(this)))
-				: runAndCatch(agent, (a) -> withValue(agent.step(this)));
-	}
-
-	@Override
-	public ExecutionResult init(final IStepable agent) {
-		if (agent == null || interrupted()) { return FAILED; }
-		return agent instanceof IAgent ? pushRunAndCatch((IAgent) agent, (a) -> withValue(agent.init(this)))
-				: runAndCatch(agent, (a) -> withValue(agent.init(this)));
-	}
-
-	@Override
-	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
-		if (agent == null || interrupted()) { return FAILED; }
-		return pushRunAndCatch(agent, (a) -> withValue(expr.value(this)));
-	}
-
-	private ExecutionResult pushRunAndCatch(final IAgent a, final Function<IAgent, ExecutionResult> f) {
-		if (a == null || a.dead()) { return FAILED; }
-		final boolean pushed = push(a);
-		try {
-			return runAndCatch(a, f);
-		} finally {
-			if (pushed) {
-				pop(a);
-			}
-		}
-	}
-
-	private <S extends IStepable> ExecutionResult runAndCatch(final S a, final Function<S, ExecutionResult> f) {
-		try (StopWatch w = GAMA.benchmark(this, a)) {
-			return f.apply(a);
+		try (StopWatch w = GAMA.benchmark(this, agent)) {
+			return withValue(agent.step(this));
 		} catch (final Throwable ex) {
 			if (ex instanceof OutOfMemoryError) {
 				GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), ex);
@@ -454,6 +421,95 @@ public class ExecutionScope implements IScope {
 				final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
 				GAMA.reportAndThrowIfNeeded(this, g, true);
 				return FAILED;
+			}
+		}
+	}
+
+	@Override
+	public ExecutionResult init(final IStepable agent) {
+		if (agent == null || interrupted()) { return FAILED; }
+		try (StopWatch w = GAMA.benchmark(this, agent)) {
+			return withValue(agent.init(this));
+		} catch (final Throwable ex) {
+			if (ex instanceof OutOfMemoryError) {
+				GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), ex);
+				return FAILED;
+			} else {
+				final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
+				GAMA.reportAndThrowIfNeeded(this, g, true);
+				return FAILED;
+			}
+		}
+	}
+
+	@Override
+	public ExecutionResult step(final IAgent agent) {
+		if (agent == null || agent.dead() || interrupted()) { return FAILED; }
+		final boolean pushed = push(agent);
+		try {
+			try (StopWatch w = GAMA.benchmark(this, agent)) {
+				return withValue(agent.step(this));
+			} catch (final Throwable ex) {
+				if (ex instanceof OutOfMemoryError) {
+					GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), ex);
+					return FAILED;
+				} else {
+					final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
+					GAMA.reportAndThrowIfNeeded(this, g, true);
+					return FAILED;
+				}
+			}
+		} finally {
+			if (pushed) {
+				pop(agent);
+			}
+		}
+	}
+
+	@Override
+	public ExecutionResult init(final IAgent agent) {
+		if (agent == null || agent.dead() || interrupted()) { return FAILED; }
+		final boolean pushed = push(agent);
+		try {
+			try (StopWatch w = GAMA.benchmark(this, agent)) {
+				return withValue(agent.init(this));
+			} catch (final Throwable ex) {
+				if (ex instanceof OutOfMemoryError) {
+					GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), ex);
+					return FAILED;
+				} else {
+					final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
+					GAMA.reportAndThrowIfNeeded(this, g, true);
+					return FAILED;
+				}
+			}
+		} finally {
+			if (pushed) {
+				pop(agent);
+			}
+		}
+	}
+
+	@Override
+	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
+		if (agent == null || agent.dead() || interrupted()) { return FAILED; }
+		final boolean pushed = push(agent);
+		try {
+			try (StopWatch w = GAMA.benchmark(this, agent)) {
+				return withValue(expr.value(this));
+			} catch (final Throwable ex) {
+				if (ex instanceof OutOfMemoryError) {
+					GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), ex);
+					return FAILED;
+				} else {
+					final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
+					GAMA.reportAndThrowIfNeeded(this, g, true);
+					return FAILED;
+				}
+			}
+		} finally {
+			if (pushed) {
+				pop(agent);
 			}
 		}
 	}

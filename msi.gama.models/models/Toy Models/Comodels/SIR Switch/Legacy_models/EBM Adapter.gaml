@@ -1,7 +1,7 @@
 model SIR_EBM_coupling
 
 import "SIR_EBM.gaml"
-experiment "Adapter" type: gui parent: SIR_EBM_exp
+experiment "Adapter" type: gui
 {
 	int get_num_S
 	{
@@ -40,9 +40,4 @@ experiment "Adapter" type: gui parent: SIR_EBM_exp
 	{
 		first(agent_with_SIR_dynamic).R <- float(num);
 	}
-
-	output
-	{
-	}
-
 }

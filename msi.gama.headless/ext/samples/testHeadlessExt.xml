@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Simulation id="2" driver="msi.gama.headless.runtime.GamaSimulator" sourcePath="./testHeadlessFile/models/simple_SIR.gaml" finalstep="1000" experiment="maths">
-  <Parameters>
-    <Parameter name="Num_N" type="INT" value="1500" />
-  </Parameters>
-  <Outputs>
-    <Output id="1" name="number_of_S" framerate="1" />
-  </Outputs>
-</Simulation>

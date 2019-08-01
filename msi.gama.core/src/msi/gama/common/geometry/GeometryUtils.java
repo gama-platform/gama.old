@@ -508,23 +508,27 @@ public class GeometryUtils {
 		final Geometry bufferClip = sizeTol != 0.0 ? clip.buffer(sizeTol, 5, 0) : clip;
 		final PreparedGeometry buffered = PREPARED_GEOMETRY_FACTORY.create(bufferClip);
 		final Envelope3D env = Envelope3D.of(buffered.getGeometry());
-		for (int i = 0; i < geom.getNumGeometries(); i++) {
-			final Geometry gg = geom.getGeometryN(i);
-			final Coordinate[] coord = gg.getCoordinates();
-			boolean cond = env.covers(gg.getCentroid().getCoordinate());
-			cond = cond && (approxClipping
-					? buffered.covers(gg.getCentroid()) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[0]))
-							&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[1]))
-							&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[2]))
-					: bufferClip.covers(gg));
-			if (cond) {
-				if (setZ) {
-					final ICoordinates cc = getContourCoordinates(gg);
-					cc.setAllZ(elevation);
-					gg.geometryChanged();
+		try {
+			for (int i = 0; i < geom.getNumGeometries(); i++) {
+				final Geometry gg = geom.getGeometryN(i);
+				final Coordinate[] coord = gg.getCoordinates();
+				boolean cond = env.covers(gg.getCentroid().getCoordinate());
+				cond = cond && (approxClipping
+						? buffered.covers(gg.getCentroid()) && buffered.covers(GEOMETRY_FACTORY.createPoint(coord[0]))
+								&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[1]))
+								&& buffered.covers(GEOMETRY_FACTORY.createPoint(coord[2]))
+						: bufferClip.covers(gg));
+				if (cond) {
+					if (setZ) {
+						final ICoordinates cc = getContourCoordinates(gg);
+						cc.setAllZ(elevation);
+						gg.geometryChanged();
+					}
+					result.add(new GamaShape(gg));
 				}
-				result.add(new GamaShape(gg));
 			}
+		} finally {
+			env.dispose();
 		}
 		/*
 		 * applyToInnerGeometries(geom, (gg) -> { final ICoordinates cc = getContourCoordinates(gg); if
@@ -557,6 +561,8 @@ public class GeometryUtils {
 			GamaRuntimeException.warning("Impossible to triangulate: " + new WKTWriter().write(polygon), scope);
 			iterateOverTriangles((Polygon) DouglasPeuckerSimplifier.simplify(polygon, 0.1), action);
 			return;
+		} finally {
+			env.dispose();
 		}
 	}
 

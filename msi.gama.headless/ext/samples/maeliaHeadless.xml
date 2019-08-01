@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Simulation id="2" driver="msi.gama.headless.runtime.GamaSimulator" sourcePath="./Maelia/models/main/launcherModeleMaeliaComplet.gaml" finalstep="10" experiment="ModeleComplet">
-  <Parameters>
-  </Parameters>
-  <Outputs>
-  </Outputs>
-</Simulation>

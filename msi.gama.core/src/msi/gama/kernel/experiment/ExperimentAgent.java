@@ -179,8 +179,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	private void initialize() {
+		// We initialize the population that will host the simulation
 		createSimulationPopulation();
-		random = new RandomUtils(getDefinedSeed(), getDefinedRng());
+		// We initialize a new random number generator
+		if (random == null) {
+			random = new RandomUtils();
+		} else {
+			random = new RandomUtils(getDefinedSeed(), getDefinedRng());
+		}
 	}
 
 	@Override
@@ -192,14 +198,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ownClock.reset();
 		// We close any simulation that might be running
 		closeSimulations();
-		// We initialize the population that will host the simulation
-		createSimulationPopulation();
-		// We initialize a new random number generator
-		if (random == null) {
-			random = new RandomUtils();
-		} else {
-			random = new RandomUtils(getDefinedSeed(), getDefinedRng());
-		}
+
+		initialize();
 	}
 
 	public String getDefinedRng() {
@@ -661,7 +661,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		volatile boolean interrupted = false;
 
 		@Override
-		protected boolean _root_interrupted() {
+		public boolean _root_interrupted() {
 			return interrupted || ExperimentAgent.this.dead();
 		}
 

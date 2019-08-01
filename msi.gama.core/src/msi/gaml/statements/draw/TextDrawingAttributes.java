@@ -10,14 +10,12 @@
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Scaling3D;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
-import msi.gama.util.GamaMaterial;
-import msi.gama.util.GamaPair;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class TextDrawingAttributes extends DrawingAttributes implements Cloneable {
@@ -26,48 +24,18 @@ public class TextDrawingAttributes extends DrawingAttributes implements Cloneabl
 	public final boolean perspective;
 	public final GamaPoint anchor;
 
-	public TextDrawingAttributes(final Scaling3D size, final GamaPair<Double, GamaPoint> rotation,
-			final GamaPoint location, final GamaPoint anchor, final GamaColor color, final GamaFont font,
-			final Boolean perspective) {
+	public TextDrawingAttributes(final Scaling3D size, final AxisAngle rotation, final GamaPoint location,
+			final GamaPoint anchor, final GamaColor color, final GamaFont font, final Boolean perspective) {
 		super(size, rotation, location, color, null, null);
+		setType(Type.POLYGON);
 		this.font = font;
 		this.anchor = anchor;
 		this.perspective = perspective == null || perspective.booleanValue();
 	}
 
 	public TextDrawingAttributes copyTranslatedBy(final GamaPoint p) {
-		try {
-			final TextDrawingAttributes copy = (TextDrawingAttributes) super.clone();
-			copy.geometryProperties = copy.geometryProperties.copy();
-			// GamaPoint p1 = copy.geometryProperties.location;
-			copy.geometryProperties.location = copy.geometryProperties.location.plus(p);
-			// GamaPoint p2 = copy.geometryProperties.location;
-			// DEBUG.OUT("" + p1 + " " + p2);
-			return copy;
-		} catch (final CloneNotSupportedException e) {
-			return null;
-		}
-	}
-
-	/**
-	 * Method getMaterial()
-	 *
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
-	 */
-	@Override
-	public GamaMaterial getMaterial() {
-		// TODO
-		return null;
-	}
-
-	@Override
-	public IAgent getAgentIdentifier() {
-		return null;
-	}
-
-	@Override
-	public Type getType() {
-		return Type.POLYGON;
+		return new TextDrawingAttributes(getSize(), getRotation(), getLocation().plus(p), getAnchor(), getColor(), font,
+				perspective);
 	}
 
 	@Override

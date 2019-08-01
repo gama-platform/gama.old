@@ -23,7 +23,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
-import msi.gama.util.file.CsvWriter;
+import msi.gama.util.file.csv.CsvWriter;
 import msi.gama.util.tree.GamaTree.Order;
 import msi.gaml.operators.Files;
 import msi.gaml.types.Types;

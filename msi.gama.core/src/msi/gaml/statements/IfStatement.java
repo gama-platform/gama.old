@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.IfStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.statements.IfStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -36,7 +36,7 @@ import msi.gaml.types.IType;
 
 /**
  * IfPrototype.
- * 
+ *
  * @author drogoul 14 nov. 07
  */
 @symbol (
@@ -184,7 +184,7 @@ public class IfStatement extends AbstractStatementSequence {
 
 	/**
 	 * The Constructor.
-	 * 
+	 *
 	 * @param sim
 	 *            the sim
 	 */
@@ -209,7 +209,10 @@ public class IfStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		return (Boolean) cond.value(scope) ? super.privateExecuteIn(scope)
-				: alt != null ? scope.execute(alt).getValue() : null;
+		final Object condition = cond.value(scope);
+		if (!(condition instanceof Boolean)) {
+			throw GamaRuntimeException.error("Impossible to evaluate condition " + cond.serialize(true), scope);
+		}
+		return (Boolean) condition ? super.privateExecuteIn(scope) : alt != null ? scope.execute(alt).getValue() : null;
 	}
 }

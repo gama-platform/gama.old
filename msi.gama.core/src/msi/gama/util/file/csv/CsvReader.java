@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.util.file;
+package msi.gama.util.file.csv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -94,7 +94,7 @@ public class CsvReader {
 	public static final int ESCAPE_MODE_BACKSLASH = 2;
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.
+	 * Creates a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a file as the data source.
 	 *
 	 * @param fileName
 	 *            The path to the file to use as the data source.
@@ -118,8 +118,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.&nbsp;Uses ISO-8859-1
-	 * as the {@link java.nio.charset.Charset Charset}.
+	 * Creates a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a file as the data
+	 * source.&nbsp;Uses ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
 	 *
 	 * @param fileName
 	 *            The path to the file to use as the data source.
@@ -131,8 +131,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Creates a {@link com.csvreader.CsvReader CsvReader} object using a file as the data source.&nbsp;Uses a comma as
-	 * the column delimiter and ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
+	 * Creates a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a file as the data
+	 * source.&nbsp;Uses a comma as the column delimiter and ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
 	 *
 	 * @param fileName
 	 *            The path to the file to use as the data source.
@@ -142,8 +142,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader Reader} object as the
-	 * data source.
+	 * Constructs a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader
+	 * Reader} object as the data source.
 	 *
 	 * @param inputStream
 	 *            The stream to use as the data source.
@@ -161,8 +161,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader Reader} object as the
-	 * data source.&nbsp;Uses a comma as the column delimiter.
+	 * Constructs a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using a {@link java.io.Reader
+	 * Reader} object as the data source.&nbsp;Uses a comma as the column delimiter.
 	 *
 	 * @param inputStream
 	 *            The stream to use as the data source.
@@ -172,8 +172,8 @@ public class CsvReader {
 	}
 
 	/**
-	 * Constructs a {@link com.csvreader.CsvReader CsvReader} object using an {@link java.io.InputStream InputStream}
-	 * object as the data source.&nbsp;Uses a comma as the column delimiter.
+	 * Constructs a {@link msi.gama.util.file.csv.csvreader.CsvReader CsvReader} object using an
+	 * {@link java.io.InputStream InputStream} object as the data source.&nbsp;Uses a comma as the column delimiter.
 	 *
 	 * @param inputStream
 	 *            The stream to use as the data source.
@@ -241,14 +241,14 @@ public class CsvReader {
 		userSettings.RecordDelimiter = recordDelimiter;
 	}
 
-	/**
-	 * Gets the character to use as a text qualifier in the data.
-	 *
-	 * @return The character to use as a text qualifier in the data.
-	 */
-	public char getTextQualifier() {
-		return userSettings.TextQualifier;
-	}
+	// /**
+	// * Gets the character to use as a text qualifier in the data.
+	// *
+	// * @return The character to use as a text qualifier in the data.
+	// */
+	// public char getTextQualifier() {
+	// return userSettings.TextQualifier;
+	// }
 
 	/**
 	 * Sets the character to use as a text qualifier in the data.
@@ -256,7 +256,7 @@ public class CsvReader {
 	 * @param textQualifier
 	 *            The character to use as a text qualifier in the data.
 	 */
-	public void setTextQualifier(final char textQualifier) {
+	public void setTextQualifier(final Character textQualifier) {
 		userSettings.TextQualifier = textQualifier;
 	}
 
@@ -393,11 +393,11 @@ public class CsvReader {
 	}
 
 	/**
-	 * Gets the count of headers read in by a previous call to {@link com.csvreader.CsvReader#readHeaders
-	 * readHeaders()}.
+	 * Gets the count of headers read in by a previous call to
+	 * {@link msi.gama.util.file.csv.csvreader.CsvReader#readHeaders readHeaders()}.
 	 *
-	 * @return The count of headers read in by a previous call to {@link com.csvreader.CsvReader#readHeaders
-	 *         readHeaders()}.
+	 * @return The count of headers read in by a previous call to
+	 *         {@link msi.gama.util.file.csv.csvreader.CsvReader#readHeaders readHeaders()}.
 	 */
 	public int getHeaderCount() {
 		return headersHolder.Length;
@@ -472,6 +472,7 @@ public class CsvReader {
 		public int cols;
 		public IType type = Types.NO_TYPE;
 		public String[] headers = null;
+		public Character qualifier;
 
 		private IType firstLineType = Types.NO_TYPE;
 		private boolean atLeastOneNumber;
@@ -663,7 +664,8 @@ public class CsvReader {
 
 					char currentLetter = dataBuffer.Buffer[dataBuffer.Position];
 
-					if (userSettings.UseTextQualifier && currentLetter == userSettings.TextQualifier) {
+					if (userSettings.UseTextQualifier && userSettings.TextQualifier != null
+							&& currentLetter == userSettings.TextQualifier.charValue()) {
 						// this will be a text qualified column, so
 						// we need to set startedWithQualifier to make it
 						// enter the seperate branch to handle text
@@ -677,7 +679,7 @@ public class CsvReader {
 						startedWithQualifier = true;
 						boolean lastLetterWasQualifier = false;
 
-						char escapeChar = userSettings.TextQualifier;
+						char escapeChar = userSettings.TextQualifier.charValue();
 
 						if (userSettings.EscapeMode == ESCAPE_MODE_BACKSLASH) {
 							escapeChar = Letters.BACKSLASH;
@@ -760,7 +762,7 @@ public class CsvReader {
 									} else {
 										dataBuffer.ColumnStart = dataBuffer.Position + 1;
 									}
-								} else if (currentLetter == userSettings.TextQualifier) {
+								} else if (currentLetter == userSettings.TextQualifier.charValue()) {
 									if (lastLetterWasEscape) {
 										lastLetterWasEscape = false;
 										lastLetterWasQualifier = false;
@@ -1648,7 +1650,7 @@ public class CsvReader {
 		// the overhead of the method call that exists on properties
 		// public boolean CaseSensitive;
 
-		public char TextQualifier;
+		public Character TextQualifier;
 
 		public boolean TrimWhitespace;
 
@@ -1672,7 +1674,7 @@ public class CsvReader {
 
 		public UserSettings() {
 			// CaseSensitive = true;
-			TextQualifier = Letters.QUOTE;
+			TextQualifier = null;
 			TrimWhitespace = true;
 			UseTextQualifier = true;
 			Delimiter = Letters.COMMA;

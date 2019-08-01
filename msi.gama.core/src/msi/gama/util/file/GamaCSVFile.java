@@ -29,6 +29,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.csv.CsvReader;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
@@ -62,6 +63,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 		public int rows;
 		public boolean header;
 		public Character delimiter;
+		public Character qualifier;
 		public final IType type;
 		public String[] headers;
 
@@ -144,6 +146,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	String csvSeparator = null;
+	Character textQualifier = null;
 	IType contentsType;
 	GamaPoint userSize;
 	Boolean hasHeader;
@@ -156,7 +159,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	 * @throws GamaRuntimeException
 	 */
 	@doc (
-			value = "This file constructor allows to read a CSV file with the default separator (coma), no header, and no assumption on the type of data",
+			value = "This file constructor allows to read a CSV file with the default separator (coma), no header, and no assumption on the type of data. No text qualifier will be used",
 			examples = { @example (
 					value = "csv_file f <- csv_file(\"file.csv\");",
 					isExecutable = false) })
@@ -165,7 +168,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	@doc (
-			value = "This file constructor allows to read a CSV file with the default separator (coma), with specifying if the model has a header or not (boolean), and no assumption on the type of data",
+			value = "This file constructor allows to read a CSV file with the default separator (coma), with specifying if the model has a header or not (boolean), and no assumption on the type of data. No text qualifier will be used",
 			examples = { @example (
 					value = "csv_file f <- csv_file(\"file.csv\",true);",
 					isExecutable = false) })
@@ -175,7 +178,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	@doc (
-			value = "This file constructor allows to read a CSV file with a given separator, no header, and no assumption on the type of data",
+			value = "This file constructor allows to read a CSV file and specify the separator used, without making any assumption on the type of data. Headers should be detected automatically if they exist. No text qualifier will be used",
 			examples = { @example (
 					value = "csv_file f <- csv_file(\"file.csv\", \";\");",
 					isExecutable = false) })
@@ -184,7 +187,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	@doc (
-			value = "This file constructor allows to read a CSV file with a given separator, with specifying if the model has a header or not (boolean), and no assumption on the type of data",
+			value = "This file constructor allows to read a CSV file and specify (1) the separator used; (2) if the model has a header or not, without making any assumption on the type of data. No text qualifier will be used",
 			examples = { @example (
 					value = "csv_file f <- csv_file(\"file.csv\", \";\",true);",
 					isExecutable = false) })
@@ -194,7 +197,19 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	@doc (
-			value = "This file constructor allows to read a CSV file with a given separator, no header, and the type of data",
+			value = "This file constructor allows to read a CSV file and specify (1) the separator used; (2) the text qualifier used; (3) if the model has a header or not, without making any assumption on the type of data",
+			examples = { @example (
+					value = "csv_file f <- csv_file(\"file.csv\", ';', '\"', true);",
+					isExecutable = false) })
+	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final String qualifier,
+			final Boolean withHeader) {
+		this(scope, pathName, separator, (IType) null);
+		textQualifier = qualifier == null || qualifier.isEmpty() ? null : qualifier.charAt(0);
+		hasHeader = withHeader;
+	}
+
+	@doc (
+			value = "This file constructor allows to read a CSV file with a given separator, no header, and the type of data. No text qualifier will be used",
 			examples = { @example (
 					value = "csv_file f <- csv_file(\"file.csv\", \";\",int);",
 					isExecutable = false) })
@@ -203,7 +218,18 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	@doc (
-			value = "This file constructor allows to read a CSV file with a given separator, the type of data, with specifying if the model has a header or not (boolean),",
+			value = "This file constructor allows to read a CSV file and specify the separator, text qualifier to use, and the type of data to read.  Headers should be detected automatically if they exist.  ",
+			examples = { @example (
+					value = "csv_file f <- csv_file(\"file.csv\", ';', '\"', int);",
+					isExecutable = false) })
+	public GamaCSVFile(final IScope scope, final String pathName, final String separator, final String qualifier,
+			final IType type) {
+		this(scope, pathName, separator, type, (Boolean) null);
+		textQualifier = qualifier == null || qualifier.isEmpty() ? null : qualifier.charAt(0);
+	}
+
+	@doc (
+			value = "This file constructor allows to read a CSV file with a given separator, the type of data, with specifying if the model has a header or not (boolean). No text qualifier will be used",
 			examples = { @example (
 					value = "csv_file f <- csv_file(\"file.csv\", \";\",int,true);",
 					isExecutable = false) })
@@ -214,7 +240,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	@doc (
-			value = "This file constructor allows to read a CSV file with a given separator, the type of data, with specifying the number of cols and rows taken into account,",
+			value = "This file constructor allows to read a CSV file with a given separator, the type of data, with specifying the number of cols and rows taken into account. No text qualifier will be used",
 			examples = { @example (
 					value = "csv_file f <- csv_file(\"file.csv\", \";\",int,true, {5, 100});",
 					isExecutable = false) })
@@ -311,6 +337,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 		try {
 
 			reader = new CsvReader(getPath(scope), csvSeparator.charAt(0));
+			reader.setTextQualifier(textQualifier);
 			if (hasHeader) {
 				reader.readHeaders();
 				headers = GamaListFactory.createWithoutCasting(Types.STRING, reader.getHeaders());

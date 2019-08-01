@@ -90,7 +90,8 @@ experiment Simple_exp type: gui
 {
 	output
 	{
-		display co_SIR_chart
+	 	layout horizontal([0::5000,vertical([1::5000,2::5000])::5000]) tabs:true editors: false;
+		display "Switch_SIR chart"
 		{
 			chart "SIR_agent" type: series background: # white
 			{
@@ -99,6 +100,16 @@ experiment Simple_exp type: gui
 				data 'R' value: first(Switch).R color: # blue;
 			}
 
+		}
+		display "EBM Disp" {			
+			chart "SIR_agent" type: series background: #white {
+				data 'S' value: first(first(SIR_1."Adapter").simulation.agent_with_SIR_dynamic).S color: #green ;				
+				data 'I' value: first(first(SIR_1."Adapter").simulation.agent_with_SIR_dynamic).I color: #red ;
+				data 'R' value: first(first(SIR_1."Adapter").simulation.agent_with_SIR_dynamic).R color: #blue ;
+			}
+		}
+		display "ABM Disp" {			
+			agents "Host" value:first(SIR_2."Adapter").simulation.Host aspect:base;
 		}
 
 	}

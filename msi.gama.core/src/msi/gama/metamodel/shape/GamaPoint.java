@@ -246,7 +246,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public Envelope3D getEnvelope() {
-		return Envelope3D.of(this);
+		return Envelope3D.of((Coordinate) this);
 	}
 
 	@Override

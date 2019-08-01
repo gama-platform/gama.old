@@ -20,10 +20,11 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 
 import msi.gama.runtime.GAMA;
-import msi.gama.util.file.CsvReader;
-import msi.gama.util.file.CsvWriter;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gama.util.file.IGamaFileMetaData;
+import msi.gama.util.file.csv.CsvReader;
+import msi.gama.util.file.csv.CsvWriter;
+import msi.gama.util.file.csv.CsvWriter.Letters;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -100,7 +101,7 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 * @return the text qualifier character to use as a text qualifier in the data
 	 */
-	public char getTextQualifier() {
+	public Character getTextQualifier() {
 		final char result = Character.UNASSIGNED;
 		return result;
 	}
@@ -111,7 +112,7 @@ public class CSVModel implements IRowChangesListener {
 	 * @return true if the text qualifier is to be used for all data fields
 	 */
 	public boolean useQualifier() {
-		return false;
+		return getTextQualifier() != null;
 	}
 
 	/**
@@ -138,8 +139,8 @@ public class CSVModel implements IRowChangesListener {
 			csvReader.setUseComments(false);
 		}
 
-		csvReader.setTextQualifier(getTextQualifier());
-		csvReader.setUseTextQualifier(false);
+		csvReader.setTextQualifier(Letters.QUOTE);
+		csvReader.setUseTextQualifier(true);
 
 		return csvReader;
 	}

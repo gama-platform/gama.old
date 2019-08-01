@@ -17,9 +17,9 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
@@ -125,19 +125,19 @@ public class ModelScene {
 		}
 	}
 
-	public void addGeometryFile(final GamaGeometryFile file, final FileDrawingAttributes attributes) {
+	public void addGeometryFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addFile(file, attributes);
 		}
 	}
 
-	public void addImage(final Object img, final FileDrawingAttributes attributes) {
+	public void addImage(final Object img, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addImage(img, attributes);
 		}
 	}
 
-	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
+	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
 		if (increment()) {
 			currentLayer.addGeometry(geometry, attributes);
 		}

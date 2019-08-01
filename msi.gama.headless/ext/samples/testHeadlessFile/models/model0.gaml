@@ -1,4 +1,0 @@
-model road
-
-species road {
-}

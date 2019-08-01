@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.population.IPopulation.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.metamodel.population.IPopulation.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
@@ -44,17 +44,15 @@ public interface IPopulation<T extends IAgent>
 
 	public interface Listener {
 
-		public void notifyAgentRemoved(IScope scope, IPopulation<? extends IAgent> pop, IAgent agent);
+		void notifyAgentRemoved(IScope scope, IPopulation<? extends IAgent> pop, IAgent agent);
 
-		public void notifyAgentAdded(IScope scope, IPopulation<? extends IAgent> pop, IAgent agent);
+		void notifyAgentAdded(IScope scope, IPopulation<? extends IAgent> pop, IAgent agent);
 
-		public void notifyAgentsAdded(IScope scope, IPopulation<? extends IAgent> pop,
-				Collection<? extends IAgent> agents);
+		void notifyAgentsAdded(IScope scope, IPopulation<? extends IAgent> pop, Collection<? extends IAgent> agents);
 
-		public void notifyAgentsRemoved(IScope scope, IPopulation<? extends IAgent> pop,
-				Collection<? extends IAgent> agents);
+		void notifyAgentsRemoved(IScope scope, IPopulation<? extends IAgent> pop, Collection<? extends IAgent> agents);
 
-		public void notifyPopulationCleared(IScope scope, IPopulation<? extends IAgent> pop);
+		void notifyPopulationCleared(IScope scope, IPopulation<? extends IAgent> pop);
 
 	}
 
@@ -62,7 +60,7 @@ public interface IPopulation<T extends IAgent>
 
 		/**
 		 * Method apply()
-		 * 
+		 *
 		 * @see com.google.common.base.Predicate#apply(java.lang.Object)
 		 */
 		@Override
@@ -72,16 +70,16 @@ public interface IPopulation<T extends IAgent>
 
 	}
 
-	public static IPopulation<? extends IAgent> createEmpty(final ISpecies species) {
+	static IPopulation<? extends IAgent> createEmpty(final ISpecies species) {
 		return new GamaPopulation<>(null, species);
 	}
 
-	public abstract void createVariablesFor(IScope scope, T agent) throws GamaRuntimeException;
+	void createVariablesFor(IScope scope, T agent) throws GamaRuntimeException;
 
-	public abstract boolean hasVar(final String n);
+	boolean hasVar(final String n);
 
 	@Override
-	public default IPopulation<? extends IAgent> getPopulation(final IScope scope) {
+	default IPopulation<? extends IAgent> getPopulation(final IScope scope) {
 		return this;
 	}
 
@@ -100,33 +98,33 @@ public interface IPopulation<T extends IAgent>
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract IList<T> createAgents(IScope scope, int number, List<? extends Map<String, Object>> initialValues,
+	IList<T> createAgents(IScope scope, int number, List<? extends Map<String, Object>> initialValues,
 			boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
 
-	public abstract IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries)
+	IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries)
 			throws GamaRuntimeException;
 
-	public abstract T createAgentAt(final IScope s, int index, Map<String, Object> initialValues, boolean isRestored,
+	T createAgentAt(final IScope s, int index, Map<String, Object> initialValues, boolean isRestored,
 			boolean toBeScheduled) throws GamaRuntimeException;
 
 	// public abstract Iterator<IAgent> getAgentsList();
 
-	public abstract String getName();
+	String getName();
 
-	public abstract boolean isGrid();
+	boolean isGrid();
 
-	public abstract boolean hasAspect(String default1);
+	boolean hasAspect(String default1);
 
-	public abstract IExecutable getAspect(String default1);
+	IExecutable getAspect(String default1);
 
-	public abstract Collection<String> getAspectNames();
+	Collection<String> getAspectNames();
 
 	@Override
-	public abstract ISpecies getSpecies();
+	ISpecies getSpecies();
 
 	// public abstract boolean manages(ISpecies s, boolean direct);
 
-	public abstract IVariable getVar(final String s);
+	IVariable getVar(final String s);
 
 	boolean hasUpdatableVariables();
 
@@ -135,16 +133,16 @@ public interface IPopulation<T extends IAgent>
 	 *
 	 * @return
 	 */
-	public abstract ITopology getTopology();
+	ITopology getTopology();
 
-	public abstract void initializeFor(IScope scope) throws GamaRuntimeException;
+	void initializeFor(IScope scope) throws GamaRuntimeException;
 
 	/**
 	 * Returns the macro-agent hosting this population.
 	 *
 	 * @return
 	 */
-	public abstract IMacroAgent getHost();
+	IMacroAgent getHost();
 
 	/**
 	 * @throws GamaRuntimeException
@@ -157,19 +155,19 @@ public interface IPopulation<T extends IAgent>
 	 *
 	 * @throws GamaRuntimeException
 	 */
-	public abstract void killMembers() throws GamaRuntimeException;
+	void killMembers() throws GamaRuntimeException;
 
 	/**
 	 * @param obj
 	 * @return
 	 */
-	public abstract T getAgent(Integer obj);
+	T getAgent(Integer obj);
 
-	public void addListener(IPopulation.Listener listener);
+	void addListener(IPopulation.Listener listener);
 
-	public void removeListener(IPopulation.Listener listener);
+	void removeListener(IPopulation.Listener listener);
 
-	public abstract void updateVariables(IScope scope, IAgent a);
+	void updateVariables(IScope scope, IAgent a);
 
 	/**
 	 * @param scope
@@ -180,5 +178,9 @@ public interface IPopulation<T extends IAgent>
 
 	@Override
 	T[] toArray();
+
+	boolean isInitOverriden();
+
+	boolean isStepOverriden();
 
 }

@@ -476,7 +476,7 @@ public class GamaPreferences {
 				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
 				"Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
-				IType.BOOL, true).in(NAME, OPTIMIZATIONS).hidden();
+				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
 				"Forces the spatial index to synchronize its operations. Useful for interactive models where the user may interfere.",
 				true, IType.BOOL, true).in(NAME, OPTIMIZATIONS);

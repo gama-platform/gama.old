@@ -409,8 +409,6 @@ Export-Package: com.google.protobuf,
    org.jgrapht",
  org.jgrapht.traverse,
  org.jgrapht.util,
- org.json.simple,
- org.json.simple.parser,
  org.kabeja.dxf;
   uses:="org.xml.sax,
    org.kabeja.dxf.helpers,

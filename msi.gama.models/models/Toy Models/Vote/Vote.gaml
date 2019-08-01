@@ -336,6 +336,8 @@ experiment vote type: gui {
 	parameter "Strategy of candidates : " var: strategy_candidates category: "Candidate";
 	
 	output {
+		
+		layout #split;
 		display main background: #black { 
 			species elector aspect: base;
 			species candidate aspect: dynamic;

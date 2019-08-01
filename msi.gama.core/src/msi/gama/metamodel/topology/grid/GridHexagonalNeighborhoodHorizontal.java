@@ -27,6 +27,8 @@ public class GridHexagonalNeighborhoodHorizontal extends GridHexagonalNeighborho
 			final boolean isTorus) {
 		final int y = placeIndex / xSize;
 		final int x = placeIndex - y * xSize;
+		// TODO: verify the use of HashSet here, contradictory with the policy of GAMA to not use unordered Sets or Maps
+
 		final Set<Integer> neigh = new HashSet<>();
 		int id = getIndexAt(x, y - 1, xSize, ySize, isTorus);
 		if (id != -1) {

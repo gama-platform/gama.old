@@ -10,6 +10,8 @@
 package ummisco.gama.ui.metadata;
 
 import static javax.imageio.ImageIO.createImageInputStream;
+import static javax.imageio.ImageIO.read;
+import static msi.gama.common.util.ImageUtils.toCompatibleImage;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -26,6 +28,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
@@ -79,8 +82,8 @@ public class ImageDataLoader {
 								createImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()))) {
 							final ImageReader reader = READER_SPI.createReaderInstance();
 							reader.setInput(is);
-							final BufferedImage image = ImageUtils.toCompatibleImage(reader.read(0));
-							imageData = ImageDataLoader.convertToSWT(image);
+							final BufferedImage image = toCompatibleImage(reader.read(0));
+							imageData = convertToSWT(image);
 							image.flush();
 							imageData.type = SWT.IMAGE_TIFF;
 						} catch (final IOException e1) {
@@ -89,7 +92,22 @@ public class ImageDataLoader {
 
 					}
 				} else {
-					imageData = new ImageData(in);
+					try {
+						imageData = new ImageData(in);
+					} catch (final SWTException e) {
+						// Bad format. Can happen for PNG. See #2825
+						if ("png".equals(ext) || "jpg".equals(ext)) {
+							try {
+								final BufferedImage image = toCompatibleImage(
+										read(new File(file.getLocation().toFile().getAbsolutePath())));
+								imageData = convertToSWT(image);
+								image.flush();
+								imageData.type = "png".equals(ext) ? SWT.IMAGE_PNG: SWT.IMAGE_JPEG;
+							} catch (final IOException e1) {
+								e1.printStackTrace();
+							}
+						}
+					}
 				}
 			} catch (final Exception ex) {
 				ex.printStackTrace();
