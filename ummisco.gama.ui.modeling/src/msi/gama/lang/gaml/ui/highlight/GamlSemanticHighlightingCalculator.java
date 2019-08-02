@@ -4,7 +4,7 @@
  * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
@@ -100,11 +100,11 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 
 		switch (id) {
 			case GamlPackage.PRAGMA:
-				setStyle(object, PRAGMA_ID, ((Pragma) object).getName());
+				setStyle(object, PRAGMA_ID, ((Pragma) object).getName(), false);
 				break;
 			case GamlPackage.SASSIGNMENT:
 				final String s = ((S_Assignment) object).getKey();
-				setStyle(object, ASSIGN_ID, s);
+				setStyle(object, ASSIGN_ID, s, false);
 				break;
 			case GamlPackage.FACET:
 				final Facet f = (Facet) object;
@@ -130,10 +130,10 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				break;
 			case GamlPackage.BINARY_OPERATOR:
 			case GamlPackage.FUNCTION:
-				setStyle(object, OPERATOR_ID, EGaml.getInstance().getKeyOf(object));
+				setStyle(object, OPERATOR_ID, EGaml.getInstance().getKeyOf(object), true);
 				break;
 			case GamlPackage.ARGUMENT_PAIR:
-				setStyle(object, VARIABLE_ID, ((ArgumentPair) object).getOp());
+				setStyle(object, VARIABLE_ID, ((ArgumentPair) object).getOp(), false);
 				break;
 			case GamlPackage.VARIABLE_REF:
 				setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
@@ -150,15 +150,15 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				}
 				break;
 			case GamlPackage.PARAMETER:
-				setStyle(object, VARIABLE_ID, ((Parameter) object).getBuiltInFacetKey());
+				setStyle(object, VARIABLE_ID, ((Parameter) object).getBuiltInFacetKey(), false);
 				break;
 			case GamlPackage.ARGUMENT_DEFINITION:
-				setStyle(object, VARDEF_ID, ((ArgumentDefinition) object).getName());
+				setStyle(object, VARDEF_ID, ((ArgumentDefinition) object).getName(), false);
 				break;
 			case GamlPackage.STATEMENT:
 				final Statement stat = (Statement) object;
-				setStyle(object, VARDEF_ID, EGaml.getInstance().getNameOf(stat));
-				setStyle(object, KEYWORD_ID, stat.getKey());
+				setStyle(object, VARDEF_ID, EGaml.getInstance().getNameOf(stat), false);
+				setStyle(object, KEYWORD_ID, stat.getKey(), false);
 				break;
 			default:
 				final List<EClass> eSuperTypes = clazz.getESuperTypes();
@@ -200,7 +200,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		return false;
 	}
 
-	private final boolean setStyle(final EObject obj, final String s, final String text) {
+	private final boolean setStyle(final EObject obj, final String s, final String text, final boolean all) {
 		if (text == null) { return false; }
 		if (obj != null && s != null) {
 			INode n = NodeModelUtils.getNode(obj);
@@ -210,7 +210,9 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 					final String sNode = StringUtils.toJavaString(NodeModelUtils.getTokenText(node));
 					if (equalsFaceOrString(text, sNode)) {
 						n = node;
-						break;
+						if (!all) {
+							break;
+						}
 					}
 				}
 			}
