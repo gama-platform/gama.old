@@ -123,7 +123,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 
 		@Override
 		public String serialize(final boolean includingBuiltIn) {
-			return "°" + name;
+			return "#" + name;
 		}
 
 		@Override
