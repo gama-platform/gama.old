@@ -309,7 +309,7 @@ public abstract class AbstractEditor<T>
 	public static Label createLeftLabel(final Composite parent, final String title, final boolean isSubParameter) {
 		final Label label = new Label(parent, SWT.WRAP | SWT.RIGHT);
 		label.setBackground(parent.getBackground());
-		final GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
+		final GridData d = new GridData(SWT.END, SWT.CENTER, true, true);
 		// d.widthHint = 200;
 		// d.minimumWidth = SWT.DEFAULT;
 		if (isSubParameter) {
