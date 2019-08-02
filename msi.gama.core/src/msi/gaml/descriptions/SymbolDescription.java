@@ -240,8 +240,9 @@ public abstract class SymbolDescription implements IDescription {
 		// the source
 		// (i.e. we are probably in a runtime scenario)
 		if (e == null || e.eResource() == null || e.eResource().getURI().path().contains(SYNTHETIC_RESOURCES_PREFIX)) {
-			throw warning ? GamaRuntimeException.warning(s, msi.gama.runtime.GAMA.getRuntimeScope())
-					: GamaRuntimeException.error(s, msi.gama.runtime.GAMA.getRuntimeScope());
+			if (!warning && !info) { throw GamaRuntimeException.error(s, msi.gama.runtime.GAMA.getRuntimeScope()); }
+			return;
+
 		}
 		final ValidationContext c = getValidationContext();
 		if (c == null) {
