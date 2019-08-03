@@ -270,6 +270,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int previousHeight = getHeight();
 		final int width = w == -1 ? previousWidth : w;
 		final int height = h == -1 ? previousHeight : h;
+		final boolean sameSize = width == previousWidth && height == previousHeight;
 		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height, false);
 		final Graphics g = newImage.getGraphics();
 
@@ -282,13 +283,26 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 		try {
 			EventQueue.invokeAndWait(() -> {
-				resizeImage(width, height, false);
-				paintComponent(g);
-				resizeImage(previousWidth, previousHeight, false);
+				final Rectangle old = new Rectangle(viewPort);
+				if (!sameSize) {
+					viewPort.x = viewPort.y = 0;
+					final int[] point = computeBoundsFrom(width, height);
+					viewPort.width = point[0];
+					viewPort.height = point[1];
+					// resizeImage(width, height, false);
+
+				}
+				print(g);
+				if (!sameSize) {
+					// resizeImage(previousWidth, previousHeight, false);
+					viewPort.setBounds(old);
+				}
+
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
+		g.dispose();
 		return newImage;
 	}
 
