@@ -15,6 +15,7 @@
  </xsl:text> <xsl:value-of select="doc/@plugin"></xsl:value-of>
 
 ## Table of Contents
+
 ### Operators
 <xsl:call-template name="buildOperatorsByName"/>
 
@@ -57,7 +58,8 @@
 ## Architectures 
 	<xsl:call-template name="buildSkills"/>
 	
-	
+<xsl:text>
+</xsl:text>	
 		
 </xsl:template>
 

@@ -82,7 +82,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 
     
 <xsl:template name="buildVariables"> 
+
 ### Variables
+
 	<xsl:for-each select="vars/var">		
 	<xsl:sort select="@name" />   
   * **`<xsl:value-of select="@name"/>`** (`<xsl:value-of select="@type"/>`): <xsl:value-of select="documentation/result"/> 
@@ -99,6 +101,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 #### **`<xsl:value-of select="@name"/>`**
 	<xsl:value-of select="documentation/result"/><xsl:text>
 	</xsl:text>
+	
 * returns: <xsl:value-of select="@returnType"/>
   	<xsl:for-each select="args/arg"> 			
 * **`<xsl:value-of select="@name"/>`** (<xsl:value-of select="@type"/>): <xsl:value-of select="documentation/result"/> 
@@ -107,6 +110,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	<xsl:if test="documentation/examples[node()]">
 
 ```
+
 <xsl:for-each select="documentation/examples/example" >
 <xsl:if test="@code != ''"><xsl:value-of select="@code"/><xsl:text>
 </xsl:text>

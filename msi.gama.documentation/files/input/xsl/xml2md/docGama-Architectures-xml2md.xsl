@@ -23,6 +23,9 @@
 
 <xsl:call-template name="buildSkills"/>
 
+<xsl:text>
+</xsl:text>
+
 </xsl:template>
 
 <xsl:template name="buildSkills">
@@ -46,6 +49,7 @@
     
  	<xsl:template name="buildVariables"> 
 ### Variables
+
 	<xsl:for-each select="vars/var">		
 	<xsl:sort select="@name" />   
 * **`<xsl:value-of select="@name"/>`** (<xsl:value-of select="@type"/>): <xsl:value-of select="documentation/result"/> 
@@ -59,6 +63,7 @@
 	<xsl:sort select="@name" />  
 	 
 #### **`<xsl:value-of select="@name"/>`**
+
 <xsl:value-of select="documentation/result"/>
 * returns: <xsl:value-of select="@returnType"/>
   			<xsl:for-each select="args/arg"> 			

@@ -40,6 +40,7 @@ The ternary functional if-else operator, `? :`, uses a special infixed syntax co
 Finally, special constructor operators (`{...}` for constructing points, `[...]` for constructing lists and maps) will require their operands to be placed between their two symbols (e.g. `{1,2,3}`, `[operand1, operand2, ..., operandn]` or `[key1::value1, key2::value2... keyn::valuen]`).
 
 With the exception of these special cases above, the following rules apply to the syntax of operators:
+
 * if they only have one operand, the functional prefixed syntax is mandatory (e.g. `operator_name(operand1)`)
 * if they have two arguments, either the functional prefixed syntax (e.g. `operator_name(operand1, operand2)`) or the infixed syntax (e.g. `operand1 operator_name operand2`) can be used.
 * if they have more than two arguments, either the functional prefixed syntax (e.g. `operator_name(operand1, operand2, ..., operand)`) or a special infixed syntax with the first operand on the left-hand side of the operator name (e.g. `operand1 operator_name(operand2, ..., operand)`) can be used.
@@ -55,6 +56,7 @@ Operators in GAML are purely functional, i.e. they are guaranteed to not have an
 The priority of operators determines, in the case of complex expressions composed of several operators, which one(s) will be evaluated first.
 
 GAML follows in general the traditional priorities attributed to arithmetic, boolean, comparison operators, with some twists. Namely:
+
 * the constructor operators, like `::`, used to compose pairs of operands, have the lowest priority of all operators (e.g. `a &gt; b :: b &gt; c` will return a pair of boolean values, which means that the two comparisons are evaluated before the operator applies. Similarly, `[a &gt; 10, b &gt; 5]` will return a list of boolean values.
 * it is followed by the `?:` operator, the functional if-else (e.g. ` a &gt; b ? a + 10 : a - 10` will return the result of the if-else).
 * next are the logical operators, `and` and `or` (e.g. `a &gt; b or b &gt; c` will return the value of the test)
@@ -111,7 +113,9 @@ Note that due to the fact that actions are written by modelers, the general func
 
 ## Operators
 	<xsl:call-template name="buildOperators"/>
-
+	
+	<xsl:text>
+	</xsl:text>
 </xsl:template>
 
 <xsl:template name="buildOperatorsByName">

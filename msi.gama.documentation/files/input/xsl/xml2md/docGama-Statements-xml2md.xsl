@@ -44,6 +44,9 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 	</xsl:text>
 		<xsl:call-template name="buildStatements"/>
 
+	<xsl:text>
+	</xsl:text>
+
 </xsl:template>
 
 <xsl:template name="buildStatements">

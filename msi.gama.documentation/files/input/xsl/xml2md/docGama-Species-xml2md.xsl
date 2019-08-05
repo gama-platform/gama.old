@@ -32,6 +32,9 @@ create cluster_builder returns: clusterer;
 
 <xsl:call-template name="buildSpecies"/>
 
+<xsl:text>
+</xsl:text>
+
 </xsl:template>
 
 <xsl:template name="buildSpecies">

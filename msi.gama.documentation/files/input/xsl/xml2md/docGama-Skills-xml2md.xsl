@@ -54,12 +54,14 @@ if speed = 5 {
 
 
 ## Table of Contents
-&lt;wiki:toc max_depth="3" /&gt;
 
 </xsl:text>
 	<xsl:call-template name="buildSkillsByName"/>
 
 	<xsl:call-template name="buildSkills"/>
+
+	<xsl:text>
+	</xsl:text>
 
 </xsl:template>
 

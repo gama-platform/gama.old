@@ -18,6 +18,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 
 
 <xsl:template match="/">
+
 # Exhaustive list of GAMA Keywords
 
 ----
@@ -221,6 +222,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 [KeyConcepts#Vocabulary_correspondance_with_the_agent-based_paradigm_as_in_Ne
 correspondance GAMA Netlogo], [operators statements type
 species](KeyConcepts#Translation_into_a_concrete_syntax)
+
 
 </xsl:template>
 

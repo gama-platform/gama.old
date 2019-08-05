@@ -56,6 +56,9 @@ float one_cubic_inch &lt;- 1 °sqin * 1 °inch;
 </xsl:text>
 <xsl:call-template name="buildColors"/>
 
+<xsl:text>
+</xsl:text>
+
 </xsl:template>
 
 <xsl:template name="buildUnits">
