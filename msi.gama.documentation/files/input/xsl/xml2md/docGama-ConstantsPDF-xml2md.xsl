@@ -14,6 +14,7 @@
 
 ## Introduction
 Units can be used to qualify the values of numeric variables. By default, unqualified values are considered as:
+
 * meters for distances, lengths...
 * seconds for durations
 * cubic meters for volumes
@@ -24,7 +25,7 @@ So, an expression like:
 float foo &lt;- 1;
 ```
 
-will be considered as 1 meter if `foo` is a distance, or 1 second if it is a duration, or 1 meter/second if it is a speed. If one wants to specify the unit, it can be done very simply by adding the unit symbol (`°` or `#`) followed by an unit name after the numeric value, like:
+will be considered as 1 meter if `foo` is a distance, or 1 second if it is a duration, or 1 meter/second if it is a speed. If one wants to specify the unit, it can be done very simply by adding the unit symbol (° or `#`) followed by an unit name after the numeric value, like:
 
 ```
 float foo &lt;- 1 °centimeter;
