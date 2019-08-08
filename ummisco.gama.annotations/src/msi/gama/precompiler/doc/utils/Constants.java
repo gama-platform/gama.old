@@ -28,12 +28,10 @@ public class Constants {
 	public static String TEST_FOLDER	= SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator
 			+ "msi.gama.models" + File.separator + "models" + File.separator + "Tests";
 
-	// Config for JM
-	// public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator + ".." + File.separator +
-	// ".." + File.separator + "GamaWiki";
-	// Config for BG
-//	public static String WIKI_FOLDER 	= SRC_FOLDER + File.separator + ".." + File.separator + "gama.wiki";
-	public static String WIKI_FOLDER 	= "C:/git/gama.wiki";
+
+	public static String WIKI_FOLDER = SRC_FOLDER + File.separator + ".." + File.separator 
+			+ ".." + File.separator + ".." + File.separator + "gama.wiki";
+//	public static String WIKI_FOLDER 	= "C:/git/gama.wiki";
 
 	// Generation folders
 	public static String WIKI_FOLDER_EXT 		= WIKI_FOLDER + File.separator + "References";	
@@ -63,9 +61,10 @@ public class Constants {
 	public static String DOCGAMA_FILE_LOCAL 	= "gaml" + File.separator + "docGAMA.xml";
 	public static String DOCGAMA_GLOBAL_FILE 	= JAVA2XML_FOLDER + File.separator + "docGAMAglobal.xml";
 
-	public static String DOCGAMA_PDF 			= PDF_FOLDER + File.separator + "docGAMAv17.pdf";
-	public static String TOC_FILE 				= INPUT_FOLDER + File.separator + "toc" + File.separator + "toc17.xml";
-	public static String MD_BLANK_PAGE 			= "G__BlankPage.md"; // Blank page is directly in the wiki folder
+	public static String DOCGAMA_PDF 			= PDF_FOLDER + File.separator + "docGAMAv1.8.0.pdf";
+	public static String TOC_FILE 				= INPUT_FOLDER + File.separator + "toc" + File.separator + "toc18.xml";
+//	public static String MD_BLANK_PAGE 			= "G__BlankPage.md"; // Blank page is directly in the wiki folder
+	public static String TOC_SIDEBAR_FILE		= WIKI_FOLDER + File.separator + "_Sidebar.md";
 
 	// Tests
 	public static String TEST_PLUGIN_FOLDER 	= "tests";
@@ -81,8 +80,11 @@ public class Constants {
 	public static String CMD_PANDOC =
 			OSUtils.isWindows() ? "C:/pandoc/pandoc.exe" : "/usr/local/bin/pandoc";
 	public static String CMD_PDFLATEX = OSUtils.isWindows() ? "\"C:/MiKTeX 2.9/miktex/bin/x64/pdflatex.exe\""
-			: "/Library/TeX/Root/bin/universal-darwin/pdflatex";
+			: "/usr/local/bin/pdflatex";
+	// "/Library/TeX/Root/bin/universal-darwin/pdflatex";
 
+	// Note : need to make change in mytemplate.tex to access the write style file ..... 
+	
 	// Path
 	public static String PATH = "PATH=/usr/local/bin/:${PATH}";
 }
