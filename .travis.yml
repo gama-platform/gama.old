@@ -1,6 +1,5 @@
 sudo: required
 language: java
-dist: trusty # for SonarCloud
 jdk:
   - oraclejdk8
 before_install:
@@ -30,7 +29,8 @@ addons:
 script: 
   - bash ./travis/compile.sh	
   - bash ./travis/validate_and_test.sh
-  - sonar-scanner
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama
 after_success:
   - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - export SSHPASS=$USER_PWD 
