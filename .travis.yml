@@ -1,19 +1,20 @@
 sudo: required
 language: java
+dist: trusty # for SonarCloud
 jdk:
   - oraclejdk8
 before_install:
-- echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
-- echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
+  - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
+  - echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
 notifications:
   email:
     recipients:
-    - my.gama.bot@gmail.com
+      - my.gama.bot@gmail.com
     on_success: change
     on_failure: always
 cache:
   directories:
-  - "$HOME/.m2"
+    - "$HOME/.m2"
 addons:
     apt:
         packages:      
@@ -27,12 +28,13 @@ addons:
       token:
         secure: "$SONAR_TOKEN"
 script: 
-- bash ./travis/compile.sh	
-- bash ./travis/validate_and_test.sh    
+  - bash ./travis/compile.sh	
+  - bash ./travis/validate_and_test.sh
+  - sonar-scanner
 after_success:
-- echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-- export SSHPASS=$USER_PWD 
-- bash ./travis/publish.sh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  - export SSHPASS=$USER_PWD 
+  - bash ./travis/publish.sh
 branches:
   only:
     - master
