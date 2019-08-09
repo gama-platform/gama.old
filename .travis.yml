@@ -21,6 +21,11 @@ addons:
             - oracle-java8-installer
     ssh_known_hosts:
       - 51.255.46.42
+    # https://docs.travis-ci.com/user/sonarcloud/#inspecting-code-with-the-sonarqube-scanner
+    sonarcloud:
+      organization: "gama-platform" # the key of the org you chose at step #3
+      token:
+        secure: "$SONAR_TOKEN"
 script: 
 - bash ./travis/compile.sh	
 - bash ./travis/validate_and_test.sh    
