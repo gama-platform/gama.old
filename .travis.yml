@@ -21,16 +21,19 @@ addons:
             - oracle-java8-installer
     ssh_known_hosts:
       - 51.255.46.42
+
     # https://docs.travis-ci.com/user/sonarcloud/#inspecting-code-with-the-sonarqube-scanner
     sonarcloud:
       organization: "gama-platform" # the key of the org you chose at step #3
       token:
         secure: "$SONAR_TOKEN"
+
 script: 
-  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama
   - bash ./travis/compile.sh	
   - bash ./travis/validate_and_test.sh
+
+  #- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama
+
 after_success:
   - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - export SSHPASS=$USER_PWD 
