@@ -27,10 +27,10 @@ addons:
       token:
         secure: "$SONAR_TOKEN"
 script: 
-  - bash ./travis/compile.sh	
-  - bash ./travis/validate_and_test.sh
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama
+  - bash ./travis/compile.sh	
+  - bash ./travis/validate_and_test.sh
 after_success:
   - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - export SSHPASS=$USER_PWD 
