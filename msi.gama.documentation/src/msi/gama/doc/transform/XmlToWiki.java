@@ -14,7 +14,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -155,7 +155,7 @@ public class XmlToWiki {
 	public static void createExtentionsWiki()
 			throws IOException, ParserConfigurationException, SAXException, TransformerException {
 		final WorkspaceManager ws = new WorkspaceManager(".", false);
-		final HashMap<String, File> hmExt = ws.getExtensionsDocFiles();
+		final Map<String, File> hmExt = ws.getExtensionsDocFiles();
 
 		// Create the G__Extensions.md file as a toc to each G__extensions_plugin.md files
 		final String pathExtension = Constants.WIKI_FOLDER_EXT + File.separator + extFileName + suffix + ".md";

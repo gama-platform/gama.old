@@ -13,8 +13,8 @@ package msi.gama.doc.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jdom2.Attribute;
@@ -45,7 +45,7 @@ public class UnifyDoc {
 		try {
 
 			WorkspaceManager ws = new WorkspaceManager(".",local);
-			HashMap<String, File> hmFiles = ws.getProductDocFiles();
+			Map<String, File> hmFiles = ws.getProductDocFiles();
 
 			Document doc = mergeFiles(hmFiles);
 
@@ -62,7 +62,7 @@ public class UnifyDoc {
 		try {
 
 			WorkspaceManager ws = new WorkspaceManager(".", local);
-	 		HashMap<String, File> hmFiles = local ? ws.getAllDocFilesLocal() : ws.getAllDocFiles();			
+	 		Map<String, File> hmFiles = local ? ws.getAllDocFilesLocal() : ws.getAllDocFiles();			
 
 			Document doc = mergeFiles(hmFiles);
 
@@ -75,7 +75,7 @@ public class UnifyDoc {
 		}
 	}
 
-	private static Document mergeFiles(final HashMap<String, File> hmFilesPackages) {
+	private static Document mergeFiles(final Map<String, File> hmFilesPackages) {
 		try {
 
 			SAXBuilder builder = new SAXBuilder();

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -77,8 +78,8 @@ public class WorkspaceManager {
  	 * @return It will then return the HashMap containing all their project name with their associated files associated 
  	 * @throws IOException
  	 */
- 	public HashMap<String, File> getAllDocFiles() throws IOException{
-		HashMap<String, File> hmFilesPackages = new HashMap<String, File>();
+ 	public Map<String, File> getAllDocFiles() {
+		HashMap<String, File> hmFilesPackages = new HashMap<>();
 		
 		for(File f : wsFile.listFiles()){			
 			File docGamaFile = new File(f.getAbsolutePath() + File.separator + Constants.DOCGAMA_FILE);
@@ -89,8 +90,8 @@ public class WorkspaceManager {
 		return hmFilesPackages;
  	}
  	
- 	public HashMap<String, File> getAllDocFilesLocal() throws IOException{
-		HashMap<String, File> hmFilesPackages = new HashMap<String, File>();
+ 	public Map<String, File> getAllDocFilesLocal() {
+		HashMap<String, File> hmFilesPackages = new HashMap<>();
 		
 		for(File f : wsFile.listFiles()){			
 			File docGamaFile = new File(f.getAbsolutePath() + File.separator + Constants.DOCGAMA_FILE_LOCAL);
@@ -101,10 +102,10 @@ public class WorkspaceManager {
 		return hmFilesPackages;
  	} 	
  	
- 	public HashMap<String, File> getProductDocFiles() throws IOException, ParserConfigurationException, SAXException{
- 		HashMap<String, File> hmFilesPackages = isLocal ? getAllDocFilesLocal() : getAllDocFiles();
+ 	public Map<String, File> getProductDocFiles() throws IOException, ParserConfigurationException, SAXException{
+ 		Map<String, File> hmFilesPackages = isLocal ? getAllDocFilesLocal() : getAllDocFiles();
  		List<String> pluginsProduct = getAllGAMAPluginsInProduct();
- 		HashMap<String, File> hmFilesRes = new HashMap<String, File>();
+ 		HashMap<String, File> hmFilesRes = new HashMap<>();
 
  		for(Entry<String, File> eSF: hmFilesPackages.entrySet()) {
  			if(pluginsProduct.contains(eSF.getKey())) {
@@ -115,10 +116,10 @@ public class WorkspaceManager {
  		return hmFilesRes;
  	}
  	
- 	public HashMap<String, File> getExtensionsDocFiles() throws IOException, ParserConfigurationException, SAXException{
- 		HashMap<String, File> hmFilesPackages = isLocal ? getAllDocFilesLocal() : getAllDocFiles();
+ 	public Map<String, File> getExtensionsDocFiles() throws IOException, ParserConfigurationException, SAXException{
+ 		Map<String, File> hmFilesPackages = isLocal ? getAllDocFilesLocal() : getAllDocFiles();
  		List<String> pluginsProduct = getAllGAMAPluginsInProduct();
- 		HashMap<String, File> hmFilesRes = new HashMap<String, File>();
+ 		HashMap<String, File> hmFilesRes = new HashMap<>();
 
  		for(Entry<String, File> eSF: hmFilesPackages.entrySet()) {
  			if(!pluginsProduct.contains(eSF.getKey())) {
@@ -138,7 +139,7 @@ public class WorkspaceManager {
 	 * @throws IOException
 	 */
 	private List<String> getPluginsFromProduct(File product) throws ParserConfigurationException, SAXException, IOException{
-		ArrayList<String> listPlugins = new ArrayList<String>();
+		ArrayList<String> listPlugins = new ArrayList<>();
 		
 		// Creation of the DOM source
 		org.w3c.dom.Document document = XMLUtils.createDoc(product);
@@ -167,7 +168,7 @@ public class WorkspaceManager {
 	 * @throws IOException
 	 */
 	private List<String> getPluginsFromFeature(File feature) throws ParserConfigurationException, SAXException, IOException{
-		ArrayList<String> listPlugins = new ArrayList<String>();
+		ArrayList<String> listPlugins = new ArrayList<>();
 		
 		// Creation of the DOM source
 		org.w3c.dom.Document document = XMLUtils.createDoc(feature);	
@@ -190,7 +191,7 @@ public class WorkspaceManager {
 	}
 	
 	public List<String> getAllGAMAPluginsInProduct() throws ParserConfigurationException, SAXException, IOException{
-		ArrayList<String> listPlugins = new ArrayList<String>();
+		ArrayList<String> listPlugins = new ArrayList<>();
 		List<String> initPluginList = getPluginsFromProduct(getProductFile());
 		for(String plugin : initPluginList){
 			listPlugins.addAll(getList(plugin));
@@ -200,7 +201,7 @@ public class WorkspaceManager {
 	}
 	
 	private List<String> getList(String plugin) throws ParserConfigurationException, SAXException, IOException{
-		ArrayList<String> listPlugins = new ArrayList<String>();
+		ArrayList<String> listPlugins = new ArrayList<>();
 		if(isFeature(plugin)) {
 			List<String> pluginsFromFeature = getPluginsFromFeature(getFeatureFile(plugin));
 			for(String name : pluginsFromFeature) {
@@ -218,21 +219,20 @@ public class WorkspaceManager {
  * 
  * 
  */
-	public ArrayList<String> getModelLibrary(){
-		ArrayList<String> modelList = litRep(wsFile.getAbsolutePath() + File.separator + "msi.gama.models"+File.separator+"models");
-		return modelList;
+	public List<String> getModelLibrary(){
+		return litRep(wsFile.getAbsolutePath() + File.separator + "msi.gama.models"+File.separator+"models");
 	}
 	
-	private static ArrayList<String> litRep(String dir){
-		ArrayList<String> listFiles = new ArrayList<String>();
+	private static List<String> litRep(String dir){
+		ArrayList<String> listFiles = new ArrayList<>();
 		File rep = new File(dir);
 		
 		if(rep.isDirectory()){
-			String t[] = rep.list();
+			String[] t = rep.list();
 			
 			if(t!=null){
 				for(String fName : t) {
-					ArrayList<String> newList = litRep(rep.getAbsolutePath()+File.separator+fName);
+					List<String> newList = litRep(rep.getAbsolutePath()+File.separator+fName);
 					listFiles.addAll(newList);
 				}
 			}
@@ -248,7 +248,7 @@ public class WorkspaceManager {
 	private static String getFileExtension(String fileName) {
 	    String extension = null;
 		try {
-	        extension =  fileName.substring(fileName.lastIndexOf(".") + 1);
+	        extension =  fileName.substring(fileName.lastIndexOf('.') + 1);
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	    }
@@ -264,7 +264,7 @@ public class WorkspaceManager {
 		}
 		System.out.println("----------");
 		
-		HashMap<String,File> hm = ws.getAllDocFiles();
+		Map<String,File> hm = ws.getAllDocFiles();
 		for(Entry<String,File> e : hm.entrySet()){
 			System.out.println(e.getKey());
 		}
