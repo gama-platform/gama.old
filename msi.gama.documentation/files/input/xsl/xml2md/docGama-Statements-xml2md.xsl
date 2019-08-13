@@ -59,8 +59,9 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 <!-- 	<xsl:with-param name="nameGAMLElement" select="@name"/> -->
 <!-- </xsl:call-template> -->
 ### <xsl:value-of select="@name"/>
-		<xsl:call-template name="buildFacets"/>
 		<xsl:call-template name="buildDefinition"/>				
+		<xsl:call-template name="buildFacets"/>
+		<xsl:call-template name="buildUsages"/>		
 		<xsl:call-template name="buildEmbedments"/>
 	</xsl:for-each>
 </xsl:template>
@@ -94,12 +95,21 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 </xsl:for-each>
 </xsl:template>
 
+
  <xsl:template name="buildDefinition"> 
  	<xsl:if test="documentation[text()]"> 
  	
 #### Definition
 
-<xsl:value-of select="documentation/result"/>
+<xsl:value-of select="documentation/result"/><xsl:text>
+</xsl:text>
+
+</xsl:if>
+</xsl:template>
+
+
+ <xsl:template name="buildUsages"> 
+ 	<xsl:if test="documentation[text()]"> 
 
 #### Usages
 <xsl:for-each select="documentation/usages/usage">
@@ -117,15 +127,14 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 
 <xsl:if test="documentation/usagesExamples[node()]">
 * Other examples of use: 
-```
-<xsl:for-each select="documentation/usagesExamples/usage">
-<xsl:call-template name="generateExamples"/> </xsl:for-each>
+```<xsl:for-each select="documentation/usagesExamples/usage"><xsl:call-template name="generateExamples"/> </xsl:for-each>
 ``` 
   </xsl:if>
 
   <xsl:if test="documentation/seeAlso[node()]">    
 * See also: <xsl:for-each select="documentation/seeAlso/see"><xsl:text>[</xsl:text> <xsl:value-of select="@id"/><xsl:text>](#</xsl:text><xsl:value-of select="translate(@id, $uppercase, $smallcase)"/><xsl:text>)</xsl:text><xsl:text>, </xsl:text> </xsl:for-each>
-  </xsl:if>
+  </xsl:if><xsl:text>
+</xsl:text>
 </xsl:if>
 </xsl:template>
 

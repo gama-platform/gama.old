@@ -103,10 +103,6 @@ Note that due to the fact that actions are written by modelers, the general func
 
 ----
 
-## Table of Contents
-
-----
-
 ## Operators by categories
 	<xsl:call-template name="buildOperatorsByCategories"/>
 	
