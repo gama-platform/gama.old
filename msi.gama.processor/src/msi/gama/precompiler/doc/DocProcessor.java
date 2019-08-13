@@ -229,7 +229,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 			final TransformerFactory tf = TransformerFactory.newInstance();
 			final Transformer transformer = tf.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1"); // "UTF-8");//
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //"ISO-8859-1"); 
 			transformer.transform(new DOMSource(document), new StreamResult(out));
 		} catch (final TransformerException e) {
 			context.emitError("XML Error when producing the documentation: " + e.getMessage(), e);

@@ -21,7 +21,7 @@
 <xsl:variable name="sz" select="'sz'"/>
 
 <xsl:template match="/">
- 	<xsl:text>#</xsl:text> <xsl:value-of select="$fileName"/> <xsl:text>
+ 	<xsl:text># </xsl:text> <xsl:value-of select="$fileName"/> <xsl:text>
  	
 ----
 
@@ -229,15 +229,15 @@ Note that due to the fact that actions are written by modelers, the general func
 #### Special cases: </xsl:if> 
   <xsl:if test="documentation/specialCases[node()]">
   <xsl:for-each select="documentation/specialCases/case">    
-  * <xsl:value-of select="@item"/> </xsl:for-each> </xsl:if>     
+* <xsl:value-of select="@item"/> </xsl:for-each> </xsl:if>     
   <xsl:if test="documentation/usages[node()] | documentation/usagesNoExample[node()]">
 	<xsl:for-each select="documentation/usagesNoExample/usage">    
-  * <xsl:value-of select="@descUsageElt"/> </xsl:for-each>
+* <xsl:value-of select="@descUsageElt"/> </xsl:for-each>
   <xsl:for-each select="documentation/usages/usage">    
-  * <xsl:value-of select="@descUsageElt"/> 
+* <xsl:value-of select="@descUsageElt"/> 
   
-```
-<xsl:call-template name="generateExamples"/>
+```<xsl:call-template name="generateExamples"/>
+
 ``` 
 
 </xsl:for-each>
@@ -246,10 +246,8 @@ Note that due to the fact that actions are written by modelers, the general func
   <xsl:if test="documentation/usagesExamples[node()]">
 
 #### Examples: 
-```
-<xsl:for-each select="documentation/usagesExamples/usage">
+```<xsl:for-each select="documentation/usagesExamples/usage">
 <xsl:call-template name="generateExamples"/> </xsl:for-each>
-
 ```
   </xsl:if>
   
@@ -273,7 +271,7 @@ Note that due to the fact that actions are written by modelers, the general func
  <xsl:template name="buildOperands">
  	<xsl:param name="operatorName"/>
 
-#### Possible use: <xsl:for-each select="combinaisonIO/operands"> <xsl:sort select="count(operand)"/> <xsl:call-template name="buildOperand"><xsl:with-param name="operatorName" select="$operatorName"/></xsl:call-template> </xsl:for-each>
+#### Possible uses: <xsl:for-each select="combinaisonIO/operands"> <xsl:sort select="count(operand)"/> <xsl:call-template name="buildOperand"><xsl:with-param name="operatorName" select="$operatorName"/></xsl:call-template> </xsl:for-each>
  </xsl:template> 
  
  <xsl:template name="buildOperand">
@@ -282,14 +280,14 @@ Note that due to the fact that actions are written by modelers, the general func
  	
 	<xsl:choose>
 	<xsl:when test="count(operand) = 1">
-  * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand/@type"/></xsl:with-param></xsl:call-template>) --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template> 
+* <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand/@type"/></xsl:with-param></xsl:call-template>) --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template> 
 	</xsl:when>
 	<xsl:when test="count(operand) = 2">
-  * <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template> --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>
-  * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> , </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template>) --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>		
+* <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template> --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>
+* <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> , </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template>) --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>		
 	</xsl:when>	
 	<xsl:otherwise>
-  * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:for-each select="operand">
+* <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:for-each select="operand">
 		<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@type"/></xsl:with-param></xsl:call-template>
 
 		<xsl:choose>		

@@ -69,6 +69,7 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 <xsl:variable name="nameStatGlobal" select="@name"/>
 
 #### Embedments
+
 * The `<xsl:value-of select="@name"/>` statement is of type: **<xsl:value-of select="@kind"/>**
 * The `<xsl:value-of select="@name"/>` statement can be embedded into: <xsl:for-each select="inside/symbols/symbol"><xsl:value-of select="text()"/>, </xsl:for-each><xsl:for-each select="inside/kinds/kind"><xsl:value-of select="text()"/>, </xsl:for-each>
 * The `<xsl:value-of select="@name"/>` statement embeds statements: <xsl:for-each select="/doc/statements/statement"> 
@@ -88,8 +89,8 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 	<xsl:sort select="@name" />  
 	<xsl:choose>
   		<xsl:when test="@optional = 'false'">  
-  * **`<xsl:value-of select="@name"/>`** </xsl:when> <xsl:otherwise>
-  * `<xsl:value-of select="@name"/>` </xsl:otherwise></xsl:choose>(<xsl:value-of select="@type"/>)<xsl:if test="@omissible = 'true'">, (omissible) </xsl:if><xsl:if test="@values"><xsl:value-of select="@values"/></xsl:if>: <xsl:value-of select="documentation/result"/> 
+* **`<xsl:value-of select="@name"/>`** </xsl:when> <xsl:otherwise>
+* `<xsl:value-of select="@name"/>` </xsl:otherwise></xsl:choose>(<xsl:value-of select="@type"/>)<xsl:if test="@omissible = 'true'">, (omissible) </xsl:if><xsl:if test="@values"><xsl:value-of select="@values"/></xsl:if>: <xsl:value-of select="documentation/result"/> 
 </xsl:for-each>
 </xsl:template>
 
@@ -105,8 +106,7 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 * <xsl:value-of select="@descUsageElt"/> 
 <xsl:if test="examples[node()]">
 
-```
-<xsl:call-template name="generateExamples"/>
+```<xsl:call-template name="generateExamples"/>
 ```
 
 </xsl:if>
@@ -134,8 +134,8 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="kindGlobal" select="@symbol"/> 			
 		<xsl:text>
-  * **</xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text>**
-    * </xsl:text>
+* **</xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text>**
+  * </xsl:text>
 		<xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />
 				<xsl:if test="@kind = $kindGlobal "> 
@@ -157,8 +157,8 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="kindGlobal" select="@symbol"/> 
 		<xsl:text>
-  * **</xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text>**
-    * </xsl:text>
+* **</xsl:text> <xsl:value-of select="$kindGlobal"/> <xsl:text>**
+  * </xsl:text>
 		<xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />
 				<xsl:variable name="nameStat" select="@name"/>
@@ -175,8 +175,8 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 		<xsl:sort select="@symbol"/>
 		<xsl:variable name="symbolGlobal" select="@symbol"/> 
 		<xsl:text>
-  * **</xsl:text> <xsl:value-of select="$symbolGlobal"/> <xsl:text>**
-    * </xsl:text>
+* **</xsl:text> <xsl:value-of select="$symbolGlobal"/> <xsl:text>**
+  * </xsl:text>
 		<xsl:for-each select="/doc/statements/statement"> 
 			<xsl:sort select="@name" />
 				<xsl:variable name="nameStat" select="@name"/>
