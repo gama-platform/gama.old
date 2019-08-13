@@ -64,7 +64,7 @@ import msi.gaml.types.Types;
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT },
 		symbols = IKeyword.CHART)
 @doc (
-		value = "Allows an agent, the sender agent (that can be the [Sections161#global world agent]), to ask another (or other) agent(s) to perform a set of statements. If the value of the target facet is nil or empty, the statement is ignored.",
+		value = "Allows an agent, the sender agent (that can be the [GlobalSpecies](world agent)), to ask another (or other) agent(s) to perform a set of statements. If the value of the target facet is nil or empty, the statement is ignored.",
 		usages = { @usage (
 				name = "Ask agents",
 				value = "Ask  a set of receiver agents, stored in a container, to perform a block of statements. The block is evaluated in the context of the agents' species",

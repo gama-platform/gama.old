@@ -104,7 +104,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("the agregation method")) },
 		omissible = IKeyword.NAME)
 @doc (
-		value = "This is a simple implementation of Genetic Algorithms (GA). See the wikipedia article and [batch161 the batch dedicated page]. The principle of the GA is to search an optimal solution by applying evolution operators on an initial population of solutions. There are three types of evolution operators: crossover, mutation and selection. Different techniques can be applied for this selection. Most of them are based on the solution quality (fitness).",
+		value = "This is a simple implementation of Genetic Algorithms (GA). See the wikipedia article and [BatchExperiments](the batch dedicated page). The principle of the GA is to search an optimal solution by applying evolution operators on an initial population of solutions. There are three types of evolution operators: crossover, mutation and selection. Different techniques can be applied for this selection. Most of them are based on the solution quality (fitness).",
 		usages = { @usage (
 				value = "As other batch methods, the basic syntax of the `genetic` statement uses `method genetic` instead of the expected `genetic name: id` : ",
 				examples = { @example (

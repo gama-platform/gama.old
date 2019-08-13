@@ -89,7 +89,7 @@ import msi.gaml.types.IType;
 								value = "create a new variable and assign to it the result of the action")) },
 		omissible = IKeyword.ACTION)
 @doc (
-		value = "Allows the agent to execute an action or a primitive.  For a list of primitives available in every species, see this [BuiltIn161 page]; for the list of primitives defined by the different skills, see this [Skills161 page]. Finally, see this [Species161 page] to know how to declare custom actions.",
+		value = "Allows the agent to execute an (built-in or defined by the modeler) action. For a list of built-in actions available in every species, see [RegularSpecies#built-in-actions](the regular species page); for the built-in action available in the `world` agent, see the [GlobalSpecies#built-in-actions](the global species page); for the actions defined by the different skills, see this [BuiltInSkills](page dedicated to skills). Finally, see [DefiningActionsAndBehaviors#action](this page showing to know how to declare custom actions).",
 		usages = { @usage (
 				value = "The simple syntax (when the action does not expect any argument and the result is not to be kept) is:",
 				examples = { @example (

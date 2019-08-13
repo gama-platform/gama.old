@@ -101,7 +101,7 @@ import msi.gaml.types.Types;
 						name = ANCHOR,
 						type = IType.POINT,
 						optional = true,
-						doc = @doc ("Only used when perspective: true in OpenGL. The anchor point of the location with respect to the envelope of the text to draw, can take one of the following values: #center, #top_left, #left_center, #bottom_left, #bottom_center, #bottom_right, #right_center, #top_right, #top_center; or any point between {0,0} (#bottom_left) and {1,1} (#top_right)")),
+						doc = @doc ("Only used when perspective: true in OpenGL. The anchor point of the location with respect to the envelope of the text to draw, can take one of the following values: `#center`, `#top_left`, `#left_center`, `#bottom_left`, `#bottom_center`, `#bottom_right`, `#right_center`, `#top_right`, `#top_center`; or any point between `{0,0}` (`#bottom_left`) and `{1,1}` (`#top_right`)")),
 				@facet (
 						name = SIZE,
 						type = { IType.FLOAT, IType.POINT },
@@ -111,19 +111,19 @@ import msi.gaml.types.Types;
 						name = COLOR,
 						type = { IType.COLOR, IType.CONTAINER },
 						optional = true,
-						doc = @doc ("the color to use to display the object. In case of images, will try to colorize it. You can also pass a list of colors : in that case, each color will be matched to its corresponding vertex.")),
+						doc = @doc ("the color to use to display the object. In case of images, will try to colorize it. You can also pass a list of colors: in that case, each color will be matched to its corresponding vertex.")),
 				@facet (
 						name = ROTATE,
 						type = { IType.FLOAT, IType.INT, IType.PAIR },
 						index = IType.FLOAT,
 						of = IType.POINT,
 						optional = true,
-						doc = @doc ("orientation of the shape/text/icon; can be either an int/float (angle) or a pair float::point (angle::rotation axis). The rotation axis, when expressed as an angle, is by defaut {0,0,1}")),
+						doc = @doc ("orientation of the shape/text/icon; can be either an int/float (angle) or a pair float::point (angle::rotation axis). The rotation axis, when expressed as an angle, is by defaut `{0,0,1}`")),
 				@facet (
 						name = FONT,
 						type = { IType.FONT, IType.STRING },
 						optional = true,
-						doc = @doc ("the font used to draw the text, if any. Applying this facet to geometries or images has no effect. You can construct here your font with the operator \"font\". ex : font:font(\"Helvetica\", 20 , #plain)")),
+						doc = @doc ("the font used to draw the text, if any. Applying this facet to geometries or images has no effect. You can construct here your font with the operator \"font\". ex : `font: font(\"Helvetica\", 20 , #plain)`")),
 				@facet (
 						name = DEPTH,
 						type = IType.FLOAT,

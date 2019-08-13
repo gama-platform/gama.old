@@ -61,7 +61,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("The aggregation method to use (either min or max)")) },
 		omissible = IKeyword.NAME)
 @doc (
-		value = "This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. See [batch161 the batch dedicated page].",
+		value = "This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. See [BatchExperiments](the batch dedicated page).",
 		usages = { @usage (
 				value = "As other batch methods, the basic syntax of the exhaustive statement uses `method exhaustive` instead of the expected `exhaustive name: id` : ",
 				examples = { @example (

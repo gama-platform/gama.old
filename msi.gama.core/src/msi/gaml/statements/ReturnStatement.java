@@ -36,7 +36,7 @@ import msi.gaml.types.IType;
 		doc = @doc("an expression that is returned") ) },
 	omissible = IKeyword.VALUE)
 @doc(
-	value = "Allows to immediately stop and tell which value to return from the evaluation of the surrounding action or top-level statement (reflex, init, etc.). Usually used within the declaration of an action. For more details about actions, see the following [Section161 section].",
+	value = "Allows to immediately stop and tell which value to return from the evaluation of the surrounding action or top-level statement (`reflex`, `init`, etc.). Usually used within the declaration of an action. For more details about actions, see the following [DefiningActionsAndBehaviors#action](page).",
 	usages = {
 		@usage(value = "Example:",
 			examples = { @example(value = "string foo {", isExecutable = false),

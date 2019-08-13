@@ -73,7 +73,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("the agregation method")) },
 		omissible = IKeyword.NAME)
 @doc (
-		value = "This algorithm is an implementation of the Hill Climbing algorithm. See the wikipedia article and [batch161 the batch dedicated page].",
+		value = "This algorithm is an implementation of the Hill Climbing algorithm. See the wikipedia article and [BatchExperiments](the batch dedicated page).",
 		usages = { @usage (
 				value = "As other batch methods, the basic syntax of the `hill_climbing` statement uses `method hill_climbing` instead of the expected `hill_climbing name: id` : ",
 				examples = { @example (

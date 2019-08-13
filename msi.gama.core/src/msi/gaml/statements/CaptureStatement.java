@@ -76,7 +76,7 @@ import msi.gaml.types.Types;
 		usages = {
 
 				@usage (
-						value = "The preliminary for an agent A to capture an agent B as its micro-agent is that the A's species must defined a micro-species which is a sub-species of B's species (cf. [Species161#Nesting_species Nesting species]).",
+						value = "The preliminary for an agent A to capture an agent B as its micro-agent is that the A's species must defined a micro-species which is a sub-species of B's species (cf. [MultiLevelArchitecture#declaration-of-micro-species](micro-species)).",
 						examples = { @example (
 								value = "species A {",
 								isExecutable = false),

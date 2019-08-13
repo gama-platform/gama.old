@@ -74,7 +74,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("(openGL only) specify whether the display of the species is refreshed. (true by default, usefull in case of agents that do not move)")) },
 		omissible = IKeyword.NAME)
 @doc (
-		value = "`graphics` allows the modeler to freely draw shapes/geometries/texts without having to define a species. It works exactly like a species [Aspect161 aspect]: the draw statement can be used in the same way.",
+		value = "`graphics` allows the modeler to freely draw shapes/geometries/texts in a display without having to define a species. It works exactly like a species [RegularSpecies#the-aspect-statement](aspect): the [Statements#draw](draw statement) can be used in the same way.",
 		usages = { @usage (
 				value = "The general syntax is:",
 				examples = { @example (

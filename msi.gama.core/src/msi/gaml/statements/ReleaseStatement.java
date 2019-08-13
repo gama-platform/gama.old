@@ -72,7 +72,7 @@ import msi.gaml.types.Types;
 						doc = @doc ("a new variable containing a list of the newly released agent(s)")) },
 		omissible = IKeyword.TARGET)
 @doc (
-		value = "Allows an agent to release its micro-agent(s). The preliminary for an agent to release its micro-agents is that species of these micro-agents are sub-species of other species (cf. [Species161#Nesting_species Nesting species]). The released agents won't be micro-agents of the calling agent anymore. Being released from a macro-agent, the micro-agents will change their species and host (macro-agent).",
+		value = "Allows an agent to release its micro-agent(s). The preliminary for an agent to release its micro-agents is that species of these micro-agents are sub-species of other species (cf. [MultiLevelArchitecture#declaration-of-micro-species](micro-species)). The released agents won't be micro-agents of the calling agent anymore. Being released from a macro-agent, the micro-agents will change their species and host (macro-agent).",
 		usages = { @usage (
 				value = "We consider the following species. Agents of \"C\" species can be released from a \"B\" agent to become agents of \"A\" species. Agents of \"D\" species cannot be released from the \"A\" agent because species \"D\" has no parent species.",
 				examples = { @example (

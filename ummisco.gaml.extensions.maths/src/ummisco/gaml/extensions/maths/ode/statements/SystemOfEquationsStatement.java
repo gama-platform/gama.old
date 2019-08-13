@@ -137,7 +137,7 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
 								value = "} ",
 								isExecutable = false) }),
 				@usage (
-						value = "If the type: facet is used, a predefined equation system is defined using variables vars: and parameters params: in the right order. All possible predefined equation systems are the following ones (see [EquationPresentation161 EquationPresentation161] for precise definition of each classical equation system): ",
+						value = "If the type: facet is used, a predefined equation system is defined using variables vars: and parameters params: in the right order. All possible predefined equation systems are the following ones (see [Equations](the equation-related page) for precise definition of each classical equation system): ",
 						examples = { @example (
 								value = "equation eqSI type: SI vars: [S,I,t] params: [N,beta];",
 								isExecutable = false),
