@@ -27,7 +27,7 @@ public class GamaStyleGeneration {
 	public static String KEYWORD_FILE = Constants.WIKI_FOLDER + "/keywords.xml";
 	public static String GAMA_STYLE_FILE = "files/input/pandocPDF/gama_style.sty";
 	// BEWARE !! The order of the list_category is important !! The first one will be prioritary
-	public static String[] LIST_CATEGORY = { "statement", "type", "operator", "facet", "literal" };
+	public static String[] LIST_CATEGORY = { "statement", "type", "facet", "operator", "literal" };
 	public static String[] LIST_FORBIDDEN_CHAR = { "-", ":", "!", "?", "/", ".", "^", "@", "*", "+", "<", ">", "=" };
 	public static String[] LIST_UNDETECTED_STATEMENT = { "species", "global", "grid", "model", "import", "output" };
 	public static String[] LIST_LITERAL = { "true", "false", "unknown", "nil" };
@@ -152,43 +152,4 @@ public class GamaStyleGeneration {
 		return result;
 	}
 
-	public void createSubpartFiles() throws ParserConfigurationException, SAXException, IOException {
-		final Document doc = XMLUtils.createDoc("oj");
-		final NodeList nl = doc.getElementsByTagName("subpart");
-
-		for (int i = 0; i < nl.getLength(); i++) {
-			final String subpartName = ((Element) nl.item(i)).getAttribute("name");
-			final File subpartFile =
-					new File(Constants.TOC_GEN_FOLDER + File.separator + subpartName.replaceAll(" ", "_") + ".md");
-
-			// copy the content of the wiki file in the new file.
-			final String wikiPagePath =
-					Constants.WIKI_FOLDER + File.separatorChar + ((Element) nl.item(i)).getAttribute("file") + ".md";
-			final File wikiFile = new File(wikiPagePath);
-
-			try (BufferedReader br = new BufferedReader(new FileReader(wikiFile));
-					FileWriter fw = new FileWriter(subpartFile);
-					BufferedWriter partBw = new BufferedWriter(fw);) {
-
-				String line = null;
-				boolean titleWritten = false;
-				while ((line = br.readLine()) != null) {
-					// change the title of the page (# Title) to the correct latex title
-					if (line.startsWith("#") && !titleWritten) {
-						// write latex content to make the content bigger.
-						partBw.write("\\begingroup\n");
-						partBw.write("\\fontsize{28}{34}\\selectfont\n");
-						partBw.write("\\textbf{" + subpartName + "}\n");
-						partBw.write("\\endgroup\n");
-						partBw.write("\\vspace{20mm}\n");
-						titleWritten = true;
-					} else {
-						partBw.write(line);
-						partBw.newLine();
-					}
-				}
-
-			}
-		}
-	}
 }
