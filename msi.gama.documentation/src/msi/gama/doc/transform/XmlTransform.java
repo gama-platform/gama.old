@@ -6,7 +6,6 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -15,7 +14,7 @@ import msi.gama.precompiler.doc.utils.XMLUtils;
 
 public class XmlTransform {
 	public static void transformXML(String xml, String xsl, String output) 
-			throws ParserConfigurationException, SAXException, IOException, TransformerException {
+			throws ParserConfigurationException, SAXException, IOException {
 		// Creation of the DOM source
 		DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
 		DocumentBuilder constructeur = fabriqueD.newDocumentBuilder();

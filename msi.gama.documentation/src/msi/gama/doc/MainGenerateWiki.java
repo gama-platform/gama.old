@@ -16,15 +16,21 @@ import msi.gama.doc.util.CheckConcepts;
 import msi.gama.doc.util.GenerateCategoryXML;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class MainGenerateWiki {
 
+	static {
+		DEBUG.ON();
+	}
+	
 	public static void main(final String[] args) { 
 		try {
 			// build the file keywords.xml
 			GenerateCategoryXML.GenerateKeywordsXML();
 
 			// generate the wiki documentation
+			DEBUG.LOG("GENERATION OF THE WIKI DOCUMENTATION FROM JAVA CODE");
 			System.out.println("GENERATION OF THE WIKI DOCUMENTATION FROM JAVA CODE");
 			System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
 			System.out.print("Preparation of the folders................");

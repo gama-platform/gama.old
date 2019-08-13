@@ -94,12 +94,12 @@ public class XmlToTestGAML {
 	}
 
 	private static void createMasterTest(final Document document, final String xsl, final String targetFolder,
-			final String targetFile) throws ParserConfigurationException, SAXException, IOException {
+			final String targetFile) {
 		XMLUtils.transformDocument(document, xsl, targetFolder + File.separator + targetFile);
 	}
 
 	private static void createOperatorsTests(final Document document, final String xsl, final String targetFolder)
-			throws ParserConfigurationException, SAXException, IOException, TransformerException {
+			throws ParserConfigurationException {
 
 		final DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
 		final DocumentBuilder builder = fabriqueD.newDocumentBuilder();
@@ -166,8 +166,7 @@ public class XmlToTestGAML {
 
 		for (int j = 0; j < nLOperators.getLength(); j++) {
 			final org.w3c.dom.Element eltOperator = (org.w3c.dom.Element) nLOperators.item(j);
-			// eltOperator.setAttribute("category",eltOperator.getAttribute("category").replaceAll(" ",
-			// "__").replaceAll("-", "_"));
+
 			eltOperator.setAttribute(XMLElements.ATT_OP_ID,
 					nameConverter.getProperOperatorName(eltOperator.getAttribute(XMLElements.ATT_OP_ID)));
 			eltOperator.setAttribute(XMLElements.ATT_OP_NAME,
@@ -211,7 +210,7 @@ public class XmlToTestGAML {
 		}
 
 		private HashMap<String, String> initProperNameOperatorMap() {
-			final HashMap<String, String> hm = new HashMap<String, String>();
+			final HashMap<String, String> hm = new HashMap<>();
 			hm.put("*", "Multiply");
 			hm.put("-", "Minus");
 			hm.put("/", "Divide");

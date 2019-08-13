@@ -24,13 +24,13 @@ import msi.gama.precompiler.doc.utils.XMLUtils;
 
 public class GamaStyleGeneration {
 
-	public static String KEYWORD_FILE = Constants.WIKI_FOLDER + "/keywords.xml";
-	public static String GAMA_STYLE_FILE = "files/input/pandocPDF/gama_style.sty";
+	public final static String KEYWORD_FILE = Constants.WIKI_FOLDER + "/keywords.xml";
+	public final static String GAMA_STYLE_FILE = "files/input/pandocPDF/gama_style.sty";
 	// BEWARE !! The order of the list_category is important !! The first one will be prioritary
-	public static String[] LIST_CATEGORY = { "statement", "type", "facet", "operator", "literal" };
-	public static String[] LIST_FORBIDDEN_CHAR = { "-", ":", "!", "?", "/", ".", "^", "@", "*", "+", "<", ">", "=" };
-	public static String[] LIST_UNDETECTED_STATEMENT = { "species", "global", "grid", "model", "import", "output" };
-	public static String[] LIST_LITERAL = { "true", "false", "unknown", "nil" };
+	public final static String[] LIST_CATEGORY = { "statement", "type", "facet", "operator", "literal" };
+	public final static String[] LIST_FORBIDDEN_CHAR = { "-", ":", "!", "?", "/", ".", "^", "@", "*", "+", "<", ">", "=" };
+	public final static String[] LIST_UNDETECTED_STATEMENT = { "species", "global", "grid", "model", "import", "output" };
+	public final static String[] LIST_LITERAL = { "true", "false", "unknown", "nil" };
 
 	private static Map<String, ArrayList<String>> keywordMap = new HashMap<>();
 
@@ -99,7 +99,7 @@ public class GamaStyleGeneration {
 							out.write("morekeywords=[" + (i + 1) + "]{\n");
 						}
 						boolean firstWordWritten = false;
-						if (LIST_CATEGORY[i] == "statement") {
+						if ( "statement".equals(LIST_CATEGORY[i])) {
 							for (final String undetectStatement : LIST_UNDETECTED_STATEMENT) {
 								if (firstWordWritten) {
 									out.write(", ");
@@ -108,7 +108,7 @@ public class GamaStyleGeneration {
 								out.write(undetectStatement);
 							}
 						}
-						if (LIST_CATEGORY[i] == "literal") {
+						if ("literal".equals(LIST_CATEGORY[i])) {
 							for (final String literal : LIST_LITERAL) {
 								if (firstWordWritten) {
 									out.write(", ");
