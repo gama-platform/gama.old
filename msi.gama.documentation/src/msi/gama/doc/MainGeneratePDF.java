@@ -11,21 +11,27 @@
  **********************************************************************************************/
 package msi.gama.doc;
 
-import msi.gama.doc.util.ConvertToPDF;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
+import msi.gama.doc.pdf.ConvertToPDF;
 import msi.gama.doc.util.GamaStyleGeneration;
 import msi.gama.doc.util.PrepareEnv;
 
 public class MainGeneratePDF {
 
-	public static boolean generateGamaStyle = false;
+	public static boolean generateGamaStyle = true;
 	
 	public static void main(String[] args) {
 		try {
 			System.out.println("GENERATION OF THE PDF DOCUMENTATION");
 		
-		if (generateGamaStyle) {
-			GamaStyleGeneration.generateGamaStyle();
-		}
+			if (generateGamaStyle) {
+				GamaStyleGeneration.generateGamaStyle();
+			}
 
 			System.out.print("Preparation of the folders.......................");
 			PrepareEnv.prepareDocumentation();
@@ -33,11 +39,14 @@ public class MainGeneratePDF {
 
 			System.out.println("Generation of the PDF file .................");
 			ConvertToPDF.convert();
-			System.out.println("DONE");			
-		} catch(Exception e){
-			System.out.println("ERROR: Impossible connection to the SVN repository.");
-			System.out.println(e);
-		}
+			System.out.println("DONE");		
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}			
 	}
 
 }

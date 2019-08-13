@@ -63,7 +63,6 @@ public class Constants {
 
 	public static String DOCGAMA_PDF 			= PDF_FOLDER + File.separator + "docGAMAv1.8.0.pdf";
 	public static String TOC_FILE 				= INPUT_FOLDER + File.separator + "toc" + File.separator + "toc18.xml";
-	public static String MD_BLANK_PAGE 			= "G__BlankPage.md"; // Blank page is directly in the wiki folder
 	public static String TOC_SIDEBAR_FILE		= WIKI_FOLDER + File.separator + "_Sidebar.md";
 
 	// Tests
