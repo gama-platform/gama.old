@@ -1,4 +1,4 @@
-package msi.gama.doc.util;
+package msi.gama.doc.pdf;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,18 +23,16 @@ import msi.gama.precompiler.doc.utils.OSUtils;
 public class ConvertToPDF {
 
 	public static String getCommandLine() throws ParserConfigurationException, SAXException, IOException {
-		FileInputStream in;
+		
 		final Properties prop2 = new Properties();
-		try {
-			in = new FileInputStream(Constants.PANDOC_FOLDER + File.separator + "param.properties");
+		
+		try (FileInputStream in = new FileInputStream(Constants.PANDOC_FOLDER + File.separator + "param.properties") ){
 			prop2.load(in);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 
-		final TOCManager toc = new TOCManager(Constants.TOC_FILE);
-		toc.createPartFiles();
-		toc.createSubpartFiles();
+		final TOCManager toc = new TOCManager(Constants.TOC_SIDEBAR_FILE, Constants.WIKI_FOLDER);
 		final String files = toc.getTocFilesString();
 
 		final File template = new File(Constants.PANDOC_FOLDER + File.separator + "mytemplate.tex");
@@ -51,9 +49,8 @@ public class ConvertToPDF {
 		System.out.println("Command " + command);
 
 		return command;
-
-	}
-
+	}	
+	
 	public static void convertMacOs() {
 		System.out.println("Start of convert for MacOS");
 		String line;
@@ -130,7 +127,7 @@ public class ConvertToPDF {
 
 	public static void main(final String[] argc) throws ParserConfigurationException, SAXException, IOException {
 
-		convert();
+ 		convert();
 
 	}
 }
