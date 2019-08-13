@@ -276,14 +276,20 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		return null;
 	}
 
-	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
+	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) { 
 		
+		/*
+		 * Do we want to have intersections that are not connected to any road ?
+		 * At least put this in the next loop to avoid duplicates
+		 *
 		for (final Object ag : vertices.iterable(scope)) {
 			super.addVertex(ag);
 		}
+		*/
 		
 		final IMap<ILocation, IAgent> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
 		for (final Object ag : vertices.iterable(scope)) {
+			super.addVertex(ag);
 			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}
 		for (final Object p : edges.iterable(scope)) {

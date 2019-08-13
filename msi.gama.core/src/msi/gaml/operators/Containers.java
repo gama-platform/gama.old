@@ -922,7 +922,7 @@ public class Containers {
 			index_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			content_type = IType.LIST,
 			content_type_content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-			concept = { IConcept.CONTAINER })
+			concept = { IConcept.CONTAINER, IConcept.MAP})
 	@doc (
 			value = "Returns a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements "
 					+ "of the left-hand operand associated to the key value",
