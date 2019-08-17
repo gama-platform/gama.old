@@ -5,15 +5,13 @@
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.application.workspace;
 
 // import java.awt.GridLayout;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +33,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import com.google.common.io.Files;
 
 /**
  * Dialog that lets/forces a user to enter/select a workspace that will be used
@@ -82,7 +81,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	/**
 	 * Creates a new workspace dialog with a specific image as title-area image.
-	 * 
+	 *
 	 * @param switchWorkspace
 	 *            true if we're using this dialog as a switch workspace dialog
 	 * @param wizardImage
@@ -122,7 +121,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	/**
 	 * Returns the last set workspace directory from the preferences
-	 * 
+	 *
 	 * @return null if none
 	 */
 	public static String getLastSetWorkspaceDirectory() {
@@ -169,7 +168,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			rememberWorkspaceButton.setSelection(getNode().getBoolean(keyRememberWorkspace, false));
 
 			final String lastUsed = getNode().get(keyLastUsedWorkspaces, "");
-			lastUsedWorkspaces = new ArrayList<String>();
+			lastUsedWorkspaces = new ArrayList<>();
 			if ( lastUsed != null ) {
 				final String[] all = lastUsed.split(splitChar);
 				for ( final String str : all ) {
@@ -208,7 +207,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	/**
 	 * Returns whatever path the user selected in the dialog.
-	 * 
+	 *
 	 * @return Path
 	 */
 	public String getSelectedWorkspaceLocation() {
@@ -239,33 +238,13 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
-	/* Checks whether a target directory is a subdirectory of ourselves */
-	private boolean isTargetSubdirOfDir(final File source, final File target) {
-		final List<File> subdirs = new ArrayList<File>();
-		getAllSubdirectoriesOf(source, subdirs);
-		return subdirs.contains(target);
-	}
-
-	/* Helper for above */
-	private void getAllSubdirectoriesOf(final File target, final List<File> buffer) {
-		final File[] files = target.listFiles();
-		if ( files == null || files.length == 0 ) { return; }
-
-		for ( final File f : files ) {
-			if ( f.isDirectory() ) {
-				buffer.add(f);
-				getAllSubdirectoriesOf(f, buffer);
-			}
-		}
-	}
-
 	/**
 	 * This function will copy files or directories from one location to
 	 * another. note that the source and the destination must be mutually
 	 * exclusive. This function can not be used to copy a directory to a sub
 	 * directory of itself. The function will also have problems if the
 	 * destination files already exist.
-	 * 
+	 *
 	 * @param src
 	 *            -- A File object that represents the source for the copy
 	 * @param dest
@@ -277,50 +256,34 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		/* Check to ensure that the source is valid... */
 		if ( !src.exists() ) {
 			throw new IOException("Can not find source: " + src.getAbsolutePath());
-		} else if ( !src.canRead() ) { // check to ensure we have rights to the
-										// source...
+		} else if ( !src.canRead() ) {
 			throw new IOException("Cannot read: " + src.getAbsolutePath() + ". Check file permissions.");
 		}
 		/* Is this a directory copy? */
 		final List<String> noCopy = Arrays.asList("org.eclipse.core.runtime", "org.eclipse.e4.workbench",
 			"org.eclipse.emf.common.ui", "org.eclipse.ui.workbench", "org.eclipse.xtext.builder");
 		if ( src.isDirectory() ) {
-			if ( noCopy.contains(src.getName()) )
-				return;
+			if ( noCopy.contains(src.getName()) ) { return; }
 			/* Does the destination already exist? */
 			if ( !dest.exists() ) {
 				/* If not we need to make it exist if possible */
-				if ( !dest
-					.mkdirs() ) { throw new IOException("Could not create direcotry: " + dest.getAbsolutePath()); }
+				if ( !dest.mkdirs() ) {
+					throw new IOException("Could not create direcotry: " + dest.getAbsolutePath());
+				}
 			}
 			/* Get a listing of files... */
 			final String list[] = src.list();
 			/* Copy all the files in the list. */
-			if ( list != null )
-				for ( int i = 0; i < list.length; i++ ) {
-					final File dest1 = new File(dest, list[i]);
-					final File src1 = new File(src, list[i]);
+			if ( list != null ) {
+				for ( final String element : list ) {
+					final File dest1 = new File(dest, element);
+					final File src1 = new File(src, element);
 					copyFiles(src1, dest1);
 				}
+			}
 		} else {
 			/* This was not a directory, so lets just copy the file */
-			final byte[] buffer = new byte[4096];
-			int bytesRead;
-			try (FileInputStream fin = new FileInputStream(src); FileOutputStream fout = new FileOutputStream(dest);) {
-				/* Open the files for input and output */
-
-				/* While bytesRead indicates a successful read, lets write... */
-				while ((bytesRead = fin.read(buffer)) >= 0) {
-					fout.write(buffer, 0, bytesRead);
-				}
-			} catch (final IOException e) {
-				final IOException wrapper =
-					new IOException("Unable to copy file: " + src.getAbsolutePath() + "to" + dest.getAbsolutePath());
-				wrapper.initCause(e);
-				wrapper.setStackTrace(e.getStackTrace());
-				throw wrapper;
-				/* Ensure that the files are closed (if they were open). */
-			}
+			Files.copy(src, dest);
 		}
 	}
 
@@ -331,31 +294,13 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 				"No current workspace exists. Can only clone from an existing workspace");
 			return;
 		}
-		cloneWorkspace(currentLocation);
-	}
-
-	protected void cloneWorkspace(final String locationToClone) {
-		// Some checks first
 		final String newLocation = workspacePathCombo.getText();
-
-		final File workspaceDirectory = new File(locationToClone);
-		final File targetDirectory = new File(newLocation);
-		if ( workspaceDirectory.exists() &&
-			targetDirectory.getAbsolutePath().equals(workspaceDirectory.getAbsolutePath()) ) {
+		// Fixes Issue #2848
+		if ( newLocation.startsWith(currentLocation) ) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-				"Please enter a different location for the new workspace. A workspace cannot be cloned into itself.");
+				"The path entered is either that of the current wokspace or of a subdirectory of it. Neither can be used as a destination.");
 			return;
 		}
-		// recursive check, if new directory is a subdirectory of
-		// our workspace, that's a big no-no or we'll
-		// create directories forever
-		if ( isTargetSubdirOfDir(workspaceDirectory, targetDirectory) ) {
-			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-				"The path entered is a subdirectory of the current workspace. A workspace cannot be cloned in one of its sub-directories");
-			return;
-		}
-		// If the checks are ok, we set "cloning" to true and do as if ok was
-		// pressed.
 		cloning = true;
 		try {
 			okPressed();
@@ -388,7 +333,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* Deal with the max history */
 		if ( lastUsedWorkspaces.size() > maxHistory ) {
-			final List<String> remove = new ArrayList<String>();
+			final List<String> remove = new ArrayList<>();
 			for ( int i = maxHistory; i < lastUsedWorkspaces.size(); i++ ) {
 				remove.add(lastUsedWorkspaces.get(i));
 			}
@@ -466,7 +411,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	/**
 	 * Checks to see if a workspace exists at a given directory string, and if
 	 * not, creates it. Also puts our identifying file inside that workspace.
-	 * 
+	 *
 	 * @param wsRoot
 	 *            Workspace root directory as string
 	 * @return true if all checks and creations succeeded, false if there was a
