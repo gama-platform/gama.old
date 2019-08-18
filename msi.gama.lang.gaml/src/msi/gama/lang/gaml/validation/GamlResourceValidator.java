@@ -37,7 +37,11 @@ public class GamlResourceValidator implements IResourceValidator {
 	public List<Issue> validate(final Resource resource, final CheckMode mode, final CancelIndicator indicator) {
 		// DEBUG.OUT("GamlResourceValidato begginning validation job of " + resource.getURI().lastSegment());
 		try (final Collector.AsList<Issue> result = Collector.getList();) {
-			final IAcceptor<Issue> acceptor = t -> result.add(t);
+			final IAcceptor<Issue> acceptor = t -> {
+				if (t.getMessage() != null && !t.getMessage().isEmpty()) {
+					result.add(t);
+				}
+			};
 			// We resolve the cross references
 			EcoreUtil2.resolveLazyCrossReferences(resource, indicator);
 			// DEBUG.OUT("Cross references resolved for " + resource.getURI().lastSegment());
