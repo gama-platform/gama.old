@@ -3,7 +3,7 @@
 function mvn_install() {
 	echo "Building " $1
 	cd $1
-	if mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama; then
+	if mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama$1; then
 	   echo ok
 	else
 	   echo Something went wrong.
