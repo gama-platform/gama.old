@@ -14,30 +14,18 @@
 
 	<distributionManagement>
 		<repository>
+			<uniqueVersion>false</uniqueVersion>
 			<id>p2Repo</id>
 			<url>scp://51.255.46.42/./var/www/gama_updates</url>
 		</repository>
 		<snapshotRepository>
+			<uniqueVersion>false</uniqueVersion>
 			<id>p2Repo</id>
 			<url>scp://51.255.46.42/./var/www/gama_updates</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
-	
-	<build>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh-external</artifactId>
-				<version>2.12</version>
-			</extension>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ssh</artifactId>
-				<version>2.12</version>
-			</extension>
-		</extensions>
-	</build>
+
+
 	<profiles>
 		<!-- This profile is used to upload the repo -->
 		<profile>
@@ -71,11 +59,18 @@
 						<executions>
 							<execution>
 								<id>p2Repo</id>
-								<phase>deploy</phase>
+								<phase>install</phase>
 								<goals>
 									<goal>upload</goal>
 								</goals>
 								<configuration>
+									<rules>
+										<requireFilesSize>
+											<maxsize>50000</maxsize>
+											<minsize>90</minsize>
+										</requireFilesSize>
+									</rules>
+									<removeAll>true</removeAll>
 									<fromDir>${repo.path}</fromDir>
 									<includes>**</includes>
 									<toDir>${ftp.toDir}</toDir>
@@ -96,5 +91,25 @@
 			</build>
 		</profile>
 	</profiles>
+
+
+
+	<build>
+
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh-external</artifactId>
+				<version>2.12</version>
+			</extension>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.12</version>
+			</extension>
+		</extensions>
+	</build>
+
 	<groupId>msi.gama</groupId>
+	<version>1.7.0-SNAPSHOT</version>
 </project>
