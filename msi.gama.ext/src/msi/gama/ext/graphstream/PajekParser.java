@@ -378,7 +378,7 @@ public class PajekParser implements Parser, PajekParserConstants {
 		}
 		EO();
 		if (label != null) {
-			if (label.startsWith("\u005c"")) {
+			if (label.startsWith("\\u005c")) {
 				label = label.substring(1, label.length() - 1);
 			}
 			ctx.addNodeLabel(id.image, label);
