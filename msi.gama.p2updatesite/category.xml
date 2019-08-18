@@ -3,9 +3,6 @@
    <description name="GAMA Update Site">
       Site containing updates to the GAMA platform software (see http://gama-platform.org)
    </description>
-   <feature url="features/idees.gama.features.weka_0.0.0.jar" id="idees.gama.features.weka" version="0.0.0">
-      <category name="gama.optional"/>
-   </feature>
    <feature url="features/ummisco.gama.feature.audio_0.0.0.jar" id="ummisco.gama.feature.audio" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
@@ -39,7 +36,6 @@
    <feature url="features/ummisco.gama.feature.serialize_1.7.0.qualifier.jar" id="ummisco.gama.feature.serialize" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/idees.gama.features.weka_1.7.0.qualifier.jar" id="idees.gama.features.weka" version="1.7.0.qualifier"/>
    <feature url="features/ummisco.gama.feature.core.extensions_1.7.0.qualifier.jar" id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier"/>
    <feature url="features/simtools.graphlayout.feature_1.7.0.qualifier.jar" id="simtools.graphlayout.feature" version="1.7.0.qualifier"/>
    <feature url="features/ummisco.gama.feature.core_1.7.0.qualifier.jar" id="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
@@ -52,9 +48,7 @@
    <feature url="features/ummisco.gama.feature.network_1.7.0.qualifier.jar" id="ummisco.gama.feature.network" version="1.7.0.qualifier"/>
    <feature url="features/ummisco.gama.feature.serialize_1.7.0.qualifier.jar" id="ummisco.gama.feature.serialize" version="1.7.0.qualifier"/>
    <feature url="features/ummisco.gama.feature.stats_1.7.0.qualifier.jar" id="ummisco.gama.feature.stats" version="1.7.0.qualifier"/>
-   <bundle id="idees.gama.weka" version="1.7.0.qualifier"/>
    <bundle id="irit.gaml.extensions.database" version="1.7.0.qualifier"/>
-   <bundle id="irit.gaml.extensions.test" version="1.7.0.qualifier"/>
    <bundle id="msi.gama.application" version="1.7.0.qualifier"/>
    <bundle id="msi.gama.core" version="1.7.0.qualifier"/>
    <bundle id="msi.gama.ext" version="1.7.0.qualifier"/>
