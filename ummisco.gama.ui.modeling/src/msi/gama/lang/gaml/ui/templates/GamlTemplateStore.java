@@ -157,6 +157,20 @@ public class GamlTemplateStore extends XtextTemplateStore {
 	}
 
 	@Override
+	public org.eclipse.jface.text.templates.persistence.TemplatePersistenceData getTemplateData(final String id) {
+		if (id == null) { return null; }
+		for (final org.eclipse.text.templates.TemplatePersistenceData data : internalGetTemplates()) {
+			if (id.equals(data.getId())) {
+				final org.eclipse.jface.text.templates.persistence.TemplatePersistenceData wrap =
+						new org.eclipse.jface.text.templates.persistence.TemplatePersistenceData(data);
+				return wrap;
+			}
+
+		}
+		return null;
+	}
+
+	@Override
 	protected void loadContributedTemplates() throws IOException {
 		super.loadContributedTemplates();
 		Iterable<String> protos = DescriptionFactory.getProtoNames();
