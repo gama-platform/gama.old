@@ -11,6 +11,7 @@ package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
@@ -49,9 +50,14 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 		textBox = FlatButton.menu(comp, IGamaColors.NEUTRAL, "").light().small();
 		textBox.setText("No file");
 		textBox.addSelectionListener(this);
-		// GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		// textBox.setLayoutData(d);
 		return textBox;
+	}
+
+	@Override
+	protected GridData getParameterGridData() {
+		final GridData d = new GridData(SWT.FILL, SWT.TOP, true, false);
+		d.minimumWidth = 50;
+		return d;
 	}
 
 	@Override

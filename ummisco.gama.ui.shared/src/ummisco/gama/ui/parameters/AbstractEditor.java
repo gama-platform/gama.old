@@ -310,8 +310,7 @@ public abstract class AbstractEditor<T>
 		final Label label = new Label(parent, SWT.WRAP | SWT.RIGHT);
 		label.setBackground(parent.getBackground());
 		final GridData d = new GridData(SWT.END, SWT.CENTER, true, true);
-		// d.widthHint = 200;
-		// d.minimumWidth = SWT.DEFAULT;
+		d.minimumWidth = 70;
 		if (isSubParameter) {
 			d.horizontalIndent = 30;
 		}
