@@ -80,6 +80,7 @@
    <bundle id="ummisco.gaml.extensions.maths" version="1.7.0.qualifier"/>
    <bundle id="ummisco.gaml.extensions.sound" version="1.7.0.qualifier"/>
    <bundle id="ummisco.gaml.extensions.stats" version="1.7.0.qualifier"/>
+   <bundle id="msi.gama.processor" version="1.4.0.qualifier"/>
    <category-def name="gama.ui" label="UI components of GAMA"/>
    <category-def name="gama.core" label="Core components of GAMA"/>
    <category-def name="gama.optional" label="Optional components of GAMA"/>

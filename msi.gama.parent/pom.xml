@@ -263,7 +263,7 @@
 
 		<module>../ummisco.gama.product</module>
 
-		<!-- <module>../msi.gama.p2updatesite</module> -->
+		<module>../msi.gama.p2updatesite</module>
 
 		<!-- -->
 	</modules>
