@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
+import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_LAYOUT;
+import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +23,10 @@ import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
@@ -31,6 +34,7 @@ import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> implements IGamaView.Parameters {
@@ -117,10 +121,16 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 				}, SWT.RIGHT);
 		tb.button("menu.add2", "Add simulation",
 				"Add a new simulation (with the current parameters) to this experiment", e -> {
-					GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
-					if (GamaPreferences.Displays.CORE_DISPLAY_LAYOUT.getValue().equals("None")) {
-						ArrangeDisplayViews.execute(IUnits.split);
-					}
+					final SimulationAgent sim =
+							GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
+					if (sim == null) { return; }
+					WorkbenchHelper.runInUI("", 0, (m) -> {
+						if (CORE_DISPLAY_LAYOUT.getValue().equals("None")) {
+							ArrangeDisplayViews.execute(IUnits.split);
+						} else {
+							ArrangeDisplayViews.execute(LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
+						}
+					});
 				}, SWT.RIGHT);
 
 	}
