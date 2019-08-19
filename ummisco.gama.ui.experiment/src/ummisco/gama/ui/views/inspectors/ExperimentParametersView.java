@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -117,7 +118,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		tb.button("menu.add2", "Add simulation",
 				"Add a new simulation (with the current parameters) to this experiment", e -> {
 					GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
-					ArrangeDisplayViews.execute(IUnits.split);
+					if (GamaPreferences.Displays.CORE_DISPLAY_LAYOUT.getValue().equals("None")) {
+						ArrangeDisplayViews.execute(IUnits.split);
+					}
 				}, SWT.RIGHT);
 
 	}
