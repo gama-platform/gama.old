@@ -66,7 +66,7 @@ public class _Vertex<E, V> extends GraphObject<GamaGraph<E, V>, E, V> {
 	public Object edgeTo(final Object v2) {
 		for (final Object e : outEdges) {
 			final _Edge<V, E> edge = (_Edge<V, E>) graph.edgeMap.get(e);
-			if (edge.getTarget().equals(v2)) { return e; }
+			if (edge != null && edge.getTarget().equals(v2)) { return e; }
 		}
 		return null;
 	}
