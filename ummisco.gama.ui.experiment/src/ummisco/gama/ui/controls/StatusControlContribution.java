@@ -36,7 +36,7 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.GAMA;
-import msi.gaml.operators.Dates;
+import msi.gaml.operators.Strings;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -160,15 +160,9 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			result.add(IGamaColors.NEUTRAL, "No experiment available");
 			return result;
 		}
-		final IExperimentAgent exp = agent.getExperiment();
+		appendPopupTextFor(agent.getExperiment(), result);
 
-		text.setLength(0);
-		SimulationClock clock = exp.getClock();
-		text.append(String.format("%-20s %-10d\n", "Experiment cycles elapsed: ", clock.getCycle()));
-		text.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
-				(int) clock.getAverageDuration(), clock.getTotalDuration()));
-		result.add(GamaColors.get(exp.getColor()), text.toString());
-		final IPopulation<? extends IAgent> pop = exp.getSimulationPopulation();
+		final IPopulation<? extends IAgent> pop = agent.getExperiment().getSimulationPopulation();
 		if (pop == null) {
 			result.add(IGamaColors.NEUTRAL, "No simulations available");
 			return result;
@@ -176,19 +170,22 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		final IAgent[] simulations = pop.toArray();
 
 		for (final IAgent a : simulations) {
-			text.setLength(0);
-			final SimulationAgent sim = (SimulationAgent) a;
-			clock = sim.getClock();
-
-			text.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
-					Dates.asDuration(clock.getStartingDate(), clock.getCurrentDate())));
-			text.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
-					(int) clock.getAverageDuration(), clock.getTotalDuration()));
-			result.add(GamaColors.get(sim.getColor()), text.toString());
-
+			appendPopupTextFor((SimulationAgent) a, result);
 		}
 
 		return result;
+	}
+
+	void appendPopupTextFor(final ITopLevelAgent exp, final PopupText result) {
+		text.setLength(0);
+		text.append(Strings.LN);
+		final SimulationClock clock = exp.getClock();
+		text.append(clock.getInfo()).append(Strings.LN);
+		text.append("Durations: cycle ").append(clock.getDuration()).append("ms; average ")
+				.append((int) clock.getAverageDuration()).append("ms; total ").append(clock.getTotalDuration())
+				.append("ms");
+		text.append(Strings.LN);
+		result.add(GamaColors.get(exp.getColor()), text.toString());
 	}
 
 	/**
@@ -284,7 +281,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			label.setText(
 					subTaskName + (subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
 		} else {
-			label.setText(mainTaskName == null ? getClockMessage() : mainTaskName);
+			label.setText(mainTaskName == null ? getClockMessage(getStatusAgent()) : mainTaskName);
 		}
 		if (popup.isVisible()) {
 			popup.display();
@@ -294,8 +291,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	}
 
-	private String getClockMessage() {
-		final ITopLevelAgent agent = getStatusAgent();
+	private String getClockMessage(final ITopLevelAgent agent) {
 		if (agent == null) { return ""; }
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append(agent.getClock().getInfo());

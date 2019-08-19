@@ -116,8 +116,8 @@ public class Popup2 extends PopupDialog {
 			}
 		} else if (labelsSize > controlsSize) {
 			for (int i = 0; i < labelsSize - controlsSize; i++) {
-				final Label label = new Label(contents, SWT.WRAP);
-				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+				final Label label = new Label(contents, SWT.NONE);
+				label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 				labels.add(label);
 			}
 		}
