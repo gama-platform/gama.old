@@ -136,12 +136,12 @@ import msi.gaml.types.Types;
 						name = IKeyword.DATA,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("any expression, that will be saved in the file")),
+						doc = @doc ("the data that will be saved to the file")),
 				@facet (
 						name = IKeyword.REWRITE,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it. Default is true")),
+						doc = @doc ("a boolean expression specifying whether to erase the file if it exists or append data at the end of it. Only applicable to \"text\" or \"csv\" files. Default is true")),
 				@facet (
 						name = IKeyword.HEADER,
 						type = IType.BOOL,
@@ -342,8 +342,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					Object agents = item.value(scope);
 					if (agents instanceof ISpecies) {
 						agents = scope.getAgent().getPopulationFor((ISpecies) agents);
-					}
-					if (!(agents instanceof IList)) { return null; }
+					} else if (agents instanceof IShape) {
+						// see Issue #2857
+						agents = GamaListFactory.wrap(item.getGamlType(), agents);
+					} else if (!(agents instanceof IList)) { return null; }
 					saveShape((IList<? extends IShape>) agents, fileToSave, scope, type.equals("json"));
 					break;
 				case "text":
