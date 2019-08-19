@@ -142,6 +142,7 @@ public class PopulationInspectView extends GamaViewPart
 		}
 
 	}
+
 	/**
 	 * Added to address Issue #2752
 	 */
@@ -150,7 +151,6 @@ public class PopulationInspectView extends GamaViewPart
 		super.init(site);
 		this.setTitleImage(GamaIcons.create("view.browser2").image());
 	}
-
 
 	final private AgentContentProvider provider = new AgentContentProvider();
 
@@ -277,11 +277,45 @@ public class PopulationInspectView extends GamaViewPart
 		attributesMenu.setLayout(layout);
 		attributesMenu.setBackground(IGamaColors.WHITE.color());
 		fillAttributeMenu();
+	}
+
+	void fillAttributeMenu() {
+		if (getOutput() == null) { return; }
+		// Not yet declared or already disposed
+		if (attributesMenu == null || attributesMenu.isDisposed()) { return; }
+		for (final Control c : attributesMenu.getChildren()) {
+			c.dispose();
+		}
+		Label attributesLabel = new Label(attributesMenu, SWT.NONE);
+		attributesLabel.setText("Attributes");
+		attributesLabel.setFont(GamaFonts.getNavigHeaderFont());
+		attributesLabel = new Label(attributesMenu, SWT.None);
+		attributesLabel.setText(" ");
+		String tooltipText;
+		final String speciesName = getSpeciesName();
+		if (speciesName.equals(IKeyword.AGENT)) {
+			tooltipText = "A list of the attributes common to the agents returned by the custom expression";
+		} else {
+			tooltipText = "A list of the attributes defined in species " + speciesName
+					+ ". Select the ones you want to display in the table";
+		}
+		attributesMenu.setToolTipText(tooltipText);
+		final boolean hasPreviousSelection = selectedColumns.get(speciesName) != null;
+		final InspectDisplayOutput output = getOutput();
+		final ISpecies species = output.getSpecies();
+		final List<String> names = new ArrayList(
+				getOutput().getAttributes() == null ? species.getVarNames() : getOutput().getAttributes().keySet());
+		Collections.sort(names);
+		for (final String name : names) {
+			final SwitchButton b = new SwitchButton(attributesMenu, SWT.NONE, "   ", "   ", name);
+			b.setBackground(GamaColors.system(SWT.COLOR_WHITE));
+			b.setSelection(hasPreviousSelection && selectedColumns.get(speciesName).contains(name));
+			b.addSelectionListener(attributeAdapter);
+		}
 		final Point size = attributesMenu.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		attributesMenu.setSize(size);
 		attributesMenu.layout(true, true);
-		scroll.setMinSize(size);
-
+		((ScrolledComposite) attributesMenu.getParent()).setMinSize(size);
 	}
 
 	private void createExpressionComposite() {
@@ -357,41 +391,6 @@ public class PopulationInspectView extends GamaViewPart
 		final ISpecies species = getOutput().getSpecies();
 		if (species == null) { return IKeyword.AGENT; }
 		return species.getName();
-	}
-
-	void fillAttributeMenu() {
-		if (getOutput() == null) { return; }
-		// Not yet declared or already disposed
-		if (attributesMenu == null || attributesMenu.isDisposed()) { return; }
-		for (final Control c : attributesMenu.getChildren()) {
-			c.dispose();
-		}
-		Label attributesLabel = new Label(attributesMenu, SWT.NONE);
-		attributesLabel.setText("Attributes");
-		attributesLabel.setFont(GamaFonts.getNavigHeaderFont());
-		attributesLabel = new Label(attributesMenu, SWT.None);
-		attributesLabel.setText(" ");
-		String tooltipText;
-		final String speciesName = getSpeciesName();
-		if (speciesName.equals(IKeyword.AGENT)) {
-			tooltipText = "A list of the attributes common to the agents returned by the custom expression";
-		} else {
-			tooltipText = "A list of the attributes defined in species " + speciesName
-					+ ". Select the ones you want to display in the table";
-		}
-		attributesMenu.setToolTipText(tooltipText);
-		final boolean hasPreviousSelection = selectedColumns.get(speciesName) != null;
-		final InspectDisplayOutput output = getOutput();
-		final ISpecies species = output.getSpecies();
-		final List<String> names = new ArrayList(
-				getOutput().getAttributes() == null ? species.getVarNames() : getOutput().getAttributes().keySet());
-		Collections.sort(names);
-		for (final String name : names) {
-			final SwitchButton b = new SwitchButton(attributesMenu, SWT.NONE, "   ", "   ", name);
-			b.setBackground(GamaColors.system(SWT.COLOR_WHITE));
-			b.setSelection(hasPreviousSelection && selectedColumns.get(speciesName).contains(name));
-			b.addSelectionListener(attributeAdapter);
-		}
 	}
 
 	@Override
