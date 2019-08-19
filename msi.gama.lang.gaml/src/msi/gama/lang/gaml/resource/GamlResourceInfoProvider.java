@@ -42,7 +42,6 @@ import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
 
 @Singleton
@@ -91,11 +90,13 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				if (s.length() > 4) {
 					final URI u = URI.createFileURI(s);
 					final String ext = u.fileExtension();
-					if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(ext)) {
+					if (ext != null && !ext.isEmpty()) {
+						// if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(ext)) {
 						if (uses == null) {
 							uses = new LinkedHashSet();
 						}
 						uses.add(s);
+						// }
 					}
 				}
 			} else if (e instanceof S_Experiment) {
