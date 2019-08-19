@@ -27,6 +27,7 @@ import org.jdom2.output.XMLOutputter;
 import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class UnifyDoc {
 
@@ -35,11 +36,6 @@ public class UnifyDoc {
 			XMLElements.STATEMENTS, XMLElements.CONSTANTS_CATEGORIES, XMLElements.CONSTANTS,
 			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
 			XMLElements.TYPES, XMLElements.FILES };
-	// among tebEltXML, categories do not need to have an additional projectName
-	// attribute
-//	private static String[] tabCategoriesEltXML = { XMLElements.OPERATORS_CATEGORIES, XMLElements.CONSTANTS_CATEGORIES,
-//			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
-//			XMLElements.CONCEPT_LIST };
 
 	public static void unify(boolean local) {
 		try {
@@ -49,12 +45,12 @@ public class UnifyDoc {
 
 			Document doc = mergeFiles(hmFiles);
 
-			System.out.println("" + hmFiles);
+			DEBUG.LOG("" + hmFiles);
 
 			XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
 			sortie.output(doc, new FileOutputStream(Constants.DOCGAMA_GLOBAL_FILE));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			DEBUG.ERR("Error in unifying XML files.",ex);
 		}
 	}
 
@@ -66,12 +62,12 @@ public class UnifyDoc {
 
 			Document doc = mergeFiles(hmFiles);
 
-			System.out.println("" + hmFiles);
+			DEBUG.LOG("" + hmFiles);
 
 			XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
 			sortie.output(doc, new FileOutputStream(Constants.DOCGAMA_GLOBAL_FILE));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			DEBUG.ERR("Error in unifying Projects.",ex);
 		}
 	}
 
@@ -97,9 +93,7 @@ public class UnifyDoc {
 						for (Element e : docTemp.getRootElement().getChild(catXML).getChildren()) {
 							// Do not add the projectName for every kinds of
 							// categories
-					//		if (!Arrays.asList(tabCategoriesEltXML).contains(catXML)) {
-								e.setAttribute("projectName", fileDoc.getKey());
-					//		}
+							e.setAttribute("projectName", fileDoc.getKey());
 
 							// Test whether the element is already in the merged
 							// doc
@@ -130,7 +124,7 @@ public class UnifyDoc {
 
 			return doc;
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			DEBUG.ERR("Error in merging files", ex);
 		}
 		return null;
 	}
@@ -139,7 +133,7 @@ public class UnifyDoc {
 		try {
 			UnifyDoc.unify(true);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			DEBUG.ERR("Main UnifyDoc",ex);
 		}
 
 	}

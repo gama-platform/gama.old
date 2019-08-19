@@ -1,13 +1,15 @@
-package msi.gama.doc.websiteGen;
+package msi.gama.doc.website;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import msi.gama.doc.websiteGen.utilClasses.LearningConcept;
-import msi.gama.doc.websiteGen.utilClasses.Topic;
+import msi.gama.doc.website.utils.LearningConcept;
+import msi.gama.doc.website.utils.Topic;
 import msi.gama.precompiler.doc.utils.Constants;
+import ummisco.gama.dev.utils.DEBUG;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -19,10 +21,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class learningGraphDatabaseGenerator {
+public class LearningGraphDatabaseGenerator {
 	
-	static List<LearningConcept> learningConceptList = new ArrayList<LearningConcept>();
-	static List<Topic> topicList = new ArrayList<Topic>();
+	static List<LearningConcept> learningConceptList = new ArrayList<>();
+	static List<Topic> topicList = new ArrayList<>();
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
@@ -34,6 +36,8 @@ public class learningGraphDatabaseGenerator {
 		
 	    try {
 	    	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			dbFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+	    	
 	    	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 	    	Document doc = dBuilder.parse(inputFilePath);
 	    			
@@ -54,7 +58,7 @@ public class learningGraphDatabaseGenerator {
 	    			float y = Float.valueOf(eElement.getAttribute("y"))*coeff;
 	    			String name = eElement.getElementsByTagName("name").item(0).getTextContent();
 	    			String description = eElement.getElementsByTagName("description").item(0).getTextContent();
-	    			List<String> listPrerequisite = new ArrayList<String>();
+	    			List<String> listPrerequisite = new ArrayList<>();
 	    			for (int i=0; i < eElement.getElementsByTagName("prerequisite").getLength(); i++) {
 		    			listPrerequisite.add(eElement.getElementsByTagName("prerequisite").item(i).getTextContent());
 	    			}
@@ -77,9 +81,9 @@ public class learningGraphDatabaseGenerator {
 	    			float y = Float.valueOf(eElement.getAttribute("y"))*coeff;
 	    			float xBigHallow = Float.valueOf(eElement.getAttribute("xBigHallow"))*coeff;
 	    			float yBigHallow = Float.valueOf(eElement.getAttribute("yBigHallow"))*coeff;
-	    			float sizeBigHallow = Float.valueOf(eElement.getAttribute("sizeBigHallow"));
+	    			float sizeBigHallow = Float.parseFloat(eElement.getAttribute("sizeBigHallow"));
 	    			String name = eElement.getElementsByTagName("name").item(0).getTextContent();
-	    			List<String> associatedLearningConceptList = new ArrayList<String>();
+	    			List<String> associatedLearningConceptList = new ArrayList<>();
 	    			for (int i=0; i < eElement.getElementsByTagName("learningConceptAssociated").getLength(); i++) {
 	    				associatedLearningConceptList.add(eElement.getElementsByTagName("learningConceptAssociated").item(i).getTextContent());
 	    			}
@@ -89,12 +93,12 @@ public class learningGraphDatabaseGenerator {
 	    		}
 	    	}
 	    	} catch (Exception e) {
-	    	e.printStackTrace();
+	    		DEBUG.ERR("", e);
 	        }
 	    
 	    ///////// check the values ///////////
 	    
-	    List<String> listConceptNames = new ArrayList<String>();
+	    List<String> listConceptNames = new ArrayList<>();
 	    for (int i=0; i<learningConceptList.size(); i++) {
 	    	listConceptNames.add(learningConceptList.get(i).m_id);
 	    }
@@ -102,7 +106,7 @@ public class learningGraphDatabaseGenerator {
 	    	// check if all the "prerequisite" are learningConceptID.
 	    	for (int j=0; j<learningConceptList.get(i).m_prerequisitesList.size(); j++) {
 	    		if (!listConceptNames.contains(learningConceptList.get(i).m_prerequisitesList.get(j))) {
-	    			System.out.println("ERROR !!!! The name "
+	    			DEBUG.LOG("ERROR !!!! The name "
 	    		+learningConceptList.get(i).m_prerequisitesList.get(j)+" is not a learning concept id");
 	    		}
 	    	}
@@ -111,7 +115,7 @@ public class learningGraphDatabaseGenerator {
 	    	// check if all the "prerequisite" are learningConceptID.
 	    	for (int j=0; j<topicList.get(i).m_associatedLearningConceptList.size(); j++) {
 	    		if (!listConceptNames.contains(topicList.get(i).m_associatedLearningConceptList.get(j))) {
-	    			System.out.println("ERROR !!!! The name "
+	    			DEBUG.LOG("ERROR !!!! The name "
 	    		+topicList.get(i).m_associatedLearningConceptList.get(j)+" is not a learning concept id");
 	    		}
 	    	}
@@ -197,15 +201,12 @@ public class learningGraphDatabaseGenerator {
 	    
 	    input += "];\n";
 	    
-        FileOutputStream fileOut = new FileOutputStream(file);
-        try {
+        try (FileOutputStream fileOut = new FileOutputStream(file);) {
 			fileOut.write(input.getBytes());
-	        fileOut.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			DEBUG.ERR("",e);
 		}	
-        System.out.println("--- Finish ! ---");
+        DEBUG.LOG("--- Finish ! ---");
 	}
 
 }

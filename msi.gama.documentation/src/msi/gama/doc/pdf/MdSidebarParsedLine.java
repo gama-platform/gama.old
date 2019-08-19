@@ -1,5 +1,7 @@
 package msi.gama.doc.pdf;
 
+import ummisco.gama.dev.utils.DEBUG;
+
 public class MdSidebarParsedLine {
 	
 	EntryLevel level;
@@ -52,8 +54,8 @@ public class MdSidebarParsedLine {
 	}
 	
 	private String parseEntryName(String remainingLine) {
-		final int openBracket = remainingLine.indexOf("[");
-		final int closeBracket = remainingLine.indexOf("]");
+		final int openBracket = remainingLine.indexOf('[');
+		final int closeBracket = remainingLine.indexOf(']');
 		
 		if (openBracket > -1 ) {
 			entryName = remainingLine.substring(openBracket + 1, closeBracket);
@@ -63,8 +65,8 @@ public class MdSidebarParsedLine {
 	}
 	
 	private String parseFileName(String remainingLine) {		
-		final int openParenth = remainingLine.indexOf("(");
-		final int closeParenth = remainingLine.lastIndexOf(")");
+		final int openParenth = remainingLine.indexOf('(');
+		final int closeParenth = remainingLine.lastIndexOf(')');
 		
 		if (openParenth > -1) {
 			fileName = remainingLine.substring(openParenth + 1, closeParenth) + ".md";			
@@ -77,8 +79,8 @@ public class MdSidebarParsedLine {
 	}
 	
 	public static void main(String[] argc) {
-		System.out.println(new MdSidebarParsedLine("## [My paragraph](Hello)"));
-		System.out.println(new MdSidebarParsedLine(" 1. (Hello)"));
+		DEBUG.LOG(new MdSidebarParsedLine("## [My paragraph](Hello)"));
+		DEBUG.LOG(new MdSidebarParsedLine(" 1. (Hello)"));
 		
 	}
 }

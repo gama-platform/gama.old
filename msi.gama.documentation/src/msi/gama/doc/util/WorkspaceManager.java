@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 
 import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.XMLUtils;
+import ummisco.gama.dev.utils.DEBUG;
 
 
 /**
@@ -247,11 +248,8 @@ public class WorkspaceManager {
 	
 	private static String getFileExtension(String fileName) {
 	    String extension = null;
-		try {
-	        extension =  fileName.substring(fileName.lastIndexOf('.') + 1);
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
+	    extension =  fileName.substring(fileName.lastIndexOf('.') + 1);
+
 		return extension;
 	}
 	
@@ -259,37 +257,39 @@ public class WorkspaceManager {
 	public static void main(String[] arg) throws IOException, ParserConfigurationException, SAXException{
 		WorkspaceManager ws = new WorkspaceManager(".", false);
 		List<String> l = ws.getAllGAMAPluginsInProduct();
+		String splitLine = "----------";
+		
 		for(String name : l){
-			System.out.println(name);
+			DEBUG.LOG(name);
 		}
-		System.out.println("----------");
+		DEBUG.LOG(splitLine);
 		
 		Map<String,File> hm = ws.getAllDocFiles();
 		for(Entry<String,File> e : hm.entrySet()){
-			System.out.println(e.getKey());
+			DEBUG.LOG(e.getKey());
 		}
-		System.out.println("----------");
+		DEBUG.LOG(splitLine);
 		hm = ws.getProductDocFiles();
 		for(Entry<String,File> e : hm.entrySet()){
-			System.out.println(e.getKey());
+			DEBUG.LOG(e.getKey());
 		}
-		System.out.println("----------");
+		DEBUG.LOG(splitLine);
 		hm = ws.getExtensionsDocFiles();
 		for(Entry<String,File> e : hm.entrySet()){
-			System.out.println(e.getKey());
+			DEBUG.LOG(e.getKey());
 		}
-		System.out.println("----------");
+		DEBUG.LOG(splitLine);
 		
-		System.out.println("----------");
+		DEBUG.LOG(splitLine);
 		
 
 		
 		l = ws.getModelLibrary();
 		for(String name : l){
-			System.out.println(name);
+			DEBUG.LOG(name);
 		}
-		System.out.println(l.size());
-		System.out.println("----------");
+		DEBUG.LOG(l.size());
+		DEBUG.LOG(splitLine);
 		
 	}
 }

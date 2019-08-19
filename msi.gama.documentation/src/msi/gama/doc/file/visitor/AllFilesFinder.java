@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.precompiler.doc.utils.Constants;
+import ummisco.gama.dev.utils.DEBUG;
 
 import static java.nio.file.FileVisitResult.*;
 
@@ -45,9 +46,9 @@ public class AllFilesFinder extends SimpleFileVisitor<Path> {
         Files.walkFileTree(Paths.get(Constants.WIKI_FOLDER), files);
         files.getFiles().forEach(f -> {
 			try {
-				System.out.println(f.getCanonicalPath());
+				DEBUG.LOG(f.getCanonicalPath());
 			} catch (IOException e) {
-				e.printStackTrace();
+				DEBUG.ERR("Error in getCanonicalPath.",e);
 			}
 		});
     }

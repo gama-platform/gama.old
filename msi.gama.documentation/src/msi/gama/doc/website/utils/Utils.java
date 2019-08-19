@@ -1,4 +1,4 @@
-package msi.gama.doc.websiteGen.utilClasses;
+package msi.gama.doc.website.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,12 +6,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
 
-	public static void getFilesFromFolder(final String folderPath, final ArrayList<File> files) {
+	public static void getFilesFromFolder(final String folderPath, final List<File> files) {
 		final File folder = new File(folderPath);
 		final File[] fList = folder.listFiles();
 		if (fList != null) {
@@ -25,7 +26,7 @@ public class Utils {
 		}
 	}
 
-	public static ArrayList<File> filterFilesByExtension(final ArrayList<File> inputList, final String ext) {
+	public static List<File> filterFilesByExtension(final List<File> inputList, final String ext) {
 		final ArrayList<File> result = new ArrayList<>();
 		for (int i = 0; i < inputList.size(); i++) {
 			if (inputList.get(i).getAbsoluteFile().toString().endsWith(ext)) {
@@ -46,7 +47,7 @@ public class Utils {
 
 			while ((line = br.readLine()) != null) {
 				result = findAndReturnRegex(line, "^model (\\w+)");
-				if (result != "") {
+				if(! "".equals(result)) {
 					break;
 				}
 			}
@@ -55,7 +56,7 @@ public class Utils {
 		return result;
 	}
 
-	public static ArrayList<String> getExpeNames(final File file) throws IOException {
+	public static List<String> getExpeNames(final File file) throws IOException {
 		// returns the list of experiments
 		final ArrayList<String> result = new ArrayList<>();
 		String expeName = "";
@@ -67,7 +68,7 @@ public class Utils {
 
 			while ((line = br.readLine()) != null) {
 				expeName = Utils.findAndReturnRegex(line, "^experiment (\\w+)");
-				if (expeName != "") {
+				if(! "".equals(expeName)) {	
 					result.add(expeName);
 					expeName = "";
 				}
@@ -77,7 +78,7 @@ public class Utils {
 		return result;
 	}
 
-	public static ArrayList<String> getConceptKeywords(final File file) throws IOException {
+	public static List<String> getConceptKeywords(final File file) throws IOException {
 		// returns the list of concept keywords
 		final ArrayList<String> result = new ArrayList<>();
 		String concept = "";
@@ -89,7 +90,7 @@ public class Utils {
 
 			while ((line = br.readLine()) != null) {
 				concept = Utils.findAndReturnRegex(line, "\\[//\\]: # \\(keyword\\|concept_(.*)\\)");
-				if (concept != "") {
+				if(! "".equals(concept)) {
 					result.add(concept);
 					concept = "";
 				}
@@ -109,7 +110,7 @@ public class Utils {
 		return str;
 	}
 
-	public static boolean IsInList(final String element, final String[] list) {
+	public static boolean isInList(final String element, final String[] list) {
 		boolean result = false;
 		for (final String str : list) {
 			if (element.equals(str)) {
@@ -119,12 +120,11 @@ public class Utils {
 		return result;
 	}
 
-	public static void CreateFolder(final File file) {
+	public static void createFolder(final File file) {
 		if (!file.mkdir() && !file.exists()) {
-			CreateFolder(file.getParentFile());
+			createFolder(file.getParentFile());
 			file.mkdir();
 		}
-		return;
 	}
 
 	public static String getUrlFromName(final String param) {

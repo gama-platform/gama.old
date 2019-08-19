@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -16,26 +18,27 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import msi.gama.doc.websiteGen.utilClasses.ConceptManager;
-import msi.gama.doc.websiteGen.utilClasses.ConceptManager.WebsitePart;
-import msi.gama.doc.websiteGen.utilClasses.Utils;
+import msi.gama.doc.website.utils.ConceptManager;
+import msi.gama.doc.website.utils.Utils;
+import msi.gama.doc.website.utils.ConceptManager.WebsitePart;
 import msi.gama.precompiler.doc.utils.Constants;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class CheckConcepts {
 	// this class will check if all the concepts present in the documentations
 	// are conform. It will then build a report about repartition of concept
 	// keywords.
 
-	public static String PATH_TO_MODEL_LIBRARY =
+	public static final String PATH_TO_MODEL_LIBRARY =
 			Constants.WIKI_FOLDER + File.separator + "References" + File.separator + "ModelLibrary";
-	public static String PATH_TO_GAML_REFERENCES =
+	public static final String PATH_TO_GAML_REFERENCES =
 			Constants.WIKI_FOLDER + File.separator + "References" + File.separator + "GAMLReferences";
-	public static String PATH_TO_DOCUMENTATION = Constants.WIKI_FOLDER + File.separator + "Tutorials";
+	public static final String PATH_TO_DOCUMENTATION = Constants.WIKI_FOLDER + File.separator + "Tutorials";
 
-	public static String PATH_TO_MD_REPORT = Constants.WIKI_FOLDER + File.separator + "WikiOnly" + File.separator
+	public static final String PATH_TO_MD_REPORT = Constants.WIKI_FOLDER + File.separator + "WikiOnly" + File.separator
 			+ "DevelopingExtensions" + File.separator + "WebsiteGeneration.md";
 
-	public static void DoCheckConcepts() throws IOException, IllegalArgumentException, IllegalAccessException {
+	public static void doCheckConcepts() throws IOException, IllegalAccessException {
 		// get all the concepts.
 		ConceptManager.loadConcepts();
 
@@ -59,19 +62,19 @@ public class CheckConcepts {
 	private static void executeForAWebsitePart(final String path, final String websitePart) {
 		final ArrayList<File> listFiles = new ArrayList<>();
 		Utils.getFilesFromFolder(path, listFiles);
-		final ArrayList<File> gamlFiles = Utils.filterFilesByExtension(listFiles, "md");
+		final List<File> gamlFiles = Utils.filterFilesByExtension(listFiles, "md");
 
-		ArrayList<String> listConcept = new ArrayList<>();
+		List<String> listConcept = new ArrayList<>();
 
 		for (final File file : gamlFiles) {
 			try {
 				listConcept = Utils.getConceptKeywords(file);
 			} catch (final IOException e) {
-				e.printStackTrace();
+				DEBUG.ERR("Error in getConceptWords", e);
 			}
 			for (final String concept : listConcept) {
 				if (!ConceptManager.conceptIsPossibleToAdd(concept)) {
-					System.out.println("WARNING : The concept " + concept + " is not a predefined concept !!");
+					DEBUG.LOG("WARNING : The concept " + concept + " is not a predefined concept !!");
 				} else {
 					ConceptManager.addOccurrenceOfConcept(concept, websitePart);
 				}
@@ -82,8 +85,11 @@ public class CheckConcepts {
 	private static void browseKeywords(final String path) {
 		try {
 			final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			dbFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
 			final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			final Document doc = dBuilder.parse(path);
+			    
 
 			doc.getDocumentElement().normalize();
 
@@ -94,16 +100,15 @@ public class CheckConcepts {
 				final Element eElement = (Element) nNode;
 				final String category = eElement.getElementsByTagName("category").item(0).getTextContent();
 				final String conceptName = eElement.getElementsByTagName("name").item(0).getTextContent();
-				if (category.equals("concept")) {
-					if (ConceptManager.conceptIsPossibleToAdd(conceptName)) {
-						for (int i = 0; i < eElement.getElementsByTagName("associatedKeyword").getLength(); i++) {
-							ConceptManager.addOccurrenceOfConcept(conceptName, WebsitePart.GAML_REFERENCES.toString());
-						}
+				
+				if (category.equals("concept") && ConceptManager.conceptIsPossibleToAdd(conceptName)) {
+					for (int i = 0; i < eElement.getElementsByTagName("associatedKeyword").getLength(); i++) {
+						ConceptManager.addOccurrenceOfConcept(conceptName, WebsitePart.GAML_REFERENCES.toString());
 					}
-				}
+				}				
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			DEBUG.ERR("Error in browseKeywords.",e);
 		}
 	}
 

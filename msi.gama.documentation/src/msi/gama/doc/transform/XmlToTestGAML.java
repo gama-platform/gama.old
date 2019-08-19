@@ -14,10 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -28,69 +28,69 @@ import msi.gama.doc.util.PrepareEnv;
 import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.XMLElements;
 import msi.gama.precompiler.doc.utils.XMLUtils;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class XmlToTestGAML {
 
 	public static final String ATT_NAME_FILE = "fileName";
 
 	public static void createEachTest(final File docFile)
-			throws ParserConfigurationException, SAXException, IOException, TransformerException {
+			throws ParserConfigurationException, SAXException, IOException {
 		final File pluginFolder = docFile.getParentFile().getParentFile();
 
 		Document document = XMLUtils.createDoc(docFile.getAbsolutePath());
 		document = cleanDocumentTest(document);
 
-		System.out.println("Beginning of the transformation for: " + docFile.getAbsolutePath());
+		DEBUG.LOG("Beginning of the transformation for: " + docFile.getAbsolutePath());
 		PrepareEnv.prepareUnitTestGenerator(pluginFolder);
 
 		//////////////////////////////////////////////////////////////////////////////////
-		System.out.print("Creation of the test models for Operators.....");
+		DEBUG.LOG("Creation of the test models for Operators.....");
 		final File dirOperators = new File(pluginFolder + File.separator + Constants.TEST_PLUGIN_GEN_MODELS
 				+ File.separator + Constants.TEST_OPERATORS_FOLDER);
-		//
-		// File dirOperators = new File(Constants.TEST_FOLDER + File.separator + Constants.TEST_OPERATORS_FOLDER);
+		
 		dirOperators.mkdir();
 
 		createOperatorsTests(document,
 				Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Operators-xml2test.xsl",
 				dirOperators.getCanonicalPath());
-		System.out.println("Done");
+		DEBUG.LOG("Done");
 
 	}
 
 	public static void createAllTests()
-			throws ParserConfigurationException, SAXException, IOException, TransformerException {
+			throws ParserConfigurationException, SAXException, IOException {
 		Document document = XMLUtils.createDoc(Constants.DOCGAMA_GLOBAL_FILE);
 		document = cleanDocumentTest(document);
 
-		System.out.println("Beginning of the transformation");
+		DEBUG.LOG("Beginning of the transformation");
 
 		//////////////////////////////////////////////////////////////////////////////////
-		System.out.print("Creation of the test models for Operators.....");
+		DEBUG.LOG("Creation of the test models for Operators.....");
 		final File dirOperators = new File(Constants.TEST_FOLDER + File.separator + Constants.TEST_OPERATORS_FOLDER);
 		dirOperators.mkdir();
 
 		createOperatorsTests(document,
 				Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Operators-xml2test.xsl",
 				dirOperators.getCanonicalPath());
-		System.out.println("Done");
+		DEBUG.LOG("Done");
 
 		//////////////////////////////////////////////////////////////////////////////////
-		System.out.print("Creation of the test models for Statements.....");
+		DEBUG.LOG("Creation of the test models for Statements.....");
 		final File dirStatements = new File(Constants.TEST_FOLDER + File.separator + Constants.TEST_STATEMENTS_FOLDER);
 		dirStatements.mkdir();
 
 		createMasterTest(document, Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Statements-xml2test.xsl",
 				dirStatements.getCanonicalPath(), "StatementsTest.gaml");
-		System.out.println("Done");
+		DEBUG.LOG("Done");
 
 		//////////////////////////////////////////////////////////////////////////////////
-		System.out.print("Creation of the master test model.....");
+		DEBUG.LOG("Creation of the master test model.....");
 		createMasterTest(document, Constants.XSL_XML2TEST_FOLDER + File.separator + "testGaml-Master-xml2test.xsl",
 				Constants.TEST_FOLDER, "masterTest.gaml");
-		System.out.println("Done");
+		DEBUG.LOG("Done");
 		//
-		System.out.println("End of the transformation");
+		DEBUG.LOG("End of the transformation");
 	}
 
 	private static void createMasterTest(final Document document, final String xsl, final String targetFolder,
@@ -102,6 +102,9 @@ public class XmlToTestGAML {
 			throws ParserConfigurationException {
 
 		final DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
+		fabriqueD.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		
+		// disable external entities
 		final DocumentBuilder builder = fabriqueD.newDocumentBuilder();
 
 		final NodeList nLCategoriesOp = document.getElementsByTagName(XMLElements.OPERATORS_CATEGORIES);
@@ -113,7 +116,6 @@ public class XmlToTestGAML {
 		for (int i = 0; i < nLCategories.getLength(); i++) {
 			final org.w3c.dom.Element eltCategory = (org.w3c.dom.Element) nLCategories.item(i);
 			final String nameFileSpecies = "Op" + eltCategory.getAttribute("id") + "Test";
-			// DEBUG.LOG(nameFileSpecies);
 
 			final Document docTemp = builder.newDocument();
 			final org.w3c.dom.Element root = docTemp.createElement(XMLElements.DOC);
@@ -135,11 +137,6 @@ public class XmlToTestGAML {
 					}
 					k++;
 				}
-
-				// if(eltCategory.getAttribute(XMLElements.ATT_CAT_ID).equals(eltOperator.getAttribute(XMLElements.CATEGORY))){
-				// Node importedOpElt = docTemp.importNode(eltOperator.cloneNode(true), true);
-				// rootOperators.appendChild(importedOpElt);
-				// }
 			}
 			root.appendChild(rootOperators);
 			docTemp.appendChild(root);

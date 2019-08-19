@@ -3,6 +3,7 @@ package msi.gama.doc.pdf;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import msi.gama.doc.file.visitor.AllFilesFinder;
 import msi.gama.doc.file.visitor.FilesByStartingFinder;
 import msi.gama.doc.pdf.MdSidebarParsedLine.EntryLevel;
 import msi.gama.precompiler.doc.utils.Constants;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class TOCManager {
 
@@ -26,8 +28,8 @@ public class TOCManager {
 	List<File> docFiles;
 	List<String> deadLinks;
 	
-	public static String TUTORIALS_FILE = "Tutorials.md";
-	public static String OPERATORS = "Operators";
+	public static final String TUTORIALS_FILE = "Tutorials.md";
+	public static final String OPERATORS = "Operators";
 	boolean inTutorials = false;
 	boolean operatorsAdded = false;
 
@@ -70,7 +72,7 @@ public class TOCManager {
 								File fileOperator = allFiles.stream()
 										.filter(elt -> elt.getName().equals(OPERATORS + ".md"))
 										.findFirst()
-										.get();
+										.orElseThrow(() -> new FileNotFoundException(OPERATORS + ".md file not found."));
 								docFiles.add(fileOperator);
 								operatorsAdded = true;
 							} // else: the whole file has already been added and there is no need to add another one.
@@ -86,7 +88,7 @@ public class TOCManager {
 	}
 	
 	private List<File> getTutorialFiles(File titlePage) throws IOException {
-		String fileNameWithoutExt = titlePage.getName().substring(0,titlePage.getName().lastIndexOf("."));			
+		String fileNameWithoutExt = titlePage.getName().substring(0,titlePage.getName().lastIndexOf('.'));			
 		FilesByStartingFinder filesVisitor = new FilesByStartingFinder(fileNameWithoutExt);	
 		
         Files.walkFileTree(Paths.get(Constants.WIKI_FOLDER), filesVisitor);
@@ -100,7 +102,7 @@ public class TOCManager {
 					try {
 						return f.getCanonicalFile();
 					} catch (IOException e) {
-						e.printStackTrace();
+						DEBUG.ERR("Error in getting tutorial file.",e);
 					}
 					return null;
 				})
@@ -147,23 +149,22 @@ public class TOCManager {
 
 	public static void main(final String[] args) throws IOException {
 		
-//		final TOCSideBarManager t = new TOCSideBarManager(Constants.TOC_SIDEBAR_FILE, Constants.WIKI_FOLDER);	
 		final TOCManager t = new TOCManager(Constants.TOC_SIDEBAR_FILE, Constants.WIKI_FOLDER);	
 		
 		t.getFiles().forEach(f -> {
 			try {
-				System.out.println(f.getCanonicalPath());
-				System.out.println(f.getPath());
+				DEBUG.LOG(f.getCanonicalPath());
+				DEBUG.LOG(f.getPath());
 				
 			} catch (IOException e) {
-				e.printStackTrace();
+				DEBUG.ERR("Error in min of TOCManager.", e);
 			}
 		});
 
-		System.out.println("*********************");
-		System.out.println("Broken Links:");
-		System.out.println("*********************");
+		DEBUG.LOG("*********************");
+		DEBUG.LOG("Broken Links:");
+		DEBUG.LOG("*********************");
 		
-		t.getDeadLinks().forEach(n -> System.out.println(n));
+		t.getDeadLinks().forEach(DEBUG::LOG);
 	}
 }

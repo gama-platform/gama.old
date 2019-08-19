@@ -21,6 +21,7 @@ import org.xml.sax.SAXException;
 
 import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.XMLUtils;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class GamaStyleGeneration {
 
@@ -37,7 +38,7 @@ public class GamaStyleGeneration {
 	public static void generateGamaStyle() throws ParserConfigurationException, SAXException, IOException {
 		final File keywordFile = new File(KEYWORD_FILE);
 		if (!keywordFile.exists()) {
-			System.out.println("WARNING : Impossible to find the file " + keywordFile.getAbsolutePath()
+			DEBUG.LOG("WARNING : Impossible to find the file " + keywordFile.getAbsolutePath()
 					+ ". Please generate it from the Processor before running it !");
 			return;
 		}

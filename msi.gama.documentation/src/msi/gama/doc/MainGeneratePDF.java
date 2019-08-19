@@ -20,32 +20,29 @@ import org.xml.sax.SAXException;
 import msi.gama.doc.pdf.ConvertToPDF;
 import msi.gama.doc.util.GamaStyleGeneration;
 import msi.gama.doc.util.PrepareEnv;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class MainGeneratePDF {
 
-	public static boolean generateGamaStyle = true;
+	public static final boolean GENERATE_GAMA_STYLE = true;
 	
 	public static void main(String[] args) {
 		try {
-			System.out.println("GENERATION OF THE PDF DOCUMENTATION");
+			DEBUG.LOG("GENERATION OF THE PDF DOCUMENTATION");
 		
-			if (generateGamaStyle) {
+			if (GENERATE_GAMA_STYLE) {
 				GamaStyleGeneration.generateGamaStyle();
 			}
 
-			System.out.print("Preparation of the folders.......................");
+			DEBUG.LOG("Preparation of the folders.......................");
 			PrepareEnv.prepareDocumentation();
-			System.out.println("DONE");
+			DEBUG.LOG("DONE");
 
-			System.out.println("Generation of the PDF file .................");
+			DEBUG.LOG("Generation of the PDF file .................");
 			ConvertToPDF.convert();
-			System.out.println("DONE");		
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			DEBUG.LOG("DONE");		
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			DEBUG.ERR("Error in PDF Generation.", e);
 		}			
 	}
 

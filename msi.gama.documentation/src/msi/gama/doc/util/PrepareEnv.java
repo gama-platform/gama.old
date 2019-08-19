@@ -24,8 +24,9 @@ public class PrepareEnv {
 	 * 
 	 * @param pluginFolder
 	 *            the plugin folder in which tests will be created
+	 * @throws IOException 
 	 */
-	public static void prepareUnitTestGenerator(final File pluginFolder) {
+	public static void prepareUnitTestGenerator(final File pluginFolder) throws IOException {
 		final File testsFolder = new File(pluginFolder + File.separator + Constants.TEST_PLUGIN_FOLDER);
 		final File testsGenFolder = new File(pluginFolder + File.separator + Constants.TEST_PLUGIN_GEN_FOLDER);
 		final File testsModelsFolder = new File(pluginFolder + File.separator + Constants.TEST_PLUGIN_GEN_MODELS);
@@ -46,7 +47,6 @@ public class PrepareEnv {
 					Paths.get(testsGenFolder.getAbsolutePath() + File.separator + ".project"),
 					StandardCopyOption.REPLACE_EXISTING);
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		testsModelsFolder.mkdir();
@@ -76,18 +76,20 @@ public class PrepareEnv {
 		new File(Constants.CATALOG_GEN_FOLDER).mkdir();
 	}
 
-	static public boolean deleteDirectory(final File path) {
+	public static void deleteDirectory(final File path) throws IOException {
 		if (path.exists()) {
 			final File[] files = path.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isDirectory()) {
 					deleteDirectory(files[i]);
 				} else {
-					files[i].delete();
+				//	files[i].delete();
+					Files.delete(files[i].toPath());
 				}
 			}
 		}
-		return path.delete();
+		Files.delete(path.toPath());
+//		return path.delete();
 	}
 
 	/**

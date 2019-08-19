@@ -27,31 +27,36 @@ public class MainGenerateWiki {
 	public static void main(final String[] args) { 
 		try {
 			// build the file keywords.xml
-			GenerateCategoryXML.GenerateKeywordsXML();
+			GenerateCategoryXML.generateCategories();
 
 			// generate the wiki documentation
 			DEBUG.LOG("GENERATION OF THE WIKI DOCUMENTATION FROM JAVA CODE");
-			System.out.println("GENERATION OF THE WIKI DOCUMENTATION FROM JAVA CODE");
-			System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
-			System.out.print("Preparation of the folders................");
+			DEBUG.LOG("Please notice that the docGAMA.xml files should have been previously generated..");
+			DEBUG.LOG("Preparation of the folders................");
 			PrepareEnv.prepareDocumentation();
-			System.out.println("DONE");
+			DEBUG.LOG("DONE");
 
-			System.out.print("Merge all the docGAMA.xml files................");
-			UnifyDoc.unify((args.length > 0) ? (args[0].equals("-online") ? false : true) : true);
-			System.out.println("DONE");
+			DEBUG.LOG("Merge all the docGAMA.xml files................");
+			
+			if((args.length > 0)) {
+				UnifyDoc.unify( !args[0].equals("-online"));				
+			} else {
+				UnifyDoc.unify(true);				
+			}
+			
+			DEBUG.LOG("DONE");
 
-			System.out.print(
+			DEBUG.LOG(
 					"Transform the docGAMA.xml file into Wiki Files (md) and create/update them in the gama.wiki folder................");
 			XmlToWiki.createAllWikis();
 			XmlToWiki.createExtentionsWiki();
-			System.out.println("DONE");
+			DEBUG.LOG("DONE");
 
 			// check the concept used, print a report and write it in the file
 			// "website generation"
-			CheckConcepts.DoCheckConcepts();
+			CheckConcepts.doCheckConcepts();
 		} catch (Exception e) {
-			e.printStackTrace();
+			DEBUG.ERR("Error in the Wiki generation.",e);
 		}
 	}
 

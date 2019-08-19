@@ -3,6 +3,7 @@ package msi.gama.doc.transform;
 import java.io.File;
 import java.io.IOException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,6 +18,8 @@ public class XmlTransform {
 			throws ParserConfigurationException, SAXException, IOException {
 		// Creation of the DOM source
 		DocumentBuilderFactory fabriqueD = DocumentBuilderFactory.newInstance();
+		fabriqueD.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);		
+		
 		DocumentBuilder constructeur = fabriqueD.newDocumentBuilder();
 		File fileXml = new File(xml);
 		Document document = constructeur.parse(fileXml);	

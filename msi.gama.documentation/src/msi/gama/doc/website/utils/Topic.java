@@ -1,4 +1,4 @@
-package msi.gama.doc.websiteGen.utilClasses;
+package msi.gama.doc.website.utils;
 
 import java.util.List;
 

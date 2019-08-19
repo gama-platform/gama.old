@@ -14,30 +14,30 @@ package msi.gama.doc;
 import msi.gama.doc.transform.XmlToCatalog;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class MainGenerateCatalog {
 
 	public static void main(final String[] args) {
 		try {
-			System.out.println("GENERATION OF THE CATALOG FROM JAVA CODE");
-			System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
-			System.out.print("Preparation of the folders................");
+			DEBUG.LOG("GENERATION OF THE CATALOG FROM JAVA CODE");
+			DEBUG.LOG("Please notice that the docGAMA.xml files should have been previously generated..");
+			DEBUG.LOG("Preparation of the folders................");
 			PrepareEnv.prepareDocumentation();
-			System.out.println("DONE");
+			DEBUG.LOG("DONE");
 
-			System.out.print("Merge all the docGAMA.xml files................");
+			DEBUG.LOG("Merge all the docGAMA.xml files................");
 			UnifyDoc.unifyAllProjects(true);
-			//UnifyDoc.unify(true);
 			
-			System.out.println("DONE"); 
+			DEBUG.LOG("DONE"); 
 
-			System.out.print(
+			DEBUG.LOG(
 					"Transform the docGAMA.xml file into a catalog file containg keyword, their type, the plugin................");
 			XmlToCatalog.createCatalog();
 			
-			System.out.println("DONE");
+			DEBUG.LOG("DONE");
 		} catch (Exception e) {
-			e.printStackTrace();
+			DEBUG.ERR("Error in the catalog generation.", e);
 		}
 	}
 

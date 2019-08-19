@@ -1,27 +1,28 @@
 package msi.gama.doc.util;
 
 import msi.gama.doc.transform.XmlToCategoryXML;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class GenerateCategoryXML {
 
-	public static void GenerateKeywordsXML() {
+	public static void generateCategories() {
 		try {
 
-			System.out.println("GENERATION OF THE XML CATEGORY FILES FROM XML docGAMA.xml");
-			System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
-			System.out.print("Preparation of the folders................");
+			DEBUG.LOG("GENERATION OF THE XML CATEGORY FILES FROM XML docGAMA.xml");
+			DEBUG.LOG("Please notice that the docGAMA.xml files should have been previously generated..");
+			DEBUG.LOG("Preparation of the folders................");
 			PrepareEnv.prepareDocumentation();
-			System.out.println("DONE");
+			DEBUG.LOG("DONE");
 
-			System.out.print("Merge all the docGAMA.xml filess................");
+			DEBUG.LOG("Merge all the docGAMA.xml filess................");
 			UnifyDoc.unifyAllProjects(false);
-			System.out.println("DONE");
+			DEBUG.LOG("DONE");
 
-			System.out.print("Transform the docGAMA.xml file into the XML category file ................");
+			DEBUG.LOG("Transform the docGAMA.xml file into the XML category file ................");
 			XmlToCategoryXML.createCategoryWiki();
-			System.out.println("DONE");
+			DEBUG.LOG("DONE");
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			DEBUG.ERR("Error in generate categories.",ex);
 		}
 	}
 }

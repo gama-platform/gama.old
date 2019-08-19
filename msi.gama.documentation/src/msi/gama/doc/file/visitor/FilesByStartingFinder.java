@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.precompiler.doc.utils.Constants;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class FilesByStartingFinder extends SimpleFileVisitor<Path> {
 	String fileNameStart;
@@ -36,11 +37,6 @@ public class FilesByStartingFinder extends SimpleFileVisitor<Path> {
 	
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-//    	System.out.println(file.getFileName());
-//    	System.out.println(fileNameStart);
-//    	
-//    	System.out.println(file.getFileName().toString().startsWith(fileNameStart));
-//    	
     	if(file.getFileName().toString().startsWith(fileNameStart)) {
     		l.add(file.toFile());
     	} 
@@ -66,25 +62,15 @@ public class FilesByStartingFinder extends SimpleFileVisitor<Path> {
 
     	FilesByStartingFinder files = new FilesByStartingFinder("IncrementalModel");
     	
-//    	files.setFileName("Updating.md");
         Files.walkFileTree(Paths.get(Constants.WIKI_FOLDER), files);
-//        System.out.println(files.getFiles().getCanonicalPath());
 
         files.getFiles().forEach(f -> {
 			try {
-				System.out.println(f.getCanonicalPath());
+				DEBUG.LOG(f.getCanonicalPath());
 			} catch (IOException e) {
-				e.printStackTrace();
+				DEBUG.ERR("", e);
 			}
-		});
-//
-//        
-//    	files.setFileName("NotExistingFile.md");
-//        Files.walkFileTree(Paths.get(Constants.WIKI_FOLDER), files);
-//        System.out.println(files.getFiles().getCanonicalPath());
-
-        
-        
+		});      
     }
 
 }
