@@ -99,9 +99,7 @@ public class SwtGui implements IGui {
 		PreferencesHelper.initialize();
 	}
 
-	public SwtGui() {
-		updateExperimentState(null, NONE);
-	}
+	public SwtGui() {}
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
