@@ -299,14 +299,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return null;
 	}
 
-	public void createSimulation(final ParametersSet parameters, final boolean scheduleIt) {
+	public SimulationAgent createSimulation(final ParametersSet parameters, final boolean scheduleIt) {
 		final IPopulation<? extends IAgent> pop = getSimulationPopulation();
-		if (pop == null) { return; }
+		if (pop == null) { return null; }
 		final ParametersSet ps = getParameterValues();
 		ps.putAll(parameters);
 		final IList<Map<String, Object>> list = GamaListFactory.create(Types.MAP);
 		list.add(ps);
-		pop.createAgents(ownScope, 1, list, false, scheduleIt);
+		final IList<? extends IAgent> c = pop.createAgents(ownScope, 1, list, false, scheduleIt);
+		return (SimulationAgent) c.get(0);
 	}
 
 	public ParametersSet getParameterValues() {
