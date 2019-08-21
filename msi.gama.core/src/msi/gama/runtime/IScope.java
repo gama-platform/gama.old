@@ -683,7 +683,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	IList getListArg(String string) throws GamaRuntimeException;
+	<T> IList<T> getListArg(String string) throws GamaRuntimeException;
 
 	/**
 	 * Gets the string arg.
