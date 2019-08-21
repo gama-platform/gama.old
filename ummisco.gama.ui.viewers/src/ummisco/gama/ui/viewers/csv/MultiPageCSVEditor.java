@@ -461,7 +461,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 				else if (delta.getKind() == IResourceDelta.CHANGED) {
 					final int flags = delta.getFlags();
 					if ((flags & IResourceDelta.CONTENT) != 0 || (flags & IResourceDelta.LOCAL_CHANGED) != 0) {
-						MultiPageCSVEditor.this.updateTableFromTextEditor();
+						WorkbenchHelper.asyncRun(() -> MultiPageCSVEditor.this.updateTableFromTextEditor());
 					}
 				}
 			}

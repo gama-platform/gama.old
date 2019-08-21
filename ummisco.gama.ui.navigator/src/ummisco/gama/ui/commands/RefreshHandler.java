@@ -9,6 +9,12 @@
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
 
+import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
+import static org.eclipse.core.resources.IResource.PROJECT;
+import static org.eclipse.core.resources.IResource.ROOT;
+import static ummisco.gama.ui.navigator.contents.ResourceManager.getInstance;
+import static ummisco.gama.ui.utils.WorkbenchHelper.runInUI;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +47,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IFileMetaDataProvider;
 import ummisco.gama.ui.interfaces.IRefreshHandler;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.GamaNavigator;
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
@@ -66,7 +73,7 @@ public class RefreshHandler implements IRefreshHandler {
 		WorkbenchHelper.run(() -> getNavigator().getCommonViewer().refresh());
 	}
 
-	protected void refreshResource(final IResource resource, final IProgressMonitor monitor) throws CoreException {
+	protected void simpleRefresh(final IResource resource, final IProgressMonitor monitor) throws CoreException {
 		if (resource.getType() == IResource.PROJECT) {
 			checkLocationDeleted((IProject) resource);
 		} else if (resource.getType() == IResource.ROOT) {
@@ -76,6 +83,44 @@ public class RefreshHandler implements IRefreshHandler {
 			}
 		}
 		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+	}
+
+	@Override
+	public void refreshResource(final IResource resource) {
+		if (resource.getType() == PROJECT) {
+			try {
+				checkLocationDeleted((IProject) resource);
+			} catch (final CoreException e) {
+				e.printStackTrace();
+				return;
+			}
+		} else if (resource.getType() == ROOT) {
+			final IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
+			for (final IProject project : projects) {
+				try {
+					checkLocationDeleted(project);
+				} catch (final CoreException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
+
+		runInUI("Refreshing " + resource.getName(), 0, (m) -> {
+			FileMetaDataProvider.getInstance().storeMetaData(resource, null, true);
+			FileMetaDataProvider.getInstance().getMetaData(resource, false, true);
+			getNavigator().getCommonViewer().refresh(getInstance().findWrappedInstanceOf(resource), true);
+			final WorkspaceJob job = new WorkspaceJob("Refreshing " + resource.getName()) {
+
+				@Override
+				public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+					resource.refreshLocal(DEPTH_INFINITE, monitor);
+					resource.getParent().refreshLocal(DEPTH_INFINITE, monitor);
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+		});
 	}
 
 	@Override
@@ -92,7 +137,7 @@ public class RefreshHandler implements IRefreshHandler {
 					while (resourcesEnum.hasNext()) {
 						try {
 							final IResource resource = resourcesEnum.next();
-							refreshResource(resource, monitor);
+							simpleRefresh(resource, monitor);
 							if (monitor != null) {
 								monitor.worked(1);
 							}

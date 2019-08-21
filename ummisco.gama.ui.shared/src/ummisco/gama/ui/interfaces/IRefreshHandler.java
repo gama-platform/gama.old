@@ -6,8 +6,10 @@ import org.eclipse.core.resources.IResource;
 
 public interface IRefreshHandler {
 
-	public void completeRefresh(List<? extends IResource> resources);
+	void completeRefresh(List<? extends IResource> resources);
 
-	public void refreshNavigator();
+	void refreshResource(final IResource resource);
+
+	void refreshNavigator();
 
 }

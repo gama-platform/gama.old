@@ -26,6 +26,8 @@ import msi.gama.util.file.csv.CsvReader;
 import msi.gama.util.file.csv.CsvWriter;
 import msi.gama.util.file.csv.CsvWriter.Letters;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.ui.interfaces.IRefreshHandler;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  *
@@ -460,7 +462,10 @@ public class CSVModel implements IRowChangesListener {
 	 *
 	 */
 	public void saveMetaData() {
-		GAMA.getGui().getMetaDataProvider().storeMetaData(file, getInfo(), true);
+		final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
+		if (refresh != null) {
+			refresh.refreshResource(file);
+		}
 	}
 
 	/**
