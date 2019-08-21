@@ -713,11 +713,11 @@ public class Containers {
 			usages = { @usage (
 					value = "if the left operand is a list and the right operand is an object of any type (except list), "
 							+ IKeyword.MINUS
-							+ " returns a list containing the elements of the left operand minus all the occurrences of this object",
+							+ " returns a list containing the elements of the left operand minus the first occurence of this object",
 					examples = { @example (
-							value = "[1,2,3,4,5,6] - 2",
+							value = "[1,2,3,4,5,6,2] - 2",
 							returnType = "list<int>",
-							equals = "[1,3,4,5,6]"),
+							equals = "[1,3,4,5,6,2]"),
 							@example (
 									value = "[1,2,3,4,5,6] - 0",
 									returnType = "list<int>",
@@ -922,7 +922,7 @@ public class Containers {
 			index_type = ITypeProvider.TYPE_AT_INDEX + 2,
 			content_type = IType.LIST,
 			content_type_content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-			concept = { IConcept.CONTAINER, IConcept.MAP})
+			concept = { IConcept.CONTAINER, IConcept.MAP })
 	@doc (
 			value = "Returns a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements "
 					+ "of the left-hand operand associated to the key value",
