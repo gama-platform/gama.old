@@ -19,6 +19,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 @species (
 		name = "base_edge",
 		doc = @doc ("A built-in species for agents representing the edges of a graph, from which one can inherit"))
+@doc ("A built-in species for agents representing the edges of a graph, from which one can inherit")
 public class BaseGraphEdgeAgent extends AbstractGraphEdgeAgent {
 
 	public BaseGraphEdgeAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {

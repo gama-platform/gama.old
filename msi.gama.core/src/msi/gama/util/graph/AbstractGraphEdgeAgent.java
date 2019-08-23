@@ -36,8 +36,8 @@ import msi.gaml.types.IType;
 				name = IKeyword.TARGET,
 				type = IType.AGENT,
 				doc = @doc ("The target agent of this edge")) })
+@doc ("A species that represents an edge of a graph made of agents. The source and the target of the edge should be agents")
 public class AbstractGraphEdgeAgent extends GamlAgent {
-
 	public AbstractGraphEdgeAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
 	}
