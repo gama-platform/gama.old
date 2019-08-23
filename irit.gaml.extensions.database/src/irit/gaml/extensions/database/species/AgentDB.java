@@ -20,6 +20,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -50,6 +51,7 @@ import ummisco.gama.dev.utils.DEBUG;
 @species (
 		name = "AgentDB",
 		doc = @doc ("An abstract species that can be extended to provide agents with capabilities to access databases"))
+@doc ("AgentDB is an abstract species that can be extended to provide agents with capabilities to access databases")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class AgentDB extends GamlAgent {
 
@@ -63,13 +65,21 @@ public class AgentDB extends GamlAgent {
 	}
 
 	@action (
-			name = "isConnected")
+			name = "isConnected",
+			doc = @doc (
+					value = "To check if connection to the server was successfully established or not.",
+					returns = "Returns true if connection to the server was successfully established, otherwise, it returns false.")
+			)
 	public boolean isConnected(final IScope scope) throws GamaRuntimeException {
 		return isConnection;
 	}
 
 	@action (
-			name = "close")
+			name = "close",
+			doc = @doc (
+					value = "Close the established database connection.",
+					returns = "Returns null if the connection was successfully closed, otherwise, it returns an error.")
+			)
 	public Object close(final IScope scope) throws GamaRuntimeException {
 		try {
 			conn.close();
@@ -97,7 +107,11 @@ public class AgentDB extends GamlAgent {
 	// Get current time of system
 	// added from MaeliaSkill
 	@action (
-			name = "timeStamp")
+			name = "timeStamp",
+			doc = @doc (
+					value = "Get the current time of the system.",
+					returns = "Current time of the system in millisecondes")
+			)
 	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
 		final Long timeStamp = System.currentTimeMillis();
 		return timeStamp;
@@ -115,7 +129,11 @@ public class AgentDB extends GamlAgent {
 					name = "params",
 					type = IType.MAP,
 					optional = false,
-					doc = @doc ("Connection parameters")) })
+					doc = @doc ("Connection parameters")) },
+			doc = @doc (
+					value = "Establish a database connection.",
+					returns = "Returns null if connection to the server was successfully established, otherwise, it returns an error.")
+			)
 	public Object connectDB(final IScope scope) throws GamaRuntimeException {
 
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
@@ -154,7 +172,11 @@ public class AgentDB extends GamlAgent {
 					name = "params",
 					type = IType.MAP,
 					optional = false,
-					doc = @doc ("Connection parameters")) })
+					doc = @doc ("Connection parameters")) },
+			doc = @doc (
+					value = "To test a database connection .",
+					returns = "Returns true if connection to the server was successfully established, otherwise, it returns false.")
+			)
 	public boolean testConnection(final IScope scope) throws GamaRuntimeException {
 		try {
 			SqlConnection sqlConn;
@@ -192,7 +214,12 @@ public class AgentDB extends GamlAgent {
 			// @doc("if transform = true then geometry will be tranformed from
 			// absolute to gis otherways it will be not transformed. Default
 			// value is false "))
-			})
+					
+			},
+			doc = @doc (
+					value = "Make a connection to DBMS and execute the select statement.",
+					returns = "Returns the obtained result from executing the select statement.")
+			)
 	public IList select(final IScope scope) throws GamaRuntimeException {
 
 		if (!isConnection) {
@@ -245,7 +272,12 @@ public class AgentDB extends GamlAgent {
 			// @doc("if transform = true then geometry will be tranformed from
 			// absolute to gis otherways it will be not transformed. Default
 			// value is false "))
-			})
+			},
+			doc = @doc (
+					value = "- Make a connection to DBMS - Executes the SQL statement in this PreparedStatement object, which must be an SQL\n" + 
+							"	 INSERT, UPDATE or DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.",
+					returns = "Returns the number of updated rows. ")
+			)
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 
 		if (!isConnection) {
@@ -277,18 +309,26 @@ public class AgentDB extends GamlAgent {
 
 	@action (
 			name = "getParameter",
-			args = {})
+			args = {},
+			doc = @doc (
+					value = "Returns the list used parameters to make a connection to DBMS (dbtype, url, port, database, user and passwd).",
+					returns = "Returns the list of used parameters to make a connection to DBMS. ")
+			)
 	public Object getParamater(final IScope scope) throws GamaRuntimeException {
 		return params;
 	}
-
+	
 	@action (
 			name = "setParameter",
 			args = { @arg (
 					name = "params",
 					type = IType.MAP,
 					optional = false,
-					doc = @doc ("Connection parameters")) })
+					doc = @doc ("Connection parameters")) },
+			doc = @doc (
+					value = "Sets the parameters to use in order to make a connection to the DBMS (dbtype, url, port, database, user and passwd).",
+					returns = "null. ")
+			)
 	public Object setParameter(final IScope scope) throws GamaRuntimeException {
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
 
@@ -333,7 +373,11 @@ public class AgentDB extends GamlAgent {
 			// @doc("if transform = true then geometry will be tranformed from
 			// absolute to gis otherways it will be not transformed. Default
 			// value is false "))
-			})
+			},
+			doc = @doc (
+					value = "- Make a connection to DBMS - Executes the insert statement.",
+					returns = "Returns the number of updated rows. ")
+			)
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
 		if (!isConnection) {
