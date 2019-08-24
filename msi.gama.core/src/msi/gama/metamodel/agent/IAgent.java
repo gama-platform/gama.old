@@ -65,6 +65,9 @@ import msi.gaml.types.IType;
 				name = IKeyword.SHAPE,
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the shape of the receiver agent") }) })
+@doc ("The species hierarchy derives from a single built-in species, which is 'agent'. All its components (attributes, actions) will then be inherited by all direct "
+		+ "or indirect children species (including 'model' and 'experiment' except species that explicitly set 'use_minimal_agents' facet to 'true', which inherit from"
+		+ " a stripped-down version of 'agent'. ")
 public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>, IStepable,
 		IContainer.Addressable<String, Object>, IVarAndActionSupport, IScoped {
 

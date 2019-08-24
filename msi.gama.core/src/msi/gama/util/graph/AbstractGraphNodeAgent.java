@@ -42,6 +42,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		name = IKeyword.MYGRAPH,
 		type = IType.GRAPH,
 		doc = @doc ("A reference to the graph containing the agent")) })
+@doc ("A base species to use as a parent for species representing agents that are nodes of a graph")
 public class AbstractGraphNodeAgent extends GamlAgent {
 
 	final static Arguments args = new Arguments();

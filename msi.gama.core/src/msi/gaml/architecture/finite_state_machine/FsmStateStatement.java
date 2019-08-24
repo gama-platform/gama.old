@@ -184,16 +184,17 @@ public class FsmStateStatement extends AbstractStatementSequence {
 			}
 			if (!Assert.nameIsValid(description)) { return; }
 
-			IExpression expr = description.getFacetExpr(INITIAL);
+			final IExpression expr = description.getFacetExpr(INITIAL);
 			if (IExpressionFactory.TRUE_EXPR.equals(expr)) {
 				assertNoOther(description, INITIAL);
 			} else {
-				expr = description.getFacetExpr(FINAL);
-				if (IExpressionFactory.TRUE_EXPR.equals(expr)) {
-					assertNoOther(description, FINAL);
-				} else {
-					assertAtLeastOne(description, INITIAL);
-				}
+				// See Issue #2866
+				// expr = description.getFacetExpr(FINAL);
+				// if (IExpressionFactory.TRUE_EXPR.equals(expr)) {
+				// assertNoOther(description, FINAL);
+				// } else {
+				assertAtLeastOne(description, INITIAL);
+				// }
 			}
 
 		}

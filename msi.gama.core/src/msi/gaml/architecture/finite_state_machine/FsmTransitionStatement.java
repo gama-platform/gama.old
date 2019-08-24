@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.finite_state_machine.FsmTransitionStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.architecture.finite_state_machine.FsmTransitionStatement.java, in plugin msi.gama.core, is part of the
+ * source code of the GAMA modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.finite_state_machine;
 
@@ -110,7 +110,7 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -121,12 +121,18 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 				desc.error("Transitions cannot be declared inside  " + keyword, IGamlIssue.WRONG_PARENT);
 				return;
 			}
+			final IExpression expr = sup.getFacetExpr(FsmStateStatement.FINAL);
+			if (IExpressionFactory.TRUE_EXPR.equals(expr)) {
+				desc.error("Transitions are not accepted in final states", IGamlIssue.WRONG_PARENT);
+				return;
+			}
 			final String behavior = desc.getLitteral(TO);
 			final SpeciesDescription sd = desc.getSpeciesContext();
 			if (!sd.hasBehavior(behavior)) {
 				desc.error("Behavior " + behavior + " does not exist in " + sd.getName(), IGamlIssue.UNKNOWN_BEHAVIOR,
 						TO, behavior, sd.getName());
 			}
+
 		}
 
 	}
