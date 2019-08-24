@@ -8,6 +8,7 @@ model SI_city
 
 global {
 	int nb_people <- 500;
+    float agent_speed <- 5.0 #km/#h;		
 	float step <- 1 #minutes;
 	geometry shape <- envelope(square(500 #m));
 	float infection_distance <- 2.0 #m;
@@ -15,11 +16,11 @@ global {
 	int nb_infected_init <- 5;
 	int nb_people_infected <- nb_infected_init update: people count (each.is_infected);
 	int nb_people_not_infected <- nb_people - nb_infected_init update: nb_people - nb_people_infected;
-	float infected_rate update: nb_people_infected / length(people);
+	float infected_rate update: nb_people_infected / nb_people;
 
 	init {
 		create people number: nb_people {
-			speed <- 5.0 #km / #h;
+			speed <- agent_speed;
 		}
 
 		ask nb_infected_init among people {

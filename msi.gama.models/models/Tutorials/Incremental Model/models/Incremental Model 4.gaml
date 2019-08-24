@@ -9,6 +9,7 @@ model model4
  
 global {
 	int nb_people <- 500;
+    float agent_speed <- 5.0 #km/#h;			
 	float step <- 1 #minutes;
 	float infection_distance <- 2.0 #m; 
 	float proba_infection <- 0.05;
@@ -16,19 +17,18 @@ global {
 	file roads_shapefile <- file("../includes/road.shp");
 	file buildings_shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(roads_shapefile);
-	int current_hour update: current_date.hour;
 	graph road_network;
-	float staying_coeff update: 10.0 ^ (1 + min([abs(current_hour - 9), abs(current_hour - 12), abs(current_hour - 18)]));
+	float staying_coeff update: 10.0 ^ (1 + min([abs(current_date.hour - 9), abs(current_date.hour - 12), abs(current_date.hour - 18)]));
 	int nb_people_infected <- nb_infected_init update: people count (each.is_infected);
 	int nb_people_not_infected <- nb_people - nb_infected_init update: nb_people - nb_people_infected;
+	float infected_rate update: nb_people_infected / nb_people;
 	
-	float infected_rate update: nb_people_infected/length(people);
 	init {
 		create road from: roads_shapefile;
 		road_network <- as_edge_graph(road);
 		create building from: buildings_shapefile; 
 		create people number:nb_people {
-			speed <- 5.0 #km/#h;
+			speed <- agent_speed;
 			location <- any_location_in(one_of(building));
 		}
 		ask nb_infected_init among people {
@@ -44,6 +44,7 @@ species people skills:[moving]{
 	bool is_infected <- false;
 	point target;
 	int staying_counter;
+	
 	reflex staying when: target = nil {
 		staying_counter <- staying_counter + 1;
 		if flip(staying_counter / staying_coeff) {
@@ -78,7 +79,7 @@ species road {
 
 species building {
 	aspect default {
-		draw shape color: #gray;
+		draw shape color: #gray border: #black;
 	}
 }
 
@@ -87,7 +88,7 @@ experiment main_experiment type:gui{
 	parameter "Proba infection" var: proba_infection min: 0.0 max: 1.0;
 	parameter "Nb people infected at init" var: nb_infected_init ;
 	output {
-		monitor "Current hour" value: current_hour;
+		monitor "Current hour" value: current_date.hour;
 		monitor "Infected people rate" value: infected_rate;
 		display map {
 			species road ;
