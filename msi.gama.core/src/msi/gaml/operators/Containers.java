@@ -296,6 +296,139 @@ public class Containers {
 	}
 
 	@operator (
+			value = { "internal_at" },
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
+	@doc (
+			value = "For internal use only. Corresponds to the implementation of the access to containers with [index]",
+			see = { IKeyword.AT })
+	@no_test
+	@validator (InternalAtValidator.class)
+	public static Object internal_at(final IScope scope, final IContainer container, final IList indices)
+			throws GamaRuntimeException {
+		if (container instanceof IContainer.Addressable) {
+			return ((IContainer.Addressable) container).getFromIndicesList(scope, indices);
+		}
+		throw GamaRuntimeException.error("" + container + " cannot be accessed using " + indices, scope);
+	}
+
+	@operator (
+			value = { IKeyword.AT, "@" },
+			can_be_const = true,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
+	@doc (
+			value = "the element at the right operand index of the container",
+			masterDoc = true,
+			comment = "The first element of the container is located at the index 0. "
+					+ "In addition, if the user tries to get the element at an index higher or equals than the length of the container, he will get an IndexOutOfBoundException."
+					+ "The at operator behavior depends on the nature of the operand",
+			usages = { @usage (
+					value = "if it is a list or a matrix, at returns the element at the index specified by the right operand",
+					examples = { @example (
+							value = "[1, 2, 3] at 2",
+							returnType = IKeyword.INT,
+							equals = "3"),
+							@example (
+									value = "[{1,2}, {3,4}, {5,6}] at 0",
+									returnType = IKeyword.POINT,
+									equals = "{1.0,2.0}") }),
+					@usage ("if it is a file, at returns the element of the file content at the index specified by the right operand"),
+					@usage ("if it is a population, at returns the agent at the index specified by the right operand"),
+					@usage ("if it is a graph and if the right operand is a node, at returns the in and out edges corresponding to that node"),
+					@usage ("if it is a graph and if the right operand is an edge, at returns the pair node_out::node_in of the edge"),
+					@usage ("if it is a graph and if the right operand is a pair node1::node2, at returns the edge from node1 to node2 in the graph") },
+			see = { "contains_all", "contains_any" })
+	@validator (AtValidator.class)
+	public static Object at(final IScope scope, final IContainer container, final Object key) {
+		if (container instanceof IContainer.Addressable) {
+			return ((IContainer.Addressable) container).get(scope, key);
+		}
+		throw GamaRuntimeException.error("" + container + " cannot be accessed using " + key, scope);
+	}
+
+	public static class AtValidator implements IOperatorValidator {
+
+		@Override
+		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
+			IType type = arguments[0].getGamlType();
+			final IType indexType = arguments[1].getGamlType();
+			if (Types.FILE.isAssignableFrom(type)) {
+				type = type.getWrappedType();
+			}
+			final IType keyType = type.getKeyType();
+			final boolean wrongKey = keyType != Types.NO_TYPE && !indexType.isTranslatableInto(keyType);
+			if (wrongKey) {
+				context.error("The contents of this " + type.getGamlType().getName() + " can only be accessed with "
+						+ type.getKeyType() + " keys", IGamlIssue.WRONG_TYPE, emfContext);
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	public static class InternalAtValidator implements IOperatorValidator {
+
+		@Override
+		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
+			// Used in remove, for instance
+			if (Types.isEmpty(arguments[1])) { return true; }
+			IType type = arguments[0].getGamlType();
+			// It is normally a list with 1 or 2 indices
+			final IType indexType = arguments[1].getGamlType().getContentType();
+			if (Types.FILE.isAssignableFrom(type)) {
+				type = type.getWrappedType();
+			}
+			final IType keyType = type.getKeyType();
+			final boolean wrongKey = keyType != Types.NO_TYPE && !indexType.isTranslatableInto(keyType)
+					&& !(Types.MATRIX.isAssignableFrom(type) && indexType == Types.INT);
+			if (wrongKey) {
+				context.error("The contents of this " + type.getGamlType().getName() + " can only be accessed with "
+						+ type.getKeyType() + " keys", IGamlIssue.WRONG_TYPE, emfContext);
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	@operator (
+			value = { IKeyword.AT, "@" },
+			can_be_const = true,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
+	@no_test
+	public static Object at(final IScope scope, final IList container, final Integer key) {
+		return container.get(scope, key);
+	}
+
+	@operator (
+			value = { IKeyword.AT, "@" },
+			can_be_const = true,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
+	@no_test
+	public static Object at(final IScope scope, final IMatrix container, final GamaPoint key) {
+		return container.get(scope, key);
+	}
+
+	@operator (
+			value = { IKeyword.AT, "@" },
+			can_be_const = true,
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
+	@no_test
+	public static IAgent at(final IScope scope, final ISpecies species, final Integer key) {
+		return species.get(scope, key);
+	}
+
+	@operator (
 			value = { "grid_at" },
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.POINT, IOperatorCategory.GRID },
