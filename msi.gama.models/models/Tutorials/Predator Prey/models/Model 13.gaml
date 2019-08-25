@@ -27,6 +27,7 @@ global {
 	
 	int nb_preys -> {length (prey)};
 	int nb_predators -> {length (predator)};
+	bool is_batch <- false;
 	
 	init {
 		create prey number: nb_preys_init ; 
@@ -48,7 +49,7 @@ global {
 	   		to: "results.txt" type: "text" rewrite: (cycle = 0) ? true : false;
 	}
 	
-	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {
+	reflex stop_simulation when: ((nb_preys = 0) or (nb_predators = 0)) and !is_batch {
 		do pause ;
 	} 
 }
@@ -217,5 +218,15 @@ experiment Optimization type: batch repeat: 2 keep_seed: true until: ( time > 20
 	parameter "Prey energy reproduce:" var: prey_energy_reproduce min: 0.05 max: 0.75 step: 0.05;
 	parameter "Predator energy transfert:" var: predator_energy_transfert min: 0.1 max: 1.0 step: 0.1 ;
 	parameter "Predator energy reproduce:" var: predator_energy_reproduce min: 0.1 max: 1.0 step: 0.1;
+	parameter "Batch mode:" var: is_batch <- true;
+	
 	method tabu maximize: nb_preys + nb_predators iter_max: 10 tabu_list_size: 3;
+	
+	
+	reflex save_results_explo {
+		ask simulations {
+			save [int(self),prey_max_transfert,prey_energy_reproduce,predator_energy_transfert,predator_energy_reproduce,self.nb_predators,self.nb_preys] 
+		   		to: "results.csv" type: "csv" rewrite: (int(self) = 0) ? true : false header: true;
+		}		
+	}
 }

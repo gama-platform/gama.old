@@ -4,7 +4,6 @@
 * Description: 9th part of the tutorial: Predator Prey
 * Tags:
 */
-
 model prey_predator
 
 global {
