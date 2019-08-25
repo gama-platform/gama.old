@@ -34,7 +34,7 @@ global {
 		ask vegetation_cell {
 			color <- rgb (map_init at {grid_x,grid_y}) ;
 			food <- 1 - (((color as list) at 0) / 255) ;
-			foodProd <- food / 100 ; 
+			food_prod <- food / 100 ; 
 		}
 	}
 	
@@ -60,11 +60,11 @@ species generic_species {
 	float max_transfert;
 	float energy_consum;
 	float proba_reproduce ;
-	float nb_max_offsprings;
+	int nb_max_offsprings;
 	float energy_reproduce;
 	image_file my_icon;
 	vegetation_cell myCell <- one_of (vegetation_cell) ;
-	float energy <- (rnd(1000) / 1000) * max_energy  update: energy - energy_consum max: max_energy ;
+	float energy <- rnd(max_energy) update: energy - energy_consum max: max_energy ;
 	
 	init {
 		location <- myCell.location;
@@ -84,7 +84,7 @@ species generic_species {
 	}
 	
 	reflex reproduce when: (energy >= energy_reproduce) and (flip(proba_reproduce)) {
-			int nb_offsprings <- int(1 + rnd(nb_max_offsprings -1));
+			int nb_offsprings <- rnd(1,nb_max_offsprings);
 			create species(self) number: nb_offsprings {
 				myCell <- myself.myCell ;
 				location <- myCell.location ;
@@ -113,7 +113,7 @@ species prey parent: generic_species {
 	float proba_reproduce <- prey_proba_reproduce ;
 	int nb_max_offsprings <- prey_nb_max_offsprings ;
 	float energy_reproduce <- prey_energy_reproduce ;
-	file my_icon <- file("../includes/data/sheep.png") ;
+	image_file my_icon <- image_file("../includes/data/sheep.png") ;
 		
 	reflex eat when: myCell.food > 0 {
 		float energy_transfert <- min([max_transfert, myCell.food]) ;
@@ -122,7 +122,7 @@ species prey parent: generic_species {
 	}
 	
 	vegetation_cell choose_cell {
-		return (myCell.neighbours) with_max_of (each.food);
+		return (myCell.neighbors2) with_max_of (each.food);
 	}
 }
 	
@@ -135,7 +135,7 @@ species predator parent: generic_species {
 	float proba_reproduce <- predator_proba_reproduce ;
 	int nb_max_offsprings <- predator_nb_max_offsprings ;
 	float energy_reproduce <- predator_energy_reproduce ;
-	file my_icon <- file("../includes/data/wolf.png") ;
+	image_file my_icon <- image_file("../includes/data/wolf.png") ;
 	
 	reflex eat when: ! empty(reachable_preys) {
 		ask one_of (reachable_preys) {
@@ -145,21 +145,21 @@ species predator parent: generic_species {
 	}
 	
 	vegetation_cell choose_cell {
-		vegetation_cell myCell_tmp <- shuffle(myCell.neighbours) first_with (!(empty (prey inside (each))));
+		vegetation_cell myCell_tmp <- shuffle(myCell.neighbors2) first_with (!(empty (prey inside (each))));
 		if myCell_tmp != nil {
 			return myCell_tmp;
 		} else {
-			return one_of (myCell.neighbours);
+			return one_of (myCell.neighbors2);
 		} 
 	}
 }
 	
 grid vegetation_cell width: 50 height: 50 neighbors: 4 {
-	float maxFood <- 1.0 ;
-	float foodProd <- (rnd(1000) / 1000) * 0.01 ;
-	float food <- (rnd(1000) / 1000) max: maxFood update: food + foodProd ;
+	float max_food <- 1.0 ;
+	float food_prod <- rnd(0.01) ;
+	float food <- rnd(1.0) max: max_food update: food + food_prod ;
 	rgb color <- rgb(int(255 * (1 - food)), 255, int(255 * (1 - food))) update: rgb(int(255 * (1 - food)), 255, int(255 *(1 - food))) ;
-	list<vegetation_cell> neighbours  <- (self neighbors_at 2); 
+	list<vegetation_cell> neighbors2  <- (self neighbors_at 2); 
 }
 
 experiment prey_predator type: gui {
