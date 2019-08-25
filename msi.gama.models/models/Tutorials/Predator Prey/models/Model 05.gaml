@@ -31,16 +31,16 @@ species generic_species {
 	float max_energy;
 	float max_transfert;
 	float energy_consum;
-	vegetation_cell myCell <- one_of (vegetation_cell) ;
-	float energy <- (rnd(1000) / 1000) * max_energy  update: energy - energy_consum max: max_energy ;
+	vegetation_cell my_cell <- one_of (vegetation_cell) ;
+	float energy <- rnd(max_energy) update: energy - energy_consum max: max_energy ;
 	
 	init {
-		location <- myCell.location;
+		location <- my_cell.location;
 	}
 		
 	reflex basic_move {
-		myCell <- one_of (myCell.neighbours) ;
-		location <- myCell.location ;
+		my_cell <- one_of (my_cell.neighbors2) ;
+		location <- my_cell.location ;
 	}
 		
 	reflex die when: energy <= 0 {
@@ -58,9 +58,9 @@ species prey parent: generic_species {
 	float max_transfert <- prey_max_transfert ;
 	float energy_consum <- prey_energy_consum ;
 		
-	reflex eat when: myCell.food > 0 {
-		float energy_transfert <- min([max_transfert, myCell.food]) ;
-		myCell.food <- myCell.food - energy_transfert ;
+	reflex eat when: my_cell.food > 0 {
+		float energy_transfert <- min([max_transfert, my_cell.food]) ;
+		my_cell.food <- my_cell.food - energy_transfert ;
 		energy <- energy + energy_transfert ;
 	}
 }
@@ -70,7 +70,7 @@ species predator parent: generic_species {
 	float max_energy <- predator_max_energy ;
 	float energy_transfert <- predator_energy_transfert ;
 	float energy_consum <- predator_energy_consum ;
-	list<prey> reachable_preys update: prey inside (myCell);
+	list<prey> reachable_preys update: prey inside (my_cell);
 		
 	reflex eat when: ! empty(reachable_preys) {
 		ask one_of (reachable_preys) {
@@ -81,11 +81,11 @@ species predator parent: generic_species {
 }
 	
 grid vegetation_cell width: 50 height: 50 neighbors: 4 {
-	float maxFood <- 1.0 ;
-	float foodProd <- (rnd(1000) / 1000) * 0.01 ;
-	float food <- (rnd(1000) / 1000) max: maxFood update: food + foodProd ;
+	float max_food <- 1.0 ;
+	float food_prod <- rnd(0.01) ;
+	float food <- rnd(1.0) max: max_food update: food + food_prod ;
 	rgb color <- rgb(int(255 * (1 - food)), 255, int(255 * (1 - food))) update: rgb(int(255 * (1 - food)), 255, int(255 *(1 - food))) ;
-	list<vegetation_cell> neighbours  <- (self neighbors_at 2); 
+	list<vegetation_cell> neighbors2  <- (self neighbors_at 2); 
 }
 
 experiment prey_predator type: gui {

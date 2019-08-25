@@ -17,10 +17,10 @@ global {
 species prey {
 	float size <- 1.0 ;
 	rgb color <- #blue;
-	vegetation_cell myCell <- one_of (vegetation_cell) ;
+	vegetation_cell my_cell <- one_of (vegetation_cell) ;
 		
 	init {
-		location <- myCell.location;
+		location <- my_cell.location;
 	}
 		
 	aspect base {
@@ -29,9 +29,9 @@ species prey {
 }
 
 grid vegetation_cell width: 50 height: 50 neighbors: 4 {
-	float maxFood <- 1.0 ;
-	float foodProd <- (rnd(1000) / 1000) * 0.01 ;
-	float food <- (rnd(1000) / 1000) max: maxFood update: food + foodProd ;
+	float max_food <- 1.0 ;
+	float food_prod <- rnd(0.01) ;
+	float food <- rnd(1.0) max: max_food update: food + food_prod ;
 	rgb color <- rgb(int(255 * (1 - food)), 255, int(255 * (1 - food))) update: rgb(int(255 * (1 - food)), 255, int(255 *(1 - food))) ;
 }
 
