@@ -7,13 +7,13 @@
 
 model tutorial_gis_city_traffic
 
-
 global {
 	file shape_file_buildings <- file("../includes/building.shp");
 	file shape_file_roads <- file("../includes/road.shp");
 	file shape_file_bounds <- file("../includes/bounds.shp");
 	geometry shape <- envelope(shape_file_bounds);
 	float step <- 10 #mn;
+	date starting_date <- date("2019-09-01-00-00-00");
 	int nb_people <- 100;
 	int min_work_start <- 6;
 	int max_work_start <- 8;
@@ -35,11 +35,11 @@ global {
 		list<building> residential_buildings <- building where (each.type="Residential");
 		list<building> industrial_buildings <- building  where (each.type="Industrial") ;
 		create people number: nb_people {
-			speed <- min_speed + rnd (max_speed - min_speed) ;
-			start_work <- min_work_start + rnd (max_work_start - min_work_start) ;
-			end_work <- min_work_end + rnd (max_work_end - min_work_end) ;
-			living_place <- one_of(residential_buildings) ;
-			working_place <- one_of(industrial_buildings) ;
+			speed <- rnd(min_speed, max_speed);
+			start_work <- rnd (min_work_start, max_work_start);
+			end_work <- rnd(min_work_end, max_work_end);
+			living_place <- one_of(residential_buildings);
+			working_place <- one_of(industrial_buildings);
 			objective <- "resting";
 			location <- any_location_in (living_place); 
 		}
