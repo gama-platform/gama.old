@@ -8,25 +8,25 @@
 model Tuto3D
 
 global {
-  int nb_cells <-100;	
+  int nb_cells <- 100;	
   init { 
-    create cells number: nb_cells { 
+    create cell number: nb_cells { 
       location <- {rnd(100), rnd(100), rnd(100)};       
     } 
   }  
 } 
   
-species cells{                      
+species cell {                      
   aspect default {
-    draw sphere(1) color:#blue;   
+    draw sphere(1) color: #blue;   
   }
 }
 
 experiment Tuto3D  type: gui {
   parameter "Initial number of cells: " var: nb_cells min: 1 max: 1000 category: "Cells" ;	
   output {
-    display View1 type:opengl {
-      species cells;
+    display View1 type: opengl {
+      species cell;
     }
   }
 }

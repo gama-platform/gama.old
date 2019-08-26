@@ -9,6 +9,7 @@ model model5
  
 global {
 	int nb_people <- 500;
+    float agent_speed <- 5.0 #km/#h;			
 	float step <- 1 #minutes;
 	float infection_distance <- 2.0 #m;
 	float proba_infection <- 0.05;
@@ -17,19 +18,18 @@ global {
 	file buildings_shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(roads_shapefile);
 	graph road_network;
-	int current_hour update: current_date.hour;
-	float staying_coeff update: 10.0 ^ (1 + min([abs(current_hour - 9), abs(current_hour - 12), abs(current_hour - 18)]));
+	float staying_coeff update: 10.0 ^ (1 + min([abs(current_date.hour - 9), abs(current_date.hour - 12), abs(current_date.hour - 18)]));
 	int nb_people_infected <- nb_infected_init update: people count (each.is_infected);
 	int nb_people_not_infected <- nb_people - nb_infected_init update: nb_people - nb_people_infected;
-	bool is_night <- true update: current_hour < 7 or current_hour > 20;
+	bool is_night <- true update: current_date.hour < 7 or current_date.hour > 20;	
+	float infected_rate update: nb_people_infected / nb_people;
 	
-	float infected_rate update: nb_people_infected/length(people);
 	init {
 		create road from: roads_shapefile;
 		road_network <- as_edge_graph(road);
 		create building from: buildings_shapefile;
 		create people number:nb_people {
-			speed <- 5.0 #km/#h;
+			speed <- agent_speed;
 			location <- any_location_in(one_of(building));
 		}
 		ask nb_infected_init among people {
@@ -82,9 +82,10 @@ species road {
 }
 
 species building {
-	float height <- 10#m + rnd(10) #m;
+	float height <- rnd(10#m, 20#m) ;
+	
 	aspect default {
-		draw shape color: #gray depth: height;
+		draw shape color: #gray border: #black depth: height;
 	}
 }
 
@@ -93,7 +94,7 @@ experiment main_experiment type:gui{
 	parameter "Proba infection" var: proba_infection min: 0.0 max: 1.0;
 	parameter "Nb people infected at init" var: nb_infected_init ;
 	output {
-		monitor "Current hour" value: current_hour;
+		monitor "Current hour" value: current_date.hour;
 		monitor "Infected people rate" value: infected_rate;
 		display map_3D type: opengl {
 			light 1 color:(is_night ? 50 : 255);

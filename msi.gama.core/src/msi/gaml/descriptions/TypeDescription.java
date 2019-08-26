@@ -301,54 +301,35 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
-		// TODO Do it once for built-in species
-		final Collection<String> accumulator = parent != null && parent != this
-				? parent.getOrderedAttributeNames(facetsToConsider) : new LinkedHashSet<>();
-		if (attributes == null) { return accumulator; }
-		if (attributes.size() <= 1) {
-			accumulator.addAll(attributes.keySet());
-			return accumulator;
-		}
-
-		final VariableDescription shape = attributes.get(SHAPE);
-		final Collection<VariableDescription> shapeDependencies =
-				shape == null ? Collections.EMPTY_SET : shape.getDependencies(facetsToConsider, false, true);
+		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
-		if (shape != null) {
-			dependencies.addVertex(shape);
-		}
-		attributes.forEachPair((an, var) -> {
+		final IMap<String, VariableDescription> all = GamaMapFactory.createUnordered();
+		this.visitAllAttributes((d) -> {
+			all.put(d.getName(), (VariableDescription) d);
+			return true;
+		});
+		final VariableDescription shape = getAttribute(SHAPE);
+		final Collection<VariableDescription> shapeDependencies = shape.getDependencies(facetsToConsider, false, true);
+		dependencies.addVertex(shape);
+		all.forEachPair((an, var) -> {
 			dependencies.addVertex(var);
 			final Collection<VariableDescription> varDependencies = var.getDependencies(facetsToConsider, false, true);
 			for (final VariableDescription newVar : varDependencies) {
-				if (attributes.containsValue(newVar)) {
-					dependencies.addVertex(newVar);
-					// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
-					if (!dependencies.containsEdge(newVar, var) && !dependencies.containsEdge(var, newVar)) {
-						dependencies.addEdge(newVar, var);
-					}
+				dependencies.addVertex(newVar);
+				// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
+				if (!dependencies.containsEdge(newVar, var) && !dependencies.containsEdge(var, newVar)) {
+					dependencies.addEdge(newVar, var);
 				}
 			}
+			// Adding a constraint between the shape of the macrospecies and the populations of microspecies
 			if (var.isSyntheticSpeciesContainer()) {
-				if (shape != null && !shapeDependencies.contains(var)) {
+				if (!shapeDependencies.contains(var)) {
 					dependencies.addEdge(shape, var);
 				}
 			}
 			return true;
 		});
-
-		final TopologicalOrderIterator<VariableDescription, Object> iterator =
-				new TopologicalOrderIterator<>(dependencies);
-		while (iterator.hasNext()) {
-
-			final VariableDescription vd = iterator.next();
-			final String vn = vd.getName();
-			// Make sure it is added at the end
-			accumulator.remove(vn);
-			accumulator.add(vn);
-		}
-		return accumulator;
-
+		return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).map(vd -> vd.getName()).toList();
 	}
 
 	/**

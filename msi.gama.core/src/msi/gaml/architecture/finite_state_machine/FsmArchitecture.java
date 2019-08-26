@@ -136,4 +136,18 @@ public class FsmArchitecture extends ReflexArchitecture {
 		agent.setAttribute(IKeyword.ENTER, true);
 		agent.setAttribute(IKeyword.CURRENT_STATE, state);
 	}
+
+	/***
+	 * What happens when the agent dies: calls the exit statement of the current state if it exists (see Issue #2865)
+	 */
+	@Override
+	public boolean abort(final IScope scope) throws GamaRuntimeException {
+		final IAgent agent = getCurrentAgent(scope);
+		if (scope.interrupted() || agent == null) { return true; }
+		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
+		if (currentState == null) { return true; }
+		currentState.haltOn(scope);
+		// and we return the regular abort behavior
+		return super.abort(scope);
+	}
 }
