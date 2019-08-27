@@ -17,7 +17,6 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -74,37 +73,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 	public interface Addressable<KeyType, ValueType> {
 
-		@operator (
-				value = { IKeyword.AT, "@" },
-				can_be_const = true,
-				type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-				category = { IOperatorCategory.CONTAINER },
-				concept = { IConcept.CONTAINER })
-		@doc (
-				value = "the element at the right operand index of the container",
-				masterDoc = true,
-				comment = "The first element of the container is located at the index 0. "
-						+ "In addition, if the user tries to get the element at an index higher or equals than the length of the container, he will get an IndexOutOfBoundException."
-						+ "The at operator behavior depends on the nature of the operand",
-				usages = { @usage (
-						value = "if it is a list or a matrix, at returns the element at the index specified by the right operand",
-						examples = { @example (
-								value = "[1, 2, 3] at 2",
-								returnType = IKeyword.INT,
-								equals = "3"),
-								@example (
-										value = "[{1,2}, {3,4}, {5,6}] at 0",
-										returnType = IKeyword.POINT,
-										equals = "{1.0,2.0}") }),
-						@usage ("if it is a file, at returns the element of the file content at the index specified by the right operand"),
-						@usage ("if it is a population, at returns the agent at the index specified by the right operand"),
-						@usage ("if it is a graph and if the right operand is a node, at returns the in and out edges corresponding to that node"),
-						@usage ("if it is a graph and if the right operand is an edge, at returns the pair node_out::node_in of the edge"),
-						@usage ("if it is a graph and if the right operand is a pair node1::node2, at returns the edge from node1 to node2 in the graph") },
-				see = { "contains_all", "contains_any" })
 		ValueType get(IScope scope, KeyType index) throws GamaRuntimeException;
-
-		// FIXME No way to test if the index is correct or not
 
 		/**
 		 * Method sent from GAML with a list containing the index or indices. It is the responsibility of the container
@@ -115,15 +84,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		 * @return
 		 * @throws GamaRuntimeException
 		 */
-		@operator (
-				value = { "internal_at" },
-				type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-				category = { IOperatorCategory.CONTAINER },
-				concept = { IConcept.CONTAINER })
-		@doc (
-				value = "For internal use only. Corresponds to the implementation of the access to containers with [index]",
-				see = { IKeyword.AT })
-		@no_test
+
 		ValueType getFromIndicesList(IScope scope, IList<KeyType> indices) throws GamaRuntimeException;
 
 	}

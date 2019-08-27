@@ -331,7 +331,7 @@ public class Types {
 
 	}
 
-	private static boolean isEmpty(final IExpression expr2) {
+	public static boolean isEmpty(final IExpression expr2) {
 		switch (expr2.getGamlType().getGamlType().id()) {
 			case IType.LIST:
 				if (expr2 instanceof ListExpression) { return ((ListExpression) expr2).isEmpty(); }

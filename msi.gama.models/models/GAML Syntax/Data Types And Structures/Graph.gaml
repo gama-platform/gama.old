@@ -98,7 +98,8 @@ global {
 		write "\tas_distance_graph(my_species, distance)";
 		float distance <- 20 #m;
 		g_graph <- as_distance_graph(regular_agent_node, // A list of agent to connect to one another 
-		distance // The maximal distance between two nodes for them to be connected
+		distance,// The maximal distance between two nodes for them to be connected
+		regular_agent_edge 
 );
 	}
 
@@ -108,7 +109,7 @@ global {
 		create regular_agent_node number: nb_nodes with: [shape::circle(rnd(5,20)) at_location any_location_in(world)];
 		write "\tas_intersection_graph(my_lines, tolerance)";
 		float tolerance <- 1.0;
-		g_graph <- as_intersection_graph(regular_agent_node, tolerance);
+		g_graph <- as_intersection_graph(regular_agent_node, tolerance,regular_agent_edge);
 	}
 
 	action grid_graph (int k) {
@@ -117,15 +118,15 @@ global {
 		write "- Using 'grid_cells_to_graph(my_grid)'";
 		switch k {
 			match_one [5, 6, 7] {
-				g_graph <- grid_cells_to_graph(cell6);
+				g_graph <- grid_cells_to_graph(cell6,regular_agent_edge);
 			}
 
 			match_between [8, #infinity] {
-				g_graph <- grid_cells_to_graph(cell8);
+				g_graph <- grid_cells_to_graph(cell8,regular_agent_edge);
 			}
 
 			default {
-				g_graph <- grid_cells_to_graph(cell4);
+				g_graph <- grid_cells_to_graph(cell4,regular_agent_edge);
 			}
 
 		}

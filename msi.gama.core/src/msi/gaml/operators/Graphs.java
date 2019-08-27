@@ -1155,6 +1155,29 @@ public class Graphs {
 
 		return createdGraph;
 	}
+	
+	@operator (
+			value = "as_intersection_graph",
+			content_type = IType.GEOMETRY,
+			index_type = IType.GEOMETRY,
+			category = { IOperatorCategory.GRAPH },
+			concept = {})
+	@doc (
+			value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices with an intersection (with a given tolerance).",
+			see = { "as_distance_graph", "as_edge_graph" })
+	@no_test
+	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance,
+			final ISpecies edgeSpecies) {
+		final IType edgeType = scope.getType(edgeSpecies.getName());
+		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance),
+				edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
+
+		if (Types.AGENT.equals(vertices.getGamlType().getContentType())) {
+			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
+		}
+
+		return createdGraph;
+	}
 
 	@operator (
 			value = "as_edge_graph",
@@ -1312,6 +1335,30 @@ public class Graphs {
 		}
 		return graph;
 	}
+	
+
+	@operator (
+			value = "grid_cells_to_graph",
+			content_type = IType.GEOMETRY,
+			index_type = IType.GEOMETRY,
+			category = { IOperatorCategory.GRAPH },
+			concept = {})
+	@doc (
+			value = "creates a graph from a list of cells (operand). An edge is created between neighbors.",
+			see = { "as_intersection_graph", "as_edge_graph" })
+	@no_test
+	public static IGraph gridCellsToGraph(final IScope scope, final IContainer vertices,final ISpecies edgeSpecies) {
+		final IType edgeType = scope.getType(edgeSpecies.getName());
+		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new GridNeighborsRelation(),
+				edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
+
+		for (final Object e : createdGraph.edgeSet()) {
+			createdGraph.setEdgeWeight(e, ((IShape) e).getPerimeter());
+		}
+
+		return createdGraph;
+	}
+
 
 	@operator (
 			value = "as_distance_graph",
