@@ -45,6 +45,11 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 		return staticCast(scope, obj, param, copy);
 	}
 
+	@Override
+	public int getNumberOfParameters() {
+		return 2;
+	}
+
 	public static IGraph staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		// param = true : spatial.
 

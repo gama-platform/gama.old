@@ -328,11 +328,34 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// /
 
 		final TypeInfo parameter = object.getParameter();
-		if (parameter == null || !t.isContainer()) { return t; }
+		if (parameter == null) { return t; }
+		final int numberOfParameter = t.getNumberOfParameters();
+		if (numberOfParameter == 0) {
+			// Emit a warning (see #2875)
+			getContext().warning(t + " is not a parametric type. Type parameters will be ignored",
+					IGamlIssue.WRONG_TYPE, object);
+			// We return the type anyway.
+			return t;
+		}
+
 		final TypeRef first = (TypeRef) parameter.getFirst();
 		if (first == null) { return t; }
 		final TypeRef second = (TypeRef) parameter.getSecond();
-		if (second == null) { return GamaType.from(t, t.getKeyType(), fromTypeRef(first)); }
+		if (second == null) {
+			if (numberOfParameter == 2) {
+				// Emit a warning (see #2875)
+				getContext().warning(t + " expects two type parameters", IGamlIssue.WRONG_TYPE, object);
+				// We return it anyway with a default key
+			}
+			return GamaType.from(t, t.getKeyType(), fromTypeRef(first));
+		} else {
+			if (numberOfParameter == 1) {
+				// Emit an error (see #2875)
+				getContext().error(t + " expects only one type parameter", IGamlIssue.WRONG_TYPE, object);
+				// We return null
+				return null;
+			}
+		}
 		return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
 	}
 
@@ -746,6 +769,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseTypeRef(final TypeRef object) {
 		final IType t = fromTypeRef(object);
+		if (t == null) { return null; }
 
 		// / SEE IF IT WORKS
 

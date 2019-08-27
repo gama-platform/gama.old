@@ -45,6 +45,11 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 		// Types.NO_TYPE, Types.NO_TYPE));
 	}
 
+	@Override
+	public int getNumberOfParameters() {
+		return 1;
+	}
+
 	@SuppressWarnings ("unchecked")
 	@Override
 	public T cast(final IScope scope, final Object obj, final Object param, final IType<?> keyType,

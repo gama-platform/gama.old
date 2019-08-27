@@ -16,16 +16,19 @@ import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACE
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graphs;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
@@ -302,34 +305,29 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
 		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
-		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
-		final IMap<String, VariableDescription> all = GamaMapFactory.createUnordered();
+		final DirectedGraph<String, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		final Map<String, VariableDescription> all = new HashMap<>();
 		this.visitAllAttributes((d) -> {
 			all.put(d.getName(), (VariableDescription) d);
 			return true;
 		});
-		final VariableDescription shape = getAttribute(SHAPE);
-		final Collection<VariableDescription> shapeDependencies = shape.getDependencies(facetsToConsider, false, true);
-		dependencies.addVertex(shape);
-		all.forEachPair((an, var) -> {
-			dependencies.addVertex(var);
-			final Collection<VariableDescription> varDependencies = var.getDependencies(facetsToConsider, false, true);
-			for (final VariableDescription newVar : varDependencies) {
-				dependencies.addVertex(newVar);
+		Graphs.addAllVertices(dependencies, all.keySet());
+		final Collection<VariableDescription> shapeDependencies =
+				getAttribute(SHAPE).getDependencies(facetsToConsider, false, true);
+		all.forEach((an, var) -> {
+			for (final VariableDescription newVar : var.getDependencies(facetsToConsider, false, true)) {
+				final String other = newVar.getName();
 				// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
-				if (!dependencies.containsEdge(newVar, var) && !dependencies.containsEdge(var, newVar)) {
-					dependencies.addEdge(newVar, var);
+				if (!dependencies.containsEdge(an, other)) {
+					dependencies.addEdge(other, an);
 				}
 			}
 			// Adding a constraint between the shape of the macrospecies and the populations of microspecies
-			if (var.isSyntheticSpeciesContainer()) {
-				if (!shapeDependencies.contains(var)) {
-					dependencies.addEdge(shape, var);
-				}
+			if (var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
+				dependencies.addEdge(SHAPE, an);
 			}
-			return true;
 		});
-		return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).map(vd -> vd.getName()).toList();
+		return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
 	}
 
 	/**
