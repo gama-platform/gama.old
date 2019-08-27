@@ -415,9 +415,20 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected void duplicateInfo(final IDescription one, final IDescription two) {
 		final String aName = one.getName();
 		final String key = one.getKeyword();
-		final String error = key + " " + aName + " is declared twice. This definition supersedes the previous in "
-				+ two.getOriginName();
-		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, aName);
+		if (!one.getOriginName().equals(two.getOriginName())) {
+			if (key.equals(REFLEX)) {
+				one.info(
+						"The order in which reflex " + aName + " will be executed in " + one.getOriginName()
+								+ " can differ from the order defined in " + two.getOriginName(),
+						IGamlIssue.GENERAL, NAME, aName);
+			}
+			one.info("This definition of " + key + " " + aName + " supersedes the one existing in "
+					+ two.getOriginName(), IGamlIssue.DUPLICATE_DEFINITION, NAME, aName);
+		} else {
+			one.info("This definition of " + key + " " + aName + " supersedes the previous one(s) in the same species",
+					IGamlIssue.DUPLICATE_DEFINITION, NAME, aName);
+
+		}
 	}
 
 	protected void addAction(final ActionDescription newAction) {
