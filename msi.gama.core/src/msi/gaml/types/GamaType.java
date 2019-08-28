@@ -62,6 +62,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
+	public int getNumberOfParameters() {
+		return 0;
+	}
+
+	@Override
 	public String getDefiningPlugin() {
 		return plugin;
 	}
@@ -387,7 +392,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	public static IContainerType<?> from(final IContainerType<IContainer<?, ?>> t, final IType<?> keyType,
 			final IType<?> contentType) {
-		if (keyType == Types.NO_TYPE && contentType == Types.NO_TYPE) { return t; }
+		if ((keyType == null || keyType == Types.NO_TYPE) && (contentType == null || contentType == Types.NO_TYPE)) {
+			return t;
+		}
 		final IType<?> kt = keyType == Types.NO_TYPE ? t.getGamlType().getKeyType() : keyType;
 		final IType<?> ct = contentType == Types.NO_TYPE ? t.getGamlType().getContentType() : contentType;
 		return ParametricType.createParametricType(t.getGamlType(), kt, ct);
@@ -395,6 +402,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public static IType<?> from(final IType<?> t, final IType<?> keyType, final IType<?> contentType) {
+		if (keyType == null || contentType == null) { return t; }
 		if (t instanceof IContainerType) {
 			if (!(t instanceof GamaSpeciesType)) {
 				if (contentType.isAssignableFrom(t.getContentType()) && keyType.isAssignableFrom(t.getKeyType())) {

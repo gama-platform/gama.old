@@ -46,6 +46,11 @@ public class ParametricFileType extends ParametricType {
 	}
 
 	@Override
+	public int getNumberOfParameters() {
+		return bufferType.getNumberOfParameters();
+	}
+
+	@Override
 	public boolean isDrawable() {
 		return GamaGeometryFile.class.isAssignableFrom(support) || GamaImageFile.class.isAssignableFrom(support);
 	}

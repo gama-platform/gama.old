@@ -46,6 +46,11 @@ public class GamaPairType extends GamaContainerType<GamaPair> {
 		return staticCast(scope, obj, keyType, contentsType, copy);
 	}
 
+	@Override
+	public int getNumberOfParameters() {
+		return 2;
+	}
+
 	public static GamaPair staticCast(final IScope scope, final Object obj, final IType keyType,
 			final IType contentsType, final boolean copy) throws GamaRuntimeException {
 		Object key, value;

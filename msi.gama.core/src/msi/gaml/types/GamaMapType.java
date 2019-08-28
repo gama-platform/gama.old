@@ -51,6 +51,11 @@ public class GamaMapType extends GamaContainerType<IMap> {
 	}
 
 	@Override
+	public int getNumberOfParameters() {
+		return 2;
+	}
+
+	@Override
 	public IType keyTypeIfCasting(final IExpression exp) {
 		final IType itemType = exp.getGamlType();
 		if (itemType.isAgentType()) { return Types.get(STRING); }

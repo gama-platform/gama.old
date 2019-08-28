@@ -81,6 +81,11 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	}
 
 	@Override
+	public int getNumberOfParameters() {
+		return type.getNumberOfParameters();
+	}
+
+	@Override
 	public boolean isCompoundType() {
 		return true;
 	}

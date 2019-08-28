@@ -314,7 +314,7 @@ public class SpeciesDescription extends TypeDescription {
 		if (behaviors == null) {
 			behaviors = GamaMapFactory.create();
 		}
-		final StatementDescription existing = behaviors.get(behaviorName);
+		final StatementDescription existing = getBehavior(behaviorName);
 		if (existing != null) {
 			if (existing.getKeyword().equals(r.getKeyword())) {
 				duplicateInfo(r, existing);

@@ -213,4 +213,12 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 */
 	boolean isCompoundType();
 
+	/**
+	 * Returns the number of type parameters this type can accept (for instance list is 1, int is 0, map is 2, file
+	 * depends on the wrapped buffer type, etc.)
+	 * 
+	 * @return
+	 */
+	int getNumberOfParameters();
+
 }
