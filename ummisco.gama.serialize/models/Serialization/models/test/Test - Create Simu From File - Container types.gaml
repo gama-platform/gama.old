@@ -11,7 +11,7 @@ global {
 	int toot <- 0;
 	string s <- "test";
 	list<people> pList <- [];
-	pair<people> pPair ;
+	pair<people,people> pPair ;
 	map<people, people> pMap <- map([]);
 	list<list<people>> plistlist <- [];
 	graph g;

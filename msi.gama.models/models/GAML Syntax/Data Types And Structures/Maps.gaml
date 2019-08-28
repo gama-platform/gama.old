@@ -137,7 +137,7 @@ species combining_maps {
 		write sample(l1 - l2);
 		write sample(l1 inter l2);
 		write sample(l1 union l2);
-		map<string> l3 <- map<int, string>(l1 + l2);
+		map<int,string> l3 <- map<int, string>(l1 + l2);
 		write "map<string> l3 <- l1 + l2; " + sample(l3);
 	}
 }
