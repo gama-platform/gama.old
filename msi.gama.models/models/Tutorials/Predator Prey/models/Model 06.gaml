@@ -28,7 +28,6 @@ global {
 		create prey number: nb_preys_init;
 		create predator number: nb_predators_init;
 	}
-
 }
 
 species generic_species {
@@ -52,6 +51,10 @@ species generic_species {
 		location <- my_cell.location;
 	}
 
+	reflex eat {
+		energy <- energy + energy_from_eat();
+	}
+
 	reflex die when: energy <= 0 {
 		do die;
 	}
@@ -65,6 +68,10 @@ species generic_species {
 		}
 
 		energy <- energy / nb_offsprings;
+	}
+
+	float energy_from_eat {
+		return 0.0;
 	}
 
 	aspect base {
@@ -81,12 +88,14 @@ species prey parent: generic_species {
 	int nb_max_offsprings <- prey_nb_max_offsprings;
 	float energy_reproduce <- prey_energy_reproduce;
 
-	reflex eat when: my_cell.food > 0 {
-		float energy_transfert <- min([max_transfert, my_cell.food]);
-		my_cell.food <- my_cell.food - energy_transfert;
-		energy <- energy + energy_transfert;
+	float energy_from_eat {
+		float energy_transfert <- 0.0;
+		if(my_cell.food > 0) {
+			energy_transfert <- min([max_transfert, my_cell.food]);
+			my_cell.food <- my_cell.food - energy_transfert;
+		} 			
+		return energy_transfert;
 	}
-
 }
 
 species predator parent: generic_species {
@@ -94,17 +103,19 @@ species predator parent: generic_species {
 	float max_energy <- predator_max_energy;
 	float energy_transfert <- predator_energy_transfert;
 	float energy_consum <- predator_energy_consum;
-	list<prey> reachable_preys update: prey inside (my_cell);
 	float proba_reproduce <- predator_proba_reproduce;
 	int nb_max_offsprings <- predator_nb_max_offsprings;
 	float energy_reproduce <- predator_energy_reproduce;
 
-	reflex eat when: !empty(reachable_preys) {
-		ask one_of(reachable_preys) {
-			do die;
+	float energy_from_eat {
+		list<prey> reachable_preys <- prey inside (my_cell);
+		if(! empty(reachable_preys)) {
+			ask one_of (reachable_preys) {
+				do die;
+			}
+			return energy_transfert;
 		}
-
-		energy <- energy + energy_transfert;
+		return 0.0;
 	}
 }
 
@@ -131,6 +142,7 @@ experiment prey_predator type: gui {
 	parameter 'Predator probability reproduce: ' var: predator_proba_reproduce category: 'Predator';
 	parameter 'Predator nb max offsprings: ' var: predator_nb_max_offsprings category: 'Predator';
 	parameter 'Predator energy reproduce: ' var: predator_energy_reproduce category: 'Predator';
+
 	output {
 		display main_display {
 			grid vegetation_cell lines: #black;
