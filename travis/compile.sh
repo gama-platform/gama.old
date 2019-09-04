@@ -1,6 +1,25 @@
 #!/bin/bash
 
 function mvn_install() {
+
+	echo "Building " $1
+	cd $1
+	if mvn clean install; then
+	   echo ok
+	else
+	   echo Something went wrong.
+	   exit 1
+	fi
+	res=${PIPESTATUS[0]} 
+	echo "return code $res"
+	if [[ $res -ne 0 ]]; then
+		exit $res
+	fi
+	cd -
+	
+}
+function mvn_install_with_sonar() {
+
 	echo "Building " $1
 	cd $1
 	if mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama$1; then
@@ -15,6 +34,7 @@ function mvn_install() {
 		exit $res
 	fi
 	cd -
+
 }
 function mvn_compile() {
 	echo "Building " $1
@@ -45,6 +65,24 @@ compile (){
 
 install (){
 	echo "Install GAMA project"			
+	
+	
+if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
+	
+	
+	
+	mvn_install_with_sonar ummisco.gama.annotations
+	mvn_install_with_sonar msi.gama.processor
+	
+	
+	
+	
+	mvn_install_with_sonar msi.gama.parent
+	
+	
+else		
+	
+	
 	mvn_install ummisco.gama.annotations
 	mvn_install msi.gama.processor
 	
@@ -52,6 +90,10 @@ install (){
 	
 	
 	mvn_install msi.gama.parent
+	
+	
+fi
+	
 }
 
 install1 (){
