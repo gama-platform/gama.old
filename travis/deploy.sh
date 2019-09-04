@@ -42,7 +42,6 @@ else
 fi
 	
 	
-function tmp(){
 change=$(git log --pretty=format: --name-only --since="1 day ago")
 
 if [[ ${change} == *"ummisco.gama.annotations"* ]] || [[ $MSG == *"ci ummisco.gama.annotations"* ]] || [[ $MSG == *"ci fullbuild"* ]]; then
@@ -297,4 +296,5 @@ else
 	cd -
 
 fi
-}
+
+function tmp(){}
