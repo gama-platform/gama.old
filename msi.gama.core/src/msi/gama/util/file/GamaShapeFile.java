@@ -35,6 +35,7 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
@@ -381,17 +382,34 @@ public class GamaShapeFile extends GamaGisFile {
 					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 						if (!with3D && !g.isValid()) {
-							g = g.buffer(0.0);
+							Geometry g2 = g.buffer(0.0);
+							if (g2.isEmpty()) {
+								if (g instanceof Polygon) {
+									Polygon p = (Polygon) g;
+									Geometry g3 = GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getExteriorRing().getCoordinates());
+									for (int i = 0; i < p.getNumInteriorRing(); i++) {
+										Geometry g4 = GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates());
+										g3 = g3.difference(g4);
+									}
+									g = g3;
+								}else {
+									g = GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
+								}
+								
+							}else {
+								g = g2;
+							}
 						}
 						g = gis.transform(g);
-
 						if (!with3D) {
 							g.apply(ZERO_Z);
 							g.geometryChanged();
 						}
 						g = multiPolygonManagement(g);
-						list.add(new GamaGisGeometry(g, feature));
-
+						GamaGisGeometry gt = new GamaGisGeometry(g, feature);
+						if (gt.getInnerGeometry() != null)
+							list.add(gt);
+						
 					} else if (g == null) {
 						// See Issue 725
 						GAMA.reportError(scope,
