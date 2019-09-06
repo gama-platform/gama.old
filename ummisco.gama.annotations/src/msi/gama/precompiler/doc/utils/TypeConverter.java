@@ -15,18 +15,27 @@ import msi.gama.precompiler.IOperatorCategory;
 
 public class TypeConverter {
 
-	HashMap<String, String> properNameTypeMap;
+	public static final HashMap<String, String> properNameTypeMap = new HashMap<>();
 	HashMap<String, String> specialCasesProperNameTypeMap;
 	HashMap<String, String> properCategoryNameMap;
-	HashMap<Integer, String> typeStringFromIType;
+	public static final HashMap<Integer, String> typeStringFromIType = new HashMap<>();
 	HashMap<Integer, String> symbolKindStringFromISymbolKind;
 
 	public TypeConverter() {
-		properNameTypeMap = initProperNameTypeMap();
+		properNameTypeMap.putAll(initProperNameTypeMap());
 		specialCasesProperNameTypeMap = initSpecialCasesProperNameTypeMap();
 		properCategoryNameMap = initProperNameCategoriesMap();
-		typeStringFromIType = initNameTypeFromIType();
+		typeStringFromIType.putAll(initNameTypeFromIType());
 		symbolKindStringFromISymbolKind = initSymbolKindStringFromISymbolKind();
+	}
+
+	public static void registerType(final String className, final String type, final Integer id) {
+		if (!properNameTypeMap.containsKey(className)) {
+			properNameTypeMap.put(className, type);
+		}
+		if (!typeStringFromIType.containsKey(id)) {
+			typeStringFromIType.put(id, type);
+		}
 	}
 
 	private HashMap<Integer, String> initSymbolKindStringFromISymbolKind() {

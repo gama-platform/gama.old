@@ -156,10 +156,11 @@ public interface Constants {
 			new LinkedHashMap<Class<? extends Annotation>, IProcessor<?>>() {
 				{
 					// Order is important
+					put(type.class, new TypeProcessor());
 					// Doc built first, so that test generation can happen subsequently
 					put(doc.class, new DocProcessor());
 					// Then all the processors for specific annotations
-					put(type.class, new TypeProcessor());
+
 					put(factory.class, new FactoryProcessor());
 					put(species.class, new SpeciesProcessor());
 					put(symbol.class, new SymbolProcessor());
