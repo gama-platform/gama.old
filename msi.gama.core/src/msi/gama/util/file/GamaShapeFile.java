@@ -382,23 +382,7 @@ public class GamaShapeFile extends GamaGisFile {
 					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 						if (!with3D && !g.isValid()) {
-							Geometry g2 = g.buffer(0.0);
-							if (g2.isEmpty()) {
-								if (g instanceof Polygon) {
-									Polygon p = (Polygon) g;
-									Geometry g3 = GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getExteriorRing().getCoordinates());
-									for (int i = 0; i < p.getNumInteriorRing(); i++) {
-										Geometry g4 = GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates());
-										g3 = g3.difference(g4);
-									}
-									g = g3;
-								}else {
-									g = GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
-								}
-								
-							}else {
-								g = g2;
-							}
+							g = GeometryUtils.cleanGeometry(g);
 						}
 						g = gis.transform(g);
 						if (!with3D) {

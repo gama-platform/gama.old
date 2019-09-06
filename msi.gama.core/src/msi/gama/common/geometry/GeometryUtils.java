@@ -43,6 +43,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.io.WKTWriter;
+import com.vividsolutions.jts.operation.buffer.BufferParameters;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
@@ -1034,5 +1035,26 @@ public class GeometryUtils {
 
 	public static int getHolesNumber(final Geometry p) {
 		return p instanceof Polygon ? ((Polygon) p).getNumInteriorRing() : 0;
+	}
+	
+	public static Geometry cleanGeometry(final Geometry g) {
+		//follow the proposition of https://locationtech.github.io/jts/jts-faq.html#G1
+		if (g == null || g.isEmpty()) return g; 
+		Geometry g2 = g.buffer(0.0, BufferParameters.DEFAULT_QUADRANT_SEGMENTS,
+				BufferParameters.CAP_FLAT);
+		if (g2.isEmpty()) {
+			if (g instanceof Polygon) {
+				Polygon p = (Polygon) g;
+				Geometry g3 = GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getExteriorRing().getCoordinates());
+				for (int i = 0; i < p.getNumInteriorRing(); i++) {
+					Geometry g4 = GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates());
+					g3 = g3.difference(g4);
+				}
+				return g3;
+			}else {
+				return GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
+			}
+		}
+		return g2;
 	}
 }

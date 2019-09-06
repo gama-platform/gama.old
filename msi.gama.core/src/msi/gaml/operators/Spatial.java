@@ -3186,16 +3186,14 @@ public abstract class Spatial {
 
 			if (g == null || g.getInnerGeometry() == null) { return g; }
 			if (g.getInnerGeometry() instanceof Polygon) {
-				return new GamaShape(g, g.getInnerGeometry().buffer(0.0, BufferParameters.DEFAULT_QUADRANT_SEGMENTS,
-						BufferParameters.CAP_FLAT));
+				return new GamaShape(g, GeometryUtils.cleanGeometry(g.getInnerGeometry()));
 			}
 			if (g.getInnerGeometry() instanceof MultiPolygon) {
 				final MultiPolygon mp = (MultiPolygon) g.getInnerGeometry();
 				final int nb = mp.getNumGeometries();
 				final Polygon[] polys = new Polygon[nb];
 				for (int i = 0; i < nb; i++) {
-					polys[i] = (Polygon) mp.getGeometryN(i).buffer(0.0, BufferParameters.DEFAULT_QUADRANT_SEGMENTS,
-							BufferParameters.CAP_FLAT);
+					polys[i] = (Polygon) GeometryUtils.cleanGeometry(mp.getGeometryN(i));
 				}
 				return new GamaShape(g, GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(polys));
 			}
