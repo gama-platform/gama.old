@@ -77,6 +77,7 @@ species policeman skills: [moving] control:simple_bdi {
 	}
 	
 	perceive target: miner in: view_dist {
+		myself.agent_perceived <-self;
 		enforcement law:"working" sanction:"sanction_to_law";
 		enforcement obligation:has_gold /*when:has_belief(has_gold)*/ sanction: "sanction_to_obligation" reward:"reward_to_obligation";
 	}
