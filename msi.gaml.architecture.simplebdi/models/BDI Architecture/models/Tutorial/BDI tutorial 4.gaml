@@ -92,7 +92,7 @@ species miner skills: [moving] control:simple_bdi {
 	rule belief: mine_location new_desire: has_gold strength: 2.0;
 	rule belief: has_gold new_desire: sell_gold strength: 3.0;
 	
-	plan lets_wander intention:find_gold {
+	plan lets_wander intention:find_gold finished_when: has_desire(has_gold){
 		do wander;
 	}
 	
@@ -139,12 +139,12 @@ species miner skills: [moving] control:simple_bdi {
 		list<miner> my_friends <- list<miner>((social_link_base where (each.liking > 0)) collect each.agent);
 		loop known_gold_mine over: get_beliefs_with_name(mine_at_location) {
 			ask my_friends {
-				do add_belief(known_gold_mine);
+				do add_directly_belief(known_gold_mine);
 			}
 		}
 		loop known_empty_gold_mine over: get_beliefs_with_name(empty_mine_location) {
 			ask my_friends {
-				do add_belief(known_empty_gold_mine);
+				do add_directly_belief(known_empty_gold_mine);
 			}
 		}
 		
@@ -153,6 +153,7 @@ species miner skills: [moving] control:simple_bdi {
 
 	aspect default {
 	    draw circle(200) color: my_color border: #black depth: gold_sold;
+	    draw circle(view_dist) color: my_color border: #black depth: gold_sold empty: true;
 	}
 }
 
@@ -165,6 +166,13 @@ experiment GoldBdi type: gui {
 			species gold_mine ;
 			species miner;
 		}
+		
+		display chart {
+			chart "Money" type: series {
+				datalist legend: miner accumulate each.name value: miner accumulate each.gold_sold color: miner accumulate each.my_color;
+			}
+		}
+		
 	}
 }
 
