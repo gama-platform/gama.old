@@ -40,8 +40,37 @@ global {
 		create miner number: nb_miners;
 	}
 	
+	reflex display_social_links{
+		loop tempMiner over: miner{
+				loop tempDestination over: tempMiner.social_link_base{
+					if (tempDestination !=nil){
+						bool exists<-false;
+						loop tempLink over: socialLinkRepresentation{
+							if((tempLink.origin=tempMiner) and (tempLink.destination=tempDestination.agent)){
+								exists<-true;
+							}
+						}
+						if(not exists){
+							create socialLinkRepresentation number: 1{
+								origin <- tempMiner;
+								destination <- tempDestination.agent;
+								if(get_liking(tempDestination)>0){
+									my_color <- #green;
+								} else {
+									my_color <- #red;
+								}
+							}
+						}
+					}
+				}
+			}
+	}
+	
 	reflex end_simulation when: sum(gold_mine collect each.quantity) = 0 and empty(miner where each.has_belief(has_gold)){
 		do pause;
+		ask miner {
+			write name + " : " +gold_sold;
+		}
 	}
 }
 
@@ -154,6 +183,16 @@ species miner skills: [moving] control:simple_bdi {
 	aspect default {
 	    draw circle(200) color: my_color border: #black depth: gold_sold;
 	    draw circle(view_dist) color: my_color border: #black depth: gold_sold empty: true;
+	}
+}
+
+species socialLinkRepresentation{
+	miner origin;
+	agent destination;
+	rgb my_color;
+	
+	aspect base{
+		draw line([origin,destination],50.0) color: my_color;
 	}
 }
 

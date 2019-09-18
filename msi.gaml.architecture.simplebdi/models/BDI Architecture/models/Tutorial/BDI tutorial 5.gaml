@@ -43,6 +43,32 @@ global {
 		create policeman number:nb_police;
 	}
 	
+	reflex display_social_links{
+		loop tempMiner over: miner{
+				loop tempDestination over: tempMiner.social_link_base{
+					if (tempDestination !=nil){
+						bool exists<-false;
+						loop tempLink over: socialLinkRepresentation{
+							if((tempLink.origin=tempMiner) and (tempLink.destination=tempDestination.agent)){
+								exists<-true;
+							}
+						}
+						if(not exists){
+							create socialLinkRepresentation number: 1{
+								origin <- tempMiner;
+								destination <- tempDestination.agent;
+								if(get_liking(tempDestination)>0){
+									my_color <- #green;
+								} else {
+									my_color <- #red;
+								}
+							}
+						}
+					}
+				}
+			}
+	}
+	
 	reflex end_simulation when: sum(gold_mine collect each.quantity) = 0 and empty(miner where each.has_belief(has_gold)){
 		do pause;
 		ask miner {
@@ -286,6 +312,15 @@ species miner skills: [moving] control:simple_bdi {
 	}
 }
 
+species socialLinkRepresentation{
+	miner origin;
+	agent destination;
+	rgb my_color;
+	
+	aspect base{
+		draw line([origin,destination],50.0) color: my_color;
+	}
+}
 
 experiment GoldBdi type: gui {
 	output {

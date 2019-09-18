@@ -35,8 +35,37 @@ global {
 		create miner number: nb_miners;
 	}
 	
+	reflex display_social_links{
+		loop tempMiner over: miner{
+				loop tempDestination over: tempMiner.social_link_base{
+					if (tempDestination !=nil){
+						bool exists<-false;
+						loop tempLink over: socialLinkRepresentation{
+							if((tempLink.origin=tempMiner) and (tempLink.destination=tempDestination.agent)){
+								exists<-true;
+							}
+						}
+						if(not exists){
+							create socialLinkRepresentation number: 1{
+								origin <- tempMiner;
+								destination <- tempDestination.agent;
+								if(get_liking(tempDestination)>0){
+									my_color <- #green;
+								} else {
+									my_color <- #red;
+								}
+							}
+						}
+					}
+				}
+			}
+	}
+	
 	reflex end_simulation when: sum(gold_mine collect each.quantity) = 0 and empty(miner where each.has_belief(has_gold)){
 		do pause;
+		ask miner {
+			write name + " : " +gold_sold;
+		}
 	}
 }
 
@@ -70,6 +99,10 @@ species miner skills: [moving] control:simple_bdi {
 	
 	perceive target: miner in: view_dist {
 		socialize liking: 1 -  point(my_color.red, my_color.green, my_color.blue) distance_to point(myself.my_color.red, myself.my_color.green, myself.my_color.blue) / 255;
+		//créer un lien social "physique" que l'on affiche avec en couleur, vert pour liking positif et rouge pour liking négatif
+		//s'assurer qu'on a seulement 1 lien physique par lien social.
+		//l'aspect sera une ligne droite avec chaque bout placé à la location de chaque agent à ses bouts
+		//Faire cet affichage dans un réflexe global
 	}
 		
 	perceive target: gold_mine where (each.quantity > 0) in: view_dist {
@@ -151,6 +184,16 @@ species miner skills: [moving] control:simple_bdi {
 	}
 }
 
+species socialLinkRepresentation{
+	miner origin;
+	agent destination;
+	rgb my_color;
+	
+	aspect base{
+		draw line([origin,destination],50.0) color: my_color;
+	}
+}
+
 
 experiment GoldBdi type: gui {
 	output {
@@ -158,6 +201,10 @@ experiment GoldBdi type: gui {
 			species market ;
 			species gold_mine ;
 			species miner;
+		}
+		
+		display socialLinks type: opengl{
+			species socialLinkRepresentation aspect: base;
 		}
 		
 		display chart {
