@@ -197,7 +197,10 @@ species miner skills: [moving] control:simple_bdi {
 	perceive target: gold_mine where (each.quantity > 0) in: view_dist {
 		focus id:mine_at_location var:location;
 		ask myself {
-			if (has_emotion(joy)) {do add_desire(predicate:share_information, strength: 5.0);}
+			if (has_emotion(joy)) {
+				write self.name + " is joyous";
+				do add_desire(predicate:share_information, strength: 5.0);
+			}
 			do remove_intention(find_gold, false);
 		}
 	}
