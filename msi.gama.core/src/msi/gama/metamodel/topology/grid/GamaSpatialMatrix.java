@@ -507,12 +507,21 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	private final int getPlaceIndexAt(final ILocation p) {
 		if (isHexagon) {
-			final int xx = (int) (p.getX() / (cellWidth * 0.75));
-			final int yy = xx % 2 == 0 ? (int) (p.getY() / cellHeight) : (int) ((p.getY() - cellHeight) / cellHeight);
-
+			int xx = 0;
+			int yy = 0;
+			if (isHorizontalOrientation) {
+				xx = (int) (p.getX() / (cellWidth * 0.75));
+				yy = xx % 2 == 0 ? (int) (p.getY() / cellHeight) : (int) ((p.getY() - cellHeight) / cellHeight);
+			} else {
+				yy = (int) (p.getY() / (cellHeight* 0.75));
+				xx = yy % 2 == 0 ? (int) (p.getX() / cellWidth) : (int) ((p.getX() - cellWidth) / cellWidth);
+				
+			}
+			xx = Math.min(xx,this.numCols - 1);
+			yy = Math.min(yy,this.numRows - 1);
 			int i = getPlaceIndexAt(xx, yy);
 			if (matrix[i] == null) { return -1; }
-			if (matrix[i].getLocation() == p) { return i; }
+			if (matrix[i].getLocation() == p || matrix[i].intersects(p)) { return i; }
 			final Set<Integer> toObserve =
 					((GridHexagonalNeighborhood) getNeighborhood()).getNeighborsAtRadius1(i, numCols, numRows, isTorus);
 			toObserve.add(i);
@@ -523,20 +532,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				final int id = it.next();
 
 				final IShape sh = matrix[id];
-				if (sh == null) {
-					continue;
-				}
-				final double dist = sh.getLocation().euclidianDistanceTo(p);
-				if (dist < dMin) {
-					dMin = dist;
+				if (sh.intersects(p)) {
 					final GamaPoint pt = (GamaPoint) hexAgentToLoc.get(sh.getGeometry());
 					x = (int) pt.x;
 					y = (int) pt.y;
+					return getPlaceIndexAt(x, y);
 				}
 
 			}
-			i = getPlaceIndexAt(x, y);
-			return i;
+			return -1;
 
 		}
 		final double px = p.getX();
