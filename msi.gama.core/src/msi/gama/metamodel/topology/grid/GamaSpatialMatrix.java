@@ -525,7 +525,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final Set<Integer> toObserve =
 					((GridHexagonalNeighborhood) getNeighborhood()).getNeighborsAtRadius1(i, numCols, numRows, isTorus);
 			toObserve.add(i);
-			double dMin = Double.MAX_VALUE;
 			int x = 0, y = 0;
 			final Iterator<Integer> it = toObserve.iterator();
 			while (it.hasNext()) {
@@ -1409,10 +1408,29 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	private Set<IAgent> inEnvelope(final Envelope env) {
 		// TODO Is it really efficient?
 		final Set<IAgent> shapes = new LinkedHashSet();
-		final int minX = max(0, (int) (env.getMinX() / cellWidth));
-		final int minY = max(0, (int) (env.getMinY() / cellHeight));
-		final int maxX = min(numCols - 1, (int) (env.getMaxX() / cellWidth));
-		final int maxY = min(numRows - 1, (int) (env.getMaxY() / cellHeight));
+		int minX = 0 ;
+		int minY = 0 ;
+		int maxX = numCols - 1;
+		int maxY = numRows - 1 ;
+		
+		if (this.isHexagon) {
+			if (this.isHorizontalOrientation) {
+				minX = max(0, (int) (env.getMinX() / (cellWidth / 0.75)));
+				minY = max(0, (int) (env.getMinY() / (cellHeight )));
+				maxX = min(numCols - 1, (int) (env.getMaxX() /  (cellWidth * 0.75)));
+				maxY = min(numRows - 1, (int) (env.getMaxY() / (cellHeight )));	
+			} else {
+				minX = max(0, (int) (env.getMinX() / (cellWidth)));
+				minY = max(0, (int) (env.getMinY() / (cellHeight / 0.75)));
+				maxX = min(numCols - 1, (int) (env.getMaxX() /  (cellWidth )));
+				maxY = min(numRows - 1, (int) (env.getMaxY() / (cellHeight * 0.75)));	
+			}
+		} else {
+			minX = max(0, (int) (env.getMinX() / cellWidth));
+			minY = max(0, (int) (env.getMinY() / cellHeight));
+			maxX = min(numCols - 1, (int) (env.getMaxX() / cellWidth));
+			maxY = min(numRows - 1, (int) (env.getMaxY() / cellHeight));	
+		}
 		for (int i = minX; i <= maxX; i++) {
 			for (int j = minY; j <= maxY; j++) {
 				final int index = getPlaceIndexAt(i, j);
@@ -1425,6 +1443,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				}
 			}
 		}
+		
 		return shapes;
 
 	}
@@ -1437,10 +1456,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		// Iterators.emptyIterator(); }
 		final Set<IAgent> shapes = inEnvelope(env);
 		shapes.remove(source);
-		shapes.removeIf(each -> {
+		System.out.println("env: " + env);
+		for (IAgent s : shapes) {
+			System.out.println("s: " + s + " e: "+ s.getEnvelope() + " env.intersects(e):" + env.intersects(s.getEnvelope()));
+		}
+		
+		shapes.removeIf(each -> { 
 			final Envelope3D e = each.getEnvelope();
 			return each.getAgent() == null || !(covered ? env.covers(e) : env.intersects(e));
 		});
+		
 		if (f != null) {
 			f.filter(scope, source, shapes);
 		}
