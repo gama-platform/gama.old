@@ -1456,10 +1456,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		// Iterators.emptyIterator(); }
 		final Set<IAgent> shapes = inEnvelope(env);
 		shapes.remove(source);
-		System.out.println("env: " + env);
-		for (IAgent s : shapes) {
-			System.out.println("s: " + s + " e: "+ s.getEnvelope() + " env.intersects(e):" + env.intersects(s.getEnvelope()));
-		}
 		
 		shapes.removeIf(each -> { 
 			final Envelope3D e = each.getEnvelope();
