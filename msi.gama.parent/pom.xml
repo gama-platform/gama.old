@@ -30,7 +30,6 @@
 			<layout>default</layout>
 		</pluginRepository>
 		<!-- 
-		 -->
 		<pluginRepository>
 			<id>orbit</id>
 			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
@@ -42,6 +41,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</pluginRepository>
+		 -->
 	</pluginRepositories>
 
 
@@ -115,7 +115,6 @@
 			<url>http://download.eclipse.org/technology/epp/packages/2018-12/</url>
 			<layout>p2</layout>
 		</repository
-		-->
 		<repository>
 			<id>orbit</id>
 			<name>orbit</name>
@@ -128,6 +127,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		-->
 		<repository>
 			<id>eclipse-1903</id>
 			<url>http://download.eclipse.org/releases/2019-03</url>
