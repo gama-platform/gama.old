@@ -81,7 +81,7 @@
    </vm>
 
    <license>
-        <url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.html</url>
+        <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
    </license>
 
    <plugins>
