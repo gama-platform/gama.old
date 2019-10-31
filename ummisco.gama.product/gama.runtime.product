@@ -19,36 +19,36 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-nl ${target.nl} 
--data @noDefault 
---launcher.defaultAction
-openFile
+      <programArgs>
+         -nl ${target.nl} 
+         -data @noDefault 
+         --launcher.defaultAction
+         openFile
       </programArgs>
       <programArgsLin>--launcher.GTK_version 2
       </programArgsLin>
-      <vmArgs>-server
--noverify
--Xmn128m
--Xss2m
--XX:+UseParallelGC
--XX:+UseAdaptiveSizePolicy
--XX:+OptimizeStringConcat
--Dosgi.locking=none
--Dosgi.checkConfiguration=false
--Declipse.log.level=ERROR
+      <vmArgs>
+         -server
+         -noverify
+         -Xmn128m
+         -Xss2m
+         -XX:+UseParallelGC
+         -XX:+UseAdaptiveSizePolicy
+         -XX:+OptimizeStringConcat
+         -Dosgi.locking=none
+         -Dosgi.checkConfiguration=false
+         -Declipse.log.level=ERROR
       </vmArgs>
       <vmArgsLin>
-         <argsX86>-Xms256m -Xmx1024m</argsX86>
-         <argsX86_64>-Xms256m -Xmx2048m</argsX86_64>
+         -Xms256m -Xmx1024m
       </vmArgsLin>
-      <vmArgsMac>-XstartOnFirstThread 
--Dorg.eclipse.swt.internal.carbon.smallFonts
--Xms256m -Xmx2048m
-         <argsX86>-d32</argsX86>
+      <vmArgsMac>
+         -XstartOnFirstThread 
+         -Dorg.eclipse.swt.internal.carbon.smallFonts
+         -Xms256m -Xmx2048m
       </vmArgsMac>
       <vmArgsWin>
-         <argsX86>-Xms256m -Xmx1024m</argsX86>
-         <argsX86_64>-Xms256m -Xmx2048m</argsX86_64>
+         -Xms256m -Xmx1024m
       </vmArgsWin>
    </launcherArgs>
 
