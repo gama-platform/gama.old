@@ -41,6 +41,7 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.mqtt.MQTTConnector;
+import ummisco.gama.network.serial.ArduinoConnector;
 import ummisco.gama.network.tcp.TCPConnection;
 import ummisco.gama.network.udp.UDPConnector;
 
@@ -186,6 +187,8 @@ public class NetworkSkill extends MessagingSkill {
 				connector = new TCPConnection(scope, false);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
+			} else if (protocol != null && protocol.equals("arduino")) {
+				connector = new ArduinoConnector(scope);			
 			} else // if(protocol.equals( INetworkSkill.MQTT))
 			{
 				DEBUG.OUT("create MQTT serveur " + login + " " + password);
