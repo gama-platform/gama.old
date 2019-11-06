@@ -100,40 +100,45 @@ public class GamaGridFile extends GamaGisFile {
 								"The format of " + getName(scope) + " is incorrect. Attempting to read it anyway.",
 								scope),
 						false);
-				final StringBuilder text = new StringBuilder();
-				final String NL = System.getProperty("line.separator");
-
-				try (Scanner scanner = new Scanner(getFile(scope))) {
-					// final int cpt = 0;
-					while (scanner.hasNextLine()) {
-						final String line = scanner.nextLine();
-
-						if (line.contains("dx")) {
-							text.append(line.replace("dx", "cellsize") + NL);
-						} else if (line.contains("dy")) {
-							// continue;
-						} else {
-							text.append(line + NL);
-						}
-
-						// if (cpt < 10) {}
-						// else {
-						// text.append(line + NL);
-						// }
-					}
-				} catch (final FileNotFoundException e2) {
-					final GamaRuntimeException ex = GamaRuntimeException.error(
-							"The format of " + getName(scope) + " is not correct. Error: " + e2.getMessage(), scope);
-					ex.addContext("for file " + getPath(scope));
-					throw ex;
-				}
-
-				text.append(NL);
-				// fis = new StringBufferInputStream(text.toString());
-				reader = new GamaGridReader(scope, new StringBufferInputStream(text.toString()), fillBuffer);
+				
+				reader = fixFileHeader(scope,fillBuffer);
 			}
 		}
 		return reader;
+	}
+	
+	public GamaGridReader fixFileHeader(IScope scope,final boolean fillBuffer) {
+		final StringBuilder text = new StringBuilder();
+		final String NL = System.getProperty("line.separator");
+
+		try (Scanner scanner = new Scanner(getFile(scope))) {
+			// final int cpt = 0;
+			while (scanner.hasNextLine()) {
+				final String line = scanner.nextLine();
+
+				if (line.contains("dx")) {
+					text.append(line.replace("dx", "cellsize") + NL);
+				} else if (line.contains("dy")) {
+					// continue;
+				} else {
+					text.append(line + NL);
+				}
+
+				// if (cpt < 10) {}
+				// else {
+				// text.append(line + NL);
+				// }
+			}
+		} catch (final FileNotFoundException e2) {
+			final GamaRuntimeException ex = GamaRuntimeException.error(
+					"The format of " + getName(scope) + " is not correct. Error: " + e2.getMessage(), scope);
+			ex.addContext("for file " + getPath(scope));
+			throw ex;
+		}
+
+		text.append(NL);
+		// fis = new StringBufferInputStream(text.toString());
+		return new GamaGridReader(scope, new StringBufferInputStream(text.toString()), fillBuffer);
 	}
 
 	class GamaGridReader {

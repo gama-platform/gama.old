@@ -199,7 +199,9 @@ public class ImageDataLoader {
 			// yllcorner
 			infile.nextLine();
 			// cellsize
-			infile.nextLine();
+			String cellsize = infile.nextLine();
+			if (cellsize.startsWith("dx") || cellsize.startsWith("dy")) infile.nextLine();
+			
 			// NODATA_value
 			if (infile.hasNext("NODATA_value")) {
 				infile.next();
