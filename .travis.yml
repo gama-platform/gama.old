@@ -27,7 +27,7 @@ addons:
     sonarcloud:
       organization: "gama-platform" # the key of the org you chose at step #3
       token:
-        secure: "$SONAR_TOKEN"
+        secure: "LVKRZFl4dsdpuLjZ7S+0pRNX3B1Agr239bvKE1LACOR/Jz+EoUVo5+o7AdQ+/qRKuUf7DbP8SzC9G+TWbv7HMFTVUocMAqrqho/51AuEUptkh1mkdqq3sClPrjQbKi98zA2BOr85QfnHMBeDqP1MttxrO6fzBTDTwlT2AK7mkhsZKloXKXFfA+t9Mv55B8DJAQ+nt8ja8dUhbj+x8wXcqpmIWUK206OBtnMXtSZZw5hVJa+myTtR49RbpriCMFnMoPn3pC/sJTAHUluIJVwZ4ps67ISo5r5GUli3yLyZtt6kQJuHyTNxBs3z/J3NARL88xSHN8/+ZEatgue56ePe0/jzzVI+b4Og8F8iAjDHUjxqxMAFWoKDAWmnJlhUUj3z0wNlJciXjZXzpTkRNw3qsVpmIyQWY3PESB1aq9EDriGnq3/p1G0A5XqueWxgklKWTavwZznwPOQPkS0jX/fvxl9Zt1YfbUifIC3hs+TlfLmdGsnsQ/3q2CTYYFvLd5Aie/fIRNM4kCqFOgT+7k7OE7aYjXMOxnoB/vnRhDB1Vx4VO1QFG4td/65h15xSxWNJalXXCv+OL7CZ4Tw5xMzvvbjx1GhancUmFxbJskNfpU9ieVCOZdd+HSt7+a4QNn1Pd7ZQoeislm1OluxGgLCjo99rVAppsv3h42ZbqQUXfv4="
 
 script: 
   - bash ./travis/compile.sh	
