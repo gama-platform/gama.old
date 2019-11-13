@@ -297,4 +297,3 @@ else
 
 fi
 
-function tmp(){}
