@@ -22,7 +22,7 @@ function mvn_install_with_sonar() {
 
 	echo "Building " $1
 	cd $1
-	if mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama$1 -Dsonar.host.url=https://sonarcloud.io then
+	if mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=gama-platform_gama$1 -Dsonar.host.url=https://sonarcloud.io; then
 	   echo ok
 	else
 	   echo Something went wrong.
