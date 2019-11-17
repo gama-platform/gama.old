@@ -286,7 +286,7 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		}
 
 		final Solver solver = createSolver(scope, stepSize);
-		if (solver == null) { return null; }
+//		if (solver == null) { return null; }
 		final double timeInit =
 				timeInitExp == null ? scope.getSimulation().getClock().getCycle() * simStepDurationFromUnit
 						: Cast.asFloat(scope, timeInitExp.value(scope));
