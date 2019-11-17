@@ -15,7 +15,7 @@ notifications:
 cache:
   directories:
     - "$HOME/.m2"    
-    - "$HOME/.sonar/cache"
+    - "$HOME/.sonarscanner"
 addons:
     apt:
         packages:      
