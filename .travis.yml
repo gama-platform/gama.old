@@ -27,8 +27,6 @@ addons:
     # https://docs.travis-ci.com/user/sonarcloud/#inspecting-code-with-the-sonarqube-scanner
     sonarcloud:
       organization: "gama-platform" # the key of the org you chose at step #3
-      token:
-        secure: "UTXpLhczMEw8f/cYya/Bmmxb7CCkZIdoE8yjX5fn3y9WDc6whCSi4QyQW4hm4CMho3+1X77RwJ6OAWBLdVITNCZMZUVvHfe/FUSLPgn6wmxtSrcPIQdZykDMOUX3fI5WvwIR1xFnnWS9mUCgEvi2tl12aCtHcucxXvZwlrYagKbzlguFyFN/pJ6sBssgO3jXy23Jyzbk8BjrHa4uqVjnIpnwX/D4KSVAJXW4op56JW6fTCZ2QI4jCowL3klbdbNXyFhnh7F6lNzsrpXyptvcNQref97p8pISlxoTEyfMjQNlI1cpNQKtxa3H9/H6/va0VgSqI1BCWfExDTVlOPkwZg3HlablVnloSBDZYDf1eGj6JHxD89zDOJCXLrE5XxU6eqKYruYfTpGkhBWDVIaPdb8zoL4ntwrM1tMXt+riZ3SD87qpv/1wr6Dlc2/1/cGUTZBhtC2fr+5o6g9CY6SyUFfI2VjmSWn/G5D5arXlt5Z++XFw28qRkSafJ0NM1EGutSE1ALH+XXhKOhYGqP8SzNubMJva7pvAaQFPRd1ov838lH8a6/OQND60NrRNsanwCvz2qGGzxBvsKdJbXKTfYcVsTbF0Uh5fHeHc8JI3tjQYd8Lcainrw+FRX46eoPIYGKzSMf8H8wliUEo6YX8ZkKQpLYTBBqx5ydYQRJ5pRT4="
 script: 
   - bash ./travis/compile.sh	
   - bash ./travis/validate_and_test.sh
