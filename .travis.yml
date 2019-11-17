@@ -27,6 +27,7 @@ addons:
     # https://docs.travis-ci.com/user/sonarcloud/#inspecting-code-with-the-sonarqube-scanner
     sonarcloud:
       organization: "gama-platform" # the key of the org you chose at step #3
+      token: $SONAR_TOKEN
 script: 
   - bash ./travis/compile.sh	
   - bash ./travis/validate_and_test.sh
