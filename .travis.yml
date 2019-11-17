@@ -28,8 +28,6 @@ addons:
     sonarcloud:
       organization: "gama-platform" # the key of the org you chose at step #3
       token: $SONAR_TOKEN
-git:
-  depth: false
 script: 
   - bash ./travis/compile.sh	
   - bash ./travis/validate_and_test.sh
