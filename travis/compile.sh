@@ -1,5 +1,8 @@
 #!/bin/bash
 
+MESSAGE=$(git log -1 HEAD --pretty=format:%s)
+echo $MESSAGE
+
 function mvn_install() {
 
 	echo "Building " $1
@@ -67,7 +70,7 @@ install (){
 	echo "Install GAMA project"			
 	
 	
-if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]] || [[ $MSG == *"ci sonarcloud"* ]]; then 	
+if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]] || [[ $MESSAGE == *"ci sonarcloud"* ]]; then 	
 	
 	
 	
@@ -360,8 +363,6 @@ install1 (){
 
 
  
-MESSAGE=$(git log -1 HEAD --pretty=format:%s)
-echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
 	MSG+=" ci fullbuild "
 fi 
