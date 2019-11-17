@@ -494,7 +494,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public double getDisplayWidth() {
-		return viewPort.width;
+		return (double)viewPort.width;
 	}
 
 	protected void setDisplayWidth(final int displayWidth) {
@@ -508,7 +508,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public double getDisplayHeight() {
-		return viewPort.height;
+		return (double)viewPort.height;
 	}
 
 	protected void setDisplayHeight(final int displayHeight) {
