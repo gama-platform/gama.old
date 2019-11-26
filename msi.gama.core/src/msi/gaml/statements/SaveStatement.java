@@ -529,8 +529,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			// This is perfectly possible for the GeoTiff, but as GAMA can only read Byte format GeoTiff files, we limit
 			// the save to this
 			// specific format of data.
-			// final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
-			final GridCoverage2D coverage = createCoverageByteFromFloat("data", imagePixelData, refEnvelope);
+			 final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+//			final GridCoverage2D coverage = createCoverageByteFromFloat("data", imagePixelData, refEnvelope);
 
 			try {
 
