@@ -18,6 +18,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * A class that facilitates the development of classes holding attributes declared in symbols' facets
@@ -154,7 +155,10 @@ public abstract class AttributeHolder {
 			final T type, final V def, final Function<IExpression, V> constCaster) {
 		final IExpression exp = symbol.getFacet(facet);
 		Attribute<V> result;
-		if (exp == null || exp.isConst() && exp.isContextIndependant()) {
+		// AD 10/12/19 Changed because it was creating problems with constant 
+		// boolean values meant to indicate the presence or absence of the property
+		// see #2902 and #2913
+		if (exp == null || (exp.isConst() && exp.isContextIndependant() && exp.getGamlType() != Types.BOOL) ) {
 			result = new ConstantAttribute<>(exp == null ? def : constCaster != null ? constCaster.apply(exp) : def);
 		} else {
 			result = new ExpressionEvaluator<>(ev, exp);
