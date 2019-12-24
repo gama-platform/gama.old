@@ -6,6 +6,8 @@
 [![Documentation](https://img.shields.io/badge/documentation-web-brightgreen.svg)](https://gama-platform.github.io)
 [![Documentation](https://img.shields.io/badge/documentation-pdf-brightgreen.svg)](https://github.com/gama-platform/gama/wiki/resources/pdf/docGAMAv17.pdf)
 
+[![Sonarcloud](https://sonarcloud.io/api/project_badges/quality_gate?project=gama-platform_gamamsi.gama.parent)](https://sonarcloud.io/organizations/gama-platform/projects)
+
 **Core repository for the GAMA Platform project**
 
 Please post issues about GAMA here:  
