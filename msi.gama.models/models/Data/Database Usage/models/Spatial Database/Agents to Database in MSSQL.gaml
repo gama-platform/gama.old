@@ -12,7 +12,7 @@ global {
 	file boundsShp <- file('../../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	map<string,string> PARAMS <- [//'srid'::'4326', // optinal
-								  'host'::'123.30.143.203','dbtype'::'sqlserver','database'::'GAMAMSSQL',
+								  'host'::'localhost','dbtype'::'sqlserver','database'::'GAMAMSSQL',
 								  'port'::'1433','user'::'gama_usr','passwd'::'123456'];
 
 	init {

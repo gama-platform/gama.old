@@ -8,7 +8,7 @@ model DB2agentMSSQL
 
 global {
 	map<string,string> BOUNDS <- [	"srid"::"32648", // optional
-									"host"::"123.30.143.203",  // server name
+									"host"::"localhost",  // server name
 									"dbtype"::"sqlserver",
 									"database"::"GAMAMSSQL",
 									"port"::"1433",
@@ -16,7 +16,7 @@ global {
 									"passwd"::"123456",
 								  	"select"::"SELECT geom.STAsBinary() as geom FROM bounds;" ];
 	map<string,string> PARAMS <- [	"srid"::"32648", // optional
-									"host"::"123.30.143.203",
+									"host"::"localhost",
 									"dbtype"::"sqlserver",
 									"database"::"GAMAMSSQL",
 									"port"::"1433",
