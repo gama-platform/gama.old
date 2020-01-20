@@ -70,7 +70,7 @@ install (){
 	echo "Install GAMA project"			
 	
 	
-if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]] || [[ $MESSAGE == *"ci sonarcloud"* ]]; then 	
+if [[ $MSG == *"ci cron"* ]] || [[ $MESSAGE == *"ci sonarcloud"* ]]; then 	
 	
 	
 	
