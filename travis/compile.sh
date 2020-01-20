@@ -70,7 +70,7 @@ install (){
 	echo "Install GAMA project"			
 	
 	
-if [[ $MSG == *"ci cron"* ]] || [[ $MESSAGE == *"ci sonarcloud"* ]]; then 	
+if [[ $MSG == *"ci sonarcloud"* ]] || [[ $MESSAGE == *"ci sonarcloud"* ]]; then 	
 	
 	
 	
