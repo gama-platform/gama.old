@@ -72,7 +72,7 @@ public class System {
 			can_be_const = true,
 			concept = IConcept.TEST)
 	@doc ("Returns whether or not the argument raises an error when evaluated")
-	@test ("is_error(\"one\" = 1) = false")
+	@test ("is_error(1.0 = 1) = false")
 	public static Boolean is_error(final IScope scope, final IExpression expr) {
 		try {
 			expr.value(scope);
@@ -87,7 +87,7 @@ public class System {
 			can_be_const = true,
 			concept = IConcept.TEST)
 	@doc ("Returns whether or not the argument raises a warning when evaluated")
-	@test ("is_warning(\"one\" = 1) = false")
+	@test ("is_warning(1.0 = 1) = false")
 	public static Boolean is_warning(final IScope scope, final IExpression expr) {
 		try {
 			expr.value(scope);

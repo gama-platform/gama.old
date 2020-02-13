@@ -1247,7 +1247,6 @@ public class Containers {
 	@operator (
 			value = "sum",
 			can_be_const = true,
-			type = IType.GRAPH,
 			doc = @doc ("Returns the sum of the weights of the graph nodes"),
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })

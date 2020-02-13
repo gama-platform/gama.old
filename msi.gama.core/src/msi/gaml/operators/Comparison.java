@@ -12,8 +12,11 @@ package msi.gaml.operators;
 
 import static com.vividsolutions.jts.index.quadtree.IntervalSize.isZeroWidth;
 
+import org.eclipse.emf.ecore.EObject;
+
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -22,6 +25,11 @@ import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
+import msi.gaml.compilation.IOperatorValidator;
+import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 10 dec. 2010
@@ -30,6 +38,22 @@ import msi.gama.precompiler.IOperatorCategory;
  *
  */
 public class Comparison {
+
+	public static class EqualValidator implements IOperatorValidator {
+
+		@Override
+		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
+			if (arguments.length > 1) {
+				final IType<?> t1 = arguments[0].getGamlType();
+				final IType<?> t2 = arguments[1].getGamlType();
+				if (t1.id() == IType.NONE || t2.id() == IType.NONE) { return true; }
+				if (t1.isTranslatableInto(t2) || t2.isTranslatableInto(t1)) { return true; }
+				context.warning("This equality will always return false", IGamlIssue.UNMATCHED_OPERANDS, emfContext);
+			}
+			return true;
+		}
+
+	}
 
 	public final static String GT = ">";
 	public final static String LT = "<";
@@ -538,6 +562,7 @@ public class Comparison {
 			can_be_const = true,
 			category = { IOperatorCategory.COMPARISON },
 			concept = {})
+	@validator (EqualValidator.class)
 	@doc (
 			usages = @usage (
 					value = "if both operands are any kind of objects, returns true if they are identical (i.e., the same object) or equal (comparisons between nil values are permitted)",
