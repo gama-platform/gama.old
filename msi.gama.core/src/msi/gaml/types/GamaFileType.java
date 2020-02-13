@@ -34,6 +34,7 @@ import msi.gama.util.file.IGamaFile;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.GamaGetter;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 
 /**
  * Written by drogoul Modified on 1st Aug. 2010 Modified on 30 Dec. 2013
@@ -168,8 +169,8 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	@Override
 	public IContainerType typeIfCasting(final IExpression exp) {
-		if (exp.isConst()) {
-			final String s = exp.literalValue();
+		if (exp.isConst() && exp.isContextIndependant()) {
+			final String s = Cast.asString(null, exp.getConstValue());
 			final ParametricFileType ft = getTypeFromFileName(s);
 			return ft;
 		}

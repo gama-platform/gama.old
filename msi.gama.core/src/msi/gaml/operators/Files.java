@@ -1,19 +1,18 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Files.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.operators.Files.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
 import java.io.File;
 import java.util.Map;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
@@ -46,15 +45,17 @@ public class Files {
 	public static final String FOLDER = "folder";
 	public static final String WRITE = "write";
 
-	@operator (
-			value = IKeyword.FILE,
-			can_be_const = true,
-			category = IOperatorCategory.FILE,
-			concept = { IConcept.FILE })
-	@doc (
-			value = "Creates a file in read/write mode, setting its contents to the container passed in parameter",
-			comment = "The type of container to pass will depend on the type of file (see the management of files in the documentation). Can be used to copy files since files are considered as containers. For example: save file('image_copy.png', file('image.png')); will copy image.png to image_copy.png")
-	@no_test
+	// @operator (
+	// value = IKeyword.FILE,
+	// can_be_const = true,
+	// category = IOperatorCategory.FILE,
+	// concept = { IConcept.FILE })
+	// @doc (
+	// value = "Creates a file in read/write mode, setting its contents to the container passed in parameter",
+	// comment = "The type of container to pass will depend on the type of file (see the management of files in the
+	// documentation). Can be used to copy files since files are considered as containers. For example: save
+	// file('image_copy.png', file('image.png')); will copy image.png to image_copy.png")
+	// @no_test
 	public static IGamaFile from(final IScope scope, final String s, final IContainer container) {
 		// WARNING Casting to Modifiable is not safe
 		// TODO: Add a method toModifiableVersion() to IContainer
@@ -63,22 +64,25 @@ public class Files {
 		return (IGamaFile) Types.FILE.cast(scope, s, container, key, content, false);
 	}
 
-	@operator (
-			value = IKeyword.FILE,
-			can_be_const = true,
-			category = IOperatorCategory.FILE,
-			concept = { IConcept.FILE })
-	@doc (
-			value = "opens a file in read only mode, creates a GAML file object, and tries to determine and store the file content in the contents attribute.",
-			comment = "The file should have a supported extension, see file type definition for supported file extensions.",
-			usages = @usage ("If the specified string does not refer to an existing file, an exception is risen when the variable is used."),
-			examples = { @example (
-					value = "let fileT type: file value: file(\"../includes/Stupid_Cell.Data\"); "),
-					@example (
-							value = "			// fileT represents the file \"../includes/Stupid_Cell.Data\""),
-					@example (
-							value = "			// fileT.contents here contains a matrix storing all the data of the text file") },
-			see = { "folder", "new_folder" })
+	//
+	// @operator (
+	// value = IKeyword.FILE,
+	// can_be_const = true,
+	// category = IOperatorCategory.FILE,
+	// concept = { IConcept.FILE })
+	// @doc (
+	// value = "opens a file in read only mode, creates a GAML file object, and tries to determine and store the file
+	// content in the contents attribute.",
+	// comment = "The file should have a supported extension, see file type definition for supported file extensions.",
+	// usages = @usage ("If the specified string does not refer to an existing file, an exception is risen when the
+	// variable is used."),
+	// examples = { @example (
+	// value = "let fileT type: file value: file(\"../includes/Stupid_Cell.Data\"); "),
+	// @example (
+	// value = " // fileT represents the file \"../includes/Stupid_Cell.Data\""),
+	// @example (
+	// value = " // fileT.contents here contains a matrix storing all the data of the text file") },
+	// see = { "folder", "new_folder" })
 	public static IGamaFile from(final IScope scope, final String s) throws GamaRuntimeException {
 		return from(scope, s, null);
 	}
@@ -91,14 +95,17 @@ public class Files {
 	@doc (
 			value = "Test whether the parameter is the path to an existing file.",
 			examples = { @example (
-							value="string file_name <-\"../includes/buildings.shp\";", isExecutable = false ),
-						@example (
-							value="		if file_exists(file_name){", isExecutable = false),
-						@example (
-							value="			write \"File exists in the computer\";", isExecutable = false),
-						@example (
-							value="	}", isExecutable = false)
-			})
+					value = "string file_name <-\"../includes/buildings.shp\";",
+					isExecutable = false),
+					@example (
+							value = "		if file_exists(file_name){",
+							isExecutable = false),
+					@example (
+							value = "			write \"File exists in the computer\";",
+							isExecutable = false),
+					@example (
+							value = "	}",
+							isExecutable = false) })
 	@no_test
 	public static boolean exist_file(final IScope scope, final String s) {
 		if (s == null) { return false; }
@@ -111,8 +118,6 @@ public class Files {
 			return f.exists() && !f.isDirectory();
 		}
 	}
-
-
 
 	@operator (
 			value = FOLDER,
@@ -258,8 +263,10 @@ public class Files {
 		theName = FileUtils.constructAbsoluteFilePath(scope, folder, false);
 
 		final File file = new File(theName);
-		if (file.exists() && !file.isDirectory()) { throw GamaRuntimeException
-				.error("The folder " + folder + " can not overwrite a file with the same name", scope); }
+		if (file.exists() && !file.isDirectory()) {
+			throw GamaRuntimeException.error("The folder " + folder + " can not overwrite a file with the same name",
+					scope);
+		}
 		if (!file.exists()) {
 			file.mkdirs();
 		}

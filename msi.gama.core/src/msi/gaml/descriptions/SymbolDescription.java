@@ -583,9 +583,6 @@ public abstract class SymbolDescription implements IDescription {
 		if (validated) { return this; }
 		validated = true;
 
-		if (keyword.equals("agents")) {
-			DEBUG.ERR("");
-		}
 		if (isBuiltIn()) {
 			// We simply make sure that the facets are correctly compiled
 			validateFacets();
