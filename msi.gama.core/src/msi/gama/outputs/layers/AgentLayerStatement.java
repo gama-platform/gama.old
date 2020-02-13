@@ -53,6 +53,7 @@ import msi.gaml.types.IType;
 		name = IKeyword.AGENTS,
 		kind = ISymbolKind.LAYER,
 		with_sequence = true,
+		remote_context = true,
 		concept = { IConcept.SPECIES, IConcept.DISPLAY })
 @inside (
 		symbols = IKeyword.DISPLAY)

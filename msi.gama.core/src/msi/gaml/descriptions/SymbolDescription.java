@@ -472,7 +472,8 @@ public abstract class SymbolDescription implements IDescription {
 	protected IType<?> computeType() {
 
 		// Adapter ca pour prendre ne ocmpte les ITypeProvider
-		IType<?> tt = getTypeDenotedByFacet(DATA, TYPE, SPECIES, AS, TARGET, ON);
+		// 13/02/20: Addition of VALUE (see #2932)
+		IType<?> tt = getTypeDenotedByFacet(DATA, TYPE, SPECIES, AS, TARGET, ON, VALUE);
 		IType<?> kt = getTypeDenotedByFacet(INDEX, tt.getKeyType());
 		IType<?> ct = getTypeDenotedByFacet(OF, tt.getContentType());
 		final boolean isContainerWithNoContentsType = tt.isContainer() && ct == Types.NO_TYPE;
@@ -578,8 +579,13 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IDescription validate() {
+
 		if (validated) { return this; }
 		validated = true;
+
+		if (keyword.equals("agents")) {
+			DEBUG.ERR("");
+		}
 		if (isBuiltIn()) {
 			// We simply make sure that the facets are correctly compiled
 			validateFacets();
@@ -608,6 +614,7 @@ public abstract class SymbolDescription implements IDescription {
 				if (hasError) { return null; }
 			}
 		}
+
 		// We then validate its facets
 		if (!validateFacets()) { return null; }
 		if (!validateChildren()) { return null; }
