@@ -827,17 +827,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				scope.getRandom().shuffle(getNeighborhoods(scope, startAg, cells, new ArrayList<IAgent>()));
 		while (cpt < this.numCols * this.numRows) {
 			cpt++;
-			try (ICollector<IAgent> neighb2 = Collector.getSet()) {
+			try (ICollector<IAgent> neighb2 = Collector.getOrderedSet()) {
 				for (final IAgent ag : neighb) {
 					agT = testPlace(scope, source, filter, ag);
 					if (agT != null) { return agT; }
 					cells.add(ag.getIndex());
 					neighb2.addAll(getNeighborhoods(scope, ag, cells, neighb));
-
 				}
+				neighb2.shuffleInPlaceWith(scope.getRandom()); 
 				neighb = new ArrayList<>(neighb2.items());
 			}
-
 		}
 		return null;
 	}

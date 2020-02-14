@@ -42,7 +42,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public CompoundSpatialIndex(final Envelope bounds, final boolean parallel) {
 		spatialIndexes = new HashMap<>();
 		rootIndex = GamaQuadTree.create(bounds, parallel);
-		uniqueIndexes = Sets.newHashSet(rootIndex);
+		uniqueIndexes = Sets.newHashSet(rootIndex);	
 		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
 		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * Math.sqrt(2) };
 	}
@@ -193,10 +193,11 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) { return Collections.EMPTY_LIST; }
 		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
 		if (id == rootIndex) {
-			try (final ICollector<IAgent> agents = Collector.getSet()) {
+			try (final ICollector<IAgent> agents = Collector.getOrderedSet()) {				
 				for (final ISpatialIndex si : getAllSpatialIndexes()) {
 					agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
 				}
+				agents.shuffleInPlaceWith(scope.getRandom());
 				return agents.items();
 			}
 		}
