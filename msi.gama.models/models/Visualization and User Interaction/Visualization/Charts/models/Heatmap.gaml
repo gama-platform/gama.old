@@ -62,9 +62,8 @@ experiment "Different heatmaps" type: gui
 		
 		display "NIce Heatmap" type: java2D synchronized: true
 		{
-			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style: 'italic' tick_font:
-			'Monospaced' tick_font_size: 14 tick_font_style: 'bold' label_font: 'Serif' label_font_size: 18 label_font_style: 'plain' legend_font: 'SanSerif' legend_font_size: 18
-			legend_font_style: 'bold' x_label: 'Nice Xlabel' y_label: 'Nice Ylabel'
+			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: font('Serif', 32.0, #italic) tick_font:
+			font('Monospaced', 14, #bold) label_font: font('Serif', 18, #plain) legend_font: font('SanSerif', 18, #bold) x_label: 'Nice Xlabel' y_label: 'Nice Ylabel'
 			{
 				data "test" value: mylldata color: [# darkblue, # orange] accumulate_values: false;
 			}
