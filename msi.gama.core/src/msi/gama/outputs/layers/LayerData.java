@@ -35,7 +35,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.AttributeHolder;
-import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 16 nov. 2010
@@ -53,7 +52,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	Attribute<ILocation> size;
 	Attribute<ILocation> position;
-	Attribute<Boolean> refresh;
+	final Attribute<Boolean> refresh;
 	final Attribute<Boolean> fading;
 	final Attribute<Integer> trace;
 	Attribute<Boolean> selectable;
@@ -119,12 +118,6 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	public void setPosition(final double x, final double y, final double z) {
 		position = create(POSITION, new GamaPoint(x, y, z));
 		positionIsInPixels = false;
-	}
-
-	@Override
-	public void setRefresh(final Boolean r) {
-		refresh = create(null, Types.BOOL, r);
-
 	}
 
 	@Override

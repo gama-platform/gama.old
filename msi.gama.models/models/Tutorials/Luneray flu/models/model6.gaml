@@ -94,7 +94,7 @@ species building {
 		draw shape color: #gray;
 	}
 	aspect geom3D {
-		draw shape depth: 20 #m border: #black texture:["../includes/roof_top.png","../includes/texture.jpg"];
+		draw shape depth: 20 #m border: #black texture:["../includes/roof_top.jpg","../includes/texture.jpg"];
 	}
 }
 
@@ -117,7 +117,7 @@ experiment main type: gui {
 			}
 		}
 		display view3D type: opengl ambient_light: 80 {
-			image "../includes/luneray.png" refresh:false; 
+			image "../includes/luneray.jpg" refresh:false; 
 			species building aspect:geom3D refresh: false;
 			species road aspect: geom3D refresh: false;
 			species people aspect: geom3D ; 

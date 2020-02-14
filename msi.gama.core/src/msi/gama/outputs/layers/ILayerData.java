@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.ILayerData.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.ILayerData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -28,39 +28,37 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface ILayerData {
 
-	public abstract void compute(final IScope sim, IGraphics g) throws GamaRuntimeException;
+	void compute(final IScope sim, IGraphics g) throws GamaRuntimeException;
 
-	public abstract void setTransparency(final double f);
+	void setTransparency(final double f);
 
-	public abstract Double getTransparency(final IScope scope);
+	Double getTransparency(final IScope scope);
 
-	public abstract void setSize(final ILocation p);
+	void setSize(final ILocation p);
 
-	public abstract void setSize(final double width, final double height, final double depth);
+	void setSize(final double width, final double height, final double depth);
 
-	public abstract boolean isRelativePosition();
+	boolean isRelativePosition();
 
-	public abstract boolean isRelativeSize();
+	boolean isRelativeSize();
 
-	public abstract void setPosition(final ILocation p);
+	void setPosition(final ILocation p);
 
-	public abstract void setPosition(final double x, final double y, final double z);
+	void setPosition(final double x, final double y, final double z);
 
-	public abstract void setRefresh(final Boolean r);
+	ILocation getPosition();
 
-	public abstract ILocation getPosition();
+	ILocation getSize();
 
-	public abstract ILocation getSize();
+	Boolean getRefresh();
 
-	public abstract Boolean getRefresh();
+	Integer getTrace();
 
-	public abstract Integer getTrace();
+	Boolean getFading();
 
-	public abstract Boolean getFading();
+	Boolean isSelectable();
 
-	public abstract Boolean isSelectable();
-
-	public abstract void setSelectable(Boolean b);
+	void setSelectable(Boolean b);
 
 	Point getPositionInPixels();
 
@@ -68,17 +66,17 @@ public interface ILayerData {
 
 	void computePixelsDimensions(IGraphics g);
 
-	public abstract void addElevation(double currentElevation);
+	void addElevation(double currentElevation);
 
 	void setVisibleRegion(Envelope e);
 
 	Envelope getVisibleRegion();
 
-	public abstract double getAddedElevation();
+	double getAddedElevation();
 
 	/**
 	 * Whether the layer is to be refreshed dynamically everytime the surface displays itself
-	 * 
+	 *
 	 * @return true if the layer is dynamic, false otherwise
 	 */
 	default boolean isDynamic() {
