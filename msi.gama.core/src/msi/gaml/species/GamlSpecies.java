@@ -340,7 +340,7 @@ public class GamlSpecies extends AbstractSpecies {
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
 		concurrency = this.getFacet(IKeyword.PARALLEL);
-		if (((SpeciesDescription) desc).isMirror() && !hasFacet(IKeyword.SCHEDULES)) {
+		if (isMirror() && !hasFacet(IKeyword.SCHEDULES)) {
 			// See Issue #2731 -- mirror species have a default scheduling rule
 			schedule = scope -> {
 				final IList<IAgent> agents = GamaListFactory.create();

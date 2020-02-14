@@ -88,6 +88,7 @@ import msi.gaml.variables.IVariable;
  */
 public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPopulation<T> {
 
+
 	public static <E extends IAgent> GamaPopulation<E> createPopulation(final IScope scope, final IMacroAgent host,
 			final ISpecies species) {
 		if (species.isGrid()) {
@@ -113,6 +114,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	protected int currentAgentIndex;
 	private final int hashCode;
 	private final boolean isInitOverriden, isStepOverriden;
+	private final MirrorPopulationManagement mirrorManagement;
 
 	/**
 	 * Listeners, created in a lazy way
@@ -171,7 +173,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			updatableVars[i] = species.getVar(s);
 		}
 		if (species.isMirror() && host != null) {
-			host.getScope().getSimulation().postEndAction(new MirrorPopulationManagement(species.getFacet(MIRRORS)));
+			mirrorManagement = new MirrorPopulationManagement(species.getFacet(MIRRORS));
+			// host.getScope().getSimulation().postEndAction(new MirrorPopulationManagement(species.getFacet(MIRRORS)));
+		} else {
+			mirrorManagement = null;
 		}
 		hashCode = Objects.hash(getSpecies(), getHost());
 		final boolean[] result = { false, false };
@@ -198,6 +203,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final int frequency = Cast.asInt(scope, frequencyExp.value(scope));
 			final int step = scope.getClock().getCycle();
 			if (frequency == 0 || step % frequency != 0) { return true; }
+		}
+		if (mirrorManagement != null) {
+			mirrorManagement.executeOn(scope);
 		}
 		getSpecies().getArchitecture().preStep(scope, this);
 		return stepAgents(scope);
@@ -242,6 +250,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public boolean init(final IScope scope) {
+		// See #2933
+		if (mirrorManagement != null) {
+			mirrorManagement.executeOn(scope);
+		}
 		return true;
 		// // Do whatever the population has to do at the first step ?
 	}

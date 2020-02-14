@@ -239,7 +239,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
-		return getSpecies().getArchitecture().init(scope);
+		return getSpecies().getArchitecture().init(scope) ? initSubPopulations(scope) : false;
 	}
 
 	/**
@@ -281,6 +281,10 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	protected boolean doStep(final IScope scope) {
 		return scope.execute(getSpecies().getArchitecture(), this, null).passed() ? stepSubPopulations(scope) : false;
+	}
+
+	protected boolean initSubPopulations(final IScope scope) {
+		return true;
 	}
 
 	protected boolean stepSubPopulations(final IScope scope) {

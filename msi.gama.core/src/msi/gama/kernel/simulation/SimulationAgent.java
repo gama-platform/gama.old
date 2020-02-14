@@ -312,9 +312,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		super._init_(this.getScope());
-		if (outputs != null) {
-			outputs.init(this.getScope());
-		}
+		initOutputs();
 		return this;
 	}
 

@@ -2,11 +2,11 @@
  *
  * msi.gama.outputs.layers.ImageLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
  * simulation platform (v. 1.8)
- * 
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -60,6 +60,11 @@ public class ImageLayer extends AbstractLayer {
 		}
 	}
 
+	@Override
+	protected ILayerData createData() {
+		return new ImageLayerData(definition);
+	}
+
 	private GamaImageFile createFileFromFileExpression(final IScope scope) {
 		final GamaFile<?, ?> result = (GamaFile<?, ?>) file.value(scope);
 		return verifyFile(scope, result);
@@ -108,7 +113,7 @@ public class ImageLayer extends AbstractLayer {
 			if (dg.is2D()) {
 				loc = new GamaPoint(env.getMinX(), env.getMinY());
 			} else {
-				loc = new GamaPoint(env.getWidth() / 2+ env.getMinX(), env.getHeight() / 2 + env.getMinY());
+				loc = new GamaPoint(env.getWidth() / 2 + env.getMinX(), env.getHeight() / 2 + env.getMinY());
 			}
 			attributes.setLocation(loc);
 			attributes.setSize(Scaling3D.of(env.getWidth(), env.getHeight(), 0));

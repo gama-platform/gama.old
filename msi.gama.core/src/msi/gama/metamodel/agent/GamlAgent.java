@@ -92,6 +92,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		return microPopulations;
 	}
 
+	protected boolean initSubPopulations(final IScope scope) {
+		for (final IPopulation<? extends IAgent> pop : getMicroPopulations()) {
+			if (!scope.init(pop).passed()) { return false; }
+		}
+		return true;
+	}
+
 	@Override
 	protected boolean stepSubPopulations(final IScope scope) {
 		for (final IPopulation<? extends IAgent> pop : getMicroPopulations()) {
