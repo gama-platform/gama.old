@@ -11,6 +11,7 @@
 package msi.gaml.statements;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 
 /**
  * @author drogoul
@@ -54,6 +55,18 @@ public class Arguments extends Facets {
 	public void dispose() {
 		super.dispose();
 		caller.set(null);
+	}
+
+	/**
+	 * Returns arguments where all the temp variables belonging to the scope passed in parameter are replaced by their
+	 * values
+	 */
+	public Arguments resolveAgainst(final IScope scope) {
+		forEachFacet((n, f) -> {
+			f.setExpression(f.getExpression().resolveAgainst(scope));
+			return true;
+		});
+		return this;
 	}
 
 }
