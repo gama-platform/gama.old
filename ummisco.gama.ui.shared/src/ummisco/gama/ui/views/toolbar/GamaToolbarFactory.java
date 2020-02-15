@@ -24,9 +24,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.Pref;
-import msi.gaml.types.IType;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -40,9 +37,9 @@ import ummisco.gama.ui.resources.IGamaColors;
  */
 public class GamaToolbarFactory {
 
-	public static final Pref<Boolean> REDUCED_VIEW_TOOLBAR_HEIGHT = GamaPreferences
-			.create("pref_view_toolbar_height", "Reduce the height of views' toolbars", false, IType.BOOL, false)
-			.in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
+	// public static final Pref<Boolean> REDUCED_VIEW_TOOLBAR_HEIGHT = GamaPreferences
+	// .create("pref_view_toolbar_height", "Reduce the height of views' toolbars", false, IType.BOOL, false)
+	// .in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
 	public static class GamaComposite extends Composite {
 
@@ -150,7 +147,7 @@ public class GamaToolbarFactory {
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		layout.marginWidth = 0;
-		final int margin = REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? -1 : 0;
+		final int margin = 0; // REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? -1 : 0;
 		layout.marginTop = margin;
 		layout.marginBottom = margin;
 		layout.marginHeight = margin;

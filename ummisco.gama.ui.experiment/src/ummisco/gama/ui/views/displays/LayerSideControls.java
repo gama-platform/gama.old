@@ -26,6 +26,7 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayData;
@@ -518,6 +519,7 @@ public class LayerSideControls {
 	}
 
 	private void copyCameraAndKeystoneDefinition(final IScope scope, final LayeredDisplayData data) {
+		if (!GamaPreferences.Displays.OPENGL_CLIPBOARD_CAM.getValue()) { return; }
 		final String toCopy = cameraDefinitionToCopy() + " " + Strings.LN
 				+ (data.isKeystoneDefined() ? keystoneDefinitionToCopy(scope, data) : "");
 		WorkbenchHelper.copy(toCopy);

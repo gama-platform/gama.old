@@ -420,6 +420,9 @@ public class GamaPreferences {
 						.in(NAME, RENDERING);
 		public static final Pref<Boolean> OPENGL_NUM_KEYS_CAM = create("pref_display_numkeyscam",
 				"Use Numeric Keypad (2,4,6,8) for camera interaction", true, IType.BOOL, true).in(NAME, RENDERING);
+		public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",
+				"Copy the camera definition to the clipboard when it is changed on the display", false, IType.BOOL,
+				true).in(NAME, RENDERING);
 	}
 
 	public static class External {
