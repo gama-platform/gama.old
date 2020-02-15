@@ -21,6 +21,7 @@ public class MultiThreadedUDPSocketServer extends Thread {
 	private final IAgent myAgent;
 	private volatile boolean closed = false;
 	private DatagramSocket myUDPServerSocket;
+	private int nbBits ;
 
 	/**
 	 * @return the myServerSocket
@@ -37,9 +38,10 @@ public class MultiThreadedUDPSocketServer extends Thread {
 		this.myUDPServerSocket = u;
 	}
 
-	public MultiThreadedUDPSocketServer(final IAgent a, final DatagramSocket ss) {
+	public MultiThreadedUDPSocketServer(final IAgent a, final DatagramSocket ss, final String maxSizePackage) {
 		myAgent = a;
 		myUDPServerSocket = ss;
+		nbBits = (maxSizePackage == null) ? 1024 : Integer.parseInt(maxSizePackage);
 	}
 
 	@SuppressWarnings ("unchecked")
@@ -51,8 +53,7 @@ public class MultiThreadedUDPSocketServer extends Thread {
 				if (myAgent.dead()) {
 					this.interrupt();
 				}
-
-				final byte[] receiveData = new byte[1024];
+				final byte[] receiveData = new byte[nbBits];
 				// Accept incoming connections.
 				final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				myUDPServerSocket.receive(receivePacket);

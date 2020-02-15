@@ -43,4 +43,6 @@ public interface INetworkSkill {
 	// SKILL TEST
 	String SIMULATE_STEP = "simulate_step";
 
+	// UDP data packet max size
+	String MAX_DATA_PACKET_SIZE = "size_packet";
 }

@@ -33,7 +33,7 @@ public class UDPConnector extends Connector {
 	public static String _UDP_SERVER = "__udp_server";
 
 	private boolean is_server = false;
-
+	
 	public UDPConnector(final IScope scope, final boolean as_server) {
 		is_server = as_server;
 	}
@@ -65,7 +65,7 @@ public class UDPConnector extends Connector {
 		if (agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port) == null) {
 			try {
 				final DatagramSocket sersock = new DatagramSocket(port);
-				final MultiThreadedUDPSocketServer ssThread = new MultiThreadedUDPSocketServer(agent, sersock);
+				final MultiThreadedUDPSocketServer ssThread = new MultiThreadedUDPSocketServer(agent, sersock, this.getConfigurationParameter(PACKET_SIZE));
 				ssThread.start();
 				agent.getScope().getSimulation().setAttribute(_UDP_SERVER + port, ssThread);
 

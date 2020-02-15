@@ -41,5 +41,5 @@ public interface IConnector {
 	String LOCAL_NAME = "LOCAL_NAME";
 	String LOGIN = "LOGIN";
 	String PASSWORD = "PASSWORD";
-
+	String PACKET_SIZE = "PACKET_SIZE";
 }
