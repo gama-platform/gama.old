@@ -160,17 +160,18 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	protected void createNewSerie(final IScope scope, final String serieid) {
 		// final ChartDataSeries dataserie = chartdataset.getDataSeries(scope,
 		// serieid);
-		final PiePlot plot = (PiePlot) this.chart.getPlot();
-
-		// final DefaultPieDataset firstdataset = (DefaultPieDataset)
-		// plot.getDataset();
-
-		nbseries++;
-		IdPosition.put(serieid, nbseries - 1);
-		if (getStyle().equals(IKeyword.EXPLODED)) {
-			plot.setExplodePercent(serieid, 0.20);
+		if(!IdPosition.containsKey(serieid)) {
+			final PiePlot plot = (PiePlot) this.chart.getPlot();
+	
+			// final DefaultPieDataset firstdataset = (DefaultPieDataset)
+			// plot.getDataset();
+	
+			nbseries++;
+			IdPosition.put(serieid, nbseries - 1);
+			if (getStyle().equals(IKeyword.EXPLODED)) {
+				plot.setExplodePercent(serieid, 0.20);
+			}
 		}
-
 		// DEBUG.LOG("new serie"+serieid+" at
 		// "+IdPosition.get(serieid)+" jfds "+jfreedataset.size()+" datasc "+"
 		// nbse "+nbseries);

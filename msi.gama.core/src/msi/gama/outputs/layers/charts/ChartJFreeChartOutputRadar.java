@@ -129,26 +129,28 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		// serieid);
 		// final XYIntervalSeries serie = new
 		// XYIntervalSeries(dataserie.getSerieLegend(scope), false, true);
-		final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
+		if(!IdPosition.containsKey(serieid)) {
 
-		final DefaultCategoryDataset firstdataset = (DefaultCategoryDataset) plot.getDataset();
-
-		if (nbseries == 0) {
-			plot.setDataset(firstdataset);
-
-		} else {
-
-			// DefaultCategoryDataset newdataset=new DefaultCategoryDataset();
-			// jfreedataset.add(newdataset);
-			// plot.setDataset(jfreedataset.size()-1, newdataset);
-			// plot.setDataset(nbseries, firstdataset);
-
+			final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
+	
+			final DefaultCategoryDataset firstdataset = (DefaultCategoryDataset) plot.getDataset();
+	
+			if (nbseries == 0) {
+				plot.setDataset(firstdataset);
+	
+			} else {
+	
+				// DefaultCategoryDataset newdataset=new DefaultCategoryDataset();
+				// jfreedataset.add(newdataset);
+				// plot.setDataset(jfreedataset.size()-1, newdataset);
+				// plot.setDataset(nbseries, firstdataset);
+	
+			}
+			nbseries++;
+			// plot.setRenderer(nbseries-1,
+			// (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
+			IdPosition.put(serieid, nbseries - 1);
 		}
-		nbseries++;
-		// plot.setRenderer(nbseries-1,
-		// (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
-		IdPosition.put(serieid, nbseries - 1);
-
 		// DEBUG.LOG("new serie"+serieid+" at
 		// "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+"
 		// jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount()+" nbse
