@@ -19,9 +19,8 @@ experiment "Different radars" type: gui
 		layout #split;
 		display "nice_radar_chart" synchronized: true
 		{
-			chart "Nice Cumulative Radar Chart" type: radar background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style:
-			'italic' tick_font: 'Monospaced' tick_font_size: 14 tick_font_style: 'bold' label_font: 'Arial' label_font_size: 18 label_font_style: 'bold' legend_font: 'SanSerif'
-			legend_font_size: 14 legend_font_style: 'bold'
+			chart "Nice Cumulative Radar Chart" type: radar background: # darkblue color: # lightgreen axes: # lightgreen title_font: font('Serif', 32.0 #italic)
+			 tick_font: font('Monospaced',14 #bold) label_font: font('Arial', 18 #bold) legend_font: font('SanSerif', 14 ,#bold)
 			{
 				data "BCC" value: 10 * cos(100 * cycle) accumulate_values: true color: # yellow;
 				data "ABC" value: 10 * sin(100 * cycle) accumulate_values: true color: # lightgreen;

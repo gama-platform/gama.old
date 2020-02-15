@@ -225,12 +225,6 @@ public abstract class ChartOutput {
 		// if there is something to do to use custom X axis
 	}
 
-	int toFontStyle(final String style) {
-		if (style.equals("bold")) { return Font.BOLD; }
-		if (style.equals("italic")) { return Font.ITALIC; }
-		return Font.PLAIN;
-	}
-
 	public void initChart(final IScope scope, final String chartname) {
 		chname = chartname;
 
@@ -315,28 +309,20 @@ public abstract class ChartOutput {
 		titleFontSize = value;
 	}
 
-	public void setTickFontStyle(final IScope scope, final String value) {
-		if (value != null) {
-			tickFontStyle = toFontStyle(value);
-		}
+	public void setTickFontStyle(final IScope scope, final int value) {
+		tickFontStyle = value;
 	}
 
-	public void setLabelFontStyle(final IScope scope, final String value) {
-		if (value != null) {
-			labelFontStyle = toFontStyle(value);
-		}
+	public void setLabelFontStyle(final IScope scope, final int value) {
+		labelFontStyle = value;
 	}
 
-	public void setLegendFontStyle(final IScope scope, final String value) {
-		if (value != null) {
-			legendFontStyle = toFontStyle(value);
-		}
+	public void setLegendFontStyle(final IScope scope, final int value) {
+		legendFontStyle = value;
 	}
 
-	public void setTitleFontStyle(final IScope scope, final String value) {
-		if (value != null) {
-			titleFontStyle = toFontStyle(value);
-		}
+	public void setTitleFontStyle(final IScope scope, final int value) {
+		titleFontStyle = value;
 	}
 
 	public void setXLabel(final IScope scope, final String asString) {

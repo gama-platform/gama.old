@@ -54,7 +54,8 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 		final GridLayout layout = new GridLayout(2, false);
 		rightSection.setLayout(layout);
 
-		modelChooser = new Text(rightSection, SWT.BORDER | SWT.SINGLE);
+		modelChooser = new Text(rightSection, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY);
+		modelChooser.setBackground(parent.getBackground());
 		applyGridData(modelChooser, 1);
 		modelChooser.addModifyListener(e -> dialogChanged());
 		final Button button = new Button(rightSection, SWT.PUSH);

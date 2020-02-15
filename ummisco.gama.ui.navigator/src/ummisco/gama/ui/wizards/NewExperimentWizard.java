@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.wizards;
@@ -25,10 +25,11 @@ public class NewExperimentWizard extends AbstractNewModelWizard implements INewW
 		final IResource model =
 				ResourcesPlugin.getWorkspace().getRoot().findMember(getPage().getExperimentedModelPath());
 		final IPath pathToModel;
-		if (model.getType() != IResource.FILE) {
+		if (model == null || model.getType() != IResource.FILE) {
 			pathToModel = null;
-		} else
+		} else {
 			pathToModel = model.getFullPath().makeRelativeTo(folder.getFullPath());
+		}
 		final String header = super.getHeader(folder, str, title);
 		final String result = pathToModel == null ? header.replace("model:$MODEL$", "")
 				: header.replaceAll("\\$MODEL\\$", "'" + pathToModel + "'");

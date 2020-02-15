@@ -23,8 +23,8 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.ExecutionResult;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
@@ -218,13 +218,13 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 				desc.error("Action " + action + " does not exist in " + sd.getName(), IGamlIssue.UNKNOWN_ACTION, ACTION,
 						action, sd.getName());
 			}
-			ActionDescription ad = sd.getAction(action);
+			final ActionDescription ad = sd.getAction(action);
 			// if (ad.getName().equals("halt")) {
 			// DEBUG.OUT("");
 			// }
 			if (ad instanceof PrimitiveDescription) {
-				PrimitiveDescription pd = (PrimitiveDescription) ad;
-				String dep = pd.getDeprecated();
+				final PrimitiveDescription pd = (PrimitiveDescription) ad;
+				final String dep = pd.getDeprecated();
 				if (dep != null) {
 					desc.warning("Action " + action + " is deprecated: " + dep, IGamlIssue.DEPRECATED, ACTION);
 				}
@@ -268,7 +268,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		final IStatement.WithArgs executer = context.getAction(name);
 		Object result = null;
 		if (executer != null) {
-			final ExecutionResult er = scope.execute(executer, args);
+			final ExecutionResult er = scope.execute(executer, args == null ? null : args.resolveAgainst(scope));
 			result = er.getValue();
 		} else if (function != null) {
 			result = function.value(scope);
