@@ -76,12 +76,14 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 						type = IType.LIST,
 						optional = true,
 						doc = @doc (
+								deprecated = "do not work anymore, use t[] instead; it is automatically updated.",
 								value = "time interval inside integration process")),
 				@facet (
 						name = "integrated_values",
 						type = IType.LIST,
 						optional = true,
 						doc = @doc (
+								deprecated = "do not work anymore, use S[], I[] or any variable of the equations instead; it is automatically updated.",								
 								value = "list of variables's value inside integration process")),
 				@facet (
 						name = "t0",
