@@ -83,7 +83,7 @@ import msi.gaml.variables.IVariable;
 		kind = ISymbolKind.EXPERIMENT,
 		with_sequence = true,
 		concept = { IConcept.EXPERIMENT })
-@doc ("Declaration of a particular type of agent that can manage simulations")
+@doc ("Declaration of a particular type of agent that can manage simulations. If the experiment directly imports a model using the 'model:' facet, this facet *must* be the first one after the name of the experiment")
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,
