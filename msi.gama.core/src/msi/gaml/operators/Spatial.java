@@ -3089,6 +3089,8 @@ public abstract class Spatial {
 						value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
 						equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
 						test = false) })
+		@test("split_lines([line({10,10}, {20,20}), line({10.0,20.0,0.0},{15.0,15.0,0.0})]) = [line ({10.0,10.0,0.0},{15.0,15.0,0.0}), line({15.0,15.0,0.0},{20.0,20.0,0.0}), line({10.0,20.0,0.0},{15.0,15.0,0.0})]")
+		@test("length(split_lines([line({10,10}, {20,20}), line({10.0,20.0,0.0},{15.0,15.0,0.0})])) = 3")
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms,
 				final boolean readAttributes) throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
@@ -3211,10 +3213,16 @@ public abstract class Spatial {
 						+ "is used to specify if the operator should as well keep only the main connected component of the network. "
 						+ "Usage: clean_network(lines:list of geometries or agents, tolerance: float, split_lines: bool, keepMainConnectedComponent: bool)",
 				comment = "The cleaned set of polylines",
-				examples = { @example (
+				examples = { 
+					@example (
 						value = "clean_network(my_road_shapefile.contents, 1.0, true, false)",
 						equals = "returns the list of polulines resulting from the cleaning of the geometry of the agent applying the operator with a tolerance of 1m, and splitting the lines at their intersections.",
-						isExecutable = false) })
+						isExecutable = false),
+					@example (
+						value = "clean_network([line({10,10}, {20,20}), line({10,20},{20,10})],3.0,true,false)",
+						equals = "[line({10.0,20.0,0.0},{15.0,15.0,0.0}),line({15.0,15.0,0.0},{20.0,10.0,0.0}), line({10.0,10.0,0.0},{15.0,15.0,0.0}), line({15.0,15.0,0.0},{20.0,20.0,0.0})]")
+					})
+		@test("length(clean_network([line({10,10}, {20,20}), line({10,20},{20,10})],3.0,true,false)) = 4")
 		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, final double tolerance,
 				final boolean splitlines, final boolean keepMainGraph) {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }
