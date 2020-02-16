@@ -183,8 +183,17 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
+		boolean oneOutputAutosaving = false;
 		for (final IOutput output : ImmutableList.copyOf(this)) {
 			if (!open(scope, output)) { return false; }
+			if (output instanceof IDisplayOutput) {
+				if (((IDisplayOutput) output).isAutoSave()) {
+					oneOutputAutosaving = true;
+				}
+			}
+		}
+		if (oneOutputAutosaving) {
+			synchronize();
 		}
 
 		return true;

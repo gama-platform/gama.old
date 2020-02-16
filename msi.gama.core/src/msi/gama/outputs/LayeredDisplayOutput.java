@@ -49,6 +49,7 @@ import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -243,7 +244,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.AUTOSAVE,
 						type = { IType.BOOL, IType.POINT },
 						optional = true,
-						doc = @doc ("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")), },
+						doc = @doc ("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions. Note that setting autosave to true (or to any other value than false) in a display will synchronize all the displays defined in the experiment")), },
 		omissible = IKeyword.NAME)
 @inside (
 		symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
@@ -575,6 +576,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public void setIndex(final int index) {
 		this.index = index;
+	}
+
+	@Override
+	public boolean isAutoSave() {
+		final IExpression e = getFacet(IKeyword.AUTOSAVE);
+		if (e == null) { return false; }
+		if (e == IExpressionFactory.FALSE_EXPR) { return false; }
+		return true;
 	}
 
 }
