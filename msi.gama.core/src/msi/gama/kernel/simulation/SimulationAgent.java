@@ -553,10 +553,23 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@action (
 			name = "pause",
-			doc = @doc ("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
+			doc = @doc ("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be resumed with the manual intervention of the user or the 'resume' action."))
 
 	public Object pause(final IScope scope) {
-		GAMA.pauseFrontmostExperiment();
+		if (!GAMA.isPaused()) {
+			GAMA.pauseFrontmostExperiment();
+		}
+		return null;
+	}
+
+	@action (
+			name = "resume",
+			doc = @doc ("Allows to resume the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can then be paused with the manual intervention of the user or the 'pause' action."))
+
+	public Object resume(final IScope scope) {
+		if (GAMA.isPaused()) {
+			GAMA.resumeFrontmostExperiment();
+		}
 		return null;
 	}
 

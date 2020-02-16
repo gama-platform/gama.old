@@ -304,6 +304,12 @@ public class GAMA {
 		}
 	}
 
+	public static void resumeFrontmostExperiment() {
+		for (final IExperimentController controller : controllers) {
+			controller.userStart();
+		}
+	}
+
 	public static void reloadFrontmostExperiment() {
 		final IExperimentController controller = getFrontmostController();
 		if (controller != null) {
