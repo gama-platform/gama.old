@@ -235,7 +235,7 @@ import msi.gaml.types.Types;
 						name = ChartLayerStatement.TICKFONTFACE,
 						type = { IType.STRING, IType.FONT },
 						optional = true,
-						doc = @doc ("Tick font face. Either the name of a font face or a font")),
+						doc = @doc ("Tick font face. Either the name of a font face or a font. When used for a series chart, it will set the font of values on the axes, but When used with a pie, it will modify the font of messages associated to each pie section.")),
 				@facet (
 						name = ChartLayerStatement.TICKFONTSIZE,
 						type = IType.INT,
