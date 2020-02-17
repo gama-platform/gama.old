@@ -46,6 +46,14 @@ public class CameraArcBall extends AbstractCamera {
 		final double sinP = Math.sin(factorP);
 		setPosition(getDistance() * cosT * sinP + target.x, getDistance() * sinT * sinP + target.y,
 				getDistance() * cosP + target.z);
+		// See #2854 -- see if putting this here does not restrict the moves using the mouse
+		if (flipped) {
+			setUpVector(-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)),
+					-(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)), -Math.sin(phi * Maths.toRad));
+		} else {
+			setUpVector(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
+					-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
+		}
 	}
 
 	@Override

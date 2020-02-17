@@ -19,7 +19,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
-import msi.gaml.operators.Maths;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
@@ -102,7 +101,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void updateOrientation() {
-		DEBUG.OUT("Upvector updatd as " + upVector);
+		// DEBUG.OUT("Upvector updatd as " + upVector);
 		upVector.setLocation(renderer.getData().getCameraUpVector());
 	}
 
@@ -112,13 +111,13 @@ public abstract class AbstractCamera implements ICamera {
 		cameraInteraction = !data.cameraInteractionDisabled();
 		updateSphericalCoordinatesFromLocations();
 		if (initialized) {
-			if (flipped) {
-				setUpVector(-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)),
-						-(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)), -Math.sin(phi * Maths.toRad));
-			} else {
-				setUpVector(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
-						-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
-			}
+			// if (flipped) {
+			// setUpVector(-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)),
+			// -(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)), -Math.sin(phi * Maths.toRad));
+			// } else {
+			// setUpVector(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
+			// -Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
+			// }
 			drawRotationHelper();
 		}
 
@@ -129,7 +128,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void setPosition(final double xPos, final double yPos, final double zPos) {
-
 		position.setLocation(xPos, yPos, zPos);
 		getRenderer().getData().setCameraPos(new GamaPoint(position));
 	}
@@ -142,7 +140,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public void setUpVector(final double xPos, final double yPos, final double zPos) {
 		upVector.setLocation(xPos, yPos, zPos);
-		DEBUG.OUT("Upvector modified as " + upVector);
+		// DEBUG.OUT("Upvector modified as " + upVector);
 		getRenderer().getData().setCameraUpVector(new GamaPoint(upVector));
 	}
 
