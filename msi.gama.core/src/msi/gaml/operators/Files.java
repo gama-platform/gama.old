@@ -93,7 +93,7 @@ public class Files {
 			category = IOperatorCategory.FILE,
 			concept = { IConcept.FILE })
 	@doc (
-			value = "Test whether the parameter is the path to an existing file.",
+			value = "Test whether the parameter is the path to an existing file. False if it does not exist of if it is a folder",
 			examples = { @example (
 					value = "string file_name <-\"../includes/buildings.shp\";",
 					isExecutable = false),
@@ -116,6 +116,38 @@ public class Files {
 			final File f = new File(path);
 
 			return f.exists() && !f.isDirectory();
+		}
+	}
+
+	@operator (
+			value = "folder_exists",
+			can_be_const = true,
+			category = IOperatorCategory.FILE,
+			concept = { IConcept.FILE })
+	@doc (
+			value = "Test whether the parameter is the path to an existing folder. False if it doesnt exist or if it is a file",
+			examples = { @example (
+					value = "string file_name <-\"../includes/\";",
+					isExecutable = false),
+					@example (
+							value = "		if folder_exists(file_name){",
+							isExecutable = false),
+					@example (
+							value = "			write \"Folder exists in the computer\";",
+							isExecutable = false),
+					@example (
+							value = "	}",
+							isExecutable = false) })
+	@no_test
+	public static boolean exist_folder(final IScope scope, final String s) {
+		if (s == null) { return false; }
+		if (scope == null) {
+			return false;
+		} else {
+			final String path = FileUtils.constructAbsoluteFilePath(scope, s, false);
+			final File f = new File(path);
+
+			return f.exists() && f.isDirectory();
 		}
 	}
 
@@ -257,7 +289,7 @@ public class Files {
 			examples = {
 					@example ("file dirNewT <- new_folder(\"incl/\");   	// dirNewT represents the repository \"../incl/\""),
 					@example ("															// eventually creates the directory ../incl") },
-			see = { "folder", "file" })
+			see = { "folder", "file", "folder_exists" })
 	public static IGamaFile newFolder(final IScope scope, final String folder) throws GamaRuntimeException {
 		String theName;
 		theName = FileUtils.constructAbsoluteFilePath(scope, folder, false);
