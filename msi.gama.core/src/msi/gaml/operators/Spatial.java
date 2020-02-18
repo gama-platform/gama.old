@@ -3094,6 +3094,7 @@ public abstract class Spatial {
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms,
 				final boolean readAttributes) throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
+			if (!readAttributes){return split_lines(scope, geoms);}
 			boolean change = true;
 			IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
 			lines.addAll((Collection<? extends IShape>) geoms);
@@ -3130,28 +3131,28 @@ public abstract class Spatial {
 						lines = lines2;
 						break;
 					}
-
-					final List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, lines2, l);
+					IShape gg = Transformations.enlarged_by(scope, l, Math.min(0.001, l.getPerimeter() / 1000.0),10);
+					final List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, lines2, gg);
 					if (!ls.isEmpty()) {
 						final ILocation pto = l.getPoints().firstValue(scope);
 						final ILocation ptd = l.getPoints().lastValue(scope);
-						final PreparedGeometry pg = PreparedGeometryFactory
-								.prepare(l.getInnerGeometry().buffer(Math.min(0.001, l.getPerimeter() / 1000.0), 10));
+						final PreparedGeometry pg = PreparedGeometryFactory.prepare(gg.getInnerGeometry());
 						for (final IShape l2 : ls) {
 							if (pg.covers(l2.getInnerGeometry()) || pg.coveredBy(l2.getInnerGeometry())) {
 								continue;
 							}
 							final IShape it = Spatial.Operators.inter(scope, l, l2);
+							
 							if (it.getPerimeter() > 0.0) {
 								continue;
 							}
-							if (!it.getLocation().equals(pto) && !it.getLocation().equals(ptd)) {
+							if (!it.getLocation().equals(pto) || !it.getLocation().equals(ptd)) {
 								final ILocation pt = it.getPoints().firstValue(scope);
 								final IList<IShape> res1 = Spatial.Operators.split_at(l2, pt);
 								res1.removeIf(a -> a.getPerimeter() == 0.0);
 								final IList<IShape> res2 = Spatial.Operators.split_at(l, pt);
 								res2.removeIf(a -> a.getPerimeter() == 0.0);
-								if (res1.size() > 1 && res2.size() > 1) {
+								if (res1.size() > 1 || res2.size() > 1) {
 									change = true;
 									lines2.addAll(res1);
 									lines2.addAll(res2);
@@ -3229,12 +3230,7 @@ public abstract class Spatial {
 			IList<IShape> geoms = polylines.copy(scope);
 			geoms.removeIf(a -> !a.getGeometry().isLine());
 			if (geoms.isEmpty()) { return GamaListFactory.EMPTY_LIST; }
-			if (splitlines) {
-				geoms = Transformations.split_lines(scope, geoms, true);
-				geoms.removeIf(a -> a.getPerimeter() < tolerance || !a.getInnerGeometry().isValid()
-						|| a.getInnerGeometry().isEmpty());
-
-			}
+			
 			IList<IShape> results = GamaListFactory.create();
 
 			IList<IShape> geomsTmp = geoms.copy(scope);
@@ -3267,6 +3263,12 @@ public abstract class Spatial {
 			results.removeIf(
 					a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
 
+			
+			if (splitlines) {
+			results = Transformations.split_lines(scope, results, true);
+				results.removeIf(a -> !a.getInnerGeometry().isValid()
+						|| a.getInnerGeometry().isEmpty() ||a.getPerimeter() == 0);
+			}
 			if (keepMainGraph) {
 				IGraph graph = Graphs.spatialFromEdges(scope, results);
 				graph = Graphs.ReduceToMainconnectedComponentOf(scope, graph);
