@@ -55,6 +55,10 @@ public class SelfExpression extends VariableExpression {
 	// public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
+	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+		// Added to fix a bug introduced in #2869: expressions containing `self` would not correctly initialize their
+		// dependencies.
+		result.add(species.getAttribute(IKeyword.LOCATION));
+	}
 
 }
