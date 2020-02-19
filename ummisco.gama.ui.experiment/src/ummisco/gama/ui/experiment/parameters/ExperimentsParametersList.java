@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import msi.gama.kernel.experiment.IExperimentDisplayable;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
@@ -111,7 +112,10 @@ public class ExperimentsParametersList extends EditorsList<String> {
 				gp = EditorFactory.getInstance().create(scope, (UserCommandStatement) var,
 						(Command) e -> GAMA.getExperiment().getAgent().executeAction(scope -> {
 							final Object result = scope.execute((UserCommandStatement) var).getValue();
-							GAMA.getExperiment().refreshAllOutputs();
+							final IExperimentPlan exp = GAMA.getExperiment();
+							if (exp != null) { // in case the experiment is killed in the meantime
+								exp.refreshAllOutputs();
+							}
 							return result;
 						}));
 			}
