@@ -100,6 +100,7 @@ public class EventLayer extends AbstractLayer {
 		private final static int MOUSE_MOVED = 4;
 		private final static int MOUSE_ENTERED = 5;
 		private final static int MOUSE_EXITED = 6;
+		private final static int MOUSE_MENU = 7;
 		private final static int KEY_PRESSED = 3;
 
 		private final int listenedEvent;
@@ -124,6 +125,7 @@ public class EventLayer extends AbstractLayer {
 			if (eventTypeName.equals(IKeyword.MOUSE_MOVED)) { return MOUSE_MOVED; }
 			if (eventTypeName.equals(IKeyword.MOUSE_ENTERED)) { return MOUSE_ENTERED; }
 			if (eventTypeName.equals(IKeyword.MOUSE_EXITED)) { return MOUSE_EXITED; }
+			if (eventTypeName.equals(IKeyword.MOUSE_MENU)) { return MOUSE_MENU; }
 			return KEY_PRESSED;
 		}
 
@@ -165,6 +167,13 @@ public class EventLayer extends AbstractLayer {
 		@Override
 		public void mouseExit(final int x, final int y) {
 			if (MOUSE_EXITED == listenedEvent) {
+				executeEvent(x, y);
+			}
+		}
+
+		@Override
+		public void mouseMenu(final int x, final int y) {
+			if (MOUSE_MENU == listenedEvent) {
 				executeEvent(x, y);
 			}
 		}
@@ -211,4 +220,7 @@ public class EventLayer extends AbstractLayer {
 		return false;
 	}
 
+	public String getEvent() {
+		return listener.event;
+	}
 }

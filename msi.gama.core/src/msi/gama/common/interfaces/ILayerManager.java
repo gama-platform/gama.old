@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.ILayerManager.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.common.interfaces.ILayerManager.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -40,7 +40,7 @@ public interface ILayerManager extends ItemList<ILayer>, IDisposable {
 
 	/**
 	 * Asks this manager to draw all of its enabled layers on the graphics passed in parameter
-	 * 
+	 *
 	 * @param displayGraphics
 	 *            an instance of IGraphics on which to draw the layers
 	 */
@@ -48,14 +48,14 @@ public interface ILayerManager extends ItemList<ILayer>, IDisposable {
 
 	/**
 	 * Whether the layers in this manager are to be drawn by respecting the world's proportions or not
-	 * 
+	 *
 	 * @return true if at least one layer needs to be drawn proportionnaly, false otherwise
 	 */
 	boolean stayProportional();
 
 	/**
 	 * Returns a rectangle that represent the area to focus on in order to focus on the geometry passed in parameter
-	 * 
+	 *
 	 * @param geometry
 	 *            the geometry or agent on which to focus on
 	 * @param s
@@ -66,16 +66,18 @@ public interface ILayerManager extends ItemList<ILayer>, IDisposable {
 
 	/**
 	 * Whether any of the layer managed by this manager can return coordinates for the position of the mouse
-	 * 
+	 *
 	 * @return true if at least one layer can provide coordinates
 	 */
 	boolean isProvidingCoordinates();
 
 	/**
 	 * Whether any of the layers managed by this manager can return world coordinates for the position of the mouse
-	 * 
+	 *
 	 * @return true if at least one layer can provide world coordinates
 	 */
 	boolean isProvidingWorldCoordinates();
+
+	boolean hasMouseMenuEventLayer();
 
 }

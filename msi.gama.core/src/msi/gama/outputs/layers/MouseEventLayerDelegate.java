@@ -21,8 +21,8 @@ import msi.gama.runtime.IScope;
 
 public class MouseEventLayerDelegate implements IEventLayerDelegate {
 
-	public static final Set<String> EVENTS =
-			new HashSet<>(Arrays.asList("mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit"));
+	public static final Set<String> EVENTS = new HashSet<>(Arrays.asList(IKeyword.MOUSE_UP, IKeyword.MOUSE_DOWN,
+			IKeyword.MOUSE_MOVED, IKeyword.MOUSE_ENTERED, IKeyword.MOUSE_EXITED, IKeyword.MOUSE_MENU));
 
 	@Override
 	public boolean acceptSource(final IScope scope, final Object source) {

@@ -18,6 +18,7 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.metamodel.shape.IShape;
@@ -176,9 +177,8 @@ public class LayerManager implements ILayerManager {
 		scope.setGraphics(g);
 		try {
 			if (g.beginDrawingLayers()) {
-				for (int i = 0, n = enabledLayers.size(); i < n; i++) {
+				for (final ILayer dis : enabledLayers) {
 					if (scope.interrupted()) { return; }
-					final ILayer dis = enabledLayers.get(i);
 					dis.draw(scope, g);
 				}
 				if (overlay != null) {
@@ -326,6 +326,16 @@ public class LayerManager implements ILayerManager {
 	public boolean isProvidingWorldCoordinates() {
 		for (final ILayer i : enabledLayers) {
 			if (i.isProvidingWorldCoordinates()) { return true; }
+		}
+		return false;
+	}
+
+	@Override
+	public boolean hasMouseMenuEventLayer() {
+		for (final ILayer i : enabledLayers) {
+			if (i instanceof EventLayer) {
+				if (((EventLayer) i).getEvent().equals(IKeyword.MOUSE_MENU)) { return true; }
+			}
 		}
 		return false;
 	}

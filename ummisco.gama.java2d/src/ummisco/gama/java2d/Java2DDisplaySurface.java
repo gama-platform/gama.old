@@ -8,6 +8,7 @@
  *
  **********************************************************************************************/
 package ummisco.gama.java2d;
+
 /*********************************************************************************************
  *
  *
@@ -222,6 +223,9 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 					break;
 				case SWT.MouseExit:
 					gl.mouseExit(x, y);
+					break;
+				case SWT.MenuDetect:
+					gl.mouseMenu(x, y);
 					break;
 			}
 		}
@@ -494,7 +498,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public double getDisplayWidth() {
-		return (double)viewPort.width;
+		return (double) viewPort.width;
 	}
 
 	protected void setDisplayWidth(final int displayWidth) {
@@ -508,7 +512,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public double getDisplayHeight() {
-		return (double)viewPort.height;
+		return (double) viewPort.height;
 	}
 
 	protected void setDisplayHeight(final int displayHeight) {

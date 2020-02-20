@@ -4,7 +4,7 @@
  * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
@@ -37,19 +37,19 @@ public class LayeredDisplayMultiListener {
 
 		keyListener = (keyCode) -> {
 			switch (keyCode.intValue()) {
-			case 'o':
-				deco.toggleOverlay();
-				break;
-			case 'l':
-				deco.toggleSideControls();
-				break;
-			case 'k':
-				if (deco.isFullScreen()) {
-					deco.toggleInteractiveConsole();
-				}
-				break;
-			case 't':
-				deco.toggleToolbar();
+				case 'o':
+					deco.toggleOverlay();
+					break;
+				case 'l':
+					deco.toggleSideControls();
+					break;
+				case 'k':
+					if (deco.isFullScreen()) {
+						deco.toggleInteractiveConsole();
+					}
+					break;
+				case 't':
+					deco.toggleToolbar();
 			}
 		};
 	}
@@ -60,9 +60,7 @@ public class LayeredDisplayMultiListener {
 	}
 
 	public void keyReleased(final int e, final boolean command) {
-		if (!command) {
-			return;
-		}
+		if (!command) { return; }
 		keyListener.accept(e);
 	}
 
@@ -72,18 +70,12 @@ public class LayeredDisplayMultiListener {
 			suppressNextEnter = false;
 			return;
 		}
-		if (modifier) {
-			return;
-		}
+		if (modifier) { return; }
 
 		setMousePosition(x, y);
-		if (button > 0) {
-			return;
-		}
+		if (button > 0) { return; }
 		final long currentTime = System.currentTimeMillis();
-		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == x && lastEnterPosition.y == y) {
-			return;
-		}
+		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == x && lastEnterPosition.y == y) { return; }
 		lastEnterTime = System.currentTimeMillis();
 		lastEnterPosition = new Point(x, y);
 		// DEBUG.LOG("Mouse entering " + e);
@@ -92,13 +84,9 @@ public class LayeredDisplayMultiListener {
 
 	public void mouseExit(final int x, final int y, final boolean modifier, final int button) {
 		final long currentTime = System.currentTimeMillis();
-		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == x && lastEnterPosition.y == y) {
-			return;
-		}
+		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == x && lastEnterPosition.y == y) { return; }
 		setMousePosition(-1, -1);
-		if (button > 0) {
-			return;
-		}
+		if (button > 0) { return; }
 		// DEBUG.LOG("Mouse exiting " + e);
 		surface.dispatchMouseEvent(SWT.MouseExit);
 		if (!view.isFullScreen() && WorkaroundForIssue1353.isInstalled()) {
@@ -110,9 +98,7 @@ public class LayeredDisplayMultiListener {
 	}
 
 	public void mouseHover(final int button) {
-		if (button > 0) {
-			return;
-		}
+		if (button > 0) { return; }
 		// DEBUG.LOG("Mouse hovering on " + view.getPartName());
 		surface.dispatchMouseEvent(SWT.MouseHover);
 	}
@@ -133,15 +119,18 @@ public class LayeredDisplayMultiListener {
 		}
 
 	}
+
 	/**
 	 * Mouse down event fired
-	 * 
-	 * @param x        the x coordinate relative to the display (in pixels, not
-	 *                 model coordinates)
-	 * @param y        the y coordinate relative to the display (in pixels, not
-	 *                 model coordinates)
-	 * @param button   the button clicked (1 for left, 2 for middle, 3 for right)
-	 * @param modifier whetehr ALT, CTRL, CMD, META or other modifiers are used
+	 *
+	 * @param x
+	 *            the x coordinate relative to the display (in pixels, not model coordinates)
+	 * @param y
+	 *            the y coordinate relative to the display (in pixels, not model coordinates)
+	 * @param button
+	 *            the button clicked (1 for left, 2 for middle, 3 for right)
+	 * @param modifier
+	 *            whetehr ALT, CTRL, CMD, META or other modifiers are used
 	 */
 	public void mouseDown(final int x, final int y, final int button, final boolean modifier) {
 		setMousePosition(x, y);
@@ -149,9 +138,7 @@ public class LayeredDisplayMultiListener {
 			inMenu = false;
 			return;
 		}
-		if (modifier) {
-			return;
-		}
+		if (modifier) { return; }
 		if (PlatformHelper.isWindows() && button == 3) {
 			// see Issue #2756: Windows emits the mouseDown(...) event *before* the menuDetected(..) one.
 			// No need to patch mouseUp(...) right now
@@ -164,23 +151,21 @@ public class LayeredDisplayMultiListener {
 
 	/**
 	 * Mouse up event fired
-	 * 
-	 * @param x        the x coordinate relative to the display (in pixels, not
-	 *                 model coordinates)
-	 * @param y        the y coordinate relative to the display (in pixels, not
-	 *                 model coordinates)
-	 * @param button   the button clicked (1 for left, 2 for middle, 3 for right)
-	 * @param modifier whetehr ALT, CTRL, CMD, META or other modifiers are used
+	 *
+	 * @param x
+	 *            the x coordinate relative to the display (in pixels, not model coordinates)
+	 * @param y
+	 *            the y coordinate relative to the display (in pixels, not model coordinates)
+	 * @param button
+	 *            the button clicked (1 for left, 2 for middle, 3 for right)
+	 * @param modifier
+	 *            whetehr ALT, CTRL, CMD, META or other modifiers are used
 	 */
 	public void mouseUp(final int x, final int y, final int button, final boolean modifier) {
 		// In case the mouse has moved (for example on a menu)
-		if (!mouseIsDown) {
-			return;
-		}
+		if (!mouseIsDown) { return; }
 		setMousePosition(x, y);
-		if (modifier) {
-			return;
-		}
+		if (modifier) { return; }
 		mouseIsDown = false;
 		// DEBUG.LOG("Mouse up on " + view.getPartName());
 		if (!view.isFullScreen() && WorkaroundForIssue1353.isInstalled()) {
@@ -190,13 +175,14 @@ public class LayeredDisplayMultiListener {
 	}
 
 	public void menuDetected(final int x, final int y) {
-		if (inMenu) {
-			return;
-		}
+		if (inMenu) { return; }
 		// DEBUG.LOG("Menu detected on " + view.getPartName());
-		inMenu = true;
+		inMenu = surface.canTriggerContextualMenu();
 		setMousePosition(x, y);
-		surface.selectAgentsAroundMouse();
+		surface.dispatchMouseEvent(SWT.MenuDetect);
+		if (inMenu) {
+			surface.selectAgentsAroundMouse();
+		}
 	}
 
 	public void dragDetected() {

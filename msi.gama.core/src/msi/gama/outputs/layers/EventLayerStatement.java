@@ -53,7 +53,8 @@ import msi.gaml.types.IType;
 		value = { @facet (
 				name = "unused",
 				type = IType.ID,
-				values = { "mouse_up", "mouse_down", "mouse_move", "mouse_enter", "mouse_exit" },
+				values = { IKeyword.MOUSE_UP, IKeyword.MOUSE_DOWN, IKeyword.MOUSE_MOVED, IKeyword.MOUSE_ENTERED,
+						IKeyword.MOUSE_EXITED, IKeyword.MOUSE_MENU },
 				optional = true,
 				doc = @doc (
 						value = "an unused facet that serves only for the purpose of declaring the string values"),
@@ -62,7 +63,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.NAME,
 						type = IType.ID,
 						optional = false,
-						doc = @doc ("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_move\", \"mouse_exit\", \"mouse_enter\" or a character")),
+						doc = @doc ("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_move\", \"mouse_exit\", \"mouse_enter\", \"mouse_menu\" or a character")),
 				@facet (
 						name = IKeyword.TYPE,
 						type = IType.STRING,

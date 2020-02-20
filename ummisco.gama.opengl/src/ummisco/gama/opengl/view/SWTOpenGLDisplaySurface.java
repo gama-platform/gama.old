@@ -827,6 +827,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				case SWT.MouseExit:
 					gl.mouseExit(x, y);
 					break;
+				case SWT.MenuDetect:
+					gl.mouseMenu(x, y);
+					break;
 			}
 		}
 	}

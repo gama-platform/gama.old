@@ -194,4 +194,8 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 		return f;
 	}
 
+	default boolean canTriggerContextualMenu() {
+		return !getManager().hasMouseMenuEventLayer();
+	}
+
 }

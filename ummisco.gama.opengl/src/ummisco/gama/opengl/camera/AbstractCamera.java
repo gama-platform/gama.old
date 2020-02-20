@@ -341,7 +341,9 @@ public abstract class AbstractCamera implements ICamera {
 			if (renderer.getOpenGLHelper().mouseInROI(lastMousePressedPosition)) {
 				renderer.getSurface().selectionIn(renderer.getOpenGLHelper().getROIEnvelope());
 			} else {
-				renderer.getPickingHelper().setPicking(true);
+				if (renderer.getSurface().canTriggerContextualMenu()) {
+					renderer.getPickingHelper().setPicking(true);
+				}
 			}
 		} else if (e.button == 2 && cameraInteraction) { // mouse wheel
 			resetPivot();

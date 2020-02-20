@@ -20,12 +20,12 @@ import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class WorkaroundForIssue2476 {
-	
+
 	static {
 		DEBUG.OFF();
 	}
-	
-	private static void setMousePosition(IDisplaySurface surface, int x, int y) {
+
+	private static void setMousePosition(final IDisplaySurface surface, final int x, final int y) {
 		surface.setMousePosition(x, y);
 		GAMA.getGui().setMouseLocationInModel(surface.getModelCoordinates());
 	}
@@ -65,7 +65,6 @@ public class WorkaroundForIssue2476 {
 			@Override
 			public void mousePressed(final java.awt.event.MouseEvent e) {
 
-				
 			}
 
 			@Override
@@ -84,20 +83,23 @@ public class WorkaroundForIssue2476 {
 					surface.zoomFit();
 				}
 				if (e.getButton() == 3 && !inMenu) {
-					inMenu = true;
+					inMenu = surface.canTriggerContextualMenu();
 					setMousePosition(surface, e.getX(), e.getY());
-					surface.selectAgentsAroundMouse();
+					if (inMenu) {
+						surface.selectAgentsAroundMouse();
+					}
+					surface.dispatchMouseEvent(SWT.MenuDetect);
 					return;
 				}
-				
+
 				if (inMenu) {
 					inMenu = false;
 					return;
 				}
-				//DEBUG.OUT("Click on " + e.getX() + " " + e.getY());
+				// DEBUG.OUT("Click on " + e.getX() + " " + e.getY());
 				setMousePosition(surface, e.getX(), e.getY());
 				surface.dispatchMouseEvent(SWT.MouseDown);
-				
+
 			}
 		});
 
