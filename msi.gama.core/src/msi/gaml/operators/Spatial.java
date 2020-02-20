@@ -3143,7 +3143,7 @@ public abstract class Spatial {
 							}
 							final IShape it = Spatial.Operators.inter(scope, l, l2);
 							
-							if (it.getPerimeter() > 0.0) {
+							if (it == null || it.getPerimeter() > 0.0) {
 								continue;
 							}
 							if (!it.getLocation().equals(pto) || !it.getLocation().equals(ptd)) {
