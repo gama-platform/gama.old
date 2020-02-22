@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -63,6 +64,14 @@ public class GamaGeometryFactory extends GeometryFactory {
 			coords = (Coordinate[]) ArrayUtils.add(coords, coords[0]);
 		}
 		return createLinearRing(JTS_COORDINATES_FACTORY.create(coords));
+	}
+
+	public Polygon buildRectangle(final Coordinate[] points) {
+		final CoordinateSequenceFactory fact = GamaGeometryFactory.COORDINATES_FACTORY;
+		final CoordinateSequence cs = fact.create(points);
+		final LinearRing geom = GeometryUtils.GEOMETRY_FACTORY.createLinearRing(cs);
+		final Polygon p = GeometryUtils.GEOMETRY_FACTORY.createPolygon(geom, null);
+		return p;
 	}
 
 	/**

@@ -280,11 +280,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		points[2] = new GamaPoint(x + width / 2.0, y - height / 2.0, z);
 		points[1] = new GamaPoint(x - width / 2.0, y - height / 2.0, z);
 		points[0] = new GamaPoint(x - width / 2.0, y + height / 2.0, z);
-		final CoordinateSequenceFactory fact = GamaGeometryFactory.COORDINATES_FACTORY;
-		final CoordinateSequence cs = fact.create(points);
-		final LinearRing geom = GeometryUtils.GEOMETRY_FACTORY.createLinearRing(cs);
-		final Polygon p = GeometryUtils.GEOMETRY_FACTORY.createPolygon(geom, null);
-		return new GamaShape(p);
+		return new GamaShape(GeometryUtils.GEOMETRY_FACTORY.buildRectangle(points));
 	}
 
 	/**
