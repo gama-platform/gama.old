@@ -45,11 +45,12 @@ experiment "Simplify this ! " {
 		layout #split consoles: false tray: false tabs: false controls: false editors: false toolbars: false navigator: false;
 		display my_display type:opengl draw_env: false { 
 			species shapes {
-				draw simplification(shape, tolerance) + buffer color: #blue;
-			}
-			species shapes transparency: 0.5 {
 				draw shape color: #red;
 			}
+			species shapes {
+				draw simplification(shape, tolerance) + buffer color: #blue;
+			}
+
 		}
 		
 	}	

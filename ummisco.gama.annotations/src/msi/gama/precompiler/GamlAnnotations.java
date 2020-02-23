@@ -794,9 +794,8 @@ public final class GamlAnnotations {
 		String[] value();
 
 		/**
-		 * @return true if this operator should be treated as an iterator (i.e.requires initializing the special
-		 *         variable "each" of WorldSkill within the method)
-		 * @see WorldSkill
+		 * @return true if this operator should be treated as an iterator (i.e. allows the special variable "each" to be
+		 *         used inside)
 		 */
 
 		boolean iterator() default false;

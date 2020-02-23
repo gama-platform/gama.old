@@ -120,8 +120,8 @@ import msi.gaml.types.Types;
 		name = IKeyword.SAVE,
 		kind = ISymbolKind.SINGLE_STATEMENT,
 		concept = { IConcept.FILE, IConcept.SAVE_FILE },
-		with_sequence = false,
-		with_args = true,
+		with_sequence = true,
+		// with_args = true,
 		remote_context = true)
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
@@ -162,7 +162,7 @@ import msi.gaml.types.Types;
 						type = { IType.MAP },
 						optional = true,
 						doc = @doc (
-								value = "Allows to specify the attributes of a shape file where agents are saved. Must be expressed as a literal map. The keys of the map are the names of the attributes that will be present in the file, the values are whatever expressions neeeded to define their value")),
+								value = "Allows to specify the attributes of a shape file or GeoJson file where agents are saved. Must be expressed as a literal map. The keys of the map are the names of the attributes that will be present in the file, the values are whatever expressions neeeded to define their value. ")),
 				@facet (
 						name = IKeyword.WITH,
 						type = { IType.MAP },
@@ -227,7 +227,16 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IExpression att = desc.getFacetExpr(ATTRIBUTES);
 			if (att != null) {
 				if (!(att instanceof MapExpression)) {
-					desc.error("attributes must be expressed as a literal map", IGamlIssue.WRONG_TYPE, ATTRIBUTES);
+					desc.error("attributes must be expressed as a map<string, unknown>", IGamlIssue.WRONG_TYPE,
+							ATTRIBUTES);
+					return;
+				}
+
+				final MapExpression map = (MapExpression) att;
+				if (map.getGamlType().getKeyType() != Types.STRING) {
+					desc.error(
+							"The type of the keys of the attributes map must be string. These will be used for naming the attributes in the file",
+							IGamlIssue.WRONG_TYPE, ATTRIBUTES);
 					return;
 				}
 
@@ -237,8 +246,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 							IGamlIssue.CONFLICTING_FACETS, ATTRIBUTES, WITH);
 				}
 				final IExpression type = desc.getFacetExpr(TYPE);
-				if (type == null || !type.literalValue().equals("shp")) {
-					desc.warning("Attributes can only be defined for shape files", IGamlIssue.WRONG_TYPE, ATTRIBUTES);
+				if (type == null || !(type.literalValue().equals("shp") || type.literalValue().equals("json"))) {
+					desc.warning("Attributes can only be defined for shape or json files", IGamlIssue.WRONG_TYPE,
+							ATTRIBUTES);
 				}
 
 			}
@@ -529,8 +539,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			// This is perfectly possible for the GeoTiff, but as GAMA can only read Byte format GeoTiff files, we limit
 			// the save to this
 			// specific format of data.
-			 final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
-//			final GridCoverage2D coverage = createCoverageByteFromFloat("data", imagePixelData, refEnvelope);
+			final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+			// final GridCoverage2D coverage = createCoverageByteFromFloat("data", imagePixelData, refEnvelope);
 
 			try {
 

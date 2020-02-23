@@ -18,7 +18,7 @@ global {
 			free_space <- free_space - shape;
 		}
 		//save building geometry into the shapefile: add the attribute TYPE which value is set by the type variable of the building agent and the attribute ID 
-		save building to:"../results/buildings.shp" type:"shp" attributes: ["ID":: int(self), "TYPE"::type];
+		save building to:"../results/buildings.shp" type:"shp" attributes: ["ID":: int(self), "TYPE"::type]; 
 	}
 }
   

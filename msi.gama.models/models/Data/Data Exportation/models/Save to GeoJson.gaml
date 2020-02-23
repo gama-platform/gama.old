@@ -18,9 +18,9 @@ global {
 			free_space <- free_space - shape;
 		}
 		//save building geometry into the geojson: add the attribute TYPE which value is set by the type variable of the building agent and the attribute ID 
-		save building to:"../results/buildings.geojson" type:"json" with: [name::"ID" , type::"TYPE"];
+		save building to:"../results/buildings.geojson" type: "json" attributes: ["ID"::name, "TYPE"::type];
 	}
-}
+} 
   
 //species that represent the building agents that will be saved
 species building {

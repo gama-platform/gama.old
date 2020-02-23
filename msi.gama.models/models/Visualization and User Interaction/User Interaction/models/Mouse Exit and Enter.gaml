@@ -5,7 +5,7 @@
 * Tags: user, mouse, interaction
 ***/
 
-model MouseExitandEnter
+model MouseExitandEnter 
 
 
 global {
@@ -47,6 +47,8 @@ experiment Run {
 			event mouse_exit action:{closed <- true;};
 			event mouse_enter action: {closed <- false;};
 			event mouse_move action: {ask eyes {do follow;}};
-		}
+			event mouse_menu action: {closed <- !closed;};
+			
+			}
 	}
 }
