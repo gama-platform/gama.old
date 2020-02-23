@@ -41,9 +41,9 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
+import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper.Pass;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.opengl.renderer.helpers.KeystoneHelper;
-import ummisco.gama.opengl.renderer.helpers.KeystoneHelper.Pass;
 import ummisco.gama.opengl.renderer.helpers.LightHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
@@ -183,12 +183,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	public void display(final GLAutoDrawable drawable) {
 		if (!sceneHelper.isReady()) { return; }
 
-		try (Pass c = keystoneHelper.render()) {
-			openGL.beginScene();
+		try (Pass c = keystoneHelper.render(); Pass d = openGL.beginScene();) {
 			cameraHelper.update();
 			lightHelper.draw();
 			sceneHelper.draw();
-			openGL.endScene();
 		}
 
 		if (!visible) {

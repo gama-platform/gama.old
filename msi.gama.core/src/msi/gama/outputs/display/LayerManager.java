@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
@@ -75,7 +76,8 @@ public class LayerManager implements ILayerManager {
 		}
 	}
 
-	private final List<ILayer> enabledLayers = new ArrayList<>();
+	// Feb 2020: added to avoid concurrentModifications
+	private final List<ILayer> enabledLayers = new CopyOnWriteArrayList<>();
 	private final List<ILayer> disabledLayers = new ArrayList<>();
 	private OverlayLayer overlay = null;
 	final IDisplaySurface surface;

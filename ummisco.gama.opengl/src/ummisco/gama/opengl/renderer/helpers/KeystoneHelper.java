@@ -5,7 +5,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import com.jogamp.common.nio.Buffers;
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
 
@@ -24,13 +23,6 @@ import ummisco.gama.opengl.renderer.shaders.KeystoneShaderProgram;
 import ummisco.gama.ui.utils.PlatformHelper;
 
 public class KeystoneHelper extends AbstractRendererHelper {
-
-	public interface Pass extends AutoCloseable {
-
-		@Override
-		void close();
-
-	}
 
 	private final Pass finishingHelper = () -> finishRenderToTexture();
 	private FrameBufferObject fboScene;
@@ -273,12 +265,8 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		}
 
 		// gl.glActiveTexture(GL.GL_TEXTURE0);
-		gl.glBindTexture(GL.GL_TEXTURE_2D, fboScene.getFBOTexture());
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER,
-				getData().isAntialias() ? GL.GL_LINEAR : GL.GL_NEAREST);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER,
-				getData().isAntialias() ? GL.GL_LINEAR : GL.GL_NEAREST);
-
+		// gl.glBindTexture(GL.GL_TEXTURE_2D, fboScene.getFBOTexture());
+		getOpenGL().bindTexture(fboScene.getFBOTexture());
 		// Select the VBO, GPU memory data, to use for colors
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 24, ibIdxBuff, GL2.GL_STATIC_DRAW);

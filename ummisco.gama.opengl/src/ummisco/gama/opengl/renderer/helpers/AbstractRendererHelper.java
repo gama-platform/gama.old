@@ -10,6 +10,13 @@ import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
 
 public abstract class AbstractRendererHelper {
 
+	public interface Pass extends AutoCloseable {
+
+		@Override
+		void close();
+
+	}
+
 	private final IOpenGLRenderer renderer;
 
 	public AbstractRendererHelper(final IOpenGLRenderer renderer) {
@@ -47,9 +54,11 @@ public abstract class AbstractRendererHelper {
 	public double getZNear() {
 		return renderer.getData().getzNear();
 	}
+
 	public double getZFar() {
 		return renderer.getData().getzFar();
 	}
+
 	public abstract void initialize();
 
 }
