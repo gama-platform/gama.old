@@ -33,6 +33,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public final boolean internal;
 	private final boolean isLabel;
 	private final boolean isId;
+	final boolean isRemote;
 	final boolean isNewTemp;
 	public final boolean isType;
 	public final Set<String> values;
@@ -40,7 +41,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public String owner;
 
 	public FacetProto(final String name, final int[] types, final int ct, final int kt, final String[] values,
-			final boolean optional, final boolean internal) {
+			final boolean optional, final boolean internal, final boolean isRemote) {
 		this.name = name;
 		this.typesDescribers = types;
 		isNewTemp = typesDescribers[0] == IType.NEW_TEMP_ID;
@@ -52,6 +53,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		this.keyType = Types.get(kt);
 		this.optional = optional;
 		this.internal = internal;
+		this.isRemote = isRemote;
 		isLabel = SymbolProto.ids.contains(types[0]);
 		isId = isLabel && types[0] != IType.LABEL;
 		isType = types[0] == IType.TYPE_ID;

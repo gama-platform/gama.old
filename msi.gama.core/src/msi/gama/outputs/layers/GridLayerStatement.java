@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GridLayerStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.GridLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -50,7 +50,8 @@ import msi.gaml.types.Types;
 @symbol (
 		name = IKeyword.GRID_POPULATION,
 		kind = ISymbolKind.LAYER,
-		with_sequence = false,
+		with_sequence = true, // Necessary to declare the elevation facet as remote itself
+		remote_context = true,
 		concept = { IConcept.GRID, IConcept.DISPLAY, IConcept.INSPECTOR })
 @inside (
 		symbols = IKeyword.DISPLAY)
@@ -88,6 +89,7 @@ import msi.gaml.types.Types;
 				@facet (
 						name = IKeyword.ELEVATION,
 						type = { IType.MATRIX, IType.FLOAT, IType.INT, IType.BOOL },
+						remote_context = true,
 						optional = true,
 						doc = @doc ("Allows to specify the elevation of each cell, if any. Can be a matrix of float (provided it has the same size than the grid), an int or float variable of the grid species, or simply true (in which case, the variable called 'grid_value' is used to compute the elevation of each cell)")),
 				@facet (

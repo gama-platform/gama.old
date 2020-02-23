@@ -384,8 +384,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected FacetProto _facet(final String name, final int[] types, final int ct, final int kt, final String[] values,
-			final boolean optional, final boolean internal) {
-		return new FacetProto(name, types, ct, kt, values, optional, internal);
+			final boolean optional, final boolean internal, final boolean isRemote) {
+		return new FacetProto(name, types, ct, kt, values, optional, internal, isRemote);
 	}
 
 	protected OperatorProto _proto(final String name, final GamaGetter.Unary helper, final int returnType,

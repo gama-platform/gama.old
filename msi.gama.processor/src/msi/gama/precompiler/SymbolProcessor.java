@@ -13,7 +13,7 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
 			final symbol symbol) {
 		final String clazz = rawNameOf(context, e.asType());
-		String name = symbol.name().length == 0 ? e.getSimpleName().toString() : symbol.name()[0];
+		final String name = symbol.name().length == 0 ? e.getSimpleName().toString() : symbol.name()[0];
 		verifyDoc(context, e, "symbol " + name, symbol);
 		final StringBuilder constants = new StringBuilder();
 
@@ -48,7 +48,7 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 					toArrayOfStrings(values, constants).append(',');
 				}
 				toArrayOfStrings(values, sb).append(',').append(toBoolean(child.optional())).append(',')
-						.append(toBoolean(child.internal()));
+						.append(toBoolean(child.internal())).append(',').append(toBoolean(child.remote_context()));
 				verifyDoc(context, e, "facet " + child.name(), child);
 				sb.append(')');
 			}

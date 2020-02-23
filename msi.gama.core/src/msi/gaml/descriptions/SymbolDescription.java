@@ -674,7 +674,16 @@ public abstract class SymbolDescription implements IDescription {
 					exp = createVarWithTypes(facet);
 					expr.setExpression(exp);
 				} else if (!fp.isLabel()) {
+					final boolean isRemote = fp.isRemote && this instanceof StatementRemoteWithChildrenDescription;
+					IDescription previousEnclosingDescription = null;
+					if (isRemote) {
+						previousEnclosingDescription =
+								((StatementRemoteWithChildrenDescription) this).pushRemoteContext();
+					}
 					exp = expr.compile(SymbolDescription.this);
+					if (isRemote) {
+						((StatementRemoteWithChildrenDescription) this).popRemoteContext(previousEnclosingDescription);
+					}
 				} else {
 					exp = expr.getExpression();
 				}

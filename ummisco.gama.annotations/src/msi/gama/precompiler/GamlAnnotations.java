@@ -178,6 +178,16 @@ public final class GamlAnnotations {
 		 * @see doc
 		 */
 		doc[] doc() default {};
+
+		/**
+		 * RemoteContext.
+		 *
+		 * @return Indicates that the context of this facet is actually the one denoted by the statement it is attached
+		 *         to. i.e. `self` will represent an agent of the species denoted by the statement, while `myself` will
+		 *         represent the agent calling the statement
+		 */
+
+		boolean remote_context() default false;
 	}
 
 	//

@@ -120,7 +120,7 @@ import msi.gaml.types.Types;
 		name = IKeyword.SAVE,
 		kind = ISymbolKind.SINGLE_STATEMENT,
 		concept = { IConcept.FILE, IConcept.SAVE_FILE },
-		with_sequence = true,
+		with_sequence = true, // necessary to allow declaring the attributes facet as remote itself
 		// with_args = true,
 		remote_context = true)
 @inside (
@@ -160,6 +160,7 @@ import msi.gaml.types.Types;
 				@facet (
 						name = IKeyword.ATTRIBUTES,
 						type = { IType.MAP },
+						remote_context = true,
 						optional = true,
 						doc = @doc (
 								value = "Allows to specify the attributes of a shape file or GeoJson file where agents are saved. Must be expressed as a literal map. The keys of the map are the names of the attributes that will be present in the file, the values are whatever expressions neeeded to define their value. ")),
