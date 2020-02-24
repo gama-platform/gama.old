@@ -706,7 +706,6 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		return currentObjectAlpha;
 	}
 
-
 	// TEXTURES
 
 	/**
@@ -1080,9 +1079,12 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		// Turn on clockwise direction of vertices as an indication of "front" (important)
 		gl.glFrontFace(GL.GL_CW);
 
-		// Perspective correction
+		// Hints
 		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-
+		gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
+		gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
+		gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
+		gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT_NV, GL2.GL_NICEST);
 		// Enable texture 2D
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		// Blending & alpha control
@@ -1092,23 +1094,17 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		gl.glEnable(GL2.GL_ALPHA_TEST);
 		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
 		// Disabling line smoothing to only rely on FSAA
-		gl.glDisable(GL.GL_LINE_SMOOTH);
+		 gl.glEnable(GL.GL_LINE_SMOOTH);
+		 gl.glEnable(GL2.GL_POINT_SMOOTH);
+		 gl.glEnable(GL2.GL_POLYGON_SMOOTH);
 		// Enabling forced normalization of normal vectors (important)
 		gl.glEnable(GL2.GL_NORMALIZE);
 		// Enabling multi-sampling (necessary ?)
 		// if (USE_MULTI_SAMPLE) {
 		gl.glEnable(GL2.GL_MULTISAMPLE);
-		gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT_NV, GL2.GL_NICEST);
 		// }
 		initializeShapeCache();
 
-		// SEE ALSO?
-		// GL.GL_SMOOTH_LINE_WIDTH_RANGE;
-		// GL.GL_SMOOTH_POINT_SIZE_RANGE;
-		// GL.GL_MAX_TEXTURE_SIZE;
-		// GL.GL_MAX_RENDERBUFFER_SIZE;
-		// GL.GL_LINE_SMOOTH_HINT;
-		// GL.GL_LINE_SMOOTH;
 	}
 
 	public GamaPoint getRatios() {

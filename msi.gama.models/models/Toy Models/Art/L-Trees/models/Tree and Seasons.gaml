@@ -401,8 +401,7 @@ species fruit {
 
 experiment "Random" type: gui autorun: true {
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false fullscreen: true camera_pos: {-66.4803, 275.5971, 235.9631}
-		camera_look_pos: {68.2571, 22.1928, 56.6337} camera_up_vector: {0.2488, 0.4679, 0.8481} {
+		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false fullscreen: true camera_pos: {50.0,249.6629,199.6559} camera_look_pos: {50.0,50.0,0.0} camera_up_vector: {0.0,0.7071,0.7071}   {
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;
@@ -423,8 +422,7 @@ experiment "4 simulations" type: gui autorun: true {
 	}
 
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false camera_pos: {-57.3933, 202.0369, 246.4316} camera_look_pos:
-		{77.3441, 18.6326, 67.1022} camera_up_vector: {0.3664, 0.4988, 0.7854} {
+		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false camera_pos: {50.0,249.6629,199.6559} camera_look_pos: {50.0,50.0,0.0} camera_up_vector: {0.0,0.7071,0.7071}  {
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;
@@ -441,8 +439,7 @@ experiment L_Tri type: gui autorun: true {
 	float minimum_cycle_duration <- 0.0005;
 	float seed <- 0.05387546426306633;
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: true camera_pos: {-57.3933, 202.0369, 246.4316} camera_look_pos:
-		{77.3441, 18.6326, 67.1022} camera_up_vector: {0.3664, 0.4988, 0.7854} {
+		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: true camera_pos: {50.0,249.6629,199.6559} camera_look_pos: {50.0,50.0,0.0} camera_up_vector: {0.0,0.7071,0.7071}   {
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;

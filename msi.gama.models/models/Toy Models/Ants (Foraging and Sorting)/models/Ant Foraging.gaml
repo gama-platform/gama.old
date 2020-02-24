@@ -227,7 +227,7 @@ experiment "3D View" type: gui {
 		grid ant_grid elevation: grid_values  triangulation: true texture: terrain refresh: false;
 			agents "Trail" transparency: 0.7 position: { 0.05, 0.05, 0.02 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest)) ;
 			species ant position: { 0.05, 0.05, 0.025 } size: { 0.9, 0.9 } aspect: threeD;
-			light 1 type:point color:#yellow position:{world.shape.width*0.5 - world.shape.width*1.5,world.shape.width*0.5,world.shape.width} draw_light:true ;
+			light 1 type:point color:#white position:{world.shape.width*0.5 - world.shape.width*1.5,world.shape.width*0.5,world.shape.width} draw_light:false ;
 			
 			}
 					
