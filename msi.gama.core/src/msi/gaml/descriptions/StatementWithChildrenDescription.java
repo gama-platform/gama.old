@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
+import static msi.gaml.compilation.GAML.getExpressionFactory;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -127,8 +129,9 @@ public class StatementWithChildrenDescription extends StatementDescription {
 			declaration.warning("This declaration of " + name + " shadows the declaration of a global attribute",
 					IGamlIssue.SHADOWS_NAME, facet);
 		}
-		final IExpression result = msi.gaml.compilation.GAML.getExpressionFactory().createVar(name, type, false,
-				IVarExpression.TEMP, this);
+		final IExpression result =
+				name.equals(MYSELF) ? getExpressionFactory().createVar(name, type, false, IVarExpression.MYSELF, this)
+						: getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
 		temps.put(name, (IVarExpression) result);
 		return result;
 	}

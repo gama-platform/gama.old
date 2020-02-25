@@ -1,15 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.TempVariableExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.TempVariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
@@ -62,7 +63,7 @@ public class TempVariableExpression extends VariableExpression {
 
 	/**
 	 * Method collectPlugins()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	// @Override
@@ -70,4 +71,32 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
+
+	public static class MyselfExpression extends TempVariableExpression {
+
+		protected MyselfExpression(final IType<?> type, final IDescription definitionDescription) {
+			super(IKeyword.MYSELF, type, definitionDescription);
+		}
+
+		@Override
+		public IExpression resolveAgainst(final IScope scope) {
+			return this;
+		}
+
+		@Override
+		public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {}
+
+		@Override
+		public String getTitle() {
+			return "pseudo variable " + getName() + " of type " + getGamlType().getTitle();
+		}
+
+		@Override
+		public String getDocumentation() {
+			final IDescription desc = getDefinitionDescription();
+			return "pseudo variable " + getName() + " of type " + getGamlType().getTitle()
+					+ (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+		}
+
+	}
 }

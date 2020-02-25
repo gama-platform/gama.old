@@ -33,6 +33,7 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
+import msi.gaml.expressions.TempVariableExpression.MyselfExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.statements.ActionStatement;
@@ -164,6 +165,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				return new SelfExpression(type);
 			case IVarExpression.SUPER:
 				return new SuperExpression(type);
+			case IVarExpression.MYSELF:
+				return new MyselfExpression(type, definitionDescription);
 			default:
 				return null;
 		}
