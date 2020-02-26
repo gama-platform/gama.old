@@ -187,7 +187,15 @@ public class DynamicLineString extends LineString {
 		return Objects.equals(dls.source, source) && Objects.equals(dls.target, target);
 	}
 
-	/*
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = ((source == null) ? 0 : source.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		return result;
+	}
+
+		/*
 	 * (non-Javadoc)
 	 *
 	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateFilter)
