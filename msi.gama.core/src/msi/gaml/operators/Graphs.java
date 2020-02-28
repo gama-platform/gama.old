@@ -1060,7 +1060,7 @@ public class Graphs {
 							isExecutable = false) },
 			see = { "predecessors_of", "successors_of" })
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
-			+ "g neighbors_of ({10,5}) = [{80.0,35.0,0.0},{20.0,3.0,0.0},{30.0,30.0,0.0}]")
+			+ "(g neighbors_of ({10,5}) sort_by point(each)) = [{20.0,3.0,0.0},{30.0,30.0,0.0},{80.0,35.0,0.0}]")
 	public static IList neighborsOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		if (graph.containsVertex(vertex)) {
