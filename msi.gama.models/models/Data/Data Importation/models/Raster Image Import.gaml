@@ -11,24 +11,25 @@ model HowToImportRaster
 
 global {	
 	// Constants 
-	int heightImg const: true <- 5587;
-	int widthImg const: true <- 6201;	 
+	int heightImg const: true <- 492;
+	int widthImg const: true <- 526;	 
 	  
 	// Global variables
-	int factorDiscret <- 30 ;
+	float factorDiscret <- 2.0 ;
 	file mntImageRaster <- image_file('../images/mnt/testAG.jpg') ;
 	
 	int nbIzard <- 250 ; 
 	file izardShape <- file('../images/icons/izard.gif');
 			
 	// Initialization of grid and creation of the izard agents
-	// - we use the as_matrix operator to transform a image file into a matrix of colors 
+	// - we use the as_matrix operator to resize the image file into a matrix of colors with the same size of the grid
 	// (Note that as_matrix takes a Point as right operand, this point specifies the number of lines and columns of the matrix)
 	// - we then set the color built-in attribute of the cell with the value of the corresponding matrix cell     
-	init {
-		// set mapColor value: mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
+	init {		
+		matrix mapColor <- mntImageRaster as_matrix {int(widthImg/factorDiscret), int(heightImg/factorDiscret)} ;
+		
 		ask cell {		
-			color <-rgb( (mntImageRaster) at {grid_x,grid_y}) ;
+			color <- rgb( mapColor at {grid_x,grid_y}) ;
 		}
 		create izard number: nbIzard; 
     }
@@ -38,7 +39,6 @@ global {
 // We create izard agents and locate them on one'cell' among the list of cellules in which there is no izard 
 // and with a color that is not white 'each.color != #white'
 // the shuffle operator is used to randomized the list of cells
-
 
 species izard {	
 	init{
@@ -52,27 +52,29 @@ species izard {
 	}
 }
 
-// We create a grid as environment with the same dimensions as the matrix in which we want to store the image
+// We create a grid with the same dimensions as the matrix in which we want to store the image
 // Note that the height (resp. the width) of the grid corresponds to the number of rows (resp. of columns) of the matrix:
 // - in the creation of a matrix: ([...] as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;)
 // - in the creation of the grid: grid cellule width: widthImg/factorDiscret height: heightImg/factorDiscret;
 
-grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
+grid cell  width: int(widthImg/factorDiscret) height: int(heightImg/factorDiscret);
 
 
 
 experiment main type: gui {	
-	// We display:
-	// - the grid
-	// - the original MNT image as background
-	// - izard agents
 	// We can thus compare the original MNT image and the discretized image in the grid.
-	// For cosmetic need, we can choose to not display the grid. 
+	// We define 2 displays:
+	// 1. with the original MNT image as background + izard agents
+	// 2. with the grid + izard agents 
 	output {
-		display HowToImportRaster {
-	       grid cell;
+		layout #split;
+		display Image {
 	       image 'Background' file: mntImageRaster.path;
 	       species izard aspect: image; 
 	    }   
+		display Grid {
+	       grid cell;
+	       species izard aspect: image; 
+	    }   	    
 	}	
 }
