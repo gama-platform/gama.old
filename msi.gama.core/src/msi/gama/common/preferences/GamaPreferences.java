@@ -87,6 +87,11 @@ public class GamaPreferences {
 				create("pref_show_welcome_page", "Display welcome page", true, IType.BOOL, false).in(NAME, STARTUP);
 		public static final Pref<Boolean> CORE_SHOW_MAXIMIZED =
 				create("pref_show_maximized", "Maximize GAMA window", true, IType.BOOL, false).in(NAME, STARTUP);
+		public static final Pref<Boolean> CORE_ASK_REBUILD =
+				create("pref_ask_rebuild", "Ask before rebuilding a corrupted workspace", true, IType.BOOL, false)
+						.in(NAME, STARTUP);
+		public static final Pref<Boolean> CORE_ASK_OUTDATED = create("pref_ask_outdated",
+				"Ask before using a workspace created by another version", true, IType.BOOL, false).in(NAME, STARTUP);
 		/**
 		 * Menus
 		 */

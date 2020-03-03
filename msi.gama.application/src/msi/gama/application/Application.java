@@ -174,9 +174,9 @@ public class Application implements IApplication {
 		} else {
 
 			/* Get what the user last said about remembering the workspace location */
-			remember = PickWorkspaceDialog.isRememberWorkspace();
+			remember = WorkspacePreferences.isRememberWorkspace();
 			/* Get the last used workspace location */
-			lastUsedWs = PickWorkspaceDialog.getLastSetWorkspaceDirectory();
+			lastUsedWs = WorkspacePreferences.getLastSetWorkspaceDirectory();
 			/* If we have a "remember" but no last used workspace, it's not much to remember */
 			if ( remember && (lastUsedWs == null || lastUsedWs.length() == 0) ) {
 				remember = false;

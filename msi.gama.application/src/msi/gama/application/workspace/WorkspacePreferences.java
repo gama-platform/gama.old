@@ -18,6 +18,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
@@ -29,9 +31,106 @@ import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import msi.gama.application.Application;
+import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class WorkspacePreferences {
+
+	static {
+		GamaPreferences.Interface.CORE_ASK_REBUILD.onChange(v -> askBeforeRebuildingWorkspace(v));
+		GamaPreferences.Interface.CORE_ASK_OUTDATED.onChange(v -> askBeforeUsingOutdatedWorkspace(v));
+	}
+
+	/*
+	 * The name of the file that tells us that the workspace directory belongs
+	 * to our application
+	 */
+
+	private static final String keyWorkspaceRootDir = "wsRootDir";
+	private static final String keyRememberWorkspace = "wsRemember";
+	private static final String keyLastUsedWorkspaces = "wsLastUsedWorkspaces";
+	private static final String keyAskForRebuilding = "wsAskRebuildingWorkspace";
+	private static final String keyAskForOutdated = "wsAskOutdatedWorkspace";
+
+	public static Preferences getNode() {
+		try {
+			if ( Preferences.userRoot().nodeExists("gama") ) { return Preferences.userRoot().node("gama"); }
+		} catch (final BackingStoreException e1) {
+			e1.printStackTrace();
+		}
+		final Preferences p = Preferences.userRoot().node("gama");
+		try {
+			p.flush();
+		} catch (final BackingStoreException e) {
+			e.printStackTrace();
+		}
+		return p;
+	}
+
+	private static void flush() {
+		try {
+			getNode().flush();
+		} catch (final BackingStoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Returns whether the user selected "remember workspace" in the preferences
+	 */
+	public static boolean isRememberWorkspace() {
+		return getNode().getBoolean(keyRememberWorkspace, false);
+	}
+
+	public static void isRememberWorkspace(final boolean remember) {
+		getNode().putBoolean(keyRememberWorkspace, remember);
+		flush();
+	}
+
+	public static String getLastUsedWorkspaces() {
+		return getNode().get(keyLastUsedWorkspaces, "");
+	}
+
+	public static void setLastUsedWorkspaces(final String used) {
+		getNode().put(keyLastUsedWorkspaces, used);
+		flush();
+	}
+
+	/**
+	 * Returns the last set workspace directory from the preferences
+	 *
+	 * @return null if none
+	 */
+	public static String getLastSetWorkspaceDirectory() {
+		return getNode().get(keyWorkspaceRootDir, "");
+	}
+
+	public static void setLastSetWorkspaceDirectory(final String last) {
+		getNode().put(keyWorkspaceRootDir, last);
+		flush();
+	}
+
+	public static boolean askBeforeRebuildingWorkspace() {
+		// true by default
+		return getNode().getBoolean(keyAskForRebuilding, true);
+	}
+
+	public static void askBeforeRebuildingWorkspace(final boolean ask) {
+		// true by default
+		getNode().putBoolean(keyAskForRebuilding, ask);
+		flush();
+	}
+
+	public static boolean askBeforeUsingOutdatedWorkspace() {
+		// true by default
+		return getNode().getBoolean(keyAskForOutdated, true);
+	}
+
+	public static void askBeforeUsingOutdatedWorkspace(final boolean ask) {
+		// true by default
+		getNode().putBoolean(keyAskForOutdated, ask);
+		flush();
+	}
 
 	// static String lastWs;
 	static String selectedWorkspaceRootLocation;
@@ -105,9 +204,9 @@ public class WorkspacePreferences {
 
 		try (FileInputStream input = new FileInputStream(new File(targetDirectory + "/.gama.epf"))) {
 			prefs = service.readPreferences(input);
-			service.applyPreferences(prefs, WorkspacePreferences.getPreferenceFilters());
+			service.applyPreferences(prefs, getPreferenceFilters());
 		} catch (final IOException e) {} catch (final CoreException e) {}
-		WorkspacePreferences.setApplyPrefs(false);
+		setApplyPrefs(false);
 
 	}
 
@@ -201,9 +300,12 @@ public class WorkspacePreferences {
 		final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
 		if ( !dotFile.exists() ) {
 			if ( fromDialog ) {
-				final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
-					"Different version of the models library",
-					"The workspace contains a different version of the models library. Do you want to proceed anyway ?");
+				boolean create = true;
+				if ( askBeforeUsingOutdatedWorkspace() ) {
+					create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
+						"Different version of the models library",
+						"The workspace contains a different version of the models library. Do you want to proceed anyway ?");
+				}
 				if ( create ) {
 					try {
 						dotFile.createNewFile();
@@ -243,8 +345,12 @@ public class WorkspacePreferences {
 		if ( files == null ) { return false; }
 		DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
 		if ( files.length == 0 ) { return true; }
-		if ( MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
-			"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ? Once it is done, the platform will restart to complete the cleaning process.") ) {
+		boolean rebuild = true;
+		if ( askBeforeRebuildingWorkspace() ) {
+			rebuild = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
+				"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ?");
+		}
+		if ( rebuild ) {
 			for ( final File file : files ) {
 				if ( file.exists() ) {
 					file.delete();

@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,15 +40,6 @@ import com.google.common.io.Files;
  * http://hexapixel.com/2009/01/12/rcp-workspaces
  */
 public class PickWorkspaceDialog extends TitleAreaDialog {
-
-	/*
-	 * The name of the file that tells us that the workspace directory belongs
-	 * to our application
-	 */
-
-	private static final String keyWorkspaceRootDir = "wsRootDir";
-	private static final String keyRememberWorkspace = "wsRemember";
-	private static final String keyLastUsedWorkspaces = "wsLastUsedWorkspaces";
 
 	/*
 	 * This are our preferences we will be using as the IPreferenceStore is not
@@ -97,37 +86,6 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		newShell.setText("GAMA Models Workspace");
 	}
 
-	public static Preferences getNode() {
-		try {
-			if ( Preferences.userRoot().nodeExists("gama") ) { return Preferences.userRoot().node("gama"); }
-		} catch (final BackingStoreException e1) {
-			e1.printStackTrace();
-		}
-		final Preferences p = Preferences.userRoot().node("gama");
-		try {
-			p.flush();
-		} catch (final BackingStoreException e) {
-			e.printStackTrace();
-		}
-		return p;
-	}
-
-	/**
-	 * Returns whether the user selected "remember workspace" in the preferences
-	 */
-	public static boolean isRememberWorkspace() {
-		return getNode().getBoolean(keyRememberWorkspace, false);
-	}
-
-	/**
-	 * Returns the last set workspace directory from the preferences
-	 *
-	 * @return null if none
-	 */
-	public static String getLastSetWorkspaceDirectory() {
-		return getNode().get(keyWorkspaceRootDir, null);
-	}
-
 	@Override
 	protected Control createDialogArea(final Composite parent) {
 		setTitle("Choose a Workspace to store your models, settings, etc.");
@@ -155,19 +113,16 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			final GridData data = new GridData(SWT.LEFT, SWT.CENTER, true, false);
 			data.widthHint = 200;
 			workspacePathCombo.setLayoutData(data);
-			String wsRoot = getNode().get(keyWorkspaceRootDir, "");
-			if ( wsRoot == null || wsRoot.length() == 0 ) {
-				wsRoot = getWorkspacePathSuggestion();
-			}
+			final String wsRoot = WorkspacePreferences.getLastSetWorkspaceDirectory();
 			workspacePathCombo.setText(wsRoot);
 
 			/* Checkbox below */
 			rememberWorkspaceButton = new Button(inner, SWT.CHECK);
 			rememberWorkspaceButton.setText("Remember");
 			rememberWorkspaceButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-			rememberWorkspaceButton.setSelection(getNode().getBoolean(keyRememberWorkspace, false));
+			rememberWorkspaceButton.setSelection(WorkspacePreferences.isRememberWorkspace());
 
-			final String lastUsed = getNode().get(keyLastUsedWorkspaces, "");
+			final String lastUsed = WorkspacePreferences.getLastUsedWorkspaces();
 			lastUsedWorkspaces = new ArrayList<>();
 			if ( lastUsed != null ) {
 				final String[] all = lastUsed.split(splitChar);
@@ -288,8 +243,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	protected void cloneCurrentWorkspace() {
-		final String currentLocation = getNode().get(keyWorkspaceRootDir, "");
-		if ( currentLocation.isEmpty() ) {
+		final String currentLocation = WorkspacePreferences.getLastSetWorkspaceDirectory();
+		if ( currentLocation == null || currentLocation.isEmpty() ) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
 				"No current workspace exists. Can only clone from an existing workspace");
 			return;
@@ -351,13 +306,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		/* Save them onto our preferences */
-		getNode().putBoolean(keyRememberWorkspace, rememberWorkspaceButton.getSelection());
-		getNode().put(keyLastUsedWorkspaces, buf.toString());
-		try {
-			getNode().flush();
-		} catch (final BackingStoreException e) {
-			e.printStackTrace();
-		}
+		WorkspacePreferences.isRememberWorkspace(rememberWorkspaceButton.getSelection());
+		WorkspacePreferences.setLastUsedWorkspaces(buf.toString());
 
 		/* Now create it */
 		final boolean ok = checkAndCreateWorkspaceRoot(str);
@@ -373,7 +323,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		/* And on our preferences as well */
 		// scope.getGui().debug("Writing " + str + " in the preferences");
 		if ( cloning ) {
-			final String previousLocation = getNode().get(keyWorkspaceRootDir, "");
+			final String previousLocation = WorkspacePreferences.getLastSetWorkspaceDirectory();
 			File workspaceDirectory = new File(previousLocation);
 			if ( !workspaceDirectory.exists() || previousLocation.equals(str) ) {
 				final DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
@@ -398,12 +348,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 			}
 		}
-		getNode().put(keyWorkspaceRootDir, str);
-		try {
-			getNode().flush();
-		} catch (final BackingStoreException e) {
-			e.printStackTrace();
-		}
+		WorkspacePreferences.setLastSetWorkspaceDirectory(str);
 
 		super.okPressed();
 	}
