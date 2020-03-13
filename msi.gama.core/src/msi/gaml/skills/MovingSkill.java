@@ -26,6 +26,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -65,6 +66,7 @@ import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Punctal;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -540,7 +542,9 @@ public class MovingSkill extends Skill {
 		if (onV instanceof IShape && ((IShape) onV).isLine()) {
 			rt = onV;
 		} else {
-			if (onV instanceof IList) {
+			if (onV instanceof ISpecies) {
+				on = ((ISpecies) onV).listValue(scope, Types.AGENT, false);
+			} else if (onV instanceof IList) {
 
 				on = GamaListFactory.create(Types.AGENT);
 				final IList ags = (IList) onV;
