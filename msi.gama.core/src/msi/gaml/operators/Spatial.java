@@ -1867,8 +1867,9 @@ public abstract class Spatial {
 					if (result == null ||result.getInnerGeometry() == null ) {
 						geomsVisible.stream().forEach(g -> Spatial.Transformations.enlarged_by(scope, g, 0.1));
 						result = Cast.asGeometry(scope, geomsVisible, false);
-
-
+					}
+					if (result == null ||result.getInnerGeometry() == null ) {
+						return null;
 					}
 					if ((result.getInnerGeometry() instanceof GeometryCollection)) {
 						
