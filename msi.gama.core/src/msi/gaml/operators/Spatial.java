@@ -1832,11 +1832,13 @@ public abstract class Spatial {
 					coordinates.add(location);
 					final IShape gg =
 							Spatial.Operators.inter(scope, source, Spatial.Creation.polygon(scope, coordinates));
+					
 					if (gg != null && (isPoint || !gg.isPoint())) {
-						geoms.add(new GamaShape(gg));
+						IShape s = new GamaShape(GeometryUtils.geometryCollectionManagement(gg.getInnerGeometry()));
+						geoms.add(s);
 					}
 				}
-				final IList geomsVisible = GamaListFactory.create();
+				final IList<IShape> geomsVisible = GamaListFactory.create();
 				final PreparedGeometry ref = PreparedGeometryFactory.prepare(locG);
 
 				for (final IShape geom : geoms) {
@@ -1850,9 +1852,26 @@ public abstract class Spatial {
 						}
 					}
 				}
+				boolean isPolygon = false;
+				boolean isLine = false;
+				for (IShape geom : geomsVisible) {
+					isLine = isLine || geom.isLine();
+					isPolygon = isPolygon || (!geom.isPoint() && !geom.isLine());
+				}
+				final boolean isPolygonF = isPolygon;
+				final boolean isLineF = isLine;
+				
+				geomsVisible.removeIf(g -> ((isPolygonF || isLineF) && g.isPoint()) && (isPolygonF && g.isLine()));
 				if (!geomsVisible.isEmpty(scope)) {
 					IShape result = Cast.asGeometry(scope, geomsVisible, false);
-					if (result.getInnerGeometry() instanceof GeometryCollection) {
+					if (result == null ||result.getInnerGeometry() == null ) {
+						geomsVisible.stream().forEach(g -> Spatial.Transformations.enlarged_by(scope, g, 0.1));
+						result = Cast.asGeometry(scope, geomsVisible, false);
+
+
+					}
+					if ((result.getInnerGeometry() instanceof GeometryCollection)) {
+						
 						result = Spatial.Transformations.enlarged_by(scope, result, 0.1);
 					}
 					return result;

@@ -35,6 +35,7 @@ import com.vividsolutions.jts.geom.GeometryFilter;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
@@ -1035,6 +1036,56 @@ public class GeometryUtils {
 
 	public static int getHolesNumber(final Geometry p) {
 		return p instanceof Polygon ? ((Polygon) p).getNumInteriorRing() : 0;
+	}
+	
+	public static Geometry geometryCollectionManagement(Geometry gjts) {
+		if (!(gjts instanceof GeometryCollection)) return gjts;
+		if (gjts instanceof MultiPoint ||gjts instanceof MultiLineString ||gjts instanceof MultiPolygon )
+			return gjts;
+		GeometryCollection gc = (GeometryCollection) gjts;
+		int dimMax = -1;
+		boolean toManage = false;
+		for (int i = 0; i < gc.getNumGeometries(); i++) {
+			Geometry g = gc.getGeometryN(i);
+			int dim =  (g instanceof Point) ? 0 : (g instanceof LineString) ? 1 : 2;
+			if (dimMax != -1 && dimMax != dim) {
+				toManage = true;
+			}
+			dimMax = Math.max(dimMax, dim);
+			
+		}
+		if (toManage) {
+			List<Geometry> list = new ArrayList<Geometry>();
+			for (int i = 0; i < gc.getNumGeometries(); i++) {
+				Geometry g = gc.getGeometryN(i);
+				if ( g.getDimension() == dimMax) 
+					list.add(g);
+			}
+			if (list.size() == 1) {
+				return list.get(0);
+			}
+			if (dimMax == 0) {
+				Point[] pts = new Point[list.size()];
+				for (int i = 0; i < pts.length; i++) {
+					pts[i] = (Point) list.get(i);
+				}
+				return GEOMETRY_FACTORY.createMultiPoint(pts);
+			} else if (dimMax == 1) {
+				LineString[] ls = new LineString[list.size()];
+				for (int i = 0; i < ls.length; i++) {
+					ls[i] = (LineString) list.get(i);
+				}
+				return GEOMETRY_FACTORY.createMultiLineString(ls);
+			} else {
+				Polygon[] ps = new Polygon[list.size()];
+				for (int i = 0; i < ps.length; i++) {
+					ps[i] = (Polygon) list.get(i);
+				}
+				return GEOMETRY_FACTORY.createMultiPolygon(ps);
+			}
+				
+		}
+		return gc;
 	}
 	
 	public static Geometry cleanGeometry(final Geometry g) {
