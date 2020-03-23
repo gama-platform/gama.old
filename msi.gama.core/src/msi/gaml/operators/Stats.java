@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
 import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
@@ -1193,25 +1192,6 @@ public class Stats {
 		}
 
 		return table[0][n2];
-	}
-
-	@operator (
-			value = "gamma_rnd",
-			can_be_const = false,
-			type = IType.LIST,
-			category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
-	@doc (
-			value = "returns a random value from a gamma distribution with specified values of the shape and scale parameters",
-			examples = { @example (
-					value = "gamma_distribution_complemented(2,3,0.9) with_precision(3)",
-					equals = "0.731") })
-
-	public static Double OpGammaDist(final IScope scope, final Double shape, final Double scale)
-			throws GamaRuntimeException {
-		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(), shape, scale,
-				GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
-		return dist.sample();
 	}
 
 	@operator (
