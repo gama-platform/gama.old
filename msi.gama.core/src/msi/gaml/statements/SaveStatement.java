@@ -697,6 +697,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 
 		} else {
+			if (code.equals("GAMA")) return null;
+			
 			try {
 				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 			} catch (final FactoryException e1) {
@@ -901,12 +903,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		// geometry is by convention (in specs) at position 0
 		if (ag.getInnerGeometry() == null) { return false; }
 		// System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
-
 		Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
-
+		
 		g = fixesPolygonCWS(g);
 		g = geometryCollectionManagement(g);
-
+		
 		values.add(g);
 		if (ag instanceof IAgent) {
 			for (final IExpression variable : attributeValues) {
@@ -964,6 +965,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		final FeatureJSON io = new FeatureJSON();
 		io.writeFeatureCollection(featureCollection, f.getAbsolutePath());
+		
 
 	}
 
