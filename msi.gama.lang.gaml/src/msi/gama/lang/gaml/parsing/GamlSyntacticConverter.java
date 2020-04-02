@@ -204,8 +204,8 @@ public class GamlSyntacticConverter {
 		final List<Pragma> pragmas = m.getPragmas();
 		if (pragmas.isEmpty()) { return null; }
 		try (final Collector.AsList<String> result = Collector.getList()) {
-			for (int i = 0; i < pragmas.size(); i++) {
-				final String pragma = pragmas.get(i).getName();
+			for (final Pragma pragma2 : pragmas) {
+				final String pragma = pragma2.getName();
 				result.add(pragma);
 			}
 			return result.items();
@@ -217,6 +217,10 @@ public class GamlSyntacticConverter {
 		if (p == null) { return true; }
 		final int kind = p.getKind();
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
+	}
+
+	private boolean doesNotContainVirtual(final Statement stm) {
+		return !EGaml.getInstance().hasFacet(stm, IKeyword.VIRTUAL);
 	}
 
 	// private void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
@@ -277,8 +281,7 @@ public class GamlSyntacticConverter {
 				// Translation of "type1 ID1 (type2 ID2, type3 ID3) {...}" to
 				// "action ID1 type: type1 { arg ID2 type: type2; arg ID3 type:
 				// type3; ...}"
-				final Block b = def.getBlock();
-				if (b != null /* && b.getFunction() == null */) {
+				if (EGaml.getInstance().hasChildren(def)) {
 					elt.setKeyword(ACTION);
 					keyword = ACTION;
 				}

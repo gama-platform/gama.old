@@ -147,4 +147,6 @@ public interface IGamlEcoreUtils {
 
 	EObject getExprOf(EObject element);
 
+	boolean hasFacet(EObject s, String facet);
+
 }

@@ -166,6 +166,26 @@ public class EGaml implements IGamlEcoreUtils {
 	}
 
 	/**
+	 * Tells if a facet is present in a statement
+	 *
+	 * @param s
+	 *            the s
+	 * @return the facets map of
+	 */
+	@Override
+	public boolean hasFacet(final EObject s, final String facet) {
+		final List<? extends EObject> list = getFacetsOf(s);
+		if (list.isEmpty()) { return false; }
+		for (final EObject f : list) {
+			if (f instanceof Facet) {
+				final String name = getKeyOf(f);
+				if (facet.equals(name)) { return true; }
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Get one particular facet of a statement
 	 *
 	 * @param s
@@ -217,7 +237,7 @@ public class EGaml implements IGamlEcoreUtils {
 
 		@Override
 		public Boolean caseStatement(final Statement object) {
-			return ((StatementImpl) object).eIsSet(GamlPackage.STATEMENT__BLOCK)
+			return ((StatementImpl) object).eIsSet(GamlPackage.STATEMENT__BLOCK) || hasFacet(object, IKeyword.VIRTUAL)
 			// && ((StatementImpl) object).getBlock().getFunction() == null
 			;
 		}
