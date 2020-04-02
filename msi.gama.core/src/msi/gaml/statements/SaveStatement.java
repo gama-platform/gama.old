@@ -79,6 +79,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.metamodel.topology.projection.SimpleScalingProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -697,7 +698,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 
 		} else {
-			if (code.equals("GAMA")) return null;
+			if (code.startsWith("GAMA")) {
+				if (code.equals("GAMA"))return null;
+				String[] cs = code.split("::");
+				if (cs.length == 2) {
+					Double val = Double.parseDouble(cs[1]);
+					if (val == null) return null;
+					else return new SimpleScalingProjection(val);
+				} else return null;
+			}
 			
 			try {
 				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
