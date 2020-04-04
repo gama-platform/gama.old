@@ -446,6 +446,9 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		if (textColor != null) {
 			pp.getDomainAxis().setLabelPaint(textColor);
 			pp.getDomainAxis().setTickLabelPaint(textColor);
+			if (this.series_label_position.equals("xaxis")) {
+				((SubCategoryAxis)pp.getDomainAxis()).setSubLabelPaint(textColor);
+			}			
 		}
 
 		if (gap > 0) {
@@ -568,7 +571,13 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		if (xlabel != null && !xlabel.isEmpty()) {
 			pp.getDomainAxis().setLabel(xlabel);
 		}
-
+		if (textColor != null) {
+			pp.getDomainAxis().setLabelPaint(textColor);
+			pp.getDomainAxis().setTickLabelPaint(textColor);
+			if (this.series_label_position.equals("xaxis")) {
+				((SubCategoryAxis)pp.getDomainAxis()).setSubLabelPaint(textColor);
+			}			
+		}
 	}
 
 	@Override
