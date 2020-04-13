@@ -21,4 +21,7 @@ echo "* (c) 2007-2019 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
 passWork=.work$RANDOM
 
-java -cp ../plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx$memory -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork "$@"
+if ! java -cp ../plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx$memory -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork "$@"; then
+    echo "Error in you command, here's the log :"
+    cat ./$passWork/.metadata/.log
+fi
