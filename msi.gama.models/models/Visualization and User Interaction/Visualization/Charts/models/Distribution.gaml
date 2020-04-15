@@ -12,11 +12,20 @@ global {
 	map<string, list> gamma_distrib;
 	map<string, list> lognormal_distrib;
 	map<string, list> weibull_distrib;
+	map<string, list> weibull_trunc_distrib;
+	map<string, list> lognormal_trunc_distrib;
+	map<string, list> gamma_trunc_distrib;
+	map<string, list> gauss_trunc_distrib;	
+	
 	
 	list<float> gauss_test;
 	list<float> gamma_test;
 	list<float> lognormal_test;
 	list<float> weibull_test;
+	list<float> weibull_trunc_test;
+	list<float> lognormal_trunc_test;
+	list<float> gamma_trunc_test;
+	list<float> gauss_trunc_test;
 	
 	init {
 		gauss_test <- [1, 2, 4, 1, 2, 5, 10.0];
@@ -30,20 +39,45 @@ global {
 		
 		weibull_test <- [1, 2, 4, 1, 2, 5, 10.0];		
 		weibull_distrib <- distribution_of(weibull_test, 5);
+
+		gauss_trunc_test <- [1, 2, 4, 1, 2, 5, 10.0];
+		gauss_trunc_distrib <- distribution_of(gauss_trunc_test, 5);
+		
+		gamma_trunc_test <- [1, 2, 4, 1, 2, 5, 10.0];
+		gamma_trunc_distrib <- distribution_of(gamma_trunc_test, 5);
+		
+		lognormal_trunc_test <- [1, 2, 4, 1, 2, 5, 10.0];
+		lognormal_trunc_distrib <- distribution_of(lognormal_trunc_test, 5);
+		
+		weibull_trunc_test <- [1, 2, 4, 1, 2, 5, 10.0];		
+		weibull_trunc_distrib <- distribution_of(weibull_trunc_test, 5);		
 	}
 
 	reflex update_distrib {
 		add gauss_rnd(10,10) to: gauss_test; 
-		gauss_distrib <- distribution_of(gauss_test, 10);
+		gauss_distrib <- distribution_of(gauss_test, 15);
 		
 		add gamma_rnd(10,0.5) to: gamma_test; 
-		gamma_distrib <- distribution_of(gamma_test, 10);
+		gamma_distrib <- distribution_of(gamma_test, 15);
 		
 		add lognormal_rnd(10,0.5) to: lognormal_test; 
-		lognormal_distrib <- distribution_of(lognormal_test, 10);
+		lognormal_distrib <- distribution_of(lognormal_test, 15);
 		
 		add weibull_rnd(10,10) to: weibull_test; 
-		weibull_distrib <- distribution_of(weibull_test, 10);						
+		weibull_distrib <- distribution_of(weibull_test, 15);	
+		
+		
+		add truncated_gauss(10,10) to: gauss_trunc_test; 
+		gauss_trunc_distrib <- distribution_of(gauss_trunc_test, 15);
+		
+		add gamma_trunc_rnd(10,0.5,6,true) to: gamma_trunc_test; 
+		gamma_trunc_distrib <- distribution_of(gamma_trunc_test, 15);
+		
+		add lognormal_trunc_rnd(10,0.5,17000,false) to: lognormal_trunc_test; 
+		lognormal_trunc_distrib <- distribution_of(lognormal_trunc_test, 15);
+		
+		add weibull_trunc_rnd(10,10,7,12) to: weibull_trunc_test; 
+		weibull_trunc_distrib <- distribution_of(weibull_trunc_test, 15);							
 	}
 }
 
@@ -69,7 +103,29 @@ experiment "Example of Distribution" type: gui {
 			chart "Weibull Distribution" type: histogram {
 				datalist (weibull_distrib at "legend") value: (weibull_distrib at "values");
 			}
-		}						
+		}	
+		
+		
+		display "Truncated Gauss Distribution" {
+			chart "Truncated Gauss Distribution truncated_gauss(10,10)" type: histogram {
+				datalist (gauss_trunc_distrib at "legend") value: (gauss_trunc_distrib at "values");
+			}
+		}
+		display "Truncated Gamma Distribution" {
+			chart "Truncated Gamma Distribution gamma_trunc_rnd(10,0.5,6,true)" type: histogram {
+				datalist (gamma_trunc_distrib at "legend") value: (gamma_trunc_distrib at "values");
+			}
+		}
+		display "Truncated LogNormal Distribution" {
+			chart "Truncated LogNormal Distribution lognormal_trunc_rnd(10,0.5,17000,false)" type: histogram {
+				datalist (lognormal_trunc_distrib at "legend") value: (lognormal_trunc_distrib at "values");
+			}
+		}
+		display "Truncated Weibull Distribution" {
+			chart "Truncated Weibull Distribution weibull_trunc_rnd(10,10,7,12)" type: histogram {
+				datalist (weibull_trunc_distrib at "legend") value: (weibull_trunc_distrib at "values");
+			}
+		}								
 	}
 }
 	
