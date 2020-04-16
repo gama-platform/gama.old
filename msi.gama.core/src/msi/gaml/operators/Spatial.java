@@ -25,9 +25,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.algorithm.Centroid;
@@ -5327,6 +5329,50 @@ public abstract class Spatial {
 			}
 			if (gis == null) { return g.copy(scope); }
 			final IShape s = new GamaShape(gis.inverseTransform(g.getInnerGeometry()));
+			if (g instanceof ILocation) { return s.getLocation(); }
+			return s;
+		}
+		
+		@operator (
+				value = { "CRS_transform" },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION,
+						IConcept.GIS })
+		@doc (
+				usages = { @usage (
+						value = "returns the geometry corresponding to the transformation of the given geometry from the first CRS to the second CRS (Coordinate Reference System)",
+						examples = { @example (
+								value = "{8.35,47.22} CRS_transform(\"EPSG:4326\",\"EPSG:4326\")",
+								equals = "{929517.7481238344,5978057.894895313,0.0}",
+								test = true) }) })
+		@no_test
+		public static IShape transform_CRS(final IScope scope, final IShape g, final String sourceCode, final String targetcode) {
+			if (g == null) 
+				return g;
+			CoordinateReferenceSystem sourceCRS;
+			try {
+				sourceCRS = CRS.decode(sourceCode);
+			} catch (FactoryException e) {
+				throw GamaRuntimeException.error("The code " + sourceCode + " does not correspond to a known EPSG code",
+						scope);
+			}
+			CoordinateReferenceSystem targetCRS;
+			try {
+				targetCRS = CRS.decode(targetcode);
+			}  catch (FactoryException e) {
+				throw GamaRuntimeException.error("The code " + targetcode + " does not correspond to a known EPSG code",
+						scope);
+			}
+
+			MathTransform transform;Geometry targetGeometry = null ;
+			try {
+				transform = CRS.findMathTransform(sourceCRS, targetCRS);
+				targetGeometry = JTS.transform( g.getInnerGeometry(), transform);
+			} catch (Exception e) {
+				throw GamaRuntimeException.error("No transformation found from " + sourceCode + " to " + targetcode,scope);
+			} 
+			if (targetGeometry == null) return null;
+			IShape s = new GamaShape(targetGeometry);
 			if (g instanceof ILocation) { return s.getLocation(); }
 			return s;
 		}
