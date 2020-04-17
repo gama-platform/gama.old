@@ -35,6 +35,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
@@ -43,6 +44,7 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
@@ -116,11 +118,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				}
 				final IShape secondLine = _edges.get(1).getGeometry();
 				if (threeD) {
-					pt = source.euclidianDistanceTo(pt0) < source.euclidianDistanceTo(pt1) ? pt0 : pt1;
+					pt =  _edges.get(1).getPoints().contains(pt0) ? pt1 : pt0;
 				} else {
 					pt = pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0 : pt1;
 				}
-
 			} else {
 				final IShape lineEnd = edges.get(edges.size() - 1);
 				final GamaPoint falseTarget = (GamaPoint) _closest_point_to(getEndVertex().getLocation(), lineEnd);
@@ -150,8 +151,17 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 					geom2 = GEOMETRY_FACTORY.createLineString(cc);
 					// geom2 = geom.reverse();
 					edge2 = new GamaShape(geom2);
-					if (!threeD) {
-
+					boolean threeDGeom = false;
+					if (threeD) {
+						double zz = edge2.getPoints().get(0).getZ();
+						for (int i = 1; i < edge2.getPoints().size();i++) {
+							if (edge2.getPoints().get(i).getZ() != zz) {
+								threeDGeom = true;
+								break;
+							}
+						}
+					}
+					if (!threeDGeom) {
 						if (cpt == 0 && !source.equals(pt)) {
 							GamaPoint falseSource = source.getLocation().toGamaPoint();
 							if (source.euclidianDistanceTo(edge2) > min(0.01, edge2.getPerimeter() / 1000)) {
@@ -168,7 +178,56 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 							}
 							edge2 = split_at(edge2, falseTarget).get(0);
 						}
+					} else {
+						if (cpt == 0 && !source.equals(pt)) {
+							IList<IShape> pts = GamaListFactory.create(Types.GEOMETRY) ;
+							pts.add(source);
+							if (edge2.getPoints().size() == 2) {
+								pts.add(edge2.getPoints().get(edge2.getPoints().size() - 1));
+							} else {
+								int index = 0; double distMin = Double.MAX_VALUE;
+								for (int i = 0; i < edge2.getPoints().size() -1; i++) {
+									ILocation p1 = edge2.getPoints().get(i);
+									double dist = p1.euclidianDistanceTo(source);
+									if (dist < distMin) {
+										index = i;
+										distMin = dist;
+									}
+								}
+								for (int i = index+1; i < edge2.getPoints().size(); i++) {
+									pts.add(edge2.getPoints().get(i));
+								}
+							}
+							edge2 = Spatial.Creation.line(GAMA.getRuntimeScope(), pts);
+						}
+						if (cpt == _edges.size() - 1 && !target.equals(getLastPointOf(edge2))) {
+							IList<IShape> pts = GamaListFactory.create(Types.GEOMETRY) ;
+							pts.add(edge2.getPoints().get(0));
+							
+							
+							if (edge2.getPoints().size() == 2) {
+								pts.add(edge2.getPoints().get(0));
+							} else {
+								int index = 0; double distMin = Double.MAX_VALUE;
+								for (int i = 1; i < edge2.getPoints().size(); i++) {
+									ILocation p1 = edge2.getPoints().get(i);
+									double dist = p1.euclidianDistanceTo(target);
+									if (dist < distMin) {
+										index = i;
+										distMin = dist;
+									}
+								}
+								for (int i = 0; i < index ; i++) {
+									pts.add(edge2.getPoints().get(i));
+								}
+							}
+							pts.add(target);
+							
+							edge2 = Spatial.Creation.line(GAMA.getRuntimeScope(), pts);
+						}
+
 					}
+					
 					if (ag != null) {
 						realObjects.put(edge2.getGeometry(), ag);
 					} else {
