@@ -185,4 +185,20 @@ do
 	echo $RESULT
 done 
 
+
+
+	FILE="/home/travis/build/gama-platform/gama/msi.gama.headless/target/gama1.8.jar"
+	NFILE="gama1.8.jar"
+
+  FILENAME=`basename $FILE`
+  echo   "Uploading $NFILE...  "
+  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$NFILE"
+  
+  RESULT=`curl -s -w  "\n%{http_code}\n"                   \
+    -H "Authorization: token $BOT_TOKEN"                \
+    -H "Accept: application/vnd.github.manifold-preview"  \
+    -H "Content-Type: application/zip"                    \
+    --data-binary "@$FILE"                                \
+    "$LK"`
+	echo $RESULT
 echo DONE
