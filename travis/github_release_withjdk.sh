@@ -187,8 +187,8 @@ done
 
 
 
-	FILE="/home/travis/build/gama-platform/gama/msi.gama.headless/target/gama1.8.jar"
-	NFILE="gama1.8.jar"
+	FILE="/home/travis/build/gama-platform/gama/msi.gama.headless/target/gama-headless1.8.jar"
+	NFILE="gama-headless1.8.jar"
 
   FILENAME=`basename $FILE`
   echo   "Uploading $NFILE...  "
