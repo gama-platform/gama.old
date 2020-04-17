@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +19,12 @@ import java.util.zip.ZipInputStream;
 
 public class Runner {
 
-	public void extractZip() {
-
-		File file1 = new File("Gama1.7-linux.gtk.x86_64.zip");
+	public void extractZip(String path) {
+//		String executionPath = System.getProperty("user.dir");
+		File currentJavaJarFile = new File(Runner.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
+		String executionPath = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "");
+		File file1 = new File(executionPath + "/Gama1.7-linux.gtk.x86_64.zip");
 		if (!file1.exists()) {
 			InputStream link = (getClass().getResourceAsStream("/Gama1.7-linux.gtk.x86_64.zip"));
 			try {
@@ -30,7 +35,7 @@ public class Runner {
 			}
 		}
 		try {
-			unzip("Gama1.7-linux.gtk.x86_64.zip", "Gama");
+			unzip(executionPath + "/Gama1.7-linux.gtk.x86_64.zip", path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -140,11 +145,12 @@ public class Runner {
 		}
 		final StringBuilder output = new StringBuilder();
 		final List<String> commands = new ArrayList<>();
-//		commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "cmd.exe" : "/bin/bash");
-//		commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "/C" : "-c");
-		
-		commands.add("bash");
-		commands.add("-c");
+		String os = System.getProperty("os.name");
+		commands.add(os.startsWith("Win") ? "cmd.exe" : "/bin/bash");
+		commands.add(os.startsWith("Win") ? "/C" : "-c");
+
+//		commands.add("bash");
+//		commands.add("-c");
 		commands.add(s.trim());
 		// commands.addAll(Arrays.asList(s.split(" ")));
 		final boolean nonBlocking = commands.get(commands.size() - 1).endsWith("&");
@@ -160,10 +166,10 @@ public class Runner {
 				return "";
 			}
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			final int returnValue = p.waitFor();
+//			final int returnValue = p.waitFor();
 			String line = "";
 			while ((line = reader.readLine()) != null) {
-				output.append(line + LN);
+				System.out.println(line);
 			}
 
 		} catch (final Exception e) {
@@ -173,20 +179,24 @@ public class Runner {
 
 	}
 
-	public void run(String[] args) {
+	public void run(String path, String[] args) {
 //		String out=console("/Gama/headless/gama-headless.sh samples/predatorPrey.xml o", "/");
-		String out=console(args[0]+" "+args[1]+" "+args[2], "/");
-		System.out.println(out);
+		String os = System.getProperty("os.name");
+
+//		String fscript = os.startsWith("Win") ? path + "\\headless\\gama-headless.bat" : path + "/headless/gama-headless.sh";
+		String fscript = path + "/headless/gama-headless.sh";
+		console(fscript + " " + args[1] + " " + args[2], path + "/headless");
 //			Runtime r=Runtime.getRuntime();
 //		r.exec("java -jar trang.jar 5-something.xml 5.1-somethingElse.xsd");
 	}
 
 	public static void main(String[] args) {
-		System.out.println("hello");
+		System.out.println("hello ");
+
 		Runner r = new Runner();
 		if ((args.length) == 3) {
-			r.extractZip();
-			r.run(args);
+			r.extractZip(args[0]);
+			r.run(args[0], args);
 		}
 
 	}
