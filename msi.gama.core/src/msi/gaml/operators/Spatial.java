@@ -5344,7 +5344,7 @@ public abstract class Spatial {
 						examples = { @example (
 								value = "{8.35,47.22} CRS_transform(\"EPSG:4326\",\"EPSG:4326\")",
 								equals = "{929517.7481238344,5978057.894895313,0.0}",
-								test = true) }) })
+								test = false) }) })
 		@no_test
 		public static IShape transform_CRS(final IScope scope, final IShape g, final String sourceCode, final String targetcode) {
 			if (g == null) 
