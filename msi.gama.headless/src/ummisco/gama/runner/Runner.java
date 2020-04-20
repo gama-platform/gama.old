@@ -24,9 +24,9 @@ public class Runner {
 		File currentJavaJarFile = new File(Runner.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
 		String executionPath = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "");
-		File file1 = new File(executionPath + "/Gama1.7-linux.gtk.x86_64.zip");
+		File file1 = new File(executionPath + "/Gama1.7-linux.gtk.x86_64_withJDK_COMOKIT.zip");
 		if (!file1.exists()) {
-			InputStream link = (getClass().getResourceAsStream("/Gama1.7-linux.gtk.x86_64.zip"));
+			InputStream link = (getClass().getResourceAsStream("/Gama1.7-linux.gtk.x86_64_withJDK_COMOKIT.zip"));
 			try {
 				Files.copy(link, file1.getAbsoluteFile().toPath());
 			} catch (IOException e) {
@@ -35,7 +35,7 @@ public class Runner {
 			}
 		}
 		try {
-			unzip(executionPath + "/Gama1.7-linux.gtk.x86_64.zip", path);
+			unzip(executionPath + "/Gama1.7-linux.gtk.x86_64_withJDK_COMOKIT.zip", path);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

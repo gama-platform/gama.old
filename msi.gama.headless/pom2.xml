@@ -65,7 +65,7 @@
 										<!-- 
 										<include>Gama1.7-win32.win32.x86_64.zip</include>
 										 -->
-										 <include>Gama1.7-linux.gtk.x86_64.zip</include>
+										 <include>Gama1.7-linux.gtk.x86_64_withJDK_COMOKIT.zip</include>
 									</includes>
 								</resource>
 							</resources>

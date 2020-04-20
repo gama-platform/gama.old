@@ -1,4 +1,8 @@
 #! /bin/bash
+if  [[ ${MESSAGE} == *"ci jar"* ]] || [[ $MSG == *"ci jar"* ]]; then
+	exit 0
+fi 
+
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
 memory=3048m 
 

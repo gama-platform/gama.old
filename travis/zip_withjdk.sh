@@ -8,7 +8,7 @@ RELEASE="daily"
 thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/Gama1.7"
 
 
-
+cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products
 
 
 
@@ -48,9 +48,14 @@ NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Win_64bits'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
 NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Mac'$SUFFIX
+n=6
+RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK_COMOKIT.zip"
+NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Linux_64bits_COMOKIT'$SUFFIX
 
 
 git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
+
+git clone --depth=50 --branch=master https://github.com/COMOKIT/CoVid19.git  CoVid19	
 
 rem111(){
 sudo rm "${RELEASEFILES[0]}"
@@ -113,8 +118,6 @@ sudo cp jdk/linux/gama-headless.sh /home/travis/build/gama-platform/gama/ummisco
 
 
 
-
-
 sudo cp -R jdk/win/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 sudo cp jdk/win/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 sudo cp jdk/win/gama-headless.bat /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/headless
@@ -136,6 +139,16 @@ sudo zip -9 -qr "${RELEASEFILES[3]}" . && echo "compressed ${RELEASEFILES[3]}" |
 
 cd ../../../../../../../
 
+if  [[ ${MESSAGE} == *"ci jar"* ]] || [[ $MSG == *"ci jar"* ]]; then	 
+	cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products
+	sudo cp -R CoVid19 /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+	cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+
+	sudo zip -9 -qr "${RELEASEFILES[6]}" . && echo "compressed ${RELEASEFILES[6]}" || echo "compress fail ${RELEASEFILES[6]}"
+
+
+fi 
+ 
 
 
 
