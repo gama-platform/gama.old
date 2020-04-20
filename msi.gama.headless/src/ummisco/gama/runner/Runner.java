@@ -9,8 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,7 +183,7 @@ public class Runner {
 
 //		String fscript = os.startsWith("Win") ? path + "\\headless\\gama-headless.bat" : path + "/headless/gama-headless.sh";
 		String fscript = path + "/headless/gama-headless.sh";
-		console(fscript + " " + args[1] + " " + args[2], path + "/headless");
+		console(fscript + " \"" + args[1] + "\" \"" + args[2]+"\"", path + "/headless");
 //			Runtime r=Runtime.getRuntime();
 //		r.exec("java -jar trang.jar 5-something.xml 5.1-somethingElse.xsd");
 	}
