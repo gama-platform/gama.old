@@ -11,6 +11,8 @@ thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/produ
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products
 
 
+MESSAGE=$(git log -1 HEAD --pretty=format:%s)
+echo $MESSAGE
 
 
 

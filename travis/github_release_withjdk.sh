@@ -186,6 +186,8 @@ do
 done 
 
 
+MESSAGE=$(git log -1 HEAD --pretty=format:%s)
+echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci jar"* ]] || [[ $MSG == *"ci jar"* ]]; then	 
 	
 
