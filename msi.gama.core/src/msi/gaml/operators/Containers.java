@@ -23,6 +23,7 @@ import java.util.Queue;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EObject;
@@ -56,6 +57,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaListFactory.GamaListSupplier;
 import msi.gama.util.GamaMapFactory;
@@ -614,7 +616,6 @@ public class Containers {
 			category = { IOperatorCategory.SPECIES },
 			concept = { IConcept.CONTAINER, IConcept.SPECIES })
 	@doc (
-			value = "the index of the first occurence of the right operand in the left operand container",
 			usages = @usage ("if the left operator is a species, returns the index of an agent in a species. "
 					+ "If the argument is not an agent of this species, returns -1. Use int(agent) instead"),
 			masterDoc = true)
@@ -654,7 +655,6 @@ public class Containers {
 			category = { IOperatorCategory.MAP },
 			concept = { IConcept.MAP })
 	@doc (
-			value = "the index of the first occurence of the right operand in the left operand container",
 			usages = @usage ("if the left operand is a map, index_of returns the index of a value or nil if the value is not mapped"),
 			examples = { @example (
 					value = "[1::2, 3::4, 5::6] index_of 4",
@@ -673,7 +673,6 @@ public class Containers {
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.CONTAINER, IConcept.MATRIX })
 	@doc (
-			value = "the index of the first occurence of the right operand in the left operand container",
 			usages = @usage (
 					value = "if the left operand is a matrix, index_of returns the index as a point",
 					examples = { @example (
@@ -688,7 +687,36 @@ public class Containers {
 		}
 		return null;
 	}
-
+	
+	@operator (
+			value = "all_indexes_of",
+			can_be_const = true,
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,			
+			category = { IOperatorCategory.LIST },
+			concept = { IConcept.LIST })
+	@doc (
+			value = "all the index of all the occurences of the right operand in the left operand container",
+			masterDoc = true,
+			comment = "The definition of all_indexes_of and the type of the index depend on the container",
+			usages = @usage (
+					value = "if the left operand is a list, all_indexes_of returns a list of all the indexes as integers",
+					examples = { 
+						@example (value = "[1,2,3,1,2,3] all_indexes_of 1", equals = "[0,3]"),
+						@example (value = "[1,2,3,1,2,3] all_indexes_of 4", equals = "[]") }),
+			see = { "index_of", "last_index_of" })
+	public static IList all_indexes_of2(final IScope scope, final IList c, final Object o) {
+		IList results = GamaListFactory.create(Types.INT);
+		for (int i = 0; i < notNull(scope,c).size(); i++) {
+		    if (o == c.get(scope,i)) {
+		        results.add(i);
+		    }
+		}
+		return results;
+		
+		// Note: I also tested the following version with streams, but it was around 2 times slower...
+		//	return (IList) IntStream.range(0, notNull(scope,c).size()).filter(i -> c.get(scope,i) == o).boxed().collect(Collectors.toList());
+	}		
+	
 	@operator (
 			value = "last_index_of",
 			can_be_const = true,
