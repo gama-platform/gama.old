@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -1528,6 +1529,7 @@ public class DrivingSkill extends MovingSkill {
 
 		return distMax;
 	}
+	
 
 	private double avoidCollision(final IScope scope, final IAgent agent, final double distance,
 			final double security_distance, final GamaPoint currentLocation, final GamaPoint target, final int lane,
@@ -1698,6 +1700,19 @@ public class DrivingSkill extends MovingSkill {
 		agent.setAttribute(IKeyword.REAL_SPEED, realDistance);
 		// t37 += java.lang.System.currentTimeMillis() - t;
 		return _distance == 0.0 ? 1.0 : distance / _distance;
+	}
+	
+	@action (
+			name = "die",
+			doc = @doc (
+					value = "remove the driving agent from its current road and make it die",
+					examples = { @example ("do die") }))
+	public void primChangeLaneNumber(final IScope scope) throws GamaRuntimeException {
+		final AbstractAgent driver = (AbstractAgent) getCurrentAgent(scope);
+		if (! driver.dead() && getCurrentRoad(driver) != null) {
+			RoadSkill.unregister(driver);
+		}
+		driver.primDie(scope);
 	}
 
 }

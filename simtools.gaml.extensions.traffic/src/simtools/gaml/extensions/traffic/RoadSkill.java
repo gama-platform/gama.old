@@ -402,9 +402,12 @@ public class RoadSkill extends Skill {
 					value = "unregister the agent on the road",
 					examples = { @example ("do unregister agent: the_driver") }))
 	public void primUnregister(final IScope scope) throws GamaRuntimeException {
-		// final IAgent agent = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
-		// driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, -1);
+		unregister(driver);
+	}
+	
+	public static void unregister(final IAgent driver)
+			throws GamaRuntimeException {
 		final boolean agentOnLinkedRoad = (Boolean) driver.getAttribute(DrivingSkill.ON_LINKED_ROAD);
 		if (driver.hasAttribute("current_road") && driver.hasAttribute("current_lane")) {
 			final IAgent cr = (IAgent) driver.getAttribute("current_road");
@@ -429,5 +432,6 @@ public class RoadSkill extends Skill {
 			}
 		}
 	}
+	
 
 }

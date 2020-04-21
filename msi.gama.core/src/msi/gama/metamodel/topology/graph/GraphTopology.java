@@ -257,7 +257,7 @@ public class GraphTopology extends AbstractTopology {
 			edgesT.add(edgeT);
 			if (!targetNode) {
 				final IShape edgeRev = (IShape) graph.getEdge(graph.getEdgeTarget(edgeT), graph.getEdgeSource(edgeT));
-				if (edgeRev != null && edgeRev.euclidianDistanceTo(target) <= edgeS.euclidianDistanceTo(target)) {
+				if (edgeRev != null && target != null && edgeS != null &&edgeRev.euclidianDistanceTo(target) <= edgeS.euclidianDistanceTo(target)) {
 					edgesT.add(edgeRev);
 				}
 			}
