@@ -31,8 +31,11 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @vars ({ @variable (
 		name = "agents_on",
@@ -84,10 +87,19 @@ public class RoadSkill extends Skill {
 	public static List getAgentsOn(final IAgent agent) {
 		return (List) agent.getAttribute(AGENTS_ON);
 	}
+	
+	public static void setAgentsOn(final IAgent agent, final List agents) {
+		agent.setAttribute(AGENTS_ON, agents);
+	}
+	
 
 	@getter (AGENTS)
 	public static List getAgents(final IAgent agent) {
 		return (List) agent.getAttribute(AGENTS);
+	}
+	
+	public static void setAgents(final IAgent agent, final List agents) {
+		agent.setAttribute(AGENTS, agents);
 	}
 
 	@getter (SOURCE_NODE)
@@ -184,10 +196,10 @@ public class RoadSkill extends Skill {
 				((List) ags.get(ags.size() - 1)).add(driver);
 				getAgents(road).add(driver);
 			} else {
-				lane = Math.min(lane, nbLanes - 1);
+				final List agentsOn = (List) road.getAttribute(AGENTS_ON);
+				lane = nbLanes == 0 ? Math.min(lane,  ((List) agentsOn.get(lane)).size() - 1) : Math.min(lane, nbLanes - 1);
 				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, false);
 				indexSegment = getSegmentIndex(road, driver);
-				final List agentsOn = (List) road.getAttribute(AGENTS_ON);
 				((List) ((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
 				getAgents(road).add(driver);
 			}
@@ -221,6 +233,72 @@ public class RoadSkill extends Skill {
 		}
 		return indexSegment;
 
+	}
+	
+	
+	@action (
+			name = "update_lanes",
+			args = { @arg (
+					name = "lanes",
+					type = IType.INT,
+					optional = false,
+					doc = @doc ("the new number of lanes."))},
+			doc = @doc (
+					value = "change the number of lanes of the road",
+					examples = { @example ("do update_lanes lanes: 2") }))
+	public void primChangeLaneNumber(final IScope scope) throws GamaRuntimeException {
+		final IAgent road = getCurrentAgent(scope);
+		final Integer lanes = scope.getIntArg("lanes");
+		setLanes(road, lanes);
+		if (lanes == 0) {
+			return;
+		}
+		int prev = getLanes(road);
+		final IList agentsOn = (IList) road.getAttribute(RoadSkill.AGENTS_ON);
+		if (prev == 0){
+			for (int i = 0; i < prev; i++) {
+				final int nbSeg = road.getInnerGeometry().getNumPoints() - 1;
+				final IList lisSg = GamaListFactory.create(Types.NO_TYPE);
+				for (int j = 0; j < nbSeg; j++) {
+					lisSg.add(GamaListFactory.create(Types.NO_TYPE));
+				}
+				agentsOn.add(lisSg);
+			}
+		} else if (prev < lanes) {
+			IList<IList<IList<IAgent>>> newAgentsOn = GamaListFactory.create();
+			int nb_seg = ((IList) agentsOn.get(0)).size();
+			for(int i = 0; i <lanes; i++) {
+				IList<IList<IAgent>> agsPerLanes = null;
+				if (i < prev) {
+					agsPerLanes = (IList<IList<IAgent>>) agentsOn.get(i);
+				} else {
+					agsPerLanes = GamaListFactory.create();
+					for (int j = 0; j <nb_seg; j++) {
+						agsPerLanes.add(GamaListFactory.create());
+					}
+				}
+				newAgentsOn.add(agsPerLanes);
+			}
+			setAgentsOn(road, newAgentsOn);
+		} else if (prev > lanes) {
+			IList newAgentsOn = GamaListFactory.create();
+			int nb_seg = ((IList) agentsOn.get(0)).size();
+			for (int i = 0; i <prev; i++){
+				IList agsPerLanes =  (IList) agentsOn.get(i);
+				if (i < lanes) {
+					newAgentsOn.add(agsPerLanes);
+				} else {
+					for (int j = 0; j < nb_seg; j++) {
+						IList<IAgent> ags = (IList<IAgent>) agsPerLanes.get(j);
+						for (IAgent ag: ags) {
+							((List)((List)newAgentsOn.get(lanes - 1)).get(j)).add(ag);
+							ag.setAttribute(DrivingSkill.CURRENT_LANE, lanes - 1);
+						}
+					} 	
+				}
+			}
+			setAgentsOn(road, newAgentsOn);		
+		}
 	}
 
 	@action (

@@ -677,7 +677,9 @@ public class DrivingSkill extends MovingSkill {
 			final double vL) {
 		// double realSpeed = getRealSpeed(driver);
 		// double secDist = 1 + realSpeed * secDistCoeff;
-		final List agentsOn = (List) ((List) road.getAttribute(RoadSkill.AGENTS_ON)).get(lane);
+		List agentsOnTot = (List) road.getAttribute(RoadSkill.AGENTS_ON);
+		if (agentsOnTot.isEmpty()) return false;
+		final List agentsOn = (List) agentsOnTot.get(lane);
 		for (final Object dd : agentsOn) {
 			final List<IAgent> drivers = (List<IAgent>) dd;
 			for (final IAgent dr : drivers) {
@@ -1018,7 +1020,7 @@ public class DrivingSkill extends MovingSkill {
 				// t43 += java.lang.System.currentTimeMillis() - tt2;
 				// tt2 = java.lang.System.currentTimeMillis();
 
-				if (lane >= 0) {
+				if (lane >= 0 ) {
 					currentIndex = currentIndex + 1;
 					setCurrentIndex(agent, currentIndex);
 					RoadSkill.register(newRoad, agent, lane);
