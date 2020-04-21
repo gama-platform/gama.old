@@ -728,6 +728,7 @@ public class DrivingSkill extends MovingSkill {
 		final ISpatialGraph graph = (ISpatialGraph) scope.getArg("graph", IType.GRAPH);
 		final IAgent target = (IAgent) scope.getArg("target", IType.AGENT);
 		final IAgent agent = getCurrentAgent(scope);
+		RoadSkill.unregister(agent);
 		IAgent source = (IAgent) scope.getArg("source", IType.AGENT);
 		IAgent onRoad = (IAgent) scope.getArg("on_road", IType.AGENT);
 		if (source == null) {
