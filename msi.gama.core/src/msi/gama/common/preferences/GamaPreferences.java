@@ -97,7 +97,7 @@ public class GamaPreferences {
 		 */
 		public static final String MENUS = "Menus";
 		public static final Pref<Integer> CORE_MENU_SIZE =
-				create("pref_menu_size", "Break down agents in menus every", 50, IType.INT, false).between(10, 100)
+				create("pref_menu_size", "Break down agents in menus every", 50, IType.INT, false).between(10, 1000)
 						.in(NAME, MENUS);
 		/**
 		 * Console

@@ -183,7 +183,13 @@ public class Runner {
 
 //		String fscript = os.startsWith("Win") ? path + "\\headless\\gama-headless.bat" : path + "/headless/gama-headless.sh";
 		String fscript = path + "/headless/gama-headless.sh";
-		console(fscript + " \"" + args[1] + "\" \"" + args[2]+"\"", path + "/headless");
+		String passWork = ".work" + Math.random() * 1000;
+		fscript = "java -cp \"" + path
+				+ "/plugins/org.eclipse.equinox.launcher_1.5.300.v20190213-1655.jar\" -Xms512m -Xmx4096m "
+				+ "-Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "
+				+ passWork + " \"" + args[1] + "\" \"" + args[2] + "\"";
+
+		console(fscript + " \"" + args[1] + "\" \"" + args[2] + "\"", path + "/headless");
 //			Runtime r=Runtime.getRuntime();
 //		r.exec("java -jar trang.jar 5-something.xml 5.1-somethingElse.xsd");
 	}
