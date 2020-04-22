@@ -30,6 +30,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
+import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -112,6 +113,18 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
+		tb.button(GamaIcons.create(IGamaIcons.SMALL_EXPAND).getCode(), "Collapse All",
+				"Collapse All", e -> { 
+					for(ParameterExpandItem p:getViewer().getItems()) {
+						p.setExpanded(false);
+					} 
+				}, SWT.RIGHT);
+		tb.button(GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).getCode(), "Expand All",
+				"Expand All", e -> { 
+						for(ParameterExpandItem p:getViewer().getItems()) {
+							p.setExpanded(true);
+						} 
+				}, SWT.RIGHT);
 		tb.button(GamaIcons.create(IGamaIcons.ACTION_REVERT).getCode(), "Revert parameter values",
 				"Revert parameters to their initial values", e -> {
 					final EditorsList<?> eds = editors;
