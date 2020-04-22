@@ -254,6 +254,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_SYNC =
 				create("pref_display_synchronized", "Synchronize outputs with the simulation", false, IType.BOOL, true)
 						.in(NAME, EXECUTION);
+		public static final Pref<Boolean> CORE_EXPAND_PARAMS =
+				create("pref_experiment_expand_params", "Auto expand Parameters Categories", false, IType.BOOL, true)
+						.in(NAME, EXECUTION);
 		/**
 		 * Concurrency
 		 */

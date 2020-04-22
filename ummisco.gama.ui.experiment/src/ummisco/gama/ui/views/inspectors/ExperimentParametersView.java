@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -150,7 +151,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	public boolean addItem(final String object) {
-		createItem(getParentComposite(), object, true, null);
+		createItem(getParentComposite(), object, GamaPreferences.Runtime.CORE_EXPAND_PARAMS.getValue(), null);
 		return true;
 	}
 
