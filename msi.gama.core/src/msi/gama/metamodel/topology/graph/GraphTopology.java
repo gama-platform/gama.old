@@ -666,7 +666,8 @@ public class GraphTopology extends AbstractTopology {
 		}
 		edges = getPlaces().computeBestRouteBetween(scope, source, target);
 		if (existingEdge != null) {
-			edges.add(0, existingEdge);
+			edges = edges.listValue(scope, Types.NO_TYPE, true);
+			edges.addValueAtIndex(scope, 0, existingEdge);
 		}
 		if (edges.isEmpty() || edges.get(0) == null) { return null; }
 
