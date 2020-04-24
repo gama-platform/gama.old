@@ -236,9 +236,7 @@ public class ExperimentJob implements IExperimentJob {
 		this.load(rtx);
 		this.listenedVariables = new ListenedVariable[outputs.size()];
 
-		for (int i = 0; i < parameters.size(); i++) {
-			final Parameter temp = parameters.get(i);
-
+		for (final Parameter temp : parameters) {
 			if (temp.getName() == null || "".equals(temp.getName())) {
 				this.simulator.setParameter(temp.getVar(), temp.getValue());
 			} else {
@@ -504,7 +502,9 @@ public class ExperimentJob implements IExperimentJob {
 
 			final Iterable<IDescription> displays = d.getChildrenWithKeyword(IKeyword.DISPLAY);
 			for (final IDescription disp : displays) {
-				expJob.addOutput(Output.loadAndBuildOutput(disp));
+				if (disp.getFacetExpr(IKeyword.VIRTUAL) != IExpressionFactory.TRUE_EXPR) {
+					expJob.addOutput(Output.loadAndBuildOutput(disp));
+				}
 			}
 		}
 
