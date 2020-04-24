@@ -26,7 +26,6 @@ import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 27 ao�t 2010
@@ -35,8 +34,8 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  */
 public class Facets implements IGamlable {
-	{
-		DEBUG.ON();
+	static {
+		// DEBUG.ON();
 	}
 
 	static Function<IExpressionDescription, IExpressionDescription> cleanCopy = value -> value.cleanCopy();

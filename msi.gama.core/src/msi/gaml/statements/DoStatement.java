@@ -233,7 +233,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	}
 
-	Arguments args, runtime;
+	Arguments args;
 	String returnString;
 	final IExpression function;
 	public static final Set<String> DO_FACETS = DescriptionFactory.getAllowedFacetsFor(IKeyword.DO, IKeyword.INVOKE);
@@ -256,16 +256,17 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	@Override
 	public void setFormalArgs(final Arguments args) {
 		this.args = args;
-		runtime = args == null ? null : args.cleanCopy();
+		// runtime.set(args == null ? null : args.cleanCopy());
 	}
 
 	public Arguments getRuntimeArgs(final IScope scope) {
 		if (args == null) { return null; }
+		final Arguments local = new Arguments();
 		args.forEachFacet((name, facet) -> {
-			runtime.put(name, facet.getExpression().resolveAgainst(scope));
+			local.put(name, facet.getExpression().resolveAgainst(scope));
 			return true;
 		});
-		return runtime;
+		return local;
 	}
 
 	@Override
