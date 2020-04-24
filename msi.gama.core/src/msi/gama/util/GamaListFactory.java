@@ -278,9 +278,10 @@ public class GamaListFactory {
 				contents[i] = o;
 			}));
 		} else {
-			GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
-				contents[i] = fillExpr.value(scope);
-			}));
+			GamaExecutorService.executeThreaded(
+					() -> IntStream.range(0, contents.length)./* see #2974. parallel(). */forEach(i -> {
+						contents[i] = fillExpr.value(scope);
+					}));
 		}
 		return create(scope, contentType, contents);
 	}
