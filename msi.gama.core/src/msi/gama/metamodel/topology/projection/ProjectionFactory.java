@@ -17,10 +17,10 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultProjectedCRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CartesianCS;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -67,8 +67,8 @@ public class ProjectionFactory {
 			if (!GamaPreferences.External.LIB_TARGETED.getValue()) {
 				targetCRS = computeDefaultCRS(scope, GamaPreferences.External.LIB_TARGET_CRS.getValue(), true);
 			} else {
-				if (crs != null && crs instanceof ProjectedCRS) { // Temporary fix of issue 766... a better solution
-					final CartesianCS ccs = ((ProjectedCRS) crs).getCoordinateSystem();
+				if (crs != null && crs instanceof DefaultProjectedCRS) { // Temporary fix of issue 766... a better solution
+					final CartesianCS ccs = ((DefaultProjectedCRS) crs).getCoordinateSystem();
 					final Unit<?> unitX = ccs.getAxis(0).getUnit();
 					if (unitX != null && !unitX.equals(SI.METER)) {
 						unitConverter = unitX.getConverterTo(SI.METER);
@@ -244,7 +244,7 @@ public class ProjectionFactory {
 	}
 
 	public void testConsistency(final IScope scope, final CoordinateReferenceSystem crs, final Envelope env) {
-		if (!(crs instanceof ProjectedCRS)) {
+		if (!(crs instanceof DefaultProjectedCRS)) {
 			if (env.getHeight() > 180 || env.getWidth() > 180) {
 				throw GamaRuntimeException.error(
 						"Inconsistency between the data and the CRS: The CRS " + crs
