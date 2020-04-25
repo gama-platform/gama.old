@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.OverlayLayerData.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.OverlayLayerData.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -35,7 +35,7 @@ public class OverlayLayerData extends LayerData {
 
 	public Color getBackgroundColor(final IScope scope) {
 		return new Color(background.get().getRed(), background.get().getGreen(), background.get().getBlue(),
-				(int) (getTransparency(scope) * 255));
+				(int) ((1 - getTransparency(scope)) * 255));
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GraphicLayerStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.GraphicLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -61,7 +61,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.TRANSPARENCY,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("the transparency rate of the agents (between 0 and 1, 1 means no transparency)")),
+						doc = @doc ("the transparency level of the layer (between 0 -- opaque -- and 1 -- fully transparent)")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.LABEL,

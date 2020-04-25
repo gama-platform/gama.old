@@ -93,7 +93,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.TRANSPARENCY,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("the transparency applied to this layer between 0 (solid) and 1 (totally transparent)")),
+						doc = @doc ("the transparency level of the layer (between 0 -- opaque -- and 1 -- fully transparent)")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.LABEL,

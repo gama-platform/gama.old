@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.OverlayLayer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.outputs.layers.OverlayLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -67,10 +67,10 @@ public class OverlayLayer extends GraphicLayer {
 
 	@Override
 	public void draw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		if (scope == null) return;
+		if (scope == null) { return; }
 		getData().compute(scope, g);
 		g.beginDrawingLayer(this);
-		g.setOpacity(getData().getTransparency(scope));
+		g.setOpacity(1 - getData().getTransparency(scope));
 		g.beginOverlay(this);
 		privateDraw(scope, g);
 		g.endOverlay();
