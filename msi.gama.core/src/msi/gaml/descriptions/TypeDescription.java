@@ -312,8 +312,9 @@ public abstract class TypeDescription extends SymbolDescription {
 			return true;
 		});
 		Graphs.addAllVertices(dependencies, all.keySet());
+		final VariableDescription shape = getAttribute(SHAPE);
 		final Collection<VariableDescription> shapeDependencies =
-				getAttribute(SHAPE).getDependencies(facetsToConsider, false, true);
+				shape == null ? Collections.EMPTY_LIST : shape.getDependencies(facetsToConsider, false, true);
 		all.forEach((an, var) -> {
 			for (final VariableDescription newVar : var.getDependencies(facetsToConsider, false, true)) {
 				final String other = newVar.getName();
