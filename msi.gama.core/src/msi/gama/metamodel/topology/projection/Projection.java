@@ -46,7 +46,7 @@ public class Projection implements IProjection {
 		this.referenceProjection = world;
 		initialCRS = crs;
 		if (env != null) {
-			if (! initialCRS.equals(getTargetCRS(scope))) {
+			if (initialCRS != null && ! initialCRS.equals(getTargetCRS(scope))) {
 				createTransformation(computeProjection(scope));
 			}
 			// We project the envelope and we use it for initializing the translations
