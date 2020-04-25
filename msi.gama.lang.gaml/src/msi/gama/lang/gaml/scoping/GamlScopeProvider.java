@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.scoping;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -26,8 +28,6 @@ import org.eclipse.xtext.resource.ISelectable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-
-import msi.gama.util.Collector;
 
 /**
  * This class contains custom scoping description.
@@ -38,20 +38,9 @@ import msi.gama.util.Collector;
 // @Singleton
 public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLocalScopeProvider {
 
-	private class MultimapBasedSelectable implements ISelectable {
+	private class GamlMultimapBasedSelectable implements ISelectable {
 		List<IEObjectDescription> descriptions;
-		private final Multimap<QualifiedName, IEObjectDescription> nameToObjects;
-
-		public MultimapBasedSelectable(final List<IEObjectDescription> descriptions) {
-			this.descriptions = descriptions == null || descriptions.isEmpty() ? null : descriptions;
-			this.nameToObjects = this.descriptions == null ? null : LinkedHashMultimap.create();
-			if (this.descriptions != null) {
-				for (final IEObjectDescription description : this.descriptions) {
-					nameToObjects.put(description.getName(), description);
-				}
-			}
-
-		}
+		private Multimap<QualifiedName, IEObjectDescription> nameToObjects;
 
 		@Override
 		public boolean isEmpty() {
@@ -92,21 +81,30 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 			return descriptions == null ? Collections.EMPTY_LIST : descriptions;
 		}
 
+		private void add(final QualifiedName name, final EObjectDescription e) {
+			if (descriptions == null) {
+				descriptions = new ArrayList<>();
+				nameToObjects = LinkedHashMultimap.create();
+			}
+			descriptions.add(e);
+			nameToObjects.put(name, e);
+		}
+
 	}
 
 	@Override
 	protected ISelectable getAllDescriptions(final Resource resource) {
-		try (final Collector.AsList<IEObjectDescription> descriptions = Collector.getList()) {
-			final Iterator<EObject> iterator = resource.getAllContents();
-			while (iterator.hasNext()) {
-				final EObject from = iterator.next();
-				final QualifiedName qualifiedName = getNameProvider().apply(from);
-				if (qualifiedName != null) {
-					descriptions.add(new EObjectDescription(qualifiedName, from, null));
-				}
+		final GamlMultimapBasedSelectable result = new GamlMultimapBasedSelectable();
+		final IQualifiedNameProvider provider = getNameProvider();
+		final Iterator<EObject> iterator = resource.getAllContents();
+		while (iterator.hasNext()) {
+			final EObject from = iterator.next();
+			final QualifiedName qualifiedName = provider.apply(from);
+			if (qualifiedName != null) {
+				result.add(qualifiedName, new EObjectDescription(qualifiedName, from, null));
 			}
-			return new MultimapBasedSelectable(descriptions.items());
 		}
-
+		return result;
 	}
+
 }
