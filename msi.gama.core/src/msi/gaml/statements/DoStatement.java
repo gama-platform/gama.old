@@ -219,9 +219,6 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 						action, sd.getName());
 			}
 			final ActionDescription ad = sd.getAction(action);
-			// if (ad.getName().equals("halt")) {
-			// DEBUG.OUT("");
-			// }
 			if (ad instanceof PrimitiveDescription) {
 				final PrimitiveDescription pd = (PrimitiveDescription) ad;
 				final String dep = pd.getDeprecated();
@@ -256,11 +253,11 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	@Override
 	public void setFormalArgs(final Arguments args) {
 		this.args = args;
-		// runtime.set(args == null ? null : args.cleanCopy());
 	}
 
 	public Arguments getRuntimeArgs(final IScope scope) {
 		if (args == null) { return null; }
+		// Dynamic arguments necessary (see #2943, #2922, plus issue with multiple parallel simulations)
 		final Arguments local = new Arguments();
 		args.forEachFacet((name, facet) -> {
 			local.put(name, facet.getExpression().resolveAgainst(scope));
