@@ -58,6 +58,7 @@ public class Facets implements IGamlable {
 		public Facet cleanCopy() {
 			return new Facet(key, value.cleanCopy());
 		}
+
 	}
 
 	public static final Facets NULL = new Facets();

@@ -233,12 +233,14 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	Arguments args;
 	String returnString;
 	final IExpression function;
+	final boolean isSuperInvocation;
 	public static final Set<String> DO_FACETS = DescriptionFactory.getAllowedFacetsFor(IKeyword.DO, IKeyword.INVOKE);
 
 	public DoStatement(final IDescription desc) {
 		super(desc);
 		returnString = getLiteral(IKeyword.RETURNS);
 		function = getFacet(IKeyword.INTERNAL_FUNCTION);
+		isSuperInvocation = ((StatementDescription) desc).isSuperInvocation();
 		setName(getLiteral(IKeyword.ACTION));
 	}
 
@@ -258,17 +260,11 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	public Arguments getRuntimeArgs(final IScope scope) {
 		if (args == null) { return null; }
 		// Dynamic arguments necessary (see #2943, #2922, plus issue with multiple parallel simulations)
-		final Arguments local = new Arguments();
-		args.forEachFacet((name, facet) -> {
-			local.put(name, facet.getExpression().resolveAgainst(scope));
-			return true;
-		});
-		return local;
+		return args.resolveAgainst(scope);
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final boolean isSuperInvocation = getDescription().isSuperInvocation();
 		ISpecies context = scope.getAgent().getSpecies();
 		if (isSuperInvocation) {
 			context = context.getParentSpecies();

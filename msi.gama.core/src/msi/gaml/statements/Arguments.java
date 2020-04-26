@@ -12,6 +12,7 @@ package msi.gaml.statements;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import msi.gaml.expressions.IExpression;
 
 /**
  * @author drogoul
@@ -23,12 +24,6 @@ public class Arguments extends Facets {
 	 */
 	ThreadLocal<IAgent> caller = new ThreadLocal<>();
 
-	public Arguments() {}
-
-	public Arguments(final IAgent caller) {
-		setCaller(caller);
-	}
-
 	public Arguments(final Arguments args) {
 		super(args);
 		if (args != null) {
@@ -36,12 +31,26 @@ public class Arguments extends Facets {
 		}
 	}
 
+	public Arguments() {}
+
 	@Override
 	public Arguments cleanCopy() {
 		final Arguments result = new Arguments();
 		result.setCaller(caller.get());
 		for (final Facet f : facets) {
 			result.facets.add(f.cleanCopy());
+		}
+		return result;
+	}
+
+	public Arguments resolveAgainst(final IScope scope) {
+		final Arguments result = new Arguments();
+		result.setCaller(caller.get());
+		for (final Facet f : facets) {
+			final IExpression exp = getExpr(f.key);
+			if (exp != null) {
+				result.put(f.key, exp.resolveAgainst(scope));
+			}
 		}
 		return result;
 	}
@@ -59,6 +68,5 @@ public class Arguments extends Facets {
 		super.dispose();
 		caller.set(null);
 	}
-
 
 }

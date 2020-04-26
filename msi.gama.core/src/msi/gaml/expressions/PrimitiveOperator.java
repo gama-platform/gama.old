@@ -71,9 +71,16 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		if (executer != null) {
 			// And finally, (3) to execute the executer on the target (it will
 			// be pushed in the scope)
-			return scope.execute(executer, target, parameters).getValue();
+			return scope.execute(executer, target, getRuntimeArgs(scope)).getValue();
 		}
 		return null;
+	}
+
+	public Arguments getRuntimeArgs(final IScope scope) {
+		if (parameters == null) { return null; }
+		// Dynamic arguments necessary (see #2943, #2922, plus issue with multiple parallel simulations)
+		// Copy-paste of DoStatement. Verify that this copy is necessary here.
+		return parameters.resolveAgainst(scope);
 	}
 
 	@Override
@@ -129,25 +136,6 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		}
 		return sb.toString();
 	}
-
-	/**
-	 * Method collectPlugins()
-	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-	 */
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// meta.put(GamlProperties.PLUGINS, action.getDefiningPlugin());
-	// if (action.isBuiltIn()) {
-	// meta.put(GamlProperties.ACTIONS, action.getName());
-	// }
-	// if (parameters != null) {
-	// parameters.forEachValue(exp -> {
-	// exp.collectMetaInformation(meta);
-	// return true;
-	// });
-	// }
-	// }
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
