@@ -47,7 +47,7 @@ public class FloatEditor extends NumberEditor<Double> {
 	}
 
 	@Override
-	protected void modifyValue(final Double val) throws GamaRuntimeException {
+	protected void modifyValue(final Object val) throws GamaRuntimeException {
 		Double i = Cast.asFloat(getScope(), val);
 		if (acceptNull && val == null) {
 			i = null;

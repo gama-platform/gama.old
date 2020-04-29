@@ -60,7 +60,7 @@ public class IntEditor extends NumberEditor<Integer> {
 	}
 
 	@Override
-	protected void modifyValue(final Integer val) throws GamaRuntimeException {
+	protected void modifyValue(final Object val) throws GamaRuntimeException {
 		final Integer i = Cast.asInt(getScope(), val);
 		if (minValue != null && i < minValue.intValue()) {
 			throw GamaRuntimeException.error("Value " + i + " should be greater than " + minValue, getScope());

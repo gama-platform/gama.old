@@ -60,7 +60,7 @@ import msi.gaml.types.Types;
 				@facet (
 						name = IKeyword.INIT,
 						type = IType.NONE,
-						optional = true,
+						optional = false,
 						doc = @doc ("the init value")),
 				@facet (
 						name = IKeyword.MIN,
@@ -87,7 +87,7 @@ import msi.gaml.types.Types;
 						type = IType.LIST,
 						of = IType.STRING,
 						optional = true,
-						doc = @doc ("the set of acceptable values for the variable")) },
+						doc = @doc ("the set of acceptable values, only for string inputs")) },
 		omissible = IKeyword.NAME)
 @doc (
 		value = "It allows to let the user define the value of a variable.",
@@ -155,8 +155,9 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		if (!isValued) {
-			if (init != null)
+			if (init != null) {
 				currentValue = initialValue = init.value(scope);
+			}
 			isValued = true;
 		}
 		return currentValue;
@@ -238,13 +239,12 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	@Override
 	public boolean acceptsSlider(final IScope scope) {
-		if (slider == null)
-			return true;
+		if (slider == null) { return true; }
 		return Cast.asBool(scope, slider.value(scope));
 	}
 
 	@Override
-	public List<GamaColor> getColor(IScope scope) {
+	public List<GamaColor> getColor(final IScope scope) {
 		return null;
 	}
 

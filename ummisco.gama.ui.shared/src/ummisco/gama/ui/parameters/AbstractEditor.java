@@ -644,9 +644,11 @@ public abstract class AbstractEditor<T>
 		return param;
 	}
 
-	protected void modifyValue(final T val) throws GamaRuntimeException {
+	@SuppressWarnings ("unchecked")
+	// Passes Object on purpose so that Float and Int editors can cast it.
+	protected void modifyValue(final Object val) throws GamaRuntimeException {
 		if (!isValueDifferent(val)) { return; }
-		currentValue = val;
+		currentValue = (T) val;
 		WorkbenchHelper.asyncRun(() -> {
 			if (CORE_EDITORS_HIGHLIGHT.getValue()) {
 				if (titleLabel != null && !titleLabel.isDisposed()) {
@@ -657,7 +659,7 @@ public abstract class AbstractEditor<T>
 		});
 
 		if (!internalModification) {
-			setParameterValue(val);
+			setParameterValue((T) val);
 		}
 	}
 
