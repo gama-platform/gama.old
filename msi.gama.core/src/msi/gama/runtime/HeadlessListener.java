@@ -30,6 +30,7 @@ import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -42,6 +43,7 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
@@ -49,7 +51,6 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
-import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class HeadlessListener implements IGui {
@@ -76,7 +77,11 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
-			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
+			final List<IParameter> parameters) {
+		final Map<String, Object> initialValues = GamaMapFactory.create();
+		parameters.forEach(p -> {
+			initialValues.put(p.getName(), p.getInitialValue(scope));
+		});
 		return initialValues;
 	}
 

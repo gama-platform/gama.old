@@ -11,7 +11,7 @@ global
 {
 	image_file static_map_request;
 	map
-	answers <- user_input("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", ["Address"::""]);
+	answers <- user_input("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Address","")]);
 	string center_text <- answers["Address"]; 
 	int zoom_text <- 15;
 	geometry shape<-square(500);

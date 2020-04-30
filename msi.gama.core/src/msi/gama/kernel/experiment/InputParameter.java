@@ -7,11 +7,10 @@
  *
  *
  **********************************************************************************************/
-package ummisco.gama.ui.parameters;
+package msi.gama.kernel.experiment;
 
 import java.util.List;
 
-import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
@@ -24,7 +23,7 @@ public class InputParameter extends ParameterAdapter {
 	private final List among;
 	private Number min, max, step;
 
-	InputParameter(final String name, final Object value) {
+	public InputParameter(final String name, final Object value) {
 		this(name, value, Types.get(value == null ? Object.class : (Class<Object>) value.getClass()));
 	}
 
@@ -38,20 +37,21 @@ public class InputParameter extends ParameterAdapter {
 		this.among = among;
 	}
 
-	InputParameter(final String name, final Object value, final Number min, final Number max) {
+	public InputParameter(final String name, final Object value, final Number min, final Number max) {
 		this(name, value);
 		this.min = min;
 		this.max = max;
 	}
 
-	InputParameter(final String name, final Object value, final Number min, final Number max, final Number step) {
+	public InputParameter(final String name, final Object value, final Number min, final Number max,
+			final Number step) {
 		this(name, value);
 		this.min = min;
 		this.max = max;
 		this.step = step;
 	}
 
-	InputParameter(final String name, final String unit, final Object value, final Number min, final Number max,
+	public InputParameter(final String name, final String unit, final Object value, final Number min, final Number max,
 			final Number step) {
 		this(name, value, min, max);
 		unitLabel = unit;
@@ -106,6 +106,11 @@ public class InputParameter extends ParameterAdapter {
 	@Override
 	public List<GamaColor> getColor(final IScope scope) {
 		return null;
+	}
+
+	@Override
+	public boolean acceptsSlider(final IScope scope) {
+		return true;
 	}
 
 }

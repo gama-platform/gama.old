@@ -136,7 +136,7 @@ global{
 			bool with_mobility1 <- "mobility1" in selected_road.allowed_mobility;
 			bool with_mobility2 <- "mobility2" in selected_road.allowed_mobility;
 			bool with_pedestrian <- "walk" in selected_road.allowed_mobility;
-			map input_values <- user_input(["mobility1 allowed"::with_mobility1,"mobility2 allowed"::with_mobility2,"pedestrian allowed"::with_pedestrian]);
+			map input_values <- user_input([enter("mobility1 allowed",with_mobility1),enter("mobility2 allowed",with_mobility2),enter("pedestrian allowed",with_pedestrian)]);
 			if (with_mobility1 != input_values["mobility1 allowed"]) {
 				if (with_mobility1) {selected_road.allowed_mobility >> "mobility1";}
 				else {selected_road.allowed_mobility << "mobility1";}

@@ -12,6 +12,7 @@ package ummisco.gama.ui.parameters;
 import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.GamaType;

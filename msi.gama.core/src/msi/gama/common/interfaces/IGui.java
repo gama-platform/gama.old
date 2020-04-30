@@ -15,6 +15,7 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -29,7 +30,6 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
-import msi.gaml.types.IType;
 
 /**
  * The interface IGui. Represents objects that act on behalf of a concrete GUI implementation (RCP, Headless, etc.)
@@ -96,8 +96,7 @@ public interface IGui {
 
 	IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
 
-	Map<String, Object> openUserInputDialog(IScope scope, String title, Map<String, Object> initialValues,
-			Map<String, IType<?>> types);
+	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters);
 
 	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 

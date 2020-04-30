@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;

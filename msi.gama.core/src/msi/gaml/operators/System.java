@@ -16,12 +16,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
+import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -34,12 +35,13 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.MapExpression;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -220,7 +222,8 @@ public class System {
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			concept = { IConcept.SYSTEM, IConcept.GUI })
 	@doc (
-			value = "asks the user for some values (not defined as parameters). Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
+			deprecated = "Use a list of `enter()` or `choose()` operators rather than a map",
+			value = "Asks the user for some values. Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
 			masterDoc = true,
 			comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
 					+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
@@ -239,7 +242,8 @@ public class System {
 					@example (
 							value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
 							isExecutable = false) })
-	public static IMap<String, Object> userInput(final IScope scope, final IExpression map) {
+	@no_test
+	public static IMap<String, Object> userInput(final IScope scope, final IMap<String, Object> map) {
 		final IAgent agent = scope.getAgent();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
@@ -250,32 +254,196 @@ public class System {
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			concept = {})
 	@doc (
-			value = "asks the user for some values (not defined as parameters). Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
-			examples = {
-					@example ("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
+			deprecated = "Use a list of `enter()` or `choose()` operators rather than a map",
+			value = "Asks the user for some values. Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
+			examples =
+
+			{ @example ("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
 					@example (
 							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
 							isExecutable = false) })
-	public static IMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
-		Map<String, Object> initialValues = GamaMapFactory.create();
-		final Map<String, IType<?>> initialTypes = GamaMapFactory.create();
-		if (expr instanceof MapExpression) {
-			final MapExpression map = (MapExpression) expr;
-			for (final Map.Entry<IExpression, IExpression> entry : map.getElements().entrySet()) {
-				final String key = Cast.asString(scope, entry.getKey().value(scope));
-				final IExpression val = entry.getValue();
-				initialValues.put(key, val.value(scope));
-				initialTypes.put(key, val.getGamlType());
-			}
-		} else {
-			initialValues = Cast.asMap(scope, expr.value(scope), false);
-			for (final Map.Entry<String, Object> entry : initialValues.entrySet()) {
-				initialTypes.put(entry.getKey(), GamaType.of(entry.getValue()));
-			}
-		}
-		if (initialValues.isEmpty()) { return GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
+	@no_test
+	public static IMap<String, Object> userInput(final IScope scope, final String title,
+			final IMap<String, Object> map) {
+		final IList<IParameter> parameters = GamaListFactory.create();
+		map.forEach((k, v) -> {
+			parameters.add(enterValue(scope, k, v));
+		});
+		return userInput(scope, title, parameters);
+	}
+
+	@SuppressWarnings ("unchecked")
+	@operator (
+			value = IKeyword.USER_INPUT,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is to specify the parameters the user can enter",
+			examples = {
+					@example ("map<string,unknown> values2 <- user_input('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})]);"),
+					@example (
+							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	public static IMap<String, Object> userInput(final IScope scope, final String title, final IList parameters) {
+		parameters.removeIf(p -> !(p instanceof IParameter));
 		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
-				scope.getGui().openUserInputDialog(scope, title, initialValues, initialTypes));
+				scope.getGui().openUserInputDialog(scope, title, parameters));
+	}
+
+	@SuppressWarnings ("unchecked")
+	@operator (
+			value = IKeyword.USER_INPUT,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is to specify the parameters the user can enter",
+			examples = {
+					@example ("map<string,unknown> values2 <- user_input('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})]);"),
+					@example (
+							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	public static IMap<String, Object> userInput(final IScope scope, final IList parameters) {
+		final IAgent agent = scope.getAgent();
+		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", parameters);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter a value by specifying a title and a type")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final IType type) {
+		return enterValue(scope, title, type, type.getDefault());
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter an int by specifying a title and an initial value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final Integer init) {
+		return enterValue(scope, title, Types.INT, init);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter an int by specifying a title, an initial value, a min and a max value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final Integer init, final Integer min,
+			final Integer max) {
+		return new InputParameter(title, init, min, max);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter an int by specifying a title, an initial value, a min, a max and a step value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final Integer init, final Integer min,
+			final Integer max, final Integer step) {
+		return new InputParameter(title, init, min, max, step);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter an int by specifying a title, an initial value, a min and a max value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final Double init, final Double min,
+			final Double max) {
+		return new InputParameter(title, init, min, max);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter a float by specifying a title, an initial value, a min, a max and a step value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final Double init, final Double min,
+			final Double max, final Double step) {
+		return new InputParameter(title, init, min, max, step);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter a float by specifying a title and an initial value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final Double init) {
+		return enterValue(scope, title, Types.FLOAT, init);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter a boolean value by specifying a title and an initial value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final Boolean init) {
+		return enterValue(scope, title, Types.BOOL, init);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter a string by specifying a title and an initial value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final String init) {
+		return enterValue(scope, title, Types.STRING, init);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter a value by specifying a title, a type, and an initial value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final IType type, final Object init) {
+		return new InputParameter(title, init, type);
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.ENTER)
+	@doc (
+			value = "Allows the user to enter a value by specifying a title and an initial value. The type will be deduced from the value")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final Object init) {
+		return new InputParameter(title, init, GamaType.of(init));
+	}
+
+	@operator (
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			value = IKeyword.CHOOSE)
+	@doc (
+			value = "Allows the user to choose a value by specifying a title, a type, and a list of possible values")
+	@no_test
+	public static IParameter enterValue(final IScope scope, final String title, final IType type, final Object init,
+			final IList among) {
+		return new InputParameter(title, init, type, among);
 	}
 
 	@operator (

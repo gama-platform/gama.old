@@ -26,74 +26,72 @@ import msi.gaml.types.IType;
  */
 public interface IParameter extends IExperimentDisplayable {
 
-	public static interface ParameterChangeListener {
+	public interface ParameterChangeListener {
 		void changed(IScope scope, Object newValue);
 	}
 
-	public final String[] EMPTY_STRINGS = new String[0];
+	String[] EMPTY_STRINGS = new String[0];
 
-	// public abstract Integer getDefinitionOrder();
+	void setValue(IScope scope, Object value);
 
-	public abstract void setValue(IScope scope, Object value);
-
-	public abstract Object value(IScope scope) throws GamaRuntimeException;
+	Object value(IScope scope) throws GamaRuntimeException;
 
 	@SuppressWarnings ("rawtypes")
-	public abstract IType getType();
+	IType getType();
 
 	@Override
-	public String serialize(boolean includingBuiltIn);
+	String serialize(boolean includingBuiltIn);
 
-	public abstract Object getInitialValue(IScope scope);
+	Object getInitialValue(IScope scope);
 
-	public abstract Number getMinValue(IScope scope);
+	Number getMinValue(IScope scope);
 
-	public abstract Number getMaxValue(IScope scope);
+	Number getMaxValue(IScope scope);
 
 	@SuppressWarnings ("rawtypes")
-	public abstract List getAmongValue(IScope scope);
+	List getAmongValue(IScope scope);
 
-	public abstract boolean isEditable();
+	boolean isEditable();
 
-	public List<GamaColor> getColor(final IScope scope);
+	List<GamaColor> getColor(final IScope scope);
 
-	public abstract boolean acceptsSlider(IScope scope);
+	boolean acceptsSlider(IScope scope);
 
-	public abstract Number getStepValue(IScope scope);
+	Number getStepValue(IScope scope);
 
-	public boolean isDefined();
+	boolean isDefined();
 
-	public default String[] getEnablement() {
+	default String[] getEnablement() {
 		return EMPTY_STRINGS;
 	}
 
-	public default String[] getDisablement() {
+	default String[] getDisablement() {
 		return EMPTY_STRINGS;
 	}
 
-	public default void addChangedListener(final ParameterChangeListener listener) {
+	default void addChangedListener(final ParameterChangeListener listener) {
 		// Nothing to do by default
 	}
 
 	public interface Batch extends IParameter {
 
-		public Object value();
+		Object value();
 
-		public void setCategory(String cat);
+		void setCategory(String cat);
 
-		public void reinitRandomly(IScope scope);
+		void reinitRandomly(IScope scope);
 
-		public abstract Set<Object> neighborValues(IScope scope) throws GamaRuntimeException;
+		Set<Object> neighborValues(IScope scope) throws GamaRuntimeException;
 
-		public void setEditable(boolean b);
+		void setEditable(boolean b);
 
-		public boolean canBeExplored();
+		boolean canBeExplored();
 
 	}
 
 	/**
 	 * @param b
 	 */
-	public abstract void setDefined(boolean b);
+	void setDefined(boolean b);
 
 }
