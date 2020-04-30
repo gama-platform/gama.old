@@ -1,10 +1,7 @@
 #! /bin/bash
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
-echo $MESSAGE
-if  [[ ${MESSAGE} == *"ci jar"* ]] || [[ $MSG == *"ci jar"* ]]; then
-	exit 0
-fi 
+echo $MESSAGE 
 
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
 memory=3048m 

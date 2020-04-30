@@ -184,28 +184,5 @@ do
     "$LK"`
 	echo $RESULT
 done 
-
-
-MESSAGE=$(git log -1 HEAD --pretty=format:%s)
-echo $MESSAGE
-if  [[ ${MESSAGE} == *"ci jar"* ]] || [[ $MSG == *"ci jar"* ]]; then	 
-	
-
-		FILE="/home/travis/build/gama-platform/gama/msi.gama.headless/target/gama-headless1.8.jar"
-		NFILE="gama-headless1.8.jar"
-
-	  FILENAME=`basename $FILE`
-	  echo   "Uploading $NFILE...  "
-	  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$NFILE"
-	  
-	  RESULT=`curl -s -w  "\n%{http_code}\n"                   \
-		-H "Authorization: token $BOT_TOKEN"                \
-		-H "Accept: application/vnd.github.manifold-preview"  \
-		-H "Content-Type: application/zip"                    \
-		--data-binary "@$FILE"                                \
-		"$LK"`
-		echo $RESULT
-fi 
  
-
 echo DONE

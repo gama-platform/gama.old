@@ -88,14 +88,7 @@ release_monthly(){
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
-
-
-if  [[ ${MESSAGE} == *"ci jar"* ]] || [[ $MSG == *"ci jar"* ]]; then	
-	embed_jdk
-	bash ./travis/compile_jar.sh
-	release_continuous
-	exit 0
-fi 
+ 
  
   
 if  [[ ${MESSAGE} == *"ci ext"* ]]; then			

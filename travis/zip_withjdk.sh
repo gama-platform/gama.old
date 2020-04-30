@@ -49,10 +49,7 @@ RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip"
 NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Win_64bits'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Mac'$SUFFIX
-n=6
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK_COMOKIT.zip"
-NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Linux_64bits_COMOKIT'$SUFFIX
+NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Mac'$SUFFIX 
 
 
 git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
@@ -140,16 +137,6 @@ cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/um
 sudo zip -9 -qr "${RELEASEFILES[3]}" . && echo "compressed ${RELEASEFILES[3]}" || echo "compress fail ${RELEASEFILES[3]}"
 
 cd ../../../../../../../
-
-if  [[ ${MESSAGE} == *"ci jar"* ]] || [[ $MSG == *"ci jar"* ]]; then	 
-	cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products
-	sudo cp -R CoVid19 /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-	cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-
-	sudo zip -9 -qr "${RELEASEFILES[6]}" . && echo "compressed ${RELEASEFILES[6]}" || echo "compress fail ${RELEASEFILES[6]}"
-
-
-fi 
  
 
 
