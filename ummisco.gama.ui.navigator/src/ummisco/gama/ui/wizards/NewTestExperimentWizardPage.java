@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.wizards;
@@ -38,7 +38,11 @@ public class NewTestExperimentWizardPage extends AbstractNewModelWizardPage {
 	@Override
 	public String getTemplateType() {
 		return AbstractNewModelWizard.TEST_EXP;
+	}
 
+	@Override
+	public String getTemplatePath() {
+		return AbstractNewModelWizard.TEMPLATES.get(getTemplateType());
 	}
 
 	@Override

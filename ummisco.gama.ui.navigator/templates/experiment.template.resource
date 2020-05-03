@@ -1,3 +1,10 @@
+/**
+* Name: $TITLE$
+* $DESC$ 
+* Author: $AUTHOR$
+* Tags: 
+*/
+
 experiment $TITLE$ model:$MODEL$ type:$TYPE$ {
 	/** Insert here the definition of the inputs and outputs of the model */
 	

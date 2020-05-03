@@ -21,7 +21,8 @@ import msi.gaml.operators.Strings;
 public class NewExperimentWizard extends AbstractNewModelWizard implements INewWizard {
 
 	@Override
-	protected String getHeader(final IContainer folder, final String str, final String title) {
+	protected String getHeader(final IContainer folder, final String str, final String title, final String author,
+			final String desc) {
 		final IResource model =
 				ResourcesPlugin.getWorkspace().getRoot().findMember(getPage().getExperimentedModelPath());
 		final IPath pathToModel;
@@ -30,7 +31,7 @@ public class NewExperimentWizard extends AbstractNewModelWizard implements INewW
 		} else {
 			pathToModel = model.getFullPath().makeRelativeTo(folder.getFullPath());
 		}
-		final String header = super.getHeader(folder, str, title);
+		final String header = super.getHeader(folder, str, title, author, desc);
 		final String result = pathToModel == null ? header.replace("model:$MODEL$", "")
 				: header.replaceAll("\\$MODEL\\$", "'" + pathToModel + "'");
 		return result.replaceAll("\\$TYPE\\$", Strings.toLowerCase(getPage().getType()));

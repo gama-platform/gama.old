@@ -156,6 +156,11 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 	}
 
 	@Override
+	public String getTemplatePath() {
+		return AbstractNewModelWizard.TEMPLATES.get(getTemplateType());
+	}
+
+	@Override
 	public boolean createDoc() {
 		return false;
 	}

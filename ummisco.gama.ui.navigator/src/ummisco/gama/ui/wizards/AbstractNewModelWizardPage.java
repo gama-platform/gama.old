@@ -35,6 +35,7 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 
 	protected final ISelection selection;
 	protected Text containerText, fileText, authorText, nameText;
+	protected String templatePath;
 
 	protected AbstractNewModelWizardPage(final ISelection selection) {
 		super("wizardPage");
@@ -143,7 +144,7 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 		return "New " + gamlType();
 	}
 
-	private IContainer findContainer() {
+	protected IContainer findContainer() {
 		Object obj = null;
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			obj = ((IStructuredSelection) selection).getFirstElement();
@@ -299,4 +300,8 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 	public abstract String gamlType();
 
 	public abstract boolean createDoc();
+
+	public String getTemplatePath() {
+		return templatePath;
+	}
 }

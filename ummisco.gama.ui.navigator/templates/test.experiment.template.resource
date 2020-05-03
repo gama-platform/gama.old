@@ -1,3 +1,10 @@
+/**
+* Name: $TITLE$
+* $DESC$ 
+* Author: $AUTHOR$
+* Tags: 
+*/
+
 experiment $TITLE$ type: test autorun: true {
 	
 	/** Insert the global definitions, variables and actions here */
