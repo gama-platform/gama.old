@@ -68,6 +68,7 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 		final String[] choices = templates.keySet().toArray(new String[0]);
 		Arrays.sort(choices);
 		c.setItems(choices);
+		c.select(0);
 		c.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -76,7 +77,9 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 				templatePath = templates.get(templateName);
 				updateStatus(null);
 				dialogChanged();
-				descriptionText.setText("Based on " + templates.get(templateName));
+				descriptionText.setText(
+						templatePath.endsWith("resource") ? "Based on the internal " + templateName + " template."
+								: "Based on the template at '" + templatePath + "'");
 			}
 
 		});
