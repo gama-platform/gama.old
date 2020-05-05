@@ -55,7 +55,7 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public class OperatorProto extends AbstractProto {
+public class OperatorProto extends AbstractProto implements IVarDescriptionUser {
 
 	public static OperatorProto AS;
 	public static Set<String> noMandatoryParenthesis = ImmutableSet.copyOf(Arrays.<String> asList("-", "!"));
@@ -289,7 +289,11 @@ public class OperatorProto extends AbstractProto {
 		return new OperatorProto(this, gamaType);
 	}
 
-	public void collectImplicitVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+	@Override
+	public void collectUsedVarsOf(final SpeciesDescription species,
+			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
+		if (alreadyProcessed.contains(this)) { return; }
+		alreadyProcessed.add(this);
 		if (depends_on == null) { return; }
 		for (final String s : depends_on) {
 			if (species.hasAttribute(s)) {

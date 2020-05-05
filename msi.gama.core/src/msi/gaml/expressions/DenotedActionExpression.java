@@ -11,10 +11,7 @@
 package msi.gaml.expressions;
 
 import msi.gama.runtime.IScope;
-import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.Types;
 
 public class DenotedActionExpression extends VariableExpression {
@@ -43,18 +40,5 @@ public class DenotedActionExpression extends VariableExpression {
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) {}
-
-	/**
-	 * Method collectPlugins()
-	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-	 */
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// getDefinitionDescription().collectMetaInformation(meta);
-	// }
-
-	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 }

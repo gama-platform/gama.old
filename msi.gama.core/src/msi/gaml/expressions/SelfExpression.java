@@ -13,6 +13,7 @@ package msi.gaml.expressions;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gama.util.ICollector;
+import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
@@ -55,7 +56,10 @@ public class SelfExpression extends VariableExpression {
 	// public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+	public void collectUsedVarsOf(final SpeciesDescription species,
+			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
+		if (alreadyProcessed.contains(this)) { return; }
+		alreadyProcessed.add(this);
 		// Added to fix a bug introduced in #2869: expressions containing `self` would not correctly initialize their
 		// dependencies.
 		result.add(species.getAttribute(IKeyword.LOCATION));

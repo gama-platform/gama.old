@@ -16,7 +16,6 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
-import msi.gama.util.ICollector;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -167,11 +166,5 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	public boolean shouldBeParenthesized() {
 		return false;
 	}
-
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {}
-
-	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 }

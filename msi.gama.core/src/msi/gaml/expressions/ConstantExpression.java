@@ -1,20 +1,17 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.ConstantExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gaml.expressions.ConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
-import msi.gama.util.ICollector;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
@@ -79,18 +76,5 @@ public class ConstantExpression extends AbstractExpression {
 	public boolean shouldBeParenthesized() {
 		return false;
 	}
-
-	/**
-	 * Method collectPlugins()
-	 * 
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-	 */
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	//
-	// }
-
-	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 }

@@ -20,6 +20,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.ICollector;
 import msi.gama.util.IList;
+import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -179,10 +180,13 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	// }
 
 	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+	public void collectUsedVarsOf(final SpeciesDescription species,
+			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
+		if (alreadyProcessed.contains(this)) { return; }
+		alreadyProcessed.add(this);
 		for (final IExpression e : elements) {
 			if (e != null) {
-				e.collectUsedVarsOf(species, result);
+				e.collectUsedVarsOf(species, alreadyProcessed, result);
 			}
 		}
 

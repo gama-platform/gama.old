@@ -28,6 +28,7 @@ import msi.gama.util.ICollector;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamaGetter;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -222,9 +223,12 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	// }
 
 	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
-		prototype.collectImplicitVarsOf(species, result);
-		child.collectUsedVarsOf(species, result);
+	public void collectUsedVarsOf(final SpeciesDescription species,
+			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
+		if (alreadyProcessed.contains(this)) { return; }
+		alreadyProcessed.add(this);
+		prototype.collectUsedVarsOf(species, alreadyProcessed, result);
+		child.collectUsedVarsOf(species, alreadyProcessed, result);
 	}
 
 	@Override

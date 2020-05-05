@@ -17,10 +17,8 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.VariableDescription;
+import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.types.IType;
 
 /**
@@ -33,7 +31,7 @@ import msi.gaml.types.IType;
  *
  */
 @FunctionalInterface
-public interface IExpression extends IGamlDescription, ITyped, IDisposable {
+public interface IExpression extends IGamlDescription, ITyped, IDisposable, IVarDescriptionUser {
 
 	/**
 	 * Convenience method for obtaining the constant value without passing a scope. Should be invoked after testing the
@@ -98,19 +96,6 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 
 	default boolean shouldBeParenthesized() {
 		return true;
-	}
-
-	/**
-	 * Collects the attributes defined in species that are being used in this expression
-	 *
-	 * @param species
-	 *            the description of a species
-	 * @param result
-	 *            a collector which can be fed with the description of the attributes defined in the species if they
-	 *            happend to be used by this expression or one of its sub-expression
-	 */
-	default void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
-		// Nothing by default
 	}
 
 	/**

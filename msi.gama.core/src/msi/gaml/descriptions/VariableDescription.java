@@ -210,7 +210,8 @@ public class VariableDescription extends SymbolDescription {
 	public Collection<VariableDescription> getDependencies(final Set<String> facetsToVisit, final boolean includingThis,
 			final boolean includingSpecies) {
 
-		try (final ICollector<VariableDescription> result = Collector.getSet()) {
+		try (final ICollector<IVarDescriptionUser> alreadyProcessed = Collector.getSet();
+				final ICollector<VariableDescription> result = Collector.getSet()) {
 			final Collection<String> deps = dependencies.get(getName());
 			if (deps != null) {
 				for (final String s : deps) {
@@ -224,14 +225,14 @@ public class VariableDescription extends SymbolDescription {
 			this.visitFacets(facetsToVisit, (fName, exp) -> {
 				final IExpression expression = exp.getExpression();
 				if (expression != null) {
-					expression.collectUsedVarsOf(getSpeciesContext(), result);
+					expression.collectUsedVarsOf(getSpeciesContext(), alreadyProcessed, result);
 				}
 				return true;
 			});
 			if (isSyntheticSpeciesContainer()) {
 				final SpeciesDescription mySpecies = (SpeciesDescription) getEnclosingDescription();
 				final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
-				sd.collectUsedVarsOf(mySpecies, result);
+				sd.collectUsedVarsOf(mySpecies, alreadyProcessed, result);
 			}
 			if (!includingThis) {
 				result.remove(this);

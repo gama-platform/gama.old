@@ -22,6 +22,7 @@ import msi.gama.util.GamaPair;
 import msi.gama.util.ICollector;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
+import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -236,16 +237,19 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+	public void collectUsedVarsOf(final SpeciesDescription species,
+			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
+		if (alreadyProcessed.contains(this)) { return; }
+		alreadyProcessed.add(this);
 		for (final IExpression e : keys) {
 			if (e != null) {
-				e.collectUsedVarsOf(species, result);
+				e.collectUsedVarsOf(species, alreadyProcessed, result);
 			}
 		}
 
 		for (final IExpression e : vals) {
 			if (e != null) {
-				e.collectUsedVarsOf(species, result);
+				e.collectUsedVarsOf(species, alreadyProcessed, result);
 			}
 		}
 

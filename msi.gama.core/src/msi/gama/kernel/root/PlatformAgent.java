@@ -42,11 +42,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.MemoryUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.ICollector;
 import msi.gama.util.IList;
 import msi.gaml.compilation.kernel.GamaMetaModel;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Containers;
 import msi.gaml.species.ISpecies;
@@ -345,9 +342,6 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public boolean shouldBeParenthesized() {
 		return false;
 	}
-
-	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 	@Override
 	public IType<?> getGamlType() {

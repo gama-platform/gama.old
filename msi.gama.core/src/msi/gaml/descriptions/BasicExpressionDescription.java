@@ -51,13 +51,6 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		return expression == null ? toOwnString() : expression.serialize(includingBuiltIn);
 	}
 
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// if (expression != null) {
-	// expression.collectMetaInformation(meta);
-	// }
-	// }
-
 	@Override
 	public boolean equals(final Object c) {
 		if (c == null) { return false; }

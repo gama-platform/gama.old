@@ -30,6 +30,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.GamaGetter;
+import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -252,31 +253,16 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return prototype.getDefiningPlugin();
 	}
 
-	/**
-	 * Method collectPlugins()
-	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-	 */
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// prototype.collectMetaInformation(meta);
-	// meta.put(GamlProperties.OPERATORS, prototype.getName());
-	// if (exprs != null) {
-	// for (final IExpression e : exprs) {
-	// if (e != null) {
-	// e.collectMetaInformation(meta);
-	// }
-	// }
-	// }
-	// }
-
 	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
-		prototype.collectImplicitVarsOf(species, result);
+	public void collectUsedVarsOf(final SpeciesDescription species,
+			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
+		if (alreadyProcessed.contains(this)) { return; }
+		alreadyProcessed.add(this);
+		prototype.collectUsedVarsOf(species, alreadyProcessed, result);
 		if (exprs != null) {
 			for (final IExpression e : exprs) {
 				if (e != null) {
-					e.collectUsedVarsOf(species, result);
+					e.collectUsedVarsOf(species, alreadyProcessed, result);
 				}
 			}
 		}

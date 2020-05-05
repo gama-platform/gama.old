@@ -4,7 +4,7 @@
  * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
@@ -20,7 +20,7 @@ public interface IGamlDescription extends INamed {
 
 	/**
 	 * Returns the title of this object (ie. the first line in the online documentation)
-	 * 
+	 *
 	 * @return a string representing the title of this object (default is its name)
 	 */
 	default String getTitle() {
@@ -29,25 +29,21 @@ public interface IGamlDescription extends INamed {
 
 	/**
 	 * Returns the documentation attached to this object
-	 * 
+	 *
 	 * @return a string that represents the documentation of this object
 	 */
-	default public String getDocumentation() {
+	default String getDocumentation() {
 		return "";
 	}
 
 	/**
 	 * Returns the plugin in which this object has been defined (if it has one)
-	 * 
+	 *
 	 * @return a string containing the identifier of the plugin in which this object has been defined, or null
 	 */
 	default String getDefiningPlugin() {
 		// Null by default
 		return null;
 	}
-
-	// default void collectMetaInformation(final GamlProperties meta) {
-	// // Does nothing by default
-	// }
 
 }

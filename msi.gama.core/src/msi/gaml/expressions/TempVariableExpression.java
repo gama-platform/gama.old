@@ -13,11 +13,8 @@ package msi.gaml.expressions;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.ICollector;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
 public class TempVariableExpression extends VariableExpression {
@@ -60,17 +57,6 @@ public class TempVariableExpression extends VariableExpression {
 	public IExpression resolveAgainst(final IScope scope) {
 		return GAML.getExpressionFactory().createConst(value(scope), type, name);
 	}
-
-	/**
-	 * Method collectPlugins()
-	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-	 */
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {}
-
-	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {}
 
 	public static class MyselfExpression extends TempVariableExpression {
 

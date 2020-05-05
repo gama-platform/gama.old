@@ -15,6 +15,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
@@ -138,17 +139,23 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final SpeciesDescription species, final ICollector<VariableDescription> result) {
+	public void collectUsedVarsOf(final SpeciesDescription species,
+			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
+		if (alreadyProcessed.contains(this)) { return; }
+		alreadyProcessed.add(this);
 		if (parameters != null) {
 			parameters.forEachFacet((name, exp) -> {
 				final IExpression expression = exp.getExpression();
 				if (expression != null) {
-					expression.collectUsedVarsOf(species, result);
+					expression.collectUsedVarsOf(species, alreadyProcessed, result);
 				}
 				return true;
 
 			});
 		}
+		// See https://github.com/COMOKIT/COMOKIT-Model/issues/21 . An action used in the initialization section may not
+		// be correctly analyzed for dependencies.
+		action.collectUsedVarsOf(species, alreadyProcessed, result);
 	}
 
 	@Override
