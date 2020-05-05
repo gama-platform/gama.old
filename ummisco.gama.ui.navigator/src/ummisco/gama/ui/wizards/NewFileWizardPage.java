@@ -41,6 +41,7 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 	Text descriptionText;
 	Button yesButton;
 	String templateName;
+	Combo combo;
 
 	public NewFileWizardPage(final ISelection selection) {
 		super(selection);
@@ -64,16 +65,16 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 					return e.getValue().contains(".model.template");
 				}));
 		addProjectTemplates(templates);
-		final Combo c = new Combo(middleComposite, SWT.READ_ONLY | SWT.DROP_DOWN);
+		combo = new Combo(middleComposite, SWT.READ_ONLY | SWT.DROP_DOWN);
 		final String[] choices = templates.keySet().toArray(new String[0]);
 		Arrays.sort(choices);
-		c.setItems(choices);
-		c.select(0);
-		c.addSelectionListener(new SelectionAdapter() {
+		combo.setItems(choices);
+
+		combo.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				templateName = choices[c.getSelectionIndex()];
+				templateName = choices[combo.getSelectionIndex()];
 				templatePath = templates.get(templateName);
 				updateStatus(null);
 				dialogChanged();
@@ -83,7 +84,9 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 			}
 
 		});
-
+		combo.select(0);
+		templateName = choices[0];
+		templatePath = templates.get(templateName);
 		createFileNameSection(container);
 		createAuthorSection(container);
 		createNameSection(container);
@@ -91,6 +94,9 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 		createLabel(container, "&Model description:");
 		descriptionText = new Text(container, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		descriptionText.setBounds(0, 0, 250, 100);
+		descriptionText
+				.setText(templatePath.endsWith("resource") ? "Based on the internal " + templateName + " template."
+						: "Based on the template at '" + templatePath + "'");
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		gd.heightHint = 100;
 		gd.verticalSpan = 4;
@@ -109,6 +115,7 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 		initialize();
 		dialogChanged();
 		setControl(container);
+
 	}
 
 	private void addProjectTemplates(final Map<String, String> templates) {
