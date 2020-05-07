@@ -293,7 +293,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}
 		for (final Object p : edges.iterable(scope)) {
-			final boolean addEdge = addDrivingEdge(scope, (IShape) p, nodes);
+			final boolean addEdge = addEdgeWithNodes(scope, (IShape) p, nodes);
 			if (!addEdge) {
 				continue;
 			}
@@ -301,7 +301,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 	}
 
-	public boolean addDrivingEdge(final IScope scope, final IShape e, final IMap<ILocation, IAgent> nodes) {
+	public boolean addEdgeWithNodes(final IScope scope, final IShape e, final IMap<ILocation, IAgent> nodes) {
 		if (containsEdge(e)) { return false; }
 		final Coordinate[] coord = e.getInnerGeometry().getCoordinates();
 		final IShape ptS = new GamaPoint(coord[0]);
@@ -310,14 +310,17 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		if (v1 == null) { return false; }
 		final IAgent v2 = nodes.get(ptT);
 		if (v2 == null) { return false; }
-
+		
 		final IAgent ag = e.getAgent();
-		final List v1ro = (List) v1.getAttribute("roads_out");
-		v1ro.add(ag);
-		final List v2ri = (List) v2.getAttribute("roads_in");
-		v2ri.add(ag);
-		ag.setAttribute("source_node", v1);
-		ag.setAttribute("target_node", v2);
+		if (ag.getSpecies().implementsSkill("skill_road")) {
+			final List v1ro = (List) v1.getAttribute("roads_out");
+			v1ro.add(ag);
+			final List v2ri = (List) v2.getAttribute("roads_in");
+			v2ri.add(ag);
+			ag.setAttribute("source_node", v1);
+			ag.setAttribute("target_node", v2);
+		}
+		
 		addVertex(v1);
 		addVertex(v2);
 		_Edge<IShape, IShape> edge;
