@@ -1237,7 +1237,7 @@ public class Graphs {
 			value = "creates a graph from the first list of edges and the list nodes",
 			masterDoc = false,
 			see = { "as_intersection_graph", "as_distance_graph" })
-	@test (" graph<geometry,geometry> comp <- as_edge_graph([line([{1,5},{12,45}]),line([{12,45},{34,56}]), [{1,5},{12,45},{34,56}]); "
+	@test ("graph<geometry,geometry> comp <- as_edge_graph([line([{1,5},{12,45}]),line([{12,45},{34,56}])], [{1,5},{12,45},{34,56}]);"
 			+ " ( ({1,5} in comp.vertices) and  ({12,45} in comp.vertices) and  ({34,56} in comp.vertices) ) ")
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges, final IContainer nodes) {
 			return new GamaSpatialGraph(edges, nodes, scope);

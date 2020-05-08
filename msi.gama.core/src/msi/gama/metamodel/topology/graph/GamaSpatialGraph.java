@@ -287,10 +287,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 		*/
 		
-		final IMap<ILocation, IAgent> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
+		final IMap<ILocation, IShape> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
 		for (final Object ag : vertices.iterable(scope)) {
 			super.addVertex(ag);
-			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
+			nodes.put(((IShape) ag).getLocation(), (IShape) ag);
 		}
 		for (final Object p : edges.iterable(scope)) {
 			final boolean addEdge = addEdgeWithNodes(scope, (IShape) p, nodes);
@@ -301,18 +301,18 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 	}
 
-	public boolean addEdgeWithNodes(final IScope scope, final IShape e, final IMap<ILocation, IAgent> nodes) {
+	public boolean addEdgeWithNodes(final IScope scope, final IShape e, final IMap<ILocation, IShape> nodes) {
 		if (containsEdge(e)) { return false; }
 		final Coordinate[] coord = e.getInnerGeometry().getCoordinates();
 		final IShape ptS = new GamaPoint(coord[0]);
 		final IShape ptT = new GamaPoint(coord[coord.length - 1]);
-		final IAgent v1 = nodes.get(ptS);
+		final IShape v1 = nodes.get(ptS);
 		if (v1 == null) { return false; }
-		final IAgent v2 = nodes.get(ptT);
+		final IShape v2 = nodes.get(ptT);
 		if (v2 == null) { return false; }
 		
-		final IAgent ag = e.getAgent();
-		if (ag.getSpecies().implementsSkill("skill_road")) {
+		if (e instanceof IAgent && (((IAgent) e).getSpecies().implementsSkill("skill_road"))) {
+			final IShape ag = e.getAgent();
 			final List v1ro = (List) v1.getAttribute("roads_out");
 			v1ro.add(ag);
 			final List v2ri = (List) v2.getAttribute("roads_in");
