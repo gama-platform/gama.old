@@ -59,6 +59,7 @@ import msi.gaml.types.IType;
 		@variable (
 				name = "attributes",
 				type = IType.MAP,
+				index = IType.STRING,
 				doc = { @doc ("Returns the attributes kept by this geometry (the ones shared with the agent)") }),
 		@variable (
 				name = "depth",

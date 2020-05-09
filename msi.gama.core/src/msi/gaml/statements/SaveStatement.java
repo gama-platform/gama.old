@@ -105,6 +105,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Comparison;
@@ -160,11 +161,11 @@ import msi.gaml.types.Types;
 						doc = @doc ("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
 				@facet (
 						name = IKeyword.ATTRIBUTES,
-						type = { IType.MAP },
+						type = { IType.MAP, IType.LIST },
 						remote_context = true,
 						optional = true,
 						doc = @doc (
-								value = "Allows to specify the attributes of a shape file or GeoJson file where agents are saved. Must be expressed as a literal map. The keys of the map are the names of the attributes that will be present in the file, the values are whatever expressions neeeded to define their value. ")),
+								value = "Allows to specify the attributes of a shape file or GeoJson file where agents are saved. Can be expressed as a list of string or as a literal map. When expressed as a list, each value should represent the name of an attribute of the shape or agent. The keys of the map are the names of the attributes that will be present in the file, the values are whatever expressions neeeded to define their value. ")),
 				@facet (
 						name = IKeyword.WITH,
 						type = { IType.MAP },
@@ -195,7 +196,7 @@ import msi.gaml.types.Types;
 				@usage (
 						value = "To save the geometries of all the agents of a species into a shapefile (with optional attributes):",
 						examples = { @example (
-								value = "save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";") }),
+								value = "save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" attributes: ['nameAgent'::name, 'locationAgent'::location] crs: \"EPSG:4326\";") }),
 				@usage (
 						value = "To save the grid_value attributes of all the cells of a grid into an ESRI ASCII Raster file:",
 						examples = { @example (
@@ -228,18 +229,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final Facets args = desc.getPassedArgs();
 			final IExpression att = desc.getFacetExpr(ATTRIBUTES);
 			if (att != null) {
-				if (!(att instanceof MapExpression)) {
-					desc.error("attributes must be expressed as a map<string, unknown>", IGamlIssue.WRONG_TYPE,
-							ATTRIBUTES);
-					return;
-				}
-
-				final MapExpression map = (MapExpression) att;
-				if (map.getGamlType().getKeyType() != Types.STRING) {
-					desc.error(
-							"The type of the keys of the attributes map must be string. These will be used for naming the attributes in the file",
+				final boolean isMap = att instanceof MapExpression;
+				if (!isMap && !att.getGamlType().isTranslatableInto(Types.LIST.of(Types.STRING))) {
+					desc.error("attributes must be expressed as a map<string, unknown> or as a list<string>",
 							IGamlIssue.WRONG_TYPE, ATTRIBUTES);
 					return;
+				}
+				if (isMap) {
+					final MapExpression map = (MapExpression) att;
+					if (map.getGamlType().getKeyType() != Types.STRING) {
+						desc.error(
+								"The type of the keys of the attributes map must be string. These will be used for naming the attributes in the file",
+								IGamlIssue.WRONG_TYPE, ATTRIBUTES);
+						return;
+					}
 				}
 
 				if (args != null && !args.isEmpty()) {
@@ -699,15 +702,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		} else {
 			if (code.startsWith("GAMA")) {
-				if (code.equals("GAMA"))return null;
-				String[] cs = code.split("::");
+				if (code.equals("GAMA")) { return null; }
+				final String[] cs = code.split("::");
 				if (cs.length == 2) {
-					Double val = Double.parseDouble(cs[1]);
-					if (val == null) return null;
-					else return new SimpleScalingProjection(val);
-				} else return null;
+					final Double val = Double.parseDouble(cs[1]);
+					if (val == null) {
+						return null;
+					} else {
+						return new SimpleScalingProjection(val);
+					}
+				} else {
+					return null;
+				}
 			}
-			
+
 			try {
 				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 			} catch (final FactoryException e1) {
@@ -862,6 +870,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				final String name = Cast.asString(scope, key.value(scope));
 				values.put(name, value);
 			});
+		} else {
+			final List<String> names =
+					GamaListFactory.create(scope, Types.STRING, Cast.asList(scope, attributesFacet.value(scope)));
+			names.forEach(n -> values.put(n,
+					species.hasAttribute(n) ? species.getVarExpr(n, false) : IExpressionFactory.NIL_EXPR));
 		}
 	}
 
@@ -913,10 +926,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (ag.getInnerGeometry() == null) { return false; }
 		// System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
 		Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
-		
+
 		g = fixesPolygonCWS(g);
 		g = geometryCollectionManagement(g);
-		
+
 		values.add(g);
 		if (ag instanceof IAgent) {
 			for (final IExpression variable : attributeValues) {
@@ -974,7 +987,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		final FeatureJSON io = new FeatureJSON();
 		io.writeFeatureCollection(featureCollection, f.getAbsolutePath());
-		
 
 	}
 
