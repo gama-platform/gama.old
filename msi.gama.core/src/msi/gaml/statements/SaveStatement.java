@@ -104,6 +104,7 @@ import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.MapExpression;
@@ -226,10 +227,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		public void validate(final StatementDescription description) {
 
 			final StatementDescription desc = description;
-			final Facets args = desc.getPassedArgs();
+			final Facets with = desc.getPassedArgs();
 			final IExpression att = desc.getFacetExpr(ATTRIBUTES);
+			final boolean isMap = att instanceof MapExpression;
 			if (att != null) {
-				final boolean isMap = att instanceof MapExpression;
 				if (!isMap && !att.getGamlType().isTranslatableInto(Types.LIST.of(Types.STRING))) {
 					desc.error("attributes must be expressed as a map<string, unknown> or as a list<string>",
 							IGamlIssue.WRONG_TYPE, ATTRIBUTES);
@@ -245,7 +246,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					}
 				}
 
-				if (args != null && !args.isEmpty()) {
+				if (with.exists()) {
 					desc.warning(
 							"'with' and 'attributes' are mutually exclusive. Only the first one will be considered",
 							IGamlIssue.CONFLICTING_FACETS, ATTRIBUTES, WITH);
@@ -263,22 +264,25 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IType<?> t = data.getGamlType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
 
-			if (att == null && (args == null || args.isEmpty())) { return; }
+			if (att == null && !with.exists()) { return; }
+
 			if (species == null) {
-				desc.error("Attributes can only be saved for agents", IGamlIssue.UNKNOWN_FACET,
-						att == null ? WITH : ATTRIBUTES);
-			} else {
-				if (args != null) {
-					args.forEachFacet((name, exp) -> {
-						if (!species.hasAttribute(name)) {
-							desc.error(
-									"Attribute " + name + " is not defined for the agents of " + data.serialize(false),
-									IGamlIssue.UNKNOWN_VAR, WITH);
-							return false;
-						}
-						return true;
-					});
+				if (with.exists() || isMap) {
+					desc.error("Attributes of geometries can only be specified with a list of attribute names",
+							IGamlIssue.UNKNOWN_FACET, att == null ? WITH : ATTRIBUTES);
 				}
+				// Error deactivated for fixing #2982.
+				// desc.error("Attributes can only be saved for agents", IGamlIssue.UNKNOWN_FACET,
+				// att == null ? WITH : ATTRIBUTES);
+			} else {
+				with.forEachFacet((name, exp) -> {
+					if (!species.hasAttribute(name)) {
+						desc.error("Attribute " + name + " is not defined for the agents of " + data.serialize(false),
+								IGamlIssue.UNKNOWN_VAR, WITH);
+						return false;
+					}
+					return true;
+				});
 			}
 		}
 
@@ -630,20 +634,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					agents instanceof IPopulation ? ((IPopulation) agents).getSpecies().getDescription()
 							: agents.getGamlType().getContentType().getSpecies();
 			final Map<String, IExpression> attributes = GamaMapFactory.create();
-			if (species != null) {
-				if (withFacet != null) {
-					computeInitsFromWithFacet(scope, withFacet, attributes, species);
-				} else if (attributesFacet != null) {
-					computeInitsFromAttributesFacet(scope, attributes, species);
-				}
-				for (final String e : attributes.keySet()) {
-					final IExpression var = attributes.get(e);
-					String name = e.replaceAll("\"", "");
-					name = name.replaceAll("'", "");
-					final String type = type(var);
-					specs.append(',').append(name).append(':').append(type);
-				}
+			// if (species != null) {
+			if (withFacet != null) {
+				computeInitsFromWithFacet(scope, withFacet, attributes, species);
+			} else if (attributesFacet != null) {
+				computeInitsFromAttributesFacet(scope, attributes, species);
 			}
+			for (final String e : attributes.keySet()) {
+				final IExpression var = attributes.get(e);
+				String name = e.replaceAll("\"", "");
+				name = name.replaceAll("'", "");
+				final String type = type(var);
+				specs.append(',').append(name).append(':').append(type);
+			}
+			// }
 			final IProjection proj = defineProjection(scope, f);
 			if (!geoJson) {
 				saveShapeFile(scope, f, agents, specs.toString(), attributes, proj);
@@ -848,7 +852,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	private void computeInitsFromWithFacet(final IScope scope, final Arguments withFacet,
 			final Map<String, IExpression> values, final SpeciesDescription species) throws GamaRuntimeException {
-		if (withFacet.isEmpty() && species != null) {
+		if (species == null) { return; }
+		if (withFacet.isEmpty()) {
 			for (final String var : species.getAttributeNames()) {
 				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var)) {
 					values.put(var, species.getVarExpr(var, false));
@@ -873,8 +878,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} else {
 			final List<String> names =
 					GamaListFactory.create(scope, Types.STRING, Cast.asList(scope, attributesFacet.value(scope)));
-			names.forEach(n -> values.put(n,
-					species.hasAttribute(n) ? species.getVarExpr(n, false) : IExpressionFactory.NIL_EXPR));
+			if (species != null) {
+				names.forEach(n -> values.put(n,
+						species.hasAttribute(n) ? species.getVarExpr(n, false) : IExpressionFactory.NIL_EXPR));
+			} else {
+				// see #2982
+				names.forEach(n -> values.put(n, new ConstantExpression(n)));
+			}
 		}
 	}
 
@@ -946,6 +956,16 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					}
 				}
 				values.add(val);
+			}
+		} else {
+			// see #2982. Assume it is an attribute of the shape
+			for (final IExpression variable : attributeValues) {
+				final Object val = variable.value(scope);
+				if (val instanceof String) {
+					values.add(ag.getAttribute((String) val));
+				} else {
+					values.add("");
+				}
 			}
 		}
 		// AD Assumes that the type is ok.

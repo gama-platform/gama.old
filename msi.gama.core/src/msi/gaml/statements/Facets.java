@@ -69,6 +69,10 @@ public class Facets implements IGamlable {
 		this(0);
 	}
 
+	public boolean exists() {
+		return facets != null && !facets.isEmpty();
+	}
+
 	protected Facets(final int size) {
 		facets = Collector.getList();
 		facets.setSize(size);
