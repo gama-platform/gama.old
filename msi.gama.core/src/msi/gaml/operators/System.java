@@ -228,7 +228,7 @@ public class System {
 			comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
 					+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
 			examples = {
-					@example ("map<string,unknown> values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
+					@example ("map<string,unknown> values <- user_input([enter(\"Number\",100), enter(\"Location\",{10, 10})]);"),
 					@example (
 							value = "(values at \"Number\") as int",
 							equals = "100",
@@ -258,7 +258,7 @@ public class System {
 			value = "Asks the user for some values. Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
 			examples =
 
-			{ @example ("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
+			{ @example ("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[enter(\"Number\",100), enter(\"Location\",{10, 10})]);"),
 					@example (
 							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
 							isExecutable = false) })
@@ -299,7 +299,7 @@ public class System {
 	@doc (
 			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is to specify the parameters the user can enter",
 			examples = {
-					@example ("map<string,unknown> values2 <- user_input('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})]);"),
+					@example ("map<string,unknown> values_no_title <- user_input([enter('Number',100), enter('Location',point, {10, 10})]);"),
 					@example (
 							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
 							isExecutable = false) })
