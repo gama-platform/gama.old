@@ -197,6 +197,7 @@ public class GamlResourceServices {
 	}
 
 	public static String getModelPathOf(final Resource r) {
+		// Likely in a headless scenario (w/o workspace)
 		if (r.getURI().isFile()) {
 			return new Path(r.getURI().toFileString()).toOSString();
 		} else {
@@ -207,12 +208,29 @@ public class GamlResourceServices {
 		}
 	}
 
+	private static boolean isProject(final File f) {
+		final String[] files = f.list();
+		if (files != null) {
+			for (final String s : files) {
+				if (".project".equals(s)) { return true; }
+			}
+		}
+		return false;
+	}
+
 	public static String getProjectPathOf(final Resource r) {
-		final IPath path = getPathOf(r);
-		// final String modelPath, projectPath;
-		if (r.getURI().isFile()) {
-			return path.toOSString();
+		if (r == null) { return ""; }
+		final URI uri = r.getURI();
+		if (uri == null) { return ""; }
+		// Cf. #2983 -- we are likely in a headless scenario
+		if (uri.isFile()) {
+			File project = new File(uri.toFileString());
+			while (project != null && !isProject(project)) {
+				project = project.getParentFile();
+			}
+			return project == null ? "" : project.getAbsolutePath();
 		} else {
+			final IPath path = getPathOf(r);
 			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			final IPath fullPath = file.getProject().getLocation();
 			return fullPath == null ? "" : fullPath.toOSString();
