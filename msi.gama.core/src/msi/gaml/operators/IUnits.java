@@ -367,13 +367,13 @@ public interface IUnits {
 			value = "min_int",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the minimum value an int can have (Java Integer.MIN_VALUE)")) double min_int =
+			doc = @doc ("A constant holding the minimum value an int can have (Java Integer.MIN_VALUE)")) int min_int =
 					Integer.MIN_VALUE;
 	@constant (
 			value = "max_int",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
-			doc = @doc ("A constant holding the maximum value an int can have (Java Integer.MAX_VALUE)")) double max_int =
+			doc = @doc ("A constant holding the maximum value an int can have (Java Integer.MAX_VALUE)")) int max_int =
 					Integer.MAX_VALUE;
 	/*
 	 *
