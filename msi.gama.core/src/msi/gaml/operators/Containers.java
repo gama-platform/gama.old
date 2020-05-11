@@ -23,7 +23,6 @@ import java.util.Queue;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.EObject;
@@ -57,7 +56,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaListFactory.GamaListSupplier;
 import msi.gama.util.GamaMapFactory;
@@ -687,11 +685,11 @@ public class Containers {
 		}
 		return null;
 	}
-	
+
 	@operator (
 			value = "all_indexes_of",
 			can_be_const = true,
-			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,			
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.LIST },
 			concept = { IConcept.LIST })
 	@doc (
@@ -700,23 +698,27 @@ public class Containers {
 			comment = "The definition of all_indexes_of and the type of the index depend on the container",
 			usages = @usage (
 					value = "if the left operand is a list, all_indexes_of returns a list of all the indexes as integers",
-					examples = { 
-						@example (value = "[1,2,3,1,2,3] all_indexes_of 1", equals = "[0,3]"),
-						@example (value = "[1,2,3,1,2,3] all_indexes_of 4", equals = "[]") }),
+					examples = { @example (
+							value = "[1,2,3,1,2,3] all_indexes_of 1",
+							equals = "[0,3]"),
+							@example (
+									value = "[1,2,3,1,2,3] all_indexes_of 4",
+									equals = "[]") }),
 			see = { "index_of", "last_index_of" })
 	public static IList all_indexes_of2(final IScope scope, final IList c, final Object o) {
-		IList results = GamaListFactory.create(Types.INT);
-		for (int i = 0; i < notNull(scope,c).size(); i++) {
-		    if (o == c.get(scope,i)) {
-		        results.add(i);
-		    }
+		final IList results = GamaListFactory.create(Types.INT);
+		for (int i = 0; i < notNull(scope, c).size(); i++) {
+			if (o == c.get(scope, i)) {
+				results.add(i);
+			}
 		}
 		return results;
-		
+
 		// Note: I also tested the following version with streams, but it was around 2 times slower...
-		//	return (IList) IntStream.range(0, notNull(scope,c).size()).filter(i -> c.get(scope,i) == o).boxed().collect(Collectors.toList());
-	}		
-	
+		// return (IList) IntStream.range(0, notNull(scope,c).size()).filter(i -> c.get(scope,i) ==
+		// o).boxed().collect(Collectors.toList());
+	}
+
 	@operator (
 			value = "last_index_of",
 			can_be_const = true,
@@ -1509,7 +1511,7 @@ public class Containers {
 		for (int i = 0; i < indexes.length; i++) {
 			indexes[i] = i;
 		}
-		scope.getRandom().shuffle(indexes);
+		scope.getRandom().shuffleInPlace(indexes);
 		final IList result = listLike(c).get();
 		for (int i = 0; i < number; i++) {
 			result.add(l.get(indexes[i]));

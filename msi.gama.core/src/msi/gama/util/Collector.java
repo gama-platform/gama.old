@@ -131,11 +131,6 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 			return collect == null ? Collections.EMPTY_SET : collect;
 		}
 
-		@Override
-		public void shuffleInPlaceWith(final RandomUtils random) {
-			random.shuffle2(items());
-
-		}
 	}
 
 	public static class AsList<E> extends Collector<E, IList<E>> {
@@ -163,8 +158,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 		@Override
 		public void shuffleInPlaceWith(final RandomUtils random) {
-			random.shuffle(items());
-
+			random.shuffleInPlace(items());
 		}
 	}
 

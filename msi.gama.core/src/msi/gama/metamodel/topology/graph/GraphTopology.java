@@ -93,7 +93,7 @@ public class GraphTopology extends AbstractTopology {
 
 	/**
 	 * TODO : doc
-	 * 
+	 *
 	 * @throws GamaRuntimeException
 	 * @throws GamaRuntimeException
 	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
@@ -257,7 +257,8 @@ public class GraphTopology extends AbstractTopology {
 			edgesT.add(edgeT);
 			if (!targetNode) {
 				final IShape edgeRev = (IShape) graph.getEdge(graph.getEdgeTarget(edgeT), graph.getEdgeSource(edgeT));
-				if (edgeRev != null && target != null && edgeS != null &&edgeRev.euclidianDistanceTo(target) <= edgeS.euclidianDistanceTo(target)) {
+				if (edgeRev != null && target != null && edgeS != null
+						&& edgeRev.euclidianDistanceTo(target) <= edgeS.euclidianDistanceTo(target)) {
 					edgesT.add(edgeRev);
 				}
 			}
@@ -1112,7 +1113,7 @@ public class GraphTopology extends AbstractTopology {
 		final List<IAgent> listAgents = new ArrayList();
 		listAgents.addAll(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
 		listAgents.remove(source);
-		scope.getRandom().shuffle(listAgents);
+		scope.getRandom().shuffleInPlace(listAgents);
 		final Ordering<IAgent> ordering = Ordering.natural().onResultOf(input -> distanceBetween(scope, source, input));
 		if (listAgents.size() <= number) {
 			Collections.sort(listAgents, ordering);

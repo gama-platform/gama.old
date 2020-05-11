@@ -59,6 +59,7 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import msi.gaml.variables.IVariable;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -724,11 +725,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			// However, if the experiment is defined with keep_simulations: false, we should not give access to the
 			// value, as no simulations can be made available (see #2727)
 			if (this.getModel().getSpecies().hasVar(varName)) {
-				if (!getExperiment().getSpecies().keepsSimulations()) {
+				final IVariable var = getModel().getSpecies().getVar(varName);
+				if (!var.isConst() && !getExperiment().getSpecies().keepsSimulations()) {
 					throw GamaRuntimeException.error("This experiment does not keep its simulations. " + varName
 							+ " cannot be retrieved in this context", this);
 				}
-				return getModel().getSpecies().getVar(varName).getInitialValue(this);
+				return var.getInitialValue(this);
 			}
 			// Fourth case: this is a parameter, so we get it from the species
 			if (getSpecies().hasParameter(varName)) {

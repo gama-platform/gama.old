@@ -52,7 +52,7 @@ public class NoCacheNeighborhood implements INeighborhood {
 				}
 			}
 			// Addresses Issue 1071 by explicitly shuffling the result
-			scope.getRandom().shuffle2(result);
+			result.shuffleInPlaceWith(scope.getRandom());
 			return result.items();
 		}
 	}

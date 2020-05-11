@@ -1834,9 +1834,10 @@ public abstract class Spatial {
 					coordinates.add(location);
 					final IShape gg =
 							Spatial.Operators.inter(scope, source, Spatial.Creation.polygon(scope, coordinates));
-					
+
 					if (gg != null && (isPoint || !gg.isPoint())) {
-						IShape s = new GamaShape(GeometryUtils.geometryCollectionManagement(gg.getInnerGeometry()));
+						final IShape s =
+								new GamaShape(GeometryUtils.geometryCollectionManagement(gg.getInnerGeometry()));
 						geoms.add(s);
 					}
 				}
@@ -1856,25 +1857,23 @@ public abstract class Spatial {
 				}
 				boolean isPolygon = false;
 				boolean isLine = false;
-				for (IShape geom : geomsVisible) {
+				for (final IShape geom : geomsVisible) {
 					isLine = isLine || geom.isLine();
-					isPolygon = isPolygon || (!geom.isPoint() && !geom.isLine());
+					isPolygon = isPolygon || !geom.isPoint() && !geom.isLine();
 				}
 				final boolean isPolygonF = isPolygon;
 				final boolean isLineF = isLine;
-				
-				geomsVisible.removeIf(g -> ((isPolygonF || isLineF) && g.isPoint()) && (isPolygonF && g.isLine()));
+
+				geomsVisible.removeIf(g -> (isPolygonF || isLineF) && g.isPoint() && isPolygonF && g.isLine());
 				if (!geomsVisible.isEmpty(scope)) {
 					IShape result = Cast.asGeometry(scope, geomsVisible, false);
-					if (result == null ||result.getInnerGeometry() == null ) {
+					if (result == null || result.getInnerGeometry() == null) {
 						geomsVisible.stream().forEach(g -> Spatial.Transformations.enlarged_by(scope, g, 0.1));
 						result = Cast.asGeometry(scope, geomsVisible, false);
 					}
-					if (result == null ||result.getInnerGeometry() == null ) {
-						return null;
-					}
-					if ((result.getInnerGeometry() instanceof GeometryCollection)) {
-						
+					if (result == null || result.getInnerGeometry() == null) { return null; }
+					if (result.getInnerGeometry() instanceof GeometryCollection) {
+
 						result = Spatial.Transformations.enlarged_by(scope, result, 0.1);
 					}
 					return result;
@@ -3111,12 +3110,12 @@ public abstract class Spatial {
 						value = "split_lines([line([{0,10}, {20,10}]), line([{0,10}, {20,10}])])",
 						equals = "a list of four polylines: line([{0,10}, {10,10}]), line([{10,10}, {20,10}]), line([{10,0}, {10,10}]) and line([{10,10}, {10,20}])",
 						test = false) })
-		@test("split_lines([line({10,10}, {20,20}), line({10.0,20.0,0.0},{15.0,15.0,0.0})]) = [line ({10.0,10.0,0.0},{15.0,15.0,0.0}), line({15.0,15.0,0.0},{20.0,20.0,0.0}), line({10.0,20.0,0.0},{15.0,15.0,0.0})]")
-		@test("length(split_lines([line({10,10}, {20,20}), line({10.0,20.0,0.0},{15.0,15.0,0.0})])) = 3")
+		@test ("split_lines([line({10,10}, {20,20}), line({10.0,20.0,0.0},{15.0,15.0,0.0})]) = [line ({10.0,10.0,0.0},{15.0,15.0,0.0}), line({15.0,15.0,0.0},{20.0,20.0,0.0}), line({10.0,20.0,0.0},{15.0,15.0,0.0})]")
+		@test ("length(split_lines([line({10,10}, {20,20}), line({10.0,20.0,0.0},{15.0,15.0,0.0})])) = 3")
 		public static IList<IShape> split_lines(final IScope scope, final IContainer<?, IShape> geoms,
 				final boolean readAttributes) throws GamaRuntimeException {
 			if (geoms.isEmpty(scope)) { return GamaListFactory.create(Types.GEOMETRY); }
-			if (!readAttributes){return split_lines(scope, geoms);}
+			if (!readAttributes) { return split_lines(scope, geoms); }
 			boolean change = true;
 			IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
 			lines.addAll((Collection<? extends IShape>) geoms);
@@ -3153,7 +3152,8 @@ public abstract class Spatial {
 						lines = lines2;
 						break;
 					}
-					IShape gg = Transformations.enlarged_by(scope, l, Math.min(0.001, l.getPerimeter() / 1000.0),10);
+					final IShape gg =
+							Transformations.enlarged_by(scope, l, Math.min(0.001, l.getPerimeter() / 1000.0), 10);
 					final List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, lines2, gg);
 					if (!ls.isEmpty()) {
 						final ILocation pto = l.getPoints().firstValue(scope);
@@ -3164,7 +3164,7 @@ public abstract class Spatial {
 								continue;
 							}
 							final IShape it = Spatial.Operators.inter(scope, l, l2);
-							
+
 							if (it == null || it.getPerimeter() > 0.0) {
 								continue;
 							}
@@ -3236,23 +3236,21 @@ public abstract class Spatial {
 						+ "is used to specify if the operator should as well keep only the main connected component of the network. "
 						+ "Usage: clean_network(lines:list of geometries or agents, tolerance: float, split_lines: bool, keepMainConnectedComponent: bool)",
 				comment = "The cleaned set of polylines",
-				examples = { 
-					@example (
+				examples = { @example (
 						value = "clean_network(my_road_shapefile.contents, 1.0, true, false)",
 						equals = "returns the list of polulines resulting from the cleaning of the geometry of the agent applying the operator with a tolerance of 1m, and splitting the lines at their intersections.",
 						isExecutable = false),
-					@example (
-						value = "clean_network([line({10,10}, {20,20}), line({10,20},{20,10})],3.0,true,false)",
-						equals = "[line({10.0,20.0,0.0},{15.0,15.0,0.0}),line({15.0,15.0,0.0},{20.0,10.0,0.0}), line({10.0,10.0,0.0},{15.0,15.0,0.0}), line({15.0,15.0,0.0},{20.0,20.0,0.0})]")
-					})
-		@test("length(clean_network([line({10,10}, {20,20}), line({10,20},{20,10})],3.0,true,false)) = 4")
+						@example (
+								value = "clean_network([line({10,10}, {20,20}), line({10,20},{20,10})],3.0,true,false)",
+								equals = "[line({10.0,20.0,0.0},{15.0,15.0,0.0}),line({15.0,15.0,0.0},{20.0,10.0,0.0}), line({10.0,10.0,0.0},{15.0,15.0,0.0}), line({15.0,15.0,0.0},{20.0,20.0,0.0})]") })
+		@test ("length(clean_network([line({10,10}, {20,20}), line({10,20},{20,10})],3.0,true,false)) = 4")
 		public static IList<IShape> clean(final IScope scope, final IList<IShape> polylines, final double tolerance,
 				final boolean splitlines, final boolean keepMainGraph) {
 			if (polylines == null || polylines.isEmpty()) { return polylines; }
-			IList<IShape> geoms = polylines.copy(scope);
+			final IList<IShape> geoms = polylines.copy(scope);
 			geoms.removeIf(a -> !a.getGeometry().isLine());
 			if (geoms.isEmpty()) { return GamaListFactory.EMPTY_LIST; }
-			
+
 			IList<IShape> results = GamaListFactory.create();
 
 			IList<IShape> geomsTmp = geoms.copy(scope);
@@ -3285,11 +3283,10 @@ public abstract class Spatial {
 			results.removeIf(
 					a -> a.getPerimeter() == 0 || !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty());
 
-			
 			if (splitlines) {
-			results = Transformations.split_lines(scope, results, true);
-				results.removeIf(a -> !a.getInnerGeometry().isValid()
-						|| a.getInnerGeometry().isEmpty() ||a.getPerimeter() == 0);
+				results = Transformations.split_lines(scope, results, true);
+				results.removeIf(a -> !a.getInnerGeometry().isValid() || a.getInnerGeometry().isEmpty()
+						|| a.getPerimeter() == 0);
 			}
 			if (keepMainGraph) {
 				IGraph graph = Graphs.spatialFromEdges(scope, results);
@@ -4559,7 +4556,7 @@ public abstract class Spatial {
 			objects.removeIf(a -> !(a instanceof IShape));
 			final IList<IShape> shapes = (IList<IShape>) objects;
 			if (shapes.size() <= number) { return shapes; }
-			scope.getRandom().shuffle(shapes);
+			scope.getRandom().shuffleInPlace(shapes);
 			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
 			return GamaListFactory.wrap(Types.GEOMETRY, ordering.leastOf(shapes, number));
 		}
@@ -5332,7 +5329,7 @@ public abstract class Spatial {
 			if (g instanceof ILocation) { return s.getLocation(); }
 			return s;
 		}
-		
+
 		@operator (
 				value = { "CRS_transform" },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
@@ -5346,33 +5343,35 @@ public abstract class Spatial {
 								equals = "{929517.7481238344,5978057.894895313,0.0}",
 								test = false) }) })
 		@no_test
-		public static IShape transform_CRS(final IScope scope, final IShape g, final String sourceCode, final String targetcode) {
-			if (g == null) 
-				return g;
+		public static IShape transform_CRS(final IScope scope, final IShape g, final String sourceCode,
+				final String targetcode) {
+			if (g == null) { return g; }
 			CoordinateReferenceSystem sourceCRS;
 			try {
 				sourceCRS = CRS.decode(sourceCode);
-			} catch (FactoryException e) {
+			} catch (final FactoryException e) {
 				throw GamaRuntimeException.error("The code " + sourceCode + " does not correspond to a known EPSG code",
 						scope);
 			}
 			CoordinateReferenceSystem targetCRS;
 			try {
 				targetCRS = CRS.decode(targetcode);
-			}  catch (FactoryException e) {
+			} catch (final FactoryException e) {
 				throw GamaRuntimeException.error("The code " + targetcode + " does not correspond to a known EPSG code",
 						scope);
 			}
 
-			MathTransform transform;Geometry targetGeometry = null ;
+			MathTransform transform;
+			Geometry targetGeometry = null;
 			try {
 				transform = CRS.findMathTransform(sourceCRS, targetCRS);
-				targetGeometry = JTS.transform( g.getInnerGeometry(), transform);
-			} catch (Exception e) {
-				throw GamaRuntimeException.error("No transformation found from " + sourceCode + " to " + targetcode,scope);
-			} 
-			if (targetGeometry == null) return null;
-			IShape s = new GamaShape(targetGeometry);
+				targetGeometry = JTS.transform(g.getInnerGeometry(), transform);
+			} catch (final Exception e) {
+				throw GamaRuntimeException.error("No transformation found from " + sourceCode + " to " + targetcode,
+						scope);
+			}
+			if (targetGeometry == null) { return null; }
+			final IShape s = new GamaShape(targetGeometry);
 			if (g instanceof ILocation) { return s.getLocation(); }
 			return s;
 		}

@@ -24,6 +24,8 @@ public interface ICollector<E> extends Collection<E>, Closeable {
 		Collector.release(this);
 	}
 
-	void shuffleInPlaceWith(RandomUtils random);
+	default void shuffleInPlaceWith(final RandomUtils random) {
+		random.shuffleInPlace(items());
+	}
 
 }

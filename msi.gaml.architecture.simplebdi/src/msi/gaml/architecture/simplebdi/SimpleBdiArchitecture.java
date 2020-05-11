@@ -673,8 +673,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 		} else {
 			final List<MentalState> desireBaseTest = GamaListFactory.create();
-			for (final MentalState tempDesire : (IList<MentalState>) scope.getSimulation().getRandomGenerator()
-					.shuffle(getBase(scope, DESIRE_BASE))) {
+			final IList<MentalState> desires = getBase(scope, DESIRE_BASE);
+			scope.getRandom().shuffleInPlace(desires);
+			for (final MentalState tempDesire : desires) {
 				if (listPlans != null) {
 					for (final BDIPlan tempPlan : listPlans) {
 						if (tempPlan == null) {
@@ -824,8 +825,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			} else {
 				final List<MentalState> obligationBaseTest = GamaListFactory.create();
-				for (final MentalState tempObligation : (IList<MentalState>) scope.getSimulation().getRandomGenerator()
-						.shuffle(getBase(scope, OBLIGATION_BASE))) {
+				final IList<MentalState> obligations = getBase(scope, OBLIGATION_BASE);
+				scope.getRandom().shuffleInPlace(obligations);
+				for (final MentalState tempObligation : obligations) {
 					for (final Norm tempNorm : listNorm) {
 						if (tempNorm == null) {
 							continue;
@@ -911,8 +913,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		double highestPriority = Double.MIN_VALUE;
 		final List<BDIPlan> temp_plan = new ArrayList<>();
 		final IList priorities = GamaListFactory.create(Types.FLOAT);
-		for (final Object BDIPlanstatement : scope.getSimulation().getRandomGenerator()
-				.shuffle(new ArrayList(_plans))) {
+		final List<BDIPlan> plansCopy = new ArrayList(_plans);
+		scope.getRandom().shuffleInPlace(plansCopy);
+		for (final Object BDIPlanstatement : plansCopy) {
 			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
 			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
 					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
@@ -986,8 +989,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			tempNorm.setSanctioned(false);
 			;
 		}
-
-		for (final Object Normstatement : scope.getSimulation().getRandomGenerator().shuffle(new ArrayList(_norms))) {
+		final List<Norm> normsCopy = new ArrayList(_norms);
+		scope.getRandom().shuffleInPlace(normsCopy);
+		for (final Object Normstatement : normsCopy) {
 			final NormStatement statement = ((Norm) Normstatement).getNormStatement();
 			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
 					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
@@ -1177,8 +1181,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	protected final List<SimpleBdiPlanStatement> listExecutablePlans(final IScope scope) {
 		final List<SimpleBdiPlanStatement> plans = new ArrayList<>();
-		for (final Object BDIPlanstatement : scope.getRandom().shuffle(new ArrayList(_plans))) {
-			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
+		final List<BDIPlan> plansCopy = new ArrayList(_plans);
+		scope.getRandom().shuffleInPlace(plansCopy);
+		for (final BDIPlan BDIPlanstatement : plansCopy) {
+			final SimpleBdiPlanStatement statement = BDIPlanstatement.getPlanStatement();
 
 			if (statement.getContextExpression() != null
 					&& !msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope))) {
@@ -1199,8 +1205,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	protected final List<NormStatement> listExecutableNorms(final IScope scope) {
 		final List<NormStatement> norms = new ArrayList<>();
-		for (final Object Normstatement : scope.getRandom().shuffle(new ArrayList(_norms))) {
-			final NormStatement statement = ((Norm) Normstatement).getNormStatement();
+		final List<Norm> normsCopy = new ArrayList(_norms);
+		scope.getRandom().shuffleInPlace(normsCopy);
+		for (final Norm Normstatement : normsCopy) {
+			final NormStatement statement = Normstatement.getNormStatement();
 
 			if (statement.getContextExpression() != null
 					&& !msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope))) {

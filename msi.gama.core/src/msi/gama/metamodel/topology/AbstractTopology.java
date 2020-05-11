@@ -386,7 +386,7 @@ public abstract class AbstractTopology implements ITopology {
 		agents.remove(g0);
 		if (agents.size() <= number) { return agents.values(); }
 		final List<Geometry> ggs = new ArrayList<>(agents.keySet());
-		scope.getRandom().shuffle(ggs);
+		scope.getRandom().shuffleInPlace(ggs);
 		final Ordering<Geometry> ordering = Ordering.natural().onResultOf(input -> g0.distance(input));
 		final IList<IAgent> shapes = GamaListFactory.create(Types.AGENT);
 		for (final Geometry g : ordering.leastOf(ggs, number)) {

@@ -12,7 +12,6 @@
 package msi.gama.metamodel.topology;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import com.google.common.collect.Ordering;
@@ -54,7 +53,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	double minSize = 10;
 	final boolean parallel;
 
-	public static ISpatialIndex create(final Envelope envelope, final boolean parallel) {
+	public static GamaQuadTree create(final Envelope envelope, final boolean parallel) {
 		// if (GamaPreferences.GRID_OPTIMIZATION.getValue())
 		// return new GamaParallelQuadTree(envelope);
 		// else
@@ -111,9 +110,9 @@ public class GamaQuadTree implements ISpatialIndex {
 		// random procedures and removing duplicates
 		try (final ICollector<IAgent> list = Collector.getOrderedSet()) {
 			root.findIntersects(r, list);
-			if (list.isEmpty()) { return Collections.EMPTY_LIST; }
+			if (list.isEmpty()) { return GamaListFactory.create(); }
 			filter.filter(scope, source, list);
-			scope.getRandom().shuffle2(list);
+			list.shuffleInPlaceWith(scope.getRandom());
 			return list.items();
 		}
 	}
@@ -127,7 +126,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		env.expandBy(exp);
 		try {
 			final Collection<IAgent> result = findIntersects(scope, source, env, f);
-			if (result.isEmpty()) { return Collections.EMPTY_LIST; }
+			if (result.isEmpty()) { return GamaListFactory.create(); }
 			result.removeIf(each -> source.euclidianDistanceTo(each) > dist);
 			return result;
 		} finally {
@@ -144,7 +143,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		try {
 			final Collection<IAgent> in_square = findIntersects(scope, source, env, f);
 			in_square.removeAll(alreadyChosen);
-			if (in_square.isEmpty()) { return GamaListFactory.EMPTY_LIST; }
+			if (in_square.isEmpty()) { return GamaListFactory.create(); }
 
 			if (in_square.size() <= number) { return in_square; }
 			final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
