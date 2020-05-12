@@ -274,7 +274,8 @@ public class Random {
 					value = "shuffle ('abc')",
 					equals = "'bac' (for example)",
 					test = false) })
-	@test ("seed <- 1.0; shuffle ('abc') = 'abc'")
+	@no_test
+	// @test ("seed <- 1.0; shuffle ('abc') = 'abc'")
 	public static String opShuffle(final IScope scope, final String target) {
 		return RANDOM(scope).shuffle(target);
 	}
