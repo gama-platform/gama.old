@@ -354,19 +354,20 @@ public class Variable extends Symbol implements IVariable {
 
 	}
 
-	protected IExpression updateExpression, initExpression, amongExpression, functionExpression, onChangeExpression;
-	protected IType type/* , contentType */;
-	protected final boolean isNotModifiable /* , doUpdate */;
-	// private final int definitionOrder;
+	protected IExpression initExpression;
+	protected final IExpression updateExpression, amongExpression, functionExpression, onChangeExpression;
+	protected IType type;
+	protected final boolean isNotModifiable;
+	// protected boolean isSpeciesConst;
 	public IGamaHelper getter, initer, setter;
 	private IExecutable on_changer;
-	protected String /* gName, sName, iName, */ pName, cName;
-	protected ISkill gSkill/* , iSkill */, sSkill;
+	protected String pName, cName;
+	protected ISkill gSkill, sSkill;
+	// private Object speciesWideValue;
 
 	public Variable(final IDescription sd) {
 		super(sd);
 		final VariableDescription desc = (VariableDescription) sd;
-		// doUpdate = true;
 		setName(sd.getName());
 		pName = desc.getParameterName();
 		cName = getLiteral(IKeyword.CATEGORY, null);
@@ -377,9 +378,13 @@ public class Variable extends Symbol implements IVariable {
 		onChangeExpression = getFacet(IKeyword.ON_CHANGE);
 		isNotModifiable = desc.isNotModifiable();
 		type = desc.getGamlType();
-		// contentType = desc.getContentType();
-		// definitionOrder = desc.getDefinitionOrder();
+		// computeSpeciesConst();
 	}
+
+	// private void computeSpeciesConst() {
+	// isSpeciesConst = isNotModifiable && updateExpression == null && functionExpression == null && getter == null
+	// && setter == null && (initExpression == null || initExpression.isConst());
+	// }
 
 	private void buildHelpers(final AbstractSpecies species) {
 		getter = getDescription().getGetter();
@@ -398,31 +403,9 @@ public class Variable extends Symbol implements IVariable {
 		return type.cast(scope, v, null, false);
 	}
 
-	// private void computeSpeciesConst(final IScope scope) {
-	// if ( !isNotModifiable ) { return; }
-	// if ( initExpression != null && !initExpression.isConst() ) { return; }
-	// if ( updateExpression != null && !updateExpression.isConst() ) { return;
-	// }
-	// if ( getter != null || setter != null ) { return; }
-	// for ( final IVariable v : dependsOn ) {
-	// if ( !v.isConst() ) { return; }
-	// }
-	// isSpeciesConst = true;
-	// computeStaticValue(scope);
-	// }
-	//
-	// public void computeStaticValue(final IScope scope) {
-	// staticValue = coerce(null, getAnyExpression(scope).value(scope));
-	// }
-
-	// @Override
-	// public String toGaml() {
-	// return getName();
-	// }
-
 	@Override
 	public String toString() {
-		String result = isConst() ? IKeyword.CONST : IKeyword.VAR;
+		String result = isNotModifiable() ? IKeyword.CONST : IKeyword.VAR;
 		result += " " + type.toString() + "[" + getName() + "]";
 		return result;
 	}
@@ -432,11 +415,7 @@ public class Variable extends Symbol implements IVariable {
 		final IExpressionDescription desc = ConstantExpressionDescription.create(initial);
 		initExpression = desc.getExpression();
 		setFacet(IKeyword.INIT, desc);
-	}
-
-	@Override
-	public boolean isConst() {
-		return false /* isSpeciesConst */;
+		// computeSpeciesConst();
 	}
 
 	@Override
@@ -544,6 +523,9 @@ public class Variable extends Symbol implements IVariable {
 		} else {
 			agent.setAttribute(name, val);
 		}
+		// if (isSpeciesConst) {
+		// speciesWideValue = val;
+		// }
 	}
 
 	protected Object checkAmong(final IAgent agent, final IScope scope, final Object val) throws GamaRuntimeException {
@@ -563,6 +545,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		// if (isSpeciesConst) { return speciesWideValue; }
 		if (getter != null) { return getter.run(scope, agent, gSkill == null ? agent : gSkill); }
 		if (functionExpression != null) { return scope.evaluate(functionExpression, agent).getValue(); }
 		if (!agent.hasAttribute(name)) {

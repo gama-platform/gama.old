@@ -29,8 +29,6 @@ public interface IVariable extends ISymbol, IParameter {
 
 	boolean isMicroPopulation();
 
-	boolean isConst();
-
 	void initializeWith(IScope scope, IAgent gamaObject, Object object) throws GamaRuntimeException;
 
 	void setVal(IScope scope, IAgent agent, Object v) throws GamaRuntimeException;
