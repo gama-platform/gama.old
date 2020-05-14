@@ -356,7 +356,7 @@ public class Variable extends Symbol implements IVariable {
 
 	protected IExpression updateExpression, initExpression, amongExpression, functionExpression, onChangeExpression;
 	protected IType type/* , contentType */;
-	protected boolean isNotModifiable /* , doUpdate */;
+	protected final boolean isNotModifiable /* , doUpdate */;
 	// private final int definitionOrder;
 	public IGamaHelper getter, initer, setter;
 	private IExecutable on_changer;
@@ -677,6 +677,11 @@ public class Variable extends Symbol implements IVariable {
 	public List<GamaColor> getColor(final IScope scope) {
 		// No facet available to describe a potential color
 		return null;
+	}
+
+	@Override
+	public boolean isNotModifiable() {
+		return isNotModifiable;
 	}
 
 }
