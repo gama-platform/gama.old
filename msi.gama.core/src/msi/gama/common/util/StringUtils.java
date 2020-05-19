@@ -41,11 +41,34 @@ public class StringUtils {
 	public final static String literals = "\\w+\\$\\w+|\\#\\w+|\\d+\\.\\d+|\\w+\\.\\w+|\\w+";
 	final static String regex = strings + "|" + literals + "|" + operators + "|" + ponctuation;
 
+	// static public String toGamlStringOld(final String s) {
+	// if (s == null) { return null; }
+	// final StringBuilder sb = new StringBuilder(s.length());
+	// sb.append('\'');
+	// sb.append(s.replace("\\", "\\\\").replace("'", "\\'").replace("\"", "\\\"").replace("/", "\\/"));
+	// sb.append('\'');
+	// return sb.toString();
+	// }
+
 	static public String toGamlString(final String s) {
 		if (s == null) { return null; }
-		final StringBuilder sb = new StringBuilder(s.length());
+		final int length = s.length();
+		final StringBuilder sb = new StringBuilder(length);
 		sb.append('\'');
-		sb.append(s.replace("\\", "\\\\").replace("'", "\\'").replace("\"", "\\\"").replace("/", "\\/"));
+		for (int i = 0; i < s.length(); i++) {
+			final char c = s.charAt(i);
+			switch (c) {
+				case '"':
+				case '\'':
+				case '\\':
+					// Commented on purpose. See issue #2988
+					// case '/':
+					sb.append('\\');
+					// $FALL-THROUGH$
+				default:
+					sb.append(c);
+			}
+		}
 		sb.append('\'');
 		return sb.toString();
 	}
@@ -140,6 +163,9 @@ public class StringUtils {
 						break;
 					case '\"':
 						writer.append('"');
+						break;
+					case '/':
+						writer.append('/');
 						break;
 					case 'r':
 						writer.append('\r');

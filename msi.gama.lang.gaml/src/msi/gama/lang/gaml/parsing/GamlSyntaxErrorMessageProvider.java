@@ -38,7 +38,8 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		// }
 		// if (contextobj != null) {
 		// if (DEBUG.IS_ON()) {
-		// DEBUG.OUT("Current EObject: " + contextobj.eClass().getName() + " " + EGaml.getInstance().getKeyOf(contextobj));
+		// DEBUG.OUT("Current EObject: " + contextobj.eClass().getName() + " " +
+		// EGaml.getInstance().getKeyOf(contextobj));
 		// }
 		// }
 		final RecognitionException ex = context.getRecognitionException();
@@ -60,7 +61,7 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		// final String[] tokens = context.getTokenNames();
 		if (ex == null) {
 			if (msg.startsWith("mismatched ch")) {
-				final String ch = msg.substring(msg.length() - 3, msg.length());
+				final String ch = msg.substring(msg.lastIndexOf(' '), msg.length());
 				msg = "Character expected " + ch;
 			} else {
 
