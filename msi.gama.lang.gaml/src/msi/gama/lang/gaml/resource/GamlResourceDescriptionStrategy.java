@@ -12,6 +12,8 @@ package msi.gama.lang.gaml.resource;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.util.IAcceptor;
@@ -31,14 +33,22 @@ import msi.gama.lang.gaml.gaml.Statement;
  */
 public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionStrategy {
 
+	private void createDescription(final EObject o, final IAcceptor<IEObjectDescription> acceptor) {
+		final QualifiedName qn = getQualifiedNameProvider().getFullyQualifiedName(o);
+		if (qn != null) {
+			acceptor.accept(EObjectDescription.create(qn, o));
+		}
+	}
+
 	@Override
 	public boolean createEObjectDescriptions(final EObject o, final IAcceptor<IEObjectDescription> acceptor) {
 		if (o instanceof ActionArguments || o instanceof Block || o instanceof Model) { return true; }
-		if (o instanceof ArgumentDefinition) {
-			super.createEObjectDescriptions(o, acceptor);
-		} else if (o instanceof Statement) {
-			super.createEObjectDescriptions(o, acceptor);
+		if (o instanceof Statement) {
+			createDescription(o, acceptor);
 			return true;
+		}
+		if (o instanceof ArgumentDefinition) {
+			createDescription(o, acceptor);
 		}
 		return false;
 	}
