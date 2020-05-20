@@ -33,6 +33,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.noisegeneration.OpenSimplexNoise;
 import msi.gaml.operators.noisegeneration.SimplexNoise;
@@ -514,6 +515,51 @@ public class Random {
 		}
 
 		return -1;
+	}
+	
+	@operator (
+			value = "rnd_choice",
+			concept = { IConcept.RANDOM })
+	@doc (
+			value = "returns a key from the map with a probability following the (normalized) distribution described in map values (a form of lottery)",
+			examples = { @example (
+					value = "rnd_choice([\"toto\"::0.2,\\\"tata\\\"::0.5,\\\"tonton\\\"::0.3])",
+					equals = "2/10 chances to return \"toto\", 5/10 chances to return \"tata\", 3/10 chances to return \"tonton\"",
+					test = false) },
+			see = { "rnd" })
+	@test ("seed <- 1.0; rnd_choice([\"toto\"::0.2,\"tata\"::0.5,\"tonton\"::0.3]) = \"tata\"")
+	public static <T> T opRndCoice(final IScope scope, final IMap<T,?> distribution) {
+		final IList<T> key = distribution.getKeys();
+		final IList<Double> normalizedDistribution = GamaListFactory.create(Types.FLOAT);
+		Double sumElt = 0.0;
+
+		for (final T k : key) {
+			Object eltDistrib = distribution.get(k);
+			final Double elt = Cast.asFloat(scope, eltDistrib);
+			if (elt < 0.0) {
+				throw GamaRuntimeException.create(new RuntimeException("Distribution elements should be positive."),
+						scope);
+			}
+			normalizedDistribution.add(elt);
+			sumElt = sumElt + elt;
+		}
+		if (sumElt == 0.0) {
+			throw GamaRuntimeException
+					.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
+		}
+		
+		for (int i = 0; i < normalizedDistribution.size(); i++) {
+			normalizedDistribution.set(i, normalizedDistribution.get(i) / sumElt);
+		}
+
+		double randomValue = RANDOM(scope).between(0., 1.);
+
+		for (int i = 0; i < distribution.size(); i++) {
+			randomValue = randomValue - normalizedDistribution.get(i);
+			if (randomValue <= 0) { return key.get(i); }
+		}
+
+		throw GamaRuntimeException.create(new RuntimeException("Malformed distribution"), scope);
 	}
 
 	@operator (
