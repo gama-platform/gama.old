@@ -527,7 +527,7 @@ public class Random {
 					equals = "2/10 chances to return \"toto\", 5/10 chances to return \"tata\", 3/10 chances to return \"tonton\"",
 					test = false) },
 			see = { "rnd" })
-	@test ("seed <- 1.0; rnd_choice([\"toto\"::0.2,\"tata\"::0.5,\"tonton\"::0.3]) = \"tata\"")
+	@test ("seed <- 1.0; rnd_choice([\"toto\"::0.2,\"tata\"::0.5,\"tonton\"::0.3]) = \"tonton\"")
 	public static <T> T opRndCoice(final IScope scope, final IMap<T,?> distribution) {
 		final IList<T> key = distribution.getKeys();
 		final IList<Double> normalizedDistribution = GamaListFactory.create(Types.FLOAT);
