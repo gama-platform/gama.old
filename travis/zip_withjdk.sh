@@ -54,7 +54,7 @@ NEWFILES[$n]='GAMA1.8_EmbeddedJDK_Mac'$SUFFIX
 
 git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
 
-git clone --depth=50 --branch=master https://github.com/COMOKIT/CoVid19.git  CoVid19	
+
 
 rem111(){
 sudo rm "${RELEASEFILES[0]}"
@@ -129,7 +129,10 @@ sudo cp jdk/win/gama-headless.bat /home/travis/build/gama-platform/gama/ummisco.
 
 sudo cp -R jdk/mac/64/1.8.171/jdk /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents
 sudo cp jdk/mac/64/Gama.ini /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
-	
+sudo cp jdk/mac/gama-headless.sh /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless
+
+
+
 
 	
 cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
