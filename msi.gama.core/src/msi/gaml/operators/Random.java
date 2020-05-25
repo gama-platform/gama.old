@@ -519,7 +519,8 @@ public class Random {
 	
 	@operator (
 			value = "rnd_choice",
-			concept = { IConcept.RANDOM })
+			concept = { IConcept.RANDOM },
+			type = ITypeProvider.KEY_TYPE_AT_INDEX + 1)
 	@doc (
 			value = "returns a key from the map with a probability following the (normalized) distribution described in map values (a form of lottery)",
 			examples = { @example (
