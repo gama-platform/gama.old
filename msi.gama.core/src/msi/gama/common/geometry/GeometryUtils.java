@@ -513,6 +513,7 @@ public class GeometryUtils {
 		try {
 			for (int i = 0; i < geom.getNumGeometries(); i++) {
 				final Geometry gg = geom.getGeometryN(i);
+				if (!clip.covers(gg.getCentroid())) continue;
 				final Coordinate[] coord = gg.getCoordinates();
 				boolean cond = env.covers(gg.getCentroid().getCoordinate());
 				cond = cond && (approxClipping
