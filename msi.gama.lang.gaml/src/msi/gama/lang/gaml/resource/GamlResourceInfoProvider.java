@@ -26,7 +26,6 @@ import java.util.Set;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
@@ -34,8 +33,10 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.inject.Singleton;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.HeadlessExperiment;
+import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
@@ -52,7 +53,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
 	private XtextResourceSet resourceSet;
 
-	public GamlFileInfo getInfo(final URI originalURI, final Resource r, final long stamp) {
+	public GamlFileInfo getInfo(final URI originalURI, final GamlResource r, final long stamp) {
 
 		Set<String> imports = null;
 		final Set<URI> uris = GamlResourceIndexer.directImportsOf(originalURI);
@@ -82,10 +83,15 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		Set<String> exps = null;
 
 		final TreeIterator<EObject> tree = EcoreUtil2.getAllContents(r, true);
-
+		boolean processExperiments = true;
 		while (tree.hasNext()) {
 			final EObject e = tree.next();
-			if (e instanceof StringLiteral) {
+			if (e instanceof Pragma) {
+				final String s = ((Pragma) e).getName();
+				if (IKeyword.NO_EXPERIMENT.equals(s)) {
+					processExperiments = false;
+				}
+			} else if (e instanceof StringLiteral) {
 				final String s = ((StringLiteral) e).getOp();
 				if (s.length() > 4) {
 					final URI u = URI.createFileURI(s);
@@ -99,7 +105,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 						// }
 					}
 				}
-			} else if (e instanceof S_Experiment) {
+			} else if (processExperiments && e instanceof S_Experiment) {
 				String s = ((S_Experiment) e).getName();
 				if (s == null) {
 					DEBUG.ERR("EXPERIMENT NULL");
@@ -112,7 +118,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 					exps = new LinkedHashSet();
 				}
 				exps.add(s);
-			} else if (e instanceof HeadlessExperiment) {
+			} else if (processExperiments && e instanceof HeadlessExperiment) {
 				String s = ((HeadlessExperiment) e).getName();
 
 				if (EGaml.getInstance().isBatch(e)) {
