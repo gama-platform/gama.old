@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaFont.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
+ * msi.gama.util.GamaFont.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v. 1.8)
+ *
  * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -35,10 +35,18 @@ import msi.gaml.types.Types;
  * @since 22 mars 2015
  *
  */
-@vars({ @variable(name = IKeyword.NAME, type = IType.STRING, doc = { @doc("Returns the name of this font") }),
-		@variable(name = IKeyword.SIZE, type = IType.INT, doc = { @doc("Returns the size (in points) of this font") }),
-		@variable(name = IKeyword.STYLE, type = IType.INT, doc = {
-				@doc("Returns the style of this font (0 for plain, 1 for bold, 2 for italic, 3 for bold+italic)") }) })
+@vars ({ @variable (
+		name = IKeyword.NAME,
+		type = IType.STRING,
+		doc = { @doc ("Returns the name of this font") }),
+		@variable (
+				name = IKeyword.SIZE,
+				type = IType.INT,
+				doc = { @doc ("Returns the size (in points) of this font") }),
+		@variable (
+				name = IKeyword.STYLE,
+				type = IType.INT,
+				doc = { @doc ("Returns the style of this font (0 for plain, 1 for bold, 2 for italic, 3 for bold+italic)") }) })
 public class GamaFont extends Font implements IValue {
 
 	/**
@@ -55,26 +63,26 @@ public class GamaFont extends Font implements IValue {
 	}
 
 	@Override
-	@getter(IKeyword.NAME)
+	@getter (IKeyword.NAME)
 	public String getName() {
 		return name;
 	}
 
 	@Override
-	@getter(IKeyword.SIZE)
+	@getter (IKeyword.SIZE)
 	public int getSize() {
 		return size;
 	}
 
 	@Override
-	@getter(IKeyword.STYLE)
+	@getter (IKeyword.STYLE)
 	public int getStyle() {
 		return style;
 	}
 
 	/**
 	 * Method serialize()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
 	 */
 	@Override
@@ -92,7 +100,7 @@ public class GamaFont extends Font implements IValue {
 
 	/**
 	 * Method getType()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override
@@ -101,9 +109,8 @@ public class GamaFont extends Font implements IValue {
 	}
 
 	/**
-	 * Method stringValue(). Outputs to a format that is usable by
-	 * Font.decode(String);
-	 * 
+	 * Method stringValue(). Outputs to a format that is usable by Font.decode(String);
+	 *
 	 * @see msi.gama.common.interfaces.IValue#stringValue(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -124,7 +131,7 @@ public class GamaFont extends Font implements IValue {
 
 	/**
 	 * Method copy()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IValue#copy(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -132,12 +139,32 @@ public class GamaFont extends Font implements IValue {
 		return new GamaFont(name, style, size);
 	}
 
-	@operator(value = "font", category = { IOperatorCategory.CASTING }, concept = { IConcept.TEXT,
-			IConcept.DISPLAY }, can_be_const = true)
-	@doc(value = "Creates a new font, by specifying its name (either a font face name like 'Lucida Grande Bold' or 'Helvetica', or a logical name like 'Dialog', 'SansSerif', 'Serif', etc.), a size in points and a style, either #bold, #italic or #plain or a combination (addition) of them.", examples = @example(value = "font ('Helvetica Neue',12, #bold + #italic)", equals = "a bold and italic face of the Helvetica Neue family", test = false))
+	@operator (
+			value = "font",
+			category = { IOperatorCategory.CASTING },
+			concept = { IConcept.TEXT, IConcept.DISPLAY },
+			can_be_const = true)
+	@doc (
+			value = "Creates a new font, by specifying its name (either a font face name like 'Lucida Grande Bold' or 'Helvetica', or a logical name like 'Dialog', 'SansSerif', 'Serif', etc.), a size in points and a style, either #bold, #italic or #plain or a combination (addition) of them.",
+			examples = @example (
+					value = "font ('Helvetica Neue',12, #bold + #italic)",
+					equals = "a bold and italic face of the Helvetica Neue family",
+					test = false))
 	@no_test
 	public static GamaFont font(final String name, final Integer size, final Integer style) {
 		return new GamaFont(name, style, size);
+	}
+
+	@operator (
+			value = "font",
+			category = { IOperatorCategory.CASTING },
+			concept = { IConcept.TEXT, IConcept.DISPLAY },
+			can_be_const = true)
+	@doc (
+			value = "Creates a new font, by specifying its name (either a font face name like 'Lucida Grande Bold' or 'Helvetica', or a logical name like 'Dialog', 'SansSerif', 'Serif', etc.) and a size in points. No style is attached to this font")
+	@no_test
+	public static GamaFont font(final String name, final Integer size) {
+		return new GamaFont(name, Font.PLAIN, size);
 	}
 
 }
