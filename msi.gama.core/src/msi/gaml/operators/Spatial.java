@@ -38,6 +38,7 @@ import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
@@ -305,6 +306,38 @@ public abstract class Spatial {
 			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
 			if (xRadius <= 0) { return new GamaShape(location); }
 			return GamaGeometryType.buildArc(xRadius, heading, amplitude, filled, location);
+		}
+		
+		@operator (
+				value = "elliptical_arc",
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+		@doc (
+				value = "An elliptical arc from the first operand (point) to the second operand (point), which radius is equal to the third operand, and a int giving the number of points to use as a last operand",
+				examples = { @example (
+						value = "elliptical_arc({0,0},{10,10},5.0, 20)",
+						equals = "a geometry from {0,0} to {10,10} considering a radius of 5.0 built using 20 points",
+						test = false) },
+				see = {"arc", "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
+						"rectangle", "square", "circle", "ellipse", "triangle" })
+		@no_test // (comment="See Creation.experiment in test models : {Arc tests}")
+	
+		public static IShape EllipticalArc(IScope scope, GamaPoint pt1, GamaPoint pt2, double h, int nPts) {
+			    double xRadius = pt1.distance(pt2)/2.0;
+			    double yRadius = h;
+
+			    Coordinate[] pts = new Coordinate[nPts];
+			    int iPt = 0;
+			    for (int i = 0; i < nPts; i++) {
+			        double ang = i * (Math.PI / nPts);
+			        double x = xRadius * Math.cos(ang);
+			        double y = yRadius * Math.sin(ang);
+			        pts[iPt++] = new Coordinate(x, y);
+			    }
+			    IShape shape = new GamaShape( GeometryUtils.GEOMETRY_FACTORY.createLineString(pts));
+			    shape = Transformations.rotated_by(scope, shape, Relations.towards(scope, pt2, pt1) );
+			    shape = Transformations.translated_by(scope, shape, pt1.minus(shape.getPoints().firstValue(scope).toGamaPoint()));
+			    return shape;
 		}
 
 		@operator (

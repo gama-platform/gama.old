@@ -26,6 +26,7 @@ import org.kabeja.dxf.DXFLine;
 import org.kabeja.dxf.DXFPolyline;
 import org.kabeja.dxf.DXFSolid;
 import org.kabeja.dxf.DXFVertex;
+import org.kabeja.math.MathUtils;
 import org.kabeja.parser.DXFParser;
 import org.kabeja.parser.Parser;
 import org.kabeja.parser.ParserBuilder;
@@ -34,6 +35,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -44,8 +46,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gaml.operators.Containers;
 import msi.gaml.operators.Spatial;
+import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -71,6 +73,9 @@ public class GamaDXFFile extends GamaGeometryFile {
 	Double unit;
 	double x_t;
 	double y_t;
+	  protected static final double QUARTER_CIRCLE_ANGLE = Math.tan(0.39269908169872414D);
+	  
+	
 
 	@doc (
 			value = "This file constructor allows to read a dxf (.dxf) file",
@@ -115,7 +120,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 		return null;
 	}
 
-	public IShape createPolygone(final IScope scope, final IList pts) {
+	public IShape createPolygon(final IScope scope, final IList pts) {
 		if (pts.isEmpty()) { return null; }
 		final IShape shape = GamaGeometryType.buildPolygon(pts);
 		if (shape != null) {
@@ -126,7 +131,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	public IShape createCircle(final IScope scope, final GamaPoint location, final double radius) {
-		final IShape shape = GamaGeometryType.buildCircle(radius, location);
+		IShape shape = GamaGeometryType.buildCircle(radius, location).getExteriorRing(scope);
 		if (shape != null) {
 			if (size != null) { return Spatial.Transformations.scaled_to(scope, shape, size); }
 			return shape;
@@ -150,7 +155,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 				obj.getPoint4().getY() * (unit == null ? 1 : unit) - y_t,
 				obj.getPoint4().getZ() * (unit == null ? 1 : unit)));
 
-		final IShape shape = createPolygone(scope, list);
+		final IShape shape = createPolygon(scope, list);
 
 		return shape;
 	}
@@ -174,6 +179,8 @@ public class GamaDXFFile extends GamaGeometryFile {
 				obj.getEndPoint().getZ() * (unit == null ? 1 : unit)));
 		return createPolyline(scope, list);
 	}
+	
+	
 
 	public IShape manageObj(final IScope scope, final DXFArc obj) {
 		if (obj == null) { return null; }
@@ -186,37 +193,109 @@ public class GamaDXFFile extends GamaGeometryFile {
 				obj.getEndPoint().getZ() * (unit == null ? 1 : unit)));
 		return createPolyline(scope, list);
 	}
+	
+	
+	public GamaPoint toGamaPoint(DXFVertex v) {
+		return new GamaPoint(v.getPoint().getX(),v.getPoint().getY(),v.getPoint().getZ());
+	}
+	
+	protected void addToLists(IScope scope, DXFPolyline pline, DXFVertex start, DXFVertex end, IList list) {
+		IList<ILocation> locs = GamaListFactory.create(Types.POINT);
+		locs.add(new GamaPoint(start.getPoint().getX(), start.getPoint().getY(), start.getPoint().getZ()));
+			  // calculte the height
+                    
+            if (start.getBulge() == 0) {
+            	list.add(toGamaPoint(start));
+            	list.add(toGamaPoint(end));
+            	
+            } else {
+                double l = MathUtils.distance(start.getPoint(), end.getPoint());
 
+                 double s = start.getBulge() * l / 2;
+
+            	IShape c = Creation.EllipticalArc(scope,toGamaPoint(start), toGamaPoint(end), s,20);
+				list.addAll(c.getPoints());
+            }
+            
+    }
+ 
+	 public IList<ILocation> getPoints(IScope scope, final DXFPolyline obj) {
+	        IList list = GamaListFactory.create(Types.POINT);
+			
+	        Iterator i = obj.getVertexIterator();
+
+	        if (i.hasNext()) {
+	            DXFVertex last;
+	            DXFVertex first;
+	            DXFVertex v = null;
+
+	            last = first = (DXFVertex) i.next();
+	            list.add(new GamaPoint(last.getPoint().getX(),last.getPoint().getY(),last.getPoint().getZ()));
+
+	            while (i.hasNext()) {
+	                v = (DXFVertex) i.next();
+	                 addToLists(scope,obj,last, v, list);
+	               last = v;
+	            }
+
+	            if ((v != null) && (v.getBulge() != 0.0)) {
+	            	addToLists(scope,obj,v, first, list);
+	            }
+	            
+	        }
+	        
+	        boolean change = true;
+	        while (change) {
+	        	change = false;
+	        	 for (int k = 0; k < list.size() - 1; k ++) {
+	 	        	ILocation pt1 = (ILocation)list.get(k);
+	 	        	ILocation pt2 = (ILocation)list.get(k+1);
+	 	        	if (pt1.euclidianDistanceTo(pt2) < 0.000001) {
+	 	        		list.remove(k+1);
+	 	        		change = true;
+	 	        		break;
+	 	        	}
+	 	        }
+	        }
+	       
+	        return list;
+	    }
 	public IShape manageObj(final IScope scope, final DXFPolyline obj) {
 		if (obj == null) { return null; }
-		IList list = GamaListFactory.create(Types.POINT);
-		final Iterator it = obj.getVertexIterator();
-		while (it.hasNext()) {
-			final DXFVertex vertex = (DXFVertex) it.next();
-			list.add(new GamaPoint(vertex.getX() * (unit == null ? 1 : unit) - x_t,
-					vertex.getY() * (unit == null ? 1 : unit) - y_t, vertex.getZ() * (unit == null ? 1 : unit)));
-		}
-		list = Containers.remove_duplicates(scope, list);
-		final GamaPoint pt = (GamaPoint) list.get(list.size() - 1);
+		IList<ILocation> list_ = getPoints(scope,obj);
+		
+		final GamaPoint pt = (GamaPoint) list_.get(list_.size() - 1);
 		if (pt.getX() == 0 && pt.getY() == 0 && pt.getZ() == 0) {
-			list.remove(pt);
-
+			list_.remove(pt);
 		}
+		
+		
+		IList<GamaPoint> list = GamaListFactory.create(Types.POINT);
+		
+		
+		for (ILocation p : list_) {
+			list.add(new GamaPoint(p.getX() * (unit == null ? 1 : unit) - x_t,
+					p.getY() * (unit == null ? 1 : unit) - y_t, p.getZ() * (unit == null ? 1 : unit)));
+		}
+		
 		if (list.size() < 2) { return null; }
+		if (obj.isClosed() && (list.get(0) != list.get(list.size() - 1))) {
+			list.add(list.firstValue(scope));
+		}
 		return createPolyline(scope, list);
 	}
 
 	public IShape defineGeom(final IScope scope, final Object obj) {
 
 		if (obj != null) {
-
 			if (obj instanceof DXFArc) { return manageObj(scope, (DXFArc) obj); }
 			if (obj instanceof DXFLine) { return manageObj(scope, (DXFLine) obj); }
 			if (obj instanceof DXFPolyline) { return manageObj(scope, (DXFPolyline) obj); }
 			if (obj instanceof DXFSolid) { return manageObj(scope, (DXFSolid) obj); }
 			if (obj instanceof DXFCircle) { return manageObj(scope, (DXFCircle) obj); }
-
+			
 		}
+		
 		return null;
 	}
 
