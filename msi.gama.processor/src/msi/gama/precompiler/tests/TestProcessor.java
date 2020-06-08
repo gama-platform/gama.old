@@ -3,6 +3,7 @@ package msi.gama.precompiler.tests;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,8 @@ import msi.gama.precompiler.ProcessorContext;
 public class TestProcessor extends ElementProcessor<tests> {
 
 	@Override
-	public void serialize(final ProcessorContext context, final StringBuilder sb) {}
+	public void serialize(final ProcessorContext context, final Collection<StringBuilder> elements,
+			final StringBuilder sb) {}
 
 	@Override
 	public void process(final ProcessorContext context) {
@@ -36,7 +38,7 @@ public class TestProcessor extends ElementProcessor<tests> {
 		// Special case for lone test annotations
 		final Map<String, List<Element>> elements = context.groupElements(test.class);
 		for (final Map.Entry<String, List<Element>> entry : elements.entrySet()) {
-			final StringBuilder sb = opIndex.getOrDefault(entry.getKey(), new StringBuilder());
+			final StringBuilder sb = serializedElements.getOrDefault(entry.getKey(), new StringBuilder());
 			for (final Element e : entry.getValue()) {
 				try {
 					createElement(sb, context, e, createFrom(e.getAnnotation(test.class)));
@@ -45,7 +47,7 @@ public class TestProcessor extends ElementProcessor<tests> {
 				}
 
 			}
-			opIndex.put(entry.getKey(), sb);
+			serializedElements.put(entry.getKey(), sb);
 		}
 	}
 
@@ -88,7 +90,7 @@ public class TestProcessor extends ElementProcessor<tests> {
 
 	public void writeTests(final ProcessorContext context, final Writer sb) throws IOException {
 		sb.append("experiment ").append(toJavaString("Tests for " + context.currentPlugin)).append(" type: test {");
-		for (final StringBuilder tests : opIndex.values()) {
+		for (final StringBuilder tests : serializedElements.values()) {
 			sb.append(ln);
 			sb.append(tests);
 		}

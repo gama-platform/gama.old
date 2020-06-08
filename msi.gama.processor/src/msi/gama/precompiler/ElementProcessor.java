@@ -1,9 +1,13 @@
 package msi.gama.precompiler;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +38,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 
 	protected static final Map<String, String> NAME_CACHE = new HashMap<>();
 
-	protected final Map<String, StringBuilder> opIndex = new HashMap<>();
+	protected final SortedMap<String, StringBuilder> serializedElements = new TreeMap<>();
 	static final Pattern CLASS_PARAM = Pattern.compile("<.*?>");
 	static final Pattern SINGLE_QUOTE = Pattern.compile("\"");
 	static final String QUOTE_MATCHER = Matcher.quoteReplacement("\\\"");
@@ -50,13 +54,13 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 
 	@Override
 	public boolean hasElements() {
-		return opIndex.size() > 0;
+		return serializedElements.size() > 0;
 	}
 
 	@Override
 	public void process(final ProcessorContext context) {
 		final Class<T> a = getAnnotationClass();
-		clean(context, opIndex);
+		clean(context, serializedElements);
 		for (final Map.Entry<String, List<Element>> entry : context.groupElements(a).entrySet()) {
 			final List<Element> elements = entry.getValue();
 			if (elements.size() == 0) {
@@ -74,7 +78,7 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 
 			}
 			if (sb.length() > 0) {
-				opIndex.put(entry.getKey(), sb);
+				serializedElements.put(entry.getKey(), sb);
 			}
 		}
 	}
@@ -187,12 +191,47 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	}
 
 	@Override
-	public void serialize(final ProcessorContext context, final StringBuilder sb) {
-		opIndex.forEach((s, builder) -> {
+	public void serialize(final ProcessorContext context, final Collection<StringBuilder> elements,
+			final StringBuilder sb) {
+		elements.forEach((builder) -> {
 			if (builder != null) {
 				sb.append(builder);
 			}
 		});
+	}
+
+	private void writeMethod(final String method, final String followingMethod,
+			final Collection<StringBuilder> elements, final StringBuilder sb, final ProcessorContext context) {
+		sb.append("public void ").append(method).append("() ").append(getExceptions()).append(" {");
+		serialize(context, elements, sb);
+		if (followingMethod != null) {
+			sb.append(ln).append(followingMethod).append("(); ");
+		}
+		sb.append(ln).append("}");
+	}
+
+	@Override
+	public void writeJavaBody(final StringBuilder sb, final ProcessorContext context) {
+		final String method = getInitializationMethodName();
+		if (method == null) { return; }
+		final int size = sizeOf(serializedElements);
+		if (size > 20000) {
+			writeMethod(method, method + "2", halfOf(serializedElements, true), sb, context);
+			writeMethod(method + "2", null, halfOf(serializedElements, false), sb, context);
+		} else {
+			writeMethod(method, null, serializedElements.values(), sb, context);
+		}
+	}
+
+	private int sizeOf(final Map<String, StringBuilder> elements) {
+		return elements.values().stream().filter(e -> e != null).mapToInt(e -> e.length()).sum();
+	}
+
+	private List<StringBuilder> halfOf(final Map<String, StringBuilder> elements, final boolean firstHalf) {
+		final int size = elements.size();
+		final List<StringBuilder> result = new ArrayList<>(elements.values());
+		return firstHalf ? result.subList(0, size / 2) : result.subList(size / 2, size);
+
 	}
 
 	public abstract void createElement(StringBuilder sb, ProcessorContext context, Element e, T annotation);
@@ -236,13 +275,11 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 	}
 
 	protected static String checkPrim(final String c) {
-		final String result = CHECK_PRIM.get(c);
-		return result == null ? c : result;
+		return CHECK_PRIM.getOrDefault(c, c);
 	}
 
 	protected static String returnWhenNull(final String returnClass) {
-		final String result = RETURN_WHEN_NULL.get(returnClass);
-		return result == null ? " null" : result;
+		return RETURN_WHEN_NULL.getOrDefault(returnClass, " null");
 	}
 
 	protected static void param(final StringBuilder sb, final String c, final String par) {
