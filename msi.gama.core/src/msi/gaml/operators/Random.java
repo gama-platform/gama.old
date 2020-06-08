@@ -909,4 +909,61 @@ public class Random {
 		}
 		return tmpResult;
 	}
+	
+	
+	@operator (
+			value = "weibull_density",
+			can_be_const = false,
+			category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
+	@doc (
+			value = "weibull_density(x,shape,scale) returns the probability density function (PDF) at the specified point x "
+					+ "of the Weibull distribution with the given shape and scale.",
+			examples = { @example ( value = "weibull_rnd(1,2,3) ", equals = "0.731", test = false) },
+			see = { "binomial", "gamma_rnd", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "skew_gauss",
+					"lognormal_density", "gamma_density"})
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+	public static Double OpWeibullDistDensity(final IScope scope, final Double x, final Double shape, final Double scale)
+			throws GamaRuntimeException {
+		final WeibullDistribution dist = new WeibullDistribution(scope.getRandom().getGenerator(), shape, scale);
+
+		return dist.density(x);
+	}
+	
+	@operator (
+			value = "lognormal_density",
+			can_be_const = false,
+			category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
+	@doc (
+			value = "lognormal_density(x,shape,scale) returns the probability density function (PDF) at the specified point x "
+					+ "of the logNormal distribution with the given shape and scale.",
+			examples = { @example ( value = "lognormal_density(1,2,3) ", equals = "0.731", test = false) },
+			see = { "binomial", "gamma_rnd", "gauss_rnd", "poisson", "rnd", "skew_gauss", "truncated_gauss",
+					"weibull_rnd", "weibull_density", "gamma_density" })
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+	public static Double OpLogNormalDist(final IScope scope, final Double x, final Double shape, final Double scale)
+			throws GamaRuntimeException {
+		final LogNormalDistribution dist = new LogNormalDistribution(scope.getRandom().getGenerator(), shape, scale);
+		return dist.density(x);
+	}	
+	
+	@operator (
+			value = "gamma_density",
+			can_be_const = false,
+			category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
+	@doc (
+			value = "gamma_density(x,shape,scale) returns the probability density function (PDF) at the specified point x "
+					+ "of the Gamma distribution with the given shape and scale.",
+			examples = { @example ( value = "gamma_density(1,9,0.5)", equals = "0.731", test = false) },
+			see = { "binomial", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "skew_gauss", "truncated_gauss",
+					"weibull_rnd", "weibull_density", "lognormal_density" })
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+	public static Double OpGammaDist(final IScope scope, final Double x, final Double shape, final Double scale)
+			throws GamaRuntimeException {
+		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(), shape, scale,
+				GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+		return dist.density(x);
+	}	
 }
