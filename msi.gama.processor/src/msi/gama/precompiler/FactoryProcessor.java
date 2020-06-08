@@ -1,5 +1,7 @@
 package msi.gama.precompiler;
 
+import java.util.Collection;
+
 import javax.lang.model.element.Element;
 
 import msi.gama.precompiler.GamlAnnotations.factory;
@@ -23,9 +25,10 @@ public class FactoryProcessor extends ElementProcessor<factory> {
 	}
 
 	@Override
-	public void serialize(final ProcessorContext context, final StringBuilder sb) {
+	public void serialize(final ProcessorContext context, final Collection<StringBuilder> elements,
+			final StringBuilder sb) {
 		sb.append("_factories(");
-		super.serialize(context, sb);
+		super.serialize(context, elements, sb);
 		sb.setLength(sb.length() - 1);
 		sb.append(");");
 	}

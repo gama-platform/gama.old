@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.precompiler;
@@ -47,8 +47,8 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 			"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.tree",
 			"msi.gama.util.file", "msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
 			"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
-			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators",
-			"msi.gama.common.interfaces", "msi.gama.extensions.messaging", "msi.gama.metamodel.population" };
+			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gama.common.interfaces",
+			"msi.gama.extensions.messaging", "msi.gama.metamodel.population" };
 
 	private ProcessorContext context;
 	public static final String JAVA_HEADER;
@@ -166,12 +166,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		writeMutableHeader(sb);
 		processors.values().forEach(p -> {
 			if (p.outputToJava() && p.hasElements()) {
-				final String method = p.getInitializationMethodName();
-				if (method != null) {
-					sb.append("public void ").append(method).append("() ").append(p.getExceptions()).append(" {");
-					p.serialize(context, sb);
-					sb.append(ln).append("}");
-				}
+				p.writeJavaBody(sb, context);
 			}
 		});
 
