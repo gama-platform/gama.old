@@ -26,7 +26,6 @@ import org.kabeja.dxf.DXFLine;
 import org.kabeja.dxf.DXFPolyline;
 import org.kabeja.dxf.DXFSolid;
 import org.kabeja.dxf.DXFVertex;
-import org.kabeja.math.MathUtils;
 import org.kabeja.parser.DXFParser;
 import org.kabeja.parser.Parser;
 import org.kabeja.parser.ParserBuilder;
@@ -203,17 +202,18 @@ public class GamaDXFFile extends GamaGeometryFile {
 		IList<ILocation> locs = GamaListFactory.create(Types.POINT);
 		locs.add(new GamaPoint(start.getPoint().getX(), start.getPoint().getY(), start.getPoint().getZ()));
 			  // calculte the height
-                    
+             GamaPoint startPt = toGamaPoint(start);
+             GamaPoint endPt = toGamaPoint(end);
             if (start.getBulge() == 0) {
-            	list.add(toGamaPoint(start));
-            	list.add(toGamaPoint(end));
+            	list.add(startPt);
+            	list.add(endPt);
             	
             } else {
-                double l = MathUtils.distance(start.getPoint(), end.getPoint());
+                double l = startPt.distance(endPt);
 
                  double s = start.getBulge() * l / 2;
 
-            	IShape c = Creation.EllipticalArc(scope,toGamaPoint(start), toGamaPoint(end), s,20);
+            	IShape c = Creation.EllipticalArc(scope,startPt, endPt, s,20);
 				list.addAll(c.getPoints());
             }
             
