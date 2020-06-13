@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Experiment UI
 Bundle-SymbolicName: ummisco.gama.ui.experiment;singleton:=true
-Bundle-Version: 1.7.0.qualifier
+Bundle-Version: 1.8.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: msi.gama.application;bundle-version="1.7.0",
  ummisco.gama.ui.shared;bundle-version="1.7.0",

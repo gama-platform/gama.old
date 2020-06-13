@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: External libraries of GAMA
 Bundle-SymbolicName: msi.gama.ext;singleton:=true
-Bundle-Version: 1.7.0.qualifier
+Bundle-Version: 1.8.1.qualifier
 Bundle-Activator: msi.gama.ext.Activator
 Bundle-Vendor: MSI
 Bundle-ActivationPolicy: lazy
