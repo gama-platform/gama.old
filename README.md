@@ -8,7 +8,7 @@
 
 [![Sonarcloud](https://sonarcloud.io/api/project_badges/quality_gate?project=gama-platform_gamamsi.gama.parent)](https://sonarcloud.io/organizations/gama-platform/projects)
 
-**See CHANGELOG.MD for a list of changes since version 1.8**
+**See [CHANGELOG.MD](CHANGELOG.MD) for a list of changes since version 1.8**
 
 
 
