@@ -20,7 +20,6 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -138,14 +137,18 @@ public class AgentDB extends GamlAgent {
 
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
 
-		final String dbtype = params.get("dbtype");
-
+	// Note BG: before 13/06/2020, SQLite was not supported in AgentDB.
+		// The reason is not clear, a guess is that when an agent update the database file, 
+		// the file is locked and thus another agent cannot try to update it.
+		// As a consequence it is recommended to have a single AgentDB connected to SQLite DB file.
+		
+//		final String dbtype = params.get("dbtype");	
 		// SqlConnection sqlConn;
-		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) {
-			throw GamaRuntimeException.error(
-					"AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).",
-					scope);
-		}
+//		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) {
+//			throw GamaRuntimeException.error(
+//					"AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).",
+//					scope);
+//		}
 		if (isConnection) {
 			throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened", scope);
 		}
