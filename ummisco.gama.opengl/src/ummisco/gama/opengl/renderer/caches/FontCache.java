@@ -1,16 +1,17 @@
 /*********************************************************************************************
  *
  * 'TextRenderersCache.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * simulation platform. (v. 1.8.1)
+ *
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
-import static com.google.common.cache.CacheBuilder.newBuilder;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -20,14 +21,16 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.awt.TextRenderer.RenderDelegate;
 
 /**
  * Global text renderers. Does not allow renderers to be created for text bigger than 200 pixels
- * 
+ *
  * @author drogoul
  *
  */
@@ -70,21 +73,24 @@ public class FontCache {
 
 	final Set<Font> fontsToProcess = new HashSet<>();
 
-	LoadingCache<Font, TextRenderer> cache = newBuilder().initialCapacity(10).expireAfterAccess(10, SECONDS)
-			.build(new CacheLoader<Font, TextRenderer>() {
+	static RemovalListener<Font, TextRenderer> REMOVAL = notif -> notif.getValue().dispose();
+	static CacheLoader<Font, TextRenderer> LOADER = new CacheLoader<Font, TextRenderer>() {
 
-				@Override
-				public TextRenderer load(final Font f) throws Exception {
-					final TextRenderer r = new TextRenderer(f, true, true, DELEGATE, true);
-					r.setSmoothing(true);
-					r.setUseVertexArrays(true);
-					return r;
-				}
-			});
+		@Override
+		public TextRenderer load(final Font f) throws Exception {
+			final TextRenderer r = new TextRenderer(f, true, true, DELEGATE, true);
+			r.setSmoothing(true);
+			r.setUseVertexArrays(true);
+			return r;
+		}
+	};
+
+	LoadingCache<Font, TextRenderer> internalCache = CacheBuilder.newBuilder().initialCapacity(10)
+			.expireAfterAccess(10, MINUTES).removalListener(REMOVAL).build(LOADER);
 
 	public TextRenderer get(final Font font, final float withSize) {
 		final Font f = new Font(font.getFontName(), font.getStyle(), (int) withSize);
-		return cache.getUnchecked(f);
+		return internalCache.getUnchecked(f);
 	}
 
 	public void process(final Font font, final float withSize) {
@@ -94,15 +100,14 @@ public class FontCache {
 
 	public void processUnloaded() {
 		for (final Font f : fontsToProcess) {
-			cache.getUnchecked(f);
+			internalCache.getUnchecked(f);
 		}
 		fontsToProcess.clear();
 	}
 
 	public void dispose() {
-		for (final TextRenderer r : cache.asMap().values()) {
-			r.dispose();
-		}
+		fontsToProcess.clear();
+		internalCache.invalidateAll();
 	}
 
 }

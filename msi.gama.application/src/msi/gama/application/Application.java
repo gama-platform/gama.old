@@ -2,7 +2,9 @@
  *
  * 'Application.java, in plugin msi.gama.application, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (v. 1.8.1)
+ *
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  *
@@ -105,7 +107,7 @@ public class Application implements IApplication {
 
 		});
 		Display.setAppName("Gama Platform");
-		Display.setAppVersion("1.8.0");
+		Display.setAppVersion("1.8.1");
 		// DEBUG.OUT(System.getProperties());
 		createProcessor();
 		final Object check = checkWorkspace();

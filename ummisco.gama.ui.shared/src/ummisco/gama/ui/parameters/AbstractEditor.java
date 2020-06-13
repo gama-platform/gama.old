@@ -1,7 +1,9 @@
 /*********************************************************************************************
  *
  * 'AbstractEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * simulation platform. (v. 1.8.1)
+ *
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  *
@@ -331,7 +333,8 @@ public abstract class AbstractEditor<T>
 		this.parent = comp;
 		internalModification = true;
 		titleLabel = createLeftLabel(comp, name, isSubParameter);
-		titleLabel.setForeground(IGamaColors.BLACK.color()); // by default, see #2601
+		titleLabel.setForeground(GamaColors.getTextColorForBackground(titleLabel.getBackground()).color());
+		// IGamaColors.BLACK.color()); by default, see #2601
 		try {
 			setOriginalValue(getParameterValue());
 		} catch (final GamaRuntimeException e1) {

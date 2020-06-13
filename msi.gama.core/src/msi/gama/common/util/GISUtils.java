@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.GISUtils.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * msi.gama.common.util.GISUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8.1)
+ *
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -21,20 +21,20 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class GISUtils {
 
-	//ugly method to manage Google CRS.... hoping that it is better managed by the next versions of Geotools
-	public static CoordinateReferenceSystem manageGoogleCRS(URL url)  {
+	// ugly method to manage Google CRS.... hoping that it is better managed by the next versions of Geotools
+	public static CoordinateReferenceSystem manageGoogleCRS(final URL url) {
 		CoordinateReferenceSystem crs = null;
 		try {
-			String path = new File(url.toURI()).getAbsolutePath().replace(".shp", ".prj");
+			final String path = new File(url.toURI()).getAbsolutePath().replace(".shp", ".prj");
 			if (Files.exists(Paths.get(path))) {
-				byte[] encoded = Files.readAllBytes(Paths.get(path));
-				String content = new String(encoded, StandardCharsets.UTF_8);
-				if (content.contains("WGS 84 / Pseudo-Mercator") || content.contains("WGS_1984_Web_Mercator_Auxiliary_Sphere"))
-				{
+				final byte[] encoded = Files.readAllBytes(Paths.get(path));
+				final String content = new String(encoded, StandardCharsets.UTF_8);
+				if (content.contains("WGS 84 / Pseudo-Mercator")
+						|| content.contains("WGS_1984_Web_Mercator_Auxiliary_Sphere")) {
 					crs = CRS.decode("EPSG:3857");
 				}
 			}
-		} catch (Exception e) {}
+		} catch (final Exception e) {}
 		return crs;
 	}
 }

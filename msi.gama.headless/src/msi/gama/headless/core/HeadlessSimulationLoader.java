@@ -2,9 +2,11 @@
  *
  *
  * 'HeadlessSimulationLoader.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and
- * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * simulation platform. (v. 1.8.1)
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  *
  *
  **********************************************************************************************/

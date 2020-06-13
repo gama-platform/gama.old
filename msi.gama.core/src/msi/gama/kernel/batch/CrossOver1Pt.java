@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * msi.gama.kernel.batch.CrossOver1Pt.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
+ * simulation platform (v. 1.8.1)
  *
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -21,7 +21,7 @@ public class CrossOver1Pt implements CrossOver {
 
 	@Override
 	public Set<Chromosome> crossOver(final IScope scope, final Chromosome parent1, final Chromosome parent2) {
-		final Set<Chromosome> children = new HashSet<Chromosome>();
+		final Set<Chromosome> children = new HashSet<>();
 		final int nbGenes = parent2.getGenes().length;
 		if (nbGenes == 1) { return children; }
 		int cutPt = 0;

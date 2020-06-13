@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * msi.gaml.operators.Containers.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8)
+ * simulation platform (v. 1.8.1)
  *
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -1574,14 +1574,15 @@ public class Containers {
 			value = { "where", "select" },
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			iterator = true,
-			expected_content_type = IType.BOOL,
+			// expected_content_type = IType.BOOL,
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER, IConcept.FILTER })
 	@doc (
+			masterDoc = true,
 			value = "a list containing all the elements of the left-hand operand that make the right-hand operand evaluate to true. ",
 			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
 			usages = { @usage (
-					value = "if the left-hand operand is a list nil, where returns a new empty list"),
+					value = "if the left-hand operand is nil, where throws an error"),
 					@usage (
 							value = "if the left-operand is a map, the keyword each will contain each value",
 							examples = { @example (
@@ -1601,10 +1602,67 @@ public class Containers {
 							value = "(list(node) where (round(node(each).location.x) > 32)",
 							equals = "[node2, node3]",
 							isExecutable = false) },
-			see = { "first_with", "last_with", "where" })
+			see = { "first_with", "last_with" })
 	@test ("[1,2,3,4,5,6,7,8] where (each > 3) = [4, 5, 6, 7, 8] ")
 	public static IList where(final IScope scope, final IContainer c, final IExpression filter) {
 		return (IList) stream(scope, c).filter(by(scope, filter)).toCollection(listLike(c));
+	}
+
+	@operator (
+			value = { "where", "select" },
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			iterator = true,
+			// expected_content_type = IType.BOOL,
+			category = IOperatorCategory.CONTAINER,
+			concept = { IConcept.CONTAINER, IConcept.FILTER })
+	@doc (
+			value = "Returns a list contaning only the elements that make the predicate return true")
+	@test ("[1,2,3,4,5,6,7,8] where (each != 2) = [1, 3, 4, 5, 6, 7, 8] ")
+	/**
+	 * Optimization for a very common case (Ilist)
+	 *
+	 * @param scope
+	 * @param c
+	 * @param filter
+	 * @return
+	 */
+	public static IList where(final IScope scope, final IList c, final IExpression filter) {
+		return where(scope, c.iterable(scope), c.getGamlType().getContentType(), filter);
+	}
+
+	private static IList where(final IScope scope, final Iterable c, final IType contentType,
+			final IExpression filter) {
+		final IList result = GamaListFactory.create(contentType);
+		for (final Object o : c) {
+			scope.setEach(o);
+			if ((Boolean) filter.value(scope)) {
+				result.add(o);
+			}
+		}
+		scope.setEach(null);
+		return result;
+	}
+
+	@operator (
+			value = { "where", "select" },
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			iterator = true,
+			// expected_content_type = IType.BOOL,
+			category = IOperatorCategory.CONTAINER,
+			concept = { IConcept.CONTAINER, IConcept.FILTER })
+	@doc (
+			value = "Returns a list containing only the agents of this species that make the predicate return true")
+	@no_test
+	/**
+	 * Optimization for a very common case (ISpecies)
+	 *
+	 * @param scope
+	 * @param c
+	 * @param filter
+	 * @return
+	 */
+	public static IList where(final IScope scope, final ISpecies c, final IExpression filter) {
+		return where(scope, c.iterable(scope), c.getGamlType().getContentType(), filter);
 	}
 
 	@operator (
