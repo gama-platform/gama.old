@@ -34,7 +34,7 @@ global {
 	}
 	
 	reflex stop when: cycle>100 {
-		do halt();
+		do pause();
 	}
 }
 
