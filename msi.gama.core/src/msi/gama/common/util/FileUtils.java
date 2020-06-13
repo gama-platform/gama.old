@@ -154,7 +154,10 @@ public class FileUtils {
 		if (!file.exists()) {
 			if (mustExist) { return null; }
 		}
-		return file.getLocation().toString();
+		final IPath loc = file.getLocation();
+		// cf. #2997
+		if (loc == null) { return fp; }
+		return loc.toString();
 		// getLocation() works for regular and linked files
 	}
 
