@@ -3,8 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Traffic
 Bundle-SymbolicName: simtools.gaml.extensions.traffic;singleton:=true
 Bundle-Version: 1.8.1.qualifier
-Require-Bundle: msi.gama.core;bundle-version="1.4.0",
- msi.gama.ext;bundle-version="1.0.0"
+Require-Bundle: msi.gama.core,
+ msi.gama.ext
 Import-Package: com.vividsolutions.jts.geom
 Export-Package: simtools.gaml.extensions.traffic
 Bundle-ClassPath: .

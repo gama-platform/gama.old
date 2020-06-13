@@ -8,7 +8,7 @@ Require-Bundle: org.eclipse.core.runtime,
  msi.gama.ext,
  org.eclipse.core.resources,
  ummisco.gama.annotations;visibility:=reexport,
- msi.gama.processor;bundle-version="1.4.0";visibility:=reexport,
+ msi.gama.processor;visibility:=reexport,
  com.google.guava,
  org.eclipse.core.filesystem,
  org.apache.commons.compress

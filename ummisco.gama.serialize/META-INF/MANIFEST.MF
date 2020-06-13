@@ -3,8 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Serialize
 Bundle-SymbolicName: ummisco.gama.serialize;singleton:=true
 Bundle-Version: 1.8.1.qualifier
-Require-Bundle: msi.gama.core;bundle-version="1.7.0",
- msi.gama.ext;bundle-version="1.0.0"
+Require-Bundle: msi.gama.core,
+ msi.gama.ext
 Bundle-ClassPath: .,
  ext/xstream-1.4.8.jar,
  ext/kxml2-2.3.0.jar,

@@ -30,8 +30,8 @@ Export-Package: org.eclipse.paho.client.mqttv3,
    msi.gama.runtime,
    msi.gama.util,
    ummisco.gama.network.common"
-Require-Bundle: msi.gama.core;bundle-version="1.7.0",
- ummisco.gama.serialize;bundle-version="1.7.0"
+Require-Bundle: msi.gama.core,
+ ummisco.gama.serialize
 Bundle-ClassPath: .,
  ext/org.eclipse.paho.client.mqttv3-1.0.2-3.jar,
  ext/arduino.jar,

@@ -4,16 +4,16 @@ Bundle-Name: Experiment UI
 Bundle-SymbolicName: ummisco.gama.ui.experiment;singleton:=true
 Bundle-Version: 1.8.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: msi.gama.application;bundle-version="1.7.0",
- ummisco.gama.ui.shared;bundle-version="1.7.0",
- msi.gama.core;bundle-version="1.7.0",
+Require-Bundle: msi.gama.application,
+ ummisco.gama.ui.shared,
+ msi.gama.core,
  org.eclipse.swt,
  org.eclipse.ui.workbench,
  org.eclipse.jface,
  org.eclipse.core.runtime;visibility:=reexport,
  org.eclipse.ui.console,
  org.eclipse.jface.text,
- msi.gama.ext;bundle-version="1.7.0",
+ msi.gama.ext,
  org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.core.contexts,

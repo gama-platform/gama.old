@@ -14,6 +14,6 @@ Export-Package: msi.gama.precompiler;
    javax.xml.transform,
    javax.annotation.processing,
    javax.lang.model.element"
-Require-Bundle: ummisco.gama.annotations;bundle-version="1.7.0"
+Require-Bundle: ummisco.gama.annotations
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: msi.gama.processor
