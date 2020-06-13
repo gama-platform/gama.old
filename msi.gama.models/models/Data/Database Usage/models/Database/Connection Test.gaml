@@ -15,7 +15,16 @@ global {
 	init {
 		write "This model will work only if the corresponding database is installed and the database management server launched." color: #red;
 
+		write "TESTS CONNECTIONS WITH SQLSKILL";
 		create DB_connection_tester;
+		
+		write "";
+		write "TESTS CONNECTIONS WITH AgentDB";			
+		create AgentDB_SQLSERVER;
+		create AgentDB_MySQL;	
+		create AgentDB_SQLITE;
+		create AgentDB_ORACLE;	
+		create AgentDB_POSTGRESQL;		
 	}
 
 }
@@ -29,8 +38,36 @@ species DB_connection_tester skills: [SQLSKILL] {
 		write "Connection to ORACLE is " +  testConnection(ORACLE);
 		write "Connection to POSTGRESQL is " +  testConnection(POSTGRES);
 	}
-
 }
 
-experiment default_expr type: gui {
-}  
+species AgentDB_SQLSERVER parent: AgentDB {
+	init {
+		write "Connection to SQLSERVER with AgenDB is " +  testConnection(SQLSERVER);
+	}
+}
+
+species AgentDB_MySQL parent: AgentDB {
+	init {
+		write "Connection to MySQL with AgenDB is " +  testConnection(MySQL);
+	}
+}
+
+species AgentDB_SQLITE parent: AgentDB {
+	init {
+		write "Connection to SQLITE with AgenDB is " +  testConnection(SQLITE);
+	}
+}
+
+species AgentDB_ORACLE parent: AgentDB {
+	init {
+		write "Connection to ORACLE with AgenDB is " +  testConnection(ORACLE);
+	}
+}
+
+species AgentDB_POSTGRESQL parent: AgentDB {
+	init {
+		write "Connection to POSTGRESQL with AgenDB is " +  testConnection(POSTGRES);
+	}
+}
+
+experiment default_expr type: gui {}  

@@ -161,9 +161,9 @@ public class AgentDB extends GamlAgent {
 	}
 
 	/*
-	 * Make a connection to BDMS
+	 * Test a connection to DBMS 
 	 *
-	 * @syntax: do action: connectDB { arg params value:[ "dbtype":"SQLSERVER", "url":"host address", "port":
+	 * @syntax: testConnection { arg params value:[ "dbtype":"SQLSERVER", "url":"host address", "port":
 	 * "port number", "database":"database name", "user": "user name", "passwd": "password", ]; }
 	 */
 	@action (
@@ -178,12 +178,8 @@ public class AgentDB extends GamlAgent {
 					returns = "Returns true if connection to the server was successfully established, otherwise, it returns false.")
 			)
 	public boolean testConnection(final IScope scope) throws GamaRuntimeException {
-		try {
-			SqlConnection sqlConn;
-			sqlConn = SqlUtils.createConnectionObject(scope);
-			try (final Connection conn = sqlConn.connectDB();) {}
-		} catch (final Exception e) {
-			throw GamaRuntimeException.create(e, scope);
+		try (final Connection conn = SqlUtils.createConnectionObject(scope).connectDB()) {} catch (final Exception e) {
+			return false;
 		}
 		return true;
 		// ---------------------------------------------------------------------------------------
