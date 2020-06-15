@@ -76,6 +76,10 @@ release_official(){
 	echo "Upload release to github"	
 	bash ./travis/github_release_official.sh "$TRAVIS_COMMIT"  
 }
+release_181(){	
+	echo "Upload continuous/on-demand release to github"	
+	bash ./travis/github_release_181_withjdk.sh "$TRAVIS_COMMIT" 
+}
 release_continuous(){	
 	echo "Upload continuous/on-demand release to github"	
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
@@ -122,6 +126,10 @@ else
 	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 		commit_wiki_files
 		commit_io_website_files
+	fi	
+	if  [[ ${MESSAGE} == *"ci 181"* ]] || [[ $MSG == *"ci 181"* ]]; then		
+		embed_jdk
+		release_181
 	fi	
 	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then		
 		embed_jdk
