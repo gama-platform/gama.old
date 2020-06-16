@@ -49,7 +49,7 @@ COMMIT="${COMMIT:0:7}"
 
 timestamp=$(date '+_%D')
 
-SUFFIX=''
+SUFFIX='.zip'
 echo $SUFFIX
 
 
