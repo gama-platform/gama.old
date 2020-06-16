@@ -59,19 +59,19 @@ RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
 NEWFILES[$n]='GAMA_1.8.1_Linux'$SUFFIX 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA_1.8.1_Mac'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.1_MacOS'$SUFFIX
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA_1.8.1_Win'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.1_Windows'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA_1.8.1_withJDK_Linux'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.1_Linux_with_JDK'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA_1.8.1_withJDK_Win'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.1_Windows_with_JDK'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA_1.8.1_withJDK_Mac'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.1_MacOS_with_JDK'$SUFFIX
  
 
 i=0
