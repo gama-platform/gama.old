@@ -2,7 +2,7 @@
  *
  *
  * 'CopingStatement.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the GAMA modeling
- * and simulation platform. (c) 2007-2019 UMI 209 UMMISCO IRD/UPMC & Partners
+ * and simulation platform. (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  *
