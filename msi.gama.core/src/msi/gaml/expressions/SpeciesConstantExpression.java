@@ -39,7 +39,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 			final ModelDescription main = m == null ? null : (ModelDescription) scope.getModel().getDescription();
 			final Boolean fromMicroModel = main == null || main.getMicroModel(micro.getAlias()) != null;
 			if (!fromMicroModel) {
-				final IPopulation pop = scope.getAgent().getPopulationFor((String) value);
+				final IPopulation pop = a.getPopulationFor((String) value);
 				if (pop != null) { return pop.getSpecies(); }
 				return scope.getModel().getSpecies((String) value);
 			} else {
