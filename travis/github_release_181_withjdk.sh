@@ -49,29 +49,29 @@ COMMIT="${COMMIT:0:7}"
 
 timestamp=$(date '+_%D')
 
-SUFFIX=$timestamp'_'$COMMIT'.zip'
+SUFFIX=''
 echo $SUFFIX
 
 
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_Linux'$SUFFIX 
+NEWFILES[$n]='GAMA1.8.1_Linux'$SUFFIX 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_Mac'$SUFFIX
+NEWFILES[$n]='GAMA1.8.1_Mac'$SUFFIX
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.8_Continuous_Win'$SUFFIX
+NEWFILES[$n]='GAMA1.8.1_Win'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Linux'$SUFFIX
+NEWFILES[$n]='GAMA1.8.1_withJDK_Linux'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Win'$SUFFIX
+NEWFILES[$n]='GAMA1.8.1_withJDK_Win'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Mac'$SUFFIX
+NEWFILES[$n]='GAMA1.8.1_withJDK_Mac'$SUFFIX
  
 
 i=0
@@ -89,7 +89,7 @@ done
 
 LK1="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
 
-echo   "Getting info of release Continuous...  "
+echo   "Getting info of release 1.8.1...  "
 RESULT1=`curl  -s -X GET \
 -H "Authorization: token $BOT_TOKEN"   \
 "$LK1"`	
@@ -106,7 +106,7 @@ echo $RESULT1
 		if [ "$theid" != "id:" ]; then
 	LK1="https://api.github.com/repos/gama-platform/gama/releases/$theid"
 
-	echo   "Deleting release Continuous...  "
+	echo   "Deleting release 1.8.1...  "
 	RESULT1=`curl  -s -X DELETE \
 	-H "Authorization: token $BOT_TOKEN"   \
 	"$LK1"`	
@@ -118,7 +118,7 @@ echo $RESULT1
 
 	#update_tag $RELEASE
 
-	echo   "Creating release Continuous...  "
+	echo   "Creating release 1.8.1...  "
 LK="https://api.github.com/repos/gama-platform/gama/releases"
 
   RESULT=` curl -s -X POST \
@@ -126,7 +126,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"# BUG FIXES\n","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"GAMA 1.8.1 build","body":"# BUG FIXES\n","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
