@@ -1,14 +1,14 @@
 /*********************************************************************************************
- * 
+ *
  *
  * GAMA modeling and simulation platform. 'Application.java', in plugin 'msi.gama.headless', is part of the source code
  * of the (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.headless.runtime;
 
@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
@@ -36,8 +34,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
-
-import com.vividsolutions.jts.util.Debug;
 
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
 import msi.gama.headless.batch.test.ModelLibraryTester;
@@ -57,7 +53,6 @@ import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class Application implements IApplication {
-
 
 	final public static String CONSOLE_PARAMETER = "-c";
 	final public static String GAMA_VERSION = "-version";
@@ -81,25 +76,24 @@ public class Application implements IApplication {
 	public SimulationRuntime processorQueue;
 
 	private static String showHelp() {
-		final String res = " Welcome to Gama-platform.org version "+GAMA.VERSION
-				+ "\n"
-				+ "sh ./gama-headless.sh [Options] [XML Input] [output directory]\n"
-				+ "\nList of available options:"
+		final String res = " Welcome to Gama-platform.org version " + GAMA.VERSION + "\n"
+				+ "sh ./gama-headless.sh [Options] [XML Input] [output directory]\n" + "\nList of available options:"
 				+ "\n      -help     				 	-- get the help of the command line"
 				+ "\n      -version     				-- get the the version of gama"
 				+ "\n      -m [mem]    					-- allocate memory (ex 2048m)"
 				+ "\n      -c        					-- start the console to write xml parameter file"
 				+ "\n      -v 							-- verbose mode"
 				+ "\n      -hpc [core] 					-- set the number of core available for experimentation"
-				+ "\n      -socket [socketPort] 		-- start socket pipeline to interact with another framework" + "\n"
-				+ "\n      -p        					-- start pipeline to interact with another framework" + "\n"
+				+ "\n      -socket [socketPort] 		-- start socket pipeline to interact with another framework"
+				+ "\n" + "\n      -p        					-- start pipeline to interact with another framework"
+				+ "\n"
 				+ "\n      -validate [directory]    	-- invokes GAMA to validate the models present in the directory passed as argument"
 				+ "\n      -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
 				+ "\n      -failed		   				-- only display the failed and aborted test results"
 				+ "\n      -xml	[experimentName] [modelFile.gaml] [xmlOutputFile.xml]	-- only display the failed and aborted test results"
 				+ "\n" + " sh ./gama-headless.sh -xml experimentName gamlFile xmlOutputFile\n"
 				+ "\n      build an xml parameter file from a model" + "\n" + "\n";
-		
+
 		return res;
 	}
 
@@ -173,10 +167,9 @@ public class Application implements IApplication {
 	}
 
 	private static boolean showError(final int errorCode, final String path) {
-		SystemLogger.activeDisplay();
-		System.out.println(HeadLessErrors.getError(errorCode, path));
+		DEBUG.ON();
 		DEBUG.ERR(HeadLessErrors.getError(errorCode, path));
-		SystemLogger.removeDisplay();
+		DEBUG.OFF();
 
 		return false;
 	}
@@ -184,21 +177,17 @@ public class Application implements IApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 
-//		Logger.getRootLogger().setLevel(Level.WARN); 
-		SystemLogger.removeDisplay();
-		
-		
+		DEBUG.OFF();
+
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
-		if(args.contains(GAMA_VERSION)) {
-			
+		if (args.contains(GAMA_VERSION)) {
+
 		} else if (args.contains(HELP_PARAMETER)) {
-			//DEBUG.LOG(showHelp());
-			SystemLogger.activeDisplay();
-			System.out.println(showHelp());
-			SystemLogger.removeDisplay();
-			
+			DEBUG.ON();
 			DEBUG.LOG(showHelp());
+			DEBUG.OFF();
+
 		} else if (args.contains(RUN_LIBRARY_PARAMETER)) {
 			return ModelLibraryRunner.getInstance().start(args);
 		} else if (args.contains(VALIDATE_LIBRARY_PARAMETER)) {
@@ -227,16 +216,12 @@ public class Application implements IApplication {
 			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
 		verbose = arg.contains(VERBOSE_PARAMETER);
 		if (this.verbose) {
-			SystemLogger.activeDisplay();
-			System.out.println("active display");
+			DEBUG.ON();
+			DEBUG.LOG("Log active", true);
 		}
 
 		if (arg.size() < 3) {
-			SystemLogger.activeDisplay();
-
-			System.out.println("Check your parameters!");
-			System.out.println(showHelp());
-
+			DEBUG.ON();
 			DEBUG.ERR("Check your parameters!");
 			DEBUG.ERR(showHelp());
 			return;
@@ -258,8 +243,7 @@ public class Application implements IApplication {
 		final File output = new File(arg.get(arg.size() - 1));
 		final StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
-		SystemLogger.activeDisplay();
-		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
+		DEBUG.ON();
 		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
 	}
 
@@ -283,8 +267,7 @@ public class Application implements IApplication {
 		output.createNewFile();
 		final StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
-		SystemLogger.activeDisplay();
-		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
+		DEBUG.ON();
 		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
 	}
 
@@ -312,19 +295,18 @@ public class Application implements IApplication {
 
 		verbose = args.contains(VERBOSE_PARAMETER);
 		if (verbose) {
-			SystemLogger.activeDisplay();
-			
+			DEBUG.ON();
+
 		}
 		HeadlessSimulationLoader.preloadGAMA();
 		this.tunnelingMode = args.contains(TUNNELING_PARAMETER);
 		this.consoleMode = args.contains(CONSOLE_PARAMETER);
 		if (args.contains(SOCKET_PARAMETER)) {
 			this.socket = Integer.valueOf(after(args, SOCKET_PARAMETER));
-		}
-		else {
+		} else {
 			this.socket = -1;
 		}
-		
+
 		if (args.contains(THREAD_PARAMETER)) {
 			this.numberOfThread = Integer.valueOf(after(args, THREAD_PARAMETER));
 		} else {
@@ -334,7 +316,7 @@ public class Application implements IApplication {
 
 		Reader in = null;
 		if (this.verbose && !this.tunnelingMode) {
-			SystemLogger.activeDisplay();
+			DEBUG.ON();
 		}
 
 		if (this.consoleMode) {

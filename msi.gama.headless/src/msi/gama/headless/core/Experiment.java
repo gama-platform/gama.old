@@ -24,7 +24,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
-import ummisco.gama.dev.utils.DEBUG;
 
 public class Experiment implements IExperiment {
 
@@ -95,10 +94,10 @@ public class Experiment implements IExperiment {
 			currentExperiment.getAgent().step(currentExperiment.getAgent().getScope());
 		} else {
 			currentExperiment.getAgent().step(this.getScope());
-			//currentExperiment.getAgent().getSimulation().step(this.getScope());
+			// currentExperiment.getAgent().getSimulation().step(this.getScope());
 		}
 		return currentStep++;
- 
+
 	}
 
 	@Override
@@ -114,10 +113,13 @@ public class Experiment implements IExperiment {
 		final IOutput output =
 				((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
 		// System.out.
-		if (output == null) { throw GamaRuntimeException.error("Output does not exist: " + parameterName,
-				currentSimulation.getScope()); }
-		if (!(output instanceof MonitorOutput)) { throw GamaRuntimeException
-				.error("Output " + parameterName + " is not an alphanumeric data.", currentSimulation.getScope()); }
+		if (output == null) {
+			throw GamaRuntimeException.error("Output does not exist: " + parameterName, currentSimulation.getScope());
+		}
+		if (!(output instanceof MonitorOutput)) {
+			throw GamaRuntimeException.error("Output " + parameterName + " is not an alphanumeric data.",
+					currentSimulation.getScope());
+		}
 		output.update();
 		return ((MonitorOutput) output).getLastValue();
 	}
@@ -127,8 +129,9 @@ public class Experiment implements IExperiment {
 		// this.currentExperiment.getSimulationOutputs().step(this.getScope());
 		final Object res =
 				this.currentExperiment.getCurrentSimulation().getDirectVarValue(this.getScope(), parameterName);
-		if (res == null) { throw GamaRuntimeException.error("Output unresolved: " + parameterName,
-				currentSimulation.getScope()); }
+		if (res == null) {
+			throw GamaRuntimeException.error("Output unresolved: " + parameterName, currentSimulation.getScope());
+		}
 		return res;
 	}
 
@@ -157,7 +160,6 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public IExpression compileExpression(final String expression) {
-		System.out.println("expression " + expression);
 		return GAML.compileExpression(expression, this.getSimulation(), false);
 	}
 

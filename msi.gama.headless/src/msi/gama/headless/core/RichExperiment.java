@@ -13,8 +13,8 @@
 package msi.gama.headless.core;
 
 import msi.gama.headless.common.DataType;
-import msi.gama.headless.job.ExperimentJob.ListenedVariable;
 import msi.gama.headless.job.ExperimentJob.OutputType;
+import msi.gama.headless.job.ListenedVariable;
 import msi.gama.kernel.model.IModel;
 import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.outputs.FileOutput;

@@ -15,7 +15,7 @@ package msi.gama.headless.xml;
 
 import msi.gama.headless.core.*;
 import msi.gama.headless.job.ExperimentJob;
-import msi.gama.headless.job.ExperimentJob.ListenedVariable;
+import msi.gama.headless.job.ListenedVariable;
 
 public interface Writer {
 

@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 
@@ -27,7 +26,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.headless.common.DataType;
 import msi.gama.headless.common.Display2D;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
@@ -38,6 +36,7 @@ import msi.gama.headless.runtime.RuntimeContext;
 import msi.gama.headless.xml.Writer;
 import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -53,81 +52,14 @@ import ummisco.gama.dev.utils.DEBUG;
 
 public class ExperimentJob implements IExperimentJob {
 
+	static {
+		DEBUG.ON();
+	}
+
 	private static long GLOBAL_ID_GENERATOR = 0;
 
 	public enum OutputType {
 		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
-	}
-
-	public static class ListenedVariable {
-
-		public class NA {
-			NA() {}
-
-			@Override
-			public String toString() {
-				return "NA";
-			}
-		}
-
-		String name;
-		public int width;
-		public int height;
-		int frameRate;
-		OutputType type;
-		DataType dataType;
-		Object value;
-		long step;
-		String path;
-		// private boolean isNa;
-
-		private Object setNaValue() {
-			this.value = new NA();
-			// this.isNa = true;
-			return this.value;
-		}
-
-		public ListenedVariable(final String name, final int width, final int height, final int frameRate,
-				final OutputType type, final String outputPath) {
-			this.name = name;
-			this.width = width;
-			this.height = height;
-			this.frameRate = frameRate;
-			this.type = type;
-			this.path = outputPath;
-			this.setNaValue();
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setValue(final Object obj, final long st, final DataType typ) {
-			// this.isNa = false;
-			value = obj == null ? setNaValue() : obj;
-			this.step = st;
-			this.dataType = typ;
-		}
-
-		public void setValue(final Object obj, final long st) {
-			setValue(obj, st, this.dataType);
-		}
-
-		public Object getValue() {
-			return value;
-		}
-
-		public OutputType getType() {
-			return type;
-		}
-
-		public DataType getDataType() {
-			return dataType;
-		}
-
-		public String getPath() {
-			return path;
-		}
 	}
 
 	/**
@@ -141,6 +73,18 @@ public class ExperimentJob implements IExperimentJob {
 	private String experimentName;
 	private String modelName;
 	private double seed;
+	/**
+	 * current step
+	 */
+	private long step;
+
+	/**
+	 * id of current experiment
+	 */
+	private String experimentID;
+	public long finalStep;
+	private String untilCond;
+	IExpression endCondition;
 
 	/**
 	 * simulator to be loaded
@@ -154,19 +98,6 @@ public class ExperimentJob implements IExperimentJob {
 	public String getSourcePath() {
 		return sourcePath;
 	}
-
-	/**
-	 * current step
-	 */
-	private long step;
-
-	/**
-	 * id of current experiment
-	 */
-	private String experimentID;
-	public long finalStep;
-	private String untilCond;
-	IExpression endCondition;
 
 	private static long generateID() {
 		return ExperimentJob.GLOBAL_ID_GENERATOR++;
@@ -257,7 +188,8 @@ public class ExperimentJob implements IExperimentJob {
 		if (untilCond == null || "".equals(untilCond)) {
 			endCondition = IExpressionFactory.FALSE_EXPR;
 		} else {
-			endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);
+			endCondition = GAML.getExpressionFactory().createExpr(untilCond, simulator.getModel().getDescription());
+			// endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);
 		}
 		if (endCondition.getGamlType() != Types.BOOL) {
 			throw GamaRuntimeException.error("The until condition of the experiment should be a boolean",
@@ -280,12 +212,10 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void playAndDispose() {
-		final long startDate = Calendar.getInstance().getTimeInMillis();
-		play();
-		dispose();
-		final long endDate = Calendar.getInstance().getTimeInMillis();
-		System.out.println("\nSimulation duration: " + (endDate - startDate) + "ms");
-		// DEBUG.OUT("\nSimulation duration: " + (endDate - startDate) + "ms");
+		DEBUG.TIMER("Simulation duration", () -> {
+			play();
+			dispose();
+		});
 	}
 
 	@Override
@@ -294,30 +224,28 @@ public class ExperimentJob implements IExperimentJob {
 			this.outputFile.writeSimulationHeader(this);
 		}
 		// DEBUG.LOG("Simulation is running...", false);
-		// System.out.println("Simulation is running...");
-		// final long startdate = Calendar.getInstance().getTimeInMillis();
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
 
 		try {
 			int step = 0;
 			// Added because the simulation may be null in case we deal with a batch experiment
-			IScope scope = GAMA.getRuntimeScope();
-			while (!Cast.asBool(scope, endCondition.value(scope)) && (finalStep >= 0 ? step < finalStep : true)) {
+			while (finalStep >= 0 ? step < finalStep : true) {
 				if (step % affDelay == 0) {
 					DEBUG.LOG(".", false);
-					System.out.print(".");
 				}
 				if (simulator.isInterrupted()) {
 					break;
 				}
+				final SimulationAgent sim = simulator.getSimulation();
+				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
+				if (Cast.asBool(scope, endCondition.value(scope))) {
+					break;
+				}
 				doStep();
-				scope = GAMA.getRuntimeScope();
 				step++;
 			}
 		} catch (final GamaRuntimeException e) {
-			// DEBUG.ERR("\n The simulation has stopped before the end due to the following exception: ");
-			System.out.println("\n The simulation has stopped before the end due to the following exception: ");
-			e.printStackTrace();
+			DEBUG.ERR("\n The simulation has stopped before the end due to the following exception: ", e);
 		}
 	}
 
@@ -490,7 +418,6 @@ public class ExperimentJob implements IExperimentJob {
 		double mseed = 0.0;
 		if (seedDescription != null) {
 			mseed = Double.valueOf(seedDescription.getExpression().literalValue()).doubleValue();
-			System.out.println("seed " + mseed);
 		}
 		final IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
 		final ExperimentJob expJob =

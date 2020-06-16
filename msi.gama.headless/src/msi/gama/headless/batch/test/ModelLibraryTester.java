@@ -18,7 +18,6 @@ import com.google.inject.Injector;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
-import msi.gama.headless.runtime.SystemLogger;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.experiment.TestAgent;
@@ -29,12 +28,12 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.test.TestState;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	private static ModelLibraryTester instance;
 	private final static String FAILED_PARAMETER = "-failed";
-	// public static final Logger LOGGER = Logger.getLogger(ModelLibraryTester.class.getName());;
 
 	PrintStream original;
 	PrintStream nullStream;
@@ -43,14 +42,14 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	@Override
 	public int start(final List<String> args) throws IOException {
-		SystemLogger.activeDisplay();
-		Injector injector = HeadlessSimulationLoader.preloadGAMA();
-		GamlModelBuilder builder = createBuilder(injector);
+		DEBUG.ON();
+		final Injector injector = HeadlessSimulationLoader.preloadGAMA();
+		final GamlModelBuilder builder = createBuilder(injector);
 
 		original = System.out;
 		nullStream = new PrintStream(new OutputStream() {
 			@Override
-			public void write(int b) {
+			public void write(final int b) {
 				// DO NOTHING
 			}
 		});
@@ -60,11 +59,11 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		final boolean oldPref = GamaPreferences.Runtime.FAILED_TESTS.getValue();
 		GamaPreferences.Runtime.FAILED_TESTS.set(onlyFailed);
 		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithTests();
-		List<URL> allURLs = new ArrayList<>();
+		final List<URL> allURLs = new ArrayList<>();
 		for (final Bundle bundle : plugins.keySet()) {
 			for (final String entry : plugins.get(bundle)) {
 				final Enumeration<URL> urls = bundle.findEntries(entry, "*", true);
-				if (urls != null)
+				if (urls != null) {
 					while (urls.hasMoreElements()) {
 						final URL url = urls.nextElement();
 						if (isTest(url)) {
@@ -72,6 +71,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 							allURLs.add(resolvedFileURL);
 						}
 					}
+				}
 			}
 		}
 		builder.loadURLs(allURLs);
@@ -79,26 +79,21 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		allURLs.forEach(u -> test(builder, count, code, u));
 		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
 
-		// LOGGER.info(
-		// "" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
-		System.out.println(
-				"" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
-		System.out.println(code[0]);
+		DEBUG.OUT("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
+		DEBUG.OUT(code[0]);
 		return code[0];
 	}
 
-	public void test(GamlModelBuilder builder, final int[] count, final int[] code, final URL p) {
-		// System.out.println(p);
+	public void test(final GamlModelBuilder builder, final int[] count, final int[] code, final URL p) {
+		// DEBUG.OUT(p);
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		try {
 			final IModel model = builder.compile(p, errors);
-			if (model == null || model.getDescription() == null)
-				return;
+			if (model == null || model.getDescription() == null) { return; }
 			final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
 					.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
 
-			if (testExpNames.isEmpty())
-				return;
+			if (testExpNames.isEmpty()) { return; }
 			for (final String expName : testExpNames) {
 				final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 				if (exp != null) {
@@ -115,19 +110,20 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 					if (agent.getSummary().countTestsWith(TestState.FAILED) > 0
 							|| agent.getSummary().countTestsWith(TestState.ABORTED) > 0) {
 
-						System.out.println(agent.getSummary().toString());
+						DEBUG.OUT(agent.getSummary().toString());
 					}
 				}
 			}
 		} catch (final Exception ex) {
-			System.out.println(ex.getMessage());
+			DEBUG.OUT(ex.getMessage());
 		}
 
 	}
 
 	public static ModelLibraryTester getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new ModelLibraryTester();
+		}
 		return instance;
 	}
 }

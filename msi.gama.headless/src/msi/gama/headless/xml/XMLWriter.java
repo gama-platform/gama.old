@@ -16,7 +16,7 @@ package msi.gama.headless.xml;
 import java.io.*;
 import msi.gama.headless.core.*;
 import msi.gama.headless.job.ExperimentJob;
-import msi.gama.headless.job.ExperimentJob.ListenedVariable;
+import msi.gama.headless.job.ListenedVariable;
 
 public class XMLWriter implements Writer {
 

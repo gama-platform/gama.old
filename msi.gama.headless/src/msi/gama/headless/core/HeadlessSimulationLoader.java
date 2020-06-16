@@ -33,6 +33,10 @@ import ummisco.gama.dev.utils.DEBUG;
 
 public class HeadlessSimulationLoader {
 
+	static {
+		DEBUG.ON();
+	}
+
 	public static Injector preloadGAMA() {
 		DEBUG.LOG("GAMA configuring and loading...");
 		System.setProperty("java.awt.headless", "true");
