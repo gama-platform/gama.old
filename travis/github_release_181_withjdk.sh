@@ -126,7 +126,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"GAMA version 1.8.1","body":"# BUG FIXES\n","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"GAMA Version 1.8.1","body":"# BUG FIXES\n","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
