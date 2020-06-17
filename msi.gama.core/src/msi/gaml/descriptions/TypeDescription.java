@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.compress.utils.Lists;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.jgrapht.DirectedGraph;
@@ -43,7 +43,6 @@ import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
-import one.util.streamex.StreamEx;
 
 /**
  * A class that represents skills and species (either built-in or introduced by users) The class TypeDescription.
@@ -298,9 +297,13 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 	}
 
-	public List<String> getUpdatableAttributeNames() {
-		final Collection<String> vars = getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS);
-		return StreamEx.of(vars).filter(input -> getAttribute(input).isUpdatable()).toList();
+	public Iterable<String> getUpdatableAttributeNames() {
+
+		// June 2020: moving (back) to Iterables instead of Streams.
+		return Iterables.filter(getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS),
+				input -> getAttribute(input).isUpdatable());
+		// final Collection<String> vars = getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS);
+		// return StreamEx.of(vars).filter(input -> getAttribute(input).isUpdatable()).toList();
 	}
 
 	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
@@ -328,7 +331,9 @@ public abstract class TypeDescription extends SymbolDescription {
 				dependencies.addEdge(SHAPE, an);
 			}
 		});
-		return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
+		// June 2020: moving (back) to Iterables instead of Streams.
+		return Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
+		// return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
 	}
 
 	/**
