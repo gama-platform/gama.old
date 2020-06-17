@@ -62,6 +62,7 @@ public class SpeciesDescription extends TypeDescription {
 	private SpeciesConstantExpression speciesExpr;
 	protected Class javaBase;
 	protected boolean canUseMinimalAgents = true;
+	protected boolean controlFinalized;
 
 	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
 			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
@@ -692,7 +693,11 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 */
 	private void finalizeControl() {
+		if (controlFinalized) { return; }
+		controlFinalized = true;
+
 		if (control == null && parent != this && parent instanceof SpeciesDescription) {
+			((SpeciesDescription) parent).finalizeControl();
 			control = ((SpeciesDescription) parent).getControl();
 		}
 		if (control == null) {
