@@ -128,7 +128,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "Content-Type: application/json" \
   -d '{"tag_name": "'$RELEASE'", "name":"GAMA Version 1.8.1","body":"# BUG FIXES\n","draft": false,"prerelease": true}' \
     "$LK"`
-echo $RESULT	
+echo $RESULT	 
 
 
 
