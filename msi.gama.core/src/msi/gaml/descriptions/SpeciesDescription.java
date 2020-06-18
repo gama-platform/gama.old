@@ -539,6 +539,15 @@ public class SpeciesDescription extends TypeDescription {
 		return getMicroSpecies().forEachValue(visitor);
 	}
 
+	// public boolean visitSortedMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
+	// if (!hasMicroSpecies()) { return true; }
+	// final Iterable<SpeciesDescription> all = getSortedMicroSpecies();
+	// for (final SpeciesDescription sd : all) {
+	// if (!visitor.process(sd)) { return false; }
+	// }
+	// return true;
+	// }
+
 	@Override
 	public void setParent(final TypeDescription parent) {
 		super.setParent(parent);
@@ -749,6 +758,32 @@ public class SpeciesDescription extends TypeDescription {
 		}
 		return microSpecies;
 	}
+
+	// public Iterable<SpeciesDescription> getSortedMicroSpecies() {
+	// final GamaTree<SpeciesDescription> tree = GamaTree.withRoot(this);
+	//
+	// final Iterable<SpeciesDescription> before = microSpecies.values();
+	// DEBUG.OUT(Iterables.transform(before, each -> each.getName()));
+	// final boolean[] found = { false };
+	// for (final SpeciesDescription sd : before) {
+	// tree.visitPreOrder(tree.getRoot(), n -> {
+	// if (sd.getParent() == n.getData()) {
+	// n.addChild(sd);
+	// found[0] = true;
+	// }
+	// });
+	// if (found[0]) {
+	// found[0] = false;
+	// } else {
+	// tree.getRoot().addChild(sd);
+	// }
+	// }
+	// DEBUG.OUT(Iterables.transform(tree.list(Order.PRE_ORDER), each -> each.getData().getName()));
+	// final List<GamaNode<SpeciesDescription>> list = tree.list(Order.PRE_ORDER);
+	// list.remove(0);
+	// return Iterables.transform(list, each -> each.getData());
+	//
+	// }
 
 	public boolean isMirror() {
 		return hasFacet(MIRRORS);
