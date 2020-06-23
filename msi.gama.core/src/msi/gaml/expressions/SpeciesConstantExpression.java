@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * msi.gaml.expressions.SpeciesConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8)
+ * modeling and simulation platform (v. 1.8.1)
  *
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -39,7 +39,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 			final ModelDescription main = m == null ? null : (ModelDescription) scope.getModel().getDescription();
 			final Boolean fromMicroModel = main == null || main.getMicroModel(micro.getAlias()) != null;
 			if (!fromMicroModel) {
-				final IPopulation pop = scope.getAgent().getPopulationFor((String) value);
+				final IPopulation pop = a.getPopulationFor((String) value);
 				if (pop != null) { return pop.getSpecies(); }
 				return scope.getModel().getSpecies((String) value);
 			} else {

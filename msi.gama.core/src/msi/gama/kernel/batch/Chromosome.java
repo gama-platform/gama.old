@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.Chromosome.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8)
- * 
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * msi.gama.kernel.batch.Chromosome.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8.1)
+ *
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.batch;
 
@@ -55,11 +55,11 @@ public class Chromosome implements Comparable<Chromosome> {
 
 		fitness = chromosome.fitness;
 	}
-	
+
 	public void update(final IScope scope, final ParametersSet solution) {
-		int nb = this.getGenes().length;
+		final int nb = this.getGenes().length;
 		for (int i = 0; i < nb; i++) {
-			String var =  getPhenotype()[i]; 
+			final String var = getPhenotype()[i];
 			genes[i] = Cast.asFloat(scope, solution.get(var));
 		}
 	}
@@ -74,9 +74,9 @@ public class Chromosome implements Comparable<Chromosome> {
 			}
 			phenotype[cpt] = var.getName();
 			if (var.getType().id() == IType.FLOAT) {
-				genes[cpt] = Cast.asFloat(scope, (var.value(scope)));
+				genes[cpt] = Cast.asFloat(scope, var.value(scope));
 			} else if (var.getType().id() == IType.INT) {
-				genes[cpt] = Cast.asInt(scope, (var.value(scope)));
+				genes[cpt] = Cast.asInt(scope, var.value(scope));
 			} else {
 				genes[cpt] = 0;
 			}
@@ -86,9 +86,9 @@ public class Chromosome implements Comparable<Chromosome> {
 
 	public void setGene(final IScope scope, final IParameter.Batch var, final int index) {
 		if (var.getType().id() == IType.FLOAT) {
-			genes[index] = Cast.asFloat(scope, (var.value(scope)));
+			genes[index] = Cast.asFloat(scope, var.value(scope));
 		} else if (var.getType().id() == IType.INT) {
-			genes[index] = Cast.asInt(scope, (var.value(scope)));
+			genes[index] = Cast.asInt(scope, var.value(scope));
 		} else {
 			genes[index] = 0;
 		}
@@ -122,20 +122,13 @@ public class Chromosome implements Comparable<Chromosome> {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Chromosome other = (Chromosome) obj;
-		if (!Arrays.equals(genes, other.genes))
-			return false;
+	public boolean equals(final Object obj) {
+		if (this == obj) { return true; }
+		if (obj == null) { return false; }
+		if (getClass() != obj.getClass()) { return false; }
+		final Chromosome other = (Chromosome) obj;
+		if (!Arrays.equals(genes, other.genes)) { return false; }
 		return true;
 	}
-
-	
-	
 
 }

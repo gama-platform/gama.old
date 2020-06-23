@@ -1,4 +1,4 @@
-# GAMA
+# GAMA 1.8.1
 [![Build Status](https://travis-ci.org/gama-platform/gama.svg?branch=master)](https://travis-ci.org/gama-platform/gama)
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 [![GitHub issues](https://img.shields.io/github/issues/gama-platform/gama.svg)](https://github.com/gama-platform/gama/issues)
@@ -8,18 +8,10 @@
 
 [![Sonarcloud](https://sonarcloud.io/api/project_badges/quality_gate?project=gama-platform_gamamsi.gama.parent)](https://sonarcloud.io/organizations/gama-platform/projects)
 
-**Core repository for the GAMA Platform project**
+**See CHANGELOG.MD for a list of changes since version 1.8**
 
-Please post issues about GAMA here:  
- 
-https://github.com/gama-platform/gama/issues
 
-Issues regarding the website (http://gama-platform.org) and the documentation should be posted here: 
 
-https://github.com/gama-platform/gama-platform.github.io/issues
- 
-
- 
  
 
 

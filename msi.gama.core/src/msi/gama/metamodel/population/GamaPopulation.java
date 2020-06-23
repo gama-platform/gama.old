@@ -1,15 +1,16 @@
 /*******************************************************************************************************
  *
  * msi.gama.metamodel.population.GamaPopulation.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8)
+ * modeling and simulation platform (v. 1.8.1)
  *
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
+import static com.google.common.collect.Iterables.transform;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.EMPTY_MAP;
 import static msi.gama.common.interfaces.IKeyword.CELL_HEIGHT;
@@ -88,7 +89,6 @@ import msi.gaml.variables.IVariable;
  */
 public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPopulation<T> {
 
-
 	public static <E extends IAgent> GamaPopulation<E> createPopulation(final IScope scope, final IMacroAgent host,
 			final ISpecies species) {
 		if (species.isGrid()) {
@@ -165,16 +165,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		this.species = species;
 		final TypeDescription ecd = species.getDescription();
 		orderedVarNames = ecd.getOrderedAttributeNames(INIT_DEPENDENCIES_FACETS).toArray(new String[0]);
-		final List<String> updatableVarNames = ecd.getUpdatableAttributeNames();
-		final int updatableVarsSize = updatableVarNames.size();
-		updatableVars = new IVariable[updatableVarsSize];
-		for (int i = 0; i < updatableVarsSize; i++) {
-			final String s = updatableVarNames.get(i);
-			updatableVars[i] = species.getVar(s);
-		}
+		updatableVars =
+				Iterables.toArray(transform(ecd.getUpdatableAttributeNames(), s -> species.getVar(s)), IVariable.class);
 		if (species.isMirror() && host != null) {
 			mirrorManagement = new MirrorPopulationManagement(species.getFacet(MIRRORS));
-			// host.getScope().getSimulation().postEndAction(new MirrorPopulationManagement(species.getFacet(MIRRORS)));
 		} else {
 			mirrorManagement = null;
 		}

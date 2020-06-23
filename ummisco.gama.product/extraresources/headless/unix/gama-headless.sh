@@ -15,9 +15,9 @@ for arg do
 done
 
 echo "******************************************************************"
-echo "* GAMA version 1.8                                               *"
+echo "* GAMA version 1.8.1                                             *"
 echo "* http://gama-platform.org                                       *"
-echo "* (c) 2007-2019 UMI 209 UMMISCO IRD/SU & Partners                *"
+echo "* (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
 passWork=.work$RANDOM
 

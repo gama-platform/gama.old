@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * msi.gaml.descriptions.SpeciesDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8)
+ * modeling and simulation platform (v. 1.8.1)
  *
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -62,6 +62,7 @@ public class SpeciesDescription extends TypeDescription {
 	private SpeciesConstantExpression speciesExpr;
 	protected Class javaBase;
 	protected boolean canUseMinimalAgents = true;
+	protected boolean controlFinalized;
 
 	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
 			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
@@ -538,6 +539,15 @@ public class SpeciesDescription extends TypeDescription {
 		return getMicroSpecies().forEachValue(visitor);
 	}
 
+	// public boolean visitSortedMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
+	// if (!hasMicroSpecies()) { return true; }
+	// final Iterable<SpeciesDescription> all = getSortedMicroSpecies();
+	// for (final SpeciesDescription sd : all) {
+	// if (!visitor.process(sd)) { return false; }
+	// }
+	// return true;
+	// }
+
 	@Override
 	public void setParent(final TypeDescription parent) {
 		super.setParent(parent);
@@ -692,7 +702,11 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 */
 	private void finalizeControl() {
+		if (controlFinalized) { return; }
+		controlFinalized = true;
+
 		if (control == null && parent != this && parent instanceof SpeciesDescription) {
+			((SpeciesDescription) parent).finalizeControl();
 			control = ((SpeciesDescription) parent).getControl();
 		}
 		if (control == null) {
@@ -744,6 +758,32 @@ public class SpeciesDescription extends TypeDescription {
 		}
 		return microSpecies;
 	}
+
+	// public Iterable<SpeciesDescription> getSortedMicroSpecies() {
+	// final GamaTree<SpeciesDescription> tree = GamaTree.withRoot(this);
+	//
+	// final Iterable<SpeciesDescription> before = microSpecies.values();
+	// DEBUG.OUT(Iterables.transform(before, each -> each.getName()));
+	// final boolean[] found = { false };
+	// for (final SpeciesDescription sd : before) {
+	// tree.visitPreOrder(tree.getRoot(), n -> {
+	// if (sd.getParent() == n.getData()) {
+	// n.addChild(sd);
+	// found[0] = true;
+	// }
+	// });
+	// if (found[0]) {
+	// found[0] = false;
+	// } else {
+	// tree.getRoot().addChild(sd);
+	// }
+	// }
+	// DEBUG.OUT(Iterables.transform(tree.list(Order.PRE_ORDER), each -> each.getData().getName()));
+	// final List<GamaNode<SpeciesDescription>> list = tree.list(Order.PRE_ORDER);
+	// list.remove(0);
+	// return Iterables.transform(list, each -> each.getData());
+	//
+	// }
 
 	public boolean isMirror() {
 		return hasFacet(MIRRORS);

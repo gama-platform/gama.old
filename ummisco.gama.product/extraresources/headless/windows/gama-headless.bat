@@ -27,9 +27,9 @@ GOTO TOP
 
 :NEXT_CODE
 echo ******************************************************************
-echo * GAMA version 1.7.0                                             *
-echo * http://gama-platform.googlecode.com                            *
-echo * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC and Partners            *
+echo * GAMA version 1.8.1                                             *
+echo * http://gama-platform.org                                       *
+echo * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC and Partners            *
 echo ******************************************************************
 rem @echo off
 set FILENAME=..\plugins\org.eclipse.equinox.launcher_*.jar

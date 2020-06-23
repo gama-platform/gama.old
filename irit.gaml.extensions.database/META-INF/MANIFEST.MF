@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Additions of Database Tools to GAML
 Bundle-SymbolicName: irit.gaml.extensions.database;singleton:=true
-Bundle-Version: 1.7.0.qualifier
-Require-Bundle: msi.gama.ext;bundle-version="1.0.0",
- msi.gama.core;bundle-version="1.6.0",
+Bundle-Version: 1.8.1.qualifier
+Require-Bundle: msi.gama.ext,
+ msi.gama.core,
  org.eclipse.osgi
 Export-Package: irit.gaml.extensions.database.skills,
  irit.gaml.extensions.database.species,

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Eclipse-BundleShape: dir
 Bundle-Name: msi.gama.documentation
 Bundle-SymbolicName: msi.gama.documentation;singleton:=true
-Bundle-Version: 1.7.0.qualifier
+Bundle-Version: 1.8.1.qualifier
 Export-Package: de.regnis.q.sequence,
  de.regnis.q.sequence.core,
  de.regnis.q.sequence.line,
@@ -426,4 +426,4 @@ Bundle-ClassPath: .,
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: msi.gama.doc.MainGenerateWiki
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: ummisco.gama.annotations;bundle-version="1.7.0"
+Require-Bundle: ummisco.gama.annotations

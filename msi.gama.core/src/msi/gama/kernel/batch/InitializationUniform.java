@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * msi.gama.kernel.batch.InitializationUniform.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8)
+ * modeling and simulation platform (v. 1.8.1)
  *
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -27,7 +27,7 @@ public class InitializationUniform implements Initialization {
 	@Override
 	public List<Chromosome> initializePop(final IScope scope, final List<IParameter.Batch> variables,
 			final GeneticAlgorithm algo) throws GamaRuntimeException {
-		final Set<Chromosome> populationInit = new HashSet<Chromosome>();
+		final Set<Chromosome> populationInit = new HashSet<>();
 		final int nbPrelimGenerations = algo.getNbPrelimGenerations();
 		final int populationDim = algo.getPopulationDim();
 		for (int i = 0; i < nbPrelimGenerations; i++) {

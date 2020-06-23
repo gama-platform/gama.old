@@ -1,7 +1,7 @@
 *******************************************************************
-*GAMA version 1.8.0                                               *
-*http://gama-platform.googlecode.com                              *
-*(c) 2007-2019 UMI 209 UMMISCO IRD/SU & Partners                  *
+* GAMA version 1.8.1                                               *
+* http://gama-platform.org                              *
+* (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners                  *
 *******************************************************************
 
 How to start GAMA in headless mode with script file

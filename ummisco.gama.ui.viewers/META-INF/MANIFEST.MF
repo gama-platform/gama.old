@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Viewers
 Bundle-SymbolicName: ummisco.gama.ui.viewers;singleton:=true
-Bundle-Version: 1.7.0.qualifier
+Bundle-Version: 1.8.1.qualifier
 Bundle-Vendor: UMMISCO
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.jface,
@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.browser;bundle-version="3.4.300",
  ummisco.gama.ui.shared,
  msi.gama.application,
- ummisco.gama.ui.navigator;bundle-version="1.7.0"
+ ummisco.gama.ui.navigator
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: ummisco.gama.ui.viewers
 Export-Package: ummisco.gama.ui.viewers.csv,

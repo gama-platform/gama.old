@@ -2,9 +2,11 @@
  * 
  * 
  * 'RoadNodeSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the GAMA modeling
- * and simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * and simulation platform. (v. 1.8.1)
+ *
+ * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  * 
  **********************************************************************************************/
