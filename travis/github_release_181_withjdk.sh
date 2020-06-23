@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
- 
+  
 
 function update_tag() {
 	echo "update tag " $1 
