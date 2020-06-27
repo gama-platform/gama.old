@@ -38,13 +38,22 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	final Arguments parameters;
 	final IExpression target;
 	final StatementDescription action;
-	final boolean isSuper;
+	final String targetSpecies;
 
 	public PrimitiveOperator(final IDescription callerContext, final StatementDescription action,
 			final IExpression target, final Arguments args, final boolean superInvocation) {
 		this.target = target;
+		if (superInvocation) {
+			// target is not null
+			this.targetSpecies = target.getGamlType().getSpecies().getName();
+		} else {
+			if (target == null) {
+				targetSpecies = callerContext.getSpeciesContext().getName();
+			} else {
+				targetSpecies = null;
+			}
+		}
 		this.action = action;
-		isSuper = superInvocation;
 		parameters = args;
 
 	}
@@ -63,8 +72,8 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		// the arguments will be (incorrectly)
 		// evaluated in its context, but how to prevent it ? See Issue 401.
 		// One way is (1) to gather the executer
-		final ISpecies species = isSuper ? scope.getModel().getSpecies(this.target.getGamlType().getSpeciesName(),
-				this.target.getGamlType().getSpecies()) : target.getSpecies();
+		final ISpecies species =
+				targetSpecies != null ? scope.getModel().getSpecies(targetSpecies) : target.getSpecies();
 		final IStatement.WithArgs executer = species.getAction(getName());
 		// Then, (2) to set the caller to the actual agent on the scope (in the
 		// context of which the arguments need to
