@@ -46,7 +46,7 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		// }
 		final RecognitionException ex = context.getRecognitionException();
 
-		String msg = context.getDefaultMessage();
+		String msg = "";
 		// if (DEBUG.IS_ON()) {
 		// DEBUG.OUT("Default Message: " + msg);
 		// }
@@ -62,25 +62,7 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		// }
 		// final String[] tokens = context.getTokenNames();
 		if (ex == null) {
-			if (msg.startsWith("mismatched ch")) {
-				final String ch = msg.substring(msg.lastIndexOf(' '), msg.length());
-				msg = "Character expected " + ch;
-			} else {
-
-				if (contextobj != null) {
-					// if (DEBUG.IS_ON()) {
-					// DEBUG.OUT("No exception but EObject present");
-					// }
-					msg += "Error in expression '" + NodeModelUtils.getTokenText(NodeModelUtils.getNode(contextobj))
-							+ "'";
-				}
-				if (node != null) {
-					// if (DEBUG.IS_ON()) {
-					// DEBUG.OUT("No exception but Node present");
-					// }
-					msg += "Error in expression '" + NodeModelUtils.getTokenText(node) + "'";
-				}
-			}
+			msg = translateMessage(contextobj, context.getDefaultMessage(), node);
 		} else {
 			// final int positionInLine = ex.charPositionInLine;
 			// if (DEBUG.IS_ON()) {
@@ -89,7 +71,6 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 			// if (DEBUG.IS_ON()) {
 			// DEBUG.OUT("Exception :" + ex);
 			// }
-			msg = "";
 			final Token t = ex.token;
 			if (t != null) {
 				final String token = t.getText();
@@ -142,14 +123,40 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 
 						}
 					}
+				} else {
+					// cf. Issue #3003. Some errors do not have token text.
+					msg = translateMessage(contextobj, context.getDefaultMessage(), node);
 				}
 			}
 		}
 		// if (DEBUG.IS_ON()) {
 		// DEBUG.OUT("Message : " + msg);
 		// }
-
+		if (msg.isEmpty()) msg = context.getDefaultMessage();
 		return new SyntaxErrorMessage(msg, Diagnostic.SYNTAX_DIAGNOSTIC);
+	}
+
+	private String translateMessage(final EObject contextobj, final String message, final INode node) {
+		String msg = message;
+		if (msg.startsWith("mismatched ch")) {
+			final String ch = msg.substring(msg.lastIndexOf(' '), msg.length());
+			msg = "Character expected " + ch;
+		} else if (msg.startsWith("mismatched in")) {
+			msg = msg.replace("mismatched input", "Found");
+		} else {
+			if (contextobj != null) {
+				// if (DEBUG.IS_ON()) {
+				// DEBUG.OUT("No exception but EObject present");
+				// }
+				msg += "Error in expression '" + NodeModelUtils.getTokenText(NodeModelUtils.getNode(contextobj)) + "'";
+			} else if (node != null) {
+				// if (DEBUG.IS_ON()) {
+				// DEBUG.OUT("No exception but Node present");
+				// }
+				msg += "Error in expression '" + NodeModelUtils.getTokenText(node) + "'";
+			}
+		}
+		return msg;
 	}
 
 }
