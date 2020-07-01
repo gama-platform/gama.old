@@ -51,7 +51,7 @@ public class GAMA {
 		DEBUG.OFF();
 	}
 
-	public final static String VERSION = "GAMA 1.8";
+	public final static String VERSION = "GAMA 1.8.1";
 	public static final String _WARNINGS = "warnings";
 	private static volatile PlatformAgent agent;
 	private static Benchmark benchmarkAgent;
