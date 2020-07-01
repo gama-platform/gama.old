@@ -136,7 +136,8 @@ public class GAMA {
 		final ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
 
 		if (currentExperiment == null) {
-			throw GamaRuntimeException.error("Experiment " + expName + " cannot be created", getRuntimeScope());
+			throw GamaRuntimeException.error("Experiment " + expName + " does not exist. Please check its name.",
+					getRuntimeScope());
 		}
 		currentExperiment.setHeadless(true);
 		for (final Map.Entry<String, Object> entry : params.entrySet()) {
