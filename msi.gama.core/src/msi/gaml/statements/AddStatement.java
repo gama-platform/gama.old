@@ -271,8 +271,7 @@ public class AddStatement extends AbstractContainerStatement {
 			final IExpression item = cd.getFacetExpr(ITEM);
 			final IExpression list = cd.getFacetExpr(TO);
 			final IExpression allFacet = cd.getFacetExpr(ALL);
-			if (item == null)
-				return;
+			if (item == null) { return; }
 			if (allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue())) {
 				if (!item.getGamlType().isContainer()) {
 					cd.warning(
@@ -338,7 +337,8 @@ public class AddStatement extends AbstractContainerStatement {
 			}
 		} else {
 			if (object instanceof IContainer) {
-				container.addValues(scope, (IContainer<?, ?>) object);
+				// AD July 2020: Addition of the position (see #2985)
+				container.addValues(scope, position, (IContainer<?, ?>) object);
 			}
 		}
 	}

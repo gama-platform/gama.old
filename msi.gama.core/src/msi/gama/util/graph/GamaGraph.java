@@ -327,16 +327,17 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
-	public void addValues(final IScope scope, final IContainer values) {
+	public void addValues(final IScope scope, final Object index, final IContainer values) {
+		// Index is not used here as it does not make sense for graphs (see #2985)
 		if (values instanceof GamaGraph) {
 			for (final Object o : ((GamaGraph) values).edgeSet()) {
 				addEdge(o);
 			}
-			return;
-		}
-		for (final Object o : values.iterable(scope)) {
-			if (o instanceof msi.gaml.operators.Graphs.GraphObjectToAdd) {
-				addValue(scope, (msi.gaml.operators.Graphs.GraphObjectToAdd) o);
+		} else {
+			for (final Object o : values.iterable(scope)) {
+				if (o instanceof msi.gaml.operators.Graphs.GraphObjectToAdd) {
+					addValue(scope, (msi.gaml.operators.Graphs.GraphObjectToAdd) o);
+				}
 			}
 		}
 

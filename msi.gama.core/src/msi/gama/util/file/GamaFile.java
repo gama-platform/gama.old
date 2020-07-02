@@ -214,9 +214,10 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	// Then, methods for "all" operations
 	// Adds the values if possible, without replacing existing ones
 	@Override
-	public void addValues(final IScope scope, final IContainer values) {
+	public void addValues(final IScope scope, final Object index, final IContainer values) {
+		// Addition of the index (see #2985)
 		fillBuffer(scope);
-		getBuffer().addValues(scope, values);
+		getBuffer().addValues(scope, index, values);
 	}
 
 	// Adds this value to all slots (if this operation is available), otherwise

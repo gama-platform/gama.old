@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.Spliterator;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 import msi.gama.common.interfaces.BiConsumerWithPruning;
@@ -103,10 +104,17 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	 *
 	 * @see msi.gama.util.IContainer#addAll(msi.gama.runtime.IScope, msi.gama.util.IContainer)
 	 */
+	// AD July 2020: Addition of the index (see #2985)
 	@Override
-	default void addValues(final IScope scope, final IContainer/* <?, GamaPair<K, V>> */ values) {
-		for (final Object o : values.iterable(scope)) {
-			addValue(scope, (V) o);
+	default void addValues(final IScope scope, final Object index, final IContainer/* <?, GamaPair<K, V>> */ values) {
+		// If an index is specified, we add only the last object
+		if (index != null) {
+			final Iterable list = values.iterable(scope);
+			setValueAtIndex(scope, index, (V) Iterables.getLast(list));
+		} else {
+			for (final Object o : values.iterable(scope)) {
+				addValue(scope, (V) o);
+			}
 		}
 	}
 

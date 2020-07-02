@@ -104,7 +104,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 		// Then, methods for "all" operations
 		// Adds the values if possible, without replacing existing ones
-		void addValues(IScope scope, IContainer<?, ?> values);
+		// AD July 2020: Addition of the index (see #2985)
+		void addValues(IScope scope, Object index, IContainer<?, ?> values);
+
+		default void addValues(final IScope scope, final IContainer<?, ?> values) {
+			addValues(scope, null, values);
+		}
 
 		// Adds this value to all slots (if this operation is available),
 		// otherwise replaces the values with this one

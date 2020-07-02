@@ -386,8 +386,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	public static boolean isFlat(final List val) {
-		for (int i = 0; i < val.size(); i++) {
-			if (val.get(i) instanceof List) { return false; }
+		for (final Object element : val) {
+			if (element instanceof List) { return false; }
 		}
 		return true;
 	}
@@ -544,8 +544,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	// Then, methods for "all" operations
 	// Adds the values if possible, without replacing existing ones
+	// AD July 2020: Addition of the index (see #2985)
 	@Override
-	public void addValues(final IScope scope, final IContainer values) {}
+	public void addValues(final IScope scope, final Object index, final IContainer values) {
+		// Nothing to do for matrices
+	}
 
 	// Adds this value to all slots (if this operation is available), otherwise
 	// replaces the values with this one

@@ -125,9 +125,15 @@ public interface IList<E>
 		set(buildIndex(scope, index), buildValue(scope, value));
 	}
 
+	// AD July 2020: Addition of the index (see #2985)
 	@Override
-	default void addValues(final IScope scope, final IContainer values) {
-		addAll(buildValues(scope, values));
+	default void addValues(final IScope scope, final Object index, final IContainer values) {
+		if (index == null) {
+			addAll(buildValues(scope, values));
+		} else {
+			final int i = buildIndex(scope, index);
+			addAll(i, buildValues(scope, values));
+		}
 	}
 
 	@Override
