@@ -10,14 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.runtime;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.eclipse.core.resources.IResource;
 
@@ -48,26 +42,27 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.operators.Strings;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class HeadlessListener implements IGui {
 
-	static Logger LOGGER = LogManager.getLogManager().getLogger("");
+	// See #2996: simplification of the logging done in this class
+	// static Logger LOGGER = LogManager.getLogManager().getLogger("");
 	// static Level LEVEL = Level.ALL;
-	final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<>();
+	// final ThreadLocal<BufferedWriter> outputWriter = new ThreadLocal<>();
 
 	static {
+		// See #2996: simplification of the logging done in this class
+		// if (GAMA.isInHeadLessMode()) {
 
-		if (GAMA.isInHeadLessMode()) {
-
-			for (final Handler h : LOGGER.getHandlers()) {
-				h.setLevel(Level.ALL);
-			}
-			LOGGER.setLevel(Level.ALL);
-		}
+		//
+		// for (final Handler h : LOGGER.getHandlers()) {
+		// h.setLevel(Level.ALL);
+		// }
+		// LOGGER.setLevel(Level.ALL);
+		// }
 		GAMA.setHeadlessGui(new HeadlessListener());
 	}
 
@@ -85,15 +80,16 @@ public class HeadlessListener implements IGui {
 		return initialValues;
 	}
 
-	public void registerJob(final BufferedWriter w) {
-		this.outputWriter.set(w);
-	}
-
-	public BufferedWriter leaveJob() {
-		final BufferedWriter res = this.outputWriter.get();
-		this.outputWriter.remove();
-		return res;
-	}
+	// See #2996: simplification of the logging done in this class
+	// public void registerJob(final BufferedWriter w) {
+	// this.outputWriter.set(w);
+	// }
+	//
+	// public BufferedWriter leaveJob() {
+	// final BufferedWriter res = this.outputWriter.get();
+	// this.outputWriter.remove();
+	// return res;
+	// }
 
 	@Override
 	public boolean copyToClipboard(final String text) {
@@ -178,12 +174,12 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void cleanAfterExperiment() {
 		// DEBUG.LOG("[Headless] Clean after experiment.");
-		try {
-			outputWriter.get().flush();
-			outputWriter.get().close();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
+		// try {
+		// outputWriter.get().flush();
+		// outputWriter.get().close();
+		// } catch (final IOException e) {
+		// e.printStackTrace();
+		// }
 
 	}
 
@@ -366,15 +362,16 @@ public class HeadlessListener implements IGui {
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root) {
+			DEBUG.ON();
 			DEBUG.LOG(s);
-			if (outputWriter.get() != null) {
-				try {
-					outputWriter.get().write(s + Strings.LN);
-					// outputWriter.get().flush();
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			}
+			// if (outputWriter.get() != null) {
+			// try {
+			// outputWriter.get().write(s + Strings.LN);
+			// // outputWriter.get().flush();
+			// } catch (final IOException e) {
+			// e.printStackTrace();
+			// }
+			// }
 		}
 
 		@Override

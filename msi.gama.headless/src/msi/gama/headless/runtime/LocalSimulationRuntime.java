@@ -1,8 +1,11 @@
 package msi.gama.headless.runtime;
 
-import java.io.BufferedWriter;
+import static msi.gama.headless.common.Globals.CONSOLE_OUTPUT_FILENAME;
+import static msi.gama.headless.common.Globals.OUTPUT_PATH;
+
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,15 +14,12 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.HeadlessListener;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.IDescription;
 import ummisco.gama.dev.utils.DEBUG;
@@ -126,33 +126,10 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		return started.size() > 0 || queue.size() > 0;
 	}
 
-	public synchronized void releaseModel(final String key, final IModel mdl) {
-		// DEBUG.LOG("release simulation");
-		// String key = mdl.getFilePath();
-		// availableLoadedModels.get(key).add(mdl);
-		// DEBUG.LOG("remove " + mdl.getFilePath());
-		// lockUnLock(null,key, mdl);
-		// DEBUG.LOG("model released ") ;
-	}
-
-	// private synchronized IModel lockUnLock(final File fl, final String key, final IModel mdl)
-	// throws IOException, GamaHeadlessException {
-	// IModel mm = null;
-	// if (mdl != null) {
-	// availableLoadedModels.get(key).add(mdl);
-	// mm = mdl;
-	// }
-	// if (fl != null) {
-	// mm = lockModel(fl);
-	// }
-	// return mm;
-	// }
-
 	public synchronized IModel lockModel(final File fl) throws IOException, GamaHeadlessException {
 		IModel mdl;
 		final String key = fl.getAbsolutePath();
 		ArrayList<IModel> arr = availableLoadedModels.get(fl.getAbsolutePath());
-		// DEBUG.OUT(fl.getAbsolutePath());
 		if (arr == null) {
 			arr = new ArrayList<>();
 			availableLoadedModels.put(key, arr);
@@ -170,9 +147,8 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 
 	@Override
 	public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
-		// return lockUnLock( fl,null, null) ; //lockModel(fl); //
 		final List<GamlCompilationError> errors = new ArrayList<>();
-		return HeadlessSimulationLoader.loadModel(fl, errors); // lockModel(fl); //mdl.c;
+		return HeadlessSimulationLoader.loadModel(fl, errors);
 	}
 
 	@Override
@@ -184,6 +160,21 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	}
 
 	class FakeApplication extends Thread {// implements Runnable {
+
+		class DebugStream extends FileOutputStream {
+
+			DebugStream() throws FileNotFoundException {
+				super(OUTPUT_PATH + "/" + CONSOLE_OUTPUT_FILENAME + "-" + si.getExperimentID() + ".txt");
+				DEBUG.REGISTER_LOG_WRITER(this);
+			}
+
+			@Override
+			public void close() throws IOException {
+				super.close();
+				DEBUG.UNREGISTER_LOG_WRITER();
+			}
+
+		}
 
 		private ExperimentJob si = null;
 		private LocalSimulationRuntime runtime = null;
@@ -199,50 +190,20 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 
 		@Override
 		public void run() {
-			boolean noErrorFound = true;
-			try {
-				final BufferedWriter file = new BufferedWriter(new FileWriter(Globals.OUTPUT_PATH + "/"
-						+ Globals.CONSOLE_OUTPUT_FILENAME + "-" + si.getExperimentID() + ".txt"));
-				((HeadlessListener) GAMA.getHeadlessGui()).registerJob(file);
-			} catch (final IOException e1) {
-				e1.printStackTrace();
-				noErrorFound = false;
-			}
-			try {
-				if (noErrorFound) {
-					si.loadAndBuild(this.runtime);
-				}
-
-			} catch (final InstantiationException e) {
-				noErrorFound = false;
-				DEBUG.ERR(e);
-			} catch (final IllegalAccessException e) {
-				noErrorFound = false;
-				DEBUG.ERR(e);
-			} catch (final ClassNotFoundException e) {
-				noErrorFound = false;
-				DEBUG.ERR(e);
-			} catch (final IOException e) {
-				noErrorFound = false;
-				DEBUG.ERR(e);
-			} catch (final GamaHeadlessException e) {
-				noErrorFound = false;
-				DEBUG.ERR(e);
-			}
-			if (noErrorFound) {
+			try (final DebugStream file = new DebugStream()) {
+				si.loadAndBuild(this.runtime);
 				si.playAndDispose();
+			} catch (final Exception e) {
+				DEBUG.ERR(e);
+			} finally {
+				runtime.closeSimulation(this);
 			}
-			((HeadlessListener) GAMA.getHeadlessGui()).leaveJob();
-			runtime.closeSimulation(this);
-			runtime.releaseModel(si.getSourcePath(), si.getSimulation().getModel());
-
 		}
 
 	}
 
 	@Override
 	public HashMap<String, Double> getSimulationState() {
-
 		final HashMap<String, Double> res = new HashMap<>();
 		for (final ExperimentJob exp : simulations.values()) {
 			res.put(exp.getExperimentID(), new Double(exp.getStep() / exp.getFinalStep()));

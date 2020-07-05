@@ -3,6 +3,8 @@ package ummisco.gama.dev.utils;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -31,6 +33,7 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
+	private static final ThreadLocal<PrintStream> LOG_WRITERS = ThreadLocal.withInitial(() -> System.out);
 	private static final boolean GLOBAL_OFF = false;
 
 	static {
@@ -230,8 +233,8 @@ public class DEBUG {
 	}
 
 	/**
-	 * Will always output to System.out (using print if 'newLine' is false) except if GLOBAL_OFF is true. Takes care of
-	 * arrays so as to output their contents (and not their identity)
+	 * Will always output to System.out or the registered logger for this thread (using print if 'newLine' is false)
+	 * except if GLOBAL_OFF is true. Takes care of arrays so as to output their contents (and not their identity)
 	 *
 	 * @param object
 	 *            the message to output
@@ -241,11 +244,19 @@ public class DEBUG {
 	public static void LOG(final Object object, final boolean newLine) {
 		if (!GLOBAL_OFF) {
 			if (newLine) {
-				System.out.println(TO_STRING(object));
+				LOG_WRITERS.get().println(TO_STRING(object));
 			} else {
-				System.out.print(TO_STRING(object));
+				LOG_WRITERS.get().print(TO_STRING(object));
 			}
 		}
+	}
+
+	public static void REGISTER_LOG_WRITER(final OutputStream writer) {
+		LOG_WRITERS.set(new PrintStream(writer, true));
+	}
+
+	public static void UNREGISTER_LOG_WRITER() {
+		LOG_WRITERS.remove();
 	}
 
 	/**
