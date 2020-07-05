@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.vividsolutions.jts.util.NumberUtil;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -343,11 +345,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				}
 			}
 		}
-		if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
-			if (!getAmongValue(scope).contains(newValue)) {
-				newValue = getAmongValue(scope).get(0);
-			}
-		}
+
+		// See #3006
+		// final List among = getAmongValue(scope);
+		// if (among != null && !among.isEmpty()) {
+		// if (!getAmongValue(scope).contains(newValue)) {
+		// newValue = getAmongValue(scope).get(0);
+		// }
+		// }
+		newValue = filterWithAmong(scope, newValue);
 		if (value != UNDEFINED) {
 			for (final ParameterChangeListener listener : listeners) {
 				listener.changed(scope, newValue);
@@ -363,11 +369,29 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		value = newValue;
 	}
 
+	private Object filterWithAmong(final IScope scope, final Object newValue) {
+		getAmongValue(scope);
+		if (amongValue == null || amongValue.isEmpty()) { return newValue; }
+		if (Types.FLOAT.equals(this.getType())) {
+			final double newDouble = Cast.asFloat(scope, newValue);
+			for (final Object o : amongValue) {
+				final Double d = Cast.asFloat(scope, o);
+				final Double tolerance = 0.0000001d;
+				if (NumberUtil.equalsWithTolerance(d, newDouble, tolerance)) { return d; }
+			}
+
+		} else {
+			if (amongValue.contains(newValue)) { return newValue; }
+		}
+		return amongValue.get(0);
+	}
+
 	@Override
 	public void setValue(final IScope scope, final Object val) {
 		if (val == UNDEFINED) {
-			if (getAmongValue(scope) != null) {
-				value = getAmongValue(scope).get(scope.getRandom().between(0, getAmongValue(scope).size() - 1));
+			getAmongValue(scope);
+			if (amongValue != null) {
+				value = amongValue.get(scope.getRandom().between(0, amongValue.size() - 1));
 			} else if (type.id() == IType.INT || type.id() == IType.FLOAT) {
 				value = drawRandomValue(scope);
 			} else if (type.id() == IType.BOOL) {
