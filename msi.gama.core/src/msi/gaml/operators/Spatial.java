@@ -3186,7 +3186,8 @@ public abstract class Spatial {
 					}
 					final IShape gg =
 							Transformations.enlarged_by(scope, l, Math.min(0.001, l.getPerimeter() / 1000.0), 10);
-					final List<IShape> ls = (List<IShape>) Spatial.Queries.overlapping(scope, lines2, gg);
+					
+					final List<IShape> ls = gg == null ? GamaListFactory.create(): (List<IShape>) Spatial.Queries.overlapping(scope, lines2, gg);
 					if (!ls.isEmpty()) {
 						final ILocation pto = l.getPoints().firstValue(scope);
 						final ILocation ptd = l.getPoints().lastValue(scope);
