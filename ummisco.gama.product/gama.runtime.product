@@ -266,13 +266,13 @@
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
       <feature id="org.eclipse.equinox.p2.user.ui"/>
-      <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.modeling.ui" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.core.extensions" version="1.8.1.qualifier"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.8.1.qualifier"/>
+      <feature id="ummisco.gama.feature.core" version="1.8.1.qualifier"/>
+      <feature id="ummisco.gama.feature.models" version="1.8.1.qualifier"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.8.1.qualifier"/>
+      <feature id="ummisco.gama.feature.experiment.ui" version="1.8.1.qualifier"/>
+      <feature id="ummisco.gama.feature.modeling.ui" version="1.8.1.qualifier"/>
    </features>
 
    <configurations>

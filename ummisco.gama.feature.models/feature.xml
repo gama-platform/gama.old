@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.models"
       label="Models"
-      version="1.7.0.qualifier"
+      version="1.8.1.qualifier"
       provider-name="UMMISCO"
       colocation-affinity="ummisco.gama.feature.core">
 

@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core.extensions"
       label="Core extensions of GAMA"
-      version="1.7.0.qualifier"
+      version="1.8.1.qualifier"
       provider-name="UMMISCO, IRIT &amp; IDEES">
 
    <description url="http://gama-platform.org">
@@ -22,7 +22,7 @@
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
+      <import feature="ummisco.gama.feature.core" version="1.8.1.qualifier"/>
    </requires>
 
    <plugin

@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.modeling.ui"
       label="UI Components for designing models in  GAMA"
-      version="1.7.0.qualifier"
+      version="1.8.1.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://gama-platform.org">
@@ -22,7 +22,7 @@
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
+      <import feature="ummisco.gama.feature.core.ui" version="1.8.1.qualifier"/>
    </requires>
 
    <plugin
