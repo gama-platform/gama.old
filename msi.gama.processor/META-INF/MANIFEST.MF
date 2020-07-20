@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GAMA Processor
 Bundle-SymbolicName: msi.gama.processor;singleton:=true
-Bundle-Version: 1.4.0.qualifier
+Bundle-Version: 1.8.1.qualifier
 Bundle-Vendor: MSI
 Export-Package: msi.gama.precompiler;
   uses:="org.w3c.dom,
