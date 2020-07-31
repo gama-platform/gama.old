@@ -542,7 +542,7 @@ public class DrivingSkill extends MovingSkill {
 	public Double primAdvancedFollow(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final Double s = scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
-		final Double t = scope.hasArg("time") ? scope.getFloatArg("time") : 1.0;
+		final Double t = scope.hasArg("time") ? scope.getFloatArg("time") : scope.getClock().getStepInSeconds();
 		final GamaPoint target = scope.hasArg("target") ? (GamaPoint) scope.getArg("target", IType.NONE) : null;
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 		return primAdvancedFollow(scope, agent, s, t, path, target);
@@ -881,7 +881,7 @@ public class DrivingSkill extends MovingSkill {
 		final Arguments argsSC = new Arguments();
 		final Map<IAgent, Double> roadProba = (Map) scope.getArg("proba_roads", IType.MAP);
 
-		double remainingTime = 1.0;
+		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
 		while (remainingTime > 0.0) {
 			final IAgent road = getCurrentRoad(agent);
 			final GamaPoint target = GeometryUtils.getLastPointOf(road);
@@ -968,7 +968,7 @@ public class DrivingSkill extends MovingSkill {
 		double x = loc.getX();
 		double y = loc.getY();
 
-		double remainingTime = 1.0;
+		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
 		// t1 += java.lang.System.currentTimeMillis() - t;
 		while (remainingTime > 0.0) {
 			// t = java.lang.System.currentTimeMillis();
