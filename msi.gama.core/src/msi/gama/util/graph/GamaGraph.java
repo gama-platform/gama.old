@@ -98,7 +98,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	protected boolean saveComputedShortestPaths = true;
 
 	protected ISpecies edgeSpecies;
-	protected shortestPathAlgorithm pathFindingAlgo = shortestPathAlgorithm.NBAStar;
+	protected shortestPathAlgorithm pathFindingAlgo = shortestPathAlgorithm.Dijkstra;
 	private FloydWarshallShortestPathsGAMA<V, E> optimizer;
 
 	private Object linkedGraph = null;
