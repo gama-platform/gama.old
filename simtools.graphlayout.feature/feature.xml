@@ -2,7 +2,7 @@
 <feature
       id="simtools.graphlayout.feature"
       label="Graph Layouts"
-      version="1.7.0.qualifier">
+      version="1.8.1.qualifier">
 
    <description url="http://www.example.com/description">
       Graph Layout Operators
@@ -21,7 +21,7 @@
    </url>
 
    <requires>
-      <import plugin="msi.gama.core" version="1.7.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.core" version="1.8.1" match="greaterOrEqual"/>
       <import plugin="msi.gama.ext" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="msi.gama.processor" version="1.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore"/>
