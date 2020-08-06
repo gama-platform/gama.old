@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core.ui"
       label="Common UI Components of GAMA"
-      version="1.7.0.qualifier"
+      version="1.8.1.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://gama-platform.org">

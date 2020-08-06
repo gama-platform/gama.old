@@ -28,7 +28,6 @@ import msi.gaml.operators.Cast;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
-import ummisco.gama.network.skills.INetworkSkill;
 
 public class UDPConnector extends Connector {
 
@@ -94,9 +93,10 @@ public class UDPConnector extends Connector {
 
 		final String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(sender.getScope(), sport);
+		final String sURL = this.getConfigurationParameter(SERVER_URL);
 
 		try (final DatagramSocket clientSocket = new DatagramSocket();) {
-			final InetAddress IPAddress = InetAddress.getByName((String) sender.getAttribute(INetworkSkill.SERVER_URL));
+			final InetAddress IPAddress = InetAddress.getByName(sURL);			
 			final byte[] sendData = content.getBytes();
 			final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
 			sendPacket.setData(sendData);

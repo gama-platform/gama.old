@@ -1537,7 +1537,7 @@ public class Graphs {
 					IConcept.ALGORITHM })
 	@doc (
 			value = "changes the shortest path computation method of the given graph",
-			comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\" to use the associated algorithm. "
+			comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\", \"NBAStar\", \"NBAStarApprox\" to use the associated algorithm. "
 					+ "Note that these methods are dynamic: the path is computed when needed. In contrarily, if the operand is another string, "
 					+ "a static method will be used, i.e. all the shortest are previously computed.",
 			examples = @example (
