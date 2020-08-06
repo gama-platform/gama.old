@@ -1,5 +1,5 @@
 {
-    "schedule": "weekly", // daily|weekly|monthly
-    "aggressiveCompression": "false" // true|false
-    "compressWiki": "true" // true|false
+    "schedule": "weekly",
+    "aggressiveCompression": "false",
+    "compressWiki": "true"
 }
