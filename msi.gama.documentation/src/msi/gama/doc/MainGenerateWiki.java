@@ -47,7 +47,6 @@ public class MainGenerateWiki {
 			// "website generation"
 			CheckConcepts.DoCheckConcepts();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

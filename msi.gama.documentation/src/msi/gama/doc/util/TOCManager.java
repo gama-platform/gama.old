@@ -104,8 +104,12 @@ public class TOCManager {
 			final NodeList nlSubpart = eltPart.getElementsByTagName("subpart");
 			for (int j = 0; j < nlSubpart.getLength(); j++) {
 				eltPart = (Element) nlSubpart.item(j);
-				fPart = new File(Constants.TOC_GEN_FOLDER + File.separator
-						+ eltPart.getAttribute("name").replaceAll(" ", "_") + ".md");
+				//fPart = new File(Constants.TOC_GEN_FOLDER + File.separator
+				//		+ eltPart.getAttribute("name").replaceAll(" ", "_") + ".md");
+				//
+				fPart = new File(Constants.WIKI_FOLDER + File.separator
+						+ eltPart.getAttribute("file") + ".md");
+				//
 				lFile.add(fPart.getAbsolutePath());
 				final NodeList chapterList = eltPart.getElementsByTagName("chapter");
 				for (int k = 0; k < chapterList.getLength(); k++) {

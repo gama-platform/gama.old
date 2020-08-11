@@ -34,7 +34,7 @@ public class ConvertToPDF {
 
 		final TOCManager toc = new TOCManager(Constants.TOC_FILE);
 		toc.createPartFiles();
-		toc.createSubpartFiles();
+//		toc.createSubpartFiles();
 		final String files = toc.getTocFilesString();
 
 		final File template = new File(Constants.PANDOC_FOLDER + File.separator + "mytemplate.tex");
