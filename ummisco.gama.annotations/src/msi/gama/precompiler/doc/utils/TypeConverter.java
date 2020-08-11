@@ -91,6 +91,7 @@ public class TypeConverter {
 		hm.put("msi.gama.util.file.GamaFile", "file");
 		hm.put("msi.gama.jogl.files.Gama3DSFile", "file");
 		hm.put("msi.gama.jogl.files.GamaObjFile", "file");
+		hm.put("ummisco.gama.serializer.gaml.GamaSavedSimulationFile", "file");
 
 		// Colors
 		hm.put("msi.gama.util.GamaColor", "rgb");
@@ -138,6 +139,7 @@ public class TypeConverter {
 		hm.put("T", "unknown");
 		hm.put("?", "unknown");
 		hm.put("msi.gama.util.tree.GamaNode", "unknown");
+		hm.put("? extends java.lang.Comparable", "unknown");
 		hm.put("msi.gaml.types.IType", "any GAML type");
 		hm.put("msi.gaml.expressions.IExpression", "any expression");
 
@@ -188,6 +190,9 @@ public class TypeConverter {
 		// FIPA
 		hm.put("msi.gaml.extensions.fipa.Conversation", "conversation");
 		hm.put("msi.gaml.extensions.fipa.Message", "message");
+		
+		hm.put("msi.gama.extensions.messaging.GamaMessage", "message");
+		
 
 		hm.put("msi.gama.util.IPath", "path");
 		hm.put("msi.gama.util.path.IPath", "path");
@@ -195,10 +200,10 @@ public class TypeConverter {
 
 		hm.put("msi.gama.util.IContainer.Addressable", "container");
 
-		// msi.gama.util.GamaRegression ??????
-		// msi.gama.util.GamaFont ????
-
 		hm.put("msi.gaml.types.GamaKmlExport", "kml");
+		
+		hm.put("msi.gama.kernel.experiment.IParameter", "unknown");
+		
 		return hm;
 	}
 
