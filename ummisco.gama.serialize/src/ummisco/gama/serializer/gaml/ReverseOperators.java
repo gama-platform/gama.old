@@ -24,6 +24,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
@@ -39,7 +40,9 @@ public class ReverseOperators {
 	@operator (
 			value = "serialize")
 	@doc (
-			value = "It serializes any object, i.e. transform it into a string.")
+			value = "It serializes any object, i.e.transforms it into a string.",
+			see =  "serialize_agent")
+	@no_test()
 	public static String serialize(final IScope scope, final Object o) {
 		DEBUG.OUT("**** Serialize Object ****");
 		return StreamConverter.convertObjectToStream(scope, o);
@@ -58,7 +61,10 @@ public class ReverseOperators {
 	@operator (
 			value = "serialize_agent")
 	@doc (
-			value = "")
+			value = "searializes an agent (i.e. transforms into a string value).",
+			comment = "As a simulation is a particular agent, it can be used to serialize a simulation and save it.",
+			see = "serialize")
+	@no_test
 	public static String serializeAgent(final IScope scope, final IAgent agent) {
 		return StreamConverter.convertObjectToStream(scope, new SavedAgent(scope, agent));
 	}
@@ -66,7 +72,10 @@ public class ReverseOperators {
 	@operator (
 			value = "restore_simulation_from_file")
 	@doc (
-			value = "restoreSimulationFromFile")
+			value = "Restores a simulation from a saved simulation file.", 
+			comment = "This operator should be used in a reflex of an experiment and it will remove the current simulation and replace it  by the new restored simulation",
+			see = "restore_simulation")
+	@no_test
 	public static int unSerializeSimulationFromFile(final IScope scope, final GamaSavedSimulationFile file) {
 		return unSerializeSimulationFromXML(scope, file.getBuffer().get(0));
 	}
@@ -74,7 +83,10 @@ public class ReverseOperators {
 	@operator (
 			value = "restore_simulation")
 	@doc (
-			value = "restore_simulation")
+			value = "restores a simulation from a string value containing a serialized simulation.", 
+			comment = "This operator should be used in a reflex of an experiment and it will remove the current simulation and replace it by the new restored simulation",
+			see = "restore_simulation_from_file")
+	@no_test
 	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
 		final ConverterScope cScope = new ConverterScope(scope);
 		final XStream xstream = StreamConverter.loadAndBuild(cScope);
@@ -92,7 +104,9 @@ public class ReverseOperators {
 	@operator (
 			value = "save_agent")
 	@doc (
-			value = "")
+			value = "saves an agent in a file specified by its path",
+			deprecated = "use the save statement instead.")
+	@no_test
 	public static int saveAgent(final IScope scope, final IAgent agent, final String pathname) {
 		final String path = FileUtils.constructAbsoluteFilePath(scope, pathname, false);
 
@@ -138,7 +152,9 @@ public class ReverseOperators {
 	@operator (
 			value = "save_simulation")
 	@doc (
-			value = "")
+			value = "saves the current simulation in a  given file",
+			comment = "About to be deprecated, the save statement should be used instead.")
+	@no_test
 	public static int saveSimulation(final IScope scope, final String pathname) {
 		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		final SimulationAgent simAgt = expAgt.getSimulation();

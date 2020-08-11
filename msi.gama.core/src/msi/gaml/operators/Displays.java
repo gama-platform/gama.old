@@ -70,8 +70,8 @@ public class Displays {
 	@operator (
 			value = HORIZONTAL,
 			expected_content_type = IType.FLOAT,
-			can_be_const = false,
-			doc = @doc ("Creates a horizontal layout node (a sash). Sashes can contain any number (> 1) of other elements: stacks, horizontal or vertical sashes, or display indices. Each element is represented by a pair in the map, where the key is the element and the value its weight within the sash"))
+			can_be_const = false)
+	@doc ("Creates a horizontal layout node (a sash). Sashes can contain any number (> 1) of other elements: stacks, horizontal or vertical sashes, or display indices. Each element is represented by a pair in the map, where the key is the element and the value its weight within the sash")
 	@no_test
 	public static GamaNode<String> horizontal(final IScope scope, final IMap<Object, Integer> nodes) {
 		return buildSashFromMap(scope, HORIZONTAL, nodes);
@@ -80,8 +80,8 @@ public class Displays {
 	@operator (
 			value = VERTICAL,
 			expected_content_type = IType.FLOAT,
-			can_be_const = false,
-			doc = @doc ("Creates a vertical layout node (a sash). Sashes can contain any number (> 1) of other elements: stacks, horizontal or vertical sashes, or display indices. Each element is represented by a pair in the map, where the key is the element and the value its weight within the sash"))
+			can_be_const = false)
+	@doc ("Creates a vertical layout node (a sash). Sashes can contain any number (> 1) of other elements: stacks, horizontal or vertical sashes, or display indices. Each element is represented by a pair in the map, where the key is the element and the value its weight within the sash")
 	@no_test
 	public static GamaNode<String> vertical(final IScope scope, final IMap<Object, Integer> nodes) {
 		return buildSashFromMap(scope, VERTICAL, nodes);
@@ -89,8 +89,8 @@ public class Displays {
 
 	@operator (
 			value = STACK,
-			can_be_const = false,
-			doc = @doc ("Creates a stack layout node. Stacks can only contain one or several indices of displays (without weight)"))
+			can_be_const = false)
+	@doc ("Creates a stack layout node. Stacks can only contain one or several indices of displays (without weight)")
 	@no_test
 	public static GamaNode<String> stack(final IScope scope, final IList<Integer> nodes) {
 		if (nodes == null) { throw GamaRuntimeException.error("Nodes of a stack cannot be nil", scope); }

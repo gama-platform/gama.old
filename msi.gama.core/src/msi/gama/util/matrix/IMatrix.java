@@ -328,7 +328,7 @@ public interface IMatrix<T>
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
-			value = "The eigen values (matrix) of the given matrix",
+			value = "The list of the eigen values of the given matrix",
 			masterDoc = true,
 			examples = { @example (
 					value = "eigenvalues(matrix([[5,-3],[6,-4]]))",

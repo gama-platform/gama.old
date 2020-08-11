@@ -50,10 +50,7 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 			category = { IOperatorCategory.FIPA },
 			concept = { IConcept.FIPA })
 	@doc (
-			value = "to be added",
-			comment = "",
-			special_cases = { "" },
-			examples = {})
+			value = "defines a new message that will be exchanged between agents.")
 	@no_test
 	public static GamaMessage asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaMessageType.staticCast(scope, val, null);

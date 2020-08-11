@@ -354,13 +354,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 			value = "one of the values stored in this container  at a random key",
 			masterDoc = true,
 			comment = "the one_of operator behavior depends on the nature of the operand",
-			usages = { @usage (
-					value = "if the operand is empty, one_of returns nil",
-					examples = { @example (
-							value = "one_of([])",
-							equals = "nil",
-							returnType = IKeyword.UNKNOWN,
-							isTestOnly = true) }),
+			usages = { @usage (value = "if the operand is empty, one_of returns nil"),
 					@usage (
 							value = "if it is a list or a matrix, one_of returns one of the values of the list or of the matrix",
 							examples = { @example (
@@ -400,6 +394,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 											value = "bug b <- one_of(bug);  	// Given a previously defined species bug, b is one of the created bugs, e.g. bug3",
 											isExecutable = false) }) },
 			see = { "contains" })
+	@test("one_of([]) = nil")
 	ValueType anyValue(IScope scope);
 
 }

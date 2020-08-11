@@ -207,7 +207,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			concept = { IConcept.MATRIX })
 	@doc (
 			value = "A matrix resulting from the concatenation of the columns  of the two given matrices. ",
-			masterDoc = true,
+			masterDoc = false,
 			examples = { @example (
 					value = "matrix([[1,2],[3,4]]) append_vertically matrix([[1,2],[3,4]])",
 					equals = "matrix([[1,2,1,2],[3,4,3,4]])") })
@@ -255,10 +255,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			concept = { IConcept.MATRIX })
 	@doc (
 			value = "A matrix resulting from the concatenation of the rows of the two given matrices.",
-			masterDoc = true,
-			examples = { @example (
-					value = "matrix([[1.0,2.0],[3.0,4.0]]) append_horizontally matrix([[1,2],[3,4]])",
-					equals = "matrix([[1.0,2.0],[3.0,4.0],[1.0,2.0],[3.0,4.0]])") })
+			masterDoc = false)
 	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
 		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
 			return ((GamaIntMatrix) this)._opAppendHorizontally(scope, b);

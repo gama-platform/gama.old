@@ -281,7 +281,7 @@ public class Stats2 extends Stats {
 				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the phi-quantile; that is, an element elem for which holds that phi percent of data elements are less than elem. The quantile need not necessarily be contained in the data sequence, it can be a linear interpolation. Note that the container holding the values must be sorted first",
+				value = "Returns the phi-quantile; that is, an element elem for which holds that phi percent of data elements are less than elem. The quantile does not need necessarily to be contained in the data sequence, it can be a linear interpolation. Note that the container holding the values must be sorted first",
 				comment = "",
 				examples = { @example (
 						value = "quantile([1,3,5,6,9,11,12,13,19,21,22,32,35,36,45,44,55,68,79,80,81,88,90,91,92,100], 0.5)",
@@ -710,13 +710,11 @@ public class Stats2 extends Stats {
 				category = { IOperatorCategory.STATISTICAL },
 				concept = { IConcept.STATISTIC })
 		@doc (
-				value = "Returns the x in the normal distribution with the given mean and standard deviation, to the left of which lies the given area. normal.Inverse returns the value in terms of standard deviations from the mean, so we need to adjust it for the given mean and standard deviation.",
+				value = "Returns the x in the normal distribution with the given mean and standard deviation, to the left of which lies the given area. normal.",
 				comment = "",
 				examples = { @example (
 						value = "normal_inverse(0.98,0,1) with_precision(2)",
-						equals = "2.05") }
-
-		)
+						equals = "2.05") })
 		public static Double opNormalInverse(final IScope scope, final Double area, final Double mean,
 				final Double sd) {
 

@@ -430,7 +430,8 @@ public class Stats {
 			see = { "split", "split_in" },
 			value = "Splits a list of numbers into n+1 bins using a set of n bounds passed as the second argument. "
 					+ "The splitting is strict (i.e. elements are in the ith bin if they are strictly smaller "
-					+ "than the ith bound",
+					+ "than the ith bound), when no boolean attribute is specified.",
+			masterDoc = true,
 			examples = { @example ("list<float> li <- [1.0,3.1,5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0];"), @example (
 					value = "split_using(li,[1.0,3.0,4.2])",
 					equals = "[[],[1.0],[3.1],[5.2,6.0,9.2,11.1,12.0,13.0,19.9,35.9,40.0]]") })
@@ -1050,9 +1051,10 @@ public class Stats {
 	@doc (
 			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ "
 					+ "algorithm from the first operand data according to the number of clusters to split"
-					+ " the data into (k) and the maximum number of iterations to run the algorithm for "
+					+ " the data into (k) and the maximum number of iterations to run the algorithm."
 					+ "(If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
-			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+//			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+			masterDoc = true,
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)",
 					equals = "[[0,2,3],[1]]") })
@@ -1248,10 +1250,11 @@ public class Stats {
 			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ "
 					+ "algorithm from the first operand data according to the number of clusters to split"
 					+ " the data into (k). Usage: kmeans(data,k)",
-			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+//			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+			usages = {@usage(value="The maximum number of (third operand) can be omitted.",
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)",
-					equals = "[[0,2,3],[1]]") })
+					equals = "[[0,2,3],[1]]") })})
 	public static IList<IList> KMeansPlusplusApache(final IScope scope, final IList data, final Integer k)
 			throws GamaRuntimeException {
 		return KMeansPlusplusApache(scope, data, k, -1);

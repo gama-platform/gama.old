@@ -286,19 +286,14 @@ public class Random {
 			category = { IOperatorCategory.RANDOM },
 			concept = { IConcept.RANDOM })
 	@doc (
-			value = "a random integer in the interval [0, operand]",
+			value = "returns a random value in a range (the type value depends on the operand type): when called with an integer, it returns a random integer in the interval [0, operand]",
 			masterDoc = true,
 			comment = "to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision",
 			usages = {},
 			examples = { @example (
 					value = "rnd (2)",
 					equals = "0, 1 or 2",
-					test = false),
-					@example (
-							value = "rnd (1000) / 1000",
-							returnType = IKeyword.FLOAT,
-							equals = "a float between 0 and 1 with a precision of 0.001",
-							test = false) },
+					test = false) },
 			see = { "binomial", "gamma_rnd", "gauss_rnd", "lognormal_rnd", "poisson", "skew_gauss", "truncated_gauss",
 					"weibull_rnd" })
 	@test ("seed <- 1.0; rnd(10) = 8")

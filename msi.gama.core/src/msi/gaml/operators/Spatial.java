@@ -171,8 +171,9 @@ public abstract class Spatial {
 				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc (
 				value = "A circle geometry which radius is equal to the operand.",
+				masterDoc = true,
 				usages = { @usage (
-						value = "returns a point if the operand is lower or equal to 0.") },
+						value = "returns a point if the radius operand is lower or equal to 0.") },
 				comment = "the center of the circle is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
 						value = "circle(10)",
@@ -194,16 +195,16 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc (
-				value = "A circle geometry which radius is equal to the first operand, and the center has the location equal to the second operand.",
-				usages = { @usage (
-						value = "returns a point if the operand is lower or equal to 0.") },
-				examples = { @example (
+			value = "A circle geometry which radius is equal to the first operand, and the center has the location equal to the second operand.",
+			usages = { 
+				@usage (value = "When circle is used with 2 operands, the second one is the center of the created circle.",
+					examples = { @example (
 						value = "circle(10,{80,30})",
 						equals = "a geometry as a circle of radius 10, the center will be in the location {80,30}.",
-						test = false) },
-				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
-						"triangle" })
-		@no_test // (comment="See Creation.experiment in test models : {Circle tests with tolerance}")
+						test = false) })},
+			see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square",
+					"triangle" })
+		@no_test
 		public static IShape circle(final IScope scope, final Double radius, final GamaPoint position) {
 			ILocation location;
 			location = position;
@@ -267,6 +268,7 @@ public abstract class Spatial {
 				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc (
 				value = "An arc, which radius is equal to the first operand, heading to the second and amplitude the third",
+				masterDoc = false,
 				usages = { @usage (
 						value = "returns a point if the radius operand is lower or equal to 0.") },
 				comment = "the center of the arc is by default the location of the current agent in which has been called this operator. This operator returns a polygon by default.",
@@ -288,6 +290,7 @@ public abstract class Spatial {
 				concept = {})
 		@doc (
 				value = "An arc, which radius is equal to the first operand, heading to the second, amplitude to the third and a boolean indicating whether to return a linestring or a polygon to the fourth",
+				masterDoc = true,
 				usages = { @usage (
 						value = "returns a point if the radius operand is lower or equal to 0.") },
 				comment = "the center of the arc is by default the location of the current agent in which has been called this operator.",
@@ -344,14 +347,15 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
 		@doc (
-				value = "A cross, which radius is equal to the first operand and the width of the lines for the second",
+				value = "A cross, which radius is equal to the first operand (and eventually the width of the lines for the second)",
+				masterDoc = true,
 				examples = { @example (
 						value = "cross(10,2)",
 						equals = "a geometry as a cross of radius 10, and with a width of 2 for the lines ",
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 						"rectangle", "square", "circle", "ellipse", "triangle" })
-		@no_test // (comment="no idea on how to test a cross")
+		@no_test 
 		public static IShape cross(final IScope scope, final Double xRadius, final Double width) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
@@ -372,7 +376,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
 						"rectangle", "square", "circle", "ellipse", "triangle" })
-		@no_test // (comment="no idea on how to test a cross")
+		@no_test
 		public static IShape cross(final IScope scope, final Double xRadius) {
 			GamaPoint location;
 			final IAgent a = scope.getAgent();
@@ -458,6 +462,7 @@ public abstract class Spatial {
 				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc (
 				value = "A cone geometry which min and max angles are given by the operands.",
+				masterDoc = true,
 				special_cases = { "returns nil if the operand is nil." },
 				comment = "the center of the cone is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
@@ -498,8 +503,6 @@ public abstract class Spatial {
 				concept = {})
 		@doc (
 				value = "A cone geometry which min and max angles are given by the operands.",
-				special_cases = { "returns nil if the operand is nil." },
-				comment = "the center of the cone is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
 						value = "cone({0, 45})",
 						equals = "a geometry as a cone with min angle is 0 and max angle is 45.",
@@ -592,10 +595,7 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = { IConcept.SHAPE, IConcept.GEOMETRY })
 		@doc (
-				value = "A rectangle geometry which side sizes are given by the operands.",
-				masterDoc = true,
-				usages = { @usage (
-						value = "returns nil if the operand is nil.") },
+				value = "A rectangle geometry which side sizes are given by the operands (as a point).",
 				comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
 						value = "rectangle({10, 5})",
@@ -604,7 +604,7 @@ public abstract class Spatial {
 						@example (
 								value = "rectangle({10, 5}).area",
 								equals = "50.0",
-								returnType = "float") },
+								returnType = "float", isTestOnly = true) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint p) {
@@ -619,7 +619,8 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
 		@doc (
-				value = "A rectangle geometry which side sizes are given by the operands.",
+				value = "A rectangle geometry, computed from the operands values (e.g. the 2 side sizes).",
+				masterDoc = true,
 				usages = { @usage (
 						value = "returns nil if the operand is nil.") },
 				comment = "the center of the rectangle is by default the location of the current agent in which has been called this operator.",
@@ -630,7 +631,7 @@ public abstract class Spatial {
 						@example (
 								value = "rectangle(10, 5).area",
 								equals = "50.0",
-								returnType = "float") },
+								returnType = "float", isTestOnly = true) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final double x, final double y) {
@@ -646,8 +647,6 @@ public abstract class Spatial {
 				concept = {})
 		@doc (
 				value = "A rectangle geometry which upper-left and lower-right corners are defined as points.",
-				usages = { @usage (
-						value = "returns nil if the operand is nil.") },
 				examples = { @example (
 						value = "rectangle({0.0,0.0}, {10.0,10.0})",
 						equals = "a geometry as a rectangle with {1.0,1.0} as the upper-left corner, {10.0,10.0} as the lower-right corner.",
@@ -655,7 +654,7 @@ public abstract class Spatial {
 						@example (
 								value = "rectangle({0.0,0.0}, {10.0,10.0}).area",
 								equals = "100.0",
-								returnType = "float") },
+								returnType = "float", isTestOnly = true) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint upperLeftCorner,
@@ -819,8 +818,6 @@ public abstract class Spatial {
 				concept = { IConcept.THREED })
 		@doc (
 				value = "A hexagon geometry which the given width and height",
-				usages = { @usage ("returns nil if the operand is nil.") },
-				comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
 						value = "hexagon({10,5})",
 						equals = "a geometry as a hexagon of width of 10 and height of 5.",
@@ -844,8 +841,6 @@ public abstract class Spatial {
 				concept = { IConcept.THREED })
 		@doc (
 				value = "A hexagon geometry which the given width and height",
-				usages = { @usage ("returns nil if the operand is nil.") },
-				comment = "the center of the hexagon is by default the location of the current agent in which has been called this operator.",
 				examples = { @example (
 						value = "hexagon(10,5)",
 						equals = "a geometry as a hexagon of width of 10 and height of 5.",
@@ -945,14 +940,14 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
-		@doc (
-				value = "A quadratic Bezier curve geometry built from the three given points composed of 10 points.",
-				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
-				examples = { @example (
-						value = "curve({0,0}, {0,10}, {10,10})",
-						equals = "a quadratic Bezier curve geometry composed of 10 points from p0 to p2.",
-						test = false) },
+		@doc ( value = "The operator computes a Bezier curve geometry between the given operators, with 10 or a given number of points, and from left to rigth or right to left.",
+				masterDoc = true,
+				usages = { @usage (value = "if one  of the operand is nil, returns nil"),
+					@usage(value="When used with 3 points, it computes a quadratic Bezier curve geometry built from the three given points and composed of 10 points.",
+						examples = { @example (
+							value = "curve({0,0}, {0,10}, {10,10})",
+							equals = "a quadratic Bezier curve geometry composed of 10 points from p0 to p2.",
+							test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -967,17 +962,15 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A quadratic Bezier curve geometry built from the three given points composed of a given numnber of points.",
-				usages = { @usage (
-						value = "if the operand is nil, returns nil"),
-						@usage (
-								value = "if the last operand (number of points) is inferior to 2, returns nil") },
-				examples = { @example (
+		@doc ( 
+			value = "A quadratic Bezier curve geometry built from the three given points composed of a given numnber of points.",	
+			usages = { 
+				@usage ( value = "When used with 3 points and an integer, it  computes a quadratic Bezier curve geometry built from the three given points. If the last operand (number of points) is inferior to 2, returns nil",
+					examples = { @example (
 						value = "curve({0,0}, {0,10}, {10,10}, 20)",
 						equals = "a quadratic Bezier curve geometry composed of 20 points from p0 to p2.",
-						test = false) },
-				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+						test = false) })},
+			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
@@ -991,15 +984,15 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A cubic Bezier curve geometry built from the four given points composed of 10 points.",
-				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
-				examples = { @example (
+		@doc (	
+			value = "A cubic Bezier curve geometry built from the four given points composed of 10 points.",				
+			usages = { @usage (
+					value = "When used with 4 points, it computes, it computes a cubic Bezier curve geometry built from the four given points and composed of 10 points. ",
+					examples = { @example (
 						value = "curve({0,0}, {0,10}, {10,10})",
 						equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p3.",
-						test = false) },
-				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
+						test = false) })},
+			see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
 		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
@@ -1014,13 +1007,13 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
 		@doc (
-				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of 10 points.",
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of 10 points.",				
 				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
-				examples = { @example (
+					value = "When used with 2 points and a float coefficient, it computes a cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of 10 points.",
+					examples = { @example (
 						value = "curve({0,0},{10,10}, 0.5)",
 						equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p1.",
-						test = false) },
+						test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -1034,14 +1027,14 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of 10 points - the last boolean is used to specified if it is the right side.",
+		@doc (	
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of 10 points - the last boolean is used to specified if it is the right side.",				
 				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
-				examples = { @example (
+					value = "When used with 2 points, a float coefficient and a boolean, it computes a cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of 10 points. The last boolean is used to specified if it is the right side.",
+					examples = { @example (
 						value = "curve({0,0},{10,10}, 0.5, false)",
 						equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p1 at the left side.",
-						test = false) },
+						test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -1055,14 +1048,14 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the boolean is used to specified if it is the right side.",
+		@doc ( 
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the boolean is used to specified if it is the right side.",	
 				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
-				examples = { @example (
+					value = "When used with 2 points, a float coefficient, a boolean, and an integer number of points, it computes a cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the boolean is used to specified if it is the right side.",
+					examples = { @example (
 						value = "curve({0,0},{10,10}, 0.5, false, 100)",
 						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
-						test = false) },
+						test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -1076,14 +1069,14 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the boolean is used to specified if it is the right side and the last value to indicate where is the inflection point (between 0.0 and 1.0 - default 0.5).",
-				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
+		@doc ( 
+			value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the boolean is used to specified if it is the right side and the last value to indicate where is the inflection point (between 0.0 and 1.0 - default 0.5).",				
+			usages = { @usage (
+				value = "When used with 2 points, a float coefficient, a boolean, an integer number of points, and a float proportion, it computes a cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points - the boolean is used to specified if it is the right side and the last value to indicate where is the inflection point (between 0.0 and 1.0 - default 0.5).",
 				examples = { @example (
-						value = "curve({0,0},{10,10}, 0.5, false, 100, 0.8)",
-						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
-						test = false) },
+					value = "curve({0,0},{10,10}, 0.5, false, 100, 0.8)",
+					equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
+					test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -1104,14 +1097,14 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points, considering the given inflection point (between 0.0 and 1.0 - default 0.5), and the given rotation angle (90 = along the z axis).",
+		@doc ( 
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points, considering the given inflection point (between 0.0 and 1.0 - default 0.5), and the given rotation angle (90 = along the z axis).",				
 				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
-				examples = { @example (
+					value = "When used with 2 points, a float coefficient, a boolean, an integer number of points, a float proportion, and a float angle, it computes a cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points, considering the given inflection point (between 0.0 and 1.0 - default 0.5), and the given rotation angle (90 = along the z axis).",
+					examples = { @example (
 						value = "curve({0,0},{10,10}, 0.5, 100, 0.8, 90)",
 						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
-						test = false) },
+						test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -1131,14 +1124,14 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points, considering the given rotation angle (90 = along the z axis).",
+		@doc ( 
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points, considering the given rotation angle (90 = along the z axis).",				
 				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
-				examples = { @example (
+					value = "When used with 2 points, a float coefficient, a boolean, an integer number of points, and a float angle, it computes a cubic Bezier curve geometry built from the two given points with the given coefficient for the radius and composed of the given number of points, considering the given rotation angle (90 = along the z axis).",
+					examples = { @example (
 						value = "curve({0,0},{10,10}, 0.5, 100, 90)",
 						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
-						test = false) },
+						test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -1152,14 +1145,14 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius considering the given rotation angle (90 = along the z axis).",
+		@doc ( 
+				value = "A cubic Bezier curve geometry built from the two given points with the given coefficient for the radius considering the given rotation angle (90 = along the z axis).",				
 				usages = { @usage (
-						value = "if the operand is nil, returns nil") },
-				examples = { @example (
+					value = "When used with 2 points, a float coefficient, and a float angle, it computes a cubic Bezier curve geometry built from the two given points with the given coefficient for the radius considering the given rotation angle (90 = along the z axis).",
+					examples = { @example (
 						value = "curve({0,0},{10,10}, 0.5, 90)",
 						equals = "a cubic Bezier curve geometry composed of 100 points from p0 to p1 at the right side.",
-						test = false) },
+						test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -1173,16 +1166,14 @@ public abstract class Spatial {
 				expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT },
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 				concept = {})
-		@doc (
-				value = "A cubic Bezier curve geometry built from the four given points composed of a given number of points.",
+		@doc (  
+				value = "A cubic Bezier curve geometry built from the four given points composed of a given number of points.",				
 				usages = { @usage (
-						value = "if the operand is nil, returns nil"),
-						@usage (
-								value = "if the last operand (number of points) is inferior to 2, returns nil") },
-				examples = { @example (
+					value = "When used with 4 points and an integer number of  points, it computes a cubic Bezier curve geometry built from the four given points composed of a given number of points. If the number of points is  lower than 2, it returns nil.",
+					examples = { @example (
 						value = "curve({0,0}, {0,10}, {10,10})",
 						equals = "a cubic Bezier curve geometry composed of 10 points from p0 to p3.",
-						test = false) },
+						test = false) })},
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
@@ -1233,10 +1224,11 @@ public abstract class Spatial {
 				concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.POINT })
 		@doc (
 				value = "A polyline geometry from the given list of points.",
+				masterDoc = true,
 				usages = { @usage (
-						value = "if the operand is nil, returns the point geometry {0,0}"),
+						value = "if the points list operand is nil, returns the point geometry {0,0}"),
 						@usage (
-								value = "if the operand is composed of a single point, returns a point geometry.") },
+								value = "if the points list operand is composed of a single point, returns a point geometry.") },
 				examples = { @example (
 						value = "polyline([{0,0}, {0,10}, {10,10}])",
 						equals = "a polyline geometry composed of the 3 points.",
@@ -1248,13 +1240,10 @@ public abstract class Spatial {
 						@example (
 								value = "string(polyline([{0,0}, {0,10}, {10,10}])+line([{10,10}, {10,0}]))",
 								equals = "\"MULTILINESTRING ((0 0, 0 10, 10 10), (10 10, 10 0))\"",
-								returnType = "string"), }
-
-				,
+								returnType = "string"), },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle" })
 		@test ("points_along(line({0,0},{0,10}),[0.5])[0] = point({0,5})")
-
 		public static IShape line(final IScope scope, final IContainer<?, IShape> points) {
 			if (points == null || points.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = points.listValue(scope, Types.NO_TYPE, false);
@@ -1281,6 +1270,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
+		@no_test
 		public static IShape geometryCollection(final IScope scope, final IContainer<?, IShape> geometries) {
 			if (geometries == null || geometries.isEmpty(scope)) { return new GamaShape(new GamaPoint(0, 0)); }
 			final IList<IShape> shapes = geometries.listValue(scope, Types.NO_TYPE, false);
@@ -1297,10 +1287,7 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE })
 		@doc (
 				value = "A polyline geometry from the given list of points represented as a cylinder of radius r.",
-				usages = { @usage (
-						value = "if the operand is nil, returns the point geometry {0,0}"),
-						@usage (
-								value = "if the operand is composed of a single point, returns a point geometry."),
+				usages = { 
 						@usage (
 								value = "if a radius is added, the given list of points represented as a cylinder of radius r",
 								examples = { @example (
@@ -2361,7 +2348,7 @@ public abstract class Spatial {
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
 				value = "A geometry resulting from the application of a rotation by the operand angles (degree)"
-						+ " along the operand axis to the left-hand operand (geometry, agent, point)",
+						+ " along the operand axis (last operand) to the left-hand operand (geometry, agent, point)",
 				masterDoc = true,
 				examples = { @example (
 						value = "rotated_by(pyramid(10),45.0, {1,0,0})",
@@ -2369,7 +2356,7 @@ public abstract class Spatial {
 								+ "the agent applying the operator.",
 						test = false) },
 				see = { "transformed_by", "translated_by" })
-		@no_test // hard to compare geometries
+		@no_test 
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double rotation,
 				final GamaPoint vector) {
 			if (g1 == null) { return null; }
@@ -2382,10 +2369,9 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = {})
 		@doc (
-				value = "A point resulting from the application of the right-hand rotation operand (angles in degree)"
-						+ " to the left-hand operand point",
-				comment = "return a vector that results from ")
-		@no_test // hard to compare geometries
+				usages = {@usage("When used  with a  point and  a pair angle::point, it returns a point resulting from the application of the right-hand rotation operand (angles in degree)"
+						+ " to the left-hand operand point")})
+		@no_test 
 		public static GamaPoint rotated_by(final IScope scope, final GamaPoint p1, final GamaPair rotation) {
 			if (p1 == null) { return null; }
 			final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
@@ -2399,17 +2385,13 @@ public abstract class Spatial {
 				value = "rotated_by",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
-		@doc (
-				value = "A geometry resulting from the application of the right-hand rotation operand (angles in degree)"
-						+ " to the left-hand operand (geometry, agent, point)",
-				masterDoc = true,
-				examples = { @example (
-						value = "rotated_by(pyramid(10),45.0::{1,0,0})",
-						equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
-								+ "the agent applying the operator.",
-						test = false) },
+		@doc (	examples = { @example (
+					value = "rotated_by(pyramid(10),45.0::{1,0,0})",
+					equals = "the geometry resulting from a 45 degrees rotation along the {1,0,0} vector to the geometry of "
+							+ "the agent applying the operator.",
+					test = false) },
 				see = { "transformed_by", "translated_by" })
-		@no_test // hard to compare geometries
+		@no_test 
 		public static IShape rotated_by(final IScope scope, final IShape g1, final GamaPair rotation) {
 			final GamaPair<Double, GamaPoint> rot = (GamaPair<Double, GamaPoint>) GamaType
 					.from(Types.PAIR, Types.FLOAT, Types.POINT).cast(scope, rotation, null, false);
@@ -2421,9 +2403,8 @@ public abstract class Spatial {
 				value = "rotated_by",
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = {})
-		@doc (
-				comment = "the right-hand operand can be a float or a int")
-		@no_test // hard to compare geometries
+		@doc ( usages = {@usage("the right-hand operand representing  the angle can be a float or an integer")})
+		@no_test 
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Integer angle) {
 			if (g1 == null) { return null; }
 			if (angle == null) { return g1.copy(scope); }
@@ -2547,15 +2528,8 @@ public abstract class Spatial {
 				content_type = IType.GEOMETRY,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
-		@doc (
-				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry "
-						+ "(geometry, agent) with the given tolerance for the clipping and for the triangulation",
-				examples = { @example (
-						value = "skeletonize(self)",
-						equals = "the list of geometries corresponding to the skeleton of the geometry of "
-								+ "the agent applying the operator.",
-						test = false) })
-
+		@doc ( usages = {@usage("It can be used with 2 additional float operands: the tolerances for the clipping and for the triangulation")})
+		@no_test
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
 				final Double triangulationTolerance) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(),
@@ -2572,12 +2546,8 @@ public abstract class Spatial {
 				content_type = IType.GEOMETRY,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
-		@doc (
-				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent) with the given tolerance for the clipping and for the triangulation",
-				examples = { @example (
-						value = "skeletonize(self)",
-						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
-						test = false) })
+		@doc ( usages = {@usage("It can be used with 3 additional float operands: the tolerance for the clipping, the  tolerance for the triangulation, and the approximation for the clipping.")})
+		@no_test		
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance,
 				final Double triangulationTolerance, final boolean approxiClipping) {
 			final List<LineString> netw = GeometryUtils.squeletisation(scope, g.getInnerGeometry(),
@@ -2594,12 +2564,8 @@ public abstract class Spatial {
 				content_type = IType.GEOMETRY,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
-		@doc (
-				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent) with the given tolerance for the clipping",
-				examples = { @example (
-						value = "skeletonize(self)",
-						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
-						test = false) })
+		@doc ( usages = {@usage("It can be used with 1 additional float operand: the tolerance for the clipping.")})
+		@no_test		
 		public static IList<IShape> skeletonize(final IScope scope, final IShape g, final Double clippingTolerance) {
 			final List<LineString> netw =
 					GeometryUtils.squeletisation(scope, g.getInnerGeometry(), 0.0, clippingTolerance, false);
@@ -2617,6 +2583,7 @@ public abstract class Spatial {
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
 				value = "A list of geometries (polylines) corresponding to the skeleton of the operand geometry (geometry, agent)",
+				masterDoc = true,
 				examples = { @example (
 						value = "skeletonize(self)",
 						equals = "the list of geometries corresponding to the skeleton of the geometry of the agent applying the operator.",
@@ -2660,6 +2627,7 @@ public abstract class Spatial {
 						value = "triangulate(self, 0.1)",
 						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
 						test = false) })
+		@no_test
 		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance) {
 			if (g == null) { return null; }
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, clipTolerance, false);
@@ -2677,6 +2645,7 @@ public abstract class Spatial {
 						value = "triangulate([line([{0,50},{100,50}]), line([{50,0},{50,100}]))",
 						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
 						test = false) })
+		@no_test		
 		public static IList<IShape> triangulate(final IScope scope, final IList<IShape> gs) {
 			if (gs == null || gs.isEmpty()) { return null; }
 			return GeometryUtils.triangulation(scope, gs);
@@ -2694,6 +2663,7 @@ public abstract class Spatial {
 						value = "triangulate(self,0.1, 1.0)",
 						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
 						test = false) })
+		@no_test
 		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance,
 				final Double triangulationTolerance) {
 			if (g == null) { return null; }
@@ -2710,9 +2680,10 @@ public abstract class Spatial {
 				value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point, use_approx_clipping) with the given tolerance for the clipping and for the triangulation with using an approximate clipping is the last operand is true",
 				masterDoc = true,
 				examples = { @example (
-						value = "triangulate(self,0.1, 1.0)",
+						value = "triangulate(self,0.1, 1.0, true)",
 						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
 						test = false) })
+		@no_test		
 		public static IList<IShape> triangulate(final IScope scope, final IShape g, final Double clipTolerance,
 				final Double triangulationTolerance, final boolean approxClip) {
 			if (g == null) { return null; }
@@ -2726,12 +2697,13 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A list of geometries corresponding to the Voronoi diagram built from the list of points",
+				value = "A list of geometries corresponding to the Voronoi diagram built from the list of points (with eventually a given  clip).",
 				masterDoc = true,
 				examples = { @example (
 						value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}])",
 						equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points.",
 						test = false) })
+		@no_test
 		public static IList<IShape> vornoi(final IScope scope, final IList<GamaPoint> pts) {
 			if (pts == null) { return null; }
 			return GeometryUtils.voronoi(scope, pts);
@@ -2744,11 +2716,11 @@ public abstract class Spatial {
 				concept = {})
 		@doc (
 				value = "A list of geometries corresponding to the Voronoi diagram built from the list of points according to the given clip",
-				masterDoc = true,
 				examples = { @example (
 						value = "voronoi([{10,10},{50,50},{90,90},{10,90},{90,10}], square(300))",
 						equals = "the list of geometries corresponding to the Voronoi Diagram built from the list of points with a square of 300m side size as clip.",
 						test = false) })
+		@no_test		
 		public static IList<IShape> vornoi(final IScope scope, final IList<GamaPoint> pts, final IShape clip) {
 			if (pts == null) { return null; }
 			return GeometryUtils.voronoi(scope, pts, clip);
@@ -2766,6 +2738,7 @@ public abstract class Spatial {
 						value = "smooth(square(10), 0.0)",
 						equals = "a 'rounded' square",
 						test = false) })
+		@no_test
 		public static IShape smooth(final IScope scope, final IShape geometry, final Double fit) {
 			if (geometry == null) { return null; }
 			final double param = fit == null ? 0d : fit < 0 ? 0d : fit > 1 ? 1d : fit;
@@ -2804,6 +2777,7 @@ public abstract class Spatial {
 						value = "to_squares(self, 10, true)",
 						equals = "the list of 10 squares corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
 						test = false) })
+		@no_test
 		public static IList<IShape> toSquares(final IScope scope, final IShape geom, final Integer nbSquares,
 				final boolean overlaps) {
 			if (geom == null || geom.getInnerGeometry().getArea() <= 0) {
@@ -2824,6 +2798,7 @@ public abstract class Spatial {
 						value = "to_squares(self, 10, true, 0.99)",
 						equals = "the list of 10 squares corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
 						test = false) })
+		@no_test
 		public static IList<IShape> squareDiscretization(final IScope scope, final IShape geom, final Integer nbSquares,
 				final boolean overlaps, final double precision) {
 			if (geom == null || geom.getInnerGeometry().getArea() <= 0) {
@@ -2839,10 +2814,12 @@ public abstract class Spatial {
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
 				value = "A list of rectangles of the size corresponding to the given dimension that result from the decomposition of the geometry into rectangles (geometry, dimension, overlaps), if overlaps = true, add the rectangles that overlap the border of the geometry",
+				masterDoc = true,
 				examples = { @example (
 						value = "to_rectangles(self, {10.0, 15.0}, true)",
 						equals = "the list of rectangles of size {10.0, 15.0} corresponding to the discretization into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",
 						test = false) })
+		@no_test
 		public static IList<IShape> to_rectangle(final IScope scope, final IShape geom, final GamaPoint dimension,
 				final boolean overlaps) {
 			if (geom == null || geom.getInnerGeometry().getArea() <= 0) {
@@ -2863,6 +2840,7 @@ public abstract class Spatial {
 						value = "to_rectangles(self, 5, 20, true)",
 						equals = "the list of rectangles corresponding to the discretization by a grid of 5 columns and 20 rows into rectangles of the geometry of the agent applying the operator. The rectangles overlapping the border of the geometry are kept",
 						test = false) })
+		@no_test
 		public static IList<IShape> to_rectangle(final IScope scope, final IShape geom, final int nbCols,
 				final int nbRows, final boolean overlaps) {
 			if (geom == null || geom.getInnerGeometry().getArea() <= 0) {
@@ -2881,11 +2859,13 @@ public abstract class Spatial {
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
-				value = "A list of geometries that result from the decomposition of the geometry by square cells of the given side size (geometry, size)",
+				value = "A list of geometries that result from the decomposition of the geometry by square cells of the given side size (geometry, size). It can be used to split in rectangles by giving a point or 2 integer values as operand.",
+				masterDoc = true,
 				examples = { @example (
 						value = "to_squares(self, 10.0)",
 						equals = "the list of the geometries corresponding to the decomposition of the geometry by squares of side size 10.0",
 						test = false) })
+		@test("length(square(10.0) split_geometry(3)) = 16")
 		public static IList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension) {
 			if (geom == null || geom.getInnerGeometry().getArea() <= 0) {
 				return GamaListFactory.create(Types.GEOMETRY);
@@ -2904,6 +2884,7 @@ public abstract class Spatial {
 						value = "to_rectangles(self, {10.0, 15.0})",
 						equals = "the list of the geometries corresponding to the decomposition of the geometry by rectangles of size 10.0, 15.0",
 						test = false) })
+		@test("length(square(10.0) split_geometry({2,3})) = 20")
 		public static IList<IShape> toRectangle(final IScope scope, final IShape geom, final GamaPoint dimension) {
 			if (geom == null || geom.getInnerGeometry().getArea() <= 0) {
 				return GamaListFactory.create(Types.GEOMETRY);
@@ -2922,6 +2903,7 @@ public abstract class Spatial {
 						value = "to_rectangles(self, 10,20)",
 						equals = "the list of the geometries corresponding to the decomposition of the geometry of the agent applying the operator",
 						test = false) })
+		@test("length(square(10.0) split_geometry(2,2)) = 4")
 		public static IList<IShape> to_rectangle(final IScope scope, final IShape geom, final int nbCols,
 				final int nbRows) {
 			if (geom == null || geom.getInnerGeometry().getArea() <= 0) {
@@ -3018,6 +3000,7 @@ public abstract class Spatial {
 						equals = "the matrix of square geometries (grid with 4-neighborhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
 						test = false) },
 				see = { "as_grid", "as_hexagonal_grid" })
+		@no_test
 		public static IMatrix as_4_grid(final IScope scope, final IShape g, final GamaPoint dim)
 				throws GamaRuntimeException {
 			// cols, rows
@@ -3031,10 +3014,12 @@ public abstract class Spatial {
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_TRANSFORMATION })
 		@doc (
 				value = "A list of geometries resulting after spliting the geometry into sub-geometries.",
+				masterDoc = true,
 				examples = { @example (
 						value = "to_sub_geometries(rectangle(10, 50), [0.1, 0.5, 0.4])",
 						equals = "a list of three geometries corresponding to 3 sub-geometries",
 						test = false) })
+		@test("length(to_sub_geometries(rectangle(10, 50), [0.1, 0.5, 0.4])) = 3")
 		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, final IList<Double> rates) {
 			if (geom == null) { return GamaListFactory.create(Types.GEOMETRY); }
 
@@ -3053,6 +3038,7 @@ public abstract class Spatial {
 						value = "to_sub_geometries(rectangle(10, 50), [0.1, 0.5, 0.4], 1.0)",
 						equals = "a list of three geometries corresponding to 3 sub-geometries using cubes of 1m size",
 						test = false) })
+		@no_test
 		public static IList<IShape> splitGeometries(final IScope scope, final IShape geom, final IList<Double> rates,
 				final Double dimension) throws GamaRuntimeException {
 			if (geom == null || rates == null || rates.isEmpty()) { return GamaListFactory.create(Types.GEOMETRY); }
@@ -3807,9 +3793,9 @@ public abstract class Spatial {
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{15,15},{15,25},{25,25},{25,15}])",
 								equals = "false"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from {15,15}",
-								equals = "false"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from {15,15}",
+//								equals = "false"),
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from {25,25}",
 								equals = "true"),
@@ -3817,6 +3803,7 @@ public abstract class Spatial {
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from polygon([{35,35},{35,45},{45,45},{45,35}])",
 								equals = "true") },
 				see = { "intersects", "crosses", "overlaps", "partially_overlaps", "touches" })
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) disjoint_from {15,15} = false")
 		public static Boolean disjoint_from(final IScope scope, final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null) { return true; }
 			if (g1.getInnerGeometry() == null || g2.getInnerGeometry() == null) { return true; }
@@ -3845,28 +3832,33 @@ public abstract class Spatial {
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}])",
 								equals = "true"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps {25,25}",
-								equals = "false"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{35,35},{35,45},{45,45},{45,35}])",
-								equals = "false"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps {25,25}",
+//								equals = "false"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{35,35},{35,45},{45,45},{45,35}])",
+//								equals = "false"),
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polyline([{10,10},{20,20}])",
 								equals = "true"),
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps {15,15}",
-								equals = "true"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{0,0},{0,30},{30,30}, {30,0}])",
-								equals = "true"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}])",
-								equals = "true"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}])",
-								equals = "true") },
+								equals = "true")},
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{0,0},{0,30},{30,30}, {30,0}])",
+//								equals = "true"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}])",
+//								equals = "true"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}])",
+//								equals = "true") },
 				see = { "disjoint_from", "crosses", "intersects", "partially_overlaps", "touches" })
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{0,0},{0,30},{30,30},{30,0}])")
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{15,15},{15,25},{25,25},{25,15}])")
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{10,20},{20,20},{20,30},{10,30}])")
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) =  false")
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) overlaps {25,25} = false")
 		public static Boolean overlaps(final IScope scope, final IShape g1, final IShape g2) {
 			if (g1 == null || g2 == null) { return false; }
 			return !disjoint_from(scope, g1, g2);
@@ -3888,9 +3880,10 @@ public abstract class Spatial {
 				value = "A boolean, equal to true if the left-geometry (or agent/point) partially overlaps the right-geometry (or agent/point).",
 				usages = { @usage ("if one of the operand is null, returns false.") },
 				comment = "if one geometry operand fully covers the other geometry operand, returns false (contrarily to the overlaps operator).",
-				examples = { @example (
-						value = "polyline([{10,10},{20,20}]) partially_overlaps polyline([{15,15},{25,25}])",
-						equals = "true"),
+				examples = { 
+						@example (
+								value = "polyline([{10,10},{20,20}]) partially_overlaps polyline([{15,15},{25,25}])",
+								equals = "true"),
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}])",
 								equals = "true"),
@@ -3899,23 +3892,28 @@ public abstract class Spatial {
 								equals = "false"),
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}])",
-								equals = "false"),
+								equals = "false",  isTestOnly = true),
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polyline([{10,10},{20,20}])",
-								equals = "false"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {15,15}",
-								equals = "false"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}])",
-								equals = "false"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}])",
-								equals = "true"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}])",
-								equals = "false") },
+								equals = "false")
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {15,15}",
+//								equals = "false"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}])",
+//								equals = "false"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}])",
+//								equals = "true"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}])",
+//								equals = "false") 
+						},
 				see = { "disjoint_from", "crosses", "overlaps", "intersects", "touches" })
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) =  false")
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}])")
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) = false")
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {15,15} = false")
 		public static Boolean partially_overlaps(final IShape g1, final IShape g) {
 			if (g == null) { return false; }
 			return g1.getInnerGeometry().overlaps(g.getInnerGeometry());
@@ -3936,41 +3934,44 @@ public abstract class Spatial {
 				value = "A boolean, equal to true if the left-geometry (or agent/point) touches the right-geometry (or agent/point).",
 				usages = { @usage ("if one of the operand is null, returns false.") },
 				comment = "returns true when the left-operand only touches the right-operand. When one geometry covers partially (or fully) the other one, it returns false.",
-				examples = { @example (
-						value = "polyline([{10,10},{20,20}]) touches {15,15}",
-						equals = "false"),
+				examples = { 
+//						@example (
+//								value = "polyline([{10,10},{20,20}]) touches {15,15}",
+//								equals = "false"),
+						@example (
+								value = "{15,15} touches {15,15}",
+								equals = "false"),						
 						@example (
 								value = "polyline([{10,10},{20,20}]) touches {10,10}",
 								equals = "true"),
 						@example (
-								value = "{15,15} touches {15,15}",
-								equals = "false"),
-						@example (
 								value = "polyline([{10,10},{20,20}]) touches polyline([{10,10},{5,5}])",
 								equals = "true"),
-						@example (
-								value = "polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}])",
-								equals = "false"),
-						@example (
-								value = "polyline([{10,10},{20,20}]) touches polyline([{15,15},{25,25}])",
-								equals = "false"),
+//						@example (
+//								value = "polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}])",
+//								equals = "false"),
+//						@example (
+//								value = "polyline([{10,10},{20,20}]) touches polyline([{15,15},{25,25}])",
+//								equals = "false"),
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{15,15},{15,25},{25,25},{25,15}])",
 								equals = "false"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}])",
-								equals = "true"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,10},{0,10},{0,0},{10,0}])",
-								equals = "true"),
-						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches {15,15}",
-								equals = "false"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}])",
+//								equals = "true"),
+//						@example (
+//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches {15,15}",
+//								equals = "false"),
 						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) touches {10,15}",
 								equals = "true") },
 				see = { "disjoint_from", "crosses", "overlaps", "partially_overlaps", "intersects" })
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,20},{20,20},{20,30},{10,30}])")
+		@test ("polyline([{10,10},{20,20}]) touches polyline([{15,15},{25,25}]) = false")
+		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) touches polygon([{10,10},{0,10},{0,0},{10,0}])")
+		@test ("polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}]) = false")
+		@test ("polyline([{10,10},{20,20}]) touches {15,15} = false")
+		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) touches {15,15} = false")
 		public static Boolean touches(final IShape g, final IShape g2) {
 			if (g == null) { return false; }
 			return g2.getInnerGeometry().touches(g.getInnerGeometry());

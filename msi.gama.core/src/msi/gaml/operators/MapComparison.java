@@ -25,6 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
@@ -132,6 +133,7 @@ public class MapComparison {
 			concept = { IConcept.MAP })
 	@doc (
 			value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8).",
+			masterDoc = true,
 			examples = { @example (
 					value = "kappa_sim([\"cat1\",\"cat1\",\"cat2\",\"cat2\",\"cat2\"],[\"cat1\",\"cat3\",\"cat2\",\"cat1\",\"cat3\"],[\"cat1\",\"cat3\",\"cat2\",\"cat3\",\"cat1\"],[\"cat1\",\"cat2\",\"cat3\"])",
 					equals = "0.3333333333333335") })
@@ -147,9 +149,10 @@ public class MapComparison {
 			concept = {})
 	@doc (
 			value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories, weights). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8)",
+			usages = {@usage(value = "kappa_sim can be used with an additional weights operand",
 			examples = { @example (
 					value = "kappa_sim([\"cat1\",\"cat1\",\"cat2\",\"cat2\",\"cat2\"],[\"cat1\",\"cat3\",\"cat2\",\"cat1\",\"cat3\"],[\"cat1\",\"cat3\",\"cat2\",\"cat3\",\"cat1\"],[\"cat1\",\"cat2\",\"cat3\"], [1.0, 2.0, 3.0, 1.0, 5.0])",
-					equals = "0.2702702702702703") })
+					equals = "0.2702702702702703") })})
 	public static double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
 			final IList<Object> valsSim, final IList<Object> categories, final IList<Object> weights) {
 		if (valsInit == null || valsObs == null || valsSim == null) { return 1; }

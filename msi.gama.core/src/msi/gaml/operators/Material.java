@@ -22,11 +22,10 @@ import msi.gama.util.*;
 public class Material {
 
 	@operator(value = "material", can_be_const = true, category = { /*TODO*/ }, concept = { /*TODO*/ })
-	@doc(value = "Returns"/*TODO*/,
-	masterDoc = true,
-	usages = @usage(""),
-	examples = @example(value = "", equals = ""),
-	see = "")
+	@doc(
+		value = "Returns a material defined by a given damper and reflectivity",
+		masterDoc = true
+	)
 	public static GamaMaterial material(final double damper, final double reflectivity) {
 		return new GamaMaterial(damper,reflectivity);
 	}

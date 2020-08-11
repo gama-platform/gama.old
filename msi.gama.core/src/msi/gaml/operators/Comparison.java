@@ -66,7 +66,8 @@ public class Comparison {
 			category = { IOperatorCategory.COMPARISON },
 			concept = { IConcept.COMPARISON })
 	@doc (
-			value = "returns true the first integer operand is bigger than the second integer operand and smaller than the third integer operand",
+			value = "returns true the first operand is bigger than the second operand and smaller than the third operand",
+			masterDoc = true,
 			examples = @example (
 					value = "between(5, 1, 10)",
 					equals = "true"))

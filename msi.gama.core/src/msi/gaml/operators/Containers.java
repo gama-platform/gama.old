@@ -172,7 +172,9 @@ public class Containers {
 				category = { IOperatorCategory.CONTAINER },
 				can_be_const = true)
 		@doc (
-				value = "Allows to build a list of int representing all contiguous values from zero to the argument. The range can be increasing or decreasing. Passing 0 will return a singleton list with 0")
+				value = "builds a list of int representing all contiguous values from zero to the argument. The range can be increasing or decreasing.",
+				masterDoc = true,
+				special_cases = "Passing 0 will return a singleton list with 0.")
 		@test ("range(2) = [0,1,2]")
 		public static IList range(final IScope scope, final Integer end) {
 			if (end == 0) { return GamaListFactory.wrap(Types.INT, Integer.valueOf(0)); }
@@ -185,11 +187,12 @@ public class Containers {
 				category = { IOperatorCategory.CONTAINER },
 				can_be_const = true)
 		@doc (
-				value = "Allows to build a list of int representing all contiguous values from the first to the second argument. The range can be increasing or decreasing. "
+				value = "the list of int representing all contiguous values from the first to the second argument.",
+				usages = {@usage( value = "When used with 2 operands, it returns the list of int representing all contiguous values from the first to the second argument. "
 						+ "Passing the same value for both will return a singleton list with this value",
 				examples = { @example (
 						value = "range(0,2)",
-						equals = "[0,1,2]") })
+						equals = "[0,1,2]") })})
 		@test ("range(0,2) = [0,1,2]")
 		public static IList range(final IScope scope, final Integer start, final Integer end) {
 			final Integer step = start > end ? -1 : 1;
@@ -202,8 +205,11 @@ public class Containers {
 				category = { IOperatorCategory.CONTAINER },
 				can_be_const = true)
 		@doc (
-				value = "Allows to build a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value. Passing a step of 0 will result in an exception. Attempting to build infinite ranges (e.g. end > start with a negative step) will similarly not be accepted and yield an exception")
-		@test ("range(0,6,2) = [0,2,4,6]")
+				value = "a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument.",
+			usages = { @usage( value = "When used with 3 operands, it returns a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value. Passing a step of 0 will result in an exception. Attempting to build infinite ranges (e.g. end > start with a negative step) will similarly not be accepted and yield an exception",
+			examples = { @example (
+					value = "range(0,6,2)",
+					equals = "[0,2,4,6]") })})
 		public static IList range(final IScope scope, final Integer start, final Integer end, final Integer step) {
 			if (step == 0) { throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope); }
 			if (start.equals(end)) { return GamaListFactory.wrap(Types.INT, start); }
@@ -269,7 +275,7 @@ public class Containers {
 			content_type = IType.NONE,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER, IConcept.GEOMETRY })
-	@doc ("For internal use only. Corresponds to the implementation, for geometries, of the access to containers with [index]")
+	@doc (value = "For internal use only. Corresponds to the implementation, for geometries, of the access to containers with [index]", masterDoc = true)
 	@no_test
 	public static Object internal_at(final IScope scope, final IShape shape, final IList indices)
 			throws GamaRuntimeException {
@@ -401,6 +407,7 @@ public class Containers {
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
+	@doc("the element at the right operand index of the container")
 	@no_test
 	public static Object at(final IScope scope, final IList container, final Integer key) {
 		return container.get(scope, key);
@@ -412,6 +419,7 @@ public class Containers {
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
+	@doc("the element at the right (point) operand index of the matrix")	
 	@no_test
 	public static Object at(final IScope scope, final IMatrix container, final GamaPoint key) {
 		return container.get(scope, key);
@@ -423,6 +431,7 @@ public class Containers {
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
+	@doc("the agent at the right operand index of the given species")	
 	@no_test
 	public static IAgent at(final IScope scope, final ISpecies species, final Integer key) {
 		return species.get(scope, key);
@@ -454,7 +463,7 @@ public class Containers {
 	}
 
 	@operator (
-			value = { "distinct", "remove_duplicates" },
+			value = { "remove_duplicates", "distinct" },
 			can_be_const = true,
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
@@ -463,7 +472,7 @@ public class Containers {
 	@doc (
 			value = "produces a set from the elements of the operand (i.e. a list without duplicated elements)",
 			usages = { @usage (
-					value = "if the operand is nil, remove_duplicates returns nil",
+					value = "if the operand is empty, remove_duplicates returns an empty list",
 					examples = { @example (
 							value = "remove_duplicates([])",
 							equals = "[]") }),
@@ -1888,9 +1897,10 @@ public class Containers {
 			category = IOperatorCategory.CONTAINER,
 			concept = { IConcept.CONTAINER })
 	@doc (
-			value = "Returns true if none of the elements of the left-hand operand make the right-hand operand evaluate to true.  Returns true if the left-hand operand is empty. 'c none_matches each.property' is strictly equivalent to '(c count each.property) = 0'",
-			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
-			usages = { @usage ("if the left-hand operand is nil, none_matches throws an error") },
+			value = "Returns true if none of the elements of the left-hand operand make the right-hand operand evaluate to true. 'c none_matches each.property' is strictly equivalent to '(c count each.property) = 0'",
+			comment = "In the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
+			usages = { @usage ("If the left-hand operand is nil, none_matches throws an error."),
+					@usage ("If the left-hand operand is empty, none_matches returns true.")},
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] none_matches (each > 3)",
 					equals = "false"),

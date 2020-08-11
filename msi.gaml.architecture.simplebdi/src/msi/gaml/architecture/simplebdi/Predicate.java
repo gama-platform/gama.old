@@ -286,7 +286,7 @@ public class Predicate implements IValue {
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return name + (values == null ? "" : "," + values) + (agentCause == null ? "" : "," + agentCause)
+		return "predicate(" + name + (values == null ? "" : "," + values) + (agentCause == null ? "" : "," + agentCause)
 				+ "," + is_true +")";
 	}
 

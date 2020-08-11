@@ -32,8 +32,9 @@ public class KmlOp {
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL })
 	@doc (
-			value = "the kml export manager with new geometry: take the following argument: (kml, geometry,linewidth, linecolor,fillcolor, begin date, end date)",
-			see = { "add_3Dmodel", "add_icon", "add_label"})
+			value = "Define the kml export manager with new geometry",
+			see = { "add_3Dmodel", "add_icon", "add_label"},
+			masterDoc = true)
 	@no_test
 	public static GamaKmlExport addShape(final IScope scope, final GamaKmlExport kml, final IShape shape,
 			double lineWidth, GamaColor lineColor, GamaColor fillColor, GamaDate begin, GamaDate end) throws GamaRuntimeException {
@@ -106,8 +107,9 @@ public class KmlOp {
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL })
 	@doc (
-			value = "the kml export manager with new 3D model: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string), begin date, end date)",
-			see = { "add_geometry", "add_icon", "add_label"})
+			value = "the kml export manager with new 3D model: specify the 3D model (collada) to add to the kml",
+			see = { "add_geometry", "add_icon", "add_label"},
+			masterDoc = true)
 	@no_test
 	public static GamaKmlExport add3DModel(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
 			double scale , double orientation, String file, GamaDate begin, GamaDate end) throws GamaRuntimeException {
@@ -121,7 +123,7 @@ public class KmlOp {
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL })
 	@doc (
-			value = "the kml export manager with new 3D model: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string))",
+			value = "Kml export with a 3D model",
 			see = { "add_geometry", "add_icon", "add_label"})
 	@no_test
 	public static GamaKmlExport add3DModel(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
@@ -136,8 +138,9 @@ public class KmlOp {
 			category = IOperatorCategory.LOGIC,
 			concept = { IConcept.LOGICAL })
 	@doc (
-			value = "the kml export manager with new icons: take the following argument: (kml, location (point),orientation (float), scale (float), file_path (string), begin date, end date)",
-			see = { "add_geometry", "add_icon"})
+			value = "Define the kml export manager with new icons",
+			see = { "add_geometry", "add_icon"},
+			masterDoc = true)
 	@no_test
 	public static GamaKmlExport addIcon(final IScope scope, final GamaKmlExport kml, final GamaPoint loc,
 			double scale, double orientation , String file, GamaDate begin, GamaDate end) throws GamaRuntimeException {

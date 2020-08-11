@@ -12,6 +12,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -29,9 +30,10 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new predicate with the given properties (name)",
+			value = "creates a new predicate with a given name and adidtional properties (values, agent causing the predicate, whether it is true...)",
+			masterDoc = true,
 			examples = @example (
-					value = "predicate(\"people to meet\")",
+					value = "new_predicate(\"people to meet\")",
 					isExecutable = false))
 	@no_test
 	public static Predicate newPredicate(final String name) throws GamaRuntimeException {
@@ -46,7 +48,7 @@ public class Operators {
 	@doc (
 			value = "a new predicate with the given properties (name, values)",
 			examples = @example (
-					value = "predicate(\"people to meet\", people1 )",
+					value = "new_predicate(\"people to meet\", map([\"val1\"::23]) )",
 					isExecutable = false))
 	@no_test
 	public static Predicate newPredicate(final String name, final IMap values) throws GamaRuntimeException {
@@ -61,7 +63,7 @@ public class Operators {
 	@doc (
 			value = "a new predicate with the given is_true (name, is_true)",
 			examples = @example (
-					value = "predicate(\"hasWater\", true)",
+					value = "new_predicate(\"hasWater\", true)",
 					isExecutable = false))
 	@no_test
 	public static Predicate newPredicate(final String name, final Boolean ist) throws GamaRuntimeException {
@@ -74,9 +76,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new predicate with the given properties (name, values, lifetime)",
+			value = "a new predicate with the given properties (name, cause agent)",
 			examples = @example (
-					value = "predicate(\"people to meet\", [\"time\"::10], true)",
+					value = "new_predicate(\"people to meet\", agent1)",
 					isExecutable = false))
 	@no_test
 	public static Predicate newPredicate(final String name, final IAgent agent) throws GamaRuntimeException {
@@ -91,7 +93,7 @@ public class Operators {
 	@doc (
 			value = "a new predicate with the given properties (name, values, is_true)",
 			examples = @example (
-					value = "predicate(\"people to meet\", [\"time\"::10], true)",
+					value = "new_predicate(\"people to meet\", [\"time\"::10], true)",
 					isExecutable = false))
 	@no_test
 	public static Predicate newPredicate(final String name, final IMap values, final Boolean truth)
@@ -121,9 +123,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new predicate with the given properties (name, values, 	agentCause)",
+			value = "a new predicate with the given properties (name, values, agentCause)",
 			examples = @example (
-					value = "predicate(\"people to meet\", [\"time\"::10], agentA)",
+					value = "new_predicate(\"people to meet\", [\"time\"::10], agentA)",
 					isExecutable = false))
 	@no_test
 	public static Predicate newPredicate(final String name, final IMap values, final IAgent agent)
@@ -139,7 +141,7 @@ public class Operators {
 	@doc (
 			value = "a new predicate with the given properties (name, values, is_true, agentCause)",
 			examples = @example (
-					value = "predicate(\"people to meet\", [\"time\"::10], true, agentA)",
+					value = "new_predicate(\"people to meet\", [\"time\"::10], true, agentA)",
 					isExecutable = false))
 	@no_test
 	public static Predicate newPredicate(final String name, final IMap values, final Boolean truth, final IAgent agent)
@@ -385,11 +387,12 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name)",
+			value = "a new emotion with the given properties (at least its name, and eventually intensity, parameters...)",
+			masterDoc = true,
 			examples = @example (
-					value = "emotion(\"joy\")",
+					value = "new_emotion(\"joy\")",
 					isExecutable = false))
-	@no_test
+	@test("emotion e <- new_emotion(\"joy\"); assert e.name = \"joy\"; assert e.intensity  = -1.0;")
 	public static Emotion newEmotion(final String name) throws GamaRuntimeException {
 		return new Emotion(name);
 	}
@@ -399,12 +402,12 @@ public class Operators {
 			can_be_const = true,
 			category = { "BDI" },
 			concept = { IConcept.BDI })
-	@doc (
-			value = "a new emotion with the given properties (name, intensity)",
-			examples = @example (
-					value = "emotion(\"joy\",12.3)",
-					isExecutable = false))
-	@no_test
+	@doc ( value = "a new emotion with the given properties (name, intensity)",
+		usages = {
+			@usage(value = "a new emotion with a name and an initial intensity: ",
+				examples = {@example (
+					value = "new_emotion(\"joy\",12.3)",
+					isExecutable = false)})})
 	@test ("get_intensity(new_emotion('joy',12.3)) = 12.3")
 	public static Emotion newEmotion(final String name, final Double intensity) throws GamaRuntimeException {
 		return new Emotion(name, intensity);
@@ -416,10 +419,11 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name,about)",
-			examples = @example (
-					value = "emotion(\"joy\",eatFood)",
-					isExecutable = false))
+			value = "a new emotion with the given properties (name, about)",
+			usages = {
+					@usage(value = "a new emotion with a given name and the predicate it is about ",
+						examples = {@example (value = "new_emotion(\"joy\",estFood)", isExecutable = false),
+								@example (value = "new_emotion(\"joy\",agent1)", isExecutable = false)})})			
 	@no_test
 	public static Emotion newEmotion(final String name, final Predicate about) throws GamaRuntimeException {
 		return new Emotion(name, about);
@@ -431,10 +435,10 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name)",
-			examples = @example (
-					value = "emotion(\"joy\",12.3,eatFood,4)",
-					isExecutable = false))
+			value = "a new emotion with the given properties (name and cause agent)",
+			usages = {
+					@usage(value = "a new emotion with a given name and the agent which has caused this emotion ",
+						examples = {@example (value = "new_emotion(\"joy\",agent1)", isExecutable = false)})})	
 	@no_test
 	public static Emotion newEmotion(final String name, final IAgent agent) throws GamaRuntimeException {
 		return new Emotion(name, agent);
@@ -447,9 +451,13 @@ public class Operators {
 			concept = { IConcept.BDI })
 	@doc (
 			value = "a new emotion with the given properties (name,intensity,about)",
-			examples = @example (
-					value = "emotion(\"joy\",12.3,eatFood)",
-					isExecutable = false))
+			usages = {
+				@usage(value = "Various combinations are possible to create the emotion: (name,intensity,about), (name,about,cause), (name,intensity,cause)... ",
+					examples = {
+						@example (value = "new_emotion(\"joy\",12.3,eatFood)", isExecutable = false),
+						@example (value = "new_emotion(\"joy\",eatFood,agent1)", isExecutable = false),
+						@example (value = "new_emotion(\"joy\",12.3,agent1)", isExecutable = false)
+					})})				
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about)
 			throws GamaRuntimeException {
@@ -463,9 +471,11 @@ public class Operators {
 			concept = { IConcept.BDI })
 	@doc (
 			value = "a new emotion with the given properties (name,intensity,decay)",
-			examples = @example (
-					value = "emotion(\"joy\",12.3,4.0)",
-					isExecutable = false))
+			usages = {
+				@usage(value = "A decay value value can be added to define a new emotion.",
+					examples = {
+						@example (value = "new_emotion(\"joy\",12.3,4.0)", isExecutable = false)
+					})})				
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Double decay)
 			throws GamaRuntimeException {
@@ -478,10 +488,7 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name)",
-			examples = @example (
-					value = "emotion(\"joy\",12.3,eatFood,4)",
-					isExecutable = false))
+			value = "a new emotion with the given properties (name, about, cause agent)")
 	@no_test
 	public static Emotion newEmotion(final String name, final Predicate about, final IAgent agent)
 			throws GamaRuntimeException {
@@ -494,10 +501,7 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name)",
-			examples = @example (
-					value = "emotion(\"joy\",12.3,eatFood,4)",
-					isExecutable = false))
+			value = "a new emotion with the given properties (name,intensity,cause agent)")
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final IAgent agent)
 			throws GamaRuntimeException {
@@ -510,9 +514,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name)",
+			value = "a new emotion with the given properties (name, intensity, about,  decay)",
 			examples = @example (
-					value = "emotion(\"joy\",12.3,eatFood,4)",
+					value = "new_emotion(\"joy\",12.3,eatFood,4.0)",
 					isExecutable = false))
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about,
@@ -526,9 +530,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name)",
+			value = "a new emotion with the given properties (name,intensity, decay, cause agent)",
 			examples = @example (
-					value = "emotion(\"joy\",12.3,eatFood,4)",
+					value = "emotion(\"joy\", 12.3, 4, agent1)",
 					isExecutable = false))
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Double decay, final IAgent agent)
@@ -542,9 +546,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name)",
+			value = "a new emotion with the given properties (name, intensity, about, cause  agent)",
 			examples = @example (
-					value = "emotion(\"joy\",12.3,eatFood,4)",
+					value = "new_emotion(\"joy\",12.3,eatFood,agent1)",
 					isExecutable = false))
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about,
@@ -558,9 +562,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new emotion with the given properties (name)",
+			value = "a new emotion with the given properties (name, intensity, about, decay, cause  agent)",
 			examples = @example (
-					value = "emotion(\"joy\",12.3,eatFood,4)",
+					value = "emotion(\"joy\",12.3,eatFood,4,agent1)",
 					isExecutable = false))
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about,
@@ -576,7 +580,7 @@ public class Operators {
 	@doc (
 			value = "change the agentCause value of the given emotion",
 			examples = @example (
-					value = "emotion set_agent_cause agentA",
+					value = "new_emotion set_agent_cause agentA",
 					isExecutable = false))
 	@no_test
 	public static Emotion withAgentCause(final Emotion emotion, final IAgent agent) throws GamaRuntimeException {
@@ -724,7 +728,8 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new social link",
+			value = "creates a new social link with another agent (eventually given additional parameters such as the appreciation, dominance, solidarity, and familiarity values).",
+			masterDoc = true,
 			examples = @example (
 					value = "new_social_link(agentA)",
 					isExecutable = false))
@@ -739,7 +744,7 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new social link",
+			value = "creates a new social link toward another agent with given appreciation, dominance, solidarity, and familiarity values",
 			examples = @example (
 					value = "new_social_link(agentA,0.0,-0.1,0.2,0.1)",
 					isExecutable = false))
@@ -981,9 +986,10 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "creates a new mental state with a given modality (e.g. belief or desire) and various properties (a predicate it is about, a strength, a lifetime, an ower agent  and an emotion it is about",
+			masterDoc = true,
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\")",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality) throws GamaRuntimeException {
@@ -996,9 +1002,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional predicate",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", raining)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred) throws GamaRuntimeException {
@@ -1011,9 +1017,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional predicate and strength",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", raining, 0.5)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength)
@@ -1027,9 +1033,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional predicate and owner agent",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", raining, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final IAgent ag)
@@ -1043,9 +1049,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional predicate and lifetime",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", raining, 10)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Integer life)
@@ -1059,9 +1065,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional predicate, strength, and owner agent.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", raining, 12.3, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength,
@@ -1075,9 +1081,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional predicate, strength andd lifetime",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", raining, 12.4, 10)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength,
@@ -1091,9 +1097,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional predicate, lifetime, and owner agent.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", raining, 10, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Integer life,
@@ -1107,9 +1113,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional predicate, strength, lifetime and owner agent.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\",raining, 12.3, 10, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Predicate pred, final Double strength,
@@ -1123,9 +1129,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional mental state it is about",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", mental_state1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred)
@@ -1139,9 +1145,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state  with an additional mental state it is about and a strength",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", mental_state1, 12.3)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength)
@@ -1155,9 +1161,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional mental state it is about and the owner  agent",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", mental_state1, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final IAgent ag)
@@ -1171,9 +1177,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional mental state it is about and a lifetime",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", mental_state1, 10)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Integer life)
@@ -1187,9 +1193,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional mental state it is about, a stength, and an owner agent",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", mental_state1, 12.2, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength,
@@ -1203,9 +1209,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional mental state it is about, a stength, and a lifetime.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", mental_state1, 12.3, 10)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength,
@@ -1219,9 +1225,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional mental state it is about, a stength, and an owner agent.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", mental_state1, 10, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Integer life,
@@ -1235,9 +1241,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional mental state it is about, a stength, lifetime, and an owner agent",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", mental_state1, 12.3, 10, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final MentalState pred, final Double strength,
@@ -1252,9 +1258,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional emotion it is about",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", my_joy)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred) throws GamaRuntimeException {
@@ -1267,9 +1273,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional emotion it is about and a strength.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", my_joy, 12.3)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength)
@@ -1283,9 +1289,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional emotion it is about and an owner agent.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", my_joy, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final IAgent ag)
@@ -1299,9 +1305,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional emotion it is about and a lifetime.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\",  my_joy, 10)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Integer life)
@@ -1315,9 +1321,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional emotion it is about, a stength, and an owner agent.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", my_joy, 12.3, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength,
@@ -1331,9 +1337,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional emotion it is about, a strength, and a lifetime.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", my_joy, 12.3, 10)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength,
@@ -1347,9 +1353,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional emotion it is about, a lifetime, and an owner agent.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", my_joy, 10, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Integer life,
@@ -1363,9 +1369,9 @@ public class Operators {
 			category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc (
-			value = "a new mental state",
+			value = "a new mental state with an additional emotion it is about, a strength, a lifetime, and an owner agent.",
 			examples = @example (
-					value = "new_mental-state(belief)",
+					value = "new_mental_state(\"belief\", my_joy, 12.3, 10, agent1)",
 					isExecutable = false))
 	@no_test
 	public static MentalState newMentalState(final String modality, final Emotion pred, final Double strength,

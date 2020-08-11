@@ -395,16 +395,10 @@ public class Dates {
 			concept = { IConcept.DATE })
 	@doc (
 			usages = @usage (
-					value = "returns true if the first operand is between the two dates passed in arguments (both exclusive). The version with 2 arguments compares the current_date with the 2 others",
+					value = "With only 2 date operands, it returns true if the current_date is between the 2 date  operands.",
 					examples = { @example (
-							value = "(date('2016-01-01') between(date('2000-01-01'), date('2020-02-02')))",
-							equals = "true"),
-							@example (
-									value = "// // will return true if the current_date of the model is in_between the 2",
-									isExecutable = false),
-							@example (
-									value = "between(date('2000-01-01'), date('2020-02-02'))",
-									isExecutable = false) }))
+							value = "between(date('2000-01-01'), date('2020-02-02'))",
+							equals = "false") }))
 	@test("starting_date <- date([2019,5,9]);between((date([2019,5,8])), (date([2019,5,10]))) = true")
 	public static boolean between(final IScope scope, final GamaDate date1, final GamaDate date2) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date1, true)
@@ -1016,6 +1010,7 @@ public class Dates {
 			concept = { IConcept.STRING, IConcept.CAST, IConcept.TIME })
 	@doc (
 			value = "converts a string to a date following a custom pattern. The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will parse the date using one of the ISO date & time formats (similar to date('...') in that case). The pattern can also follow the pattern definition found here, which gives much more control over what will be parsed: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns. Different patterns are available by default as constant: #iso_local, #iso_simple, #iso_offset, #iso_zoned and #custom, which can be changed in the preferences ",
+			masterDoc = true,
 			usages = @usage (
 					value = "",
 					examples = @example (
@@ -1034,7 +1029,7 @@ public class Dates {
 	@doc (
 			value = "converts a string to a date following a custom pattern and a specific locale (e.g. 'fr', 'en'...). The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for parsing years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will parse the date using one of the ISO date & time formats (similar to date('...') in that case). The pattern can also follow the pattern definition found here, which gives much more control over what will be parsed: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns. Different patterns are available by default as constant: #iso_local, #iso_simple, #iso_offset, #iso_zoned and #custom, which can be changed in the preferences ",
 			usages = @usage (
-					value = "",
+					value = "In addition to the date and  pattern string operands, a specific locale (e.g. 'fr', 'en'...) can be added.",
 					examples = @example (
 							value = "date d <- date(\"1999-january-30\", 'yyyy-MMMM-dd', 'en');",
 							test = false)))
@@ -1051,16 +1046,15 @@ public class Dates {
 			concept = { IConcept.STRING, IConcept.CAST, IConcept.TIME })
 	@doc (
 			value = "converts a date to astring following a custom pattern. The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will return the complete date as defined by the ISO date & time format. The pattern can also follow the pattern definition found here, which gives much more control over the format of the date: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns. Different patterns are available by default as constants: #iso_local, #iso_simple, #iso_offset, #iso_zoned and #custom, which can be changed in the preferences",
+			masterDoc = true,
 			usages = @usage (
 					value = "",
 					examples = @example (
 							value = "string(#now, 'yyyy-MM-dd')",
 							isExecutable = false)))
-
 	@test ("string(date('2000-01-02'),'yyyy-MM-dd') = '2000-01-02'")
 	@test ("string(date('2000-01-31'),'yyyy-MM-dd') = '2000-01-31'")
 	@test ("string(date('2000-01-02'),'yyyy-MM-dd') = '2000-01-02'")
-
 	public static String format(final GamaDate time, final String pattern) {
 		return format(time, pattern, null);
 	}
@@ -1076,7 +1070,7 @@ public class Dates {
 			usages = @usage (
 					value = "",
 					examples = @example (
-							value = "string(#now, 'yyyy-MM-dd')",
+							value = "string(#now, 'yyyy-MM-dd', 'en')",
 							isExecutable = false)))
 	@test ("string(date('2000-01-02'),'yyyy-MMMM-dd','en') = '2000-January-02'")
 

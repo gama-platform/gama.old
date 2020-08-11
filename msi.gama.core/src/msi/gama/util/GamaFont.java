@@ -146,6 +146,7 @@ public class GamaFont extends Font implements IValue {
 			can_be_const = true)
 	@doc (
 			value = "Creates a new font, by specifying its name (either a font face name like 'Lucida Grande Bold' or 'Helvetica', or a logical name like 'Dialog', 'SansSerif', 'Serif', etc.), a size in points and a style, either #bold, #italic or #plain or a combination (addition) of them.",
+			masterDoc = true,
 			examples = @example (
 					value = "font ('Helvetica Neue',12, #bold + #italic)",
 					equals = "a bold and italic face of the Helvetica Neue family",

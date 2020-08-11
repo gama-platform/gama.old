@@ -511,8 +511,7 @@ public class Maths {
 			category = { IOperatorCategory.ARITHMETIC },
 			concept = {})
 	@doc (
-			value = "returns Euler's number e raised to the power of the operand.",
-			special_cases = "the operand is casted to a float before being evaluated.")
+			value = "returns Euler's number e raised to the power of the operand.")
 	@test ("exp (0) = 1.0")
 	public static Double exp(final Integer rv) {
 		return Math.exp(rv.doubleValue());
@@ -1214,8 +1213,6 @@ public class Maths {
 			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc (
 			value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.",
-			usages = @usage (
-					value = "if the right-hand operand is equal to zero, raises an exception."),
 			examples = @example (
 					value = "40.5 div 3",
 					equals = "13"),
@@ -1232,8 +1229,6 @@ public class Maths {
 			concept = {})
 	@doc (
 			value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.",
-			usages = @usage (
-					value = "if the right-hand operand is equal to zero, raises an exception."),
 			examples = @example (
 					value = "40 div 4.1",
 					equals = "9"))

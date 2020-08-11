@@ -192,6 +192,7 @@ public class Strings {
 			concept = { IConcept.STRING })
 	@doc (
 			value = "Returns a list containing the sub-strings (tokens) of the left-hand operand delimited by each of the characters of the right-hand operand.",
+			masterDoc = true,
 			comment = "Delimiters themselves are excluded from the resulting list.",
 			examples = @example (
 					value = "'to be or not to be,that is the question' split_with ' ,'",
@@ -208,10 +209,10 @@ public class Strings {
 			concept = { IConcept.STRING })
 	@doc (
 			value = "Returns a list containing the sub-strings (tokens) of the left-hand operand delimited either by each of the characters of the right-hand operand (false) or by the whole right-hand operand (true).",
-			comment = "Delimiters themselves are excluded from the resulting list.",
-			examples = @example (
-					value = "'aa::bb:cc' split_with ('::', true)",
-					equals = "['aa','bb:cc']"))
+			usages = @usage(value = "when used  with an  additional boolean operand, it returns a list containing the sub-strings (tokens) of the left-hand operand delimited either by each of the characters of the right-hand operand (false) or by the whole right-hand operand (true)."),
+			examples = {
+					@example (value = "'aa::bb:cc' split_with ('::', true)",equals = "['aa','bb:cc']"),
+					@example (value = "'aa::bb:cc' split_with ('::', false)", equals = "['aa','bb','cc']")})
 	public static IList opTokenize(final IScope scope, final String target, final String pattern,
 			final Boolean completeSep) {
 		if (completeSep) { return GamaListFactory.create(scope, Types.STRING, target.split(pattern)); }

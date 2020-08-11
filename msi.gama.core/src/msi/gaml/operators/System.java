@@ -103,7 +103,8 @@ public class System {
 			value = "command",
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
-	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string. The basic form with only one string in argument uses the directory of the model and does not set any environment variables. Two other forms (with a directory and a map<string, string> of environment variables) are available.")
+	@doc (value = "command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string. The basic form with only one string in argument uses the directory of the model and does not set any environment variables. Two other forms (with a directory and a map<string, string> of environment variables) are available.",
+			masterDoc =  true)
 	@no_test
 	public static String console(final IScope scope, final String s) {
 		return console(scope, s, scope.getSimulation().getExperiment().getWorkingPath());
@@ -248,7 +249,6 @@ public class System {
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
 
-	@SuppressWarnings ("unchecked")
 	@operator (
 			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -279,6 +279,7 @@ public class System {
 			concept = {})
 	@doc (
 			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is to specify the parameters the user can enter",
+			masterDoc = true,
 			examples = {
 					@example ("map<string,unknown> values2 <- user_input('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})]);"),
 					@example (
@@ -291,7 +292,6 @@ public class System {
 				scope.getGui().openUserInputDialog(scope, title, parameters));
 	}
 
-	@SuppressWarnings ("unchecked")
 	@operator (
 			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -348,7 +348,14 @@ public class System {
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			value = IKeyword.ENTER)
 	@doc (
-			value = "Allows the user to enter an int by specifying a title, an initial value, a min, a max and a step value")
+		value = "Allows the user to enter an int by specifying a title, an initial value, a min, a max and a step value",
+		usages =  {
+			@usage(value = "The GUI is then a slider when an init value, a min (int or float), a max (int or float) (and eventually a  step (int or float) ) operands.",
+			examples = {
+				@example(value = "map resMinMax <- user_input([enter(\"Title\",5,0)])", test = false),
+				@example(value = "map resMinMax <- user_input([enter(\"Title\",5,0,10)])", test = false),				
+				@example(value = "map resMMStepFF <- user_input([enter(\"Title\",5,0.1,10.1,0.5)]);", test = false)
+			})})			
 	@no_test
 	public static IParameter enterValue(final IScope scope, final String title, final Integer init, final Integer min,
 			final Integer max, final Integer step) {
@@ -395,7 +402,13 @@ public class System {
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			value = IKeyword.ENTER)
 	@doc (
-			value = "Allows the user to enter a boolean value by specifying a title and an initial value")
+			value = "Allows the user to enter a boolean value by specifying a title and an initial value",
+			usages =  {
+				@usage(value = "When the second operand is the boolean type or a boolean value, the GUI is then a switch",
+				examples = {
+					@example(value = "map<string,unknown> m <- user_input(enter(\"Title\",true));", test = false),
+					@example(value = "map<string,unknown> m2 <- user_input(enter(\"Title\",bool));", test = false)
+				})})
 	@no_test
 	public static IParameter enterValue(final IScope scope, final String title, final Boolean init) {
 		return enterValue(scope, title, Types.BOOL, init);
@@ -406,7 +419,8 @@ public class System {
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			value = IKeyword.ENTER)
 	@doc (
-			value = "Allows the user to enter a string by specifying a title and an initial value")
+		value = "Allows the user to enter a string by specifying a title and an initial value",
+		masterDoc = true)
 	@no_test
 	public static IParameter enterValue(final IScope scope, final String title, final String init) {
 		return enterValue(scope, title, Types.STRING, init);

@@ -240,7 +240,8 @@ public class Files {
 	// 'second_variable' variable."
 	// })
 	@doc (
-			value = "Reads an attribute of the specified agent (left operand). The attribute name is specified by the right operand.",
+			value = "Reads an attribute of the specified agent (or geometry) (left operand). The attribute name is specified by the right operand.",
+			masterDoc = true,
 			usages = { @usage (
 					value = "Reading the attribute of another agent",
 					examples = @example (

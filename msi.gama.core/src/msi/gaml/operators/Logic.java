@@ -63,9 +63,9 @@ public class Logic {
 			see = { "bool", "and", "!" },
 					examples= {
 							@example(value="true or false", equals="true"),
-							@example(value="false or false", equals="false"),
-							@example(value="false or true", equals="true"),
-							@example(value="true or true", equals="true"),
+							@example(value="false or false", equals="false", isTestOnly = true),
+							@example(value="false or true", equals="true", isTestOnly = true),
+							@example(value="true or true", equals="true", isTestOnly = true),
 							@example(" int a <-3 ; int b <- 4; int c <- 7;"),
 							@example(value="((a+b) = c ) or ((a+b) > c )", equals="true"),	
 					})
