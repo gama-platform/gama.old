@@ -300,7 +300,8 @@ public class DocProcessor extends ElementProcessor<doc> {
 			// Operators to be created:
 			// - name_type: converts the parameter into the type name_type
 			final Operator op_type = new Operator(document, tc.getProperCategory("Types"),
-					e.getAnnotation(type.class).concept(), e.getAnnotation(type.class).name());
+					e.getAnnotation(type.class).concept(), e.getAnnotation(type.class).name(), 
+					"casts the operand in a " + e.getAnnotation(type.class).name() + " object.");
 			org.w3c.dom.Element docElt = null;
 		
 			Operands ops = new Operands(document, ((TypeElement) e).getQualifiedName().toString(), "", e.getAnnotation(type.class).name(), "");
