@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toc title="Full Documentation of GAMA 1.8.1">
+	<part name="Introduction to GAMA platform">
+		<subpart file="Home" name="Home"/>
+		<subpart file="WikiOnly/Overview" name="Introduction"/>
+		<subpart file="New-Version-Changes" name="Changes from 1.6.1 to 1.8"/>
+		<subpart file="Next-Version-Goals" name="Moving to 1.9"/>
+	</part>
+	<part name="Install and run GAMA platform">
+		<subpart file="References/PlatformDocumentation" name="Platform"/>
+		<subpart file="References/PlatformDocumentation/InstallationAndLaunching" name="Installation and Launching"/>
+		<subpart file="References/PlatformDocumentation/InstallationAndLaunching/Installation" name="Installation">
+			<chapter file="References/PlatformDocumentation/InstallationAndLaunching/Launching" name="Launching GAMA"/>
+			<chapter file="References/PlatformDocumentation/InstallationAndLaunching/Headless" name="Headless Mode"/>
+			<chapter file="References/PlatformDocumentation/InstallationAndLaunching/Updating" name="Updating GAMA"/>
+			<chapter file="References/PlatformDocumentation/InstallationAndLaunching/InstallingPlugins" name="Installing Plugins"/>
+			<chapter file="References/PlatformDocumentation/InstallationAndLaunching/Troubleshooting" name="Troubleshooting"/>
+		</subpart>
+		<subpart file="References/PlatformDocumentation/WorkspaceProjectsAndModels" name="Workspace, Projects and Models"/>
+		<subpart file="References/PlatformDocumentation/WorkspaceProjectsAndModels/NavigatingWorkspace" name="Navigating in the Workspace">
+			<chapter file="References/PlatformDocumentation/WorkspaceProjectsAndModels/ChangingWorkspace" name="Changing Workspace"/>
+			<chapter file="References/PlatformDocumentation/WorkspaceProjectsAndModels/ImportingModels" name="Importing Models"/>
+		</subpart>
+		<subpart file="References/PlatformDocumentation/EditingModels" name="Editing Models"/>
+		<subpart file="References/PlatformDocumentation/EditingModels/GamlEditorGeneralities" name="GAML Editor (Generalities)">
+			<chapter file="References/PlatformDocumentation/EditingModels/GamlEditorToolbar" name="GAML Editor Tools"/>
+			<chapter file="References/PlatformDocumentation/EditingModels/ValidationOfModels" name="Validation of Models"/>
+		</subpart>
+		<subpart file="References/PlatformDocumentation/RunningExperiments" name="Running Experiments"/>
+		<subpart file="References/PlatformDocumentation/RunningExperiments/LaunchingExperiments" name="Launching Experiments">
+			<chapter file="References/PlatformDocumentation/RunningExperiments/ExperimentsUserInterface" name="Experiments User interface"/>
+			<chapter file="References/PlatformDocumentation/RunningExperiments/MenusAndCommands" name="Controls of experiments"/>
+			<chapter file="References/PlatformDocumentation/RunningExperiments/ParametersView" name="Parameters view"/>
+			<chapter file="References/PlatformDocumentation/RunningExperiments/InspectorsAndMonitors" name="Inspectors and monitors"/>
+			<chapter file="References/PlatformDocumentation/RunningExperiments/Displays" name="Displays"/>
+			<chapter file="References/PlatformDocumentation/RunningExperiments/BatchSpecific" name="Batch Specific UI"/>
+			<chapter file="References/PlatformDocumentation/RunningExperiments/ErrorsView" name="Errors View"/>
+		</subpart>
+		<subpart file="References/PlatformDocumentation/Preferences" name="Preferences"/>
+	</part>
+	<part name="Learn GAML step by step">
+		<subpart file="Tutorials/LearnGAMLStepByStep" name="Learn GAML step by step"/>
+		<subpart file="Tutorials/LearnGAMLStepByStep/Introduction" name="Introduction">
+			<chapter file="Tutorials/LearnGAMLStepByStep/StartWithGAML" name="Start with GAML"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/StartWithGAML/ModelOrganization" name="Organization of a Model"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/StartWithGAML/BasicProgrammingConceptsInGAML" name="Basic programming concepts in GAML"/>
+		</subpart>
+		<subpart file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies" name="Manipulate basic Species"/>
+		<subpart file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/GlobalSpecies" name="Global Species">
+			<chapter file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/RegularSpecies" name="Regular Species"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/DefiningActionsAndBehaviors" name="Defining Actions and Behaviors"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/InteractionBetweenAgents" name="Interaction between Agents"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/AttachingSkills" name="Attaching Skills"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/Inheritance" name="Inheritance"/>
+		</subpart>
+		<subpart file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies" name="Defining Advanced Species">
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/GridSpecies" name="Grid Species"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/GraphSpecies" name="Graph Species"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/MirrorSpecies" name="Mirror Species"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/MultiLevelArchitecture" name="Multi-Level Architecture"/>
+		</subpart>
+		<subpart file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment" name="Defining GUI Experiment">
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningParameters" name="Defining Parameters"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningDisplaysGeneralities" name="Defining Displays Generalities"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningCharts" name="Defining Charts"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/Defining3DDisplays" name="Defining 3D Displays"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningMonitorsAndInspectors" name="Defining Monitors and Inspectors"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningExportFiles" name="Defining Export files"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningUserInteraction" name="Defining User Interaction"/>
+		</subpart>
+		<subpart file="Tutorials/LearnGAMLStepByStep/ExploringModels" name="Exploring Models">
+			<chapter file="Tutorials/LearnGAMLStepByStep/ExploringModels/RunSeveralSimulations" name="Run Several Simulations"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/ExploringModels/BatchExperiments" name="Batch Experiments"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/ExploringModels/ExplorationMethods" name="Exploration Methods"/>
+		</subpart>
+		<subpart file="Tutorials/LearnGAMLStepByStep/OptimizingModelsSection" name="Optimizing Model Section">
+			<chapter file="Tutorials/LearnGAMLStepByStep/OptimizingModels/RuntimeConcepts" name="Runtime Concepts"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/OptimizingModels/OptimizingModels" name="Optimizing Models"/>
+		</subpart>
+		<subpart file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling" name="Multi-Paradigm Modeling">
+			<chapter file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling/ControlArchitecture" name="Control Architecture"/>
+			<chapter file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling/Equations" name="Defining Equations"/>
+		</subpart>
+		<subpart file="Pedagogical-Materials" name="Pedagogical materials"/>		
+	</part>
+	<part name="GAML recipes">
+		<subpart file="Tutorials/Recipes" name="Recipes"/>
+		<subpart file="Tutorials/Recipes/ManipulateOSMDatas" name="Manipulate OSM Data"/>
+		<subpart file="Tutorials/Recipes/Diffusion" name="Diffusion"/>
+		<subpart file="Tutorials/Recipes/UsingDatabase" name="Using Database"/>
+		<subpart file="Tutorials/Recipes/CallingR" name="Calling R"/>
+		<subpart file="Tutorials/Recipes/UsingFIPAACL" name="Using FIPA ACL"/>
+		<subpart file="Tutorials/Recipes/GamAnalyzer" name="Using GamAnalyzer"/>
+		<subpart file="Tutorials/Recipes/Using-BEN-simple-bdi" name="Using BDI with BEN"/>
+		<subpart file="Tutorials/Recipes/UsingDrivingSkill" name="Using Driving Skill"/>
+		<subpart file="Tutorials/Recipes/ManipulateDates" name="Manipulate dates"/>
+		<subpart file="Tutorials/Recipes/ManipulateLight" name="Manipulate lights"/>
+		<subpart file="Tutorials/Recipes/Comodel" name="Using comodel"/>
+		<subpart file="Save-and-restore-simulations" name="Save and restore Simulations"/>
+		<subpart file="Tutorials/Recipes/UsingNetwork" name="Using network"/>
+		<subpart file="Headless-mode-for-dummies" name="Headless mode"/>
+		<subpart file="G__GraphicalEditor" name="Using Graphical Editor"/>
+		<subpart file="Tutorials/Recipes/Using_Git" name="Using Git from GAMA"/>
+		<subpart file="Writing_Tests" name="Writing Unit Tests"/>
+		<subpart file="Tutorials/Recipes/FAQ" name="FAQ"/>
+		<subpart file="Tutorials/Recipes/KnownIssues" name="Known Issues"/>
+	</part>
+	<part name="GAML References">
+		<subpart file="GamlReference" name="GAML References"/>
+		<subpart file="References/GAMLReferences/BuiltInSpecies" name="Built-in Species">
+			<chapter file="References/GAMLReferences/ModelBuiltIn" name="Model Built-in"/>
+		</subpart>
+		<subpart file="References/GAMLReferences/BuiltInSkills" name="Built-in Skills"/>
+		<subpart file="References/GAMLReferences/BuiltInArchitectures" name="Built-in Architecture"/>
+		<subpart file="References/GAMLReferences/Statements" name="Statements"/>
+		<subpart file="References/GAMLReferences/DataTypes" name="Data Type"/>
+		<subpart file="References/GAMLReferences/FileTypes" name="File Type"/>
+		<subpart file="References/GAMLReferences/Expressions" name="Expressions">
+			<chapter file="References/GAMLReferences/Literals" name="Literals"/>
+			<chapter file="References/GAMLReferences/UnitsAndConstants" name="Units and Constants"/>
+			<chapter file="References/GAMLReferences/PseudoVariables" name="Pseudo Variables"/>
+			<chapter file="References/GAMLReferences/VariablesAndAttributes" name="Variables And Attributes"/>
+			<chapter file="References/GAMLReferences/Operators" name="Operators"/>
+		</subpart>
+		<subpart file="Index" name="Index"/>
+	</part>
+	<part name="Develop and extend GAMA platform">
+		<subpart file="Extensions" name="Extensions"/>
+		<subpart file="WikiOnly/DevelopingExtensions" name="Developing Extensions"/>
+		<subpart file="WikiOnly/DevelopingExtensions/InstallingGitVersion" name="Installing the GIT version">
+			<chapter file="WikiOnly/DevelopingExtensions/GamaArchitecture" name="Architecture of GAMA"/>
+			<chapter file="WikiOnly/DevelopingExtensions/DevelopingPlugins" name="Developing a Plugin"/>
+			<chapter file="WikiOnly/DevelopingExtensions/DevelopingSkills" name="Developing a Skill"/>
+			<chapter file="WikiOnly/DevelopingExtensions/DevelopingStatements" name="Developing a Statement"/>
+			<chapter file="WikiOnly/DevelopingExtensions/DevelopingOperators" name="Developing an Operator"/>
+			<chapter file="WikiOnly/DevelopingExtensions/DevelopingTypes" name="Developing a Type"/>
+			<chapter file="WikiOnly/DevelopingExtensions/DevelopingSpecies" name="Developing a Species"/>
+			<chapter file="WikiOnly/DevelopingExtensions/DevelopingControlArchitectures" name="Developing a Control Architecture"/>
+			<chapter file="WikiOnly/DevelopingExtensions/DevelopingIndexAnnotations" name="Index of annotations"/>
+		</subpart>
+		<subpart file="developingGAMA" name="Developing GAMA"/>
+		<subpart file="Introduction-To-Gama-Java-API" name="Introduction to GAMA Java API"/>
+		<subpart file="WikiOnly/DevelopingExtensions/DevelopingIScope" name="IScope"/>
+		<subpart file="CreatingAReleaseOfGama" name="Creating a release of GAMA"/>
+		<subpart file="WikiOnly/DevelopingExtensions/Documentation" name="Documentation generation"/>
+		<subpart file="WikiOnly/DevelopingExtensions/WebsiteGeneration" name="Website generation"/>		
+	</part>
+	<part name="Scientific References">
+		<subpart file="WikiOnly/References" name="Scientific References"/>
+		<subpart file="Community/Projects" name="Projects using GAMA"/>		
+	</part>
+</toc>
