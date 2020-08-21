@@ -600,13 +600,10 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "rectangle({10, 5})",
 						equals = "a geometry as a rectangle with width = 10 and height = 5.",
-						test = false),
-						@example (
-								value = "rectangle({10, 5}).area",
-								equals = "50.0",
-								returnType = "float", isTestOnly = true) },
+						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
+		@test("rectangle({10, 5}).area = 50.0")
 		public static IShape rectangle(final IScope scope, final GamaPoint p) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -627,13 +624,10 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "rectangle(10, 5)",
 						equals = "a geometry as a rectangle with width = 10 and height = 5.",
-						test = false),
-						@example (
-								value = "rectangle(10, 5).area",
-								equals = "50.0",
-								returnType = "float", isTestOnly = true) },
+						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
+		@test("rectangle(10, 5).area = 50.0")
 		public static IShape rectangle(final IScope scope, final double x, final double y) {
 			ILocation location;
 			final IAgent a = scope.getAgent();
@@ -650,13 +644,10 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "rectangle({0.0,0.0}, {10.0,10.0})",
 						equals = "a geometry as a rectangle with {1.0,1.0} as the upper-left corner, {10.0,10.0} as the lower-right corner.",
-						test = false),
-						@example (
-								value = "rectangle({0.0,0.0}, {10.0,10.0}).area",
-								equals = "100.0",
-								returnType = "float", isTestOnly = true) },
+						test = false) },
 				see = { "around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "square",
 						"triangle" })
+		@test("rectangle({0.0,0.0}, {10.0,10.0}).area = 100.0")
 		public static IShape rectangle(final IScope scope, final GamaPoint upperLeftCorner,
 				final GamaPoint lowerRightCorner) {
 			ILocation location;
@@ -3891,29 +3882,15 @@ public abstract class Spatial {
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {25,25}",
 								equals = "false"),
 						@example (
-								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}])",
-								equals = "false",  isTestOnly = true),
-						@example (
 								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polyline([{10,10},{20,20}])",
 								equals = "false")
-//						@example (
-//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {15,15}",
-//								equals = "false"),
-//						@example (
-//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}])",
-//								equals = "false"),
-//						@example (
-//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}])",
-//								equals = "true"),
-//						@example (
-//								value = "polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}])",
-//								equals = "false") 
 						},
 				see = { "disjoint_from", "crosses", "overlaps", "intersects", "touches" })
 		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{0,0},{0,30},{30,30}, {30,0}]) =  false")
 		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{15,15},{15,25},{25,25},{25,15}])")
 		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) = false")
 		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {15,15} = false")
+		@test("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) = false")
 		public static Boolean partially_overlaps(final IShape g1, final IShape g) {
 			if (g == null) { return false; }
 			return g1.getInnerGeometry().overlaps(g.getInnerGeometry());

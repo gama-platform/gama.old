@@ -15,6 +15,7 @@ import java.util.Objects;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
@@ -63,12 +64,12 @@ public class Logic {
 			see = { "bool", "and", "!" },
 					examples= {
 							@example(value="true or false", equals="true"),
-							@example(value="false or false", equals="false", isTestOnly = true),
-							@example(value="false or true", equals="true", isTestOnly = true),
-							@example(value="true or true", equals="true", isTestOnly = true),
 							@example(" int a <-3 ; int b <- 4; int c <- 7;"),
 							@example(value="((a+b) = c ) or ((a+b) > c )", equals="true"),	
 					})
+	@test("false or false = false")
+	@test("false or true")
+	@test("true or true")
 	public static Boolean or(final IScope scope, final Boolean left, final IExpression right)
 			throws GamaRuntimeException {
 		return left != null && left || right != null && Cast.asBool(scope, right.value(scope));

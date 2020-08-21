@@ -1146,13 +1146,13 @@ public class Containers {
 											equals = "(5::6)") }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] last_with (each > 3)",
-					equals = "8"),
+					equals = "8",  returnType = IKeyword.INT),
 					@example (
 							value = "graph g2 <- graph([]);",
 							isTestOnly = true),
 					@example (
 							value = "g2 last_with (length(g2 out_edges_of each) = 0 )",
-							equals = "node11",
+							equals = "a node",
 							isExecutable = false),
 					@example (
 							value = "(list(node) last_with (round(node(each).location.x) > 32)",
@@ -1180,10 +1180,10 @@ public class Containers {
 							value = "if the left-operand is a map, the keyword each will contain each value",
 							examples = { @example (
 									value = "[1::2, 3::4, 5::6] first_with (each >= 4)",
-									equals = "4"),
+									equals = "4", returnType = IKeyword.INT),
 									@example (
 											value = "[1::2, 3::4, 5::6].pairs first_with (each.value >= 4)",
-											equals = "(3::4)") }) },
+											equals = "(3::4)", returnType = IKeyword.PAIR) }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] first_with (each > 3)",
 					equals = "4"),

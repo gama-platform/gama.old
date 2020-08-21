@@ -373,29 +373,14 @@ public class Cast {
 							value = "to_gaml(3.78)",
 							equals = "'3.78'"),
 					@example (
-							value = "to_gaml(true)",
-							equals = "'true'", isTestOnly = true),
-					@example (
 							value = "to_gaml({23, 4.0})",
 							equals = "'{23.0,4.0,0.0}'"),
-					@example (
-							value = "to_gaml(5::34)",
-							equals = "'5::34'", isTestOnly = true),
 					@example (
 							value = "to_gaml(rgb(255,0,125))",
 							equals = "'rgb (255, 0, 125,255)'"),
 					@example (
 							value = "to_gaml('hello')",
 							equals = "\"'hello'\""),
-					@example (
-							value = "to_gaml([1,5,9,3])",
-							equals = "'[1,5,9,3]'", isTestOnly = true),
-					@example (
-							value = "to_gaml(['a'::345, 'b'::13, 'c'::12])",
-							equals = "\"map([\'a\'::345,\'b\'::13,\'c\'::12])\"", isTestOnly = true),
-					@example (
-							value = "to_gaml([[3,5,7,9],[2,4,6,8]])",
-							equals = "'[[3,5,7,9],[2,4,6,8]]'", isTestOnly = true),
 					@example (
 							value = "to_gaml(a_graph)",
 							equals = "([((1 as node)::(3 as node))::(5 as edge),((0 as node)::(3 as node))::(3 as edge),((1 as node)::(2 as node))::(1 as edge),((0 as node)::(2 as node))::(2 as edge),((0 as node)::(1 as node))::(0 as edge),((2 as node)::(3 as node))::(4 as edge)] as map ) as graph",
@@ -405,6 +390,11 @@ public class Cast {
 							equals = " 1 as node",
 							isExecutable = false) },
 			see = {})
+	@test("to_gaml(true) = 'true'")
+	@test("to_gaml(5::34) = '5::34'")
+	@test("to_gaml([1,5,9,3]) = '[1,5,9,3]'")
+	@test("to_gaml(['a'::345, 'b'::13, 'c'::12]) = \"map([\'a\'::345,\'b\'::13,\'c\'::12])\"")
+	@test("to_gaml([[3,5,7,9],[2,4,6,8]]) = '[[3,5,7,9],[2,4,6,8]]'")
 	public static String toGaml(final Object val) {
 		return StringUtils.toGaml(val, false);
 	}

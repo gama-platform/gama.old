@@ -133,11 +133,7 @@ public class Maths {
 							equals = "10"),
 							@example (
 									value = "abs (10)",
-									equals = "10"),
-							@example (
-									value = "abs (-0)",
-									equals = "0",
-									isTestOnly = true) }) })
+									equals = "10") }) })
 	@test ("abs(1) = 1")
 	@test ("abs(-2) = 2")
 	@test ("abs(0) = 0")

@@ -247,12 +247,7 @@ public class Colors {
 			examples = { @example (
 					value = "rgb (255,0,0,125)",
 					equals = "a light red color",
-					test = false),
-					@example (
-							value = "rgb (255,0,0,125).alpha",
-							equals = "125",
-							returnType = IKeyword.INT,
-							isTestOnly = true) },
+					test = false) },
 			see = "hsb")
 	@test ("rgb (255,0,0,125).alpha = 125")
 	public static GamaColor rgb(final int r, final int g, final int b, final int alpha) {
@@ -342,12 +337,10 @@ public class Colors {
 					value = "grayscale (rgb(255,0,0))",
 					equals = "to a dark grey",
 					isExecutable = false),
-					@example (
-							value = "grayscale (rgb(255,0,0))",
-							equals = "rgb(76,76,76)",
-							isTestOnly = true) },
+			},
 			see = { "rgb", "hsb" })
 	@test ("int(grayscale (rgb(255,0,0))) = -11776948")
+	@test("grayscale (rgb(255,0,0)) = rgb(76,76,76)")
 	public static GamaColor grayscale(final GamaColor c) {
 		final int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
@@ -402,10 +395,6 @@ public class Colors {
 			value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1",
 			masterDoc = true,
 			examples = { @example (
-					value = "blend(#red, #blue, 0.3)",
-					equals = "rgb(76,0,178)",
-					isTestOnly = true),
-					@example (
 							value = "blend(#red, #blue, 0.3)",
 							equals = "to a color between the purple and the blue",
 							isExecutable = false) },
@@ -427,10 +416,6 @@ public class Colors {
 			usages = @usage (
 					value = "If the ratio is omitted, an even blend is done",
 					examples = { @example (
-							value = "blend(#red, #blue)",
-							equals = "rgb(127,0,127)",
-							isTestOnly = true),
-							@example (
 									value = "blend(#red, #blue)",
 									equals = "to a color very close to the purple",
 									isExecutable = false) }),
