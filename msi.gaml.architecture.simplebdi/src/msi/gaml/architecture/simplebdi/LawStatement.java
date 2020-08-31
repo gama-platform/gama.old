@@ -138,6 +138,10 @@ public class LawStatement extends AbstractStatement{
 		return parallel;
 	}
 	
+	public IExpression getThreshold() {
+		return threshold;
+	}
+	
 	public LawStatement(IDescription desc) {
 		super(desc);
 		when = getFacet(IKeyword.WHEN);

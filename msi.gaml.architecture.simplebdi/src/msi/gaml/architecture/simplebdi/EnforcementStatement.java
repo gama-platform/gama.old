@@ -156,7 +156,7 @@ public class EnforcementStatement extends AbstractStatement {
 				// Les sanctions et rewards seront ici appliquées dans le cadre de l'agent controlé car directe
 				final MentalState tempObligation = new MentalState("obligation", (Predicate) obligation.value(scope));
 				if (SimpleBdiArchitecture.hasObligation(scope, tempObligation)) {
-					// si ma norme en cours répond à l'iobligation , reward, sinon punition.
+					// si ma norme en cours répond à l'obligation , reward, sinon punition.
 					Norm tempNorm = null;// new Norm ((NormStatement)scope.getAgent().getAttribute("CURRENT_NORM"));
 					for (final Norm testNorm : SimpleBdiArchitecture.getNorms(scope)) {
 						if (testNorm.getObligation(scope) != null
@@ -215,6 +215,8 @@ public class EnforcementStatement extends AbstractStatement {
 			if (law != null) {
 				// on recherche la norme avec le même nom chez l'autre et on regarde si elle est violée
 				LawStatement lawToTest = null;
+				Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
+				Boolean isViolated = true;
 				// Améliorable en temps de calcul
 				for (final LawStatement tempLaw : SimpleBdiArchitecture.getLaws(scope)) {
 					if (tempLaw.getName().equals(law.value(scopeMySelf))) {
@@ -232,6 +234,10 @@ public class EnforcementStatement extends AbstractStatement {
 									|| lawToTest.getObligationExpression().value(scope) == null
 									|| SimpleBdiArchitecture.hasObligation(scope, new MentalState("Obligation",
 											(Predicate) lawToTest.getObligationExpression().value(scope)))) {
+								if(lawToTest.getThreshold() == null
+										|| lawToTest.getThreshold().value(scope) == null
+										|| obedienceValue>= (Double) lawToTest.getThreshold().value(scope)) {
+									isViolated = false;
 								if (reward != null) {
 									Sanction rewardToExecute = null;
 									// Améliorable en temps de calcul
@@ -244,7 +250,10 @@ public class EnforcementStatement extends AbstractStatement {
 										retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 									}
 								}
-							} else {
+							} 
+						}
+					} 
+					} if(isViolated) {
 								if (sanction != null) {
 									Sanction sanctionToExecute = null;
 									// Améliorable en temps de calcul
@@ -259,10 +268,9 @@ public class EnforcementStatement extends AbstractStatement {
 									}
 								}
 							}
-						}
-					}
 				}
 			}
+		
 			GAMA.releaseScope(scopeMySelf);
 		}
 		return retour;
