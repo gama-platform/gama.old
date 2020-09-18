@@ -71,6 +71,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Spatial;
+import msi.gaml.operators.Spatial.Projections;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
@@ -235,19 +236,34 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		this.optimizer = optimizer;
 		this.nbBands = gfiles.size();
 		bands = new ArrayList<>();
+		
+		String initCRS = new ArrayList<>(gfile.getGis(scope).getInitialCRS(scope).getIdentifiers()).get(0).toString();
+		List<String> crsF = new ArrayList<>();
+		
+		for (int j = 1; j < gfiles.size(); j++) { 
+			crsF.add(new ArrayList<>(gfiles.get(j).getGis(scope).getInitialCRS(scope).getIdentifiers()).get(0).toString());
+		}
 		for (int i = 0; i < size; i++) {
 			final IShape g = gfile.get(scope, i);
 			final Double val = (Double) g.getAttribute("grid_value");
+			final IList vals = GamaListFactory.create(Types.FLOAT);
 			if (val != null) {
 				gridValue[i] = val;
 			}
-			final IList vals = GamaListFactory.create(Types.FLOAT);
-			for (final GamaGridFile gfile2 : gfiles) {
-				final Double v = gfile2.valueOf(scope, g.getLocation());
+			vals.add(val);
+			for (int j = 1; j < gfiles.size(); j++) { 
+				final GamaGridFile gfile2 = gfiles.get(j);
+				String taCRS = crsF.get(j - 1);
+				ILocation loc = g.getLocation(); 
+				if (initCRS != null && taCRS != null) {
+					IShape s = Projections.transform_CRS(scope, loc, initCRS,taCRS);
+					if (s != null) loc = s.getLocation();
+				}
+				final Double v = gfile2.valueOf(scope, loc);
 				vals.add(v);
 			}
 			bands.add(vals);
-
+		//	System.out.println("vals: " + vals);
 			// WARNING A bit overkill as we only use the GamaGisGeometry for its
 			// attribute...
 			// matrix[i] = g;

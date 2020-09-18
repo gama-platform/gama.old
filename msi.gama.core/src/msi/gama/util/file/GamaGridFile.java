@@ -18,6 +18,7 @@ import java.io.InputStream;
 // ArcGridReader still requires input streams
 import java.io.StringBufferInputStream;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -48,6 +49,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Spatial.Projections;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -449,10 +451,9 @@ public class GamaGridFile extends GamaGisFile {
 		if (getBuffer() == null) {
 			fillBuffer(scope);
 		}
-
 		Object vals = null;
 		try {
-			vals = coverage.evaluate(new DirectPosition2D(loc.getX(), loc.getY()));
+			vals = coverage.evaluate(new DirectPosition2D(loc.getLocation().getX(), loc.getLocation().getY()));
 		} catch (final Exception e) {
 			vals = reader.noData.doubleValue();
 		}
