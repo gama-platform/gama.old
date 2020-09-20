@@ -277,6 +277,11 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	@Override
 	public void mergeWith(final Compound comp) {
 		final CompoundSpatialIndex other = (CompoundSpatialIndex) comp;
+		if(null==other) return;
+		if(null==other.spatialIndexes) { 
+			other.spatialIndexes = GamaMapFactory.create();  
+//			return;
+		}
 		other.spatialIndexes.forEach((species, index) -> {
 			if (index != other.rootIndex) {
 				add(index, species);
