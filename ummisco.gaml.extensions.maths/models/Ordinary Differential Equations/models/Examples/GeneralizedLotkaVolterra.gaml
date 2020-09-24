@@ -87,7 +87,7 @@ species animal{
 	
 
 	equation dynamics simultaneously: [animal]{ 
-		diff(pop,t) = r*pop * (1 - pop/k + sum(positive_species collect(interaction_coef[each]*each.pop/k)) - sum(negative_species collect(interaction_coef[each]*each.pop/k)));		
+		diff(pop,t) = r*pop * (1 - pop/k + sum((positive_species where (!dead(each))) collect(interaction_coef[each]*each.pop/k)) - sum((negative_species where (!dead(each))) collect(interaction_coef[each]*each.pop/k)));		
         }
         
  
