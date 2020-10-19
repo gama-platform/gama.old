@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;
@@ -90,10 +91,16 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected abstract CoordinateReferenceSystem getOwnCRS(IScope scope);
 
 	protected void computeProjection(final IScope scope, final Envelope3D env) {
-		if (scope == null) { return; }
+		if (scope == null) {
+			return;
+		}
 		final CoordinateReferenceSystem crs = getExistingCRS(scope);
-		final ProjectionFactory pf =
-				scope.getSimulation() == null ? new ProjectionFactory() : scope.getSimulation().getProjectionFactory();
+		final ProjectionFactory pf;
+		if (scope.getSimulation().isMicroSimulation()) {
+			pf=((IExperimentAgent)scope.getExperiment().getPopulation().getHost()).getSimulation().getProjectionFactory();
+		} else {
+			pf = scope.getSimulation() == null ? new ProjectionFactory() : scope.getSimulation().getProjectionFactory();
+		}
 		gis = pf.fromCRS(scope, crs, env);
 	}
 
@@ -123,7 +130,9 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	protected static boolean hasNullElements(final Object[] array) {
 		for (final Object element : array) {
-			if (element == null) { return true; }
+			if (element == null) {
+				return true;
+			}
 		}
 		return false;
 	}

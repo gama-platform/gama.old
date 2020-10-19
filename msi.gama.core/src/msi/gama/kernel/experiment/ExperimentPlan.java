@@ -278,11 +278,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 
 		@Override
-		public IMacroAgent getHost() {
-			return null;
-		}
-
-		@Override
 		public void computeTopology(final IScope scope) throws GamaRuntimeException {
 			topology = new AmorphousTopology();
 		}

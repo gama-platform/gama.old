@@ -596,6 +596,11 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public IMacroAgent getHost() {
 		return host;
 	}
+	
+	@Override
+	public void setHost(IMacroAgent agt) {
+		host=agt;
+	}
 	//
 	// @Override
 	// public Iterator<T> iterator() {

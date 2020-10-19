@@ -504,6 +504,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// hqnghi in case of creating experiment of micro-models, we must
 		// implicitely initialize it and its simulation output
 		if (population instanceof ExperimentPopulation) {
+			population.setHost(scope.getExperiment());
 			for (final IAgent a : population) {
 				((ExperimentAgent) a)._init_(scope);
 				final SimulationAgent sim = ((ExperimentAgent) a).getSimulation();

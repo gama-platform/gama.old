@@ -143,6 +143,13 @@ public interface IPopulation<T extends IAgent>
 	 * @return
 	 */
 	IMacroAgent getHost();
+	
+	/**
+	 * Set the macro-agent hosting this population.
+	 *
+	 * @return
+	 */
+	void setHost(IMacroAgent agt);
 
 	/**
 	 * @throws GamaRuntimeException

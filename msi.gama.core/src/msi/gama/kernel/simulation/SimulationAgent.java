@@ -367,7 +367,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	}
 
-	private boolean isMicroSimulation() {
+	public boolean isMicroSimulation() {
 		return getSpecies().getDescription().belongsToAMicroModel();
 	}
 
