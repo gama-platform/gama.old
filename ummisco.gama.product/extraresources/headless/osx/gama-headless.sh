@@ -19,7 +19,7 @@ echo "* GAMA version 1.8.1                                             *"
 echo "* http://gama-platform.org                                       *"
 echo "* (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
-passWork=.work$RANDOM
+passWork=.gama_headless-workspace-$(find ./ -maxdepth 1 -name ".gama_headless-workspace-*" | wc -l)
 
 if ! java -cp "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx$memory -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork "$@"; then
     echo "Error in you command, here's the log :"
