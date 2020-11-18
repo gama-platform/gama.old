@@ -14,9 +14,11 @@ package msi.gama.headless.job;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.DataType;
-import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.model.IModel; 
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.types.GamaFileType;
 import msi.gaml.types.IType;
 
 public class Parameter {
@@ -41,7 +43,10 @@ public class Parameter {
 		final String name = paramDesc.getLitteral(IKeyword.NAME);
 		final String varName = paramDesc.getLitteral(IKeyword.VAR);
 		final IExpression exp = paramDesc.getFacetExpr(IKeyword.INIT);
-		final Object val = exp.isConst() ? exp.getConstValue() : exp.serialize(true);
+		Object val = exp.isConst() ? exp.getConstValue() : exp.serialize(true);
+		if(exp.getGamlType().getParent() instanceof GamaFileType) {
+			val=((BinaryOperator)exp).arg(0);
+		}
 		final Parameter res = new Parameter(name, varName, val, translate(paramDesc.getGamlType().id()));
 		return res;
 	}
