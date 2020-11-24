@@ -70,7 +70,6 @@
       </win>
    </launcher>
 
-
    <vm>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
    </vm>
@@ -262,10 +261,6 @@
 
    <features>
       <feature id="ummisco.gama.feature.dependencies"/>
-      <feature id="org.eclipse.equinox.p2.core.feature"/>
-      <feature id="org.eclipse.equinox.p2.extras.feature"/>
-      <feature id="org.eclipse.equinox.p2.rcp.feature"/>
-      <feature id="org.eclipse.equinox.p2.user.ui"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.8.1.qualifier"/>
       <feature id="ummisco.gama.feature.core.ui" version="1.8.1.qualifier"/>
       <feature id="ummisco.gama.feature.core" version="1.8.1.qualifier"/>

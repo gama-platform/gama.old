@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.misc.TextMatcher;
 
 @SuppressWarnings ({ "rawtypes" })
 public class BoxProviderImpl implements IBoxProvider {
@@ -164,10 +165,10 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	class Matcher {
 
-		org.eclipse.ui.internal.misc.StringMatcher m;
+		TextMatcher m;
 
 		Matcher(final String pattern) {
-			m = new org.eclipse.ui.internal.misc.StringMatcher(pattern, true, false);
+			m = new TextMatcher(pattern, true, false);
 		}
 
 		boolean matches(final String text) {
