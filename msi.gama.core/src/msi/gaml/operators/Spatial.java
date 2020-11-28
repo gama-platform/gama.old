@@ -1744,7 +1744,7 @@ public abstract class Spatial {
 				}
 				final LinearRing[] lrs = new LinearRing[((Polygon) geometry).getNumInteriorRing()];
 				for (int i = 0; i < lrs.length; i++) {
-					lrs[i] = (LinearRing) ((Polygon) geometry).getInteriorRingN(i);
+					lrs[i] = ((Polygon) geometry).getInteriorRingN(i);
 				}
 				final Geometry g = GeometryUtils.GEOMETRY_FACTORY
 						.createPolygon(GeometryUtils.GEOMETRY_FACTORY.createLinearRing(coord), lrs);

@@ -62,7 +62,7 @@ public class GeometryCache {
 			.010718, .04, .018716, .028577, .028577, .018716, .04, .010718, .052638, .004825, .066108, .001215, .08,
 			0 };
 
-	static DoubleBuffer db = (DoubleBuffer) Buffers.newDirectDoubleBuffer(roundRect.length).put(roundRect).rewind();
+	static DoubleBuffer db = Buffers.newDirectDoubleBuffer(roundRect.length).put(roundRect).rewind();
 
 	public static class BuiltInGeometry {
 		Integer bottom, top, faces;
