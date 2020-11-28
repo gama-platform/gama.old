@@ -20,8 +20,8 @@ import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
 import java.awt.Color;
 
 import com.jogamp.opengl.util.gl2.GLUT;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;

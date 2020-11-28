@@ -10,9 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequenceFactory;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
@@ -21,7 +21,7 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 	/**
 	 * Method create()
 	 * 
-	 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.Coordinate[])
+	 * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(org.locationtech.jts.geom.Coordinate[])
 	 */
 	@Override
 	public ICoordinates create(final Coordinate[] coordinates) {
@@ -37,7 +37,7 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 	/**
 	 * Method create()
 	 * 
-	 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.CoordinateSequence)
+	 * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(org.locationtech.jts.geom.CoordinateSequence)
 	 */
 	@Override
 	public ICoordinates create(final CoordinateSequence coordSeq) {
@@ -49,7 +49,7 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 	/**
 	 * Method create()
 	 * 
-	 * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(int, int)
+	 * @see org.locationtech.jts.geom.CoordinateSequenceFactory#create(int, int)
 	 */
 	@Override
 	public ICoordinates create(final int size, final int dimension) {

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.common.primitives.Ints;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.BiConsumerWithPruning;
@@ -149,7 +149,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
+	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(org.locationtech.jts.geom.Geometry)
 	 */
 	@Override
 	public void setInnerGeometry(final Geometry geom) {

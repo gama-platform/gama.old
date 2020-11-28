@@ -16,7 +16,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import com.jogamp.opengl.GL2;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IKeyword;

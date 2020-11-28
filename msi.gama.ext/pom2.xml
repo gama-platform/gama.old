@@ -63,7 +63,7 @@
 	    <version>0.7-RC2</version>
 	    <exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -156,7 +156,7 @@
 		<version>${jt.version}</version>
 		<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -167,7 +167,7 @@
 		<version>${jt.version}</version>
 		<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -178,7 +178,7 @@
 		<version>${jt.version}</version>
 		<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -189,7 +189,7 @@
 		<version>${jt.version}</version>
 		<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -200,7 +200,7 @@
 		<version>${jt.version}</version>
 		<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -211,7 +211,7 @@
 		<version>${jt.version}</version>
 		<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -341,7 +341,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -352,7 +352,7 @@
 		 <version>${geotools.version}</version>
 		 <exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -363,7 +363,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -374,7 +374,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -385,7 +385,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -396,7 +396,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -407,7 +407,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -418,7 +418,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -429,7 +429,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -440,7 +440,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -451,7 +451,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -462,7 +462,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -473,7 +473,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -484,7 +484,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -495,7 +495,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -506,7 +506,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -517,7 +517,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -528,7 +528,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -539,7 +539,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -550,7 +550,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -561,7 +561,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -572,7 +572,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -583,7 +583,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -594,7 +594,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -605,7 +605,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -616,7 +616,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -627,7 +627,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -638,7 +638,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -649,7 +649,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -660,7 +660,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  		<exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  		</exclusion>
 	  	</exclusions>
@@ -671,7 +671,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -682,7 +682,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -693,7 +693,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -704,7 +704,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -715,7 +715,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -726,7 +726,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -737,7 +737,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -748,7 +748,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -759,7 +759,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -770,7 +770,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -781,7 +781,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -792,7 +792,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -804,7 +804,7 @@
          <version>${geotools.version}</version>
          <exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	 </exclusions>
@@ -816,7 +816,7 @@
   		<version>${geotools.version}</version>
   		<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	 </exclusions>
@@ -827,7 +827,7 @@
 	    <version>${geotools.version}</version>
   		<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	  <exclusion>
@@ -846,7 +846,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -857,7 +857,7 @@
 	  	<version>${geotools.version}</version>
 	  	<exclusions>
 	  	  <exclusion>
-	  		 <groupId>com.vividsolutions</groupId>
+	  		 <groupId>org.locationtech</groupId>
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	</exclusions>
@@ -908,7 +908,7 @@
 	  
 	  <!--  jts dependencies : current version in properties -->
 	  <dependency>
-		<groupId>com.vividsolutions</groupId>
+		<groupId>org.locationtech</groupId>
 		<artifactId>jts-core</artifactId>
 		<version>${jts.version}</version>
 	  </dependency>

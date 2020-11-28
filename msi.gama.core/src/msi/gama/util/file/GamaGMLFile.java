@@ -16,17 +16,14 @@ import java.io.IOException;
 
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.DefaultFeatureCollection;
-import org.geotools.gml.GMLFilterDocument;
-import org.geotools.gml.GMLFilterFeature;
-import org.geotools.gml.GMLFilterGeometry;
-import org.geotools.gml.GMLReceiver;
+import org.geotools.wfs.GML;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaGisGeometry;
@@ -36,7 +33,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope; 
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;

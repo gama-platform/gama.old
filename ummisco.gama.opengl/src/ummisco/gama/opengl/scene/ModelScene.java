@@ -11,7 +11,7 @@
 package ummisco.gama.opengl.scene;
 
 import com.jogamp.opengl.GL2;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.util.GamaMapFactory;

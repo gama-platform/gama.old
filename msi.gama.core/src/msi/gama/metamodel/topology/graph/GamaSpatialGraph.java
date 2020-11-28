@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.jgrapht.Graphs;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.util.StringUtils;

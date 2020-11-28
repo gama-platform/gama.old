@@ -12,9 +12,10 @@ package msi.gama.metamodel.topology.projection;
 
 import java.util.Map;
 
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import si.uom.SI;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.quantity.Length;
 
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultProjectedCRS;
@@ -23,7 +24,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CartesianCS;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
@@ -69,9 +70,9 @@ public class ProjectionFactory {
 			} else {
 				if (crs != null && crs instanceof DefaultProjectedCRS) { // Temporary fix of issue 766... a better solution
 					final CartesianCS ccs = ((DefaultProjectedCRS) crs).getCoordinateSystem();
-					final Unit<?> unitX = ccs.getAxis(0).getUnit();
-					if (unitX != null && !unitX.equals(SI.METER)) {
-						unitConverter = unitX.getConverterTo(SI.METER);
+					final Unit<Length> unitX = (Unit<Length>) ccs.getAxis(0).getUnit();
+					if (unitX != null && !unitX.equals(SI.METRE)) {
+						unitConverter = unitX.getConverterTo(SI.METRE);
 					}
 					targetCRS = crs;
 				} else {

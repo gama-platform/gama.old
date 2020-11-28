@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequence;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
@@ -61,6 +61,11 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	default void getCenter(final GamaPoint center) {
 		center.setLocation(0, 0, 0);
 		addCenterTo(center);
+	}
+	
+	@Deprecated
+	default CoordinateSequence clone()  {
+		return copy();
 	}
 
 	/**

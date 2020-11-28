@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.vividsolutions.jts.util.NumberUtil;
+import org.locationtech.jts.util.NumberUtil;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;

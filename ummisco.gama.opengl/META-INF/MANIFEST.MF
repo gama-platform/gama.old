@@ -14,7 +14,7 @@ Require-Bundle: msi.gama.ext,
  com.google.guava,
  ummisco.gama.annotations
 Bundle-ActivationPolicy: lazy
-Import-Package: com.vividsolutions.jts.geom,
+Import-Package: org.locationtech.jts.geom,
  org.apache.commons.lang;version="2.6.0",
  org.jfree.chart
 Export-Package: 

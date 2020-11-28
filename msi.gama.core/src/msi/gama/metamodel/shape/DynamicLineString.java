@@ -12,18 +12,18 @@ package msi.gama.metamodel.shape;
 
 import java.util.Objects;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceComparator;
-import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryComponentFilter;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.GeometryFilter;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateFilter;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequenceComparator;
+import org.locationtech.jts.geom.CoordinateSequenceFilter;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryComponentFilter;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.GeometryFilter;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 
 import msi.gama.common.geometry.GeometryUtils;
 
@@ -72,7 +72,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#getGeometryType()
+	 * @see org.locationtech.jts.geom.Geometry#getGeometryType()
 	 */
 	@Override
 	public String getGeometryType() {
@@ -82,7 +82,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#getCoordinate()
+	 * @see org.locationtech.jts.geom.Geometry#getCoordinate()
 	 */
 	@Override
 	public Coordinate getCoordinate() {
@@ -92,7 +92,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#getCoordinates()
+	 * @see org.locationtech.jts.geom.Geometry#getCoordinates()
 	 */
 	@Override
 	public Coordinate[] getCoordinates() {
@@ -108,7 +108,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#getNumPoints()
+	 * @see org.locationtech.jts.geom.Geometry#getNumPoints()
 	 */
 	@Override
 	public int getNumPoints() {
@@ -118,7 +118,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#isEmpty()
+	 * @see org.locationtech.jts.geom.Geometry#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
@@ -128,7 +128,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#getDimension()
+	 * @see org.locationtech.jts.geom.Geometry#getDimension()
 	 */
 	@Override
 	public int getDimension() {
@@ -138,7 +138,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#getBoundary()
+	 * @see org.locationtech.jts.geom.Geometry#getBoundary()
 	 */
 	@Override
 	public Geometry getBoundary() {
@@ -158,7 +158,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#getBoundaryDimension()
+	 * @see org.locationtech.jts.geom.Geometry#getBoundaryDimension()
 	 */
 	@Override
 	public int getBoundaryDimension() {
@@ -168,17 +168,17 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#reverse()
+	 * @see org.locationtech.jts.geom.Geometry#reverse()
 	 */
 	@Override
-	public Geometry reverse() {
+	public LineString reverse() {
 		return new DynamicLineString(getFactory(), target, source);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#equalsExact(com.vividsolutions.jts. geom.Geometry, double)
+	 * @see org.locationtech.jts.geom.Geometry#equalsExact(org.locationtech.jts. geom.Geometry, double)
 	 */
 	@Override
 	public boolean equalsExact(final Geometry other, final double tolerance) {
@@ -198,7 +198,7 @@ public class DynamicLineString extends LineString {
 		/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateFilter)
+	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. CoordinateFilter)
 	 */
 	@Override
 	public void apply(final CoordinateFilter filter) {
@@ -209,7 +209,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. CoordinateSequenceFilter)
+	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. CoordinateSequenceFilter)
 	 */
 	@Override
 	public void apply(final CoordinateSequenceFilter filter) {
@@ -225,7 +225,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. GeometryFilter)
+	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. GeometryFilter)
 	 */
 	@Override
 	public void apply(final GeometryFilter filter) {
@@ -235,7 +235,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom. GeometryComponentFilter)
+	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. GeometryComponentFilter)
 	 */
 	@Override
 	public void apply(final GeometryComponentFilter filter) {
@@ -255,7 +255,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#normalize()
+	 * @see org.locationtech.jts.geom.Geometry#normalize()
 	 */
 	@Override
 	public void normalize() {}
@@ -270,7 +270,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#computeEnvelopeInternal()
+	 * @see org.locationtech.jts.geom.Geometry#computeEnvelopeInternal()
 	 */
 	@Override
 	protected Envelope computeEnvelopeInternal() {
@@ -281,7 +281,7 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object)
+	 * @see org.locationtech.jts.geom.Geometry#compareToSameClass(java.lang.Object)
 	 */
 	@Override
 	protected int compareToSameClass(final Object o) {
@@ -294,8 +294,8 @@ public class DynamicLineString extends LineString {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object,
-	 * com.vividsolutions.jts.geom.CoordinateSequenceComparator)
+	 * @see org.locationtech.jts.geom.Geometry#compareToSameClass(java.lang.Object,
+	 * org.locationtech.jts.geom.CoordinateSequenceComparator)
 	 */
 	@Override
 	protected int compareToSameClass(final Object o, final CoordinateSequenceComparator comp) {

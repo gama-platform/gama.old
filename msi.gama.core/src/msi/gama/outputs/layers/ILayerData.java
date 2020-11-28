@@ -12,7 +12,7 @@ package msi.gama.outputs.layers;
 
 import java.awt.Point;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.ILocation;

@@ -13,7 +13,7 @@ package msi.gama.metamodel.topology;
 import java.util.Collection;
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;

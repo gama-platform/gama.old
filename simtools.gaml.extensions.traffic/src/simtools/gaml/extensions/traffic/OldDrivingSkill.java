@@ -13,8 +13,8 @@ package simtools.gaml.extensions.traffic;
 import java.util.Collection;
 import java.util.Collections;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;

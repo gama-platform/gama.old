@@ -20,7 +20,7 @@ import java.util.List;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.swt.GLCanvas;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;

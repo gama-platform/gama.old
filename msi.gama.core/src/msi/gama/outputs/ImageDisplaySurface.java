@@ -22,7 +22,7 @@ import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;

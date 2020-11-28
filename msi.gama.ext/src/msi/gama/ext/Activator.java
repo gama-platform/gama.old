@@ -17,8 +17,8 @@ import javax.media.jai.JAI;
 
 import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.GeoTools;
-import org.geotools.factory.Hints;
+import org.geotools.util.factory.GeoTools;
+import org.geotools.util.factory.Hints;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -45,9 +45,9 @@ public class Activator implements BundleActivator {
 			jaiDef.setOperationRegistry(ConcurrentOperationRegistry.initializeRegistry());
 		}
 		ImageIO.scanForPlugins();
-//		Hints.putSystemDefault(Hints.FILTER_FACTORY, CommonFactoryFinder.getFilterFactory2(null));
-//		Hints.putSystemDefault(Hints.STYLE_FACTORY, CommonFactoryFinder.getStyleFactory(null));
-//		Hints.putSystemDefault(Hints.FEATURE_FACTORY, CommonFactoryFinder.getFeatureFactory(null));
+		Hints.putSystemDefault(Hints.FILTER_FACTORY, CommonFactoryFinder.getFilterFactory2(null));
+		Hints.putSystemDefault(Hints.STYLE_FACTORY, CommonFactoryFinder.getStyleFactory(null));
+		Hints.putSystemDefault(Hints.FEATURE_FACTORY, CommonFactoryFinder.getFeatureFactory(null));
 		Hints.putSystemDefault(Hints.USE_JAI_IMAGEREAD, true);
 		final Hints defHints = GeoTools.getDefaultHints();
 //

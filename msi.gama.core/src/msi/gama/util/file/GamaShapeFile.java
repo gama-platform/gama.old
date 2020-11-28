@@ -34,8 +34,8 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;

@@ -34,7 +34,7 @@ saveSimu
         <z>0.0</z>
       </msi.gama.metamodel.shape.GamaPoint>
       <msi.gama.metamodel.shape.GamaShape>
-        <geometry class="com.vividsolutions.jts.geom.Polygon">
+        <geometry class="org.locationtech.jts.geom.Polygon">
           <envelope>
             <minx>0.0</minx>
             <maxx>100.0</maxx>
@@ -56,7 +56,7 @@ saveSimu
             <depth>100.0</depth>
             <type>BOX</type>
             <outer-class>
-              <geometry class="com.vividsolutions.jts.geom.Polygon">
+              <geometry class="org.locationtech.jts.geom.Polygon">
                 <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../factory"/>
                 <SRID>0</SRID>
                 <userData class="msi.gama.metamodel.shape.GamaShape$ShapeData" reference="../../.."/>
@@ -316,7 +316,7 @@ saveSimu
                   <z>0.0</z>
                 </msi.gama.metamodel.shape.GamaPoint>
                 <msi.gama.metamodel.shape.GamaShape>
-                  <geometry class="com.vividsolutions.jts.geom.LineString">
+                  <geometry class="org.locationtech.jts.geom.LineString">
                     <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
                     <SRID>0</SRID>
                     <points class="msi.gama.common.geometry.GamaCoordinateSequence">
@@ -361,7 +361,7 @@ saveSimu
                   <z>0.0</z>
                 </msi.gama.metamodel.shape.GamaPoint>
                 <msi.gama.metamodel.shape.GamaShape>
-                  <geometry class="com.vividsolutions.jts.geom.LineString">
+                  <geometry class="org.locationtech.jts.geom.LineString">
                     <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
                     <SRID>0</SRID>
                     <points class="msi.gama.common.geometry.GamaCoordinateSequence">
@@ -406,7 +406,7 @@ saveSimu
                   <z>0.0</z>
                 </msi.gama.metamodel.shape.GamaPoint>
                 <msi.gama.metamodel.shape.GamaShape>
-                  <geometry class="com.vividsolutions.jts.geom.LineString">
+                  <geometry class="org.locationtech.jts.geom.LineString">
                     <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
                     <SRID>0</SRID>
                     <points class="msi.gama.common.geometry.GamaCoordinateSequence">
@@ -451,7 +451,7 @@ saveSimu
                   <z>0.0</z>
                 </msi.gama.metamodel.shape.GamaPoint>
                 <msi.gama.metamodel.shape.GamaShape>
-                  <geometry class="com.vividsolutions.jts.geom.LineString">
+                  <geometry class="org.locationtech.jts.geom.LineString">
                     <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
                     <SRID>0</SRID>
                     <points class="msi.gama.common.geometry.GamaCoordinateSequence">
@@ -506,7 +506,7 @@ saveSimu
               <data>
                 <string>people0</string>
                 <msi.gama.metamodel.shape.GamaShape>
-                  <geometry class="com.vividsolutions.jts.geom.Point">
+                  <geometry class="org.locationtech.jts.geom.Point">
                     <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
                     <SRID>0</SRID>
                     <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
@@ -604,7 +604,7 @@ saveSimu
               <data>
                 <string>people1</string>
                 <msi.gama.metamodel.shape.GamaShape>
-                  <geometry class="com.vividsolutions.jts.geom.Point">
+                  <geometry class="org.locationtech.jts.geom.Point">
                     <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../../variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
                     <SRID>0</SRID>
                     <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">

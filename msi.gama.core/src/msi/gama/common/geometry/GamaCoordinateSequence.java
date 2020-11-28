@@ -11,7 +11,7 @@
 package msi.gama.common.geometry;
 
 import static com.google.common.collect.Iterators.forArray;
-import static com.vividsolutions.jts.algorithm.CGAlgorithms.signedArea;
+import static org.locationtech.jts.algorithm.CGAlgorithms.signedArea;
 import static msi.gama.common.geometry.GamaGeometryFactory.isRing;
 
 import java.util.Arrays;
@@ -19,8 +19,8 @@ import java.util.Iterator;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
@@ -91,7 +91,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method getDimension(). Always 3 for these sequences
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getDimension()
+	 * @see org.locationtech.jts.geom.CoordinateSequence#getDimension()
 	 */
 	@Override
 	public int getDimension() {
@@ -102,8 +102,13 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * Makes a complete copy of this sequence (incl. cloning the points themselves)
 	 */
 	@Override
-	public final GamaCoordinateSequence clone() {
+	public final GamaCoordinateSequence copy() {
 		return new GamaCoordinateSequence(true, points);
+	}
+	
+	@Deprecated
+	public GamaCoordinateSequence clone() {
+		return copy();
 	}
 
 	@Override
@@ -115,7 +120,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * Method getCoordinate(). The coordinate is *not* a copy of the original one, so any modification to it will
 	 * directly affect the sequence of points
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int)
+	 * @see org.locationtech.jts.geom.CoordinateSequence#getCoordinate(int)
 	 */
 	@Override
 	public GamaPoint getCoordinate(final int i) {
@@ -125,7 +130,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method getCoordinateCopy()
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinateCopy(int)
+	 * @see org.locationtech.jts.geom.CoordinateSequence#getCoordinateCopy(int)
 	 */
 	@Override
 	public GamaPoint getCoordinateCopy(final int i) {
@@ -135,7 +140,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method getCoordinate()
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int, com.vividsolutions.jts.geom.Coordinate)
+	 * @see org.locationtech.jts.geom.CoordinateSequence#getCoordinate(int, org.locationtech.jts.geom.Coordinate)
 	 */
 	@Override
 	public void getCoordinate(final int index, final Coordinate coord) {
@@ -145,7 +150,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method getX()
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getX(int)
+	 * @see org.locationtech.jts.geom.CoordinateSequence#getX(int)
 	 */
 	@Override
 	public double getX(final int index) {
@@ -155,7 +160,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method getY()
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getY(int)
+	 * @see org.locationtech.jts.geom.CoordinateSequence#getY(int)
 	 */
 	@Override
 	public double getY(final int index) {
@@ -165,7 +170,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method getOrdinate()
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getOrdinate(int, int)
+	 * @see org.locationtech.jts.geom.CoordinateSequence#getOrdinate(int, int)
 	 */
 	@Override
 	public double getOrdinate(final int index, final int ordinateIndex) {
@@ -175,7 +180,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method size()
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#size()
+	 * @see org.locationtech.jts.geom.CoordinateSequence#size()
 	 */
 	@Override
 	public int size() {
@@ -185,7 +190,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method setOrdinate(). Be aware that CW property is not maintained in case of direct modifications like this
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#setOrdinate(int, int, double)
+	 * @see org.locationtech.jts.geom.CoordinateSequence#setOrdinate(int, int, double)
 	 */
 	@Override
 	public void setOrdinate(final int index, final int ordinateIndex, final double value) {
@@ -195,7 +200,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method toCoordinateArray()
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#toCoordinateArray()
+	 * @see org.locationtech.jts.geom.CoordinateSequence#toCoordinateArray()
 	 */
 	@Override
 	public GamaPoint[] toCoordinateArray() {
@@ -205,7 +210,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	/**
 	 * Method expandEnvelope()
 	 *
-	 * @see com.vividsolutions.jts.geom.CoordinateSequence#expandEnvelope(com.vividsolutions.jts.geom.Envelope)
+	 * @see org.locationtech.jts.geom.CoordinateSequence#expandEnvelope(org.locationtech.jts.geom.Envelope)
 	 */
 	@Override
 	public Envelope expandEnvelope(final Envelope env) {

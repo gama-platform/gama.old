@@ -13,7 +13,7 @@ package msi.gama.common.geometry;
 
 import java.io.Serializable;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
 

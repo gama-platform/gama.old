@@ -50,7 +50,7 @@ import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;

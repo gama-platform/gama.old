@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaPoint;

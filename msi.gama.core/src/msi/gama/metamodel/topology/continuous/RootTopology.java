@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.continuous;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;

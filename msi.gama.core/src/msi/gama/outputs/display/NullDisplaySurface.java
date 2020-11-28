@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Collections;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;

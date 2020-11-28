@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
 				name = IKeyword.Z,
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the z ordinate of this point") }) })
-public interface ILocation extends IShape, Comparable {
+public interface ILocation extends IShape, Comparable<Coordinate> {
 
 	@getter (IKeyword.X)
 	double getX();
@@ -73,5 +73,9 @@ public interface ILocation extends IShape, Comparable {
 	boolean equalsWithTolerance(Coordinate c, double tolerance);
 
 	ILocation withPrecision(int i);
+
+	default int compareTo(ILocation location) {
+		return compareTo((Coordinate)toGamaPoint());
+	}
 
 }

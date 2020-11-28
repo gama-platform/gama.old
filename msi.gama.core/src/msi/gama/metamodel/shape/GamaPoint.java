@@ -13,9 +13,9 @@ package msi.gama.metamodel.shape;
 import static java.lang.Math.sqrt;
 import static msi.gaml.operators.Maths.round;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.util.NumberUtil;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.util.NumberUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
@@ -331,7 +331,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void setAgent(final IAgent agent) {}
 
 	/**
-	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
+	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(org.locationtech.jts.geom.Geometry)
 	 */
 	@Override
 	public void setInnerGeometry(final Geometry point) {
