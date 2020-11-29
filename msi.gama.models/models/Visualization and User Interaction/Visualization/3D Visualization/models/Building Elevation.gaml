@@ -191,7 +191,7 @@ experiment road_traffic_multi_layer type: gui
 	};
 	output
 	{
-		display city_display type: opengl
+		display city_display type: java2D
 		{
 			species road aspect: base;
 			species building aspect: base position: { 0, 0, 0.25 };

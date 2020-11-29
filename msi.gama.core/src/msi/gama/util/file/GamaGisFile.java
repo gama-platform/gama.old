@@ -113,7 +113,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 				final LinearRing lr = GEOMETRY_FACTORY.createLinearRing(coords.toCoordinateArray());
 				try (final Collector.AsList<LinearRing> holes = Collector.getList()) {
 					for (int j = 0; j < p.getNumInteriorRing(); j++) {
-						final LinearRing h = p.getInteriorRingN(j);
+						final LinearRing h = (LinearRing) p.getInteriorRingN(j);
 						if (!hasNullElements(h.getCoordinates())) {
 							holes.add(h);
 						}

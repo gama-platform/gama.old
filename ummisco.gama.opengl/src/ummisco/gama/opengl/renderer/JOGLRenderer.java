@@ -202,8 +202,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
 		int width = w, height = h;
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
-		width = scaleDownIfMac(width);
-		height = scaleDownIfMac(height);
+		//width = scaleDownIfMac(width);
+		//height = scaleDownIfMac(height);
 		if (width <= 0 || height <= 0) { return; }
 		if (openGL.getViewWidth() == width && openGL.getViewHeight() == height) { return; }
 		// DEBUG.OUT("Reshaped to " + width + " x " + height);
