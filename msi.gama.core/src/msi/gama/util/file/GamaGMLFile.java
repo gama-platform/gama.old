@@ -161,20 +161,20 @@ public class GamaGMLFile extends GamaGisFile {
 			// saxExample start
 			final InputSource input = new InputSource(new FileReader(file));
 			final DefaultFeatureCollection collection = new DefaultFeatureCollection();
-			final GMLReceiver receiver = new GMLReceiver(collection);
-			final GMLFilterFeature filterFeature = new GMLFilterFeature(receiver);
-
-			final GMLFilterGeometry filterGeometry = new GMLFilterGeometry(filterFeature);
-			final GMLFilterDocument filterDocument = new GMLFilterDocument(filterGeometry);
-
-			try {
-				// parse xml
-				final XMLReader reader = XMLReaderFactory.createXMLReader();
-				reader.setContentHandler(filterDocument);
-				reader.parse(input);
-			} catch (final Exception e) {
-				throw new RuntimeException(e);
-			}
+//			final GMLReceiver receiver = new GMLReceiver(collection);
+//			final GMLFilterFeature filterFeature = new GMLFilterFeature(receiver);
+//
+//			final GMLFilterGeometry filterGeometry = new GMLFilterGeometry(filterFeature);
+//			final GMLFilterDocument filterDocument = new GMLFilterDocument(filterGeometry);
+//
+//			try {
+//				// parse xml
+//				final XMLReader reader = XMLReaderFactory.createXMLReader();
+//				reader.setContentHandler(filterDocument);
+//				reader.parse(input);
+//			} catch (final Exception e) {
+//				throw new RuntimeException(e);
+//			}
 
 			crs = collection.getSchema().getCoordinateReferenceSystem();
 			env = Envelope3D.of(collection.getBounds());

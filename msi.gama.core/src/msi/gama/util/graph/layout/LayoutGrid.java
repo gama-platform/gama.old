@@ -1,5 +1,6 @@
 package msi.gama.util.graph.layout;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -19,8 +20,7 @@ import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Queries;
-import msi.gaml.types.Types;
-import sun.awt.util.IdentityArrayList;
+import msi.gaml.types.Types; 
 
 public class LayoutGrid {
 
@@ -62,12 +62,12 @@ public class LayoutGrid {
 		IShape center = Queries.overlapping(scope, places, envelopeGeometry.getLocation()).firstValue(scope);
 		places.remove(center);
 		locs.put(currentV, center.getLocation().toGamaPoint());
-		final List<IShape> open = new IdentityArrayList<>();
-		final List<IShape> remaining = new IdentityArrayList<>();
+		final List<IShape> open = new ArrayList<>();
+		final List<IShape> remaining = new ArrayList<>();
 		remaining.addAll(graph.getVertices());
 		remaining.remove(currentV);
 
-		final List<IShape> close = new IdentityArrayList<>();
+		final List<IShape> close = new ArrayList<>();
 		close.add(currentV);
 
 		while (close.size() < nbV) {

@@ -19,8 +19,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-nl ${target.nl} 
-         -data @noDefault 
+      <programArgs>-data @noDefault 
          --launcher.defaultAction
          openFile
       </programArgs>
@@ -30,7 +29,6 @@
          -noverify
          -Xmn128m
          -Xss2m
-         -XX:+UseParallelGC
          -XX:+UseAdaptiveSizePolicy
          -XX:+OptimizeStringConcat
          -Dosgi.locking=none
