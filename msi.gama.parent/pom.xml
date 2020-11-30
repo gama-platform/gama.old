@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>msi.gama</groupId>
 	<artifactId>msi.gama.parent</artifactId>
@@ -29,19 +30,9 @@
 			<url>http://buchen.github.io/maven-repo</url>
 			<layout>default</layout>
 		</pluginRepository>
-		<!-- 
-		<pluginRepository>
-			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-		 -->
+		<!-- <pluginRepository> <id>orbit</id> <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url> 
+			<layout>default</layout> <releases> <enabled>true</enabled> </releases> <snapshots> 
+			<enabled>true</enabled> </snapshots> </pluginRepository> -->
 	</pluginRepositories>
 
 
@@ -110,27 +101,42 @@
 			<id>portfolio-non-maven-dependencies</id>
 			<url>http://buchen.github.io/maven-repo</url>
 		</repository>
-		<!--   repository>
-			<id>eclipse-2018-12pp</id>
-			<url>http://download.eclipse.org/technology/epp/packages/2018-12/</url>
-			<layout>p2</layout>
-		</repository
+		<!-- repository> <id>eclipse-2018-12pp</id> <url>http://download.eclipse.org/technology/epp/packages/2018-12/</url> 
+			<layout>p2</layout> </repository <repository> <id>orbit</id> <name>orbit</name> 
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url> 
+			<layout>p2</layout> <releases> <enabled>true</enabled> </releases> <snapshots> 
+			<enabled>true</enabled> </snapshots> </repository> -->
 		<repository>
-			<id>orbit</id>
-			<name>orbit</name>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/</url>
-			<layout>p2</layout>
+			<id>eclipse-ecf</id>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+			<url>http://download.eclipse.org/rt/ecf/3.14.18/site.p2</url>
+			<layout>p2</layout>
 		</repository>
-		-->
 		<repository>
-			<id>eclipse-1903</id>
-			<url>http://download.eclipse.org/releases/2019-03</url>
+			<id>eclipse-1909</id>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<url>http://download.eclipse.org/releases/2019-09</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>eclipse-2009</id>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<url>http://download.eclipse.org/releases/2020-09</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -149,7 +155,7 @@
 			<name>Open Source Geospatial Foundation Repository</name>
 			<url>http://download.osgeo.org/webdav/geotools/</url>
 		</repository>
-		
+
 		<repository>
 			<snapshots>
 				<enabled>true</enabled>
@@ -172,13 +178,31 @@
 			<name>sourceforge-repository</name>
 			<url>http://logicaldoc.sourceforge.net/maven/</url>
 		</repository>
-		<!-- <repository> <id>ossrh</id> <name>Sonatype Nexus Snapshots</name> 
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url> 
-			<releases> <enabled>true</enabled> </releases> <snapshots> <enabled>true</enabled> 
-			</snapshots> </repository> <repository> <id>ossrh</id> <name>Sonatype Nexus 
-			Snapshots</name> <url>https://oss.sonatype.org/content/groups/public/</url> 
-			<releases> <enabled>true</enabled> </releases> <snapshots> <enabled>true</enabled> 
-			</snapshots> </repository> -->
+		<repository>
+			<id>ossrh</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<!-- 
+		<repository>
+			<id>ossrh</id>
+			<name>Sonatype Nexus 
+			Snapshots</name>
+			<url>https://oss.sonatype.org/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		 -->
 		<repository>
 			<id>pentaho-releases</id>
 			<url>http://repository.pentaho.org/artifactory/repo/</url>
@@ -210,69 +234,55 @@
 		<module>../msi.gama.ext</module>
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>
-		<module>../msi.gama.documentation</module>
 		<module>../ummisco.gama.ui.modeling</module>
 		<module>../ummisco.gama.ui.shared</module>
 		<module>../ummisco.gama.ui.navigator</module>
 		<module>../ummisco.gama.ui.experiment</module>
+		<module>../ummisco.gama.ui.viewers</module>
 
-		<module>../msi.gama.application</module>
-
-		<module>../ummisco.gama.feature.models</module>
-		<module>../ummisco.gama.feature.dependencies</module>
-
-
-		<module>../ummisco.gama.feature.core</module>
-		<module>../ummisco.gama.feature.core.extensions</module>
-		<module>../ummisco.gama.feature.core.ui</module>
-		<module>../ummisco.gama.feature.experiment.ui</module>
-		<module>../ummisco.gama.feature.modeling.ui</module>
-		<module>../ummisco.gama.feature.serialize</module>
-		<module>../ummisco.gama.feature.network</module>
-
-		<module>../msi.gaml.extensions.fipa</module>
 		<module>../msi.gama.headless</module>
-		<module>../simtools.gaml.extensions.traffic</module>
-		<module>../simtools.gaml.extensions.physics</module>
-
-
-		<module>../irit.gaml.extensions.database</module>
-
-
-
+		<module>../msi.gama.application</module>
 		<module>../msi.gama.models</module>
-		<module>../msi.gaml.architecture.simplebdi</module>
-
-
-		<module>../simtools.graphanalysis.fr</module>
-		<module>../simtools.graphlayout.feature</module>
-
-		<module>../ummisco.gama.feature.audio</module>
-
-		<module>../ummisco.gama.feature.stats</module>
 
 		<module>../ummisco.gama.opengl</module>
 		<module>../ummisco.gama.java2d</module>
-		<module>../ummisco.gama.ui.viewers</module>
-		<module>../ummisco.gama.serialize</module>
-		<module>../ummisco.gama.network</module>
-		<module>../ummisco.gaml.extensions.maths</module>
 
-		<module>../ummisco.gaml.extensions.sound</module>
-		<module>../ummisco.gaml.extensions.stats</module>
+
+
+		<module>../ummisco.gama.feature.models</module>
+		<module>../ummisco.gama.feature.dependencies</module>
+		<module>../ummisco.gama.feature.core</module>
+		<module>../ummisco.gama.feature.core.ui</module>
+		<module>../ummisco.gama.feature.experiment.ui</module>
+		<module>../ummisco.gama.feature.modeling.ui</module>
+
+
+
+
 
 		<module>../ummisco.gama.product</module>
 
-		<module>../msi.gama.p2updatesite</module>
 
-		<!-- -->
+
+
+
+		<!-- <module>../ummisco.gama.feature.network</module> <module>../ummisco.gama.network</module> 
+			<module>../ummisco.gaml.extensions.maths</module> <module>../ummisco.gama.serialize</module> 
+			<module>../ummisco.gama.feature.core.extensions</module> <module>../ummisco.gama.feature.serialize</module> 
+			<module>../msi.gama.documentation</module> <module>../msi.gaml.extensions.fipa</module> 
+			<module>../simtools.gaml.extensions.traffic</module> <module>../simtools.gaml.extensions.physics</module> 
+			<module>../irit.gaml.extensions.database</module> <module>../msi.gaml.architecture.simplebdi</module> 
+			<module>../simtools.graphanalysis.fr</module> <module>../simtools.graphlayout.feature</module> 
+			<module>../ummisco.gama.feature.audio</module> <module>../ummisco.gama.feature.stats</module> 
+			<module>../ummisco.gaml.extensions.sound</module> <module>../ummisco.gaml.extensions.stats</module> 
+			<module>../msi.gama.p2updatesite</module> -->
 	</modules>
 
 	<properties>
 		<batik.version>1.7</batik.version>
 		<p2-maven.version>1.2.0-SNAPSHOT</p2-maven.version>
 		<jetty-maven.version>8.1.5.v20120716</jetty-maven.version>
-		<tycho.version>0.25.0</tycho.version>
+		<tycho.version>2.1.0</tycho.version>
 		<project.version>1.8.1-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<geotools.version>14.5</geotools.version>
@@ -347,7 +357,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.5</version>
+				<version>3.2.0</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>
@@ -359,7 +369,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-						<outputDirectory>${project.build.outputDirectory}/tests</outputDirectory>
+							<outputDirectory>${project.build.outputDirectory}/tests</outputDirectory>
 							<resources>
 								<resource>
 									<directory>target/tests</directory>
@@ -373,11 +383,11 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-compiler-plugin</artifactId>
-				<version>0.25.0</version>
+				<version>2.1.0</version>
 				<configuration>
 					<debug>false</debug>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 					<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
 					<useProjectSettings>false</useProjectSettings>
 					<generatedSourcesDirectory>${project.build.directory}</generatedSourcesDirectory>
@@ -387,12 +397,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.8.1</version>
 				<configuration>
 					<debug>false</debug>
-					<source>1.8</source>
-					<target>1.8</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+					<source>11</source>
+					<target>11</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -401,8 +411,8 @@
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 					<!--<compilerArgument>-proc:none</compilerArgument> -->
 					<annotationProcessors>
 						<annotationProcessor>msi.gama.precompiler.GamaProcessor</annotationProcessor>
@@ -438,11 +448,6 @@
 						<filter>
 							<type>eclipse-plugin</type>
 							<id>org.eclipse.jdt.ui</id>
-							<removeAll />
-						</filter>
-						<filter>
-							<type>eclipse-plugin</type>
-							<id>org.eclipse.debug.core</id>
 							<removeAll />
 						</filter>
 						<filter>
@@ -566,25 +571,15 @@
 					<resolver>p2</resolver>
 					<pomDependencies>consider</pomDependencies>
 					<environments>
-						<!--  obsolete on 1812 
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						-->
+						<!-- obsolete on 1812 <environment> <os>linux</os> <ws>gtk</ws> <arch>x86</arch> 
+							</environment> -->
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
 							<arch>x86_64</arch>
 						</environment>
-						<!--  obsolete on 1812 
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
-						</environment>
-						-->
+						<!-- obsolete on 1812 <environment> <os>win32</os> <ws>win32</ws> <arch>x86</arch> 
+							</environment> -->
 						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
@@ -620,40 +615,40 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-		            <groupId>org.apache.maven.plugins</groupId>
-		            <artifactId>maven-dependency-plugin</artifactId>
-		        </plugin>
-		
-		        <plugin>
-		            <groupId>org.apache.maven.plugins</groupId>
-		            <artifactId>maven-compiler-plugin</artifactId>
-		            <version>3.7.0</version>
-		            <configuration>
-		                <compilerId>eclipse</compilerId>
-		                <source>${source.jdk.version}</source>
-		                <target>${target.jdk.version}</target>
-		                <!-- Passing arguments is a trainwreck, see https://issues.apache.org/jira/browse/MCOMPILER-123 -->
-		                <compilerArguments>
-		                    <properties>${project.basedir}/.settings/org.eclipse.jdt.core.prefs</properties>
-		                </compilerArguments>
-		                <showWarnings>true</showWarnings>
-		                <showDeprecation>true</showDeprecation>
-		            </configuration>
-		
-		            <dependencies>
-		                <dependency>
-		                    <groupId>org.codehaus.plexus</groupId>
-		                    <artifactId>plexus-compiler-eclipse</artifactId>
-		                    <version>2.8.3</version>
-		                </dependency>
-		
-		                <dependency>
-		                    <groupId>org.eclipse.jdt</groupId>
-		                    <artifactId>ecj</artifactId>
-		                    <version>3.13.101</version>
-		                </dependency>
-		            </dependencies>
-		        </plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.7.0</version>
+					<configuration>
+						<compilerId>eclipse</compilerId>
+						<source>${source.jdk.version}</source>
+						<target>${target.jdk.version}</target>
+						<!-- Passing arguments is a trainwreck, see https://issues.apache.org/jira/browse/MCOMPILER-123 -->
+						<compilerArguments>
+							<properties>${project.basedir}/.settings/org.eclipse.jdt.core.prefs</properties>
+						</compilerArguments>
+						<showWarnings>true</showWarnings>
+						<showDeprecation>true</showDeprecation>
+					</configuration>
+
+					<dependencies>
+						<dependency>
+							<groupId>org.codehaus.plexus</groupId>
+							<artifactId>plexus-compiler-eclipse</artifactId>
+							<version>2.8.3</version>
+						</dependency>
+
+						<dependency>
+							<groupId>org.eclipse.jdt</groupId>
+							<artifactId>ecj</artifactId>
+							<version>3.13.101</version>
+						</dependency>
+					</dependencies>
+				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
