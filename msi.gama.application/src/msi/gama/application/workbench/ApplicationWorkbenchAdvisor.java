@@ -15,6 +15,7 @@ package msi.gama.application.workbench;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import org.eclipse.core.internal.runtime.Activator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
@@ -33,6 +35,11 @@ import org.eclipse.ui.internal.PluginActionBuilder;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.themes.IThemeManager;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
@@ -43,6 +50,8 @@ import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import ummisco.gama.dev.utils.DEBUG;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
@@ -65,6 +74,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		ResourcesPlugin.getPlugin().getStateLocation();
 		try {
 			super.initialize(configurer);
+
 			IDE.registerAdapters();
 			configurer.setSaveAndRestore(true);
 
@@ -82,6 +92,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			// e.printStackTrace();
 		}
 		PluginActionBuilder.setAllowIdeLogging(false);
+		ApplicationWorkbenchThemeManager.install();
 	}
 
 	@Override
@@ -92,8 +103,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if ( false ) {
 			DEBUG.LOG("Arguments received by GAMA : " + Arrays.toString(args));
 		}
-		if ( args.length > 0 && args[0].contains("launcher.defaultAction") &&
-			!args[0].contains("--launcher.defaultAction") ) {
+		if ( args.length > 0 && args[0].contains("launcher.defaultAction")
+			&& !args[0].contains("--launcher.defaultAction") ) {
 			return;
 		}
 		if ( args.length >= 1 ) {
@@ -254,8 +265,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 				}
 				final String message = statusAdapter.getStatus().getMessage();
 				// Stupid Eclipse
-				if ( !message.contains("File toolbar contribution item") &&
-					!message.contains("Duplicate template id") ) {
+				if ( !message.contains("File toolbar contribution item")
+					&& !message.contains("Duplicate template id") ) {
 					DEBUG.OUT("GAMA Caught a workbench message : " + message);
 				}
 				if ( e != null ) {

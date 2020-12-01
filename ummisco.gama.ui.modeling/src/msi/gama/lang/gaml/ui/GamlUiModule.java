@@ -48,6 +48,7 @@ import org.eclipse.xtext.ui.editor.model.ResourceForIEditorInputFactory;
 import org.eclipse.xtext.ui.editor.outline.actions.IOutlineContribution;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.ITextAttributeProvider;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.ui.resource.SimpleResourceSetProvider;
 
@@ -74,6 +75,7 @@ import msi.gama.lang.gaml.ui.editor.folding.GamaFoldingRegionProvider;
 import msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration;
 import msi.gama.lang.gaml.ui.highlight.GamlReconciler;
 import msi.gama.lang.gaml.ui.highlight.GamlSemanticHighlightingCalculator;
+import msi.gama.lang.gaml.ui.highlight.GamlTextAttributeProvider;
 import msi.gama.lang.gaml.ui.hover.GamlDocumentationProvider;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
@@ -111,6 +113,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		// binder.bind(XtextDocumentProvider.class).to(XtextDocumentProvider.class);
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
 		binder.bind(IGamlLabelProvider.class).to(GamlLabelProvider.class);
+		// binder.bind(IHighlightingConfiguration.class).to(GamlHighlightingConfiguration.class).asEagerSingleton();
 	}
 
 	@Override
@@ -169,8 +172,16 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return GamlSemanticHighlightingCalculator.class;
 	}
 
+	@SingletonBinding (
+			eager = true)
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
 		return GamlHighlightingConfiguration.class;
+	}
+
+	@SingletonBinding (
+			eager = true)
+	public Class<? extends ITextAttributeProvider> bindITextAttributeProvider() {
+		return GamlTextAttributeProvider.class;
 	}
 
 	@Override

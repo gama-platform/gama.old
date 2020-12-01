@@ -14,7 +14,12 @@ Require-Bundle: org.eclipse.core.runtime,
  msi.gama.core,
  com.google.guava,
  org.eclipse.e4.ui.model.workbench,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.ui.workbench,
+ org.eclipse.e4.ui.css.swt.theme,
+ org.eclipse.e4.core.services,
+ org.eclipse.osgi.services,
+ org.eclipse.e4.core.contexts
 Bundle-Vendor: UMMISCO
 Bundle-Version: 1.8.1.qualifier
 Bundle-ManifestVersion: 2

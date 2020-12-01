@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -55,8 +54,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -64,7 +61,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
 // import org.eclipse.text.templates.TemplatePersistenceData;
@@ -85,6 +81,7 @@ import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
 import org.eclipse.xtext.ui.editor.model.XtextDocument;
 import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateContextType;
 import org.eclipse.xtext.ui.editor.validation.IValidationIssueProcessor;
 import org.eclipse.xtext.ui.editor.validation.MarkerCreator;
@@ -112,7 +109,6 @@ import msi.gama.lang.gaml.ui.editbox.BoxDecoratorPartListener;
 import msi.gama.lang.gaml.ui.editbox.BoxProviderRegistry;
 import msi.gama.lang.gaml.ui.editbox.IBoxDecorator;
 import msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor;
-import msi.gama.lang.gaml.ui.editbox.IBoxProvider;
 import msi.gama.lang.gaml.ui.editor.toolbar.CreateExperimentSelectionListener;
 import msi.gama.lang.gaml.ui.editor.toolbar.EditorSearchControls;
 import msi.gama.lang.gaml.ui.editor.toolbar.EditorToolbar;
@@ -120,7 +116,6 @@ import msi.gama.lang.gaml.ui.editor.toolbar.GamlQuickOutlinePopup;
 import msi.gama.lang.gaml.ui.editor.toolbar.OpenExperimentSelectionListener;
 import msi.gama.lang.gaml.ui.editor.toolbar.OpenImportedErrorSelectionListener;
 import msi.gama.lang.gaml.ui.editor.toolbar.RevalidateModelSelectionListener;
-import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialog;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
@@ -129,7 +124,6 @@ import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -153,7 +147,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		IToolbarDecoratedView /* IToolbarDecoratedView.Sizable, ITooltipDisplayer */ {
 
 	static {
-		final IPreferenceStore store = EditorsUI.getPreferenceStore();
+		final var store = EditorsUI.getPreferenceStore();
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
 		store.setDefault("spellingEnabled", false);
 		store.setValue("spellingEnabled", false);
@@ -182,6 +176,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Inject private MarkerCreator markerCreator;
 	@Inject private MarkerTypeProvider markerTypeProvider;
 	@Inject private IssueResolutionProvider issueResolver;
+	@Inject private IHighlightingConfiguration highlightingConfiguration;
 	private final GamlEditorDragAndDropHandler dndHandler;
 	private final IPreferenceAfterChangeListener dndChangedListener = newValue -> {
 		uninstallTextDragAndDrop(getInternalSourceViewer());
@@ -213,7 +208,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 			@Override
 			public void paint(final Annotation annotation, final GC gc, final Canvas canvas, final Rectangle bounds) {
-				final Image image = imageProvider.getManagedImage(annotation);
+				final var image = imageProvider.getManagedImage(annotation);
 				if (image != null) {
 					ImageUtilities.drawImage(image, gc, canvas, bounds, SWT.CENTER, SWT.TOP);
 				} else {
@@ -238,7 +233,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 		final IMenuManager foldingMenu = new MenuManager(XtextUIMessages.Editor_FoldingMenu_name, "projection"); //$NON-NLS-1$
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
-		IAction action = getAction("FoldingToggle"); //$NON-NLS-1$
+		var action = getAction("FoldingToggle"); //$NON-NLS-1$
 		foldingMenu.add(action);
 		action = getAction("FoldingExpandAll"); //$NON-NLS-1$
 		foldingMenu.add(action);
@@ -273,8 +268,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	private void buildRightToolbar() {
 		toolbar.wipe(SWT.LEFT, true);
-		final ToolItem t = toolbar.button(IGamaColors.NEUTRAL, "Waiting...", GamaIcons.create("status.clock").image(),
-				null, SWT.LEFT);
+		final var t = toolbar.button(IGamaColors.NEUTRAL, "Waiting...", GamaIcons.create("status.clock").image(), null,
+				SWT.LEFT);
 		toolbar.sep(4, SWT.LEFT);
 		findControl = new EditorToolbar(this).fill(toolbar.getToolbar(SWT.RIGHT));
 
@@ -284,7 +279,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public boolean isLineNumberRulerVisible() {
-		final IPreferenceStore store = getAdvancedPreferenceStore();
+		final var store = getAdvancedPreferenceStore();
 		return store != null ? store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)
 				: false;
 	}
@@ -298,7 +293,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	private void configureTabFolder(final Composite compo) {
-		Composite c = compo;
+		var c = compo;
 		while (c != null) {
 			if (c instanceof CTabFolder) {
 				break;
@@ -306,7 +301,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			c = c.getParent();
 		}
 		if (c != null) {
-			final CTabFolder folder = (CTabFolder) c;
+			final var folder = (CTabFolder) c;
 			folder.setMaximizeVisible(true);
 			folder.setMinimizeVisible(true);
 			folder.setMinimumCharacters(10);
@@ -321,7 +316,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		ummisco.gama.dev.utils.DEBUG.OUT("Creating part control of " + this.getPartName());
 		configureTabFolder(compo);
 		toolbarParent = GamaToolbarFactory.createToolbars(this, compo);
-		final GridLayout layout = new GridLayout(1, false);
+		final var layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
@@ -333,8 +328,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 		// Asking the editor to fill the rest
 		// final int style = GamaToolbarFactory.REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? SWT.NONE : SWT.BORDER;
-		final Composite editor = new Composite(toolbarParent, SWT.BORDER);
-		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		final var editor = new Composite(toolbarParent, SWT.BORDER);
+		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		editor.setLayoutData(data);
 		editor.setLayout(new FillLayout());
 		super.createPartControl(editor);
@@ -359,11 +354,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		final ValidationJob validate = new ValidationJob(validator, getDocument(), processor, CheckMode.FAST_ONLY) {
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				final List<Issue> issues = getDocument().readOnly(resource -> {
+				final var issues = getDocument().readOnly(resource -> {
 					if (resource.isValidationDisabled()) { return Collections.emptyList(); }
 					return validator.validate(resource, getCheckMode(), null);
 				});
-				processor.processIssues(issues, monitor);
+				processor.processIssues((List<Issue>) issues, monitor);
 				return Status.OK_STATUS;
 			}
 
@@ -374,7 +369,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public boolean isOverviewRulerVisible() {
-		final GamaSourceViewer viewer = getInternalSourceViewer();
+		final var viewer = getInternalSourceViewer();
 		if (viewer == null) { return super.isOverviewRulerVisible(); }
 		return viewer.isOverviewVisible();
 	}
@@ -395,7 +390,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	private void installGestures() {
-		final StyledText text = this.getInternalSourceViewer().getTextWidget();
+		final var text = this.getInternalSourceViewer().getTextWidget();
 		if (text != null) {
 			text.addGestureListener(ge -> {
 				if (ge.detail == SWT.GESTURE_END) {
@@ -411,7 +406,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		if (!isRangeIndicatorEnabled()) {
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
 		}
-	};
+	}
 
 	@Override
 	protected void handleCursorPositionChanged() {
@@ -425,13 +420,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	private void enableButton(final int index, final String text, final SelectionListener listener) {
 		if (text == null) { return; }
-		final String expType = state.types.get(index);
-		final Image image = IKeyword.BATCH.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
+		final var expType = state.types.get(index);
+		final var image = IKeyword.BATCH.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
 				: IKeyword.MEMORIZE.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BACK).image()
 						: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
 
-		final ToolItem t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
-		final String type =
+		final var t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
+		final var type =
 				IKeyword.BATCH.equals(expType) ? "batch" : IKeyword.MEMORIZE.equals(expType) ? "memorize" : "regular";
 
 		t.getControl().setToolTipText("Executes the " + type + " experiment " + text);
@@ -443,15 +438,15 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
 		if (forceState || !state.equals(newState)) {
-			WorkbenchHelper.runInUI("Editor refresh", 50, (m) -> {
+			WorkbenchHelper.runInUI("Editor refresh", 50, m -> {
 				if (toolbar == null || toolbar.isDisposed()) { return; }
 				toolbar.wipe(SWT.LEFT, true);
 				if (PlatformHelper.isWindows()) {
 					toolbar.sep(4, SWT.LEFT);
 				}
 
-				final GamaUIColor c = state.getColor();
-				String msg = state.getStatus();
+				final var c = state.getColor();
+				var msg = state.getStatus();
 
 				Selector listener = null;
 				String imageName = null;
@@ -470,14 +465,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				}
 
 				if (msg != null) {
-					final ToolItem t = toolbar.button(c, msg, GamaIcons.create(imageName).image(), listener, SWT.LEFT);
+					final var t = toolbar.button(c, msg, GamaIcons.create(imageName).image(), listener, SWT.LEFT);
 
 					// without the following line, the display of the
 					// text "msg" is not updated
 					// correctly (at least for Windows OS)
 					toolbar.sep(4, SWT.LEFT);
 				} else {
-					int i = 0;
+					var i = 0;
 					if (newState.showExperiments) {
 						for (final String e : state.abbreviations) {
 							enableButton(i++, e, listener);
@@ -510,7 +505,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		if (newExperiments == null && state != null) {
 			updateToolbar(state, true);
 		} else {
-			final GamlEditorState newState = new GamlEditorState(status, newExperiments);
+			final var newState = new GamlEditorState(status, newExperiments);
 			updateToolbar(newState, false);
 			state = newState;
 		}
@@ -540,7 +535,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	private void beforeSave() {
 		if (!GamaPreferences.Modeling.EDITOR_CLEAN_UP.getValue()) { return; }
 		final SourceViewer sv = getInternalSourceViewer();
-		final Point p = sv.getSelectedRange();
+		final var p = sv.getSelectedRange();
 		sv.setSelectedRange(0, sv.getDocument().getLength());
 		if (sv.canDoOperation(SourceViewer.FORMAT)) {
 			sv.doOperation(ISourceViewer.FORMAT);
@@ -550,8 +545,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	protected String[] collectContextMenuPreferencePages() {
-		final String[] commonPages = super.collectContextMenuPreferencePages();
-		final String[] langSpecificPages = new String[] { "pm.eclipse.editbox.pref.default" };
+		final var commonPages = super.collectContextMenuPreferencePages();
+		final var langSpecificPages = new String[] { "pm.eclipse.editbox.pref.default" };
 		return ObjectArrays.concat(langSpecificPages, commonPages, String.class);
 	}
 
@@ -572,7 +567,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	public void createDecorator() {
 		if (decorator != null) { return; }
-		final IBoxProvider provider = BoxProviderRegistry.getInstance().getGamlProvider();
+		final var provider = BoxProviderRegistry.getInstance().getGamlProvider();
 		decorator = provider.createDecorator();
 		decorator.setStyledText(getStyledText());
 		decorator.setSettings(provider.getEditorsBoxSettings());
@@ -618,12 +613,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	private void assignBoxPartListener() {
-		final IPartService partService = getSite().getWorkbenchWindow().getPartService();
+		final var partService = getSite().getWorkbenchWindow().getPartService();
 		if (partService == null) { return; }
 		if (partListeners == null) {
 			partListeners = new HashMap<>();
 		}
-		final IPartListener2 oldListener = partListeners.get(partService);
+		final var oldListener = partListeners.get(partService);
 		if (oldListener == null) {
 			final IPartListener2 listener = new BoxDecoratorPartListener();
 			partService.addPartListener(listener);
@@ -632,9 +627,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	public void insertText(final String s) {
-		final ITextSelection selection = (ITextSelection) getSelectionProvider().getSelection();
-		final int offset = selection.getOffset();
-		final int length = selection.getLength();
+		final var selection = (ITextSelection) getSelectionProvider().getSelection();
+		final var offset = selection.getOffset();
+		final var length = selection.getLength();
 		try {
 			new ReplaceEdit(offset, length, s).apply(getDocument());
 		} catch (final MalformedTreeException e) {
@@ -648,8 +643,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	public String getSelectedText() {
-		final ITextSelection sel = (ITextSelection) getSelectionProvider().getSelection();
-		final int length = sel.getLength();
+		final var sel = (ITextSelection) getSelectionProvider().getSelection();
+		final var length = sel.getLength();
 		if (length == 0) { return ""; }
 		final IDocument doc = getDocument();
 		try {
@@ -664,7 +659,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	 * @see msi.gama.lang.gaml.ui.editor.IGamlEditor#openEditTemplateDialog()
 	 */
 	public boolean openEditTemplateDialog(final TemplatePersistenceData data, final boolean edit) {
-		final GamlEditTemplateDialog d = getTemplateFactory().createDialog(data, edit, getEditorSite().getShell());
+		final var d = getTemplateFactory().createDialog(data, edit, getEditorSite().getShell());
 		if (d.open() == Window.OK) {
 			getTemplateStore().directAdd(d.getData(), edit);
 			return true;
@@ -687,15 +682,15 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 		try {
 			final IDocument doc = getDocument();
-			int offset = doc.getLineOffset(doc.getNumberOfLines() - 1);
+			var offset = doc.getLineOffset(doc.getNumberOfLines() - 1);
 			doc.replace(offset, 0, "\n\n");
 			offset += 2;
-			final int length = 0;
-			final Position pos = new Position(offset, length);
-			final XtextTemplateContextType ct = new XtextTemplateContextType();
-			final DocumentTemplateContext dtc = new DocumentTemplateContext(ct, doc, pos);
+			final var length = 0;
+			final var pos = new Position(offset, length);
+			final var ct = new XtextTemplateContextType();
+			final var dtc = new DocumentTemplateContext(ct, doc, pos);
 			final IRegion r = new Region(offset, length);
-			final TemplateProposal tp = new TemplateProposal(t, dtc, r, null);
+			final var tp = new TemplateProposal(t, dtc, r, null);
 			tp.apply(getInternalSourceViewer(), (char) 0, 0, offset);
 		} catch (final BadLocationException e) {
 			e.printStackTrace();
@@ -704,15 +699,15 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	public void applyTemplate(final Template t) {
 		// TODO Create a specific context type (with GAML specific variables ??)
-		final XtextTemplateContextType ct = new XtextTemplateContextType();
+		final var ct = new XtextTemplateContextType();
 		final IDocument doc = getDocument();
-		final ITextSelection selection = (ITextSelection) getSelectionProvider().getSelection();
-		final int offset = selection.getOffset();
-		final int length = selection.getLength();
-		final Position pos = new Position(offset, length);
-		final DocumentTemplateContext dtc = new DocumentTemplateContext(ct, doc, pos);
+		final var selection = (ITextSelection) getSelectionProvider().getSelection();
+		final var offset = selection.getOffset();
+		final var length = selection.getLength();
+		final var pos = new Position(offset, length);
+		final var dtc = new DocumentTemplateContext(ct, doc, pos);
 		final IRegion r = new Region(offset, length);
-		final TemplateProposal tp = new TemplateProposal(t, dtc, r, null);
+		final var tp = new TemplateProposal(t, dtc, r, null);
 		tp.apply(getInternalSourceViewer(), (char) 0, 0, offset);
 	}
 
@@ -752,7 +747,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 			final Iterator e = ((CompositeRuler) getVerticalRuler()).getDecoratorIterator();
 			while (e.hasNext()) {
-				final IVerticalRulerColumn column = (IVerticalRulerColumn) e.next();
+				final var column = (IVerticalRulerColumn) e.next();
 				column.getControl().setBackground(
 						GamaColors.get(GamaPreferences.Modeling.EDITOR_BACKGROUND_COLOR.getValue()).color());
 				column.redraw();

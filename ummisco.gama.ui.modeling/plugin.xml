@@ -86,13 +86,14 @@
 			name="Gaml">
 			<keywordReference id="msi.gama.lang.gaml.ui.keyword_Gaml"/>
 		</page>
-		<page
+<!--		<page
 			category="msi.gama.lang.gaml.Gaml"
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
 			id="msi.gama.lang.gaml.Gaml.coloring"
 			name="Syntax Coloring">
 			<keywordReference id="msi.gama.lang.gaml.ui.keyword_Gaml"/>
 		</page>
+-->
 		<page
 			category="msi.gama.lang.gaml.Gaml"
 			class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"

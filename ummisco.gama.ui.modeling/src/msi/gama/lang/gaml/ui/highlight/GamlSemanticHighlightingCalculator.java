@@ -210,7 +210,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 			for (final ILeafNode node : n.getLeafNodes()) {
 				if (!node.isHidden()) {
 					final String sNode = StringUtils.toJavaString(NodeModelUtils.getTokenText(node));
-					if (equalsFaceOrString(text, sNode)) {
+					if (equalsFacetOrString(text, sNode)) {
 						n = node;
 						if (!all) {
 							break;
@@ -223,11 +223,16 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		return false;
 	}
 
-	boolean equalsFaceOrString(final String text, final String s) {
+	boolean equalsFacetOrString(final String text, final String s) {
 		if (s.equals(text)) { return true; }
-		if (s.equals(text + ":")) { return true; }
-		if (s.equals("\"" + text + "\"")) { return true; }
-		if (s.equals("\'" + text + "\'")) { return true; }
+		int length = s.length();
+		char first = s.charAt(0);
+		char last = s.charAt(length-1);
+		switch (last) {
+			case ':': return text.equals(s.substring(0, length -1));
+			case '\"': case '\'': return (first == last) && text.equals(s.substring(1, length - 1));
+			
+		}
 		return false;
 	}
 

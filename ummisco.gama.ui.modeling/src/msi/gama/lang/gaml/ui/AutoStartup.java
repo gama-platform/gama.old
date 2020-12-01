@@ -15,11 +15,15 @@ import static org.eclipse.jface.preference.PreferenceConverter.setValue;
 import static org.eclipse.jface.resource.JFaceResources.TEXT_FONT;
 
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.themes.IThemeManager;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.lang.gaml.GamlRuntimeModule;
@@ -62,6 +66,7 @@ public class AutoStartup implements IStartup {
 		GamlRuntimeModule.staticInitialize();
 		GamlEditorBindings.install();
 		GamlReferenceSearch.install();
+
 	}
 
 }
