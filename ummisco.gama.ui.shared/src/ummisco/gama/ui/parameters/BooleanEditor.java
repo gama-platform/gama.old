@@ -11,11 +11,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -23,7 +20,6 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.SwitchButton;
@@ -66,7 +62,7 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	protected void showToolbar() {
 		super.showToolbar();
 		if (getEditor() != null) {
-			this.getEditor().setBackground(HOVERED_BACKGROUND);
+			this.getEditor().setBackground(HOVERED_BACKGROUND());
 			// AD 26/12/15 Commented for the moment to not force the focus (see
 			// Issues #1339 and #1248)
 			// if ( combo != null ) {
@@ -82,9 +78,9 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
-		final List<GamaColor> colors = getParam().getColor(getScope());
-		Color left = IGamaColors.OK.color();
-		Color right = IGamaColors.ERROR.color();
+		final var colors = getParam().getColor(getScope());
+		var left = IGamaColors.OK.color();
+		var right = IGamaColors.ERROR.color();
 		if (colors != null) {
 			if (colors.size() == 1) {
 				left = right = GamaColors.get(colors.get(0)).color();
@@ -101,7 +97,7 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		Boolean b = currentValue;
+		var b = currentValue;
 		if (b == null) {
 			b = false;
 		}

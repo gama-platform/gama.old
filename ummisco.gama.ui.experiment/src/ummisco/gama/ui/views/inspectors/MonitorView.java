@@ -38,7 +38,6 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.ExpandableItemsView;
@@ -86,7 +85,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@Override
 	protected Composite createItemContentsFor(final MonitorOutput output) {
 		final Composite compo = new Composite(getViewer(), SWT.NONE);
-		compo.setBackground(IGamaColors.WHITE.color());
+		// compo.setBackground(IGamaColors.WHITE.color());
 		final GridLayout layout = new GridLayout(2, false);
 		// GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true,
 		// false);

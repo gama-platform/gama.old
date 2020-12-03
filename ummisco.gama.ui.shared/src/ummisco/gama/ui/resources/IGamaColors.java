@@ -13,6 +13,7 @@ package ummisco.gama.ui.resources;
 
 import org.eclipse.swt.SWT;
 
+import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
@@ -32,9 +33,12 @@ public interface IGamaColors {
 	GamaUIColor TOOLTIP = GamaColors.get(GamaIcons.create("palette/palette.yellow2")).validate();
 	GamaUIColor GRAY_LABEL = GamaColors.get(0x88, 0x88, 0x88).validate();
 	GamaUIColor VERY_LIGHT_GRAY = GamaColors.get(245, 245, 245).validate();
+	GamaUIColor VERY_DARK_GRAY = GamaColors.get(20, 20, 20).validate();
 	GamaUIColor WHITE =
 			new GamaUIColor(GamaColors.system(SWT.COLOR_WHITE), GamaColors.system(SWT.COLOR_WHITE)).validate();
 	GamaUIColor BLACK = new GamaUIColor(GamaColors.system(SWT.COLOR_BLACK)).validate();
-	GamaUIColor PARAMETERS_BACKGROUND = GamaColors.get(255, 255, 255).validate();
+	GamaUIColor PARAMETERS_BACKGROUND =
+			(ThemeHelper.isDark() ? GamaColors.get(120, 120, 120) : GamaColors.get(255, 255, 255)).validate();
+	GamaUIColor DARK_ORANGE = GamaColors.get(225, 92, 15).validate();
 
 }

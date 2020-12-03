@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -33,7 +34,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -84,11 +84,11 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	protected void displayTooltip() {
-		final String s = getPopupText();
+		final var s = getPopupText();
 		if (s == null || s.isEmpty()) {
 			removeTooltip();
 		} else {
-			final ITooltipDisplayer displayer = GamaToolbarFactory.findTooltipDisplayer(text);
+			final var displayer = GamaToolbarFactory.findTooltipDisplayer(text);
 			if (displayer != null) {
 				displayer.displayTooltip(s, background);
 			}
@@ -99,12 +99,12 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	protected void removeTooltip() {
-		final ITooltipDisplayer displayer = GamaToolbarFactory.findTooltipDisplayer(text);
+		final var displayer = GamaToolbarFactory.findTooltipDisplayer(text);
 		if (displayer != null) {
 			displayer.stopDisplayingTooltips();
 		}
 		if (editor != null) {
-			editor.getComposite().setBackground(AbstractEditor.NORMAL_BACKGROUND);
+			editor.getComposite().setBackground(editor.getNormalBackground());
 		}
 
 	}
@@ -123,10 +123,10 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	private Object computeValue() {
 		try {
 			currentException = null;
-			IAgent agent = getHostAgent();
+			var agent = getHostAgent();
 			// AD: fix for SWT Issue in Eclipse 4.4
 			if (text == null || text.isDisposed()) { return null; }
-			String s = text.getText();
+			var s = text.getText();
 			if (expectedType == Types.STRING) {
 				if (!StringUtils.isGamaString(s))
 					s = StringUtils.toGamlString(s);
@@ -154,8 +154,8 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	public void modifyValue() {
-		final Object oldValue = getCurrentValue();
-		final Object value = computeValue();
+		final var oldValue = getCurrentValue();
+		final var value = computeValue();
 		if (currentException != null) {
 			setCurrentValue(oldValue);
 			return;
@@ -182,8 +182,12 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	protected Text createTextBox(final Composite comp, final int controlStyle) {
-		Text t = new Text(comp, controlStyle);
-		t.setForeground(IGamaColors.BLACK.color()); // force the color, see #2601
+		final var t = new Text(comp, controlStyle);
+		t.setForeground(ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color()); // force
+																													// the
+																													// color,
+																													// see
+																													// #2601
 		return t;
 	}
 
@@ -227,11 +231,11 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
 	 */
 	public String getPopupText() {
-		String result = "";
+		var result = "";
 		// if ( getCurrentValue() == null ) {
 		// final Object value = computeValue();
 		// }
-		final Object value = getCurrentValue();
+		final var value = getCurrentValue();
 		if (currentException != null) {
 			background = IGamaColors.ERROR;
 			result += currentException.getMessage();

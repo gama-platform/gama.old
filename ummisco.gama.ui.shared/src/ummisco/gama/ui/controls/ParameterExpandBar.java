@@ -18,23 +18,19 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Widget;
 
 import com.google.common.base.Objects;
 
 import msi.gama.common.interfaces.ItemList;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -170,16 +166,16 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 				// onHover(e);
 			}
 		});
-		addMouseMoveListener(e -> onHover(e));
+		addMouseMoveListener(this::onHover);
 		// addListener(SWT.KeyDown, listener);
 		addListener(SWT.FocusIn, listener);
 		addListener(SWT.FocusOut, listener);
-		final ScrollBar verticalBar = getVerticalBar();
+		final var verticalBar = getVerticalBar();
 		if (verticalBar != null) {
-			verticalBar.addListener(SWT.Selection, event -> onScroll(event));
+			verticalBar.addListener(SWT.Selection, this::onScroll);
 		}
 		// By default
-		setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		// setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 	}
 
 	@Override
@@ -192,9 +188,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 			if (itemCount > 0) {
 				height += spacing;
-				final GC gc = new GC(this);
-				for (int i = 0; i < itemCount; i++) {
-					final ParameterExpandItem item = items[i];
+				final var gc = new GC(this);
+				for (var i = 0; i < itemCount; i++) {
+					final var item = items[i];
 					height += item.getHeaderHeight();
 					if (item.expanded) {
 						height += item.height + 2;
@@ -219,16 +215,16 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 			height = hHint;
 		}
 		// return new Point(width, height);
-		final Rectangle trim = computeTrim(0, 0, width, height);
+		final var trim = computeTrim(0, 0, width, height);
 		return new Point(trim.width, trim.height);
 	}
 
 	void createItem(final ParameterExpandItem item, final int style, final int index) {
-		if (!(0 <= index && index <= itemCount)) {
+		if (((0 > index) || (index > itemCount))) {
 			SWT.error(SWT.ERROR_INVALID_RANGE);
 		}
 		if (itemCount == items.length) {
-			final ParameterExpandItem[] newItems = new ParameterExpandItem[itemCount + 4];
+			final var newItems = new ParameterExpandItem[itemCount + 4];
 			System.arraycopy(items, 0, newItems, 0, items.length);
 			items = newItems;
 		}
@@ -245,7 +241,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	public void destroyItem(final ParameterExpandItem item) {
 
 		if (inDispose) { return; }
-		int index = 0;
+		var index = 0;
 		while (index < itemCount) {
 			if (items[index] == item) {
 				break;
@@ -254,7 +250,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		}
 		if (index == itemCount) { return; }
 		if (item == getFocusItem()) {
-			final int focusIndex = index > 0 ? index - 1 : 1;
+			final var focusIndex = index > 0 ? index - 1 : 1;
 			if (focusIndex < itemCount) {
 				setFocusItem(items[focusIndex]);
 				getFocusItem().redraw();
@@ -276,8 +272,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	void computeBandHeight() {
 		if (getFont() == null) { return; }
-		final GC gc = new GC(this);
-		final FontMetrics metrics = gc.getFontMetrics();
+		final var gc = new GC(this);
+		final var metrics = gc.getFontMetrics();
 		gc.dispose();
 		bandHeight = Math.max(ParameterExpandItem.CHEVRON_SIZE, metrics.getHeight());
 	}
@@ -322,7 +318,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	 *                </ul>
 	 */
 	public ParameterExpandItem[] getItems() {
-		final ParameterExpandItem[] result = new ParameterExpandItem[itemCount];
+		final var result = new ParameterExpandItem[itemCount];
 		System.arraycopy(items, 0, result, 0, itemCount);
 		return result;
 	}
@@ -350,7 +346,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		if (item == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		for (int i = 0; i < itemCount; i++) {
+		for (var i = 0; i < itemCount; i++) {
 			if (items[i] == item) { return i; }
 		}
 		return -1;
@@ -358,16 +354,16 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	void layoutItems(final int index, final boolean setScrollbar) {
 		if (index < itemCount) {
-			int y = spacing - yCurrentScroll;
-			for (int i = 0; i < index; i++) {
-				final ParameterExpandItem item = items[i];
+			var y = spacing - yCurrentScroll;
+			for (var i = 0; i < index; i++) {
+				final var item = items[i];
 				if (item.expanded) {
 					y += item.height + 2;
 				}
 				y += item.getHeaderHeight() + spacing;
 			}
-			for (int i = index; i < itemCount; i++) {
-				final ParameterExpandItem item = items[i];
+			for (var i = index; i < itemCount; i++) {
+				final var item = items[i];
 				item.setBounds(spacing, y, 0, 0, true, false);
 				if (item.expanded) {
 					y += item.height + 2;
@@ -382,14 +378,14 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	public void updateItemNames() {
 		if (underlyingObjects == null) { return; }
-		for (int i = 0; i < itemCount; i++) {
+		for (var i = 0; i < itemCount; i++) {
 			items[i].setText(underlyingObjects.getItemDisplayName(items[i].getData(), items[i].getText()));
 		}
 	}
 
 	public void updateItemColors() {
 		if (underlyingObjects == null) { return; }
-		for (int i = 0; i < itemCount; i++) {
+		for (var i = 0; i < itemCount; i++) {
 			items[i].setColor(underlyingObjects.getItemDisplayColor(items[i].getData()));
 		}
 
@@ -404,11 +400,11 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	void setScrollbar() {
 		if (itemCount == 0) { return; }
-		final ScrollBar verticalBar = getVerticalBar();
+		final var verticalBar = getVerticalBar();
 		if (verticalBar == null) { return; }
-		final int height = getClientArea().height;
-		final ParameterExpandItem item = items[itemCount - 1];
-		int maxHeight = item.y + bandHeight + spacing;
+		final var height = getClientArea().height;
+		final var item = items[itemCount - 1];
+		var maxHeight = item.y + bandHeight + spacing;
 		if (item.expanded) {
 			maxHeight += item.height;
 		}
@@ -420,9 +416,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		}
 		maxHeight += yCurrentScroll;
 
-		final int selection = Math.min(yCurrentScroll, maxHeight);
-		final int increment = verticalBar.getIncrement();
-		final int pageIncrement = verticalBar.getPageIncrement();
+		final var selection = Math.min(yCurrentScroll, maxHeight);
+		final var increment = verticalBar.getIncrement();
+		final var pageIncrement = verticalBar.getPageIncrement();
 		verticalBar.setValues(selection, 0, maxHeight, height, increment, pageIncrement);
 		verticalBar.setVisible(maxHeight > height);
 	}
@@ -438,9 +434,9 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		if (spacing < 0) { return; }
 		if (spacing == this.spacing) { return; }
 		this.spacing = spacing;
-		final int width = Math.max(0, getClientArea().width - spacing * 2);
-		for (int i = 0; i < itemCount; i++) {
-			final ParameterExpandItem item = items[i];
+		final var width = Math.max(0, getClientArea().width - spacing * 2);
+		for (var i = 0; i < itemCount; i++) {
+			final var item = items[i];
 			if (item.width != width) {
 				item.setBounds(0, 0, width, item.height, false, true);
 			}
@@ -450,16 +446,16 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	void showItem(final ParameterExpandItem item) {
-		final Composite control = item.control;
+		final var control = item.control;
 		if (control != null && !control.isDisposed()) {
 			item.setImage(item.expanded ? GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).image()
 					: GamaIcons.create(IGamaIcons.SMALL_EXPAND).image());
 			control.setVisible(item.expanded);
 		}
 		item.redraw();
-		final int index = indexOf(item);
+		final var index = indexOf(item);
 		layoutItems(index + 1, true);
-		final Event ev = new Event();
+		final var ev = new Event();
 		ev.item = this;
 		notifyListeners(SWT.Resize, ev);
 	}
@@ -475,7 +471,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		 */
 		inDispose = true;
 
-		for (int i = 0; i < itemCount; i++) {
+		for (var i = 0; i < itemCount; i++) {
 			items[i].dispose();
 		}
 		items = null;
@@ -492,11 +488,11 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	void onHover(final MouseEvent event) {
-		final int x = event.x;
-		final int y = event.y;
-		boolean hover = false;
-		for (int i = 0; i < itemCount; i++) {
-			final ParameterExpandItem item = items[i];
+		final var x = event.x;
+		final var y = event.y;
+		var hover = false;
+		for (var i = 0; i < itemCount; i++) {
+			final var item = items[i];
 			hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
 			if (hover) {
 				changeHoverTo(item);
@@ -510,7 +506,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	void changeHoverTo(final ParameterExpandItem item) {
 		if (hoverItem == item) { return; }
-		final ParameterExpandItem oldHoverItem = hoverItem;
+		final var oldHoverItem = hoverItem;
 		hoverItem = item;
 		if (oldHoverItem != null) {
 			oldHoverItem.redraw();
@@ -521,25 +517,25 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	void onContextualMenu(final Event event) {
-		final int x = event.x;
-		final int y = event.y;
-		for (int i = 0; i < itemCount; i++) {
-			final ParameterExpandItem item = items[i];
-			final boolean hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
+		final var x = event.x;
+		final var y = event.y;
+		for (var i = 0; i < itemCount; i++) {
+			final var item = items[i];
+			final var hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
 			if (!hover) {
 				continue;
 			}
 			if (underlyingObjects != null) {
 				ignoreMouseUp = true;
-				final Point p = toDisplay(x, y);
+				final var p = toDisplay(x, y);
 				final Map<String, Runnable> menuContents = underlyingObjects.handleMenu(item.getData(), p.x, p.y);
 				if (menuContents == null) {
 					return;
 				} else {
-					final Menu menu = new Menu(getShell(), SWT.POP_UP);
+					final var menu = new Menu(getShell(), SWT.POP_UP);
 
 					for (final Map.Entry<String, Runnable> entry : menuContents.entrySet()) {
-						final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+						final var menuItem = new MenuItem(menu, SWT.PUSH);
 						menuItem.setText(entry.getKey());
 						menuItem.addListener(SWT.Selection, e -> entry.getValue().run());
 					}
@@ -558,11 +554,11 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	void onMouseDown(final Event event) {
 		if (event.button != 1) { return; }
-		final int x = event.x;
-		final int y = event.y;
-		for (int i = 0; i < itemCount; i++) {
-			final ParameterExpandItem item = items[i];
-			final boolean hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
+		final var x = event.x;
+		final var y = event.y;
+		for (var i = 0; i < itemCount; i++) {
+			final var item = items[i];
+			final var hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
 			if (!hover) {
 				continue;
 			}
@@ -639,17 +635,17 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		}
 		if (event.button != 1) { return; }
 		if (getFocusItem() == null) { return; }
-		final int x = event.x;
-		final int y = event.y;
-		final boolean hover = getFocusItem().x <= x && x < getFocusItem().x + getFocusItem().width
-				&& getFocusItem().y <= y && y < getFocusItem().y + bandHeight;
+		final var x = event.x;
+		final var y = event.y;
+		final var hover = getFocusItem().x <= x && x < getFocusItem().x + getFocusItem().width && getFocusItem().y <= y
+				&& y < getFocusItem().y + bandHeight;
 		if (hover) {
 			// if ( hasPausableToggle && getFocusItem().pauseRequested(x, y) ) {
 			// return; }
 
-			final Event ev = new Event();
+			final var ev = new Event();
 			ev.item = getFocusItem();
-			final boolean wasExpanded = getFocusItem().expanded;
+			final var wasExpanded = getFocusItem().expanded;
 			getFocusItem().setExpanded(!getFocusItem().expanded);
 			notifyListeners(wasExpanded ? SWT.Collapse : SWT.Expand, ev);
 			showItem(getFocusItem());
@@ -659,18 +655,18 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 
 	void onPaint(final Event event) {
 		// final boolean hasFocus = isFocusControl();
-		for (int i = 0; i < itemCount; i++) {
-			final ParameterExpandItem item = items[i];
+		for (var i = 0; i < itemCount; i++) {
+			final var item = items[i];
 			event.gc.setAlpha(255);
 			item.drawItem(event.gc, item == hoverItem);
 		}
 	}
 
 	void onResize() {
-		final Rectangle rect = getClientArea();
-		final int width = Math.max(0, rect.width - spacing * 2);
-		for (int i = 0; i < itemCount; i++) {
-			final ParameterExpandItem item = items[i];
+		final var rect = getClientArea();
+		final var width = Math.max(0, rect.width - spacing * 2);
+		for (var i = 0; i < itemCount; i++) {
+			final var item = items[i];
 			if (item.getControl() != null) {
 				item.setHeight(item.getControl().computeSize(width, SWT.DEFAULT).y);
 			}
@@ -680,7 +676,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	public void onScroll(final Event event) {
-		final ScrollBar verticalBar = getVerticalBar();
+		final var verticalBar = getVerticalBar();
 		if (verticalBar != null) {
 			yCurrentScroll = verticalBar.getSelection();
 			layoutItems(0, false);

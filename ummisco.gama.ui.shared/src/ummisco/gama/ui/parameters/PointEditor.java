@@ -66,7 +66,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 		// GridData.CENTER, true, false);
 		// pointEditorGridData.widthHint = 100;
 		// pointEditor.setLayoutData(pointEditorGridData);
-		final GridLayout pointEditorLayout = new GridLayout(3, true);
+		final var pointEditorLayout = new GridLayout(3, true);
 		pointEditorLayout.horizontalSpacing = 10;
 		pointEditorLayout.verticalSpacing = 0;
 		pointEditorLayout.marginHeight = 0;
@@ -74,19 +74,19 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 		pointEditor.setLayout(pointEditorLayout);
 		pointEditor.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 
-		for (int i = 0; i < 3; i++) {
-			final Composite xComposite = new Composite(pointEditor, SWT.NO_BACKGROUND);
+		for (var i = 0; i < 3; i++) {
+			final var xComposite = new Composite(pointEditor, SWT.NO_BACKGROUND);
 			xComposite.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
-			final GridLayout subCompositeLayout = new GridLayout(2, false);
+			final var subCompositeLayout = new GridLayout(2, false);
 			subCompositeLayout.marginHeight = 0;
 			subCompositeLayout.marginWidth = 0;
 			xComposite.setLayout(subCompositeLayout);
-			final GridData subCompositeGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
+			final var subCompositeGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 			xComposite.setLayoutData(subCompositeGridData);
-			final Label xLabel = new Label(xComposite, SWT.NONE);
+			final var xLabel = new Label(xComposite, SWT.NONE);
 			xLabel.setText(labels[i]);
 			ordinates[i] = new Text(xComposite, SWT.BORDER);
-			final GridData textGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
+			final var textGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 			ordinates[i].setLayoutData(textGridData);
 			ordinates[i].addModifyListener(this);
 			ordinates[i].addVerifyListener(this);
@@ -110,7 +110,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	protected void showToolbar() {
 		super.showToolbar();
 		if (pointEditor != null) {
-			pointEditor.setBackground(HOVERED_BACKGROUND);
+			pointEditor.setBackground(HOVERED_BACKGROUND());
 		}
 	}
 
@@ -118,12 +118,12 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	public void verifyText(final VerifyEvent event) {
 		if (internalModification) { return; }
 		if (!allowVerification) { return; }
-		final char myChar = event.character;
+		final var myChar = event.character;
 		// Last one is for texts
-		final Text text = (Text) event.widget;
-		final String old = text.getText();
-		final boolean alreadyPoint = old.contains(".");
-		final boolean atBeginning = event.start == 0;
+		final var text = (Text) event.widget;
+		final var old = text.getText();
+		final var alreadyPoint = old.contains(".");
+		final var atBeginning = event.start == 0;
 		event.doit = Character.isDigit(myChar) || myChar == '\b' || myChar == '.' && !alreadyPoint
 				|| myChar == '-' && atBeginning;
 	}
@@ -131,8 +131,8 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	@Override
 	protected void displayParameterValue() {
 		allowVerification = false;
-		final GamaPoint p = (GamaPoint) currentValue;
-		for (int i = 0; i < 3; i++) {
+		final var p = (GamaPoint) currentValue;
+		for (var i = 0; i < 3; i++) {
 			if (isReverting || !ordinates[i].isFocusControl()) {
 				ordinates[i].setText(currentValue == null ? "0.0" : StringUtils.toGaml(p.getOrdinate(i), false));
 			}

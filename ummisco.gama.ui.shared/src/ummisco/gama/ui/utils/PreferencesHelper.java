@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 
-import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.runtime.MemoryUtils;
@@ -115,14 +114,6 @@ public class PreferencesHelper {
 						}
 
 					});
-
-	public static final Pref<Boolean> CORE_THEME_LIGHT =
-			create("pref_theme_light", "Light theme", true, IType.BOOL, true).in(NAME, APPEARANCE).onChange(v -> {
-				if (v)
-					ThemeHelper.changeToLight();
-				else
-					ThemeHelper.changeToDark();
-			});
 
 	public static File findIniFile() {
 		final var path = Platform.getConfigurationLocation().getURL().getPath();

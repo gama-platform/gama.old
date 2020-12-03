@@ -54,7 +54,7 @@ public class EditorsDialog extends Dialog {
 		this.title = title;
 		setShellStyle(SWT.RESIZE | SWT.BORDER);
 		this.parameters = parameters;
-		parameters.forEach((p) -> {
+		parameters.forEach(p -> {
 			values.put(p.getName(), p.getInitialValue(scope));
 		});
 	}
@@ -66,8 +66,8 @@ public class EditorsDialog extends Dialog {
 
 	@Override
 	protected Control createButtonBar(final Composite parent) {
-		final Control composite = super.createButtonBar(parent);
-		composite.setBackground(IGamaColors.WHITE.color());
+		final var composite = super.createButtonBar(parent);
+		// composite.setBackground(IGamaColors.WHITE.color());
 		return composite;
 	}
 
@@ -78,24 +78,24 @@ public class EditorsDialog extends Dialog {
 	 */
 	@Override
 	protected Control createContents(final Composite parent) {
-		final Control composite = super.createContents(parent);
-		composite.setBackground(IGamaColors.WHITE.color());
+		final var composite = super.createContents(parent);
+		// composite.setBackground(IGamaColors.WHITE.color());
 		return composite;
 	}
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		final Composite composite = (Composite) super.createDialogArea(parent);
-		composite.setBackground(IGamaColors.WHITE.color());
-		final GridLayout layout = (GridLayout) composite.getLayout();
+		final var composite = (Composite) super.createDialogArea(parent);
+		// composite.setBackground(IGamaColors.WHITE.color());
+		final var layout = (GridLayout) composite.getLayout();
 		layout.numColumns = 2;
-		final Label text = new Label(composite, SWT.None);
+		final var text = new Label(composite, SWT.None);
 		text.setBackground(IGamaColors.OK.inactive());
 		text.setForeground(GamaColors.getTextColorForBackground(text.getBackground()).color());
 		text.setText(title);
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		var data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		text.setLayoutData(data);
-		final Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		final var sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		data.heightHint = 20;
 		sep.setLayoutData(data);
@@ -112,7 +112,7 @@ public class EditorsDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		final Point p = super.getInitialSize();
+		final var p = super.getInitialSize();
 		return new Point(p.x * 2, p.y);
 	}
 

@@ -44,7 +44,6 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.utils.PreferencesHelper;
 
 /**
  * @author Sebastian Zarnekow - Initial contribution and API
@@ -187,7 +186,7 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 			ids.add(pref.getKey());
 			ids.add(pref2.getKey());
 		});
-		PreferencesHelper.CORE_THEME_LIGHT.refreshes(ids.toArray(new String[0]));
+		ThemeHelper.CORE_THEME_LIGHT.refreshes(ids.toArray(new String[0]));
 	}
 
 	private void applyFont(String id, String name, TextStyle style, GamaFont font) {

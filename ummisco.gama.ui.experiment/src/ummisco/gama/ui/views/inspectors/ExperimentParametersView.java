@@ -116,18 +116,16 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		tb.button(GamaIcons.create(IGamaIcons.SMALL_EXPAND).getCode(), "Collapse All",
-				"Collapse All", e -> { 
-					for(ParameterExpandItem p:getViewer().getItems()) {
-						p.setExpanded(false);
-					} 
-				}, SWT.RIGHT);
-		tb.button(GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).getCode(), "Expand All",
-				"Expand All", e -> { 
-						for(ParameterExpandItem p:getViewer().getItems()) {
-							p.setExpanded(true);
-						} 
-				}, SWT.RIGHT);
+		tb.button(GamaIcons.create(IGamaIcons.SMALL_EXPAND).getCode(), "Collapse All", "Collapse All", e -> {
+			for (final ParameterExpandItem p : getViewer().getItems()) {
+				p.setExpanded(false);
+			}
+		}, SWT.RIGHT);
+		tb.button(GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).getCode(), "Expand All", "Expand All", e -> {
+			for (final ParameterExpandItem p : getViewer().getItems()) {
+				p.setExpanded(true);
+			}
+		}, SWT.RIGHT);
 		tb.button(GamaIcons.create(IGamaIcons.ACTION_REVERT).getCode(), "Revert parameter values",
 				"Revert parameters to their initial values", e -> {
 					final EditorsList<?> eds = editors;
@@ -140,7 +138,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					final SimulationAgent sim =
 							GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
 					if (sim == null) { return; }
-					WorkbenchHelper.runInUI("", 0, (m) -> {
+					WorkbenchHelper.runInUI("", 0, m -> {
 						if (CORE_DISPLAY_LAYOUT.getValue().equals("None")) {
 							ArrangeDisplayViews.execute(IUnits.split);
 						} else {

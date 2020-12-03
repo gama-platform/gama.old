@@ -45,7 +45,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.ParameterExpandBar;
@@ -145,6 +144,7 @@ public class GamaPreferencesView {
 		final var viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
 		contents.add(viewer);
 		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		// viewer.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		viewer.setLayoutData(data);
 		// ?
 		viewer.computeSize(tab.getBounds().x, SWT.DEFAULT);
@@ -154,9 +154,9 @@ public class GamaPreferencesView {
 		for (final String groupName : entries.keySet()) {
 			final var item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
-			item.setColor(new GamaColor(230, 230, 230, 255));
+			// item.setColor(new GamaColor(230, 230, 230, 255));
 			final var compo = new Composite(viewer, SWT.NONE);
-			compo.setBackground(viewer.getBackground());
+			// compo.setBackground(viewer.getBackground());
 			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
 			item.setControl(compo);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
@@ -230,6 +230,8 @@ public class GamaPreferencesView {
 					modelValues.put(e.getKey(), value);
 					checkActivables(e, value);
 					checkRefreshables(e, value);
+					if (e.isRestartRequired())
+						setRestartRequired();
 				} else {
 					GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());
 				}
@@ -378,7 +380,8 @@ public class GamaPreferencesView {
 				GamaPreferences.setNewPreferences(modelValues);
 				if (restartRequired) {
 					restartRequired = false;
-					final var restart = Messages.confirm("Restart ?", "Restart GAMA now ?");
+					final var restart = Messages.confirm("Restart GAMA",
+							"It is advised to restart GAMA after these changes. Restart now ?");
 					if (restart) {
 						close();
 						PlatformUI.getWorkbench().restart(true);

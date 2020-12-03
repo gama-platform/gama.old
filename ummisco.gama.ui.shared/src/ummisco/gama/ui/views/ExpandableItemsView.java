@@ -46,7 +46,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 					this);
 			final Object layout = parent.getLayout();
 			if (layout instanceof GridLayout) {
-				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+				final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
 				viewer.setLayoutData(data);
 			}
 			viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
@@ -69,13 +69,13 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
 			final Composite control, final ParameterExpandBar bar, final boolean expanded, final GamaUIColor color) {
-		final ParameterExpandItem i = buildConcreteItem(bar, data, color);
+		final var i = buildConcreteItem(bar, data, color);
 		if (name != null) {
 			i.setText(name);
 		}
 		control.pack(true);
 		control.layout();
-		control.setBackground(bar.getBackground());
+		// control.setBackground(bar.getBackground());
 		i.setControl(control);
 		i.setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		i.setExpanded(expanded);
@@ -99,7 +99,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 			final GamaUIColor color) {
 		createViewer(parent);
 		if (viewer == null) { return null; }
-		final Composite control = createItemContentsFor(data);
+		final var control = createItemContentsFor(data);
 		if (control == null) { return null; }
 		return createItem(parent, data, control, expanded, color);
 	}
@@ -166,7 +166,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	}
 
 	public void displayItems() {
-		final List<T> items = getItems();
+		final var items = getItems();
 		for (final T obj : items) {
 			addItem(obj);
 		}

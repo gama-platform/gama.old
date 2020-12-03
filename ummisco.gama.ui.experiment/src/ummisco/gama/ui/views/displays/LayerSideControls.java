@@ -57,7 +57,6 @@ import ummisco.gama.ui.parameters.FloatEditor;
 import ummisco.gama.ui.parameters.IntEditor;
 import ummisco.gama.ui.parameters.PointEditor;
 import ummisco.gama.ui.parameters.StringEditor;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -76,7 +75,7 @@ public class LayerSideControls {
 	public Composite fill(final Composite parent, final LayeredDisplayView view) {
 
 		final Composite column = new Composite(parent, SWT.NONE);
-		column.setBackground(IGamaColors.WHITE.color());
+		// column.setBackground(IGamaColors.WHITE.color());
 		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
 		column.setLayoutData(data);
 		final GridLayout layout = new GridLayout(2, false);
@@ -84,7 +83,7 @@ public class LayerSideControls {
 		column.setLayout(layout);
 
 		final Composite viewersComposite = new Composite(parent, SWT.None);
-		viewersComposite.setBackground(IGamaColors.WHITE.color());
+		// viewersComposite.setBackground(IGamaColors.WHITE.color());
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewersComposite.setLayoutData(data);
 		viewersComposite.setLayout(new GridLayout(1, true));
@@ -330,16 +329,15 @@ public class LayerSideControls {
 					data.setHighlightColor(new GamaColor(newValue));
 					ds.updateDisplay(true);
 				});
-		zoom = EditorFactory.create(scope, contents, "Zoom (%):", "",
-				Integer.valueOf((int) (data.getZoomLevel() * 100)), 0, null, 1, (EditorListener<Integer>) newValue -> {
+		zoom = EditorFactory.create(scope, contents, "Zoom (%):", "", (int) (data.getZoomLevel() * 100), 0, null, 1,
+				(EditorListener<Integer>) newValue -> {
 					data.setZoomLevel(newValue.doubleValue() / 100d, true, false);
 					ds.updateDisplay(true);
 				});
 
 		if (view.isOpenGL()) {
-			rotate = EditorFactory.create(scope, contents, "Z-axis rotation:",
-					Double.valueOf(data.getCurrentRotationAboutZ()), null, null, 0.1, false,
-					(EditorListener<Double>) newValue -> {
+			rotate = EditorFactory.create(scope, contents, "Z-axis rotation:", data.getCurrentRotationAboutZ(), null,
+					null, 0.1, false, (EditorListener<Double>) newValue -> {
 						data.setZRotationAngle(newValue);
 						// ds.updateDisplay(true);
 					});
@@ -347,7 +345,7 @@ public class LayerSideControls {
 					(EditorListener<Boolean>) val -> {
 						ds.runAndUpdate(() -> {
 							data.setContinuousRotation(val);
-							;
+
 						});
 
 					});
@@ -396,7 +394,7 @@ public class LayerSideControls {
 
 	public static Composite createContentsComposite(final ParameterExpandBar viewer) {
 		final Composite contents = new Composite(viewer, SWT.NONE);
-		contents.setBackground(IGamaColors.WHITE.color());
+		// contents.setBackground(IGamaColors.WHITE.color());
 		final GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
 		contents.setLayout(layout);

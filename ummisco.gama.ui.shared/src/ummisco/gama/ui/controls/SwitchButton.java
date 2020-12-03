@@ -24,7 +24,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -170,7 +169,7 @@ public class SwitchButton extends Canvas {
 
 		this.listOfSelectionListeners = new HashSet<>();
 
-		this.addPaintListener(event -> SwitchButton.this.onPaint(event));
+		this.addPaintListener(SwitchButton.this::onPaint);
 
 		this.addMouseListener(new MouseAdapter() {
 
@@ -196,10 +195,10 @@ public class SwitchButton extends Canvas {
 	 *            paint event
 	 */
 	private void onPaint(final PaintEvent event) {
-		final Rectangle rect = this.getClientArea();
+		final var rect = this.getClientArea();
 		if (rect.width == 0 || rect.height == 0) { return; }
 		this.gc = event.gc;
-		final Point buttonSize = this.computeButtonSize();
+		final var buttonSize = this.computeButtonSize();
 		this.drawSwitchButton(buttonSize);
 		if (text != null && !text.isEmpty()) {
 			this.drawText(buttonSize);
@@ -254,7 +253,7 @@ public class SwitchButton extends Canvas {
 			this.gc.fillRectangle(2, 2, buttonSize.x, buttonSize.y);
 		}
 		this.gc.setForeground(GamaColors.getTextColorForBackground(selectedBackgroundColor).color());
-		final Point textSize = this.gc.textExtent(this.textForSelect);
+		final var textSize = this.gc.textExtent(this.textForSelect);
 		this.gc.drawString(this.textForSelect, (buttonSize.x / 2 - textSize.x) / 2 + 3,
 				(buttonSize.y - textSize.y) / 2 + 3);
 	}
@@ -274,7 +273,7 @@ public class SwitchButton extends Canvas {
 			this.gc.fillRectangle(2, 2, buttonSize.x, buttonSize.y);
 		}
 		this.gc.setForeground(GamaColors.getTextColorForBackground(unselectedBackgroundColor).color());
-		final Point textSize = this.gc.textExtent(this.textForUnselect);
+		final var textSize = this.gc.textExtent(this.textForUnselect);
 		this.gc.drawString(this.textForUnselect, buttonSize.x / 2 + (buttonSize.x / 2 - textSize.x) / 2 + 3,
 				(buttonSize.y - textSize.y) / 2 + 3);
 	}
@@ -306,12 +305,12 @@ public class SwitchButton extends Canvas {
 	Point computeButtonSize() {
 		// Compute size for the left part
 		gc.setFont(getFont());
-		final Point sizeForLeftPart = this.gc.stringExtent(this.textForSelect);
+		final var sizeForLeftPart = this.gc.stringExtent(this.textForSelect);
 		// Compute size for the right part
-		final Point sizeForRightPart = this.gc.stringExtent(this.textForUnselect);
+		final var sizeForRightPart = this.gc.stringExtent(this.textForUnselect);
 		// Compute whole size
-		final int width = Math.max(sizeForLeftPart.x, sizeForRightPart.x) * 2 + 2 * INSIDE_BUTTON_MARGIN;
-		final int height = Math.max(sizeForLeftPart.y, sizeForRightPart.y) + INSIDE_BUTTON_MARGIN;
+		final var width = Math.max(sizeForLeftPart.x, sizeForRightPart.x) * 2 + 2 * INSIDE_BUTTON_MARGIN;
+		final var height = Math.max(sizeForLeftPart.y, sizeForRightPart.y) + INSIDE_BUTTON_MARGIN;
 		return new Point(width, height);
 	}
 
@@ -323,11 +322,11 @@ public class SwitchButton extends Canvas {
 	 */
 	void drawText(final Point buttonSize) {
 		this.gc.setForeground(this.selection ? this.selectedBackgroundColor : this.unselectedBackgroundColor);
-		this.gc.setBackground(IGamaColors.WHITE.color());
+		this.gc.setBackground(getParent().getBackground());
 
-		final int widgetHeight = buttonSize.y + 6;
-		final int textHeight = this.gc.stringExtent(this.text).y;
-		final int x = 2 + buttonSize.x + this.gap;
+		final var widgetHeight = buttonSize.y + 6;
+		final var textHeight = this.gc.stringExtent(this.text).y;
+		final var x = 2 + buttonSize.x + this.gap;
 		this.gc.drawText(text, x, (widgetHeight - textHeight) / 2);
 	}
 
@@ -340,7 +339,7 @@ public class SwitchButton extends Canvas {
 	 */
 	boolean fireSelectionListeners(final MouseEvent mouseEvent) {
 		for (final SelectionListener listener : this.listOfSelectionListeners) {
-			final Event event = new Event();
+			final var event = new Event();
 			event.button = mouseEvent.button;
 			event.display = this.getDisplay();
 			event.item = null;
@@ -350,7 +349,7 @@ public class SwitchButton extends Canvas {
 			event.x = mouseEvent.x;
 			event.y = mouseEvent.y;
 
-			final SelectionEvent selEvent = new SelectionEvent(event);
+			final var selEvent = new SelectionEvent(event);
 			listener.widgetSelected(selEvent);
 			if (!selEvent.doit) { return false; }
 		}
@@ -396,16 +395,16 @@ public class SwitchButton extends Canvas {
 	@Override
 	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
 		this.checkWidget();
-		boolean disposeGC = false;
+		var disposeGC = false;
 		if (this.gc == null || this.gc.isDisposed()) {
 			this.gc = new GC(this);
 			disposeGC = true;
 		}
-		final Point buttonSize = this.computeButtonSize();
-		int width = buttonSize.x;
-		int height = buttonSize.y;
+		final var buttonSize = this.computeButtonSize();
+		var width = buttonSize.x;
+		var height = buttonSize.y;
 		if (this.text != null && this.text.trim().length() > 0) {
-			final Point textSize = this.gc.textExtent(this.text);
+			final var textSize = this.gc.textExtent(this.text);
 			width += textSize.x + this.gap + 1;
 		}
 		width += 6;

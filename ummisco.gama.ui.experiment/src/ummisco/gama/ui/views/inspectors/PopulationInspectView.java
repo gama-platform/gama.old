@@ -56,7 +56,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.InspectDisplayOutput;
@@ -76,10 +75,8 @@ import ummisco.gama.ui.controls.SwitchButton;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.parameters.ExpressionControl;
-import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -278,7 +275,7 @@ public class PopulationInspectView extends GamaViewPart
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 1;
 		attributesMenu.setLayout(layout);
-		attributesMenu.setBackground(IGamaColors.WHITE.color());
+		// attributesMenu.setBackground(IGamaColors.WHITE.color());
 		fillAttributeMenu();
 	}
 
@@ -311,7 +308,7 @@ public class PopulationInspectView extends GamaViewPart
 		Collections.sort(names);
 		for (final String name : names) {
 			final SwitchButton b = new SwitchButton(attributesMenu, SWT.NONE, "   ", "   ", name);
-			b.setBackground(GamaColors.system(SWT.COLOR_WHITE));
+			// b.setBackground(GamaColors.system(SWT.COLOR_WHITE));
 			b.setSelection(hasPreviousSelection && selectedColumns.get(speciesName).contains(name));
 			b.addSelectionListener(attributeAdapter);
 		}
@@ -324,7 +321,7 @@ public class PopulationInspectView extends GamaViewPart
 	private void createExpressionComposite() {
 		final Composite compo = new Composite(toolbar.getToolbar(SWT.RIGHT), SWT.None);
 		compo.setSize(new Point(150, 30));
-		compo.setBackground(IGamaColors.WHITE.color());
+		// compo.setBackground(IGamaColors.WHITE.color());
 		compo.setLayout(new GridLayout(1, false));
 		editor = new ExpressionControl(getScope(), compo, null, getScope().getAgent(), Types.CONTAINER.of(Types.AGENT),
 				SWT.BORDER, false) {
@@ -432,7 +429,7 @@ public class PopulationInspectView extends GamaViewPart
 			if (o instanceof IAgent) {
 				getScope().getGui().setHighlightedAgent((IAgent) o);
 				GAMA.getExperiment().refreshAllOutputs();
-				;
+
 			}
 		});
 
@@ -590,7 +587,7 @@ public class PopulationInspectView extends GamaViewPart
 									rc = stringComparator.compare(v1, v2);
 									break;
 								case IType.POINT:
-									rc = ((ILocation) v1).compareTo((ILocation)v2);
+									rc = ((ILocation) v1).compareTo((ILocation) v2);
 									break;
 								default:
 									rc = Cast.toGaml(v1).compareTo(Cast.toGaml(v2));

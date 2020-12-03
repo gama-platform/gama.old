@@ -43,7 +43,6 @@ import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -210,7 +209,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		sidePanel.setLayout(layout);
-		sidePanel.setBackground(IGamaColors.WHITE.color());
+		// sidePanel.setBackground(IGamaColors.WHITE.color());
 	}
 
 	public void createDecorations(final SashForm form) {
@@ -221,7 +220,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		keyAndMouseListener = new SWTLayeredDisplayMultiListener(this, view.getDisplaySurface());
 		menuManager = new DisplaySurfaceMenu(view.getDisplaySurface(), view.getParentComposite(), presentationMenu());
 		final boolean tbVisible = view.getOutput().getData().isToolbarVisible();
-		WorkbenchHelper.runInUI("Toolbar", 0, (m) -> {
+		WorkbenchHelper.runInUI("Toolbar", 0, m -> {
 			if (tbVisible) {
 				toolbar.show();
 			} else {
@@ -234,7 +233,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				toggle = Messages.question("Toggle fullscreen confirmation", "Do you want to go fullscreen ?");
 			}
 			if (toggle) {
-				WorkbenchHelper.runInUI("Fullscreen", 100, (m) -> toggleFullScreen());
+				WorkbenchHelper.runInUI("Fullscreen", 100, m -> toggleFullScreen());
 			}
 		}
 	}
@@ -428,7 +427,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	public void changed(final Changes changes, final Object value) {
 		switch (changes) {
 			case ZOOM:
-				WorkbenchHelper.asyncRun(() -> updateOverlay());
+				WorkbenchHelper.asyncRun(this::updateOverlay);
 				break;
 			default:
 				break;

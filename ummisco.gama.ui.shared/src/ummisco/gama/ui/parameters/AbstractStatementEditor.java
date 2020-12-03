@@ -62,31 +62,31 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 		currentValue = getOriginalValue();
 		composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(parent.getBackground());
-		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		final var data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.minimumWidth = 150;
 		composite.setLayoutData(data);
-		final GridLayout layout = new GridLayout(isSubParameter ? 3 : 2, false);
+		final var layout = new GridLayout(isSubParameter ? 3 : 2, false);
 		layout.marginWidth = 5;
 		composite.setLayout(layout);
 		createEditorControl(composite);
 		if (isSubParameter) {
 			titleLabel = createLeftLabel(composite, name, isSubParameter);
 			titleLabel.setFont(GamaFonts.getNavigFolderFont());
-			final GridData d = new GridData(SWT.LEAD, SWT.CENTER, true, false);
+			final var d = new GridData(SWT.LEAD, SWT.CENTER, true, false);
 			titleLabel.setLayoutData(d);
 		}
 
 		internalModification = false;
 		if (isSubParameter) {
-			titleLabel.setBackground(HOVERED_BACKGROUND);
-			composite.setBackground(HOVERED_BACKGROUND);
+			titleLabel.setBackground(HOVERED_BACKGROUND());
+			composite.setBackground(HOVERED_BACKGROUND());
 		}
 		composite.layout();
 	}
 
 	@Override
 	protected final GridData getParameterGridData() {
-		final GridData d = new GridData(SWT.FILL, SWT.TOP, false, false);
+		final var d = new GridData(SWT.FILL, SWT.TOP, false, false);
 		d.minimumWidth = 70;
 		return d;
 	}

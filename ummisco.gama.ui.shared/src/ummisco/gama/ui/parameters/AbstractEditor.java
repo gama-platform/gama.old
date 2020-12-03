@@ -42,9 +42,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.ExperimentParameter;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
@@ -107,9 +107,14 @@ public abstract class AbstractEditor<T>
 
 	}
 
-	public static final Color NORMAL_BACKGROUND = IGamaColors.PARAMETERS_BACKGROUND.color();
-	public static final Color HOVERED_BACKGROUND = IGamaColors.WHITE.darker();
-	public static final Color CHANGED_BACKGROUND = IGamaColors.TOOLTIP.color();
+	// public static final Color NORMAL_BACKGROUND = IGamaColors.PARAMETERS_BACKGROUND.color();
+
+	public final Color HOVERED_BACKGROUND() {
+		return getNormalBackground();
+		// return (ThemeHelper.isDark() ? IGamaColors.VERY_DARK_GRAY : IGamaColors.VERY_LIGHT_GRAY).color();
+	}
+
+	// public static final Color CHANGED_BACKGROUND = IGamaColors.TOOLTIP.color();
 	private static int ORDER;
 	private final Integer order = ORDER++;
 	private final IAgent agent;
@@ -211,7 +216,9 @@ public abstract class AbstractEditor<T>
 	@Override
 	public void setActive(final Boolean active) {
 		if (titleLabel != null) {
-			titleLabel.setForeground(active ? IGamaColors.BLACK.color() : GamaColors.system(SWT.COLOR_GRAY));
+			titleLabel.setForeground(
+					active ? (ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color())
+							: GamaColors.system(SWT.COLOR_GRAY));
 		}
 		if (!active) {
 			for (final Button t : items) {
@@ -229,11 +236,11 @@ public abstract class AbstractEditor<T>
 
 	private final void valueModified(final Object newValue) throws GamaRuntimeException {
 
-		IAgent a = agent;
+		var a = agent;
 
 		if (param instanceof ExperimentParameter) {
 			if (a == null) {
-				final IExperimentPlan exp = GAMA.getExperiment();
+				final var exp = GAMA.getExperiment();
 				if (exp != null) {
 					a = exp.getAgent();
 				}
@@ -297,9 +304,9 @@ public abstract class AbstractEditor<T>
 			return null;
 		}
 
-		final GridData data = getParameterGridData();
+		final var data = getParameterGridData();
 		paramControl.setLayoutData(data);
-		paramControl.setBackground(comp.getBackground());
+		paramControl.setBackground(getNormalBackground());
 		addToolbarHiders(paramControl);
 		return paramControl;
 	}
@@ -308,10 +315,14 @@ public abstract class AbstractEditor<T>
 		return parent.getBackground();
 	}
 
+	protected Color getChangedBackground() {
+		return ThemeHelper.isDark() ? IGamaColors.DARK_ORANGE.color() : IGamaColors.TOOLTIP.color();
+	}
+
 	public static Label createLeftLabel(final Composite parent, final String title, final boolean isSubParameter) {
-		final Label label = new Label(parent, SWT.WRAP | SWT.RIGHT);
+		final var label = new Label(parent, SWT.WRAP | SWT.RIGHT);
 		label.setBackground(parent.getBackground());
-		final GridData d = new GridData(SWT.END, SWT.CENTER, true, true);
+		final var d = new GridData(SWT.END, SWT.CENTER, true, true);
 		d.minimumWidth = 70;
 		if (isSubParameter) {
 			d.horizontalIndent = 30;
@@ -323,7 +334,7 @@ public abstract class AbstractEditor<T>
 	}
 
 	public void resizeLabel(final int width) {
-		final Label l = getLabel();
+		final var l = getLabel();
 		if (l != null) {
 			((GridData) l.getLayoutData()).widthHint = width;
 		}
@@ -343,12 +354,12 @@ public abstract class AbstractEditor<T>
 		}
 		currentValue = getOriginalValue();
 		composite = new Composite(comp, SWT.NONE);
-		composite.setBackground(comp.getBackground());
-		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		composite.setBackground(getNormalBackground());
+		final var data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.minimumWidth = 150;
 		composite.setLayoutData(data);
 
-		final GridLayout layout = new GridLayout(2, false);
+		final var layout = new GridLayout(2, false);
 		layout.marginWidth = 5;
 
 		composite.setLayout(layout);
@@ -387,7 +398,7 @@ public abstract class AbstractEditor<T>
 
 	protected void hideToolbar() {
 		if (toolbar == null || toolbar.isDisposed()) { return; }
-		final GridData d = (GridData) toolbar.getLayoutData();
+		final var d = (GridData) toolbar.getLayoutData();
 		if (d.exclude) { return; }
 		d.exclude = true;
 		toolbar.setVisible(false);
@@ -398,19 +409,19 @@ public abstract class AbstractEditor<T>
 
 	protected void showToolbar() {
 		if (toolbar == null || toolbar.isDisposed()) { return; }
-		final GridData d = (GridData) toolbar.getLayoutData();
+		final var d = (GridData) toolbar.getLayoutData();
 		if (!d.exclude) { return; }
 		d.exclude = false;
 		toolbar.setVisible(true);
-		composite.setBackground(HOVERED_BACKGROUND);
+		composite.setBackground(HOVERED_BACKGROUND());
 		composite.layout(true, true);
 		composite.update();
 	}
 
 	protected String computeUnitLabel() {
-		String s = typeToDisplay();
+		var s = typeToDisplay();
 		if (minValue != null) {
-			final String min = StringUtils.toGaml(minValue, false);
+			final var min = StringUtils.toGaml(minValue, false);
 			if (maxValue != null) {
 				s += " [" + min + ".." + StringUtils.toGaml(maxValue, false) + "]";
 			} else {
@@ -421,7 +432,7 @@ public abstract class AbstractEditor<T>
 				s += "<=" + StringUtils.toGaml(maxValue, false);
 			}
 		}
-		final String u = param.getUnitLabel(getScope());
+		final var u = param.getUnitLabel(getScope());
 		if (u != null) {
 			s += " " + u;
 		}
@@ -434,24 +445,23 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected Composite createToolbar2() {
-		final Composite t = new Composite(composite, SWT.NONE);
-		final GridData d = new GridData(SWT.FILL, SWT.TOP, false, false);
+		final var t = new Composite(composite, SWT.NONE);
+		final var d = new GridData(SWT.FILL, SWT.TOP, false, false);
 		t.setLayoutData(d);
-		t.setBackground(HOVERED_BACKGROUND);
-		final GridLayout id =
+		t.setBackground(HOVERED_BACKGROUND());
+		final var id =
 				GridLayoutFactory.fillDefaults().equalWidth(false).extendedMargins(0, 0, 0, 0).spacing(0, 0).create();
-		final GridData gd =
-				GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).indent(0, -1).create();
+		final var gd = GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).indent(0, -1).create();
 		t.setLayout(id);
-		final String unitText = computeUnitLabel();
+		final var unitText = computeUnitLabel();
 		if (!unitText.isEmpty()) {
 			unitItem = new Text(t, SWT.READ_ONLY | SWT.FLAT);
 			unitItem.setText(unitText);
-			unitItem.setBackground(HOVERED_BACKGROUND);
+			unitItem.setBackground(HOVERED_BACKGROUND());
 			unitItem.setEnabled(false);
 		}
 		if (isEditable) {
-			final int[] codes = this.getToolItems();
+			final var codes = this.getToolItems();
 			for (final int i : codes) {
 				Button item = null;
 				switch (i) {
@@ -483,9 +493,9 @@ public abstract class AbstractEditor<T>
 				}
 				if (item != null) {
 					items[i] = item;
-					item.setBackground(HOVERED_BACKGROUND);
+					item.setBackground(HOVERED_BACKGROUND());
 					item.setLayoutData(GridDataFactory.copyData(gd));
-					;
+
 					item.addSelectionListener(new ItemSelectionListener(i));
 
 				}
@@ -499,12 +509,12 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected ToolItem createPlusItem(final ToolBar t) {
-		final ToolItem item = createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
+		final var item = createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
 		return item;
 	}
 
 	protected Button createPlusItem(final Composite t) {
-		final Button item = createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
+		final var item = createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
 		return item;
 	}
 
@@ -513,14 +523,14 @@ public abstract class AbstractEditor<T>
 	 * @param image
 	 */
 	private ToolItem createItem(final ToolBar t, final String string, final Image image) {
-		final ToolItem i = new ToolItem(t, SWT.FLAT | SWT.PUSH);
+		final var i = new ToolItem(t, SWT.FLAT | SWT.PUSH);
 		i.setToolTipText(string);
 		i.setImage(image);
 		return i;
 	}
 
 	private Button createItem(final Composite t, final String string, final Image image) {
-		final Button i = new Button(t, SWT.FLAT | SWT.TRANSPARENT | SWT.PUSH);
+		final var i = new Button(t, SWT.FLAT | SWT.TRANSPARENT | SWT.PUSH);
 		i.setToolTipText(string);
 		i.setImage(image);
 		return i;
@@ -563,7 +573,7 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected GridData getParameterGridData() {
-		final GridData d = new GridData(SWT.FILL, SWT.TOP, true, false);
+		final var d = new GridData(SWT.FILL, SWT.TOP, true, false);
 		d.minimumWidth = 100;
 		return d;
 	}
@@ -572,7 +582,9 @@ public abstract class AbstractEditor<T>
 
 	protected Control createLabelParameterControl(final Composite comp) {
 		fixedValue = new CLabel(comp, SWT.READ_ONLY | SWT.BORDER_SOLID);
-		fixedValue.setForeground(IGamaColors.BLACK.color()); // force text color, see #2601
+		fixedValue
+				.setForeground(ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color());
+		// force text color, see #2601
 		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue()
 				: StringUtils.toGaml(getOriginalValue(), false));
 		// addToolbarHiders(fixedValue);
@@ -581,8 +593,8 @@ public abstract class AbstractEditor<T>
 
 	protected Control createComboParameterControl(final Composite comp) {
 		possibleValues = new ArrayList<T>(param.getAmongValue(getScope()));
-		final String[] valuesAsString = new String[possibleValues.size()];
-		for (int i = 0; i < possibleValues.size(); i++) {
+		final var valuesAsString = new String[possibleValues.size()];
+		for (var i = 0; i < possibleValues.size(); i++) {
 			// if ( param.isLabel() ) {
 			// valuesAsString[i] = possibleValues.get(i).toString();
 			// } else {
@@ -594,7 +606,8 @@ public abstract class AbstractEditor<T>
 			}
 		}
 		combo = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
-		combo.setForeground(IGamaColors.BLACK.color()); // force text color, see #2601
+		combo.setForeground(ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color());
+		// force text color, see #2601
 		combo.setItems(valuesAsString);
 		combo.select(possibleValues.indexOf(getOriginalValue()));
 		// combo.addModifyListener(new ModifyListener() {
@@ -612,7 +625,7 @@ public abstract class AbstractEditor<T>
 			}
 		});
 
-		final GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, true);
+		final var d = new GridData(SWT.LEFT, SWT.CENTER, false, true);
 		d.minimumWidth = 48;
 		// d.widthHint = 100; // SWT.DEFAULT
 		combo.setLayoutData(d);
@@ -623,7 +636,7 @@ public abstract class AbstractEditor<T>
 	protected abstract void displayParameterValue();
 
 	protected void checkButtons() {
-		final Button revert = items[REVERT];
+		final var revert = items[REVERT];
 		if (revert == null || revert.isDisposed()) { return; }
 		revert.setEnabled(currentValue == null ? originalValue != null : !currentValue.equals(originalValue));
 	}
@@ -655,8 +668,7 @@ public abstract class AbstractEditor<T>
 		WorkbenchHelper.asyncRun(() -> {
 			if (CORE_EDITORS_HIGHLIGHT.getValue()) {
 				if (titleLabel != null && !titleLabel.isDisposed()) {
-					titleLabel.setBackground(
-							isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
+					titleLabel.setBackground(isValueModified() ? getChangedBackground() : getNormalBackground());
 				}
 			}
 		});
@@ -669,7 +681,7 @@ public abstract class AbstractEditor<T>
 	@Override
 	public void updateValue(final boolean force) {
 		try {
-			final T newVal = getParameterValue();
+			final var newVal = getParameterValue();
 			if (!force && !isValueDifferent(newVal)) { return; }
 			internalModification = true;
 			if (titleLabel != null && !titleLabel.isDisposed()) {
@@ -685,15 +697,14 @@ public abstract class AbstractEditor<T>
 
 	@Override
 	public void forceUpdateValueAsynchronously() {
-		final T newVal = getParameterValue();
+		final var newVal = getParameterValue();
 		// if (!isValueDifferent(newVal))
 		// return;
 		currentValue = newVal;
 		WorkbenchHelper.asyncRun(() -> {
 			internalModification = true;
 			if (titleLabel != null && !titleLabel.isDisposed()) {
-				titleLabel.setBackground(
-						isValueModified() ? CHANGED_BACKGROUND : IGamaColors.PARAMETERS_BACKGROUND.color());
+				titleLabel.setBackground(isValueModified() ? getChangedBackground() : getNormalBackground());
 			}
 			if (!parent.isDisposed()) {
 				if (!isEditable) {

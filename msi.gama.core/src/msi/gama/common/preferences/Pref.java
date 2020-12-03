@@ -41,7 +41,8 @@ public class Pref<T> implements IParameter {
 
 	String key, title, tab, group, comment;
 	boolean disabled = false; // by default
-	boolean hidden = false; // by default;
+	boolean hidden = false; // by default
+	boolean restartRequired = false; // by default
 	ValueProvider<T> initialProvider;
 	T value, initial;
 	final int type;
@@ -313,6 +314,15 @@ public class Pref<T> implements IParameter {
 
 	public boolean isHidden() {
 		return hidden;
+	}
+
+	public Pref<T> restartRequired() {
+		restartRequired = true;
+		return this;
+	}
+
+	public boolean isRestartRequired() {
+		return restartRequired;
 	}
 
 	public boolean inGaml() {
