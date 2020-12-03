@@ -1,13 +1,15 @@
 package ummisco.gama.ui.navigator.contents;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
+import msi.gama.application.workbench.ThemeHelper;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 public class WrappedFolder extends WrappedContainer<IFolder> {
@@ -29,7 +31,7 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 	public int countModels() {
 		if (modelsCount == NOT_COMPUTED) {
 			super.countModels();
-			final boolean isExternal = getName().equals("external");
+			final var isExternal = getName().equals("external");
 			image = GamaIcons.create(isExternal ? "navigator/file.svn2"
 					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
 			font = modelsCount == 0 ? GamaFonts.getResourceFont() : GamaFonts.getNavigFolderFont();
@@ -52,7 +54,7 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 
 	@Override
 	public Color getColor() {
-		return IGamaColors.BLACK.color();
+		return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
 	}
 
 	@Override

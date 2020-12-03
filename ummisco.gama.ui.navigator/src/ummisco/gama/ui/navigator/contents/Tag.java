@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
+import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 
@@ -79,7 +80,7 @@ public class Tag extends VirtualContent<Tags> {
 	 */
 	@Override
 	public Color getColor() {
-		return GamaColors.system(SWT.COLOR_BLACK);
+		return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
 	}
 
 	@Override

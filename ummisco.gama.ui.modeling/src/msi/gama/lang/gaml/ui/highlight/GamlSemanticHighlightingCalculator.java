@@ -11,25 +11,24 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
 
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.ASSIGN_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.FACET_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.OPERATOR_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.PRAGMA_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.RESERVED_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.TASK_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.TYPE_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.UNIT_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.VARDEF_ID;
-import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.VARIABLE_ID;
-import static org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration.KEYWORD_ID;
-import static org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration.NUMBER_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.ASSIGN_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.FACET_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.KEYWORD_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.NUMBER_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.OPERATOR_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.PRAGMA_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.RESERVED_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.TASK_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.TYPE_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.UNIT_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.VARDEF_ID;
+import static msi.gama.lang.gaml.ui.highlight.DelegateHighlightingConfiguration.VARIABLE_ID;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
@@ -77,7 +76,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 			final CancelIndicator arg2) {
 		if (resource == null) { return; }
 		acceptor = arg1;
-		final TreeIterator<EObject> root = resource.getAllContents();
+		final var root = resource.getAllContents();
 		while (root.hasNext()) {
 			process(root.next());
 		}
@@ -86,7 +85,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	}
 
 	protected void highlightTasks(final XtextResource resource, final IHighlightedPositionAcceptor acceptor) {
-		final List<Task> tasks = taskFinder.findTasks(resource);
+		final var tasks = taskFinder.findTasks(resource);
 		for (final Task task : tasks) {
 			acceptor.addPosition(task.getOffset(), task.getTagLength(), TASK_ID);
 		}
@@ -98,19 +97,19 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	}
 
 	void process(final EObject object, final EClass clazz) {
-		final int id = clazz.getClassifierID();
+		final var id = clazz.getClassifierID();
 
 		switch (id) {
 			case GamlPackage.PRAGMA:
 				setStyle(object, PRAGMA_ID, ((Pragma) object).getName(), false);
 				break;
 			case GamlPackage.SASSIGNMENT:
-				final String s = ((S_Assignment) object).getKey();
+				final var s = ((S_Assignment) object).getKey();
 				setStyle(object, ASSIGN_ID, s, false);
 				break;
 			case GamlPackage.FACET:
-				final Facet f = (Facet) object;
-				final String key = f.getKey();
+				final var f = (Facet) object;
+				final var key = f.getKey();
 				if (ASSIGNMENTS.contains(key)) {
 					setStyle(object, ASSIGN_ID, 0);
 				} else {
@@ -144,7 +143,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				setStyle(object, UNIT_ID, 0);
 				break;
 			case GamlPackage.TYPE_REF:
-				final Statement st = EGaml.getInstance().getStatement(object);
+				final var st = EGaml.getInstance().getStatement(object);
 				if (st instanceof S_Definition && ((S_Definition) st).getTkey() == object) {
 					setStyle(KEYWORD_ID, NodeModelUtils.findActualNodeFor(object));
 				} else {
@@ -158,7 +157,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				setStyle(object, VARDEF_ID, ((ArgumentDefinition) object).getName(), false);
 				break;
 			case GamlPackage.STATEMENT:
-				final Statement stat = (Statement) object;
+				final var stat = (Statement) object;
 				setStyle(object, VARDEF_ID, EGaml.getInstance().getNameOf(stat), false);
 				setStyle(object, KEYWORD_ID, stat.getKey(), false);
 				break;
@@ -177,7 +176,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 			INode n = NodeModelUtils.getNode(obj);
 			if (n == null) { return false; }
 			if (position > -1) {
-				int i = 0;
+				var i = 0;
 				for (final ILeafNode node : n.getLeafNodes()) {
 					if (!node.isHidden()) {
 						if (position == i) {
@@ -209,7 +208,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 			if (n == null) { return false; }
 			for (final ILeafNode node : n.getLeafNodes()) {
 				if (!node.isHidden()) {
-					final String sNode = StringUtils.toJavaString(NodeModelUtils.getTokenText(node));
+					final var sNode = StringUtils.toJavaString(NodeModelUtils.getTokenText(node));
 					if (equalsFacetOrString(text, sNode)) {
 						n = node;
 						if (!all) {
@@ -225,13 +224,16 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 
 	boolean equalsFacetOrString(final String text, final String s) {
 		if (s.equals(text)) { return true; }
-		int length = s.length();
-		char first = s.charAt(0);
-		char last = s.charAt(length-1);
+		final var length = s.length();
+		final var first = s.charAt(0);
+		final var last = s.charAt(length - 1);
 		switch (last) {
-			case ':': return text.equals(s.substring(0, length -1));
-			case '\"': case '\'': return (first == last) && text.equals(s.substring(1, length - 1));
-			
+			case ':':
+				return text.equals(s.substring(0, length - 1));
+			case '\"':
+			case '\'':
+				return (first == last) && text.equals(s.substring(1, length - 1));
+
 		}
 		return false;
 	}

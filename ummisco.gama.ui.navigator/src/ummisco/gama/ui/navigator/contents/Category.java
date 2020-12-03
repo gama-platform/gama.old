@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.util.FileUtils;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
@@ -77,17 +77,17 @@ public class Category extends VirtualContent<WrappedFile> {
 	public Object[] getNavigatorChildren() {
 		if (fileNames.isEmpty()) { return EMPTY; }
 		final List<LinkedFile> files = new ArrayList<>();
-		final IFile file = getParent().getResource();
-		final String filePath = file.getFullPath().toString();
-		final URI uri = URI.createURI(filePath, false);
+		final var file = getParent().getResource();
+		final var filePath = file.getFullPath().toString();
+		final var uri = URI.createURI(filePath, false);
 		for (final String fn : fileNames) {
-			final String s = URI.decode(fn);
+			final var s = URI.decode(fn);
 			if (s.startsWith("http")) {
 				continue;
 			}
-			final IFile newFile = FileUtils.getFile(s, uri, true);
+			final var newFile = FileUtils.getFile(s, uri, true);
 			if (newFile != null) {
-				final LinkedFile proxy = new LinkedFile(this, newFile, s);
+				final var proxy = new LinkedFile(this, newFile, s);
 				files.add(proxy);
 			}
 		}
@@ -111,7 +111,7 @@ public class Category extends VirtualContent<WrappedFile> {
 	 */
 	@Override
 	public Color getColor() {
-		return IGamaColors.BLACK.color();
+		return ThemeHelper.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color();
 	}
 
 	@Override

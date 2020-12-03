@@ -14,10 +14,13 @@ package ummisco.gama.ui.navigator.contents;
 import java.util.Collection;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
+import msi.gama.application.workbench.ThemeHelper;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -71,7 +74,7 @@ public class Tags extends VirtualContent<WrappedFile> {
 	@Override
 	public Object[] getNavigatorChildren() {
 		if (tags.isEmpty()) { return EMPTY; }
-		return tags.stream().map((each) -> new Tag(this, each)).toArray();
+		return tags.stream().map(each -> new Tag(this, each)).toArray();
 	}
 
 	/**
@@ -91,7 +94,8 @@ public class Tags extends VirtualContent<WrappedFile> {
 	 */
 	@Override
 	public Color getColor() {
-		return IGamaColors.BLACK.color();
+		return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
+
 	}
 
 	@Override

@@ -27,7 +27,6 @@ import static ummisco.gama.ui.menus.GamaColorMenu.colorComp;
 import static ummisco.gama.ui.resources.GamaColors.toGamaColor;
 import static ummisco.gama.ui.resources.GamaFonts.baseSize;
 import static ummisco.gama.ui.resources.GamaFonts.getBaseFont;
-import static ummisco.gama.ui.resources.GamaFonts.setLabelFont;
 import static ummisco.gama.ui.resources.IGamaColors.WARNING;
 
 import java.io.BufferedReader;
@@ -44,8 +43,8 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.IDecoratorManager;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.runtime.MemoryUtils;
@@ -54,6 +53,7 @@ import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.menus.GamaColorMenu;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.GamaPreferencesView;
 
@@ -83,7 +83,7 @@ public class PreferencesHelper {
 
 	public static final Pref<GamaFont> BASE_BUTTON_FONT = create("pref_button_font", "Font of buttons and dialogs",
 			() -> new GamaFont(getBaseFont(), SWT.BOLD, baseSize), IType.FONT, false).in(NAME, APPEARANCE)
-					.onChange(newValue -> setLabelFont(newValue));
+					.onChange(GamaFonts::setLabelFont);
 
 	public static Pref<String> COLOR_MENU_SORT =
 			create("pref_menu_colors_sort", "Sort colors menu by", "RGB value", IType.STRING, false).among(SORT_NAMES)
@@ -107,7 +107,7 @@ public class PreferencesHelper {
 	public static final Pref<Boolean> NAVIGATOR_METADATA =
 			create("pref_navigator_display_metadata", "Display metadata in navigator", true, IType.BOOL, false)
 					.in(NAME, APPEARANCE).onChange(newValue -> {
-						final IDecoratorManager mgr = getWorkbench().getDecoratorManager();
+						final var mgr = getWorkbench().getDecoratorManager();
 						try {
 							mgr.setEnabled(NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
 						} catch (final CoreException e) {
@@ -116,11 +116,19 @@ public class PreferencesHelper {
 
 					});
 
+	public static final Pref<Boolean> CORE_THEME_LIGHT =
+			create("pref_theme_light", "Light theme", true, IType.BOOL, true).in(NAME, APPEARANCE).onChange(v -> {
+				if (v)
+					ThemeHelper.changeToLight();
+				else
+					ThemeHelper.changeToDark();
+			});
+
 	public static File findIniFile() {
-		final String path = Platform.getConfigurationLocation().getURL().getPath();
+		final var path = Platform.getConfigurationLocation().getURL().getPath();
 		DEBUG.OUT("Install location of GAMA is " + path);
-		File dir = new File(path);
-		File result = findIn(dir);
+		var dir = new File(path);
+		var result = findIn(dir);
 		if (result == null) {
 			if (PlatformHelper.isMac()) {
 				dir = new File(path + "Gama.app/Contents/MacOS");
@@ -139,17 +147,17 @@ public class PreferencesHelper {
 
 	private static File findIn(final File path) {
 		DEBUG.OUT("Looking for ini file in " + path);
-		final File ini = new File(path.getAbsolutePath() + "/Gama.ini");
+		final var ini = new File(path.getAbsolutePath() + "/Gama.ini");
 		return ini.exists() ? ini : null;
 	}
 
 	public static void initialize() {
-		final File ini = findIniFile();
-		final int memory = readMaxMemoryInMegabytes(ini);
-		final String text = ini == null || memory == 0
+		final var ini = findIniFile();
+		final var memory = readMaxMemoryInMegabytes(ini);
+		final var text = ini == null || memory == 0
 				? "The max. memory allocated needs to be set in Eclipse (developer version) or in Gama.ini file"
 				: "Maximum memory allocated in Mb (requires to restart GAMA)";
-		final Pref<Integer> p = GamaPreferences
+		final var p = GamaPreferences
 				.create("pref_memory_max", text, memory == 0 ? (int) MemoryUtils.availableMemory() : memory, 1, false)
 				.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.MEMORY);
 		if (memory == 0) {
@@ -165,14 +173,14 @@ public class PreferencesHelper {
 	public static int readMaxMemoryInMegabytes(final File ini) {
 		try {
 			if (ini != null) {
-				try (final FileInputStream stream = new FileInputStream(ini);
-						final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {
-					String s = reader.readLine();
+				try (final var stream = new FileInputStream(ini);
+						final var reader = new BufferedReader(new InputStreamReader(stream));) {
+					var s = reader.readLine();
 					while (s != null) {
 						if (s.startsWith("-Xmx")) {
-							final char last = s.charAt(s.length() - 1);
-							double divider = 1000000;
-							boolean unit = false;
+							final var last = s.charAt(s.length() - 1);
+							var divider = 1000000D;
+							var unit = false;
 							switch (last) {
 								case 'k':
 								case 'K':
@@ -190,12 +198,12 @@ public class PreferencesHelper {
 									divider = 0.001;
 									break;
 							}
-							String trim = s;
+							var trim = s;
 							trim = trim.replace("-Xmx", "");
 							if (unit) {
 								trim = trim.substring(0, trim.length() - 1);
 							}
-							final int result = Integer.parseInt(trim);
+							final var result = Integer.parseInt(trim);
 							return (int) (result / divider);
 
 						}
@@ -209,13 +217,13 @@ public class PreferencesHelper {
 	}
 
 	public static void changeMaxMemory(final File ini, final int memory) {
-		final int mem = memory < 128 ? 128 : memory;
+		final var mem = memory < 128 ? 128 : memory;
 		try {
 			final List<String> contents = new ArrayList<>();
 			if (ini != null) {
-				try (final FileInputStream stream = new FileInputStream(ini);
-						final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {
-					String s = reader.readLine();
+				try (final var stream = new FileInputStream(ini);
+						final var reader = new BufferedReader(new InputStreamReader(stream));) {
+					var s = reader.readLine();
 					while (s != null) {
 						if (s.startsWith("-Xmx")) {
 							s = "-Xmx" + mem + "m";
@@ -224,8 +232,8 @@ public class PreferencesHelper {
 						s = reader.readLine();
 					}
 				}
-				try (final FileOutputStream os = new FileOutputStream(ini);
-						final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));) {
+				try (final var os = new FileOutputStream(ini);
+						final var writer = new BufferedWriter(new OutputStreamWriter(os));) {
 					for (final String line : contents) {
 						writer.write(line);
 						writer.newLine();

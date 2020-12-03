@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
+import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -90,7 +91,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 	 */
 	@Override
 	public Color getColor() {
-		return GamaColors.system(SWT.COLOR_BLACK);
+		return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
 	}
 
 	/**

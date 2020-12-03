@@ -28,8 +28,6 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -116,7 +114,7 @@ public class GamaPreferencesView {
 	private GamaPreferencesView(final Shell parent) {
 		parentShell = parent;
 		shell = new Shell(parentShell, SWT.TITLE | SWT.RESIZE | SWT.APPLICATION_MODAL);
-		final GridLayout gridLayout = new GridLayout(2, false);
+		final var gridLayout = new GridLayout(2, false);
 		gridLayout.marginWidth = gridLayout.marginHeight = 5;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
 		shell.setLayout(gridLayout);
@@ -130,9 +128,9 @@ public class GamaPreferencesView {
 		tabFolder.setMRUVisible(true);
 		tabFolder.setSimple(false); // rounded tabs
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
-		final Map<String, Map<String, List<Pref>>> prefs = GamaPreferences.organizePrefs();
+		final var prefs = GamaPreferences.organizePrefs();
 		for (final String tabName : prefs.keySet()) {
-			final CTabItem item = new CTabItem(tabFolder, SWT.NONE);
+			final var item = new CTabItem(tabFolder, SWT.NONE);
 			item.setFont(GamaFonts.getNavigHeaderFont());
 			item.setText(tabName);
 			item.setImage(prefs_images.get(tabName));
@@ -144,9 +142,9 @@ public class GamaPreferencesView {
 	}
 
 	private void buildContentsFor(final CTabItem tab, final Map<String, List<Pref>> entries) {
-		final ParameterExpandBar viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
+		final var viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
 		contents.add(viewer);
-		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewer.setLayoutData(data);
 		// ?
 		viewer.computeSize(tab.getBounds().x, SWT.DEFAULT);
@@ -154,10 +152,10 @@ public class GamaPreferencesView {
 		viewer.setSpacing(5);
 		tab.setControl(viewer);
 		for (final String groupName : entries.keySet()) {
-			final ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
+			final var item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
 			item.setColor(new GamaColor(230, 230, 230, 255));
-			final Composite compo = new Composite(viewer, SWT.NONE);
+			final var compo = new Composite(viewer, SWT.NONE);
 			compo.setBackground(viewer.getBackground());
 			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
 			item.setControl(compo);
@@ -172,7 +170,7 @@ public class GamaPreferencesView {
 	void checkActivables(final Pref e, final Object value) {
 		if (e.getEnablement() != null) {
 			for (final String activable : e.getEnablement()) {
-				final IParameterEditor ed = editors.get(activable);
+				final var ed = editors.get(activable);
 				if (ed == null) {
 					if (value instanceof Boolean) {
 						activations.put(activable, (Boolean) value);
@@ -190,7 +188,7 @@ public class GamaPreferencesView {
 		}
 		if (e.getDisablement() != null && value instanceof Boolean) {
 			for (final String deactivable : e.getDisablement()) {
-				final IParameterEditor ed = editors.get(deactivable);
+				final var ed = editors.get(deactivable);
 				if (ed == null) {
 					activations.put(deactivable, !(Boolean) value);
 				} else {
@@ -200,10 +198,21 @@ public class GamaPreferencesView {
 		}
 	}
 
+	void checkRefreshables(final Pref e, final Object value) {
+		if (e.getRefreshment() != null) {
+			for (final String activable : e.getRefreshment()) {
+				final var ed = editors.get(activable);
+				if (ed != null) {
+					ed.updateValue(true);
+				}
+			}
+		}
+	}
+
 	private void buildGroupContents(final Composite compo, final List<Pref> list, final int nbColumns) {
 		GridLayoutFactory.fillDefaults().numColumns(NB_DIVISIONS).spacing(0, 0).equalWidth(true).applyTo(compo);
-		final Composite[] comps = new Composite[nbColumns];
-		for (int i = 0; i < nbColumns; i++) {
+		final var comps = new Composite[nbColumns];
+		for (var i = 0; i < nbColumns; i++) {
 			comps[i] = new Composite(compo, SWT.BORDER);
 			comps[i].setBackground(compo.getBackground());
 			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).equalWidth(false).applyTo(comps[i]);
@@ -211,7 +220,7 @@ public class GamaPreferencesView {
 		}
 		// final int compositeIndex = 0;
 
-		int i = 0;
+		var i = 0;
 		for (final Pref e : list) {
 			modelValues.put(e.getKey(), e.getValue());
 			// Initial activations of editors
@@ -220,19 +229,20 @@ public class GamaPreferencesView {
 				if (e.acceptChange(value)) {
 					modelValues.put(e.getKey(), value);
 					checkActivables(e, value);
+					checkRefreshables(e, value);
 				} else {
 					GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());
 				}
 
 			});
-			final boolean isSubParameter = activations.containsKey(e.getKey());
-			final AbstractEditor ed = EditorFactory.create(null, comps[(int) (i * ((double) nbColumns / list.size()))],
-					e, isSubParameter, true);
+			final var isSubParameter = activations.containsKey(e.getKey());
+			final var ed = EditorFactory.create(null, comps[(int) (i * ((double) nbColumns / list.size()))], e,
+					isSubParameter, true);
 			if (e.isDisabled()) {
 				ed.setActive(false);
 			} else {
-				final Menu m = getMenuFor(e, ed);
-				final Label l = ed.getLabel();
+				final var m = getMenuFor(e, ed);
+				final var l = ed.getLabel();
 				l.setMenu(m);
 			}
 			editors.put(e.getKey(), ed);
@@ -241,7 +251,7 @@ public class GamaPreferencesView {
 
 		// Initial activations of editors
 		for (final String s : activations.keySet()) {
-			final IParameterEditor ed = editors.get(s);
+			final var ed = editors.get(s);
 			if (ed != null) {
 				ed.setActive(activations.get(s));
 			}
@@ -252,21 +262,21 @@ public class GamaPreferencesView {
 	}
 
 	private static Menu getMenuFor(final Pref e, final AbstractEditor ed) {
-		final Menu m = new Menu(ed.getLabel());
-		final MenuItem title = new MenuItem(m, SWT.PUSH);
+		final var m = new Menu(ed.getLabel());
+		final var title = new MenuItem(m, SWT.PUSH);
 		title.setEnabled(false);
 
 		if (e.inGaml()) {
 			title.setText("Use gama." + e.getKey() + " in GAML");
-			@SuppressWarnings ("unused") final MenuItem sep = new MenuItem(m, SWT.SEPARATOR);
-			final MenuItem i = new MenuItem(m, SWT.PUSH);
+			@SuppressWarnings ("unused") final var sep = new MenuItem(m, SWT.SEPARATOR);
+			final var i = new MenuItem(m, SWT.PUSH);
 			i.setText("Copy name to clipboard");
 			i.addSelectionListener((Selector) se -> WorkbenchHelper.copy("gama." + e.getKey()));
 		} else {
 			title.setText("Not assignable from GAML");
-			@SuppressWarnings ("unused") final MenuItem sep = new MenuItem(m, SWT.SEPARATOR);
+			@SuppressWarnings ("unused") final var sep = new MenuItem(m, SWT.SEPARATOR);
 		}
-		final MenuItem i2 = new MenuItem(m, SWT.PUSH);
+		final var i2 = new MenuItem(m, SWT.PUSH);
 		i2.setText("Revert to default value");
 		i2.addSelectionListener((Selector) se -> {
 			e.set(e.getInitialValue(GAMA.getRuntimeScope()));
@@ -284,37 +294,37 @@ public class GamaPreferencesView {
 	}
 
 	private void buildButtons() {
-		final Label doc = new Label(shell, SWT.NONE);
+		final var doc = new Label(shell, SWT.NONE);
 		doc.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		doc.setFont(GamaFonts.boldHelpFont);
 		doc.setText(
 				"Some preferences can also be set in GAML, using 'gama.pref_name <- new_value;'. 'pref_name' is displayed in the contextual menu of each preference");
 
-		final Composite group1 = new Composite(shell, SWT.NONE);
+		final var group1 = new Composite(shell, SWT.NONE);
 		group1.setLayout(new FillLayout());
-		final GridData gridDataGroup1 = new GridData(GridData.BEGINNING, GridData.END, true, false);
+		final var gridDataGroup1 = new GridData(GridData.BEGINNING, GridData.END, true, false);
 		// gridDataGroup1.widthHint = 300;
 		group1.setLayoutData(gridDataGroup1);
 
-		final Button buttonRevert = new Button(group1, SWT.PUSH | SWT.FLAT);
+		final var buttonRevert = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonRevert.setText("Revert to defaults");
 		buttonRevert.setImage(GamaIcons.create(IGamaIcons.ACTION_REVERT).image());
 		buttonRevert.setToolTipText("Restore default values for all preferences");
 
-		final Button buttonAdvanced = new Button(group1, SWT.PUSH | SWT.FLAT);
+		final var buttonAdvanced = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonAdvanced.setText("Advanced...");
 		buttonAdvanced.setToolTipText("Access to advanced preferences");
 
-		final Button buttonImport = new Button(group1, SWT.PUSH | SWT.FLAT);
+		final var buttonImport = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonImport.setText("Import...");
 		buttonImport.setToolTipText("Import preferences from a file...");
 		buttonImport.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final FileDialog fd = new FileDialog(shell, SWT.OPEN);
+				final var fd = new FileDialog(shell, SWT.OPEN);
 				fd.setFilterExtensions(new String[] { "*.prefs" });
-				final String path = fd.open();
+				final var path = fd.open();
 				if (path == null) { return; }
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
 				for (final IParameterEditor ed : editors.values()) {
@@ -324,31 +334,31 @@ public class GamaPreferencesView {
 
 		});
 
-		final Button buttonExport = new Button(group1, SWT.PUSH | SWT.FLAT);
+		final var buttonExport = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonExport.setText("Export...");
 		buttonExport.setToolTipText("Export preferences to a model that can be run to restore or share them...");
 		buttonExport.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final FileDialog fd = new FileDialog(shell, SWT.SAVE);
+				final var fd = new FileDialog(shell, SWT.SAVE);
 				fd.setFileName("Preferences.gaml");
 				fd.setFilterExtensions(new String[] { "*.gaml" });
 				fd.setOverwrite(false);
-				final String path = fd.open();
+				final var path = fd.open();
 				if (path == null) { return; }
 				GamaPreferences.savePreferencesTo(path);
 			}
 
 		});
 
-		final Composite group2 = new Composite(shell, SWT.NONE);
+		final var group2 = new Composite(shell, SWT.NONE);
 		group2.setLayout(new FillLayout());
-		final GridData gridDataGroup2 = new GridData(GridData.END, GridData.END, true, false);
+		final var gridDataGroup2 = new GridData(GridData.END, GridData.END, true, false);
 		gridDataGroup2.widthHint = 200;
 		group2.setLayoutData(gridDataGroup2);
 
-		final Button buttonCancel = new Button(group2, SWT.PUSH);
+		final var buttonCancel = new Button(group2, SWT.PUSH);
 		buttonCancel.setText("Cancel");
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 
@@ -359,7 +369,7 @@ public class GamaPreferencesView {
 
 		});
 
-		final Button buttonOK = new Button(group2, SWT.PUSH);
+		final var buttonOK = new Button(group2, SWT.PUSH);
 		buttonOK.setText("Save");
 		buttonOK.addSelectionListener(new SelectionAdapter() {
 
@@ -368,7 +378,7 @@ public class GamaPreferencesView {
 				GamaPreferences.setNewPreferences(modelValues);
 				if (restartRequired) {
 					restartRequired = false;
-					final boolean restart = Messages.confirm("Restart ?", "Restart GAMA now ?");
+					final var restart = Messages.confirm("Restart ?", "Restart GAMA now ?");
 					if (restart) {
 						close();
 						PlatformUI.getWorkbench().restart(true);
@@ -443,17 +453,17 @@ public class GamaPreferencesView {
 	}
 
 	private void saveLocation() {
-		final Point p = shell.getLocation();
+		final var p = shell.getLocation();
 		DIALOG_LOCATION.set(new GamaPoint(p.x, p.y)).save();
 	}
 
 	private void saveSize() {
-		final Point s = shell.getSize();
+		final var s = shell.getSize();
 		DIALOG_SIZE.set(new GamaPoint(s.x, s.y)).save();
 	}
 
 	private void saveTab() {
-		final int index = tabFolder.getSelectionIndex();
+		final var index = tabFolder.getSelectionIndex();
 		DIALOG_TAB.set(index).save();
 	}
 
@@ -465,16 +475,16 @@ public class GamaPreferencesView {
 	}
 
 	public void open() {
-		final GamaPoint loc = DIALOG_LOCATION.getValue();
-		final GamaPoint size = DIALOG_SIZE.getValue();
+		final var loc = DIALOG_LOCATION.getValue();
+		final var size = DIALOG_SIZE.getValue();
 		final int tab = DIALOG_TAB.getValue();
-		int x = (int) loc.x;
-		int y = (int) loc.y;
-		int width = (int) size.x;
-		int height = (int) size.y;
+		var x = (int) loc.x;
+		var y = (int) loc.y;
+		var width = (int) size.x;
+		var height = (int) size.y;
 		if (loc.x == -1 || loc.y == -1 || size.x == -1 || size.y == -1) {
-			final Point p = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-			final Rectangle bounds = WorkbenchHelper.getDisplay().getBounds();
+			final var p = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			final var bounds = WorkbenchHelper.getDisplay().getBounds();
 			width = Math.min(p.x, bounds.width - 200);
 			height = Math.min(p.y, bounds.height - 200);
 			x = (bounds.width - width) / 2;

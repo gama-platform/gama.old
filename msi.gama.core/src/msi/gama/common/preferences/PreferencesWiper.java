@@ -16,8 +16,9 @@ public class PreferencesWiper { // NO_UCD (unused code)
 
 	public static void main(final String[] args) {
 		try {
-			final Preferences store = Preferences.userRoot().node("gama");
+			final var store = Preferences.userRoot().node("gama");
 			store.removeNode();
+			System.out.println("All GAMA preferences have been erased.");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

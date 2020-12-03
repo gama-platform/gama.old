@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -73,7 +74,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	}
 
 	public void initializeChildren() {
-		children = StreamEx.of(ResourcesPlugin.getWorkspace().getRoot().getProjects()).filter(p -> privateAccepts(p))
+		children = StreamEx.of(ResourcesPlugin.getWorkspace().getRoot().getProjects()).filter(this::privateAccepts)
 				.map(p -> (WrappedProject) getManager().wrap(this, p)).toArray(WrappedProject.class);
 	}
 
@@ -94,9 +95,9 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 
 	@Override
 	public int findMaxProblemSeverity() {
-		int severity = NO_PROBLEM;
+		var severity = NO_PROBLEM;
 		for (final WrappedProject p : children) {
-			final int s = p.findMaxProblemSeverity();
+			final var s = p.findMaxProblemSeverity();
 			if (s > severity) {
 				severity = s;
 			}
@@ -126,13 +127,13 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 
 	protected Location estimateLocation(final IPath location) {
 		try {
-			final URL old_url = new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS.getSymbolicName() + "/");
-			final URL new_url = FileLocator.toFileURL(old_url);
+			final var old_url = new URL("platform:/plugin/" + GamaBundleLoader.CORE_MODELS.getSymbolicName() + "/");
+			final var new_url = FileLocator.toFileURL(old_url);
 			// windows URL formating
-			final URI resolvedURI = new URI(new_url.getProtocol(), new_url.getPath(), null).normalize();
-			final URL urlRep = resolvedURI.toURL();
-			final String osString = location.toOSString();
-			final boolean isTest = osString.contains(GamaBundleLoader.REGULAR_TESTS_LAYOUT);
+			final var resolvedURI = new URI(new_url.getProtocol(), new_url.getPath(), null).normalize();
+			final var urlRep = resolvedURI.toURL();
+			final var osString = location.toOSString();
+			final var isTest = osString.contains(GamaBundleLoader.REGULAR_TESTS_LAYOUT);
 			if (!isTest && osString.startsWith(urlRep.getPath())) { return Location.CoreModels; }
 			if (osString
 					.startsWith(urlRep.getPath().replace(GamaBundleLoader.CORE_MODELS.getSymbolicName() + "/", ""))) {
@@ -173,12 +174,12 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 
 	@Override
 	public Color getColor() {
-		return IGamaColors.GRAY_LABEL.color();
+		return ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.GRAY_LABEL.color();
 	}
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {
-		final int projectCount = children.length;
+		final var projectCount = children.length;
 		sb.append(projectCount).append(" project");
 		if (projectCount > 1) {
 			sb.append("s");

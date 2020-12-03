@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
@@ -48,7 +47,6 @@ import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.kernel.GamaMetaModel;
-import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaFontType;
@@ -127,7 +125,7 @@ public class GamaPreferences {
 				"Maintain the state of the navigator across sessions", true, IType.BOOL, false).in(NAME, STARTUP);
 
 		static {
-			for (int i = 0; i < 5; i++) {
+			for (var i = 0; i < 5; i++) {
 				SIMULATION_COLORS[i] = create("pref_simulation_color_" + i,
 						"Color of Simulation " + i + " in the UI (console, view tabs) ", BASIC_COLORS[i], IType.COLOR,
 						true).in(NAME, SIMULATIONS);
@@ -528,7 +526,7 @@ public class GamaPreferences {
 				"...or use the following EPSG code (the one that will also be used if no projection information is found)",
 				32648, IType.INT, true).in(NAME, GEOTOOLS)
 						.addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
-							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+							final var codes = CRS.getSupportedCodes(newValue.toString());
 							if (codes.isEmpty()) { return false; }
 							return true;
 						});
@@ -536,7 +534,7 @@ public class GamaPreferences {
 		public static final Pref<Integer> LIB_INITIAL_CRS =
 				create("pref_gis_initial_crs", "...or use the following CRS (EPSG code)", 4326, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
-							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+							final var codes = CRS.getSupportedCodes(newValue.toString());
 							if (codes.isEmpty()) { return false; }
 							return true;
 						});
@@ -544,7 +542,7 @@ public class GamaPreferences {
 		public static final Pref<Integer> LIB_OUTPUT_CRS =
 				create("pref_gis_output_crs", "... or use this following CRS (EPSG code)", 4326, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
-							final Set<String> codes = CRS.getSupportedCodes(newValue.toString());
+							final var codes = CRS.getSupportedCodes(newValue.toString());
 							if (codes.isEmpty()) { return false; }
 							return true;
 						});
@@ -555,8 +553,8 @@ public class GamaPreferences {
 		// "C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe"
 		// "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe"
 		private static String getDefaultRPath() {
-			final String os = System.getProperty("os.name");
-			final String osbit = System.getProperty("os.arch");
+			final var os = System.getProperty("os.name");
+			final var osbit = System.getProperty("os.arch");
 			if (os.startsWith("Mac")) {
 				return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
 			} else if (os.startsWith("Linux")) { return "/usr/local/lib/libjri.so"; }
@@ -610,7 +608,7 @@ public class GamaPreferences {
 		// if (key.contains(".") || key.contains(" ")) {
 		// DEBUG.OUT("WARNING. Preference " + key + " cannot be used as a variable");
 		// }
-		final Pref<T> e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(value);
+		final var e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(value);
 		register(e);
 		return e;
 	}
@@ -629,17 +627,19 @@ public class GamaPreferences {
 		// if (key.contains(".") || key.contains(" ")) {
 		// DEBUG.OUT("WARNING. Preference " + key + " cannot be used as a variable");
 		// }
-		final Pref<T> e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(provider);
+		final var e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(provider);
 		register(e);
 		return e;
 	}
 
+	static final String DEFAULT_FONT = "Default";
+
 	private static void register(final Pref gp) {
 		final IScope scope = null;
-		final String key = gp.key;
+		final var key = gp.key;
 		if (key == null) { return; }
 		prefs.put(key, gp);
-		final Object value = gp.value;
+		final var value = gp.value;
 		if (storeKeys.contains(key)) {
 			switch (gp.type) {
 				case IType.POINT:
@@ -664,7 +664,12 @@ public class GamaPreferences {
 					gp.init(() -> GamaColor.getInt(store.getInt(key, asInt(scope, value))));
 					break;
 				case IType.FONT:
-					gp.init(() -> GamaFontType.staticCast(scope, store.get(key, asString(scope, value)), false));
+					gp.init(() -> {
+						final var font = store.get(key, asString(scope, value));
+						if (DEFAULT_FONT.equals(font))
+							return null;
+						return GamaFontType.staticCast(scope, font, false);
+					});
 					break;
 				case IType.DATE:
 					gp.init(() -> fromISOString(toJavaString(store.get(key, asString(scope, value)))));
@@ -679,7 +684,7 @@ public class GamaPreferences {
 			ex.printStackTrace();
 		}
 		// Adds the preferences to the platform species if it is already created
-		final PlatformSpeciesDescription spec = GamaMetaModel.INSTANCE.getPlatformSpeciesDescription();
+		final var spec = GamaMetaModel.INSTANCE.getPlatformSpeciesDescription();
 		if (spec != null) {
 			if (!spec.hasAttribute(key)) {
 				spec.addPref(key, gp);
@@ -691,8 +696,8 @@ public class GamaPreferences {
 	}
 
 	public static void writeToStore(final Pref gp) {
-		final String key = gp.key;
-		final Object value = gp.value;
+		final var key = gp.key;
+		final var value = gp.value;
 		switch (gp.type) {
 			case IType.INT:
 				store.putInt(key, (Integer) value);
@@ -710,14 +715,14 @@ public class GamaPreferences {
 				store.put(key, ((GamaFile) value).getPath(null));
 				break;
 			case IType.COLOR:
-				final int code = ((GamaColor) value).getRGB();
+				final var code = ((GamaColor) value).getRGB();
 				store.putInt(key, code);
 				break;
 			case IType.POINT:
 				store.put(key, ((GamaPoint) value).stringValue(null));
 				break;
 			case IType.FONT:
-				store.put(key, value.toString());
+				store.put(key, value == null ? DEFAULT_FONT : value.toString());
 				break;
 			case IType.DATE:
 				store.put(key, toJavaString(((GamaDate) value).toISOString()));
@@ -733,14 +738,14 @@ public class GamaPreferences {
 			if (e.isHidden()) {
 				continue;
 			}
-			final String tab = e.tab;
-			Map<String, List<Pref>> groups = result.get(tab);
+			final var tab = e.tab;
+			var groups = result.get(tab);
 			if (groups == null) {
 				groups = GamaMapFactory.create();
 				result.put(tab, groups);
 			}
-			final String group = e.group;
-			List<Pref> in_group = groups.get(group);
+			final var group = e.group;
+			var in_group = groups.get(group);
 			if (in_group == null) {
 				in_group = new ArrayList<>();
 				groups.put(group, in_group);
@@ -791,7 +796,7 @@ public class GamaPreferences {
 
 	public static void applyPreferencesFrom(final String path, final Map<String, Object> modelValues) {
 		// DEBUG.OUT("Apply preferences from " + path);
-		try (final FileInputStream is = new FileInputStream(path);) {
+		try (final var is = new FileInputStream(path);) {
 			store.importPreferences(is);
 			reloadPreferences(modelValues);
 		} catch (final IOException | InvalidPreferencesFormatException e) {
@@ -800,11 +805,11 @@ public class GamaPreferences {
 	}
 
 	public static void savePreferencesTo(final String path) {
-		try (FileWriter os = new FileWriter(path)) {
-			final List<Pref<? extends Object>> entries = StreamEx.ofValues(prefs).sortedBy((p) -> p.getName()).toList();
+		try (var os = new FileWriter(path)) {
+			final var entries = StreamEx.ofValues(prefs).sortedBy(Pref::getName).toList();
 
-			final StringBuilder read = new StringBuilder(1000);
-			final StringBuilder write = new StringBuilder(1000);
+			final var read = new StringBuilder(1000);
+			final var write = new StringBuilder(1000);
 			for (final Pref e : entries) {
 				if (e.isHidden() || !e.inGaml()) {
 					continue;

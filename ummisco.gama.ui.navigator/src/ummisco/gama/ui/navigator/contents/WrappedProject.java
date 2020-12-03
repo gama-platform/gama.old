@@ -11,8 +11,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.statements.test.AbstractSummary;
 import msi.gaml.statements.test.CompoundSummary;
 import ummisco.gama.ui.resources.GamaFonts;
@@ -65,7 +65,7 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 
 	@Override
 	public Color getColor() {
-		return IGamaColors.GRAY_LABEL.color();
+		return ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.GRAY_LABEL.color();
 	}
 
 	@Override
@@ -89,9 +89,8 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 	}
 
 	private void getTestSuffix(final StringBuilder sb) {
-		final org.eclipse.emf.common.util.URI emfURI =
-				org.eclipse.emf.common.util.URI.createPlatformResourceURI(URI.encode(getName()), false);
-		final String result = getSuffixOfTestSummary(emfURI);
+		final var emfURI = org.eclipse.emf.common.util.URI.createPlatformResourceURI(URI.encode(getName()), false);
+		final var result = getSuffixOfTestSummary(emfURI);
 		if (result.isEmpty())
 			super.getSuffix(sb);
 		else {
@@ -120,7 +119,7 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 
 	String getPlugin() {
 		if (plugin == null) {
-			final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
+			final var data = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
 			if (data != null) {
 				setPlugin(data.getSuffix());
 			} else

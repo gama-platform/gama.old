@@ -172,14 +172,12 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return GamlSemanticHighlightingCalculator.class;
 	}
 
-	@SingletonBinding (
-			eager = true)
+	@SingletonBinding ()
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
 		return GamlHighlightingConfiguration.class;
 	}
 
-	@SingletonBinding (
-			eager = true)
+	@SingletonBinding ()
 	public Class<? extends ITextAttributeProvider> bindITextAttributeProvider() {
 		return GamlTextAttributeProvider.class;
 	}

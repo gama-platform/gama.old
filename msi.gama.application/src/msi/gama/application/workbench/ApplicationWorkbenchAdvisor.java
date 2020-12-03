@@ -92,7 +92,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			// e.printStackTrace();
 		}
 		PluginActionBuilder.setAllowIdeLogging(false);
-		ApplicationWorkbenchThemeManager.install();
+		ThemeHelper.install();
 	}
 
 	@Override

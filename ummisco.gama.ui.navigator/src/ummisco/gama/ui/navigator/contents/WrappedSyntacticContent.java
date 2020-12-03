@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
@@ -71,7 +72,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public Color getColor() {
-		return IGamaColors.BLACK.inactive();
+		return ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.inactive();
 	}
 
 	@Override
@@ -93,7 +94,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public int compareTo(final WrappedSyntacticContent o) {
-		final ISyntacticElement e = o.element;
+		final var e = o.element;
 		if (element.isSpecies()) {
 			if (e.isSpecies())
 				return getName().compareTo(o.getName());
@@ -121,7 +122,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public ImageDescriptor getOverlay() {
-		final int severity = getURIProblem(uri);
+		final var severity = getURIProblem(uri);
 		if (severity != -1)
 			return DESCRIPTORS.get(severity);
 		return null;
