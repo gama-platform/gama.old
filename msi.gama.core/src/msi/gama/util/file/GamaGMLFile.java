@@ -10,20 +10,17 @@
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.feature.DefaultFeatureCollection;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.geotools.wfs.GML;
+import org.geotools.wfs.GML.Version;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import org.locationtech.jts.geom.Geometry;
+import org.xml.sax.SAXException;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaGisGeometry;
@@ -33,7 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope; 
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
@@ -153,36 +150,20 @@ public class GamaGMLFile extends GamaGisFile {
 
 	protected void readShapes(final IScope scope) {
 		scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope));
-		final File file = getFile(scope);
+		final var file = getFile(scope);
 		shapes = GamaListFactory.create(Types.GEOMETRY);
-		int size = 0;
+		var size = 0;
 		try {
 
-			// saxExample start
-			final InputSource input = new InputSource(new FileReader(file));
-			final DefaultFeatureCollection collection = new DefaultFeatureCollection();
-//			final GMLReceiver receiver = new GMLReceiver(collection);
-//			final GMLFilterFeature filterFeature = new GMLFilterFeature(receiver);
-//
-//			final GMLFilterGeometry filterGeometry = new GMLFilterGeometry(filterFeature);
-//			final GMLFilterDocument filterDocument = new GMLFilterDocument(filterGeometry);
-//
-//			try {
-//				// parse xml
-//				final XMLReader reader = XMLReaderFactory.createXMLReader();
-//				reader.setContentHandler(filterDocument);
-//				reader.parse(input);
-//			} catch (final Exception e) {
-//				throw new RuntimeException(e);
-//			}
-
+			final var gml = new GML(Version.GML3);
+			final var collection = gml.decodeFeatureCollection(new FileInputStream(file));
 			crs = collection.getSchema().getCoordinateReferenceSystem();
 			env = Envelope3D.of(collection.getBounds());
 			size = collection.size();
-			int index = 0;
+			var index = 0;
 			computeProjection(scope, env);
 
-			final SimpleFeatureIterator it = collection.features();
+			final var it = collection.features();
 			while (it.hasNext()) {
 				index++;
 				if (index % 20 == 0) {
@@ -190,7 +171,7 @@ public class GamaGMLFile extends GamaGisFile {
 				}
 				final Feature feature = it.next();
 
-				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
+				var g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 
 					g = gis.transform(g);
@@ -212,6 +193,10 @@ public class GamaGMLFile extends GamaGisFile {
 			}
 
 		} catch (final IOException e) {
+			throw GamaRuntimeException.create(e, scope);
+		} catch (final SAXException e) {
+			throw GamaRuntimeException.create(e, scope);
+		} catch (final ParserConfigurationException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
 			scope.getGui().getStatus(scope).endSubStatus("Reading file " + getName(scope));
