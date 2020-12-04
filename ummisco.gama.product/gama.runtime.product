@@ -275,12 +275,37 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="version" value="1.8.2" />
       <property name="org.eclipse.update.reconcile" value="false" />
+      <property name="version" value="1.8.2" />
       <property name="eclipse.buildId" value="${build.id}" />
    </configurations>
 
    <repositories>
+      <repository location="http://updates.gama-platform.org" enabled="true" />
+      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
+      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
+      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
+      <repository location="http://updates.gama-platform.org" enabled="true" />
+      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
+      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
+      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
+      <repository location="http://updates.gama-platform.org" enabled="true" />
+      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
+      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
+      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
+      <repository location="http://updates.gama-platform.org" enabled="true" />
+      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
+      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
+      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
+      <repository location="http://updates.gama-platform.org" enabled="true" />
+      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
+      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
+      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
       <repository location="http://updates.gama-platform.org" enabled="true" />
       <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
       <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
