@@ -12,7 +12,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.css.swt.internal.theme.ThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
-import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
@@ -28,6 +27,7 @@ public class ThemeHelper {
 	public static final String E4_LIGHT_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_default";
 	public static final String E4_CLASSIC_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_classic";
 	public static final String THEME_ID_PREFERENCE = "themeid";
+	public static final String THEME_ID = "cssTheme";
 
 	public static final Pref<Boolean> CORE_THEME_FOLLOW =
 		create("pref_theme_follow", "Follow OS theme", true, IType.BOOL, false).in(NAME, APPEARANCE)
@@ -94,7 +94,7 @@ public class ThemeHelper {
 		final var themeEngine = getContext().get(IThemeEngine.class);
 		if ( themeEngine == null ) {
 			// early in the cycle
-			getContext().set(E4Application.THEME_ID, id);
+			getContext().set(THEME_ID, id);
 			getPreferences().put(THEME_ID_PREFERENCE, id);
 			return;
 		}
@@ -114,10 +114,6 @@ public class ThemeHelper {
 
 	public static void removeListener(IThemeListener l) {
 		listeners.remove(l);
-	}
-
-	private static String getEclipsePreference() {
-		return getPreferences().get(THEME_ID_PREFERENCE, null);
 	}
 
 	private static IEclipsePreferences getPreferences() {
@@ -154,7 +150,7 @@ public class ThemeHelper {
 	public static boolean isDark() {
 		final var themeEngine = getContext().get(IThemeEngine.class);
 		if ( themeEngine == null ) {
-			final var id = (String) getContext().get(E4Application.THEME_ID);
+			final var id = (String) getContext().get(THEME_ID);
 			return (id != null) && (id.startsWith(E4_DARK_THEME_ID));
 		}
 		final var theme = (themeEngine.getActiveTheme());
