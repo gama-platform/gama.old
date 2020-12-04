@@ -11,9 +11,13 @@
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import static msi.gama.application.workbench.ThemeHelper.isDark;
+import static ummisco.gama.ui.resources.GamaColors.get;
+import static ummisco.gama.ui.resources.GamaColors.system;
+import static ummisco.gama.ui.resources.GamaIcons.create;
+
 import org.eclipse.swt.SWT;
 
-import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
@@ -25,20 +29,21 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
  */
 public interface IGamaColors {
 
-	GamaUIColor BLUE = GamaColors.get(GamaIcons.create("palette/palette.blue2")).validate();
-	GamaUIColor ERROR = GamaColors.get(GamaIcons.create("palette/palette.red2")).validate();
-	GamaUIColor OK = GamaColors.get(GamaIcons.create("palette/palette.green2")).validate();
-	GamaUIColor WARNING = GamaColors.get(GamaIcons.create("palette/palette.orange2")).validate();
-	GamaUIColor NEUTRAL = GamaColors.get(GamaIcons.create("palette/palette.gray2")).validate();
-	GamaUIColor TOOLTIP = GamaColors.get(GamaIcons.create("palette/palette.yellow2")).validate();
-	GamaUIColor GRAY_LABEL = GamaColors.get(0x88, 0x88, 0x88).validate();
-	GamaUIColor VERY_LIGHT_GRAY = GamaColors.get(245, 245, 245).validate();
-	GamaUIColor VERY_DARK_GRAY = GamaColors.get(20, 20, 20).validate();
-	GamaUIColor WHITE =
-			new GamaUIColor(GamaColors.system(SWT.COLOR_WHITE), GamaColors.system(SWT.COLOR_WHITE)).validate();
-	GamaUIColor BLACK = new GamaUIColor(GamaColors.system(SWT.COLOR_BLACK)).validate();
-	GamaUIColor PARAMETERS_BACKGROUND =
-			(ThemeHelper.isDark() ? GamaColors.get(120, 120, 120) : GamaColors.get(255, 255, 255)).validate();
-	GamaUIColor DARK_ORANGE = GamaColors.get(225, 92, 15).validate();
+	GamaUIColor BLUE = isDark() ? GamaColors.get(get(create("palette/palette.blue2")).lighter())
+			: get(create("palette/palette.blue2"));
+	GamaUIColor ERROR = isDark() ? GamaColors.get(get(create("palette/palette.red2")).lighter())
+			: get(create("palette/palette.red2"));
+	GamaUIColor OK = isDark() ? GamaColors.get(get(create("palette/palette.green2")).lighter())
+			: get(create("palette/palette.green2"));
+	GamaUIColor WARNING = get(create("palette/palette.orange2"));
+	GamaUIColor NEUTRAL = get(create("palette/palette.gray2"));
+	GamaUIColor TOOLTIP = get(create("palette/palette.yellow2"));
+	GamaUIColor GRAY_LABEL = get(0x88, 0x88, 0x88);
+	GamaUIColor VERY_LIGHT_GRAY = get(245, 245, 245);
+	GamaUIColor DARK_GRAY = new GamaUIColor(system(SWT.COLOR_DARK_GRAY));
+	GamaUIColor WHITE = new GamaUIColor(system(SWT.COLOR_WHITE), system(SWT.COLOR_WHITE));
+	GamaUIColor BLACK = new GamaUIColor(system(SWT.COLOR_BLACK));
+	GamaUIColor PARAMETERS_BACKGROUND = (isDark() ? get(120, 120, 120) : get(255, 255, 255));
+	GamaUIColor DARK_ORANGE = get(225, 92, 15);
 
 }

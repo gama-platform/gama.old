@@ -44,8 +44,7 @@ public class ParameterExpandItem extends Item {
 	int visiblePosition = -1;
 	int selectablePosition = -1;
 	int closePosition = -1;
-	Color backgroundColor =
-			ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_DARK_GRAY) : IGamaColors.VERY_LIGHT_GRAY.color();
+	Color backgroundColor = ThemeHelper.isDark() ? IGamaColors.DARK_GRAY.color() : IGamaColors.VERY_LIGHT_GRAY.color();
 
 	private static int imageHeight = 16, imageWidth = 16;
 	boolean isPaused = false;

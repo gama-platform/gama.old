@@ -14,9 +14,6 @@ package ummisco.gama.ui.resources;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 
 import msi.gama.util.GamaColor;
@@ -90,51 +87,51 @@ public class GamaColors {
 	static HashMap<RGB, GamaUIColor> colors = new HashMap<>();
 
 	static Color computeInactive(final Color c) {
-		final RGB data = c.getRGB();
-		final float[] hsb = data.getHSB();
-		final float[] newHsb = new float[3];
+		final var data = c.getRGB();
+		final var hsb = data.getHSB();
+		final var newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1] / 2;
 		newHsb[2] = Math.min(1.0f, hsb[2] + 0.2f);
-		final RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
+		final var newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}
 
 	static Color computeDarker(final Color c) {
-		final RGB data = c.getRGB();
-		final float[] hsb = data.getHSB();
-		final float[] newHsb = new float[3];
+		final var data = c.getRGB();
+		final var hsb = data.getHSB();
+		final var newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1];
 		newHsb[2] = Math.max(0.0f, hsb[2] - 0.1f);
-		final RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
+		final var newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}
 
 	static Color computeReverse(final Color c) {
-		final RGB data = c.getRGB();
+		final var data = c.getRGB();
 		return getColor(255 - data.red, 255 - data.green, 255 - data.blue);
 	}
 
 	static Color computeLighter(final Color c) {
-		final RGB data = c.getRGB();
-		final float[] hsb = data.getHSB();
-		final float[] newHsb = new float[3];
+		final var data = c.getRGB();
+		final var hsb = data.getHSB();
+		final var newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1];
 		newHsb[2] = Math.min(1f, hsb[2] + 0.2f);
-		final RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
+		final var newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}
 
 	static Color computeGray(final Color c) {
-		final RGB data = c.getRGB();
-		final float[] hsb = data.getHSB();
-		final float[] newHsb = new float[3];
+		final var data = c.getRGB();
+		final var hsb = data.getHSB();
+		final var newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = 0.0f;
 		newHsb[2] = hsb[2];
-		final RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
+		final var newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}
 
@@ -149,20 +146,25 @@ public class GamaColors {
 
 	public static GamaUIColor get(final RGB rgb) {
 		if (rgb == null) { return null; }
-		GamaUIColor c = colors.get(rgb);
+		var c = colors.get(rgb);
 		if (c == null) {
-			final Color cc = getColor(rgb.red, rgb.green, rgb.blue);
+			final var cc = getColor(rgb.red, rgb.green, rgb.blue);
 			c = new GamaUIColor(cc);
 			colors.put(rgb, c);
 		}
 		return c;
 	}
 
+	public static GamaUIColor get(final Color color) {
+		if (color == null) { return null; }
+		return get(color.getRGB());
+	}
+
 	public static GamaUIColor get(final int r, final int g, final int b) {
-		final int r1 = r < 0 ? 0 : r > 255 ? 255 : r;
-		final int g1 = g < 0 ? 0 : g > 255 ? 255 : g;
-		final int b1 = b < 0 ? 0 : b > 255 ? 255 : b;
-		final RGB rgb = new RGB(r1, g1, b1);
+		final var r1 = r < 0 ? 0 : r > 255 ? 255 : r;
+		final var g1 = g < 0 ? 0 : g > 255 ? 255 : g;
+		final var b1 = b < 0 ? 0 : b > 255 ? 255 : b;
+		final var rgb = new RGB(r1, g1, b1);
 		return get(rgb);
 	}
 
@@ -174,10 +176,10 @@ public class GamaColors {
 		if (c.length >= 3) {
 			return get(c[0], c[1], c[2]);
 		} else {
-			final int rgb = c[0];
-			final int red = rgb >> 16 & 0xFF;
-			final int green = rgb >> 8 & 0xFF;
-			final int blue = rgb & 0xFF;
+			final var rgb = c[0];
+			final var red = rgb >> 16 & 0xFF;
+			final var green = rgb >> 8 & 0xFF;
+			final var blue = rgb & 0xFF;
 			return get(red, green, blue);
 		}
 	}
@@ -189,10 +191,10 @@ public class GamaColors {
 	 * @return
 	 */
 	public static GamaUIColor get(final GamaIcon icon) {
-		final Image image = icon.image();
-		final ImageData data = image.getImageData();
-		final PaletteData palette = data.palette;
-		final int pixelValue = data.getPixel(0, 0);
+		final var image = icon.image();
+		final var data = image.getImageData();
+		final var palette = data.palette;
+		final var pixelValue = data.getPixel(0, 0);
 		return get(palette.getRGB(pixelValue));
 	}
 
@@ -202,7 +204,7 @@ public class GamaColors {
 	 */
 	public static boolean isDark(final Color color) {
 		return luminanceOf(color) < 130;
-	};
+	}
 
 	public static int luminanceOf(final Color color) {
 		return (int) (0.299 * color.getRed() * color.getRed() / 255 + 0.587 * color.getGreen() * color.getGreen() / 255

@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -55,6 +56,7 @@ import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.Selector;
@@ -117,13 +119,14 @@ public class GamaPreferencesView {
 		gridLayout.marginWidth = gridLayout.marginHeight = 5;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
 		shell.setLayout(gridLayout);
+		// shell.setBackground(ThemeHelper.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
 		buildContents();
 	}
 
 	private void buildContents() {
 		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
 		tabFolder.setBorderVisible(true);
-		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		// tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setMRUVisible(true);
 		tabFolder.setSimple(false); // rounded tabs
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
@@ -145,6 +148,8 @@ public class GamaPreferencesView {
 		contents.add(viewer);
 		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		// viewer.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		viewer.setBackground(
+				!ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.darker());
 		viewer.setLayoutData(data);
 		// ?
 		viewer.computeSize(tab.getBounds().x, SWT.DEFAULT);
@@ -214,7 +219,7 @@ public class GamaPreferencesView {
 		final var comps = new Composite[nbColumns];
 		for (var i = 0; i < nbColumns; i++) {
 			comps[i] = new Composite(compo, SWT.BORDER);
-			comps[i].setBackground(compo.getBackground());
+			// comps[i].setBackground(compo.getBackground());
 			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).equalWidth(false).applyTo(comps[i]);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(comps[i]);
 		}
