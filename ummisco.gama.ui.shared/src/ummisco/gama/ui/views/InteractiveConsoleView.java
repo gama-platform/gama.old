@@ -25,7 +25,6 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -33,9 +32,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.IOConsole;
-import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -79,7 +78,7 @@ public class InteractiveConsoleView extends GamaViewPart
 	@Override
 	public void createPartControl(final Composite composite) {
 		setParentOfControlToDisplayFullScreen(composite);
-		final GridLayout layout = new GridLayout(1, true);
+		final var layout = new GridLayout(1, true);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
@@ -107,8 +106,8 @@ public class InteractiveConsoleView extends GamaViewPart
 	public void ownCreatePartControl(final Composite p) {
 		msgConsole = new IOConsole("GAMA Console", null);
 		reader = new BufferedReader(new InputStreamReader(msgConsole.getInputStream()));
-		IOConsoleOutputStream stream = msgConsole.newOutputStream();
-		stream.setColor(IGamaColors.NEUTRAL.color());
+		var stream = msgConsole.newOutputStream();
+		stream.setColor(ThemeHelper.isDark() ? IGamaColors.NEUTRAL.lighter() : IGamaColors.NEUTRAL.color());
 		// stream.setFontStyle(SWT.ITALIC);
 		resultWriter = new OutputStreamWriter(stream);
 		stream = msgConsole.newOutputStream();
@@ -123,7 +122,7 @@ public class InteractiveConsoleView extends GamaViewPart
 			@Override
 			public void documentChanged(final DocumentEvent event) {
 				if (Strings.LN.equals(event.getText())) {
-					String textEntered = "";
+					var textEntered = "";
 					try {
 						textEntered = reader.readLine();
 					} catch (final IOException e) {
@@ -142,9 +141,9 @@ public class InteractiveConsoleView extends GamaViewPart
 
 		viewer.getTextWidget().addVerifyKeyListener(e -> {
 			if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN) {
-				final StyledText text = (StyledText) e.widget;
-				final Point selection = text.getSelection();
-				final int line = text.getLineAtOffset(selection.y);
+				final var text = (StyledText) e.widget;
+				final var selection = text.getSelection();
+				final var line = text.getLineAtOffset(selection.y);
 				if (line == text.getLineCount() - 1) {
 					e.doit = false;
 					insertHistory(e.keyCode == SWT.ARROW_UP);
@@ -179,7 +178,6 @@ public class InteractiveConsoleView extends GamaViewPart
 			});
 
 		}).start();
-		;
 
 	}
 
@@ -201,10 +199,10 @@ public class InteractiveConsoleView extends GamaViewPart
 			indexInHistory = history.size() - 1;
 		}
 		try {
-			final StyledText text = viewer.getTextWidget();
-			final int lineIndex = text.getLineCount() - 1;
-			final int nbChars = text.getCharCount();
-			final int firstOffset = text.getOffsetAtLine(lineIndex) + PROMPT.length();
+			final var text = viewer.getTextWidget();
+			final var lineIndex = text.getLineCount() - 1;
+			final var nbChars = text.getCharCount();
+			final var firstOffset = text.getOffsetAtLine(lineIndex) + PROMPT.length();
 			viewer.getDocument().replace(firstOffset, nbChars - firstOffset, history.get(indexInHistory));
 			text.setCaretOffset(text.getCharCount());
 			if (back) {
@@ -225,7 +223,7 @@ public class InteractiveConsoleView extends GamaViewPart
 	public void append(final String text, final boolean error, final boolean showPrompt) {
 
 		WorkbenchHelper.asyncRun(() -> {
-			@SuppressWarnings ("resource") final OutputStreamWriter writer = error ? errorWriter : resultWriter;
+			@SuppressWarnings ("resource") final var writer = error ? errorWriter : resultWriter;
 			try {
 				writer.append(text);
 				writer.flush();
@@ -326,20 +324,20 @@ public class InteractiveConsoleView extends GamaViewPart
 	}
 
 	protected void processInput(final String s) {
-		final IAgent agent = getListeningAgent();
+		final var agent = getListeningAgent();
 		if (agent == null || agent.dead()) {
 			setExecutorAgent(null);
 		} else {
-			final String entered = s.trim();
+			final var entered = s.trim();
 			history.add(entered);
 			indexInHistory = history.size() - 1;
 			String result = null;
-			boolean error = false;
+			var error = false;
 			if (entered.startsWith("?")) {
 				result = GAML.getDocumentationOn(entered.substring(1));
 			} else {
 				try {
-					final IExpression expr = GAML.compileExpression(s, agent, this, false);
+					final var expr = GAML.compileExpression(s, agent, this, false);
 					if (expr != null) {
 						result = StringUtils.toGaml(scope.evaluate(expr, agent).getValue(), true);
 					}
@@ -437,7 +435,7 @@ public class InteractiveConsoleView extends GamaViewPart
 	@Override
 	public IExpression getVarExpr(final String name, final boolean asField) {
 		if (temps.containsKey(name)) {
-			final Object value = temps.get(name);
+			final var value = temps.get(name);
 			final IType<?> t = GamaType.of(value);
 			return GAML.getExpressionFactory().createVar(name, t, false, IVarExpression.TEMP, null);
 		}

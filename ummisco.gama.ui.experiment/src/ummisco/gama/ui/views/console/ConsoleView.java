@@ -26,6 +26,7 @@ import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -65,13 +66,13 @@ public class ConsoleView extends GamaViewPart
 	public void ownCreatePartControl(final Composite parent) {
 		msgConsole = new IOConsole("GAMA Console", null);
 		setCharacterLimit(GamaPreferences.Interface.CORE_CONSOLE_SIZE.getValue());
-		GamaPreferences.Interface.CORE_CONSOLE_SIZE.onChange(newValue -> setCharacterLimit(newValue));
+		GamaPreferences.Interface.CORE_CONSOLE_SIZE.onChange(this::setCharacterLimit);
 		viewer = new IOConsoleViewer(parent, msgConsole);
 		viewer.setWordWrap(GamaPreferences.Interface.CORE_CONSOLE_WRAP.getValue());
 	}
 
 	private BufferedWriter getWriterFor(final ITopLevelAgent root, final GamaUIColor color) {
-		final Color c = color == null ? getColorFor(root) : color.color();
+		final Color c = getColorFor(root, color);
 		BufferedWriter writer = writers.get(c);
 		if (writer == null) {
 			final IOConsoleOutputStream stream = msgConsole.newOutputStream();
@@ -83,13 +84,10 @@ public class ConsoleView extends GamaViewPart
 		return writer;
 	}
 
-	/**
-	 * @param root
-	 * @return
-	 */
-	private Color getColorFor(final ITopLevelAgent root) {
-		if (root == null) { return IGamaColors.BLACK.color(); }
-		return GamaColors.get(root.getColor()).color();
+	private Color getColorFor(final ITopLevelAgent root, final GamaUIColor requested) {
+		final GamaUIColor result =
+				requested == null ? root == null ? IGamaColors.BLACK : GamaColors.get(root.getColor()) : requested;
+		return ThemeHelper.isDark() ? result.lighter() : result.color();
 	}
 
 	private boolean indicated = false;

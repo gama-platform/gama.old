@@ -3,6 +3,7 @@ package msi.gama.application.workbench;
 import static msi.gama.common.preferences.GamaPreferences.create;
 import static msi.gama.common.preferences.GamaPreferences.Interface.APPEARANCE;
 import static msi.gama.common.preferences.GamaPreferences.Interface.NAME;
+import static org.eclipse.swt.widgets.Display.isSystemDarkTheme;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -14,10 +15,10 @@ import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.event.EventHandler;
+import org.osgi.service.prefs.BackingStoreException;
 import msi.gama.common.preferences.Pref;
 import msi.gaml.types.IType;
 
@@ -28,10 +29,16 @@ public class ThemeHelper {
 	public static final String E4_CLASSIC_THEME_ID = "org.eclipse.e4.ui.css.theme.e4_classic";
 	public static final String THEME_ID_PREFERENCE = "themeid";
 	public static final String THEME_ID = "cssTheme";
+	public static final String THEME_FOLLOW_PROPERTY = "org.eclipse.swt.display.useSystemTheme";
+	public static final String ENABLED_THEME_KEY = "themeEnabled";
+	public static final String SWT_PREFERENCES = "org.eclipse.e4.ui.workbench.renderers.swt";
+
+	private static final List<IThemeListener> listeners = new ArrayList<>();
 
 	public static final Pref<Boolean> CORE_THEME_FOLLOW =
-		create("pref_theme_follow", "Follow OS theme", true, IType.BOOL, false).in(NAME, APPEARANCE)
-			.deactivates("pref_theme_light").onChange(yes -> {
+		create("pref_theme_follow", "Follow OS theme", followOSTheme(), IType.BOOL, false).in(NAME, APPEARANCE)
+			.restartRequired().deactivates("pref_theme_light").onChange(yes -> {
+				followOSTheme(yes);
 				chooseThemeBasedOnPreferences();
 			});
 
@@ -41,70 +48,108 @@ public class ThemeHelper {
 				chooseThemeBasedOnPreferences();
 			});
 
-	public static void chooseThemeBasedOnPreferences() {
-		final var isGamaAlreadyDark = isDark();
-		if ( CORE_THEME_FOLLOW.getValue() ) {
-			final var isOSDark = Display.isSystemDarkTheme();
-			if ( isGamaAlreadyDark && isOSDark )
-				return;
-			if ( isGamaAlreadyDark && !isOSDark ) {
-				changeToLight();
-				return;
-			}
-			if ( !isGamaAlreadyDark && isOSDark ) {
-				changeToDark();
-				return;
-			}
-			if ( !isGamaAlreadyDark && !isOSDark )
-				return;
-		} else {
-			if ( CORE_THEME_LIGHT.getValue() )
-				changeToLight();
-			else changeToDark();
-		}
+	/**
+	 * Chooses a light/dark theme based on the GAMA preferences and the actual theme
+	 * @return whether a change has been made
+	 */
+	private static boolean chooseThemeBasedOnPreferences() {
+		return CORE_THEME_FOLLOW.getValue() && changeTo(!isSystemDarkTheme()) || changeTo(CORE_THEME_LIGHT.getValue());
 	}
-
-	private static final List<IThemeListener> listeners = new ArrayList<>();
 
 	private static IEclipseContext getContext() {
 		return Workbench.getInstance().getContext();
 	}
 
-	public static void install() {
+	private static Boolean followOSTheme() {
+		final var prefs = getSwtRendererPreferences();
+		final var val = prefs.get(THEME_FOLLOW_PROPERTY, null);
+		if ( val != null ) { return Boolean.valueOf(val); }
+		return Boolean.valueOf(System.getProperty(THEME_FOLLOW_PROPERTY, "true"));
+	}
 
-		if ( !PlatformUI.isWorkbenchRunning() ) { return; }
+	private static void followOSTheme(Boolean follow) {
+		Display.getDefault().setData(THEME_FOLLOW_PROPERTY, follow);
+		System.setProperty(THEME_FOLLOW_PROPERTY, follow.toString());
+		// We create a new preference
+		getSwtRendererPreferences().putBoolean(THEME_FOLLOW_PROPERTY, follow);
+		try {
+			getSwtRendererPreferences().flush();
+		} catch (final BackingStoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static boolean isDark() {
+		String id;
+		final var themeEngine = getContext().get(IThemeEngine.class);
+		if ( themeEngine == null ) {
+			id = (String) getContext().get(THEME_ID);
+			if ( id == null ) {
+				// Still no trace of a theme, let's look at preferences
+				final var prefs = getThemeEclipsePreferences();
+				id = prefs.get(THEME_ID_PREFERENCE, null);
+			}
+
+		} else {
+			final var theme = (themeEngine.getActiveTheme());
+			id = (theme == null) ? null : (theme.getId());
+		}
+		return (id != null) && (id.contains("dark"));
+	}
+
+	public static void install() {
+		// if ( !PlatformUI.isWorkbenchRunning() ) { return; }
+		// We transfer the preference to the system property (to be read by Eclipse)
+		System.setProperty(THEME_FOLLOW_PROPERTY, followOSTheme().toString());
 		final var eventBroker = Workbench.getInstance().getService(IEventBroker.class);
-		final var themeChangedHandler = new WorkbenchThemeChangedHandler();
 		if ( eventBroker != null ) {
+			final var themeChangedHandler = new WorkbenchThemeChangedHandler();
 			eventBroker.subscribe(UIEvents.UILifeCycle.THEME_CHANGED, themeChangedHandler);
 			eventBroker.subscribe(IThemeEngine.Events.THEME_CHANGED, themeChangedHandler);
 		}
 		chooseThemeBasedOnPreferences();
 	}
 
-	public static void changeToLight() {
-		changeTo(E4_LIGHT_THEME_ID);
+	private static IEclipsePreferences getThemeEclipsePreferences() {
+		return InstanceScope.INSTANCE.getNode(FrameworkUtil.getBundle(ThemeEngine.class).getSymbolicName());
 	}
 
-	public static void changeToDark() {
-		changeTo(E4_DARK_THEME_ID);
+	private static IEclipsePreferences getSwtRendererPreferences() {
+		return InstanceScope.INSTANCE.getNode("org.eclipse.e4.ui.workbench.renderers.swt"); //$NON-NLS-1$
 	}
 
-	private static void changeTo(String id) {
-		final var themeEngine = getContext().get(IThemeEngine.class);
-		if ( themeEngine == null ) {
-			// early in the cycle
-			getContext().set(THEME_ID, id);
-			getPreferences().put(THEME_ID_PREFERENCE, id);
-			return;
+	/**
+	 * Changes to a light or dark theme depending on the value of the argument
+	 * @param light whether to choose a light (true) or dark (false) theme
+	 * @return whether a change has been necessary
+	 */
+	private static boolean changeTo(boolean light) {
+		// OS.setTheme(!light);
+		return changeTo(light ? E4_LIGHT_THEME_ID : E4_DARK_THEME_ID);
+	}
+
+	/**
+	 * Changes the current theme in both the theme engine and the preferences (so that they can stick)
+	 * @param id the identifier of the theme
+	 */
+	private static boolean changeTo(String id) {
+		// even early in the cycle
+		getContext().set(THEME_ID, id);
+		getThemeEclipsePreferences().put(THEME_ID_PREFERENCE, id);
+		try {
+			getThemeEclipsePreferences().flush();
+		} catch (final BackingStoreException e) {
+			e.printStackTrace();
 		}
+		final var themeEngine = getContext().get(IThemeEngine.class);
+		if ( themeEngine == null ) { return true; }
 		final var theme = (themeEngine.getActiveTheme());
 		if ( theme != null ) {
 			if ( theme.getId().startsWith(id) )
-				return;
+				return false;
 		}
-		getPreferences().put(THEME_ID_PREFERENCE, id);
 		themeEngine.setTheme(id, true);
+		return true;
 	}
 
 	public static void addListener(IThemeListener l) {
@@ -116,15 +161,12 @@ public class ThemeHelper {
 		listeners.remove(l);
 	}
 
-	private static IEclipsePreferences getPreferences() {
-		return InstanceScope.INSTANCE.getNode(FrameworkUtil.getBundle(ThemeEngine.class).getSymbolicName());
-	}
-
 	public static class WorkbenchThemeChangedHandler implements EventHandler {
 
 		@Override
 		public void handleEvent(org.osgi.service.event.Event event) {
 			final var theme = getTheme(event);
+			System.out.println("PROPERTY " + THEME_FOLLOW_PROPERTY + " = " + System.getProperty(THEME_FOLLOW_PROPERTY));
 			System.out.println("THEME = " + theme);
 			if ( theme == null )
 				return;
@@ -147,30 +189,4 @@ public class ThemeHelper {
 		void themeChanged(boolean light);
 	}
 
-	public static boolean isDark() {
-		final var themeEngine = getContext().get(IThemeEngine.class);
-		if ( themeEngine == null ) {
-			final var id = (String) getContext().get(THEME_ID);
-			return (id != null) && (id.startsWith(E4_DARK_THEME_ID));
-		}
-		final var theme = (themeEngine.getActiveTheme());
-
-		final var result = (theme != null) && (theme.getId().startsWith(E4_DARK_THEME_ID));
-		return result;
-	}
-
 }
-
-// Bundle b = FrameworkUtil.getBundle(getClass());
-// BundleContext context = b.getBundleContext();
-// ServiceReference serviceRef = context
-// .getServiceReference(IThemeManager.class.getName());
-// IThemeManager themeManager = (IThemeManager) context
-// .getService(serviceRef);
-// final IThemeEngine engine = themeManager.getEngineForDisplay(Display
-// .getCurrent());
-// engine.setTheme("org.eclipse.e4.ui.examples.css.rcp", true);
-// if (serviceRef != null) {
-// serviceRef = null;
-// }
-// themeManager = null;
