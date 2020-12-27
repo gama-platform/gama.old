@@ -2,7 +2,7 @@ package msi.gama.precompiler;
 
 import static java.util.Collections.sort;
 
-// import static msi.gama.precompiler.GamlProperties.GAML;
+// import static gama.processor.annotations.GamlProperties.GAML;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,13 +41,15 @@ import javax.xml.parsers.ParserConfigurationException;
 public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment, Constants {
 	private final static boolean PRODUCES_DOC = true;
 	public static final Charset CHARSET = Charset.forName("UTF-8");
-	public static final String ADDITIONS = "gaml.additions.GamlAdditions";
+	public static final String ADDITIONS_PACKAGE_BASE = "gaml.additions";
+	public static final String ADDITIONS_CLASS_NAME = "GamlAdditions";
 	private final static boolean PRODUCES_WARNING = true;
 	public static final StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
 	private final ProcessingEnvironment delegate;
 	private RoundEnvironment round;
 	private TypeMirror iSkill, iAgent;
 	public volatile String currentPlugin;
+	public volatile String shortcut;
 	public List<String> roots;
 	public static final DocumentBuilder xmlBuilder;
 
@@ -59,7 +61,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		xmlBuilder = temp;
 	}
 
-	ProcessorContext(final ProcessingEnvironment pe) {
+	public ProcessorContext(final ProcessingEnvironment pe) {
 		delegate = pe;
 	}
 
@@ -68,7 +70,8 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	}
 
 	public String nameOf(final TypeElement e) {
-		if (e.getNestingKind() == NestingKind.TOP_LEVEL) { return e.getQualifiedName().toString(); }
+		if (e.getNestingKind() == NestingKind.TOP_LEVEL)
+			return e.getQualifiedName().toString();
 		return nameOf((TypeElement) e.getEnclosingElement()) + "." + e.getSimpleName().toString();
 	}
 
@@ -98,9 +101,8 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		final Element enclosing = e.getEnclosingElement();
 		final ElementKind enclosingKind = enclosing.getKind();
 		if ((kind == ElementKind.CLASS || kind == ElementKind.INTERFACE)
-				&& !(enclosingKind == ElementKind.CLASS || enclosingKind == ElementKind.INTERFACE)) {
+				&& !(enclosingKind == ElementKind.CLASS || enclosingKind == ElementKind.INTERFACE))
 			return e.toString();
-		}
 		return getRootClassOf(enclosing);
 	}
 
@@ -170,7 +172,8 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	}
 
 	public void emit(final Kind kind, final String s, final Element e) {
-		if (!PRODUCES_WARNING) { return; }
+		if (!PRODUCES_WARNING)
+			return;
 		if (e == null) {
 			getMessager().printMessage(kind, s);
 		} else {
@@ -246,13 +249,25 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		return null;
 	}
 
-	FileObject createSource() {
+	void initCurrentPlugin() {
 		try {
-			final FileObject obj = getFiler().createSourceFile(ADDITIONS, (Element[]) null);
-			// To accomodate for different classpaths in Maven and Eclipse
-			final String plugin2 = obj.toUri().toASCIIString().replace("/target/gaml/additions/GamlAdditions.java", "")
-					.replace("/gaml/gaml/additions/GamlAdditions.java", "");
+			final FileObject temp = getFiler().createSourceFile("gaml.additions.package-info", (Element[]) null);
+			emit(Kind.NOTE, "GAML Processor: creating " + temp.toUri(), (Element) null);
+			final String plugin2 = temp.toUri().toASCIIString().replace("/target/gaml/additions/package-info.java", "")
+					.replace("/gaml/gaml/additions/package-info.java", "");
 			currentPlugin = plugin2.substring(plugin2.lastIndexOf('/') + 1);
+			shortcut = currentPlugin.substring(currentPlugin.lastIndexOf('.') + 1);
+		} catch (IOException e) {
+			emitWarning("Exception raised while reading the current plugin name " + e.getMessage(), e);
+		}
+	}
+
+	public FileObject createSource() {
+		initCurrentPlugin();
+		try {
+
+			final FileObject obj = getFiler().createSourceFile(
+					ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME, (Element[]) null);
 			return obj;
 		} catch (final Exception e) {
 			emitWarning("Exception raised while creating the source file: " + e.getMessage(), e);
@@ -318,7 +333,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		}
 	}
 
-	Writer createSourceWriter(final FileObject file) {
+	public Writer createSourceWriter(final FileObject file) {
 		try {
 			final OutputStream output = file.openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, CHARSET);

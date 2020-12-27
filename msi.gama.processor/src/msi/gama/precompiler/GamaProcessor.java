@@ -1,9 +1,7 @@
 /*********************************************************************************************
  *
  * 'GamaProcessor.java, in plugin msi.gama.processor, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
- *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  *
@@ -13,7 +11,6 @@ package msi.gama.precompiler;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -27,16 +24,23 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.tests;
-import msi.gama.precompiler.doc.DocProcessor;
-import msi.gama.precompiler.tests.ExamplesToTests;
 import msi.gama.precompiler.tests.TestProcessor;
+ 
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 @SupportedAnnotationTypes ({ "*" })
-@SupportedSourceVersion (SourceVersion.RELEASE_8)
+@SupportedSourceVersion (SourceVersion.RELEASE_11)
 public class GamaProcessor extends AbstractProcessor implements Constants {
+
+//	public final static String[] IMPORTS = new String[] { "java.util", "java.lang", "gama.util.map", "gama.util.list",
+//			"gama.util.file", "gama.util.matrix", "gama.util.path", "gama.util.graph", "gama.util.random",
+//			"gama.util.tree", "gama.util", "gama.metamodel.agent", "gama.metamodel.population", "gama.metamodel.shape",
+//			"gaml.types", "gaml.skills", "gama.common.interfaces.batch", "gama.common.interfaces.experiment",
+//			"gama.common.interfaces.gui", "gama.common.interfaces.outputs", "gama.common.interfaces",
+//			"gama.runtime.scope", "gaml.operators.noisegeneration", "gaml.operators", "gama.kernel.batch",
+//			"gama.kernel.experiment", "gama.kernel.root", "gama.kernel.model", "gama.kernel.simulation", "gaml.species",
+//			"gaml.expressions" };
 
 	public final static String[] IMPORTS = new String[] { "msi.gaml.extensions.multi_criteria",
 			"msi.gama.outputs.layers.charts", "msi.gama.outputs.layers", "msi.gama.outputs", "msi.gama.kernel.batch",
@@ -62,7 +66,6 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		final StringBuilder sb = new StringBuilder();
 		writeImmutableHeader(sb);
 		JAVA_HEADER = sb.toString();
-		Arrays.sort(IMPORTS, (a, b) -> b.compareTo(a));
 	}
 
 	@Override
@@ -113,11 +116,8 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 			}
 		}
 		// We pass the current document of the documentation processor to avoir re-reading it
-		final DocProcessor dp = (DocProcessor) processors.get(doc.class);
-		// context.emit(Kind.NOTE,
-		// " GAML Tests: lone tests serialization took " + (System.currentTimeMillis() - begin) + "ms",
-		// (Element) null);
-		ExamplesToTests.createTests(context, dp.document);
+		// final DocProcessor dp = (DocProcessor) processors.get(doc.class);
+		// ExamplesToTests.createTests(context, dp.document);
 	}
 
 	public void generateJavaSource(final FileObject file) {
@@ -134,7 +134,6 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	}
 
 	protected static void writeImmutableHeader(final StringBuilder sb) {
-		sb.append("package ").append(PACKAGE_NAME).append(';');
 		for (final String element : IMPORTS) {
 			sb.append(ln).append("import ").append(element).append(".*;");
 		}
@@ -144,8 +143,9 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		sb.append(ln).append("import static msi.gaml.operators.Cast.*;");
 		sb.append(ln).append("import static msi.gaml.operators.Spatial.*;");
 		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
-		sb.append(ln).append("	@SuppressWarnings({ \"rawtypes\", \"unchecked\", \"unused\" })");
-		sb.append(ln).append(ln).append("public class GamlAdditions extends AbstractGamlAdditions").append(" {");
+		sb.append(ln).append("@SuppressWarnings({ \"rawtypes\", \"unchecked\", \"unused\" })");
+		sb.append(ln).append(ln).append("public class GamlAdditions extends msi.gaml.compilation.AbstractGamlAdditions")
+				.append(" {");
 		sb.append(ln).append(tab);
 		sb.append("public void initialize() throws SecurityException, NoSuchMethodException {");
 	}
@@ -164,7 +164,9 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 	}
 
 	public StringBuilder writeJavaBody() {
-		final StringBuilder sb = new StringBuilder(JAVA_HEADER);
+		final StringBuilder sb = new StringBuilder();
+		sb.append("package ").append(PACKAGE_NAME).append(".").append(context.shortcut).append(';');
+		sb.append(ln).append(JAVA_HEADER);
 		writeMutableHeader(sb);
 		processors.values().forEach(p -> {
 			if (p.outputToJava() && p.hasElements()) {

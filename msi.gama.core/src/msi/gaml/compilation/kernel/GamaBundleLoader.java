@@ -71,6 +71,8 @@ public class GamaBundleLoader {
 	public static String CORE_TESTS = "tests";
 	public static String CURRENT_PLUGIN_NAME = CORE_PLUGIN.getSymbolicName();
 	public static String ADDITIONS = "gaml.additions.GamlAdditions";
+	public static final String ADDITIONS_PACKAGE_BASE = "gaml.additions";
+	public static final String ADDITIONS_CLASS_NAME = "GamlAdditions";
 	public static String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";
 	public static String GRAMMAR_EXTENSION = "gaml.extension";
 	public static String CREATE_EXTENSION = "gama.create";
@@ -135,7 +137,7 @@ public class GamaBundleLoader {
 			} catch (final Exception e2) {
 				ERR(ERROR_MESSAGE);
 				ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
-				System.exit(0);
+//				System.exit(0);
 				return;
 			}
 			// We then build the other extensions to the language
@@ -146,7 +148,7 @@ public class GamaBundleLoader {
 				} catch (final Exception e1) {
 					ERR(ERROR_MESSAGE);
 					ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e1.getMessage());
-					System.exit(0);
+//					System.exit(0);
 					return;
 				}
 			}
@@ -164,7 +166,7 @@ public class GamaBundleLoader {
 				} catch (final Exception e1) {
 					ERR(ERROR_MESSAGE);
 					ERR("Error in loading CreateStatement delegate : " + e1.getMessage());
-					System.exit(0);
+//					System.exit(0);
 					return;
 
 				}
@@ -180,7 +182,7 @@ public class GamaBundleLoader {
 
 					ERR(ERROR_MESSAGE);
 					ERR("Error in loading EventLayerStatement delegate : " + e1.getMessage());
-					System.exit(0);
+//					System.exit(0);
 					return;
 
 				}
@@ -219,10 +221,16 @@ public class GamaBundleLoader {
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
 		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: " + bundle.getSymbolicName(), 45) + " loaded in ", () -> {
+			String shortcut = bundle.getSymbolicName();
+			shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);
 			GamaClassLoader.getInstance().addBundle(bundle);
 			Class<IGamlAdditions> gamlAdditions = null;
 			try {
-				gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
+//				gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
+
+				gamlAdditions = (Class<IGamlAdditions>) bundle
+					.loadClass(ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME);
+				
 			} catch (final ClassNotFoundException e1) {
 				ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
 				throw e1;
