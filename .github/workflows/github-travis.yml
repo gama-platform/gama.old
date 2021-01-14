@@ -47,11 +47,6 @@ jobs:
         shell: bash
         run: $GITHUB_WORKSPACE/travis/validate_and_test.sh
 
-      - name: Publish to GitHub Packages Apache Maven
-        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
       - name: Prepare publish
         run: echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
         env:
