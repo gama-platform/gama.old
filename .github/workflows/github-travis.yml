@@ -26,17 +26,17 @@ jobs:
       - name: Prepare build
         run: |
           echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
-          sudo apt install sshpass
+          sudo apt install sshpass -y
 
       - name: Build with Maven
         shell: bash
-        run: ./travis/compile.sh 
+        run: $GITHUB_WORKSPACE/travis/compile.sh 
         env:
           MSG: ${ github.event.head_commit.message }
 
       - name: Validate and test Maven
         shell: bash
-        run: ./travis/validate_and_test.sh
+        run: $GITHUB_WORKSPACE/travis/validate_and_test.sh
 
       - name: Publish to GitHub Packages Apache Maven
         run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
@@ -50,7 +50,7 @@ jobs:
 
       - name: Publish to Github
         shell: bash
-        run: ./travis/publish.sh
+        run: $GITHUB_WORKSPACE/travis/publish.sh
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SSHPASS: ${{ secrets.USER_PWD }}
