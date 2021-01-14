@@ -47,10 +47,19 @@ jobs:
         shell: bash
         run: $GITHUB_WORKSPACE/travis/validate_and_test.sh
 
-      - name: Prepare publish
-        run: echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-        env:
-          SSHPASS: ${{ secrets.USER_PWD }}
+      - name: Prepare SSH (if needed)
+        if: ${{ contains(github.event.head_commit.message, 'ci clean') && contains(github.event.head_commit.message, 'ci deploy') }} 
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
+          chmod 700 ~/.ssh
+          cat << EOF > ~/.ssh/config
+          Host *
+              ServerAliveInterval 60
+              StrictHostKeyChecking no
+          EOF
 
       - name: Publish to Github
         shell: bash
