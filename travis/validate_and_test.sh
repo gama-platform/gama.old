@@ -3,7 +3,7 @@
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE 
 
-cd /home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
+cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
 memory=3048m 
 
 
