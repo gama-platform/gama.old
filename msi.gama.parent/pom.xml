@@ -126,12 +126,12 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-			<url>http://download.eclipse.org/releases/2020-09</url>
+			<url>http://download.eclipse.org/releases/2020-12</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>xtext</id>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.17.0/</url>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.24.0/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
