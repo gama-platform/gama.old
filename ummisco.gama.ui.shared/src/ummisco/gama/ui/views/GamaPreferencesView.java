@@ -235,8 +235,9 @@ public class GamaPreferencesView {
 					modelValues.put(e.getKey(), value);
 					checkActivables(e, value);
 					checkRefreshables(e, value);
-					if (e.isRestartRequired())
+					if (e.isRestartRequired()) {
 						setRestartRequired();
+					}
 				} else {
 					GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());
 				}
@@ -332,7 +333,8 @@ public class GamaPreferencesView {
 				final var fd = new FileDialog(shell, SWT.OPEN);
 				fd.setFilterExtensions(new String[] { "*.prefs" });
 				final var path = fd.open();
-				if (path == null) { return; }
+				if (path == null)
+					return;
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
 				for (final IParameterEditor ed : editors.values()) {
 					ed.updateValue(true);
@@ -353,7 +355,8 @@ public class GamaPreferencesView {
 				fd.setFilterExtensions(new String[] { "*.gaml" });
 				fd.setOverwrite(false);
 				final var path = fd.open();
-				if (path == null) { return; }
+				if (path == null)
+					return;
 				GamaPreferences.savePreferencesTo(path);
 			}
 
@@ -404,11 +407,15 @@ public class GamaPreferencesView {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
+				if (!Messages.question("Revert to default",
+						"Do you want to revert all preferences to their default values ? A restart of the platform will be performed immediately"))
+					return;
 				GamaPreferences.revertToDefaultValues(modelValues);
-				for (final IParameterEditor ed : editors.values()) {
-					ed.updateValue(true);
-				}
-
+				// for (final IParameterEditor ed : editors.values()) {
+				// // ed.forceUpdateValueAsynchronously();
+				// ed.updateValue(true);
+				// }
+				PlatformUI.getWorkbench().restart(true);
 			}
 
 		});
@@ -476,7 +483,8 @@ public class GamaPreferencesView {
 	}
 
 	private void saveDialogProperties() {
-		if (shell.isDisposed()) { return; }
+		if (shell.isDisposed())
+			return;
 		saveLocation();
 		saveSize();
 		saveTab();

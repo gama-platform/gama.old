@@ -527,7 +527,8 @@ public class GamaPreferences {
 				32648, IType.INT, true).in(NAME, GEOTOOLS)
 						.addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final var codes = CRS.getSupportedCodes(newValue.toString());
-							if (codes.isEmpty()) { return false; }
+							if (codes.isEmpty())
+								return false;
 							return true;
 						});
 
@@ -535,7 +536,8 @@ public class GamaPreferences {
 				create("pref_gis_initial_crs", "...or use the following CRS (EPSG code)", 4326, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final var codes = CRS.getSupportedCodes(newValue.toString());
-							if (codes.isEmpty()) { return false; }
+							if (codes.isEmpty())
+								return false;
 							return true;
 						});
 
@@ -543,7 +545,8 @@ public class GamaPreferences {
 				create("pref_gis_output_crs", "... or use this following CRS (EPSG code)", 4326, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final var codes = CRS.getSupportedCodes(newValue.toString());
-							if (codes.isEmpty()) { return false; }
+							if (codes.isEmpty())
+								return false;
 							return true;
 						});
 
@@ -555,11 +558,13 @@ public class GamaPreferences {
 		private static String getDefaultRPath() {
 			final var os = System.getProperty("os.name");
 			final var osbit = System.getProperty("os.arch");
-			if (os.startsWith("Mac")) {
+			if (os.startsWith("Mac"))
 				return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
-			} else if (os.startsWith("Linux")) { return "/usr/local/lib/libjri.so"; }
+			else if (os.startsWith("Linux"))
+				return "/usr/local/lib/libjri.so";
 			if (os.startsWith("Windows")) {
-				if (osbit.endsWith("64")) { return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll"; }
+				if (osbit.endsWith("64"))
+					return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 				return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 			}
 			return "";
@@ -637,7 +642,8 @@ public class GamaPreferences {
 	private static void register(final Pref gp) {
 		final IScope scope = null;
 		final var key = gp.key;
-		if (key == null) { return; }
+		if (key == null)
+			return;
 		prefs.put(key, gp);
 		final var value = gp.value;
 		if (storeKeys.contains(key)) {
@@ -775,14 +781,25 @@ public class GamaPreferences {
 	 *
 	 */
 	public static void revertToDefaultValues(final Map<String, Object> modelValues) {
-		for (final String name : modelValues.keySet()) {
-			final Pref e = prefs.get(name);
-			if (e == null) {
-				continue;
-			}
-			modelValues.put(name, e.getInitialValue(null));
-			e.set(e.initial);
+		// First we erase all preferences
+		final var store = Preferences.userRoot().node("gama");
+		try {
+			store.removeNode();
+		} catch (BackingStoreException e1) {
+			e1.printStackTrace();
 		}
+		// storeKeys.clear();
+		// reloadPreferences(modelValues);
+		//
+		//
+		// for (final String name : modelValues.keySet()) {
+		// final Pref e = prefs.get(name);
+		// if (e == null) {
+		// continue;
+		// }
+		// modelValues.put(name, e.getInitialValue(null));
+		// e.set(e.initial);
+		// }
 
 	}
 
