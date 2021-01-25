@@ -26,8 +26,8 @@ commit_io_website_files() {
 	git config --global user.email "my.gama.bot@gmail.com"
 	git config --global user.name "GAMA Bot"
 	git config --global push.default simple		
-	git clone https://github.com/gama-platform/gama-platform.github.io.git /home/travis/build/gama-platform/gama-platform.github.io
-	cd /home/travis/build/gama-platform/gama-platform.github.io
+	git clone https://github.com/gama-platform/gama-platform.github.io.git ~/gama-platform.github.io
+	cd ~/gama-platform.github.io
 	git remote rm origin
 	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama-platform.github.io.git
 	git fetch origin
