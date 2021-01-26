@@ -28,8 +28,8 @@ echo "github_release_continuous_withjdk"
 COMMIT=$@
 
 REPO="gama-platform/gama"
-RELEASE="continuous"
-thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/Gama1.7"
+RELEASE="1.8.2"
+thePATH="$GITHUB_WORKSPACE/ummisco.gama.product/target/products/Gama1.7"
 
 
 
@@ -46,6 +46,8 @@ thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/produ
 
 
 COMMIT="${COMMIT:0:7}"
+BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f 3)
+COMMIT=$(echo $GITHUB_SHA | cut -c1-8)
 
 timestamp=$(date '+_%D')
 
@@ -56,22 +58,22 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_Linux'$SUFFIX 
+NEWFILES[$n]='GAMA1.8.2_Continuous_Linux'$SUFFIX 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_Mac'$SUFFIX
+NEWFILES[$n]='GAMA1.8.2_Continuous_Mac'$SUFFIX
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.8_Continuous_Win'$SUFFIX
+NEWFILES[$n]='GAMA1.8.2_Continuous_Win'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Linux'$SUFFIX
+NEWFILES[$n]='GAMA1.8.2_Continuous_withJDK_Linux'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Win'$SUFFIX
+NEWFILES[$n]='GAMA1.8.2_Continuous_withJDK_Win'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Continuous_withJDK_Mac'$SUFFIX
+NEWFILES[$n]='GAMA1.8.2_Continuous_withJDK_Mac'$SUFFIX
  
 
 i=0
@@ -126,7 +128,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"Built once a day or by adding \`ci release\` to the comment of a commit. **The release file names are composed with a number of segments separated by \`_\` :** \n- the version of the release, (e.g., \`GAMA1.8\`)  \n- the name of the OS: either \`Linux\`, \`Mac\` or \`Win\`  \n- the day it has been produced (e.g., \`07.03.18\` for the 3rd of July, 2018)  \n- the hashcode of the corresponding commit (which can be retrieved using the address \`https://github.com/gama-platform/gama/commit/\` followed by the code, for instance https://github.com/gama-platform/gama/commit/'$COMMIT' for this release)","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"Continuous build","body":"Alpha release for GAMA 1.8.2, which adds compatibility with JDK 11+ . Please test and report issues","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 

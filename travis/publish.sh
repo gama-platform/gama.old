@@ -98,7 +98,7 @@ echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci ext"* ]]; then			
 	MSG+=" ci ext " 
 fi	
-
+ 
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
 	
 	change=$(git log --pretty=format: --name-only --since="1 day ago")
