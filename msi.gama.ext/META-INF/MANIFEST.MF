@@ -6,7 +6,10 @@ Bundle-Version: 1.8.1.qualifier
 Bundle-Activator: msi.gama.ext.Activator
 Bundle-Vendor: MSI
 Bundle-ActivationPolicy: lazy
-Export-Package: com.fasterxml.jackson.core,
+Export-Package: com.conversantmedia.util.collection,
+ com.conversantmedia.util.concurrent,
+ com.conversantmedia.util.estimation,
+ com.fasterxml.jackson.core,
  com.fasterxml.jackson.core.async,
  com.fasterxml.jackson.core.base,
  com.fasterxml.jackson.core.filter,
@@ -712,6 +715,7 @@ Bundle-ClassPath: .,
  commons-lang3-3.11/commons-lang3-3.11.jar,
  geotools 21.4/jackson-core-2.9.10.jar,
  geotools 21.4/ejml-core-0.34.jar,
- jts-1.16.1/jts-core-1.16.1.jar
+ jts-1.16.1/jts-core-1.16.1.jar,
+ disruptor-1.2.19.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: msi.gama.ext

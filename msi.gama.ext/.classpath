@@ -100,7 +100,11 @@
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/mysql-connector-java-5.1.46.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/postgresql-42.2.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/sqlite-jdbc-3.27.2.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="protobuf-java-3.6.1.jar"/>
@@ -121,5 +125,6 @@
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.5.0.jar" sourcepath="jfreechart-1.5.0.zip"/>
+	<classpathentry exported="true" kind="lib" path="disruptor-1.2.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
