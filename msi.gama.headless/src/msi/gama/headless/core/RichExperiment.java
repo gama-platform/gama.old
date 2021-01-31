@@ -45,6 +45,12 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 				((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
 		if (output == null) {
 			throw GamaRuntimeException.error("Output unresolved", currentExperiment.getExperimentScope());
+		} 
+		if (output instanceof LayeredDisplayOutput) {
+			if(((LayeredDisplayOutput) output).getSurface().getWidth()!=v.width) {
+				((LayeredDisplayOutput) output).getSurface().setSize(v.width, v.height);
+				((LayeredDisplayOutput) output).getSurface().outputReloaded();
+			}
 		}
 		output.update();
 

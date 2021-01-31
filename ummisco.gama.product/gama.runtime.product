@@ -19,14 +19,14 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-data @noDefault 
+      <programArgs>-showsplash
+-data @noDefault 
          --launcher.defaultAction
          openFile
       </programArgs>
       <programArgsLin>--launcher.GTK_version 3
       </programArgsLin>
-      <vmArgs>-server
-         -noverify
+      <vmArgs>-server 
          -Xmn128m
          -Xss2m
          -XX:+UseAdaptiveSizePolicy
@@ -275,9 +275,9 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="org.eclipse.update.reconcile" value="false" />
       <property name="version" value="1.8.2" />
       <property name="eclipse.buildId" value="${build.id}" />
+      <property name="org.eclipse.update.reconcile" value="false" />
    </configurations>
 
    <repositories>

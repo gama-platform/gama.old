@@ -126,12 +126,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		this.height = newHeight;
 		final Image copy = buffImage;
 		createBuffImage();
-		if (getScope().isPaused()) {
+		if (getScope()!=null && getScope().isPaused()) {
 			updateDisplay(true);
 		} else {
 			g2.drawImage(copy, 0, 0, newWidth, newHeight, null);
 		}
-		copy.flush();
+		if(copy!=null)
+			copy.flush();
 		return true;
 	}
 
