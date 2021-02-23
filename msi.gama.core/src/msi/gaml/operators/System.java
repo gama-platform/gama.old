@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -35,6 +36,7 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
@@ -229,6 +231,97 @@ public class System {
 			comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
 					+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
 			examples = {
+					@example ("map<string,unknown> values <- user_input([enter(\"Number\",100), enter(\"Location\",{10, 10})], font('Helvetica', 18));"),
+					@example (
+							value = "(values at \"Number\") as int",
+							equals = "100",
+							returnType = "int",
+							isTestOnly = true),
+					@example (
+							value = " (values at \"Location\") as point",
+							equals = "{10,10}",
+							returnType = "point",
+							isTestOnly = true),
+					@example (
+							value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	public static IMap<String, Object> userInput(final IScope scope, final IMap<String, Object> map,final GamaFont font) {
+		final IAgent agent = scope.getAgent();
+		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map,font);
+	}
+
+	@operator (
+			value = IKeyword.USER_INPUT,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			deprecated = "Use a list of `enter()` or `choose()` operators rather than a map",
+			value = "Asks the user for some values. Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
+			examples =
+
+			{ @example ("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[enter(\"Number\",100), enter(\"Location\",{10, 10})], font('Helvetica', 18));"),
+					@example (
+							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	public static IMap<String, Object> userInput(final IScope scope, final String title,
+			final IMap<String, Object> map, final GamaFont font) {
+		final IList<IParameter> parameters = GamaListFactory.create();
+		map.forEach((k, v) -> {
+			parameters.add(enterValue(scope, k, v));
+		});
+		return userInput(scope, title, parameters,font);
+	}
+
+	@SuppressWarnings ("unchecked")
+	@operator (
+			value = IKeyword.USER_INPUT,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is to specify the parameters the user can enter",
+			masterDoc = true,
+			examples = {
+					@example ("map<string,unknown> values2 <- user_input('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})], font('Helvetica', 18));"),
+					@example (
+							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	public static IMap<String, Object> userInput(final IScope scope, final String title, final IList parameters,final GamaFont font) {
+		parameters.removeIf(p -> !(p instanceof IParameter));
+		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
+				scope.getGui().openUserInputDialog(scope, title, parameters,font));
+	}
+
+	@operator (
+			value = IKeyword.USER_INPUT,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is to specify the parameters the user can enter",
+			examples = {
+					@example ("map<string,unknown> values_no_title <- user_input([enter('Number',100), enter('Location',point, {10, 10})], font('Helvetica', 18));"),
+					@example (
+							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	public static IMap<String, Object> userInput(final IScope scope, final IList parameters,final GamaFont font) {
+		final IAgent agent = scope.getAgent();
+		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", parameters,font);
+	}
+
+	@operator (
+			value = IKeyword.USER_INPUT,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = { IConcept.SYSTEM, IConcept.GUI })
+	@doc (
+			deprecated = "Use a list of `enter()` or `choose()` operators rather than a map",
+			value = "Asks the user for some values. Takes a string (optional) and a map as arguments. The string is used to specify the message of the dialog box. The map is to specify the parameters you want the user to change before the simulation starts, with the name of the parameter in string key, and the default value as value.",
+			masterDoc = true,
+			comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
+					+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :",
+			examples = {
 					@example ("map<string,unknown> values <- user_input([enter(\"Number\",100), enter(\"Location\",{10, 10})]);"),
 					@example (
 							value = "(values at \"Number\") as int",
@@ -289,7 +382,7 @@ public class System {
 	public static IMap<String, Object> userInput(final IScope scope, final String title, final IList parameters) {
 		parameters.removeIf(p -> !(p instanceof IParameter));
 		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
-				scope.getGui().openUserInputDialog(scope, title, parameters));
+				scope.getGui().openUserInputDialog(scope, title, parameters, GamaPreferences.Modeling.EDITOR_BASE_FONT.getValue()));
 	}
 
 	@operator (

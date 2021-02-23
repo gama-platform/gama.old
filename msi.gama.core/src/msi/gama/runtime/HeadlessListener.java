@@ -37,6 +37,7 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
@@ -72,7 +73,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
-			final List<IParameter> parameters) {
+			final List<IParameter> parameters, final GamaFont font) {
 		final Map<String, Object> initialValues = GamaMapFactory.create();
 		parameters.forEach(p -> {
 			initialValues.put(p.getName(), p.getInitialValue(scope));

@@ -25,6 +25,7 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
@@ -96,7 +97,7 @@ public interface IGui {
 
 	IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
 
-	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters);
+	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters, GamaFont font);
 
 	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,11 +28,13 @@ import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class EditorsDialog.
@@ -45,13 +48,15 @@ public class EditorsDialog extends Dialog {
 	private final IMap<String, Object> values = GamaMapFactory.createUnordered();
 	private final List<IParameter> parameters;
 	private final String title;
+	private final GamaFont font;
 	private final IScope scope;
 
 	public EditorsDialog(final IScope scope, final Shell parentShell, final List<IParameter> parameters,
-			final String title) {
+			final String title, final GamaFont font) {
 		super(parentShell);
 		this.scope = scope;
 		this.title = title;
+		this.font = font;
 		setShellStyle(SWT.RESIZE | SWT.BORDER);
 		this.parameters = parameters;
 		parameters.forEach(p -> {
@@ -92,6 +97,7 @@ public class EditorsDialog extends Dialog {
 		final var text = new Label(composite, SWT.None);
 		text.setBackground(IGamaColors.OK.inactive());
 		text.setForeground(GamaColors.getTextColorForBackground(text.getBackground()).color());
+		text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
 		text.setText(title);
 		var data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		text.setLayoutData(data);
