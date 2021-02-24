@@ -29,7 +29,7 @@ COMMIT=$@
 
 REPO="gama-platform/gama"
 RELEASE="continuous"
-thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/Gama1.7"
+thePATH="$GITHUB_WORKSPACE/ummisco.gama.product/target/products/Gama1.7"
 
 
 
@@ -46,6 +46,8 @@ thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/produ
 
 
 COMMIT="${COMMIT:0:7}"
+BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f 3)
+COMMIT=$(echo $GITHUB_SHA | cut -c1-8)
 
 timestamp=$(date '+_%D')
 
