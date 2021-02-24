@@ -24,6 +24,7 @@
  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<tycho.version>2.2.0</tycho.version>
+	<jdk.version>15</jdk.version>
   </properties>
 
 	<profiles>
@@ -112,8 +113,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<source>15</source>
-					<target>15</target>
+					<source>${jdk.version}</source>
+					<target>11</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -121,8 +122,8 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<source>15</source>
-					<target>15</target>
+					<source>${jdk.version}</source>
+					<target>11</target>
                 	<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
                 	<useProjectSettings>false</useProjectSettings>
 				</configuration>
@@ -133,8 +134,8 @@
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<source>15</source>
-					<target>15</target>
+					<source>${jdk.version}</source>
+					<target>11</target>
 					<compilerArgument>-proc:none</compilerArgument>
 				</configuration>
 				<!-- FIX the JDT core due to bug in tycho https://www.eclipse.org/forums/index.php/t/1068443/ -->

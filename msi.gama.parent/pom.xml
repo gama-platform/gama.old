@@ -229,7 +229,6 @@
 		<module>../ummisco.gama.network</module>
 		<module>../ummisco.gaml.extensions.maths</module>
 		<module>../ummisco.gama.serialize</module>
-		<module>../msi.gama.documentation</module>
 		<module>../msi.gaml.extensions.fipa</module>
 		<module>../simtools.gaml.extensions.traffic</module>
 		<module>../simtools.gaml.extensions.physics</module>
@@ -271,6 +270,7 @@
 		<p2-maven.version>1.2.0-SNAPSHOT</p2-maven.version>
 		<jetty-maven.version>8.1.5.v20120716</jetty-maven.version>
 		<tycho.version>2.2.0</tycho.version>
+		<jdk.version>15</jdk.version>
 		<project.version>1.8.1-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<geotools.version>14.5</geotools.version>
@@ -374,8 +374,8 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<debug>false</debug>
-					<source>15</source>
-					<target>15</target>
+					<source>${jdk.version}</source>
+					<target>11</target>
 					<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
 					<useProjectSettings>false</useProjectSettings>
 					<generatedSourcesDirectory>gaml</generatedSourcesDirectory>
@@ -388,8 +388,8 @@
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<source>15</source>
-					<target>15</target>
+					<source>${jdk.version}</source>
+					<target>11</target>
 					<!--<compilerArgument>-proc:none</compilerArgument> -->
 					<annotationProcessors>
 						<annotationProcessor>msi.gama.precompiler.GamaProcessor</annotationProcessor>
@@ -594,8 +594,8 @@
 					<version>3.8.1</version>
 					<configuration>
 						<compilerId>eclipse</compilerId>
-						<source>15</source>
-						<target>15</target>
+						<source>${jdk.version}</source>
+						<target>11</target>
 						<encoding>${project.build.sourceEncoding}</encoding>
 						<showWarnings>true</showWarnings>
 						<showDeprecation>true</showDeprecation>
