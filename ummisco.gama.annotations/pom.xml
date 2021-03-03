@@ -113,7 +113,7 @@
 				<version>3.8.1</version>
 				<configuration>
 					<source>${jdk.version}</source>
-					<target>11</target>
+					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -122,7 +122,7 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<source>${jdk.version}</source>
-					<target>11</target>
+					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -132,7 +132,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<source>${jdk.version}</source>
-					<target>11</target>
+					<target>${jdk.version}</target>
 					<compilerArgument>-proc:none</compilerArgument>
 				</configuration>
 				<!-- FIX the JDT core due to bug in tycho https://www.eclipse.org/forums/index.php/t/1068443/ -->
