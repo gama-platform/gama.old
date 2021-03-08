@@ -66,6 +66,7 @@ import msi.gaml.types.Types;
 		@variable (
 				name = "maxspeed",
 				type = IType.FLOAT,
+				init = "50#km/#h",
 				doc = @doc ("the maximal speed on the road")) })
 @skill (
 		name = "skill_road",
