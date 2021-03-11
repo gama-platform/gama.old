@@ -1093,7 +1093,6 @@ public class DrivingSkill extends MovingSkill {
 		if (numLanesOccupied > numRoadLanes) return -1;
 
 		Integer currentLane = getCurrentLane(driver);
-		IAgent currentRoad = getCurrentRoad(driver);
 		boolean onLinkedRoad = getOnLinkedRoad(driver);
 		IAgent node = (IAgent) newRoad.getAttribute(RoadSkill.SOURCE_NODE);
 
@@ -1134,12 +1133,9 @@ public class DrivingSkill extends MovingSkill {
 		// }
 
 		final int newLaneIdx = Math.min(currentLane, numRoadLanes - numLanesOccupied);
-		// TODO: need to check this condition again
-		int cv = goingToBlock || laneOnNextRoadAvailable(scope, newRoad, newLaneIdx) ? newLaneIdx : -1;
-
-		if (cv != -1) {
-			blockIntersection(scope, currentRoad, newRoad, node);
-			return cv;
+		// check current lane
+		if (laneOnNextRoadAvailable(scope, newRoad, newLaneIdx)) {
+			return newLaneIdx;
 		}
 
 		// driver decides if he's going to switch lanes on the new road or not
@@ -1150,25 +1146,17 @@ public class DrivingSkill extends MovingSkill {
 		if (changeDown || changeUp) {
 			for (int i = 0; i < numRoadLanes; i++) {
 				int l1 = newLaneIdx - i;
-				if (l1 >= 0 && changeDown) {
-					cv = goingToBlock || laneOnNextRoadAvailable(scope, newRoad, l1) ? l1 : -1;
-					if (cv != -1) {
-						blockIntersection(scope, currentRoad, newRoad, node);
-						return cv;
-					}
+				if (l1 >= 0 && changeDown && laneOnNextRoadAvailable(scope, newRoad, l1)) {
+					return l1;
 				}
 				int l2 = newLaneIdx + i;
-				if (l2 < numRoadLanes - numLanesOccupied && changeUp) {
-					cv = goingToBlock || laneOnNextRoadAvailable(scope, newRoad, l2) ? l2 : -1;
-					if (cv != -1) {
-						blockIntersection(scope, currentRoad, newRoad, node);
-						return cv;
-					}
+				if (l2 < numRoadLanes - numLanesOccupied && changeUp && laneOnNextRoadAvailable(scope, newRoad, l2)) {
+					return l2;
 				}
 			}
 		}
 
-		return cv;
+		return (goingToBlock) ? newLaneIdx : -1;
 	}
 
 	@action (
