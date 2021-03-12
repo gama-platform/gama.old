@@ -14,6 +14,7 @@ import static msi.gaml.descriptions.VariableDescription.FUNCTION_DEPENDENCIES_FA
 import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
 import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACETS;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -332,7 +333,13 @@ public abstract class TypeDescription extends SymbolDescription {
 			}
 		});
 		// June 2020: moving (back) to Iterables instead of Streams.
-		return Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
+		ArrayList<String> list = Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
+		
+		//March 2021: Temporary patch for #3068 - just add missing variables. TopologicalOrderIterator have to be fixed
+		 for (String s : dependencies.vertexSet()) {
+			 if (!list.contains(s)) {list.add(s);}
+		 }
+		return list;
 		// return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
 	}
 
