@@ -1348,7 +1348,9 @@ public class DrivingSkill extends MovingSkill {
 		}
 		double realDist = Math.min(distance, minDiff - secDistance - 0.5 * vL - 0.5 * getVehicleLength(nextAgent));
 
-		if (changeLane && realDist < vL) { return 0; }
+		// this line causes vehicles to not switch lanes with small simulation step size
+		// if (changeLane && realDist < vL) { return 0; }
+
 		// TODO: what is this?
 		// realDist = Math.max(0.0, (int) (min_safety_distance + realDist * 1000) / 1000.0);
 		realDist = Math.max(0.0, realDist);
