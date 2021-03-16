@@ -87,7 +87,7 @@ import ummisco.gama.dev.utils.DEBUG;
 				name = "current_index",
 				type = IType.INT,
 				init = "0",
-				doc = @doc ("the current index of the agent target (according to the targets list)")),
+				doc = @doc ("the index of the current edge (road) in the path")),
 		@variable (
 				name = "targets",
 				type = IType.LIST,
@@ -211,7 +211,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class DrivingSkill extends MovingSkill {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	@Deprecated public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
@@ -647,7 +647,7 @@ public class DrivingSkill extends MovingSkill {
 		double vehicleLength = getVehicleLength(driver);
 
 		for (IAgent otherInRoad : roadsIn) {
-			if (otherInRoad != currentRoad) {
+			if (otherInRoad == currentRoad) {
 				continue;
 			}
 			double angle = Punctal.angleInDegreesBetween(scope, (GamaPoint) sourceNode.getLocation(),
@@ -723,30 +723,25 @@ public class DrivingSkill extends MovingSkill {
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
 			final List<ILocation> targets = getTargets(agent);
 			targets.clear();
-			for (final Object edge : path.getEdgeGeometry()) {
-				final IShape egGeom = (IShape) edge;
+			for (int i = 0; i < path.getEdgeGeometry().size(); i += 1) {
+				IShape egGeom = (IShape) path.getEdgeGeometry().get(i);
 				final Coordinate[] coords = egGeom.getInnerGeometry().getCoordinates();
+				if (i == 0) {
+					targets.add(new GamaPoint(coords[0]));
+				}
 				final GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
 				targets.add(pt);
 			}
-
 			setTargets(agent, targets);
-			setCurrentIndex(agent, 0);
+			setCurrentIndex(agent, -1);
 			setCurrentTarget(agent, targets.get(0));
 			setFinalTarget(agent, target.getLocation());
 			setCurrentPath(agent, path);
-
-			final IAgent nwRoad = (IAgent) path.getEdgeList().get(0);
-			int lane = getCurrentLane(agent);
-			if (lane > (Integer) nwRoad.getAttribute(RoadSkill.LANES)) {
-				lane = (Integer) nwRoad.getAttribute(RoadSkill.LANES);
-			}
-			RoadSkill.register(scope, nwRoad, agent, lane);
-
+		
 			return path;
-
 		}
 		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
+		setCurrentIndex(agent, -1);
 		setCurrentTarget(agent, null);
 		setFinalTarget(agent, null);
 		setCurrentPath(agent, (IPath) null);
@@ -919,48 +914,31 @@ public class DrivingSkill extends MovingSkill {
 		final IStatement.WithArgs actionSC = context.getAction("speed_choice");
 		final Arguments argsSC = new Arguments();
 
-		ILocation loc = driver.getLocation();
-		double x = loc.getX();
-		double y = loc.getY();
-
 		// get the amount of time that the driver is able to travel in one simulation step
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
 		// main loop to move the agent until the simulation step ends
-		while (remainingTime > 0.0) {
-			IAgent road = getCurrentRoad(driver);
+		while (true) {
+			ILocation loc = driver.getLocation();
 			GamaPoint target = getCurrentTarget(driver);
-
-			// compute the desired speed
-			argsSC.put("new_road", ConstantExpressionDescription.create(road));
-			actionSC.setRuntimeArgs(scope, argsSC);
-			double desiredSpeed = (Double) actionSC.executeOn(scope);
-			setSpeed(driver, desiredSpeed);
-
-			// move towards the current target and compute the remaining time
-			remainingTime = primAdvancedFollow(scope, driver, desiredSpeed, remainingTime, path, target);
-
-			loc = driver.getLocation();
-			x = loc.getX();
-			y = loc.getY();
 			// final target check
-			if (x == finalTarget.getX() && y == finalTarget.getY()) {
+			if (loc.equals(finalTarget)) {
 				setFinalTarget(driver, null);
 				return;
 			}
 			// intermediate target check
-			if (remainingTime > 0.0 &&
-					x == target.getX() && y == target.getY()) {
-				int currentTargetIdx = getCurrentIndex(driver);
-				// TODO: this seems to be checking if driver has reached final target? (already checked btw)
+			if (remainingTime > 0.0 && loc.equals(target)) {
+				int currEdgeIdx = getCurrentIndex(driver);
+				// TODO: this seems to be checking if driver has reached final target? (already checked above)
 				// edit: maybe it is safeguarding the case when an invalid final target is used
-				if (currentTargetIdx >= path.getEdgeList().size() - 1) {
-					setCurrentPath(driver, (IPath) null);
-					setFinalTarget(driver, null);
-					return;
-				}
+				// commented out for now
+				// if (currentTargetIdx >= path.getEdgeList().size() - 1) {
+				// 	setCurrentPath(driver, (IPath) null);
+				// 	setFinalTarget(driver, null);
+				// 	return;
+				// }
 
 				// get the next road in the path
-				IAgent newRoad = (IAgent) path.getEdgeList().get(currentTargetIdx + 1);
+				IAgent newRoad = (IAgent) path.getEdgeList().get(currEdgeIdx + 1);
 
 				// external factor that affects remaining time, can be defined by user
 				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
@@ -973,14 +951,27 @@ public class DrivingSkill extends MovingSkill {
 				actionLC.setRuntimeArgs(scope, argsLC);
 				int lane = (Integer) actionLC.executeOn(scope);
 				if (lane >= 0) {
-					currentTargetIdx += 1;
-					setCurrentIndex(driver, currentTargetIdx);
+					// updating states like this since there are n + 1 nodes and n edges in a path
+					setCurrentIndex(driver, currEdgeIdx + 1);
+					setCurrentTarget(driver, getTargets(driver).get(currEdgeIdx + 2));
 					RoadSkill.register(scope, newRoad, driver, lane);
-					setCurrentTarget(driver, getTargets(driver).get(currentTargetIdx));
 				} else {
 					return;
 				}
 			}
+
+			// LOOP BREAK CONDITION
+			if (remainingTime <= 0.0) break;
+
+			IAgent road = getCurrentRoad(driver);
+			// compute the desired speed
+			argsSC.put("new_road", ConstantExpressionDescription.create(road));
+			actionSC.setRuntimeArgs(scope, argsSC);
+			double desiredSpeed = (Double) actionSC.executeOn(scope);
+			setSpeed(driver, desiredSpeed);
+
+			// move towards the current target and compute the remaining time
+			remainingTime = primAdvancedFollow(scope, driver, desiredSpeed, remainingTime, path, target);
 		}
 	}
 
@@ -1109,7 +1100,7 @@ public class DrivingSkill extends MovingSkill {
 		if (goingToBlock) {
 			blockIntersection(scope, getCurrentRoad(driver), newRoad, node);
 		}
-		return newLaneIdx;
+		return -1;
 	}
 
 	@action (
