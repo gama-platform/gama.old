@@ -570,6 +570,8 @@ public class DrivingSkill extends MovingSkill {
 		final IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
 		final Integer lane = (Integer) scope.getArg("lane", IType.INT);
 		final IAgent driver = getCurrentAgent(scope);
+		double vehicleLength = getVehicleLength(driver);
+		int numLanesOccupied = getNumLanesOccupied(driver);
 		final double probaBlock = getProbaBlockNode(driver);
 		final boolean testBlockNode = Random.opFlip(scope, probaBlock);
 		final IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
@@ -581,7 +583,7 @@ public class DrivingSkill extends MovingSkill {
 			}
 		}
 		return isReadyNextRoad(scope, road)
-				&& (testBlockNode || laneOnNextRoadAvailable(scope, road, lane));
+				&& (testBlockNode || DrivingOperators.enoughSpaceToEnterRoad(scope, road, lane, numLanesOccupied, vehicleLength / 2));
 	}
 
 	@action (
@@ -667,47 +669,6 @@ public class DrivingSkill extends MovingSkill {
 							dist - (vehicleLength / 2 + otherVehicleLength / 2)) {
 						return false;
 					}
-				}
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Checks if there is enough space for the vehicle to enter the specified lane on the new road
-	 *
-	 * @param scope
-	 * @param road The new road
-	 * @param lane The lane index to check
-	 * @return true if there is enough space, false otherwise
-	 */
-	public boolean laneOnNextRoadAvailable(IScope scope, IAgent road, int lane) {
-		List<List<List<IAgent>>> driversOnNextRoad = (List<List<List<IAgent>>>) 
-				road.getAttribute(RoadSkill.AGENTS_ON);
-		IAgent driver = getCurrentAgent(scope);
-		int numLanesOccupied = getNumLanesOccupied(driver);
-
-		// check if chosen lanes on next road are totally clear
-		boolean allClear = true;
-		for (int i = 0; i < numLanesOccupied; i += 1) {
-			List<List<IAgent>> laneDrivers = driversOnNextRoad.get(lane);
-			// check first segment only
-			if (!laneDrivers.get(0).isEmpty()) {
-				allClear = false;
-				break;
-			}
-		}
-		if (allClear) return true;
-
-		// check if any vehicle in these lanes is too close to the source node of the road
-		for (int i = 0; i < numLanesOccupied; i += 1) {
-			List<List<IAgent>> laneDrivers = driversOnNextRoad.get(lane);
-			for (List<IAgent> segmentDrivers : laneDrivers)
-			for (IAgent otherDriver : segmentDrivers) {
-				if (driver == otherDriver) continue;
-				if (GeometryUtils.getFirstPointOf(road).euclidianDistanceTo(otherDriver) < 
-						getVehicleLength(driver) / 2 + getVehicleLength(otherDriver) / 2) {
-					return false;
 				}
 			}
 		}
@@ -1073,7 +1034,8 @@ public class DrivingSkill extends MovingSkill {
 	 */
 	public Integer chooseLane(IScope scope, IAgent newRoad) throws GamaRuntimeException {
 		IAgent driver = getCurrentAgent(scope);
-		Integer numLanesOccupied = getNumLanesOccupied(driver);
+		double vehicleLength = getVehicleLength(driver);
+		int numLanesOccupied = getNumLanesOccupied(driver);
 		Integer numRoadLanes = (Integer) newRoad.getAttribute(RoadSkill.LANES);
 		// not enough lanes in new road
 		if (numLanesOccupied > numRoadLanes) return -1;
@@ -1120,7 +1082,7 @@ public class DrivingSkill extends MovingSkill {
 
 		final int newLaneIdx = Math.min(currentLane, numRoadLanes - numLanesOccupied);
 		// check current lane
-		if (laneOnNextRoadAvailable(scope, newRoad, newLaneIdx)) {
+		if (DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, newLaneIdx, numLanesOccupied, vehicleLength / 2)) {
 			return newLaneIdx;
 		}
 
@@ -1132,17 +1094,22 @@ public class DrivingSkill extends MovingSkill {
 		if (changeDown || changeUp) {
 			for (int i = 0; i < numRoadLanes; i++) {
 				int l1 = newLaneIdx - i;
-				if (l1 >= 0 && changeDown && laneOnNextRoadAvailable(scope, newRoad, l1)) {
+				if (l1 >= 0 && changeDown &&
+						DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, l1, numLanesOccupied, vehicleLength / 2)) {
 					return l1;
 				}
 				int l2 = newLaneIdx + i;
-				if (l2 < numRoadLanes - numLanesOccupied && changeUp && laneOnNextRoadAvailable(scope, newRoad, l2)) {
+				if (l2 < numRoadLanes - numLanesOccupied && changeUp && 
+						DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, l2, numLanesOccupied, vehicleLength / 2)) {
 					return l2;
 				}
 			}
 		}
 
-		return (goingToBlock) ? newLaneIdx : -1;
+		if (goingToBlock) {
+			blockIntersection(scope, getCurrentRoad(driver), newRoad, node);
+		}
+		return newLaneIdx;
 	}
 
 	@action (
@@ -1602,7 +1569,7 @@ public class DrivingSkill extends MovingSkill {
 			doc = @doc (
 					value = "remove the driving agent from its current road and make it die",
 					examples = { @example ("do die") }))
-	public void primChangeLaneNumber(final IScope scope) throws GamaRuntimeException {
+	public void primDieWrapper(final IScope scope) throws GamaRuntimeException {
 		final AbstractAgent driver = (AbstractAgent) getCurrentAgent(scope);
 		if (! driver.dead() && getCurrentRoad(driver) != null) {
 			RoadSkill.unregister(scope, driver);
