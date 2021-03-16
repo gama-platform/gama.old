@@ -1210,10 +1210,12 @@ public class DrivingSkill extends MovingSkill {
 		final double vL = getVehicleLength(driver);
 		// if there are no vehicles on the current segment, driver can take into account the next segment
 		if (contains && sameSegmentDrivers.size() < 2 || !contains && sameSegmentDrivers.isEmpty()) {
-			// just enough remaining time for lane changing?
-			if (changeLane && distance < vL) { return 0; }
+			// this line causes vehicles to not switch lanes with small simulation step size
+			// if (changeLane && distance < vL) { return 0; }
+
 			// have to return to the current road to get to the next segment?
 			if (onLinkedRoad && nextSegment) { return 0; }
+
 			// if entering a new segment on the road
 			if (nextSegment && moreSegment) {
 				final double length = currentRoad.getInnerGeometry().getCoordinates()[segment + 2].distance(targetLoc);
@@ -1234,7 +1236,7 @@ public class DrivingSkill extends MovingSkill {
 		IAgent nextAgent = null;
 		double minDiff = Double.MAX_VALUE;
 		for (final IAgent ag : sameSegmentDrivers) {
-			if (ag == driver || ag == null) {
+			if (ag == driver || ag == null || ag.dead()) {
 				continue;
 			}
 			final double dist = getOnLinkedRoad(ag) ? distance2D((GamaPoint) ag.getLocation(), targetLoc)
@@ -1433,19 +1435,6 @@ public class DrivingSkill extends MovingSkill {
 		List newAgentOn = agentOn;
 		// boolean changeLane = false;
 
-		if (currentLane > 0 && scope.getRandom().next() < probaChangeLaneDown) {
-			final double val = computeDistToVehicleAhead(scope, driver, distance, security_distance, currentLocation, target,
-					currentLane - 1, segment, false, currentRoad, true);
-			if (val == distance) {
-				changeLaneAndSegment(scope, driver, currentRoad, currentRoad, currentLane, currentLane - 1, segment);
-				return distance;
-			}
-			if (val > distMax && val > vehicleLength) {
-				bestLane = currentLane - 1;
-				distMax = val;
-			}
-		}
-
 		double val = computeDistToVehicleAhead(scope, driver, distance, security_distance, currentLocation, target, currentLane, segment,
 				false, currentRoad, false);
 		if (val == distance) {
@@ -1457,6 +1446,20 @@ public class DrivingSkill extends MovingSkill {
 			distMax = val;
 			bestLane = currentLane;
 		}
+
+		if (currentLane > 0 && scope.getRandom().next() < probaChangeLaneDown) {
+			val = computeDistToVehicleAhead(scope, driver, distance, security_distance, currentLocation, target,
+					currentLane - 1, segment, false, currentRoad, true);
+			if (val == distance) {
+				changeLaneAndSegment(scope, driver, currentRoad, currentRoad, currentLane, currentLane - 1, segment);
+				return distance;
+			}
+			if (val > distMax && val > vehicleLength) {
+				bestLane = currentLane - 1;
+				distMax = val;
+			}
+		}
+
 		int numRoadLanes = (Integer) currentRoad.getAttribute(RoadSkill.LANES);
 		if (currentLane < numRoadLanes - numLanesOccupied
 				&& scope.getRandom().next() < probaChangeLaneUp) {
