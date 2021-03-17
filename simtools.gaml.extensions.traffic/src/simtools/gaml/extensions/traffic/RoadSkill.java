@@ -192,8 +192,6 @@ public class RoadSkill extends Skill {
 		final IAgent linkedRoad = (IAgent) road.getAttribute(LINKED_ROAD);
 		final Integer nbLanes = (Integer) road.getAttribute(LANES);
 
-		unregister(scope, driver);
-
 		int indexSegment = 0;
 		boolean onLinkedRoad = false;
 		// register driver to the new road
@@ -352,8 +350,18 @@ public class RoadSkill extends Skill {
 		unregister(scope, driver);
 	}
 	
+	
+	/**
+	 * Remove the driver from all the roads that it's currently on
+	 *
+	 * @param scope
+	 * @param driver
+	 *
+	 * @throws GamaRuntimeException
+	 */
 	public static void unregister(IScope scope, final IAgent driver)
 			throws GamaRuntimeException {
+		// TODO: update this for linked roads
 		final boolean agentOnLinkedRoad = (boolean) driver.getAttribute(DrivingSkill.ON_LINKED_ROAD);
 		final IAgent prevRoad = (IAgent) driver.getAttribute(DrivingSkill.CURRENT_ROAD);
 		final Integer prevLane = (Integer) driver.getAttribute(DrivingSkill.CURRENT_LANE);

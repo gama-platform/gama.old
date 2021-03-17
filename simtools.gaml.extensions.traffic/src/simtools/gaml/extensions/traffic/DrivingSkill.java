@@ -705,7 +705,6 @@ public class DrivingSkill extends MovingSkill {
 		final ISpatialGraph graph = (ISpatialGraph) scope.getArg("graph", IType.GRAPH);
 		final IAgent target = (IAgent) scope.getArg("target", IType.AGENT);
 		final IAgent agent = getCurrentAgent(scope);
-		RoadSkill.unregister(scope, agent);
 		IAgent source = (IAgent) scope.getArg("source", IType.AGENT);
 		IAgent onRoad = (IAgent) scope.getArg("on_road", IType.AGENT);
 		if (source == null) {
@@ -765,6 +764,7 @@ public class DrivingSkill extends MovingSkill {
 					returns = "the computed path, return nil if no path can be taken",
 					examples = { @example ("do compute_path graph: road_network nodes: [node1, node5, node10];") }))
 	public IPath primComputePathFromNodes(final IScope scope) throws GamaRuntimeException {
+		// TODO: update this method
 		final GamaGraph graph = (GamaGraph) scope.getArg("graph", IType.GRAPH);
 		final IList<IAgent> nodes = (IList) scope.getArg("nodes", IType.LIST);
 
@@ -834,6 +834,7 @@ public class DrivingSkill extends MovingSkill {
 					value = "action to drive by chosen randomly the next road",
 					examples = { @example ("do drive_random;") }))
 	public void primDriveRandom(final IScope scope) throws GamaRuntimeException {
+		// TODO: update this method
 		final IAgent driver = getCurrentAgent(scope);
 		final ISpecies context = driver.getSpecies();
 		final IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
@@ -884,6 +885,7 @@ public class DrivingSkill extends MovingSkill {
 				final int lane = (Integer) actionLC.executeOn(scope);
 
 				if (lane >= 0) {
+					RoadSkill.unregister(scope, driver);
 					RoadSkill.register(scope, newRoad, driver, lane);
 				} else {
 					return;
@@ -954,6 +956,7 @@ public class DrivingSkill extends MovingSkill {
 					// updating states like this since there are n + 1 nodes and n edges in a path
 					setCurrentIndex(driver, currEdgeIdx + 1);
 					setCurrentTarget(driver, getTargets(driver).get(currEdgeIdx + 2));
+					RoadSkill.unregister(scope, driver);
 					RoadSkill.register(scope, newRoad, driver, lane);
 				} else {
 					return;
