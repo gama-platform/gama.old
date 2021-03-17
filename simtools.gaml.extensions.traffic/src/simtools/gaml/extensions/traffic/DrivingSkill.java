@@ -601,6 +601,17 @@ public class DrivingSkill extends MovingSkill {
 		return true;
 	}
 
+	/**
+	 * Check if the driver is ready to cross the intersection to get to a new road, concerning:
+	 *     1. Traffic lights
+	 *     2. Other drivers coming from other incoming roads
+	 *
+	 * @param scope
+	 * @param newRoad
+	 * @return true if ready, false otherwise
+	 *
+	 * @throws GamaRuntimeException
+	 */
 	public Boolean isReadyNextRoad(IScope scope, IAgent newRoad) throws GamaRuntimeException {
 		IAgent sourceNode = (IAgent) newRoad.getAttribute(RoadSkill.SOURCE_NODE);
 		Map<IAgent, List<IAgent>> blockInfo = (Map<IAgent, List<IAgent>>)
@@ -941,6 +952,10 @@ public class DrivingSkill extends MovingSkill {
 
 				// get the next road in the path
 				IAgent newRoad = (IAgent) path.getEdgeList().get(currEdgeIdx + 1);
+				// check traffic lights and vehicles coming from other roads
+				if (!isReadyNextRoad(scope, newRoad)) {
+					return;
+				}
 
 				// external factor that affects remaining time, can be defined by user
 				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
@@ -1032,7 +1047,10 @@ public class DrivingSkill extends MovingSkill {
 		int numLanesOccupied = getNumLanesOccupied(driver);
 		Integer numRoadLanes = (Integer) newRoad.getAttribute(RoadSkill.LANES);
 		// not enough lanes in new road
-		if (numLanesOccupied > numRoadLanes) return -1;
+		if (numLanesOccupied > numRoadLanes) {
+			throw GamaRuntimeException.error(driver.getName() + " occupies " + numLanesOccupied + " lanes, " +
+					"but " + newRoad.getName() + " only has " + numRoadLanes + " lane(s)!", scope);
+		}
 
 		Integer currentLane = getCurrentLane(driver);
 		boolean onLinkedRoad = getOnLinkedRoad(driver);
@@ -1053,9 +1071,6 @@ public class DrivingSkill extends MovingSkill {
 				blockInfo.remove(otherDriver);
 			}
 		}
-
-		boolean ready = isReadyNextRoad(scope, newRoad);
-		if (!ready) { return -1; }
 
 		// driver decides if it is going to ignore the full road ahead and
 		// block the intersection anyway
@@ -1086,16 +1101,14 @@ public class DrivingSkill extends MovingSkill {
 		boolean changeDown = Random.opFlip(scope, probaLaneChangeDown);
 		boolean changeUp = Random.opFlip(scope, probaLaneChangeUp);
 		if (changeDown || changeUp) {
-			for (int i = 0; i < numRoadLanes; i++) {
-				int l1 = newLaneIdx - i;
-				if (l1 >= 0 && changeDown &&
-						DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, l1, numLanesOccupied, vehicleLength / 2)) {
-					return l1;
+			for (int i = 0; i <= numRoadLanes - numLanesOccupied; i++) {
+				if (i < newLaneIdx && changeDown &&
+						DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, i, numLanesOccupied, vehicleLength / 2)) {
+					return i;
 				}
-				int l2 = newLaneIdx + i;
-				if (l2 < numRoadLanes - numLanesOccupied && changeUp && 
-						DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, l2, numLanesOccupied, vehicleLength / 2)) {
-					return l2;
+				if (i > newLaneIdx && changeUp &&
+						DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, i, numLanesOccupied, vehicleLength / 2)) {
+					return i;
 				}
 			}
 		}
