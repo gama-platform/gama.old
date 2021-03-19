@@ -243,72 +243,72 @@ public class DrivingSkill extends MovingSkill {
 	public final static String NUM_LANES_OCCUPIED = "num_lanes_occupied";
 
 	@getter (ACCELERATION_MAX)
-	public double getAccelerationMax(final IAgent agent) {
+	public static double getAccelerationMax(final IAgent agent) {
 		return (Double) agent.getAttribute(ACCELERATION_MAX);
 	}
 
 	@setter (ACCELERATION_MAX)
-	public void setAccelerationMax(final IAgent agent, final Double val) {
+	public static void setAccelerationMax(final IAgent agent, final Double val) {
 		agent.setAttribute(ACCELERATION_MAX, val);
 	}
 
 	@getter (SPEED_COEFF)
-	public double getSpeedCoeff(final IAgent agent) {
+	public static double getSpeedCoeff(final IAgent agent) {
 		return (Double) agent.getAttribute(SPEED_COEFF);
 	}
 
 	@setter (SPEED_COEFF)
-	public void setSpeedCoeff(final IAgent agent, final Double val) {
+	public static void setSpeedCoeff(final IAgent agent, final Double val) {
 		agent.setAttribute(SPEED_COEFF, val);
 	}
 
 	@getter (MAX_SPEED)
-	public double getMaxSpeed(final IAgent agent) {
+	public static double getMaxSpeed(final IAgent agent) {
 		return (Double) agent.getAttribute(MAX_SPEED);
 	}
 
 	@setter (MAX_SPEED)
-	public void setMaxSpeed(final IAgent agent, final Double val) {
+	public static void setMaxSpeed(final IAgent agent, final Double val) {
 		agent.setAttribute(MAX_SPEED, val);
 	}
 
 	@getter (CURRENT_TARGET)
-	public GamaPoint getCurrentTarget(final IAgent agent) {
+	public static GamaPoint getCurrentTarget(final IAgent agent) {
 		return (GamaPoint) agent.getAttribute(CURRENT_TARGET);
 	}
 
 	@setter (CURRENT_TARGET)
-	public void setCurrentTarget(final IAgent agent, final ILocation point) {
+	public static void setCurrentTarget(final IAgent agent, final ILocation point) {
 		agent.setAttribute(CURRENT_TARGET, point);
 	}
 
 	@getter (FINAL_TARGET)
-	public GamaPoint getFinalTarget(final IAgent agent) {
+	public static GamaPoint getFinalTarget(final IAgent agent) {
 		return (GamaPoint) agent.getAttribute(FINAL_TARGET);
 	}
 
 	@setter (FINAL_TARGET)
-	public void setFinalTarget(final IAgent agent, final ILocation point) {
+	public static void setFinalTarget(final IAgent agent, final ILocation point) {
 		agent.setAttribute(FINAL_TARGET, point);
 	}
 
 	@getter (CURRENT_INDEX)
-	public Integer getCurrentIndex(final IAgent agent) {
+	public static Integer getCurrentIndex(final IAgent agent) {
 		return (Integer) agent.getAttribute(CURRENT_INDEX);
 	}
 
 	@setter (CURRENT_INDEX)
-	public void setCurrentIndex(final IAgent agent, final Integer index) {
+	public static void setCurrentIndex(final IAgent agent, final Integer index) {
 		agent.setAttribute(CURRENT_INDEX, index);
 	}
 
 	@getter (SEGMENT_INDEX)
-	public Integer getSegmentIndex(final IAgent agent) {
+	public static Integer getSegmentIndex(final IAgent agent) {
 		return (Integer) agent.getAttribute(SEGMENT_INDEX);
 	}
 
 	@setter (SEGMENT_INDEX)
-	public void setSegmentIndex(final IAgent agent, final Integer index) {
+	public static void setSegmentIndex(final IAgent agent, final Integer index) {
 		agent.setAttribute(SEGMENT_INDEX, index);
 	}
 
@@ -325,164 +325,164 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@getter (TARGETS)
-	public List<ILocation> getTargets(final IAgent agent) {
+	public static List<ILocation> getTargets(final IAgent agent) {
 		return (List<ILocation>) agent.getAttribute(TARGETS);
 	}
 
 	@setter (TARGETS)
-	public void setTargets(final IAgent agent, final List<ILocation> points) {
+	public static void setTargets(final IAgent agent, final List<ILocation> points) {
 		agent.setAttribute(TARGETS, points);
 	}
 
 	@getter (PROBA_USE_LINKED_ROAD)
-	public double getProbaUseLinkedRoad(final IAgent agent) {
+	public static double getProbaUseLinkedRoad(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_USE_LINKED_ROAD);
 	}
 
 	@setter (PROBA_USE_LINKED_ROAD)
-	public void setProbaUseLinkedRoad(final IAgent agent, final Double proba) {
+	public static void setProbaUseLinkedRoad(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_USE_LINKED_ROAD, proba);
 	}
 
 	@getter (PROBA_LANE_CHANGE_DOWN)
-	public double getProbaLaneChangeDown(final IAgent agent) {
+	public static double getProbaLaneChangeDown(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_LANE_CHANGE_DOWN);
 	}
 
 	@setter (PROBA_LANE_CHANGE_DOWN)
-	public void setProbaLaneChangeDown(final IAgent agent, final Double proba) {
+	public static void setProbaLaneChangeDown(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_LANE_CHANGE_DOWN, proba);
 	}
 
 	@getter (PROBA_LANE_CHANGE_UP)
-	public double getProbaLaneChangeUp(final IAgent agent) {
+	public static double getProbaLaneChangeUp(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_LANE_CHANGE_UP);
 	}
 
 	@setter (PROBA_LANE_CHANGE_UP)
-	public void setProbaLaneChangeUp(final IAgent agent, final Double proba) {
+	public static void setProbaLaneChangeUp(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_LANE_CHANGE_UP, proba);
 	}
 
 	@getter (PROBA_RESPECT_PRIORITIES)
-	public double getRespectPriorities(final IAgent agent) {
+	public static double getRespectPriorities(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_RESPECT_PRIORITIES);
 	}
 
 	@setter (PROBA_RESPECT_PRIORITIES)
-	public void setRespectPriorities(final IAgent agent, final Double proba) {
+	public static void setRespectPriorities(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_RESPECT_PRIORITIES, proba);
 	}
 
 	@getter (PROBA_BLOCK_NODE)
-	public double getProbaBlockNode(final IAgent agent) {
+	public static double getProbaBlockNode(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_BLOCK_NODE);
 	}
 
 	@setter (PROBA_BLOCK_NODE)
-	public void setProbaBlockNode(final IAgent agent, final Double proba) {
+	public static void setProbaBlockNode(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_BLOCK_NODE, proba);
 	}
 
 	@getter (PROBA_RESPECT_STOPS)
-	public List<Double> getRespectStops(final IAgent agent) {
+	public static List<Double> getRespectStops(final IAgent agent) {
 		return (List<Double>) agent.getAttribute(PROBA_RESPECT_STOPS);
 	}
 
 	@setter (PROBA_RESPECT_STOPS)
-	public void setRespectStops(final IAgent agent, final List<Boolean> probas) {
+	public static void setRespectStops(final IAgent agent, final List<Boolean> probas) {
 		agent.setAttribute(PROBA_RESPECT_STOPS, probas);
 	}
 
 	@getter (ON_LINKED_ROAD)
-	public boolean getOnLinkedRoad(final IAgent agent) {
+	public static boolean getOnLinkedRoad(final IAgent agent) {
 		return (Boolean) agent.getAttribute(ON_LINKED_ROAD);
 	}
 
 	@setter (ON_LINKED_ROAD)
-	public void setOnLinkedRoad(final IAgent agent, final Boolean onLinkedRoad) {
+	public static void setOnLinkedRoad(final IAgent agent, final Boolean onLinkedRoad) {
 		agent.setAttribute(ON_LINKED_ROAD, onLinkedRoad);
 	}
 
 	@getter (RIGHT_SIDE_DRIVING)
-	public boolean getRightSideDriving(final IAgent agent) {
+	public static boolean getRightSideDriving(final IAgent agent) {
 		return (Boolean) agent.getAttribute(RIGHT_SIDE_DRIVING);
 	}
 
 	@setter (RIGHT_SIDE_DRIVING)
-	public void setRightSideDriving(final IAgent agent, final Boolean isRight) {
+	public static void setRightSideDriving(final IAgent agent, final Boolean isRight) {
 		agent.setAttribute(RIGHT_SIDE_DRIVING, isRight);
 	}
 
 	@Deprecated
 	@getter (SECURITY_DISTANCE_COEFF)
-	public double getSecurityDistanceCoeff(final IAgent agent) {
+	public static double getSecurityDistanceCoeff(final IAgent agent) {
 		return (Double) agent.getAttribute(SECURITY_DISTANCE_COEFF);
 	}
 
 	@Deprecated
 	@setter (SECURITY_DISTANCE_COEFF)
-	public void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
+	public static void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
 		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
 	}
 
 	@getter (SAFETY_DISTANCE_COEFF)
-	public double getSafetyDistanceCoeff(final IAgent agent) {
+	public static double getSafetyDistanceCoeff(final IAgent agent) {
 		return (Double) agent.getAttribute(SAFETY_DISTANCE_COEFF);
 	}
 
 	@setter (SAFETY_DISTANCE_COEFF)
-	public void setSafetyDistanceCoeff(final IAgent agent, final double ls) {
+	public static void setSafetyDistanceCoeff(final IAgent agent, final double ls) {
 		agent.setAttribute(SAFETY_DISTANCE_COEFF, ls);
 	}
 
 	@getter (CURRENT_ROAD)
-	public IAgent getCurrentRoad(final IAgent agent) {
+	public static IAgent getCurrentRoad(final IAgent agent) {
 		return (IAgent) agent.getAttribute(CURRENT_ROAD);
 	}
 
 	@getter (VEHICLE_LENGTH)
-	public double getVehicleLength(final IAgent agent) {
+	public static double getVehicleLength(final IAgent agent) {
 		return (Double) agent.getAttribute(VEHICLE_LENGTH);
 	}
 
 	@getter (CURRENT_LANE)
-	public int getCurrentLane(final IAgent agent) {
+	public static int getCurrentLane(final IAgent agent) {
 		return (Integer) agent.getAttribute(CURRENT_LANE);
 	}
 
 	@getter (DISTANCE_TO_GOAL)
-	public double getDistanceToGoal(final IAgent agent) {
+	public static double getDistanceToGoal(final IAgent agent) {
 		return (Double) agent.getAttribute(DISTANCE_TO_GOAL);
 	}
 
 	@getter (MIN_SECURITY_DISTANCE)
-	public double getMinSecurityDistance(final IAgent agent) {
+	public static double getMinSecurityDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
 	}
 
 	@setter (MIN_SECURITY_DISTANCE)
-	public void setMinSecDistance(final IAgent agent, final double msd) {
+	public static void setMinSecDistance(final IAgent agent, final double msd) {
 		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
 	}
 
 	@getter (MIN_SAFETY_DISTANCE)
-	public double getMinSafetyDistance(final IAgent agent) {
+	public static double getMinSafetyDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SAFETY_DISTANCE);
 	}
 
 	@setter (DISTANCE_TO_GOAL)
-	public void setDistanceToGoal(final IAgent agent, final double dg) {
+	public static void setDistanceToGoal(final IAgent agent, final double dg) {
 		agent.setAttribute(DISTANCE_TO_GOAL, dg);
 	}
 
 	@getter (NUM_LANES_OCCUPIED)
-	public Integer getNumLanesOccupied(IAgent agent) {
+	public static Integer getNumLanesOccupied(IAgent agent) {
 		return (Integer) agent.getAttribute(NUM_LANES_OCCUPIED);
 	}
 
 	@setter (NUM_LANES_OCCUPIED)
-	public void setNumLanesOccupied(IAgent agent, Integer value) {
+	public static void setNumLanesOccupied(IAgent agent, Integer value) {
 		agent.setAttribute(NUM_LANES_OCCUPIED, value);
 	}
 
