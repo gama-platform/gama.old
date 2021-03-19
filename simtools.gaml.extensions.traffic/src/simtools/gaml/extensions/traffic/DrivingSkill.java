@@ -404,14 +404,16 @@ public class DrivingSkill extends MovingSkill {
 		agent.setAttribute(PROBA_RESPECT_STOPS, probas);
 	}
 
+	@Deprecated
 	@getter (ON_LINKED_ROAD)
 	public static boolean getOnLinkedRoad(final IAgent agent) {
-		return (Boolean) agent.getAttribute(ON_LINKED_ROAD);
+		return isUsingLinkedRoad(agent);
 	}
 
+	@Deprecated
 	@setter (ON_LINKED_ROAD)
 	public static void setOnLinkedRoad(final IAgent agent, final Boolean onLinkedRoad) {
-		agent.setAttribute(ON_LINKED_ROAD, onLinkedRoad);
+		// read-only
 	}
 
 	@getter (USING_LINKED_ROAD)
@@ -423,6 +425,11 @@ public class DrivingSkill extends MovingSkill {
 		int numLanesCurrent = RoadSkill.getLanes(currentRoad);
 		int numLanesOccupied = getNumLanesOccupied(driver);
 		return currentStartingLane > numLanesCurrent - numLanesOccupied;
+	}
+
+	@setter (USING_LINKED_ROAD)
+	public static void setUsingLinkedRoad(IAgent driver, boolean usingLinkedRoad) {
+		// read-only
 	}
 
 	@getter (RIGHT_SIDE_DRIVING)
