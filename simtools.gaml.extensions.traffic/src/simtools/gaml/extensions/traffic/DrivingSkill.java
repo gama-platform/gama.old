@@ -155,12 +155,19 @@ import ummisco.gama.dev.utils.DEBUG;
 				name = "on_linked_road",
 				type = IType.BOOL,
 				init = "false",
-				doc = @doc ("is the agent on the linked road?")),
+				doc = @doc (
+						deprecated = "use using_linked_road instead",
+						value = "is the agent on the linked road?")),
 		@variable (
 				name = "using_linked_road",
 				type = IType.BOOL,
 				init = "false",
-				doc = @doc ("indicates if the agent is occupying at least one lane on the linked road")),
+				doc = @doc ("indicates if the driver is occupying at least one lane on the linked road")),
+		@variable (
+				name = "linked_lane_limit",
+				type = IType.INT,
+				init = "-1",
+				doc = @doc ("the maximum number of linked lanes that the driver can use")),
 		@variable (
 				name = "proba_lane_change_up",
 				type = IType.FLOAT,
@@ -241,6 +248,7 @@ public class DrivingSkill extends MovingSkill {
 	public final static String RIGHT_SIDE_DRIVING = "right_side_driving";
 	public final static String ON_LINKED_ROAD = "on_linked_road";
 	public final static String USING_LINKED_ROAD = "using_linked_road";
+	public final static String LINKED_LANE_LIMIT = "linked_lane_limit";
 	public final static String TARGETS = "targets";
 	public final static String CURRENT_TARGET = "current_target";
 	public final static String CURRENT_INDEX = "current_index";
@@ -430,6 +438,16 @@ public class DrivingSkill extends MovingSkill {
 	@setter (USING_LINKED_ROAD)
 	public static void setUsingLinkedRoad(IAgent driver, boolean usingLinkedRoad) {
 		// read-only
+	}
+
+	@getter (LINKED_LANE_LIMIT)
+	public static int getLinkedLaneLimit(IAgent driver) {
+		return (int) driver.getAttribute(LINKED_LANE_LIMIT);
+	}
+
+	@setter (LINKED_LANE_LIMIT)
+	public static void setLinkedLaneLimit(IAgent driver, int linkedLaneLimit) {
+		driver.setAttribute(LINKED_LANE_LIMIT, linkedLaneLimit);
 	}
 
 	@getter (RIGHT_SIDE_DRIVING)
@@ -1400,6 +1418,8 @@ public class DrivingSkill extends MovingSkill {
 		double distMax = 0;
 		int bestStartingLane = currentStartingLane;
 		int numLanesLinked = (linkedRoad != null) ? (int) linkedRoad.getAttribute(RoadSkill.LANES) : 0;
+		int linkedLaneLimit = getLinkedLaneLimit(driver);
+		linkedLaneLimit = linkedLaneLimit != -1 ? linkedLaneLimit : numLanesLinked;
 		int numRoadLanes = (Integer) currentRoad.getAttribute(RoadSkill.LANES);
 		double val;
 
@@ -1429,8 +1449,8 @@ public class DrivingSkill extends MovingSkill {
 		}
 
 		if ((currentStartingLane < numRoadLanes - numLanesOccupied ||
-			(currentStartingLane > numRoadLanes - numLanesOccupied && currentStartingLane < numRoadLanes + numLanesLinked - numLanesOccupied))
-			&& scope.getRandom().next() < probaChangeLaneUp) {
+				(currentStartingLane > numRoadLanes - numLanesOccupied && currentStartingLane < numRoadLanes + linkedLaneLimit - numLanesOccupied))
+				&& scope.getRandom().next() < probaChangeLaneUp) {
 			val = computeDistToVehicleAhead(scope, driver, distance, security_distance, currentLocation, target, currentStartingLane + 1, segment,
 					false, currentRoad, true);
 			if (val == distance) {
