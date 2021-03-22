@@ -70,33 +70,21 @@ public class DrivingOperators {
 	}
 
 	/**
-	 * Checks if there is enough space for the vehicle to enter the specified lane on the new road
+	 * Checks if there is enough space for the vehicle to enter the specified lanes on the new road.
+	 *
 	 *
 	 * @param scope
 	 * @param road The new road
-	 * @param lane The lane index to check
+	 * @param startingLane The lane index to check
 	 * @return true if there is enough space, false otherwise
 	 */
 	@operator(value = "enough_space_to_enter_road")
-	public static boolean enoughSpaceToEnterRoad(IScope scope, IAgent road, int lane, int numLanesOccupied, double requiredLength) {
-		List<List<List<IAgent>>> driversOnNextRoad = (List<List<List<IAgent>>>)
+	public static boolean enoughSpaceToEnterRoad(IScope scope, IAgent road, int startingLane, int numLanesOccupied, double requiredLength) {
+		List<List<List<IAgent>>> otherDrivers = (List<List<List<IAgent>>>)
 				road.getAttribute(RoadSkill.AGENTS_ON);
-		// check if chosen lanes on next road are totally clear
-		boolean allClear = true;
-		for (int i = 0; i < numLanesOccupied; i += 1) {
-			// TODO: fix potential bug
-			List<List<IAgent>> laneDrivers = driversOnNextRoad.get(lane);
-			// check first segment only
-			if (!laneDrivers.get(0).isEmpty()) {
-				allClear = false;
-				break;
-			}
-		}
-		if (allClear) return true;
-
 		// check if any vehicle in these lanes is too close to the source node of the road
 		for (int i = 0; i < numLanesOccupied; i += 1) {
-			List<List<IAgent>> laneDrivers = driversOnNextRoad.get(lane);
+			List<List<IAgent>> laneDrivers = otherDrivers.get(startingLane + i);
 			for (List<IAgent> segmentDrivers : laneDrivers)
 			for (IAgent otherDriver : segmentDrivers) {
 				if (otherDriver == null || otherDriver.dead()) continue;
