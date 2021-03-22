@@ -227,7 +227,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class DrivingSkill extends MovingSkill {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	@Deprecated public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
@@ -533,24 +533,12 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	public Double primAdvancedFollow(final IScope scope, final IAgent driver, final double s, final double t,
-			final IPath path, final GamaPoint target) throws GamaRuntimeException {
-
-		final double safety_distance_coeff = driver.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(driver)
-				: getSecurityDistanceCoeff(driver);
-		final int currentLane = getCurrentLane(driver);
-		final Double probaChangeLaneUp = getProbaLaneChangeUp(driver);
-		final Double probaChangeLaneDown = getProbaLaneChangeDown(driver);
-		final Double probaProbaUseLinkedRoad = getProbaUseLinkedRoad(driver);
-		final Boolean rightSide = getRightSideDriving(driver);
-		final IAgent currentRoad = getCurrentRoad(driver);
-		final IAgent linkedRoad = (IAgent) currentRoad.getAttribute(RoadSkill.LINKED_ROAD);
-		// final boolean onLinkedRoad = getOnLinkedRoad(agent);
+			final IPath path) throws GamaRuntimeException {
 		final double maxDist = s * t;
 
 		if (maxDist == 0) { return 0.0; }
 		double tps = 0;
-		tps = t * moveToNextLocAlongPathOSM(scope, driver, path, target, maxDist, safety_distance_coeff, currentLane,
-				currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown, probaProbaUseLinkedRoad, rightSide);
+		tps = t * moveToNextLocAlongPathOSM(scope, path, maxDist);
 
 		if (tps < t) {
 			driver.setAttribute(IKeyword.REAL_SPEED, this.getRealSpeed(driver) / (t - tps));
@@ -591,9 +579,8 @@ public class DrivingSkill extends MovingSkill {
 		final IAgent agent = getCurrentAgent(scope);
 		final Double s = scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
 		final Double t = scope.hasArg("time") ? scope.getFloatArg("time") : scope.getClock().getStepInSeconds();
-		final GamaPoint target = scope.hasArg("target") ? (GamaPoint) scope.getArg("target", IType.NONE) : null;
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
-		return primAdvancedFollow(scope, agent, s, t, path, target);
+		return primAdvancedFollow(scope, agent, s, t, path);
 	}
 
 	@action (
@@ -910,7 +897,7 @@ public class DrivingSkill extends MovingSkill {
 			actionSC.setRuntimeArgs(scope, argsSC);
 			final double speed = (Double) actionSC.executeOn(scope);
 			setSpeed(driver, speed);
-			remainingTime = primAdvancedFollow(scope, driver, speed, remainingTime, null, target);
+			remainingTime = primAdvancedFollow(scope, driver, speed, remainingTime, null);
 
 			if (remainingTime > 0.0) {
 				IAgent newRoad = null;
@@ -1035,7 +1022,7 @@ public class DrivingSkill extends MovingSkill {
 			setSpeed(driver, desiredSpeed);
 
 			// move towards the current target and compute the remaining time
-			remainingTime = primAdvancedFollow(scope, driver, desiredSpeed, remainingTime, path, target);
+			remainingTime = primAdvancedFollow(scope, driver, desiredSpeed, remainingTime, path);
 		}
 	}
 
@@ -1091,14 +1078,14 @@ public class DrivingSkill extends MovingSkill {
 		IAgent driver = getCurrentAgent(scope);
 		double vehicleLength = getVehicleLength(driver);
 		int numLanesOccupied = getNumLanesOccupied(driver);
-		Integer numRoadLanes = (Integer) newRoad.getAttribute(RoadSkill.LANES);
+		Integer numCurrentLanes = (Integer) newRoad.getAttribute(RoadSkill.LANES);
 		// not enough lanes in new road
-		if (numLanesOccupied > numRoadLanes) {
+		if (numLanesOccupied > numCurrentLanes) {
 			throw GamaRuntimeException.error(driver.getName() + " occupies " + numLanesOccupied + " lanes, " +
-					"but " + newRoad.getName() + " only has " + numRoadLanes + " lane(s)!", scope);
+					"but " + newRoad.getName() + " only has " + numCurrentLanes + " lane(s)!", scope);
 		}
 
-		Integer currentLane = getCurrentLane(driver);
+		Integer currentStartingLane = getCurrentLane(driver);
 		IAgent node = (IAgent) newRoad.getAttribute(RoadSkill.SOURCE_NODE);
 
 		// road node blocking information, which is a map: driver -> list of blocked roads
@@ -1107,7 +1094,7 @@ public class DrivingSkill extends MovingSkill {
 
 		// force the driver to return from the linked road
 		if (isUsingLinkedRoad(driver)) {
-			currentLane = numRoadLanes - numLanesOccupied;
+			currentStartingLane = numCurrentLanes - numLanesOccupied;
 		}
 
 		// check if any blocking driver has moved
@@ -1134,7 +1121,7 @@ public class DrivingSkill extends MovingSkill {
 		// 	return lane;
 		// }
 
-		final int newLaneIdx = Math.min(currentLane, numRoadLanes - numLanesOccupied);
+		final int newLaneIdx = Math.min(currentStartingLane, numCurrentLanes - numLanesOccupied);
 		// check current lane
 		if (DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, newLaneIdx, numLanesOccupied, vehicleLength / 2)) {
 			return newLaneIdx;
@@ -1146,7 +1133,7 @@ public class DrivingSkill extends MovingSkill {
 		boolean changeDown = Random.opFlip(scope, probaLaneChangeDown);
 		boolean changeUp = Random.opFlip(scope, probaLaneChangeUp);
 		if (changeDown || changeUp) {
-			for (int i = 0; i <= numRoadLanes - numLanesOccupied; i++) {
+			for (int i = 0; i <= numCurrentLanes - numLanesOccupied; i++) {
 				if (i < newLaneIdx && changeDown &&
 						DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, i, numLanesOccupied, vehicleLength / 2)) {
 					return i;
@@ -1215,18 +1202,21 @@ public class DrivingSkill extends MovingSkill {
 	/*
 	 * Compute distance to the closest vehicle ahead
 	 */
-	private double computeDistToVehicleAhead(final IScope scope, final IAgent driver, final double distance,
-			final double security_distance, final GamaPoint currentLocation, final GamaPoint target, final int startingLane,
-			final int segmentIndex, final boolean onLinkedRoad, final IAgent currentRoad, final boolean changeLane) {
-		final double distanceToGoal = getDistanceToGoal(driver);
+	private double computeDistToVehicleAhead(IScope scope, double remainingDist, int startingLane, int segmentIndex) {
+		IAgent driver = getCurrentAgent(scope);
+		double distanceToGoal = getDistanceToGoal(driver);
+		IAgent currentRoad = getCurrentRoad(driver);
 		int numLanesOccupied = getNumLanesOccupied(driver);
 		int numLanesCurrent = (int) currentRoad.getAttribute(RoadSkill.LANES);
 
 		// if it's going to enter a new segment
-		final boolean nextSegment = distanceToGoal < distance;
-		final double min_safety_distance =
+		boolean nextSegment = distanceToGoal < remainingDist;
+
+		double safetyDistCoeff = driver.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(driver)
+				: getSecurityDistanceCoeff(driver);
+		double minSafetyDist =
 				driver.hasAttribute(MIN_SAFETY_DISTANCE) ? getMinSafetyDistance(driver) : getMinSecurityDistance(driver);
-		// final int newIndexInv = agPrevLane.size() - segment - 1;
+
 		int numSegments = 0;
 		// collect drivers that we may "crashed into"
 		List<IAgent> sameSegmentDrivers = new ArrayList<>();
@@ -1262,87 +1252,76 @@ public class DrivingSkill extends MovingSkill {
 				}
 			}
 		}
-		final boolean moreSegment = /*!usingLinkedRoad && */segmentIndex <= numSegments - 2;
+		boolean moreSegment = /*!usingLinkedRoad && */segmentIndex <= numSegments - 2;
 
-		final boolean contains = sameSegmentDrivers.contains(driver);
-		final GamaPoint targetLoc = new GamaPoint(currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1]);
-		final double vL = getVehicleLength(driver);
+		boolean contains = sameSegmentDrivers.contains(driver);
+		GamaPoint targetLoc = new GamaPoint(currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1]);
+		double vL = getVehicleLength(driver);
 		// if there are no vehicles on the current segment, driver can take into account the next segment
 		if (contains && sameSegmentDrivers.size() < 2 || !contains && sameSegmentDrivers.isEmpty()) {
-			// this line causes vehicles to not switch lanes with small simulation step size
-			// if (changeLane && distance < vL) { return 0; }
-
-			// have to return to the current road to get to the next segment?
-			// if (usingLinkedRoad && nextSegment) { return 0; }
-
 			// if entering a new segment on the road
 			if (nextSegment && moreSegment) {
-				final double length = currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 2].distance(targetLoc);
-				for (final IAgent ag : nextSegmentDrivers) {
+				double length = currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 2].distance(targetLoc);
+				for (IAgent otherDriver : nextSegmentDrivers) {
 					// check if there is enough space to fit in the 2nd segment
-					final double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(ag)) ?
-						getDistanceToGoal(ag) : distance2D((GamaPoint) ag.getLocation(), targetLoc);
-					final double vLa = 0.5 * vL + 0.5 * getVehicleLength(ag);
+					double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
+						getDistanceToGoal(otherDriver) : distance2D((GamaPoint) otherDriver.getLocation(), targetLoc);
+					double vLa = 0.5 * vL + 0.5 * getVehicleLength(otherDriver);
 					if (length - otherDistToGoal < vLa) { 
 						return distanceToGoal - (vLa - (length - otherDistToGoal));
 					}
 				}
 			}
-			return distance;
+			return remainingDist;
 		}
-		// if (usingLinkedRoad && nextSegment) { return 0; }
 
 		// finding the closest driver ahead
 		IAgent closestDriverAhead = null;
 		double minDiff = Double.MAX_VALUE;
-		for (final IAgent ag : sameSegmentDrivers) {
-			if (ag == driver || ag == null || ag.dead()) {
+		for (IAgent otherDriver : sameSegmentDrivers) {
+			if (otherDriver == driver || otherDriver == null || otherDriver.dead()) {
 				continue;
 			}
-			final double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(ag)) ?
-				getDistanceToGoal(ag) : distance2D((GamaPoint) ag.getLocation(), targetLoc);
+			double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
+				getDistanceToGoal(otherDriver) : distance2D((GamaPoint) otherDriver.getLocation(), targetLoc);
 			// compute diff this way is faster than computing euclidean dist between two vehicles
-			final double diff = distanceToGoal - otherDistToGoal;
-			if (changeLane && Math.abs(diff) < vL) { return 0; }
+			double diff = distanceToGoal - otherDistToGoal;
 			if (diff <= 0.0) {
 				// the other driver is behind
 				continue;
 			}
 			if (diff < minDiff) {
 				minDiff = diff;
-				closestDriverAhead = ag;
+				closestDriverAhead = otherDriver;
 			}
 		}
 
 		// the segment ahead is clear
 		if (closestDriverAhead == null) {
 			if (nextSegment && moreSegment) {
-				final double length = currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1]
+				double length = currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1]
 						.distance(currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 2]);
 
-				for (final IAgent ag : nextSegmentDrivers) {
-					final double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(ag)) ?
-						getDistanceToGoal(ag) : distance2D((GamaPoint) ag.getLocation(), targetLoc);
-					final double vLa = 0.5 * vL + 0.5 * getVehicleLength(ag);
+				for (IAgent otherDriver : nextSegmentDrivers) {
+					double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
+						getDistanceToGoal(otherDriver) : distance2D((GamaPoint) otherDriver.getLocation(), targetLoc);
+					double vLa = 0.5 * vL + 0.5 * getVehicleLength(otherDriver);
 					if (otherDistToGoal > length - vLa) {
 						return distanceToGoal - (vLa - (length - otherDistToGoal));
 					}
 				}
 			}
-			return distance;
+			return remainingDist;
 		}
 		double secDistance = 0.0;
 		if (getCurrentRoad(closestDriverAhead) == getCurrentRoad(driver)) {
-			secDistance = Math.max(min_safety_distance,
-					security_distance * Math.min(getRealSpeed(driver), getRealSpeed(closestDriverAhead)));
+			secDistance = Math.max(minSafetyDist,
+					safetyDistCoeff * Math.min(getRealSpeed(driver), getRealSpeed(closestDriverAhead)));
 		} else {
-			secDistance = Math.max(min_safety_distance,
-					security_distance * Math.max(getRealSpeed(driver), getRealSpeed(closestDriverAhead)));
+			secDistance = Math.max(minSafetyDist,
+					safetyDistCoeff * Math.max(getRealSpeed(driver), getRealSpeed(closestDriverAhead)));
 		}
-		double realDist = Math.min(distance, minDiff - secDistance - 0.5 * vL - 0.5 * getVehicleLength(closestDriverAhead));
-
-		// this line causes vehicles to not switch lanes with small simulation step size
-		// if (changeLane && realDist < vL) { return 0; }
+		double realDist = Math.min(remainingDist, minDiff - secDistance - 0.5 * vL - 0.5 * getVehicleLength(closestDriverAhead));
 
 		// TODO: what is this?
 		// realDist = Math.max(0.0, (int) (min_safety_distance + realDist * 1000) / 1000.0);
@@ -1370,6 +1349,7 @@ public class DrivingSkill extends MovingSkill {
 		HashSet<Integer> newRelLanes = IntStream.range(newStartingLane, newStartingLane + numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(HashSet::new));
 
+		// TODO: rewrite this part using guava
 		HashSet<Integer> removedRelLanes, addedRelLanes;
 		if (newSegment != currSegment) {
 			// if entering new segment, we have to update the lists for all related lanes and segments
@@ -1410,124 +1390,118 @@ public class DrivingSkill extends MovingSkill {
 	 * Choose the lane in which the driver can travel the longest distance,
 	 * and move across that lane (i.e. update driver's lane and segment index)
 	 */
-	private double avoidCollision(final IScope scope, final IAgent driver, final double distance,
-			final double security_distance, final GamaPoint currentLocation, final GamaPoint target, final int currentStartingLane,
-			final int segment, final IAgent currentRoad, final IAgent linkedRoad, final Double probaChangeLaneUp,
-			final Double probaChangeLaneDown, final Double probaUseLinkedRoad, final Boolean rightSide) {
+	private double avoidCollision(IScope scope, double remainingDist, int segment) {
+		IAgent driver = getCurrentAgent(scope);
+		Double probaChangeLaneUp = getProbaLaneChangeUp(driver);
+		Double probaChangeLaneDown = getProbaLaneChangeDown(driver);
+		Double probaUseLinkedRoad = getProbaUseLinkedRoad(driver);
 		int numLanesOccupied = getNumLanesOccupied(driver);
-		double distMax = 0;
-		int bestStartingLane = currentStartingLane;
-		int numLanesLinked = (linkedRoad != null) ? (int) linkedRoad.getAttribute(RoadSkill.LANES) : 0;
-		int linkedLaneLimit = getLinkedLaneLimit(driver);
-		linkedLaneLimit = linkedLaneLimit != -1 ? linkedLaneLimit : numLanesLinked;
-		int numRoadLanes = (Integer) currentRoad.getAttribute(RoadSkill.LANES);
-		double val;
 
-		val = computeDistToVehicleAhead(scope, driver, distance, security_distance, currentLocation, target, currentStartingLane, segment,
-				false, currentRoad, false);
-		if (val == distance) {
-			// stay in the lane, but possibly update segment
+		int currentStartingLane = getCurrentLane(driver);
+		IAgent currentRoad = getCurrentRoad(driver);
+		IAgent linkedRoad = RoadSkill.getLinkedRoad(currentRoad);
+		int numCurrentLanes = (Integer) currentRoad.getAttribute(RoadSkill.LANES);
+		int numLinkedLanes = (linkedRoad != null) ? (int) linkedRoad.getAttribute(RoadSkill.LANES) : 0;
+		int linkedLaneLimit = getLinkedLaneLimit(driver);
+		linkedLaneLimit = linkedLaneLimit != -1 ? linkedLaneLimit : numLinkedLanes;
+
+		int bestStartingLane = currentStartingLane;
+		double tmpDist;
+		double maxDist = 0;
+
+		// stay in lane
+		tmpDist = computeDistToVehicleAhead(scope, remainingDist, currentStartingLane, segment);
+		if (tmpDist == remainingDist) {
 			updateLaneSegment(scope, currentStartingLane, segment);
-			return distance;
+			return remainingDist;
 		}
-		if (val >= distMax) {
-			distMax = val;
+		if (tmpDist >= maxDist) {
+			maxDist = tmpDist;
 			bestStartingLane = currentStartingLane;
 		}
 
+		// change to lower lane
 		if (currentStartingLane > 0 && scope.getRandom().next() < probaChangeLaneDown) {
-			val = computeDistToVehicleAhead(scope, driver, distance, security_distance, currentLocation, target,
-					currentStartingLane - 1, segment, false, currentRoad, true);
-			if (val == distance) {
+			tmpDist = computeDistToVehicleAhead(scope, remainingDist, currentStartingLane - 1, segment);
+			if (tmpDist == remainingDist) {
 				updateLaneSegment(scope, currentStartingLane - 1, segment);
-				return distance;
+				return remainingDist;
 			}
-			if (val > distMax) {
+			if (tmpDist > maxDist) {
 				bestStartingLane = currentStartingLane - 1;
-				distMax = val;
+				maxDist = tmpDist;
 			}
 		}
 
-		if ((currentStartingLane < numRoadLanes - numLanesOccupied ||
-				(currentStartingLane > numRoadLanes - numLanesOccupied && currentStartingLane < numRoadLanes + linkedLaneLimit - numLanesOccupied))
+		// change to upper lane, only within a road
+		if ((currentStartingLane < numCurrentLanes - numLanesOccupied ||
+				(currentStartingLane > numCurrentLanes - numLanesOccupied && currentStartingLane < numCurrentLanes + linkedLaneLimit - numLanesOccupied))
 				&& scope.getRandom().next() < probaChangeLaneUp) {
-			val = computeDistToVehicleAhead(scope, driver, distance, security_distance, currentLocation, target, currentStartingLane + 1, segment,
-					false, currentRoad, true);
-			if (val == distance) {
+			tmpDist = computeDistToVehicleAhead(scope, remainingDist, currentStartingLane + 1, segment);
+			if (tmpDist == remainingDist) {
 				updateLaneSegment(scope, currentStartingLane + 1, segment);
-				return distance;
+				return remainingDist;
 			}
-			if (val > distMax) {
-				distMax = val;
+			if (tmpDist > maxDist) {
+				maxDist = tmpDist;
 				bestStartingLane = currentStartingLane + 1;
 			}
 		}
 
+		// change to upper lane, but move from current road to linked road
 		if (linkedRoad != null &&
-				currentStartingLane == numRoadLanes - numLanesOccupied &&
+				currentStartingLane == numCurrentLanes - numLanesOccupied &&
 				scope.getRandom().next() < probaUseLinkedRoad) {
-			DEBUG.LOG(driver.getName() + " PASSED the linkedRoad check");
-			DEBUG.LOG("current starting lane: " + currentStartingLane);
-			val = computeDistToVehicleAhead(scope, driver, distance, security_distance, currentLocation, target, currentStartingLane + 1,
-					segment, true, currentRoad, true);
-
-			if (val == distance) {
+			tmpDist = computeDistToVehicleAhead(scope, remainingDist, currentStartingLane + 1, segment);
+			if (tmpDist == remainingDist) {
 				updateLaneSegment(scope, currentStartingLane + 1, segment);
-				return distance;
+				return remainingDist;
 			}
-			if (val > distMax) {
-				DEBUG.LOG(driver.getName() + " is choosing the linked road");
-				distMax = val;
+			if (tmpDist > maxDist) {
+				maxDist = tmpDist;
 				bestStartingLane = currentStartingLane + 1;
 			}
 		}
 
 		updateLaneSegment(scope, bestStartingLane, segment);
-		return distMax;
+		return maxDist;
 	}
 
-	private double moveToNextLocAlongPathOSM(final IScope scope, final IAgent driver, final IPath path,
-			final GamaPoint target, final double _distance, final double security_distance, final int lane,
-			final IAgent currentRoad, final IAgent linkedRoad, final Double probaChangeLaneUp,
-			final Double probaChangeLaneDown, final Double probaUseLinkedRoad, final Boolean rightSide) {
-		int currentLane = lane;
+	private double moveToNextLocAlongPathOSM(IScope scope, IPath path, double initRemainingDist) {
+		IAgent driver = getCurrentAgent(scope);
+		IAgent currentRoad = getCurrentRoad(driver);
 		GamaPoint currentLocation = (GamaPoint) driver.getLocation().copy(scope);
-		final GamaPoint falseTarget = target == null ? new GamaPoint(
-				currentRoad.getInnerGeometry().getCoordinates()[currentRoad.getInnerGeometry().getCoordinates().length])
-				: target;
 
 		int indexSegment = getSegmentIndex(driver);
-		final int endIndexSegment = GeometryUtils.getPointsOf(currentRoad).length - 1;
+		int endIndexSegment = GeometryUtils.getPointsOf(currentRoad).length - 1;
 
-		double distance = _distance;
+		double remainingDist = initRemainingDist;
 		double realDistance = 0;
-		final IShape line = currentRoad.getGeometry();
-		final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
+		IShape line = currentRoad.getGeometry();
+		Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 		GamaPoint pt = null;
 		for (int j = indexSegment; j < endIndexSegment; j++) {
 			pt = new GamaPoint(coords[j + 1]);
-			final double dist = pt.euclidianDistanceTo(currentLocation);
-			setDistanceToGoal(driver, dist);
-			distance = avoidCollision(scope, driver, distance, security_distance, currentLocation, falseTarget,
-					currentLane, indexSegment, currentRoad, linkedRoad, probaChangeLaneUp, probaChangeLaneDown,
-					probaUseLinkedRoad, rightSide);
-			currentLane = (Integer) driver.getAttribute(CURRENT_LANE);
+			double distToGoal = pt.euclidianDistanceTo(currentLocation);
+			setDistanceToGoal(driver, distToGoal);
+			// TODO: refactor this confusing distance vars
+			remainingDist = avoidCollision(scope, remainingDist, indexSegment);
 
 			// if can not reach the end of the segment, we are done
-			if (distance < dist) {
-				final double ratio = distance / dist;
-				final double newX = currentLocation.getX() + ratio * (pt.getX() - currentLocation.getX());
-				final double newY = currentLocation.getY() + ratio * (pt.getY() - currentLocation.getY());
-				final GamaPoint npt = new GamaPoint(newX, newY);
+			if (remainingDist < distToGoal) {
+				double ratio = remainingDist / distToGoal;
+				double newX = currentLocation.getX() + ratio * (pt.getX() - currentLocation.getX());
+				double newY = currentLocation.getY() + ratio * (pt.getY() - currentLocation.getY());
+				GamaPoint npt = new GamaPoint(newX, newY);
 				realDistance += currentLocation.euclidianDistanceTo(npt);
 				currentLocation.setLocation(npt);
-				distance = 0;
+				remainingDist = 0;
 				break;
 			}
 			// else continue to the next segment
 			currentLocation = pt;
-			distance = distance - dist;
-			realDistance += dist;
+			remainingDist = remainingDist - distToGoal;
+			realDistance += distToGoal;
 			if (j == endIndexSegment) {
 				break;
 			}
@@ -1543,7 +1517,7 @@ public class DrivingSkill extends MovingSkill {
 
 		// TODO: hmm, I suppose this is intended for simulation step = 1 s
 		driver.setAttribute(IKeyword.REAL_SPEED, realDistance);
-		return _distance == 0.0 ? 1.0 : distance / _distance;
+		return initRemainingDist == 0.0 ? 1.0 : remainingDist / initRemainingDist;
 	}
 	
 	@action (

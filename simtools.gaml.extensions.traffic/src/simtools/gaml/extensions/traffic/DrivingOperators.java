@@ -84,6 +84,7 @@ public class DrivingOperators {
 		// check if chosen lanes on next road are totally clear
 		boolean allClear = true;
 		for (int i = 0; i < numLanesOccupied; i += 1) {
+			// TODO: fix potential bug
 			List<List<IAgent>> laneDrivers = driversOnNextRoad.get(lane);
 			// check first segment only
 			if (!laneDrivers.get(0).isEmpty()) {
