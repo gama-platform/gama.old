@@ -704,6 +704,9 @@ public class DrivingSkill extends MovingSkill {
 					&& (shouldRespectPriority || rightSide && angle > angleRef || !rightSide && angle < angleRef)) {
 				List<IAgent> otherDrivers = (List) otherInRoad.getAttribute(RoadSkill.AGENTS);
 				for (IAgent otherDriver : otherDrivers) {
+					if (otherDriver == null || otherDriver.dead()) {
+						continue;
+					}
 					double otherVehicleLength = getVehicleLength(otherDriver);
 					double otherRealSpeed = getRealSpeed(otherDriver);
 					double dist = otherDriver.euclidianDistanceTo(driver);
