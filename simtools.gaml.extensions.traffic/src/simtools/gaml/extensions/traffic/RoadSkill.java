@@ -62,6 +62,10 @@ import msi.gaml.types.Types;
 				type = IType.INT,
 				doc = @doc ("the number of lanes")),
 		@variable (
+				name = RoadSkill.NUM_SEGMENTS,
+				type = IType.INT,
+				doc = @doc ("the number of road segments")),
+		@variable (
 				name = "linked_road",
 				type = ITypeProvider.OWNER_TYPE,
 				doc = @doc ("the linked road: the lanes of this linked road will be usable by drivers on the road")),
@@ -85,6 +89,7 @@ public class RoadSkill extends Skill {
 	public final static String LANES = "lanes";
 	public final static String MAXSPEED = "maxspeed";
 	public final static String LINKED_ROAD = "linked_road";
+	public final static String NUM_SEGMENTS = "num_segments";
 
 	@getter (AGENTS_ON)
 	public static List getAgentsOn(final IAgent agent) {
@@ -155,23 +160,47 @@ public class RoadSkill extends Skill {
 		agent.setAttribute(LINKED_ROAD, rd);
 	}
 
+	@getter (NUM_SEGMENTS)
 	public static int getNumSegments(IAgent road) {
 		return GeometryUtils.getPointsOf(road).length - 1;
 	}
 
-	public static void addDriverToLaneSegment(IScope scope, IAgent driver, IAgent road, int laneIdx, int segmentIdx) {
+	@setter (NUM_SEGMENTS)
+	public static void setNumSegments(IAgent road, int numSegments) {
+		// read-only
+	}
+
+	/**
+	 * Adds the vehicle to the specified lane and segment in the specified road's `AGENTS_ON` list.
+	 *
+	 * @param scope
+	 * @param driver the driver agent to be added.
+	 * @param road the road to be updated.
+	 * @param lane a valid lane index on the road.
+	 * @param segment a valid segment index on the road.
+	 */
+	public static void addDriverToLaneSegment(IScope scope, IAgent driver, IAgent road, int lane, int segment) {
 		List agentsOn = (List) road.getAttribute(AGENTS_ON);
 		List laneDrivers, segmentDrivers;
-		laneDrivers = (List) agentsOn.get(laneIdx);
-		segmentDrivers = (List) laneDrivers.get(segmentIdx);
+		laneDrivers = (List) agentsOn.get(lane);
+		segmentDrivers = (List) laneDrivers.get(segment);
 		segmentDrivers.add(driver);
 	}
 
-	public static void removeDriverFromLaneSegment(IScope scope, IAgent driver, IAgent road, int laneIdx, int segmentIdx) {
+	/**
+	 * Removes the vehicle from the specified lane and segment in the specified road's `AGENTS_ON` list.
+	 *
+	 * @param scope
+	 * @param driver the driver agent to be removed.
+	 * @param road the road to be updated.
+	 * @param lane a valid lane index on the road.
+	 * @param segment a valid segment index on the road.
+	 */
+	public static void removeDriverFromLaneSegment(IScope scope, IAgent driver, IAgent road, int lane, int segment) {
 		List agentsOn = (List) road.getAttribute(AGENTS_ON);
 		List laneDrivers, segmentDrivers;
-		laneDrivers = (List) agentsOn.get(laneIdx);
-		segmentDrivers = (List) laneDrivers.get(segmentIdx);
+		laneDrivers = (List) agentsOn.get(lane);
+		segmentDrivers = (List) laneDrivers.get(segment);
 		segmentDrivers.remove(driver);
 	}
 
@@ -180,7 +209,7 @@ public class RoadSkill extends Skill {
 	 * Simply returns the input lane if it is already a valid lane on the current road.
 	 * 
 	 * @param scope
-	 * @param lane
+	 * @param lane the input lane index
 	 * @return
 	 */
 	public static int computeValidLane(IAgent road, int lane) {
@@ -195,12 +224,12 @@ public class RoadSkill extends Skill {
 	}
 
 	/**
-	 * Returns the correct segment index on the linked road.
+	 * Computes the correct segment index on the linked road.
 	 *
 	 * @param road
 	 * @param segment
 	 * @param isLinkedLane if true, simply returns the input segment index
-	 * @return
+	 * @return the correct segment index
 	 */
 	public static int computeCorrectSegment(IAgent road, int segment, boolean isLinkedLane) {
 		if (!isLinkedLane) {
@@ -214,13 +243,13 @@ public class RoadSkill extends Skill {
 	 * Registers the driver on the specified road and starting lane.
 	 *
 	 * @param scope
-	 * @param road
-	 * @param driver
-	 * @param startingLane
+	 * @param driver the agent to register
+	 * @param road the new road
+	 * @param startingLane the new starting lane
 	 *
 	 * @throws GamaRuntimeException
 	 */
-	public static void register(IScope scope, final IAgent road, final IAgent driver, final int startingLane)
+	public static void register(IScope scope, IAgent driver, IAgent road, int startingLane)
 			throws GamaRuntimeException {
 		if (driver == null) return;
 
@@ -352,7 +381,7 @@ public class RoadSkill extends Skill {
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
 		int lane = scope.getIntArg("lane");
 
-		register(scope, road, driver, lane);
+		register(scope, driver, road, lane);
 	}
 
 	@action (
@@ -372,10 +401,10 @@ public class RoadSkill extends Skill {
 	
 	
 	/**
-	 * Unregister the driver from all the roads that it's currently on
+	 * Unregisters the driver from all the roads that it's currently on.
 	 *
 	 * @param scope
-	 * @param driver
+	 * @param driver the agent that we want to unregister.
 	 *
 	 * @throws GamaRuntimeException
 	 */

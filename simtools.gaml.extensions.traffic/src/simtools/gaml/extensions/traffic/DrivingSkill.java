@@ -136,7 +136,11 @@ import ummisco.gama.dev.utils.DEBUG;
 				name = DrivingSkill.NUM_LANES_OCCUPIED,
 				type = IType.INT,
 				init = "1",
-				doc = @doc ("the number of lanes that the vehicle occupies")),
+				doc = @doc (
+					value = "the number of lanes that the vehicle occupies",
+					comment = "e.g. if `num_lanes_occupied=3` and `starting_lane=1`, the vehicle will be in lane 1, 2 and 3`"
+				)
+		),
 		@variable (
 				name = "vehicle_length",
 				type = IType.FLOAT,
@@ -155,7 +159,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		@variable (
 				name = "current_road",
 				type = IType.AGENT,
-				doc = @doc ("current road on which the agent is")),
+				doc = @doc ("the road which the vehicle is currently on")),
 		@variable (
 				name = "on_linked_road",
 				type = IType.BOOL,
@@ -172,7 +176,7 @@ import ummisco.gama.dev.utils.DEBUG;
 				name = "linked_lane_limit",
 				type = IType.INT,
 				init = "-1",
-				doc = @doc ("the maximum number of linked lanes that the driver can use")),
+				doc = @doc ("the maximum number of linked lanes that the vehicle can use; the default value is -1, i.e. the vehicle can use all available linked lanes")),
 		@variable (
 				name = "proba_lane_change_up",
 				type = IType.FLOAT,
@@ -872,7 +876,7 @@ public class DrivingSkill extends MovingSkill {
 			setCurrentTarget(agent, targets.get(0));
 			setFinalTarget(agent, target.getLocation());
 			setCurrentPath(agent, path);
-			RoadSkill.register(scope, nwRoad, agent, 0);
+			RoadSkill.register(scope, agent, nwRoad, 0);
 			return path;
 
 		}
@@ -951,7 +955,7 @@ public class DrivingSkill extends MovingSkill {
 
 				if (lane >= 0) {
 					RoadSkill.unregister(scope, driver);
-					RoadSkill.register(scope, newRoad, driver, lane);
+					RoadSkill.register(scope, driver, newRoad, lane);
 				} else {
 					return;
 				}
@@ -1026,7 +1030,7 @@ public class DrivingSkill extends MovingSkill {
 					setCurrentIndex(driver, currEdgeIdx + 1);
 					setCurrentTarget(driver, getTargets(driver).get(currEdgeIdx + 2));
 					RoadSkill.unregister(scope, driver);
-					RoadSkill.register(scope, newRoad, driver, lane);
+					RoadSkill.register(scope, driver, newRoad, lane);
 				} else {
 					return;
 				}
@@ -1087,7 +1091,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	/**
-	 * Choose a new lane when entering a new road
+	 * Chooses a new lane when entering a new road
 	 *
 	 * @param scope
 	 * @param newRoad
@@ -1189,7 +1193,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	/**
-	 * Block other incoming roads at the specified node
+	 * Blocks other incoming roads at the specified node
 	 *
 	 * @param scope
 	 * @param currentRoad
@@ -1220,10 +1224,17 @@ public class DrivingSkill extends MovingSkill {
 		return p1.distance(p2);
 	}
 
-	/*
-	 * Compute distance to the closest vehicle ahead
+	/**
+	 * Computes distance to the closest vehicle ahead on the specified lanes and segment.
+	 * If the specified segment is totally clear, we will also consider vehicles on the next segment.
+	 *
+	 * @param scope
+	 * @param remainingDist the remaining distance
+	 * @param startingLane the starting lane to check for vehicles
+	 * @param segment the segment to check for vehicles
+	 * @return the distance to the closest vehicle ahead
 	 */
-	private double computeDistToVehicleAhead(IScope scope, double remainingDist, int startingLane, int segmentIndex) {
+	private double computeDistToVehicleAhead(IScope scope, double remainingDist, int startingLane, int segment) {
 		IAgent driver = getCurrentAgent(scope);
 		double distanceToGoal = getDistanceToGoal(driver);
 		IAgent currentRoad = getCurrentRoad(driver);
@@ -1246,7 +1257,7 @@ public class DrivingSkill extends MovingSkill {
 			// determine the correct lane & segment on either main or linked road
 			int relLane = startingLane + i;
 			boolean laneOnLinkedRoad = relLane >= numLanesCurrent;
-			int correctSegment = RoadSkill.computeCorrectSegment(currentRoad, segmentIndex, laneOnLinkedRoad);
+			int correctSegment = RoadSkill.computeCorrectSegment(currentRoad, segment, laneOnLinkedRoad);
 			int absLane = RoadSkill.computeValidLane(currentRoad, relLane);
 			IAgent road = laneOnLinkedRoad ? (IAgent) currentRoad.getAttribute(RoadSkill.LINKED_ROAD) :
 					currentRoad;
@@ -1273,16 +1284,16 @@ public class DrivingSkill extends MovingSkill {
 				}
 			}
 		}
-		boolean moreSegment = /*!usingLinkedRoad && */segmentIndex <= numSegments - 2;
+		boolean moreSegment = /*!usingLinkedRoad && */segment <= numSegments - 2;
 
 		boolean contains = sameSegmentDrivers.contains(driver);
-		GamaPoint targetLoc = new GamaPoint(currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1]);
+		GamaPoint targetLoc = new GamaPoint(currentRoad.getInnerGeometry().getCoordinates()[segment + 1]);
 		double vL = getVehicleLength(driver);
 		// if there are no vehicles on the current segment, driver can take into account the next segment
 		if (contains && sameSegmentDrivers.size() < 2 || !contains && sameSegmentDrivers.isEmpty()) {
 			// if entering a new segment on the road
 			if (nextSegment && moreSegment) {
-				double length = currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 2].distance(targetLoc);
+				double length = currentRoad.getInnerGeometry().getCoordinates()[segment + 2].distance(targetLoc);
 				for (IAgent otherDriver : nextSegmentDrivers) {
 					// check if there is enough space to fit in the 2nd segment
 					double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
@@ -1320,8 +1331,8 @@ public class DrivingSkill extends MovingSkill {
 		// the segment ahead is clear
 		if (closestDriverAhead == null) {
 			if (nextSegment && moreSegment) {
-				double length = currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 1]
-						.distance(currentRoad.getInnerGeometry().getCoordinates()[segmentIndex + 2]);
+				double length = currentRoad.getInnerGeometry().getCoordinates()[segment + 1]
+						.distance(currentRoad.getInnerGeometry().getCoordinates()[segment + 2]);
 
 				for (IAgent otherDriver : nextSegmentDrivers) {
 					double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
@@ -1353,7 +1364,8 @@ public class DrivingSkill extends MovingSkill {
 
 	
 	/**
-	 * Updates the `agents_on` list of the corresponding roads after the driver has switch lanes and/or segment
+	 * Updates the `agents_on` list of the corresponding roads after the driver
+	 * has switched to new lanes and/or a new segment.
 	 *
 	 * @param scope
 	 * @param newStartingLane
@@ -1408,8 +1420,13 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	/**
-	 * Choose the lane in which the driver can travel the longest distance,
-	 * and move across that lane (i.e. update driver's lane and segment index)
+	 * Chooses the lanes such that the vehicle can travel the furthest, and then moves the driver
+	 * across those lanes (i.e. updates driver's starting lane and segment).
+	 *
+	 * @param scope
+	 * @param remainingDist the remaining distance
+	 * @param segment the segment that the vehicle is currently in
+	 * @return the maximum distance that the vehicle can travel
 	 */
 	private double avoidCollision(IScope scope, double remainingDist, int segment) {
 		IAgent driver = getCurrentAgent(scope);
@@ -1488,6 +1505,14 @@ public class DrivingSkill extends MovingSkill {
 		return maxDist;
 	}
 
+	/**
+	 * Moves the driver from segment to segment on the current road.
+	 *
+	 * @param scope
+	 * @param path
+	 * @param initRemainingDist
+	 * @return TODO
+	 */
 	private double moveToNextLocAlongPathOSM(IScope scope, IPath path, double initRemainingDist) {
 		IAgent driver = getCurrentAgent(scope);
 		IAgent currentRoad = getCurrentRoad(driver);
@@ -1523,6 +1548,7 @@ public class DrivingSkill extends MovingSkill {
 			currentLocation = pt;
 			remainingDist = remainingDist - distToGoal;
 			realDistance += distToGoal;
+			// TODO: isn't j and indexsegment the same thing?
 			if (j == endIndexSegment) {
 				break;
 			}
