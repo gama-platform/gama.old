@@ -238,7 +238,7 @@ public class RoadSkill extends Skill {
 		driver.setAttribute(DrivingSkill.DISTANCE_TO_GOAL,
 				driver.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[indexSegment + 1]));
 		driver.setAttribute(DrivingSkill.CURRENT_ROAD, road);
-		driver.setAttribute(DrivingSkill.CURRENT_LANE, startingLane);
+		driver.setAttribute(DrivingSkill.STARTING_LANE, startingLane);
 		driver.setAttribute(DrivingSkill.SEGMENT_INDEX,
 				onLinkedRoad ? road.getInnerGeometry().getNumPoints() - indexSegment - 2 : indexSegment);
 	}
@@ -323,7 +323,7 @@ public class RoadSkill extends Skill {
 						IList<IAgent> ags = (IList<IAgent>) agsPerLanes.get(j);
 						for (IAgent ag: ags) {
 							((List)((List)newAgentsOn.get(lanes - 1)).get(j)).add(ag);
-							ag.setAttribute(DrivingSkill.CURRENT_LANE, lanes - 1);
+							ag.setAttribute(DrivingSkill.STARTING_LANE, lanes - 1);
 						}
 					} 	
 				}
@@ -386,7 +386,7 @@ public class RoadSkill extends Skill {
 
 		int numLanesCurrent = getLanes(currentRoad);
 		IAgent linkedRoad = getLinkedRoad(currentRoad);
-		final Integer startingLane = (Integer) driver.getAttribute(DrivingSkill.CURRENT_LANE);
+		final Integer startingLane = (Integer) driver.getAttribute(DrivingSkill.STARTING_LANE);
 		int numLanesOccupied = (int) driver.getAttribute(DrivingSkill.NUM_LANES_OCCUPIED);
 		int currentSegment = DrivingSkill.getSegmentIndex(driver);
 
