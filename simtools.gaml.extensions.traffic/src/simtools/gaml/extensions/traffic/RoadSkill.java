@@ -428,5 +428,6 @@ public class RoadSkill extends Skill {
 					RoadSkill.computeValidLane(currentRoad, relLane),
 					RoadSkill.computeCorrectSegment(currentRoad, currentSegment, isLinkedLane));
 		}
+		getAgents(currentRoad).remove(driver);
 	}
 }

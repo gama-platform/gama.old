@@ -724,6 +724,7 @@ public class DrivingSkill extends MovingSkill {
 			// be careful of vehicles coming from the right/left side
 			if (!hasPriority
 					&& (shouldRespectPriority || rightSide && angle > angleRef || !rightSide && angle < angleRef)) {
+				// TODO: this should include drivers on linked roads as well
 				List<IAgent> otherDrivers = (List) otherInRoad.getAttribute(RoadSkill.ALL_AGENTS);
 				for (IAgent otherDriver : otherDrivers) {
 					if (otherDriver == null || otherDriver.dead()) {
