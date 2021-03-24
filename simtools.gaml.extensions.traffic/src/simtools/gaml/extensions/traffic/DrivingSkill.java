@@ -73,40 +73,40 @@ import ummisco.gama.dev.utils.DEBUG;
 				init = "0.0",
 				doc = @doc ("the actual speed of the agent (in meter/second)")),
 		@variable (
-				name = "current_path",
+				name = DrivingSkill.CURRENT_PATH,
 				type = IType.PATH,
 				init = "nil",
 				doc = @doc ("the current path that tha agent follow")),
 		@variable (
-				name = "final_target",
+				name = DrivingSkill.FINAL_TARGET,
 				type = IType.POINT,
 				init = "nil",
 				doc = @doc ("the final target of the agent")),
 		@variable (
-				name = "current_target",
+				name = DrivingSkill.CURRENT_TARGET,
 				type = IType.POINT,
 				init = "nil",
 				doc = @doc ("the current target of the agent")),
 		@variable (
-				name = "current_index",
+				name = DrivingSkill.CURRENT_INDEX,
 				type = IType.INT,
 				init = "0",
 				doc = @doc ("the index of the current edge (road) in the path")),
 		@variable (
-				name = "targets",
+				name = DrivingSkill.TARGETS,
 				type = IType.LIST,
 				of = IType.POINT,
 				init = "[]",
 				doc = @doc ("the current list of points that the agent has to reach (path)")),
 		@variable (
-				name = "security_distance_coeff",
+				name = DrivingSkill.SECURITY_DISTANCE_COEFF,
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc (
 						deprecated = "use safety_distance_coeff instead",
 						value = "the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - safety_distance =max(min_safety_distance, safety_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
 		@variable (
-				name = "safety_distance_coeff",
+				name = DrivingSkill.SAFETY_DISTANCE_COEFF,
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance =max(min_security_distance, security_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
@@ -161,70 +161,70 @@ import ummisco.gama.dev.utils.DEBUG;
 				type = IType.AGENT,
 				doc = @doc ("the road which the vehicle is currently on")),
 		@variable (
-				name = "on_linked_road",
+				name = DrivingSkill.ON_LINKED_ROAD,
 				type = IType.BOOL,
 				init = "false",
 				doc = @doc (
 						deprecated = "use using_linked_road instead",
 						value = "is the agent on the linked road?")),
 		@variable (
-				name = "using_linked_road",
+				name = DrivingSkill.USING_LINKED_ROAD,
 				type = IType.BOOL,
 				init = "false",
 				doc = @doc ("indicates if the driver is occupying at least one lane on the linked road")),
 		@variable (
-				name = "linked_lane_limit",
+				name = DrivingSkill.LINKED_LANE_LIMIT,
 				type = IType.INT,
 				init = "-1",
 				doc = @doc ("the maximum number of linked lanes that the vehicle can use; the default value is -1, i.e. the vehicle can use all available linked lanes")),
 		@variable (
-				name = "proba_lane_change_up",
+				name = DrivingSkill.PROBA_LANE_CHANGE_UP,
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("probability to change lane to a upper lane (left lane if right side driving) if necessary")),
 		@variable (
-				name = "proba_lane_change_down",
+				name = DrivingSkill.PROBA_LANE_CHANGE_DOWN,
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("probability to change lane to a lower lane (right lane if right side driving) if necessary")),
 		@variable (
-				name = "proba_respect_priorities",
+				name = DrivingSkill.PROBA_RESPECT_PRIORITIES,
 				type = IType.FLOAT,
 				init = "1.0",
 				doc = @doc ("probability to respect priority (right or left) laws")),
 		@variable (
-				name = "proba_respect_stops",
+				name = DrivingSkill.PROBA_RESPECT_STOPS,
 				type = IType.LIST,
 				of = IType.FLOAT,
 				init = "[]",
 				doc = @doc ("probability to respect stop laws - one value for each type of stop")),
 		@variable (
-				name = "proba_block_node",
+				name = DrivingSkill.PROBA_BLOCK_NODE,
 				type = IType.FLOAT,
 				init = "0.0",
 				doc = @doc ("probability to block a node (do not let other driver cross the crossroad)")),
 		@variable (
-				name = "proba_use_linked_road",
+				name = DrivingSkill.PROBA_USE_LINKED_ROAD,
 				type = IType.FLOAT,
 				init = "0.0",
 				doc = @doc ("probability to change lane to a linked road lane if necessary")),
 		@variable (
-				name = "right_side_driving",
+				name = DrivingSkill.RIGHT_SIDE_DRIVING,
 				type = IType.BOOL,
 				init = "true",
 				doc = @doc ("are drivers driving on the right size of the road?")),
 		@variable (
-				name = "max_speed",
+				name = DrivingSkill.MAX_SPEED,
 				type = IType.FLOAT,
 				init = "50.0",
 				doc = @doc ("maximal speed of the vehicle")),
 		@variable (
-				name = "distance_to_goal",
+				name = DrivingSkill.DISTANCE_TO_GOAL,
 				type = IType.FLOAT,
 				init = "0.0",
 				doc = @doc ("euclidean distance to the next point of the current segment")),
 		@variable (
-				name = "segment_index_on_road",
+				name = DrivingSkill.SEGMENT_INDEX,
 				type = IType.INT,
 				init = "-1",
 				doc = @doc ("current segment index of the agent on the current road ")), })
@@ -724,7 +724,7 @@ public class DrivingSkill extends MovingSkill {
 			// be careful of vehicles coming from the right/left side
 			if (!hasPriority
 					&& (shouldRespectPriority || rightSide && angle > angleRef || !rightSide && angle < angleRef)) {
-				List<IAgent> otherDrivers = (List) otherInRoad.getAttribute(RoadSkill.AGENTS);
+				List<IAgent> otherDrivers = (List) otherInRoad.getAttribute(RoadSkill.ALL_AGENTS);
 				for (IAgent otherDriver : otherDrivers) {
 					if (otherDriver == null || otherDriver.dead()) {
 						continue;

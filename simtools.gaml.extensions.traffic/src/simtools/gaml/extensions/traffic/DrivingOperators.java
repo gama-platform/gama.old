@@ -61,7 +61,7 @@ public class DrivingOperators {
 							agentsOn.add(lisSg);
 						}
 					}
-					ag.setAttribute(RoadSkill.AGENTS, GamaListFactory.create(Types.NO_TYPE));
+					ag.setAttribute(RoadSkill.ALL_AGENTS, GamaListFactory.create(Types.NO_TYPE));
 				}
 
 			}

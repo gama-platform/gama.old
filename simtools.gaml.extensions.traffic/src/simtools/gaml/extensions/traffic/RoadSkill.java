@@ -40,25 +40,25 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @vars ({ @variable (
-		name = "agents_on",
+		name = RoadSkill.AGENTS_ON,
 		type = IType.LIST,
 		of = IType.LIST,
 		doc = @doc ("for each lane of the road, the list of agents for each segment")),
 		@variable (
-				name = "all_agents",
+				name = RoadSkill.ALL_AGENTS,
 				type = IType.LIST,
 				of = IType.AGENT,
 				doc = @doc ("the list of agents on the road")),
 		@variable (
-				name = "source_node",
+				name = RoadSkill.SOURCE_NODE,
 				type = IType.AGENT,
 				doc = @doc ("the source node of the road")),
 		@variable (
-				name = "target_node",
+				name = RoadSkill.TARGET_NODE,
 				type = IType.AGENT,
 				doc = @doc ("the target node of the road")),
 		@variable (
-				name = "lanes",
+				name = RoadSkill.LANES,
 				type = IType.INT,
 				doc = @doc ("the number of lanes")),
 		@variable (
@@ -66,11 +66,11 @@ import msi.gaml.types.Types;
 				type = IType.INT,
 				doc = @doc ("the number of road segments")),
 		@variable (
-				name = "linked_road",
+				name = RoadSkill.LINKED_ROAD,
 				type = ITypeProvider.OWNER_TYPE,
 				doc = @doc ("the linked road: the lanes of this linked road will be usable by drivers on the road")),
 		@variable (
-				name = "maxspeed",
+				name = RoadSkill.MAXSPEED,
 				type = IType.FLOAT,
 				init = "50#km/#h",
 				doc = @doc ("the maximal speed on the road")) })
@@ -80,9 +80,7 @@ import msi.gaml.types.Types;
 		doc = @doc ("A skill for agents representing roads in traffic simulations"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class RoadSkill extends Skill {
-
-	public final static String AGENTS = "all_agents";
-
+	public final static String ALL_AGENTS = "all_agents";
 	public final static String AGENTS_ON = "agents_on";
 	public final static String SOURCE_NODE = "source_node";
 	public final static String TARGET_NODE = "target_node";
@@ -101,13 +99,13 @@ public class RoadSkill extends Skill {
 	}
 	
 
-	@getter (AGENTS)
+	@getter (ALL_AGENTS)
 	public static List getAgents(final IAgent agent) {
-		return (List) agent.getAttribute(AGENTS);
+		return (List) agent.getAttribute(ALL_AGENTS);
 	}
 	
 	public static void setAgents(final IAgent agent, final List agents) {
-		agent.setAttribute(AGENTS, agents);
+		agent.setAttribute(ALL_AGENTS, agents);
 	}
 
 	@getter (SOURCE_NODE)
