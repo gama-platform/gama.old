@@ -1310,8 +1310,8 @@ public class DrivingSkill extends MovingSkill {
 			}
 			
 			// collect drivers in same lane, next segment
-			if (correctSegment > 0 && correctSegment < numSegments - 1) {
-				int nextSegmentIdx = laneOnLinkedRoad ? correctSegment - 1 : correctSegment + 1;
+			int nextSegmentIdx = laneOnLinkedRoad ? correctSegment - 1 : correctSegment + 1;
+			if (nextSegmentIdx >= 0 && nextSegmentIdx < numSegments) {
 				segmentDrivers = (List<IAgent>) laneDrivers.get(nextSegmentIdx);
 				for (IAgent otherDriver : segmentDrivers) {
 					if (!nextSegmentDrivers.contains(otherDriver)) {
