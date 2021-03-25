@@ -39,45 +39,56 @@ import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars ({ @variable (
+@vars({
+	@variable(
 		name = RoadSkill.AGENTS_ON,
 		type = IType.LIST,
 		of = IType.LIST,
-		doc = @doc ("for each lane of the road, the list of agents for each segment")),
-		@variable (
-				name = RoadSkill.ALL_AGENTS,
-				type = IType.LIST,
-				of = IType.AGENT,
-				doc = @doc ("the list of agents on the road")),
-		@variable (
-				name = RoadSkill.SOURCE_NODE,
-				type = IType.AGENT,
-				doc = @doc ("the source node of the road")),
-		@variable (
-				name = RoadSkill.TARGET_NODE,
-				type = IType.AGENT,
-				doc = @doc ("the target node of the road")),
-		@variable (
-				name = RoadSkill.LANES,
-				type = IType.INT,
-				doc = @doc ("the number of lanes")),
-		@variable (
-				name = RoadSkill.NUM_SEGMENTS,
-				type = IType.INT,
-				doc = @doc ("the number of road segments")),
-		@variable (
-				name = RoadSkill.LINKED_ROAD,
-				type = ITypeProvider.OWNER_TYPE,
-				doc = @doc ("the linked road: the lanes of this linked road will be usable by drivers on the road")),
-		@variable (
-				name = RoadSkill.MAXSPEED,
-				type = IType.FLOAT,
-				init = "50#km/#h",
-				doc = @doc ("the maximal speed on the road")) })
-@skill (
-		name = "skill_road",
-		concept = { IConcept.TRANSPORT, IConcept.SKILL },
-		doc = @doc ("A skill for agents representing roads in traffic simulations"))
+		doc = @doc("for each lane of the road, the list of agents for each segment")
+	),
+	@variable(
+		name = RoadSkill.ALL_AGENTS,
+		type = IType.LIST,
+		of = IType.AGENT,
+		doc = @doc("the list of agents on the road")
+	),
+	@variable(
+		name = RoadSkill.SOURCE_NODE,
+		type = IType.AGENT,
+		doc = @doc("the source node of the road")
+	),
+	@variable(
+		name = RoadSkill.TARGET_NODE,
+		type = IType.AGENT,
+		doc = @doc("the target node of the road")
+	),
+	@variable(
+		name = RoadSkill.LANES,
+		type = IType.INT,
+		doc = @doc("the number of lanes")
+	),
+	@variable(
+		name = RoadSkill.NUM_SEGMENTS,
+		type = IType.INT,
+		doc = @doc("the number of road segments")
+	),
+	@variable(
+		name = RoadSkill.LINKED_ROAD,
+		type = ITypeProvider.OWNER_TYPE,
+		doc = @doc("the linked road: the lanes of this linked road will be usable by drivers on the road")
+	),
+	@variable(
+		name = RoadSkill.MAXSPEED,
+		type = IType.FLOAT,
+		init = "50#km/#h",
+		doc = @doc("the maximal speed on the road")
+	)
+})
+@skill(
+	name = "skill_road",
+	concept = { IConcept.TRANSPORT, IConcept.SKILL },
+	doc = @doc ("A skill for agents representing roads in traffic simulations")
+)
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class RoadSkill extends Skill {
 	public final static String ALL_AGENTS = "all_agents";
@@ -89,7 +100,7 @@ public class RoadSkill extends Skill {
 	public final static String LINKED_ROAD = "linked_road";
 	public final static String NUM_SEGMENTS = "num_segments";
 
-	@getter (AGENTS_ON)
+	@getter(AGENTS_ON)
 	public static List getAgentsOn(final IAgent agent) {
 		return (List) agent.getAttribute(AGENTS_ON);
 	}
@@ -99,7 +110,7 @@ public class RoadSkill extends Skill {
 	}
 	
 
-	@getter (ALL_AGENTS)
+	@getter(ALL_AGENTS)
 	public static List getAgents(final IAgent agent) {
 		return (List) agent.getAttribute(ALL_AGENTS);
 	}
@@ -108,62 +119,62 @@ public class RoadSkill extends Skill {
 		agent.setAttribute(ALL_AGENTS, agents);
 	}
 
-	@getter (SOURCE_NODE)
+	@getter(SOURCE_NODE)
 	public static IAgent getSourceNode(final IAgent agent) {
 		return (IAgent) agent.getAttribute(SOURCE_NODE);
 	}
 
-	@getter (TARGET_NODE)
+	@getter(TARGET_NODE)
 	public static IAgent getTargetNode(final IAgent agent) {
 		return (IAgent) agent.getAttribute(TARGET_NODE);
 	}
 
-	@getter (LANES)
+	@getter(LANES)
 	public static Integer getLanes(final IAgent agent) {
 		return (Integer) agent.getAttribute(LANES);
 	}
 
-	@getter (MAXSPEED)
+	@getter(MAXSPEED)
 	public static Double getMaxSpeed(final IAgent agent) {
 		return (Double) agent.getAttribute(MAXSPEED);
 	}
 
-	@setter (LANES)
+	@setter(LANES)
 	public static void setLanes(final IAgent agent, final int ln) {
 		agent.setAttribute(LANES, ln);
 	}
 
-	@setter (MAXSPEED)
+	@setter(MAXSPEED)
 	public static void setMaxSpeed(final IAgent agent, final Double sp) {
 		agent.setAttribute(MAXSPEED, sp);
 	}
 
-	@setter (SOURCE_NODE)
+	@setter(SOURCE_NODE)
 	public static void setSourceNode(final IAgent agent, final IAgent nd) {
 		agent.setAttribute(SOURCE_NODE, nd);
 	}
 
-	@setter (TARGET_NODE)
+	@setter(TARGET_NODE)
 	public void setTargetNode(final IAgent agent, final IAgent nd) {
 		agent.setAttribute(TARGET_NODE, nd);
 	}
 
-	@getter (LINKED_ROAD)
+	@getter(LINKED_ROAD)
 	public static IAgent getLinkedRoad(final IAgent agent) {
 		return (IAgent) agent.getAttribute(LINKED_ROAD);
 	}
 
-	@setter (LINKED_ROAD)
+	@setter(LINKED_ROAD)
 	public static void setLinkedRoad(final IAgent agent, final IAgent rd) {
 		agent.setAttribute(LINKED_ROAD, rd);
 	}
 
-	@getter (NUM_SEGMENTS)
+	@getter(NUM_SEGMENTS)
 	public static int getNumSegments(IAgent road) {
 		return GeometryUtils.getPointsOf(road).length - 1;
 	}
 
-	@setter (NUM_SEGMENTS)
+	@setter(NUM_SEGMENTS)
 	public static void setNumSegments(IAgent road, int numSegments) {
 		// read-only
 	}

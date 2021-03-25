@@ -62,179 +62,214 @@ import msi.gaml.types.Types;
 
 import ummisco.gama.dev.utils.DEBUG;
 
-@vars ({ @variable (
+@vars({
+	@variable(
 		name = IKeyword.SPEED,
 		type = IType.FLOAT,
 		init = "1.0",
-		doc = @doc ("the speed of the agent (in meter/second)")),
-		@variable (
-				name = IKeyword.REAL_SPEED,
-				type = IType.FLOAT,
-				init = "0.0",
-				doc = @doc ("the actual speed of the agent (in meter/second)")),
-		@variable (
-				name = DrivingSkill.CURRENT_PATH,
-				type = IType.PATH,
-				init = "nil",
-				doc = @doc ("the current path that tha agent follow")),
-		@variable (
-				name = DrivingSkill.FINAL_TARGET,
-				type = IType.POINT,
-				init = "nil",
-				doc = @doc ("the final target of the agent")),
-		@variable (
-				name = DrivingSkill.CURRENT_TARGET,
-				type = IType.POINT,
-				init = "nil",
-				doc = @doc ("the current target of the agent")),
-		@variable (
-				name = DrivingSkill.CURRENT_INDEX,
-				type = IType.INT,
-				init = "0",
-				doc = @doc ("the index of the current edge (road) in the path")),
-		@variable (
-				name = DrivingSkill.TARGETS,
-				type = IType.LIST,
-				of = IType.POINT,
-				init = "[]",
-				doc = @doc ("the current list of points that the agent has to reach (path)")),
-		@variable (
-				name = DrivingSkill.SECURITY_DISTANCE_COEFF,
-				type = IType.FLOAT,
-				init = "1.0",
-				doc = @doc (
-						deprecated = "use safety_distance_coeff instead",
-						value = "the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - safety_distance =max(min_safety_distance, safety_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
-		@variable (
-				name = DrivingSkill.SAFETY_DISTANCE_COEFF,
-				type = IType.FLOAT,
-				init = "1.0",
-				doc = @doc ("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance =max(min_security_distance, security_distance_coeff `*` min(self.real_speed, other.real_speed) )")),
-		@variable (
-				name = "min_security_distance",
-				type = IType.FLOAT,
-				init = "0.5",
-				doc = @doc (
-						deprecated = "use min_safety_distance instead",
-						value = "the minimal distance to another driver")),
-		@variable (
-				name = "min_safety_distance",
-				type = IType.FLOAT,
-				init = "0.5",
-				doc = @doc ("the minimal distance to another driver")),
-		@variable (
-				name = "current_lane",
-				type = IType.INT,
-				init = "0",
-				doc = @doc ("the current lane on which the agent is")),
-		@variable (
-				name = "starting_lane",
-				type = IType.INT,
-				init = "0",
-				doc = @doc ("the lane with the smallest index that the vehicle is in")),
-		@variable (
-				name = DrivingSkill.NUM_LANES_OCCUPIED,
-				type = IType.INT,
-				init = "1",
-				doc = @doc (
-					value = "the number of lanes that the vehicle occupies",
-					comment = "e.g. if `num_lanes_occupied=3` and `starting_lane=1`, the vehicle will be in lane 1, 2 and 3`"
-				)
-		),
-		@variable (
-				name = "vehicle_length",
-				type = IType.FLOAT,
-				init = "0.0",
-				doc = @doc ("the length of the vehicle (in meters)")),
-		@variable (
-				name = "speed_coeff",
-				type = IType.FLOAT,
-				init = "1.0",
-				doc = @doc ("speed coefficient for the speed that the driver want to reach (according to the max speed of the road)")),
-		@variable (
-				name = "max_acceleration",
-				type = IType.FLOAT,
-				init = "0.5",
-				doc = @doc ("maximum acceleration of the car for a cycle")),
-		@variable (
-				name = "current_road",
-				type = IType.AGENT,
-				doc = @doc ("the road which the vehicle is currently on")),
-		@variable (
-				name = DrivingSkill.ON_LINKED_ROAD,
-				type = IType.BOOL,
-				init = "false",
-				doc = @doc (
-						deprecated = "use using_linked_road instead",
-						value = "is the agent on the linked road?")),
-		@variable (
-				name = DrivingSkill.USING_LINKED_ROAD,
-				type = IType.BOOL,
-				init = "false",
-				doc = @doc ("indicates if the driver is occupying at least one lane on the linked road")),
-		@variable (
-				name = DrivingSkill.LINKED_LANE_LIMIT,
-				type = IType.INT,
-				init = "-1",
-				doc = @doc ("the maximum number of linked lanes that the vehicle can use; the default value is -1, i.e. the vehicle can use all available linked lanes")),
-		@variable (
-				name = DrivingSkill.PROBA_LANE_CHANGE_UP,
-				type = IType.FLOAT,
-				init = "1.0",
-				doc = @doc ("probability to change lane to a upper lane (left lane if right side driving) if necessary")),
-		@variable (
-				name = DrivingSkill.PROBA_LANE_CHANGE_DOWN,
-				type = IType.FLOAT,
-				init = "1.0",
-				doc = @doc ("probability to change lane to a lower lane (right lane if right side driving) if necessary")),
-		@variable (
-				name = DrivingSkill.PROBA_RESPECT_PRIORITIES,
-				type = IType.FLOAT,
-				init = "1.0",
-				doc = @doc ("probability to respect priority (right or left) laws")),
-		@variable (
-				name = DrivingSkill.PROBA_RESPECT_STOPS,
-				type = IType.LIST,
-				of = IType.FLOAT,
-				init = "[]",
-				doc = @doc ("probability to respect stop laws - one value for each type of stop")),
-		@variable (
-				name = DrivingSkill.PROBA_BLOCK_NODE,
-				type = IType.FLOAT,
-				init = "0.0",
-				doc = @doc ("probability to block a node (do not let other driver cross the crossroad)")),
-		@variable (
-				name = DrivingSkill.PROBA_USE_LINKED_ROAD,
-				type = IType.FLOAT,
-				init = "0.0",
-				doc = @doc ("probability to change lane to a linked road lane if necessary")),
-		@variable (
-				name = DrivingSkill.RIGHT_SIDE_DRIVING,
-				type = IType.BOOL,
-				init = "true",
-				doc = @doc ("are drivers driving on the right size of the road?")),
-		@variable (
-				name = DrivingSkill.MAX_SPEED,
-				type = IType.FLOAT,
-				init = "50.0",
-				doc = @doc ("maximal speed of the vehicle")),
-		@variable (
-				name = DrivingSkill.DISTANCE_TO_GOAL,
-				type = IType.FLOAT,
-				init = "0.0",
-				doc = @doc ("euclidean distance to the next point of the current segment")),
-		@variable (
-				name = DrivingSkill.SEGMENT_INDEX,
-				type = IType.INT,
-				init = "-1",
-				doc = @doc ("current segment index of the agent on the current road ")), })
-@skill (
-		name = "advanced_driving",
-		concept = { IConcept.TRANSPORT, IConcept.SKILL },
-		doc = @doc ("A skill that provides driving primitives and operators"))
+		doc = @doc("the speed of the agent (in meter/second)")
+	),
+	@variable(
+		name = IKeyword.REAL_SPEED,
+		type = IType.FLOAT,
+		init = "0.0",
+		doc = @doc("the actual speed of the agent (in meter/second)")
+	),
+	@variable(
+		name = DrivingSkill.CURRENT_PATH,
+		type = IType.PATH,
+		init = "nil",
+		doc = @doc("the current path that tha agent follow")
+	),
+	@variable(
+		name = DrivingSkill.FINAL_TARGET,
+		type = IType.POINT,
+		init = "nil",
+		doc = @doc("the final target of the agent")
+	),
+	@variable(
+		name = DrivingSkill.CURRENT_TARGET,
+		type = IType.POINT,
+		init = "nil",
+		doc = @doc("the current target of the agent")
+	),
+	@variable(
+		name = DrivingSkill.CURRENT_INDEX,
+		type = IType.INT,
+		init = "0",
+		doc = @doc("the index of the current edge (road) in the path")
+	),
+	@variable(
+		name = DrivingSkill.TARGETS,
+		type = IType.LIST,
+		of = IType.POINT,
+		init = "[]",
+		doc = @doc("the current list of points that the agent has to reach (path)")
+	),
+	@variable(
+		name = DrivingSkill.SECURITY_DISTANCE_COEFF,
+		type = IType.FLOAT,
+		init = "1.0",
+		doc = @doc(
+			deprecated = "use safety_distance_coeff instead",
+			value = "the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - safety_distance =max(min_safety_distance, safety_distance_coeff `*` min(self.real_speed, other.real_speed) )"
+		)
+	),
+	@variable(
+		name = DrivingSkill.SAFETY_DISTANCE_COEFF,
+		type = IType.FLOAT,
+		init = "1.0",
+		doc = @doc("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance =max(min_security_distance, security_distance_coeff `*` min(self.real_speed, other.real_speed) )")
+	),
+	@variable(
+		name = "min_security_distance",
+		type = IType.FLOAT,
+		init = "0.5",
+		doc = @doc(
+			deprecated = "use min_safety_distance instead",
+			value = "the minimal distance to another driver"
+		)
+	),
+	@variable(
+		name = "min_safety_distance",
+		type = IType.FLOAT,
+		init = "0.5",
+		doc = @doc("the minimal distance to another driver")
+	),
+	@variable(
+		name = "current_lane",
+		type = IType.INT,
+		init = "0",
+		doc = @doc("the current lane on which the agent is")
+	),
+	@variable(
+		name = "starting_lane",
+		type = IType.INT,
+		init = "0",
+		doc = @doc("the lane with the smallest index that the vehicle is in")
+	),
+	@variable(
+		name = DrivingSkill.NUM_LANES_OCCUPIED,
+		type = IType.INT,
+		init = "1",
+		doc = @doc(
+			value = "the number of lanes that the vehicle occupies",
+			comment = "e.g. if `num_lanes_occupied=3` and `starting_lane=1`, the vehicle will be in lane 1, 2 and 3`"
+		)
+	),
+	@variable(
+		name = "vehicle_length",
+		type = IType.FLOAT,
+		init = "0.0",
+		doc = @doc("the length of the vehicle (in meters)")
+	),
+	@variable(
+		name = "speed_coeff",
+		type = IType.FLOAT,
+		init = "1.0",
+		doc = @doc("speed coefficient for the speed that the driver want to reach (according to the max speed of the road)")
+	),
+	@variable(
+		name = "max_acceleration",
+		type = IType.FLOAT,
+		init = "0.5",
+		doc = @doc("maximum acceleration of the car for a cycle")
+	),
+	@variable(
+		name = "current_road",
+		type = IType.AGENT,
+		doc = @doc("the road which the vehicle is currently on")
+	),
+	@variable(
+		name = DrivingSkill.ON_LINKED_ROAD,
+		type = IType.BOOL,
+		init = "false",
+		doc = @doc(
+			deprecated = "use using_linked_road instead",
+			value = "is the agent on the linked road?"
+		)
+	),
+	@variable(
+		name = DrivingSkill.USING_LINKED_ROAD,
+		type = IType.BOOL,
+		init = "false",
+		doc = @doc("indicates if the driver is occupying at least one lane on the linked road")
+	),
+	@variable(
+		name = DrivingSkill.LINKED_LANE_LIMIT,
+		type = IType.INT,
+		init = "-1",
+		doc = @doc("the maximum number of linked lanes that the vehicle can use; the default value is -1, i.e. the vehicle can use all available linked lanes")
+	),
+	@variable(
+		name = DrivingSkill.PROBA_LANE_CHANGE_UP,
+		type = IType.FLOAT,
+		init = "1.0",
+		doc = @doc("probability to change lane to a upper lane (left lane if right side driving) if necessary")
+	),
+	@variable(
+		name = DrivingSkill.PROBA_LANE_CHANGE_DOWN,
+		type = IType.FLOAT,
+		init = "1.0",
+		doc = @doc("probability to change lane to a lower lane (right lane if right side driving) if necessary")
+	),
+	@variable(
+		name = DrivingSkill.PROBA_RESPECT_PRIORITIES,
+		type = IType.FLOAT,
+		init = "1.0",
+		doc = @doc("probability to respect priority (right or left) laws")
+	),
+	@variable(
+		name = DrivingSkill.PROBA_RESPECT_STOPS,
+		type = IType.LIST,
+		of = IType.FLOAT,
+		init = "[]",
+		doc = @doc("probability to respect stop laws - one value for each type of stop")
+	),
+	@variable(
+		name = DrivingSkill.PROBA_BLOCK_NODE,
+		type = IType.FLOAT,
+		init = "0.0",
+		doc = @doc("probability to block a node (do not let other driver cross the crossroad)")
+	),
+	@variable(
+		name = DrivingSkill.PROBA_USE_LINKED_ROAD,
+		type = IType.FLOAT,
+		init = "0.0",
+		doc = @doc("probability to change lane to a linked road lane if necessary")
+	),
+	@variable(
+		name = DrivingSkill.RIGHT_SIDE_DRIVING,
+		type = IType.BOOL,
+		init = "true",
+		doc = @doc("are drivers driving on the right size of the road?")
+	),
+	@variable(
+		name = DrivingSkill.MAX_SPEED,
+		type = IType.FLOAT,
+		init = "50.0",
+		doc = @doc("maximal speed of the vehicle")
+	),
+	@variable(
+		name = DrivingSkill.DISTANCE_TO_GOAL,
+		type = IType.FLOAT,
+		init = "0.0",
+		doc = @doc("euclidean distance to the next point of the current segment")
+	),
+	@variable(
+		name = DrivingSkill.SEGMENT_INDEX,
+		type = IType.INT,
+		init = "-1",
+		doc = @doc("current segment index of the agent on the current road ")
+	),
+})
+@skill(
+	name = "advanced_driving",
+	concept = { IConcept.TRANSPORT, IConcept.SKILL },
+	doc = @doc ("A skill that provides driving primitives and operators")
+)
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DrivingSkill extends MovingSkill {
-
 	static {
 		DEBUG.OFF();
 	}
@@ -270,171 +305,171 @@ public class DrivingSkill extends MovingSkill {
 	public final static String SEGMENT_INDEX = "segment_index_on_road";
 	public final static String NUM_LANES_OCCUPIED = "num_lanes_occupied";
 
-	@getter (ACCELERATION_MAX)
+	@getter(ACCELERATION_MAX)
 	public static double getAccelerationMax(final IAgent agent) {
 		return (Double) agent.getAttribute(ACCELERATION_MAX);
 	}
 
-	@setter (ACCELERATION_MAX)
+	@setter(ACCELERATION_MAX)
 	public static void setAccelerationMax(final IAgent agent, final Double val) {
 		agent.setAttribute(ACCELERATION_MAX, val);
 	}
 
-	@getter (SPEED_COEFF)
+	@getter(SPEED_COEFF)
 	public static double getSpeedCoeff(final IAgent agent) {
 		return (Double) agent.getAttribute(SPEED_COEFF);
 	}
 
-	@setter (SPEED_COEFF)
+	@setter(SPEED_COEFF)
 	public static void setSpeedCoeff(final IAgent agent, final Double val) {
 		agent.setAttribute(SPEED_COEFF, val);
 	}
 
-	@getter (MAX_SPEED)
+	@getter(MAX_SPEED)
 	public static double getMaxSpeed(final IAgent agent) {
 		return (Double) agent.getAttribute(MAX_SPEED);
 	}
 
-	@setter (MAX_SPEED)
+	@setter(MAX_SPEED)
 	public static void setMaxSpeed(final IAgent agent, final Double val) {
 		agent.setAttribute(MAX_SPEED, val);
 	}
 
-	@getter (CURRENT_TARGET)
+	@getter(CURRENT_TARGET)
 	public static GamaPoint getCurrentTarget(final IAgent agent) {
 		return (GamaPoint) agent.getAttribute(CURRENT_TARGET);
 	}
 
-	@setter (CURRENT_TARGET)
+	@setter(CURRENT_TARGET)
 	public static void setCurrentTarget(final IAgent agent, final ILocation point) {
 		agent.setAttribute(CURRENT_TARGET, point);
 	}
 
-	@getter (FINAL_TARGET)
+	@getter(FINAL_TARGET)
 	public static GamaPoint getFinalTarget(final IAgent agent) {
 		return (GamaPoint) agent.getAttribute(FINAL_TARGET);
 	}
 
-	@setter (FINAL_TARGET)
+	@setter(FINAL_TARGET)
 	public static void setFinalTarget(final IAgent agent, final ILocation point) {
 		agent.setAttribute(FINAL_TARGET, point);
 	}
 
-	@getter (CURRENT_INDEX)
+	@getter(CURRENT_INDEX)
 	public static Integer getCurrentIndex(final IAgent agent) {
 		return (Integer) agent.getAttribute(CURRENT_INDEX);
 	}
 
-	@setter (CURRENT_INDEX)
+	@setter(CURRENT_INDEX)
 	public static void setCurrentIndex(final IAgent agent, final Integer index) {
 		agent.setAttribute(CURRENT_INDEX, index);
 	}
 
-	@getter (SEGMENT_INDEX)
+	@getter(SEGMENT_INDEX)
 	public static Integer getSegmentIndex(final IAgent agent) {
 		return (Integer) agent.getAttribute(SEGMENT_INDEX);
 	}
 
-	@setter (SEGMENT_INDEX)
+	@setter(SEGMENT_INDEX)
 	public static void setSegmentIndex(final IAgent agent, final Integer index) {
 		agent.setAttribute(SEGMENT_INDEX, index);
 	}
 
 	@Override
-	@getter (CURRENT_PATH)
+	@getter(CURRENT_PATH)
 	public IPath getCurrentPath(final IAgent agent) {
 		return (IPath) agent.getAttribute(CURRENT_PATH);
 	}
 
 	@Override
-	@setter (CURRENT_PATH)
+	@setter(CURRENT_PATH)
 	public void setCurrentPath(final IAgent agent, final IPath path) {
 		agent.setAttribute(CURRENT_PATH, path);
 	}
 
-	@getter (TARGETS)
+	@getter(TARGETS)
 	public static List<ILocation> getTargets(final IAgent agent) {
 		return (List<ILocation>) agent.getAttribute(TARGETS);
 	}
 
-	@setter (TARGETS)
+	@setter(TARGETS)
 	public static void setTargets(final IAgent agent, final List<ILocation> points) {
 		agent.setAttribute(TARGETS, points);
 	}
 
-	@getter (PROBA_USE_LINKED_ROAD)
+	@getter(PROBA_USE_LINKED_ROAD)
 	public static double getProbaUseLinkedRoad(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_USE_LINKED_ROAD);
 	}
 
-	@setter (PROBA_USE_LINKED_ROAD)
+	@setter(PROBA_USE_LINKED_ROAD)
 	public static void setProbaUseLinkedRoad(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_USE_LINKED_ROAD, proba);
 	}
 
-	@getter (PROBA_LANE_CHANGE_DOWN)
+	@getter(PROBA_LANE_CHANGE_DOWN)
 	public static double getProbaLaneChangeDown(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_LANE_CHANGE_DOWN);
 	}
 
-	@setter (PROBA_LANE_CHANGE_DOWN)
+	@setter(PROBA_LANE_CHANGE_DOWN)
 	public static void setProbaLaneChangeDown(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_LANE_CHANGE_DOWN, proba);
 	}
 
-	@getter (PROBA_LANE_CHANGE_UP)
+	@getter(PROBA_LANE_CHANGE_UP)
 	public static double getProbaLaneChangeUp(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_LANE_CHANGE_UP);
 	}
 
-	@setter (PROBA_LANE_CHANGE_UP)
+	@setter(PROBA_LANE_CHANGE_UP)
 	public static void setProbaLaneChangeUp(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_LANE_CHANGE_UP, proba);
 	}
 
-	@getter (PROBA_RESPECT_PRIORITIES)
+	@getter(PROBA_RESPECT_PRIORITIES)
 	public static double getRespectPriorities(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_RESPECT_PRIORITIES);
 	}
 
-	@setter (PROBA_RESPECT_PRIORITIES)
+	@setter(PROBA_RESPECT_PRIORITIES)
 	public static void setRespectPriorities(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_RESPECT_PRIORITIES, proba);
 	}
 
-	@getter (PROBA_BLOCK_NODE)
+	@getter(PROBA_BLOCK_NODE)
 	public static double getProbaBlockNode(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_BLOCK_NODE);
 	}
 
-	@setter (PROBA_BLOCK_NODE)
+	@setter(PROBA_BLOCK_NODE)
 	public static void setProbaBlockNode(final IAgent agent, final Double proba) {
 		agent.setAttribute(PROBA_BLOCK_NODE, proba);
 	}
 
-	@getter (PROBA_RESPECT_STOPS)
+	@getter(PROBA_RESPECT_STOPS)
 	public static List<Double> getRespectStops(final IAgent agent) {
 		return (List<Double>) agent.getAttribute(PROBA_RESPECT_STOPS);
 	}
 
-	@setter (PROBA_RESPECT_STOPS)
+	@setter(PROBA_RESPECT_STOPS)
 	public static void setRespectStops(final IAgent agent, final List<Boolean> probas) {
 		agent.setAttribute(PROBA_RESPECT_STOPS, probas);
 	}
 
 	@Deprecated
-	@getter (ON_LINKED_ROAD)
+	@getter(ON_LINKED_ROAD)
 	public static boolean getOnLinkedRoad(final IAgent agent) {
 		return isUsingLinkedRoad(agent);
 	}
 
 	@Deprecated
-	@setter (ON_LINKED_ROAD)
+	@setter(ON_LINKED_ROAD)
 	public static void setOnLinkedRoad(final IAgent agent, final Boolean onLinkedRoad) {
 		// read-only
 	}
 
-	@getter (USING_LINKED_ROAD)
+	@getter(USING_LINKED_ROAD)
 	public static boolean isUsingLinkedRoad(IAgent driver) {
 		IAgent currentRoad = getCurrentRoad(driver);
 		if (currentRoad == null) return false;
@@ -445,111 +480,111 @@ public class DrivingSkill extends MovingSkill {
 		return startingLane > numLanesCurrent - numLanesOccupied;
 	}
 
-	@setter (USING_LINKED_ROAD)
+	@setter(USING_LINKED_ROAD)
 	public static void setUsingLinkedRoad(IAgent driver, boolean usingLinkedRoad) {
 		// read-only
 	}
 
-	@getter (LINKED_LANE_LIMIT)
+	@getter(LINKED_LANE_LIMIT)
 	public static int getLinkedLaneLimit(IAgent driver) {
 		return (int) driver.getAttribute(LINKED_LANE_LIMIT);
 	}
 
-	@setter (LINKED_LANE_LIMIT)
+	@setter(LINKED_LANE_LIMIT)
 	public static void setLinkedLaneLimit(IAgent driver, int linkedLaneLimit) {
 		driver.setAttribute(LINKED_LANE_LIMIT, linkedLaneLimit);
 	}
 
-	@getter (RIGHT_SIDE_DRIVING)
+	@getter(RIGHT_SIDE_DRIVING)
 	public static boolean getRightSideDriving(final IAgent agent) {
 		return (Boolean) agent.getAttribute(RIGHT_SIDE_DRIVING);
 	}
 
-	@setter (RIGHT_SIDE_DRIVING)
+	@setter(RIGHT_SIDE_DRIVING)
 	public static void setRightSideDriving(final IAgent agent, final Boolean isRight) {
 		agent.setAttribute(RIGHT_SIDE_DRIVING, isRight);
 	}
 
 	@Deprecated
-	@getter (SECURITY_DISTANCE_COEFF)
+	@getter(SECURITY_DISTANCE_COEFF)
 	public static double getSecurityDistanceCoeff(final IAgent agent) {
 		return (Double) agent.getAttribute(SECURITY_DISTANCE_COEFF);
 	}
 
 	@Deprecated
-	@setter (SECURITY_DISTANCE_COEFF)
+	@setter(SECURITY_DISTANCE_COEFF)
 	public static void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
 		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
 	}
 
-	@getter (SAFETY_DISTANCE_COEFF)
+	@getter(SAFETY_DISTANCE_COEFF)
 	public static double getSafetyDistanceCoeff(final IAgent agent) {
 		return (Double) agent.getAttribute(SAFETY_DISTANCE_COEFF);
 	}
 
-	@setter (SAFETY_DISTANCE_COEFF)
+	@setter(SAFETY_DISTANCE_COEFF)
 	public static void setSafetyDistanceCoeff(final IAgent agent, final double ls) {
 		agent.setAttribute(SAFETY_DISTANCE_COEFF, ls);
 	}
 
-	@getter (CURRENT_ROAD)
+	@getter(CURRENT_ROAD)
 	public static IAgent getCurrentRoad(final IAgent agent) {
 		return (IAgent) agent.getAttribute(CURRENT_ROAD);
 	}
 
-	@getter (VEHICLE_LENGTH)
+	@getter(VEHICLE_LENGTH)
 	public static double getVehicleLength(final IAgent agent) {
 		return (Double) agent.getAttribute(VEHICLE_LENGTH);
 	}
 
 	@Deprecated
-	@getter (CURRENT_LANE)
+	@getter(CURRENT_LANE)
 	public static int getCurrentLane(final IAgent agent) {
 		return (int) agent.getAttribute(STARTING_LANE);
 	}
 
 	@Deprecated
-	@setter (CURRENT_LANE)
+	@setter(CURRENT_LANE)
 	public static void setCurrentLane(IAgent agent, int newLane) {
 		agent.setAttribute(STARTING_LANE, newLane);
 	}
 
-	@getter (STARTING_LANE)
+	@getter(STARTING_LANE)
 	public static int getStartingLane(final IAgent agent) {
 		return (int) agent.getAttribute(STARTING_LANE);
 	}
 
-	@getter (DISTANCE_TO_GOAL)
+	@getter(DISTANCE_TO_GOAL)
 	public static double getDistanceToGoal(final IAgent agent) {
 		return (Double) agent.getAttribute(DISTANCE_TO_GOAL);
 	}
 
-	@getter (MIN_SECURITY_DISTANCE)
+	@getter(MIN_SECURITY_DISTANCE)
 	public static double getMinSecurityDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
 	}
 
-	@setter (MIN_SECURITY_DISTANCE)
+	@setter(MIN_SECURITY_DISTANCE)
 	public static void setMinSecDistance(final IAgent agent, final double msd) {
 		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
 	}
 
-	@getter (MIN_SAFETY_DISTANCE)
+	@getter(MIN_SAFETY_DISTANCE)
 	public static double getMinSafetyDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(MIN_SAFETY_DISTANCE);
 	}
 
-	@setter (DISTANCE_TO_GOAL)
+	@setter(DISTANCE_TO_GOAL)
 	public static void setDistanceToGoal(final IAgent agent, final double dg) {
 		agent.setAttribute(DISTANCE_TO_GOAL, dg);
 	}
 
-	@getter (NUM_LANES_OCCUPIED)
+	@getter(NUM_LANES_OCCUPIED)
 	public static Integer getNumLanesOccupied(IAgent agent) {
 		return (Integer) agent.getAttribute(NUM_LANES_OCCUPIED);
 	}
 
-	@setter (NUM_LANES_OCCUPIED)
+	@setter(NUM_LANES_OCCUPIED)
 	public static void setNumLanesOccupied(IAgent agent, Integer value) {
 		agent.setAttribute(NUM_LANES_OCCUPIED, value);
 	}
