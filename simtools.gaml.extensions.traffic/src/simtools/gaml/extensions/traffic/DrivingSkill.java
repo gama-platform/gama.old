@@ -122,7 +122,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("the coefficient for the computation of the the min distance between two drivers (according to the vehicle speed - security_distance =max(min_security_distance, security_distance_coeff `*` min(self.real_speed, other.real_speed) )")
 	),
 	@variable(
-		name = "min_security_distance",
+		name = DrivingSkill.MIN_SECURITY_DISTANCE,
 		type = IType.FLOAT,
 		init = "0.5",
 		doc = @doc(
@@ -131,19 +131,19 @@ import ummisco.gama.dev.utils.DEBUG;
 		)
 	),
 	@variable(
-		name = "min_safety_distance",
+		name = DrivingSkill.MIN_SAFETY_DISTANCE,
 		type = IType.FLOAT,
 		init = "0.5",
 		doc = @doc("the minimal distance to another driver")
 	),
 	@variable(
-		name = "current_lane",
+		name = DrivingSkill.CURRENT_LANE,
 		type = IType.INT,
 		init = "0",
 		doc = @doc("the current lane on which the agent is")
 	),
 	@variable(
-		name = "starting_lane",
+		name = DrivingSkill.STARTING_LANE,
 		type = IType.INT,
 		init = "0",
 		doc = @doc("the lane with the smallest index that the vehicle is in")
@@ -158,25 +158,25 @@ import ummisco.gama.dev.utils.DEBUG;
 		)
 	),
 	@variable(
-		name = "vehicle_length",
+		name = DrivingSkill.VEHICLE_LENGTH,
 		type = IType.FLOAT,
 		init = "0.0",
 		doc = @doc("the length of the vehicle (in meters)")
 	),
 	@variable(
-		name = "speed_coeff",
+		name = DrivingSkill.SPEED_COEFF,
 		type = IType.FLOAT,
 		init = "1.0",
 		doc = @doc("speed coefficient for the speed that the driver want to reach (according to the max speed of the road)")
 	),
 	@variable(
-		name = "max_acceleration",
+		name = DrivingSkill.MAX_ACCELERATION,
 		type = IType.FLOAT,
 		init = "0.5",
 		doc = @doc("maximum acceleration of the car for a cycle")
 	),
 	@variable(
-		name = "current_road",
+		name = DrivingSkill.CURRENT_ROAD,
 		type = IType.AGENT,
 		doc = @doc("the road which the vehicle is currently on")
 	),
@@ -299,20 +299,20 @@ public class DrivingSkill extends MovingSkill {
 	public final static String CURRENT_INDEX = "current_index";
 	public final static String FINAL_TARGET = "final_target";
 	public final static String CURRENT_PATH = "current_path";
-	public final static String ACCELERATION_MAX = "max_acceleration";
+	public final static String MAX_ACCELERATION = "max_acceleration";
 	public final static String SPEED_COEFF = "speed_coeff";
 	public final static String MAX_SPEED = "max_speed";
 	public final static String SEGMENT_INDEX = "segment_index_on_road";
 	public final static String NUM_LANES_OCCUPIED = "num_lanes_occupied";
 
-	@getter(ACCELERATION_MAX)
+	@getter(MAX_ACCELERATION)
 	public static double getAccelerationMax(final IAgent agent) {
-		return (Double) agent.getAttribute(ACCELERATION_MAX);
+		return (Double) agent.getAttribute(MAX_ACCELERATION);
 	}
 
-	@setter(ACCELERATION_MAX)
+	@setter(MAX_ACCELERATION)
 	public static void setAccelerationMax(final IAgent agent, final Double val) {
-		agent.setAttribute(ACCELERATION_MAX, val);
+		agent.setAttribute(MAX_ACCELERATION, val);
 	}
 
 	@getter(SPEED_COEFF)

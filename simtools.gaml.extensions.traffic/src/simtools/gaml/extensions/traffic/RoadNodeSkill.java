@@ -28,31 +28,31 @@ import msi.gaml.types.IType;
 
 @vars({
 	@variable(
-		name = "roads_in",
+		name = RoadNodeSkill.ROADS_IN,
 		type = IType.LIST,
 		of = IType.AGENT,
 		doc = @doc("the list of input roads")
 	),
 	@variable(
-		name = "priority_roads",
+		name = RoadNodeSkill.PRIORITY_ROADS,
 		type = IType.LIST,
 		of = IType.AGENT,
 		doc = @doc("the list of priority roads")
 	),
 	@variable(
-		name = "roads_out",
+		name = RoadNodeSkill.ROADS_OUT,
 		type = IType.LIST,
 		of = IType.AGENT,
 		doc = @doc("the list of output roads")
 	),
 	@variable(
-		name = "stop",
+		name = RoadNodeSkill.STOP,
 		type = IType.LIST,
 		of = IType.LIST,
 		doc = @doc("define for each type of stop, the list of concerned roads")
 	),
 	@variable(
-		name = "block",
+		name = RoadNodeSkill.BLOCK,
 		type = IType.MAP,
 		doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")
 	)
