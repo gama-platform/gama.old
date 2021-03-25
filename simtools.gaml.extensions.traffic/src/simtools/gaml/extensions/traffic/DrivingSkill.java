@@ -12,6 +12,7 @@ package simtools.gaml.extensions.traffic;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.locationtech.jts.geom.Coordinate;
+
+import com.google.common.collect.Range;
+import com.google.common.primitives.Ints;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
@@ -202,6 +206,18 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("the maximum number of linked lanes that the vehicle can use; the default value is -1, i.e. the vehicle can use all available linked lanes")
 	),
 	@variable(
+		name = DrivingSkill.LANE_CHANGE_RANGE,
+		type = IType.INT,
+		init = "1",
+		doc = @doc("the maximum number of lanes that the vehicle can change during segment traversal")
+	),
+	@variable(
+		name = DrivingSkill.LANE_CHANGE_PRIORITY_RANDOMIZED,
+		type = IType.BOOL,
+		init = "false",
+		doc = @doc("whether to randomize the lane choices when changing lane")
+	),
+	@variable(
 		name = DrivingSkill.PROBA_LANE_CHANGE_UP,
 		type = IType.FLOAT,
 		init = "1.0",
@@ -304,6 +320,8 @@ public class DrivingSkill extends MovingSkill {
 	public final static String MAX_SPEED = "max_speed";
 	public final static String SEGMENT_INDEX = "segment_index_on_road";
 	public final static String NUM_LANES_OCCUPIED = "num_lanes_occupied";
+	public final static String LANE_CHANGE_RANGE = "lane_change_range";
+	public final static String LANE_CHANGE_PRIORITY_RANDOMIZED = "lane_change_priority_randomized";
 
 	@getter(MAX_ACCELERATION)
 	public static double getAccelerationMax(final IAgent agent) {
@@ -493,6 +511,16 @@ public class DrivingSkill extends MovingSkill {
 	@setter(LINKED_LANE_LIMIT)
 	public static void setLinkedLaneLimit(IAgent driver, int linkedLaneLimit) {
 		driver.setAttribute(LINKED_LANE_LIMIT, linkedLaneLimit);
+	}
+
+	@getter(LANE_CHANGE_RANGE)
+	public static int getLaneChangeRange(IAgent driver) {
+		return (int) driver.getAttribute(LANE_CHANGE_RANGE);
+	}
+
+	@getter(LANE_CHANGE_PRIORITY_RANDOMIZED)
+	public static boolean isLaneChangePriorityRandomized(IAgent driver) {
+		return (boolean) driver.getAttribute(LANE_CHANGE_PRIORITY_RANDOMIZED);
 	}
 
 	@getter(RIGHT_SIDE_DRIVING)
@@ -1335,7 +1363,7 @@ public class DrivingSkill extends MovingSkill {
 					double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
 						getDistanceToGoal(otherDriver) : distance2D((GamaPoint) otherDriver.getLocation(), targetLoc);
 					double vLa = 0.5 * vL + 0.5 * getVehicleLength(otherDriver);
-					if (length - otherDistToGoal < vLa) { 
+					if (length - otherDistToGoal < vLa) {
 						return distanceToGoal - (vLa - (length - otherDistToGoal));
 					}
 				}
@@ -1345,7 +1373,9 @@ public class DrivingSkill extends MovingSkill {
 
 		// finding the closest driver ahead
 		IAgent closestDriverAhead = null;
-		double minDiff = Double.MAX_VALUE;
+		IAgent closestDriverBehind = null;
+		double minDiffAhead = Double.MAX_VALUE;
+		double minDiffBehind = Double.MAX_VALUE;
 		for (IAgent otherDriver : sameSegmentDrivers) {
 			if (otherDriver == driver || otherDriver == null || otherDriver.dead()) {
 				continue;
@@ -1353,19 +1383,27 @@ public class DrivingSkill extends MovingSkill {
 			double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
 				getDistanceToGoal(otherDriver) : distance2D((GamaPoint) otherDriver.getLocation(), targetLoc);
 			// compute diff this way is faster than computing euclidean dist between two vehicles
+			// TODO: this diff should include vehicle lengths
 			double diff = distanceToGoal - otherDistToGoal;
-			if (diff <= 0.0) {
+			if (diff <= 0.0 && -diff < minDiffBehind) {
 				// the other driver is behind
-				continue;
-			}
-			if (diff < minDiff) {
-				minDiff = diff;
+				minDiffBehind = -diff;
+				closestDriverBehind = otherDriver;
+			} else if (diff > 0 && diff < minDiffAhead) {
+				minDiffAhead = diff;
 				closestDriverAhead = otherDriver;
 			}
 		}
 
+		// avoid crashing with the closest vehicle behind
+		if (closestDriverBehind != null && !closestDriverBehind.dead()) {
+			double requiredSpace = 0.5 * vL + 0.5 * getVehicleLength(closestDriverBehind);
+			// returning -1 ensures that the vehicle will not switch to this lane
+			if (minDiffBehind < requiredSpace) return -1;
+		}
+
 		// the segment ahead is clear
-		if (closestDriverAhead == null) {
+		if (closestDriverAhead == null || closestDriverAhead.dead()) {
 			if (nextSegment && moreSegment) {
 				double length = currentRoad.getInnerGeometry().getCoordinates()[segment + 1]
 						.distance(currentRoad.getInnerGeometry().getCoordinates()[segment + 2]);
@@ -1389,7 +1427,7 @@ public class DrivingSkill extends MovingSkill {
 			secDistance = Math.max(minSafetyDist,
 					safetyDistCoeff * Math.max(getRealSpeed(driver), getRealSpeed(closestDriverAhead)));
 		}
-		double realDist = Math.min(remainingDist, minDiff - secDistance - 0.5 * vL - 0.5 * getVehicleLength(closestDriverAhead));
+		double realDist = Math.min(remainingDist, minDiffAhead - secDistance - 0.5 * vL - 0.5 * getVehicleLength(closestDriverAhead));
 
 		// TODO: what is this?
 		// realDist = Math.max(0.0, (int) (min_safety_distance + realDist * 1000) / 1000.0);
@@ -1459,6 +1497,9 @@ public class DrivingSkill extends MovingSkill {
 	 * Chooses the lanes such that the vehicle can travel the furthest, and then moves the driver
 	 * across those lanes (i.e. updates driver's starting lane and segment).
 	 *
+	 * The default order of lanes to consider (i.e. when `lane_change_priority_randomized=false`) is:
+	 * 		lower -> current -> upper
+	 *
 	 * @param scope
 	 * @param remainingDist the remaining distance
 	 * @param segment the segment that the vehicle is currently in
@@ -1470,6 +1511,7 @@ public class DrivingSkill extends MovingSkill {
 		Double probaChangeLaneDown = getProbaLaneChangeDown(driver);
 		Double probaUseLinkedRoad = getProbaUseLinkedRoad(driver);
 		int numLanesOccupied = getNumLanesOccupied(driver);
+		int laneChangeRange = getLaneChangeRange(driver);
 
 		int startingLane = getStartingLane(driver);
 		IAgent currentRoad = getCurrentRoad(driver);
@@ -1477,66 +1519,45 @@ public class DrivingSkill extends MovingSkill {
 		int numCurrentLanes = (Integer) currentRoad.getAttribute(RoadSkill.LANES);
 		int numLinkedLanes = (linkedRoad != null) ? (int) linkedRoad.getAttribute(RoadSkill.LANES) : 0;
 		int linkedLaneLimit = getLinkedLaneLimit(driver);
-		linkedLaneLimit = linkedLaneLimit != -1 ? linkedLaneLimit : numLinkedLanes;
+		linkedLaneLimit = (linkedLaneLimit != -1 && numLinkedLanes > linkedLaneLimit) ?
+				linkedLaneLimit : numLinkedLanes;
 
+		List<Integer> laneDiffs = IntStream.rangeClosed(-laneChangeRange, laneChangeRange)
+				.boxed().collect(Collectors.toCollection(ArrayList::new));
+		if (isLaneChangePriorityRandomized(driver)) {
+			Collections.shuffle(laneDiffs);
+		}
 		int bestStartingLane = startingLane;
-		double tmpDist;
 		double maxDist = 0;
 
-		// stay in lane
-		tmpDist = computeDistToVehicleAhead(scope, remainingDist, startingLane, segment);
-		if (tmpDist == remainingDist) {
-			updateLaneSegment(scope, startingLane, segment);
-			return remainingDist;
-		}
-		if (tmpDist >= maxDist) {
-			maxDist = tmpDist;
-			bestStartingLane = startingLane;
-		}
+		for (int i : laneDiffs) {
+			int tmpStartingLane = startingLane + i;
+			boolean canStayInSameLane = tmpStartingLane == startingLane;
+			boolean canChangeDown = tmpStartingLane >= 0 && tmpStartingLane < startingLane &&
+					scope.getRandom().next() < probaChangeLaneDown;
+			// first two conditions check the valid upper lane idxs, the 3rd one is to restrict moving from current road to linked road
+			boolean canChangeUp = tmpStartingLane > startingLane &&
+					 tmpStartingLane <= numCurrentLanes + linkedLaneLimit - numLanesOccupied &&
+					 !(startingLane <= numCurrentLanes - numLanesOccupied && tmpStartingLane > numCurrentLanes - numLanesOccupied) &&
+					 scope.getRandom().next() < probaChangeLaneUp;
+			boolean canChangeToLinkedRoad = linkedRoad != null &&
+					tmpStartingLane > startingLane &&
+					tmpStartingLane == numCurrentLanes - numLanesOccupied + 1 &&
+					scope.getRandom().next() < probaUseLinkedRoad;
 
-		// change to lower lane
-		if (startingLane > 0 && scope.getRandom().next() < probaChangeLaneDown) {
-			tmpDist = computeDistToVehicleAhead(scope, remainingDist, startingLane - 1, segment);
-			if (tmpDist == remainingDist) {
-				updateLaneSegment(scope, startingLane - 1, segment);
-				return remainingDist;
-			}
-			if (tmpDist > maxDist) {
-				bestStartingLane = startingLane - 1;
-				maxDist = tmpDist;
-			}
-		}
-
-		// change to upper lane, only within a road
-		if ((startingLane < numCurrentLanes - numLanesOccupied ||
-				(startingLane > numCurrentLanes - numLanesOccupied && startingLane < numCurrentLanes + linkedLaneLimit - numLanesOccupied))
-				&& scope.getRandom().next() < probaChangeLaneUp) {
-			tmpDist = computeDistToVehicleAhead(scope, remainingDist, startingLane + 1, segment);
-			if (tmpDist == remainingDist) {
-				updateLaneSegment(scope, startingLane + 1, segment);
-				return remainingDist;
-			}
-			if (tmpDist > maxDist) {
-				maxDist = tmpDist;
-				bestStartingLane = startingLane + 1;
+			if (canStayInSameLane || canChangeDown || canChangeUp || canChangeToLinkedRoad) {
+				double tmpDist = computeDistToVehicleAhead(scope, remainingDist, tmpStartingLane, segment);
+				// if lane is totally clear then just choose it and return immediately
+				if (tmpDist == remainingDist) {
+					updateLaneSegment(scope, tmpStartingLane, segment);
+					return remainingDist;
+				}
+				if (tmpDist > maxDist) {
+					maxDist = tmpDist;
+					bestStartingLane = tmpStartingLane;
+				}
 			}
 		}
-
-		// change to upper lane, but move from current road to linked road
-		if (linkedRoad != null &&
-				startingLane == numCurrentLanes - numLanesOccupied &&
-				scope.getRandom().next() < probaUseLinkedRoad) {
-			tmpDist = computeDistToVehicleAhead(scope, remainingDist, startingLane + 1, segment);
-			if (tmpDist == remainingDist) {
-				updateLaneSegment(scope, startingLane + 1, segment);
-				return remainingDist;
-			}
-			if (tmpDist > maxDist) {
-				maxDist = tmpDist;
-				bestStartingLane = startingLane + 1;
-			}
-		}
-
 		updateLaneSegment(scope, bestStartingLane, segment);
 		return maxDist;
 	}
