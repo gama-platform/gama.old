@@ -22,9 +22,6 @@ import java.util.stream.IntStream;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import com.google.common.collect.Range;
-import com.google.common.primitives.Ints;
-
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.AbstractAgent;
@@ -1382,24 +1379,25 @@ public class DrivingSkill extends MovingSkill {
 			}
 			double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
 				getDistanceToGoal(otherDriver) : distance2D((GamaPoint) otherDriver.getLocation(), targetLoc);
-			// compute diff this way is faster than computing euclidean dist between two vehicles
-			// TODO: this diff should include vehicle lengths
-			double diff = distanceToGoal - otherDistToGoal;
-			if (diff <= 0.0 && -diff < minDiffBehind) {
-				// the other driver is behind
-				minDiffBehind = -diff;
+			// NOTE: compute diffence this way is faster than computing euclidean dist between two vehicles,
+			// and it provides order of vehicles as well.
+			// difference between two centroids of the vehicles
+			double pointDiff = distanceToGoal - otherDistToGoal;
+			// taking into account vehicle lengths
+			double realDiff = Math.abs(pointDiff) - 0.5 * vL - 0.5 * getVehicleLength(otherDriver);
+			if (pointDiff <= 0.0 && realDiff < minDiffBehind) {
+				minDiffBehind = realDiff;
 				closestDriverBehind = otherDriver;
-			} else if (diff > 0 && diff < minDiffAhead) {
-				minDiffAhead = diff;
+			} else if (pointDiff > 0 && realDiff < minDiffAhead) {
+				minDiffAhead = realDiff;
 				closestDriverAhead = otherDriver;
 			}
 		}
 
 		// avoid crashing with the closest vehicle behind
 		if (closestDriverBehind != null && !closestDriverBehind.dead()) {
-			double requiredSpace = 0.5 * vL + 0.5 * getVehicleLength(closestDriverBehind);
 			// returning -1 ensures that the vehicle will not switch to this lane
-			if (minDiffBehind < requiredSpace) return -1;
+			if (minDiffBehind < 0) return -1;
 		}
 
 		// the segment ahead is clear
@@ -1427,7 +1425,7 @@ public class DrivingSkill extends MovingSkill {
 			secDistance = Math.max(minSafetyDist,
 					safetyDistCoeff * Math.max(getRealSpeed(driver), getRealSpeed(closestDriverAhead)));
 		}
-		double realDist = Math.min(remainingDist, minDiffAhead - secDistance - 0.5 * vL - 0.5 * getVehicleLength(closestDriverAhead));
+		double realDist = Math.min(remainingDist, minDiffAhead - secDistance);
 
 		// TODO: what is this?
 		// realDist = Math.max(0.0, (int) (min_safety_distance + realDist * 1000) / 1000.0);
