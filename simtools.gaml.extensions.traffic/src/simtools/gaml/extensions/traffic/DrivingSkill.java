@@ -1538,7 +1538,7 @@ public class DrivingSkill extends MovingSkill {
 					 tmpStartingLane <= numCurrentLanes + linkedLaneLimit - numLanesOccupied &&
 					 !(startingLane <= numCurrentLanes - numLanesOccupied && tmpStartingLane > numCurrentLanes - numLanesOccupied) &&
 					 scope.getRandom().next() < probaChangeLaneUp;
-			boolean canChangeToLinkedRoad = linkedRoad != null &&
+			boolean canChangeToLinkedRoad = linkedRoad != null && linkedLaneLimit > 0 &&
 					tmpStartingLane > startingLane &&
 					tmpStartingLane == numCurrentLanes - numLanesOccupied + 1 &&
 					scope.getRandom().next() < probaUseLinkedRoad;
