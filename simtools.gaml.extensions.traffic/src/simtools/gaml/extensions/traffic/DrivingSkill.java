@@ -616,23 +616,6 @@ public class DrivingSkill extends MovingSkill {
 		agent.setAttribute(NUM_LANES_OCCUPIED, value);
 	}
 
-	public Double primAdvancedFollow(final IScope scope, final IAgent driver, final double s, final double t,
-			final IPath path) throws GamaRuntimeException {
-		final double maxDist = s * t;
-
-		if (maxDist == 0) { return 0.0; }
-		double tps = 0;
-		tps = t * moveToNextLocAlongPathOSM(scope, path, maxDist);
-
-		if (tps < t) {
-			driver.setAttribute(IKeyword.REAL_SPEED, this.getRealSpeed(driver) / (t - tps));
-		} else {
-			driver.setAttribute(IKeyword.REAL_SPEED, 0.0);
-		}
-
-		return tps;
-	}
-
 	@action (
 			name = "advanced_follow_driving",
 			args = { @arg (
@@ -660,11 +643,12 @@ public class DrivingSkill extends MovingSkill {
 					returns = "the remaining time",
 					examples = { @example ("do osm_follow path: the_path on: road_network;") }))
 	public Double primAdvancedFollow(final IScope scope) throws GamaRuntimeException {
+		// TODO: path is not used anywhere in this action
 		final IAgent agent = getCurrentAgent(scope);
 		final Double s = scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
 		final Double t = scope.hasArg("time") ? scope.getFloatArg("time") : scope.getClock().getStepInSeconds();
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
-		return primAdvancedFollow(scope, agent, s, t, path);
+		return moveToNextLocAlongPathOSM(scope, s, t, path);
 	}
 
 	@action (
@@ -985,7 +969,7 @@ public class DrivingSkill extends MovingSkill {
 			actionSC.setRuntimeArgs(scope, argsSC);
 			final double speed = (Double) actionSC.executeOn(scope);
 			setSpeed(driver, speed);
-			remainingTime = primAdvancedFollow(scope, driver, speed, remainingTime, null);
+			remainingTime = moveToNextLocAlongPathOSM(scope, speed, remainingTime, null);
 
 			if (remainingTime > 0.0) {
 				IAgent newRoad = null;
@@ -1050,6 +1034,7 @@ public class DrivingSkill extends MovingSkill {
 
 		// get the amount of time that the driver is able to travel in one simulation step
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
+		double timeSpentMoving = Double.MAX_VALUE;
 		// main loop to move the agent until the simulation step ends
 		while (true) {
 			ILocation loc = driver.getLocation();
@@ -1062,14 +1047,6 @@ public class DrivingSkill extends MovingSkill {
 			// intermediate target check
 			if (remainingTime > 0.0 && loc.equals(target)) {
 				int currEdgeIdx = getCurrentIndex(driver);
-				// TODO: this seems to be checking if driver has reached final target? (already checked above)
-				// edit: maybe it is safeguarding the case when an invalid final target is used
-				// commented out for now
-				// if (currentTargetIdx >= path.getEdgeList().size() - 1) {
-				// 	setCurrentPath(driver, (IPath) null);
-				// 	setFinalTarget(driver, null);
-				// 	return;
-				// }
 
 				// get the next road in the path
 				IAgent newRoad = (IAgent) path.getEdgeList().get(currEdgeIdx + 1);
@@ -1099,8 +1076,10 @@ public class DrivingSkill extends MovingSkill {
 				}
 			}
 
-			// LOOP BREAK CONDITION
-			if (remainingTime <= 0.0) break;
+			// if time is up or the vehicle can not move any further, we are done
+			if (remainingTime < 1e-8 || timeSpentMoving < 1e-8) {
+				break;
+			}
 
 			IAgent road = getCurrentRoad(driver);
 			// compute the desired speed
@@ -1109,8 +1088,9 @@ public class DrivingSkill extends MovingSkill {
 			double desiredSpeed = (Double) actionSC.executeOn(scope);
 			setSpeed(driver, desiredSpeed);
 
-			// move towards the current target and compute the remaining time
-			remainingTime = primAdvancedFollow(scope, driver, desiredSpeed, remainingTime, path);
+			// move towards the end of the road
+			timeSpentMoving = moveToNextLocAlongPathOSM(scope, desiredSpeed, remainingTime, path);
+			remainingTime -= timeSpentMoving;
 		}
 	}
 
@@ -1575,11 +1555,12 @@ public class DrivingSkill extends MovingSkill {
 	 * Moves the driver from segment to segment on the current road.
 	 *
 	 * @param scope
-	 * @param path
-	 * @param initRemainingDist
-	 * @return TODO
+	 * @param speed the desired speed of the vehicle
+	 * @param time left until a simulation step is finished
+	 * @param path no idea what it does for now
+	 * @return the actual time that the vehicle spent moving
 	 */
-	private double moveToNextLocAlongPathOSM(IScope scope, IPath path, double initRemainingDist) {
+	private double moveToNextLocAlongPathOSM(IScope scope, double speed, double remainingTime, IPath path) {
 		IAgent driver = getCurrentAgent(scope);
 		IAgent currentRoad = getCurrentRoad(driver);
 		GamaPoint currentLocation = (GamaPoint) driver.getLocation().copy(scope);
@@ -1587,8 +1568,15 @@ public class DrivingSkill extends MovingSkill {
 		int indexSegment = getSegmentIndex(driver);
 		int endIndexSegment = GeometryUtils.getPointsOf(currentRoad).length - 1;
 
-		double remainingDist = initRemainingDist;
-		double realDistance = 0;
+		// the maximum distance that the vehicle can move, if it does not get blocked
+		// by any other vehicle
+		double maxDist = speed * remainingTime;
+		if (maxDist < 1e-8) {
+			return 0.0;
+		}
+		double remainingDist = maxDist;
+		double totalDistMoved = 0;
+
 		IShape line = currentRoad.getGeometry();
 		Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 		GamaPoint pt = null;
@@ -1596,29 +1584,27 @@ public class DrivingSkill extends MovingSkill {
 			pt = new GamaPoint(coords[j + 1]);
 			double distToGoal = pt.euclidianDistanceTo(currentLocation);
 			setDistanceToGoal(driver, distToGoal);
-			// TODO: refactor this confusing distance vars
-			remainingDist = avoidCollision(scope, remainingDist, indexSegment);
+			// NOTE: distMoved is always <= remainingDist
+			double distMoved = avoidCollision(scope, remainingDist, indexSegment);
 
 			// if can not reach the end of the segment, we are done
-			if (remainingDist < distToGoal) {
-				double ratio = remainingDist / distToGoal;
+			if (distMoved < distToGoal) {
+				double ratio = distMoved / distToGoal;
 				double newX = currentLocation.getX() + ratio * (pt.getX() - currentLocation.getX());
 				double newY = currentLocation.getY() + ratio * (pt.getY() - currentLocation.getY());
 				GamaPoint npt = new GamaPoint(newX, newY);
-				realDistance += currentLocation.euclidianDistanceTo(npt);
+				totalDistMoved += currentLocation.euclidianDistanceTo(npt);
 				currentLocation.setLocation(npt);
-				remainingDist = 0;
 				break;
 			}
 			// else continue to the next segment
 			currentLocation = pt;
-			remainingDist = remainingDist - distToGoal;
-			realDistance += distToGoal;
-			// TODO: isn't j and indexsegment the same thing?
+			remainingDist -= distToGoal;
+			totalDistMoved += distToGoal;
 			if (j == endIndexSegment) {
 				break;
 			}
-			indexSegment++;
+			indexSegment += 1;
 		}
 		if (pt != null) {
 			setDistanceToGoal(driver, pt.distance(currentLocation));
@@ -1628,9 +1614,9 @@ public class DrivingSkill extends MovingSkill {
 			path.setSource(currentLocation.copy(scope));
 		}
 
-		// TODO: hmm, I suppose this is intended for simulation step = 1 s
-		driver.setAttribute(IKeyword.REAL_SPEED, realDistance);
-		return initRemainingDist == 0.0 ? 1.0 : remainingDist / initRemainingDist;
+		driver.setAttribute(IKeyword.REAL_SPEED, totalDistMoved / remainingTime);
+
+		return remainingTime * (totalDistMoved / maxDist);
 	}
 	
 	@action (
