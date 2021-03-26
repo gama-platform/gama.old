@@ -22,6 +22,8 @@ import java.util.stream.IntStream;
 
 import org.locationtech.jts.geom.Coordinate;
 
+import com.google.common.collect.Range;
+
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.AbstractAgent;
@@ -203,10 +205,10 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("the maximum number of linked lanes that the vehicle can use; the default value is -1, i.e. the vehicle can use all available linked lanes")
 	),
 	@variable(
-		name = DrivingSkill.LANE_CHANGE_RANGE,
+		name = DrivingSkill.LANE_CHANGE_LIMIT,
 		type = IType.INT,
-		init = "1",
-		doc = @doc("the maximum number of lanes that the vehicle can change during segment traversal")
+		init = "-1",
+		doc = @doc("the maximum number of lanes that the vehicle can change during a simulation step")
 	),
 	@variable(
 		name = DrivingSkill.LANE_CHANGE_PRIORITY_RANDOMIZED,
@@ -317,7 +319,7 @@ public class DrivingSkill extends MovingSkill {
 	public final static String MAX_SPEED = "max_speed";
 	public final static String SEGMENT_INDEX = "segment_index_on_road";
 	public final static String NUM_LANES_OCCUPIED = "num_lanes_occupied";
-	public final static String LANE_CHANGE_RANGE = "lane_change_range";
+	public final static String LANE_CHANGE_LIMIT = "lane_change_limit";
 	public final static String LANE_CHANGE_PRIORITY_RANDOMIZED = "lane_change_priority_randomized";
 
 	@getter(MAX_ACCELERATION)
@@ -510,9 +512,9 @@ public class DrivingSkill extends MovingSkill {
 		driver.setAttribute(LINKED_LANE_LIMIT, linkedLaneLimit);
 	}
 
-	@getter(LANE_CHANGE_RANGE)
-	public static int getLaneChangeRange(IAgent driver) {
-		return (int) driver.getAttribute(LANE_CHANGE_RANGE);
+	@getter(LANE_CHANGE_LIMIT)
+	public static int getLaneChangeLimit(IAgent driver) {
+		return (int) driver.getAttribute(LANE_CHANGE_LIMIT);
 	}
 
 	@getter(LANE_CHANGE_PRIORITY_RANDOMIZED)
@@ -1509,7 +1511,7 @@ public class DrivingSkill extends MovingSkill {
 		Double probaChangeLaneDown = getProbaLaneChangeDown(driver);
 		Double probaUseLinkedRoad = getProbaUseLinkedRoad(driver);
 		int numLanesOccupied = getNumLanesOccupied(driver);
-		int laneChangeRange = getLaneChangeRange(driver);
+		int laneChangeLimit = getLaneChangeLimit(driver);
 
 		int startingLane = getStartingLane(driver);
 		IAgent currentRoad = getCurrentRoad(driver);
@@ -1520,16 +1522,25 @@ public class DrivingSkill extends MovingSkill {
 		linkedLaneLimit = (linkedLaneLimit != -1 && numLinkedLanes > linkedLaneLimit) ?
 				linkedLaneLimit : numLinkedLanes;
 
-		List<Integer> laneDiffs = IntStream.rangeClosed(-laneChangeRange, laneChangeRange)
+		Range<Integer> limitedLaneRange;
+		if (laneChangeLimit == -1) {
+			// can change to all available lanes
+			limitedLaneRange = Range.closed(0, numCurrentLanes + linkedLaneLimit - numLanesOccupied);
+		} else {
+			limitedLaneRange = Range.closed(startingLane - laneChangeLimit, startingLane + laneChangeLimit);
+		}
+		List<Integer> allLanes = IntStream.rangeClosed(0, numCurrentLanes + linkedLaneLimit - numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(ArrayList::new));
 		if (isLaneChangePriorityRandomized(driver)) {
-			Collections.shuffle(laneDiffs);
+			Collections.shuffle(allLanes);
 		}
 		int bestStartingLane = startingLane;
 		double maxDist = 0;
 
-		for (int i : laneDiffs) {
-			int tmpStartingLane = startingLane + i;
+		for (int tmpStartingLane : allLanes) {
+			if (!limitedLaneRange.contains(tmpStartingLane)) {
+				continue;
+			}
 			boolean canStayInSameLane = tmpStartingLane == startingLane;
 			boolean canChangeDown = tmpStartingLane >= 0 && tmpStartingLane < startingLane &&
 					scope.getRandom().next() < probaChangeLaneDown;
