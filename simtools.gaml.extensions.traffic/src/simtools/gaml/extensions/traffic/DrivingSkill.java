@@ -1361,7 +1361,7 @@ public class DrivingSkill extends MovingSkill {
 			}
 			double otherDistToGoal = (getCurrentRoad(driver) == getCurrentRoad(otherDriver)) ?
 				getDistanceToGoal(otherDriver) : distance2D((GamaPoint) otherDriver.getLocation(), targetLoc);
-			// NOTE: compute diffence this way is faster than computing euclidean dist between two vehicles,
+			// NOTE: compute difference this way is faster than computing euclidean dist between two vehicles,
 			// and it provides order of vehicles as well.
 			// difference between two centroids of the vehicles
 			double pointDiff = distanceToGoal - otherDistToGoal;
@@ -1379,7 +1379,7 @@ public class DrivingSkill extends MovingSkill {
 		// avoid crashing with the closest vehicle behind
 		if (closestDriverBehind != null && !closestDriverBehind.dead()) {
 			// returning -1 ensures that the vehicle will not switch to this lane
-			if (minDiffBehind < 0) return -1;
+			if (Math.abs(minDiffBehind) > 1e-8 && minDiffBehind < 0) return -1;
 		}
 
 		// the segment ahead is clear
