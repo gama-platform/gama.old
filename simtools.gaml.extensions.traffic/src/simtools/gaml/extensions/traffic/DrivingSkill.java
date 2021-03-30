@@ -207,7 +207,7 @@ import ummisco.gama.dev.utils.DEBUG;
 	@variable(
 		name = DrivingSkill.LANE_CHANGE_LIMIT,
 		type = IType.INT,
-		init = "-1",
+		init = "1",
 		doc = @doc("the maximum number of lanes that the vehicle can change during a simulation step")
 	),
 	@variable(
