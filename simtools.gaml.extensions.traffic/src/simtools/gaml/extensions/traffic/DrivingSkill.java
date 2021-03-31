@@ -838,7 +838,6 @@ public class DrivingSkill extends MovingSkill {
 		final IPath path = ((GraphTopology) graph.getTopology(scope)).pathBetween(scope, source, target, onRoad);
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
 			final List<ILocation> targets = getTargets(agent);
-			targets.clear();
 			for (int i = 0; i < path.getEdgeGeometry().size(); i += 1) {
 				IShape egGeom = (IShape) path.getEdgeGeometry().get(i);
 				final Coordinate[] coords = egGeom.getInnerGeometry().getCoordinates();
@@ -848,20 +847,17 @@ public class DrivingSkill extends MovingSkill {
 				final GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
 				targets.add(pt);
 			}
+
 			setTargets(agent, targets);
 			setCurrentIndex(agent, -1);
 			setCurrentTarget(agent, targets.get(0));
 			setFinalTarget(agent, target.getLocation());
 			setCurrentPath(agent, path);
-		
 			return path;
+		} else {
+			clearDrivingStates(scope);
+			return null;
 		}
-		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
-		setCurrentIndex(agent, -1);
-		setCurrentTarget(agent, null);
-		setFinalTarget(agent, null);
-		setCurrentPath(agent, (IPath) null);
-		return null;
 	}
 
 	@action(
@@ -886,6 +882,7 @@ public class DrivingSkill extends MovingSkill {
 		)
 	)
 	public IPath primComputePathFromNodes(final IScope scope) throws GamaRuntimeException {
+		// TODO: should we merge this with compute_path?
 		final GamaGraph graph = (GamaGraph) scope.getArg("graph", IType.GRAPH);
 		final IList<IAgent> nodes = (IList) scope.getArg("nodes", IType.LIST);
 
@@ -925,20 +922,17 @@ public class DrivingSkill extends MovingSkill {
 				final GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
 				targets.add(pt);
 			}
+
 			setTargets(agent, targets);
 			setCurrentIndex(agent, -1);
 			setCurrentTarget(agent, targets.get(0));
 			setFinalTarget(agent, target.getLocation());
 			setCurrentPath(agent, path);
-		
 			return path;
+		} else {
+			clearDrivingStates(scope);
+			return null;
 		}
-		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
-		setCurrentIndex(agent, -1);
-		setCurrentTarget(agent, null);
-		setFinalTarget(agent, null);
-		setCurrentPath(agent, (IPath) null);
-		return null;
 	}
 
 	private Double speedChoice(final IAgent agent, final IAgent road) {
@@ -1086,17 +1080,18 @@ public class DrivingSkill extends MovingSkill {
 		while (true) {
 			ILocation loc = driver.getLocation();
 			GamaPoint target = getCurrentTarget(driver);
+			int currentEdgeIdx = getCurrentIndex(driver);
+
 			// final target check
-			if (loc.equals(finalTarget)) {
-				setFinalTarget(driver, null);
+			if (currentEdgeIdx == path.getEdgeList().size() - 1 && loc.equals(finalTarget)) {
+				clearDrivingStates(scope);
 				return;
 			}
+
 			// intermediate target check
 			if (remainingTime > 0.0 && loc.equals(target)) {
-				int currEdgeIdx = getCurrentIndex(driver);
-
 				// get the next road in the path
-				IAgent newRoad = (IAgent) path.getEdgeList().get(currEdgeIdx + 1);
+				IAgent newRoad = (IAgent) path.getEdgeList().get(currentEdgeIdx + 1);
 				// check traffic lights and vehicles coming from other roads
 				if (!isReadyNextRoad(scope, newRoad)) {
 					return;
@@ -1114,8 +1109,8 @@ public class DrivingSkill extends MovingSkill {
 				int lane = (Integer) actionLC.executeOn(scope);
 				if (lane >= 0) {
 					// updating states like this since there are n + 1 nodes and n edges in a path
-					setCurrentIndex(driver, currEdgeIdx + 1);
-					setCurrentTarget(driver, getTargets(driver).get(currEdgeIdx + 2));
+					setCurrentIndex(driver, currentEdgeIdx + 1);
+					setCurrentTarget(driver, getTargets(driver).get(currentEdgeIdx + 2));
 					RoadSkill.unregister(scope, driver);
 					RoadSkill.register(scope, driver, newRoad, lane);
 				} else {
@@ -1676,5 +1671,14 @@ public class DrivingSkill extends MovingSkill {
 			RoadSkill.unregister(scope, driver);
 		}
 		driver.primDie(scope);
+	}
+
+	private void clearDrivingStates(IScope scope) {
+		IAgent driver = getCurrentAgent(scope);
+		getTargets(driver).clear();
+		setCurrentIndex(driver, -1);
+		setCurrentTarget(driver, null);
+		setFinalTarget(driver, null);
+		setCurrentPath(driver, null);
 	}
 }
