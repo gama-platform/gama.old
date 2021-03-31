@@ -103,6 +103,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("the index of the current edge (road) in the path")
 	),
 	@variable(
+		// TODO: this attribute seems redundant
 		name = DrivingSkill.TARGETS,
 		type = IType.LIST,
 		of = IType.POINT,
@@ -560,6 +561,11 @@ public class DrivingSkill extends MovingSkill {
 		return (IAgent) agent.getAttribute(CURRENT_ROAD);
 	}
 
+	@setter(CURRENT_ROAD)
+	public static void setCurrentRoad(IAgent driver, IAgent road) {
+		driver.setAttribute(CURRENT_ROAD, road);
+	}
+
 	@getter(VEHICLE_LENGTH)
 	public static double getVehicleLength(final IAgent agent) {
 		return (Double) agent.getAttribute(VEHICLE_LENGTH);
@@ -977,10 +983,8 @@ public class DrivingSkill extends MovingSkill {
 			throw GamaRuntimeException.error("You need to specify init_node in drive_random", scope);
 		}
 
-		// initialize driver's location and current road
+		// initialize driver's location
 		if (getCurrentTarget(driver) == null) {
-			IAgent initRoad = (IAgent) RoadNodeSkill.getRoadsIn(initNode).get(0);
-			RoadSkill.register(scope, driver, initRoad, 0);
 			setCurrentTarget(driver, initNode.getLocation());
 			setLocation(driver, initNode.getLocation());
 		}
@@ -991,12 +995,12 @@ public class DrivingSkill extends MovingSkill {
 		while (true) {
 			ILocation loc = driver.getLocation();
 			GamaPoint target = getCurrentTarget(driver);
-			IAgent currentRoad = getCurrentRoad(driver);
 
 			if (remainingTime > 0.0 && loc.equals(target)) {
 				// choose a new road randomly
-				IAgent newRoad = null;
-				final IAgent targetNode =  RoadSkill.getTargetNode(currentRoad);
+				IAgent newRoad;
+				IAgent currentRoad = getCurrentRoad(driver);
+				IAgent targetNode = currentRoad != null ? RoadSkill.getTargetNode(currentRoad) : initNode;
 				final List<IAgent> nextRoads = RoadNodeSkill.getRoadsOut(targetNode);
 				if (nextRoads.isEmpty()) {
 					return;
@@ -1041,7 +1045,7 @@ public class DrivingSkill extends MovingSkill {
 				break;
 			}
 
-			argsSC.put("new_road", ConstantExpressionDescription.create(currentRoad));
+			argsSC.put("new_road", ConstantExpressionDescription.create(getCurrentRoad(driver)));
 			actionSC.setRuntimeArgs(scope, argsSC);
 			final double speed = (Double) actionSC.executeOn(scope);
 			setSpeed(driver, speed);
