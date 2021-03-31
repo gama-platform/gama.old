@@ -71,52 +71,52 @@ public class RoadNodeSkill extends Skill {
 	public final static String BLOCK = "block";
 
 	@getter(ROADS_IN)
-	public List getRoadsIn(final IAgent agent) {
+	public static List getRoadsIn(final IAgent agent) {
 		return (List) agent.getAttribute(ROADS_IN);
 	}
 
 	@getter(ROADS_OUT)
-	public List getRoadsOut(final IAgent agent) {
+	public static List getRoadsOut(final IAgent agent) {
 		return (List) agent.getAttribute(ROADS_OUT);
 	}
 
 	@setter(ROADS_IN)
-	public void setSourceNode(final IAgent agent, final List rds) {
+	public static void setRoadsIn(final IAgent agent, final List rds) {
 		agent.setAttribute(ROADS_IN, rds);
 	}
 
 	@setter(ROADS_OUT)
-	public void setTargetNode(final IAgent agent, final List rds) {
+	public static void setRoadsOut(final IAgent agent, final List rds) {
 		agent.setAttribute(ROADS_OUT, rds);
 	}
 
 	@getter(STOP)
-	public List<List> getStop(final IAgent agent) {
+	public static List<List> getStop(final IAgent agent) {
 		return (List<List>) agent.getAttribute(STOP);
 	}
 
 	@setter(STOP)
-	public void setStop(final IAgent agent, final List<List> stop) {
+	public static void setStop(final IAgent agent, final List<List> stop) {
 		agent.setAttribute(STOP, stop);
 	}
 
 	@getter(BLOCK)
-	public Map<IAgent, List> getBlock(final IAgent agent) {
+	public static Map<IAgent, List> getBlock(final IAgent agent) {
 		return (Map<IAgent, List>) agent.getAttribute(BLOCK);
 	}
 
 	@setter(BLOCK)
-	public void setBlock(final IAgent agent, final Map<IAgent, List> block) {
+	public static void setBlock(final IAgent agent, final Map<IAgent, List> block) {
 		agent.setAttribute(BLOCK, block);
 	}
 
 	@getter(PRIORITY_ROADS)
-	public List getPriorityRoads(final IAgent agent) {
+	public static List getPriorityRoads(final IAgent agent) {
 		return (List) agent.getAttribute(PRIORITY_ROADS);
 	}
 
 	@setter(PRIORITY_ROADS)
-	public void setPriorityRoads(final IAgent agent, final List rds) {
+	public static void setPriorityRoads(final IAgent agent, final List rds) {
 		agent.setAttribute(PRIORITY_ROADS, rds);
 	}
 }
