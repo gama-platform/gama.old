@@ -798,7 +798,7 @@ public class DrivingSkill extends MovingSkill {
 					name = "graph",
 					type = IType.GRAPH,
 					optional = false,
-					doc = @doc ("the graph on wich compute the path")),
+					doc = @doc ("the graph representing the road network")),
 					@arg (
 							name = "target",
 							type = IType.AGENT,
@@ -864,24 +864,28 @@ public class DrivingSkill extends MovingSkill {
 		return null;
 	}
 
-	@action (
-			name = "path_from_nodes",
-			args = { @arg (
-					name = "graph",
-					type = IType.GRAPH,
-					optional = false,
-					doc = @doc ("the graph on wich compute the path")),
-					@arg (
-							name = "nodes",
-							type = IType.LIST,
-							optional = false,
-							doc = @doc ("the list of nodes composing the path")) },
-			doc = @doc (
-					value = "action to compute a path from a list of nodes according to a given graph",
-					returns = "the computed path, return nil if no path can be taken",
-					examples = { @example ("do compute_path graph: road_network nodes: [node1, node5, node10];") }))
+	@action(
+		name = "compute_path_from_nodes",
+		args = {
+			@arg(
+				name = "graph",
+				type = IType.GRAPH,
+				optional = false,
+				doc = @doc("the graph representing the road network")
+			),
+			@arg(
+				name = "nodes",
+				type = IType.LIST,
+				optional = false,
+				doc = @doc("the list of nodes composing the path"))
+		},
+		doc = @doc(
+			value = "action to compute a path from a list of nodes according to a given graph",
+			returns = "the computed path, return nil if no path can be taken",
+			examples = { @example ("do compute_path_from_nodes graph: road_network nodes: [node1, node5, node10];") }
+		)
+	)
 	public IPath primComputePathFromNodes(final IScope scope) throws GamaRuntimeException {
-		// TODO: update this method
 		final GamaGraph graph = (GamaGraph) scope.getArg("graph", IType.GRAPH);
 		final IList<IAgent> nodes = (IList) scope.getArg("nodes", IType.LIST);
 
@@ -912,23 +916,25 @@ public class DrivingSkill extends MovingSkill {
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
 			final List<ILocation> targets = getTargets(agent);
 			targets.clear();
-			for (final Object edge : path.getEdgeGeometry()) {
-				final IShape egGeom = (IShape) edge;
+			for (int i = 0; i < path.getEdgeGeometry().size(); i += 1) {
+				IShape egGeom = (IShape) path.getEdgeGeometry().get(i);
 				final Coordinate[] coords = egGeom.getInnerGeometry().getCoordinates();
+				if (i == 0) {
+					targets.add(new GamaPoint(coords[0]));
+				}
 				final GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
 				targets.add(pt);
 			}
 			setTargets(agent, targets);
-			final IAgent nwRoad = (IAgent) path.getEdgeList().get(0);
-			setCurrentIndex(agent, 0);
+			setCurrentIndex(agent, -1);
 			setCurrentTarget(agent, targets.get(0));
 			setFinalTarget(agent, target.getLocation());
 			setCurrentPath(agent, path);
-			RoadSkill.register(scope, agent, nwRoad, 0);
+		
 			return path;
-
 		}
 		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
+		setCurrentIndex(agent, -1);
 		setCurrentTarget(agent, null);
 		setFinalTarget(agent, null);
 		setCurrentPath(agent, (IPath) null);
@@ -1118,7 +1124,6 @@ public class DrivingSkill extends MovingSkill {
 			}
 
 			// if time is up or the vehicle can not move any further, we are done
-			// TODO: this condition might not be right, need to take into account if it went on a new road?
 			if (remainingTime < 1e-8 || timeSpentMoving < 1e-8) {
 				break;
 			}
