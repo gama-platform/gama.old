@@ -947,7 +947,7 @@ public class DrivingSkill extends MovingSkill {
 				name = "init_node",
 				type = IType.AGENT,
 				optional = false,
-				doc = @doc("the initial node that the vehicle will starting driving randomly from")
+				doc = @doc("The initial node where the vehicle will starting driving randomly from. This will only be used the first time this action is executed.")
 			),
 			@arg(
 				name = "proba_roads",
@@ -958,7 +958,7 @@ public class DrivingSkill extends MovingSkill {
 		},
 		doc = @doc(
 			value = "action to drive by chosen randomly the next road",
-			examples = { @example ("do drive_random;") }
+			examples = { @example ("do drive_random init_node: some_node;") }
 		)
 	)
 	public void primDriveRandom(final IScope scope) throws GamaRuntimeException {
