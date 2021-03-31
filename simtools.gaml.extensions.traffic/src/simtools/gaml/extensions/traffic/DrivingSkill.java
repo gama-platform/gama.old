@@ -181,6 +181,7 @@ import ummisco.gama.dev.utils.DEBUG;
 	@variable(
 		name = DrivingSkill.CURRENT_ROAD,
 		type = IType.AGENT,
+		init = "nil",
 		doc = @doc("the road which the vehicle is currently on")
 	),
 	@variable(
@@ -939,18 +940,28 @@ public class DrivingSkill extends MovingSkill {
 				getSpeedCoeff(agent) * (Double) road.getAttribute(RoadSkill.MAXSPEED)));
 	}
 
-	@action (
-			name = "drive_random",
-			args = { @arg (
-					name = "proba_roads",
-					type = IType.MAP,
-					optional = true,
-					doc = @doc ("a map containing for each road (key), the probability to be selected as next road (value)")) },
-			doc = @doc (
-					value = "action to drive by chosen randomly the next road",
-					examples = { @example ("do drive_random;") }))
+	@action(
+		name = "drive_random",
+		args = {
+			@arg(
+				name = "init_node",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc("the initial node that the vehicle will starting driving randomly from")
+			),
+			@arg(
+				name = "proba_roads",
+				type = IType.MAP,
+				optional = true,
+				doc = @doc("a map containing for each road (key), the probability to be selected as next road (value)")
+			)
+		},
+		doc = @doc(
+			value = "action to drive by chosen randomly the next road",
+			examples = { @example ("do drive_random;") }
+		)
+	)
 	public void primDriveRandom(final IScope scope) throws GamaRuntimeException {
-		// TODO: update this method
 		final IAgent driver = getCurrentAgent(scope);
 		final ISpecies context = driver.getSpecies();
 		final IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
@@ -960,26 +971,38 @@ public class DrivingSkill extends MovingSkill {
 		final IStatement.WithArgs actionSC = context.getAction("speed_choice");
 		final Arguments argsSC = new Arguments();
 		final Map<IAgent, Double> roadProba = (Map) scope.getArg("proba_roads", IType.MAP);
+		IAgent initNode = (IAgent) scope.getArg("init_node", IType.AGENT);
+		// TODO: why didn't `optional = true` do any check?
+		if (initNode == null) {
+			throw GamaRuntimeException.error("You need to specify init_node in drive_random", scope);
+		}
+
+		// initialize driver's location and current road
+		if (getCurrentTarget(driver) == null) {
+			IAgent initRoad = (IAgent) RoadNodeSkill.getRoadsIn(initNode).get(0);
+			RoadSkill.register(scope, driver, initRoad, 0);
+			setCurrentTarget(driver, initNode.getLocation());
+			setLocation(driver, initNode.getLocation());
+		}
 
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
-		while (remainingTime > 0.0) {
-			final IAgent road = getCurrentRoad(driver);
-			final GamaPoint target = GeometryUtils.getLastPointOf(road);
-			argsSC.put("new_road", ConstantExpressionDescription.create(road));
-			actionSC.setRuntimeArgs(scope, argsSC);
-			final double speed = (Double) actionSC.executeOn(scope);
-			setSpeed(driver, speed);
-			remainingTime = moveToNextLocAlongPathOSM(scope, speed, remainingTime, null);
+		double timeSpentMoving = Double.MAX_VALUE;
 
-			if (remainingTime > 0.0) {
+		while (true) {
+			ILocation loc = driver.getLocation();
+			GamaPoint target = getCurrentTarget(driver);
+			IAgent currentRoad = getCurrentRoad(driver);
+
+			if (remainingTime > 0.0 && loc.equals(target)) {
+				// choose a new road randomly
 				IAgent newRoad = null;
-				final IAgent targetNode = (IAgent) road.getDirectVarValue(scope, RoadSkill.TARGET_NODE);
-				final List<IAgent> nextRoads = (List) targetNode.getDirectVarValue(scope, RoadNodeSkill.ROADS_OUT);
-				if (nextRoads.isEmpty()) { return; }
-				if (nextRoads.size() == 1) {
+				final IAgent targetNode =  RoadSkill.getTargetNode(currentRoad);
+				final List<IAgent> nextRoads = RoadNodeSkill.getRoadsOut(targetNode);
+				if (nextRoads.isEmpty()) {
+					return;
+				} else if (nextRoads.size() == 1) {
 					newRoad = nextRoads.get(0);
-				}
-				if (nextRoads.size() > 1) {
+				} else {
 					if (roadProba == null || roadProba.isEmpty()) {
 						newRoad = nextRoads.get(scope.getRandom().between(0, nextRoads.size() - 1));
 					} else {
@@ -992,6 +1015,10 @@ public class DrivingSkill extends MovingSkill {
 					}
 				}
 
+				if (!isReadyNextRoad(scope, newRoad)) {
+					return;
+				}
+
 				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
 				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
@@ -1001,12 +1028,26 @@ public class DrivingSkill extends MovingSkill {
 				final int lane = (Integer) actionLC.executeOn(scope);
 
 				if (lane >= 0) {
+					setCurrentTarget(driver, RoadSkill.getTargetNode(newRoad).getLocation());
 					RoadSkill.unregister(scope, driver);
 					RoadSkill.register(scope, driver, newRoad, lane);
 				} else {
 					return;
 				}
 			}
+
+			// if time is up or the vehicle can not move any further, we are done
+			if (remainingTime < 1e-8 || timeSpentMoving < 1e-8) {
+				break;
+			}
+
+			argsSC.put("new_road", ConstantExpressionDescription.create(currentRoad));
+			actionSC.setRuntimeArgs(scope, argsSC);
+			final double speed = (Double) actionSC.executeOn(scope);
+			setSpeed(driver, speed);
+
+			timeSpentMoving = moveToNextLocAlongPathOSM(scope, speed, remainingTime, null);
+			remainingTime -= timeSpentMoving;
 		}
 	}
 
@@ -1077,6 +1118,7 @@ public class DrivingSkill extends MovingSkill {
 			}
 
 			// if time is up or the vehicle can not move any further, we are done
+			// TODO: this condition might not be right, need to take into account if it went on a new road?
 			if (remainingTime < 1e-8 || timeSpentMoving < 1e-8) {
 				break;
 			}
@@ -1129,7 +1171,6 @@ public class DrivingSkill extends MovingSkill {
 		final IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
 		final IAgent agent = getCurrentAgent(scope);
 		final double speed = speedChoice(agent, road);
-		setSpeed(agent, speed);
 		return speed;
 	}
 
