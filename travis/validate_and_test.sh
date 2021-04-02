@@ -34,3 +34,4 @@ if [[ $res -gt 0 ]]; then
 	rm -rf $passWork
 	exit $res
 fi
+cat /home/runner/work/gama/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless/.work/.metadata/.log
