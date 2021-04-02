@@ -45,7 +45,9 @@ jobs:
 
       - name: Validate and test Maven
         shell: bash
-        run: $GITHUB_WORKSPACE/travis/validate_and_test.sh
+        run: |
+            $GITHUB_WORKSPACE/travis/validate_and_test.sh
+            cat /home/runner/work/gama/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless/.work/.metadata/.log
 
       - name: Prepare SSH (if needed)
         if: ${{ contains(github.event.head_commit.message, 'ci clean') && contains(github.event.head_commit.message, 'ci deploy') }} 
