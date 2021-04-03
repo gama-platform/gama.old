@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="streamex/streamex-0.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-core-1.18.1.jar" sourcepath="jts 1.18.1/jts-core-1.18.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-io-common-1.18.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/ejml-core-0.34.jar"/>
@@ -15,7 +16,6 @@
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/gt-xsd-gml3-21.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/gt-xsd-wfs-21.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/gt-xsd-gml2-21.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="streamex 0.6.7/streamex-0.6.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/batik-transcoder-1.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/commons-collections-3.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/commons-dbcp-1.4.jar"/>
