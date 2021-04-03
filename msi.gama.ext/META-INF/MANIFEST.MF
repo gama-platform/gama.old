@@ -623,7 +623,6 @@ Bundle-ClassPath: .,
  kml/jars/jaxb-impl.jar,
  kml/jars/jaxb-api.jar,
  kml/jars/jaxb-core.jar,
- jfreechart-1.5.0.jar,
  geotools 21.4/batik-transcoder-1.10.jar,
  geotools 21.4/commons-collections-3.2.2.jar,
  geotools 21.4/commons-dbcp-1.4.jar,
@@ -725,6 +724,7 @@ Bundle-ClassPath: .,
  disruptor-1.2.19.jar,
  jts 1.18.1/jts-core-1.18.1.jar,
  jts 1.18.1/jts-io-common-1.18.1.jar,
- streamex/streamex-0.7.3.jar
+ streamex/streamex-0.7.3.jar,
+ jfreechart/jfreechart-1.5.3.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: msi.gama.ext

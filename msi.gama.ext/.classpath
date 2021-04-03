@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="jfreechart/jfreechart-1.5.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="streamex/streamex-0.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-core-1.18.1.jar" sourcepath="jts 1.18.1/jts-core-1.18.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-io-common-1.18.1.jar"/>
@@ -124,7 +125,6 @@
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-impl.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="kml/jars/jaxb-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="jfreechart-1.5.0.jar" sourcepath="jfreechart-1.5.0.zip"/>
 	<classpathentry exported="true" kind="lib" path="disruptor-1.2.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
