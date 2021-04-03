@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-core-1.18.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-core-1.18.1.jar" sourcepath="jts 1.18.1/jts-core-1.18.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-io-common-1.18.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/ejml-core-0.34.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 21.4/jackson-core-2.9.10.jar"/>
