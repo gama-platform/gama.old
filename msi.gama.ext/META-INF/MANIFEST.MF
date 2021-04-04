@@ -618,7 +618,7 @@ Export-Package: com.conversantmedia.util.collection,
  tech.units.indriya.unit,
  tech.uom.lib.common.function,
  tech.uom.lib.common.util
-Require-Bundle: com.google.guava;bundle-version="30.1.0";visibility:=reexport,
+Require-Bundle: com.google.guava;visibility:=reexport,
  org.eclipse.osgi,
  org.apache.commons.lang;bundle-version="2.6.0",
  org.apache.commons.compress;bundle-version="1.18.0",
