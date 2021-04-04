@@ -37,13 +37,8 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
-import org.geotools.coverage.grid.io.AbstractGridFormat;
-import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.gce.geotiff.GeoTiffReader;
-import org.geotools.geometry.DirectPosition2D;
-import org.geotools.geometry.GeneralEnvelope;
 import org.geotools.map.GridCoverageLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
@@ -56,19 +51,9 @@ import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactory;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.locationtech.jts.geom.Envelope;
 
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
-import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.topology.projection.IProjection;
-import msi.gama.metamodel.topology.projection.ProjectionFactory;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.file.GamaGridFile;
-import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -113,8 +98,8 @@ public class ImageDataLoader {
 							imageData = convertToSWT(tif);
 						}
 						if (imageData == null) {
-							try (ImageInputStream is = createImageInputStream(
-									new File(file.getLocation().toFile().getAbsolutePath()))) {
+							try (ImageInputStream is =
+									createImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()))) {
 								final ImageReader reader = READER_SPI.createReaderInstance();
 								reader.setInput(is);
 								final BufferedImage image = toCompatibleImage(reader.read(0));
@@ -126,8 +111,9 @@ public class ImageDataLoader {
 							}
 						}
 					} catch (Exception ex) {
-						AbstractGridCoverage2DReader reader = new GeoTiffReader(
-								file.getLocation().toFile().getAbsolutePath());// format.getReader(file, hints);
+						AbstractGridCoverage2DReader reader =
+								new GeoTiffReader(file.getLocation().toFile().getAbsolutePath());// format.getReader(file,
+																									// hints);
 						GridCoverage2D grid = reader.read(null);
 						reader.dispose();
 
@@ -148,11 +134,11 @@ public class ImageDataLoader {
 						imageData.type = SWT.IMAGE_TIFF;
 					}
 
-//					AbstractGridFormat format = GridFormatFinder.findFormat(file); 
-//					Hints hints = null;
-//					if (format instanceof GeoTiffFormat) {
-//						hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-//					}
+					// AbstractGridFormat format = GridFormatFinder.findFormat(file);
+					// Hints hints = null;
+					// if (format instanceof GeoTiffFormat) {
+					// hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+					// }
 
 				} else {
 					try {
@@ -176,14 +162,12 @@ public class ImageDataLoader {
 				ex.printStackTrace();
 			}
 		}
-		if (imageData == null) {
-			DEBUG.ERR("null image data");
-		}
+		if (imageData == null) { DEBUG.ERR("null image data"); }
 		return imageData;
 
 	}
 
-	private static Style createStyle(int band, double min, double max) {
+	private static Style createStyle(final int band, final double min, final double max) {
 
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2();
 		StyleFactory sf = CommonFactoryFinder.getStyleFactory();
@@ -227,9 +211,7 @@ public class ImageDataLoader {
 			for (int r = 0; r < rows; r++) {
 				for (int c = 0; c < cols; c++) {
 					final int n = infile.nextInt();
-					if (n > maxValue) {
-						maxValue = n;
-					}
+					if (n > maxValue) { maxValue = n; }
 					pixels[r][c] = n * 255;
 				}
 			}
@@ -285,8 +267,7 @@ public class ImageDataLoader {
 			infile.nextLine();
 			// cellsize
 			String cellsize = infile.nextLine();
-			if (cellsize.startsWith("dx") || cellsize.startsWith("dy"))
-				infile.nextLine();
+			if (cellsize.startsWith("dx") || cellsize.startsWith("dy")) { infile.nextLine(); }
 
 			// NODATA_value
 			if (infile.hasNext("NODATA_value")) {
@@ -300,14 +281,10 @@ public class ImageDataLoader {
 			for (int r = 0; r < rows; r++) {
 				for (int c = 0; c < cols; c++) {
 					double d = infile.nextDouble();
-					if (d == nodata) {
-						d = 0d;
-					}
+					if (d == nodata) { d = 0d; }
 					if (d > maxValue) {
 						maxValue = (int) d;
-					} else if (d < minValue) {
-						minValue = (int) d;
-					}
+					} else if (d < minValue) { minValue = (int) d; }
 					pixels[r][c] = (int) d;
 				}
 			}
@@ -343,23 +320,19 @@ public class ImageDataLoader {
 	}
 
 	public static ImageData convertToSWT(final java.awt.image.BufferedImage image) {
-		if (image == null) {
-			return null;
-		}
+		if (image == null) return null;
 		if (image.getColorModel() instanceof java.awt.image.DirectColorModel) {
 			final java.awt.image.DirectColorModel colorModel = (java.awt.image.DirectColorModel) image.getColorModel();
-			final PaletteData palette = new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(),
-					colorModel.getBlueMask());
-			final ImageData data = new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(),
-					palette);
+			final PaletteData palette =
+					new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel.getBlueMask());
+			final ImageData data =
+					new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(), palette);
 			for (int y = 0; y < data.height; y++) {
 				for (int x = 0; x < data.width; x++) {
 					final int rgb = image.getRGB(x, y);
 					final int pixel = palette.getPixel(new RGB(rgb >> 16 & 0xFF, rgb >> 8 & 0xFF, rgb & 0xFF));
 					data.setPixel(x, y, pixel);
-					if (colorModel.hasAlpha()) {
-						data.setAlpha(x, y, rgb >> 24 & 0xFF);
-					}
+					if (colorModel.hasAlpha()) { data.setAlpha(x, y, rgb >> 24 & 0xFF); }
 				}
 			}
 			return data;
@@ -377,8 +350,8 @@ public class ImageDataLoader {
 				rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
 			}
 			final PaletteData palette = new PaletteData(rgbs);
-			final ImageData data = new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(),
-					palette);
+			final ImageData data =
+					new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(), palette);
 			data.transparentPixel = colorModel.getTransparentPixel();
 			final java.awt.image.WritableRaster raster = image.getRaster();
 			final int[] pixelArray = new int[1];
@@ -391,8 +364,8 @@ public class ImageDataLoader {
 			return data;
 		} else if (image.getColorModel() instanceof java.awt.image.ComponentColorModel) {
 
-			final java.awt.image.ComponentColorModel colorModel = (java.awt.image.ComponentColorModel) image
-					.getColorModel();
+			final java.awt.image.ComponentColorModel colorModel =
+					(java.awt.image.ComponentColorModel) image.getColorModel();
 			if (colorModel.getPixelSize() > 32) {
 				final BufferedImage newImage = ImageUtils.toCompatibleImage(image);
 				return convertToSWT(newImage);
@@ -400,8 +373,8 @@ public class ImageDataLoader {
 			// ASSUMES: 3 BYTE BGR IMAGE TYPE
 
 			final PaletteData palette = new PaletteData(0x0000FF, 0x00FF00, 0xFF0000);
-			final ImageData data = new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(),
-					palette);
+			final ImageData data =
+					new ImageData(image.getWidth(), image.getHeight(), colorModel.getPixelSize(), palette);
 
 			// This is valid because we are using a 3-byte Data model with no
 			// transparent pixels
@@ -416,19 +389,15 @@ public class ImageDataLoader {
 					for (int x = 0; x < data.width; x++) {
 						raster.getPixel(x, y, pixelArray);
 						final int val = pixelArray[0];
-						if (val > maxVal) {
-							maxVal = val;
-						}
-						if (val < minVal) {
-							minVal = val;
-						}
+						if (val > maxVal) { maxVal = val; }
+						if (val < minVal) { minVal = val; }
 					}
 				}
 				for (int y = 0; y < data.height; y++) {
 					for (int x = 0; x < data.width; x++) {
 						raster.getPixel(x, y, pixelArray);
-						final int val = (int) (maxVal == minVal ? 0
-								: (pixelArray[0] - minVal) / (0.0 + maxVal - minVal) * 255);
+						final int val =
+								(int) (maxVal == minVal ? 0 : (pixelArray[0] - minVal) / (0.0 + maxVal - minVal) * 255);
 						final int pixel = palette.getPixel(new RGB(val, val, val));
 						data.setPixel(x, y, pixel);
 					}

@@ -1,0 +1,19 @@
+<?xml version="1.0" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="jaxbXmlRootElements" type="jaxbXmlRootElements"/>
+
+  <xs:complexType name="jaxbXmlRootElements">
+    <xs:sequence>
+      <xs:element name="elements" type="jaxbXmlRootElement" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="jaxbXmlRootElement">
+    <xs:sequence>
+      <xs:element name="lowerCaseClassName" type="xs:string" minOccurs="0"/>
+      <xs:element name="nameInKmlFile" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+
