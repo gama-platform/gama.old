@@ -23,6 +23,7 @@ import java.util.stream.IntStream;
 import org.locationtech.jts.geom.Coordinate;
 
 import com.google.common.collect.Range;
+import com.google.common.collect.Sets;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
@@ -1453,9 +1454,6 @@ public class DrivingSkill extends MovingSkill {
 					safetyDistCoeff * Math.max(getRealSpeed(driver), getRealSpeed(closestDriverAhead)));
 		}
 		double realDist = Math.min(remainingDist, minDiffAhead - secDistance);
-
-		// TODO: what is this?
-		// realDist = Math.max(0.0, (int) (min_safety_distance + realDist * 1000) / 1000.0);
 		realDist = Math.max(0.0, realDist);
 
 		return realDist;
@@ -1476,42 +1474,42 @@ public class DrivingSkill extends MovingSkill {
 		int currStartingLane = getStartingLane(driver);
 		int currSegment = getSegmentIndex(driver);
 
-		HashSet<Integer> oldRelLanes = IntStream.range(currStartingLane, currStartingLane + numLanesOccupied)
+		// Expand the lane indices into sets using `starting_lane` and `num_lanes_occupied`
+		Set<Integer> oldRelLanes = IntStream.range(currStartingLane, currStartingLane + numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(HashSet::new));
-		HashSet<Integer> newRelLanes = IntStream.range(newStartingLane, newStartingLane + numLanesOccupied)
+		Set<Integer> newRelLanes = IntStream.range(newStartingLane, newStartingLane + numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(HashSet::new));
 
-		// TODO: rewrite this part using guava
-		HashSet<Integer> removedRelLanes, addedRelLanes;
+		Set<Integer> removedRelLanes, addedRelLanes;
 		if (newSegment != currSegment) {
 			// if entering new segment, we have to update the lists for all related lanes and segments
 			removedRelLanes = oldRelLanes;
 			addedRelLanes = newRelLanes;
 		} else {
-			// otherwise the driver is still in the same segment, only changing (possibly a few) lanes
-			removedRelLanes = (HashSet) oldRelLanes.clone();
-			removedRelLanes.removeAll(newRelLanes);
-			addedRelLanes = (HashSet) newRelLanes.clone();
-			addedRelLanes.removeAll(oldRelLanes);
+			// otherwise the driver is still in the same segment, so we only update the lists related to lane changes
+			removedRelLanes = Sets.difference(oldRelLanes, newRelLanes);
+			addedRelLanes = Sets.difference(newRelLanes, oldRelLanes);
 		}
 
 		IAgent road;
 		IAgent currentRoad = getCurrentRoad(driver);
 		IAgent linkedRoad = RoadSkill.getLinkedRoad(currentRoad);
 		int numLanesCurrent = RoadSkill.getLanes(currentRoad);
-		for (int relLane : removedRelLanes) {
+		for (int relLane : Sets.union(removedRelLanes, addedRelLanes)) {
 			boolean isLinkedLane = relLane >= numLanesCurrent;
 			road = isLinkedLane ? linkedRoad : currentRoad;
-			RoadSkill.removeDriverFromLaneSegment(scope, driver, road,
-					RoadSkill.computeValidLane(currentRoad, relLane),
-					RoadSkill.computeCorrectSegment(currentRoad, currSegment, isLinkedLane));
-		}
-		for (int relLane : addedRelLanes) {
-			boolean isLinkedLane = relLane >= numLanesCurrent;
-			road = isLinkedLane ? linkedRoad : currentRoad;
-			RoadSkill.addDriverToLaneSegment(scope, driver, road,
-					RoadSkill.computeValidLane(currentRoad, relLane),
-					RoadSkill.computeCorrectSegment(currentRoad, newSegment, isLinkedLane));
+			// converts relLane to the valid lane idx w.r.t the linked road if necessary
+			int trueLane = RoadSkill.computeValidLane(currentRoad, relLane);
+			int trueSegment;
+
+			if (removedRelLanes.contains(relLane)) {
+				trueSegment = RoadSkill.computeCorrectSegment(road, currSegment, isLinkedLane);
+				RoadSkill.removeDriverFromLaneSegment(scope, driver, road, trueLane, trueSegment);
+			}
+			if (addedRelLanes.contains(relLane)) {
+				trueSegment = RoadSkill.computeCorrectSegment(road, newSegment, isLinkedLane);
+				RoadSkill.addDriverToLaneSegment(scope, driver, road, trueLane, trueSegment);
+			}
 		}
 
 		driver.setAttribute(STARTING_LANE, newStartingLane);
