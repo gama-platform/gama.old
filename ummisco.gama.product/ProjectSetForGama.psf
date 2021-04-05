@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,cict.gaml.extensions.VR"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,escape.gaml.pedestrian"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,femto.st.gama.mpi"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,gama.target.platform"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,idees.gama.weka"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,irit.gaml.extensions.database"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,miat.gama.extension.ifcfile"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,miat.gaml.extensions.argumentation"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,mit.gaml.extension.launchpad"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,msi.gama.application"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,msi.gama.core"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,msi.gama.documentation"/>
@@ -21,14 +14,10 @@
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,msi.gama.processor"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,msi.gaml.architecture.simplebdi"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,msi.gaml.extensions.fipa"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,simtools.gama.feature.gamanalyzer"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,simtools.gamanalyzer.fr"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,simtools.gaml.extensions.physics"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,simtools.gaml.extensions.traffic"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,simtools.graphanalysis.fr"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.annotations"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gama.camisole"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gama.extensions.matlab"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.feature.audio"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.feature.core"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.feature.core.extensions"/>
@@ -40,10 +29,7 @@
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.feature.network"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.feature.serialize"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.feature.stats"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gama.gaming"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gama.gamr"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.java2d"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gama.markdown.documentation"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.network"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.opengl"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.product"/>
@@ -53,11 +39,7 @@
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.ui.navigator"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.ui.shared"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.ui.viewers"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gama.uml"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gama.extension.hecras"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gaml.extensions.maths"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gaml.extensions.mike"/>
-<project reference="1.0,https://github.com/gama-platform/gama.experimental.git,master,ummisco.gaml.extensions.rjava"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gaml.extensions.sound"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gaml.extensions.stats"/>
 </provider>
