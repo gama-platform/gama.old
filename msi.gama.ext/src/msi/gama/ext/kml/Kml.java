@@ -19,7 +19,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -698,7 +697,7 @@ public class Kml implements Cloneable {
 
 	private static boolean validate(final Unmarshaller unmarshaller) {
 		try {
-			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema" /*XMLConstants.W3C_XML_SCHEMA_NS_URI*/);
 			File schemaFile = new File(SCHEMA_LOCATION);
 			Schema schema = sf.newSchema(schemaFile);
 			unmarshaller.setSchema(schema);
