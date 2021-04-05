@@ -799,67 +799,88 @@ public class DrivingSkill extends MovingSkill {
 		return true;
 	}
 
-	@action (
-			name = "compute_path",
-			args = { @arg (
-					name = "graph",
-					type = IType.GRAPH,
-					optional = false,
-					doc = @doc ("the graph representing the road network")),
-					@arg (
-							name = "target",
-							type = IType.AGENT,
-							optional = false,
-							doc = @doc ("the target node to reach")),
-					@arg (
-							name = "source",
-							type = IType.AGENT,
-							optional = true,
-							doc = @doc ("the source node (optional, if not defined, closest node to the agent location)")),
-					@arg (
-							name = "on_road",
-							type = IType.AGENT,
-							optional = true,
-							doc = @doc ("the road on which the agent is located (optional)")) },
-			doc = @doc (
-					value = "action to compute a path to a target location according to a given graph",
-					returns = "the computed path, return nil if no path can be taken",
-					examples = { @example ("do compute_path graph: road_network target: the_node;") }))
-	public IPath primComputePath(final IScope scope) throws GamaRuntimeException {
-		final ISpatialGraph graph = (ISpatialGraph) scope.getArg("graph", IType.GRAPH);
-		final IAgent target = (IAgent) scope.getArg("target", IType.AGENT);
-		final IAgent agent = getCurrentAgent(scope);
-		IAgent source = (IAgent) scope.getArg("source", IType.AGENT);
-		IAgent onRoad = (IAgent) scope.getArg("on_road", IType.AGENT);
-		if (source == null) {
-			if (onRoad != null) {
-				source = RoadSkill.getTargetNode(onRoad);
-			} else {
-				source = (IAgent) Queries.closest_to(scope, target.getSpecies(), agent);
+	@action(
+		name = "compute_path",
+		args = {
+			@arg(
+				name = "graph",
+				type = IType.GRAPH,
+				optional = false,
+				doc = @doc ("the graph representing the road network")
+			),
+			@arg(
+				name = "target",
+				type = IType.AGENT,
+				optional = true,
+				doc = @doc ("the target node to reach")
+			),
+			@arg(
+				name = "source",
+				type = IType.AGENT,
+				optional = true,
+				doc = @doc ("the source node (optional, if not defined, closest node to the agent location)")
+			),
+			@arg(
+				name = "nodes",
+				type = IType.LIST,
+				optional = true,
+				doc = @doc("the nodes forming the resulting path")
+			)
+		},
+		doc = @doc(
+			value = "Action to compute the shortest path to the target node, or shortest path based on the provided list of nodes",
+			returns = "the computed path, or nil if no valid path is found",
+			comment = "either `nodes` or `target` must be specified",
+			examples = {
+				@example("do compute_path graph: road_network target: target_node;"),
+				@example("do compute_path graph: road_network nodes: [node1, node5, node10];")
 			}
-		}
-		if (source.getLocation().equals(agent.getLocation())) {
-			onRoad = null;
+		)
+	)
+	public IPath primComputePath(final IScope scope) throws GamaRuntimeException {
+		GamaGraph graph = (GamaGraph) scope.getArg("graph", IType.GRAPH);
+		IList<IAgent> nodes = (IList) scope.getArg("nodes", IType.LIST);
+		IAgent target = (IAgent) scope.getArg("target", IType.AGENT);
+		IAgent source = (IAgent) scope.getArg("source", IType.AGENT);
+
+		IAgent driver = getCurrentAgent(scope);
+		IPath path;
+		if (target != null) {
+			if (source == null) {
+				source = (IAgent) Queries.closest_to(scope, target.getSpecies(), driver);
+			}
+			path = graph.computeShortestPathBetween(scope, source, target);
+		} else if (nodes != null && !nodes.isEmpty()) {
+			source = nodes.firstValue(scope);
+			target = nodes.lastValue(scope);
+			IList edges = GamaListFactory.create();
+			for (int i = 0; i < nodes.size() - 1; i++) {
+				List<Object> interEdges = graph.computeBestRouteBetween(scope, nodes.get(i), nodes.get(i + 1));
+				edges.addAll(interEdges);
+			}
+			path = PathFactory.newInstance(graph, source, target, edges);
+		} else {
+			throw GamaRuntimeException.error("either `nodes` or `target` must be specified", scope);
 		}
 
-		final IPath path = ((GraphTopology) graph.getTopology(scope)).pathBetween(scope, source, target, onRoad);
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
-			final List<ILocation> targets = getTargets(agent);
+			List<ILocation> targets = getTargets(driver);
 			for (int i = 0; i < path.getEdgeGeometry().size(); i += 1) {
-				IShape egGeom = (IShape) path.getEdgeGeometry().get(i);
-				final Coordinate[] coords = egGeom.getInnerGeometry().getCoordinates();
+				IShape edgeGeom = (IShape) path.getEdgeGeometry().get(i);
+				Coordinate[] coords = edgeGeom.getInnerGeometry().getCoordinates();
 				if (i == 0) {
 					targets.add(new GamaPoint(coords[0]));
 				}
-				final GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
+				GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
 				targets.add(pt);
 			}
 
-			setTargets(agent, targets);
-			setCurrentIndex(agent, -1);
-			setCurrentTarget(agent, targets.get(0));
-			setFinalTarget(agent, target.getLocation());
-			setCurrentPath(agent, path);
+			driver.setLocation(source.getLocation());
+			setTargets(driver, targets);
+			setCurrentIndex(driver, -1);
+			setCurrentTarget(driver, targets.get(0));
+			setFinalTarget(driver, target.getLocation());
+			setCurrentPath(driver, path);
 			return path;
 		} else {
 			clearDrivingStates(scope);
@@ -885,61 +906,24 @@ public class DrivingSkill extends MovingSkill {
 		doc = @doc(
 			value = "action to compute a path from a list of nodes according to a given graph",
 			returns = "the computed path, return nil if no path can be taken",
+			deprecated = "use compute_path with the facet `nodes` instead",
 			examples = { @example ("do compute_path_from_nodes graph: road_network nodes: [node1, node5, node10];") }
 		)
 	)
 	public IPath primComputePathFromNodes(final IScope scope) throws GamaRuntimeException {
-		// TODO: should we merge this with compute_path?
-		final GamaGraph graph = (GamaGraph) scope.getArg("graph", IType.GRAPH);
-		final IList<IAgent> nodes = (IList) scope.getArg("nodes", IType.LIST);
+		GamaGraph graph = (GamaGraph) scope.getArg("graph", IType.GRAPH);
+		IList<IAgent> nodes = (IList) scope.getArg("nodes", IType.LIST);
 
-		if (nodes == null || nodes.isEmpty()) { return null; }
-		final IAgent source = nodes.firstValue(scope);
-		final IAgent target = nodes.lastValue(scope);
-		final IList edges = GamaListFactory.create();
-		for (int i = 0; i < nodes.size() - 1; i++) {
-			final Set<Object> eds = graph.getAllEdges(nodes.get(i), nodes.get(i + 1));
-			if (!eds.isEmpty()) {
-				double minW = Double.MAX_VALUE;
-				Object ed = null;
-				for (final Object e : eds) {
-					final double w = graph.getEdgeWeight(e);
-					if (w < minW) {
-						minW = w;
-						ed = e;
-					}
-				}
-				edges.add(ed);
-			} else {
-				return null;
-			}
-		}
-		if (edges.isEmpty()) { return null; }
-		final IPath path = PathFactory.newInstance(graph, source, target, edges);
-		final IAgent agent = getCurrentAgent(scope);
-		if (path != null && !path.getEdgeGeometry().isEmpty()) {
-			final List<ILocation> targets = getTargets(agent);
-			targets.clear();
-			for (int i = 0; i < path.getEdgeGeometry().size(); i += 1) {
-				IShape egGeom = (IShape) path.getEdgeGeometry().get(i);
-				final Coordinate[] coords = egGeom.getInnerGeometry().getCoordinates();
-				if (i == 0) {
-					targets.add(new GamaPoint(coords[0]));
-				}
-				final GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
-				targets.add(pt);
-			}
+		IAgent driver = getCurrentAgent(scope);
+		ISpecies context = driver.getSpecies();
 
-			setTargets(agent, targets);
-			setCurrentIndex(agent, -1);
-			setCurrentTarget(agent, targets.get(0));
-			setFinalTarget(agent, target.getLocation());
-			setCurrentPath(agent, path);
-			return path;
-		} else {
-			clearDrivingStates(scope);
-			return null;
-		}
+		IStatement.WithArgs actionComputePath = context.getAction("compute_path");
+		Arguments args = new Arguments();
+		args.put("graph", ConstantExpressionDescription.create(graph));
+		args.put("nodes", ConstantExpressionDescription.create(nodes));
+		actionComputePath.setRuntimeArgs(scope, args);
+
+		return (IPath) actionComputePath.executeOn(scope);
 	}
 
 	private Double speedChoice(final IAgent agent, final IAgent road) {
