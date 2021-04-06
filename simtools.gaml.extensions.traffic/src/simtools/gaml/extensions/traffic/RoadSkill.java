@@ -2,11 +2,11 @@
  *
  * simtools.gaml.extensions.traffic.RoadSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source
  * code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
+ *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
@@ -421,8 +421,7 @@ public class RoadSkill extends Skill {
 		IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
 		unregister(scope, driver);
 	}
-	
-	
+
 	/**
 	 * Unregisters the driver from all the roads that it's currently on.
 	 *
