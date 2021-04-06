@@ -170,12 +170,12 @@ public class RoadSkill extends Skill {
 	}
 
 	@getter(NUM_SEGMENTS)
-	public static int getNumSegments(IAgent road) {
+	public static int getNumSegments(final IAgent road) {
 		return GeometryUtils.getPointsOf(road).length - 1;
 	}
 
 	@setter(NUM_SEGMENTS)
-	public static void setNumSegments(IAgent road, int numSegments) {
+	public static void setNumSegments(final IAgent road, final int numSegments) {
 		// read-only
 	}
 
@@ -300,20 +300,23 @@ public class RoadSkill extends Skill {
 			}
 		}
 		return indexSegment;
-
 	}
-	
-	
-	@action (
-			name = "update_lanes",
-			args = { @arg (
-					name = "lanes",
-					type = IType.INT,
-					optional = false,
-					doc = @doc ("the new number of lanes."))},
-			doc = @doc (
-					value = "change the number of lanes of the road",
-					examples = { @example ("do update_lanes lanes: 2") }))
+
+	@action(
+		name = "update_lanes",
+		args = {
+			@arg(
+				name = "lanes",
+				type = IType.INT,
+				optional = false,
+				doc = @doc("the new number of lanes.")
+			)
+		},
+		doc = @doc(
+			value = "change the number of lanes of the road",
+			examples = { @example ("do update_lanes lanes: 2") }
+		)
+	)
 	public void primChangeLaneNumber(final IScope scope) throws GamaRuntimeException {
 		// TODO: update this for multi-lane
 		final IAgent road = getCurrentAgent(scope);
@@ -370,21 +373,27 @@ public class RoadSkill extends Skill {
 		}
 	}
 
-	@action (
-			name = "register",
-			args = { @arg (
-					name = "agent",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the agent to register on the road.")),
-					@arg (
-							name = "lane",
-							type = IType.INT,
-							optional = false,
-							doc = @doc ("the lane index on which to register; if lane index >= number of lanes, then register on the linked road")) },
-			doc = @doc (
-					value = "register the agent on the road at the given lane",
-					examples = { @example ("do register agent: the_driver lane: 0") }))
+	@action(
+		name = "register",
+		args = {
+			@arg(
+				name = "agent",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc("the agent to register on the road.")
+			),
+			@arg(
+				name = "lane",
+				type = IType.INT,
+				optional = false,
+				doc = @doc("the lane index on which to register; if lane index >= number of lanes, then register on the linked road")
+			)
+		},
+		doc = @doc(
+			value = "register the agent on the road at the given lane",
+			examples = { @example ("do register agent: the_driver lane: 0") }
+		)
+	)
 	public void primRegister(final IScope scope) throws GamaRuntimeException {
 		final IAgent road = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
@@ -393,18 +402,23 @@ public class RoadSkill extends Skill {
 		register(scope, driver, road, lane);
 	}
 
-	@action (
-			name = "unregister",
-			args = { @arg (
-					name = "agent",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the agent to unregister on the road.")) },
-			doc = @doc (
-					value = "unregister the agent on the road",
-					examples = { @example ("do unregister agent: the_driver") }))
+	@action(
+		name = "unregister",
+		args = {
+			@arg(
+				name = "agent",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc ("the agent to unregister on the road.")
+			)
+		},
+		doc = @doc(
+			value = "unregister the agent on the road",
+			examples = { @example ("do unregister agent: the_driver") }
+		)
+	)
 	public void primUnregister(final IScope scope) throws GamaRuntimeException {
-		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
+		IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
 		unregister(scope, driver);
 	}
 	
@@ -424,7 +438,7 @@ public class RoadSkill extends Skill {
 
 		int numLanesCurrent = getLanes(currentRoad);
 		IAgent linkedRoad = getLinkedRoad(currentRoad);
-		final Integer startingLane = (Integer) driver.getAttribute(DrivingSkill.STARTING_LANE);
+		Integer startingLane = (Integer) driver.getAttribute(DrivingSkill.STARTING_LANE);
 		int numLanesOccupied = (int) driver.getAttribute(DrivingSkill.NUM_LANES_OCCUPIED);
 		int currentSegment = DrivingSkill.getSegmentIndex(driver);
 

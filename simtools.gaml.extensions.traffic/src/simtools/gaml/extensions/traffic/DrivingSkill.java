@@ -32,8 +32,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.graph.GraphTopology;
-import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -104,7 +102,6 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("the index of the current edge (road) in the path")
 	),
 	@variable(
-		// TODO: this attribute seems redundant
 		name = DrivingSkill.TARGETS,
 		type = IType.LIST,
 		of = IType.POINT,
@@ -326,171 +323,171 @@ public class DrivingSkill extends MovingSkill {
 	public final static String LANE_CHANGE_PRIORITY_RANDOMIZED = "lane_change_priority_randomized";
 
 	@getter(MAX_ACCELERATION)
-	public static double getAccelerationMax(final IAgent agent) {
-		return (Double) agent.getAttribute(MAX_ACCELERATION);
+	public static double getAccelerationMax(final IAgent driver) {
+		return (Double) driver.getAttribute(MAX_ACCELERATION);
 	}
 
 	@setter(MAX_ACCELERATION)
-	public static void setAccelerationMax(final IAgent agent, final Double val) {
-		agent.setAttribute(MAX_ACCELERATION, val);
+	public static void setAccelerationMax(final IAgent driver, final Double val) {
+		driver.setAttribute(MAX_ACCELERATION, val);
 	}
 
 	@getter(SPEED_COEFF)
-	public static double getSpeedCoeff(final IAgent agent) {
-		return (Double) agent.getAttribute(SPEED_COEFF);
+	public static double getSpeedCoeff(final IAgent driver) {
+		return (Double) driver.getAttribute(SPEED_COEFF);
 	}
 
 	@setter(SPEED_COEFF)
-	public static void setSpeedCoeff(final IAgent agent, final Double val) {
-		agent.setAttribute(SPEED_COEFF, val);
+	public static void setSpeedCoeff(final IAgent driver, final Double val) {
+		driver.setAttribute(SPEED_COEFF, val);
 	}
 
 	@getter(MAX_SPEED)
-	public static double getMaxSpeed(final IAgent agent) {
-		return (Double) agent.getAttribute(MAX_SPEED);
+	public static double getMaxSpeed(final IAgent driver) {
+		return (Double) driver.getAttribute(MAX_SPEED);
 	}
 
 	@setter(MAX_SPEED)
-	public static void setMaxSpeed(final IAgent agent, final Double val) {
-		agent.setAttribute(MAX_SPEED, val);
+	public static void setMaxSpeed(final IAgent driver, final Double val) {
+		driver.setAttribute(MAX_SPEED, val);
 	}
 
 	@getter(CURRENT_TARGET)
-	public static GamaPoint getCurrentTarget(final IAgent agent) {
-		return (GamaPoint) agent.getAttribute(CURRENT_TARGET);
+	public static GamaPoint getCurrentTarget(final IAgent driver) {
+		return (GamaPoint) driver.getAttribute(CURRENT_TARGET);
 	}
 
 	@setter(CURRENT_TARGET)
-	public static void setCurrentTarget(final IAgent agent, final ILocation point) {
-		agent.setAttribute(CURRENT_TARGET, point);
+	public static void setCurrentTarget(final IAgent driver, final ILocation point) {
+		driver.setAttribute(CURRENT_TARGET, point);
 	}
 
 	@getter(FINAL_TARGET)
-	public static GamaPoint getFinalTarget(final IAgent agent) {
-		return (GamaPoint) agent.getAttribute(FINAL_TARGET);
+	public static GamaPoint getFinalTarget(final IAgent driver) {
+		return (GamaPoint) driver.getAttribute(FINAL_TARGET);
 	}
 
 	@setter(FINAL_TARGET)
-	public static void setFinalTarget(final IAgent agent, final ILocation point) {
-		agent.setAttribute(FINAL_TARGET, point);
+	public static void setFinalTarget(final IAgent driver, final ILocation point) {
+		driver.setAttribute(FINAL_TARGET, point);
 	}
 
 	@getter(CURRENT_INDEX)
-	public static Integer getCurrentIndex(final IAgent agent) {
-		return (Integer) agent.getAttribute(CURRENT_INDEX);
+	public static Integer getCurrentIndex(final IAgent driver) {
+		return (Integer) driver.getAttribute(CURRENT_INDEX);
 	}
 
 	@setter(CURRENT_INDEX)
-	public static void setCurrentIndex(final IAgent agent, final Integer index) {
-		agent.setAttribute(CURRENT_INDEX, index);
+	public static void setCurrentIndex(final IAgent driver, final Integer index) {
+		driver.setAttribute(CURRENT_INDEX, index);
 	}
 
 	@getter(SEGMENT_INDEX)
-	public static Integer getSegmentIndex(final IAgent agent) {
-		return (Integer) agent.getAttribute(SEGMENT_INDEX);
+	public static Integer getSegmentIndex(final IAgent driver) {
+		return (Integer) driver.getAttribute(SEGMENT_INDEX);
 	}
 
 	@setter(SEGMENT_INDEX)
-	public static void setSegmentIndex(final IAgent agent, final Integer index) {
-		agent.setAttribute(SEGMENT_INDEX, index);
+	public static void setSegmentIndex(final IAgent driver, final Integer index) {
+		driver.setAttribute(SEGMENT_INDEX, index);
 	}
 
 	@Override
 	@getter(CURRENT_PATH)
-	public IPath getCurrentPath(final IAgent agent) {
-		return (IPath) agent.getAttribute(CURRENT_PATH);
+	public IPath getCurrentPath(final IAgent driver) {
+		return (IPath) driver.getAttribute(CURRENT_PATH);
 	}
 
 	@Override
 	@setter(CURRENT_PATH)
-	public void setCurrentPath(final IAgent agent, final IPath path) {
-		agent.setAttribute(CURRENT_PATH, path);
+	public void setCurrentPath(final IAgent driver, final IPath path) {
+		driver.setAttribute(CURRENT_PATH, path);
 	}
 
 	@getter(TARGETS)
-	public static List<ILocation> getTargets(final IAgent agent) {
-		return (List<ILocation>) agent.getAttribute(TARGETS);
+	public static List<ILocation> getTargets(final IAgent driver) {
+		return (List<ILocation>) driver.getAttribute(TARGETS);
 	}
 
 	@setter(TARGETS)
-	public static void setTargets(final IAgent agent, final List<ILocation> points) {
-		agent.setAttribute(TARGETS, points);
+	public static void setTargets(final IAgent driver, final List<ILocation> points) {
+		driver.setAttribute(TARGETS, points);
 	}
 
 	@getter(PROBA_USE_LINKED_ROAD)
-	public static double getProbaUseLinkedRoad(final IAgent agent) {
-		return (Double) agent.getAttribute(PROBA_USE_LINKED_ROAD);
+	public static double getProbaUseLinkedRoad(final IAgent driver) {
+		return (Double) driver.getAttribute(PROBA_USE_LINKED_ROAD);
 	}
 
 	@setter(PROBA_USE_LINKED_ROAD)
-	public static void setProbaUseLinkedRoad(final IAgent agent, final Double proba) {
-		agent.setAttribute(PROBA_USE_LINKED_ROAD, proba);
+	public static void setProbaUseLinkedRoad(final IAgent driver, final Double proba) {
+		driver.setAttribute(PROBA_USE_LINKED_ROAD, proba);
 	}
 
 	@getter(PROBA_LANE_CHANGE_DOWN)
-	public static double getProbaLaneChangeDown(final IAgent agent) {
-		return (Double) agent.getAttribute(PROBA_LANE_CHANGE_DOWN);
+	public static double getProbaLaneChangeDown(final IAgent driver) {
+		return (Double) driver.getAttribute(PROBA_LANE_CHANGE_DOWN);
 	}
 
 	@setter(PROBA_LANE_CHANGE_DOWN)
-	public static void setProbaLaneChangeDown(final IAgent agent, final Double proba) {
-		agent.setAttribute(PROBA_LANE_CHANGE_DOWN, proba);
+	public static void setProbaLaneChangeDown(final IAgent driver, final Double proba) {
+		driver.setAttribute(PROBA_LANE_CHANGE_DOWN, proba);
 	}
 
 	@getter(PROBA_LANE_CHANGE_UP)
-	public static double getProbaLaneChangeUp(final IAgent agent) {
-		return (Double) agent.getAttribute(PROBA_LANE_CHANGE_UP);
+	public static double getProbaLaneChangeUp(final IAgent driver) {
+		return (Double) driver.getAttribute(PROBA_LANE_CHANGE_UP);
 	}
 
 	@setter(PROBA_LANE_CHANGE_UP)
-	public static void setProbaLaneChangeUp(final IAgent agent, final Double proba) {
-		agent.setAttribute(PROBA_LANE_CHANGE_UP, proba);
+	public static void setProbaLaneChangeUp(final IAgent driver, final Double proba) {
+		driver.setAttribute(PROBA_LANE_CHANGE_UP, proba);
 	}
 
 	@getter(PROBA_RESPECT_PRIORITIES)
-	public static double getRespectPriorities(final IAgent agent) {
-		return (Double) agent.getAttribute(PROBA_RESPECT_PRIORITIES);
+	public static double getRespectPriorities(final IAgent driver) {
+		return (Double) driver.getAttribute(PROBA_RESPECT_PRIORITIES);
 	}
 
 	@setter(PROBA_RESPECT_PRIORITIES)
-	public static void setRespectPriorities(final IAgent agent, final Double proba) {
-		agent.setAttribute(PROBA_RESPECT_PRIORITIES, proba);
+	public static void setRespectPriorities(final IAgent driver, final Double proba) {
+		driver.setAttribute(PROBA_RESPECT_PRIORITIES, proba);
 	}
 
 	@getter(PROBA_BLOCK_NODE)
-	public static double getProbaBlockNode(final IAgent agent) {
-		return (Double) agent.getAttribute(PROBA_BLOCK_NODE);
+	public static double getProbaBlockNode(final IAgent driver) {
+		return (Double) driver.getAttribute(PROBA_BLOCK_NODE);
 	}
 
 	@setter(PROBA_BLOCK_NODE)
-	public static void setProbaBlockNode(final IAgent agent, final Double proba) {
-		agent.setAttribute(PROBA_BLOCK_NODE, proba);
+	public static void setProbaBlockNode(final IAgent driver, final Double proba) {
+		driver.setAttribute(PROBA_BLOCK_NODE, proba);
 	}
 
 	@getter(PROBA_RESPECT_STOPS)
-	public static List<Double> getRespectStops(final IAgent agent) {
-		return (List<Double>) agent.getAttribute(PROBA_RESPECT_STOPS);
+	public static List<Double> getRespectStops(final IAgent driver) {
+		return (List<Double>) driver.getAttribute(PROBA_RESPECT_STOPS);
 	}
 
 	@setter(PROBA_RESPECT_STOPS)
-	public static void setRespectStops(final IAgent agent, final List<Boolean> probas) {
-		agent.setAttribute(PROBA_RESPECT_STOPS, probas);
+	public static void setRespectStops(final IAgent driver, final List<Boolean> probas) {
+		driver.setAttribute(PROBA_RESPECT_STOPS, probas);
 	}
 
 	@Deprecated
 	@getter(ON_LINKED_ROAD)
-	public static boolean getOnLinkedRoad(final IAgent agent) {
-		return isUsingLinkedRoad(agent);
+	public static boolean getOnLinkedRoad(final IAgent driver) {
+		return isUsingLinkedRoad(driver);
 	}
 
 	@Deprecated
 	@setter(ON_LINKED_ROAD)
-	public static void setOnLinkedRoad(final IAgent agent, final Boolean onLinkedRoad) {
+	public static void setOnLinkedRoad(final IAgent driver, final Boolean onLinkedRoad) {
 		// read-only
 	}
 
 	@getter(USING_LINKED_ROAD)
-	public static boolean isUsingLinkedRoad(IAgent driver) {
+	public static boolean isUsingLinkedRoad(final IAgent driver) {
 		IAgent currentRoad = getCurrentRoad(driver);
 		if (currentRoad == null) return false;
 
@@ -501,192 +498,205 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@setter(USING_LINKED_ROAD)
-	public static void setUsingLinkedRoad(IAgent driver, boolean usingLinkedRoad) {
+	public static void setUsingLinkedRoad(final IAgent driver, final boolean usingLinkedRoad) {
 		// read-only
 	}
 
 	@getter(LINKED_LANE_LIMIT)
-	public static int getLinkedLaneLimit(IAgent driver) {
+	public static int getLinkedLaneLimit(final IAgent driver) {
 		return (int) driver.getAttribute(LINKED_LANE_LIMIT);
 	}
 
 	@setter(LINKED_LANE_LIMIT)
-	public static void setLinkedLaneLimit(IAgent driver, int linkedLaneLimit) {
+	public static void setLinkedLaneLimit(final IAgent driver, final int linkedLaneLimit) {
 		driver.setAttribute(LINKED_LANE_LIMIT, linkedLaneLimit);
 	}
 
 	@getter(LANE_CHANGE_LIMIT)
-	public static int getLaneChangeLimit(IAgent driver) {
+	public static int getLaneChangeLimit(final IAgent driver) {
 		return (int) driver.getAttribute(LANE_CHANGE_LIMIT);
 	}
 
 	@getter(LANE_CHANGE_PRIORITY_RANDOMIZED)
-	public static boolean isLaneChangePriorityRandomized(IAgent driver) {
+	public static boolean isLaneChangePriorityRandomized(final IAgent driver) {
 		return (boolean) driver.getAttribute(LANE_CHANGE_PRIORITY_RANDOMIZED);
 	}
 
 	@getter(RIGHT_SIDE_DRIVING)
-	public static boolean getRightSideDriving(final IAgent agent) {
-		return (Boolean) agent.getAttribute(RIGHT_SIDE_DRIVING);
+	public static boolean getRightSideDriving(final IAgent driver) {
+		return (Boolean) driver.getAttribute(RIGHT_SIDE_DRIVING);
 	}
 
 	@setter(RIGHT_SIDE_DRIVING)
-	public static void setRightSideDriving(final IAgent agent, final Boolean isRight) {
-		agent.setAttribute(RIGHT_SIDE_DRIVING, isRight);
+	public static void setRightSideDriving(final IAgent driver, final Boolean isRight) {
+		driver.setAttribute(RIGHT_SIDE_DRIVING, isRight);
 	}
 
 	@Deprecated
 	@getter(SECURITY_DISTANCE_COEFF)
-	public static double getSecurityDistanceCoeff(final IAgent agent) {
-		return (Double) agent.getAttribute(SECURITY_DISTANCE_COEFF);
+	public static double getSecurityDistanceCoeff(final IAgent driver) {
+		return (Double) driver.getAttribute(SECURITY_DISTANCE_COEFF);
 	}
 
 	@Deprecated
 	@setter(SECURITY_DISTANCE_COEFF)
-	public static void setSecurityDistanceCoeff(final IAgent agent, final double ls) {
-		agent.setAttribute(SECURITY_DISTANCE_COEFF, ls);
+	public static void setSecurityDistanceCoeff(final IAgent driver, final double ls) {
+		driver.setAttribute(SECURITY_DISTANCE_COEFF, ls);
 	}
 
 	@getter(SAFETY_DISTANCE_COEFF)
-	public static double getSafetyDistanceCoeff(final IAgent agent) {
-		return (Double) agent.getAttribute(SAFETY_DISTANCE_COEFF);
+	public static double getSafetyDistanceCoeff(final IAgent driver) {
+		return (Double) driver.getAttribute(SAFETY_DISTANCE_COEFF);
 	}
 
 	@setter(SAFETY_DISTANCE_COEFF)
-	public static void setSafetyDistanceCoeff(final IAgent agent, final double ls) {
-		agent.setAttribute(SAFETY_DISTANCE_COEFF, ls);
+	public static void setSafetyDistanceCoeff(final IAgent driver, final double ls) {
+		driver.setAttribute(SAFETY_DISTANCE_COEFF, ls);
 	}
 
 	@getter(CURRENT_ROAD)
-	public static IAgent getCurrentRoad(final IAgent agent) {
-		return (IAgent) agent.getAttribute(CURRENT_ROAD);
+	public static IAgent getCurrentRoad(final IAgent driver) {
+		return (IAgent) driver.getAttribute(CURRENT_ROAD);
 	}
 
 	@setter(CURRENT_ROAD)
-	public static void setCurrentRoad(IAgent driver, IAgent road) {
+	public static void setCurrentRoad(final IAgent driver, final IAgent road) {
 		driver.setAttribute(CURRENT_ROAD, road);
 	}
 
 	@getter(VEHICLE_LENGTH)
-	public static double getVehicleLength(final IAgent agent) {
-		return (Double) agent.getAttribute(VEHICLE_LENGTH);
+	public static double getVehicleLength(final IAgent driver) {
+		return (Double) driver.getAttribute(VEHICLE_LENGTH);
 	}
 
 	@Deprecated
 	@getter(CURRENT_LANE)
-	public static int getCurrentLane(final IAgent agent) {
-		return (int) agent.getAttribute(STARTING_LANE);
+	public static int getCurrentLane(final IAgent driver) {
+		return (int) driver.getAttribute(STARTING_LANE);
 	}
 
 	@Deprecated
 	@setter(CURRENT_LANE)
-	public static void setCurrentLane(IAgent agent, int newLane) {
-		agent.setAttribute(STARTING_LANE, newLane);
+	public static void setCurrentLane(final IAgent driver, final int newLane) {
+		driver.setAttribute(STARTING_LANE, newLane);
 	}
 
 	@getter(STARTING_LANE)
-	public static int getStartingLane(final IAgent agent) {
-		return (int) agent.getAttribute(STARTING_LANE);
+	public static int getStartingLane(final IAgent driver) {
+		return (int) driver.getAttribute(STARTING_LANE);
 	}
 
 	@getter(DISTANCE_TO_GOAL)
-	public static double getDistanceToGoal(final IAgent agent) {
-		return (Double) agent.getAttribute(DISTANCE_TO_GOAL);
+	public static double getDistanceToGoal(final IAgent driver) {
+		return (Double) driver.getAttribute(DISTANCE_TO_GOAL);
 	}
 
 	@getter(MIN_SECURITY_DISTANCE)
-	public static double getMinSecurityDistance(final IAgent agent) {
-		return (Double) agent.getAttribute(MIN_SECURITY_DISTANCE);
+	public static double getMinSecurityDistance(final IAgent driver) {
+		return (Double) driver.getAttribute(MIN_SECURITY_DISTANCE);
 	}
 
 	@setter(MIN_SECURITY_DISTANCE)
-	public static void setMinSecDistance(final IAgent agent, final double msd) {
-		agent.setAttribute(MIN_SECURITY_DISTANCE, msd);
+	public static void setMinSecDistance(final IAgent driver, final double msd) {
+		driver.setAttribute(MIN_SECURITY_DISTANCE, msd);
 	}
 
 	@getter(MIN_SAFETY_DISTANCE)
-	public static double getMinSafetyDistance(final IAgent agent) {
-		return (Double) agent.getAttribute(MIN_SAFETY_DISTANCE);
+	public static double getMinSafetyDistance(final IAgent driver) {
+		return (Double) driver.getAttribute(MIN_SAFETY_DISTANCE);
 	}
 
 	@setter(DISTANCE_TO_GOAL)
-	public static void setDistanceToGoal(final IAgent agent, final double dg) {
-		agent.setAttribute(DISTANCE_TO_GOAL, dg);
+	public static void setDistanceToGoal(final IAgent driver, final double dg) {
+		driver.setAttribute(DISTANCE_TO_GOAL, dg);
 	}
 
 	@getter(NUM_LANES_OCCUPIED)
-	public static Integer getNumLanesOccupied(IAgent agent) {
-		return (Integer) agent.getAttribute(NUM_LANES_OCCUPIED);
+	public static Integer getNumLanesOccupied(final IAgent driver) {
+		return (Integer) driver.getAttribute(NUM_LANES_OCCUPIED);
 	}
 
 	@setter(NUM_LANES_OCCUPIED)
-	public static void setNumLanesOccupied(IAgent agent, Integer value) {
-		agent.setAttribute(NUM_LANES_OCCUPIED, value);
+	public static void setNumLanesOccupied(final IAgent driver, final Integer value) {
+		driver.setAttribute(NUM_LANES_OCCUPIED, value);
 	}
 
-	@action (
-			name = "advanced_follow_driving",
-			args = { @arg (
-					name = "path",
-					type = IType.PATH,
-					optional = false,
-					doc = @doc ("a path to be followed.")),
-					@arg (
-							name = "target",
-							type = IType.POINT,
-							optional = true,
-							doc = @doc ("the target to reach")),
-					@arg (
-							name = IKeyword.SPEED,
-							type = IType.FLOAT,
-							optional = true,
-							doc = @doc ("the speed to use for this move (replaces the current value of speed)")),
-					@arg (
-							name = "time",
-							type = IType.FLOAT,
-							optional = true,
-							doc = @doc ("time to travel")) },
-			doc = @doc (
-					value = "moves the agent towards along the path passed in the arguments while considering the other agents in the network (only for graph topology)",
-					returns = "the remaining time",
-					examples = { @example ("do osm_follow path: the_path on: road_network;") }))
+	@action(
+		name = "advanced_follow_driving",
+		args = {
+			@arg(
+				name = "path",
+				type = IType.PATH,
+				optional = false,
+				doc = @doc ("a path to be followed.")
+			),
+			@arg(
+				name = "target",
+				type = IType.POINT,
+				optional = true,
+				doc = @doc ("the target to reach")
+			),
+			@arg(
+				name = IKeyword.SPEED,
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc ("the speed to use for this move (replaces the current value of speed)")
+			),
+			@arg(
+				name = "time",
+				type = IType.FLOAT,
+				optional = true,
+				doc = @doc ("time to travel")
+			) 
+		},
+		doc = @doc(
+			value = "moves the agent towards along the path passed in the arguments while considering the other agents in the network (only for graph topology)",
+			returns = "the remaining time",
+			examples = { @example ("do osm_follow path: the_path on: road_network;") }
+		)
+	)
 	public Double primAdvancedFollow(final IScope scope) throws GamaRuntimeException {
 		// TODO: path is not used anywhere in this action
-		final IAgent agent = getCurrentAgent(scope);
-		final Double s = scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
-		final Double t = scope.hasArg("time") ? scope.getFloatArg("time") : scope.getClock().getStepInSeconds();
-		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
+		IAgent agent = getCurrentAgent(scope);
+		Double s = scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
+		Double t = scope.hasArg("time") ? scope.getFloatArg("time") : scope.getClock().getStepInSeconds();
+		GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 		return moveToNextLocAlongPathOSM(scope, s, t, path);
 	}
 
-	@action (
-			name = "is_ready_next_road",
-			args = { @arg (
-					name = "new_road",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the road to test")),
-					@arg (
-							name = "lane",
-							type = IType.INT,
-							optional = false,
-							doc = @doc ("the lane to test")) },
-			doc = @doc (
-					value = "action to test if the driver can take the given road at the given lane",
-					returns = "true (the driver can take the road) or false (the driver cannot take the road)",
-					examples = { @example ("do is_ready_next_road new_road: a_road lane: 0;") }))
+	@action(
+		name = "is_ready_next_road",
+		args = {
+			@arg(
+				name = "new_road",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc ("the road to test")
+			),
+			@arg(
+				name = "lane",
+				type = IType.INT,
+				optional = false,
+				doc = @doc ("the lane to test"))
+		},
+		doc = @doc(
+			value = "action to test if the driver can take the given road at the given lane",
+			returns = "true (the driver can take the road) or false (the driver cannot take the road)",
+			examples = { @example ("do is_ready_next_road new_road: a_road lane: 0;") }
+		)
+	)
 	public Boolean primIsReadyNextRoad(final IScope scope) throws GamaRuntimeException {
-		final IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
-		final Integer lane = (Integer) scope.getArg("lane", IType.INT);
-		final IAgent driver = getCurrentAgent(scope);
+		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
+		Integer lane = (Integer) scope.getArg("lane", IType.INT);
+		IAgent driver = getCurrentAgent(scope);
 		double vehicleLength = getVehicleLength(driver);
 		int numLanesOccupied = getNumLanesOccupied(driver);
-		final double probaBlock = getProbaBlockNode(driver);
-		final boolean testBlockNode = Random.opFlip(scope, probaBlock);
-		final IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
-		final Map<IAgent, List<IAgent>> block = (Map<IAgent, List<IAgent>>) node.getAttribute(RoadNodeSkill.BLOCK);
-		final List<IAgent> ba = GamaListFactory.create(scope, Types.AGENT, block.keySet());
-		for (final IAgent dr : ba) {
+		double probaBlock = getProbaBlockNode(driver);
+		boolean testBlockNode = Random.opFlip(scope, probaBlock);
+		IAgent node = (IAgent) road.getAttribute(RoadSkill.SOURCE_NODE);
+		Map<IAgent, List<IAgent>> block = (Map<IAgent, List<IAgent>>) node.getAttribute(RoadNodeSkill.BLOCK);
+		List<IAgent> ba = GamaListFactory.create(scope, Types.AGENT, block.keySet());
+		for (IAgent dr : ba) {
 			if (!dr.getLocation().equals(node.getLocation())) {
 				block.remove(dr);
 			}
@@ -695,17 +705,22 @@ public class DrivingSkill extends MovingSkill {
 				&& (testBlockNode || DrivingOperators.enoughSpaceToEnterRoad(scope, road, lane, numLanesOccupied, vehicleLength / 2));
 	}
 
-	@action (
-			name = "test_next_road",
-			args = { @arg (
-					name = "new_road",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the road to test")) },
-			doc = @doc (
-					value = "action to test if the driver can take the given road",
-					returns = "true (the driver can take the road) or false (the driver cannot take the road)",
-					examples = { @example ("do test_next_road new_road: a_road;") }))
+	@action(
+		name = "test_next_road",
+		args = {
+			@arg(
+				name = "new_road",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc ("the road to test")
+			)
+		},
+		doc = @doc(
+			value = "action to test if the driver can take the given road",
+			returns = "true (the driver can take the road) or false (the driver cannot take the road)",
+			examples = { @example ("do test_next_road new_road: a_road;") }
+		)
+	)
 	public Boolean primTestNextRoad(final IScope scope) throws GamaRuntimeException {
 		return true;
 	}
@@ -721,26 +736,28 @@ public class DrivingSkill extends MovingSkill {
 	 *
 	 * @throws GamaRuntimeException
 	 */
-	public Boolean isReadyNextRoad(IScope scope, IAgent newRoad) throws GamaRuntimeException {
-		IAgent sourceNode = (IAgent) newRoad.getAttribute(RoadSkill.SOURCE_NODE);
-		Map<IAgent, List<IAgent>> blockInfo = (Map<IAgent, List<IAgent>>)
-			sourceNode.getAttribute(RoadNodeSkill.BLOCK);
-
+	public Boolean isReadyNextRoad(final IScope scope, final IAgent newRoad) throws GamaRuntimeException {
 		IAgent driver = getCurrentAgent(scope);
-		// additional conditions to cross the intersection, defined by the user
 		ISpecies context = driver.getSpecies();
+
+		// additional conditions to cross the intersection, defined by the user
 		IStatement.WithArgs actionTNR = context.getAction("test_next_road");
 		Arguments argsTNR = new Arguments();
 		argsTNR.put("new_road", ConstantExpressionDescription.create(newRoad));
 		actionTNR.setRuntimeArgs(scope, argsTNR);
 		if (!(Boolean) actionTNR.executeOn(scope)) { return false; }
 
+		IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
+		// Don't need to do traffic light + other safety checks if the driver has not been on a road
+		if (currentRoad == null) {
+			return true;
+		}
+
+		IAgent sourceNode = (IAgent) newRoad.getAttribute(RoadSkill.SOURCE_NODE);
+		Map<IAgent, List<IAgent>> blockInfo = (Map<IAgent, List<IAgent>>)
+			sourceNode.getAttribute(RoadNodeSkill.BLOCK);
 		List<List> stops = (List<List>) sourceNode.getAttribute(RoadNodeSkill.STOP);
 		List<Double> respectsStops = getRespectStops(driver);
-
-		IAgent currentRoad = (IAgent) driver.getAttribute(CURRENT_ROAD);
-		// TODO: why would current road be null?
-		if (currentRoad == null) { return true; }
 
 		for (int i = 0; i < stops.size(); i++) {
 			Boolean stop = stops.get(i).contains(currentRoad);
@@ -778,7 +795,6 @@ public class DrivingSkill extends MovingSkill {
 			// be careful of vehicles coming from the right/left side
 			if (!hasPriority
 					&& (shouldRespectPriority || rightSide && angle > angleRef || !rightSide && angle < angleRef)) {
-				// TODO: this should include drivers on linked roads as well
 				List<IAgent> otherDrivers = (List) otherInRoad.getAttribute(RoadSkill.ALL_AGENTS);
 				for (IAgent otherDriver : otherDrivers) {
 					if (otherDriver == null || otherDriver.dead()) {
@@ -953,17 +969,16 @@ public class DrivingSkill extends MovingSkill {
 		)
 	)
 	public void primDriveRandom(final IScope scope) throws GamaRuntimeException {
-		final IAgent driver = getCurrentAgent(scope);
-		final ISpecies context = driver.getSpecies();
-		final IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
-		final Arguments argsEF = new Arguments();
-		final IStatement.WithArgs actionLC = context.getAction("lane_choice");
-		final Arguments argsLC = new Arguments();
-		final IStatement.WithArgs actionSC = context.getAction("speed_choice");
-		final Arguments argsSC = new Arguments();
-		final Map<IAgent, Double> roadProba = (Map) scope.getArg("proba_roads", IType.MAP);
+		IAgent driver = getCurrentAgent(scope);
+		ISpecies context = driver.getSpecies();
+		IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
+		Arguments argsEF = new Arguments();
+		IStatement.WithArgs actionLC = context.getAction("lane_choice");
+		Arguments argsLC = new Arguments();
+		IStatement.WithArgs actionSC = context.getAction("speed_choice");
+		Arguments argsSC = new Arguments();
+		Map<IAgent, Double> roadProba = (Map) scope.getArg("proba_roads", IType.MAP);
 		IAgent initNode = (IAgent) scope.getArg("init_node", IType.AGENT);
-		// TODO: why didn't `optional = true` do any check?
 		if (initNode == null) {
 			throw GamaRuntimeException.error("You need to specify init_node in drive_random", scope);
 		}
@@ -986,7 +1001,7 @@ public class DrivingSkill extends MovingSkill {
 				IAgent newRoad;
 				IAgent currentRoad = getCurrentRoad(driver);
 				IAgent targetNode = currentRoad != null ? RoadSkill.getTargetNode(currentRoad) : initNode;
-				final List<IAgent> nextRoads = RoadNodeSkill.getRoadsOut(targetNode);
+				List<IAgent> nextRoads = RoadNodeSkill.getRoadsOut(targetNode);
 				if (nextRoads.isEmpty()) {
 					return;
 				} else if (nextRoads.size() == 1) {
@@ -995,9 +1010,9 @@ public class DrivingSkill extends MovingSkill {
 					if (roadProba == null || roadProba.isEmpty()) {
 						newRoad = nextRoads.get(scope.getRandom().between(0, nextRoads.size() - 1));
 					} else {
-						final IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
-						for (final IAgent r : nextRoads) {
-							final Double val = roadProba.get(r);
+						IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
+						for (IAgent r : nextRoads) {
+							Double val = roadProba.get(r);
 							distribution.add(val == null ? 0.0 : val);
 						}
 						newRoad = nextRoads.get(Random.opRndChoice(scope, distribution));
@@ -1014,7 +1029,7 @@ public class DrivingSkill extends MovingSkill {
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
 				argsLC.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionLC.setRuntimeArgs(scope, argsLC);
-				final int lane = (Integer) actionLC.executeOn(scope);
+				int lane = (Integer) actionLC.executeOn(scope);
 
 				if (lane >= 0) {
 					setCurrentTarget(driver, RoadSkill.getTargetNode(newRoad).getLocation());
@@ -1032,7 +1047,7 @@ public class DrivingSkill extends MovingSkill {
 
 			argsSC.put("new_road", ConstantExpressionDescription.create(getCurrentRoad(driver)));
 			actionSC.setRuntimeArgs(scope, argsSC);
-			final double speed = (Double) actionSC.executeOn(scope);
+			double speed = (Double) actionSC.executeOn(scope);
 			setSpeed(driver, speed);
 
 			timeSpentMoving = moveToNextLocAlongPathOSM(scope, speed, remainingTime, null);
@@ -1040,12 +1055,14 @@ public class DrivingSkill extends MovingSkill {
 		}
 	}
 
-	@action (
-			name = "drive",
-			doc = @doc (
-					value = "action to drive toward the final target",
-					examples = { @example ("do drive;") }))
-	public void primDrive(IScope scope) throws GamaRuntimeException {
+	@action(
+		name = "drive",
+		doc = @doc(
+			value = "action to drive toward the target",
+			examples = { @example ("do drive;") }
+		)
+	)
+	public void primDrive(final IScope scope) throws GamaRuntimeException {
 		IAgent driver = getCurrentAgent(scope);
 		if (driver == null || driver.dead()) return;
 
@@ -1054,13 +1071,13 @@ public class DrivingSkill extends MovingSkill {
 		IPath path = getCurrentPath(driver);
 
 		// some preparations to execute other actions during the loop
-		final ISpecies context = driver.getSpecies();
-		final IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
-		final Arguments argsEF = new Arguments();
-		final IStatement.WithArgs actionLC = context.getAction("lane_choice");
-		final Arguments argsLC = new Arguments();
-		final IStatement.WithArgs actionSC = context.getAction("speed_choice");
-		final Arguments argsSC = new Arguments();
+		ISpecies context = driver.getSpecies();
+		IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
+		Arguments argsEF = new Arguments();
+		IStatement.WithArgs actionLC = context.getAction("lane_choice");
+		Arguments argsLC = new Arguments();
+		IStatement.WithArgs actionSC = context.getAction("speed_choice");
+		Arguments argsSC = new Arguments();
 
 		// get the amount of time that the driver is able to travel in one simulation step
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
@@ -1071,7 +1088,7 @@ public class DrivingSkill extends MovingSkill {
 			GamaPoint target = getCurrentTarget(driver);
 			int currentEdgeIdx = getCurrentIndex(driver);
 
-			// final target check
+			// target check
 			if (currentEdgeIdx == path.getEdgeList().size() - 1 && loc.equals(finalTarget)) {
 				clearDrivingStates(scope);
 				return;
@@ -1125,41 +1142,52 @@ public class DrivingSkill extends MovingSkill {
 		}
 	}
 
-	@action (
-			name = "external_factor_impact",
-			args = { @arg (
-					name = "new_road",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the road on which to the driver wants to go")),
-					@arg (
-							name = "remaining_time",
-							type = IType.FLOAT,
-							optional = false,
-							doc = @doc ("the remaining time")) },
-			doc = @doc (
-					value = "action that allows to define how the remaining time is impacted by external factor",
-					returns = "the remaining time",
-					examples = { @example ("do external_factor_impact new_road: a_road remaining_time: 0.5;") }))
+	@action(
+		name = "external_factor_impact",
+		args = {
+			@arg(
+				name = "new_road",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc ("the road on which to the driver wants to go")
+			),
+			@arg(
+				name = "remaining_time",
+				type = IType.FLOAT,
+				optional = false,
+				doc = @doc ("the remaining time")
+			)
+		},
+		doc = @doc(
+			value = "action that allows to define how the remaining time is impacted by external factor",
+			returns = "the remaining time",
+			examples = { @example ("do external_factor_impact new_road: a_road remaining_time: 0.5;") }
+		)
+	)
 	public Double primExternalFactorOnRemainingTime(final IScope scope) throws GamaRuntimeException {
 		return scope.getFloatArg("remaining_time");
 	}
 
-	@action (
-			name = "speed_choice",
-			args = { @arg (
-					name = "new_road",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the road on which to choose the speed")) },
-			doc = @doc (
-					value = "action to choose a speed",
-					returns = "the chosen speed",
-					examples = { @example ("do speed_choice new_road: the_road;") }))
+	@action(
+		name = "speed_choice",
+		args = {
+			@arg(
+				name = "new_road",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc ("the road on which to choose the speed")
+			)
+		},
+		doc = @doc(
+			value = "action to choose a speed",
+			returns = "the chosen speed",
+			examples = { @example ("do speed_choice new_road: the_road;") }
+		)
+	)
 	public Double primSpeedChoice(final IScope scope) throws GamaRuntimeException {
-		final IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
-		final IAgent agent = getCurrentAgent(scope);
-		final double speed = speedChoice(agent, road);
+		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
+		IAgent agent = getCurrentAgent(scope);
+		double speed = speedChoice(agent, road);
 		return speed;
 	}
 
@@ -1172,7 +1200,7 @@ public class DrivingSkill extends MovingSkill {
 	 *
 	 * @throws GamaRuntimeException
 	 */
-	public Integer chooseLane(IScope scope, IAgent newRoad) throws GamaRuntimeException {
+	public Integer chooseLane(final IScope scope, final IAgent newRoad) throws GamaRuntimeException {
 		IAgent driver = getCurrentAgent(scope);
 		double vehicleLength = getVehicleLength(driver);
 		int numLanesOccupied = getNumLanesOccupied(driver);
@@ -1207,19 +1235,7 @@ public class DrivingSkill extends MovingSkill {
 		double probaBlock = getProbaBlockNode(driver);
 		boolean goingToBlock = Random.opFlip(scope, probaBlock);
 
-		// TODO: how could a road have no lane? 
-		// edit: removing this block causes no issue so far
-		// if (numLanes == 0 /* && !onLinkedRoad */ ) {
-		// 	int lane = goingToBlock || nextRoadTestLane(driver, newRoad, 0, secDistCoeff, vL) ? 0 : -1;
-
-		// 	if (lane != -1) {
-		// 		addBlockingDriver(0, goingToBlock, driver, currentRoad, newRoad, node, roadsIn, blockInfo);
-		// 		return lane;
-		// 	}
-		// 	return lane;
-		// }
-
-		final int newStartingLane = Math.min(startingLane, numCurrentLanes - numLanesOccupied);
+		int newStartingLane = Math.min(startingLane, numCurrentLanes - numLanesOccupied);
 		// check current lane
 		if (DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, newStartingLane, numLanesOccupied, vehicleLength / 2)) {
 			return newStartingLane;
@@ -1249,19 +1265,24 @@ public class DrivingSkill extends MovingSkill {
 		return -1;
 	}
 
-	@action (
-			name = "lane_choice",
-			args = { @arg (
-					name = "new_road",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the road on which to choose the lane")) },
-			doc = @doc (
-					value = "action to choose a lane",
-					returns = "the chosen lane, return -1 if no lane can be taken",
-					examples = { @example ("do lane_choice new_road: a_road;") }))
+	@action(
+		name = "lane_choice",
+		args = {
+			@arg(
+				name = "new_road",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc ("the road on which to choose the lane")
+			)
+		},
+		doc = @doc(
+			value = "action to choose a lane",
+			returns = "the chosen lane, return -1 if no lane can be taken",
+			examples = { @example ("do lane_choice new_road: a_road;") }
+		)
+	)
 	public Integer primLaneChoice(final IScope scope) throws GamaRuntimeException {
-		final IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
+		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
 		return chooseLane(scope, road);
 	}
 
@@ -1273,7 +1294,8 @@ public class DrivingSkill extends MovingSkill {
 	 * @param newRoad
 	 * @param node The node agent whose blocking info will be updated
 	 */
-	public void blockIntersection(IScope scope, IAgent currentRoad, IAgent newRoad, IAgent node) {
+	public void blockIntersection(final IScope scope, final IAgent currentRoad,
+			final IAgent newRoad, final IAgent node) {
 		List<IAgent> inRoads = (List<IAgent>) node.getAttribute(RoadNodeSkill.ROADS_IN);
 		if (inRoads.size() <= 1) {
 			return;
@@ -1307,7 +1329,8 @@ public class DrivingSkill extends MovingSkill {
 	 * @param segment the segment to check for vehicles
 	 * @return the distance to the closest vehicle ahead
 	 */
-	private double computeDistToVehicleAhead(IScope scope, double remainingDist, int startingLane, int segment) {
+	private double computeDistToVehicleAhead(final IScope scope, final double remainingDist,
+			final int startingLane, final int segment) {
 		IAgent driver = getCurrentAgent(scope);
 		double distanceToGoal = getDistanceToGoal(driver);
 		IAgent currentRoad = getCurrentRoad(driver);
@@ -1452,7 +1475,8 @@ public class DrivingSkill extends MovingSkill {
 	 * @param newStartingLane
 	 * @param newSegment
 	 */
-	private void updateLaneSegment(IScope scope, int newStartingLane, int newSegment) {
+	private void updateLaneSegment(final IScope scope, final int newStartingLane,
+			final int newSegment) {
 		IAgent driver = getCurrentAgent(scope);
 		int numLanesOccupied = getNumLanesOccupied(driver);
 		int currStartingLane = getStartingLane(driver);
@@ -1512,7 +1536,8 @@ public class DrivingSkill extends MovingSkill {
 	 * @param segment the segment that the vehicle is currently in
 	 * @return the maximum distance that the vehicle can travel
 	 */
-	private double avoidCollision(IScope scope, double remainingDist, int segment) {
+	private double avoidCollision(final IScope scope, final double remainingDist,
+			final int segment) {
 		IAgent driver = getCurrentAgent(scope);
 		Double probaChangeLaneUp = getProbaLaneChangeUp(driver);
 		Double probaChangeLaneDown = getProbaLaneChangeDown(driver);
@@ -1587,7 +1612,8 @@ public class DrivingSkill extends MovingSkill {
 	 * @param path no idea what it does for now
 	 * @return the actual time that the vehicle spent moving
 	 */
-	private double moveToNextLocAlongPathOSM(IScope scope, double speed, double remainingTime, IPath path) {
+	private double moveToNextLocAlongPathOSM(final IScope scope, final double speed,
+			final double remainingTime, IPath path) {
 		IAgent driver = getCurrentAgent(scope);
 		IAgent currentRoad = getCurrentRoad(driver);
 		GamaPoint currentLocation = (GamaPoint) driver.getLocation().copy(scope);
@@ -1646,20 +1672,22 @@ public class DrivingSkill extends MovingSkill {
 		return remainingTime * (totalDistMoved / maxDist);
 	}
 	
-	@action (
-			name = "die",
-			doc = @doc (
-					value = "remove the driving agent from its current road and make it die",
-					examples = { @example ("do die") }))
+	@action(
+		name = "die",
+		doc = @doc(
+			value = "remove the driving agent from its current road and make it die",
+			examples = { @example("do die") }
+		)
+	)
 	public void primDieWrapper(final IScope scope) throws GamaRuntimeException {
-		final AbstractAgent driver = (AbstractAgent) getCurrentAgent(scope);
+		AbstractAgent driver = (AbstractAgent) getCurrentAgent(scope);
 		if (! driver.dead() && getCurrentRoad(driver) != null) {
 			RoadSkill.unregister(scope, driver);
 		}
 		driver.primDie(scope);
 	}
 
-	private void clearDrivingStates(IScope scope) {
+	private void clearDrivingStates(final IScope scope) {
 		IAgent driver = getCurrentAgent(scope);
 		getTargets(driver).clear();
 		setCurrentIndex(driver, -1);
