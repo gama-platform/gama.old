@@ -104,17 +104,18 @@ public class RoadSkill extends Skill {
 	public static List getAgentsOn(final IAgent agent) {
 		return (List) agent.getAttribute(AGENTS_ON);
 	}
-	
+
+	@setter(AGENTS_ON)
 	public static void setAgentsOn(final IAgent agent, final List agents) {
 		agent.setAttribute(AGENTS_ON, agents);
 	}
-	
 
 	@getter(ALL_AGENTS)
 	public static List getAgents(final IAgent agent) {
 		return (List) agent.getAttribute(ALL_AGENTS);
 	}
-	
+
+	@setter(ALL_AGENTS)
 	public static void setAgents(final IAgent agent, final List agents) {
 		agent.setAttribute(ALL_AGENTS, agents);
 	}
@@ -124,9 +125,19 @@ public class RoadSkill extends Skill {
 		return (IAgent) agent.getAttribute(SOURCE_NODE);
 	}
 
+	@setter(SOURCE_NODE)
+	public static void setSourceNode(final IAgent agent, final IAgent nd) {
+		agent.setAttribute(SOURCE_NODE, nd);
+	}
+
 	@getter(TARGET_NODE)
 	public static IAgent getTargetNode(final IAgent agent) {
 		return (IAgent) agent.getAttribute(TARGET_NODE);
+	}
+
+	@setter(TARGET_NODE)
+	public void setTargetNode(final IAgent agent, final IAgent nd) {
+		agent.setAttribute(TARGET_NODE, nd);
 	}
 
 	@getter(LANES)
@@ -134,29 +145,19 @@ public class RoadSkill extends Skill {
 		return (Integer) agent.getAttribute(LANES);
 	}
 
-	@getter(MAXSPEED)
-	public static Double getMaxSpeed(final IAgent agent) {
-		return (Double) agent.getAttribute(MAXSPEED);
-	}
-
 	@setter(LANES)
 	public static void setLanes(final IAgent agent, final int ln) {
 		agent.setAttribute(LANES, ln);
 	}
 
+	@getter(MAXSPEED)
+	public static Double getMaxSpeed(final IAgent agent) {
+		return (Double) agent.getAttribute(MAXSPEED);
+	}
+
 	@setter(MAXSPEED)
 	public static void setMaxSpeed(final IAgent agent, final Double sp) {
 		agent.setAttribute(MAXSPEED, sp);
-	}
-
-	@setter(SOURCE_NODE)
-	public static void setSourceNode(final IAgent agent, final IAgent nd) {
-		agent.setAttribute(SOURCE_NODE, nd);
-	}
-
-	@setter(TARGET_NODE)
-	public void setTargetNode(final IAgent agent, final IAgent nd) {
-		agent.setAttribute(TARGET_NODE, nd);
 	}
 
 	@getter(LINKED_ROAD)
