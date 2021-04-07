@@ -133,7 +133,7 @@
 					<products>
 						<product>
 							<id>ummisco.gama.application.product</id>
-							<archiveFileName>Gama1.8.1</archiveFileName>
+							<archiveFileName>Gama1.8.2</archiveFileName>
 							<rootFolders>
 								<macosx>Gama.app</macosx>
 							</rootFolders>
