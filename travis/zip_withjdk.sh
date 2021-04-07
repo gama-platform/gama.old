@@ -5,7 +5,7 @@ COMMIT=$@
 
 REPO="gama-platform/gama"
 RELEASE="1.8.2"
-thePATH="$GITHUB_WORKSPACE/ummisco.gama.product/target/products/Gama1.7"
+thePATH="$GITHUB_WORKSPACE/ummisco.gama.product/target/products/Gama1.8.2"
 
 
 cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products
