@@ -203,11 +203,8 @@ species people skills: [advanced_driving] {
 	}
 
 	reflex time_to_go when: final_target = nil {
-		target <- one_of(intersection );
+		target <- one_of(intersection - target);
 		current_path <- compute_path(graph: road_network, target: target);
-		if (current_path = nil) {
-			location <- one_of(intersection).location;
-		} 
 	}
 
 	reflex move when: current_path != nil and final_target != nil {
