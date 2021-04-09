@@ -62,6 +62,7 @@ jobs:
               ServerAliveInterval 60
               StrictHostKeyChecking no
           EOF
+          chmod 400 ~/.ssh/config
 
       - name: Publish to Github
         shell: bash
