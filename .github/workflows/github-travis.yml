@@ -53,9 +53,9 @@ jobs:
         if: ${{ contains(github.event.head_commit.message, 'ci clean') && contains(github.event.head_commit.message, 'ci deploy') }} 
         shell: bash
         run: |
+          export SSHPASS=${{ secrets.USER_PWD }} 
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
+          ssh-keyscan -H 51.255.46.42 >> ~/.ssh/known_hosts
           chmod 700 ~/.ssh
           cat << EOF > ~/.ssh/config
           Host *
