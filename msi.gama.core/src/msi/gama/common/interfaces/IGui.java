@@ -27,6 +27,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.statements.test.CompoundSummary;
@@ -98,6 +100,8 @@ public interface IGui {
 	IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters, GamaFont font);
+
+	IList<IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages);
 
 	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) ;
 	

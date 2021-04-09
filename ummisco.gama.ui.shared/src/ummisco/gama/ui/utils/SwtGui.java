@@ -41,6 +41,7 @@ import msi.gama.common.interfaces.IGamaView.Test;
 import msi.gama.common.interfaces.IGamaView.User;
 import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.preferences.GamaPreferences;
@@ -62,7 +63,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaFont;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
@@ -78,6 +81,9 @@ import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.interfaces.IUserDialogFactory;
 import ummisco.gama.ui.parameters.EditorsDialog;
+import ummisco.gama.ui.parameters.GamaWizard;
+import ummisco.gama.ui.parameters.GamaWizardDialog;
+import ummisco.gama.ui.parameters.GamaWizardPage;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -279,6 +285,47 @@ public class SwtGui implements IGui {
 		});
 		return result;
 	}
+	
+	@Override
+	public IList<IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
+		final IList<IMap<String, Object>> result = GamaListFactory.create();
+		final IList<GamaWizardPage> wizardPages = GamaListFactory.create();
+		for (IMap<String, Object> l : pages) {
+			GamaFont f = (GamaFont) l.get(IKeyword.FONT);
+			String t = (String) l.get(IKeyword.TITLE);
+			String d = (String) l.get(IKeyword.DESCRIPTION);
+			List<IParameter> ps  = (List<IParameter>) l.get(IKeyword.PARAMETERS);
+			
+			wizardPages.add(new GamaWizardPage(scope, ps,t,d, f)); 
+		
+		}
+		
+		
+		WorkbenchHelper.run(() -> {
+			final GamaWizard wizard = new GamaWizard(title, wizardPages);
+			GamaWizardDialog wizardDialog = new GamaWizardDialog(WorkbenchHelper.getShell(),wizard);
+			if (wizardDialog.open() == Window.OK) {
+				result.addAll(wizardDialog.getValues());
+		    }
+		});
+		return result;
+	}
+	
+	/*@Override
+	public Map<String, Object> openWizard(final IScope scope, final String title,
+			final List<IParameter> parameters, final GamaFont font) {
+		final IMap<String, Object> result = GamaMapFactory.createUnordered();
+		for (final IParameter p : parameters) {
+			result.put(p.getName(), p.getInitialValue(scope));
+		}
+		WorkbenchHelper.run(() -> {
+			final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), parameters, title, font);
+			if (dialog.open() == Window.OK) {
+				result.putAll(dialog.getValues());
+			}
+		});
+		return result;
+	}*/
 	
 	@Override
 	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) {

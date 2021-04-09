@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -306,6 +307,30 @@ public class System {
 		parameters.removeIf(p -> !(p instanceof IParameter));
 		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
 				scope.getGui().openUserInputDialog(scope, title, parameters,font));
+	}
+	
+	@operator (
+			value = IKeyword.WIZARD,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@no_test
+
+	public static IList<IMap<String, Object>> openWizard(final IScope scope, final String title, final IList<IMap<String, Object>> pages) {
+		return scope.getGui().openWizard(scope, title, pages);
+	}
+	
+	@operator (
+			value = IKeyword.WIZARD_PAGE,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@no_test
+	public static IMap<String, Object> wizardPage(final String title, final String description,final IList parameters, final GamaFont font) {
+		IMap<String, Object> results = GamaMapFactory.create();
+		results.put(IKeyword.TITLE, title);
+		results.put(IKeyword.DESCRIPTION, description);
+		results.put(IKeyword.PARAMETERS, parameters);
+		results.put(IKeyword.FONT, font);
+		return results;
 	}
 
 	@operator (
