@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.runtime;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +80,11 @@ public class HeadlessListener implements IGui {
 			initialValues.put(p.getName(), p.getInitialValue(scope));
 		});
 		return initialValues;
+	}
+	
+	@Override
+	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) {
+		return true;
 	}
 
 	// See #2996: simplification of the logging done in this class

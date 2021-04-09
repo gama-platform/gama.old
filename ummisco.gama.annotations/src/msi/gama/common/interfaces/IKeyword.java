@@ -431,6 +431,7 @@ public interface IKeyword {
 	String USER_CONTROLLED = "user_controlled";
 	String USER_COMMAND = "user_command";
 	String USER_INPUT = "user_input";
+	String USER_CONFIRM = "user_confirm";
 	String USER_ONLY = "user_only";
 	String USER_FIRST = "user_first";
 	String USER_LAST = "user_last";

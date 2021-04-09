@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -277,6 +278,15 @@ public class SwtGui implements IGui {
 			}
 		});
 		return result;
+	}
+	
+	@Override
+	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) {
+		final List<Boolean> result = new ArrayList<>();	
+		WorkbenchHelper.run(() -> {
+			result.add(MessageDialog.openConfirm(WorkbenchHelper.getShell(), title, message));
+		});
+		return result.isEmpty() ? false : result.get(0);
 	}
 
 	@Override

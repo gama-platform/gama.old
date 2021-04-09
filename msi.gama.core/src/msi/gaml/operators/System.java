@@ -273,6 +273,20 @@ public class System {
 		});
 		return userInput(scope, title, parameters,font);
 	}
+	
+	@operator (
+			value = IKeyword.USER_CONFIRM,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			value = "Asks the user to confirm a choice. The two string are used to specify the title and the message of the dialog box. ",
+			examples =
+
+			{ @example ("bool confirm <- user_confirm(\"Confirm\",\"Please confirm\";") })
+	@no_test
+	public static Boolean userConfirmDialog(final IScope scope, final String title, final String message) {
+		return scope.getGui().openUserInputDialogConfirm(scope, title,message);
+	}
 
 	@SuppressWarnings ("unchecked")
 	@operator (

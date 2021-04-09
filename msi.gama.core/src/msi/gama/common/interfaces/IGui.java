@@ -99,6 +99,9 @@ public interface IGui {
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters, GamaFont font);
 
+	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) ;
+	
+		
 	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 
 	void closeDialogs(IScope scope);
