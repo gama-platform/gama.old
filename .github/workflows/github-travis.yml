@@ -27,7 +27,6 @@ jobs:
         run: |
           echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
           sudo apt install sshpass -y
-          sudo apt-get install p7zip-full -y
           sudo chmod +x $GITHUB_WORKSPACE/travis/*.sh
 
       - name: Cache local Maven repository
