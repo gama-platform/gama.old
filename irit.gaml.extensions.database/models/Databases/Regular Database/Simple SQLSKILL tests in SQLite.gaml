@@ -20,7 +20,7 @@
 model SQLite_selectNUpdate
 
 global {
-	map<string, string> PARAMS <- ['dbtype'::'sqlite', 'database'::'../../includes/emptyFile.db'];
+	map<string, string> PARAMS <- ['dbtype'::'sqlite', 'database'::'../includes/emptyFile.db'];
 	init {
 		write "This model will work only if the corresponding database is installed" color: #red;
 

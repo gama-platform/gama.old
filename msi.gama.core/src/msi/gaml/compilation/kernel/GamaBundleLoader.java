@@ -115,9 +115,7 @@ public class GamaBundleLoader {
 				if (bundle.getEntry(REGULAR_MODELS_LAYOUT) != null) {
 					MODEL_PLUGINS.put(bundle, REGULAR_MODELS_LAYOUT);
 				}
-				if (bundle.getEntry(REGULAR_TESTS_LAYOUT) != null) {
-					TEST_PLUGINS.put(bundle, REGULAR_TESTS_LAYOUT);
-				}
+				if (bundle.getEntry(REGULAR_TESTS_LAYOUT) != null) { TEST_PLUGINS.put(bundle, REGULAR_TESTS_LAYOUT); }
 				if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null) {
 					TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT);
 				}
@@ -137,7 +135,7 @@ public class GamaBundleLoader {
 			} catch (final Exception e2) {
 				ERR(ERROR_MESSAGE);
 				ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
-//				System.exit(0);
+				// System.exit(0);
 				return;
 			}
 			// We then build the other extensions to the language
@@ -148,7 +146,7 @@ public class GamaBundleLoader {
 				} catch (final Exception e1) {
 					ERR(ERROR_MESSAGE);
 					ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e1.getMessage());
-//					System.exit(0);
+					// System.exit(0);
 					return;
 				}
 			}
@@ -160,13 +158,11 @@ public class GamaBundleLoader {
 				try {
 					// TODO Add the defining plug-in
 					cd = (ICreateDelegate) e.createExecutableExtension("class");
-					if (cd != null) {
-						CreateStatement.addDelegate(cd);
-					}
+					if (cd != null) { CreateStatement.addDelegate(cd); }
 				} catch (final Exception e1) {
 					ERR(ERROR_MESSAGE);
 					ERR("Error in loading CreateStatement delegate : " + e1.getMessage());
-//					System.exit(0);
+					// System.exit(0);
 					return;
 
 				}
@@ -182,7 +178,7 @@ public class GamaBundleLoader {
 
 					ERR(ERROR_MESSAGE);
 					ERR("Error in loading EventLayerStatement delegate : " + e1.getMessage());
-//					System.exit(0);
+					// System.exit(0);
 					return;
 
 				}
@@ -207,9 +203,7 @@ public class GamaBundleLoader {
 				final IConfigurationElement[] configs = ext.getConfigurationElements();
 				for (final IConfigurationElement config : configs) {
 					final String s = config.getAttribute("file-extensions");
-					if (s != null) {
-						HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(",")));
-					}
+					if (s != null) { HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(","))); }
 				}
 			}
 
@@ -226,11 +220,11 @@ public class GamaBundleLoader {
 			GamaClassLoader.getInstance().addBundle(bundle);
 			Class<IGamlAdditions> gamlAdditions = null;
 			try {
-//				gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
+				// gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
 
 				gamlAdditions = (Class<IGamlAdditions>) bundle
-					.loadClass(ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME);
-				
+						.loadClass(ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME);
+
 			} catch (final ClassNotFoundException e1) {
 				ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
 				throw e1;

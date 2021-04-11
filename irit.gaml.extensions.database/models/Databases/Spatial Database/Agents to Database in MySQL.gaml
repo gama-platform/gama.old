@@ -15,8 +15,8 @@
 model agent2DB_MySQL 
   
 global { 
-	file buildingsShp <- file('../../includes/building.shp');
-	file boundsShp <- file('../../includes/bounds.shp');
+	file buildingsShp <- file('../includes/building.shp');
+	file boundsShp <- file('../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	
 	map<string,string> PARAMS <- ['srid'::'4326',

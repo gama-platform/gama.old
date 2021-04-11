@@ -16,13 +16,13 @@ model Sqlite_QGis
 global { 
 	map BOUNDS <- [//'srid'::'4326', // optinal
 				  "dbtype"::"sqlite",
-				  "database"::"../../includes/building.sqlite"
+				  "database"::"../includes/building.sqlite"
 				  ,"select"::	"select geom  from building;" 
 														
 							  ]; 
 	map PARAMS <- [//'srid'::'4326', // optinal
 					"dbtype"::"sqlite",
-					"database"::"../../includes/building.sqlite"];
+					"database"::"../includes/building.sqlite"];
 	string QUERY <- "SELECT geom FROM building ;";
 	geometry shape <- envelope(BOUNDS);		  	
 		  	

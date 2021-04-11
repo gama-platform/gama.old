@@ -14,7 +14,7 @@
 model agent2DB_POSTGIS 
   
 global { 
-	file districtShp <- file('../../includes/district.shp') ;
+	file districtShp <- file('../includes/district.shp') ;
 	geometry shape <- envelope(districtShp);
 	 
 	map<string,string> PARAMS <-  ['srid'::'32846', // 32648 represents for the WGS 84 - Zone 48 Northern.

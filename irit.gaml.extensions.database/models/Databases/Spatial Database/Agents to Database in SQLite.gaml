@@ -13,14 +13,14 @@
 model agent2DB_SQLite  
   
 global {  
-	file buildingsShp <- file('../../includes/building.shp');
-	file boundsShp <- file('../../includes/bounds.shp');
+	file buildingsShp <- file('../includes/building.shp');
+	file boundsShp <- file('../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	
 	map<string,string> PARAMS <- [
 				'dbtype'::'sqlite', 
 				//'srid'::'4326', // optinal
-				'database'::'../../includes/spatialite.db'
+				'database'::'../includes/spatialite.db'
 			
 				];
 

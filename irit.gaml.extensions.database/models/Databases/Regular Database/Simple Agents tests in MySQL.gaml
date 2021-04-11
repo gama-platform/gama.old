@@ -31,7 +31,7 @@
  * - Drop table 
  * 
  * 
- *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (testDB here) AND IMPORTED THE FILE (../../includes/meteo_DB_dump.sql)
+ *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (testDB here) AND IMPORTED THE FILE (../includes/meteo_DB_dump.sql)
  *        IN ORDER THAT THE MODEL CAN RUN PROPERLY.
 * Tags: database
  */

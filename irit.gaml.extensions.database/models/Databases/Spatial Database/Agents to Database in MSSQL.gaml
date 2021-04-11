@@ -8,8 +8,8 @@
 model agent2DB_MSSQL 
   
 global {  
-	file buildingsShp <- file('../../includes/building.shp');
-	file boundsShp <- file('../../includes/bounds.shp');
+	file buildingsShp <- file('../includes/building.shp');
+	file boundsShp <- file('../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
 	map<string,string> PARAMS <- [//'srid'::'4326', // optinal
 								  'host'::'localhost','dbtype'::'sqlserver','database'::'GAMAMSSQL',

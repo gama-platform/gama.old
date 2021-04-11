@@ -7,19 +7,19 @@
 model DB2agentSQLite
 
 global {
-//	file buildingsShp <- file('../../includes/building.shp');
-//	file boundsShp <- file('../../includes/bounds.shp');
+//	file buildingsShp <- file('../includes/building.shp');
+//	file boundsShp <- file('../includes/bounds.shp');
 //	geometry shape <- envelope(boundsShp);
 
 	
 	map<string,string> BOUNDS <- ["dbtype"::"sqlite",
-								  'database'::'../../includes/spatialite.db',
+								  'database'::'../includes/spatialite.db',
 								 //'srid'::'32648',
 								  "select"::"SELECT AsBinary(geom) as geom FROM bounds;"				
 				  				 ];
 	map<string,string> PARAMS <- ["dbtype"::"sqlite",
 								  //'srid'::'32648',
-								  'database'::'../../includes/spatialite.db'
+								  'database'::'../includes/spatialite.db'
 								  ];
 	
 	string QUERY <- "SELECT name, type, AsBinary(geom) as geom FROM buildings ;";

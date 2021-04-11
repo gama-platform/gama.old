@@ -11,7 +11,7 @@
  *  Note: this model could be used with any DBMS just by changing the PARAMS variable.
  * 
  * 
- *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (meteo_DB here) AND IMPORTED THE FILE (../../includes/meteo_DB_dump.sql)
+ *  NOTE: YOU SHOULD HAVE ALREADY CREATED YOUR DATABASE (meteo_DB here) AND IMPORTED THE FILE (../includes/meteo_DB_dump.sql)
  *        IN ORDER THAT THE MODEL CAN RUN PROPERLY.
 * Tags: database
  */
@@ -24,7 +24,7 @@ global {
     			FROM meteo_table GROUP BY `idPointgrille`";
 	init {
 		write "This model will work only if the MySQL database server is installed." color: #red;
-		write "In addition, the database \"meteo_db\" should have be created and the data imported inside. The SQL queries are available in the file ../../includes/meteo_DB_dump.sql.";
+		write "In addition, the database \"meteo_db\" should have be created and the data imported inside. The SQL queries are available in the file ../includes/meteo_DB_dump.sql.";
 		write "";
 		
 		create DB_accessor;

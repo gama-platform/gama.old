@@ -14,7 +14,7 @@
 model agent2DB_POSTGIS 
   
 global { 
-	file buildingsShp <- file('../../includes/building.shp') ;
+	file buildingsShp <- file('../includes/building.shp') ;
 	geometry shape <- envelope(buildingsShp);
 	 
 	map<string,string> PARAMS <-  ['srid'::'4326', // optinal postgis
