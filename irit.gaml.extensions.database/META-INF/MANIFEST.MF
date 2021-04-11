@@ -15,3 +15,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Activator: msi.gama.database.Activator
 Automatic-Module-Name: irit.gaml.extensions.database
+Bundle-ClassPath: lib/olap4j 1.2.0/jars/olap4j-1.2.0.jar,
+ lib/olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar,
+ .

@@ -139,9 +139,6 @@
 	<classpathentry exported="true" kind="lib" path="protobuf-java-3.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-math3-3.6.1/jars/commons-math3-3.6.1.jar" sourcepath="commons-math3-3.6.1/commons-math3-3.6.1-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="rcaller 2.5/jars/RCaller-2.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="vecmath 1.5.2/jars/vecmath-1.5.2.jar" sourcepath="/Users/drogoul/.m2/repository/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-1.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.0.1/jgrapht-core-1.0.1.jar" sourcepath="jgrapht 1.0.1/src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

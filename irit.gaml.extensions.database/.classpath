@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="irit/gaml/extensions/database/skills/XmlaTest.java|irit/gaml/extensions/database/skills/MondrianApp.java|irit/gaml/extensions/database/skills/MondrianXmlaApp.java|irit/gaml/extensions/database/skills/MyAPP.java|irit/gaml/extensions/database/skills/MDXApp.java|irit/gaml/extensions/database/skills/QueryLab.java" kind="src" path="src"/>
-	<classpathentry kind="src" path="gaml">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry excluding="irit/gaml/extensions/database/skills/XmlaTest.java|irit/gaml/extensions/database/skills/MondrianApp.java|irit/gaml/extensions/database/skills/MondrianXmlaApp.java|irit/gaml/extensions/database/skills/MyAPP.java|irit/gaml/extensions/database/skills/MDXApp.java|irit/gaml/extensions/database/skills/QueryLab.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="gaml">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/olap4j 1.2.0/jars/olap4j-1.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
