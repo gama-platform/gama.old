@@ -15,20 +15,20 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.util.file.IGamaFile;
+import msi.gama.util.file.GamaFolderFile;
 
 /**
  * Written by taillandier Modified on 10 Apr. 2021
  *
  */
 @type (
-		name = IKeyword.FOLDER,
-		id = IType.FOLDER,
-		wraps = { IGamaFile.class },
+		name = IKeyword.DIRECTORY,
+		id = IType.DIRECTORY,
+		wraps = { GamaFolderFile.class },
 		kind = ISymbolKind.Variable.CONTAINER,
 		concept = { IConcept.TYPE, IConcept.FILE },
 		doc = @doc ("specific type of for folder"))
-public class GamaFolderType extends GamaFileType {
+public class GamaDirectoryType extends GamaFileType {
 
 
 }

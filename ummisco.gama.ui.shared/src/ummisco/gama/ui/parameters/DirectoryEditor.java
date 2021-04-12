@@ -17,7 +17,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
@@ -36,15 +35,15 @@ import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class FolderEditor extends AbstractEditor<GamaFolderFile> {
+public class DirectoryEditor extends AbstractEditor<GamaFolderFile> {
 
 	private FlatButton textBox;
 
-	FolderEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	DirectoryEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
 		super(scope, agent, param, l);
 	}
 
-	FolderEditor(final IScope scope, final Composite parent, final String title, final String value,
+	DirectoryEditor(final IScope scope, final Composite parent, final String title, final String value,
 			final EditorListener<GamaFolderFile> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);

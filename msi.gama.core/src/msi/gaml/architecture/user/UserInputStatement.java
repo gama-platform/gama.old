@@ -113,7 +113,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	// static int index;
 	boolean isValued;
 	Object initialValue, currentValue;
-	IExpression min, max, among, init, slider, isFolder;
+	IExpression min, max, among, init, slider;
 	String tempVar;
 
 	public UserInputStatement(final IDescription desc) {
@@ -124,7 +124,6 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		max = getFacet(IKeyword.MAX);
 		among = getFacet(IKeyword.AMONG);
 		slider = getFacet("slider");
-		isFolder = getFacet("isFolder");
 		tempVar = getLiteral(IKeyword.RETURNS);
 	}
 

@@ -171,6 +171,8 @@ public interface IKeyword {
 	String FALSE = "false";
 	String FILE = "file";
 	String FOLDER = "folder";
+
+	String DIRECTORY = "directory";
 	String FILES = "files";
 	String OUTPUT_FILE = "output_file";
 	String FILL_WITH = "fill_with";
