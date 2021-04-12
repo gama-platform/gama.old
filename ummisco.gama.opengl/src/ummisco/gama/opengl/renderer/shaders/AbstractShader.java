@@ -15,8 +15,6 @@ import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.util.Scanner;
 
-import javax.vecmath.Matrix4f;
-
 import com.jogamp.opengl.GL2;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -46,13 +44,11 @@ public abstract class AbstractShader {
 
 		try {
 			vertexInputStream = getClass().getResourceAsStream(vertexFile);
-			if (vertexInputStream == null) {
+			if (vertexInputStream == null)
 				throw new RuntimeException("Cannot locate vertex shader program " + vertexFile);
-			}
 			fragmentInputStream = getClass().getResourceAsStream(fragmentFile);
-			if (fragmentInputStream == null) {
+			if (fragmentInputStream == null)
 				throw new RuntimeException("Cannot locate vertex shader program " + vertexFile);
-			}
 		} catch (final Exception e) {
 			DEBUG.ERR(e.getMessage());
 			vertexShaderID = -1;
@@ -143,32 +139,32 @@ public abstract class AbstractShader {
 		location_layerAlpha = getUniformLocation("layerAlpha");
 	}
 
-	static public FloatBuffer getFloatBuffer(final Matrix4f matrix) {
-		final FloatBuffer result = FloatBuffer.allocate(16);
-		result.put(0, matrix.m00);
-		result.put(1, matrix.m01);
-		result.put(2, matrix.m02);
-		result.put(3, matrix.m03);
-		result.put(4, matrix.m10);
-		result.put(5, matrix.m11);
-		result.put(6, matrix.m12);
-		result.put(7, matrix.m13);
-		result.put(8, matrix.m20);
-		result.put(9, matrix.m21);
-		result.put(10, matrix.m22);
-		result.put(11, matrix.m23);
-		result.put(12, matrix.m30);
-		result.put(13, matrix.m31);
-		result.put(14, matrix.m32);
-		result.put(15, matrix.m33);
-		return result;
-	}
-
-	protected void loadMatrix(final int location, final Matrix4f matrix) {
-		matrixBuffer = getFloatBuffer(matrix);
-		matrixBuffer.flip();
-		gl.glUniformMatrix4fv(location, 1, false, matrixBuffer.array(), 0);
-	}
+	// static public FloatBuffer getFloatBuffer(final Matrix4f matrix) {
+	// final FloatBuffer result = FloatBuffer.allocate(16);
+	// result.put(0, matrix.m00);
+	// result.put(1, matrix.m01);
+	// result.put(2, matrix.m02);
+	// result.put(3, matrix.m03);
+	// result.put(4, matrix.m10);
+	// result.put(5, matrix.m11);
+	// result.put(6, matrix.m12);
+	// result.put(7, matrix.m13);
+	// result.put(8, matrix.m20);
+	// result.put(9, matrix.m21);
+	// result.put(10, matrix.m22);
+	// result.put(11, matrix.m23);
+	// result.put(12, matrix.m30);
+	// result.put(13, matrix.m31);
+	// result.put(14, matrix.m32);
+	// result.put(15, matrix.m33);
+	// return result;
+	// }
+	//
+	// protected void loadMatrix(final int location, final Matrix4f matrix) {
+	// matrixBuffer = getFloatBuffer(matrix);
+	// matrixBuffer.flip();
+	// gl.glUniformMatrix4fv(location, 1, false, matrixBuffer.array(), 0);
+	// }
 
 	public void loadFloat(final int location, final float value) {
 		gl.glUniform1f(location, value);

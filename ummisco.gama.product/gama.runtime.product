@@ -68,6 +68,7 @@
       </win>
    </launcher>
 
+
    <vm>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
    </vm>
@@ -281,51 +282,11 @@
    </configurations>
 
    <repositories>
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
-      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
       <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
       <repository location="http://updates.gama-platform.org" enabled="true" />
       <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
       <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
       <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
-      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
-      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
-      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
-      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
-      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
-      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
-      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
-      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
-      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
-      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
-      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
-      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
-      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://download.eclipse.org/tm/terminal/marketplace" enabled="true" />
-      <repository location="http://anb0s.github.io/EasyShell" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental" enabled="true" />
-      <repository location="http://updates.gama-platform.org/graphical_modeling" enabled="true" />
    </repositories>
 
    <preferencesInfo>

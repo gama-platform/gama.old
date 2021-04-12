@@ -141,6 +141,8 @@ public class EditorFactory {
 				return new MatrixEditor(scope, agent, var, l);
 			case IType.FILE:
 				return new FileEditor(scope, agent, var, l);
+			case IType.DIRECTORY:
+				return new DirectoryEditor(scope, agent, var, l);
 			case IType.FONT:
 				return new FontEditor(scope, agent, var, l);
 			case IType.STRING:

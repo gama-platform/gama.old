@@ -164,9 +164,7 @@ public class SwtMapPane extends Canvas
 			endX = e.x;
 			endY = e.y;
 			isDragging = true;
-			if (!isDisposed()) {
-				redraw();
-			}
+			if (!isDisposed()) { redraw(); }
 		}
 
 	}
@@ -198,9 +196,7 @@ public class SwtMapPane extends Canvas
 	 *             if layerTable is null
 	 */
 	public void setMapLayerTable(final MapLayerComposite layerTable) {
-		if (layerTable == null) {
-			throw new IllegalArgumentException("The argument must not be null"); //$NON-NLS-1$
-		}
+		if (layerTable == null) throw new IllegalArgumentException("The argument must not be null"); //$NON-NLS-1$
 
 		this.layerTable = layerTable;
 	}
@@ -223,9 +219,7 @@ public class SwtMapPane extends Canvas
 	public void setRenderer(final GTRenderer renderer) {
 		if (renderer != null) {
 			if (renderer instanceof StreamingRenderer) {
-				if (this.content != null) {
-					renderer.setMapContent(this.content);
-				}
+				if (this.content != null) { renderer.setMapContent(this.content); }
 
 			}
 		}
@@ -251,9 +245,7 @@ public class SwtMapPane extends Canvas
 	public void setMapContent(final MapContent content) {
 		if (this.content != content) {
 
-			if (this.content != null) {
-				this.content.removeMapLayerListListener(this);
-			}
+			if (this.content != null) { this.content.removeMapLayerListListener(this); }
 
 			this.content = content;
 
@@ -269,9 +261,7 @@ public class SwtMapPane extends Canvas
 				setFullExtent();
 			}
 
-			if (renderer != null) {
-				renderer.setMapContent(this.content);
-			}
+			if (renderer != null) { renderer.setMapContent(this.content); }
 
 		}
 	}
@@ -343,18 +333,15 @@ public class SwtMapPane extends Canvas
 	 */
 	public void setDisplayArea(final Envelope envelope) {
 		if (content != null) {
-			if (curPaintArea == null || curPaintArea.isEmpty()) {
+			if (curPaintArea == null || curPaintArea.isEmpty())
 				return;
-			} else {
+			else {
 				doSetDisplayArea(envelope);
-				if (!isDisposed()) {
-					redraw();
-				}
+				if (!isDisposed()) { redraw(); }
 			}
 
-		} else {
+		} else
 			throw new IllegalStateException("Map context must be set before setting the display area");
-		}
 	}
 
 	/**
@@ -397,23 +384,15 @@ public class SwtMapPane extends Canvas
 	 * @todo My logic here seems overly complex - I'm sure there must be a simpler way for the map pane to handle this.
 	 */
 	private boolean equalsFullExtent(final Envelope envelope) {
-		if (fullExtent == null || envelope == null) { return false; }
+		if (fullExtent == null || envelope == null) return false;
 
 		final double TOL = 1.0e-6d * (fullExtent.getWidth() + fullExtent.getHeight());
 
 		boolean touch = false;
-		if (Math.abs(envelope.getMinimum(0) - fullExtent.getMinimum(0)) < TOL) {
-			touch = true;
-		}
-		if (Math.abs(envelope.getMaximum(0) - fullExtent.getMaximum(0)) < TOL) {
-			if (touch) { return true; }
-		}
-		if (Math.abs(envelope.getMinimum(1) - fullExtent.getMinimum(1)) < TOL) {
-			touch = true;
-		}
-		if (Math.abs(envelope.getMaximum(1) - fullExtent.getMaximum(1)) < TOL) {
-			if (touch) { return true; }
-		}
+		if (Math.abs(envelope.getMinimum(0) - fullExtent.getMinimum(0)) < TOL) { touch = true; }
+		if (Math.abs(envelope.getMaximum(0) - fullExtent.getMaximum(0)) < TOL) { if (touch) return true; }
+		if (Math.abs(envelope.getMinimum(1) - fullExtent.getMinimum(1)) < TOL) { touch = true; }
+		if (Math.abs(envelope.getMaximum(1) - fullExtent.getMaximum(1)) < TOL) { if (touch) return true; }
 
 		return false;
 	}
@@ -422,9 +401,7 @@ public class SwtMapPane extends Canvas
 	 * Reset the map area to include the full extent of all layers and redraw the display
 	 */
 	public void reset() {
-		if (fullExtent == null) {
-			setFullExtent();
-		}
+		if (fullExtent == null) { setFullExtent(); }
 		try {
 			fullExtent = new ReferencedEnvelope(CRS.transform(fullExtent, content.getCoordinateReferenceSystem()));
 		} catch (final Exception e) {
@@ -454,11 +431,10 @@ public class SwtMapPane extends Canvas
 	 * @return a copy of the screen to world coordinate transform
 	 */
 	public AffineTransform getScreenToWorldTransform() {
-		if (screenToWorld != null) {
+		if (screenToWorld != null)
 			return new AffineTransform(screenToWorld);
-		} else {
+		else
 			return null;
-		}
 	}
 
 	/**
@@ -475,11 +451,10 @@ public class SwtMapPane extends Canvas
 	 * @return a copy of the world to screen coordinate transform
 	 */
 	public AffineTransform getWorldToScreenTransform() {
-		if (worldToScreen != null) {
+		if (worldToScreen != null)
 			return new AffineTransform(worldToScreen);
-		} else {
+		else
 			return null;
-		}
 	}
 
 	/**
@@ -495,9 +470,7 @@ public class SwtMapPane extends Canvas
 	public void moveImage(final int dx, final int dy) {
 		imageOrigin.translate(dx, dy);
 		redrawBaseImage = false;
-		if (!isDisposed()) {
-			redraw();
-		}
+		if (!isDisposed()) { redraw(); }
 	}
 
 	/**
@@ -510,7 +483,7 @@ public class SwtMapPane extends Canvas
 	 */
 	private void afterImageMove() {
 		final ReferencedEnvelope env = content.getViewport().getBounds();
-		if (env == null) { return; }
+		if (env == null) return;
 		final int dx = imageOrigin.x;
 		final int dy = imageOrigin.y;
 		final DirectPosition2D newPos = new DirectPosition2D(dx, dy);
@@ -528,10 +501,8 @@ public class SwtMapPane extends Canvas
 	 */
 	@Override
 	public void layerAdded(final MapLayerListEvent event) {
-		final Layer layer = event.getElement();
-		if (layerTable != null) {
-			layerTable.onAddLayer(layer);
-		}
+		final Layer layer = event.getLayer();
+		if (layerTable != null) { layerTable.onAddLayer(layer); }
 		layer.setSelected(true);
 		redrawBaseImage = true;
 
@@ -544,9 +515,7 @@ public class SwtMapPane extends Canvas
 				return;
 			}
 		}
-		if (!isDisposed()) {
-			redraw();
-		}
+		if (!isDisposed()) { redraw(); }
 	}
 
 	/**
@@ -554,10 +523,8 @@ public class SwtMapPane extends Canvas
 	 */
 	@Override
 	public void layerRemoved(final MapLayerListEvent event) {
-		final Layer layer = event.getElement();
-		if (layerTable != null) {
-			layerTable.onRemoveLayer(layer);
-		}
+		final Layer layer = event.getLayer();
+		if (layerTable != null) { layerTable.onRemoveLayer(layer); }
 		redrawBaseImage = true;
 
 		if (content.layers().size() == 0) {
@@ -565,9 +532,7 @@ public class SwtMapPane extends Canvas
 		} else {
 			setFullExtent();
 		}
-		if (!isDisposed()) {
-			redraw();
-		}
+		if (!isDisposed()) { redraw(); }
 	}
 
 	/**
@@ -575,22 +540,14 @@ public class SwtMapPane extends Canvas
 	 */
 	@Override
 	public void layerChanged(final MapLayerListEvent event) {
-		if (layerTable != null) {
-			layerTable.repaint(event.getElement());
-		}
+		if (layerTable != null) { layerTable.repaint(event.getLayer()); }
 		redrawBaseImage = true;
 
 		final int reason = event.getMapLayerEvent().getReason();
 
-		if (reason == MapLayerEvent.DATA_CHANGED) {
-			setFullExtent();
-		}
+		if (reason == MapLayerEvent.DATA_CHANGED) { setFullExtent(); }
 
-		if (reason != MapLayerEvent.SELECTION_CHANGED) {
-			if (!isDisposed()) {
-				redraw();
-			}
-		}
+		if (reason != MapLayerEvent.SELECTION_CHANGED) { if (!isDisposed()) { redraw(); } }
 	}
 
 	/**
@@ -599,9 +556,7 @@ public class SwtMapPane extends Canvas
 	@Override
 	public void layerMoved(final MapLayerListEvent event) {
 		redrawBaseImage = true;
-		if (!isDisposed()) {
-			redraw();
-		}
+		if (!isDisposed()) { redraw(); }
 	}
 
 	/**
@@ -769,7 +724,7 @@ public class SwtMapPane extends Canvas
 				return;
 			}
 
-			if (curPaintArea == null || content == null || renderer == null) { return; }
+			if (curPaintArea == null || content == null || renderer == null) return;
 
 			if (content.layers().size() == 0) {
 				// if no layers available, return only if there are also no
@@ -781,7 +736,7 @@ public class SwtMapPane extends Canvas
 			}
 
 			final ReferencedEnvelope mapAOI = content.getViewport().getBounds();
-			if (mapAOI == null) { return; }
+			if (mapAOI == null) return;
 
 			if (redrawBaseImage) {
 
@@ -804,9 +759,7 @@ public class SwtMapPane extends Canvas
 						new Image(getDisplay(), awtToSwt(baseImage, curPaintArea.width + 1, curPaintArea.height + 1));
 			}
 
-			if (swtImage != null) {
-				drawFinalImage(swtImage);
-			}
+			if (swtImage != null) { drawFinalImage(swtImage); }
 
 			redrawBaseImage = false;
 		}
@@ -821,9 +774,7 @@ public class SwtMapPane extends Canvas
 			tmpGc.setAlpha(alpha);
 			tmpGc.drawImage(swtImage, imageOrigin.x, imageOrigin.y);
 		}
-		if (gc != null && !gc.isDisposed()) {
-			gc.drawImage(tmpImage, imageOrigin.x, imageOrigin.y);
-		}
+		if (gc != null && !gc.isDisposed()) { gc.drawImage(tmpImage, imageOrigin.x, imageOrigin.y); }
 		tmpGc.dispose();
 		tmpImage.dispose();
 	}

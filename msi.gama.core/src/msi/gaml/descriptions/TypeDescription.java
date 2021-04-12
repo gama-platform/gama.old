@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.compress.utils.Lists;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.jgrapht.DirectedGraph;
@@ -36,6 +35,7 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.GamaMapFactory;
@@ -106,7 +106,8 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public String getDefiningPlugin() {
-		if (isBuiltIn()) { return originName; }
+		if (isBuiltIn())
+			return originName;
 		return null;
 	}
 
@@ -141,13 +142,16 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public VariableDescription getAttribute(final String vn) {
 		final VariableDescription attribute = attributes == null ? null : attributes.get(vn);
-		if (attribute == null && parent != null && parent != this) { return getParent().getAttribute(vn); }
+		if (attribute == null && parent != null && parent != this)
+			return getParent().getAttribute(vn);
 		return attribute;
 	}
 
 	public boolean redefinesAttribute(final String vn) {
-		if (!attributes.containsKey(name)) { return false; }
-		if (parent == null || parent == this) { return false; }
+		if (!attributes.containsKey(name))
+			return false;
+		if (parent == null || parent == this)
+			return false;
 		return parent.hasAttribute(name);
 	}
 
@@ -162,7 +166,8 @@ public abstract class TypeDescription extends SymbolDescription {
 		final VariableDescription vd = getAttribute(n);
 		if (vd == null) {
 			final IDescription desc = getAction(n);
-			if (desc != null) { return new DenotedActionExpression(desc); }
+			if (desc != null)
+				return new DenotedActionExpression(desc);
 			return null;
 		}
 		return vd.getVarExpr(asField);
@@ -179,7 +184,8 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public boolean assertAttributesAreCompatible(final VariableDescription existingVar,
 			final VariableDescription newVar) {
-		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) { return true; }
+		if (newVar.isBuiltIn() && existingVar.isBuiltIn())
+			return true;
 		final IType existingType = existingVar.getGamlType();
 		final IType newType = newVar.getGamlType();
 		if (!newType.isTranslatableInto(existingType)) {
@@ -226,12 +232,14 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public void markAttributeRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
-		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) { return; }
+		if (newVar.isBuiltIn() && existingVar.isBuiltIn())
+			return;
 		if (newVar.getOriginName().equals(existingVar.getOriginName())) {
 			// TODO must be review carefully the inheritance in comodel
 			/// temporay fix for co-model, variable in micro-model can be
 			// defined multi time
-			if (!newVar.getModelDescription().getAlias().equals("")) { return; }
+			if (!newVar.getModelDescription().getAlias().equals(""))
+				return;
 			///
 			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
 					NAME);
@@ -273,9 +281,8 @@ public abstract class TypeDescription extends SymbolDescription {
 			if (assertAttributesAreCompatible(existing, vd)) {
 				markAttributeRedefinition(existing, vd);
 				vd.copyFrom(existing);
-			} else {
+			} else
 				return;
-			}
 		}
 
 		addAttributeNoCheck(vd);
@@ -334,11 +341,13 @@ public abstract class TypeDescription extends SymbolDescription {
 		});
 		// June 2020: moving (back) to Iterables instead of Streams.
 		ArrayList<String> list = Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
-		
-		//March 2021: Temporary patch for #3068 - just add missing variables. TopologicalOrderIterator have to be fixed
-		 for (String s : dependencies.vertexSet()) {
-			 if (!list.contains(s)) {list.add(s);}
-		 }
+
+		// March 2021: Temporary patch for #3068 - just add missing variables. TopologicalOrderIterator have to be fixed
+		for (String s : dependencies.vertexSet()) {
+			if (!list.contains(s)) {
+				list.add(s);
+			}
+		}
 		return list;
 		// return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
 	}
@@ -349,7 +358,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	 * @return
 	 */
 	protected boolean verifyAttributeCycles() {
-		if (attributes == null || attributes.size() <= 1) { return true; }
+		if (attributes == null || attributes.size() <= 1)
+			return true;
 		final VariableDescription shape = attributes.get(SHAPE);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
@@ -390,7 +400,8 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 		final DirectedGraph<VariableDescription, Object> fDependencies = new DefaultDirectedGraph<>(Object.class);
 		attributes.forEachPair((aName, var) -> {
-			if (!var.hasFacet(FUNCTION)) { return true; }
+			if (!var.hasFacet(FUNCTION))
+				return true;
 			fDependencies.addVertex(var);
 			for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false)) {
 				if (attributes.containsValue(newVar)) {
@@ -458,8 +469,10 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean redefinesAction(final String theName) {
-		if (!actions.containsKey(theName)) { return false; }
-		if (parent == null || parent == this) { return false; }
+		if (!actions.containsKey(theName))
+			return false;
+		if (parent == null || parent == this)
+			return false;
 		return parent.hasAction(theName, false);
 	}
 
@@ -480,7 +493,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public void removeAction(final String temp) {
-		if (actions == null) { return; }
+		if (actions == null)
+			return;
 		actions.remove(temp);
 
 	}
@@ -501,7 +515,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public boolean hasAction(final String a, final boolean superInvocation) {
 		if (superInvocation) {
-			if (parent == null || parent == this) { return false; }
+			if (parent == null || parent == this)
+				return false;
 			return parent.hasAction(a, false);
 		}
 		return actions != null && actions.containsKey(a)
@@ -511,16 +526,19 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public IDescription getDescriptionDeclaringAction(final String vn, final boolean superInvocation) {
 		if (superInvocation) {
-			if (parent == null) { return null; }
+			if (parent == null)
+				return null;
 			return parent.getDescriptionDeclaringAction(vn, false);
 		}
 		return hasAction(vn, false) ? this : null;
 	}
 
 	public final boolean isAbstract() {
-		if (isAbstract) { return true; }
+		if (isAbstract)
+			return true;
 		for (final ActionDescription a : getActions()) {
-			if (a.isAbstract()) { return true; }
+			if (a.isAbstract())
+				return true;
 		}
 		return false;
 	}
@@ -532,7 +550,8 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public boolean isArgOf(final String op, final String arg) {
 		final ActionDescription action = getAction(op);
-		if (action != null) { return action.containsArg(arg); }
+		if (action != null)
+			return action.containsArg(arg);
 		return false;
 	}
 
@@ -549,7 +568,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	public void dispose() {
 
 		super.dispose();
-		if (isBuiltIn()) { return; }
+		if (isBuiltIn())
+			return;
 		actions = null;
 		attributes = null;
 		parent = null;
@@ -564,7 +584,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void inheritActionsFrom(final TypeDescription p) {
-		if (p == null || p == this) { return; }
+		if (p == null || p == this)
+			return;
 		for (final ActionDescription inheritedAction : p.getActions()) {
 			final String actionName = inheritedAction.getName();
 			final ActionDescription userDeclared = actions == null ? null : actions.get(actionName);
@@ -693,47 +714,56 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : getAttributes()) {
-			if (!visitor.process(d)) { return false; }
+			if (!visitor.process(d))
+				return false;
 		}
 		for (final IDescription d : getActions()) {
-			if (!visitor.process(d)) { return false; }
+			if (!visitor.process(d))
+				return false;
 		}
 		return true;
 	}
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
-		if (!visitOwnAttributes(visitor)) { return false; }
+		if (!visitOwnAttributes(visitor))
+			return false;
 		return visitOwnActions(visitor);
 	}
 
 	@Override
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
-		if (!visitOwnAttributes(visitor)) { return false; }
+		if (!visitOwnAttributes(visitor))
+			return false;
 		return visitOwnActionsRecursively(visitor);
 	}
 
 	public boolean visitAllAttributes(final DescriptionVisitor<IDescription> visitor) {
 		if (parent != null && parent != this) {
-			if (!parent.visitAllAttributes(visitor)) { return false; }
+			if (!parent.visitAllAttributes(visitor))
+				return false;
 		}
 		return visitOwnAttributes(visitor);
 	}
 
 	public boolean visitOwnAttributes(final DescriptionVisitor<IDescription> visitor) {
-		if (attributes == null) { return true; }
+		if (attributes == null)
+			return true;
 		return attributes.forEachValue(visitor);
 	}
 
 	public boolean visitOwnActions(final DescriptionVisitor<IDescription> visitor) {
-		if (actions == null) { return true; }
+		if (actions == null)
+			return true;
 		return actions.forEachValue(visitor);
 	}
 
 	public boolean visitOwnActionsRecursively(final DescriptionVisitor<IDescription> visitor) {
-		if (actions == null) { return true; }
+		if (actions == null)
+			return true;
 		return actions.forEachValue(each -> {
-			if (!visitor.process(each)) { return false; }
+			if (!visitor.process(each))
+				return false;
 			return each.visitOwnChildrenRecursively(visitor);
 		});
 	}
@@ -746,9 +776,11 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated) { return this; }
+		if (validated)
+			return this;
 		final IDescription result = super.validate();
-		if (result != null && !verifyAttributeCycles()) { return null; }
+		if (result != null && !verifyAttributeCycles())
+			return null;
 		return result;
 	}
 

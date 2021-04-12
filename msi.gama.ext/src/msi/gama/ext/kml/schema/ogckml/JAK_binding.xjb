@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings version="2.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+	<jaxb:globalBindings 
+		generateElementClass="false" 
+		mapSimpleTypeDef="false" 
+		generateMixedExtensions="false" 
+		optionalProperty="primitive">
+	</jaxb:globalBindings>
+
+	<jaxb:bindings schemaLocation="atom-author-link.xsd" node="/xs:schema">
+		<!-- rename the package 'oasis/names/tc/ciq/xsdschema/xal/_2/' to the following:  -->
+		<jaxb:schemaBindings>
+			<jaxb:package name="de.micromata.opengis.kml.v_2_2_0.atom" />
+		</jaxb:schemaBindings>
+				
+		<!-- bind the 'Link' attribute to Java 'LinkDeprecated' -->
+		<jaxb:bindings node=".//xs:element[@name='link']">
+			<jaxb:property name="AtomLink" />
+		</jaxb:bindings>
+		<jaxb:bindings node=".//xs:element[@name='author']">
+			<jaxb:property name="AtomAuthor" />
+		</jaxb:bindings>
+	</jaxb:bindings>
+
+	<!-- this package is referenced by AbstractFeatureType (xal:AddressDetails is used) -->
+	<jaxb:bindings schemaLocation="http://docs.oasis-open.org/election/external/xAL.xsd" node="/xs:schema">
+		<!-- rename the package 'oasis/names/tc/ciq/xsdschema/xal/_2/' to the following:  -->
+		<jaxb:schemaBindings>
+			<jaxb:package name="de.micromata.opengis.kml.v_2_2_0.xal" />
+		</jaxb:schemaBindings>
+
+		<!--
+			Resolve: [xjc] [ERROR] Property "DependentThoroughfares" is already defined. Use &lt;jaxb:property> to resolve this
+			conflict. [xjc] line 958 of http://docs.oasis-open.org/election/external/xAL.xsd [xjc] [ERROR] The following location
+			is relevant to the above error [xjc] line 979 of http://docs.oasis-open.org/election/external/xAL.xsd
+		-->
+		<jaxb:bindings node=".//xs:attribute[@name='DependentThoroughfares']">
+			<jaxb:property name="XalDependentThoroughfares" />
+		</jaxb:bindings>
+
+		<!--
+			Resolve: [xjc] [ERROR] Property "Address" is already defined. Use &lt;jaxb:property> to resolve this conflict. [xjc]
+			line 210 of http://docs.oasis-open.org/election/external/xAL.xsd [xjc] [ERROR] The following location is relevant to
+			the above error [xjc] line 267 of http://docs.oasis-open.org/election/external/xAL.xsd
+		-->
+		<jaxb:bindings node=".//xs:element[@name='Address']">
+			<jaxb:property name="XalAddress" />
+		</jaxb:bindings>
+
+		<!--
+			Resolve: [xjc] [ERROR] Property "PremiseDependency" is already defined. Use &lt;jaxb:property> to resolve this
+			conflict. [xjc] line 1486 of http://docs.oasis-open.org/election/external/xAL.xsd [xjc] [ERROR] The following
+			location is relevant to the above error [xjc] line 1491 of http://docs.oasis-open.org/election/external/xAL.xsd
+		-->
+		<jaxb:bindings node=".//xs:attribute[@name='PremiseDependency']">
+			<jaxb:property name="XalPremiseDependency" />
+		</jaxb:bindings>
+		
+		<jaxb:bindings node=".//xs:element[@name='AddressDetails']">
+			<jaxb:property name="XalAddressDetails" />
+		</jaxb:bindings>
+	</jaxb:bindings>
+
+	<jaxb:bindings schemaLocation="kml22gx.xsd" node="/xs:schema">
+		<!-- rename the package 'oasis/names/tc/ciq/xsdschema/xal/_2/' to the following:  -->
+		<jaxb:schemaBindings>
+			<jaxb:package name="de.micromata.opengis.kml.v_2_2_0.gx" />
+		</jaxb:schemaBindings>
+	</jaxb:bindings>	
+		
+	<jaxb:bindings schemaLocation="ogckml22.xsd" node="/xs:schema">
+		<!-- rename the package 'oasis/names/tc/ciq/xsdschema/xal/_2/' to the following:  -->
+		<jaxb:schemaBindings xmlns="default namespace">
+			<jaxb:package name="de.micromata.opengis.kml.v_2_2_0" xmlns="default namespace" />
+		</jaxb:schemaBindings>
+
+		<jaxb:bindings node="//xs:element[@name='altitudeMode']">
+			<!-- <jaxb:class name="AltitudeModeEnumTypeDeprecated" /> -->
+			<jaxb:factoryMethod name="AltitudeModeEnumTypeDeprecated" />
+		</jaxb:bindings>
+		<!--
+			<jaxb:property name="AltitudeModeEnumType1" />
+			Resolve: [xjc] [ERROR] Property "Snippet" is already defined. Use &lt;jaxb:property> to resolve this conflict. [xjc]
+			line 321 of file:/Users/Flori/Documents/workspace34/JavaAPIforKML/src/main/resources/schema/ogckml/ogckml22.xsd [xjc]
+			[ERROR] The following location is relevant to the above error [xjc] line 320 of
+			file:/Users/Flori/Documents/workspace34/JavaAPIforKML/src/main/resources/schema/ogckml/ogckml22.xsd
+		-->
+		<!-- bind the 'snippet' attribute to Java 'SnippetDeprecated' -->
+		<jaxb:bindings node="//xs:element[@name='snippet']">
+			<jaxb:property name="snippetd" />
+			<jaxb:factoryMethod name="snippetSmall" />
+		</jaxb:bindings>
+		
+		<!-- bind the 'scale' attribute to Java 'ScaleDeprecated' -->
+		<jaxb:bindings node=".//xs:element[@name='scale']">
+			<jaxb:property name="scale" />
+			<jaxb:factoryMethod name="scaleSmall" />
+		</jaxb:bindings>
+
+		<!-- only needed if <xjc:simple /> is enabled -->
+		<!--
+			Resolve: [xjc] [ERROR] Property "Link" is already defined. Use &lt;jaxb:property> to resolve this conflict. [xjc]
+			line 744 of file:/Users/Flori/Documents/workspace34/JavaAPIforKML/src/main/resources/schema/ogckml/ogckml22.xsd [xjc]
+			[ERROR] The following location is relevant to the above error [xjc] line 312 of
+			file:/Users/Flori/Documents/workspace34/JavaAPIforKML/src/main/resources/schema/ogckml/ogckml22.xsd
+		-->
+	</jaxb:bindings>
+</jaxb:bindings>

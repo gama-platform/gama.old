@@ -1,0 +1,19 @@
+<?xml version="1.0" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="jaxbJavaDocElements" type="jaxbJavaDocElements"/>
+
+  <xs:complexType name="jaxbJavaDocElements">
+    <xs:sequence>
+      <xs:element name="elements" type="jaxbJavaDoc" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="jaxbJavaDoc">
+    <xs:sequence>
+      <xs:element name="className" type="xs:string" minOccurs="0"/>
+      <xs:element name="javaDoc" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+
