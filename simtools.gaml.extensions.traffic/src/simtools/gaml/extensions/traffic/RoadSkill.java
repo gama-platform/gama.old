@@ -274,11 +274,11 @@ public class RoadSkill extends Skill {
 		}
 		getAgents(road).add(driver);
 
-		driver.setAttribute(DrivingSkill.DISTANCE_TO_GOAL,
+		DrivingSkill.setDistanceToGoal(driver,
 				driver.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[indexSegment + 1]));
-		driver.setAttribute(DrivingSkill.CURRENT_ROAD, road);
-		driver.setAttribute(DrivingSkill.STARTING_LANE, startingLane);
-		driver.setAttribute(DrivingSkill.SEGMENT_INDEX,
+		DrivingSkill.setCurrentRoad(driver, road);
+		DrivingSkill.setStartingLane(driver, startingLane);
+		DrivingSkill.setSegmentIndex(driver,
 				onLinkedRoad ? road.getInnerGeometry().getNumPoints() - indexSegment - 2 : indexSegment);
 	}
 
