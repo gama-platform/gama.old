@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gaml.types;
+package ummisco.gaml.extensions.stats;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -16,7 +16,8 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaRegression;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IType;
 
 
 @type(name = "regression", id = IType.REGRESSION, wraps = {

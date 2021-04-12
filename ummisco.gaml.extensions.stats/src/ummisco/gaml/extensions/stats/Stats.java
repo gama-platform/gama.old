@@ -8,7 +8,9 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gaml.operators;
+package ummisco.gaml.extensions.stats;
+
+import static msi.gaml.operators.Containers.collect;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,12 +47,12 @@ import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
-import msi.gama.util.GamaRegression;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import rcaller.RCaller;
@@ -173,7 +175,7 @@ public class Stats {
 			java.lang.System.arraycopy(dataSet, 0, dataCopy, 0, dataCopy.length);
 			Arrays.sort(dataCopy);
 			final int midPoint = dataCopy.length / 2;
-			if (dataCopy.length % 2 != 0) { return dataCopy[midPoint]; }
+			if (dataCopy.length % 2 != 0) return dataCopy[midPoint];
 
 			return dataCopy[midPoint - 1] + (dataCopy[midPoint] - dataCopy[midPoint - 1]) / 2;
 		}
@@ -342,9 +344,7 @@ public class Stats {
 	private static DataSet from(final IScope scope, final IContainer values) {
 		final DataSet d = new DataSet(values.length(scope));
 		for (final Object o : values.iterable(scope)) {
-			if (o instanceof Number) {
-				d.addValue(((Number) o).doubleValue());
-			}
+			if (o instanceof Number) { d.addValue(((Number) o).doubleValue()); }
 		}
 		return d;
 	}
@@ -462,10 +462,8 @@ public class Stats {
 			result.add(list);
 			return result;
 		}
-		if (!Ordering.<Comparable> natural().isStrictlyOrdered(stops)) {
-			throw GamaRuntimeException.error(
-					"The list " + Cast.toGaml(stops) + " should be ordered and cannot contain duplicates", scope);
-		}
+		if (!Ordering.<Comparable> natural().isStrictlyOrdered(stops)) throw GamaRuntimeException
+				.error("The list " + Cast.toGaml(stops) + " should be ordered and cannot contain duplicates", scope);
 		final DataSet d = from(scope, stops);
 		d.addValue(Double.MAX_VALUE);
 		final IType numberType = list.getGamlType().getContentType();
@@ -528,17 +526,13 @@ public class Stats {
 		ILocation maxPoint = null;
 		for (final Object o : l.iterable(scope)) {
 			if (o instanceof ILocation && maxNum == null) {
-				if (maxPoint == null || ((ILocation) o).compareTo(maxPoint) > 0) {
-					maxPoint = (ILocation) o;
-				}
+				if (maxPoint == null || ((ILocation) o).compareTo(maxPoint) > 0) { maxPoint = (ILocation) o; }
 			} else if (o instanceof Number && maxPoint == null
 					&& (maxNum == null || ((Number) o).doubleValue() > maxNum.doubleValue())) {
 				maxNum = (Number) o;
 			} else {
 				final Double d = Cast.asFloat(scope, o);
-				if (maxNum == null || d > maxNum.doubleValue()) {
-					maxNum = d;
-				}
+				if (maxNum == null || d > maxNum.doubleValue()) { maxNum = d; }
 			}
 		}
 		return maxNum == null ? maxPoint : maxNum;
@@ -590,17 +584,13 @@ public class Stats {
 		ILocation minPoint = null;
 		for (final Object o : l.iterable(scope)) {
 			if (o instanceof ILocation && minNum == null) {
-				if (minPoint == null || ((ILocation) o).compareTo(minPoint) < 0) {
-					minPoint = (ILocation) o;
-				}
+				if (minPoint == null || ((ILocation) o).compareTo(minPoint) < 0) { minPoint = (ILocation) o; }
 			} else if (o instanceof Number && minPoint == null
 					&& (minNum == null || ((Number) o).doubleValue() < minNum.doubleValue())) {
 				minNum = (Number) o;
 			} else {
 				final Double d = Cast.asFloat(scope, o);
-				if (minNum == null || d < minNum.doubleValue()) {
-					minNum = d;
-				}
+				if (minNum == null || d < minNum.doubleValue()) { minNum = d; }
 			}
 		}
 		return minNum == null ? minPoint : minNum;
@@ -664,10 +654,10 @@ public class Stats {
 			}
 		}
 		if (x.getSize() == 0) {
-			if (y == null) { return 0.0; }
+			if (y == null) return 0.0;
 			return new GamaPoint(0, 0, 0);
 		}
-		if (y == null) { return x.getProduct(); }
+		if (y == null) return x.getProduct();
 		return new GamaPoint(x.getProduct(), y.getProduct(), z.getProduct());
 	}
 
@@ -693,7 +683,7 @@ public class Stats {
 	public static Object opMedian(final IScope scope, final IContainer values) {
 
 		final IType contentType = values.getGamlType().getContentType();
-		if (values.length(scope) == 0) { return contentType.cast(scope, 0d, null, false); }
+		if (values.length(scope) == 0) return contentType.cast(scope, 0d, null, false);
 		switch (contentType.id()) {
 			case IType.INT:
 			case IType.FLOAT:
@@ -713,7 +703,7 @@ public class Stats {
 					y.addValue(p.getY());
 					z.addValue(p.getZ());
 				}
-				if (x.getSize() == 0) { return new GamaPoint(0, 0, 0); }
+				if (x.getSize() == 0) return new GamaPoint(0, 0, 0);
 				return new GamaPoint(x.getMedian(), y.getMedian(), z.getMedian());
 			case IType.COLOR:
 				final DataSet r = new DataSet();
@@ -725,7 +715,7 @@ public class Stats {
 					g.addValue(p.getGreen());
 					b.addValue(p.getBlue());
 				}
-				if (r.getSize() == 0) { return new GamaColor(0, 0, 0, 0); }
+				if (r.getSize() == 0) return new GamaColor(0, 0, 0, 0);
 				return new GamaColor(r.getMedian(), g.getMedian(), b.getMedian(), 0);
 			default:
 				final DataSet d = new DataSet();
@@ -860,7 +850,7 @@ public class Stats {
 
 	public static IMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 			throws GamaRuntimeException {
-		if (original == null) { return GamaMapFactory.create(Types.NO_TYPE, Types.INT); }
+		if (original == null) return GamaMapFactory.create(Types.NO_TYPE, Types.INT);
 		final IMap<Object, Integer> result = GamaMapFactory.create(original.getGamlType().getContentType(), Types.INT);
 		for (final Object each : original.iterable(scope)) {
 			scope.setEach(each);
@@ -898,9 +888,9 @@ public class Stats {
 
 	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
 			throws GamaRuntimeException, ParseException, ExecutionException {
-		if (l1.length(scope) == 0 || l2.length(scope) == 0) { return Double.valueOf(0d); }
+		if (l1.length(scope) == 0 || l2.length(scope) == 0) return Double.valueOf(0d);
 
-		if (l1.length(scope) != l2.length(scope)) { return Double.valueOf(0d); }
+		if (l1.length(scope) != l2.length(scope)) return Double.valueOf(0d);
 
 		final RCaller caller = new RCaller();
 		final RCode code = new RCode();
@@ -965,7 +955,7 @@ public class Stats {
 	@no_test
 	public static Object getMeanR(final IScope scope, final IContainer l)
 			throws GamaRuntimeException, ParseException, ExecutionException {
-		if (l.length(scope) == 0) { return Double.valueOf(0d); }
+		if (l.length(scope) == 0) return Double.valueOf(0d);
 
 		double[] results;
 		final RCaller caller = new RCaller();
@@ -1053,7 +1043,7 @@ public class Stats {
 					+ "algorithm from the first operand data according to the number of clusters to split"
 					+ " the data into (k) and the maximum number of iterations to run the algorithm."
 					+ "(If negative, no maximum will be used) (maxIt). Usage: kmeans(data,k,maxit)",
-//			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+			// special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
 			masterDoc = true,
 			examples = { @example (
 					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2,10)",
@@ -1115,9 +1105,7 @@ public class Stats {
 			final int end = Math.min(n2, i + radius);
 
 			table[1][start - 1] = Double.POSITIVE_INFINITY;
-			if (end < n2) {
-				table[1][end + 1] = Double.POSITIVE_INFINITY;
-			}
+			if (end < n2) { table[1][end + 1] = Double.POSITIVE_INFINITY; }
 
 			for (int j = start; j <= end; j++) {
 				final double cost =
@@ -1125,13 +1113,9 @@ public class Stats {
 
 				double min = table[0][j - 1];
 
-				if (min > table[0][j]) {
-					min = table[0][j];
-				}
+				if (min > table[0][j]) { min = table[0][j]; }
 
-				if (min > table[1][j - 1]) {
-					min = table[1][j - 1];
-				}
+				if (min > table[1][j - 1]) { min = table[1][j - 1]; }
 
 				table[1][j] = cost + min;
 			}
@@ -1177,13 +1161,9 @@ public class Stats {
 
 				double min = table[0][j - 1];
 
-				if (min > table[0][j]) {
-					min = table[0][j];
-				}
+				if (min > table[0][j]) { min = table[0][j]; }
 
-				if (min > table[1][j - 1]) {
-					min = table[1][j - 1];
-				}
+				if (min > table[1][j - 1]) { min = table[1][j - 1]; }
 
 				table[1][j] = cost + min;
 			}
@@ -1236,7 +1216,7 @@ public class Stats {
 		for (int i = 0; i < values.length; i++) {
 			values[i] = Cast.asFloat(scope, data.get(i));
 		}
-//		java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
+		// java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
 		return k.evaluate(values);
 	}
 
@@ -1250,11 +1230,12 @@ public class Stats {
 			value = "returns the list of clusters (list of instance indices) computed with the kmeans++ "
 					+ "algorithm from the first operand data according to the number of clusters to split"
 					+ " the data into (k). Usage: kmeans(data,k)",
-//			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-			usages = {@usage(value="The maximum number of (third operand) can be omitted.",
-			examples = { @example (
-					value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)",
-					equals = "[[0,2,3],[1]]") })})
+			// special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+			usages = { @usage (
+					value = "The maximum number of (third operand) can be omitted.",
+					examples = { @example (
+							value = "kmeans ([[2,4,5], [3,8,2], [1,1,3], [4,3,4]],2)",
+							equals = "[[0,2,3],[1]]") }) })
 	public static IList<IList> KMeansPlusplusApache(final IScope scope, final IList data, final Integer k)
 			throws GamaRuntimeException {
 		return KMeansPlusplusApache(scope, data, k, -1);
@@ -1329,6 +1310,49 @@ public class Stats {
 		}
 		G /= 2 * N * sumXi;
 		return G;
+	}
+
+	@operator (
+			value = { "product_of" },
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			iterator = true,
+			category = IOperatorCategory.CONTAINER,
+			concept = { IConcept.CONTAINER, IConcept.FILTER })
+	@doc (
+			value = "the product of the right-hand expression evaluated on each of the elements of the left-hand operand",
+			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
+			usages = { @usage (
+					value = "if the left-operand is a map, the keyword each will contain each value",
+					examples = { @example (
+							value = "[1::2, 3::4, 5::6] product_of (each)",
+							equals = "48") }) },
+			examples = { @example (
+					value = "[1,2] product_of (each * 10 )",
+					equals = "200") },
+			see = { "min_of", "max_of", "sum_of", "mean_of" })
+	@test ("[3,4] product_of (each *2) = 48")
+	public static Object product_of(final IScope scope, final IContainer container, final IExpression filter) {
+		return product(scope, collect(scope, container, filter));
+	}
+
+	@operator (
+			value = { "variance_of" },
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			iterator = true,
+			category = IOperatorCategory.CONTAINER,
+			concept = { IConcept.CONTAINER, IConcept.FILTER })
+	@doc (
+			value = "the variance of the right-hand expression evaluated on each of the elements of the left-hand operand",
+			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
+			see = { "min_of", "max_of", "sum_of", "product_of" },
+			examples = { @example (
+					value = "[1,2,3,4,5,6] variance_of each with_precision 2",
+					equals = "2.92",
+					returnType = "float") })
+
+	@test ("[1,2,3,4,5,6] variance_of each with_precision 2 = 2.92")
+	public static Object variance_of(final IScope scope, final IContainer container, final IExpression filter) {
+		return opVariance(scope, collect(scope, container, filter));
 	}
 
 }

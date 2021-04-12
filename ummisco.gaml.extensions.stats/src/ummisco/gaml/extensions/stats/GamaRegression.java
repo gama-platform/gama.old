@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.util;
+package ummisco.gaml.extensions.stats;
 
 import org.apache.commons.math3.stat.regression.AbstractMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
@@ -21,6 +21,8 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
