@@ -170,6 +170,7 @@ public interface IKeyword {
 	String FADING = "fading";
 	String FALSE = "false";
 	String FILE = "file";
+	String FOLDER = "folder";
 	String FILES = "files";
 	String OUTPUT_FILE = "output_file";
 	String FILL_WITH = "fill_with";

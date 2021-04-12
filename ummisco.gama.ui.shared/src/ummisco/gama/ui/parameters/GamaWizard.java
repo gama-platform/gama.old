@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.Wizard;
 
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.IList;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 
 
@@ -25,11 +24,10 @@ public class GamaWizard extends Wizard{
         return title;
     }
     
-    public IList<IMap<String, Object>> getValues() {
-    	IList<IMap<String, Object>> values = GamaListFactory.create();
+    public IMap<String,IMap<String, Object>> getValues() {
+    	IMap<String,IMap<String, Object>> values = GamaMapFactory.create();
     	for(GamaWizardPage p : pages) {
-    		System.out.println("page: " + p);
-    		values.add(p.getValues());
+    		values.put(title,p.getValues());
     	}
     	return values;
     }
@@ -41,11 +39,15 @@ public class GamaWizard extends Wizard{
     	}
     }
 
-	@Override
-	public boolean performFinish() {
-		return true;
-	}
-
+    @Override
+    public boolean performFinish() {
+    	for (GamaWizardPage p : pages) {
+    		if (! p.isPageComplete())
+    			return false;
+    	}
+    	return true;
+    }
+    
    
 
 }

@@ -287,8 +287,8 @@ public class SwtGui implements IGui {
 	}
 	
 	@Override
-	public IList<IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
-		final IList<IMap<String, Object>> result = GamaListFactory.create();
+	public IMap<String,IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
+		final IMap<String,IMap<String, Object>> result = GamaMapFactory.create();
 		final IList<GamaWizardPage> wizardPages = GamaListFactory.create();
 		for (IMap<String, Object> l : pages) {
 			GamaFont f = (GamaFont) l.get(IKeyword.FONT);
@@ -305,7 +305,7 @@ public class SwtGui implements IGui {
 			final GamaWizard wizard = new GamaWizard(title, wizardPages);
 			GamaWizardDialog wizardDialog = new GamaWizardDialog(WorkbenchHelper.getShell(),wizard);
 			if (wizardDialog.open() == Window.OK) {
-				result.addAll(wizardDialog.getValues());
+				result.putAll(wizardDialog.getValues());
 		    }
 		});
 		return result;

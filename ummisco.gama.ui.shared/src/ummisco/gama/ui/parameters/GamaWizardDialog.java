@@ -2,7 +2,6 @@ package ummisco.gama.ui.parameters;
 
 
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.util.IList;
@@ -27,7 +26,13 @@ public class GamaWizardDialog extends WizardDialog{
 		return true;
 	}*/
 
-	public IList<IMap<String, Object>> getValues() {
+	public IMap<String,IMap<String, Object>> getValues() {
 		return wizard.getValues();
+	}
+	
+	@Override
+	protected void cancelPressed() {
+		super.cancelPressed();
+		this.wizard.getValues().clear();
 	}
 }

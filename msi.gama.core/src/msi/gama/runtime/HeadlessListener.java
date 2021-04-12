@@ -40,6 +40,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
@@ -85,11 +86,13 @@ public class HeadlessListener implements IGui {
 		return initialValues;
 	}
 	@Override
-	public IList<IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
-		final IList<IMap<String, Object>> initialValues = GamaListFactory.create();
+	public IMap<String,IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
+		final IMap<String, IMap<String, Object>> initialValues = GamaMapFactory.create();
 		for (IMap l : pages) {
 			final IMap<String, Object> initialValuesPage = GamaMapFactory.create();
-			initialValues.add(initialValuesPage);
+			String t = (String) l.get(IKeyword.TITLE);
+			
+			initialValues.put(t,initialValuesPage);
 			IList<IParameter> ps = (IList<IParameter>) l.get(IKeyword.PARAMETERS);
 			if (ps != null) {
 				ps.forEach(p -> {

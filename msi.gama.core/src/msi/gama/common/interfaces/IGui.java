@@ -101,7 +101,7 @@ public interface IGui {
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters, GamaFont font);
 
-	IList<IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages);
+	IMap<String, IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages);
 
 	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) ;
 	

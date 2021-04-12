@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -13,6 +14,7 @@ import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamaWizardPage extends WizardPage{
 
@@ -48,13 +50,21 @@ public class GamaWizardPage extends WizardPage{
 			EditorFactory.create(scope, composite, param, listener, false, false);
 		});
 		composite.layout();
-		 setControl(composite);
+		setControl(composite);
+		composite.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
+		
 	}
 
 	public IMap<String, Object> getValues() {
 		return values;
 	}
 	
-	
+	@Override
+	public boolean isPageComplete() {
+		/*for(Object v : values.values()) {
+			if (v == null) return false;
+		}*/
+		return true;
+	}
 	
 }

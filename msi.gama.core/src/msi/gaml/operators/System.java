@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -315,7 +314,7 @@ public class System {
 			concept = {})
 	@no_test
 
-	public static IList<IMap<String, Object>> openWizard(final IScope scope, final String title, final IList<IMap<String, Object>> pages) {
+	public static IMap<String,IMap<String, Object>> openWizard(final IScope scope, final String title, final IList<IMap<String, Object>> pages) {
 		return scope.getGui().openWizard(scope, title, pages);
 	}
 	

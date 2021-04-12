@@ -113,7 +113,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	// static int index;
 	boolean isValued;
 	Object initialValue, currentValue;
-	IExpression min, max, among, init, slider;
+	IExpression min, max, among, init, slider, isFolder;
 	String tempVar;
 
 	public UserInputStatement(final IDescription desc) {
@@ -124,6 +124,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		max = getFacet(IKeyword.MAX);
 		among = getFacet(IKeyword.AMONG);
 		slider = getFacet("slider");
+		isFolder = getFacet("isFolder");
 		tempVar = getLiteral(IKeyword.RETURNS);
 	}
 
@@ -242,6 +243,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		if (slider == null) { return true; }
 		return Cast.asBool(scope, slider.value(scope));
 	}
+	
 
 	@Override
 	public List<GamaColor> getColor(final IScope scope) {

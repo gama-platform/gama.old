@@ -16,6 +16,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 
 import msi.gama.kernel.experiment.IParameter;
@@ -24,6 +25,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamaFolderFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Files;
 import msi.gaml.types.IType;
@@ -34,16 +36,16 @@ import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class FileEditor extends AbstractEditor<IGamaFile> {
+public class FolderEditor extends AbstractEditor<GamaFolderFile> {
 
 	private FlatButton textBox;
 
-	FileEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	FolderEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
 		super(scope, agent, param, l);
 	}
 
-	FileEditor(final IScope scope, final Composite parent, final String title, final String value,
-			final EditorListener<IGamaFile> whenModified) {
+	FolderEditor(final IScope scope, final Composite parent, final String title, final String value,
+			final EditorListener<GamaFolderFile> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
@@ -66,13 +68,13 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
-		final FileDialog dialog = new FileDialog(WorkbenchHelper.getDisplay().getActiveShell(), SWT.NULL);
-		IGamaFile file = currentValue ;
-		dialog.setFileName(file != null ? file.getPath(getScope()) : GAMA.getModel().getFilePath());
-		dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
+		final DirectoryDialog dialog = new DirectoryDialog(WorkbenchHelper.getDisplay().getActiveShell(), SWT.NULL);
+		GamaFolderFile file = currentValue ;
+		dialog.setFilterPath(file != null ? file.getPath(getScope()) : GAMA.getModel().getFilePath());
+		dialog.setText("Choose a folder for parameter '" + param.getTitle() + "'");
 		final String path = dialog.open();
 		if (path != null) {
-			file = Files.from(getScope(), path);
+			file = (GamaFolderFile) Files.folderFile(getScope(), path);
 			modifyAndDisplayValue(file);
 		}
 	}
