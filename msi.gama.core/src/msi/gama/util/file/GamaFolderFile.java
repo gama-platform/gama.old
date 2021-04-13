@@ -34,6 +34,10 @@ public class GamaFolderFile extends GamaFile<IList<String>, String> {
 		// "write" operators, so no need to decide for a default here
 		// setWritable(true);
 	}
+	
+	public GamaFolderFile(IScope scope, String pn, boolean forReading) throws GamaRuntimeException {
+		super(scope, pn, forReading);
+	}
 
 	@Override
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {

@@ -73,7 +73,7 @@ public class DirectoryEditor extends AbstractEditor<GamaFolderFile> {
 		dialog.setText("Choose a folder for parameter '" + param.getTitle() + "'");
 		final String path = dialog.open();
 		if (path != null) {
-			file = (GamaFolderFile) Files.folderFile(getScope(), path);
+			file = (GamaFolderFile) Files.folderFile(getScope(), path, false);
 			modifyAndDisplayValue(file);
 		}
 	}
