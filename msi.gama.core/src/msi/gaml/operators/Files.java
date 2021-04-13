@@ -175,6 +175,10 @@ public class Files {
 	public static IGamaFile folderFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaFolderFile(scope, s);
 	}
+	
+	public static IGamaFile folderFile(final IScope scope, final String s, final boolean modify) throws GamaRuntimeException {
+		return new GamaFolderFile(scope, s, modify);
+	}
 
 	@operator (
 			value = "writable",

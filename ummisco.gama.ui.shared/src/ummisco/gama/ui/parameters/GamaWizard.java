@@ -27,7 +27,7 @@ public class GamaWizard extends Wizard{
     public IMap<String,IMap<String, Object>> getValues() {
     	IMap<String,IMap<String, Object>> values = GamaMapFactory.create();
     	for(GamaWizardPage p : pages) {
-    		values.put(title,p.getValues());
+    		values.put(p.getTitle(),p.getValues());
     	}
     	return values;
     }
