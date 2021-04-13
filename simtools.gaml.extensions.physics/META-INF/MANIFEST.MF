@@ -9,6 +9,7 @@ Bundle-ClassPath: .,
  lib/jbullet.jar,
  lib/vecmath-1.5.2.jar
 Export-Package: 
+ javax.vecmath,
  simtools.gaml.extensions.physics
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
