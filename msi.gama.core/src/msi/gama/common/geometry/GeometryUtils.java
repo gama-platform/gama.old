@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import static org.locationtech.jts.algorithm.CGAlgorithms.distancePointLine;
 import static msi.gama.metamodel.shape.IShape.Type.LINESTRING;
 import static msi.gama.metamodel.shape.IShape.Type.MULTILINESTRING;
 import static msi.gama.metamodel.shape.IShape.Type.MULTIPOINT;
@@ -26,7 +25,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.geotools.geometry.jts.JTS;
-
+import org.locationtech.jts.algorithm.Distance;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -101,6 +100,52 @@ public class GeometryUtils {
 	public static GamaGeometryFactory GEOMETRY_FACTORY = new GamaGeometryFactory();
 	public static PreparedGeometryFactory PREPARED_GEOMETRY_FACTORY = new PreparedGeometryFactory();
 
+	public static Double distanceOnPolyline(final IShape line, GamaPoint pt1, GamaPoint pt2) {
+		int indexS = 0;
+		int indexT = 0;
+		
+		IList<GamaPoint> points = (IList<GamaPoint>) line.getPoints();
+		int nbSp = points.size();
+		if (nbSp == 2) {
+			return pt1.euclidianDistanceTo(pt2);
+		} else {
+			
+			double distanceS = Double.MAX_VALUE;
+			double distanceT = Double.MAX_VALUE;
+			for (int i = 0; i < nbSp - 1; i++) {
+				final double distS = Distance.pointToSegment(pt1, points.get(i), points.get(i + 1));
+				final double distT = Distance.pointToSegment(pt2, points.get(i), points.get(i + 1));
+				if (distS < distanceS) {
+					distanceS = distS;
+					indexS = i;
+					
+				} 
+				if (distT < distanceT) {
+					distanceT = distT;
+					indexT = i;
+				} 
+				
+			}
+		}
+		if (indexS == indexT) return pt1.euclidianDistanceTo(pt2);
+		double distance = 0;
+		int minI, maxI;
+		GamaPoint source, target;
+		
+		if (indexT > indexS) {
+			minI = indexS +1; maxI = indexT; source = pt1; target = pt2;
+		} else {
+			minI = indexT + 1; maxI = indexS;source = pt2; target = pt1;
+		}
+		distance = source.euclidianDistanceTo(points.get(minI));
+		for (int i = minI; i < maxI - 1; i++) {
+			GamaPoint pt = points.get(i);
+			distance += source.euclidianDistanceTo(pt);
+			source = pt;
+		}
+		distance += source.euclidianDistanceTo(target);
+		return distance;
+	}
 	public static GamaPoint pointInGeom(final Geometry geom, final RandomUtils rand) {
 		// WARNING Only in 2D for Polygons !
 		if (geom == null || geom.getCoordinate() == null) { return null; }
@@ -867,7 +912,7 @@ public class GeometryUtils {
 			int indexTarget = -1;
 			double distanceT = Double.MAX_VALUE;
 			for (int i = 0; i < coords.length - 1; i++) {
-				final double distT = distancePointLine(pt, coords[i], coords[i + 1]);
+				final double distT = Distance.pointToSegment(pt, coords[i], coords[i + 1]);
 				if (distT < distanceT) {
 					distanceT = distT;
 					indexTarget = i;
