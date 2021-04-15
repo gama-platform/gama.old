@@ -946,9 +946,15 @@ public class DrivingSkill extends MovingSkill {
 		return (IPath) actionComputePath.executeOn(scope);
 	}
 
-	private Double speedChoice(final IAgent agent, final IAgent road) {
-		return Math.min(getMaxSpeed(agent), Math.min(getRealSpeed(agent) + getAccelerationMax(agent),
-				getSpeedCoeff(agent) * (Double) road.getAttribute(RoadSkill.MAXSPEED)));
+	private double speedChoice(final IScope scope, final IAgent road) {
+		IAgent driver = getCurrentAgent(scope);
+
+		double stepDuration = scope.getSimulation().getClock().getStepInSeconds();
+		double accel = getAccelerationMax(driver) / (1 / stepDuration);
+		double speed = getRealSpeed(driver) + accel;
+		speed = Math.min(speed, getSpeedCoeff(driver) * RoadSkill.getMaxSpeed(road));
+		speed = Math.min(speed, getMaxSpeed(driver));
+		return speed;
 	}
 
 	@action(
@@ -1190,9 +1196,7 @@ public class DrivingSkill extends MovingSkill {
 	)
 	public Double primSpeedChoice(final IScope scope) throws GamaRuntimeException {
 		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
-		IAgent agent = getCurrentAgent(scope);
-		double speed = speedChoice(agent, road);
-		return speed;
+		return speedChoice(scope, road);
 	}
 
 	/**
