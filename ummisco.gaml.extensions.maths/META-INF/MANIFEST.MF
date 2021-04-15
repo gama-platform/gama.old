@@ -9,6 +9,7 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.apache.commons.math3.ml.clustering,
  org.apache.commons.math3.ml.distance,
  org.apache.commons.math3.random,
+ org.apache.commons.math3.stat.descriptive,
  org.apache.commons.math3.stat.descriptive.moment,
  org.apache.commons.math3.stat.regression,
  ummisco.gaml.extensions.maths.ode.statements
