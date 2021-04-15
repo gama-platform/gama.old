@@ -25,7 +25,7 @@ echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci ext"* ]]; then			
 	MSG+=" ci ext " 
 fi	
- 
+
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
 	
 	deploy

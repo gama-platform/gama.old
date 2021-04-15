@@ -16,14 +16,13 @@ import java.util.HashMap;
 
 import javax.vecmath.Vector3f;
 
-import org.locationtech.jts.geom.Coordinate;
-
 import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.collision.shapes.ConvexHullShape;
 import com.bulletphysics.collision.shapes.SphereShape;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.util.ObjectArrayList;
+import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -109,7 +108,9 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 	@getter ("gravity")
 	public Double getGravity() {
-		if (!this.hasAttribute("gravity")) { this.setAttribute("gravity", 9.81); }
+		if (!this.hasAttribute("gravity")) {
+			this.setAttribute("gravity", 9.81);
+		}
 		return (Double) this.getAttribute("gravity");
 	}
 
@@ -127,7 +128,9 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 	@getter ("use_gravity")
 	public Boolean isUseGravity() {
-		if (!this.hasAttribute("use_gravity")) { this.setAttribute("use_gravity", true); }
+		if (!this.hasAttribute("use_gravity")) {
+			this.setAttribute("use_gravity", true);
+		}
 
 		return (Boolean) this.getAttribute("use_gravity");
 	}
@@ -185,7 +188,9 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		} else {
 
 			String shapeType = (String) collisionBound.get("shape");
-			if (shapeType == null) { shapeType = ""; }
+			if (shapeType == null) {
+				shapeType = "";
+			}
 			if (shapeType.equalsIgnoreCase("sphere")) {
 				final Double radius = Cast.asFloat(null, collisionBound.get("radius"));
 				shape = new SphereShape(radius.floatValue());
@@ -263,7 +268,9 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		world.update(timeStep.floatValue());
 		registeredMap.keySet().removeIf(entry -> entry == null || entry.dead());
 		for (final IAgent ia : registeredMap.keySet()) {
-			if ((Double) ia.getAttribute("mass") == 0.0) { continue; }
+			if ((Double) ia.getAttribute("mass") == 0.0) {
+				continue;
+			}
 
 			final RigidBody node = registeredMap.get(ia);
 			final Vector3f _position = world.getNodePosition(node);

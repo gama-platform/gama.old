@@ -273,20 +273,6 @@ public class System {
 		});
 		return userInput(scope, title, parameters,font);
 	}
-	
-	@operator (
-			value = IKeyword.USER_CONFIRM,
-			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
-			concept = {})
-	@doc (
-			value = "Asks the user to confirm a choice. The two string are used to specify the title and the message of the dialog box. ",
-			examples =
-
-			{ @example ("bool confirm <- user_confirm(\"Confirm\",\"Please confirm\";") })
-	@no_test
-	public static Boolean userConfirmDialog(final IScope scope, final String title, final String message) {
-		return scope.getGui().openUserInputDialogConfirm(scope, title,message);
-	}
 
 	@SuppressWarnings ("unchecked")
 	@operator (
@@ -306,30 +292,6 @@ public class System {
 		parameters.removeIf(p -> !(p instanceof IParameter));
 		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
 				scope.getGui().openUserInputDialog(scope, title, parameters,font));
-	}
-	
-	@operator (
-			value = IKeyword.WIZARD,
-			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
-			concept = {})
-	@no_test
-
-	public static IMap<String,IMap<String, Object>> openWizard(final IScope scope, final String title, final IList<IMap<String, Object>> pages) {
-		return scope.getGui().openWizard(scope, title, pages);
-	}
-	
-	@operator (
-			value = IKeyword.WIZARD_PAGE,
-			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
-			concept = {})
-	@no_test
-	public static IMap<String, Object> wizardPage(final String title, final String description,final IList parameters, final GamaFont font) {
-		IMap<String, Object> results = GamaMapFactory.create();
-		results.put(IKeyword.TITLE, title);
-		results.put(IKeyword.DESCRIPTION, description);
-		results.put(IKeyword.PARAMETERS, parameters);
-		results.put(IKeyword.FONT, font);
-		return results;
 	}
 
 	@operator (

@@ -50,7 +50,6 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	int MAP = 10;
 	int AGENT = 11;
 	int FILE = 12;
-	int DIRECTORY = 30 ;
 	int GEOMETRY = 13;
 	int SPECIES = 14;
 	int GRAPH = 15;

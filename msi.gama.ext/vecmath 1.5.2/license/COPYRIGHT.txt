@@ -1,0 +1,486 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Vecmath: Subversion: trunkCOPYRIGHT.txt &mdash; Project Kenai</title>
+    <link href="https://asset-0.java.net/stylesheets/print_packaged.css?20151030.c1dd42a" media="print" rel="stylesheet" type="text/css" />
+    <script src="https://asset-2.java.net/javascripts/head_packaged.js?20151030.c1dd42a" type="text/javascript"></script>
+    <script type="text/javascript" src="https://ws.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">
+        stLight.options({
+            publisher:'bcd30425-1749-43d6-a311-18a82f89771a'
+        });
+    </script>
+    <script type="text/javascript">
+//<![CDATA[
+var page={"token":"EaRg+g8FQUuzR/NoZh37JvYqQwCy3nxxAoN/alxcNCs="};
+//]]>
+</script>
+    <script type="text/javascript" charset="utf-8">
+      function debug(m){}
+    </script>
+    
+  <link href="https://asset-2.java.net/stylesheets/syntax/shCore.css?20151030.c1dd42a" media="screen" rel="stylesheet" type="text/css" />
+<link href="https://asset-2.java.net/stylesheets/syntax/shThemeDefault.css?20151030.c1dd42a" media="screen" rel="stylesheet" type="text/css" />
+
+
+    <link href="https://asset-3.java.net/theme/stylesheets/java_net.css?20151030.c1dd42a" media="screen" rel="stylesheet" type="text/css" />
+    <link href="https://asset-0.java.net/theme/stylesheets/layout.css?20151030.c1dd42a" media="screen" rel="stylesheet" type="text/css" />
+    <link href="https://asset-1.java.net/stylesheets/additions.css?20151030.c1dd42a" media="screen" rel="stylesheet" type="text/css" />
+    <!--[if IE]><style type="text/css" media="all">@import "/theme/stylesheets/ie.css";</style><![endif]-->
+    <!--[if lte IE 6]><style type="text/css" media="all">@import "/theme/stylesheets/ie6.css";</style><![endif]-->
+    <!--[if IE 7]><style type="text/css" media="all">@import "/theme/stylesheets/ie7.css";</style><![endif]-->
+    <!--[if IE 8]><style type="text/css" media="all">@import "/theme/stylesheets/ie8.css";</style><![endif]-->
+
+    <meta name="keywords" content="" />
+  </head>
+  <body class="front not-logged-in article-type-page one-sidebar">
+      <div id="container">
+      
+      <div id="skip-nav" class="element-invisible">
+        <!-- To adjust the display of the skip link see the Advanced theme settings
+        (General settings), and never use display:none! -->
+        <a href="#main-content">Skip to main content</a>
+      </div>
+      <div id="leaderboard">
+        <div id="block-block-31"  class="block">
+          <div class="block-inner">
+            <div class="content">
+                <a href="/people/new">Create Account</a>
+  <span class="separator"></span>
+  <a href="/people/login?original_uri=%2Fprojects%2Fvecmath%2Fsources%2Fsvn%2Fcontent%2Ftrunk%2FCOPYRIGHT.txt" rel="nofollow">Login</a>
+  <span class="separator"></span>
+  <a href="/projects/help/pages/SourceControl" target="_blank">Help</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="header" class="clearfix">
+        <div id="branding">
+          <div class="logo-site-name">
+            <strong>
+              <span id="logo">
+                <a href="http://www.java.net/" rel="home" class="active">
+                  <img alt="java.net - Go to Homepage" border="0" class="logo-link" src="https://asset-2.java.net/theme/images/logo.png?20151030.c1dd42a" title="Java.net - Go to the Homepage" />
+                </a>
+              </span>
+            </strong>
+          </div>
+          <div id="site-slogan">The Source for Java Technology Collaboration</div>
+        </div>
+        <div id="search-box" class="hide-label">
+          <form action="http://www.java.net/search/node" method="post" id="search-theme-form">
+            <div id="search">
+              <input type="hidden" value="search_form" id="edit-search-form" name="form_id" />
+              <div style="margin-left: -10px;" class="checks">
+                <span><input type="checkbox" name="type[forum]" id="edit-forums" value="forum" /> Forums</span>
+                <span><input type="checkbox" name="type[blog]" id="edit-blogs" value="blog" /> Blogs</span>
+                <span><input type="checkbox" name="projects" id="edit-projects" value="project" /> Projects</span>
+                <span><input type="checkbox" name="people" id="edit-people" value="people" /> People</span>
+              </div>
+              <input type="text" class="form-text" id="edit-search-theme-form-1" value="Search All" size="15" onclick="this.value = ''" onblur="if (!this.value) this.value = ''" name="keys" />
+              <input type="submit" value="" name="op" title="Search" class="form-submit" alt="Search" />
+            </div>
+          </form>
+        </div>
+      </div>
+    <div id="primary" class="nav">
+      <div id="primary-inner">
+                <h2 class="element-invisible">Main Menu</h2>
+       <ul class="primary-links clearfix">
+          <li class=""><a href="https://about.java.net" title="Return to the java.net homepage" class="active">Home</a></li>
+          <li class="active-trail"><a href="/projects" title="View the projects hosted on java.net">Projects</a></li>
+          <li class=""><a href="https://community.oracle.com/community/java" title="Participate in the java.net forums">Forums</a></li>
+          <li class=""><a href="/people" title="View all the people involved with java.net">People</a></li>
+          <li class=""><a href="https://community.oracle.com/community/java" title="Get involved in your local Java User Group (JUG)">Java User Groups</a></li>
+          <li class=""><a href="https://community.oracle.com/community/java/jcp" title="Get involved with the Java Community Process!">JCP</a></li>
+          <li class="active-trail"><a href="/projects/help/pages/Home" title="Help pages java.net">Help</a></li>
+                  </ul>
+       </div>
+    </div>
+    <div id="columns">
+      <div class="columns-inner clearfix">
+        <div id="content-column">
+          <div class="content-inner">
+           <div id="navig-breadcrumbs">
+              <a href="/">java.net</a><span>></span>
+  <a href="/projects">projects</a><span>&gt;</span><a href="/projects/vecmath">vecmath</a><span>&gt;</span><a href="/projects/vecmath/sources">source code</a><span>&gt;</span><a href="/projects/vecmath/sources/svn/show" class="current">Subversion</a>
+
+            </div>
+            <div id="block-quicktabs-2"  class="block">
+              <div class="block-inner">
+                <div class="content">
+                  <!-- BEGIN CONTENT AREA -->
+                  
+                  
+
+
+
+
+
+ 
+ 
+
+
+
+<div class="contentPadding">
+  <h2 class="pageTitle">Source code<span class="secondaryTitle"> file content</span></h2>
+
+  <!-- Revision Navigation -->
+      <!--Source code navigation - 2 column layout -->
+    <div class="scmNavBlock">
+      <div class="twoColumns">
+        <div class="column">
+          
+            <span class="alignText">Revision:</span>
+            <span class="alignText">
+              <a href="/projects/vecmath/sources/svn/revision/144">144</a>
+              
+                (of <a href="/projects/vecmath/sources/svn/revision/144">144</a>)
+              
+            </span>
+          
+          <br/><br/>
+          <span class="alignText">update docs for svn</span>
+        </div>
+        <div class="column">
+          <div align="right">
+            <a href="/projects/vecmath/sources/svn/history?">&raquo; Project Revision History</a>
+            <br/><br/>
+            <div id="repository-url-overlay">
+  <a href="#" class="contextMenuAnchor" id="scm-url_9937">&raquo; Checkout URL</a><div style="display:none" id="scm-url_9937_content">
+	
+      <span class="quiet">Access the source code using the following URL:</span>
+      <br />https://svn.java.net/svn/vecmath~svn
+      
+	
+    
+      <br /><br />
+      
+        <span class="quiet">
+          You must be <a href="/people/login">logged in</a>
+          to see SSH URLs.
+        </span>
+      
+    
+  </div>
+</div>
+
+          </div>
+        </div>
+      <div class="clear"></div>
+      </div>
+    </div>
+    <!--End source code navigation -->
+  
+
+  <!-- Title and back link -->
+  <h3 class="pathBreadcrumbs subSection scmTitle"><a href="/projects/vecmath/sources/svn/show" title="Repository Contents">svn</a><span> / </span><a href="/projects/vecmath/sources/svn/show/trunk" title="Go to trunk">trunk</a><span> / </span><a href="/projects/vecmath/sources/svn/content/trunk/COPYRIGHT.txt" title="View Contents">COPYRIGHT.txt</a></h3>
+
+  <!-- Contents -->
+  
+    <div class="twoColumns">
+      <!-- first column-->
+      <div class="column">
+        <ul class="actions">
+          <li><a href="/projects/vecmath/sources/svn/history?path%5B%5D=trunk&amp;path%5B%5D=COPYRIGHT.txt">&raquo; File Revision History</a> </li>
+          <li><a href="/projects/vecmath/sources/svn/content/trunk/COPYRIGHT.txt?raw=true">&raquo; Get Raw File</a></li>
+        </ul>
+        <div class="clear"></div>
+      </div>
+      <!-- second column-->
+      <div class="column" align="right">
+        <form method="get" action="/projects/vecmath/sources/svn/diff/trunk/COPYRIGHT.txt">
+          <input value="Get diffs" type="submit"> between
+          <input name="rev1" value="" type="text" size="6"> and
+          <input name="rev2" value="" type="text" size="6">
+        </form>        
+      </div>
+      <div class="clear"></div>
+    </div>
+  
+  
+    <!-- File info -->
+    <div style="margin:-6px 0 10px 5px;">Size: 3908 bytes, 1 line</div>
+    <!-- contents -->
+
+<pre class="scm">Copyright 1996-2008 Sun Microsystems, Inc., 4150 Network Circle, Santa
+Clara, California 95054, U.S.A. All rights reserved.
+
+Sun Microsystems, Inc. has intellectual property rights relating to
+technology embodied in the product that is described in this
+document. In particular, and without limitation, these intellectual
+property rights may include one or more of the U.S. patents listed at
+http://www.sun.com/patents and one or more additional patents or
+pending patent applications in the U.S. and in other countries.
+
+U.S. Government Rights - Commercial software. Government users are
+subject to the Sun Microsystems, Inc. standard license agreement and
+applicable provisions of the FAR and its supplements.
+
+Use is subject to license terms.
+
+This distribution may include materials developed by third parties.
+
+Parts of the product may be derived from Berkeley BSD systems,
+licensed from the University of California. UNIX is a registered
+trademark in the U.S. and in other countries, exclusively licensed
+through X/Open Company, Ltd.
+
+Sun, Sun Microsystems, the Sun logo, Java, Solaris, Java 3D, the 100%
+Pure Java logo, the Duke logo and the Java Coffee Cup logo are
+trademarks or registered trademarks of Sun Microsystems, Inc. in the
+U.S. and other countries.
+
+This product is covered and controlled by U.S. Export Control laws and
+may be subject to the export or import laws in other countries.
+Nuclear, missile, chemical biological weapons or nuclear maritime end
+uses or end users, whether direct or indirect, are strictly
+prohibited. Export or reexport to countries subject to U.S. embargo or
+to entities identified on U.S. export exclusion lists, including, but
+not limited to, the denied persons and specially designated nationals
+lists is strictly prohibited.
+
+Copyright 1996-2008 Sun Microsystems, Inc., 4150 Network Circle, Santa
+Clara, California 95054, Etats-Unis. Tous droits réservés.
+
+Sun Microsystems, Inc. détient les droits de propriété intellectuels
+relatifs à la technologie incorporée dans le produit qui est décrit
+dans ce document. En particulier, et ce sans limitation, ces droits de
+propriété intellectuelle peuvent inclure un ou plus des brevets
+américains listés à l'adresse http://www.sun.com/patents et un ou les
+brevets supplémentaires ou les applications de brevet en attente aux
+Etats - Unis et dans les autres pays.
+
+L'utilisation est soumise aux termes de la Licence.
+
+Cette distribution peut comprendre des composants développés par des
+tierces parties.
+
+Des parties de ce produit pourront être dérivées des systèmes Berkeley
+BSD licenciés par l'Université de Californie. UNIX est une marque
+déposée aux Etats-Unis et dans d'autres pays et licenciée
+exclusivement par X/Open Company, Ltd.
+
+Sun, Sun Microsystems, le logo Sun, Java, Solaris, Java 3D, le logo
+100% Pure Java, le logo Duke et le logo Java Coffee Cup sont des
+marques de fabrique ou des marques déposées de Sun Microsystems,
+Inc. aux Etats-Unis et dans d'autres pays.
+
+Ce produit est soumis à la législation américaine en matière de
+contrôle des exportations et peut être soumis à la règlementation en
+vigueur dans d'autres pays dans le domaine des exportations et
+importations. Les utilisations, ou utilisateurs finaux, pour des armes
+nucléaires,des missiles, des armes biologiques et chimiques ou du
+nucléaire maritime, directement ou indirectement, sont strictement
+interdites. Les exportations ou réexportations vers les pays sous
+embargo américain, ou vers des entités figurant sur les listes
+d'exclusion d'exportation américaines, y compris, mais de manière non
+exhaustive, la liste de personnes qui font objet d'un ordre de ne pas
+participer, d'une façon directe ou indirecte, aux exportations des
+produits ou des services qui sont régis par la législation américaine
+en matière de contrôle des exportations et la liste de ressortissants
+spécifiquement désignés, sont rigoureusement interdites.
+</pre>
+
+
+  
+</div>
+
+                  <!--END CONTENT AREA-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="sidebar-first" class="sidebar">
+          
+  <div class="vAccordion">      <div id="block-menu-menu-kenai-project-features" class="block">
+      <div class="block-inner">
+        <h2>Project Features</h2>
+        <div class="content" style="text-align: left; margin: 5px;">
+          <ul class="menu">
+                          
+              
+                <li class="leaf">
+                  <a href="/projects/vecmath/lists">Mailing Lists</a>
+                </li>
+                
+                            
+                          
+                            <li><a href="http://java.net/jira/browse/VECMATH" target="_blank">JIRA</a></li>
+                          
+              
+                <li class="leaf">
+                  <a href="/projects/vecmath/sources">Source Code Repositories</a>
+                </li>
+                
+                            <li style="margin-left: 12px"><a href="/projects/vecmath/sources/svn/show">Subversion</a></li>
+                          
+                            <li><a href="/projects/vecmath/pages/Home">Wiki</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+  
+
+  <div id="block-menu-menu-kenai-project-about" class="block">
+    <div class="block-inner">
+      <h2>About this Project</h2>
+      <div class="content" style="text-align: left; margin: 5px;">
+        <a href="/projects/vecmath">Vecmath</a>
+                  is a subproject of
+          <a href="/projects/java3d">Java 3D</a>,
+                was started in January 2011
+        and has <a href="/projects/vecmath/members">534 members</a>.
+        The project administrators are
+        <a href="/people/34766-kcr"><span class="person -kenai-kcr">kcr</span></a> and <a href="/people/33514-jada"><span class="person -kenai-jada">jada</span></a>.
+        <br />
+        <ul class="menu">
+                                    <li class="leaf">
+                <a href="/projects/vecmath/watch">Join This Project</a>
+              </li>
+                              </ul>
+              </div>
+    </div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+    <div id="tertiary-content">
+      <div id="block-menu-menu-footer-menu"  class="block">
+        <div class="block-inner">
+          <div class="content">
+            <ul class="menu">
+              <li class="leaf first">
+                <a href="http://www.java.net/contact" title="">Feedback</a>
+              </li>
+              <li class="leaf">
+                <a href="http://www.java.net/javanet-faq" title="">FAQ</a>
+              </li>
+              <li class="leaf">
+                <a href="http://www.java.net/javanet-web-site-terms-use" title="">Terms of Use</a>
+              </li>
+              <li class="leaf">
+                <a href="http://www.oracle.com/us/legal/privacy/index.html" title="">Privacy</a>
+              </li>
+              <li class="leaf last">
+                <a href="http://www.oracle.com/us/legal/third-party-trademarks/index.html" title="">Trademarks</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer">
+      <div id="footer-region">
+        <div class="block">
+          <div class="block-inner">
+            <div class="content">
+              <div style="width: 59%; float: left;">
+                <p>
+                  Your use of this web site or any of its content or software indicates
+                  your agreement to be bound by these
+                  <a href="http://www.java.net/javanet-web-site-terms-use">Terms of Participation</a>.
+                </p>
+                <p>
+                  Copyright Â© 2014, Oracle Corporation and/or its affiliates. All rights reserved.
+                  Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+                  Other names may be trademarks of their respective owners.
+                </p>
+                <p>(<a href="/projects/help/pages/ReleaseNotes">revision 20151030.c1dd42a</a>)</p>
+              </div>
+              <div style="width: 310px; float: right; text-align: right; margin-right: 10px">
+                <div style="float: right;">
+                  <a href="http://www.oracle.com" title="Oracle"><img alt="" src="https://asset-3.java.net/theme/images/oracle.png?20151030.c1dd42a" /></a>
+                  <a href="http://kenai.com" title="Kenai.com"><img alt="" src="https://asset-1.java.net/theme/images/kenai.png?20151030.c1dd42a" /></a>
+                  <a href="http://www.cognisync.com" title="Cognisync"><img alt="" src="https://asset-3.java.net/theme/images/cognisync.png?20151030.c1dd42a" /></a>
+                  <br />
+                  <div class="powered-by">
+                    Powered by Oracle, Project Kenai and Cognisync
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+     </div>
+    </div>
+        <!-- popups that are anchored to specific elements -->
+    <div class="popupMenuShadow" id="contextMenuShadow"></div>
+    <div class="popupMenuContainer" id="contextMenu">
+      <div class="popupMenu inline">	
+        <div class="upArrow"></div>
+        <div class="header"></div>
+        <div class="contextMenuBody" id="contextMenuBody">&nbsp;</div>
+      </div>
+    </div> 
+    
+    <!-- large content loaded via ajax. Faded but not modal. -->
+    <div class="jqmWindow" id="jqm_large_overlay">
+      <div class="jqmHeader">
+        <div class="jqmTitle">&nbsp;</div>
+        <img alt="Close" class="jqmClose" src="https://asset-0.java.net/images/close.gif?20151030.c1dd42a" />
+      </div>
+      <div class="jqmTarget">
+        <img alt="loading" src="https://asset-1.java.net/images/activity.gif?20151030.c1dd42a" />
+      </div>
+      <div class="jqmFooter">
+      	<div class="jqmClose functionButtonContainer"><button class="functionButton" title="Done"> Done </button></div>
+      </div>
+    </div>
+    
+    <!-- confirmation dialogs with buttons. Faded and modal. -->
+    <div class="jqmWindow" id="jqm_dialog">
+      <div class="jqmHeader">
+        <div class="jqmTitle">Please Confirm</div>
+        <img alt="Close" class="jqmClose" src="https://asset-0.java.net/images/close.gif?20151030.c1dd42a" />
+      </div>
+      <div class="jqmTarget">&nbsp;</div>
+      <div class="jqmFooter">
+      	<div class="jqmClose functionButtonContainer"><button class="functionButton" id="jq_no_button" title="No" onclick="Modal.no()"> No </button></div>
+      	<div class="jqmClose functionButtonContainer"><button class="functionButton" id="jq_yes_button" title="Yes" onclick="Modal.yes();"> Yes </button></div>
+      </div>
+    </div>    
+
+    <div id="jq-ui-autocomplete-parent"></div>
+    
+  </body>
+  <script src="https://asset-0.java.net/javascripts/body_packaged.js?20151030.c1dd42a" type="text/javascript"></script>
+  <script src="https://asset-1.java.net/theme/javascript/java_custom.js?20151030.c1dd42a" type="text/javascript"></script>
+  
+  <script src="https://asset-0.java.net/javascripts/syntax/scripts/shCore.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-3.java.net/javascripts/syntax/scripts/shLegacy.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-1.java.net/javascripts/syntax/scripts/shBrushAS3.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-2.java.net/javascripts/syntax/scripts/shBrushBash.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-2.java.net/javascripts/syntax/scripts/shBrushCpp.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-1.java.net/javascripts/syntax/scripts/shBrushCSharp.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-3.java.net/javascripts/syntax/scripts/shBrushCss.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-0.java.net/javascripts/syntax/scripts/shBrushDelphi.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-0.java.net/javascripts/syntax/scripts/shBrushDiff.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-0.java.net/javascripts/syntax/scripts/shBrushGroovy.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-3.java.net/javascripts/syntax/scripts/shBrushJava.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-2.java.net/javascripts/syntax/scripts/shBrushJavaFX.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-0.java.net/javascripts/syntax/scripts/shBrushJScript.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-0.java.net/javascripts/syntax/scripts/shBrushPerl.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-2.java.net/javascripts/syntax/scripts/shBrushPhp.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-0.java.net/javascripts/syntax/scripts/shBrushPlain.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-1.java.net/javascripts/syntax/scripts/shBrushPowerShell.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-2.java.net/javascripts/syntax/scripts/shBrushPython.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-3.java.net/javascripts/syntax/scripts/shBrushRuby.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-1.java.net/javascripts/syntax/scripts/shBrushScala.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-0.java.net/javascripts/syntax/scripts/shBrushSql.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-1.java.net/javascripts/syntax/scripts/shBrushVb.js?20151030.c1dd42a" type="text/javascript"></script>
+<script src="https://asset-2.java.net/javascripts/syntax/scripts/shBrushXml.js?20151030.c1dd42a" type="text/javascript"></script>
+
+  <script language="JavaScript">
+      $(document).ready(function(){
+          initScmSyntaxHighlight();
+      });
+  </script>
+
+</html>

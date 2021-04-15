@@ -93,7 +93,7 @@ release_monthly(){
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
  
-  
+ 
   
 if  [[ ${MESSAGE} == *"ci ext"* ]]; then			
 	MSG+=" ci ext " 

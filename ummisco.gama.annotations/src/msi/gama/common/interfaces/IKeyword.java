@@ -170,9 +170,6 @@ public interface IKeyword {
 	String FADING = "fading";
 	String FALSE = "false";
 	String FILE = "file";
-	String FOLDER = "folder";
-
-	String DIRECTORY = "directory";
 	String FILES = "files";
 	String OUTPUT_FILE = "output_file";
 	String FILL_WITH = "fill_with";
@@ -417,9 +414,6 @@ public interface IKeyword {
 	String TIME_SERIES = "time_series"; // hqnghi facet for
 										// continuous Chart
 	String TABLE = "table";
-
-	String DESCRIPTION = "description";
-	String PARAMETERS = "parameters";
 	String TITLE = "title";
 	String TO = "to";
 	String TOPOLOGY = "topology";
@@ -437,9 +431,6 @@ public interface IKeyword {
 	String USER_CONTROLLED = "user_controlled";
 	String USER_COMMAND = "user_command";
 	String USER_INPUT = "user_input";
-	String USER_CONFIRM = "user_confirm";
-	String WIZARD = "wizard";
-	String WIZARD_PAGE = "wizard_page";
 	String USER_ONLY = "user_only";
 	String USER_FIRST = "user_first";
 	String USER_LAST = "user_last";

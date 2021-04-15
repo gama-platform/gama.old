@@ -242,7 +242,6 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		if (slider == null) { return true; }
 		return Cast.asBool(scope, slider.value(scope));
 	}
-	
 
 	@Override
 	public List<GamaColor> getColor(final IScope scope) {

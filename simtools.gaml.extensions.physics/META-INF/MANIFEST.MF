@@ -6,10 +6,9 @@ Bundle-Version: 1.8.1.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
 Bundle-ClassPath: .,
- lib/jbullet.jar,
- lib/vecmath-1.5.2.jar
+ lib/jbullet.jar
 Export-Package: 
  simtools.gaml.extensions.physics
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: simtools.gaml.extensions.physics
