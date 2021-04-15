@@ -8,7 +8,9 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gaml.operators;
+package ummisco.gaml.extensions.stats;
+
+import static msi.gaml.operators.Cast.asFloat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +37,8 @@ import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaMatrix;
+import msi.gaml.operators.Cast;
+import msi.gaml.operators.Containers;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -78,9 +82,9 @@ public class MapComparison {
 					equals = "0.29411764705882354") })
 	public static double kappa(final IScope scope, final IList<Object> vals1, final IList<Object> vals2,
 			final IList<Object> categories, final IList<Object> weights) {
-		if (vals1 == null || vals2 == null) { return 1; }
+		if (vals1 == null || vals2 == null) return 1;
 		final int nb = vals1.size();
-		if (nb != vals2.size()) { return 0; }
+		if (nb != vals2.size()) return 0;
 		final int nbCat = categories.size();
 		final double[] X = new double[nbCat];
 		final double[] Y = new double[nbCat];
@@ -99,7 +103,7 @@ public class MapComparison {
 		}
 		double total = 0;
 		for (int i = 0; i < nb; i++) {
-			final double weight = weights == null ? 1.0 : Cast.asFloat(scope, weights.get(i));
+			final double weight = weights == null ? 1.0 : asFloat(scope, weights.get(i));
 			total += weight;
 			final Object val1 = vals1.get(i);
 			final Object val2 = vals2.get(i);
@@ -122,7 +126,7 @@ public class MapComparison {
 			po += contigency[i][i];
 			pe += X[i] * Y[i];
 		}
-		if (pe == 1) { return 1; }
+		if (pe == 1) return 1;
 		return (po - pe) / (1 - pe);
 	}
 
@@ -149,15 +153,16 @@ public class MapComparison {
 			concept = {})
 	@doc (
 			value = "kappa simulation indicator for 2 map comparisons: kappa(list_valsInits,list_valsObs,list_valsSim, categories, weights). Reference: van Vliet, J., Bregt, A.K. & Hagen-Zanker, A. (2011). Revisiting Kappa to account for change in the accuracy assessment of land-use change models, Ecological Modelling 222(8)",
-			usages = {@usage(value = "kappa_sim can be used with an additional weights operand",
-			examples = { @example (
-					value = "kappa_sim([\"cat1\",\"cat1\",\"cat2\",\"cat2\",\"cat2\"],[\"cat1\",\"cat3\",\"cat2\",\"cat1\",\"cat3\"],[\"cat1\",\"cat3\",\"cat2\",\"cat3\",\"cat1\"],[\"cat1\",\"cat2\",\"cat3\"], [1.0, 2.0, 3.0, 1.0, 5.0])",
-					equals = "0.2702702702702703") })})
+			usages = { @usage (
+					value = "kappa_sim can be used with an additional weights operand",
+					examples = { @example (
+							value = "kappa_sim([\"cat1\",\"cat1\",\"cat2\",\"cat2\",\"cat2\"],[\"cat1\",\"cat3\",\"cat2\",\"cat1\",\"cat3\"],[\"cat1\",\"cat3\",\"cat2\",\"cat3\",\"cat1\"],[\"cat1\",\"cat2\",\"cat3\"], [1.0, 2.0, 3.0, 1.0, 5.0])",
+							equals = "0.2702702702702703") }) })
 	public static double kappaSimulation(final IScope scope, final IList<Object> valsInit, final IList<Object> valsObs,
 			final IList<Object> valsSim, final IList<Object> categories, final IList<Object> weights) {
-		if (valsInit == null || valsObs == null || valsSim == null) { return 1; }
+		if (valsInit == null || valsObs == null || valsSim == null) return 1;
 		final int nb = valsInit.size();
-		if (nb != valsObs.size() || nb != valsSim.size()) { return 0; }
+		if (nb != valsObs.size() || nb != valsSim.size()) return 0;
 		final int nbCat = categories.size();
 		final double[] O = new double[nbCat];
 		final double[][] contigency = new double[nbCat][nbCat];
@@ -210,7 +215,7 @@ public class MapComparison {
 			}
 			pe += O[j] * sum;
 		}
-		if (pe == 1) { return 1; }
+		if (pe == 1) return 1;
 		return (po - pe) / (1 - pe);
 	}
 
@@ -247,9 +252,9 @@ public class MapComparison {
 			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents, final IList<Object> vals1,
 			final IList<Object> vals2, final IList<Double> similarities, final IList<Object> categories,
 			final GamaMatrix<Double> fuzzycategories, final Double distance, final IList<Object> weights) {
-		if (agents == null) { return 1; }
+		if (agents == null) return 1;
 		final int nb = agents.length(scope);
-		if (nb < 1) { return 1; }
+		if (nb < 1) return 1;
 		final int nbCat = categories.size();
 		similarities.clear();
 		final boolean[] sim = new boolean[nb];
@@ -274,7 +279,7 @@ public class MapComparison {
 		final Map<Double, Integer> ringsPn = GamaMapFactory.create();
 		final int nbRings = buildRings(scope, filter, distance, rings, ringsPn, agents);
 		final double similarityExpected = computeExpectedSim(nbCat, X, Y, nbRings, rings, ringsPn);
-		if (similarityExpected == 1) { return 1; }
+		if (similarityExpected == 1) return 1;
 		return (meanSimilarity - similarityExpected) / (1 - similarityExpected);
 	}
 
@@ -314,9 +319,9 @@ public class MapComparison {
 			final IList<Object> valsObs, final IList<Object> valsSim, final IList<Double> similarities,
 			final IList<Object> categories, final GamaMatrix<Double> fuzzytransitions, final Double distance,
 			final IList<Object> weights) {
-		if (agents == null) { return 1; }
+		if (agents == null) return 1;
 		final int nb = agents.length(scope);
-		if (nb < 1) { return 1; }
+		if (nb < 1) return 1;
 		similarities.clear();
 		final int nbCat = categories.size();
 		final double[] nbObs = new double[nbCat];
@@ -384,7 +389,7 @@ public class MapComparison {
 				}
 			}
 		}
-		if (pe == 1) { return 1; }
+		if (pe == 1) return 1;
 		return (po - pe) / (1 - pe);
 	}
 
@@ -454,12 +459,8 @@ public class MapComparison {
 			final double valxstmp =
 					fuzzyTransition(scope, fuzzytransitions, nbCat, valInitId, valObsId, valIId, valSId) * dist;
 
-			if (valxatmp > xa) {
-				xa = valxatmp;
-			}
-			if (valxstmp > xs) {
-				xs = valxstmp;
-			}
+			if (valxatmp > xa) { xa = valxatmp; }
+			if (valxstmp > xs) { xs = valxstmp; }
 		}
 
 		XaXs[0] = xa;
@@ -510,12 +511,8 @@ public class MapComparison {
 							final double dist = distancesCoeff.get(ag);
 							final double xatmp = fuzzyTransition(scope, fuzzytransitions, nbCat, i, k, i, j) * dist;
 							final double xstmp = fuzzyTransition(scope, fuzzytransitions, nbCat, i, j, i, k) * dist;
-							if (xatmp > xa) {
-								xa = xatmp;
-							}
-							if (xstmp > xs) {
-								xs = xstmp;
-							}
+							if (xatmp > xa) { xa = xatmp; }
+							if (xstmp > xs) { xs = xstmp; }
 						}
 						if (xa > 0) {
 
@@ -557,9 +554,7 @@ public class MapComparison {
 	private static double p(final double dist, final int a, final int b, final double[] X, final double[] Y,
 			final Map<Double, Integer> ringsPn) {
 		int n = 0;
-		if (dist > 0.0) {
-			n = ringsPn.get(dist);
-		}
+		if (dist > 0.0) { n = ringsPn.get(dist); }
 		return (1 - Math.pow(1 - X[a], n)) * (1 - Math.pow(1 - Y[b], n));
 	}
 
@@ -624,12 +619,8 @@ public class MapComparison {
 						final double val1 = crispVector1[id][j] * distancesCoeff.get(ag);
 						final double val2 = crispVector2[id][j] * distancesCoeff.get(ag);
 
-						if (val1 > max1) {
-							max1 = val1;
-						}
-						if (val2 > max2) {
-							max2 = val2;
-						}
+						if (val1 > max1) { max1 = val1; }
+						if (val2 > max2) { max2 = val2; }
 					}
 					fuzzyVector1[i][j] = max1;
 					fuzzyVector2[i][j] = max2;
@@ -640,12 +631,8 @@ public class MapComparison {
 				for (int j = 0; j < nbCat; j++) {
 					final double s1 = Math.min(fuzzyVector1[i][j], crispVector2[i][j]);
 					final double s2 = Math.min(fuzzyVector2[i][j], crispVector1[i][j]);
-					if (s1 > s1Max) {
-						s1Max = s1;
-					}
-					if (s2 > s2Max) {
-						s2Max = s2;
-					}
+					if (s1 > s1Max) { s1Max = s1; }
+					if (s2 > s2Max) { s2Max = s2; }
 				}
 				similarities.add(Math.min(s1Max, s2Max));
 			}
@@ -713,9 +700,7 @@ public class MapComparison {
 
 		for (final IAgent ag : neighbors) {
 			final double dist = centralLoc.euclidianDistanceTo(ag.getLocation());
-			if (dist == 0) {
-				continue;
-			}
+			if (dist == 0) { continue; }
 			if (!rings.contains(dist)) {
 				rings.add(dist);
 				ringsPn.put(dist, 1);
@@ -747,18 +732,18 @@ public class MapComparison {
 					equals = "20.0") })
 	public static double percentAbsoluteDeviation(final IScope scope, final IList<Double> vals1,
 			final IList<Double> vals2) {
-		if (vals1 == null || vals2 == null) { return 1; }
+		if (vals1 == null || vals2 == null) return 1;
 		final int nb = vals1.size();
-		if (nb != vals2.size()) { return 0; }
+		if (nb != vals2.size()) return 0;
 		double sum = 0;
 		double coeff = 0;
 		for (int i = 0; i < nb; i++) {
-			final double val1 = Cast.asFloat(scope, vals1.get(i));
-			final double val2 = Cast.asFloat(scope, vals2.get(i));
+			final double val1 = asFloat(scope, vals1.get(i));
+			final double val2 = asFloat(scope, vals2.get(i));
 			coeff += val1;
 			sum += Math.abs(val1 - val2) * 100.0;
 		}
-		if (coeff == 0) { return 0; }
+		if (coeff == 0) return 0;
 		return sum / coeff;
 
 	}

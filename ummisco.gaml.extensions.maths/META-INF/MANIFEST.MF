@@ -6,7 +6,13 @@ Bundle-Version: 1.8.1.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
 Bundle-ActivationPolicy: lazy
-Export-Package: ummisco.gaml.extensions.maths.ode.statements
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.apache.commons.math3.ml.clustering,
+ org.apache.commons.math3.ml.distance,
+ org.apache.commons.math3.random,
+ org.apache.commons.math3.stat.descriptive.moment,
+ ummisco.gaml.extensions.maths.ode.statements
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: ummisco.gaml.extensions.maths
+Bundle-ClassPath: lib/commons-math3-3.6.1.jar,
+ .
 

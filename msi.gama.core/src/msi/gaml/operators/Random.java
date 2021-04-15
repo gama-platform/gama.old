@@ -10,11 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
-import org.apache.commons.math3.distribution.GammaDistribution;
-import org.apache.commons.math3.distribution.LogNormalDistribution;
-import org.apache.commons.math3.distribution.WeibullDistribution;
-
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -27,7 +22,6 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
-import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -51,9 +45,7 @@ public class Random {
 
 	public static RandomUtils RANDOM(final IScope scope) {
 		RandomUtils r = scope.getRandom();
-		if (r == null) {
-			r = new RandomUtils();
-		}
+		if (r == null) { r = new RandomUtils(); }
 		return r;
 	}
 
@@ -92,7 +84,7 @@ public class Random {
 					"weibull_rnd", "gamma_trunc_rnd", "weibull_trunc_rnd", "lognormal_trunc_rnd" })
 	@test ("seed <- 1.0; truncated_gauss ([0.5, 0.2]) = 0.5671546797294768")
 	public static Double opTGauss(final IScope scope, final IList list) {
-		if (list.size() < 2) { return 0d; }
+		if (list.size() < 2) return 0d;
 		final double mean = Cast.asFloat(scope, list.get(0));
 		final double range = Cast.asFloat(scope, list.get(1));
 		/*
@@ -230,9 +222,8 @@ public class Random {
 			see = { "reverse" })
 	@test ("seed <- 1.0; shuffle ([12, 13, 14]) = [12,13,14]")
 	public static IList opShuffle(final IScope scope, final IContainer target) {
-		if (target == null || target.isEmpty(scope)) {
+		if (target == null || target.isEmpty(scope))
 			return GamaListFactory.create(target == null ? Types.NO_TYPE : target.getGamlType().getContentType());
-		}
 		final IList list = target.listValue(scope, target.getGamlType().getContentType(), false).copy(scope);
 		RANDOM(scope).shuffleInPlace(list);
 		return list;
@@ -486,17 +477,13 @@ public class Random {
 
 		for (final Object eltDistrib : distribution) {
 			final Double elt = Cast.asFloat(scope, eltDistrib);
-			if (elt < 0.0) {
-				throw GamaRuntimeException.create(new RuntimeException("Distribution elements should be positive."),
-						scope);
-			}
+			if (elt < 0.0) throw GamaRuntimeException
+					.create(new RuntimeException("Distribution elements should be positive."), scope);
 			normalizedDistribution.add(elt);
 			sumElt = sumElt + elt;
 		}
-		if (sumElt == 0.0) {
-			throw GamaRuntimeException
-					.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
-		}
+		if (sumElt == 0.0) throw GamaRuntimeException
+				.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
 
 		for (int i = 0; i < normalizedDistribution.size(); i++) {
 			normalizedDistribution.set(i, normalizedDistribution.get(i) / sumElt);
@@ -506,12 +493,12 @@ public class Random {
 
 		for (int i = 0; i < distribution.size(); i++) {
 			randomValue = randomValue - normalizedDistribution.get(i);
-			if (randomValue <= 0) { return i; }
+			if (randomValue <= 0) return i;
 		}
 
 		return -1;
 	}
-	
+
 	@operator (
 			value = "rnd_choice",
 			concept = { IConcept.RANDOM },
@@ -524,7 +511,7 @@ public class Random {
 					test = false) },
 			see = { "rnd" })
 	@test ("seed <- 1.0; rnd_choice([\"toto\"::0.2,\"tata\"::0.5,\"tonton\"::0.3]) = \"tonton\"")
-	public static <T> T opRndCoice(final IScope scope, final IMap<T,?> distribution) {
+	public static <T> T opRndCoice(final IScope scope, final IMap<T, ?> distribution) {
 		final IList<T> key = distribution.getKeys();
 		final IList<Double> normalizedDistribution = GamaListFactory.create(Types.FLOAT);
 		Double sumElt = 0.0;
@@ -532,18 +519,14 @@ public class Random {
 		for (final T k : key) {
 			Object eltDistrib = distribution.get(k);
 			final Double elt = Cast.asFloat(scope, eltDistrib);
-			if (elt < 0.0) {
-				throw GamaRuntimeException.create(new RuntimeException("Distribution elements should be positive."),
-						scope);
-			}
+			if (elt < 0.0) throw GamaRuntimeException
+					.create(new RuntimeException("Distribution elements should be positive."), scope);
 			normalizedDistribution.add(elt);
 			sumElt = sumElt + elt;
 		}
-		if (sumElt == 0.0) {
-			throw GamaRuntimeException
-					.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
-		}
-		
+		if (sumElt == 0.0) throw GamaRuntimeException
+				.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
+
 		for (int i = 0; i < normalizedDistribution.size(); i++) {
 			normalizedDistribution.set(i, normalizedDistribution.get(i) / sumElt);
 		}
@@ -552,7 +535,7 @@ public class Random {
 
 		for (int i = 0; i < distribution.size(); i++) {
 			randomValue = randomValue - normalizedDistribution.get(i);
-			if (randomValue <= 0) { return key.get(i); }
+			if (randomValue <= 0) return key.get(i);
 		}
 
 		throw GamaRuntimeException.create(new RuntimeException("Malformed distribution"), scope);
@@ -572,10 +555,8 @@ public class Random {
 					test = false) })
 	@test ("seed <- 1.0; " + "list l1 <- sample([2,10,1],2,false);\r\n" + "		list l2 <-  [1,10];" + "l1 = l2")
 	public static IList opSample(final IScope scope, final IList x, final int nb, final boolean replacement) {
-		if (nb < 0.0) {
-			throw GamaRuntimeException
-					.create(new RuntimeException("The number of elements of the sample should be positive."), scope);
-		}
+		if (nb < 0.0) throw GamaRuntimeException
+				.create(new RuntimeException("The number of elements of the sample should be positive."), scope);
 		final IList result = GamaListFactory.create(x.getGamlType());
 		final IList source = replacement ? x : x.copy(scope);
 		while (result.size() < nb && !source.isEmpty()) {
@@ -605,15 +586,12 @@ public class Random {
 			+ "		list l2 <-  [10,1];\r\n" + "		l1 = l2 ")
 	public static IList opSample(final IScope scope, final IList x, final int nb, final boolean replacement,
 			final IList weights) {
-		if (weights == null) { return opSample(scope, x, nb, replacement); }
-		if (nb < 0.0) {
-			throw GamaRuntimeException
-					.create(new RuntimeException("The number of elements of the sample should be positive."), scope);
-		}
-		if (weights.size() != x.size()) {
-			throw GamaRuntimeException.create(new RuntimeException(
-					"The number of weights should be equal to the number of elements of the source."), scope);
-		}
+		if (weights == null) return opSample(scope, x, nb, replacement);
+		if (nb < 0.0) throw GamaRuntimeException
+				.create(new RuntimeException("The number of elements of the sample should be positive."), scope);
+		if (weights.size() != x.size()) throw GamaRuntimeException.create(
+				new RuntimeException("The number of weights should be equal to the number of elements of the source."),
+				scope);
 		final IList result = GamaListFactory.create(x.getGamlType());
 		final IList source = replacement ? x : x.copy(scope);
 		final IList weights_s = replacement ? weights : weights.copy(scope);
@@ -672,293 +650,4 @@ public class Random {
 		return OpenSimplexNoise.noise(x, y, biais);
 	}
 
-	@operator (
-			value = "gamma_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "returns a random value from a gamma distribution with specified values of the shape and scale parameters",
-			examples = { @example (
-					value = "gamma_rnd(9,0.5)",
-					equals = "0.731",
-					test = false) },
-			see = { "binomial", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "skew_gauss", "truncated_gauss",
-					"weibull_rnd", "gamma_trunc_rnd" })
-	@no_test (Reason.IMPOSSIBLE_TO_TEST)
-	public static Double OpGammaDist(final IScope scope, final Double shape, final Double scale)
-			throws GamaRuntimeException {
-		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(), shape, scale,
-				GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
-		return dist.sample();
-	}
-
-	@operator (
-			value = "weibull_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "returns a random value from a Weibull distribution with specified values of the shape (alpha) and scale (beta) parameters. See https://mathworld.wolfram.com/WeibullDistribution.html for more details (equations 1 and 2). ",
-			examples = { @example (
-					value = "weibull_rnd(2,3) ",
-					equals = "0.731",
-					test = false) },
-			see = { "binomial", "gamma_rnd", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "skew_gauss",
-					"truncated_gauss", "weibull_trunc_rnd" })
-	@no_test (Reason.IMPOSSIBLE_TO_TEST)
-	public static Double OpWeibullDist(final IScope scope, final Double shape, final Double scale)
-			throws GamaRuntimeException {
-		final WeibullDistribution dist = new WeibullDistribution(scope.getRandom().getGenerator(), shape, scale);
-
-		return dist.sample();
-	}
-
-	@operator (
-			value = "lognormal_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "returns a random value from a Log-Normal distribution with specified values of the shape (alpha) and scale (beta) parameters. See https://en.wikipedia.org/wiki/Log-normal_distribution for more details. ",
-			examples = { @example (
-					value = "lognormal_rnd(2,3) ",
-					equals = "0.731",
-					test = false) },
-			see = { "binomial", "gamma_rnd", "gauss_rnd", "poisson", "rnd", "skew_gauss", "truncated_gauss",
-					"weibull_rnd", "lognormal_trunc_rnd" })
-	@no_test (Reason.IMPOSSIBLE_TO_TEST)
-	public static Double OpLogNormalDist(final IScope scope, final Double shape, final Double scale)
-			throws GamaRuntimeException {
-		final LogNormalDistribution dist = new LogNormalDistribution(scope.getRandom().getGenerator(), shape, scale);
-		return dist.sample();
-	}
-
-	@operator (
-			value = "lognormal_trunc_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "returns a random value from a truncated Log-Normal distribution (in a range or given only one boundary) with specified values of the shape (alpha) and scale (beta) parameters. See https://en.wikipedia.org/wiki/Log-normal_distribution for more details. ",
-			usages = { @usage (
-					value = "when 2 float operands are specified, they are taken as mininimum and maximum values for the result",
-					examples = { @example (
-							value = "lognormal_trunc_rnd(2,3,0,5)",
-							test = false) }) },
-			see = { "lognormal_rnd", "gamma_trunc_rnd", "weibull_trunc_rnd", "truncated_gauss" })
-	@test ("lognormal_trunc_rnd(2,3,0,5) <= 5.0")
-	@test ("lognormal_trunc_rnd(2,3,0.0,5.0) >= 0.0")
-	public static Double OpLogNormalTruncDist(final IScope scope, final Double shape, final Double scale,
-			final Double min, final Double max) throws GamaRuntimeException {
-		double tmpResult = 0;
-
-		do {
-			tmpResult = OpLogNormalDist(scope, shape, scale);
-		} while (tmpResult > max || tmpResult < min);
-		return tmpResult;
-	}
-
-	@operator (
-			value = "lognormal_trunc_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			usages = { @usage (
-					value = "when 1 float and a boolean (isMax) operands are specified, the float value represents the single boundary (max if the boolean is true, min otherwise),",
-					examples = { @example (
-							value = "lognormal_trunc_rnd(2,3,5,true)",
-							test = false) }) },
-			see = { "lognormal_rnd", "gamma_trunc_rnd", "weibull_trunc_rnd", "truncated_gauss" })
-	@test ("lognormal_trunc_rnd(2,3,5,true) <= 5.0")
-	@test ("lognormal_trunc_rnd(2,3,0.0,false) >= 0.0")
-	public static Double OpLogNormalTruncDist(final IScope scope, final Double shape, final Double scale,
-			final Double minmax, final Boolean isMax) throws GamaRuntimeException {
-		double tmpResult = 0;
-
-		if (isMax) {
-			// minmax is a max here
-			do {
-				tmpResult = OpLogNormalDist(scope, shape, scale);
-			} while (tmpResult > minmax);
-		} else {
-			// minmax is a min here
-			do {
-				tmpResult = OpLogNormalDist(scope, shape, scale);
-			} while (tmpResult < minmax);
-		}
-		return tmpResult;
-	}
-
-	@operator (
-			value = "weibull_trunc_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "returns a random value from a truncated Weibull distribution (in a range or given only one boundary) with specified values of the shape (alpha) and scale (beta) parameters. See https://mathworld.wolfram.com/WeibullDistribution.html for more details (equations 1 and 2). ",
-			usages = { @usage (
-					value = "when 2 float operands are specified, they are taken as mininimum and maximum values for the result",
-					examples = { @example (
-							value = "weibull_trunc_rnd(2,3,0.0,5.0)",
-							test = false) }) },
-			see = { "weibull_rnd", "gamma_trunc_rnd", "lognormal_trunc_rnd", "truncated_gauss" })
-	@test ("weibull_trunc_rnd(2,3,0,5) <= 5.0")
-	@test ("weibull_trunc_rnd(2,3,0.0,5.0) >= 0.0")
-	public static Double OpWeibullTruncDist(final IScope scope, final Double shape, final Double scale,
-			final Double min, final Double max) throws GamaRuntimeException {
-		double tmpResult = 0;
-
-		do {
-			tmpResult = OpWeibullDist(scope, shape, scale);
-		} while (tmpResult > max || tmpResult < min);
-		return tmpResult;
-	}
-
-	@operator (
-			value = "weibull_trunc_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			usages = { @usage (
-					value = "when 1 float and a boolean (isMax) operands are specified, the float value represents the single boundary (max if the boolean is true, min otherwise),",
-					examples = { @example (
-							value = "weibull_trunc_rnd(2,3,5,true)",
-							test = false) }) },
-			see = { "weibull_rnd", "gamma_trunc_rnd", "lognormal_trunc_rnd", "truncated_gauss" })
-	@test ("weibull_trunc_rnd(2,3,5,true) <= 5.0")
-	@test ("weibull_trunc_rnd(2,3,0.0,false) >= 0.0")
-	public static Double OpWeibullTruncDist(final IScope scope, final Double shape, final Double scale,
-			final Double minmax, final Boolean isMax) throws GamaRuntimeException {
-		double tmpResult = 0;
-
-		if (isMax) {
-			// minmax is a max here
-			do {
-				tmpResult = OpWeibullDist(scope, shape, scale);
-			} while (tmpResult > minmax);
-		} else {
-			// minmax is a min here
-			do {
-				tmpResult = OpWeibullDist(scope, shape, scale);
-			} while (tmpResult < minmax);
-		}
-		return tmpResult;
-	}
-
-	@operator (
-			value = "gamma_trunc_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "returns a random value from a truncated gamma distribution (in a range or given only one boundary) with specified values of the shape and scale parameters.",
-			usages = { @usage (
-					value = "when 2 float operands are specified, they are taken as mininimum and maximum values for the result",
-					examples = { @example (
-							value = "gamma_trunc_rnd(2,3,0,5)",
-							test = false) }) },
-			see = { "gamma_rnd", "weibull_trunc_rnd", "lognormal_trunc_rnd", "truncated_gauss" })
-	@test ("gamma_trunc_rnd(2,3,0,5) <= 5.0")
-	@test ("gamma_trunc_rnd(2,3,0.0,5.0) >= 0.0")
-	public static Double OpGammaTruncDist(final IScope scope, final Double shape, final Double scale, final Double min,
-			final Double max) throws GamaRuntimeException {
-		double tmpResult = 0;
-
-		do {
-			tmpResult = OpGammaDist(scope, shape, scale);
-		} while (tmpResult > max || tmpResult < min);
-		return tmpResult;
-	}
-
-	@operator (
-			value = "gamma_trunc_rnd",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			usages = { @usage (
-					value = "when 1 float and a boolean (isMax) operands are specified, the float value represents the single boundary (max if the boolean is true, min otherwise),",
-					examples = { @example (
-							value = "gamma_trunc_rnd(2,3,5,true)",
-							test = false) }) },
-			see = { "gamma_rnd", "weibull_trunc_rnd", "lognormal_trunc_rnd", "truncated_gauss" })
-	@test ("gamma_trunc_rnd(2,3,5,true) <= 5.0")
-	@test ("gamma_trunc_rnd(2,3,0.0,false) >= 0.0")
-	public static Double OpGammaTruncDist(final IScope scope, final Double shape, final Double scale,
-			final Double minmax, final Boolean isMax) throws GamaRuntimeException {
-		double tmpResult = 0;
-
-		if (isMax) {
-			// minmax is a max here
-			do {
-				tmpResult = OpGammaDist(scope, shape, scale);
-			} while (tmpResult > minmax);
-		} else {
-			// minmax is a min here
-			do {
-				tmpResult = OpGammaDist(scope, shape, scale);
-			} while (tmpResult < minmax);
-		}
-		return tmpResult;
-	}
-	
-	
-	@operator (
-			value = "weibull_density",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "weibull_density(x,shape,scale) returns the probability density function (PDF) at the specified point x "
-					+ "of the Weibull distribution with the given shape and scale.",
-			examples = { @example ( value = "weibull_rnd(1,2,3) ", equals = "0.731", test = false) },
-			see = { "binomial", "gamma_rnd", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "skew_gauss",
-					"lognormal_density", "gamma_density"})
-	@no_test (Reason.IMPOSSIBLE_TO_TEST)
-	public static Double OpWeibullDistDensity(final IScope scope, final Double x, final Double shape, final Double scale)
-			throws GamaRuntimeException {
-		final WeibullDistribution dist = new WeibullDistribution(scope.getRandom().getGenerator(), shape, scale);
-
-		return dist.density(x);
-	}
-	
-	@operator (
-			value = "lognormal_density",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "lognormal_density(x,shape,scale) returns the probability density function (PDF) at the specified point x "
-					+ "of the logNormal distribution with the given shape and scale.",
-			examples = { @example ( value = "lognormal_density(1,2,3) ", equals = "0.731", test = false) },
-			see = { "binomial", "gamma_rnd", "gauss_rnd", "poisson", "rnd", "skew_gauss", "truncated_gauss",
-					"weibull_rnd", "weibull_density", "gamma_density" })
-	@no_test (Reason.IMPOSSIBLE_TO_TEST)
-	public static Double OpLogNormalDist(final IScope scope, final Double x, final Double shape, final Double scale)
-			throws GamaRuntimeException {
-		final LogNormalDistribution dist = new LogNormalDistribution(scope.getRandom().getGenerator(), shape, scale);
-		return dist.density(x);
-	}	
-	
-	@operator (
-			value = "gamma_density",
-			can_be_const = false,
-			category = { IOperatorCategory.RANDOM },
-			concept = { IConcept.RANDOM })
-	@doc (
-			value = "gamma_density(x,shape,scale) returns the probability density function (PDF) at the specified point x "
-					+ "of the Gamma distribution with the given shape and scale.",
-			examples = { @example ( value = "gamma_density(1,9,0.5)", equals = "0.731", test = false) },
-			see = { "binomial", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "skew_gauss", "truncated_gauss",
-					"weibull_rnd", "weibull_density", "lognormal_density" })
-	@no_test (Reason.IMPOSSIBLE_TO_TEST)
-	public static Double OpGammaDist(final IScope scope, final Double x, final Double shape, final Double scale)
-			throws GamaRuntimeException {
-		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(), shape, scale,
-				GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
-		return dist.density(x);
-	}	
 }
