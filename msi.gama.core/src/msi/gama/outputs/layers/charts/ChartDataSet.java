@@ -92,10 +92,7 @@ public class ChartDataSet {
 	}
 
 	public String getCategories(final IScope scope, final int i) {
-		if (Xcategories.size() > i) {
-			return Xcategories.get(i);
-
-		}
+		if (Xcategories.size() > i) return Xcategories.get(i);
 		for (int c = Xcategories.size(); c <= i; c++) {
 			this.Xcategories.add("c" + c);
 		}
@@ -103,10 +100,7 @@ public class ChartDataSet {
 	}
 
 	public String getLastCategories(final IScope scope) {
-		if (Xcategories.size() > 0) {
-			return Xcategories.get(Xcategories.size() - 1);
-
-		}
+		if (Xcategories.size() > 0) return Xcategories.get(Xcategories.size() - 1);
 		this.Xcategories.add("c" + 0);
 		return Xcategories.get(Xcategories.size() - 1);
 	}
@@ -271,9 +265,7 @@ public class ChartDataSet {
 
 			for (final String sn : sourceseries.keySet()) {
 				final ChartDataSeries ser = sourceseries.get(sn);
-				if (ser.xvalues.size() < 2) {
-					this.removeserie(scope, sn);
-				}
+				if (ser.xvalues.size() < 2) { this.removeserie(scope, sn); }
 			}
 			sources.remove(source);
 		}
@@ -283,18 +275,14 @@ public class ChartDataSet {
 		if (this.getXSeriesValues().size() > 0) {
 			final ArrayList<Double> ser = this.getXSeriesValues();
 			for (int i = 0; i < this.getXSeriesValues().size(); i++) {
-				if (ser.get(i) == chartCycle - 1) {
-					this.commonXindex = i;
-				}
+				if (ser.get(i) == chartCycle - 1) { this.commonXindex = i; }
 			}
 
 		}
 		if (this.getYSeriesValues().size() > 0) {
 			final ArrayList<Double> sery = this.getYSeriesValues();
 			for (int i = 0; i < this.getYSeriesValues().size(); i++) {
-				if (sery.get(i) == chartCycle - 1) {
-					this.commonYindex = i;
-				}
+				if (sery.get(i) == chartCycle - 1) { this.commonYindex = i; }
 			}
 
 		}
@@ -306,93 +294,31 @@ public class ChartDataSet {
 
 		commonXindex++;
 		commonYindex++;
-		if (scope.getExperiment().canStepBack() && didReload(scope, chartCycle)) {
-			BackwardSim(scope, chartCycle);
-		}
+		if (scope.getExperiment().canStepBack() && didReload(scope, chartCycle)) { BackwardSim(scope, chartCycle); }
 		updateXValues(scope, chartCycle);
 		updateYValues(scope, chartCycle);
 
-		if (commonXindex >= this.getXSeriesValues().size()) {
-			commonXindex = this.getXSeriesValues().size() - 1;
-		}
-		if (commonYindex >= this.getYSeriesValues().size()) {
-			commonYindex = this.getYSeriesValues().size() - 1;
-		}
+		if (commonXindex >= this.getXSeriesValues().size()) { commonXindex = this.getXSeriesValues().size() - 1; }
+		if (commonYindex >= this.getYSeriesValues().size()) { commonYindex = this.getYSeriesValues().size() - 1; }
 
 		for (final ChartDataSource source : sources) {
 			source.updatevalues(scope, chartCycle);
-			if (keepHistory) {
-				source.savehistory(scope, history);
-			}
+			if (keepHistory) { source.savehistory(scope, history); }
 		}
-		if (keepHistory) {
-			history.append(Strings.LN);
-		}
+		if (keepHistory) { history.append(Strings.LN); }
 	}
 
 	public void updateYValues(final IScope scope, final int chartCycle, final int nb) {
 		int targetNb = nb;
-		Object xval, xlab;
-		if (this.useYSource || this.useYLabels) {
+		if (this.useYLabels) {
 
-			if (this.useYSource) {
-				xval = ysource.resolveAgainst(scope).value(scope);
-			} else {
-				xval = ylabels.resolveAgainst(scope).value(scope);
+			Object xlab = ylabels.resolveAgainst(scope).value(scope);
+			if (targetNb == -1 && !this.forceNoYAccumulate) { targetNb = YSeriesValues.size() + 1; }
+			while (YSeriesValues.size() < targetNb) {
+				YSeriesValues.add(getYCycleOrPlusOneForBatch(scope, chartCycle));
+				Ycategories.add(Cast.asString(scope, xlab));
 			}
-			if (this.useYLabels) {
-				xlab = ylabels.resolveAgainst(scope).value(scope);
-			} else {
-				xlab = ysource.resolveAgainst(scope).value(scope);
-			}
-
-			if (xval instanceof IList) {
-				final IList<?> xv2 = Cast.asList(scope, xval);
-				final IList<?> xl2 = Cast.asList(scope, xlab);
-
-				if (this.useYSource && xv2.size() > 0 && xv2.get(0) instanceof Number) {
-					YSeriesValues = new ArrayList<>();
-					Ycategories = new ArrayList<>();
-					for (int i = 0; i < xv2.size(); i++) {
-						YSeriesValues.add(Cast.asFloat(scope, xv2.get(i)));
-						Ycategories.add(Cast.asString(scope, xl2.get(i)));
-
-					}
-
-				} else {
-					if (xv2.size() > Ycategories.size()) {
-						Ycategories = new ArrayList<>();
-						for (int i = 0; i < xv2.size(); i++) {
-							if (i >= YSeriesValues.size()) {
-								YSeriesValues.add(getYCycleOrPlusOneForBatch(scope, chartCycle));
-							}
-							Ycategories.add(Cast.asString(scope, xl2.get(i)));
-						}
-					}
-				}
-				if (xv2.size() < targetNb) {
-					throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
-							+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope);
-				}
-			} else {
-				if (this.useYSource && xval instanceof Number) {
-					final double dvalue = Cast.asFloat(scope, xval);
-					final String lvalue = Cast.asString(scope, xlab);
-					YSeriesValues.add(new Double(dvalue));
-					Ycategories.add(lvalue);
-				}
-				if (targetNb == -1 && !this.forceNoYAccumulate) {
-					targetNb = YSeriesValues.size() + 1;
-				}
-				while (YSeriesValues.size() < targetNb) {
-					YSeriesValues.add(new Double(getYCycleOrPlusOneForBatch(scope, chartCycle)));
-					Ycategories.add(Cast.asString(scope, xlab));
-				}
-			}
-
-		}
-
-		if (!this.useYSource && !this.useYLabels) {
+		} else {
 			if (targetNb == -1 && !this.forceNoYAccumulate && commonYindex >= YSeriesValues.size()) {
 				targetNb = YSeriesValues.size() + 1;
 			}
@@ -416,7 +342,7 @@ public class ChartDataSet {
 	}
 
 	public Double getYCycleOrPlusOneForBatch(final IScope scope, final int chartcycle) {
-		if (isBatchAndPermanent && YSeriesValues.isEmpty()) { return 1d; }
+		if (isBatchAndPermanent && YSeriesValues.isEmpty()) return 1d;
 		// if (this.YSeriesValues.contains((double) chartcycle))
 		// return (int) YSeriesValues.get(YSeriesValues.size() - 1).doubleValue() + 1;
 		Double value = Double.valueOf(chartcycle);
@@ -487,10 +413,8 @@ public class ChartDataSet {
 					}
 
 				}
-				if (xv2.size() < targetNb) {
-					throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
-							+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope);
-				}
+				if (xv2.size() < targetNb) throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
+						+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope);
 
 			} else {
 				if (this.useXSource && xval instanceof Number) {
@@ -499,9 +423,7 @@ public class ChartDataSet {
 					XSeriesValues.add(dvalue);
 					Xcategories.add(lvalue);
 				}
-				if (targetNb == -1 && !this.forceNoXAccumulate) {
-					targetNb = XSeriesValues.size() + 1;
-				}
+				if (targetNb == -1 && !this.forceNoXAccumulate) { targetNb = XSeriesValues.size() + 1; }
 				while (XSeriesValues.size() < targetNb) {
 					XSeriesValues.add(getXCycleOrPlusOneForBatch(scope, chartCycle));
 					Xcategories.add(Cast.asString(scope, xlab));
@@ -534,7 +456,7 @@ public class ChartDataSet {
 	}
 
 	public Double getXCycleOrPlusOneForBatch(final IScope scope, final int chartcycle) {
-		if (isBatchAndPermanent && XSeriesValues.isEmpty()) { return 1d; }
+		if (isBatchAndPermanent && XSeriesValues.isEmpty()) return 1d;
 		// if (this.XSeriesValues.contains(Double.valueOf(chartcycle)))
 		// return (int) XSeriesValues.get(XSeriesValues.size() - 1).doubleValue() + 1;
 		Double value = Double.valueOf(chartcycle);
@@ -577,7 +499,7 @@ public class ChartDataSet {
 
 	public ChartDataSeries createOrGetSerie(final IScope scope, final String id, final ChartDataSourceList source) {
 		// TODO Auto-generated method stub
-		if (series.keySet().contains(id)) { return series.get(id); }
+		if (series.keySet().contains(id)) return series.get(id);
 		if (deletedseries.keySet().contains(id)) {
 			final ChartDataSeries myserie = deletedseries.get(id);
 			deletedseries.remove(id);
@@ -623,7 +545,7 @@ public class ChartDataSet {
 	}
 
 	public void saveHistory(final IScope scope, final String name) {
-		if (scope == null) { return; }
+		if (scope == null) return;
 		if (keepHistory) {
 			try {
 				Files.newFolder(scope, chartFolder);

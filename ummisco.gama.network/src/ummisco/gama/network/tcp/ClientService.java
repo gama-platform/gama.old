@@ -32,13 +32,13 @@ public abstract class ClientService extends Thread implements SocketService {
 
 	@Override
 	public String getRemoteAddress() {
-		if (socket == null) { return null; }
+		if (socket == null) return null;
 		return this.socket.getInetAddress() + ":" + this.port;
 	}
 
 	@Override
 	public String getLocalAddress() {
-		if (socket == null) { return null; }
+		if (socket == null) return null;
 		return this.socket.getLocalAddress() + ":" + this.port;
 	}
 
@@ -55,13 +55,9 @@ public abstract class ClientService extends Thread implements SocketService {
 	@Override
 	public void stopService() {
 		this.isAlive = false;
-		if (sender != null) {
-			sender.close();
-		}
+		if (sender != null) { sender.close(); }
 		try {
-			if (receiver != null) {
-				receiver.close();
-			}
+			if (receiver != null) { receiver.close(); }
 			socket.close();
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
@@ -79,9 +75,8 @@ public abstract class ClientService extends Thread implements SocketService {
 	public void run() {
 		try {
 			while (this.isAlive) {
-				String msg = "";
 				receiver = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				msg = receiver.readLine();
+				String msg = receiver.readLine();
 				msg = msg.replaceAll("@n@", "\n");
 				msg = msg.replaceAll("@b@@r@", "\b\r");
 				receivedMessage(this.socket.getInetAddress() + ":" + this.port, msg);
@@ -98,7 +93,7 @@ public abstract class ClientService extends Thread implements SocketService {
 
 	@Override
 	public void sendMessage(final String message) throws IOException {
-		if (socket == null || !isOnline()) { return; }
+		if (socket == null || !isOnline()) return;
 		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 		final String msg = message.replaceAll("\n", "@n@").replaceAll("\b\r", "@b@@r@");
 		sender.println(msg + "\n");
