@@ -14,8 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.common.primitives.Ints;
 import org.locationtech.jts.geom.Geometry;
+
+import com.google.common.primitives.Ints;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.BiConsumerWithPruning;
@@ -158,16 +159,12 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void dispose() {
-		if (dead) { return; }
+		if (dead) return;
 		dead = true;
 		final IPopulation<? extends IAgent> p = getPopulation();
-		if (p != null) {
-			p.removeValue(null, this);
-		}
+		if (p != null) { p.removeValue(null, this); }
 		final IShape s = getGeometry();
-		if (s != null) {
-			s.dispose();
-		}
+		if (s != null) { s.dispose(); }
 
 	}
 
@@ -184,10 +181,9 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(30);
-		sb.append(getSpeciesName()).append('(').append(getIndex()).append(')');
-		if (dead()) {
-			sb.append(" /* dead */");
-		}
+		// AD. See issue #3053
+		sb.append(getSpeciesName()).append('[').append(getIndex()).append(']');
+		if (dead()) { sb.append(" /* dead */"); }
 		return sb.toString();
 	}
 
@@ -198,7 +194,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void setExtraAttributes(final Map<String, Object> map) {
-		if (map == null) { return; }
+		if (map == null) return;
 		getOrCreateAttributes().putAll(map);
 	}
 	//
@@ -252,9 +248,7 @@ public abstract class AbstractAgent implements IAgent {
 		try {
 			return result = preStep(scope) ? doStep(scope) : false;
 		} finally {
-			if (result) {
-				postStep(scope);
-			}
+			if (result) { postStep(scope); }
 		}
 	}
 
@@ -312,7 +306,7 @@ public abstract class AbstractAgent implements IAgent {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		if (getHost() == null) { return GamaListFactory.EMPTY_LIST; }
+		if (getHost() == null) return GamaListFactory.EMPTY_LIST;
 		final IPopulation<? extends IAgent> pop = getHost().getPopulationFor(this.getSpecies());
 		if (pop != null) {
 			final IScope scope = getScope();
@@ -362,9 +356,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void schedule(final IScope scope) {
-		if (!dead()) {
-			scope.init(this);
-		}
+		if (!dead()) { scope.init(this); }
 	}
 
 	@Override
@@ -390,19 +382,19 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
 		final ISpecies species = getSpecies();
-		if (species == s) { return true; }
-		if (!direct) { return species.extendsSpecies(s); }
+		if (species == s) return true;
+		if (!direct) return species.extendsSpecies(s);
 		return false;
 	}
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
 		final IVariable var = getPopulation().getVar(n);
-		if (var != null) { return var.value(scope, this); }
+		if (var != null) return var.value(scope, this);
 		final IMacroAgent host = this.getHost();
 		if (host != null) {
 			final IVariable varOfHost = host.getPopulation().getVar(n);
-			if (varOfHost != null) { return varOfHost.value(scope, host); }
+			if (varOfHost != null) return varOfHost.value(scope, host);
 		}
 		return null;
 	}
@@ -416,9 +408,7 @@ public abstract class AbstractAgent implements IAgent {
 			final IAgent host = this.getHost();
 			if (host != null) {
 				final IVariable varOfHost = host.getPopulation().getVar(s);
-				if (varOfHost != null) {
-					varOfHost.setVal(scope, host, v);
-				}
+				if (varOfHost != null) { varOfHost.setVal(scope, host, v); }
 			}
 		}
 		// TODO: else ? launch an error ?
@@ -438,7 +428,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public IModel getModel() {
 		final IMacroAgent a = getHost();
-		if (a == null) { return GAMA.getModel(); }
+		if (a == null) return GAMA.getModel();
 		return a.getModel();
 	}
 
@@ -450,7 +440,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public IScope getScope() {
 		final IMacroAgent a = getHost();
-		if (a == null) { return null; }
+		if (a == null) return null;
 		return a.getScope();
 	}
 
@@ -486,7 +476,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final String speciesName) {
 		final IMacroAgent a = getHost();
-		if (a == null) { return null; }
+		if (a == null) return null;
 		return getHost().getPopulationFor(speciesName);
 	}
 
@@ -551,7 +541,7 @@ public abstract class AbstractAgent implements IAgent {
 			name = "die",
 			doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		if (dying) { return null; }
+		if (dying) return null;
 		dying = true;
 		getSpecies().getArchitecture().abort(scope);
 		scope.interruptAgent();
@@ -576,7 +566,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
-		if (getPopulation().hasVar(index)) { return scope.getAgentVarValue(this, index); }
+		if (getPopulation().hasVar(index)) return scope.getAgentVarValue(this, index);
 		return getAttribute(index);
 	}
 
@@ -587,7 +577,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public Object getFromIndicesList(final IScope scope, final IList<String> indices) throws GamaRuntimeException {
-		if (indices == null || indices.isEmpty()) { return null; }
+		if (indices == null || indices.isEmpty()) return null;
 		return get(scope, indices.firstValue(scope));
 	}
 
@@ -600,13 +590,13 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public IList<? extends ILocation> getPoints() {
-		if (getGeometry() == null) { return GamaListFactory.EMPTY_LIST; }
+		if (getGeometry() == null) return GamaListFactory.EMPTY_LIST;
 		return getGeometry().getPoints();
 	}
 
 	@Override
 	public void setDepth(final double depth) {
-		if (getGeometry() == null) { return; }
+		if (getGeometry() == null) return;
 		getGeometry().setDepth(depth);
 	}
 

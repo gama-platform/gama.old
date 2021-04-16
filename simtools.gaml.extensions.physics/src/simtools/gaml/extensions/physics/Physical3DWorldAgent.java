@@ -267,8 +267,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 
 			final RigidBody node = registeredMap.get(ia);
 			final Vector3f _position = world.getNodePosition(node);
-			final GamaPoint position =
-					new GamaPoint(new Double(_position.x), new Double(_position.y), new Double(_position.z));
+			final GamaPoint position = new GamaPoint(_position.x, _position.y, _position.z);
 
 			ia.setLocation(position);
 			final Coordinate[] coordinates = ia.getInnerGeometry().getCoordinates();

@@ -40,11 +40,11 @@ public class ClassicalSIRSEquations {
 		return parentDesc;
 	}
 
-	public List<SingleEquationStatement> SIRS(final IExpression with_vars, final IExpression with_params) {
-		if (with_vars == null || with_params == null) { return null; }
+	public List<SingleEquationStatement> SIRS(final ListExpression with_vars, final ListExpression with_params) {
+		if (with_vars == null || with_params == null) return null;
 		final ArrayList<SingleEquationStatement> cmd = new ArrayList<>();
-		final IExpression[] v = ((ListExpression) with_vars).getElements();
-		final IExpression[] p = ((ListExpression) with_params).getElements();
+		final IExpression[] v = with_vars.getElements();
+		final IExpression[] p = with_params.getElements();
 
 		final StatementDescription stm = new StatementDescription("=", getDescription(), false, null, null, null);
 
