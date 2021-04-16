@@ -42,6 +42,7 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.GamaType;
@@ -311,17 +312,42 @@ public class System {
 	@operator (
 			value = IKeyword.WIZARD,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
-			concept = {})
+			concept = {IConcept.SYSTEM, IConcept.GUI })
+	@doc (
+			value = "Build a wizard and return the values enter by the user as a map of map [\"title page 1\"::[\"var1\"::1,\"var2\"::2]]. Takes a string, an action and a list of calls to the `wizard_page()` operator. The first string is used to specify the title. The action to describe when the wizard is supposed to be finished. A classic way of defining the action is "
+					+ "bool eval_finish(map<string,map> input_map) {return input_map[\"page1\"][\"file\"] != nil;}. The list is to specify the wizard pages.",
+			examples = {
+					@example (value = "map results <-  wizard(\"My wizard\",eval_finish, [wizard_page(\"page1\",\"enter info\" ,[enter(\"var1\",string)], font(\"Arial\", 10))]);", isExecutable = false)
+			})
 	@no_test
 
+	public static IMap<String,IMap<String, Object>> openWizard(final IScope scope, final String title, ActionDescription finish, final IList<IMap<String, Object>> pages) {
+		return scope.getGui().openWizard(scope, title, finish, pages);
+	}
+	
+	@operator (
+			value = IKeyword.WIZARD,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {IConcept.SYSTEM, IConcept.GUI })
+	@doc (
+			value = "Build a wizard and return the values enter by the user as a map of map [\"title page 1\"::[\"var1\"::1,\"var2\"::2]]. Takes a string, a list of calls to the `wizard_page()` operator. The first string is used to specify the title. The list is to specify the wizard pages.",
+			examples = {
+					@example (value = "map results <-  wizard(\"My wizard\",[wizard_page(\"page1\",\"enter info\" ,[enter(\"var1\",string)], font(\"Arial\", 10))]);", isExecutable = false)
+			})
+	@no_test
 	public static IMap<String,IMap<String, Object>> openWizard(final IScope scope, final String title, final IList<IMap<String, Object>> pages) {
-		return scope.getGui().openWizard(scope, title, pages);
+		return scope.getGui().openWizard(scope, title, null, pages);
 	}
 	
 	@operator (
 			value = IKeyword.WIZARD_PAGE,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
-			concept = {})
+			concept = {IConcept.SYSTEM, IConcept.GUI })
+	@doc (
+			value = "Build a wizard page. Takes two strings, a list of calls to the `enter()` or `choose()` operators and a font as arguments. The first string is used to specify the title, the second the description of the dialog box. The list is to specify the parameters the user can enter. The font is used to specify the font",
+			examples = {
+					@example (value = "map results <-  wizard(\"My wizard\",[wizard_page(\"page1\",\"enter info\" ,[enter(\"var1\",string)], font(\"Arial\", 10))]);", isExecutable = false)
+			})
 	@no_test
 	public static IMap<String, Object> wizardPage(final String title, final String description,final IList parameters, final GamaFont font) {
 		IMap<String, Object> results = GamaMapFactory.create();
@@ -331,6 +357,26 @@ public class System {
 		results.put(IKeyword.FONT, font);
 		return results;
 	}
+	
+	@operator (
+			value = IKeyword.WIZARD_PAGE,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {IConcept.SYSTEM, IConcept.GUI })
+	@doc (
+			value = "Build a wizard page. Takes two strings and a list of calls to the `enter()` or `choose()` operators. The first string is used to specify the title, the second the description of the dialog box. The list is to specify the parameters the user can enter",
+			examples = {
+					@example (value = "map results <-  wizard(\"My wizard\",[wizard_page(\"page1\",\"enter info\" ,[enter(\"var1\",string)])]);", isExecutable = false)
+			})
+	@no_test
+	public static IMap<String, Object> wizardPage(final String title, final String description,final IList parameters) {
+		IMap<String, Object> results = GamaMapFactory.create();
+		results.put(IKeyword.TITLE, title);
+		results.put(IKeyword.DESCRIPTION, description);
+		results.put(IKeyword.PARAMETERS, parameters);
+		return results;
+	}
+	
+	
 
 	@operator (
 			value = IKeyword.USER_INPUT,

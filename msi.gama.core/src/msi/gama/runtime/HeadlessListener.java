@@ -48,6 +48,8 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.descriptions.ActionDescription;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.dev.utils.DEBUG;
@@ -86,7 +88,7 @@ public class HeadlessListener implements IGui {
 		return initialValues;
 	}
 	@Override
-	public IMap<String,IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
+	public IMap<String, IMap<String, Object>> openWizard(IScope scope, String title, ActionDescription finish , IList<IMap<String, Object>> pages){
 		final IMap<String, IMap<String, Object>> initialValues = GamaMapFactory.create();
 		for (IMap l : pages) {
 			final IMap<String, Object> initialValuesPage = GamaMapFactory.create();

@@ -70,6 +70,7 @@ import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.Symbol;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.dev.utils.DEBUG;
@@ -281,16 +282,16 @@ public class SwtGui implements IGui {
 			final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), parameters, title, font);
 			if (dialog.open() == Window.OK) {
 				result.putAll(dialog.getValues());
-			}
+			} 
 		});
 		return result;
 	}
 	
 	@Override
-	public IMap<String,IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
+	public IMap<String,IMap<String, Object>> openWizard(IScope scope, String title, ActionDescription finish, IList<IMap<String, Object>> pages) {
 		final IMap<String,IMap<String, Object>> result = GamaMapFactory.create();
 		final IList<GamaWizardPage> wizardPages = GamaListFactory.create();
-		for (IMap<String, Object> l : pages) {
+		for (IMap<String, Object> l : pages) { 
 			GamaFont f = (GamaFont) l.get(IKeyword.FONT);
 			String t = (String) l.get(IKeyword.TITLE);
 			String d = (String) l.get(IKeyword.DESCRIPTION);
@@ -302,7 +303,7 @@ public class SwtGui implements IGui {
 		
 		
 		WorkbenchHelper.run(() -> {
-			final GamaWizard wizard = new GamaWizard(title, wizardPages);
+			final GamaWizard wizard = new GamaWizard(title,finish, wizardPages);
 			GamaWizardDialog wizardDialog = new GamaWizardDialog(WorkbenchHelper.getShell(),wizard);
 			if (wizardDialog.open() == Window.OK) {
 				result.putAll(wizardDialog.getValues());

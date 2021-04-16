@@ -641,6 +641,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				computeInitsFromAttributesFacet(scope, attributes, species);
 			}
 			for (final String e : attributes.keySet()) {
+				if (e == null) continue;
 				final IExpression var = attributes.get(e);
 				String name = e.replaceAll("\"", "");
 				name = name.replaceAll("'", "");

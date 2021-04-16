@@ -31,6 +31,7 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 
@@ -101,7 +102,7 @@ public interface IGui {
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters, GamaFont font);
 
-	IMap<String, IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages);
+	public IMap<String, IMap<String, Object>> openWizard(IScope scope, String title, ActionDescription finish , IList<IMap<String, Object>> pages);
 
 	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) ;
 	
