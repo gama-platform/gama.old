@@ -221,10 +221,9 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			// final IExpressionDescription step = description.getFacet(STEP);
 			final IExpressionDescription cond = description.getFacet(WHILE);
 			IExpressionDescription name = description.getFacet(NAME);
-			if (name != null && name.isConst() && name.toString().startsWith(INTERNAL)) {
-				name = null;
-			}
-
+			if (name != null && name.isConst() && name.toString().startsWith(INTERNAL)) { name = null; }
+			// See Issue #3085
+			if (name != null) { Assert.nameIsValid(description); }
 			if (times != null) {
 				if (over != null) {
 					description.error("'times' and 'over' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES,
@@ -245,9 +244,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					description.error("'times' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES, TO);
 					return;
 				}
-				if (name != null) {
-					description.error("No variable should be declared", IGamlIssue.UNUSED, NAME);
-				}
+				if (name != null) { description.error("No variable should be declared", IGamlIssue.UNUSED, NAME); }
 			} else if (over != null) {
 				if (cond != null) {
 					description.error("'over' and 'while' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER,
@@ -263,9 +260,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					description.error("'over' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER, TO);
 					return;
 				}
-				if (name == null) {
-					description.error("No variable has been declared", IGamlIssue.MISSING_NAME, OVER);
-				}
+				if (name == null) { description.error("No variable has been declared", IGamlIssue.MISSING_NAME, OVER); }
 			} else if (cond != null) {
 				if (from != null) {
 					description.error("'while' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, WHILE,
@@ -304,9 +299,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		@Override
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
-			if (key.equals(NAME)) {
-				if (s.hasFacet(TIMES) || s.hasFacet(WHILE)) { return null; }
-			}
+			if (key.equals(NAME)) { if (s.hasFacet(TIMES) || s.hasFacet(WHILE)) return null; }
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
@@ -330,9 +323,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		// 25/02/14: Suppressed because already done in loopBody() :
 		// super.enterScope(scope);
 
-		if (varName != null) {
-			scope.addVarWithValue(varName, null);
-		}
+		if (varName != null) { scope.addVarWithValue(varName, null); }
 	}
 
 	@Override
@@ -348,9 +339,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	protected boolean loopBody(final IScope scope, final Object var, final Object[] result) {
 		scope.push(this);
-		if (varName != null) {
-			scope.setVarValue(varName, var);
-		}
+		if (varName != null) { scope.setVarValue(varName, var); }
 		result[0] = super.privateExecuteIn(scope);
 		scope.pop(this);
 		return !scope.interrupted();
@@ -372,12 +361,8 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		Bounded() throws GamaRuntimeException {
 			final IScope scope = null;
 			// final IScope scope = GAMA.obtainNewScope();
-			if (from.isConst()) {
-				constantFrom = Cast.asInt(scope, from.value(scope));
-			}
-			if (to.isConst()) {
-				constantTo = Cast.asInt(scope, to.value(scope));
-			}
+			if (from.isConst()) { constantFrom = Cast.asInt(scope, from.value(scope)); }
+			if (to.isConst()) { constantTo = Cast.asInt(scope, to.value(scope)); }
 			if (step == null) {
 				stepDefined = false;
 				constantStep = 1;
@@ -401,9 +386,8 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				if (s > 0) {
 					if (!stepDefined) {
 						s = -s;
-					} else {
+					} else
 						return null;
-					}
 				}
 				for (int i = f, n = t - 1; i > n && loopBody(scope, i, result); i += s) {}
 			} else {
@@ -424,9 +408,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			final Iterable list_ =
 					!(obj instanceof IContainer) ? Cast.asList(scope, obj) : ((IContainer) obj).iterable(scope);
 			for (final Object each : list_) {
-				if (!loopBody(scope, each, result)) {
-					break;
-				}
+				if (!loopBody(scope, each, result)) { break; }
 			}
 			return result[0];
 		}
@@ -438,9 +420,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		private Integer constantTimes;
 
 		Times() throws GamaRuntimeException {
-			if (times.isConst()) {
-				constantTimes = Types.INT.cast(null, times.getConstValue(), null, false);
-			}
+			if (times.isConst()) { constantTimes = Types.INT.cast(null, times.getConstValue(), null, false); }
 		}
 
 		@Override
