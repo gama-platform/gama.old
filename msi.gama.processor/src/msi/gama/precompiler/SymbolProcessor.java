@@ -27,6 +27,10 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 		if (inside != null) {
 			toArrayOfStrings(inside.symbols(), sb).append(',');
 			toArrayOfInts(inside.kinds(), sb).append(',');
+		} else {
+			context.emitWarning("GAML: an @inside annotation should be defined", e);
+			toArrayOfStrings(null, sb).append(',');
+			toArrayOfInts(null, sb).append(',');
 		}
 		final facets facets = e.getAnnotation(facets.class);
 		String omissible = "";
@@ -37,16 +41,12 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			sb.append("P(");
 			for (int i = 0; i < facets.value().length; i++) {
 				final facet child = facets.value()[i];
-				if (i > 0) {
-					sb.append(',');
-				}
+				if (i > 0) { sb.append(','); }
 				sb.append("_facet(").append(toJavaString(child.name())).append(',');
 				toArrayOfInts(child.type(), sb).append(',').append(child.of()).append(',').append(child.index())
 						.append(',');
 				final String[] values = child.values();
-				if (values != null && values.length > 0) {
-					toArrayOfStrings(values, constants).append(',');
-				}
+				if (values != null && values.length > 0) { toArrayOfStrings(values, constants).append(','); }
 				toArrayOfStrings(values, sb).append(',').append(toBoolean(child.optional())).append(',')
 						.append(toBoolean(child.internal())).append(',').append(toBoolean(child.remote_context()));
 				verifyDoc(context, e, "facet " + child.name(), child);
