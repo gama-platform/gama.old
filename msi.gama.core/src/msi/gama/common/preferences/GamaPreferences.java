@@ -169,14 +169,20 @@ public class GamaPreferences {
 		public static Pref<String> OPERATORS_MENU_SORT = GamaPreferences
 				.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING, false)
 				.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
-		public static final Pref<Boolean> CORE_CLOSE_CURLY =
-				GamaPreferences.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL, false)
-						.in(NAME, TEXT);
-		public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences
-				.create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL, false)
+
+		public static final Pref<Boolean> CORE_CLOSE_QUOTE = GamaPreferences
+				.create("pref_editor_close_quote", "Automatically close single quotes — '..'", true, IType.BOOL, false)
 				.in(NAME, TEXT);
-		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES = GamaPreferences
-				.create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL, false).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_DOUBLE = GamaPreferences.create("pref_editor_close_double",
+				"Automatically close double quotes — \"..\"", true, IType.BOOL, false).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_CURLY = GamaPreferences
+				.create("pref_editor_close_curly", "Automatically close curly brackets — {..}", true, IType.BOOL, false)
+				.in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences.create("pref_editor_close_square",
+				"Automatically close square brackets — [..]", true, IType.BOOL, false).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES =
+				GamaPreferences.create("pref_editor_close_parentheses", "Automatically close parentheses — (..)", true,
+						IType.BOOL, false).in(NAME, TEXT);
 		public static final Pref<Boolean> EDITOR_CLEAN_UP =
 				GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL, false)
 						.in(NAME, GamaPreferences.Modeling.OPTIONS);
