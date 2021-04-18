@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
+import static msi.gama.util.Collector.getOrderedSet;
+import static msi.gaml.compilation.GAML.getExpressionFactory;
+import static msi.gaml.types.Types.intFloatCase;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -22,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
-import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
@@ -163,7 +166,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		@Override
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
-			if (key.equals(TYPE)) { return null; }
+			if (key.equals(TYPE)) return null;
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
@@ -175,18 +178,14 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 			final IExpressionDescription def = arg.getFacet(DEFAULT);
 
 			sb.append(type == null ? "unknown" : type.serialize(includingBuiltIn)).append(" ").append(name);
-			if (def != null) {
-				sb.append(" <- ").append(def.serialize(includingBuiltIn));
-			}
+			if (def != null) { sb.append(" <- ").append(def.serialize(includingBuiltIn)); }
 		}
 
 		@Override
 		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			String type = desc.getGamlType().serialize(includingBuiltIn);
-			if (type.equals(UNKNOWN)) {
-				type = ACTION;
-			}
+			if (type.equals(UNKNOWN)) { type = ACTION; }
 			sb.append(type).append(" ");
 		}
 
@@ -201,25 +200,21 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		 */
 		@Override
 		public void validate(final IDescription description) {
-			if (Assert.nameIsValid(description)) {
-				assertReturnedValueIsOk((StatementDescription) description);
-			}
+			if (Assert.nameIsValid(description)) { assertReturnedValueIsOk((ActionDescription) description); }
 
 		}
 
-		private void assertReturnedValueIsOk(final StatementDescription cd) {
+		private void assertReturnedValueIsOk(final ActionDescription cd) {
 			final IType at = cd.getGamlType();
-			if (at == Types.NO_TYPE) { return; }
-			try (final ICollector<StatementDescription> returns = Collector.getOrderedSet()) {
+			if (at == Types.NO_TYPE) return;
+			try (final ICollector<StatementDescription> returns = getOrderedSet()) {
 				final DescriptionVisitor<IDescription> finder = (desc) -> {
-					if (desc.getKeyword().equals(RETURN)) {
-						returns.add((StatementDescription) desc);
-					}
+					if (desc.getKeyword().equals(RETURN)) { returns.add((StatementDescription) desc); }
 					return true;
 				};
 				cd.visitOwnChildrenRecursively(finder);
 				if (returns.isEmpty()) {
-					if (cd instanceof ActionDescription && !((ActionDescription) cd).isAbstract()) {
+					if (!cd.isAbstract()) {
 						cd.error("Action " + cd.getName() + " must return a result of type " + at,
 								IGamlIssue.MISSING_RETURN);
 						return;
@@ -227,9 +222,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 				}
 				for (final StatementDescription ret : returns) {
 					final IExpression ie = ret.getFacetExpr(VALUE);
-					if (ie == null) {
-						continue;
-					}
+					if (ie == null) { continue; }
 					if (ie.equals(IExpressionFactory.NIL_EXPR)) {
 						if (at.getDefault() != null) {
 							ret.error(
@@ -243,6 +236,12 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 						if (!rt.isTranslatableInto(at)) {
 							ret.error("Action " + cd.getName() + " must return a result of type " + at + " (and not "
 									+ rt + ")", IGamlIssue.SHOULD_CAST, VALUE, at.toString());
+						} else if (intFloatCase(rt, at) || intFloatCase(rt.getContentType(), at.getContentType())) {
+							// See Issue #3059
+							ret.warning("The returned value (of type " + rt + ") will be casted to " + at,
+									IGamlIssue.WRONG_TYPE, VALUE);
+							ret.setFacet(VALUE, getExpressionFactory().createAs(cd.getSpeciesContext(), ie,
+									getExpressionFactory().createTypeExpression(at)));
 						}
 					}
 				}
@@ -266,9 +265,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 	 */
 	public ActionStatement(final IDescription desc) {
 		super(desc);
-		if (hasFacet(IKeyword.NAME)) {
-			name = getLiteral(IKeyword.NAME);
-		}
+		if (hasFacet(IKeyword.NAME)) { name = getLiteral(IKeyword.NAME); }
 
 	}
 
