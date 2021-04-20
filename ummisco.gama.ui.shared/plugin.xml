@@ -62,7 +62,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.InteractiveConsoleView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.interactive2.png"
+            icon="/icons/view.interactive2.png"
             id="msi.gama.application.view.InteractiveConsoleView"
             name="Interactive console"
             restorable="true">

@@ -902,8 +902,8 @@ public class ExecutionScope implements IScope {
 	@Override
 	public IScope copy(final String additionalName) {
 		final ExecutionScope scope = new ExecutionScope(getRoot(), additionalName);
-		scope.executionContext = executionContext.createCopy();
-		scope.agentContext = agentContext.createCopy();
+		scope.executionContext = executionContext == null ? null : executionContext.createCopy();
+		scope.agentContext = agentContext == null ? null : agentContext.createCopy();
 		scope.additionalContext.copyFrom(additionalContext);
 		return scope;
 	}
