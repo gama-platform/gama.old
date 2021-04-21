@@ -28,7 +28,7 @@ echo "github_release_continuous_withjdk"
 COMMIT=$@
 
 REPO="gama-platform/gama"
-RELEASE="1.8.2"
+RELEASE="continuous"
 thePATH="$GITHUB_WORKSPACE/ummisco.gama.product/target/products/Gama1.7"
 
 
@@ -128,7 +128,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Alpha Version 1.8.2 ('$SUFFIX')","body":"Alpha release for GAMA 1.8.2, which adds compatibility with JDK 11+ . Please test and report issues","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"Alpha Version 1.8.2 ('$COMMIT')","body":"Alpha release for GAMA 1.8.2, which adds compatibility with JDK 11+ . Please test and report issues","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
