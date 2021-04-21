@@ -6,7 +6,7 @@
 	<!--<parent> <groupId>msi.gama</groupId> <artifactId>msi.gama.parent</artifactId> 
 		<version>1.8.1-SNAPSHOT</version> <relativePath>../msi.gama.parent/</relativePath> 
 		</parent> -->
-	<groupId>msi.gama.processor</groupId>
+	<groupId>msi.gama</groupId>
 	<artifactId>msi.gama.processor</artifactId>
 	<version>1.4.0-SNAPSHOT</version>
 	<distributionManagement>
@@ -21,6 +21,8 @@
 			<url>scp://51.255.46.42/./var/www/gama_updates</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+
  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<tycho.version>2.2.0</tycho.version>
@@ -92,6 +94,7 @@
 		</profile>
 	</profiles>
 
+
 	<build>
 		<extensions>
 			<extension>
@@ -143,7 +146,19 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho.version}</version>				 
+				<version>${tycho.version}</version>		
+				<configuration>
+					<filters>
+						<filter>
+							<type>eclipse-plugin</type>
+							<id>org.eclipse.jdt.core</id>
+							<restrictTo>
+								<version>3.11.2.v20160128-0629</version>
+								<!--<version>3.4.0.v20150518-1201</version> -->
+							</restrictTo>
+						</filter>
+					</filters>
+				</configuration>		 
 			</plugin>
 		</plugins>
 	</build>

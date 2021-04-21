@@ -31,6 +31,8 @@
 			<layout>default</layout>
 		</pluginRepository>
 	</pluginRepositories>
+	
+	
 	<profiles>
 		<!-- This profile is used to upload the repo -->
 		<profile>
@@ -184,8 +186,9 @@
 
 		<module>../ummisco.gama.product</module>
 
+		<module>../msi.gama.p2updatesite</module>
 
-		<!-- <module>../msi.gama.p2updatesite</module> -->
+		<!-- -->
 	</modules>
 
 	<properties>
@@ -556,7 +559,7 @@
 		                <dependency>
 		                    <groupId>org.eclipse.jdt</groupId>
 		                    <artifactId>ecj</artifactId>
-						<version>3.23.0</version>
+		                    <version>3.13.101</version>
 		                </dependency>
 		            </dependencies>
 		        </plugin>

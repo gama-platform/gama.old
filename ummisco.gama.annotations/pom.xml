@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ummisco.gama.annotations</groupId>
+	<groupId>msi.gama</groupId>
 	<artifactId>ummisco.gama.annotations</artifactId>
 	<version>1.8.1-SNAPSHOT</version>
 
@@ -19,6 +19,7 @@
 			<url>scp://51.255.46.42/./var/www/gama_updates</url>
 		</snapshotRepository>
 	</distributionManagement>
+
  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<tycho.version>2.2.0</tycho.version>
@@ -65,7 +66,7 @@
 								<configuration>
 									<rules>
 										<requireFilesSize>
-											<maxsize>100000</maxsize>
+											<maxsize>50000</maxsize>
 											<minsize>90</minsize>
 										</requireFilesSize>
 									</rules>									
