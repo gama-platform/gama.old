@@ -437,6 +437,7 @@ public interface IKeyword {
 	String USER_CONTROLLED = "user_controlled";
 	String USER_COMMAND = "user_command";
 	String USER_INPUT = "user_input";
+	String USER_INPUT_DIALOG = "user_input_dialog";
 	String USER_CONFIRM = "user_confirm";
 	String WIZARD = "wizard";
 	String WIZARD_PAGE = "wizard_page";
