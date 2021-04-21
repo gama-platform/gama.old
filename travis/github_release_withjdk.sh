@@ -28,7 +28,7 @@ echo "github_release_continuous_withjdk"
 COMMIT=$@
 
 REPO="gama-platform/gama"
-RELEASE="continuous"
+RELEASE="1.8.2"
 thePATH="$GITHUB_WORKSPACE/ummisco.gama.product/target/products/Gama1.7"
 
 
