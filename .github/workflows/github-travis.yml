@@ -23,7 +23,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '15'
-          java-package: jdk 
+          java-package: jdk  
 
       - name: Prepare build
         run: |
