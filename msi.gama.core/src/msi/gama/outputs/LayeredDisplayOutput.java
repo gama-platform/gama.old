@@ -485,6 +485,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
+		if (data.isWeb()) { return IGui.GL_LAYER_VIEW_ID3; }
 		if (data.isOpenGL2()) { return IGui.GL_LAYER_VIEW_ID2; }
 		if (data.isOpenGL()) { return IGui.GL_LAYER_VIEW_ID; }
 		return IGui.LAYER_VIEW_ID;

@@ -58,6 +58,7 @@ public interface IGui {
 	String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
 	String GL_LAYER_VIEW_ID = "msi.gama.application.view.OpenGLDisplayView";
 	String GL_LAYER_VIEW_ID2 = "msi.gama.application.view.OpenGLDisplayView2";
+	String GL_LAYER_VIEW_ID3 = "msi.gama.application.view.WebDisplayView";
 
 	String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	String TEST_VIEW_ID = "msi.gama.application.view.TestView";

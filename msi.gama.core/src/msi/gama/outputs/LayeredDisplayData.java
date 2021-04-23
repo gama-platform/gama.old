@@ -62,6 +62,7 @@ public class LayeredDisplayData {
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
 	public static final String OPENGL2 = "opengl2";
+	public static final String WEB = "web";
 	public static final String THREED = "3D";
 	public static final Double INITIAL_ZOOM = 1.0;
 
@@ -994,6 +995,10 @@ public class LayeredDisplayData {
 
 	public boolean isOpenGL2() {
 		return displayType.equals(OPENGL2);
+	}
+
+	public boolean isWeb() {
+		return displayType.equals(WEB);
 	}
 
 	public boolean isOpenGL() {
