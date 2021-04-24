@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -34,9 +35,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.ValuedDisplayOutputFactory;
+import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.ExecutionResult;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
@@ -148,9 +149,7 @@ public class AgentsMenu extends ContributionItem {
 		public void widgetSelected(final SelectionEvent e) {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
-			if (a != null && !a.dead()) {
-				a.getScope().getGui().setSelectedAgent(a);
-			}
+			if (a != null && !a.dead()) { a.getScope().getGui().setSelectedAgent(a); }
 		}
 	};
 
@@ -184,9 +183,7 @@ public class AgentsMenu extends ContributionItem {
 			for (final IDisplaySurface surface : surfaces) {
 				if (a instanceof ITopLevelAgent) {
 					surface.zoomFit();
-				} else if (a != null && !a.dead()) {
-					surface.focusOn(a);
-				}
+				} else if (a != null && !a.dead()) { surface.focusOn(a); }
 			}
 			GAMA.getExperiment().refreshAllOutputs();
 		}
@@ -251,7 +248,7 @@ public class AgentsMenu extends ContributionItem {
 
 	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel,
 			final boolean withInspect, final MenuAction... actions) {
-		if (agent == null) { return; }
+		if (agent == null) return;
 		GamaMenu.separate(menu, "Actions");
 		final boolean simulation = agent instanceof SimulationAgent;
 		if (withInspect) {
@@ -266,9 +263,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 		if (actions != null && !topLevel) {
 			for (final MenuAction ma : actions) {
-				if (ma != null) {
-					actionAgentMenuItem(menu, agent, ma.listener, ma.image, ma.text);
-				}
+				if (ma != null) { actionAgentMenuItem(menu, agent, ma.listener, ma.image, ma.text); }
 			}
 		}
 		final Collection<UserCommandStatement> commands = agent.getSpecies().getUserCommands();
@@ -287,9 +282,7 @@ public class AgentsMenu extends ContributionItem {
 			final IMacroAgent macro = (IMacroAgent) agent;
 			if (macro.hasMembers()) {
 				GamaMenu.separate(menu);
-				if (!topLevel) {
-					GamaMenu.separate(menu, "Micro-populations");
-				}
+				if (!topLevel) { GamaMenu.separate(menu, "Micro-populations"); }
 				for (final IPopulation<? extends IAgent> pop : macro.getMicroPopulations()) {
 					if (!pop.isEmpty()) {
 						cascadingPopulationMenuItem(menu, agent, pop,
@@ -304,20 +297,11 @@ public class AgentsMenu extends ContributionItem {
 	public static void fillPopulationSubMenu(final Menu menu, final Collection<? extends IAgent> species,
 			final MenuAction... actions) {
 		final boolean isSimulations = species instanceof SimulationPopulation;
-		int subMenuSize = GamaPreferences.Interface.CORE_MENU_SIZE.getValue();
-		if (subMenuSize < 2) {
-			subMenuSize = 2;
-		}
+		int subMenuSize = Math.max(2, GamaPreferences.Interface.CORE_MENU_SIZE.getValue());
 		final List<IAgent> agents = new ArrayList<>(species);
 		final int size = agents.size();
-		if (size > 1 && !isSimulations) {
-			GamaMenu.separate(menu, "Actions");
-		}
-
-		if (size > 1) {
-			browsePopulationMenuItem(menu, species, GamaIcons.create(IGamaIcons.MENU_BROWSE).image());
-		}
-
+		if (size > 1 && !isSimulations) { GamaMenu.separate(menu, "Actions"); }
+		if (size > 1) { browsePopulationMenuItem(menu, species, GamaIcons.create(IGamaIcons.MENU_BROWSE).image()); }
 		if (size > 1 && !isSimulations) {
 			GamaMenu.separate(menu);
 			GamaMenu.separate(menu, "Agents");
@@ -331,34 +315,37 @@ public class AgentsMenu extends ContributionItem {
 			for (int i = 0; i < nb; i++) {
 				final int begin = i * subMenuSize;
 				final int end = Math.min((i + 1) * subMenuSize, size);
-				if (begin >= end) {
-					break;
-				}
-				final MenuItem rangeItem = new MenuItem(menu, SWT.CASCADE);
-				final Menu rangeMenu = new Menu(rangeItem);
-				rangeItem.setMenu(rangeMenu);
-				rangeItem.setText("" + begin + " to " + (end - 1));
-				rangeItem.setImage(GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
-				rangeMenu.addListener(SWT.Show, e -> {
-					if (!menu.isVisible()) { return; }
-					final MenuItem[] items = rangeMenu.getItems();
-					for (final MenuItem item : items) {
-						item.dispose();
-					}
-					for (int j = begin; j < end; j++) {
-						final IAgent ag = agents.get(j);
-						if (ag != null && !ag.dead()) {
-							cascadingAgentMenuItem(rangeMenu, ag, ag.getName(), actions);
+				if (begin >= end) { break; }
+				try {
+					final MenuItem rangeItem = new MenuItem(menu, SWT.CASCADE);
+
+					final Menu rangeMenu = new Menu(rangeItem);
+					rangeItem.setMenu(rangeMenu);
+					rangeItem.setText("" + begin + " to " + (end - 1));
+					rangeItem.setImage(GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
+					rangeMenu.addListener(SWT.Show, e -> {
+						if (!menu.isVisible()) return;
+						final MenuItem[] items = rangeMenu.getItems();
+						for (final MenuItem item : items) {
+							item.dispose();
 						}
-					}
-				});
+						for (int j = begin; j < end; j++) {
+							final IAgent ag = agents.get(j);
+							if (ag != null && !ag.dead()) {
+								cascadingAgentMenuItem(rangeMenu, ag, ag.getName(), actions);
+							}
+						}
+					});
+				} catch (SWTError e) {
+					if (e.code == SWT.ERROR_ITEM_NOT_ADDED) { continue; }
+				}
 
 			}
 		}
 	}
 
 	public static MenuAction getHighlightActionFor(final IAgent a) {
-		if (a == null) { return null; }
+		if (a == null) return null;
 		return new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(),
 				a.getScope().getGui().getHighlightedAgent() == a ? "Remove highlight" : "Highlight");
 	}
