@@ -44,6 +44,7 @@ import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.SwtGui;
 
 public class AgentsMenu extends ContributionItem {
@@ -311,14 +312,21 @@ public class AgentsMenu extends ContributionItem {
 				cascadingAgentMenuItem(menu, agent, agent.getName(), actions);
 			}
 		} else {
-			final int nb = size / subMenuSize + 1;
+			int nb = size / subMenuSize + 1;
+			if (PlatformHelper.isWindows()) {
+				// See Issue #2967
+				if (nb > 90) {
+					// Absolutely no idea about the reality of this hard-coded limit
+					nb = 90;
+					subMenuSize = size / nb;
+				}
+			}
 			for (int i = 0; i < nb; i++) {
 				final int begin = i * subMenuSize;
 				final int end = Math.min((i + 1) * subMenuSize, size);
 				if (begin >= end) { break; }
 				try {
 					final MenuItem rangeItem = new MenuItem(menu, SWT.CASCADE);
-
 					final Menu rangeMenu = new Menu(rangeItem);
 					rangeItem.setMenu(rangeMenu);
 					rangeItem.setText("" + begin + " to " + (end - 1));
