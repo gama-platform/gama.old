@@ -29,6 +29,7 @@ import org.locationtech.jts.geom.Coordinate;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -758,8 +759,7 @@ public class DrivingSkill extends MovingSkill {
 				block.remove(dr);
 			}
 		}
-		// TODO: fix 3rd arg
-		return isReadyNextRoad(scope, road, 0)
+		return isReadyNextRoad(scope, road)
 				&& (testBlockNode || DrivingOperators.enoughSpaceToEnterRoad(scope, road, lane, numLanesOccupied, vehicleLength / 2));
 	}
 
@@ -783,6 +783,39 @@ public class DrivingSkill extends MovingSkill {
 		return true;
 	}
 
+	public boolean enoughSpaceToEnterRoad(IScope scope, IAgent road, int startingLane) {
+		IAgent driver = getCurrentAgent(scope);
+		int numLanesOccupied = getNumLanesOccupied(driver);
+		double requiredLength = getVehicleLength(driver) / 2 + getMinSafetyDistance(driver);
+
+		// check if any vehicle in these lanes is too close to the source node of the road
+		IAgent linkedRoad = RoadSkill.getLinkedRoad(road);
+		int numLanesCurrent = RoadSkill.getLanes(road);
+		for (int i = 0; i < numLanesOccupied; i += 1) {
+			int lane = startingLane + i;
+			boolean isLinkedLane = lane >= numLanesCurrent;
+			IAgent correctRoad = isLinkedLane ? linkedRoad : road;
+			// converts relLane to the valid lane idx w.r.t the linked road if necessary
+			int correctLane = RoadSkill.computeValidLane(road, lane);
+			int correctSegment = RoadSkill.computeCorrectSegment(road, 0, isLinkedLane);
+
+			List<List<List<IAgent>>> otherDrivers = (List<List<List<IAgent>>>)
+					correctRoad.getAttribute(RoadSkill.AGENTS_ON);
+			List<List<IAgent>> laneDrivers = otherDrivers.get(correctLane);
+			for (List<IAgent> segmentDrivers : laneDrivers)
+			for (IAgent otherDriver : segmentDrivers) {
+				if (otherDriver == null || otherDriver == driver || otherDriver.dead()) {
+					continue;
+				}
+				if (GeometryUtils.getFirstPointOf(road).euclidianDistanceTo(otherDriver) <
+						requiredLength + (double) otherDriver.getAttribute(DrivingSkill.VEHICLE_LENGTH) / 2) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Check if the driver is ready to cross the intersection to get to a new road, concerning:
 	 *     1. Traffic lights
@@ -795,8 +828,7 @@ public class DrivingSkill extends MovingSkill {
 	 * @throws GamaRuntimeException
 	 */
 	public Boolean isReadyNextRoad(final IScope scope,
-			final IAgent newRoad,
-			final int startingLane) throws GamaRuntimeException {
+			final IAgent newRoad) throws GamaRuntimeException {
 		IAgent driver = getCurrentAgent(scope);
 		double vehicleLength = getVehicleLength(driver);
 		ISpecies context = driver.getSpecies();
@@ -882,17 +914,15 @@ public class DrivingSkill extends MovingSkill {
 		}
 
 		// Check if there is enough space to enter the specified lane
-		int numLanesOccupied = getNumLanesOccupied(driver);
-		if (!DrivingOperators.enoughSpaceToEnterRoad(scope, newRoad, startingLane, numLanesOccupied,
-					getMinSafetyDistance(driver) + vehicleLength / 2)) {
-			double probaBlock = getProbaBlockNode(driver);
-			boolean goingToBlock = Random.opFlip(scope, probaBlock);
-			// TODO: this proba test should only happen ONCE
-			if (goingToBlock) {
-				blockIntersection(scope, getCurrentRoad(driver), newRoad, sourceNode);
-			}
-			return false;
-		}
+		// if (!enoughSpaceToEnterRoad(scope, newRoad, startingLane)) {
+		// 	double probaBlock = getProbaBlockNode(driver);
+		// 	boolean goingToBlock = Random.opFlip(scope, probaBlock);
+		// 	// TODO: this proba test should only happen ONCE
+		// 	if (goingToBlock) {
+		// 		blockIntersection(scope, getCurrentRoad(driver), newRoad, sourceNode);
+		// 	}
+		// 	return false;
+		// }
 
 		return true;
 	}
@@ -1095,8 +1125,7 @@ public class DrivingSkill extends MovingSkill {
 					}
 				}
 
-				// TODO: fix 3rd arg
-				if (!isReadyNextRoad(scope, newRoad, 0)) {
+				if (!isReadyNextRoad(scope, newRoad)) {
 					return;
 				}
 
@@ -1174,21 +1203,26 @@ public class DrivingSkill extends MovingSkill {
 				// get the next road in the path
 				IAgent newRoad = (IAgent) path.getEdgeList().get(currentEdgeIdx + 1);
 
+				// check traffic lights and vehicles coming from other roads
+				if (!isReadyNextRoad(scope, newRoad)) {
+					return;
+				}
+
 				// Choose a lane on the new road
 				GamaPoint firstSegmentEndPt = new GamaPoint(
 					newRoad.getInnerGeometry().getCoordinates()[1]
 				);
 				double firstSegmentLength = loc.euclidianDistanceTo(firstSegmentEndPt);
 				Pair<Integer, Double> pair = chooseLaneMOBIL(scope, newRoad, 0, firstSegmentLength);
-				int newLane = pair.getKey();
-				if (newLane == -1) {
-					
-				}
-
-				// check traffic lights and vehicles coming from other roads
-				if (!isReadyNextRoad(scope, newRoad, newLane)) {
+				if (pair == null) {
 					return;
 				}
+				double newAccel = pair.getValue();
+				double newSpeed = updateSpeed(scope, newAccel, newRoad);
+				if (newSpeed == 0.0) {
+					return;
+				}
+				int newLane = pair.getKey();
 
 				// external factor that affects remaining time, can be defined by user
 				// argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
@@ -1197,11 +1231,9 @@ public class DrivingSkill extends MovingSkill {
 				// remainingTime = (Double) actionImpactEF.executeOn(scope);
 				setCurrentIndex(driver, currentEdgeIdx + 1);
 				setCurrentTarget(driver, getTargets(driver).get(currentEdgeIdx + 2));
+				// TODO: fix these two methods to include linked lanes
 				RoadSkill.unregister(scope, driver);
 				RoadSkill.register(scope, driver, newRoad, newLane);
-				// } else {
-					// return;
-				// }
 			}
 
 			// if time is up or the vehicle can not move any further, we are done
@@ -1616,7 +1648,6 @@ public class DrivingSkill extends MovingSkill {
 		int bestStartingLane = startingLane;
 		double maxDist = 0;
 
-		//TODO: a bug is causing a vehicle to crash into the leading vehicle, making this return null
 		ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>> pair =
 			findLeadingAndBackVehicle(scope, road, segment, distToSegmentEnd, startingLane);
 		double stayAccelM;
@@ -1903,7 +1934,7 @@ public class DrivingSkill extends MovingSkill {
 					// Consider slowing down at intersections
 					IAgent newRoad = (IAgent) path.getEdgeList().get(currentEdgeIdx + 1);
 					int newStartingLane = Math.min(startingLane, RoadSkill.getLanes(newRoad));
-					if (!isReadyNextRoad(scope, newRoad, newStartingLane)) {
+					if (!isReadyNextRoad(scope, newRoad)) {
 						return ImmutablePair.of(leadingTriple, backTriple);
 					}
 				}

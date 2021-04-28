@@ -263,14 +263,19 @@ public class RoadSkill extends Skill {
 			throws GamaRuntimeException {
 		if (driver == null) return;
 
-		int numLanesOccupied = (int) driver.getAttribute(DrivingSkill.NUM_LANES_OCCUPIED);
+		int numLanesOccupied = DrivingSkill.getNumLanesOccupied(driver);
 
-		int indexSegment = 0;
-		boolean onLinkedRoad = false;
-		driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, false);
-		indexSegment = getSegmentIndex(road, driver);
+		// TODO: why not just set to 0
+		int indexSegment = getSegmentIndex(road, driver);
+		int numLanesCurrent = getLanes(road);
+		IAgent linkedRoad = getLinkedRoad(road);
 		for (int i = 0; i < numLanesOccupied; i += 1) {
-			addDriverToLaneSegment(scope, driver, road, startingLane + i, indexSegment);
+			int lane = startingLane + i;
+			boolean isLinkedLane = i >= numLanesCurrent;
+			IAgent correctRoad = isLinkedLane ? linkedRoad : road;
+			int correctLane = RoadSkill.computeValidLane(road, lane);
+			int correctSegment = RoadSkill.computeCorrectSegment(road, indexSegment, isLinkedLane);
+			addDriverToLaneSegment(scope, driver, correctRoad, correctLane, correctSegment);
 		}
 		getAgents(road).add(driver);
 
@@ -278,8 +283,7 @@ public class RoadSkill extends Skill {
 				driver.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[indexSegment + 1]));
 		DrivingSkill.setCurrentRoad(driver, road);
 		DrivingSkill.setStartingLane(driver, startingLane);
-		DrivingSkill.setSegmentIndex(driver,
-				onLinkedRoad ? road.getInnerGeometry().getNumPoints() - indexSegment - 2 : indexSegment);
+		DrivingSkill.setSegmentIndex(driver, indexSegment);
 	}
 
 	public static int getSegmentIndex(final IAgent road, final IAgent driver) {

@@ -78,6 +78,7 @@ public class DrivingOperators {
 	 * @param startingLane The lane index to check
 	 * @return true if there is enough space, false otherwise
 	 */
+	// TODO: remove this later on
 	@operator(value = "enough_space_to_enter_road")
 	public static boolean enoughSpaceToEnterRoad(IScope scope, IAgent road, int startingLane, int numLanesOccupied, double requiredLength) {
 		List<List<List<IAgent>>> otherDrivers = (List<List<List<IAgent>>>)
