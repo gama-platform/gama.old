@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt.jar" sourcepath="lib/jogamp-fat-java-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt-natives-linux-amd64.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt-natives-macosx-universal.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt-natives-windows-amd64.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jogl-all.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jogl-all.jar" sourcepath="lib/jogamp-fat-java-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jogl-all-natives-macosx-universal.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jogl-all-natives-windows-amd64.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jogl-all-noawt-natives-linux-amd64.jar"/>
