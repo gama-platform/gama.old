@@ -11,14 +11,13 @@
 package msi.gama.common.geometry;
 
 import static com.google.common.collect.Iterators.forArray;
-import static org.locationtech.jts.algorithm.CGAlgorithms.signedArea;
 import static msi.gama.common.geometry.GamaGeometryFactory.isRing;
+import static org.locationtech.jts.algorithm.CGAlgorithms.signedArea;
 
 import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.lang.ArrayUtils;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 
@@ -35,6 +34,8 @@ import msi.gama.metamodel.shape.GamaPoint;
 
 public class GamaCoordinateSequence implements ICoordinates {
 
+	final int dimension;
+
 	/**
 	 * The final array of GamaPoint, considered to be internally mutable (i.e. points can be changed inside)
 	 */
@@ -48,8 +49,8 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * @param points2
 	 *            an array of points
 	 */
-	GamaCoordinateSequence(final Coordinate... points2) {
-		this(true, points2);
+	GamaCoordinateSequence(final int dimension, final Coordinate... points2) {
+		this(dimension, true, points2);
 	}
 
 	/**
@@ -62,7 +63,8 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * @param points2
 	 *            an array of points
 	 */
-	GamaCoordinateSequence(final boolean copy, final Coordinate... points2) {
+	GamaCoordinateSequence(final int dimension, final boolean copy, final Coordinate... points2) {
+		this.dimension = dimension;
 		if (copy) {
 			final int size = points2.length;
 			points = new GamaPoint[size];
@@ -81,7 +83,8 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * @param size
 	 *            an int > 0 (negative sizes will be treated as 0)
 	 */
-	GamaCoordinateSequence(final int size) {
+	GamaCoordinateSequence(final int dimension, final int size) {
+		this.dimension = dimension;
 		points = new GamaPoint[size < 0 ? 0 : size];
 		for (int i = 0; i < size; i++) {
 			points[i] = new GamaPoint(0d, 0d, 0d);
@@ -95,7 +98,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 */
 	@Override
 	public int getDimension() {
-		return 3;
+		return dimension;
 	}
 
 	/**
@@ -103,9 +106,10 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 */
 	@Override
 	public final GamaCoordinateSequence copy() {
-		return new GamaCoordinateSequence(true, points);
+		return new GamaCoordinateSequence(dimension, true, points);
 	}
-	
+
+	@Override
 	@Deprecated
 	public GamaCoordinateSequence clone() {
 		return copy();
@@ -257,7 +261,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 			// CW property is ensured by reversing the resulting array
 			points2[i] = points[size - i - 1].yNegated();
 		}
-		return new GamaCoordinateSequence(false, points2);
+		return new GamaCoordinateSequence(dimension, false, points2);
 	}
 
 	@Override
@@ -314,7 +318,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	@Override
 	public void getNormal(final boolean clockwise, final double factor, final GamaPoint normal) {
 		normal.setLocation(0, 0, 0);
-		if (points.length < 3) { return; }
+		if (points.length < 3) return;
 		for (int i = 0; i < points.length - 1; i++) {
 			final GamaPoint v0 = points[i];
 			final GamaPoint v1 = points[i + 1];
@@ -343,7 +347,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	@Override
 	public double averageZ() {
 		double sum = 0d;
-		if (points.length == 0) { return sum; }
+		if (points.length == 0) return sum;
 		for (final GamaPoint p : points) {
 			sum += p.z;
 		}
@@ -395,7 +399,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void replaceWith(final int i, final double x, final double y, final double z) {
-		if (i < 0 || i >= points.length) { return; }
+		if (i < 0 || i >= points.length) return;
 		points[i].setLocation(x, y, z);
 
 	}
@@ -404,7 +408,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	public boolean isHorizontal() {
 		final double z = points[0].z;
 		for (int i = 1; i < points.length; i++) {
-			if (points[i].z != z) { return false; }
+			if (points[i].z != z) return false;
 		}
 		return true;
 	}
@@ -429,7 +433,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	@Override
 	public boolean isCoveredBy(final Envelope3D env) {
 		for (final GamaPoint point : points) {
-			if (!env.covers(point)) { return false; }
+			if (!env.covers(point)) return false;
 		}
 		return true;
 	}
@@ -484,15 +488,13 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 */
 	@Override
 	public void ensureClockwiseness() {
-		if (!isRing(points)) { return; }
-		if (signedArea(points) <= 0) {
-			ArrayUtils.reverse(points);
-		}
+		if (!isRing(points)) return;
+		if (signedArea(points) <= 0) { ArrayUtils.reverse(points); }
 	}
 
 	@Override
 	public boolean equals(final Object object) {
-		if (!(object instanceof GamaCoordinateSequence)) { return false; }
+		if (!(object instanceof GamaCoordinateSequence)) return false;
 		final GamaCoordinateSequence other = (GamaCoordinateSequence) object;
 		return Arrays.equals(points, other.points);
 	}

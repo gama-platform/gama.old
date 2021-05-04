@@ -14,14 +14,13 @@ import org.geotools.geometry.jts.DefaultCoordinateSequenceTransformer;
 import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
-
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
@@ -46,7 +45,7 @@ public class Projection implements IProjection {
 		this.referenceProjection = world;
 		initialCRS = crs;
 		if (env != null) {
-			if (initialCRS != null && ! initialCRS.equals(getTargetCRS(scope))) {
+			if (initialCRS != null && !initialCRS.equals(getTargetCRS(scope))) {
 				createTransformation(computeProjection(scope));
 			}
 			// We project the envelope and we use it for initializing the translations
@@ -75,25 +74,15 @@ public class Projection implements IProjection {
 	@Override
 	public Geometry transform(final Geometry g) {
 		// Remove uselessly complicated multigeometries
-		if (g instanceof GeometryCollection && g.getNumGeometries() == 1) { return transform(g.getGeometryN(0)); }
-		Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
-		if (transformer != null) {
-			try {
-				geom = transformer.transform(geom);
-			} catch (final TransformException e) {
-				e.printStackTrace();
-			}
-		}
-		translate(geom);
-		convertUnit(geom);
-		return geom;
+		if (g instanceof GeometryCollection && g.getNumGeometries() == 1) return transform(g.getGeometryN(0));
+		return transform(g, true);
 	}
 
 	public Geometry transform(final Geometry g, final boolean translate) {
 		Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
 		if (transformer != null) {
 			try {
-				geom = transformer.transform(g);
+				geom = transformer.transform(geom);
 			} catch (final TransformException e) {
 				e.printStackTrace();
 			}
@@ -106,7 +95,7 @@ public class Projection implements IProjection {
 	}
 
 	Envelope3D transform(final Envelope3D g) {
-		if (transformer == null) { return g; }
+		if (transformer == null) return g;
 		return Envelope3D.of(transform(JTS.toGeometry(g)).getEnvelopeInternal());
 	}
 
@@ -127,7 +116,7 @@ public class Projection implements IProjection {
 
 	MathTransform computeProjection(final IScope scope) {
 		MathTransform crsTransformation = null;
-		if (initialCRS == null) { return null; }
+		if (initialCRS == null) return null;
 		try {
 			crsTransformation = CRS.findMathTransform(initialCRS, getTargetCRS(scope), true);
 		} catch (final FactoryException e) {
@@ -154,7 +143,7 @@ public class Projection implements IProjection {
 	 */
 	@Override
 	public CoordinateReferenceSystem getTargetCRS(final IScope scope) {
-		if (referenceProjection != null) { return referenceProjection.getTargetCRS(scope); }
+		if (referenceProjection != null) return referenceProjection.getTargetCRS(scope);
 		return factory.getTargetCRS(scope);
 	}
 
@@ -165,9 +154,7 @@ public class Projection implements IProjection {
 	 */
 	@Override
 	public void translate(final Geometry geom) {
-		if (referenceProjection != null) {
-			referenceProjection.translate(geom);
-		}
+		if (referenceProjection != null) { referenceProjection.translate(geom); }
 	}
 
 	/**
@@ -177,24 +164,18 @@ public class Projection implements IProjection {
 	 */
 	@Override
 	public void inverseTranslate(final Geometry geom) {
-		if (referenceProjection != null) {
-			referenceProjection.inverseTranslate(geom);
-		}
+		if (referenceProjection != null) { referenceProjection.inverseTranslate(geom); }
 	}
 
 	@Override
 	public void convertUnit(final Geometry geom) {
-		if (referenceProjection != null) {
-			referenceProjection.convertUnit(geom);
-		}
+		if (referenceProjection != null) { referenceProjection.convertUnit(geom); }
 
 	}
 
 	@Override
 	public void inverseConvertUnit(final Geometry geom) {
-		if (referenceProjection != null) {
-			referenceProjection.inverseConvertUnit(geom);
-		}
+		if (referenceProjection != null) { referenceProjection.inverseConvertUnit(geom); }
 
 	}
 

@@ -18,22 +18,21 @@ import java.io.InputStream;
 // ArcGridReader still requires input streams
 import java.io.StringBufferInputStream;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.PrjFileReader;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.GeneralEnvelope;
 import org.geotools.util.factory.Hints;
+import org.locationtech.jts.geom.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -49,7 +48,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gaml.operators.Spatial.Projections;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -102,14 +100,14 @@ public class GamaGridFile extends GamaGisFile {
 								"The format of " + getName(scope) + " is incorrect. Attempting to read it anyway.",
 								scope),
 						false);
-				
-				reader = fixFileHeader(scope,fillBuffer);
+
+				reader = fixFileHeader(scope, fillBuffer);
 			}
 		}
 		return reader;
 	}
-	
-	public GamaGridReader fixFileHeader(IScope scope,final boolean fillBuffer) {
+
+	public GamaGridReader fixFileHeader(final IScope scope, final boolean fillBuffer) {
 		final StringBuilder text = new StringBuilder();
 		final String NL = System.getProperty("line.separator");
 
@@ -132,8 +130,8 @@ public class GamaGridFile extends GamaGisFile {
 				// }
 			}
 		} catch (final FileNotFoundException e2) {
-			final GamaRuntimeException ex = GamaRuntimeException.error(
-					"The format of " + getName(scope) + " is not correct. Error: " + e2.getMessage(), scope);
+			final GamaRuntimeException ex = GamaRuntimeException
+					.error("The format of " + getName(scope) + " is not correct. Error: " + e2.getMessage(), scope);
 			ex.addContext("for file " + getPath(scope));
 			throw ex;
 		}
@@ -154,9 +152,7 @@ public class GamaGridFile extends GamaGisFile {
 			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 			AbstractGridCoverage2DReader store = null;
 			try {
-				if (fillBuffer) {
-					scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope));
-				}
+				if (fillBuffer) { scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope)); }
 				// Necessary to compute it here, because it needs to be passed
 				// to the Hints
 				final CoordinateReferenceSystem crs = getExistingCRS(scope);
@@ -178,7 +174,8 @@ public class GamaGridFile extends GamaGisFile {
 				final GeneralEnvelope genv = store.getOriginalEnvelope();
 				numRows = store.getOriginalGridRange().getHigh(1) + 1;
 				numCols = store.getOriginalGridRange().getHigh(0) + 1;
-				final Envelope3D env = Envelope3D.of(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1), 0, 0);
+				final Envelope3D env = Envelope3D.of(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1),
+						genv.getMaximum(1), 0, 0);
 				computeProjection(scope, env);
 				final Envelope envP = gis.getProjectedEnvelope();
 				final double cellHeight = envP.getHeight() / numRows;
@@ -194,7 +191,7 @@ public class GamaGridFile extends GamaGisFile {
 				shapes.add(new GamaPoint(originX, maxY));
 				shapes.add(shapes.get(0));
 				geom = GamaGeometryType.buildPolygon(shapes);
-				if (!fillBuffer) { return; }
+				if (!fillBuffer) return;
 
 				final GamaPoint p = new GamaPoint(0, 0);
 				coverage = store.read(null);
@@ -235,40 +232,30 @@ public class GamaGridFile extends GamaGisFile {
 					}
 					if (doubleValues) {
 						final double[] vd = (double[]) vals;
-						if (i == 0) {
-							nbBands = vd.length;
-						}
+						if (i == 0) { nbBands = vd.length; }
 						rect.setAttribute("grid_value", vd[0]);
 						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vd));
 					} else if (intValues) {
 						final int[] vi = (int[]) vals;
-						if (i == 0) {
-							nbBands = vi.length;
-						}
+						if (i == 0) { nbBands = vi.length; }
 						final double v = Double.valueOf(vi[0]);
 						rect.setAttribute("grid_value", v);
 						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (longValues) {
 						final long[] vi = (long[]) vals;
-						if (i == 0) {
-							nbBands = vi.length;
-						}
+						if (i == 0) { nbBands = vi.length; }
 						final double v = Double.valueOf(vi[0]);
 						rect.setAttribute("grid_value", v);
 						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (floatValues) {
 						final float[] vi = (float[]) vals;
-						if (i == 0) {
-							nbBands = vi.length;
-						}
+						if (i == 0) { nbBands = vi.length; }
 						final double v = Double.valueOf(vi[0]);
 						rect.setAttribute("grid_value", v);
 						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
 					} else if (byteValues) {
 						final byte[] bv = (byte[]) vals;
-						if (i == 0) {
-							nbBands = bv.length;
-						}
+						if (i == 0) { nbBands = bv.length; }
 						if (bv.length == 1) {
 							final double v = Double.valueOf(((byte[]) vals)[0]);
 							rect.setAttribute("grid_value", v);
@@ -289,9 +276,7 @@ public class GamaGridFile extends GamaGisFile {
 				ex.addContext("for file " + getFile(scope).getPath());
 				throw ex;
 			} finally {
-				if (store != null) {
-					store.dispose();
-				}
+				if (store != null) { store.dispose(); }
 				scope.getGui().getStatus(scope).endSubStatus("Opening file " + getName(scope));
 			}
 		}
@@ -333,15 +318,13 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	public Envelope computeEnvelopeWithoutBuffer(final IScope scope) {
-		if (gis == null) {
-			createReader(scope, false);
-		}
+		if (gis == null) { createReader(scope, false); }
 		return gis.getProjectedEnvelope();
 	}
 
 	@Override
 	protected void fillBuffer(final IScope scope) {
-		if (getBuffer() != null) { return; }
+		if (getBuffer() != null) return;
 		createReader(scope, true);
 	}
 
@@ -437,9 +420,7 @@ public class GamaGridFile extends GamaGisFile {
 	public void invalidateContents() {
 		super.invalidateContents();
 		reader = null;
-		if (coverage != null) {
-			coverage.dispose(true);
-		}
+		if (coverage != null) { coverage.dispose(true); }
 		coverage = null;
 	}
 
@@ -448,9 +429,7 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	public Double valueOf(final IScope scope, final ILocation loc) {
-		if (getBuffer() == null) {
-			fillBuffer(scope);
-		}
+		if (getBuffer() == null) { fillBuffer(scope); }
 		Object vals = null;
 		try {
 			vals = coverage.evaluate(new DirectPosition2D(loc.getLocation().getX(), loc.getLocation().getY()));
@@ -487,6 +466,11 @@ public class GamaGridFile extends GamaGisFile {
 			}
 		}
 		return val;
+	}
+
+	@Override
+	protected SimpleFeatureCollection getFeatureCollection(final IScope scope) {
+		return null;
 	}
 
 }

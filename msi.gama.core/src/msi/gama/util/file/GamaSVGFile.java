@@ -21,8 +21,7 @@ import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.Scaling3D;
-import msi.gama.ext.svgsalamander.SVGCache;
-import msi.gama.ext.svgsalamander.SVGDiagram;
+import msi.gama.ext.svgsalamander.SVGRoot;
 import msi.gama.ext.svgsalamander.SVGUniverse;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -91,27 +90,15 @@ public class GamaSVGFile extends GamaGeometryFile {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
-			final SVGUniverse svg = SVGCache.getSVGUniverse();
+			final SVGUniverse svg = SVGUniverse.getInstance();
 			final URI uri = svg.loadSVG(in, getPath(scope));
-			final SVGDiagram diagram = svg.getDiagram(uri);
-			final Shape shape = diagram.getRoot().getShape();
+			final SVGRoot diagram = svg.getRoot(uri);
+			final Shape shape = diagram.getShape();
 			final Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.GEOMETRY_FACTORY); // flatness
-			// =
-			// ??
-			// We center and scale the shape in the same operation
-			// final Envelope env = geom.getEnvelopeInternal();
-			// GamaPoint translation = new GamaPoint(-env.getWidth() / 2,
-			// -env.getHeight() / 2);
 			final IShape gs = new GamaShape(null, geom, null, new GamaPoint(0, 0), size, true);
-			// gs.setLocation(new GamaPoint(0, 0));
-			// gs.setLocation(translation);
-			// if ( size != null ) {
-			// gs = Spatial.Transformations.scaled_to(scope, gs, size);
-			// }
 			setBuffer(GamaListFactory.wrap(Types.GEOMETRY, gs));
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
-			// e.printStackTrace();
 		}
 	}
 

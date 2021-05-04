@@ -45,7 +45,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * The empty coordinate sequence
 	 */
-	ICoordinates EMPTY = new GamaCoordinateSequence(new GamaPoint[] {});
+	ICoordinates EMPTY = new GamaCoordinateSequence(3, new GamaPoint[] {});
 
 	/**
 	 * Returns the geometric center of this sequence of points
@@ -62,9 +62,10 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 		center.setLocation(0, 0, 0);
 		addCenterTo(center);
 	}
-	
+
+	@Override
 	@Deprecated
-	default CoordinateSequence clone()  {
+	default CoordinateSequence clone() {
 		return copy();
 	}
 
@@ -86,7 +87,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * @return a point or null
 	 */
 	default GamaPoint at(final int i) {
-		if (i > size() || i < 0) { return null; }
+		if (i > size() || i < 0) return null;
 		return getCoordinate(i);
 	}
 
@@ -175,7 +176,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 		final GamaPoint normal = new GamaPoint();
 		getNormal(clockwise, 1, normal);
 		return normal;
-	};
+	}
 
 	/**
 	 * Computes the normal to this sequence, multiplying the resulting unit vector by a given factor, and fills the

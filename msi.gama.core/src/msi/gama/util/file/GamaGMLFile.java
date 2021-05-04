@@ -15,27 +15,21 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.wfs.GML;
 import org.geotools.wfs.GML.Version;
-import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.Feature;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.xml.sax.SAXException;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.metamodel.shape.GamaGisGeometry;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 13 nov. 2011
@@ -53,10 +47,6 @@ import msi.gaml.types.Types;
 		doc = @doc ("Represents a Geography Markup Language (GML) file as defined by the Open Geospatial Consortium. See https://en.wikipedia.org/wiki/Geography_Markup_Language for more information."))
 @SuppressWarnings ({ "unchecked" })
 public class GamaGMLFile extends GamaGisFile {
-
-	CoordinateReferenceSystem crs = null;
-	IList<IShape> shapes = null;
-	Envelope3D env = null;
 
 	/**
 	 * @throws GamaRuntimeException
@@ -123,97 +113,21 @@ public class GamaGMLFile extends GamaGisFile {
 		super(scope, pathName, code, with3D);
 	}
 
-	/**
-	 * @see msi.gama.util.GamaFile#fillBuffer()
-	 */
-	@Override
-	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) { return; }
-		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
-		readShapes(scope);
-		for (final IShape shape : shapes) {
-			getBuffer().add(shape);
-		}
-		shapes.clear();
-	}
-
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
-	protected CoordinateReferenceSystem getOwnCRS(final IScope scope) {
-		// PROBLEM: how to get the crs of the file?
-		return crs;
-	}
-
-	protected void readShapes(final IScope scope) {
-		scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope));
-		final var file = getFile(scope);
-		shapes = GamaListFactory.create(Types.GEOMETRY);
-		var size = 0;
+	protected SimpleFeatureCollection getFeatureCollection(final IScope scope) {
+		final var gml = new GML(Version.GML3);
 		try {
-
-			final var gml = new GML(Version.GML3);
-			final var collection = gml.decodeFeatureCollection(new FileInputStream(file));
-			crs = collection.getSchema().getCoordinateReferenceSystem();
-			env = Envelope3D.of(collection.getBounds());
-			size = collection.size();
-			var index = 0;
-			computeProjection(scope, env);
-
-			final var it = collection.features();
-			while (it.hasNext()) {
-				index++;
-				if (index % 20 == 0) {
-					scope.getGui().getStatus(scope).setSubStatusCompletion(index / (double) size);
-				}
-				final Feature feature = it.next();
-
-				var g = (Geometry) feature.getDefaultGeometryProperty().getValue();
-				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-
-					g = gis.transform(g);
-					if (!with3D) {
-						g.apply(ZERO_Z);
-						g.geometryChanged();
-					}
-
-					g = multiPolygonManagement(g);
-					shapes.add(new GamaGisGeometry(g, feature));
-				} else if (g == null) {
-					// See Issue 725
-					GAMA.reportError(scope,
-							GamaRuntimeException
-									.warning("GamaShapeFile.fillBuffer; geometry could not be added  as it is "
-											+ "nil: " + feature.getIdentifier(), scope),
-							false);
-				}
-			}
-
-		} catch (final IOException e) {
+			SimpleFeatureCollection collection = gml.decodeFeatureCollection(new FileInputStream(getFile(scope)));
+			computeProjection(scope, Envelope3D.of(collection.getBounds()));
+			return collection;
+		} catch (IOException | SAXException | ParserConfigurationException e) {
 			throw GamaRuntimeException.create(e, scope);
-		} catch (final SAXException e) {
-			throw GamaRuntimeException.create(e, scope);
-		} catch (final ParserConfigurationException e) {
-			throw GamaRuntimeException.create(e, scope);
-		} finally {
-			scope.getGui().getStatus(scope).endSubStatus("Reading file " + getName(scope));
 		}
-		if (size > shapes.size()) {
-			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile(scope) + ": only "
-					+ shapes.size() + " of the " + size + " geometries could be added", scope), false);
-		}
-
-	}
-
-	@Override
-	public Envelope3D computeEnvelope(final IScope scope) {
-		if (env == null) {
-			readShapes(scope);
-		}
-		return env;
 	}
 
 }
