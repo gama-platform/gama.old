@@ -22,8 +22,6 @@
 
 package msi.gama.ext.svgsalamander;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -49,15 +47,17 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
  */
 public class SVGUniverse implements Serializable {
-	public static final long serialVersionUID = 0;
+	private static final SVGUniverse svgUniverse = new SVGUniverse();
 
-	transient private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+	public static SVGUniverse getInstance() {
+		return svgUniverse;
+	}
 
 	/**
 	 * Maps document URIs to their loaded SVG diagrams. Note that URIs for documents loaded from URLs will reflect their
 	 * URLs and URIs for documents initiated from streams will have the scheme <i>svgSalamander</i>.
 	 */
-	final HashMap<URI, SVGDiagram> loadedDocs = new HashMap<>();
+	final HashMap<URI, SVGRoot> loadedDocs = new HashMap<>();
 
 	// final HashMap loadedFonts = new HashMap();
 
@@ -65,25 +65,8 @@ public class SVGUniverse implements Serializable {
 
 	public static final String INPUTSTREAM_SCHEME = "svgSalamander";
 
-	/**
-	 * Current time in this universe. Used for resolving attributes that are influenced by track information. Time is in
-	 * milliseconds. Time 0 coresponds to the time of 0 in each member diagram.
-	 */
-	protected double curTime = 0.0;
-
 	// Cache reader for efficiency
 	XMLReader cachedReader;
-
-	/** Creates a new instance of SVGUniverse */
-	public SVGUniverse() {}
-
-	public void addPropertyChangeListener(final PropertyChangeListener l) {
-		changes.addPropertyChangeListener(l);
-	}
-
-	public void removePropertyChangeListener(final PropertyChangeListener l) {
-		changes.removePropertyChangeListener(l);
-	}
 
 	/**
 	 * Release all loaded SVG document from memory
@@ -93,78 +76,21 @@ public class SVGUniverse implements Serializable {
 	}
 
 	/**
-	 * Returns the current animation time in milliseconds.
-	 */
-	public double getCurTime() {
-		return curTime;
-	}
-
-	public void setCurTime(final double curTime) {
-		final double oldTime = this.curTime;
-		this.curTime = curTime;
-		changes.firePropertyChange("curTime", new Double(oldTime), new Double(curTime));
-	}
-
-	// //
-	// BufferedImage getImage(final URL imageURL) {
-	// return ImageUtils.getInstance().getImageFromFile(new File(imageURL.getPath()), true, false);
-	// }
-
-	/**
 	 * Returns the element of the document at the given URI. If the document is not already loaded, it will be.
 	 */
-	public SVGElement getElement(final URI path) {
-		return getElement(path, true);
-	}
 
-	public SVGElement getElement(final URL path) {
-		try {
-			final URI uri = new URI(path.toString());
-			return getElement(uri, true);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	/**
-	 * Looks up a href within our universe. If the href refers to a document that is not loaded, it will be loaded. The
-	 * URL #target will then be checked against the SVG diagram's index and the coresponding element returned. If there
-	 * is no coresponding index, null is returned.
-	 */
-	public SVGElement getElement(final URI path, final boolean loadIfAbsent) {
-		try {
-			// Strip fragment from URI
-			final URI xmlBase = new URI(path.getScheme(), path.getSchemeSpecificPart(), null);
-
-			SVGDiagram dia = loadedDocs.get(xmlBase);
-			if (dia == null && loadIfAbsent) {
-				final URL url = xmlBase.toURL();
-
-				loadSVG(url, false);
-				dia = loadedDocs.get(xmlBase);
-			}
-			if (dia == null) { return null; }
-			final String fragment = path.getFragment();
-			return fragment == null ? dia.getRoot() : dia.getElement(fragment);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public SVGDiagram getDiagram(final URI xmlBase) {
-		return getDiagram(xmlBase, true);
+	public SVGRoot getRoot(final URI xmlBase) {
+		return getRoot(xmlBase, true);
 	}
 
 	/**
 	 * Returns the diagram that has been loaded from this root. If diagram is not already loaded, returns null.
 	 */
-	public SVGDiagram getDiagram(final URI xmlBase, final boolean loadIfAbsent) {
-		if (xmlBase == null) { return null; }
+	public SVGRoot getRoot(final URI xmlBase, final boolean loadIfAbsent) {
+		if (xmlBase == null) return null;
 
-		SVGDiagram dia = loadedDocs.get(xmlBase);
-		if (dia != null || !loadIfAbsent) { return dia; }
+		SVGRoot dia = loadedDocs.get(xmlBase);
+		if (dia != null || !loadIfAbsent) return dia;
 
 		// Load missing diagram
 		try {
@@ -204,12 +130,11 @@ public class SVGUniverse implements Serializable {
 		bin.reset();
 
 		// Check for gzip magic number
-		if ((b1 << 8 | b0) == GZIPInputStream.GZIP_MAGIC) {
+		if ((b1 << 8 | b0) == GZIPInputStream.GZIP_MAGIC)
 			return new GZIPInputStream(bin);
-		} else {
+		else
 			// Plain text
 			return bin;
-		}
 	}
 
 	public URI loadSVG(final URL docRoot) {
@@ -229,8 +154,7 @@ public class SVGUniverse implements Serializable {
 	public URI loadSVG(final URL docRoot, final boolean forceLoad) {
 		try {
 			final URI uri = new URI(docRoot.toString());
-			if (loadedDocs.containsKey(uri) && !forceLoad) { return uri; }
-
+			if (loadedDocs.containsKey(uri) && !forceLoad) return uri;
 			final InputStream is = docRoot.openStream();
 			return loadSVG(uri, new InputSource(createDocumentInputStream(is)));
 		} catch (final Throwable t) {
@@ -246,8 +170,8 @@ public class SVGUniverse implements Serializable {
 
 	public URI loadSVG(final InputStream is, final String name, final boolean forceLoad) throws IOException {
 		final URI uri = getStreamBuiltURI(name);
-		if (uri == null) { return null; }
-		if (loadedDocs.containsKey(uri) && !forceLoad) { return uri; }
+		if (uri == null) return null;
+		if (loadedDocs.containsKey(uri) && !forceLoad) return uri;
 
 		return loadSVG(uri, new InputSource(createDocumentInputStream(is)));
 	}
@@ -293,9 +217,8 @@ public class SVGUniverse implements Serializable {
 		// System.err.println(url.toString());
 		// Synthesize URI for this stream
 		final URI uri = getStreamBuiltURI(name);
-		if (uri == null) { return null; }
-		if (loadedDocs.containsKey(uri) && !forceLoad) { return uri; }
-
+		if (uri == null) return null;
+		if (loadedDocs.containsKey(uri) && !forceLoad) return uri;
 		return loadSVG(uri, new InputSource(reader));
 	}
 
@@ -307,11 +230,9 @@ public class SVGUniverse implements Serializable {
 	 */
 	public URI getStreamBuiltURI(final String n) {
 		String name = n;
-		if (name == null || name.length() == 0) { return null; }
+		if (name == null || name.length() == 0) return null;
 
-		if (name.charAt(0) != '/') {
-			name = '/' + name;
-		}
+		if (name.charAt(0) != '/') { name = '/' + name; }
 
 		try {
 			// Dummy URL for SVG documents built from image streams
@@ -323,34 +244,29 @@ public class SVGUniverse implements Serializable {
 	}
 
 	private XMLReader getXMLReaderCached() throws SAXException {
-		if (cachedReader == null) {
-			cachedReader = XMLReaderFactory.createXMLReader();
-		}
+		if (cachedReader == null) { cachedReader = XMLReaderFactory.createXMLReader(); }
 		return cachedReader;
 	}
 
 	// protected URI loadSVG(URI xmlBase, InputStream is)
 	protected URI loadSVG(final URI xmlBase, final InputSource is) {
 		// Use an instance of ourselves as the SAX event handler
-		final SVGLoader handler = new SVGLoader(xmlBase, this);
-
+		final SVGLoader handler = new SVGLoader();
 		// Place this docment in the universe before it is completely loaded
 		// so that the load process can refer to references within it's current
 		// document
-		loadedDocs.put(xmlBase, handler.getLoadedDiagram());
-
+		loadedDocs.put(xmlBase, handler.getRoot());
 		try {
 			// Parse the input
 			final XMLReader reader = getXMLReaderCached();
 			reader.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream(new byte[0])));
 			reader.setContentHandler(handler);
 			reader.parse(is);
-
+			loadedDocs.put(xmlBase, handler.getRoot());
 			return xmlBase;
 		} catch (final SAXParseException sex) {
 			System.err.println("Error processing " + xmlBase);
 			System.err.println(sex.getMessage());
-
 			loadedDocs.remove(xmlBase);
 			return null;
 		} catch (final Throwable t) {
