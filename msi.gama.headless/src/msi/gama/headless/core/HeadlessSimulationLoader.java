@@ -49,7 +49,7 @@ public class HeadlessSimulationLoader {
 		return INSTANCE.configureInjector();
 	}
 
-	private static void preloadGAMA() {
+	public static void preloadGAMA() {
 		INSTANCE.configureInjector();
 	}
 
