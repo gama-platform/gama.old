@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Headless version of GAMA
 Bundle-SymbolicName: msi.gama.headless;singleton:=true
 Bundle-Version: 1.8.1.qualifier
-Bundle-Activator: msi.gama.headless.runtime.Activator
 Require-Bundle: msi.gama.core,
  msi.gama.lang.gaml,
  org.eclipse.core.runtime,
@@ -29,7 +28,6 @@ Export-Package:
    org.eclipse.equinox.app,
    msi.gama.kernel.experiment",
  msi.gama.headless.script;uses:="msi.gama.kernel.model,org.w3c.dom",
- msi.gama.headless.util;uses:="org.w3c.dom",
  msi.gama.headless.xml;uses:="msi.gama.headless.job"
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

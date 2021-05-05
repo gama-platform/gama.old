@@ -9,12 +9,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
 
 import msi.gama.headless.job.ExperimentJob;
 import ummisco.gama.dev.utils.DEBUG;
 
-public class LocalSimulationRuntime extends Observable implements SimulationRuntime {
+public class LocalSimulationRuntime /* extends Observable */ implements SimulationRuntime {
 
 	static {
 		DEBUG.ON();
@@ -22,8 +21,6 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	private final Map<String, ExperimentJobThread> simulations;
 	private final ArrayList<ExperimentJobThread> queue;
 	private final ArrayList<ExperimentJobThread> started;
-	// private final HashMap<String, ArrayList<IModel>> loadedModels;
-	// private final HashMap<String, ArrayList<IModel>> availableLoadedModels;
 	private final int allocatedProcessor;
 	private boolean isTraceKept;
 
@@ -47,20 +44,6 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		return cpus;
 	}
 
-	// public void listenMe(final Observer v) {
-	// this.addObserver(v);
-	// }
-
-	// @Override
-	// public boolean isTraceKept() {
-	// return this.isTraceKept;
-	// }
-
-	// @Override
-	// public void keepTrace(final boolean t) {
-	// this.isTraceKept = t;
-	// }
-
 	@Override
 	public void pushSimulation(final ExperimentJob s) {
 		final ExperimentJobThread f = new ExperimentJobThread(s);
@@ -75,7 +58,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	private void startSimulation(final ExperimentJobThread s) {
 		started.add(s);
 		s.start();
-		this.notifyListener();
+		// this.notifyListener();
 	}
 
 	public void closeSimulation(final ExperimentJobThread s) {
@@ -86,62 +69,15 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 			this.startSimulation(p);
 		}
 		if (!this.isTraceKept) { simulations.remove(s.getExperimentJob().getExperimentID()); }
-		this.notifyListener();
+		// this.notifyListener();
 	}
-
-	private void notifyListener() {
-		this.setChanged();
-		this.notifyObservers();
-	}
-	//
-	// @Override
-	// public SimulationState getSimulationState(final String id) {
-	// final FakeApplication tmp = simulations.get(id);
-	// if (tmp == null) return SimulationState.UNDEFINED;
-	// if (started.contains(tmp)) return SimulationState.STARTED;
-	// if (queue.contains(tmp)) return SimulationState.ENQUEUED;
-	// return SimulationState.ACHIEVED;
-	// }
 
 	@Override
 	public boolean isPerformingSimulation() {
 		return started.size() > 0 || queue.size() > 0;
 	}
 
-	// public synchronized IModel lockModel(final File fl) throws IOException, GamaHeadlessException {
-	// IModel mdl;
-	// final String key = fl.getAbsolutePath();
-	// ArrayList<IModel> arr = availableLoadedModels.get(fl.getAbsolutePath());
-	// if (arr == null) {
-	// arr = new ArrayList<>();
-	// availableLoadedModels.put(key, arr);
-	// loadedModels.put(key, new ArrayList<IModel>());
-	// }
-	// if (arr.size() == 0) {
-	// mdl = HeadlessSimulationLoader.loadModel(fl);
-	// loadedModels.get(key).add(mdl);
-	// } else {
-	// mdl = arr.get(0);
-	// arr.remove(0);
-	// }
-	// return mdl;
-	// }
-
-	// @Override
-	// public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
-	// final List<GamlCompilationError> errors = new ArrayList<>();
-	// return HeadlessSimulationLoader.loadModel(fl, errors);
-	// }
-
-	// @Override
-	// public IExperimentPlan buildExperimentPlan(final String expName, final IModel mdl) {
-	// final IDescription des = mdl.getExperiment(expName).getDescription();
-	// final IExperimentPlan expp = new ExperimentPlan(des);
-	// expp.setModel(mdl);
-	// return expp;
-	// }
-
-	class ExperimentJobThread extends Thread {// implements Runnable {
+	class ExperimentJobThread extends Thread {
 
 		class DebugStream extends FileOutputStream {
 
@@ -182,14 +118,78 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 
 	}
 
-	// @Override
-	// public HashMap<String, Double> getSimulationState() {
-	// final HashMap<String, Double> res = new HashMap<>();
-	// for (final ExperimentJobThread app : simulations.values()) {
-	// ExperimentJob exp = app.getExperimentJob();
-	// res.put(exp.getExperimentID(), new Double(exp.getStep() / exp.getFinalStep()));
-	// }
-	// return res;
-	// }
-
 }
+
+// private final HashMap<String, ArrayList<IModel>> loadedModels;
+// private final HashMap<String, ArrayList<IModel>> availableLoadedModels;
+
+// @Override
+// public HashMap<String, Double> getSimulationState() {
+// final HashMap<String, Double> res = new HashMap<>();
+// for (final ExperimentJobThread app : simulations.values()) {
+// ExperimentJob exp = app.getExperimentJob();
+// res.put(exp.getExperimentID(), new Double(exp.getStep() / exp.getFinalStep()));
+// }
+// return res;
+// }
+
+// private void notifyListener() {
+// this.setChanged();
+// this.notifyObservers();
+// }
+//
+// @Override
+// public SimulationState getSimulationState(final String id) {
+// final FakeApplication tmp = simulations.get(id);
+// if (tmp == null) return SimulationState.UNDEFINED;
+// if (started.contains(tmp)) return SimulationState.STARTED;
+// if (queue.contains(tmp)) return SimulationState.ENQUEUED;
+// return SimulationState.ACHIEVED;
+// }
+
+// public void listenMe(final Observer v) {
+// this.addObserver(v);
+// }
+
+// @Override
+// public boolean isTraceKept() {
+// return this.isTraceKept;
+// }
+
+// @Override
+// public void keepTrace(final boolean t) {
+// this.isTraceKept = t;
+// }
+
+// public synchronized IModel lockModel(final File fl) throws IOException, GamaHeadlessException {
+// IModel mdl;
+// final String key = fl.getAbsolutePath();
+// ArrayList<IModel> arr = availableLoadedModels.get(fl.getAbsolutePath());
+// if (arr == null) {
+// arr = new ArrayList<>();
+// availableLoadedModels.put(key, arr);
+// loadedModels.put(key, new ArrayList<IModel>());
+// }
+// if (arr.size() == 0) {
+// mdl = HeadlessSimulationLoader.loadModel(fl);
+// loadedModels.get(key).add(mdl);
+// } else {
+// mdl = arr.get(0);
+// arr.remove(0);
+// }
+// return mdl;
+// }
+
+// @Override
+// public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
+// final List<GamlCompilationError> errors = new ArrayList<>();
+// return HeadlessSimulationLoader.loadModel(fl, errors);
+// }
+
+// @Override
+// public IExperimentPlan buildExperimentPlan(final String expName, final IModel mdl) {
+// final IDescription des = mdl.getExperiment(expName).getDescription();
+// final IExperimentPlan expp = new ExperimentPlan(des);
+// expp.setModel(mdl);
+// return expp;
+// }

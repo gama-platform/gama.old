@@ -24,7 +24,6 @@ import org.w3c.dom.NodeList;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.job.JobPlan;
-import msi.gama.headless.util.WorkspaceManager;
 import msi.gama.headless.xml.XmlTAG;
 
 public class ExperimentationPlanFactory {
@@ -37,7 +36,7 @@ public class ExperimentationPlanFactory {
 	public static void analyseWorkspace(final String directoryPath)
 			throws IOException, ParserConfigurationException, TransformerException {
 		final ArrayList<String> modelFileNames =
-				WorkspaceManager.readDirectory(directoryPath + "./" + DEFAULT_MODEL_DIRECTORY_IN_WORKSPACE);
+				readDirectory(directoryPath + "./" + DEFAULT_MODEL_DIRECTORY_IN_WORKSPACE);
 		for (final String nm : modelFileNames) {
 			analyseModelInWorkspace(new File(nm));
 		}
@@ -50,9 +49,7 @@ public class ExperimentationPlanFactory {
 				+ DEFAULT_HEADLESS_DIRECTORY_IN_WORKSPACE;
 		final String outFileName = modelFile.getName().substring(0, modelFile.getName().lastIndexOf('.'));
 		final File storeDirectory = new File(headlessDirectory);
-		if (!storeDirectory.exists()) {
-			storeDirectory.mkdirs();
-		}
+		if (!storeDirectory.exists()) { storeDirectory.mkdirs(); }
 		final File outFile = new File(headlessDirectory + "/" + outFileName + ".xml");
 		final File outerrFile = new File(headlessDirectory + "/err_" + outFileName + ".log");
 
@@ -64,13 +61,13 @@ public class ExperimentationPlanFactory {
 			 * JobPlan jb = new JobPlan(); List<IExperimentJob> generatedExperiment; try {
 			 * jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); long[] seed = {DEFAULT_FINAL_STEP};
 			 * generatedExperiment = jb.constructAllJobs(seed,DEFAULT_FINAL_STEP);
-			 * 
-			 * 
+			 *
+			 *
 			 * Document dd =ExperimentationPlanFactory.buildXmlDocument(generatedExperiment); TransformerFactory
 			 * transformerFactory = TransformerFactory.newInstance(); Transformer transformer =
 			 * transformerFactory.newTransformer(); DOMSource source = new DOMSource(dd); StreamResult result = new
 			 * StreamResult(new File("/tmp/file.xml")); transformer.transform(source, result);
-			 * 
+			 *
 			 * //generatedExperiment = jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); }catch(Exception e) {
 			 * outErr.write("Error in file : " + modelFile.getAbsolutePath()); }
 			 */
@@ -148,9 +145,7 @@ public class ExperimentationPlanFactory {
 		final Element rootElement = doc.createElement(XmlTAG.EXPERIMENT_PLAN_TAG);
 		doc.appendChild(rootElement);
 
-		for (int i = 0; i < jobs.size(); i++) {
-			final IExperimentJob job = jobs.get(i);
-
+		for (final IExperimentJob job : jobs) {
 			final Element jb = job.asXMLDocument(doc);
 			// make sure the pathSeparator is correct
 			final String modelPath = jb.getAttribute(XmlTAG.SOURCE_PATH_TAG).replace("\\", "/");
@@ -174,6 +169,36 @@ public class ExperimentationPlanFactory {
 		}
 
 		return doc;
+	}
+
+	public static ArrayList<String> readDirectory(final String dir) {
+		final ArrayList<String> listFiles = new ArrayList<>();
+		final File rep = new File(dir);
+
+		if (rep.isDirectory()) {
+			final String t[] = rep.list();
+
+			if (t != null) {
+				for (final String fName : t) {
+					final ArrayList<String> newList = readDirectory(rep.getAbsolutePath() + File.separator + fName);
+					listFiles.addAll(newList);
+				}
+			}
+		} else {
+			if ("gaml".equals(getFileExtension(rep.getAbsolutePath()))) { listFiles.add(rep.getAbsolutePath()); }
+		}
+
+		return listFiles;
+	}
+
+	public static String getFileExtension(final String fileName) {
+		String extension = null;
+		try {
+			extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		return extension;
 	}
 
 }
