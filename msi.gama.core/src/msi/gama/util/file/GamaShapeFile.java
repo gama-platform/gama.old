@@ -33,7 +33,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.util.GISUtils;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -291,16 +290,6 @@ public class GamaShapeFile extends GamaGisFile {
 	public GamaShapeFile(final IScope scope, final String pathName, final String code, final boolean with3D)
 			throws GamaRuntimeException {
 		super(scope, pathName, code, with3D);
-	}
-
-	/**
-	 * @see msi.gama.util.GamaFile#fillBuffer()
-	 */
-	@Override
-	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) return;
-		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
-		readShapes(scope);
 	}
 
 	@Override

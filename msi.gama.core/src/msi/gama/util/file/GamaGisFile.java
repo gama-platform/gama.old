@@ -120,8 +120,8 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 			collection.accepts(feature -> {
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-					// if (!with3D && !g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
-					// g = gis.transform(g);
+					if (!with3D && !g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
+					g = gis.transform(g);
 					if (!with3D) {
 						g.apply(ZERO_Z);
 						g.geometryChanged();
