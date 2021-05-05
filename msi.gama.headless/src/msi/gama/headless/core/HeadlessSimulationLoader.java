@@ -37,11 +37,27 @@ public class HeadlessSimulationLoader {
 		DEBUG.ON();
 	}
 
-	public static Injector preloadGAMA() {
+	// The injector to use in headless mode
+	Injector injector;
+
+	private static HeadlessSimulationLoader INSTANCE = new HeadlessSimulationLoader();
+
+	// Singleton
+	private HeadlessSimulationLoader() {}
+
+	public static Injector getInjector() {
+		return INSTANCE.configureInjector();
+	}
+
+	private static void preloadGAMA() {
+		INSTANCE.configureInjector();
+	}
+
+	private Injector configureInjector() {
+		if (injector != null) return injector;
 		DEBUG.LOG("GAMA configuring and loading...");
 		System.setProperty("java.awt.headless", "true");
 		GAMA.setHeadLessMode();
-		Injector injector;
 		try {
 			// We initialize XText and Gaml.
 			injector = GamlStandaloneSetup.doSetup();
@@ -108,9 +124,10 @@ public class HeadlessSimulationLoader {
 	 */
 	public static synchronized IModel loadModel(final File myFile, final List<GamlCompilationError> errors,
 			final GamlProperties metaProperties) throws IOException, GamaHeadlessException {
-		if (myFile == null) { throw new IOException("Model file is null"); }
+		preloadGAMA(); // make sure the injector is created
+		if (myFile == null) throw new IOException("Model file is null");
 		final String fileName = myFile.getAbsolutePath();
-		if (!myFile.exists()) { throw new IOException("Model file does not exist: " + fileName); }
+		if (!myFile.exists()) throw new IOException("Model file does not exist: " + fileName);
 		DEBUG.LOG(fileName + " model is being compiled...");
 
 		final IModel model = GamlModelBuilder.getDefaultInstance().compile(URI.createFileURI(fileName), errors);
