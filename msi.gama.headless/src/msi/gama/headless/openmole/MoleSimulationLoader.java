@@ -44,7 +44,7 @@ public abstract class MoleSimulationLoader {
 
 	public static IModel loadModel(final File modelPath, final List<GamlCompilationError> errors,
 			final GamlProperties metadata) throws IOException, GamaHeadlessException {
-		return HeadlessSimulationLoader.loadModel(modelPath, errors, metadata);
+		return HeadlessSimulationLoader.loadModel(modelPath, errors, metadata, true);
 	}
 
 	public static IMoleExperiment newExperiment(final IModel model) {

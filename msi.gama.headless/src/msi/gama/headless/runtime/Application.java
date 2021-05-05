@@ -126,12 +126,8 @@ public class Application implements IApplication {
 			size = size - 1;
 			mustContainOutFile = false;
 		}
-		if (args.contains(THREAD_PARAMETER)) {
-			size = size - 2;
-		}
-		if (args.contains(VERBOSE_PARAMETER)) {
-			size = size - 1;
-		}
+		if (args.contains(THREAD_PARAMETER)) { size = size - 2; }
+		if (args.contains(VERBOSE_PARAMETER)) { size = size - 1; }
 		if (mustContainInFile && mustContainOutFile && size < 2) {
 			showError(HeadLessErrors.INPUT_NOT_DEFINED, null);
 			return false;
@@ -146,13 +142,9 @@ public class Application implements IApplication {
 			Globals.OUTPUT_PATH = args.get(outIndex);
 			Globals.IMAGES_PATH = Globals.OUTPUT_PATH + "/snapshot";
 			final File output = new File(Globals.OUTPUT_PATH);
-			if (!output.exists()) {
-				output.mkdir();
-			}
+			if (!output.exists()) { output.mkdir(); }
 			final File images = new File(Globals.IMAGES_PATH);
-			if (!images.exists()) {
-				images.mkdir();
-			}
+			if (!images.exists()) { images.mkdir(); }
 		}
 
 		if (mustContainInFile) {
@@ -177,6 +169,7 @@ public class Application implements IApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 
+		HeadlessSimulationLoader.preloadGAMA();
 		DEBUG.OFF();
 
 		final Map<String, String[]> mm = context.getArguments();
@@ -188,13 +181,13 @@ public class Application implements IApplication {
 			DEBUG.LOG(showHelp());
 			DEBUG.OFF();
 
-		} else if (args.contains(RUN_LIBRARY_PARAMETER)) {
+		} else if (args.contains(RUN_LIBRARY_PARAMETER))
 			return ModelLibraryRunner.getInstance().start(args);
-		} else if (args.contains(VALIDATE_LIBRARY_PARAMETER)) {
+		else if (args.contains(VALIDATE_LIBRARY_PARAMETER))
 			return ModelLibraryValidator.getInstance().start(args);
-		} else if (args.contains(TEST_LIBRARY_PARAMETER)) {
+		else if (args.contains(TEST_LIBRARY_PARAMETER))
 			return ModelLibraryTester.getInstance().start(args);
-		} else if (args.contains(CHECK_MODEL_PARAMETER)) {
+		else if (args.contains(CHECK_MODEL_PARAMETER)) {
 			ModelLibraryGenerator.start(this, args);
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
@@ -205,9 +198,9 @@ public class Application implements IApplication {
 	}
 
 	public String after(final List<String> args, final String arg) {
-		if (args == null || args.size() < 2) { return null; }
+		if (args == null || args.size() < 2) return null;
 		for (int i = 0; i < args.size() - 1; i++) {
-			if (args.get(i).equals(arg)) { return args.get(i + 1); }
+			if (args.get(i).equals(arg)) return args.get(i + 1);
 		}
 		return null;
 	}
@@ -226,7 +219,7 @@ public class Application implements IApplication {
 			DEBUG.ERR(showHelp());
 			return;
 		}
-		HeadlessSimulationLoader.preloadGAMA();
+
 		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(arg.get(arg.size() - 2));
 		final ArrayList<IExperimentJob> selectedJob = new ArrayList<>();
 		for (final IExperimentJob j : jb) {
@@ -250,7 +243,6 @@ public class Application implements IApplication {
 	public void buildXMLForModelLibrary(final ArrayList<File> modelPaths, final String outputPath)
 			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
 		// "arg[]" are the paths to the different models
-		HeadlessSimulationLoader.preloadGAMA();
 		final ArrayList<IExperimentJob> selectedJob = new ArrayList<>();
 		for (final File modelFile : modelPaths) {
 			final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(modelFile.getAbsolutePath());
@@ -289,16 +281,13 @@ public class Application implements IApplication {
 	}
 
 	public void runSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
-		if (!checkParameters(args)) {
-			System.exit(-1);
-		}
+		if (!checkParameters(args)) { System.exit(-1); }
 
 		verbose = args.contains(VERBOSE_PARAMETER);
 		if (verbose) {
 			DEBUG.ON();
 
 		}
-		HeadlessSimulationLoader.preloadGAMA();
 		this.tunnelingMode = args.contains(TUNNELING_PARAMETER);
 		this.consoleMode = args.contains(CONSOLE_PARAMETER);
 		if (args.contains(SOCKET_PARAMETER)) {
@@ -315,9 +304,7 @@ public class Application implements IApplication {
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 
 		Reader in = null;
-		if (this.verbose && !this.tunnelingMode) {
-			DEBUG.ON();
-		}
+		if (this.verbose && !this.tunnelingMode) { DEBUG.ON(); }
 
 		if (this.consoleMode) {
 			in = new Reader(ConsoleReader.readOnConsole());

@@ -103,7 +103,7 @@ public class HeadlessSimulationLoader {
 	 */
 	public static synchronized IModel loadModel(final File myFile, final List<GamlCompilationError> errors)
 			throws IOException, GamaHeadlessException {
-		return loadModel(myFile, errors, null);
+		return loadModel(myFile, errors, null, true);
 	}
 
 	/**
@@ -123,8 +123,10 @@ public class HeadlessSimulationLoader {
 	 *             in case the compilation ends in error
 	 */
 	public static synchronized IModel loadModel(final File myFile, final List<GamlCompilationError> errors,
-			final GamlProperties metaProperties) throws IOException, GamaHeadlessException {
-		preloadGAMA(); // make sure the injector is created
+			final GamlProperties metaProperties, final boolean initHeadless) throws IOException, GamaHeadlessException {
+		if (initHeadless) {
+			preloadGAMA(); // make sure the injector is created.
+		}
 		if (myFile == null) throw new IOException("Model file is null");
 		final String fileName = myFile.getAbsolutePath();
 		if (!myFile.exists()) throw new IOException("Model file does not exist: " + fileName);
