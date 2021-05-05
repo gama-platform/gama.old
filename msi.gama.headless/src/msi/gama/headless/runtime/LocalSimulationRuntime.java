@@ -3,27 +3,18 @@ package msi.gama.headless.runtime;
 import static msi.gama.headless.common.Globals.CONSOLE_OUTPUT_FILENAME;
 import static msi.gama.headless.common.Globals.OUTPUT_PATH;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
-import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
-import msi.gama.kernel.experiment.ExperimentPlan;
-import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.model.IModel;
-import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.descriptions.IDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
-public class LocalSimulationRuntime extends Observable implements SimulationRuntime, RuntimeContext {
+public class LocalSimulationRuntime extends Observable implements SimulationRuntime {
 
 	static {
 		DEBUG.ON();
@@ -136,19 +127,19 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	// return mdl;
 	// }
 
-	@Override
-	public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
-		final List<GamlCompilationError> errors = new ArrayList<>();
-		return HeadlessSimulationLoader.loadModel(fl, errors);
-	}
+	// @Override
+	// public synchronized IModel loadModel(final File fl) throws IOException, GamaHeadlessException {
+	// final List<GamlCompilationError> errors = new ArrayList<>();
+	// return HeadlessSimulationLoader.loadModel(fl, errors);
+	// }
 
-	@Override
-	public IExperimentPlan buildExperimentPlan(final String expName, final IModel mdl) {
-		final IDescription des = mdl.getExperiment(expName).getDescription();
-		final IExperimentPlan expp = new ExperimentPlan(des);
-		expp.setModel(mdl);
-		return expp;
-	}
+	// @Override
+	// public IExperimentPlan buildExperimentPlan(final String expName, final IModel mdl) {
+	// final IDescription des = mdl.getExperiment(expName).getDescription();
+	// final IExperimentPlan expp = new ExperimentPlan(des);
+	// expp.setModel(mdl);
+	// return expp;
+	// }
 
 	class ExperimentJobThread extends Thread {// implements Runnable {
 
@@ -180,7 +171,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		@Override
 		public void run() {
 			try (final DebugStream file = new DebugStream()) {
-				si.loadAndBuild(LocalSimulationRuntime.this);
+				si.loadAndBuild();
 				si.playAndDispose();
 			} catch (final Exception e) {
 				DEBUG.ERR(e);
@@ -191,14 +182,14 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 
 	}
 
-	@Override
-	public HashMap<String, Double> getSimulationState() {
-		final HashMap<String, Double> res = new HashMap<>();
-		for (final ExperimentJobThread app : simulations.values()) {
-			ExperimentJob exp = app.getExperimentJob();
-			res.put(exp.getExperimentID(), new Double(exp.getStep() / exp.getFinalStep()));
-		}
-		return res;
-	}
+	// @Override
+	// public HashMap<String, Double> getSimulationState() {
+	// final HashMap<String, Double> res = new HashMap<>();
+	// for (final ExperimentJobThread app : simulations.values()) {
+	// ExperimentJob exp = app.getExperimentJob();
+	// res.put(exp.getExperimentID(), new Double(exp.getStep() / exp.getFinalStep()));
+	// }
+	// return res;
+	// }
 
 }
