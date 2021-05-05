@@ -1,14 +1,14 @@
 /*********************************************************************************************
- * 
+ *
  *
  * 'MoleSimulationLoader.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and
  * simulation platform. (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
+ *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
+ *
+ *
  **********************************************************************************************/
 package msi.gama.headless.openmole;
 
@@ -24,12 +24,8 @@ import msi.gaml.compilation.GamlCompilationError;
 
 public abstract class MoleSimulationLoader {
 
-	public static void loadGAMA() {
-		// Now done in the loader
-	}
-
 	/**
-	 * 
+	 *
 	 * @param modelPath
 	 * @return a compiled model
 	 * @throws IOException
@@ -48,7 +44,6 @@ public abstract class MoleSimulationLoader {
 
 	public static IModel loadModel(final File modelPath, final List<GamlCompilationError> errors,
 			final GamlProperties metadata) throws IOException, GamaHeadlessException {
-		HeadlessSimulationLoader.preloadGAMA();
 		return HeadlessSimulationLoader.loadModel(modelPath, errors, metadata);
 	}
 

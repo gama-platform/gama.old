@@ -35,7 +35,7 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 
 	@Override
 	public int start(final List<String> args) throws IOException {
-		final Injector injector = HeadlessSimulationLoader.preloadGAMA();
+		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 		final int[] count = { 0 };
 		final int[] code = { 0, 0 };
@@ -115,7 +115,7 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 	private void validateAndRun(final GamlModelBuilder builder, final Map<String, Exception> executionErrors,
 			final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel, final boolean expGUIOnly,
 			final int nbCycles) {
-		if (pathToModel.toString().contains("Database")) { return; }
+		if (pathToModel.toString().contains("Database")) return;
 		DEBUG.PAD("", 80, '=');
 
 		final List<GamlCompilationError> errors = new ArrayList<>();
@@ -156,9 +156,7 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 	}
 
 	public static ModelLibraryRunner getInstance() {
-		if (instance == null) {
-			instance = new ModelLibraryRunner();
-		}
+		if (instance == null) { instance = new ModelLibraryRunner(); }
 		return instance;
 	}
 }
