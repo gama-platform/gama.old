@@ -13,6 +13,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -53,8 +54,7 @@ public class StartSimulation extends AbstractStatement {
 	}
 
 	private String retrieveModelFileAbsolutePath(final IScope scope, final String filename) {
-		if (filename.charAt(0) == '/')
-			return filename;
+		if (filename.charAt(0) == '/') return filename;
 		return new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath() + "/" + filename;
 	}
 
@@ -70,14 +70,13 @@ public class StartSimulation extends AbstractStatement {
 			modelPath = scope.getModel().getFilePath();
 		}
 
-		if (this.hasFacet(IKeywords.WITHSEED))
-			seed = Cast.asInt(scope, getFacetValue(scope, IKeywords.WITHSEED));
+		if (this.hasFacet(IKeywords.WITHSEED)) { seed = Cast.asInt(scope, getFacetValue(scope, IKeywords.WITHSEED)); }
 
 		final long lseed = seed;
 
 		IModel mdl = null;
 		try {
-			mdl = HeadlessSimulationLoader.loadModel(new File(modelPath));
+			mdl = HeadlessSimulationLoader.loadModel(new File(modelPath), null, null, GAMA.isInHeadLessMode());
 		} catch (final IOException e) {
 			throw GamaRuntimeException.error("Sub model file not found!", scope);
 		} catch (final GamaHeadlessException e) {
