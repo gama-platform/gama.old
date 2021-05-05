@@ -12,13 +12,10 @@
  **********************************************************************************************/
 package msi.gama.headless.common;
 
-// gama.getexperiment.getOutputManager...
-
 public final class DataTypeFactory {
 
 	public static DataType getObjectMetaData(final Object val) {
 		DataType type;
-		if (val == null) { return DataType.UNDEFINED; }
 		if (val instanceof Integer || val instanceof Long) {
 			type = DataType.INT;
 		} else if (val instanceof Float || val instanceof Double) {
@@ -27,12 +24,6 @@ public final class DataTypeFactory {
 			type = DataType.BOOLEAN;
 		} else if (val instanceof String) {
 			type = DataType.STRING;
-			/*
-			 * else if(val instanceof pams.common.dataTypes.Combined ) type=DataType.COMBINED;
-			 */
-			/*
-			 * else if(val instanceof Display2D) type=DataType.DISPLAY2D;
-			 */
 		} else {
 			type = DataType.UNDEFINED;
 		}
@@ -40,11 +31,11 @@ public final class DataTypeFactory {
 	}
 
 	public static Object getObjectFromText(final String val, final DataType t) {
-		if (t.equals(DataType.INT)) { return Integer.valueOf(val); }
-		if (t.equals(DataType.BOOLEAN)) { return Boolean.valueOf(val); }
+		if (t.equals(DataType.INT)) return Integer.valueOf(val);
+		if (t.equals(DataType.BOOLEAN)) return Boolean.valueOf(val);
 		// See #3006
-		if (t.equals(DataType.FLOAT)) { return Double.valueOf(val); }
-		if (t.equals(DataType.STRING)) { return val; }
+		if (t.equals(DataType.FLOAT)) return Double.valueOf(val);
+		if (t.equals(DataType.STRING)) return val;
 		return val;
 	}
 

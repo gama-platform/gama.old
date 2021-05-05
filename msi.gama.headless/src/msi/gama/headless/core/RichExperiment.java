@@ -13,6 +13,7 @@
 package msi.gama.headless.core;
 
 import msi.gama.headless.common.DataType;
+import msi.gama.headless.common.DataTypeFactory;
 import msi.gama.headless.job.ExperimentJob.OutputType;
 import msi.gama.headless.job.ListenedVariable;
 import msi.gama.kernel.model.IModel;
@@ -31,40 +32,28 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 
 	@Override
 	public OutputType getTypeOf(final String name) {
-		if (currentExperiment == null) { return OutputType.OUTPUT; }
-		if (currentExperiment.hasVar(name)) { return OutputType.EXPERIMENT_ATTRIBUTE; }
-		if (currentExperiment.getModel().getSpecies().hasVar(name)) { return OutputType.SIMULATION_ATTRIBUTE; }
+		if (currentExperiment == null) return OutputType.OUTPUT;
+		if (currentExperiment.hasVar(name)) return OutputType.EXPERIMENT_ATTRIBUTE;
+		if (currentExperiment.getModel().getSpecies().hasVar(name)) return OutputType.SIMULATION_ATTRIBUTE;
 		return OutputType.OUTPUT;
 	}
 
 	@Override
 	public RichOutput getRichOutput(final ListenedVariable v) {
 		final String parameterName = v.getName();
-		if (currentSimulation.dead()) { return null; }
+		if (currentSimulation.dead()) return null;
 		final IOutput output =
 				((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
-		if (output == null) {
+		if (output == null)
 			throw GamaRuntimeException.error("Output unresolved", currentExperiment.getExperimentScope());
-		}
 		output.update();
 
 		Object val = null;
 		DataType tpe = null;
 
 		if (output instanceof MonitorOutput) {
-			// ((SimulationAgent)
-			// this.currentExperiment.getAgent().getSimulation()).getOutputManager().getOutputWithName(parameterName)
 			val = ((MonitorOutput) output).getLastValue();
-			if (val instanceof Integer) {
-				tpe = DataType.INT;
-			} else if (val instanceof Double) {
-				tpe = DataType.INT;
-			} else if (val instanceof String) {
-				tpe = DataType.STRING;
-			} else {
-				tpe = DataType.UNDEFINED;
-			}
-
+			tpe = DataTypeFactory.getObjectMetaData(val);
 		} else if (output instanceof LayeredDisplayOutput) {
 			val = ((LayeredDisplayOutput) output).getImage(v.width, v.height);
 			tpe = DataType.DISPLAY2D;
