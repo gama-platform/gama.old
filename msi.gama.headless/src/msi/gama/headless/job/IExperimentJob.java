@@ -7,50 +7,49 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.runtime.RuntimeContext;
 
 public interface IExperimentJob {
 
-	public String getExperimentID();
+	String getExperimentID();
 
-	public String getExperimentName();
+	String getExperimentName();
 
-	public String getModelName();
+	String getModelName();
 
-	public List<Parameter> getParameters();
+	List<Parameter> getParameters();
 
-	public List<Output> getOutputs();
+	List<Output> getOutputs();
 
-	public void addParameter(final Parameter p);
+	void addParameter(final Parameter p);
 
-	public void addOutput(final Output p);
+	void addOutput(final Output p);
 
-	public List<String> getOutputNames();
+	List<String> getOutputNames();
 
-	public void removeOutputWithName(final String name);
+	void removeOutputWithName(final String name);
 
-	public void setOutputFrameRate(final String name, final int frate);
+	void setOutputFrameRate(final String name, final int frate);
 
-	public void setParameterValueOf(final String name, final Object val);
+	void setParameterValueOf(final String name, final Object val);
 
-	public void setSeed(final double s);
+	void setSeed(final double s);
 
-	public double getSeed();
+	double getSeed();
 
-	public long getStep();
+	long getStep();
 
-	public void setFinalStep(long step);
+	void setFinalStep(long step);
 
-	public void loadAndBuild(RuntimeContext rtx) throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException, IOException, GamaHeadlessException;
+	void loadAndBuild() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
+			GamaHeadlessException;
 
-	public Element asXMLDocument(Document doc);
+	Element asXMLDocument(Document doc);
 
-	public void playAndDispose();
+	void playAndDispose();
 
-	public void play();
+	void play();
 
-	public void dispose();
+	void dispose();
 
-	public void doStep();
+	void doStep();
 }

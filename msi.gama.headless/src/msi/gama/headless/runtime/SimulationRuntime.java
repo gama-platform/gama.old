@@ -1,7 +1,5 @@
 package msi.gama.headless.runtime;
 
-import java.util.HashMap;
-
 import msi.gama.headless.job.ExperimentJob;
 
 public interface SimulationRuntime {
@@ -16,7 +14,7 @@ public interface SimulationRuntime {
 	// public void closeSimulation(ExperimentJob s);
 	// public SimulationState getSimulationState(String id);
 
-	HashMap<String, Double> getSimulationState();
+	// HashMap<String, Double> getSimulationState();
 
 	boolean isPerformingSimulation();
 
