@@ -733,8 +733,6 @@ public class DrivingSkill extends MovingSkill {
 	)
 	public Double primAdvancedFollow(final IScope scope) throws GamaRuntimeException {
 		// TODO: path is not used anywhere in this action
-		IAgent agent = getCurrentAgent(scope);
-		Double s = scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
 		Double t = scope.hasArg("time") ? scope.getFloatArg("time") : scope.getClock().getStepInSeconds();
 		GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 		return moveToNextLocAlongPathOSM(scope, t, path);
@@ -1012,6 +1010,7 @@ public class DrivingSkill extends MovingSkill {
 			examples = { @example ("do compute_path_from_nodes graph: road_network nodes: [node1, node5, node10];") }
 		)
 	)
+	@Deprecated
 	public IPath primComputePathFromNodes(final IScope scope) throws GamaRuntimeException {
 		GamaGraph graph = (GamaGraph) scope.getArg("graph", IType.GRAPH);
 		IList<IAgent> nodes = (IList) scope.getArg("nodes", IType.LIST);
@@ -1054,10 +1053,6 @@ public class DrivingSkill extends MovingSkill {
 		ISpecies context = driver.getSpecies();
 		IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
 		Arguments argsEF = new Arguments();
-		IStatement.WithArgs actionLC = context.getAction("lane_choice");
-		Arguments argsLC = new Arguments();
-		IStatement.WithArgs actionSC = context.getAction("speed_choice");
-		Arguments argsSC = new Arguments();
 		Map<IAgent, Double> roadProba = (Map) scope.getArg("proba_roads", IType.MAP);
 		IAgent initNode = (IAgent) scope.getArg("init_node", IType.AGENT);
 		if (initNode == null) {
@@ -1107,9 +1102,9 @@ public class DrivingSkill extends MovingSkill {
 				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
-				argsLC.put("new_road", ConstantExpressionDescription.create(newRoad));
-				actionLC.setRuntimeArgs(scope, argsLC);
-				int lane = (Integer) actionLC.executeOn(scope);
+
+				// TODO: update this
+				int lane = 0;
 
 				if (lane >= 0) {
 					setCurrentTarget(driver, RoadSkill.getTargetNode(newRoad).getLocation());
@@ -1124,11 +1119,6 @@ public class DrivingSkill extends MovingSkill {
 			if (remainingTime < 1e-8) {
 				break;
 			}
-
-			argsSC.put("new_road", ConstantExpressionDescription.create(getCurrentRoad(driver)));
-			actionSC.setRuntimeArgs(scope, argsSC);
-			double speed = (Double) actionSC.executeOn(scope);
-			setSpeed(driver, speed);
 
 			remainingTime = moveToNextLocAlongPathOSM(scope, remainingTime, null);
 		}
@@ -1153,10 +1143,6 @@ public class DrivingSkill extends MovingSkill {
 		ISpecies context = driver.getSpecies();
 		IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
 		Arguments argsEF = new Arguments();
-		IStatement.WithArgs actionLC = context.getAction("lane_choice");
-		Arguments argsLC = new Arguments();
-		IStatement.WithArgs actionSC = context.getAction("speed_choice");
-		Arguments argsSC = new Arguments();
 
 		// get the amount of time that the driver is able to travel in one simulation step
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
@@ -1193,6 +1179,7 @@ public class DrivingSkill extends MovingSkill {
 				}
 				double newAccel = pair.getValue();
 				double newSpeed = updateSpeed(scope, newAccel, newRoad);
+				// Check if it is possible to move onto the new road
 				if (newSpeed == 0.0) {
 					// TODO: this proba test should only happen ONCE
 					double probaBlock = getProbaBlockNode(driver);
@@ -1206,11 +1193,12 @@ public class DrivingSkill extends MovingSkill {
 				}
 				int newLane = pair.getKey();
 
-				// external factor that affects remaining time, can be defined by user
-				// argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
-				// argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
-				// actionImpactEF.setRuntimeArgs(scope, argsEF);
-				// remainingTime = (Double) actionImpactEF.executeOn(scope);
+				// external factor that affects remaining time when entering a new road
+				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
+				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
+				actionImpactEF.setRuntimeArgs(scope, argsEF);
+				remainingTime = (Double) actionImpactEF.executeOn(scope);
+
 				setCurrentIndex(driver, currentEdgeIdx + 1);
 				setCurrentTarget(driver, getTargets(driver).get(currentEdgeIdx + 2));
 				RoadSkill.unregister(scope, driver);
@@ -1265,13 +1253,13 @@ public class DrivingSkill extends MovingSkill {
 		doc = @doc(
 			value = "action to choose a speed",
 			returns = "the chosen speed",
-			examples = { @example ("do speed_choice new_road: the_road;") }
+			examples = { @example ("do speed_choice new_road: the_road;") },
+			deprecated = "You can't override this action anymore since speed computation is now based on Intelligent Driver Model"
 		)
 	)
+	@Deprecated
 	public Double primSpeedChoice(final IScope scope) throws GamaRuntimeException {
-		//TODO: does anyone actually override this?
-		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
-		return -1.0; // speedChoice(scope, road);
+		return 0.0;
 	}
 
 	@action(
@@ -1287,12 +1275,12 @@ public class DrivingSkill extends MovingSkill {
 		doc = @doc(
 			value = "action to choose a lane",
 			returns = "the chosen lane, return -1 if no lane can be taken",
-			examples = { @example ("do lane_choice new_road: a_road;") }
+			examples = { @example ("do lane_choice new_road: a_road;") },
+			deprecated = "You can't override this action anymore since lane choice is now based on the MOBIL lane changing model"
 		)
 	)
+	@Deprecated
 	public Integer primLaneChoice(final IScope scope) throws GamaRuntimeException {
-		//TODO: does anyone actually override this?
-		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
 		return -1;
 	}
 
@@ -1325,10 +1313,6 @@ public class DrivingSkill extends MovingSkill {
 		}
 	}
 
-	public double distance2D(final GamaPoint p1, final GamaPoint p2) {
-		return p1.distance(p2);
-	}
-
 	/**
 	 * Updates the `agents_on` list of the corresponding roads after the driver
 	 * has switched to new lanes and/or a new segment.
@@ -1350,7 +1334,7 @@ public class DrivingSkill extends MovingSkill {
 		Set<Integer> newLanes = IntStream.range(newStartingLane, newStartingLane + numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(HashSet::new));
 
-		// Small optimization to keep the unchanged lanes intact
+		// Small optimization to not touch the lists associated with unchanged lanes
 		Set<Integer> lanesToRemove, lanesToAdd;
 		if (newSegment != currentSegment) {
 			// if entering new segment, we have to update the lists for all related lanes and segments
@@ -1492,6 +1476,7 @@ public class DrivingSkill extends MovingSkill {
 			final double distToSegmentEnd) {
 		IAgent driver = getCurrentAgent(scope);
 		double VL = getVehicleLength(driver);
+		// TODO: these probabilities are not time step agnostic
 		Double probaChangeLaneUp = getProbaLaneChangeUp(driver);
 		Double probaChangeLaneDown = getProbaLaneChangeDown(driver);
 		Double probaUseLinkedRoad = getProbaUseLinkedRoad(driver);
@@ -1700,7 +1685,8 @@ public class DrivingSkill extends MovingSkill {
 			if (road == getCurrentRoad(otherDriver)) {
 				otherDistToSegmentEnd = getDistanceToGoal(otherDriver);
 			} else {
-				otherDistToSegmentEnd = distance2D((GamaPoint) otherDriver.getLocation(), segmentEndPt);
+				GamaPoint otherLocation = (GamaPoint) otherDriver.getLocation();
+				otherDistToSegmentEnd = otherLocation.distance(segmentEndPt);
 			}
 
 			// Calculate bumper-to-bumper distances
