@@ -1196,6 +1196,11 @@ public class DrivingSkill extends MovingSkill {
 		IStatement.WithArgs actionImpactEF = context.getAction("external_factor_impact");
 		Arguments argsEF = new Arguments();
 
+		// Initialize the first road
+		if (getCurrentIndex(driver) == -1) {
+			setNextRoad(driver, (IAgent) path.getEdgeList().get(0));
+		}
+
 		// get the amount of time that the driver is able to travel in one simulation step
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
 		// main loop to move the agent until the simulation step ends
@@ -1204,7 +1209,7 @@ public class DrivingSkill extends MovingSkill {
 			GamaPoint target = getCurrentTarget(driver);
 			int currentEdgeIdx = getCurrentIndex(driver);
 
-			// target check
+			// final target (in path) check
 			if (currentEdgeIdx == path.getEdgeList().size() - 1 && loc.equals(finalTarget)) {
 				clearDrivingStates(scope);
 				return;
@@ -1251,10 +1256,16 @@ public class DrivingSkill extends MovingSkill {
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
 
-				setCurrentIndex(driver, currentEdgeIdx + 1);
-				setCurrentTarget(driver, getTargets(driver).get(currentEdgeIdx + 2));
+				currentEdgeIdx += 1;
+				setCurrentIndex(driver, currentEdgeIdx);
+				setCurrentTarget(driver, getTargets(driver).get(currentEdgeIdx + 1));
 				RoadSkill.unregister(scope, driver);
 				RoadSkill.register(scope, driver, newRoad, newLane);
+				if (currentEdgeIdx < path.getEdgeList().size() - 1) {
+					setNextRoad(driver, (IAgent) path.getEdgeList().get(currentEdgeIdx + 1));
+				} else {
+					setNextRoad(driver, null);
+				}
 			}
 
 			if (remainingTime < 1e-8) {
@@ -1766,22 +1777,21 @@ public class DrivingSkill extends MovingSkill {
 		} else {
 			backTriple = ImmutableTriple.of(backVehicle, minBackDist, backSameDirection);
 		}
-		if (leadingVehicle == null) {
-			int numSegments = RoadSkill.getNumSegments(road);
-			IPath path = getCurrentPath(driver);
-			int currentEdgeIdx = getCurrentIndex(driver);
-			// boolean isOnFinalRoad = currentEdgeIdx == path.getEdgeList().size() - 1;
 
+		// No leading vehicle is found on the current segment
+		if (leadingVehicle == null) {
 			IAgent nextRoad = getNextRoad(driver);
+			// Check if vehicle is approaching an intersection
+			int numSegments = RoadSkill.getNumSegments(road);
 			if (segment == numSegments - 1) {
+				// Return a virtual leading vehicle of length 0 to simulate deceleration at intersections
 				// NOTE: the added minSafetyDist is necessary for the vehicle to ignore the safety dist when stopping at an endpoint
 				leadingTriple = ImmutableTriple.of(null, distToSegmentEnd + minSafetyDist, false);
+				// Slowing down at final target, since at this point we don't know which road will be taken next
 				if (nextRoad == null) {
-					// Slowing down at final target, since at this point we don't know which road will be taken next
 					return ImmutablePair.of(leadingTriple, backTriple);
+				// Might need to slow down at the intersection if it is not possible to enter the next road
 				} else {
-					// Consider slowing down at intersections
-					// IAgent newRoad = (IAgent) path.getEdgeList().get(currentEdgeIdx + 1);
 					if (!isReadyNextRoad(scope, nextRoad)) {
 						return ImmutablePair.of(leadingTriple, backTriple);
 					}
@@ -1798,7 +1808,7 @@ public class DrivingSkill extends MovingSkill {
 				segmentToCheck = segment + 1;
 				startingLaneToCheck = startingLane;
 			} else {
-				roadToCheck = nextRoad;//(IAgent) path.getEdgeList().get(currentEdgeIdx + 1);
+				roadToCheck = nextRoad;
 				segmentToCheck = 0;
 				// TODO: is this the right lane to check?
 				IAgent linkedRoadToCheck = RoadSkill.getLinkedRoad(roadToCheck);
@@ -1841,7 +1851,7 @@ public class DrivingSkill extends MovingSkill {
 			leadingTriple = ImmutableTriple.of(null, 1e6, false);
 			return ImmutablePair.of(leadingTriple, backTriple);
 		} else {
-			// Found a leading vehicle further down the road/path
+			// Found a leading vehicle on the next segment/next road
 			leadingTriple = ImmutableTriple.of(leadingVehicle, minLeadingDist, leadingSameDirection);
 			return ImmutablePair.of(leadingTriple, backTriple);
 		}
