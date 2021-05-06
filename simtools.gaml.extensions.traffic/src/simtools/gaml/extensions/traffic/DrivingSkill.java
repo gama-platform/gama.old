@@ -236,38 +236,38 @@ import ummisco.gama.dev.utils.DEBUG;
 		name = DrivingSkill.PROBA_LANE_CHANGE_UP,
 		type = IType.FLOAT,
 		init = "1.0",
-		doc = @doc("probability to change lane to a upper lane (left lane if right side driving) if necessary")
+		doc = @doc("probability to change to a upper lane (left lane if right side driving) to gain acceleration, within one second")
 	),
 	@variable(
 		name = DrivingSkill.PROBA_LANE_CHANGE_DOWN,
 		type = IType.FLOAT,
 		init = "1.0",
-		doc = @doc("probability to change lane to a lower lane (right lane if right side driving) if necessary")
+		doc = @doc("probability to change to a lower lane (right lane if right side driving) to gain acceleration, within one second")
+	),
+	@variable(
+		name = DrivingSkill.PROBA_USE_LINKED_ROAD,
+		type = IType.FLOAT,
+		init = "0.0",
+		doc = @doc("probability to change to a linked lane to gain acceleration, within one second")
 	),
 	@variable(
 		name = DrivingSkill.PROBA_RESPECT_PRIORITIES,
 		type = IType.FLOAT,
 		init = "1.0",
-		doc = @doc("probability to respect priority (right or left) laws")
+		doc = @doc("probability to respect priority (right or left) laws, within one second")
 	),
 	@variable(
 		name = DrivingSkill.PROBA_RESPECT_STOPS,
 		type = IType.LIST,
 		of = IType.FLOAT,
 		init = "[]",
-		doc = @doc("probability to respect stop laws - one value for each type of stop")
+		doc = @doc("probability to respect stop laws - one value for each type of stop, within one second")
 	),
 	@variable(
 		name = DrivingSkill.PROBA_BLOCK_NODE,
 		type = IType.FLOAT,
 		init = "0.0",
-		doc = @doc("probability to block a node (do not let other vehicle cross the crossroad)")
-	),
-	@variable(
-		name = DrivingSkill.PROBA_USE_LINKED_ROAD,
-		type = IType.FLOAT,
-		init = "0.0",
-		doc = @doc("probability to change lane to a linked road lane if necessary")
+		doc = @doc("probability to block a node (do not let other vehicle cross the crossroad), within one second")
 	),
 	@variable(
 		name = DrivingSkill.RIGHT_SIDE_DRIVING,
@@ -496,12 +496,12 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@getter(PROBA_RESPECT_PRIORITIES)
-	public static double getRespectPriorities(final IAgent vehicle) {
+	public static double getProbaRespectPriorities(final IAgent vehicle) {
 		return (Double) vehicle.getAttribute(PROBA_RESPECT_PRIORITIES);
 	}
 
 	@setter(PROBA_RESPECT_PRIORITIES)
-	public static void setRespectPriorities(final IAgent vehicle, final Double proba) {
+	public static void setProbaRespectPriorities(final IAgent vehicle, final Double proba) {
 		vehicle.setAttribute(PROBA_RESPECT_PRIORITIES, proba);
 	}
 
@@ -516,12 +516,12 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@getter(PROBA_RESPECT_STOPS)
-	public static List<Double> getRespectStops(final IAgent vehicle) {
+	public static List<Double> getProbasRespectStops(final IAgent vehicle) {
 		return (List<Double>) vehicle.getAttribute(PROBA_RESPECT_STOPS);
 	}
 
 	@setter(PROBA_RESPECT_STOPS)
-	public static void setRespectStops(final IAgent vehicle, final List<Boolean> probas) {
+	public static void setProbasRespectStops(final IAgent vehicle, final List<Boolean> probas) {
 		vehicle.setAttribute(PROBA_RESPECT_STOPS, probas);
 	}
 
@@ -846,10 +846,16 @@ public class DrivingSkill extends MovingSkill {
 		if (currentRoad != null) {
 			// Check traffic lights
 			List<List> stops = (List<List>) sourceNode.getAttribute(RoadNodeSkill.STOP);
-			List<Double> respectsStops = getRespectStops(vehicle);
+			// TODO: it is wrong to rescale proba of 1.0 wrt time step
+			// List<Double> probasRespectStops = new ArrayList<>();
+			// double timeStep = scope.getSimulation().getClock().getStepInSeconds();
+			// for (double p : getProbasRespectStops(vehicle)) {
+			// 	probasRespectStops.add(rescaleProba(p, timeStep));
+			// }
+			List<Double> probasRespectStops = getProbasRespectStops(vehicle);
 			for (int i = 0; i < stops.size(); i++) {
 				Boolean stop = stops.get(i).contains(currentRoad);
-				if (stop && (respectsStops.size() <= i || Random.opFlip(scope, respectsStops.get(i)))) { return false; }
+				if (stop && (probasRespectStops.size() <= i || Random.opFlip(scope, probasRespectStops.get(i)))) { return false; }
 			}
 
 			// Check for vehicles blocking at intersection
@@ -868,6 +874,13 @@ public class DrivingSkill extends MovingSkill {
 				if (blockedRoads.contains(currentRoad)) { return false; }
 			}
 
+			// TODO: it is wrong to rescale proba of 1.0 wrt time step
+			// double probaRespectPriorities = rescaleProba(getProbaRespectPriorities(vehicle), timeStep);
+			double probaRespectPriorities = getProbaRespectPriorities(vehicle);
+			if (!Random.opFlip(scope, probaRespectPriorities)) {
+				return true;
+			}
+
 			// Check for vehicles coming from the rightside road
 			Boolean rightSide = getRightSideDriving(vehicle);
 			List<IAgent> priorityRoads = (List<IAgent>) sourceNode.getAttribute(RoadNodeSkill.PRIORITY_ROADS);
@@ -876,12 +889,13 @@ public class DrivingSkill extends MovingSkill {
 			// compute angle between the current & next road
 			double angleRef = Punctal.angleInDegreesBetween(scope, (GamaPoint) sourceNode.getLocation(),
 					(GamaPoint) currentRoad.getLocation(), (GamaPoint) newRoad.getLocation());
-			List<IAgent> roadsIn = (List) sourceNode.getAttribute(RoadNodeSkill.ROADS_IN);
-			if (!Random.opFlip(scope, getRespectPriorities(vehicle))) { return true; }
+
+			// TODO: adjust the speed diff condition
 			double realSpeed = Math.max(0.5, getRealSpeed(vehicle) + getMaxAcceleration(vehicle));
 			double safetyDistCoeff = vehicle.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(vehicle)
 					: getSecurityDistanceCoeff(vehicle);
 
+			List<IAgent> roadsIn = (List) sourceNode.getAttribute(RoadNodeSkill.ROADS_IN);
 			for (IAgent otherInRoad : roadsIn) {
 				if (otherInRoad == currentRoad) {
 					continue;
@@ -1087,7 +1101,8 @@ public class DrivingSkill extends MovingSkill {
 			setNextRoad(vehicle, chooseNextRoadRandomly(scope, graph, initNode, roadProba));
 		}
 
-		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
+		double timeStep = scope.getSimulation().getClock().getStepInSeconds();
+		double remainingTime = timeStep;
 
 		while (true) {
 			ILocation loc = vehicle.getLocation();
@@ -1112,12 +1127,11 @@ public class DrivingSkill extends MovingSkill {
 				double newSpeed = updateSpeed(scope, newAccel, newRoad);
 				// Check if it is possible to move onto the new road
 				if (newSpeed == 0.0) {
-					// TODO: this proba test should only happen ONCE
-					double probaBlock = getProbaBlockNode(vehicle);
+					double probaBlock = rescaleProba(getProbaBlockNode(vehicle), timeStep);
 					boolean goingToBlock = Random.opFlip(scope, probaBlock);
-					IAgent sourceNode = RoadSkill.getSourceNode(newRoad);
 					IAgent currentRoad = getCurrentRoad(vehicle);
 					if (currentRoad != null && goingToBlock) {
+						IAgent sourceNode = RoadSkill.getSourceNode(newRoad);
 						blockIntersection(scope, currentRoad, newRoad, sourceNode);
 					}
 					return;
@@ -1201,8 +1215,8 @@ public class DrivingSkill extends MovingSkill {
 			setNextRoad(vehicle, (IAgent) path.getEdgeList().get(0));
 		}
 
-		// get the amount of time that the vehicle is able to travel in one simulation step
-		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
+		double timeStep = scope.getSimulation().getClock().getStepInSeconds();
+		double remainingTime = timeStep;
 		// main loop to move the agent until the simulation step ends
 		while (true) {
 			ILocation loc = vehicle.getLocation();
@@ -1238,12 +1252,11 @@ public class DrivingSkill extends MovingSkill {
 				double newSpeed = updateSpeed(scope, newAccel, newRoad);
 				// Check if it is possible to move onto the new road
 				if (newSpeed == 0.0) {
-					// TODO: this proba test should only happen ONCE
-					double probaBlock = getProbaBlockNode(vehicle);
+					double probaBlock = rescaleProba(getProbaBlockNode(vehicle), timeStep);
 					boolean goingToBlock = Random.opFlip(scope, probaBlock);
-					IAgent sourceNode = RoadSkill.getSourceNode(newRoad);
 					IAgent currentRoad = getCurrentRoad(vehicle);
 					if (currentRoad != null && goingToBlock) {
+						IAgent sourceNode = RoadSkill.getSourceNode(newRoad);
 						blockIntersection(scope, currentRoad, newRoad, sourceNode);
 					}
 					return;
@@ -1533,18 +1546,23 @@ public class DrivingSkill extends MovingSkill {
 		}
 	}
 
+	private double rescaleProba(final double probaInOneSecond,
+			final double timeStep) {
+		return Math.min(probaInOneSecond * timeStep, 1.0);
+	}
+
 	private ImmutablePair<Integer, Double> chooseLaneMOBIL(final IScope scope,
 			final IAgent road,
 			final int segment,
 			final double distToSegmentEnd) {
 		IAgent vehicle = getCurrentAgent(scope);
 		double VL = getVehicleLength(vehicle);
-		// TODO: these probabilities are not time step agnostic
-		Double probaChangeLaneUp = getProbaLaneChangeUp(vehicle);
-		Double probaChangeLaneDown = getProbaLaneChangeDown(vehicle);
-		Double probaUseLinkedRoad = getProbaUseLinkedRoad(vehicle);
-		int numLanesOccupied = getNumLanesOccupied(vehicle);
-		int laneChangeLimit = getLaneChangeLimit(vehicle);
+
+		// Rescale probabilities based on step duration
+		double timeStep = scope.getSimulation().getClock().getStepInSeconds();
+		Double probaChangeLaneUp = rescaleProba(getProbaLaneChangeUp(vehicle), timeStep);
+		Double probaChangeLaneDown = rescaleProba(getProbaLaneChangeDown(vehicle), timeStep);
+		Double probaUseLinkedRoad = rescaleProba(getProbaUseLinkedRoad(vehicle), timeStep);
 
 		IAgent linkedRoad = RoadSkill.getLinkedRoad(road);
 		int numCurrentLanes = (Integer) road.getAttribute(RoadSkill.LANES);
@@ -1553,12 +1571,13 @@ public class DrivingSkill extends MovingSkill {
 		linkedLaneLimit = (linkedLaneLimit != -1 && numLinkedLanes > linkedLaneLimit) ?
 				linkedLaneLimit : numLinkedLanes;
 
+		Range<Integer> limitedLaneRange;
+		int numLanesOccupied = getNumLanesOccupied(vehicle);
 		int startingLane = getStartingLane(vehicle);
-		// This is for entering a new road
+		// Restrict the lane index when entering a new road
 		startingLane = Math.min(startingLane,
 				numCurrentLanes + linkedLaneLimit - numLanesOccupied);
-
-		Range<Integer> limitedLaneRange;
+		int laneChangeLimit = getLaneChangeLimit(vehicle);
 		if (laneChangeLimit == -1) {
 			// can change to all available lanes
 			limitedLaneRange = Range.closed(0, numCurrentLanes + linkedLaneLimit - numLanesOccupied);
@@ -1589,20 +1608,21 @@ public class DrivingSkill extends MovingSkill {
 			// Calculate acc(M) - Acceleration of current vehicle M if no lane change occurs
 			stayAccelM = computeAccelerationIDM(scope, vehicle, leadingDist, leadingSpeed);
 			// Do not allow changing lane when approaching intersections
-			// NOTE: in some case the vehicle is forced to slow down (e.g. on final road in path),
-			// but it can gain acceleration by switching lanes to follow a faster vehicle.
+			// Reason: in some cases the vehicle is forced to slow down (e.g. approaching final target in path),
+			// but it can gain acceleration by switching lanes to follow a fast vehicle.
 			if (leadingVehicle == null) {
 				return ImmutablePair.of(startingLane, stayAccelM);
 			}
 		}
 
+		// Examine all lanes within range
 		for (int tmpStartingLane : allLanes) {
 			if (tmpStartingLane == startingLane ||
 					!limitedLaneRange.contains(tmpStartingLane)) {
 				continue;
 			}
 
-			// Evaluate probabilities to switch lanes
+			// Evaluate probabilities to switch to this lane
 			boolean canChangeDown = tmpStartingLane >= 0 && tmpStartingLane < startingLane &&
 					scope.getRandom().next() < probaChangeLaneDown;
 			// NOTE: in canChangeUp, first two conditions check the valid upper lane idxs,
