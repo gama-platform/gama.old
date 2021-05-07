@@ -325,43 +325,45 @@ public class DrivingSkill extends MovingSkill {
 		DEBUG.OFF();
 	}
 
-	@Deprecated public final static String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
-	public final static String SAFETY_DISTANCE_COEFF = "safety_distance_coeff";
-	@Deprecated public final static String MIN_SECURITY_DISTANCE = "min_security_distance";
-	public final static String MIN_SAFETY_DISTANCE = "min_safety_distance";
+	@Deprecated public static final String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
+	public static final String SAFETY_DISTANCE_COEFF = "safety_distance_coeff";
+	@Deprecated public static final String MIN_SECURITY_DISTANCE = "min_security_distance";
+	public static final String MIN_SAFETY_DISTANCE = "min_safety_distance";
+	public static final String CURRENT_ROAD = "current_road";
+	public static final String NEXT_ROAD = "next_road";
+	@Deprecated public static final String CURRENT_LANE = "current_lane";
+	public static final String LOWEST_LANE = "lowest_lane";
+	public static final String DISTANCE_TO_GOAL = "distance_to_goal";
+	public static final String VEHICLE_LENGTH = "vehicle_length";
+	public static final String PROBA_LANE_CHANGE_UP = "proba_lane_change_up";
+	public static final String PROBA_LANE_CHANGE_DOWN = "proba_lane_change_down";
+	public static final String PROBA_RESPECT_PRIORITIES = "proba_respect_priorities";
+	public static final String PROBA_RESPECT_STOPS = "proba_respect_stops";
+	public static final String PROBA_BLOCK_NODE = "proba_block_node";
+	public static final String PROBA_USE_LINKED_ROAD = "proba_use_linked_road";
+	public static final String RIGHT_SIDE_DRIVING = "right_side_driving";
+	public static final String ON_LINKED_ROAD = "on_linked_road";
+	public static final String USING_LINKED_ROAD = "using_linked_road";
+	public static final String LINKED_LANE_LIMIT = "linked_lane_limit";
+	public static final String TARGETS = "targets";
+	public static final String CURRENT_TARGET = "current_target";
+	public static final String CURRENT_INDEX = "current_index";
+	public static final String FINAL_TARGET = "final_target";
+	public static final String CURRENT_PATH = "current_path";
+	public static final String ACCELERATION = "acceleration";
+	public static final String MAX_ACCELERATION = "max_acceleration";
+	public static final String SPEED_COEFF = "speed_coeff";
+	public static final String MAX_SPEED = "max_speed";
+	public static final String SEGMENT_INDEX = "segment_index_on_road";
+	public static final String NUM_LANES_OCCUPIED = "num_lanes_occupied";
+	public static final String LANE_CHANGE_LIMIT = "lane_change_limit";
+	public static final String LANE_CHANGE_PRIORITY_RANDOMIZED = "lane_change_priority_randomized";
+	public static final String LEADING_VEHICLE = "leading_vehicle";
+	public static final String LEADING_DISTANCE = "leading_distance";
+	public static final String LEADING_SPEED = "leading_speed";
 
-	public final static String CURRENT_ROAD = "current_road";
-	public final static String NEXT_ROAD = "next_road";
-	@Deprecated public final static String CURRENT_LANE = "current_lane";
-	public final static String LOWEST_LANE = "lowest_lane";
-	public final static String DISTANCE_TO_GOAL = "distance_to_goal";
-	public final static String VEHICLE_LENGTH = "vehicle_length";
-	public final static String PROBA_LANE_CHANGE_UP = "proba_lane_change_up";
-	public final static String PROBA_LANE_CHANGE_DOWN = "proba_lane_change_down";
-	public final static String PROBA_RESPECT_PRIORITIES = "proba_respect_priorities";
-	public final static String PROBA_RESPECT_STOPS = "proba_respect_stops";
-	public final static String PROBA_BLOCK_NODE = "proba_block_node";
-	public final static String PROBA_USE_LINKED_ROAD = "proba_use_linked_road";
-	public final static String RIGHT_SIDE_DRIVING = "right_side_driving";
-	public final static String ON_LINKED_ROAD = "on_linked_road";
-	public final static String USING_LINKED_ROAD = "using_linked_road";
-	public final static String LINKED_LANE_LIMIT = "linked_lane_limit";
-	public final static String TARGETS = "targets";
-	public final static String CURRENT_TARGET = "current_target";
-	public final static String CURRENT_INDEX = "current_index";
-	public final static String FINAL_TARGET = "final_target";
-	public final static String CURRENT_PATH = "current_path";
-	public final static String ACCELERATION = "acceleration";
-	public final static String MAX_ACCELERATION = "max_acceleration";
-	public final static String SPEED_COEFF = "speed_coeff";
-	public final static String MAX_SPEED = "max_speed";
-	public final static String SEGMENT_INDEX = "segment_index_on_road";
-	public final static String NUM_LANES_OCCUPIED = "num_lanes_occupied";
-	public final static String LANE_CHANGE_LIMIT = "lane_change_limit";
-	public final static String LANE_CHANGE_PRIORITY_RANDOMIZED = "lane_change_priority_randomized";
-	public final static String LEADING_VEHICLE = "leading_vehicle";
-	public final static String LEADING_DISTANCE = "leading_distance";
-	public final static String LEADING_SPEED = "leading_speed";
+	// A small threshold representing zero (used to handle approximations in IDM)
+	private static final Double EPSILON = 1e-4;
 
 	@setter(ACCELERATION)
 	public static void setAccelerationReadOnly(final IAgent vehicle, final Double val) {
@@ -1107,7 +1109,9 @@ public class DrivingSkill extends MovingSkill {
 			ILocation loc = vehicle.getLocation();
 			GamaPoint target = getCurrentTarget(vehicle);
 
-			if (remainingTime > 0.0 && loc.equals(target)) {
+			if (remainingTime < EPSILON) {
+				return;
+			} else if (loc.equals(target)) {
 				IAgent newRoad = getNextRoad(vehicle);
 				if (!isReadyNextRoad(scope, newRoad)) {
 					return;
@@ -1150,13 +1154,9 @@ public class DrivingSkill extends MovingSkill {
 				// Choose the next road in advance
 				IAgent nextRoad = chooseNextRoadRandomly(scope, graph, RoadSkill.getTargetNode(newRoad), roadProba);
 				setNextRoad(vehicle, nextRoad);
+			} else {
+				remainingTime = moveToNextLocAlongPathOSM(scope, remainingTime, null);
 			}
-
-			if (remainingTime < 1e-8) {
-				break;
-			}
-
-			remainingTime = moveToNextLocAlongPathOSM(scope, remainingTime, null);
 		}
 	}
 
@@ -1224,15 +1224,13 @@ public class DrivingSkill extends MovingSkill {
 			GamaPoint target = getCurrentTarget(vehicle);
 			int currentEdgeIdx = getCurrentIndex(vehicle);
 
-			// final target (in path) check
-			if (currentEdgeIdx == path.getEdgeList().size() - 1 && loc.equals(finalTarget)) {
+			if (remainingTime < EPSILON) {
+				return;
+			} else if (loc.equals(finalTarget)) {  // Final node in path
 				clearDrivingStates(scope);
 				return;
-			}
-
-			// intermediate target check
-			if (remainingTime > 0.0 && loc.equals(target)) {
-				// get the next road in the path
+			} else if (loc.equals(target)) {  // Intermediate node in path
+				// get next road in path
 				IAgent newRoad = (IAgent) path.getEdgeList().get(currentEdgeIdx + 1);
 
 				// check traffic lights and vehicles coming from other roads
@@ -1282,14 +1280,9 @@ public class DrivingSkill extends MovingSkill {
 				} else {
 					setNextRoad(vehicle, null);
 				}
+			} else {
+				remainingTime = moveToNextLocAlongPathOSM(scope, remainingTime, path);
 			}
-
-			if (remainingTime < 1e-8) {
-				break;
-			}
-
-			// Actual movement happens here
-			remainingTime = moveToNextLocAlongPathOSM(scope, remainingTime, path);
 		}
 	}
 
@@ -1459,10 +1452,6 @@ public class DrivingSkill extends MovingSkill {
 		int initSegment = getSegmentIndex(vehicle);
 		int numSegments = RoadSkill.getNumSegments(currentRoad);
 
-		double time = remainingTime;
-		double totalDistMoved = 0;
-		double distMoved = Double.MAX_VALUE;
-
 		Coordinate coords[] = currentRoad.getInnerGeometry().getCoordinates();
 		int prevSegment = -1;
 		int currentSegment = initSegment;
@@ -1470,10 +1459,11 @@ public class DrivingSkill extends MovingSkill {
 		double distToGoal = getDistanceToGoal(vehicle);
 		boolean atSegmentEnd = false;
 
-		while (true) {
+		double time = remainingTime;
+		while (time > 0.0) {
 			// Due to approximations in IDM, distToGoal will never be exactly 0
 			// TODO: not sure what is the right threshold here
-			if (distToGoal < 1e-2) {
+			if (distToGoal < EPSILON) {
 				// the vehicle is at the end of the segment
 				atSegmentEnd = true;
 				currentLocation = segmentEndPt;
@@ -1484,7 +1474,7 @@ public class DrivingSkill extends MovingSkill {
 					segmentEndPt = new GamaPoint(coords[currentSegment + 1]);
 					distToGoal = currentLocation.distance(segmentEndPt);
 				} else {
-					// at the end of the final segment on the road
+					// at the end of the final segment
 					distToGoal = 0.0;
 					break;
 				}
@@ -1501,32 +1491,30 @@ public class DrivingSkill extends MovingSkill {
 			setAcceleration(vehicle, accel);
 			setRealSpeed(vehicle, speed);
 
+			// TODO: this loop is confusing AF!!!
+			// refactor so that speed is computed only once during a simulation step,
+			// then loop over next segment/road if distMoved > distToGoal
+			double distMoved;
 			if (speed == 0.0) {
 				// Edge case when there is a stopped vehicle or traffic light
 				distMoved = -0.5 * Math.pow(oldSpeed, 2) / accel;
 			} else {
 				distMoved = speed * time;
 			}
-			if (distMoved > 1e-8) {
-				if (distMoved < distToGoal) {
-					double ratio = distMoved / distToGoal;
-					double newX = currentLocation.getX() + ratio * (segmentEndPt.getX() - currentLocation.getX());
-					double newY = currentLocation.getY() + ratio * (segmentEndPt.getY() - currentLocation.getY());
-					GamaPoint newLocation = new GamaPoint(newX, newY);
-					currentLocation.setLocation(newLocation);
-					updateLaneSegment(scope, lowestLane, currentSegment);
 
-					time = 0.0;
-					totalDistMoved += distMoved;
-					distToGoal -= distMoved;
-					break;
-				} else {
-					time -= distToGoal / speed;
-					totalDistMoved += distToGoal;
-					distToGoal = 0.0;
-				}
-			} else {
+			double oldDistToGoal = distToGoal;
+			distToGoal -= distMoved;
+			if (distMoved < oldDistToGoal) {
+				double ratio = distMoved / oldDistToGoal;
+				double newX = currentLocation.getX() + ratio * (segmentEndPt.getX() - currentLocation.getX());
+				double newY = currentLocation.getY() + ratio * (segmentEndPt.getY() - currentLocation.getY());
+				GamaPoint newLocation = new GamaPoint(newX, newY);
+				currentLocation.setLocation(newLocation);
+				updateLaneSegment(scope, lowestLane, currentSegment);
+				time = 0.0;
 				break;
+			} else {
+				time -= oldDistToGoal / speed;
 			}
 		}
 		setLocation(vehicle, currentLocation);
@@ -1542,11 +1530,7 @@ public class DrivingSkill extends MovingSkill {
 			path.setSource(currentLocation.copy(scope));
 		}
 
-		if (totalDistMoved > 1e-8) {
-			return time;
-		} else {
-			return 0.0;
-		}
+		return time;
 	}
 
 	private double rescaleProba(final double probaInOneSecond,
