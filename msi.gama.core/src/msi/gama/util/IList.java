@@ -51,7 +51,7 @@ public interface IList<E>
 	@Override
 	default IList<E> listValue(final IScope scope, final IType contentsType, final boolean copy) {
 		if (!GamaType.requiresCasting(contentsType, getGamlType().getContentType())) {
-			if (copy) { return GamaListFactory.createWithoutCasting(contentsType, this); }
+			if (copy) return GamaListFactory.createWithoutCasting(contentsType, this);
 			return this;
 		}
 		return GamaListFactory.create(scope, contentsType, this);
@@ -78,9 +78,7 @@ public interface IList<E>
 		final StringBuilder sb = new StringBuilder(size() * 10);
 		sb.append('[');
 		for (int i = 0; i < size(); i++) {
-			if (i != 0) {
-				sb.append(',');
-			}
+			if (i != 0) { sb.append(','); }
 			sb.append(StringUtils.toGaml(get(i), includingBuiltIn));
 		}
 		sb.append(']');
@@ -125,6 +123,11 @@ public interface IList<E>
 		set(buildIndex(scope, index), buildValue(scope, value));
 	}
 
+	// See Issue #3099
+	default void replaceRange(final IScope scope, final GamaPair range, final E value) {
+		this.subList(Cast.asInt(scope, range.key), Cast.asInt(scope, range.value)).replaceAll(v -> value);
+	}
+
 	// AD July 2020: Addition of the index (see #2985)
 	@Override
 	default void addValues(final IScope scope, final Object index, final IContainer values) {
@@ -151,9 +154,7 @@ public interface IList<E>
 
 	@Override
 	default void removeIndex(final IScope scope, final Object index) {
-		if (index instanceof Integer) {
-			remove(((Integer) index).intValue());
-		}
+		if (index instanceof Integer) { remove(((Integer) index).intValue()); }
 	}
 
 	@Override
@@ -172,13 +173,13 @@ public interface IList<E>
 
 	@Override
 	default E firstValue(final IScope scope) {
-		if (size() == 0) { return null; }
+		if (size() == 0) return null;
 		return get(0);
 	}
 
 	@Override
 	default E lastValue(final IScope scope) {
-		if (size() == 0) { return null; }
+		if (size() == 0) return null;
 		return get(size() - 1);
 	}
 
@@ -218,15 +219,16 @@ public interface IList<E>
 			return index >= 0 && upper;
 		} else if (object instanceof IContainer) {
 			for (final Object o : ((IContainer) object).iterable(scope)) {
-				if (!checkBounds(scope, o, forAdding)) { return false; }
+				if (!checkBounds(scope, o, forAdding)) return false;
 			}
+			return true;
 		}
 		return false;
 	}
 
 	@Override
 	default E anyValue(final IScope scope) {
-		if (isEmpty()) { return null; }
+		if (isEmpty()) return null;
 		final int i = scope.getRandom().between(0, size() - 1);
 		return get(i);
 	}
@@ -248,7 +250,7 @@ public interface IList<E>
 
 	@Override
 	default E getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-		if (indices == null || indices.isEmpty()) { return null; }
+		if (indices == null || indices.isEmpty()) return null;
 		return get(scope, Cast.asInt(scope, indices.get(0)));
 		// We do not consider the case where multiple indices are used. Maybe
 		// could be used in the

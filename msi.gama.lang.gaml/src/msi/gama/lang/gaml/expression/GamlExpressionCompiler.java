@@ -847,13 +847,21 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IType keyType = contType.getKeyType();
 		final List<? extends Expression> list = EGaml.getInstance().getExprsOf(object.getRight());
 		try (final Collector.AsList<IExpression> result = Collector.getList()) {
-			// final List<IExpression> result = new ArrayList<>();
 			final int size = list.size();
+
 			for (int i = 0; i < size; i++) {
 				final Expression eExpr = list.get(i);
 				final IExpression e = compile(eExpr);
 				if (e != null) {
 					final IType elementType = e.getGamlType();
+					// See Issue #3099
+					if (size == 1 && Types.PAIR.isAssignableFrom(elementType)) {
+						if (Types.LIST.isAssignableFrom(contType)) {
+							if (Types.INT == elementType.getKeyType() && Types.INT == elementType.getContentType())
+								return getFactory().createOperator("internal_between", getContext(), object, container,
+										e);
+						}
+					}
 					if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(elementType)) {
 						if (!(isMatrix && elementType.id() == IType.INT)) {
 							getContext().warning("a " + contType.toString() + " should not be accessed using a "
@@ -1119,7 +1127,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					}
 				}
 
-				// See Issue #3085. We give priority to the variables sporting species names unless they represent the species withing the agents
+				// See Issue #3085. We give priority to the variables sporting species names unless they represent the
+				// species withing the agents
 				if (!isSpeciesName(varName)) return temp_sd.getVarExpr(varName, false);
 			} else
 				return temp_sd.getVarExpr(varName, false);
