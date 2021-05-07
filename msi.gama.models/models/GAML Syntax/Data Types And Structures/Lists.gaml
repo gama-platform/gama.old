@@ -126,6 +126,8 @@ species accessing_list_elements {
 		write sample(copy_between(l2,1,3));
 		write sample(copy_between(l2, 1, length(l2) - 1));
 		write sample(l2 as_map (length(each)::"new"+each));
+		// Ranges
+		write sample(l2[1::3]);
 	}
 }
 
@@ -173,6 +175,9 @@ species modifying_lists {
 		add all: [6, 7, 8, 9] to: l1;
 		// or, in a more compact way:
 		l1 <<+ [10,11,12,13];
+		write sample(l1);
+		// modifyng ranges of elements is also possible
+		l1[1::3] <- 100;
 		write sample(l1);
 		// automatic casting applies to any element added to the list
  		l1 <+ (int("14"));

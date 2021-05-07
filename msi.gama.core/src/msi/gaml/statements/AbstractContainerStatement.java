@@ -23,6 +23,7 @@ import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.IVarExpression;
@@ -163,12 +164,18 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			final IExpression list = cd.getFacetExpr(TO);
 			// IExpression whole = cd.getFacets().getExpr(ALL);
 			final IExpression index = cd.getFacetExpr(AT);
+
+			if (list instanceof BinaryOperator && ((BinaryOperator) list).getName().equals("internal_between")) {
+				// Corresponds to a wrong usage of the range with add, remove operators
+				cd.error("Ranges of indices can only be used in conjunction with `put` or `<-`",
+						IGamlIssue.CONFLICTING_FACETS, IKeyword.AT);
+				return;
+			}
+
 			if (!keyword.equals(REMOVE)) {
-				if (item == null) {
-					// we are in the case "remove all: true from...". Nothing to
+				if (item == null) // we are in the case "remove all: true from...". Nothing to
 					// validate
 					return;
-				}
 				final IType<?> contentType = list.getGamlType().getContentType();
 				boolean isAll = false;
 				IType<?> valueType;
@@ -199,6 +206,9 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				}
 				final IType<?> keyType = list.getGamlType().getKeyType();
 				if (index != null && keyType != Types.NO_TYPE && !index.getGamlType().isTranslatableInto(keyType)) {
+					if (Types.LIST.isAssignableFrom(list.getGamlType())) {
+						if (Types.PAIR.of(Types.INT, Types.INT).equals(index.getGamlType())) return;
+					}
 					if (!(Types.MATRIX.isAssignableFrom(list.getGamlType()) && index.getGamlType() == Types.INT)) {
 						cd.warning(
 								"The type of the index of " + list.serialize(false) + " (" + keyType
@@ -260,25 +270,25 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	protected Object identifyValue(final IScope scope, final IContainer.Modifiable container) {
-		if (item == null) { return null; }
+		if (item == null) return null;
 		// For the moment, only graphs need to recompute their objects
-		if (isGraph) { return buildValue(scope, (IGraph) container); }
+		if (isGraph) return buildValue(scope, (IGraph) container);
 		return item.value(scope);
 	}
 
 	protected Object identifyIndex(final IScope scope, final IContainer.Modifiable container) {
-		if (index == null) { return null; }
-		if (isGraph) { return buildIndex(scope, (IGraph) container); }
+		if (index == null) return null;
+		if (isGraph) return buildIndex(scope, (IGraph) container);
 		return index.value(scope);
 	}
 
 	protected Object buildValue(final IScope scope, final IGraph container) {
-		if (asAllValues) { return container.buildValues(scope, (IContainer) this.item.value(scope)); }
+		if (asAllValues) return container.buildValues(scope, (IContainer) this.item.value(scope));
 		return container.buildValue(scope, this.item.value(scope));
 	}
 
 	protected Object buildIndex(final IScope scope, final IGraph container) {
-		if (asAllIndexes) { return container.buildIndexes(scope, (IContainer) this.index.value(scope)); }
+		if (asAllIndexes) return container.buildIndexes(scope, (IContainer) this.index.value(scope));
 		return container.buildIndex(scope, this.index.value(scope));
 	}
 
@@ -288,8 +298,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	 */
 	private IContainer.Modifiable identifyContainer(final IScope scope) throws GamaRuntimeException {
 		final Object cont = list.value(scope);
-		if (isDirect) { return (IContainer.Modifiable) cont; }
-		if (cont instanceof IShape) { return ((IShape) cont).getOrCreateAttributes(); }
+		if (isDirect) return (IContainer.Modifiable) cont;
+		if (cont instanceof IShape) return ((IShape) cont).getOrCreateAttributes();
 		throw GamaRuntimeException.warning("Cannot use " + list.serialize(false) + ", of type "
 				+ list.getGamlType().toString() + ", as a container", scope);
 	}

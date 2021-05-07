@@ -15,10 +15,13 @@ experiment length type: test {
 	
 	test "length" {
 		list<int> vList<- [12,13];
+		list<int> zList <- [1,2,3,4,5];
 		assert length([1,2,3,4.4])=4;
 		assert length(vList)=2;
 		assert length(cell)=25; 
 		assert length(cell where (each.grid_value=1.0))=25;
+		// Testing ranges
+		assert length(zList[1::3]) = 2;
 	}
 
 	

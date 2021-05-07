@@ -265,9 +265,24 @@ public class Containers {
 			return result;
 		}
 
+		@operator (
+				internal = true,
+				value = { "internal_between" },
+				can_be_const = true,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.LIST },
+				concept = { IConcept.CONTAINER, IConcept.LIST })
+		@doc (
+				value = "For internal use only. Corresponds to the implementation, for containers, of the access with [begin::end]",
+				masterDoc = true)
+		public static IList copy_between(final IScope scope, final IList l1, final GamaPair p) {
+			return copy_between(scope, l1, Cast.asInt(scope, p.key), Cast.asInt(scope, p.value));
+		}
+
 	}
 
 	@operator (
+			internal = true,
 			value = { "internal_at" },
 			content_type = IType.NONE,
 			category = { IOperatorCategory.CONTAINER },
@@ -288,6 +303,7 @@ public class Containers {
 	}
 
 	@operator (
+			internal = true,
 			value = { "internal_at" },
 			content_type = IType.NONE,
 			category = { IOperatorCategory.CONTAINER },
@@ -301,6 +317,7 @@ public class Containers {
 	}
 
 	@operator (
+			internal = true,
 			value = { "internal_at" },
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
