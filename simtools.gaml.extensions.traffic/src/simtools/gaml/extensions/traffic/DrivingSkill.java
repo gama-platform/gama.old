@@ -155,7 +155,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("the current lane on which the agent is")
 	),
 	@variable(
-		name = DrivingSkill.STARTING_LANE,
+		name = DrivingSkill.LOWEST_LANE,
 		type = IType.INT,
 		init = "0",
 		doc = @doc("the lane with the smallest index that the vehicle is in")
@@ -166,7 +166,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		init = "1",
 		doc = @doc(
 			value = "the number of lanes that the vehicle occupies",
-			comment = "e.g. if `num_lanes_occupied=3` and `starting_lane=1`, the vehicle will be in lane 1, 2 and 3`"
+			comment = "e.g. if `num_lanes_occupied=3` and `lowest_lane=1`, the vehicle will be in lane 1, 2 and 3`"
 		)
 	),
 	@variable(
@@ -333,8 +333,7 @@ public class DrivingSkill extends MovingSkill {
 	public final static String CURRENT_ROAD = "current_road";
 	public final static String NEXT_ROAD = "next_road";
 	@Deprecated public final static String CURRENT_LANE = "current_lane";
-	// TODO: this should be renamed. lowest_lane?
-	public final static String STARTING_LANE = "starting_lane";
+	public final static String LOWEST_LANE = "lowest_lane";
 	public final static String DISTANCE_TO_GOAL = "distance_to_goal";
 	public final static String VEHICLE_LENGTH = "vehicle_length";
 	public final static String PROBA_LANE_CHANGE_UP = "proba_lane_change_up";
@@ -542,10 +541,10 @@ public class DrivingSkill extends MovingSkill {
 		IAgent currentRoad = getCurrentRoad(vehicle);
 		if (currentRoad == null) return false;
 
-		int startingLane = getStartingLane(vehicle);
+		int lowestLane = getLowestLane(vehicle);
 		int numLanesCurrent = RoadSkill.getNumLanes(currentRoad);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
-		return startingLane > numLanesCurrent - numLanesOccupied;
+		return lowestLane > numLanesCurrent - numLanesOccupied;
 	}
 
 	@setter(USING_LINKED_ROAD)
@@ -633,23 +632,23 @@ public class DrivingSkill extends MovingSkill {
 	@Deprecated
 	@getter(CURRENT_LANE)
 	public static int getCurrentLane(final IAgent vehicle) {
-		return getStartingLane(vehicle);
+		return getLowestLane(vehicle);
 	}
 
 	@Deprecated
 	@setter(CURRENT_LANE)
 	public static void setCurrentLane(final IAgent vehicle, final int newLane) {
-		setStartingLane(vehicle, newLane);
+		setLowestLane(vehicle, newLane);
 	}
 
-	@getter(STARTING_LANE)
-	public static int getStartingLane(final IAgent vehicle) {
-		return (int) vehicle.getAttribute(STARTING_LANE);
+	@getter(LOWEST_LANE)
+	public static int getLowestLane(final IAgent vehicle) {
+		return (int) vehicle.getAttribute(LOWEST_LANE);
 	}
 
-	@setter(STARTING_LANE)
-	public static void setStartingLane(final IAgent vehicle, final int startingLane) {
-		vehicle.setAttribute(STARTING_LANE, startingLane);
+	@setter(LOWEST_LANE)
+	public static void setLowestLane(final IAgent vehicle, final int lowestLane) {
+		vehicle.setAttribute(LOWEST_LANE, lowestLane);
 	}
 
 	@getter(DISTANCE_TO_GOAL)
@@ -1398,20 +1397,20 @@ public class DrivingSkill extends MovingSkill {
 	 * has switched to new lanes and/or a new segment.
 	 *
 	 * @param scope
-	 * @param newStartingLane
+	 * @param newLowestLane
 	 * @param newSegment
 	 */
-	private void updateLaneSegment(final IScope scope, final int newStartingLane,
+	private void updateLaneSegment(final IScope scope, final int newLowestLane,
 			final int newSegment) {
 		IAgent vehicle = getCurrentAgent(scope);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
-		int currentStartingLane = getStartingLane(vehicle);
+		int currentLowestLane = getLowestLane(vehicle);
 		int currentSegment = getSegmentIndex(vehicle);
 
-		// Get all occupying lanes using `starting_lane` and `num_lanes_occupied`
-		Set<Integer> oldLanes = IntStream.range(currentStartingLane, currentStartingLane + numLanesOccupied)
+		// Get all occupying lanes using `lowest_lane` and `num_lanes_occupied`
+		Set<Integer> oldLanes = IntStream.range(currentLowestLane, currentLowestLane + numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(HashSet::new));
-		Set<Integer> newLanes = IntStream.range(newStartingLane, newStartingLane + numLanesOccupied)
+		Set<Integer> newLanes = IntStream.range(newLowestLane, newLowestLane + numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(HashSet::new));
 
 		// Small optimization to not touch the lists associated with unchanged lanes
@@ -1438,7 +1437,7 @@ public class DrivingSkill extends MovingSkill {
 			newVehicleList.add(vehicle);
 		}
 
-		setStartingLane(vehicle, newStartingLane);
+		setLowestLane(vehicle, newLowestLane);
 		setSegmentIndex(vehicle, newSegment);
 	}
 
@@ -1495,7 +1494,7 @@ public class DrivingSkill extends MovingSkill {
 
 			// Choose an optimal lane
 			Pair<Integer, Double> pair = chooseLaneMOBIL(scope, currentRoad, currentSegment, distToGoal);
-			int startingLane = pair.getKey();
+			int lowestLane = pair.getKey();
 			double accel = pair.getValue();
 			double speed = updateSpeed(scope, accel, currentRoad);
 
@@ -1515,7 +1514,7 @@ public class DrivingSkill extends MovingSkill {
 					double newY = currentLocation.getY() + ratio * (segmentEndPt.getY() - currentLocation.getY());
 					GamaPoint newLocation = new GamaPoint(newX, newY);
 					currentLocation.setLocation(newLocation);
-					updateLaneSegment(scope, startingLane, currentSegment);
+					updateLaneSegment(scope, lowestLane, currentSegment);
 
 					time = 0.0;
 					totalDistMoved += distMoved;
@@ -1577,16 +1576,16 @@ public class DrivingSkill extends MovingSkill {
 
 		Range<Integer> limitedLaneRange;
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
-		int startingLane = getStartingLane(vehicle);
+		int lowestLane = getLowestLane(vehicle);
 		// Restrict the lane index when entering a new road
-		startingLane = Math.min(startingLane,
+		lowestLane = Math.min(lowestLane,
 				numCurrentLanes + linkedLaneLimit - numLanesOccupied);
 		int laneChangeLimit = getLaneChangeLimit(vehicle);
 		if (laneChangeLimit == -1) {
 			// can change to all available lanes
 			limitedLaneRange = Range.closed(0, numCurrentLanes + linkedLaneLimit - numLanesOccupied);
 		} else {
-			limitedLaneRange = Range.closed(startingLane - laneChangeLimit, startingLane + laneChangeLimit);
+			limitedLaneRange = Range.closed(lowestLane - laneChangeLimit, lowestLane + laneChangeLimit);
 		}
 		List<Integer> allLanes = IntStream.rangeClosed(0, numCurrentLanes + linkedLaneLimit - numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(ArrayList::new));
@@ -1595,7 +1594,7 @@ public class DrivingSkill extends MovingSkill {
 		}
 
 		ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>> pair =
-			findLeadingAndBackVehicle(scope, road, segment, distToSegmentEnd, startingLane);
+			findLeadingAndBackVehicle(scope, road, segment, distToSegmentEnd, lowestLane);
 		double stayAccelM;
 		if (pair == null) {
 			stayAccelM = -Double.MAX_VALUE;
@@ -1615,35 +1614,35 @@ public class DrivingSkill extends MovingSkill {
 			// Reason: in some cases the vehicle is forced to slow down (e.g. approaching final target in path),
 			// but it can gain acceleration by switching lanes to follow a fast vehicle.
 			if (leadingVehicle == null) {
-				return ImmutablePair.of(startingLane, stayAccelM);
+				return ImmutablePair.of(lowestLane, stayAccelM);
 			}
 		}
 
 		// Examine all lanes within range
-		for (int tmpStartingLane : allLanes) {
-			if (tmpStartingLane == startingLane ||
-					!limitedLaneRange.contains(tmpStartingLane)) {
+		for (int tmpLowestLane : allLanes) {
+			if (tmpLowestLane == lowestLane ||
+					!limitedLaneRange.contains(tmpLowestLane)) {
 				continue;
 			}
 
 			// Evaluate probabilities to switch to this lane
-			boolean canChangeDown = tmpStartingLane >= 0 && tmpStartingLane < startingLane &&
+			boolean canChangeDown = tmpLowestLane >= 0 && tmpLowestLane < lowestLane &&
 					scope.getRandom().next() < probaChangeLaneDown;
 			// NOTE: in canChangeUp, first two conditions check the valid upper lane idxs,
 			// while the 3rd one restricts moving from current road to linked road
-			boolean canChangeUp = tmpStartingLane > startingLane &&
-					 tmpStartingLane <= numCurrentLanes + linkedLaneLimit - numLanesOccupied &&
-					 !(startingLane <= numCurrentLanes - numLanesOccupied && tmpStartingLane > numCurrentLanes - numLanesOccupied) &&
+			boolean canChangeUp = tmpLowestLane > lowestLane &&
+					 tmpLowestLane <= numCurrentLanes + linkedLaneLimit - numLanesOccupied &&
+					 !(lowestLane <= numCurrentLanes - numLanesOccupied && tmpLowestLane > numCurrentLanes - numLanesOccupied) &&
 					 scope.getRandom().next() < probaChangeLaneUp;
 			boolean canChangeToLinkedRoad = linkedRoad != null && linkedLaneLimit > 0 &&
-					tmpStartingLane > startingLane &&
-					tmpStartingLane == numCurrentLanes - numLanesOccupied + 1 &&
+					tmpLowestLane > lowestLane &&
+					tmpLowestLane == numCurrentLanes - numLanesOccupied + 1 &&
 					scope.getRandom().next() < probaUseLinkedRoad;
 			if (!canChangeDown && !canChangeUp && !canChangeToLinkedRoad) {
 				continue;
 			}
 
-			pair = findLeadingAndBackVehicle(scope, road, segment, distToSegmentEnd, tmpStartingLane);
+			pair = findLeadingAndBackVehicle(scope, road, segment, distToSegmentEnd, tmpLowestLane);
 			if (pair == null) {
 				// Will crash into another vehicle if change
 				continue;
@@ -1690,12 +1689,12 @@ public class DrivingSkill extends MovingSkill {
 				setLeadingVehicle(vehicle, leadingVehicle);
 				setLeadingDistance(vehicle, leadingDist);
 				setLeadingSpeed(vehicle, leadingSpeed);
-				return ImmutablePair.of(tmpStartingLane, changeAccelM);
+				return ImmutablePair.of(tmpLowestLane, changeAccelM);
 			}
 		}
 
 		// If no other lane satisfies the MOBIL criterions, stay on the same lane
-		return ImmutablePair.of(startingLane, stayAccelM);
+		return ImmutablePair.of(lowestLane, stayAccelM);
 	}
 
 	private double computeAccelerationIDM(final IScope scope,
@@ -1738,7 +1737,7 @@ public class DrivingSkill extends MovingSkill {
 										final IAgent road,
 										final int segment,
 										final double distToSegmentEnd,
-										final int startingLane) {
+										final int lowestLane) {
 		IAgent vehicle = getCurrentAgent(scope);
 		double vL = getVehicleLength(vehicle);
 		double minSafetyDist = getMinSafetyDistance(vehicle);
@@ -1749,7 +1748,7 @@ public class DrivingSkill extends MovingSkill {
 		Set<IAgent> neighbors = new HashSet<>();
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			neighbors.addAll(
-				RoadSkill.getVehiclesOnLaneSegment(scope, road, startingLane + i, segment)
+				RoadSkill.getVehiclesOnLaneSegment(scope, road, lowestLane + i, segment)
 			);
 		}
 
@@ -1825,25 +1824,25 @@ public class DrivingSkill extends MovingSkill {
 			// Continue to find leading vehicle on next segment or next road in path
 			minLeadingDist = distToSegmentEnd - 0.5 * vL;
 			IAgent roadToCheck;
-			int startingLaneToCheck;
+			int lowestLaneToCheck;
 			int segmentToCheck;
 			if (segment < numSegments - 1) {
 				roadToCheck = road;
 				segmentToCheck = segment + 1;
-				startingLaneToCheck = startingLane;
+				lowestLaneToCheck = lowestLane;
 			} else {
 				roadToCheck = nextRoad;
 				segmentToCheck = 0;
 				// TODO: is this the right lane to check?
 				IAgent linkedRoadToCheck = RoadSkill.getLinkedRoad(roadToCheck);
-				startingLaneToCheck = Math.min(startingLane,
+				lowestLaneToCheck = Math.min(lowestLane,
 						RoadSkill.getNumLanes(roadToCheck) + RoadSkill.getNumLanes(linkedRoadToCheck) - numLanesOccupied);
 			}
 			Set<IAgent> furtherVehicles = new HashSet<>();
 			for (int i = 0; i < numLanesOccupied; i += 1) {
 				furtherVehicles.addAll(
 					RoadSkill.getVehiclesOnLaneSegment(scope,
-						roadToCheck, startingLaneToCheck + i, segmentToCheck)
+						roadToCheck, lowestLaneToCheck + i, segmentToCheck)
 				);
 			}
 
