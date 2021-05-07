@@ -740,7 +740,7 @@ public class DrivingSkill extends MovingSkill {
 				type = IType.FLOAT,
 				optional = true,
 				doc = @doc ("time to travel")
-			) 
+			)
 		},
 		doc = @doc(
 			value = "moves the agent towards along the path passed in the arguments while considering the other agents in the network (only for graph topology)",
@@ -916,9 +916,9 @@ public class DrivingSkill extends MovingSkill {
 						double otherVehicleLength = getVehicleLength(otherVehicle);
 						double otherRealSpeed = getRealSpeed(otherVehicle);
 						double dist = otherVehicle.euclidianDistanceTo(vehicle);
-						
+
 						if (Maths.round(getRealSpeed(otherVehicle), 1) > 0.0 &&
-								0.5 + safetyDistCoeff * Math.max(0, realSpeed - otherRealSpeed) > 
+								0.5 + safetyDistCoeff * Math.max(0, realSpeed - otherRealSpeed) >
 								dist - (vehicleLength / 2 + otherVehicleLength / 2)) {
 							return false;
 						}
@@ -1288,7 +1288,7 @@ public class DrivingSkill extends MovingSkill {
 			if (remainingTime < 1e-8) {
 				break;
 			}
-			
+
 			// Actual movement happens here
 			remainingTime = moveToNextLocAlongPathOSM(scope, remainingTime, path);
 		}
@@ -1842,7 +1842,7 @@ public class DrivingSkill extends MovingSkill {
 			Set<IAgent> furtherVehicles = new HashSet<>();
 			for (int i = 0; i < numLanesOccupied; i += 1) {
 				furtherVehicles.addAll(
-					RoadSkill.getVehiclesOnLaneSegment(scope, 
+					RoadSkill.getVehiclesOnLaneSegment(scope,
 						roadToCheck, startingLaneToCheck + i, segmentToCheck)
 				);
 			}
