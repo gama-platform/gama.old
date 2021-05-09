@@ -146,7 +146,8 @@ import ummisco.gama.dev.utils.DEBUG;
 		name = DrivingSkill.MIN_SAFETY_DISTANCE,
 		type = IType.FLOAT,
 		init = "0.5",
-		doc = @doc("the minimal distance to another vehicle")
+		doc = @doc("the minimum distance of the vehicle's front bumper to the leading vehicle's rear bumper, " +
+			"known as the parameter s0 in the Intelligent Driver Model")
 	),
 	@variable(
 		name = DrivingSkill.CURRENT_LANE,
@@ -182,10 +183,68 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("speed coefficient for the speed that the vehicle want to reach (according to the max speed of the road)")
 	),
 	@variable(
+		name = DrivingSkill.MAX_SPEED,
+		type = IType.FLOAT,
+		init = "50.0",
+		doc = @doc("the maximum speed that the vehicle can achieve. " +
+			"Known as the parameter 'v0' in the Intelligent Driver Model"
+		)
+	),
+	@variable(
+		name = DrivingSkill.MAX_TIME_HEADWAY,
+		type = IType.FLOAT,
+		init = "1.5",
+		// TODO: this might be a bit confusing
+		doc = @doc("the maximum time difference between the front bumpers of this vehicle and its leading vehicle. " +
+			"Known as the parameter 'T' in the Intelligent Driver Model"
+		)
+	),
+	@variable(
 		name = DrivingSkill.MAX_ACCELERATION,
 		type = IType.FLOAT,
+		init = "0.3",
+		doc = @doc("the maximum acceleration of the vehicle. " +
+			"Known as the parameter 'a' in the Intelligent Driver Model"
+		)
+	),
+	@variable(
+		name = DrivingSkill.MAX_DECELERATION,
+		type = IType.FLOAT,
+		init = "3.0",
+		doc = @doc("the maximum deceleration of the vehicle. " +
+			"Known as the parameter 'b' in the Intelligent Driver Model"
+		)
+	),
+	@variable(
+		name = DrivingSkill.DELTA_IDM,
+		type = IType.FLOAT,
+		init = "4.0",
+		doc = @doc("the exponent used in the computation of free-road acceleration in the Intelligent Driver Model")
+	),
+	@variable(
+		name = DrivingSkill.POLITENESS_FACTOR,
+		type = IType.FLOAT,
 		init = "0.5",
-		doc = @doc("maximum acceleration of the car for a cycle")
+		doc = @doc("determines the politeness level of the vehicle when changing lanes. " +
+			"Known as the parameter 'p' in the MOBIL lane changing model"
+		)
+	),
+	@variable(
+		name = DrivingSkill.MAX_SAFE_DECELERATION,
+		type = IType.FLOAT,
+		init = "4",
+		doc = @doc("the maximum deceleration that the vehicle is willing to induce on its back vehicle when changing lanes. " +
+			"Known as the parameter 'b_save' in the MOBIL lane changing model"
+		)
+	),
+	@variable(
+		name = DrivingSkill.ACC_GAIN_THRESHOLD,
+		type = IType.FLOAT,
+		init = "0.2",
+		doc = @doc("the minimum acceleration gain for the vehicle to switch to another lane, " +
+			"introduced to prevent frantic lane changing. " +
+			"Known as the parameter 'p' in the MOBIL lane changing model"
+		)
 	),
 	@variable(
 		name = DrivingSkill.CURRENT_ROAD,
@@ -276,12 +335,6 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("are vehicles driving on the right size of the road?")
 	),
 	@variable(
-		name = DrivingSkill.MAX_SPEED,
-		type = IType.FLOAT,
-		init = "50.0",
-		doc = @doc("maximal speed of the vehicle")
-	),
-	@variable(
 		name = DrivingSkill.DISTANCE_TO_GOAL,
 		type = IType.FLOAT,
 		init = "0.0",
@@ -352,6 +405,12 @@ public class DrivingSkill extends MovingSkill {
 	public static final String CURRENT_PATH = "current_path";
 	public static final String ACCELERATION = "acceleration";
 	public static final String MAX_ACCELERATION = "max_acceleration";
+	public static final String MAX_DECELERATION = "max_deceleration";
+	public static final String MAX_TIME_HEADWAY = "max_time_headway";
+	public static final String DELTA_IDM = "delta_idm";
+	public static final String POLITENESS_FACTOR = "politeness_factor";
+	public static final String MAX_SAFE_DECELERATION = "max_safe_deceleration";
+	public static final String ACC_GAIN_THRESHOLD = "acc_gain_threshold";
 	public static final String SPEED_COEFF = "speed_coeff";
 	public static final String MAX_SPEED = "max_speed";
 	public static final String SEGMENT_INDEX = "segment_index_on_road";
@@ -383,6 +442,36 @@ public class DrivingSkill extends MovingSkill {
 	@setter(MAX_ACCELERATION)
 	public static void setMaxAcceleration(final IAgent vehicle, final Double val) {
 		vehicle.setAttribute(MAX_ACCELERATION, val);
+	}
+
+	@getter(MAX_DECELERATION)
+	public static double getMaxDeceleration(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(MAX_DECELERATION);
+	}
+
+	@getter(MAX_TIME_HEADWAY)
+	public static double getMaxTimeHeadway(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(MAX_TIME_HEADWAY);
+	}
+
+	@getter(DELTA_IDM)
+	public static double getDeltaIDM(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(DELTA_IDM);
+	}
+
+	@getter(POLITENESS_FACTOR)
+	public static double getPolitenessFactor(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(POLITENESS_FACTOR);
+	}
+
+	@getter(MAX_SAFE_DECELERATION)
+	public static double getMaxSafeDeceleration(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(MAX_SAFE_DECELERATION);
+	}
+
+	@getter(ACC_GAIN_THRESHOLD)
+	public static double getAccGainThreshold(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(ACC_GAIN_THRESHOLD);
 	}
 
 	@getter(SPEED_COEFF)
@@ -1661,11 +1750,11 @@ public class DrivingSkill extends MovingSkill {
 				changeAccelB = computeAccelerationIDM(scope, backVehicle, backDist, getRealSpeed(vehicle));
 			}
 
-			// TODO: turn these into attributes
 			double step = scope.getSimulation().getClock().getStepInSeconds();
-			double p = 0.5;
-			double bSave = 4 * step;
-			double aThr = 0.2 * step;
+			// MOBIL params
+			double p = getPolitenessFactor(vehicle);
+			double bSave = getMaxSafeDeceleration(vehicle) * step;
+			double aThr = getAccGainThreshold(vehicle) * step;
 
 			// Safety criterion & Incentive criterion
 			if (changeAccelB > -bSave &&
@@ -1685,17 +1774,17 @@ public class DrivingSkill extends MovingSkill {
 			final IAgent vehicle,
 			final double leadingDist,
 			final double leadingSpeed) {
-		// TODO: turn these into attributes
-		double s = leadingDist;
+		// IDM params
+		double T = getMaxTimeHeadway(vehicle);
 		double a = getMaxAcceleration(vehicle);
-		double b = 2;
+		double b = getMaxDeceleration(vehicle);
 		double v0 = getMaxSpeed(vehicle);
 		double s0 = getMinSafetyDistance(vehicle);
-		double delta = 4;
+		double delta = getDeltaIDM(vehicle);
 
+		double s = leadingDist;
 		double v = getRealSpeed(vehicle);
 		double dv = v - leadingSpeed;
-		double T = 1.5;
 
 		double sStar = s0 + Math.max(0, v * T + v * dv / 2 / Math.sqrt(a * b));
 		double accel = a * (1 - Math.pow(v / v0, delta) - Math.pow(sStar / s, 2));
