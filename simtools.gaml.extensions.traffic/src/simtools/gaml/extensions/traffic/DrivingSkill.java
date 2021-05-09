@@ -363,6 +363,7 @@ public class DrivingSkill extends MovingSkill {
 	public static final String LEADING_SPEED = "leading_speed";
 
 	// A small threshold representing zero (used to handle approximations in IDM)
+	// TODO: not sure if this is the right threshold
 	private static final Double EPSILON = 1e-4;
 
 	@setter(ACCELERATION)
@@ -1021,7 +1022,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@action(
-		name = "compute_path_from_nodes",
+		name = "path_from_nodes",
 		args = {
 			@arg(
 				name = "graph",
@@ -1462,7 +1463,6 @@ public class DrivingSkill extends MovingSkill {
 		double time = remainingTime;
 		while (time > 0.0) {
 			// Due to approximations in IDM, distToGoal will never be exactly 0
-			// TODO: not sure what is the right threshold here
 			if (distToGoal < EPSILON) {
 				// the vehicle is at the end of the segment
 				atSegmentEnd = true;
