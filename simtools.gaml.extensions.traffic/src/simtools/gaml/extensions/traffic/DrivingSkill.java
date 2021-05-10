@@ -1217,7 +1217,7 @@ public class DrivingSkill extends MovingSkill {
 					return;
 				}
 				double newAccel = pair.getValue();
-				double newSpeed = updateSpeed(scope, newAccel, newRoad);
+				double newSpeed = computeSpeed(scope, newAccel, newRoad);
 				// Check if it is possible to move onto the new road
 				if (newSpeed == 0.0) {
 					// TODO: this should only happen once
@@ -1250,11 +1250,20 @@ public class DrivingSkill extends MovingSkill {
 		}
 	}
 
+	/**
+	 * Select a random road among the outward edges of a given intersection node
+	 *
+	 * @param scope
+	 * @param graph     the graph on which the vehicle is driving
+	 * @param node      the intersection node whose outward edges will be considered
+	 * @param roadProba a map that specifies probabilities of choosing certain roads
+	 * @return the selected road
+	 */
 	private IAgent chooseNextRoadRandomly(final IScope scope,
 			final GamaSpatialGraph graph,
-			final IAgent targetNode,
+			final IAgent node,
 			final Map<IAgent, Double> roadProba) {
-		List<IAgent> possibleRoads = RoadNodeSkill.getRoadsOut(targetNode);
+		List<IAgent> possibleRoads = RoadNodeSkill.getRoadsOut(node);
 		// Only consider roads in the specified graph
 		List<IAgent> filteredRoads = new ArrayList<>();
 		for (IAgent road : possibleRoads) {
@@ -1338,7 +1347,7 @@ public class DrivingSkill extends MovingSkill {
 					return;
 				}
 				double newAccel = pair.getValue();
-				double newSpeed = updateSpeed(scope, newAccel, newRoad);
+				double newSpeed = computeSpeed(scope, newAccel, newRoad);
 				// Check if it is possible to move onto the new road
 				if (newSpeed == 0.0) {
 					// TODO: this should happen once
@@ -1447,12 +1456,14 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	/**
-	 * Blocks other incoming roads at the specified node
+	 * Blocks vehicles crossing a given intersection from other roads, except the
+	 * old road and the linked road of the new one. e.g. think of a vehicle running
+	 * a redlight at a four-way junction
 	 *
 	 * @param scope
-	 * @param currentRoad
-	 * @param newRoad
-	 * @param node The node agent whose blocking info will be updated
+	 * @param currentRoad the old road of the vehicle
+	 * @param newRoad     the new road of the vehicle
+	 * @param node        the intersection node whose blocking info will be updated
 	 */
 	public void blockIntersection(final IScope scope, final IAgent currentRoad,
 			final IAgent newRoad, final IAgent node) {
@@ -1476,12 +1487,13 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	/**
-	 * Updates the `agents_on` list of the corresponding roads after the vehicle
-	 * has switched to new lanes and/or a new segment.
+	 * Updates the `agents_on` list of the corresponding roads if the vehicle has
+	 * switched to new lanes and/or a new segment.
 	 *
 	 * @param scope
-	 * @param newLowestLane
-	 * @param newSegment
+	 * @param newLowestLane the new lane will the lowest index that the vehicle
+	 *                      occupies
+	 * @param newSegment    the new segment index
 	 */
 	private void updateLaneSegment(final IScope scope, final int newLowestLane,
 			final int newSegment) {
@@ -1528,10 +1540,9 @@ public class DrivingSkill extends MovingSkill {
 	 * Moves the vehicle from segment to segment on the current road.
 	 *
 	 * @param scope
-	 * @param speed the desired speed of the vehicle
-	 * @param time left until the current simulation step is finished
-	 * @param path no idea what it does for now
-	 * @return the actual time that the vehicle spent moving
+	 * @param remainingTime the remaining time in a simulation step
+	 * @param path          no idea what it does for now
+	 * @return the time that the vehicle spent moving along segments
 	 */
 	private double moveToNextLocAlongPathOSM(final IScope scope,
 			final double remainingTime, IPath path) {
@@ -1575,7 +1586,7 @@ public class DrivingSkill extends MovingSkill {
 			Pair<Integer, Double> pair = chooseLaneMOBIL(scope, currentRoad, currentSegment, distToGoal);
 			int lowestLane = pair.getKey();
 			double accel = pair.getValue();
-			double speed = updateSpeed(scope, accel, currentRoad);
+			double speed = computeSpeed(scope, accel, currentRoad);
 
 			setAcceleration(vehicle, accel);
 			setRealSpeed(vehicle, speed);
@@ -1622,11 +1633,31 @@ public class DrivingSkill extends MovingSkill {
 		return time;
 	}
 
+	/**
+	 * Attempts to make lane changing probabilities timestep-agnostic
+	 *
+	 * @param probaInOneSecond a probability with respect to one second
+	 * @param timeStep         the duration of a simulation step
+	 * @return the rescaled probability
+	 */
 	private double rescaleProba(final double probaInOneSecond,
 			final double timeStep) {
 		return Math.min(probaInOneSecond * timeStep, 1.0);
 	}
 
+	/**
+	 * Choose a new lane according to the lane change model MOBIL
+	 * (https://traffic-simulation.de/info/info_MOBIL.html).
+	 *
+	 * @param scope
+	 * @param road             the road which the vehicle is moving on
+	 * @param segment          the index of the current road segment
+	 * @param distToSegmentEnd the distance to the endpoint of the segment
+	 * @return a pair composed of the optimal "lowest" lane index and the
+	 *         acceleration of the vehicle if it moves on the lanes specified by
+	 *         that lowest lane index and the number of lanes occupied by the
+	 *         vehicle
+	 */
 	private ImmutablePair<Integer, Double> chooseLaneMOBIL(final IScope scope,
 			final IAgent road,
 			final int segment,
@@ -1770,6 +1801,16 @@ public class DrivingSkill extends MovingSkill {
 		return ImmutablePair.of(lowestLane, stayAccelM);
 	}
 
+	/**
+	 * Computes the acceleration according to the Intelligent Driver Model
+	 * (https://traffic-simulation.de/info/info_IDM.html)
+	 *
+	 * @param scope
+	 * @param vehicle      the vehicle whose acceleration will be computed
+	 * @param leadingDist  the bumper-to-bumper gap with its leading vehicle
+	 * @param leadingSpeed the speed of the leading vehicle
+	 * @return the resulting acceleration (deceleration if it is < 0)
+	 */
 	private double computeAccelerationIDM(final IScope scope,
 			final IAgent vehicle,
 			final double leadingDist,
@@ -1793,7 +1834,16 @@ public class DrivingSkill extends MovingSkill {
 		return accel * dt;
 	}
 
-	private double updateSpeed(final IScope scope,
+	/**
+	 * Computes the speed of the vehicle with respect to its acceleration, its
+	 * maximum speed and the speed limit of the current road.
+	 *
+	 * @param scope
+	 * @param acceleration the acceleration for this simulation step
+	 * @param road         the road which the vehicle is on
+	 * @return the resulting speed
+	 */
+	private double computeSpeed(final IScope scope,
 			final double acceleration,
 			final IAgent road) {
 		IAgent vehicle = getCurrentAgent(scope);
@@ -1805,6 +1855,33 @@ public class DrivingSkill extends MovingSkill {
 		return speed;
 	}
 
+	/**
+	 * Find the leading vehicle (closest vehicle ahead) and the back vehicle
+	 * (closest vehicle behind) which are moving on the same lanes as the current
+	 * vehicle.
+	 *
+	 * For each of the above vehicle, the method returns a triplet
+	 * containing:
+	 *    1. The vehicle agent itself
+	 *    2. The bumper-to-bumper gap between that vehicle and the current vehicle
+	 *    3. Whether that vehicle is moving in the same direction
+	 *
+	 * If no leading vehicle is found on the current segment,
+	 * it tries to find one in the next segment or the first segment of the next road.
+	 * If none is found still, the bumper-to-bumper gap is set to a big value (to eliminate the deceleration term in IDM).
+	 *
+	 * On the other hand, if no back vehicle is found on the current segment,
+	 * the method does NOT consider the previous segment or the last segment of the previous road.
+	 * (a possible TODO?)
+	 *
+	 * @param scope
+	 * @param road             the road which the vehicle is moving on
+	 * @param segment          the index of the current road segment
+	 * @param distToSegmentEnd the distance from the vehicle to the segment endpoint
+	 * @param lowestLane       the current "lowest" lane index of the vehicle
+	 * @return a pair containing two triplets, one for the leading vehicle and one
+	 *         for the back vehicle
+	 */
 	private ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>>
 			findLeadingAndBackVehicle(final IScope scope,
 										final IAgent road,
@@ -1953,6 +2030,20 @@ public class DrivingSkill extends MovingSkill {
 		}
 	}
 
+	/**
+	 * Clears information after the vehicle has reached the final target in its path
+	 *
+	 * @param scope
+	 */
+	private void clearDrivingStates(final IScope scope) {
+		IAgent vehicle = getCurrentAgent(scope);
+		getTargets(vehicle).clear();
+		setCurrentIndex(vehicle, -1);
+		setCurrentTarget(vehicle, null);
+		setFinalTarget(vehicle, null);
+		setCurrentPath(vehicle, null);
+	}
+
 	@action(
 		name = "die",
 		doc = @doc(
@@ -1966,14 +2057,5 @@ public class DrivingSkill extends MovingSkill {
 			RoadSkill.unregister(scope, vehicle);
 		}
 		vehicle.primDie(scope);
-	}
-
-	private void clearDrivingStates(final IScope scope) {
-		IAgent vehicle = getCurrentAgent(scope);
-		getTargets(vehicle).clear();
-		setCurrentIndex(vehicle, -1);
-		setCurrentTarget(vehicle, null);
-		setFinalTarget(vehicle, null);
-		setCurrentPath(vehicle, null);
 	}
 }
