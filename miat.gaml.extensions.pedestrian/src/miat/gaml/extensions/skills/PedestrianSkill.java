@@ -206,7 +206,7 @@ public class PedestrianSkill extends MovingSkill {
 	public final static String B_PEDESTRIAN_SFM = "B_pedestrians_SFM";
 	public final static String B_OBSTACLES_SFM = "B_obstacles_SFM";
 
-	public final static String K_SFM = "k_sfm";
+	public final static String K_SFM = "k_SFM";
 	public final static String KAPPA_SFM = "kappa_SFM";
 	public final static String RELAXION_SFM = "relaxion_SFM";
 	public final static String GAMA_SFM = "gama_SFM";
