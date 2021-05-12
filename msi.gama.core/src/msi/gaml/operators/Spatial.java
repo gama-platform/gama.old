@@ -4235,10 +4235,9 @@ public abstract class Spatial {
 			final double Ya = p1.y - p0.y;
 			final double Xb = p2.x - p0.x;
 			final double Yb = p2.y - p0.y;
-
 			final double Na = Maths.sqrt(scope, Xa * Xa + Ya * Ya);
 			final double Nb = Maths.sqrt(scope, Xb * Xb + Yb * Yb);
-			final double C = (Xa * Xb + Ya * Yb) / (Na * Nb);
+			final double C = Maths.round((Xa * Xb + Ya * Yb) / (Na * Nb),10);
 			final double S = Xa * Yb - Ya * Xb;
 			final double result = S > 0 ? Maths.acos(C) : -1 * Maths.acos(C);
 			return Maths.checkHeading(result);
