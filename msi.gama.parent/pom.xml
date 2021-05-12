@@ -155,6 +155,7 @@
 
 		<module>../msi.gaml.extensions.fipa</module>
 		<module>../msi.gama.headless</module>
+		<module>../miat.gaml.extensions.pedestrian</module>
 		<module>../simtools.gaml.extensions.traffic</module>
 		<module>../simtools.gaml.extensions.physics</module>
 
