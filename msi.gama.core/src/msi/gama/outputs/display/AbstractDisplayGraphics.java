@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.display.AbstractDisplayGraphics.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * msi.gama.outputs.display.AbstractDisplayGraphics.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.display;
 
@@ -82,19 +82,18 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
-		if (currentLayer == null) { return getDisplayWidth() / data.getEnvWidth(); }
+		if (currentLayer == null) return getDisplayWidth() / data.getEnvWidth();
 		return currentLayer.getData().getSizeInPixels().x / data.getEnvWidth();
 	}
 
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
-		if (currentLayer == null) {
+		if (currentLayer == null)
 			return getDisplayHeight() / data.getEnvHeight();
-		} else if (currentLayer instanceof OverlayLayer) {
+		else if (currentLayer instanceof OverlayLayer)
 			return getxRatioBetweenPixelsAndModelUnits();
-		} else {
+		else
 			return currentLayer.getData().getSizeInPixels().y / data.getEnvHeight();
-		}
 	}
 
 	@Override
@@ -121,6 +120,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
 		currentLayer = layer;
+
 	}
 
 	@Override
