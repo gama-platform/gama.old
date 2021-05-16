@@ -20,7 +20,7 @@ import msi.gaml.types.Types;
 public class ExecutionContext implements IExecutionContext {
 
 	private static final PoolUtils.ObjectPool<ExecutionContext> POOL =
-			PoolUtils.create("Execution Context", true, () -> new ExecutionContext(), null);
+			PoolUtils.create("Execution Context", true, () -> new ExecutionContext(), null, null);
 
 	public static ExecutionContext create(final IExecutionContext outer) {
 		return create(outer.getScope(), outer);
@@ -64,9 +64,7 @@ public class ExecutionContext implements IExecutionContext {
 	@Override
 	public void setTempVar(final String name, final Object value) {
 		if (local == null || !local.containsKey(name)) {
-			if (outer != null) {
-				outer.setTempVar(name, value);
-			}
+			if (outer != null) { outer.setTempVar(name, value); }
 		} else {
 			local.put(name, value);
 		}
@@ -75,7 +73,7 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public Object getTempVar(final String name) {
-		if (local == null || !local.containsKey(name)) { return outer == null ? null : outer.getTempVar(name); }
+		if (local == null || !local.containsKey(name)) return outer == null ? null : outer.getTempVar(name);
 		return local.get(name);
 	}
 
@@ -106,27 +104,25 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public void putLocalVar(final String varName, final Object val) {
-		if (local == null) {
-			local = GamaMapFactory.createUnordered();
-		}
+		if (local == null) { local = GamaMapFactory.createUnordered(); }
 		local.put(varName, val);
 	}
 
 	@Override
 	public Object getLocalVar(final String string) {
-		if (local == null) { return null; }
+		if (local == null) return null;
 		return local.get(string);
 	}
 
 	@Override
 	public boolean hasLocalVar(final String name) {
-		if (local == null) { return false; }
+		if (local == null) return false;
 		return local.containsKey(name);
 	}
 
 	@Override
 	public void removeLocalVar(final String name) {
-		if (local == null) { return; }
+		if (local == null) return;
 		local.remove(name);
 	}
 

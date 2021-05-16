@@ -7,7 +7,7 @@ import msi.gama.metamodel.agent.IAgent;
 class AgentExecutionContext implements IDisposable {
 
 	private static final PoolUtils.ObjectPool<AgentExecutionContext> POOL =
-			PoolUtils.create("Agent Execution Context", true, () -> new AgentExecutionContext(), null);
+			PoolUtils.create("Agent Execution Context", true, () -> new AgentExecutionContext(), null, null);
 
 	public static AgentExecutionContext create(final IAgent agent, final AgentExecutionContext outer) {
 		final AgentExecutionContext result = POOL.get();

@@ -28,4 +28,6 @@ public interface ICollector<E> extends Collection<E>, Closeable {
 		random.shuffleInPlace(items());
 	}
 
+	void set(final ICollector<?> c);
+
 }

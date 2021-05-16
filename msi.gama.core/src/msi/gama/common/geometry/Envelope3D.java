@@ -38,7 +38,7 @@ import msi.gaml.types.GamaGeometryType;
 public class Envelope3D extends Envelope implements IDisposable {
 
 	private final static PoolUtils.ObjectPool<Envelope3D> POOL =
-			PoolUtils.create("Envelope 3D", true, () -> new Envelope3D(), null);
+			PoolUtils.create("Envelope 3D", true, () -> new Envelope3D(), (from, to) -> to.set(from), null);
 
 	public static final Envelope3D EMPTY = create();
 
@@ -47,14 +47,14 @@ public class Envelope3D extends Envelope implements IDisposable {
 	}
 
 	public static Envelope3D of(final Geometry g) {
-		if (g instanceof GeometryCollection) { return of((GeometryCollection) g); }
+		if (g instanceof GeometryCollection) return of((GeometryCollection) g);
 		final ICoordinates sq = GeometryUtils.getContourCoordinates(g);
 		return sq.getEnvelope();
 	}
 
 	public static Envelope3D of(final GeometryCollection g) {
 		final int i = g.getNumGeometries();
-		if (i == 0) { return EMPTY; }
+		if (i == 0) return EMPTY;
 		final Envelope3D result = of(g.getGeometryN(0));
 		for (int j = 1; j < i; j++) {
 			result.expandToInclude(of(g.getGeometryN(j)));
@@ -190,6 +190,11 @@ public class Envelope3D extends Envelope implements IDisposable {
 		this.maxz = env.maxz;
 	}
 
+	private Envelope3D set(final Envelope3D env) {
+		init(env);
+		return this;
+	}
+
 	/**
 	 * Makes this <code>Envelope</code> a "null" envelope, that is, the envelope of the empty geometry.
 	 */
@@ -206,7 +211,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 * @return max z - min z, or 0 if this is a null <code>Envelope</code>
 	 */
 	public double getDepth() {
-		if (isNull()) { return 0; }
+		if (isNull()) return 0;
 		return maxz - minz;
 	}
 
@@ -237,7 +242,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 * @return 0.0 if the envelope is null
 	 */
 	public double getVolume() {
-		if (isNull()) { return 0.0; }
+		if (isNull()) return 0.0;
 		return getWidth() * getHeight() * getDepth();
 	}
 
@@ -248,7 +253,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public double minExtent() {
-		if (isNull()) { return 0.0; }
+		if (isNull()) return 0.0;
 		return Math.min(getWidth(), Math.min(getHeight(), getDepth()));
 	}
 
@@ -259,7 +264,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public double maxExtent() {
-		if (isNull()) { return 0.0; }
+		if (isNull()) return 0.0;
 		return Math.max(getWidth(), Math.max(getHeight(), getDepth()));
 	}
 
@@ -295,15 +300,13 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 *            the distance to expand the envelope along the the Y axis
 	 */
 	public void expandBy(final double deltaX, final double deltaY, final double deltaZ) {
-		if (isNull()) { return; }
+		if (isNull()) return;
 		minz -= deltaZ;
 		maxz += deltaZ;
 		expandBy(deltaX, deltaY);
 
 		// check for envelope disappearing
-		if (minz > maxz) {
-			setToNull();
-		}
+		if (minz > maxz) { setToNull(); }
 	}
 
 	/**
@@ -324,12 +327,8 @@ public class Envelope3D extends Envelope implements IDisposable {
 			maxz = z;
 		} else {
 			expandToInclude(x, y);
-			if (z < minz) {
-				minz = z;
-			}
-			if (z > maxz) {
-				maxz = z;
-			}
+			if (z < minz) { minz = z; }
+			if (z > maxz) { maxz = z; }
 		}
 	}
 
@@ -344,7 +343,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 *            the amount to translate along the Z axis
 	 */
 	public Envelope3D translate(final double transX, final double transY, final double transZ) {
-		if (isNull()) { return this; }
+		if (isNull()) return this;
 		init(getMinX() + transX, getMaxX() + transX, getMinY() + transY, getMaxY() + transY, getMinZ() + transZ,
 				getMaxZ() + transZ);
 		return this;
@@ -357,7 +356,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public GamaPoint centre() {
-		if (isNull()) { return null; }
+		if (isNull()) return null;
 		return new GamaPoint((getMinX() + getMaxX()) / 2.0, (getMinY() + getMaxY()) / 2.0,
 				(getMinZ() + getMaxZ()) / 2.0);
 	}
@@ -371,7 +370,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public boolean intersects(final Envelope other) {
-		if (!super.intersects(other)) { return false; }
+		if (!super.intersects(other)) return false;
 		return !(getMinZOf(other) > maxz || getMaxZOf(other) < minz);
 	}
 
@@ -399,7 +398,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 * @return <code>true</code> if the point overlaps this <code>Envelope</code>
 	 */
 	protected boolean intersects(final double x, final double y, final double z) {
-		if (isNull()) { return false; }
+		if (isNull()) return false;
 		return intersects(x, y) && !(z < minz || z > maxz);
 	}
 
@@ -414,7 +413,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 *         <code>Envelope</code>.
 	 */
 	protected boolean covers(final double x, final double y, final double z) {
-		if (isNull()) { return false; }
+		if (isNull()) return false;
 		return covers(x, y) && z >= minz && z <= maxz;
 	}
 
@@ -440,8 +439,8 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public boolean covers(final Envelope other) {
-		if (isNull() || other.isNull()) { return false; }
-		if (!super.covers(other)) { return false; }
+		if (isNull() || other.isNull()) return false;
+		if (!super.covers(other)) return false;
 		return getMinZOf(other) >= minz && getMaxZOf(other) <= maxz;
 	}
 
@@ -451,36 +450,30 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public double distance(final Envelope env) {
-		if (intersects(env)) { return 0; }
+		if (intersects(env)) return 0;
 
 		double dx = 0.0;
 		if (getMaxX() < env.getMinX()) {
 			dx = env.getMinX() - getMaxX();
-		} else if (getMinX() > env.getMaxX()) {
-			dx = getMinX() - env.getMaxX();
-		}
+		} else if (getMinX() > env.getMaxX()) { dx = getMinX() - env.getMaxX(); }
 
 		double dy = 0.0;
 		if (getMaxY() < env.getMinY()) {
 			dy = env.getMinY() - getMaxY();
-		} else if (getMinY() > env.getMaxY()) {
-			dy = getMinY() - env.getMaxY();
-		}
+		} else if (getMinY() > env.getMaxY()) { dy = getMinY() - env.getMaxY(); }
 
 		double dz = 0.0;
 		final double otherMinZ = getMinZOf(env);
 		final double otherMaxZ = getMaxZOf(env);
 		if (maxz < otherMinZ) {
 			dz = otherMinZ - maxz;
-		} else if (minz > otherMaxZ) {
-			dz = minz - otherMaxZ;
-		}
+		} else if (minz > otherMaxZ) { dz = minz - otherMaxZ; }
 
 		// if either is zero, the envelopes overlap either vertically or
 		// horizontally
-		if (dx == 0.0 && dz == 0.0) { return dy; }
-		if (dy == 0.0 && dz == 0.0) { return dx; }
-		if (dx == 0.0 && dy == 0.0) { return dz; }
+		if (dx == 0.0 && dz == 0.0) return dy;
+		if (dy == 0.0 && dz == 0.0) return dx;
+		if (dx == 0.0 && dy == 0.0) return dz;
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
@@ -500,7 +493,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public Envelope3D intersection(final Envelope env) {
-		if (isNull() || env.isNull() || !intersects(env)) { return EMPTY; }
+		if (isNull() || env.isNull() || !intersects(env)) return EMPTY;
 		final Envelope xyInt = super.intersection(env);
 		final double otherMinZ = getMinZOf(env);
 		final double intMinZ = minz > otherMinZ ? minz : otherMinZ;
@@ -518,7 +511,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public void expandToInclude(final Envelope other) {
-		if (other.isNull()) { return; }
+		if (other.isNull()) return;
 		final double otherMinZ = getMinZOf(other);
 		final double otherMaxZ = getMaxZOf(other);
 		if (isNull()) {
@@ -527,12 +520,8 @@ public class Envelope3D extends Envelope implements IDisposable {
 			maxz = otherMaxZ;
 		} else {
 			super.expandToInclude(other);
-			if (otherMinZ < minz) {
-				minz = otherMinZ;
-			}
-			if (otherMaxZ > maxz) {
-				maxz = otherMaxZ;
-			}
+			if (otherMinZ < minz) { minz = otherMinZ; }
+			if (otherMaxZ > maxz) { maxz = otherMaxZ; }
 		}
 	}
 
@@ -541,7 +530,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 * @return
 	 */
 	private double getMaxZOf(final Envelope other) {
-		if (other instanceof Envelope3D) { return ((Envelope3D) other).maxz; }
+		if (other instanceof Envelope3D) return ((Envelope3D) other).maxz;
 		return 0d;
 	}
 
@@ -550,7 +539,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 * @return
 	 */
 	private double getMinZOf(final Envelope other) {
-		if (other instanceof Envelope3D) { return ((Envelope3D) other).minz; }
+		if (other instanceof Envelope3D) return ((Envelope3D) other).minz;
 		return 0d;
 	}
 
@@ -572,9 +561,9 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public boolean equals(final Object other) {
-		if (!(other instanceof Envelope3D)) { return false; }
+		if (!(other instanceof Envelope3D)) return false;
 		final Envelope3D otherEnvelope = (Envelope3D) other;
-		if (isNull()) { return otherEnvelope.isNull(); }
+		if (isNull()) return otherEnvelope.isNull();
 		return super.equals(other) && Comparison.equal(minz, otherEnvelope.getMinZ())
 				&& Comparison.equal(maxz, otherEnvelope.getMaxZ());
 	}
@@ -588,9 +577,8 @@ public class Envelope3D extends Envelope implements IDisposable {
 	}
 
 	public Polygon toGeometry() {
-		if (isFlat()) {
+		if (isFlat())
 			return (Polygon) GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre()).getInnerGeometry();
-		}
 		return (Polygon) GamaGeometryType.buildBox(getWidth(), getHeight(), getDepth(), centre()).getInnerGeometry();
 	}
 
@@ -605,7 +593,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	}
 
 	public Envelope3D rotate(final AxisAngle rotation) {
-		if (isNull()) { return this; }
+		if (isNull()) return this;
 		GamaShape se = new GamaShape(this);
 		se = new GamaShape(se, null, rotation, se.getLocation());
 		init(se.getEnvelope());
