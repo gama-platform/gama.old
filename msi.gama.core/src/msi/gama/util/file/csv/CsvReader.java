@@ -127,7 +127,7 @@ public class CsvReader {
 	 *            The character to use as the column delimiter.
 	 */
 	public CsvReader(final String fileName, final char delimiter) throws FileNotFoundException {
-		this(fileName, delimiter, Charset.forName("ISO-8859-1"));
+		this(fileName, delimiter, Charset.forName("UTF-8"));
 	}
 
 	/**
