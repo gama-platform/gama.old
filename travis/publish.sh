@@ -1,16 +1,16 @@
 #!/bin/bash
 
 commit_wiki_files() {
-	git config --global user.email "travis@travis-ci.org"
-	git config --global user.name "Travis CI"
+	git config --global user.email "my.gama.bot@gmail.com"
+	git config --global user.name "GAMA Bot"
 	git config --global push.default simple		
 	cd ..
 	git clone --depth=50 --branch=master https://github.com/gama-platform/gama.wiki.git  gama.wiki	
-	cd /home/travis/build/gama-platform/gama/msi.gama.documentation/
+	cd $GITHUB_WORKSPACE/msi.gama.documentation/
 	java -cp ".:libs/jdom-2.0.1.jar:target/classes:../ummisco.gama.annotations/target/classes"  msi.gama.doc.MainGenerateWiki -online	
 	
 
-	cd /home/travis/build/gama-platform/gama.wiki
+	cd $GITHUB_WORKSPACE/../gama.wiki
 	git remote rm origin
 	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama.wiki.git
 	git status
