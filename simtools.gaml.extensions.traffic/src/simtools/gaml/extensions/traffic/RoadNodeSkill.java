@@ -58,7 +58,7 @@ import msi.gaml.types.IType;
 	)
 })
 @skill(
-	name = RoadNodeSkill.ROAD_NODE,
+	name = RoadNodeSkill.SKILL_ROAD_NODE,
 	concept = { IConcept.TRANSPORT, IConcept.SKILL },
 	doc = @doc ("A skill for agents representing intersections on roads")
 )

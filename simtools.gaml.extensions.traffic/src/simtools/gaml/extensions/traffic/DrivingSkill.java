@@ -20,14 +20,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.locationtech.jts.geom.Coordinate;
-
-import com.google.common.collect.Range;
-import com.google.common.collect.Sets;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.AbstractAgent;
@@ -65,7 +64,6 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-
 import ummisco.gama.dev.utils.DEBUG;
 
 @vars({
@@ -1727,6 +1725,8 @@ public class DrivingSkill extends MovingSkill {
 			final double distToSegmentEnd) {
 		IAgent vehicle = getCurrentAgent(scope);
 		double VL = getVehicleLength(vehicle);
+		int numLanesOccupied = getNumLanesOccupied(vehicle);
+		int lowestLane = getLowestLane(vehicle);
 
 		// Rescale probabilities based on step duration
 		double timeStep = scope.getSimulation().getClock().getStepInSeconds();
@@ -1741,26 +1741,25 @@ public class DrivingSkill extends MovingSkill {
 		linkedLaneLimit = (linkedLaneLimit != -1 && numLinkedLanes > linkedLaneLimit) ?
 				linkedLaneLimit : numLinkedLanes;
 		List<Integer> allowedLanes = getAllowedLanes(vehicle);
-
-		Range<Integer> limitedLaneRange;
-		int numLanesOccupied = getNumLanesOccupied(vehicle);
-		int lowestLane = getLowestLane(vehicle);
 		// Restrict the lane index when entering a new road
 		lowestLane = Math.min(lowestLane,
 				numCurrentLanes + linkedLaneLimit - numLanesOccupied);
+
+		// Determine the lanes which is considered for switching
 		int laneChangeLimit = getLaneChangeLimit(vehicle);
-		if (laneChangeLimit == -1) {
-			// can change to all available lanes
-			limitedLaneRange = Range.closed(0, numCurrentLanes + linkedLaneLimit - numLanesOccupied);
-		} else {
-			limitedLaneRange = Range.closed(lowestLane - laneChangeLimit, lowestLane + laneChangeLimit);
+		int lower = 0;
+		int upper = numCurrentLanes + linkedLaneLimit - numLanesOccupied;
+		if (laneChangeLimit != -1) {
+			lower = Math.max(lower, lowestLane - laneChangeLimit);
+			upper = Math.min(upper, lowestLane + laneChangeLimit);
 		}
-		List<Integer> allLanes = IntStream.rangeClosed(0, numCurrentLanes + linkedLaneLimit - numLanesOccupied)
-				.boxed().collect(Collectors.toCollection(ArrayList::new));
+		List<Integer> limitedLaneRange = IntStream.rangeClosed(lower, upper).
+			boxed().collect(Collectors.toList());
 		if (isLaneChangePriorityRandomized(vehicle)) {
-			Collections.shuffle(allLanes);
+			Collections.shuffle(limitedLaneRange);
 		}
 
+		// Compute acceleration if the vehicle stays on the same lane
 		ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>> pair =
 			findLeadingAndBackVehicle(scope, road, segment, distToSegmentEnd, lowestLane);
 		IAgent currentBackVehicle = null;
@@ -1792,22 +1791,20 @@ public class DrivingSkill extends MovingSkill {
 		}
 
 		// Examine all lanes within range
-		for (int tmpLowestLane : allLanes) {
+		for (int tmpLowestLane : limitedLaneRange) {
 			if (tmpLowestLane == lowestLane ||
-					!limitedLaneRange.contains(tmpLowestLane) ||
 					(!allowedLanes.isEmpty() && !allowedLanes.contains(tmpLowestLane))) {
 				continue;
 			}
 
 			// Evaluate probabilities to switch to tmpLowestLane
-			boolean canChangeDown = tmpLowestLane >= 0 && tmpLowestLane < lowestLane &&
+			boolean canChangeDown = tmpLowestLane < lowestLane &&
 					scope.getRandom().next() < probaChangeLaneDown;
 			// NOTE: in canChangeUp, the 2nd condition prevents moving from current road to linked road
 			boolean canChangeUp = tmpLowestLane > lowestLane &&
 					 !(lowestLane <= numCurrentLanes - numLanesOccupied && tmpLowestLane > numCurrentLanes - numLanesOccupied) &&
 					 scope.getRandom().next() < probaChangeLaneUp;
-			boolean canChangeToLinkedRoad = linkedRoad != null && linkedLaneLimit > 0 &&
-					lowestLane <= numCurrentLanes - numLanesOccupied &&
+			boolean canChangeToLinkedRoad = lowestLane <= numCurrentLanes - numLanesOccupied &&
 					tmpLowestLane > numCurrentLanes - numLanesOccupied &&
 					scope.getRandom().next() < probaUseLinkedRoad;
 			if (!canChangeDown && !canChangeUp && !canChangeToLinkedRoad) {
@@ -1838,10 +1835,10 @@ public class DrivingSkill extends MovingSkill {
 			if (backTriple == null || !backTriple.getRight() ||
 					backTriple.getLeft() == currentBackVehicle ||
 					getLeadingVehicle(backTriple.getLeft()) != vehicle) {
-				// IF no back vehicle OR back vehicle is moving backwards OR
+				// IF no back vehicle OR back vehicle is moving in opposite direction OR
 				// back vehicle on new lanes is the same one on old lanes OR
 				// back vehicle's leading vehicle is not the current vehicle
-				// THEN there is no acceleration change of B
+				// THEN acceleration change of B is irrelevant
 				stayAccelB = 0;
 				changeAccelB = 0;
 			} else {
@@ -1858,7 +1855,7 @@ public class DrivingSkill extends MovingSkill {
 			double step = scope.getSimulation().getClock().getStepInSeconds();
 			// MOBIL params
 			double p = getPolitenessFactor(vehicle);
-			double bSave = getMaxSafeDeceleration(vehicle) * step;
+			double bSave = getMaxSafeDeceleration(vehicle) * step;  // Rescale acceleration values with respect to step size
 			double aThr = getAccGainThreshold(vehicle) * step;
 
 			// Safety criterion & Incentive criterion
@@ -1947,7 +1944,7 @@ public class DrivingSkill extends MovingSkill {
 	 * the method does NOT consider the previous segment or the last segment of the previous road.
 	 * (a possible TODO?)
 	 *
-	 * If either the leading or back vehicle overlap the current one, the return value will be just null.
+	 * If either the leading or back vehicle overlaps with the current one, the return value will be null.
 	 *
 	 * @param scope
 	 * @param road             the road which the vehicle is moving on
