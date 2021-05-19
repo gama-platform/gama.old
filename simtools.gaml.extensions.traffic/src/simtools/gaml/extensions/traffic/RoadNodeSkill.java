@@ -58,17 +58,19 @@ import msi.gaml.types.IType;
 	)
 })
 @skill(
-	name = "skill_road_node",
+	name = RoadNodeSkill.ROAD_NODE,
 	concept = { IConcept.TRANSPORT, IConcept.SKILL },
 	doc = @doc ("A skill for agents representing intersections on roads")
 )
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RoadNodeSkill extends Skill {
-	public final static String ROADS_IN = "roads_in";
-	public final static String PRIORITY_ROADS = "priority_roads";
-	public final static String ROADS_OUT = "roads_out";
-	public final static String STOP = "stop";
-	public final static String BLOCK = "block";
+	public static final String ROAD_NODE = "skill_road_node";
+
+	public static final String ROADS_IN = "roads_in";
+	public static final String PRIORITY_ROADS = "priority_roads";
+	public static final String ROADS_OUT = "roads_out";
+	public static final String STOP = "stop";
+	public static final String BLOCK = "block";
 
 	@getter(ROADS_IN)
 	public static List getRoadsIn(final IAgent agent) {

@@ -274,6 +274,12 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("indicates if the vehicle is occupying at least one lane on the linked road")
 	),
 	@variable(
+		name = DrivingSkill.ALLOWED_LANES,
+		type = IType.LIST,
+		init = "[]",
+		doc = @doc("a list containing possible lane index values for the attribute lowest_lane")
+	),
+	@variable(
 		name = DrivingSkill.LINKED_LANE_LIMIT,
 		type = IType.INT,
 		init = "-1",
@@ -368,7 +374,7 @@ import ummisco.gama.dev.utils.DEBUG;
 	)
 })
 @skill(
-	name = "advanced_driving",
+	name = DrivingSkill.ADVANCED_DRIVING,
 	concept = { IConcept.TRANSPORT, IConcept.SKILL },
 	doc = @doc ("A skill that provides driving primitives and operators")
 )
@@ -377,6 +383,8 @@ public class DrivingSkill extends MovingSkill {
 	static {
 		DEBUG.OFF();
 	}
+
+	public static final String ADVANCED_DRIVING = "advanced_driving";
 
 	@Deprecated public static final String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
 	public static final String SAFETY_DISTANCE_COEFF = "safety_distance_coeff";
@@ -398,6 +406,7 @@ public class DrivingSkill extends MovingSkill {
 	public static final String ON_LINKED_ROAD = "on_linked_road";
 	public static final String USING_LINKED_ROAD = "using_linked_road";
 	public static final String LINKED_LANE_LIMIT = "linked_lane_limit";
+	public static final String ALLOWED_LANES = "allowed_lanes";
 	public static final String TARGETS = "targets";
 	public static final String CURRENT_TARGET = "current_target";
 	public static final String CURRENT_INDEX = "current_index";
@@ -644,6 +653,11 @@ public class DrivingSkill extends MovingSkill {
 		// read-only
 	}
 
+	@getter(ALLOWED_LANES)
+	public static List<Integer> getAllowedLanes(final IAgent vehicle) {
+		return (List<Integer>) vehicle.getAttribute(ALLOWED_LANES);
+	}
+
 	@getter(LINKED_LANE_LIMIT)
 	public static int getLinkedLaneLimit(final IAgent vehicle) {
 		return (int) vehicle.getAttribute(LINKED_LANE_LIMIT);
@@ -776,6 +790,11 @@ public class DrivingSkill extends MovingSkill {
 	@setter(NUM_LANES_OCCUPIED)
 	public static void setNumLanesOccupied(final IAgent vehicle, final Integer value) {
 		vehicle.setAttribute(NUM_LANES_OCCUPIED, value);
+	}
+
+	@getter(LEADING_VEHICLE)
+	public static IAgent getLeadingVehicle(final IAgent vehicle) {
+		return (IAgent) vehicle.getAttribute(LEADING_VEHICLE);
 	}
 
 	@setter(LEADING_VEHICLE)
@@ -1202,6 +1221,9 @@ public class DrivingSkill extends MovingSkill {
 			if (remainingTime < EPSILON) {
 				return;
 			} else if (loc.equals(target)) {
+				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
+				actionOnNewRoad.executeOn(scope);
+
 				IAgent newRoad = getNextRoad(vehicle);
 				if (!isReadyNextRoad(scope, newRoad)) {
 					return;
@@ -1329,8 +1351,11 @@ public class DrivingSkill extends MovingSkill {
 				clearDrivingStates(scope);
 				return;
 			} else if (loc.equals(target)) {  // Intermediate node in path
+				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
+				actionOnNewRoad.executeOn(scope);
+
 				// get next road in path
-				IAgent newRoad = (IAgent) path.getEdgeList().get(currentEdgeIdx + 1);
+				IAgent newRoad = getNextRoad(vehicle);
 
 				// check traffic lights and vehicles coming from other roads
 				if (!isReadyNextRoad(scope, newRoad)) {
@@ -1383,6 +1408,14 @@ public class DrivingSkill extends MovingSkill {
 				remainingTime = moveToNextLocAlongPathOSM(scope, remainingTime, path);
 			}
 		}
+	}
+
+	@action(
+		name = "on_entering_new_road",
+		doc = @doc("override this if you want to do something when the vehicle enters a new road (e.g. adjust parameters)")
+	)
+	public void primOnEnteringNewRoad(final IScope scope) throws GamaRuntimeException {
+		// user-defined
 	}
 
 	@action(
@@ -1677,6 +1710,7 @@ public class DrivingSkill extends MovingSkill {
 		int linkedLaneLimit = getLinkedLaneLimit(vehicle);
 		linkedLaneLimit = (linkedLaneLimit != -1 && numLinkedLanes > linkedLaneLimit) ?
 				linkedLaneLimit : numLinkedLanes;
+		List<Integer> allowedLanes = getAllowedLanes(vehicle);
 
 		Range<Integer> limitedLaneRange;
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
@@ -1699,16 +1733,27 @@ public class DrivingSkill extends MovingSkill {
 
 		ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>> pair =
 			findLeadingAndBackVehicle(scope, road, segment, distToSegmentEnd, lowestLane);
+		IAgent currentBackVehicle = null;
 		double stayAccelM;
 		if (pair == null) {
 			stayAccelM = -Double.MAX_VALUE;
 		} else {
+			if (pair.getValue() != null) {
+				currentBackVehicle = pair.getValue().getLeft();
+			}
 			// Find the leading vehicle on current lanes
 			IAgent leadingVehicle = pair.getKey().getLeft();
 			double leadingDist = pair.getKey().getMiddle();
 			boolean leadingSameDirection = pair.getKey().getRight();
-			double leadingSpeed = getRealSpeed(leadingVehicle);
-			leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
+			double leadingSpeed;
+			// TODO: embed this into getter?
+			if (leadingVehicle == null ||
+					!leadingVehicle.getSpecies().implementsSkill(ADVANCED_DRIVING)) {
+				leadingSpeed = 0.0;
+			} else {
+				leadingSpeed = getRealSpeed(leadingVehicle);
+				leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
+			}
 			setLeadingVehicle(vehicle, leadingVehicle);
 			setLeadingDistance(vehicle, leadingDist);
 			setLeadingSpeed(vehicle, leadingSpeed);
@@ -1717,7 +1762,8 @@ public class DrivingSkill extends MovingSkill {
 			// Do not allow changing lane when approaching intersections
 			// Reason: in some cases the vehicle is forced to slow down (e.g. approaching final target in path),
 			// but it can gain acceleration by switching lanes to follow a fast vehicle.
-			if (leadingVehicle == null) {
+			if (leadingVehicle != null &&
+					leadingVehicle.getSpecies().implementsSkill(RoadNodeSkill.ROAD_NODE)) {
 				return ImmutablePair.of(lowestLane, stayAccelM);
 			}
 		}
@@ -1725,22 +1771,21 @@ public class DrivingSkill extends MovingSkill {
 		// Examine all lanes within range
 		for (int tmpLowestLane : allLanes) {
 			if (tmpLowestLane == lowestLane ||
-					!limitedLaneRange.contains(tmpLowestLane)) {
+					!limitedLaneRange.contains(tmpLowestLane) ||
+					(!allowedLanes.isEmpty() && !allowedLanes.contains(tmpLowestLane))) {
 				continue;
 			}
 
-			// Evaluate probabilities to switch to this lane
+			// Evaluate probabilities to switch to tmpLowestLane
 			boolean canChangeDown = tmpLowestLane >= 0 && tmpLowestLane < lowestLane &&
 					scope.getRandom().next() < probaChangeLaneDown;
-			// NOTE: in canChangeUp, first two conditions check the valid upper lane idxs,
-			// while the 3rd one restricts moving from current road to linked road
+			// NOTE: in canChangeUp, the 2nd condition prevents moving from current road to linked road
 			boolean canChangeUp = tmpLowestLane > lowestLane &&
-					 tmpLowestLane <= numCurrentLanes + linkedLaneLimit - numLanesOccupied &&
 					 !(lowestLane <= numCurrentLanes - numLanesOccupied && tmpLowestLane > numCurrentLanes - numLanesOccupied) &&
 					 scope.getRandom().next() < probaChangeLaneUp;
 			boolean canChangeToLinkedRoad = linkedRoad != null && linkedLaneLimit > 0 &&
-					tmpLowestLane > lowestLane &&
-					tmpLowestLane == numCurrentLanes - numLanesOccupied + 1 &&
+					lowestLane <= numCurrentLanes - numLanesOccupied &&
+					tmpLowestLane > numCurrentLanes - numLanesOccupied &&
 					scope.getRandom().next() < probaUseLinkedRoad;
 			if (!canChangeDown && !canChangeUp && !canChangeToLinkedRoad) {
 				continue;
@@ -1757,8 +1802,15 @@ public class DrivingSkill extends MovingSkill {
 			IAgent leadingVehicle = leadingTriple.getLeft();
 			double leadingDist = leadingTriple.getMiddle();
 			boolean leadingSameDirection = leadingTriple.getRight();
-			double leadingSpeed = getRealSpeed(leadingVehicle);
-			leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
+			double leadingSpeed;
+			// TODO: embed this into getter?
+			if (leadingVehicle == null ||
+					!leadingVehicle.getSpecies().implementsSkill(ADVANCED_DRIVING)) {
+				leadingSpeed = 0.0;
+			} else {
+				leadingSpeed = getRealSpeed(leadingVehicle);
+				leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
+			}
 			// Calculate acc'(M) - acceleration of M on new lane
 			double changeAccelM = computeAccelerationIDM(scope, vehicle, leadingDist, leadingSpeed);
 
@@ -1766,8 +1818,13 @@ public class DrivingSkill extends MovingSkill {
 			double stayAccelB;
 			double changeAccelB;
 			Triple<IAgent, Double, Boolean> backTriple = pair.getValue();
-			if (backTriple == null || !backTriple.getRight()) {
-				// No vehicle behind
+			if (backTriple == null || !backTriple.getRight() ||
+					backTriple.getLeft() == currentBackVehicle ||
+					getLeadingVehicle(backTriple.getLeft()) != vehicle) {
+				// IF no back vehicle OR back vehicle is moving backwards OR
+				// back vehicle on new lanes is the same one on old lanes OR
+				// back vehicle's leading vehicle is not the current vehicle
+				// THEN there is no acceleration change of B
 				stayAccelB = 0;
 				changeAccelB = 0;
 			} else {
@@ -1789,7 +1846,7 @@ public class DrivingSkill extends MovingSkill {
 
 			// Safety criterion & Incentive criterion
 			if (changeAccelB > -bSave &&
-					changeAccelM - stayAccelM > p * (stayAccelB - changeAccelB) + aThr) {
+					changeAccelM - stayAccelM >= p * (stayAccelB - changeAccelB) + aThr) {
 				setLeadingVehicle(vehicle, leadingVehicle);
 				setLeadingDistance(vehicle, leadingDist);
 				setLeadingSpeed(vehicle, leadingSpeed);
@@ -1860,8 +1917,7 @@ public class DrivingSkill extends MovingSkill {
 	 * (closest vehicle behind) which are moving on the same lanes as the current
 	 * vehicle.
 	 *
-	 * For each of the above vehicle, the method returns a triplet
-	 * containing:
+	 * For each of the above vehicle, the method returns a triplet containing:
 	 *    1. The vehicle agent itself
 	 *    2. The bumper-to-bumper gap between that vehicle and the current vehicle
 	 *    3. Whether that vehicle is moving in the same direction
@@ -1873,6 +1929,8 @@ public class DrivingSkill extends MovingSkill {
 	 * On the other hand, if no back vehicle is found on the current segment,
 	 * the method does NOT consider the previous segment or the last segment of the previous road.
 	 * (a possible TODO?)
+	 *
+	 * If either the leading or back vehicle overlap the current one, the return value will be just null.
 	 *
 	 * @param scope
 	 * @param road             the road which the vehicle is moving on
@@ -1959,7 +2017,8 @@ public class DrivingSkill extends MovingSkill {
 			if (segment == numSegments - 1) {
 				// Return a virtual leading vehicle of length 0 to simulate deceleration at intersections
 				// NOTE: the added minSafetyDist is necessary for the vehicle to ignore the safety dist when stopping at an endpoint
-				leadingTriple = ImmutableTriple.of(null, distToSegmentEnd + minSafetyDist, false);
+				IAgent stoppingNode = RoadSkill.getTargetNode(road);
+				leadingTriple = ImmutableTriple.of(stoppingNode, distToSegmentEnd + minSafetyDist, false);
 				// Slowing down at final target, since at this point we don't know which road will be taken next
 				if (nextRoad == null) {
 					return ImmutablePair.of(leadingTriple, backTriple);
@@ -1998,6 +2057,9 @@ public class DrivingSkill extends MovingSkill {
 
 			double minGap = Double.MAX_VALUE;
 			for (IAgent otherVehicle : furtherVehicles) {
+				if (otherVehicle == vehicle || otherVehicle == null || otherVehicle.dead()) {
+					continue;
+				}
 				// check if the other vehicle going in opposite direction
 				double gap;
 				boolean sameDirection = getCurrentRoad(otherVehicle) == roadToCheck;

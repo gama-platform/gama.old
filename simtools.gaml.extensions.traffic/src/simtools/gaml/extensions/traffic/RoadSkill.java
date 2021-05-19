@@ -10,10 +10,7 @@
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.locationtech.jts.algorithm.CGAlgorithms;
 
@@ -85,20 +82,22 @@ import msi.gaml.types.Types;
 	)
 })
 @skill(
-	name = "skill_road",
+	name = RoadSkill.SKILL_ROAD,
 	concept = { IConcept.TRANSPORT, IConcept.SKILL },
 	doc = @doc ("A skill for agents representing roads in traffic simulations")
 )
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class RoadSkill extends Skill {
-	public final static String ALL_AGENTS = "all_agents";
-	public final static String AGENTS_ON = "agents_on";
-	public final static String SOURCE_NODE = "source_node";
-	public final static String TARGET_NODE = "target_node";
-	public final static String LANES = "lanes";
-	public final static String MAXSPEED = "maxspeed";
-	public final static String LINKED_ROAD = "linked_road";
-	public final static String NUM_SEGMENTS = "num_segments";
+	public static final String SKILL_ROAD = "skill_road";
+
+	public static final String ALL_AGENTS = "all_agents";
+	public static final String AGENTS_ON = "agents_on";
+	public static final String SOURCE_NODE = "source_node";
+	public static final String TARGET_NODE = "target_node";
+	public static final String LANES = "lanes";
+	public static final String MAXSPEED = "maxspeed";
+	public static final String LINKED_ROAD = "linked_road";
+	public static final String NUM_SEGMENTS = "num_segments";
 
 	@getter(AGENTS_ON)
 	public static List getAgentsOn(final IAgent agent) {
