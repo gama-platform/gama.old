@@ -155,25 +155,25 @@ public class MovingSkill extends Skill {
 	}
 
 	@getter (IKeyword.SPEED)
-	public double getSpeed(final IAgent agent) {
+	public static double getSpeed(final IAgent agent) {
 		if (agent == null) { return 0.0; }
 		return (Double) agent.getAttribute(IKeyword.SPEED);
 	}
 
 	@getter (IKeyword.REAL_SPEED)
-	public double getRealSpeed(final IAgent agent) {
+	public static double getRealSpeed(final IAgent agent) {
 		if (agent == null) { return 0.0; }
 		return (Double) agent.getAttribute(IKeyword.REAL_SPEED);
 	}
 
 	@setter (IKeyword.SPEED)
-	public void setSpeed(final IAgent agent, final double s) {
+	public static void setSpeed(final IAgent agent, final double s) {
 		if (agent == null) { return; }
 		agent.setAttribute(IKeyword.SPEED, s);
 	}
 
 	@setter (IKeyword.REAL_SPEED)
-	public void setRealSpeed(final IAgent agent, final double s) {
+	public static void setRealSpeed(final IAgent agent, final double s) {
 		if (agent == null) { return; }
 		agent.setAttribute(IKeyword.REAL_SPEED, s);
 	}

@@ -79,7 +79,10 @@ import ummisco.gama.dev.utils.DEBUG;
 		name = IKeyword.REAL_SPEED,
 		type = IType.FLOAT,
 		init = "0.0",
-		doc = @doc("the actual speed of the agent (in meter/second)")
+		doc = @doc(
+			value = "the actual speed of the agent (in meter/second)",
+			deprecated = "there is now only one speed value, which is located in `speed`"
+		)
 	),
 	@variable(
 		name = DrivingSkill.ACCELERATION,
@@ -433,6 +436,33 @@ public class DrivingSkill extends MovingSkill {
 	// A small threshold representing zero (used to handle approximations in IDM)
 	// TODO: not sure if this is the right threshold
 	private static final Double EPSILON = 1e-4;
+
+	@getter (IKeyword.SPEED)
+	public static double getSpeed(final IAgent vehicle) {
+		if (vehicle == null || vehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) {
+			return 0.0;
+		} else {
+			return (Double) vehicle.getAttribute(IKeyword.SPEED);
+		}
+	}
+
+	@setter (IKeyword.SPEED)
+	public static void setSpeed(final IAgent vehicle, final double speed) {
+		if (vehicle == null) { return; }
+		vehicle.setAttribute(IKeyword.SPEED, speed);
+	}
+
+	@getter(IKeyword.REAL_SPEED)
+	@Deprecated
+	public static double getRealSpeed(final IAgent vehicle) {
+		return getSpeed(vehicle);
+	}
+
+	@setter(IKeyword.REAL_SPEED)
+	@Deprecated
+	public static void setRealSpeed(final IAgent vehicle, final double speed) {
+		setSpeed(vehicle, speed);
+	}
 
 	@setter(ACCELERATION)
 	public static void setAccelerationReadOnly(final IAgent vehicle, final Double val) {
@@ -1001,7 +1031,7 @@ public class DrivingSkill extends MovingSkill {
 					(GamaPoint) currentRoad.getLocation(), (GamaPoint) newRoad.getLocation());
 
 			// TODO: adjust the speed diff condition
-			double realSpeed = Math.max(0.5, getRealSpeed(vehicle) + getMaxAcceleration(vehicle));
+			double speed = Math.max(0.5, getSpeed(vehicle) + getMaxAcceleration(vehicle));
 			double safetyDistCoeff = vehicle.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(vehicle)
 					: getSecurityDistanceCoeff(vehicle);
 
@@ -1024,11 +1054,11 @@ public class DrivingSkill extends MovingSkill {
 							continue;
 						}
 						double otherVehicleLength = getVehicleLength(otherVehicle);
-						double otherRealSpeed = getRealSpeed(otherVehicle);
+						double otherSpeed = getSpeed(otherVehicle);
 						double dist = otherVehicle.euclidianDistanceTo(vehicle);
 
-						if (Maths.round(getRealSpeed(otherVehicle), 1) > 0.0 &&
-								0.5 + safetyDistCoeff * Math.max(0, realSpeed - otherRealSpeed) >
+						if (Maths.round(getSpeed(otherVehicle), 1) > 0.0 &&
+								0.5 + safetyDistCoeff * Math.max(0, speed - otherSpeed) >
 								dist - (vehicleLength / 2 + otherVehicleLength / 2)) {
 							return false;
 						}
@@ -1613,7 +1643,7 @@ public class DrivingSkill extends MovingSkill {
 				}
 			}
 
-			double oldSpeed = getRealSpeed(vehicle);
+			double oldSpeed = getSpeed(vehicle);
 
 			// Choose an optimal lane
 			Pair<Integer, Double> pair = chooseLaneMOBIL(scope, currentRoad, currentSegment, distToGoal);
@@ -1622,7 +1652,7 @@ public class DrivingSkill extends MovingSkill {
 			double speed = computeSpeed(scope, accel, currentRoad);
 
 			setAcceleration(vehicle, accel);
-			setRealSpeed(vehicle, speed);
+			setSpeed(vehicle, speed);
 
 			// TODO: this loop is confusing AF!!!
 			// refactor so that speed is computed only once during a simulation step,
@@ -1745,15 +1775,8 @@ public class DrivingSkill extends MovingSkill {
 			IAgent leadingVehicle = pair.getKey().getLeft();
 			double leadingDist = pair.getKey().getMiddle();
 			boolean leadingSameDirection = pair.getKey().getRight();
-			double leadingSpeed;
-			// TODO: embed this into getter?
-			if (leadingVehicle == null ||
-					!leadingVehicle.getSpecies().implementsSkill(ADVANCED_DRIVING)) {
-				leadingSpeed = 0.0;
-			} else {
-				leadingSpeed = getRealSpeed(leadingVehicle);
-				leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
-			}
+			double leadingSpeed = getSpeed(leadingVehicle);
+			leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
 			setLeadingVehicle(vehicle, leadingVehicle);
 			setLeadingDistance(vehicle, leadingDist);
 			setLeadingSpeed(vehicle, leadingSpeed);
@@ -1763,7 +1786,7 @@ public class DrivingSkill extends MovingSkill {
 			// Reason: in some cases the vehicle is forced to slow down (e.g. approaching final target in path),
 			// but it can gain acceleration by switching lanes to follow a fast vehicle.
 			if (leadingVehicle != null &&
-					leadingVehicle.getSpecies().implementsSkill(RoadNodeSkill.ROAD_NODE)) {
+					leadingVehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) {
 				return ImmutablePair.of(lowestLane, stayAccelM);
 			}
 		}
@@ -1793,7 +1816,7 @@ public class DrivingSkill extends MovingSkill {
 
 			pair = findLeadingAndBackVehicle(scope, road, segment, distToSegmentEnd, tmpLowestLane);
 			if (pair == null) {
-				// Will crash into another vehicle if change
+				// Will crash into another vehicle if switch to this lane
 				continue;
 			}
 
@@ -1802,15 +1825,9 @@ public class DrivingSkill extends MovingSkill {
 			IAgent leadingVehicle = leadingTriple.getLeft();
 			double leadingDist = leadingTriple.getMiddle();
 			boolean leadingSameDirection = leadingTriple.getRight();
-			double leadingSpeed;
-			// TODO: embed this into getter?
-			if (leadingVehicle == null ||
-					!leadingVehicle.getSpecies().implementsSkill(ADVANCED_DRIVING)) {
-				leadingSpeed = 0.0;
-			} else {
-				leadingSpeed = getRealSpeed(leadingVehicle);
-				leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
-			}
+			double leadingSpeed = getSpeed(leadingVehicle);
+			leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
+
 			// Calculate acc'(M) - acceleration of M on new lane
 			double changeAccelM = computeAccelerationIDM(scope, vehicle, leadingDist, leadingSpeed);
 
@@ -1835,7 +1852,7 @@ public class DrivingSkill extends MovingSkill {
 				stayAccelB = computeAccelerationIDM(scope, backVehicle, backDist + VL + leadingDist, leadingSpeed);
 				// Calculate acc'(B') - acceleration of B' if M changes to this lane
 				// NOTE: in this case, M is the new leading vehicle of B'
-				changeAccelB = computeAccelerationIDM(scope, backVehicle, backDist, getRealSpeed(vehicle));
+				changeAccelB = computeAccelerationIDM(scope, backVehicle, backDist, getSpeed(vehicle));
 			}
 
 			double step = scope.getSimulation().getClock().getStepInSeconds();
@@ -1881,7 +1898,7 @@ public class DrivingSkill extends MovingSkill {
 		double delta = getDeltaIDM(vehicle);
 
 		double s = leadingDist;
-		double v = getRealSpeed(vehicle);
+		double v = getSpeed(vehicle);
 		double dv = v - leadingSpeed;
 
 		double sStar = s0 + Math.max(0, v * T + v * dv / 2 / Math.sqrt(a * b));
@@ -1905,7 +1922,7 @@ public class DrivingSkill extends MovingSkill {
 			final IAgent road) {
 		IAgent vehicle = getCurrentAgent(scope);
 
-		double speed = getRealSpeed(vehicle) + acceleration;
+		double speed = getSpeed(vehicle) + acceleration;
 		speed = Math.min(speed, getSpeedCoeff(vehicle) * RoadSkill.getMaxSpeed(road));
 		speed = Math.min(speed, getMaxSpeed(vehicle));
 		speed = Math.max(0.0, speed);

@@ -64,7 +64,7 @@ import msi.gaml.types.IType;
 )
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RoadNodeSkill extends Skill {
-	public static final String ROAD_NODE = "skill_road_node";
+	public static final String SKILL_ROAD_NODE = "skill_road_node";
 
 	public static final String ROADS_IN = "roads_in";
 	public static final String PRIORITY_ROADS = "priority_roads";
