@@ -94,7 +94,7 @@ global {
 }
 
 species pedestrian_path skills: [pedestrian_road]{
-	aspect default {
+	aspect default { 
 		draw shape  color: #gray;
 	}
 	aspect free_area_aspect {

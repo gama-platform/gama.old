@@ -39,6 +39,7 @@ import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Operators;
+import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
@@ -210,7 +211,7 @@ public class PedestrianRoadSkill extends Skill {
 					value = "action to initialize the free space of roads",
 					examples = { @example ("do initialize distance: 10.0 obstacles: [building];") }))
 	@SuppressWarnings("unchecked")
-	public void primWalkEscape(final IScope scope) throws GamaRuntimeException {
+	public void primInitialize(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		
 		int status = scope.hasArg("status") ? scope.getIntArg("status") : (agent.getGeometry().hasAttribute(PEDESTRIAN_ROAD_STATUS) ? GamaIntegerType
@@ -422,6 +423,8 @@ public class PedestrianRoadSkill extends Skill {
 	@SuppressWarnings("unchecked")
 	public static void register(IScope scope, IAgent road, IAgent pedestrian ) {
 		((IList<IAgent> ) road.getAttribute(AGENTS_ON)).add(pedestrian);
+		if (!pedestrian.getLocation().intersects(getFreeSpace(road)))
+			pedestrian.setLocation(Punctal._closest_point_to(pedestrian.getLocation(), getFreeSpace(road)));
 		pedestrian.setAttribute("current_edge", road);
 	}
 	

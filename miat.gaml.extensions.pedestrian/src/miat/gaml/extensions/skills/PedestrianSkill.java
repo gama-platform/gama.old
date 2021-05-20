@@ -28,7 +28,6 @@ import msi.gama.util.IMap;
 import msi.gama.util.path.IPath;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.Maths;
 import msi.gaml.operators.Points;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial;
@@ -105,7 +104,7 @@ import msi.gaml.types.Types;
 			type = IType.FLOAT,
 			init = "2.0",
 			doc = @doc ("Value of B in the SFM model for obstacles - the range (in meters) of repulsive interactions")),
-@variable (
+	@variable (
 			name = "k_SFM",
 			type = IType.FLOAT,
 			init = "200",
@@ -279,8 +278,6 @@ public class PedestrianSkill extends MovingSkill {
 	
 	
 	
-	
-	
 	@getter (OBSTACLE_SPECIES)
 	public GamaList<ISpecies> getObstacleSpecies(final IAgent agent) {
 		return (GamaList<ISpecies>) agent.getAttribute(OBSTACLE_SPECIES);
@@ -410,8 +407,6 @@ public class PedestrianSkill extends MovingSkill {
 		agent.setAttribute(B_OBSTACLES_SFM, val);
 	}
 	
-
-	
 	@getter (AVOID_OTHER)
 	public Boolean getAvoidOther(final IAgent agent) {
 		return (Boolean) agent.getAttribute(AVOID_OTHER);
@@ -444,8 +439,6 @@ public class PedestrianSkill extends MovingSkill {
 	    agent.setAttribute(TOLERANCE_TARGET, s);
 	}
 	
-	
-
 	@getter (TARGETS)
 	public IList<IShape> getTargets(final IAgent agent) {
 		return (IList<IShape>) agent.getAttribute(TARGETS);
@@ -573,7 +566,10 @@ public class PedestrianSkill extends MovingSkill {
 			IShape bounds, IContainer<Integer, ?> pedestrianList, IContainer<Integer, ?> obstaclesList, double maxDist) {
 		GamaPoint location = (GamaPoint) getLocation(agent).copy(scope);
 		GamaPoint target = currentTarget.isPoint() ? currentTarget.getLocation().toGamaPoint() : Punctal._closest_point_to(location, currentTarget).toGamaPoint();
+		target.setZ(target.z);
 		double dist = location.distance(target);
+		//System.out.println("location: " + location +" target: " + target + " dist: " + dist);
+		
 		if (dist == 0.0) return 0.0;
 		
 		if( !currentTarget.isPoint() && bounds != null && getCurrentEdge(agent) != null) {
@@ -598,6 +594,7 @@ public class PedestrianSkill extends MovingSkill {
 			double distPercep = Math.max(maxDist, getPedestrianConsiderationDistance(agent));
 			double distPercepObst = Math.max(maxDist, getObstacleConsiderationDistance(agent));
 			velocity = avoidSFM(scope, agent, location, target, distPercep,distPercepObst,pedestrianList,obstaclesList);
+			velocity = velocity.multiplyBy(dist);
 		} else {
 			velocity = target.copy(scope).minus(location);
 		}
@@ -645,8 +642,6 @@ public class PedestrianSkill extends MovingSkill {
 		double dist = location.euclidianDistanceTo(currentTarget);
 		if (dist == 0 || getSpeed(agent) <= 0.0) 
 			return  new GamaPoint(0,0,0);
-		double step = scope.getSimulation().getClock().getStepInSeconds();
-		double speed = getSpeed(agent);
 		IList<IAgent> obstacles = GamaListFactory.create(Types.AGENT);
 		IList<IAgent> pedestrians = GamaListFactory.create(Types.AGENT);
 		
@@ -743,14 +738,7 @@ public class PedestrianSkill extends MovingSkill {
 		forcesMap.put(agent, fdest);
 		agent.setAttribute(FORCES, forcesMap);
 		GamaPoint forces = fdest.add(forcesPedestrian);
-		
-		GamaPoint pref_velocity = current_velocity.add(forces.multiplyBy(step));
-		double norm_vel = Maths.sqrt(scope, pref_velocity.x * pref_velocity.x +pref_velocity.y * pref_velocity.y+pref_velocity.z * pref_velocity.z);
-		if (norm_vel > speed) {
-			current_velocity = pref_velocity.divideBy(norm_vel * speed); 
-		} else {
-			current_velocity = pref_velocity;
-		}
+		current_velocity = current_velocity.add(forces).normalize();
 		return current_velocity;
 	}
 
@@ -781,7 +769,6 @@ public class PedestrianSkill extends MovingSkill {
 		IShape source = agent.getLocation();
 		
 		thePath = ((GraphTopology) graph.getTopology(scope)).pathBetween(scope, source, target);
-		
 		// If there is no path between source and target ...
 		if(thePath == null) { return thePath; }
 		IMap<IShape,IShape> roadTarget = GamaMapFactory.create();
@@ -794,7 +781,6 @@ public class PedestrianSkill extends MovingSkill {
 				IShape cRoad = thePath.getRealObject(cSeg);
 				IMap<IAgent,IShape> map = PedestrianRoadSkill.getConnectedSegmentsIntersection((IAgent) cRoad);
 
-				//Double dist = PedestrianRoadSkill.getDistance(cRoad.getAgent());
 				IShape geom = null,cRoadNext = null,geomNext = null; 
 				if (useGeometryTarget) {
 					geom = PedestrianRoadSkill.getFreeSpace(cRoad.getAgent());
@@ -901,7 +887,6 @@ public class PedestrianSkill extends MovingSkill {
 	public void primWalk(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		if (agent == null || agent.dead()) { return; }
-		
 		final IShape finalTarget = getFinalTarget(agent);
 		if (finalTarget == null) { return; }
 		
@@ -910,6 +895,7 @@ public class PedestrianSkill extends MovingSkill {
 		
 		GamaPoint location = (GamaPoint) getLocation(agent).copy(scope);
 		double maxDist = computeDistance(scope, agent);
+		
 		boolean movement = true;
 		int maxIndex = targets.size() - 1;
 		while(movement) {
@@ -918,7 +904,7 @@ public class PedestrianSkill extends MovingSkill {
 			int index = getCurrentIndex(agent);
 			IShape currentTarget = getCurrentTarget(agent);
 			IAgent road = (IAgent) getRoadsTargets(agent).get(currentTarget);
-			
+		
 			IShape bounds = null;
 			boolean avoidOther = getAvoidOther(agent);
 			
@@ -948,6 +934,7 @@ public class PedestrianSkill extends MovingSkill {
 			
 			if (arrivedAtTarget(scope,location,currentTarget,getToleranceTarget(agent), index, maxIndex, targets)) {
 				if (road != null) PedestrianRoadSkill.unregister(scope, road, agent);
+				
 				if (index < maxIndex) {
 					index++;
 					
