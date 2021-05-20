@@ -27,6 +27,7 @@ import msi.gama.common.interfaces.IExperimentAgentCreator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.model.GamlModelSpecies;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ModelDescription;
@@ -112,7 +113,8 @@ public class GamaMetaModel {
 
 		// We then create all other built-in species and attach them to "model"
 		for (final SpeciesProto proto : tempSpecies.values()) {
-			model.addChild(buildSpecies(proto, model, agent, false, false));
+			model.addChild(
+					buildSpecies(proto, model, agent, SimulationAgent.class.isAssignableFrom(proto.clazz), false));
 		}
 		tempSpecies.clear();
 		model.buildTypes();
@@ -121,7 +123,7 @@ public class GamaMetaModel {
 	}
 
 	public SpeciesDescription buildSpecies(final SpeciesProto proto, final SpeciesDescription macro,
-			final SpeciesDescription parent, final boolean isGlobal, final boolean isExperiment) {
+			final SpeciesDescription parent, final boolean isModel, final boolean isExperiment) {
 		final Class clazz = proto.clazz;
 		final String name = proto.name;
 		final IAgentConstructor helper = proto.helper;
@@ -134,7 +136,7 @@ public class GamaMetaModel {
 			desc = DescriptionFactory.createPlatformSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
 					plugin);
 		} else {
-			if (!isGlobal) {
+			if (!isModel) {
 				if (isExperiment) {
 					desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
 							allSkills, plugin);
@@ -143,7 +145,8 @@ public class GamaMetaModel {
 							allSkills, plugin);
 				}
 			} else {
-				desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
+				// if it is a ModelDescription, then the macro represents the parent (except for root)
+				desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent, helper);
 			}
 		}
 		desc.copyJavaAdditions();
@@ -165,9 +168,7 @@ public class GamaMetaModel {
 
 	public PlatformSpeciesDescription getPlatformSpeciesDescription() {
 		final IType platform = Types.get(IKeyword.PLATFORM);
-		if (platform != null && platform != Types.NO_TYPE) {
-			return (PlatformSpeciesDescription) platform.getSpecies();
-		}
+		if (platform != null && platform != Types.NO_TYPE) return (PlatformSpeciesDescription) platform.getSpecies();
 		return null;
 	}
 

@@ -13,8 +13,10 @@ package msi.gaml.descriptions;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,8 +28,10 @@ import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
+import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
@@ -46,6 +50,7 @@ public class ModelDescription extends SpeciesDescription {
 	// TODO Move elsewhere
 	public static final String MODEL_SUFFIX = "_model";
 	public static volatile ModelDescription ROOT;
+	public static volatile Map<String, ModelDescription> BUILT_IN_MODELS = new HashMap();
 	private IMap<String, ExperimentDescription> experiments;
 	final ITypesManager types;
 	private String modelFilePath;
@@ -64,7 +69,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public ModelDescription getMicroModel(final String name) {
-		if (microModels == null) { return null; }
+		if (microModels == null) return null;
 		return microModels.get(name);
 	}
 
@@ -90,7 +95,7 @@ public class ModelDescription extends SpeciesDescription {
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent,
 			final Iterable<? extends IDescription> children, final Facets facets,
-			final ValidationContext validationContext, final Set<String> imports) {
+			final ValidationContext validationContext, final Set<String> imports, final IAgentConstructor helper) {
 		super(MODEL, clazz, macro, parent, children, source, facets);
 		setName(name);
 		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
@@ -99,6 +104,7 @@ public class ModelDescription extends SpeciesDescription {
 		modelProjectPath = projectPath;
 		this.validationContext = validationContext;
 		this.alternatePaths = imports;
+		if (helper != null) { setAgentConstructor(helper); }
 	}
 
 	@Override
@@ -129,7 +135,7 @@ public class ModelDescription extends SpeciesDescription {
 	// hqnghi does it need to verify parent of micro-model??
 	@Override
 	protected boolean verifyParent() {
-		if (parent == ModelDescription.ROOT) { return true; }
+		if (parent == ModelDescription.ROOT) return true;
 		return super.verifyParent();
 	}
 
@@ -137,7 +143,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void markAttributeRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
-		if (newVar.isBuiltIn()) { return; }
+		if (newVar.isBuiltIn()) return;
 		if (existingVar.isBuiltIn()) {
 			newVar.info(
 					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
@@ -167,9 +173,7 @@ public class ModelDescription extends SpeciesDescription {
 			sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
 		}
 		final Iterable<String> skills = getSkillsNames();
-		if (!Iterables.isEmpty(skills)) {
-			sb.append("<b>Skills:</b> ").append(skills).append("<br>");
-		}
+		if (!Iterables.isEmpty(skills)) { sb.append("<b>Skills:</b> ").append(skills).append("<br>"); }
 		sb.append("<br>").append(
 				"The following attributes and actions will be accessible using 'world' (in the model) and 'simulation' (in an experiment)")
 				.append("<br>");
@@ -191,13 +195,13 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public String toString() {
-		if (modelFilePath == null || modelFilePath.isEmpty()) { return "abstract model"; }
+		if (modelFilePath == null || modelFilePath.isEmpty()) return "abstract model " + getName();
 		return "description of " + modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
 	}
 
 	@Override
 	public void dispose() {
-		if (isBuiltIn()) { return; }
+		if (isBuiltIn()) return;
 		super.dispose();
 		experiments = null;
 		types.dispose();
@@ -232,30 +236,24 @@ public class ModelDescription extends SpeciesDescription {
 	public SpeciesDescription getMacroSpecies() {
 
 		SpeciesDescription d = super.getMacroSpecies();
-		if (d == null) {
-			d = Types.get(EXPERIMENT).getSpecies();
-		}
+		if (d == null) { d = Types.get(EXPERIMENT).getSpecies(); }
 		return d;
 
 	}
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-		if (child == null) { return null; }
+		if (child == null) return null;
 
 		if (child instanceof ModelDescription) {
 			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
-			if (microModels == null) {
-				microModels = GamaMapFactory.createUnordered();
-			}
+			if (microModels == null) { microModels = GamaMapFactory.createUnordered(); }
 			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
 		} // no else as models are also species, which should be added after.
 
 		if (child instanceof ExperimentDescription) {
 			final String s = child.getName();
-			if (experiments == null) {
-				experiments = GamaMapFactory.createUnordered();
-			}
+			if (experiments == null) { experiments = GamaMapFactory.createUnordered(); }
 			experiments.put(s, (ExperimentDescription) child);
 		} else {
 			super.addChild(child);
@@ -266,9 +264,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void addOwnAttribute(final VariableDescription vd) {
-		if (!vd.isBuiltIn() && vd.getName().equals(SimulationAgent.STARTING_DATE)) {
-			isStartingDateDefined = true;
-		}
+		if (!vd.isBuiltIn() && vd.getName().equals(SimulationAgent.STARTING_DATE)) { isStartingDateDefined = true; }
 		super.addOwnAttribute(vd);
 	}
 
@@ -277,10 +273,10 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public boolean hasExperiment(final String nameOrTitle) {
-		if (experiments == null) { return false; }
-		if (experiments.containsKey(nameOrTitle)) { return true; }
+		if (experiments == null) return false;
+		if (experiments.containsKey(nameOrTitle)) return true;
 		for (final ExperimentDescription exp : experiments.values()) {
-			if (exp.getExperimentTitleFacet().equals(nameOrTitle)) { return true; }
+			if (exp.getExperimentTitleFacet().equals(nameOrTitle)) return true;
 		}
 		return false;
 	}
@@ -292,22 +288,20 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if (spec.equals(getName())) { return this; }
-		if (importedModelNames != null && importedModelNames.contains(spec)) { return this; }
+		if (spec.equals(getName())) return this;
+		if (importedModelNames != null && importedModelNames.contains(spec)) return this;
 		if (getTypesManager() == null) {
-			if (hasMicroSpecies()) {
+			if (hasMicroSpecies())
 				return getMicroSpecies().get(spec);
-			} else {
+			else
 				return null;
-			}
-		} else {
+		} else
 			return getTypesManager().get(spec).getSpecies();
-		}
 	}
 
 	@Override
 	public IType getTypeNamed(final String s) {
-		if (types == null) { return Types.NO_TYPE; }
+		if (types == null) return Types.NO_TYPE;
 		return types.get(s);
 	}
 
@@ -321,7 +315,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public Set<String> getExperimentNames() {
-		if (experiments == null) { return Collections.EMPTY_SET; }
+		if (experiments == null) return Collections.EMPTY_SET;
 		return new LinkedHashSet(experiments.keySet());
 	}
 
@@ -329,9 +323,7 @@ public class ModelDescription extends SpeciesDescription {
 		final Set<String> strings = new LinkedHashSet();
 		if (experiments != null) {
 			experiments.forEachPair((a, b) -> {
-				if (b.getOriginName().equals(getName())) {
-					strings.add(b.getExperimentTitleFacet());
-				}
+				if (b.getOriginName().equals(getName())) { strings.add(b.getExperimentTitleFacet()); }
 				return true;
 			});
 		}
@@ -344,11 +336,11 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public ExperimentDescription getExperiment(final String name) {
-		if (experiments == null) { return null; }
+		if (experiments == null) return null;
 		final ExperimentDescription desc = experiments.get(name);
 		if (desc == null) {
 			for (final ExperimentDescription ed : experiments.values()) {
-				if (ed.getExperimentTitleFacet().equals(name)) { return ed; }
+				if (ed.getExperimentTitleFacet().equals(name)) return ed;
 			}
 		}
 		return desc;
@@ -357,35 +349,31 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		boolean result = super.visitChildren(visitor);
-		if (result && experiments != null) {
-			result &= experiments.forEachValue(visitor);
-		}
+		if (result && experiments != null) { result &= experiments.forEachValue(visitor); }
 		return result;
 	}
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
-		if (!super.visitOwnChildren(visitor)) { return false; }
-		if (experiments != null) {
-			if (!experiments.forEachValue(visitor)) { return false; }
-		}
+		if (!super.visitOwnChildren(visitor)) return false;
+		if (experiments != null) { if (!experiments.forEachValue(visitor)) return false; }
 		return true;
 	}
 
 	@Override
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
 		final DescriptionVisitor<IDescription> recursiveVisitor = each -> {
-			if (!visitor.process(each)) { return false; }
+			if (!visitor.process(each)) return false;
 			return each.visitOwnChildrenRecursively(visitor);
 		};
-		if (!super.visitOwnChildrenRecursively(visitor)) { return false; }
-		if (experiments != null && !experiments.forEachValue(recursiveVisitor)) { return false; }
+		if (!super.visitOwnChildrenRecursively(visitor)) return false;
+		if (experiments != null && !experiments.forEachValue(recursiveVisitor)) return false;
 		return true;
 	}
 
 	@Override
 	public boolean finalizeDescription() {
-		if (!super.finalizeDescription()) { return false; }
+		if (!super.finalizeDescription()) return false;
 		if (actions != null) {
 			for (final ActionDescription action : actions.values()) {
 				if (action.isAbstract()
@@ -401,7 +389,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated) { return this; }
+		if (validated) return this;
 		return validate(false);
 	}
 
@@ -416,7 +404,7 @@ public class ModelDescription extends SpeciesDescription {
 	 * @return
 	 */
 	public Collection<? extends ExperimentDescription> getExperiments() {
-		if (experiments == null) { return Collections.EMPTY_LIST; }
+		if (experiments == null) return Collections.EMPTY_LIST;
 		return experiments.values();
 	}
 
@@ -439,10 +427,8 @@ public class ModelDescription extends SpeciesDescription {
 				visitor.process(desc);
 				return desc.visitMicroSpecies(this);
 			}
-		})) { return; }
-		if (experiments != null) {
-			experiments.forEachValue(visitor);
-		}
+		})) return;
+		if (experiments != null) { experiments.forEachValue(visitor); }
 		// if (microModels != null)
 		// for (final ModelDescription md : microModels.values()) {
 		// visitor.visit(md);
@@ -455,6 +441,19 @@ public class ModelDescription extends SpeciesDescription {
 			return true;
 		};
 		visitAllSpecies(visitor);
+	}
+
+	@Override
+	public Class<? extends IAgent> getJavaBase() {
+		return super.getJavaBase();
+	}
+
+	@Override
+	protected boolean parentIsVisible() {
+		if (!getParent().isModel()) return false;
+		if (parent.isBuiltIn()) return true;
+
+		return false;
 	}
 
 }

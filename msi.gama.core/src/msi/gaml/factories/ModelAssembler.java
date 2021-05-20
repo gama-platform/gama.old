@@ -13,8 +13,11 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.FREQUENCY;
 import static msi.gama.common.interfaces.IKeyword.GLOBAL;
 import static msi.gama.common.interfaces.IKeyword.NAME;
+import static msi.gama.common.interfaces.IKeyword.PARENT;
 import static msi.gama.common.interfaces.IKeyword.SCHEDULES;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
+import static msi.gaml.descriptions.ModelDescription.BUILT_IN_MODELS;
+import static msi.gaml.descriptions.ModelDescription.ROOT;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -76,15 +79,9 @@ public class ModelAssembler {
 			final List<String> pragmas = (List<String>) facets.get(IKeyword.PRAGMA).getExpression().getConstValue();
 			collector.resetInfoAndWarning();
 			if (pragmas != null) {
-				if (pragmas.contains(IKeyword.NO_INFO)) {
-					collector.setNoInfo();
-				}
-				if (pragmas.contains(IKeyword.NO_WARNING)) {
-					collector.setNoWarning();
-				}
-				if (pragmas.contains(IKeyword.NO_EXPERIMENT)) {
-					collector.setNoExperiment();
-				}
+				if (pragmas.contains(IKeyword.NO_INFO)) { collector.setNoInfo(); }
+				if (pragmas.contains(IKeyword.NO_WARNING)) { collector.setNoWarning(); }
+				if (pragmas.contains(IKeyword.NO_EXPERIMENT)) { collector.setNoExperiment(); }
 			}
 
 		}
@@ -108,9 +105,7 @@ public class ModelAssembler {
 				// (see DiffusionStatement)
 				currentModel.visitGrids(visitor);
 				visitor = element -> {
-					if (experimentNodes[0] == null) {
-						experimentNodes[0] = GamaMapFactory.create();
-					}
+					if (experimentNodes[0] == null) { experimentNodes[0] = GamaMapFactory.create(); }
 					addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
 
 				};
@@ -137,9 +132,14 @@ public class ModelAssembler {
 			}
 		}
 
+		ModelDescription parent = ROOT;
+		if (globalFacets != null && globalFacets.containsKey(PARENT)) {
+			String parentModel = globalFacets.getLabel(PARENT);
+			if (BUILT_IN_MODELS.containsKey(parentModel)) { parent = BUILT_IN_MODELS.get(parentModel); }
+		}
 		final ModelDescription model =
-				new ModelDescription(modelName, null, projectPath, modelPath, source.getElement(), null,
-						ModelDescription.ROOT, null, globalFacets, collector, absoluteAlternatePathAsStrings);
+				new ModelDescription(modelName, null, projectPath, modelPath, source.getElement(), null, parent, null,
+						globalFacets, collector, absoluteAlternatePathAsStrings, parent.getAgentConstructor());
 
 		final Collection<String> allModelNames = models.size() == 1 ? null : ImmutableSet
 				.copyOf(Iterables.transform(Iterables.skip(models, 1), each -> buildModelName(each.getName())));
@@ -219,21 +219,15 @@ public class ModelAssembler {
 
 		for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
 			sd.inheritFromParent();
-			if (sd.isExperiment()) {
-				if (!sd.finalizeDescription()) { return null; }
-			}
+			if (sd.isExperiment()) { if (!sd.finalizeDescription()) return null; }
 		}
 
 		// Issue #1708 (put before the finalization)
-		if (model.hasFacet(SCHEDULES) || model.hasFacet(FREQUENCY)) {
-			createSchedulerSpecies(model);
-		}
+		if (model.hasFacet(SCHEDULES) || model.hasFacet(FREQUENCY)) { createSchedulerSpecies(model); }
 
-		if (!model.finalizeDescription()) { return null; }
+		if (!model.finalizeDescription()) return null;
 
-		if (document) {
-			collector.document(model);
-		}
+		if (document) { collector.document(model); }
 		return model;
 
 	}
@@ -241,9 +235,9 @@ public class ModelAssembler {
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
 		final DirectedGraph<SpeciesDescription, Object> hierarchy = new SimpleDirectedGraph<>(Object.class);
 		final DescriptionVisitor visitor = desc -> {
-			if (desc instanceof ModelDescription) { return true; }
+			if (desc instanceof ModelDescription) return true;
 			final SpeciesDescription sd = ((SpeciesDescription) desc).getParent();
-			if (sd == null || sd == desc) { return false; }
+			if (sd == null || sd == desc) return false;
 			hierarchy.addVertex((SpeciesDescription) desc);
 			if (!sd.isBuiltIn()) {
 				hierarchy.addVertex(sd);
@@ -305,9 +299,7 @@ public class ModelAssembler {
 			}
 		}
 
-		if (!experimentNodes.containsKey(modelName)) {
-			experimentNodes.put(modelName, GamaMapFactory.create());
-		}
+		if (!experimentNodes.containsKey(modelName)) { experimentNodes.put(modelName, GamaMapFactory.create()); }
 		final Map<String, ISyntacticElement> nodes = experimentNodes.get(modelName);
 		if (nodes.containsKey(experimentName)) {
 			collector.add(new GamlCompilationError("Experiment " + element.getName() + " is declared twice",
@@ -354,20 +346,16 @@ public class ModelAssembler {
 	 *            the structure of micro-species
 	 */
 	void complementSpecies(final SpeciesDescription species, final ISyntacticElement node) {
-		if (species == null) { return; }
+		if (species == null) return;
 		species.copyJavaAdditions();
 		node.visitChildren(element -> {
 			final IDescription childDesc = DescriptionFactory.create(element, species, null);
-			if (childDesc != null) {
-				species.addChild(childDesc);
-			}
+			if (childDesc != null) { species.addChild(childDesc); }
 		});
 		// recursively complement micro-species
 		node.visitSpecies(element -> {
 			final SpeciesDescription sd = species.getMicroSpecies(element.getName());
-			if (sd != null) {
-				complementSpecies(sd, element);
-			}
+			if (sd != null) { complementSpecies(sd, element); }
 		});
 
 	}
@@ -375,14 +363,12 @@ public class ModelAssembler {
 	void parentExperiment(final ModelDescription model, final ISyntacticElement micro) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = model.getExperiment(micro.getName());
-		if (mDesc == null) { return; }
+		if (mDesc == null) return;
 		final String p = mDesc.getLitteral(IKeyword.PARENT);
 		// If no parent is defined, we assume it is "experiment"
 		// No cache needed for experiments ??
 		SpeciesDescription parent = model.getExperiment(p);
-		if (parent == null) {
-			parent = Types.get(IKeyword.EXPERIMENT).getSpecies();
-		}
+		if (parent == null) { parent = Types.get(IKeyword.EXPERIMENT).getSpecies(); }
 		mDesc.setParent(parent);
 	}
 
@@ -390,16 +376,12 @@ public class ModelAssembler {
 			final Map<String, SpeciesDescription> cache) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = cache.get(micro.getName());
-		if (mDesc == null || mDesc.isExperiment()) { return; }
+		if (mDesc == null || mDesc.isExperiment()) return;
 		String p = mDesc.getLitteral(IKeyword.PARENT);
 		// If no parent is defined, we assume it is "agent"
-		if (p == null) {
-			p = IKeyword.AGENT;
-		}
+		if (p == null) { p = IKeyword.AGENT; }
 		SpeciesDescription parent = lookupSpecies(p, cache);
-		if (parent == null) {
-			parent = model.getSpeciesDescription(p);
-		}
+		if (parent == null) { parent = model.getSpeciesDescription(p); }
 		mDesc.setParent(parent);
 		micro.visitSpecies(element -> parentSpecies(mDesc, element, model, cache));
 

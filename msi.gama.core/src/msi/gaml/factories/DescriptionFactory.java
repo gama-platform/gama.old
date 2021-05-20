@@ -79,18 +79,18 @@ public class DescriptionFactory {
 		final SymbolProto p =
 				getStatementProto(keyword, superDesc == null ? null : superDesc.getSpeciesContext().getControlName());
 		// If not a statement, we try to find a var declaration prototype
-		if (p == null) { return getVarProto(keyword, superDesc); }
+		if (p == null) return getVarProto(keyword, superDesc);
 		return p;
 	}
 
 	public final static SymbolProto getStatementProto(final String keyword, final String control) {
 		final List<SymbolProto> protos = STATEMENT_KEYWORDS_PROTOS.get(keyword);
-		if (protos == null || protos.isEmpty()) { return null; }
-		if (protos.size() == 1) { return protos.get(0); }
-		if (control == null) { return protos.get(protos.size() - 1); }
+		if (protos == null || protos.isEmpty()) return null;
+		if (protos.size() == 1) return protos.get(0);
+		if (control == null) return protos.get(protos.size() - 1);
 		// DEBUG.OUT("Duplicate keyword: " + keyword + " ; looking for the one defined in " + control);
 		for (final SymbolProto proto : protos) {
-			if (proto.shouldBeDefinedIn(control)) { return proto; }
+			if (proto.shouldBeDefinedIn(control)) return proto;
 		}
 		return null;
 	}
@@ -101,11 +101,11 @@ public class DescriptionFactory {
 			// If not a var declaration, we try to find if it is not a species
 			// name (in which case, it is an "agent"
 			// declaration prototype)
-			if (superDesc == null) { return null; }
+			if (superDesc == null) return null;
 			final ModelDescription md = superDesc.getModelDescription();
-			if (md == null) { return null; }
+			if (md == null) return null;
 			final IType t = md.getTypesManager().get(keyword);
-			if (t.isAgentType()) { return getVarProto(AGENT, null); }
+			if (t.isAgentType()) return getVarProto(AGENT, null);
 		}
 		return p;
 	}
@@ -134,7 +134,7 @@ public class DescriptionFactory {
 
 	public static String getOmissibleFacetForSymbol(final String keyword) {
 		final SymbolProto md = getProto(keyword, null);
-		if (md == null) { return IKeyword.NAME; }
+		if (md == null) return IKeyword.NAME;
 		return md.getOmissible();
 	}
 
@@ -153,7 +153,7 @@ public class DescriptionFactory {
 	}
 
 	public static void addNewTypeName(final String s, final int kind) {
-		if (VAR_KEYWORDS_PROTOS.containsKey(s)) { return; }
+		if (VAR_KEYWORDS_PROTOS.containsKey(s)) return;
 		final SymbolProto p = KINDS_PROTOS.get(kind);
 		if (p != null) {
 			if (s.equals("species")) {
@@ -166,7 +166,7 @@ public class DescriptionFactory {
 
 	public static SymbolFactory getFactory(final String keyword) {
 		final SymbolProto p = getProto(keyword, null);
-		if (p != null) { return p.getFactory(); }
+		if (p != null) return p.getFactory();
 		return null;
 	}
 
@@ -210,13 +210,11 @@ public class DescriptionFactory {
 	}
 
 	public static Set<String> getAllowedFacetsFor(final String... keys) {
-		if (keys == null || keys.length == 0) { return Collections.EMPTY_SET; }
+		if (keys == null || keys.length == 0) return Collections.EMPTY_SET;
 		final Set<String> result = new HashSet();
 		for (final String key : keys) {
 			final SymbolProto md = getProto(key, null);
-			if (md != null) {
-				result.addAll(md.getPossibleFacets().keySet());
-			}
+			if (md != null) { result.addAll(md.getPossibleFacets().keySet()); }
 		}
 
 		return result;
@@ -251,21 +249,19 @@ public class DescriptionFactory {
 	}
 
 	public static ModelDescription createRootModelDescription(final String name, final Class clazz,
-			final SpeciesDescription macro, final SpeciesDescription parent) {
-		return ModelFactory.createRootModel(name, clazz, macro, parent);
+			final SpeciesDescription macro, final SpeciesDescription parent, final IAgentConstructor helper) {
+		return ModelFactory.createRootModel(name, clazz, macro, parent, helper);
 	}
 
 	public static final IDescription create(final ISyntacticElement source, final IDescription superDesc,
 			final Iterable<IDescription> cp) {
-		if (source == null) { return null; }
+		if (source == null) return null;
 		final String keyword = source.getKeyword();
 		final SymbolProto md = DescriptionFactory.getProto(keyword, superDesc);
 		if (md == null) {
-			if (superDesc == null) // We are in the initialization of GAMA. Only issue is to emit a runtime
-									// exception
-			{
+			if (superDesc == null)
 				throw new RuntimeException("Description of " + keyword + " cannot be built");
-			} else {
+			else {
 				superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement(),
 						keyword);
 			}
@@ -276,9 +272,7 @@ public class DescriptionFactory {
 			final List<IDescription> childrenList = new ArrayList<>();
 			final SyntacticVisitor visitor = element -> {
 				final IDescription desc = create(element, superDesc, null);
-				if (desc != null) {
-					childrenList.add(desc);
-				}
+				if (desc != null) { childrenList.add(desc); }
 
 			};
 			source.visitChildren(visitor);
