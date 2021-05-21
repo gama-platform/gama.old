@@ -242,7 +242,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("Set the distances to the far depth clipping planes. Must be positive.")),
 				@facet (
 						name = IKeyword.AUTOSAVE,
-						type = { IType.BOOL, IType.POINT },
+						type = { IType.BOOL, IType.POINT, IType.STRING },
 						optional = true,
 						doc = @doc ("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions. Note that setting autosave to true (or to any other value than false) in a display will synchronize all the displays defined in the experiment")), },
 		omissible = IKeyword.NAME)

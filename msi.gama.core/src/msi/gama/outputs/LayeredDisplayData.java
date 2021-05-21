@@ -99,6 +99,7 @@ public class LayeredDisplayData {
 	 * Properties
 	 */
 	private boolean isAutosaving = false;
+	private String autosavingPath = "";
 	private boolean isToolbarVisible = GamaPreferences.Displays.CORE_DISPLAY_TOOLBAR.getValue();
 	private boolean isSynchronized = GamaPreferences.Runtime.CORE_SYNC.getValue();
 	private String displayType =
@@ -194,6 +195,14 @@ public class LayeredDisplayData {
 		this.isAutosaving = autosave;
 	}
 
+	public void setAutosavePath(final String p) {
+		this.autosavingPath = p;
+	}
+	
+	public String getAutosavePath() {
+		return autosavingPath;
+	}
+	
 	public boolean isWireframe() {
 		return isWireframe;
 	}
@@ -746,6 +755,9 @@ public class LayeredDisplayData {
 			if (auto.getGamlType().equals(Types.POINT)) {
 				setAutosave(true);
 				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
+			} else if (auto.getGamlType().equals(Types.STRING)) {
+				setAutosave(true);
+				setAutosavePath(Cast.asString(scope, auto.value(scope)));
 			} else {
 				setAutosave(Cast.asBool(scope, auto.value(scope)));
 			}
@@ -935,12 +947,15 @@ public class LayeredDisplayData {
 	public void update(final IScope scope, final Facets facets) {
 		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
 		if (auto != null) {
-			if (auto.getGamlType().equals(Types.POINT)) {
-				setAutosave(true);
-				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
-			} else {
-				setAutosave(Cast.asBool(scope, auto.value(scope)));
-			}
+		    if (auto.getGamlType().equals(Types.POINT)) {
+			setAutosave(true);
+			setImageDimension(Cast.asPoint(scope, auto.value(scope)));
+		    } else if (auto.getGamlType().equals(Types.STRING)) {
+			setAutosave(true);
+			setAutosavePath(Cast.asString(scope, auto.value(scope)));
+		    } else {
+			setAutosave(Cast.asBool(scope, auto.value(scope)));
+		    }
 		}
 		// /////////////// dynamic Lighting ///////////////////
 
