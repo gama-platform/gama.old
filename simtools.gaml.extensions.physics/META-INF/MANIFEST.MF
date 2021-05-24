@@ -5,8 +5,7 @@ Bundle-SymbolicName: simtools.gaml.extensions.physics;singleton:=true
 Bundle-Version: 1.8.1.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
-Bundle-ClassPath: .,
- lib/vecmath-1.5.2.jar
+Bundle-ClassPath: .
 Export-Package: 
  javax.vecmath,
  simtools.gaml.extensions.physics
