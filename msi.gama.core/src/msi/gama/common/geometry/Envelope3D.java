@@ -196,6 +196,15 @@ public class Envelope3D extends Envelope implements IDisposable {
 	}
 
 	/**
+	 * Returns the maximal dimension of the envelope
+	 */
+
+	public double getLargestDimension() {
+		double result = Math.max(getWidth(), getHeight());
+		return Math.max(result, getDepth());
+	}
+
+	/**
 	 * Makes this <code>Envelope</code> a "null" envelope, that is, the envelope of the empty geometry.
 	 */
 	@Override
