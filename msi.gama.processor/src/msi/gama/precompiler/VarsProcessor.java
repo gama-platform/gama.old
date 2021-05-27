@@ -51,8 +51,8 @@ public class VarsProcessor extends ElementProcessor<vars> {
 	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
 			final vars vars) {
 		final TypeMirror typeClass = e.asType();
-		final boolean isField = !context.getTypeUtils().isAssignable(typeClass, context.getISkill())
-				&& !context.getTypeUtils().isAssignable(typeClass, context.getIAgent());
+		// If the declaring class has nothing to do with IAgent or ISkill, then the variable is considered as a 'field'
+		final boolean isField = !context.getTypeUtils().isAssignable(typeClass, context.getIVarAndActionSupport());
 
 		for (final variable node : vars.value()) {
 			verifyDoc(context, e, "attribute " + node.name(), node);
@@ -138,9 +138,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 					getterHelper = concat("(s,a,t,v)->t==null?", returnWhenNull(checkPrim(returns)), ":((", clazz,
 							")t).", method, "(", scope ? "s" : "", dynamic ? (scope ? "," : "") + "a)" : ")");
 				}
-				if (ex.getAnnotation(getter.class).initializer()) {
-					initerHelper = getterHelper;
-				}
+				if (ex.getAnnotation(getter.class).initializer()) { initerHelper = getterHelper; }
 			}
 		}
 
@@ -164,20 +162,14 @@ public class VarsProcessor extends ElementProcessor<vars> {
 			for (int i = 0; i < dependencies.length; i++) {
 				final String string = dependencies[i];
 				depends += string;
-				if (i < dependencies.length - 1) {
-					depends += ",";
-				}
+				if (i < dependencies.length - 1) { depends += ","; }
 			}
 			depends += "]";
 			sb.append(',').append("\"depends_on\"").append(',').append(toJavaString(depends));
 		}
-		if (s.of() != 0) {
-			sb.append(',').append("\"of\"").append(',').append(toJavaString(String.valueOf(s.of())));
-		}
+		if (s.of() != 0) { sb.append(',').append("\"of\"").append(',').append(toJavaString(String.valueOf(s.of()))); }
 		final String init = s.init();
-		if (!"".equals(init)) {
-			sb.append(',').append("\"init\"").append(',').append(toJavaString(init));
-		}
+		if (!"".equals(init)) { sb.append(',').append("\"init\"").append(',').append(toJavaString(init)); }
 		sb.append(')');
 	}
 
