@@ -223,10 +223,6 @@ public class SpeciesDescription extends TypeDescription {
 		Class<? extends IAgent> javaBase = getJavaBase();
 		Iterable<IDescription> java_children = getAllChildrenOf(javaBase, transform(getSkills(), TO_CLASS));
 		for (final IDescription v : java_children) {
-			if (v.getName().equals("use_gravity")) {
-				System.out.println();
-				System.out.println();
-			}
 			if (isBuiltIn()) { v.setOriginName("built-in species " + getName()); }
 			if (v instanceof VariableDescription) {
 				boolean toAdd = false;
