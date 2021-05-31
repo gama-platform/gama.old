@@ -95,8 +95,9 @@ public class ModelDescription extends SpeciesDescription {
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent,
 			final Iterable<? extends IDescription> children, final Facets facets,
-			final ValidationContext validationContext, final Set<String> imports, final IAgentConstructor helper) {
-		super(MODEL, clazz, macro, parent, children, source, facets);
+			final ValidationContext validationContext, final Set<String> imports, final IAgentConstructor helper,
+			final Set<String> skills) {
+		super(MODEL, clazz, macro, parent, children, source, facets, skills);
 		setName(name);
 		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
 				: Types.builtInTypes;
@@ -105,6 +106,14 @@ public class ModelDescription extends SpeciesDescription {
 		this.validationContext = validationContext;
 		this.alternatePaths = imports;
 		if (helper != null) { setAgentConstructor(helper); }
+	}
+
+	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
+			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent,
+			final Iterable<? extends IDescription> children, final Facets facets,
+			final ValidationContext validationContext, final Set<String> imports, final IAgentConstructor helper) {
+		this(name, clazz, projectPath, modelPath, source, macro, parent, children, facets, validationContext, imports,
+				helper, Collections.EMPTY_SET);
 	}
 
 	@Override
@@ -396,7 +405,6 @@ public class ModelDescription extends SpeciesDescription {
 	public IDescription validate(final boolean document) {
 		isDocumenting(document);
 		super.validate();
-		// DEBUG.LOG(this.serialize(true));
 		return this;
 	}
 

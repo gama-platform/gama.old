@@ -146,7 +146,8 @@ public class GamaMetaModel {
 				}
 			} else {
 				// if it is a ModelDescription, then the macro represents the parent (except for root)
-				desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent, helper);
+				desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent, helper, allSkills,
+						plugin);
 			}
 		}
 		desc.copyJavaAdditions();

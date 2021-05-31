@@ -241,16 +241,10 @@ public class DescriptionFactory {
 				superDesc, parent, helper, skills, null, plugin);
 	}
 
-	public static SpeciesDescription createBuiltInPlatformSpeciesDescriotion(final String name, final Class clazz,
-			final SpeciesDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
-			final Set<String> skills, final String plugin) {
-		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createBuiltInSpeciesDescription(name, clazz,
-				superDesc, parent, helper, skills, null, plugin);
-	}
-
 	public static ModelDescription createRootModelDescription(final String name, final Class clazz,
-			final SpeciesDescription macro, final SpeciesDescription parent, final IAgentConstructor helper) {
-		return ModelFactory.createRootModel(name, clazz, macro, parent, helper);
+			final SpeciesDescription macro, final SpeciesDescription parent, final IAgentConstructor helper,
+			final Set<String> skills, final String plugin) {
+		return ModelFactory.createRootModel(name, clazz, macro, parent, helper, skills, plugin);
 	}
 
 	public static final IDescription create(final ISyntacticElement source, final IDescription superDesc,

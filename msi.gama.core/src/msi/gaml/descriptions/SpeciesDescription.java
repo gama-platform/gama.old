@@ -69,9 +69,15 @@ public class SpeciesDescription extends TypeDescription {
 	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
 			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
 			final Facets facets) {
+		this(keyword, clazz, macroDesc, parent, cp, source, facets, Collections.EMPTY_SET);
+	}
+
+	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
+			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
+			final Facets facets, final Set<String> skills) {
 		super(keyword, clazz, macroDesc, parent, cp, source, facets, null);
 		setJavaBase(clazz);
-		setSkills(getFacet(SKILLS), Collections.EMPTY_SET);
+		setSkills(getFacet(SKILLS), skills);
 	}
 
 	/**

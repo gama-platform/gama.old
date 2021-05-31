@@ -12,6 +12,7 @@ package msi.gaml.factories;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -50,7 +51,8 @@ public class ModelFactory extends SymbolFactory {
 
 	@SuppressWarnings ("rawtypes")
 	public static ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
-			final SpeciesDescription parent, final IAgentConstructor helper) {
+			final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills,
+			final String plugin) {
 		if (name.equals(IKeyword.MODEL)) {
 			ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, null, null,
 					ValidationContext.NULL, Collections.EMPTY_SET, helper);
@@ -59,7 +61,7 @@ public class ModelFactory extends SymbolFactory {
 			// we are with a built-in model species
 			// for the moment we suppose its parent is the root (macro)
 			ModelDescription model = new ModelDescription(name, clazz, "", "", null, null, ModelDescription.ROOT, null,
-					null, ValidationContext.NULL, Collections.EMPTY_SET, helper);
+					null, ValidationContext.NULL, Collections.EMPTY_SET, helper, skills);
 			ModelDescription.BUILT_IN_MODELS.put(name, model);
 			return model;
 		}
