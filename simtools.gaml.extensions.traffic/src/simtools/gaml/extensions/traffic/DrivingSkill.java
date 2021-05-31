@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
 
 import com.google.common.collect.Sets;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
@@ -248,6 +249,25 @@ import ummisco.gama.dev.utils.DEBUG;
 		)
 	),
 	@variable(
+		name = DrivingSkill.IGNORE_ONEWAY,
+		type = IType.BOOL,
+		init = "false",
+		doc = @doc("if set to `true`, the vehicle will be able to violate one-way traffic rule")
+	),
+	@variable(
+		name = DrivingSkill.VIOLATING_ONEWAY,
+		type = IType.BOOL,
+		init = "false",
+		doc = @doc("indicates if the vehicle is moving in the wrong direction on an one-way (unlinked) road")
+	),
+	@variable(
+		// TODO: find a better name
+		name = DrivingSkill.REVERSED_ROADS,
+		type = IType.LIST,
+		init = "nil",
+		doc = @doc("a list containing roads in the path which will be travelled in reverse")
+	),
+	@variable(
 		name = DrivingSkill.CURRENT_ROAD,
 		type = IType.AGENT,
 		init = "nil",
@@ -404,6 +424,9 @@ public class DrivingSkill extends MovingSkill {
 	public static final String PROBA_BLOCK_NODE = "proba_block_node";
 	public static final String PROBA_USE_LINKED_ROAD = "proba_use_linked_road";
 	public static final String RIGHT_SIDE_DRIVING = "right_side_driving";
+	public static final String IGNORE_ONEWAY = "ignore_oneway";
+	public static final String VIOLATING_ONEWAY = "violating_oneway";
+	public static final String REVERSED_ROADS = "reversed_roads";
 	public static final String ON_LINKED_ROAD = "on_linked_road";
 	public static final String USING_LINKED_ROAD = "using_linked_road";
 	public static final String LINKED_LANE_LIMIT = "linked_lane_limit";
@@ -584,12 +607,12 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@getter(TARGETS)
-	public static List<ILocation> getTargets(final IAgent vehicle) {
-		return (List<ILocation>) vehicle.getAttribute(TARGETS);
+	public static List<GamaPoint> getTargets(final IAgent vehicle) {
+		return (List<GamaPoint>) vehicle.getAttribute(TARGETS);
 	}
 
 	@setter(TARGETS)
-	public static void setTargets(final IAgent vehicle, final List<ILocation> points) {
+	public static void setTargets(final IAgent vehicle, final List<GamaPoint> points) {
 		vehicle.setAttribute(TARGETS, points);
 	}
 
@@ -679,6 +702,31 @@ public class DrivingSkill extends MovingSkill {
 	@setter(USING_LINKED_ROAD)
 	public static void setUsingLinkedRoad(final IAgent vehicle, final boolean usingLinkedRoad) {
 		// read-only
+	}
+
+	@getter(IGNORE_ONEWAY)
+	public static boolean canIgnoreOneway(final IAgent vehicle) {
+		return (boolean) vehicle.getAttribute(IGNORE_ONEWAY);
+	}
+
+	@getter(VIOLATING_ONEWAY)
+	public static boolean isViolatingOneway(final IAgent vehicle) {
+		return (boolean) vehicle.getAttribute(VIOLATING_ONEWAY);
+	}
+
+	@setter(VIOLATING_ONEWAY)
+	public static void setViolatingOneway(final IAgent vehicle, final boolean violatingOneway) {
+		vehicle.setAttribute(VIOLATING_ONEWAY, violatingOneway);
+	}
+
+	@getter(REVERSED_ROADS)
+	public static List<IAgent> getReversedRoads(final IAgent vehicle) {
+		return (List<IAgent>) vehicle.getAttribute(REVERSED_ROADS);
+	}
+
+	@setter(REVERSED_ROADS)
+	public static void setReversedRoads(final IAgent vehicle, final List<IAgent> reversedRoads) {
+		vehicle.setAttribute(REVERSED_ROADS, reversedRoads);
 	}
 
 	@getter(ALLOWED_LANES)
@@ -979,7 +1027,10 @@ public class DrivingSkill extends MovingSkill {
 		if (!(Boolean) actionTNR.executeOn(scope)) { return false; }
 
 		IAgent currentRoad = (IAgent) vehicle.getAttribute(CURRENT_ROAD);
-		IAgent sourceNode = (IAgent) newRoad.getAttribute(RoadSkill.SOURCE_NODE);
+		IAgent sourceNode = RoadSkill.getSourceNode(newRoad);
+		if (!vehicle.getLocation().equals(sourceNode.getLocation())) {
+			sourceNode = RoadSkill.getTargetNode(newRoad);
+		}
 		// Don't need to do these checks if the vehicle was just initialized
 		if (currentRoad != null) {
 			// Check traffic lights
@@ -1068,6 +1119,13 @@ public class DrivingSkill extends MovingSkill {
 		return true;
 	}
 
+	private boolean willViolateOneway(IAgent oldRoad, IAgent newRoad) {
+		IAgent sourceNode = RoadSkill.getSourceNode(oldRoad);
+		IAgent nextSourceNode = (IAgent)newRoad.getAttribute("source_node");
+		IAgent nextTargetNode = (IAgent)oldRoad.getAttribute("target_node");
+		return sourceNode == nextSourceNode || sourceNode == nextTargetNode;
+	}
+
 	@action(
 		name = "compute_path",
 		args = {
@@ -1114,7 +1172,14 @@ public class DrivingSkill extends MovingSkill {
 
 		IAgent vehicle = getCurrentAgent(scope);
 		IPath path;
+
+		// allow reverse travel on road to compute path for agents on road side only
+		if (canIgnoreOneway(vehicle)) {
+			graph.setDirected(false);
+		}
+
 		if (target != null) {
+			// TODO: why do we make source an arg again?
 			if (source == null) {
 				source = (IAgent) Queries.closest_to(scope, target.getSpecies(), vehicle);
 			}
@@ -1133,15 +1198,54 @@ public class DrivingSkill extends MovingSkill {
 		}
 
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
-			List<ILocation> targets = getTargets(vehicle);
+			// Mark reversed edges if any
+			List<IAgent> reversedRoads = new ArrayList<>();
+			if (canIgnoreOneway(vehicle)) {
+				if (getReversedRoads(vehicle) == null) {
+					setReversedRoads(vehicle, new ArrayList<IAgent>());
+				}
+				reversedRoads = getReversedRoads(vehicle);
+				List<IAgent> ss = path.getEdgeList();
+				for(int i = 0; i < ss.size()-1;i++) {
+					IShape edge  = ss.get(i);
+					IAgent sourceNode = (IAgent)edge.getAttribute("source_node");
+					IShape next_edge  = ss.get(i+1);
+					IAgent nextSourceNode = (IAgent)next_edge.getAttribute("source_node");
+					IAgent nextTargetNode = (IAgent)next_edge.getAttribute("target_node");
+					if (sourceNode == nextSourceNode || sourceNode == nextTargetNode) {
+						reversedRoads.add(ss.get(i));
+					}
+				}
+				// TODO: wth is this?
+				// check last or only edge
+				// IShape last = path.getEdgeList().lastValue(scope);
+				// IAgent targetNode = (IAgent)last.getAttribute("target_node");
+				// reversedEdges.put(last, targetNode != target);
+
+				// restore graph direction
+				graph.setDirected(true);
+			}
+
+			// Initialize driving states
+			List<GamaPoint> targets = getTargets(vehicle);
 			for (int i = 0; i < path.getEdgeGeometry().size(); i += 1) {
 				IShape edgeGeom = (IShape) path.getEdgeGeometry().get(i);
 				Coordinate[] coords = edgeGeom.getInnerGeometry().getCoordinates();
-				if (i == 0) {
-					targets.add(new GamaPoint(coords[0]));
+				GamaPoint start, end;
+				if (!reversedRoads.contains(edgeGeom.getAgent())) {
+					start = new GamaPoint(coords[0]);
+					end = new GamaPoint(coords[coords.length - 1]);
+				} else {
+					end = new GamaPoint(coords[0]);
+					start = new GamaPoint(coords[coords.length - 1]);
 				}
-				GamaPoint pt = new GamaPoint(coords[coords.length - 1]);
-				targets.add(pt);
+
+				// NOTE: the first node in path is also consider a target,
+				// in order to perform the "next road test" when going on a new path as well
+				if (i == 0) {
+					targets.add(start);
+				}
+				targets.add(end);
 			}
 
 			vehicle.setLocation(source.getLocation());
@@ -1257,10 +1361,11 @@ public class DrivingSkill extends MovingSkill {
 					return;
 				}
 
+				boolean violatingOneway = loc.equals(RoadSkill.getSourceNode(newRoad).getLocation());
+
 				// Choose a lane on the new road
-				GamaPoint firstSegmentEndPt = new GamaPoint(
-					newRoad.getInnerGeometry().getCoordinates()[1]
-				);
+				int secondPtIdx = !violatingOneway ? 1 : RoadSkill.getNumSegments(newRoad) - 2;
+				GamaPoint firstSegmentEndPt = new GamaPoint(newRoad.getInnerGeometry().getCoordinates()[secondPtIdx]);
 				double firstSegmentLength = loc.euclidianDistanceTo(firstSegmentEndPt);
 				Pair<Integer, Double> pair = chooseLaneMOBIL(scope, newRoad, 0, firstSegmentLength);
 				if (pair == null) {
@@ -1288,7 +1393,13 @@ public class DrivingSkill extends MovingSkill {
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
 
-				setCurrentTarget(vehicle, RoadSkill.getTargetNode(newRoad).getLocation());
+				ILocation newTarget;
+				if (loc.equals(RoadSkill.getSourceNode(newRoad).getLocation())) {
+					newTarget = RoadSkill.getTargetNode(newRoad).getLocation();
+				} else {
+					newTarget = RoadSkill.getSourceNode(newRoad).getLocation();
+				}
+				setCurrentTarget(vehicle, newTarget);
 				RoadSkill.unregister(scope, vehicle);
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
 				// Choose the next road in advance
@@ -1313,29 +1424,32 @@ public class DrivingSkill extends MovingSkill {
 			final GamaSpatialGraph graph,
 			final IAgent node,
 			final Map<IAgent, Double> roadProba) {
-		List<IAgent> possibleRoads = RoadNodeSkill.getRoadsOut(node);
-		// Only consider roads in the specified graph
-		List<IAgent> filteredRoads = new ArrayList<>();
-		for (IAgent road : possibleRoads) {
-			if (graph.getEdges().contains(road)) {
-				filteredRoads.add(road);
-			}
-		}
+		IAgent vehicle = getCurrentAgent(scope);
 
-		if (filteredRoads.isEmpty()) {
+		Set<IAgent> possibleRoads = new HashSet<>();
+		possibleRoads.addAll(RoadNodeSkill.getRoadsOut(node));
+		if (canIgnoreOneway(vehicle)) {
+			possibleRoads.addAll(RoadNodeSkill.getRoadsIn(node));
+			possibleRoads.remove(getCurrentRoad(vehicle));
+		}
+		// Only consider roads in the specified graph
+		possibleRoads.removeIf(r -> !graph.getEdges().contains(r));
+
+		if (possibleRoads.isEmpty()) {
 			return null;
-		} else if (filteredRoads.size() == 1) {
-			return filteredRoads.get(0);
+		} else if (possibleRoads.size() == 1) {
+			return possibleRoads.iterator().next();
 		} else {
+			List<IAgent> roadList = new ArrayList<>(possibleRoads);
 			if (roadProba == null || roadProba.isEmpty()) {
-				return filteredRoads.get(scope.getRandom().between(0, filteredRoads.size() - 1));
+				return roadList.get(scope.getRandom().between(0, roadList.size() - 1));
 			} else {
 				IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
-				for (IAgent r : filteredRoads) {
+				for (IAgent r : roadList) {
 					Double val = roadProba.get(r);
 					distribution.add(val == null ? 0.0 : val);
 				}
-				return filteredRoads.get(Random.opRndChoice(scope, distribution));
+				return roadList.get(Random.opRndChoice(scope, distribution));
 			}
 		}
 	}
@@ -1427,6 +1541,10 @@ public class DrivingSkill extends MovingSkill {
 				setCurrentTarget(vehicle, getTargets(vehicle).get(currentEdgeIdx + 1));
 				RoadSkill.unregister(scope, vehicle);
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
+
+				GamaPoint roadEndPt = (GamaPoint) RoadSkill.getTargetNode(newRoad).getLocation();
+				setViolatingOneway(vehicle, !getCurrentTarget(vehicle).equals(roadEndPt));
+
 				if (currentEdgeIdx < path.getEdgeList().size() - 1) {
 					setNextRoad(vehicle, (IAgent) path.getEdgeList().get(currentEdgeIdx + 1));
 				} else {
@@ -1486,7 +1604,7 @@ public class DrivingSkill extends MovingSkill {
 			value = "action to choose a speed",
 			returns = "the chosen speed",
 			examples = { @example ("do speed_choice new_road: the_road;") },
-			deprecated = "You can't override this action anymore since speed computation is now based on Intelligent Vehicle Model"
+			deprecated = "There's no apparent use case for overriding this, since Intelligent Driving Model was implemented"
 		)
 	)
 	@Deprecated
@@ -1508,7 +1626,7 @@ public class DrivingSkill extends MovingSkill {
 			value = "action to choose a lane",
 			returns = "the chosen lane, return -1 if no lane can be taken",
 			examples = { @example ("do lane_choice new_road: a_road;") },
-			deprecated = "You can't override this action anymore since lane choice is now based on the MOBIL lane changing model"
+			deprecated = "There's no apparent use case for overriding this, since MOBIL lane changing model was implemented"
 		)
 	)
 	@Deprecated
@@ -1584,12 +1702,12 @@ public class DrivingSkill extends MovingSkill {
 		IAgent correctRoad = getCurrentRoad(vehicle);
 		for (int lane : lanesToRemove) {
 			List<IAgent> oldVehicleList = RoadSkill.getVehiclesOnLaneSegment(
-				scope, correctRoad, lane, currentSegment);
+				scope, correctRoad, lane, currentSegment, isViolatingOneway(vehicle));
 			oldVehicleList.remove(vehicle);
 		}
 		for (int lane : lanesToAdd) {
 			List<IAgent> newVehicleList = RoadSkill.getVehiclesOnLaneSegment(
-				scope, correctRoad, lane, newSegment);
+				scope, correctRoad, lane, newSegment, isViolatingOneway(vehicle));
 			newVehicleList.add(vehicle);
 		}
 
@@ -1615,6 +1733,9 @@ public class DrivingSkill extends MovingSkill {
 		int numSegments = RoadSkill.getNumSegments(currentRoad);
 
 		Coordinate coords[] = currentRoad.getInnerGeometry().getCoordinates();
+		if (isViolatingOneway(vehicle)) {
+			ArrayUtils.reverse(coords);
+		}
 		int prevSegment = -1;
 		int currentSegment = initSegment;
 		GamaPoint segmentEndPt = new GamaPoint(coords[currentSegment + 1]);
@@ -1970,7 +2091,7 @@ public class DrivingSkill extends MovingSkill {
 		Set<IAgent> neighbors = new HashSet<>();
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			neighbors.addAll(
-				RoadSkill.getVehiclesOnLaneSegment(scope, road, lowestLane + i, segment)
+				RoadSkill.getVehiclesOnLaneSegment(scope, road, lowestLane + i, segment, isViolatingOneway(vehicle))
 			);
 		}
 
@@ -2008,15 +2129,15 @@ public class DrivingSkill extends MovingSkill {
 			} else if (myFrontToOtherRear > 0 && myFrontToOtherRear < minLeadingDist) {
 				leadingVehicle = otherVehicle;
 				minLeadingDist = myFrontToOtherRear;
-				leadingSameDirection = road == getCurrentRoad(otherVehicle);
+				leadingSameDirection = getCurrentTarget(vehicle).equals(getCurrentTarget(otherVehicle));
 			} else if (otherFrontToMyRear > 0 && otherFrontToMyRear < minBackDist) {
 				backVehicle = otherVehicle;
 				minBackDist = otherFrontToMyRear;
-				backSameDirection = road == getCurrentRoad(otherVehicle);
+				backSameDirection = getCurrentTarget(vehicle).equals(getCurrentTarget(otherVehicle));
 			}
 		}
 
-		// We don't need to look further behind to find a back vehicle for now
+		// We don't look further behind to find a back vehicle for now?
 		if (backVehicle == null) {
 			backTriple = null;
 		} else {
@@ -2047,12 +2168,15 @@ public class DrivingSkill extends MovingSkill {
 			// Continue to find leading vehicle on next segment or next road in path
 			minLeadingDist = distToSegmentEnd - 0.5 * vL;
 			IAgent roadToCheck;
+			GamaPoint targetToCheck;
 			int lowestLaneToCheck;
 			int segmentToCheck;
+			boolean violatingOneway;
 			if (segment < numSegments - 1) {
 				roadToCheck = road;
 				segmentToCheck = segment + 1;
 				lowestLaneToCheck = lowestLane;
+				violatingOneway = isViolatingOneway(vehicle);
 			} else {
 				roadToCheck = nextRoad;
 				segmentToCheck = 0;
@@ -2060,12 +2184,14 @@ public class DrivingSkill extends MovingSkill {
 				IAgent linkedRoadToCheck = RoadSkill.getLinkedRoad(roadToCheck);
 				lowestLaneToCheck = Math.min(lowestLane,
 						RoadSkill.getNumLanes(roadToCheck) + RoadSkill.getNumLanes(linkedRoadToCheck) - numLanesOccupied);
+
+				violatingOneway = willViolateOneway(road, nextRoad);
 			}
 			Set<IAgent> furtherVehicles = new HashSet<>();
 			for (int i = 0; i < numLanesOccupied; i += 1) {
 				furtherVehicles.addAll(
 					RoadSkill.getVehiclesOnLaneSegment(scope,
-						roadToCheck, lowestLaneToCheck + i, segmentToCheck)
+						roadToCheck, lowestLaneToCheck + i, segmentToCheck, violatingOneway)
 				);
 			}
 

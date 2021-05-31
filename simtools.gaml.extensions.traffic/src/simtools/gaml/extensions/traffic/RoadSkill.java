@@ -191,22 +191,29 @@ public class RoadSkill extends Skill {
 	public static List<IAgent> getVehiclesOnLaneSegment(final IScope scope,
 			final IAgent correctRoad,
 			final int lane,
-			final int segment) {
+			final int segment,
+			final boolean violatingOneway) {
 		IAgent linkedRoad = getLinkedRoad(correctRoad);
 		int numLanesCorrect = getNumLanes(correctRoad);
 		int numLanesLinked = getNumLanes(linkedRoad);
 
 		IAgent actualRoad;
 		int actualLane, actualSegment;
+
 		if (lane < numLanesCorrect) {
 			actualRoad = correctRoad;
 			actualLane = lane;
-			actualSegment = segment;
 		} else {
 			actualRoad = linkedRoad;
 			actualLane = numLanesCorrect + numLanesLinked - 1 - lane;
-			actualSegment = getNumSegments(actualRoad) - segment - 1;
 		}
+
+		if (violatingOneway || lane >= numLanesCorrect) {
+			actualSegment = getNumSegments(actualRoad) - segment - 1;
+		} else {
+			actualSegment = segment;
+		}
+
 		List<List<List<IAgent>>> vehicles = RoadSkill.getAgentsOn(actualRoad);
 		return vehicles.get(actualLane).get(actualSegment);
 	}
@@ -256,17 +263,27 @@ public class RoadSkill extends Skill {
 
 		int numLanesOccupied = DrivingSkill.getNumLanesOccupied(driver);
 
+		GamaPoint roadEndPt = (GamaPoint) getTargetNode(road).getLocation();
+		boolean violatingOneway = !DrivingSkill.getCurrentTarget(driver).equals(roadEndPt);
+
 		// TODO: why not just set to 0
-		int indexSegment = getSegmentIndex(road, driver);
+		int indexSegment = 0;//getSegmentIndex(road, driver);
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			int lane = startingLane + i;
-			List<IAgent> newVehicleList = getVehiclesOnLaneSegment(scope, road, lane, indexSegment);
+			List<IAgent> newVehicleList = getVehiclesOnLaneSegment(scope, road, lane, indexSegment, violatingOneway);
 			newVehicleList.add(driver);
 		}
 		getAgents(road).add(driver);
 
-		DrivingSkill.setDistanceToGoal(driver,
-				driver.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[indexSegment + 1]));
+		DrivingSkill.setViolatingOneway(driver, violatingOneway);
+		if (!violatingOneway) {
+			DrivingSkill.setDistanceToGoal(driver,
+					driver.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[1]));
+		} else {
+			int numSegments = getNumSegments(road);
+			DrivingSkill.setDistanceToGoal(driver,
+					driver.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[numSegments - 2]));
+		}
 		DrivingSkill.setCurrentRoad(driver, road);
 		DrivingSkill.setLowestLane(driver, startingLane);
 		DrivingSkill.setSegmentIndex(driver, indexSegment);
@@ -310,7 +327,8 @@ public class RoadSkill extends Skill {
 		int currentSegment = DrivingSkill.getSegmentIndex(driver);
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			int lane = startingLane + i;
-			List<IAgent> oldVehicleList = getVehiclesOnLaneSegment(scope, currentRoad, lane, currentSegment);
+			List<IAgent> oldVehicleList = getVehiclesOnLaneSegment(
+					scope, currentRoad, lane, currentSegment, DrivingSkill.isViolatingOneway(driver));
 			oldVehicleList.remove(driver);
 		}
 		getAgents(currentRoad).remove(driver);
