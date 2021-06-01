@@ -97,13 +97,13 @@ import ummisco.gama.dev.utils.DEBUG;
 	),
 	@variable(
 		name = DrivingSkill.FINAL_TARGET,
-		type = IType.POINT,
+		type = IType.AGENT,
 		init = "nil",
 		doc = @doc("the final target of the agent")
 	),
 	@variable(
 		name = DrivingSkill.CURRENT_TARGET,
-		type = IType.POINT,
+		type = IType.AGENT,
 		init = "nil",
 		doc = @doc("the current target of the agent")
 	),
@@ -555,22 +555,22 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@getter(CURRENT_TARGET)
-	public static GamaPoint getCurrentTarget(final IAgent vehicle) {
-		return (GamaPoint) vehicle.getAttribute(CURRENT_TARGET);
+	public static IAgent getCurrentTarget(final IAgent vehicle) {
+		return (IAgent) vehicle.getAttribute(CURRENT_TARGET);
 	}
 
 	@setter(CURRENT_TARGET)
-	public static void setCurrentTarget(final IAgent vehicle, final ILocation point) {
-		vehicle.setAttribute(CURRENT_TARGET, point);
+	public static void setCurrentTarget(final IAgent vehicle, final IAgent target) {
+		vehicle.setAttribute(CURRENT_TARGET, target);
 	}
 
 	@getter(FINAL_TARGET)
-	public static GamaPoint getFinalTarget(final IAgent vehicle) {
-		return (GamaPoint) vehicle.getAttribute(FINAL_TARGET);
+	public static IAgent getFinalTarget(final IAgent vehicle) {
+		return (IAgent) vehicle.getAttribute(FINAL_TARGET);
 	}
 
 	@setter(FINAL_TARGET)
-	public static void setFinalTarget(final IAgent vehicle, final ILocation point) {
+	public static void setFinalTarget(final IAgent vehicle, final IAgent point) {
 		vehicle.setAttribute(FINAL_TARGET, point);
 	}
 
@@ -607,12 +607,12 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@getter(TARGETS)
-	public static List<GamaPoint> getTargets(final IAgent vehicle) {
-		return (List<GamaPoint>) vehicle.getAttribute(TARGETS);
+	public static List<IAgent> getTargets(final IAgent vehicle) {
+		return (List<IAgent>) vehicle.getAttribute(TARGETS);
 	}
 
 	@setter(TARGETS)
-	public static void setTargets(final IAgent vehicle, final List<GamaPoint> points) {
+	public static void setTargets(final IAgent vehicle, final List<IAgent> points) {
 		vehicle.setAttribute(TARGETS, points);
 	}
 
@@ -1027,14 +1027,11 @@ public class DrivingSkill extends MovingSkill {
 		if (!(Boolean) actionTNR.executeOn(scope)) { return false; }
 
 		IAgent currentRoad = (IAgent) vehicle.getAttribute(CURRENT_ROAD);
-		IAgent sourceNode = RoadSkill.getSourceNode(newRoad);
-		if (!vehicle.getLocation().equals(sourceNode.getLocation())) {
-			sourceNode = RoadSkill.getTargetNode(newRoad);
-		}
+		IAgent intersectionNode = getCurrentTarget(vehicle);
 		// Don't need to do these checks if the vehicle was just initialized
 		if (currentRoad != null) {
 			// Check traffic lights
-			List<List> stops = (List<List>) sourceNode.getAttribute(RoadNodeSkill.STOP);
+			List<List> stops = (List<List>) intersectionNode.getAttribute(RoadNodeSkill.STOP);
 			// TODO: it is wrong to rescale proba of 1.0 wrt time step
 			// List<Double> probasRespectStops = new ArrayList<>();
 			// double timeStep = scope.getSimulation().getClock().getStepInSeconds();
@@ -1050,11 +1047,11 @@ public class DrivingSkill extends MovingSkill {
 			// Check for vehicles blocking at intersection
 			// road node blocking information, which is a map: vehicle -> list of blocked roads
 			Map<IAgent, List<IAgent>> blockInfo = (Map<IAgent, List<IAgent>>)
-				sourceNode.getAttribute(RoadNodeSkill.BLOCK);
+				intersectionNode.getAttribute(RoadNodeSkill.BLOCK);
 			Collection<IAgent> blockingVehicles = new HashSet<>(blockInfo.keySet());
 			// check if any blocking vehicle has moved
 			for (IAgent otherVehicle : blockingVehicles) {
-				if (!otherVehicle.getLocation().equals(sourceNode.getLocation())) {
+				if (!otherVehicle.getLocation().equals(intersectionNode.getLocation())) {
 					blockInfo.remove(otherVehicle);
 				}
 			}
@@ -1072,11 +1069,11 @@ public class DrivingSkill extends MovingSkill {
 
 			// Check for vehicles coming from the rightside road
 			Boolean rightSide = getRightSideDriving(vehicle);
-			List<IAgent> priorityRoads = (List<IAgent>) sourceNode.getAttribute(RoadNodeSkill.PRIORITY_ROADS);
+			List<IAgent> priorityRoads = (List<IAgent>) intersectionNode.getAttribute(RoadNodeSkill.PRIORITY_ROADS);
 			boolean onPriorityRoad = priorityRoads != null && priorityRoads.contains(currentRoad);
 
 			// compute angle between the current & next road
-			double angleRef = Punctal.angleInDegreesBetween(scope, (GamaPoint) sourceNode.getLocation(),
+			double angleRef = Punctal.angleInDegreesBetween(scope, (GamaPoint) intersectionNode.getLocation(),
 					(GamaPoint) currentRoad.getLocation(), (GamaPoint) newRoad.getLocation());
 
 			// TODO: adjust the speed diff condition
@@ -1084,12 +1081,12 @@ public class DrivingSkill extends MovingSkill {
 			double safetyDistCoeff = vehicle.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(vehicle)
 					: getSecurityDistanceCoeff(vehicle);
 
-			List<IAgent> roadsIn = (List) sourceNode.getAttribute(RoadNodeSkill.ROADS_IN);
+			List<IAgent> roadsIn = (List) intersectionNode.getAttribute(RoadNodeSkill.ROADS_IN);
 			for (IAgent otherInRoad : roadsIn) {
 				if (otherInRoad == currentRoad) {
 					continue;
 				}
-				double angle = Punctal.angleInDegreesBetween(scope, (GamaPoint) sourceNode.getLocation(),
+				double angle = Punctal.angleInDegreesBetween(scope, (GamaPoint) intersectionNode.getLocation(),
 						(GamaPoint) currentRoad.getLocation(), (GamaPoint) otherInRoad.getLocation());
 				boolean otherRoadIsPriortized = priorityRoads != null && priorityRoads.contains(otherInRoad);
 				boolean hasPriority = onPriorityRoad && !otherRoadIsPriortized;
@@ -1227,32 +1224,33 @@ public class DrivingSkill extends MovingSkill {
 			}
 
 			// Initialize driving states
-			List<GamaPoint> targets = getTargets(vehicle);
+			List<IAgent> targets = getTargets(vehicle);
 			for (int i = 0; i < path.getEdgeGeometry().size(); i += 1) {
 				IShape edgeGeom = (IShape) path.getEdgeGeometry().get(i);
 				Coordinate[] coords = edgeGeom.getInnerGeometry().getCoordinates();
-				GamaPoint start, end;
-				if (!reversedRoads.contains(edgeGeom.getAgent())) {
-					start = new GamaPoint(coords[0]);
-					end = new GamaPoint(coords[coords.length - 1]);
+				IAgent startNode, endNode;
+				IAgent r = edgeGeom.getAgent();
+				if (!reversedRoads.contains(r)) {
+					startNode = RoadSkill.getSourceNode(r);
+					endNode = RoadSkill.getTargetNode(r);
 				} else {
-					end = new GamaPoint(coords[0]);
-					start = new GamaPoint(coords[coords.length - 1]);
+					endNode = RoadSkill.getTargetNode(r);
+					startNode = RoadSkill.getSourceNode(r);
 				}
 
 				// NOTE: the first node in path is also consider a target,
 				// in order to perform the "next road test" when going on a new path as well
 				if (i == 0) {
-					targets.add(start);
+					targets.add(startNode);
 				}
-				targets.add(end);
+				targets.add(endNode);
 			}
 
 			vehicle.setLocation(source.getLocation());
 			setTargets(vehicle, targets);
 			setCurrentIndex(vehicle, -1);
 			setCurrentTarget(vehicle, targets.get(0));
-			setFinalTarget(vehicle, target.getLocation());
+			setFinalTarget(vehicle, target);
 			setCurrentPath(vehicle, path);
 			return path;
 		} else {
@@ -1339,7 +1337,7 @@ public class DrivingSkill extends MovingSkill {
 			IShape shape = Queries.closest_to(scope, nodes, vehicle);
 			initNode = shape.getAgent();
 			setLocation(vehicle, initNode.getLocation());
-			setCurrentTarget(vehicle, initNode.getLocation());
+			setCurrentTarget(vehicle, initNode);
 			setNextRoad(vehicle, chooseNextRoadRandomly(scope, graph, initNode, roadProba));
 		}
 
@@ -1348,11 +1346,11 @@ public class DrivingSkill extends MovingSkill {
 
 		while (true) {
 			ILocation loc = vehicle.getLocation();
-			GamaPoint target = getCurrentTarget(vehicle);
+			GamaPoint targetLoc = (GamaPoint) getCurrentTarget(vehicle).getLocation();
 
 			if (remainingTime < EPSILON) {
 				return;
-			} else if (loc.equals(target)) {
+			} else if (loc.equals(targetLoc)) {
 				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
 				actionOnNewRoad.executeOn(scope);
 
@@ -1364,7 +1362,7 @@ public class DrivingSkill extends MovingSkill {
 				boolean violatingOneway = loc.equals(RoadSkill.getSourceNode(newRoad).getLocation());
 
 				// Choose a lane on the new road
-				int secondPtIdx = !violatingOneway ? 1 : RoadSkill.getNumSegments(newRoad) - 2;
+				int secondPtIdx = !violatingOneway ? 1 : RoadSkill.getNumSegments(newRoad) - 1;
 				GamaPoint firstSegmentEndPt = new GamaPoint(newRoad.getInnerGeometry().getCoordinates()[secondPtIdx]);
 				double firstSegmentLength = loc.euclidianDistanceTo(firstSegmentEndPt);
 				Pair<Integer, Double> pair = chooseLaneMOBIL(scope, newRoad, 0, firstSegmentLength);
@@ -1393,17 +1391,17 @@ public class DrivingSkill extends MovingSkill {
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
 
-				ILocation newTarget;
+				IAgent newTarget;
 				if (loc.equals(RoadSkill.getSourceNode(newRoad).getLocation())) {
-					newTarget = RoadSkill.getTargetNode(newRoad).getLocation();
+					newTarget = RoadSkill.getTargetNode(newRoad);
 				} else {
-					newTarget = RoadSkill.getSourceNode(newRoad).getLocation();
+					newTarget = RoadSkill.getSourceNode(newRoad);
 				}
 				setCurrentTarget(vehicle, newTarget);
 				RoadSkill.unregister(scope, vehicle);
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
 				// Choose the next road in advance
-				IAgent nextRoad = chooseNextRoadRandomly(scope, graph, RoadSkill.getTargetNode(newRoad), roadProba);
+				IAgent nextRoad = chooseNextRoadRandomly(scope, graph, newTarget, roadProba);
 				setNextRoad(vehicle, nextRoad);
 			} else {
 				remainingTime = moveToNextLocAlongPathOSM(scope, remainingTime, null);
@@ -1465,8 +1463,8 @@ public class DrivingSkill extends MovingSkill {
 		IAgent vehicle = getCurrentAgent(scope);
 		if (vehicle == null || vehicle.dead()) return;
 
-		GamaPoint finalTarget = getFinalTarget(vehicle);
-		if (finalTarget == null) { return; }
+		GamaPoint finalTargetLoc = (GamaPoint) getFinalTarget(vehicle).getLocation();
+		if (finalTargetLoc == null) { return; }
 		IPath path = getCurrentPath(vehicle);
 
 		// some preparations to execute other actions during the loop
@@ -1484,15 +1482,15 @@ public class DrivingSkill extends MovingSkill {
 		// main loop to move the agent until the simulation step ends
 		while (true) {
 			ILocation loc = vehicle.getLocation();
-			GamaPoint target = getCurrentTarget(vehicle);
+			GamaPoint targetLoc = (GamaPoint) getCurrentTarget(vehicle).getLocation();
 			int currentEdgeIdx = getCurrentIndex(vehicle);
 
 			if (remainingTime < EPSILON) {
 				return;
-			} else if (loc.equals(finalTarget)) {  // Final node in path
+			} else if (loc.equals(finalTargetLoc)) {  // Final node in path
 				clearDrivingStates(scope);
 				return;
-			} else if (loc.equals(target)) {  // Intermediate node in path
+			} else if (loc.equals(targetLoc)) {  // Intermediate node in path
 				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
 				actionOnNewRoad.executeOn(scope);
 
@@ -1733,12 +1731,16 @@ public class DrivingSkill extends MovingSkill {
 		int numSegments = RoadSkill.getNumSegments(currentRoad);
 
 		Coordinate coords[] = currentRoad.getInnerGeometry().getCoordinates();
-		if (isViolatingOneway(vehicle)) {
-			ArrayUtils.reverse(coords);
-		}
 		int prevSegment = -1;
 		int currentSegment = initSegment;
-		GamaPoint segmentEndPt = new GamaPoint(coords[currentSegment + 1]);
+		boolean violatingOneway = isViolatingOneway(vehicle);
+
+		GamaPoint segmentEndPt;
+		if (!violatingOneway) {
+			segmentEndPt = new GamaPoint(coords[currentSegment + 1]);
+		} else {
+			segmentEndPt = new GamaPoint(coords[currentSegment]);
+		}
 		double distToGoal = getDistanceToGoal(vehicle);
 		boolean atSegmentEnd = false;
 
@@ -1749,11 +1751,17 @@ public class DrivingSkill extends MovingSkill {
 				// the vehicle is at the end of the segment
 				atSegmentEnd = true;
 				currentLocation = segmentEndPt;
-				if (currentSegment < numSegments - 1) {
+				if (!violatingOneway && currentSegment < numSegments - 1) {
 					// try moving to the next segment
 					prevSegment = currentSegment;
 					currentSegment += 1;
 					segmentEndPt = new GamaPoint(coords[currentSegment + 1]);
+					distToGoal = currentLocation.distance(segmentEndPt);
+				} else if (violatingOneway && currentSegment > 0) {
+					// try moving to the next segment
+					prevSegment = currentSegment;
+					currentSegment -= 1;
+					segmentEndPt = new GamaPoint(coords[currentSegment]);
 					distToGoal = currentLocation.distance(segmentEndPt);
 				} else {
 					// at the end of the final segment
@@ -2085,7 +2093,8 @@ public class DrivingSkill extends MovingSkill {
 		double vL = getVehicleLength(vehicle);
 		double minSafetyDist = getMinSafetyDistance(vehicle);
 
-		GamaPoint segmentEndPt = new GamaPoint(road.getInnerGeometry().getCoordinates()[segment + 1]);
+		int endPtIdx = !isViolatingOneway(vehicle) ? segment + 1 : segment;
+		GamaPoint segmentEndPt = new GamaPoint(road.getInnerGeometry().getCoordinates()[endPtIdx]);
 
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
 		Set<IAgent> neighbors = new HashSet<>();
@@ -2111,7 +2120,7 @@ public class DrivingSkill extends MovingSkill {
 			}
 			double otherVL = getVehicleLength(otherVehicle);
 			double otherDistToSegmentEnd;
-			if (road == getCurrentRoad(otherVehicle)) {
+			if (getCurrentTarget(vehicle) == getCurrentTarget(otherVehicle)) {
 				otherDistToSegmentEnd = getDistanceToGoal(otherVehicle);
 			} else {
 				GamaPoint otherLocation = (GamaPoint) otherVehicle.getLocation();
@@ -2168,7 +2177,6 @@ public class DrivingSkill extends MovingSkill {
 			// Continue to find leading vehicle on next segment or next road in path
 			minLeadingDist = distToSegmentEnd - 0.5 * vL;
 			IAgent roadToCheck;
-			GamaPoint targetToCheck;
 			int lowestLaneToCheck;
 			int segmentToCheck;
 			boolean violatingOneway;
@@ -2181,9 +2189,12 @@ public class DrivingSkill extends MovingSkill {
 				roadToCheck = nextRoad;
 				segmentToCheck = 0;
 				// TODO: is this the right lane to check?
+				int numLanesTotal = RoadSkill.getNumLanes(roadToCheck);
 				IAgent linkedRoadToCheck = RoadSkill.getLinkedRoad(roadToCheck);
-				lowestLaneToCheck = Math.min(lowestLane,
-						RoadSkill.getNumLanes(roadToCheck) + RoadSkill.getNumLanes(linkedRoadToCheck) - numLanesOccupied);
+				if (linkedRoadToCheck != null) {
+					numLanesTotal += RoadSkill.getNumLanes(linkedRoadToCheck);
+				}
+				lowestLaneToCheck = Math.min(lowestLane, numLanesTotal - numLanesOccupied);
 
 				violatingOneway = willViolateOneway(road, nextRoad);
 			}
