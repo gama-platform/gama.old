@@ -32,6 +32,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.RemoteSequence;
 import msi.gaml.variables.IVariable;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
@@ -83,7 +84,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	@Override
 	public IList<SimulationAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
-			final boolean toBeScheduled) throws GamaRuntimeException {
+			final boolean toBeScheduled, final RemoteSequence sequence) throws GamaRuntimeException {
 		final IList<SimulationAgent> result = GamaListFactory.create(SimulationAgent.class);
 
 		for (int i = 0; i < number; i++) {
@@ -97,7 +98,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 			add(currentSimulation);
 			currentSimulation.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
 			if (scope.interrupted()) return null;
-			initSimulation(scope, currentSimulation, initialValues, i, isRestored, toBeScheduled);
+			initSimulation(scope, currentSimulation, initialValues, i, isRestored, toBeScheduled, sequence);
 			if (toBeScheduled) { runner.add(currentSimulation); }
 			result.add(currentSimulation);
 		}
@@ -108,7 +109,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	private void initSimulation(final IScope scope, final SimulationAgent sim,
 			final List<? extends Map<String, Object>> initialValues, final int index, final boolean isRestored,
-			final boolean toBeScheduled) {
+			final boolean toBeScheduled, final RemoteSequence sequence) {
 		scope.getGui().getStatus(scope).waitStatus("Instantiating agents");
 		if (toBeScheduled) { sim.prepareGuiForSimulation(scope); }
 
@@ -126,6 +127,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 				sim.initOutputs();
 			} else {
 				sim.schedule(scope);
+				if (sequence != null && !sequence.isEmpty()) { scope.execute(sequence, sim, null); }
 			}
 		}
 	}
