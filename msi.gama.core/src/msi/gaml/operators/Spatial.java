@@ -1865,21 +1865,33 @@ public abstract class Spatial {
 						}
 					}
 				}
+				IList<IShape> geomVisibleF = GamaListFactory.create(Types.GEOMETRY);
+				for (final IShape geom : geomsVisible) {
+					if (geom.getGeometries().size() > 1) {
+						for (IShape g : geom.getGeometries() ) {
+							if (g.intersects(location))
+								geomVisibleF.add(g);
+						}
+						
+					} else {
+						geomVisibleF.add(geom);
+					}
+				}
 				boolean isPolygon = false;
 				boolean isLine = false;
-				for (final IShape geom : geomsVisible) {
+				for (final IShape geom : geomVisibleF) {
 					isLine = isLine || geom.isLine();
 					isPolygon = isPolygon || !geom.isPoint() && !geom.isLine();
 				}
 				final boolean isPolygonF = isPolygon;
 				final boolean isLineF = isLine;
 
-				geomsVisible.removeIf(g -> (isPolygonF || isLineF) && g.isPoint() && isPolygonF && g.isLine());
-				if (!geomsVisible.isEmpty(scope)) {
-					IShape result = Cast.asGeometry(scope, geomsVisible, false);
+				geomVisibleF.removeIf(g -> (isPolygonF || isLineF) && g.isPoint() && isPolygonF && g.isLine());
+				if (!geomVisibleF.isEmpty(scope)) {
+					IShape result = Cast.asGeometry(scope, geomVisibleF, false);
 					if (result == null || result.getInnerGeometry() == null) {
-						geomsVisible.stream().forEach(g -> Spatial.Transformations.enlarged_by(scope, g, 0.1));
-						result = Cast.asGeometry(scope, geomsVisible, false);
+						geomVisibleF.stream().forEach(g -> Spatial.Transformations.enlarged_by(scope, g, 0.1));
+						result = Cast.asGeometry(scope, geomVisibleF, false);
 					}
 					if (result == null || result.getInnerGeometry() == null) { return null; }
 					if (result.getInnerGeometry() instanceof GeometryCollection) {

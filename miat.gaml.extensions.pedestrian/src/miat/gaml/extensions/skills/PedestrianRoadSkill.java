@@ -183,7 +183,7 @@ public class PedestrianRoadSkill extends Skill {
 							doc = @doc ("the maximal distance to the road")),
 					@arg (
 							name = "obstacles",
-							type = IType.LIST,
+							type = IType.CONTAINER,
 							optional = true,
 							doc = @doc ("the list of species to consider as obstacles to remove from the free space")),
 					@arg (
@@ -198,9 +198,14 @@ public class PedestrianRoadSkill extends Skill {
 							doc = @doc ("the geometries (the localized entity geometries) that restrains the agent movement (the agent moves inside this geometry")),
 					@arg (
 							name = "masked_by",
-							type = IType.LIST,
+							type = IType.CONTAINER,
 							optional = true,
 							doc = @doc ("if defined, keep only the part of the geometry that is visible from the location of the road considering the given obstacles")),
+					@arg (
+							name = "masked_by_precision",
+							type = IType.INT,
+							optional = true,
+							doc = @doc ("if masked_by is defined, number of triangles used to compute the visible geometries (default: 120)")),
 					@arg (
 							name = "status",
 							type = IType.INT,
@@ -228,17 +233,41 @@ public class PedestrianRoadSkill extends Skill {
 			if (dist > 0) {
 				freeSpace = Spatial.Transformations.enlarged_by(scope, freeSpace, dist, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT);
 			}
-			
-			IList<ISpecies> speciesList = scope.hasArg("obstacles") ?  scope.getListArg("obstacles") : null;
-			if (speciesList != null) {
-				for (ISpecies species : speciesList) {
-					IContainer<?, IShape> obstacles = (IContainer<?, IShape>) Spatial.Queries.overlapping(scope, species, freeSpace);
+		
+			if (scope.hasArg("obstacles") ) {
+				IContainer obstaclesLC = (IContainer) scope.getArg("obstacles", IType.CONTAINER) ;
+				if (obstaclesLC instanceof ISpecies) {
+					IContainer<?, IShape> obstacles = (IContainer<?, IShape>) Spatial.Queries.overlapping(scope, obstaclesLC, freeSpace);
 					IShape obstGeom = Spatial.Operators.union(scope, obstacles);
 					obstGeom =  Spatial.Transformations.enlarged_by(scope,obstGeom,dist/1000.0);
 					freeSpace = Spatial.Operators.minus(scope, freeSpace, obstGeom);
-					
+				} else {
+					IList obstaclesL = obstaclesLC.listValue(scope, Types.NO_TYPE, false);
+					if (!obstaclesL.isEmpty()) {
+						IList<ISpecies> speciesList = (obstaclesL.get(0) instanceof ISpecies) ? obstaclesL : null;
+						if (speciesList != null) {
+							for (ISpecies species : speciesList) {
+								IContainer<?, IShape> obstacles = (IContainer<?, IShape>) Spatial.Queries.overlapping(scope, species, freeSpace);
+								IShape obstGeom = Spatial.Operators.union(scope, obstacles);
+								obstGeom =  Spatial.Transformations.enlarged_by(scope,obstGeom,dist/1000.0);
+								freeSpace = Spatial.Operators.minus(scope, freeSpace, obstGeom);
+							}
+						} else {
+							IList<IShape> obstaclesS = GamaListFactory.create();
+							for (Object obj : obstaclesL) {
+								if (obj instanceof IShape)
+									obstaclesS.add((IShape) obj); 
+							}
+							IContainer<?, IShape> obstacles = (IContainer<?, IShape>) Spatial.Queries.overlapping(scope, obstaclesS, freeSpace);
+							IShape obstGeom = Spatial.Operators.union(scope, obstacles);
+							obstGeom =  Spatial.Transformations.enlarged_by(scope,obstGeom,dist/1000.0);
+							freeSpace = Spatial.Operators.minus(scope, freeSpace, obstGeom);
+	
+						}
+					}
 				}
 			}
+			
 			IContainer bounds = scope.hasArg("bounds") ? (IContainer) scope.getArg("bounds", IType.CONTAINER) : null;
 			if (bounds != null) {
 				IShape bds = Spatial.Operators.union(scope, bounds);
@@ -254,13 +283,30 @@ public class PedestrianRoadSkill extends Skill {
 					}
 				}
 			}
-			speciesList = scope.hasArg("masked_by") ?  scope.getListArg("masked_by") : null;
-			if (speciesList != null) {
-				IList<IShape> obstacles = GamaListFactory.create();
-				for (ISpecies species : speciesList) {
-					obstacles.addAll((Collection<? extends IShape>) species.getPopulations(scope));
+			
+			if (scope.hasArg("masked_by") ) {
+				IContainer maskedbyLC = (IContainer) scope.getArg("masked_by", IType.CONTAINER) ;
+				Integer prec = scope.hasArg("masked_by_precision") ? scope.getIntArg("masked_by_precision") : null;
+				if (maskedbyLC instanceof ISpecies) {
+					freeSpace = Operators.masked_by(scope, freeSpace, maskedbyLC, prec);
+				} else {
+					IList maskedbyL = maskedbyLC.listValue(scope, Types.NO_TYPE, false);
+					if (!maskedbyL.isEmpty()) {
+						IList<IShape> obstacles = GamaListFactory.create();
+						IList<ISpecies> speciesList = (maskedbyL.get(0) instanceof ISpecies) ? maskedbyL : null;
+						if (speciesList != null) {
+							for (ISpecies species : speciesList) {
+								obstacles.addAll((Collection<? extends IShape>) species.getPopulations(scope));
+							}
+						} else {
+							for (Object obj : maskedbyL) {
+								if (obj instanceof IShape)
+									obstacles.add((IShape) obj); 
+							}
+						}
+						freeSpace = Operators.masked_by(scope, freeSpace, obstacles, prec);
+					}
 				}
-				freeSpace = Operators.masked_by(scope, freeSpace, obstacles);
 			}
 		}
 		
