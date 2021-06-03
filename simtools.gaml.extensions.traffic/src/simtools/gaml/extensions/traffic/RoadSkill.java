@@ -191,8 +191,7 @@ public class RoadSkill extends Skill {
 	public static List<IAgent> getVehiclesOnLaneSegment(final IScope scope,
 			final IAgent correctRoad,
 			final int lane,
-			final int segment,
-			final boolean violatingOneway) {
+			final int segment) {
 		int numLanesCorrect = getNumLanes(correctRoad);
 		IAgent actualRoad;
 		int actualLane, actualSegment;
@@ -248,11 +247,11 @@ public class RoadSkill extends Skill {
 	 * @param scope
 	 * @param vehicle the agent to register
 	 * @param road the new road
-	 * @param startingLane the new starting lane
+	 * @param lowestLane the new starting lane
 	 *
 	 * @throws GamaRuntimeException
 	 */
-	public static void register(IScope scope, IAgent vehicle, IAgent road, int startingLane)
+	public static void register(IScope scope, IAgent vehicle, IAgent road, int lowestLane)
 			throws GamaRuntimeException {
 		if (vehicle == null) return;
 
@@ -264,8 +263,8 @@ public class RoadSkill extends Skill {
 		// TODO: why not just set to 0
 		int indexSegment = !violatingOneway ? 0 : getNumSegments(road) - 1;
 		for (int i = 0; i < numLanesOccupied; i += 1) {
-			int lane = startingLane + i;
-			List<IAgent> newVehicleList = getVehiclesOnLaneSegment(scope, road, lane, indexSegment, violatingOneway);
+			int lane = lowestLane + i;
+			List<IAgent> newVehicleList = getVehiclesOnLaneSegment(scope, road, lane, indexSegment);
 			newVehicleList.add(vehicle);
 		}
 		getAgents(road).add(vehicle);
@@ -280,7 +279,7 @@ public class RoadSkill extends Skill {
 					vehicle.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[numSegments - 1]));
 		}
 		DrivingSkill.setCurrentRoad(vehicle, road);
-		DrivingSkill.setLowestLane(vehicle, startingLane);
+		DrivingSkill.setLowestLane(vehicle, lowestLane);
 		DrivingSkill.setSegmentIndex(vehicle, indexSegment);
 	}
 
@@ -317,13 +316,13 @@ public class RoadSkill extends Skill {
 		IAgent currentRoad = (IAgent) driver.getAttribute(DrivingSkill.CURRENT_ROAD);
 		if (currentRoad == null) return;
 
-		Integer startingLane = (Integer) driver.getAttribute(DrivingSkill.LOWEST_LANE);
+		Integer lowestLane = (Integer) driver.getAttribute(DrivingSkill.LOWEST_LANE);
 		int numLanesOccupied = (int) driver.getAttribute(DrivingSkill.NUM_LANES_OCCUPIED);
 		int currentSegment = DrivingSkill.getSegmentIndex(driver);
 		for (int i = 0; i < numLanesOccupied; i += 1) {
-			int lane = startingLane + i;
+			int lane = lowestLane + i;
 			List<IAgent> oldVehicleList = getVehiclesOnLaneSegment(
-					scope, currentRoad, lane, currentSegment, DrivingSkill.isViolatingOneway(driver));
+					scope, currentRoad, lane, currentSegment);
 			oldVehicleList.remove(driver);
 		}
 		getAgents(currentRoad).remove(driver);
