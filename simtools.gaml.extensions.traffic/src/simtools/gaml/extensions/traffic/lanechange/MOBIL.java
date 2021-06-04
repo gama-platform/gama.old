@@ -31,8 +31,9 @@ public class MOBIL {
 	 *         that lowest lane index and the number of lanes occupied by the
 	 *         vehicle
 	 */
-	public static ImmutablePair<Integer, Double> chooseLaneMOBIL(final IScope scope,
+	public static ImmutablePair<Integer, Double> chooseLane(final IScope scope,
 			final IAgent vehicle,
+			final IAgent target,
 			final IAgent road,
 			final int segment,
 			final double distToSegmentEnd) {
@@ -73,7 +74,7 @@ public class MOBIL {
 
 		// Compute acceleration if the vehicle stays on the same lane
 		ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>> pair =
-			findLeadingAndBackVehicle(scope, vehicle, road, segment, distToSegmentEnd, lowestLane);
+			findLeadingAndBackVehicle(scope, vehicle, target, road, segment, distToSegmentEnd, lowestLane);
 		IAgent currentBackVehicle = null;
 		double stayAccelM;
 		if (pair == null) {
@@ -123,7 +124,7 @@ public class MOBIL {
 				continue;
 			}
 
-			pair = findLeadingAndBackVehicle(scope, vehicle, road, segment, distToSegmentEnd, tmpLowestLane);
+			pair = findLeadingAndBackVehicle(scope, vehicle, target, road, segment, distToSegmentEnd, tmpLowestLane);
 			if (pair == null) {
 				// Will crash into another vehicle if switch to this lane
 				continue;

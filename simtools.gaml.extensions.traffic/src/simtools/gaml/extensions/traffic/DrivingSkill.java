@@ -1226,11 +1226,9 @@ public class DrivingSkill extends MovingSkill {
 
 			// Initialize driving states
 			List<IAgent> targets = getTargets(vehicle);
-			for (int i = 0; i < path.getEdgeGeometry().size(); i += 1) {
-				IShape edgeGeom = (IShape) path.getEdgeGeometry().get(i);
-				Coordinate[] coords = edgeGeom.getInnerGeometry().getCoordinates();
+			for (int i = 0; i < path.getEdgeList().size(); i += 1) {
+				IAgent r = (IAgent) path.getEdgeList().get(i);
 				IAgent startNode, endNode;
-				IAgent r = edgeGeom.getAgent();
 				if (!reversedRoads.contains(r)) {
 					startNode = RoadSkill.getSourceNode(r);
 					endNode = RoadSkill.getTargetNode(r);
@@ -1359,14 +1357,21 @@ public class DrivingSkill extends MovingSkill {
 				if (!isReadyNextRoad(scope, vehicle, newRoad)) {
 					return;
 				}
+				IAgent newTarget;
+				if (loc.equals(RoadSkill.getSourceNode(newRoad).getLocation())) {
+					newTarget = RoadSkill.getTargetNode(newRoad);
+				} else {
+					newTarget = RoadSkill.getSourceNode(newRoad);
+				}
 
 				boolean violatingOneway = loc.equals(RoadSkill.getTargetNode(newRoad).getLocation());
 
 				// Choose a lane on the new road
+				int firstSegment = !violatingOneway ? 0 : RoadSkill.getNumSegments(newRoad) - 1;
 				int secondPtIdx = !violatingOneway ? 1 : RoadSkill.getNumSegments(newRoad) - 1;
 				GamaPoint firstSegmentEndPt = new GamaPoint(newRoad.getInnerGeometry().getCoordinates()[secondPtIdx]);
 				double firstSegmentLength = loc.euclidianDistanceTo(firstSegmentEndPt);
-				Pair<Integer, Double> pair = MOBIL.chooseLaneMOBIL(scope, vehicle, newRoad, 0, firstSegmentLength);
+				Pair<Integer, Double> pair = MOBIL.chooseLane(scope, vehicle, newTarget, newRoad, firstSegment, firstSegmentLength);
 				if (pair == null) {
 					return;
 				}
@@ -1392,12 +1397,6 @@ public class DrivingSkill extends MovingSkill {
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
 
-				IAgent newTarget;
-				if (loc.equals(RoadSkill.getSourceNode(newRoad).getLocation())) {
-					newTarget = RoadSkill.getTargetNode(newRoad);
-				} else {
-					newTarget = RoadSkill.getSourceNode(newRoad);
-				}
 				setCurrentTarget(vehicle, newTarget);
 				RoadSkill.unregister(scope, vehicle);
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
@@ -1484,7 +1483,6 @@ public class DrivingSkill extends MovingSkill {
 		while (true) {
 			ILocation loc = vehicle.getLocation();
 			GamaPoint targetLoc = (GamaPoint) getCurrentTarget(vehicle).getLocation();
-			int currentEdgeIdx = getCurrentIndex(vehicle);
 
 			if (remainingTime < EPSILON) {
 				return;
@@ -1502,13 +1500,15 @@ public class DrivingSkill extends MovingSkill {
 				if (!isReadyNextRoad(scope, vehicle, newRoad)) {
 					return;
 				}
+				int newEdgeIdx = getCurrentIndex(vehicle) + 1;
+				IAgent newTarget = getTargets(vehicle).get(newEdgeIdx + 1);
 
 				// Choose a lane on the new road
 				GamaPoint firstSegmentEndPt = new GamaPoint(
 					newRoad.getInnerGeometry().getCoordinates()[1]
 				);
 				double firstSegmentLength = loc.euclidianDistanceTo(firstSegmentEndPt);
-				Pair<Integer, Double> pair = MOBIL.chooseLaneMOBIL(scope, vehicle, newRoad, 0, firstSegmentLength);
+				Pair<Integer, Double> pair = MOBIL.chooseLane(scope, vehicle, newTarget, newRoad, 0, firstSegmentLength);
 				if (pair == null) {
 					return;
 				}
@@ -1535,17 +1535,16 @@ public class DrivingSkill extends MovingSkill {
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
 
-				currentEdgeIdx += 1;
-				setCurrentIndex(vehicle, currentEdgeIdx);
-				setCurrentTarget(vehicle, getTargets(vehicle).get(currentEdgeIdx + 1));
+				setCurrentIndex(vehicle, newEdgeIdx);
+				setCurrentTarget(vehicle, newTarget);
 				RoadSkill.unregister(scope, vehicle);
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
 
 				GamaPoint roadEndPt = (GamaPoint) RoadSkill.getTargetNode(newRoad).getLocation();
 				setViolatingOneway(vehicle, !getCurrentTarget(vehicle).getLocation().equals(roadEndPt));
 
-				if (currentEdgeIdx < path.getEdgeList().size() - 1) {
-					setNextRoad(vehicle, (IAgent) path.getEdgeList().get(currentEdgeIdx + 1));
+				if (newEdgeIdx < path.getEdgeList().size() - 1) {
+					setNextRoad(vehicle, (IAgent) path.getEdgeList().get(newEdgeIdx + 1));
 				} else {
 					setNextRoad(vehicle, null);
 				}
@@ -1726,6 +1725,7 @@ public class DrivingSkill extends MovingSkill {
 			final double remainingTime, IPath path) {
 		IAgent vehicle = getCurrentAgent(scope);
 		IAgent currentRoad = getCurrentRoad(vehicle);
+		IAgent currentTarget = getCurrentTarget(vehicle);
 		GamaPoint currentLocation = (GamaPoint) vehicle.getLocation().copy(scope);
 
 		int initSegment = getSegmentIndex(vehicle);
@@ -1774,7 +1774,7 @@ public class DrivingSkill extends MovingSkill {
 			double oldSpeed = getSpeed(vehicle);
 
 			// Choose an optimal lane
-			Pair<Integer, Double> pair = MOBIL.chooseLaneMOBIL(scope, vehicle, currentRoad, currentSegment, distToGoal);
+			Pair<Integer, Double> pair = MOBIL.chooseLane(scope, vehicle, currentTarget, currentRoad, currentSegment, distToGoal);
 			int lowestLane = pair.getKey();
 			double accel = pair.getValue();
 			double speed = computeSpeed(scope, accel, currentRoad);

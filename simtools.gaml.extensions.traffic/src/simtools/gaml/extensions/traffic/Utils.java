@@ -58,14 +58,16 @@ public class Utils {
 	public static ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>>
 			findLeadingAndBackVehicle(final IScope scope,
 										final IAgent vehicle,
+										final IAgent target,
 										final IAgent road,
 										final int segment,
 										final double distToSegmentEnd,
 										final int lowestLane) {
 		double vL = getVehicleLength(vehicle);
 		double minSafetyDist = getMinSafetyDistance(vehicle);
+		boolean violatingOneway = isViolatingOneway(vehicle);
 
-		int endPtIdx = !isViolatingOneway(vehicle) ? segment + 1 : segment;
+		int endPtIdx = !violatingOneway ? segment + 1 : segment;
 		GamaPoint segmentEndPt = new GamaPoint(road.getInnerGeometry().getCoordinates()[endPtIdx]);
 
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
@@ -90,9 +92,10 @@ public class Utils {
 			if (otherVehicle == vehicle || otherVehicle == null || otherVehicle.dead()) {
 				continue;
 			}
+			boolean sameDirection = target == getCurrentTarget(otherVehicle);
 			double otherVL = getVehicleLength(otherVehicle);
 			double otherDistToSegmentEnd;
-			if (getCurrentTarget(vehicle) == getCurrentTarget(otherVehicle)) {
+			if (sameDirection) {
 				otherDistToSegmentEnd = getDistanceToGoal(otherVehicle);
 			} else {
 				GamaPoint otherLocation = (GamaPoint) otherVehicle.getLocation();
@@ -110,11 +113,11 @@ public class Utils {
 			} else if (myFrontToOtherRear > 0 && myFrontToOtherRear < minLeadingDist) {
 				leadingVehicle = otherVehicle;
 				minLeadingDist = myFrontToOtherRear;
-				leadingSameDirection = getCurrentTarget(vehicle).equals(getCurrentTarget(otherVehicle));
+				leadingSameDirection = sameDirection;
 			} else if (otherFrontToMyRear > 0 && otherFrontToMyRear < minBackDist) {
 				backVehicle = otherVehicle;
 				minBackDist = otherFrontToMyRear;
-				backSameDirection = getCurrentTarget(vehicle).equals(getCurrentTarget(otherVehicle));
+				backSameDirection = sameDirection;
 			}
 		}
 
@@ -130,10 +133,11 @@ public class Utils {
 			IAgent nextRoad = getNextRoad(vehicle);
 			// Check if vehicle is approaching an intersection
 			int numSegments = RoadSkill.getNumSegments(road);
-			if (segment == numSegments - 1) {
+			if ((!violatingOneway && segment == numSegments - 1) ||
+					(violatingOneway && segment == 0)) {
 				// Return a virtual leading vehicle of length 0 to simulate deceleration at intersections
 				// NOTE: the added minSafetyDist is necessary for the vehicle to ignore the safety dist when stopping at an endpoint
-				IAgent stoppingNode = RoadSkill.getTargetNode(road);
+				IAgent stoppingNode = target;
 				leadingTriple = ImmutableTriple.of(stoppingNode, distToSegmentEnd + minSafetyDist, false);
 				// Slowing down at final target, since at this point we don't know which road will be taken next
 				if (nextRoad == null) {
@@ -146,19 +150,25 @@ public class Utils {
 				}
 			}
 
+			// TODO: rework this spaghetti bowl
 			// Continue to find leading vehicle on next segment or next road in path
 			minLeadingDist = distToSegmentEnd - 0.5 * vL;
-			IAgent roadToCheck;
-			int lowestLaneToCheck;
-			int segmentToCheck;
-			if (segment < numSegments - 1) {
+			IAgent roadToCheck = null;
+			IAgent targetToCheck = null;
+			int lowestLaneToCheck = 0;
+			int segmentToCheck = 0;
+			if ((!violatingOneway && segment < numSegments - 1) ||
+					(violatingOneway && segment > 0)) {
 				roadToCheck = road;
-				segmentToCheck = segment + 1;
+				targetToCheck = target;
+				segmentToCheck = !violatingOneway ? segment + 1 : segment - 1;
 				lowestLaneToCheck = lowestLane;
-			} else {
+			} else if (road != nextRoad) {  // road == nextRoad when vehicle is at an intersection
 				roadToCheck = nextRoad;
-				segmentToCheck = !willViolateOneway(road, nextRoad) ?
-					0 : RoadSkill.getNumSegments(nextRoad) - 1;
+				boolean willViolateOneway = target == RoadSkill.getTargetNode(nextRoad);
+				targetToCheck = !willViolateOneway ?
+					RoadSkill.getTargetNode(nextRoad) : RoadSkill.getSourceNode(nextRoad);
+				segmentToCheck = !willViolateOneway ? 0 : RoadSkill.getNumSegments(nextRoad) - 1;
 				// TODO: is this the right lane to check?
 				int numLanesTotal = RoadSkill.getNumLanes(roadToCheck);
 				IAgent linkedRoadToCheck = RoadSkill.getLinkedRoad(roadToCheck);
@@ -167,38 +177,41 @@ public class Utils {
 				}
 				lowestLaneToCheck = Math.min(lowestLane, numLanesTotal - numLanesOccupied);
 			}
-			Set<IAgent> furtherVehicles = new HashSet<>();
-			for (int i = 0; i < numLanesOccupied; i += 1) {
-				furtherVehicles.addAll(
-					RoadSkill.getVehiclesOnLaneSegment(scope,
-						roadToCheck, lowestLaneToCheck + i, segmentToCheck)
-				);
-			}
 
-			double minGap = Double.MAX_VALUE;
-			for (IAgent otherVehicle : furtherVehicles) {
-				if (otherVehicle == vehicle || otherVehicle == null || otherVehicle.dead()) {
-					continue;
+			if (roadToCheck != null) {
+				Set<IAgent> furtherVehicles = new HashSet<>();
+				for (int i = 0; i < numLanesOccupied; i += 1) {
+					furtherVehicles.addAll(
+						RoadSkill.getVehiclesOnLaneSegment(scope,
+							roadToCheck, lowestLaneToCheck + i, segmentToCheck)
+					);
 				}
-				// check if the other vehicle going in opposite direction
-				double gap;
-				boolean sameDirection = getCurrentRoad(otherVehicle) == roadToCheck;
-				if (sameDirection) {
-					Coordinate coords[] = roadToCheck.getInnerGeometry().getCoordinates();
-					double segmentLength = coords[segmentToCheck].distance(coords[segmentToCheck + 1]);
-					gap = segmentLength - getDistanceToGoal(otherVehicle);
-				} else {
-					gap = getDistanceToGoal(otherVehicle);
-				}
-				gap -= 0.5 * getVehicleLength(otherVehicle);
 
-				if (gap < minGap) {
-					leadingVehicle = otherVehicle;
-					minGap = gap;
-					leadingSameDirection = sameDirection;
+				double minGap = Double.MAX_VALUE;
+				for (IAgent otherVehicle : furtherVehicles) {
+					if (otherVehicle == vehicle || otherVehicle == null || otherVehicle.dead()) {
+						continue;
+					}
+					// check if the other vehicle going in opposite direction
+					double gap;
+					boolean sameDirection = targetToCheck == getCurrentTarget(otherVehicle);
+					if (sameDirection) {
+						Coordinate coords[] = roadToCheck.getInnerGeometry().getCoordinates();
+						double segmentLength = coords[segmentToCheck].distance(coords[segmentToCheck + 1]);
+						gap = segmentLength - getDistanceToGoal(otherVehicle);
+					} else {
+						gap = getDistanceToGoal(otherVehicle);
+					}
+					gap -= 0.5 * getVehicleLength(otherVehicle);
+
+					if (gap < minGap) {
+						leadingVehicle = otherVehicle;
+						minGap = gap;
+						leadingSameDirection = sameDirection;
+					}
 				}
+				minLeadingDist += minGap;
 			}
-			minLeadingDist += minGap;
 		}
 
 		if (leadingVehicle == null || leadingVehicle.dead()) {
