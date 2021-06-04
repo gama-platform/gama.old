@@ -1360,7 +1360,7 @@ public class DrivingSkill extends MovingSkill {
 					return;
 				}
 
-				boolean violatingOneway = loc.equals(RoadSkill.getSourceNode(newRoad).getLocation());
+				boolean violatingOneway = loc.equals(RoadSkill.getTargetNode(newRoad).getLocation());
 
 				// Choose a lane on the new road
 				int secondPtIdx = !violatingOneway ? 1 : RoadSkill.getNumSegments(newRoad) - 1;
