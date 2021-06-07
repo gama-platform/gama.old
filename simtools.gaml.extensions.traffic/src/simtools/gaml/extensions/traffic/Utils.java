@@ -11,7 +11,6 @@ import org.locationtech.jts.geom.Coordinate;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
-import simtools.gaml.extensions.traffic.RoadSkill;
 import static simtools.gaml.extensions.traffic.DrivingSkill.*;
 
 public class Utils {
@@ -48,8 +47,10 @@ public class Utils {
 	 * If either the leading or back vehicle overlaps with the current one, the return value will be null.
 	 *
 	 * @param scope
+	 * @param vehicle          the vehicle whose leading and back vehicle is to be found
+	 * @param target           the target of the concerned vehicle
 	 * @param road             the road which the vehicle is moving on
-	 * @param segment          the index of the current road segment
+	 * @param segment          the index of the current road segment that the vehicle is on
 	 * @param distToSegmentEnd the distance from the vehicle to the segment endpoint
 	 * @param lowestLane       the current "lowest" lane index of the vehicle
 	 * @return a pair containing two triplets, one for the leading vehicle and one

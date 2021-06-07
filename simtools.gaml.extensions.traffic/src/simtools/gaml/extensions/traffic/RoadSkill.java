@@ -12,8 +12,6 @@ package simtools.gaml.extensions.traffic;
 
 import java.util.List;
 
-import org.locationtech.jts.algorithm.CGAlgorithms;
-
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -326,27 +324,6 @@ public class RoadSkill extends Skill {
 			oldVehicleList.remove(driver);
 		}
 		getAgents(currentRoad).remove(driver);
-	}
-
-	public static int getSegmentIndex(final IAgent road, final IAgent driver) {
-		final GamaPoint[] coords = GeometryUtils.getPointsOf(road);
-		if (coords.length == 2) { return 0; }
-
-		final GamaPoint loc = driver.getLocation().toGamaPoint();
-		for (int i = 0; i < coords.length - 1; i++) {
-			if (coords[i].equals(loc)) { return i; }
-		}
-		double distanceS = Double.MAX_VALUE;
-		int indexSegment = 0;
-		final int nbSp = coords.length;
-		for (int i = 0; i < nbSp - 1; i++) {
-			final double distS = CGAlgorithms.distancePointLine(loc, coords[i], coords[i + 1]);
-			if (distS < distanceS) {
-				distanceS = distS;
-				indexSegment = i;
-			}
-		}
-		return indexSegment;
 	}
 
 	@action(

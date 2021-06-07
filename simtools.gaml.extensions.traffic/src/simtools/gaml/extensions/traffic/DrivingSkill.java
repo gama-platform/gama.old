@@ -12,7 +12,6 @@ package simtools.gaml.extensions.traffic;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +21,7 @@ import java.util.stream.IntStream;
 
 import com.google.common.collect.Sets;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -64,7 +60,6 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import simtools.gaml.extensions.traffic.carfollowing.IDM;
 import simtools.gaml.extensions.traffic.lanechange.MOBIL;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -262,13 +257,6 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("indicates if the vehicle is moving in the wrong direction on an one-way (unlinked) road")
 	),
 	@variable(
-		// TODO: find a better name
-		name = DrivingSkill.REVERSED_ROADS,
-		type = IType.LIST,
-		init = "nil",
-		doc = @doc("a list containing roads in the path which will be travelled in reverse")
-	),
-	@variable(
 		name = DrivingSkill.CURRENT_ROAD,
 		type = IType.AGENT,
 		init = "nil",
@@ -427,7 +415,6 @@ public class DrivingSkill extends MovingSkill {
 	public static final String RIGHT_SIDE_DRIVING = "right_side_driving";
 	public static final String IGNORE_ONEWAY = "ignore_oneway";
 	public static final String VIOLATING_ONEWAY = "violating_oneway";
-	public static final String REVERSED_ROADS = "reversed_roads";
 	public static final String ON_LINKED_ROAD = "on_linked_road";
 	public static final String USING_LINKED_ROAD = "using_linked_road";
 	public static final String LINKED_LANE_LIMIT = "linked_lane_limit";
@@ -720,16 +707,6 @@ public class DrivingSkill extends MovingSkill {
 		vehicle.setAttribute(VIOLATING_ONEWAY, violatingOneway);
 	}
 
-	@getter(REVERSED_ROADS)
-	public static List<IAgent> getReversedRoads(final IAgent vehicle) {
-		return (List<IAgent>) vehicle.getAttribute(REVERSED_ROADS);
-	}
-
-	@setter(REVERSED_ROADS)
-	public static void setReversedRoads(final IAgent vehicle, final List<IAgent> reversedRoads) {
-		vehicle.setAttribute(REVERSED_ROADS, reversedRoads);
-	}
-
 	@getter(ALLOWED_LANES)
 	public static List<Integer> getAllowedLanes(final IAgent vehicle) {
 		return (List<Integer>) vehicle.getAttribute(ALLOWED_LANES);
@@ -930,11 +907,13 @@ public class DrivingSkill extends MovingSkill {
 			)
 		},
 		doc = @doc(
+			deprecated = "apparently this action does not do what is described in the documentation",
 			value = "moves the agent towards along the path passed in the arguments while considering the other agents in the network (only for graph topology)",
 			returns = "the remaining time",
 			examples = { @example ("do osm_follow path: the_path on: road_network;") }
 		)
 	)
+	@Deprecated
 	public Double primAdvancedFollow(final IScope scope) throws GamaRuntimeException {
 		// TODO: path is not used anywhere in this action
 		Double t = scope.hasArg("time") ? scope.getFloatArg("time") : scope.getClock().getStepInSeconds();
@@ -1117,13 +1096,6 @@ public class DrivingSkill extends MovingSkill {
 		return true;
 	}
 
-	public static boolean willViolateOneway(IAgent oldRoad, IAgent newRoad) {
-		IAgent sourceNode = RoadSkill.getSourceNode(oldRoad);
-		IAgent nextSourceNode = (IAgent)newRoad.getAttribute("source_node");
-		IAgent nextTargetNode = (IAgent)oldRoad.getAttribute("target_node");
-		return sourceNode == nextSourceNode || sourceNode == nextTargetNode;
-	}
-
 	@action(
 		name = "compute_path",
 		args = {
@@ -1195,14 +1167,13 @@ public class DrivingSkill extends MovingSkill {
 			throw GamaRuntimeException.error("either `nodes` or `target` must be specified", scope);
 		}
 
+		// restore graph direction
+		graph.setDirected(true);
+
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
-			// Mark reversed edges if any
+			// Mark reversed roads if any
 			List<IAgent> reversedRoads = new ArrayList<>();
 			if (canIgnoreOneway(vehicle)) {
-				if (getReversedRoads(vehicle) == null) {
-					setReversedRoads(vehicle, new ArrayList<IAgent>());
-				}
-				reversedRoads = getReversedRoads(vehicle);
 				List<IAgent> ss = path.getEdgeList();
 				for(int i = 0; i < ss.size()-1;i++) {
 					IShape edge  = ss.get(i);
@@ -1214,14 +1185,6 @@ public class DrivingSkill extends MovingSkill {
 						reversedRoads.add(ss.get(i));
 					}
 				}
-				// TODO: wth is this?
-				// check last or only edge
-				// IShape last = path.getEdgeList().lastValue(scope);
-				// IAgent targetNode = (IAgent)last.getAttribute("target_node");
-				// reversedEdges.put(last, targetNode != target);
-
-				// restore graph direction
-				graph.setDirected(true);
 			}
 
 			// Initialize driving states
