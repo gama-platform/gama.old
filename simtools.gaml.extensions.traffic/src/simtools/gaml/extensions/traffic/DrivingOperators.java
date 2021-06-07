@@ -48,11 +48,11 @@ public class DrivingOperators {
 		for (final Object edge : edges.iterable(scope)) {
 			if (edge instanceof IShape) {
 				final IAgent ag = ((IShape) edge).getAgent();
-				if (ag.hasAttribute(RoadSkill.LANES) && ag.hasAttribute(RoadSkill.AGENTS_ON)) {
-					final int lanes = (Integer) ag.getAttribute(RoadSkill.LANES);
-					if (lanes > 0) {
+				if (ag.hasAttribute(RoadSkill.NUM_LANES) && ag.hasAttribute(RoadSkill.AGENTS_ON)) {
+					final int numLanes = RoadSkill.getNumLanes(ag);
+					if (numLanes > 0) {
 						final IList agentsOn = (IList) ag.getAttribute(RoadSkill.AGENTS_ON);
-						for (int i = 0; i < lanes; i++) {
+						for (int i = 0; i < numLanes; i++) {
 							final int nbSeg = ag.getInnerGeometry().getNumPoints() - 1;
 							final IList lisSg = GamaListFactory.create(Types.NO_TYPE);
 							for (int j = 0; j < nbSeg; j++) {

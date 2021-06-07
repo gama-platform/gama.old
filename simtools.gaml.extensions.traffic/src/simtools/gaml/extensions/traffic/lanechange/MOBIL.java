@@ -48,8 +48,8 @@ public class MOBIL {
 		Double probaUseLinkedRoad = rescaleProba(getProbaUseLinkedRoad(vehicle), timeStep);
 
 		IAgent linkedRoad = RoadSkill.getLinkedRoad(road);
-		int numCurrentLanes = (Integer) road.getAttribute(RoadSkill.LANES);
-		int numLinkedLanes = (linkedRoad != null) ? (int) linkedRoad.getAttribute(RoadSkill.LANES) : 0;
+		int numCurrentLanes = RoadSkill.getNumLanes(road);
+		int numLinkedLanes = (linkedRoad != null) ? RoadSkill.getNumLanes(linkedRoad) : 0;
 		int linkedLaneLimit = getLinkedLaneLimit(vehicle);
 		linkedLaneLimit = (linkedLaneLimit != -1 && numLinkedLanes > linkedLaneLimit) ?
 				linkedLaneLimit : numLinkedLanes;

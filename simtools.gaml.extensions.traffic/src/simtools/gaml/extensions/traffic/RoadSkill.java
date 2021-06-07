@@ -63,6 +63,11 @@ import msi.gaml.types.Types;
 		doc = @doc("the number of lanes")
 	),
 	@variable(
+		name = RoadSkill.NUM_LANES,
+		type = IType.INT,
+		doc = @doc("the number of lanes")
+	),
+	@variable(
 		name = RoadSkill.NUM_SEGMENTS,
 		type = IType.INT,
 		doc = @doc("the number of road segments")
@@ -88,13 +93,15 @@ import msi.gaml.types.Types;
 public class RoadSkill extends Skill {
 	public static final String SKILL_ROAD = "skill_road";
 
+	// TODO: rename these two lists?
 	public static final String ALL_AGENTS = "all_agents";
 	public static final String AGENTS_ON = "agents_on";
 	public static final String SOURCE_NODE = "source_node";
 	public static final String TARGET_NODE = "target_node";
-	public static final String LANES = "lanes";
 	public static final String MAXSPEED = "maxspeed";
 	public static final String LINKED_ROAD = "linked_road";
+	@Deprecated public static final String LANES = "lanes";
+	public static final String NUM_LANES = "num_lanes";
 	public static final String NUM_SEGMENTS = "num_segments";
 
 	@getter(AGENTS_ON)
@@ -138,13 +145,23 @@ public class RoadSkill extends Skill {
 	}
 
 	@getter(LANES)
-	public static Integer getNumLanes(final IAgent agent) {
-		return (Integer) agent.getAttribute(LANES);
+	public static int getLanes(final IAgent agent) {
+		return getNumLanes(agent);
 	}
 
 	@setter(LANES)
-	public static void setLanes(final IAgent agent, final int ln) {
-		agent.setAttribute(LANES, ln);
+	public static void setLanes(final IAgent agent, final int numLanes) {
+		setNumLanes(agent, numLanes);
+	}
+
+	@getter(NUM_LANES)
+	public static int getNumLanes(final IAgent agent) {
+		return (int) agent.getAttribute(NUM_LANES);
+	}
+
+	@setter(NUM_LANES)
+	public static void setNumLanes(final IAgent agent, final int numLanes) {
+		agent.setAttribute(NUM_LANES, numLanes);
 	}
 
 	@getter(MAXSPEED)
