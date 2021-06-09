@@ -26,10 +26,8 @@ public class MOBIL {
 	 * @param road             the road which the vehicle is moving on
 	 * @param segment          the index of the current road segment
 	 * @param distToSegmentEnd the distance to the endpoint of the segment
-	 * @return a pair composed of the optimal "lowest" lane index and the
-	 *         acceleration of the vehicle if it moves on the lanes specified by
-	 *         that lowest lane index and the number of lanes occupied by the
-	 *         vehicle
+	 * @return a pair composed of the optimal lowest lane index and
+	 *         the resulting acceleration of the vehicle
 	 */
 	public static ImmutablePair<Integer, Double> chooseLane(final IScope scope,
 			final IAgent vehicle,

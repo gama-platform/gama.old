@@ -34,7 +34,6 @@ public class IDM {
 		double sStar = s0 + Math.max(0, v * T + v * dv / 2 / Math.sqrt(a * b));
 		double accel = a * (1 - Math.pow(v / v0, delta) - Math.pow(sStar / s, 2));
 
-		double dt = scope.getSimulation().getClock().getStepInSeconds();
-		return accel * dt;
+		return accel;
 	}
 }
