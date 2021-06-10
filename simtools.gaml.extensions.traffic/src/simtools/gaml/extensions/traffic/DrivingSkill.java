@@ -244,6 +244,24 @@ import ummisco.gama.dev.utils.DEBUG;
 		)
 	),
 	@variable(
+		name = DrivingSkill.ACC_BIAS,
+		type = IType.FLOAT,
+		init = "0.25",
+		doc = @doc("the bias term used for asymmetric lane changing")
+	),
+	@variable(
+		name = DrivingSkill.LC_COOLDOWN,
+		type = IType.FLOAT,
+		init = "4",
+		doc = @doc("the duration that a vehicle must wait before changing lanes again")
+	),
+	@variable(
+		name = DrivingSkill.TIME_SINCE_LC,
+		type = IType.FLOAT,
+		init = "0.0",
+		doc = @doc("the elapsed time since the last lane change")
+	),
+	@variable(
 		name = DrivingSkill.IGNORE_ONEWAY,
 		type = IType.BOOL,
 		init = "false",
@@ -431,6 +449,9 @@ public class DrivingSkill extends MovingSkill {
 	public static final String POLITENESS_FACTOR = "politeness_factor";
 	public static final String MAX_SAFE_DECELERATION = "max_safe_deceleration";
 	public static final String ACC_GAIN_THRESHOLD = "acc_gain_threshold";
+	public static final String ACC_BIAS = "acc_bias";
+	public static final String TIME_SINCE_LC = "time_since_lane_change";
+	public static final String LC_COOLDOWN = "lane_change_cooldown";
 	public static final String SPEED_COEFF = "speed_coeff";
 	public static final String MAX_SPEED = "max_speed";
 	public static final String SEGMENT_INDEX = "segment_index_on_road";
@@ -519,6 +540,31 @@ public class DrivingSkill extends MovingSkill {
 	@getter(ACC_GAIN_THRESHOLD)
 	public static double getAccGainThreshold(final IAgent vehicle) {
 		return (Double) vehicle.getAttribute(ACC_GAIN_THRESHOLD);
+	}
+
+	@getter(ACC_BIAS)
+	public static double getAccBias(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(ACC_BIAS);
+	}
+
+	@getter(TIME_SINCE_LC)
+	public static double getTimeSinceLC(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(TIME_SINCE_LC);
+	}
+
+	// @setter(TIME_SINCE_LC)
+	public static void setTimeSinceLCReadOnly(final IAgent vehicle, final double time) {
+		// read-only
+	}
+
+	@setter(TIME_SINCE_LC)
+	public static void setTimeSinceLC(final IAgent vehicle, final double time) {
+		vehicle.setAttribute(TIME_SINCE_LC, time);
+	}
+
+	@getter(LC_COOLDOWN)
+	public static double getLCCooldown(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(LC_COOLDOWN);
 	}
 
 	@getter(SPEED_COEFF)
@@ -1738,7 +1784,7 @@ public class DrivingSkill extends MovingSkill {
 				// Move to a new road
 				setLocation(vehicle, endPt);
 				setDistanceToGoal(vehicle, 0.0);
-				// Return to the main loop in `drive` to do 
+				// Return to the main loop in `drive` to continue moving across the intersection
 				return distToGoal / speed;
 			} else {
 				// Move to a new segment

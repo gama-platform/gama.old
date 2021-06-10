@@ -37,7 +37,7 @@ public class MOBIL {
 			final double distToSegmentEnd) {
 		double VL = getVehicleLength(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
-		int lowestLane = getLowestLane(vehicle);
+		int currentLowestLane = getLowestLane(vehicle);
 
 		// Rescale probabilities based on step duration
 		double timeStep = scope.getSimulation().getClock().getStepInSeconds();
@@ -53,7 +53,7 @@ public class MOBIL {
 				linkedLaneLimit : numLinkedLanes;
 		List<Integer> allowedLanes = getAllowedLanes(vehicle);
 		// Restrict the lane index when entering a new road
-		lowestLane = Math.min(lowestLane,
+		currentLowestLane = Math.min(currentLowestLane,
 				numCurrentLanes + linkedLaneLimit - numLanesOccupied);
 
 		// Determine the lanes which is considered for switching
@@ -61,8 +61,8 @@ public class MOBIL {
 		int lower = 0;
 		int upper = numCurrentLanes + linkedLaneLimit - numLanesOccupied;
 		if (laneChangeLimit != -1) {
-			lower = Math.max(lower, lowestLane - laneChangeLimit);
-			upper = Math.min(upper, lowestLane + laneChangeLimit);
+			lower = Math.max(lower, currentLowestLane - laneChangeLimit);
+			upper = Math.min(upper, currentLowestLane + laneChangeLimit);
 		}
 		List<Integer> limitedLaneRange = IntStream.rangeClosed(lower, upper).
 			boxed().collect(Collectors.toList());
@@ -72,7 +72,7 @@ public class MOBIL {
 
 		// Compute acceleration if the vehicle stays on the same lane
 		ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>> pair =
-			findLeadingAndBackVehicle(scope, vehicle, target, road, segment, distToSegmentEnd, lowestLane);
+			findLeadingAndBackVehicle(scope, vehicle, target, road, segment, distToSegmentEnd, currentLowestLane);
 		IAgent currentBackVehicle = null;
 		double stayAccelM;
 		if (pair == null) {
@@ -95,31 +95,37 @@ public class MOBIL {
 			// Do not allow changing lane when approaching intersections
 			// Reason: in some cases the vehicle is forced to slow down (e.g. approaching final target in path),
 			// but it can gain acceleration by switching lanes to follow a fast vehicle.
-			if (leadingVehicle != null &&
-					leadingVehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) {
-				return ImmutablePair.of(lowestLane, stayAccelM);
+			if ((leadingVehicle != null &&
+					leadingVehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) ||
+					getTimeSinceLC(vehicle) < getLCCooldown(vehicle)) {
+				double t = getTimeSinceLC(vehicle);
+				setTimeSinceLC(vehicle, t + timeStep);
+				return ImmutablePair.of(currentLowestLane, stayAccelM);
 			}
 		}
+		int bestLowestLane = currentLowestLane;
+		double bestAccel = stayAccelM;
+		double bestIncentive = 0;
 
 		// Examine all lanes within range
 		for (int tmpLowestLane : limitedLaneRange) {
-			if (tmpLowestLane == lowestLane ||
+			if (tmpLowestLane == currentLowestLane ||
 					(!allowedLanes.isEmpty() && !allowedLanes.contains(tmpLowestLane))) {
 				continue;
 			}
 
 			// Evaluate probabilities to switch to tmpLowestLane
-			boolean canChangeDown = tmpLowestLane < lowestLane &&
-					scope.getRandom().next() < probaChangeLaneDown;
-			// NOTE: in canChangeUp, the 2nd condition prevents moving from current road to linked road
-			boolean canChangeUp = tmpLowestLane > lowestLane &&
-					 !(lowestLane <= numCurrentLanes - numLanesOccupied && tmpLowestLane > numCurrentLanes - numLanesOccupied) &&
-					 scope.getRandom().next() < probaChangeLaneUp;
-			boolean canChangeToLinkedRoad = lowestLane <= numCurrentLanes - numLanesOccupied &&
-					tmpLowestLane > numCurrentLanes - numLanesOccupied &&
-					scope.getRandom().next() < probaUseLinkedRoad;
-			if (!canChangeDown && !canChangeUp && !canChangeToLinkedRoad) {
-				continue;
+			// boolean canChangeDown = tmpLowestLane < lowestLane &&
+			// 		scope.getRandom().next() < probaChangeLaneDown;
+			// // NOTE: in canChangeUp, the 2nd condition prevents moving from current road to linked road
+			// boolean canChangeUp = tmpLowestLane > lowestLane &&
+			// 		 !(lowestLane <= numCurrentLanes - numLanesOccupied && tmpLowestLane > numCurrentLanes - numLanesOccupied) &&
+			// 		 scope.getRandom().next() < probaChangeLaneUp;
+			if (currentLowestLane <= numCurrentLanes - numLanesOccupied &&
+					tmpLowestLane > numCurrentLanes - numLanesOccupied) {
+				if (scope.getRandom().next() > probaUseLinkedRoad) {
+					continue;
+				}
 			}
 
 			pair = findLeadingAndBackVehicle(scope, vehicle, target, road, segment, distToSegmentEnd, tmpLowestLane);
@@ -163,23 +169,38 @@ public class MOBIL {
 				changeAccelB = IDM.computeAcceleration(scope, backVehicle, backDist, getSpeed(vehicle));
 			}
 
-			double step = scope.getSimulation().getClock().getStepInSeconds();
 			// MOBIL params
 			double p = getPolitenessFactor(vehicle);
-			double bSave = getMaxSafeDeceleration(vehicle) * step;  // Rescale acceleration values with respect to step size
-			double aThr = getAccGainThreshold(vehicle) * step;
+			double bSave = getMaxSafeDeceleration(vehicle);
+			double aThr = getAccGainThreshold(vehicle);
+			double aBias = getAccBias(vehicle);
 
-			// Safety criterion & Incentive criterion
-			if (changeAccelB > -bSave &&
-					changeAccelM - stayAccelM >= p * (stayAccelB - changeAccelB) + aThr) {
+			// Safety criterion
+			if (changeAccelB < -bSave) {
+				continue;
+			}
+
+			// Incentive criterion
+			boolean biasCond = getRightSideDriving(vehicle) ?
+				tmpLowestLane < currentLowestLane : tmpLowestLane > currentLowestLane;
+			int biasSign = biasCond ? 1 : -1;
+			double incentive = changeAccelM - stayAccelM + p * (changeAccelB - stayAccelB) + aBias * biasSign;
+			if (incentive > aThr && incentive > bestIncentive) {
+				bestIncentive = incentive;
+				bestLowestLane = tmpLowestLane;
+				bestAccel = changeAccelM;
 				setLeadingVehicle(vehicle, leadingVehicle);
 				setLeadingDistance(vehicle, leadingDist);
 				setLeadingSpeed(vehicle, leadingSpeed);
-				return ImmutablePair.of(tmpLowestLane, changeAccelM);
 			}
 		}
 
-		// If no other lane satisfies the MOBIL criterions, stay on the same lane
-		return ImmutablePair.of(lowestLane, stayAccelM);
+		if (bestLowestLane != currentLowestLane) {
+			setTimeSinceLC(vehicle, 0.0);
+		} else {
+			double t = getTimeSinceLC(vehicle);
+			setTimeSinceLC(vehicle, t + timeStep);
+		}
+		return ImmutablePair.of(bestLowestLane, bestAccel);
 	}
 }
