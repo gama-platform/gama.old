@@ -240,14 +240,14 @@ import ummisco.gama.dev.utils.DEBUG;
 		init = "0.2",
 		doc = @doc("the minimum acceleration gain for the vehicle to switch to another lane, " +
 			"introduced to prevent frantic lane changing. " +
-			"Known as the parameter 'p' in the MOBIL lane changing model"
+			"Known as the parameter 'a_th' in the MOBIL lane changing model"
 		)
 	),
 	@variable(
 		name = DrivingSkill.ACC_BIAS,
 		type = IType.FLOAT,
 		init = "0.25",
-		doc = @doc("the bias term used for asymmetric lane changing")
+		doc = @doc("the bias term used for asymmetric lane changing, parameter 'a_bias' in MOBIL")
 	),
 	@variable(
 		name = DrivingSkill.LC_COOLDOWN,
