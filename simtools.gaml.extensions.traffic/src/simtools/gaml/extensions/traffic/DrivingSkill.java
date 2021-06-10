@@ -328,13 +328,19 @@ import ummisco.gama.dev.utils.DEBUG;
 		name = DrivingSkill.PROBA_LANE_CHANGE_UP,
 		type = IType.FLOAT,
 		init = "1.0",
-		doc = @doc("probability to change to a upper lane (left lane if right side driving) to gain acceleration, within one second")
+		doc = @doc(
+			value = "probability to change to a upper lane (left lane if right side driving) to gain acceleration, within one second",
+			deprecated = "use MOBIL parameters to control this instead"
+		)
 	),
 	@variable(
 		name = DrivingSkill.PROBA_LANE_CHANGE_DOWN,
 		type = IType.FLOAT,
 		init = "1.0",
-		doc = @doc("probability to change to a lower lane (right lane if right side driving) to gain acceleration, within one second")
+		doc = @doc(
+			value = "probability to change to a lower lane (right lane if right side driving) to gain acceleration, within one second",
+			deprecated = "use MOBIL parameters to control this instead"
+		)
 	),
 	@variable(
 		name = DrivingSkill.PROBA_USE_LINKED_ROAD,
@@ -423,8 +429,8 @@ public class DrivingSkill extends MovingSkill {
 	public static final String LOWEST_LANE = "lowest_lane";
 	public static final String DISTANCE_TO_GOAL = "distance_to_goal";
 	public static final String VEHICLE_LENGTH = "vehicle_length";
-	public static final String PROBA_LANE_CHANGE_UP = "proba_lane_change_up";
-	public static final String PROBA_LANE_CHANGE_DOWN = "proba_lane_change_down";
+	@Deprecated public static final String PROBA_LANE_CHANGE_UP = "proba_lane_change_up";
+	@Deprecated public static final String PROBA_LANE_CHANGE_DOWN = "proba_lane_change_down";
 	public static final String PROBA_RESPECT_PRIORITIES = "proba_respect_priorities";
 	public static final String PROBA_RESPECT_STOPS = "proba_respect_stops";
 	public static final String PROBA_BLOCK_NODE = "proba_block_node";
@@ -660,21 +666,25 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@getter(PROBA_LANE_CHANGE_DOWN)
+	@Deprecated
 	public static double getProbaLaneChangeDown(final IAgent vehicle) {
 		return (Double) vehicle.getAttribute(PROBA_LANE_CHANGE_DOWN);
 	}
 
 	@setter(PROBA_LANE_CHANGE_DOWN)
+	@Deprecated
 	public static void setProbaLaneChangeDown(final IAgent vehicle, final Double proba) {
 		vehicle.setAttribute(PROBA_LANE_CHANGE_DOWN, proba);
 	}
 
 	@getter(PROBA_LANE_CHANGE_UP)
+	@Deprecated
 	public static double getProbaLaneChangeUp(final IAgent vehicle) {
 		return (Double) vehicle.getAttribute(PROBA_LANE_CHANGE_UP);
 	}
 
 	@setter(PROBA_LANE_CHANGE_UP)
+	@Deprecated
 	public static void setProbaLaneChangeUp(final IAgent vehicle, final Double proba) {
 		vehicle.setAttribute(PROBA_LANE_CHANGE_UP, proba);
 	}
