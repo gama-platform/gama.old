@@ -66,6 +66,7 @@ public class MOBIL {
 		}
 		List<Integer> limitedLaneRange = IntStream.rangeClosed(lower, upper).
 			boxed().collect(Collectors.toList());
+		// TODO: remove randomization
 		if (isLaneChangePriorityRandomized(vehicle)) {
 			Collections.shuffle(limitedLaneRange);
 		}

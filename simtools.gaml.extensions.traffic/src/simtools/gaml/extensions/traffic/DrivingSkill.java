@@ -1366,9 +1366,6 @@ public class DrivingSkill extends MovingSkill {
 
 			if (loc.equalsWithTolerance(targetLoc, EPSILON)) {
 				// At the end point of a road
-				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
-				actionOnNewRoad.executeOn(scope);
-
 				IAgent newRoad = getNextRoad(vehicle);
 				if (!isReadyNextRoad(scope, vehicle, newRoad)) {
 					return;
@@ -1406,12 +1403,15 @@ public class DrivingSkill extends MovingSkill {
 					}
 					return;
 				}
-				int newLane = laneAndAccPair.getKey();
+				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
+				actionOnNewRoad.executeOn(scope);
 
 				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
 				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
+
+				int newLane = laneAndAccPair.getKey();
 
 				setCurrentTarget(vehicle, newTarget);
 				RoadSkill.unregister(scope, vehicle);
@@ -1517,9 +1517,6 @@ public class DrivingSkill extends MovingSkill {
 				clearDrivingStates(scope);
 				return;
 			} else if (loc.equalsWithTolerance(targetLoc, EPSILON)) {  // Intermediate node in path
-				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
-				actionOnNewRoad.executeOn(scope);
-
 				// get next road in path
 				IAgent newRoad = getNextRoad(vehicle);
 
@@ -1554,13 +1551,16 @@ public class DrivingSkill extends MovingSkill {
 					}
 					return;
 				}
-				int newLane = laneAndAccPair.getLeft();
+				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
+				actionOnNewRoad.executeOn(scope);
 
 				// external factor that affects remaining time when entering a new road
 				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
 				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
+
+				int newLane = laneAndAccPair.getLeft();
 
 				setCurrentIndex(vehicle, newEdgeIdx);
 				setCurrentTarget(vehicle, newTarget);
