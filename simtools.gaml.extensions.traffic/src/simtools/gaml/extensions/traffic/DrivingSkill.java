@@ -113,7 +113,10 @@ import ummisco.gama.dev.utils.DEBUG;
 		type = IType.LIST,
 		of = IType.POINT,
 		init = "[]",
-		doc = @doc("the current list of points that the agent has to reach (path)")
+		doc = @doc(
+			value = "the current list of points that the agent has to reach (path)",
+			deprecated = "this can be accessed using current_path.vertices"
+		)
 	),
 	@variable(
 		name = DrivingSkill.SECURITY_DISTANCE_COEFF,
@@ -442,7 +445,7 @@ public class DrivingSkill extends MovingSkill {
 	public static final String USING_LINKED_ROAD = "using_linked_road";
 	public static final String LINKED_LANE_LIMIT = "linked_lane_limit";
 	public static final String ALLOWED_LANES = "allowed_lanes";
-	public static final String TARGETS = "targets";
+	@Deprecated public static final String TARGETS = "targets";
 	public static final String CURRENT_TARGET = "current_target";
 	public static final String CURRENT_INDEX = "current_index";
 	public static final String FINAL_TARGET = "final_target";
@@ -633,26 +636,28 @@ public class DrivingSkill extends MovingSkill {
 		vehicle.setAttribute(SEGMENT_INDEX, index);
 	}
 
-	@Override
 	@getter(CURRENT_PATH)
-	public IPath getCurrentPath(final IAgent vehicle) {
+	public static IPath getCurrentPath(final IAgent vehicle) {
 		return (IPath) vehicle.getAttribute(CURRENT_PATH);
 	}
 
-	@Override
 	@setter(CURRENT_PATH)
-	public void setCurrentPath(final IAgent vehicle, final IPath path) {
+	public static void setCurrentPathReadOnly(final IAgent vehicle, final IPath path) {
 		vehicle.setAttribute(CURRENT_PATH, path);
 	}
 
-	@getter(TARGETS)
+	public static void setCurrentPath(final IAgent vehicle, final IPath path) {
+		vehicle.setAttribute(CURRENT_PATH, path);
+	}
+
 	public static List<IAgent> getTargets(final IAgent vehicle) {
-		return (List<IAgent>) vehicle.getAttribute(TARGETS);
+		IPath path = getCurrentPath(vehicle);
+		return path == null ? null : path.getVertexList();
 	}
 
 	@setter(TARGETS)
 	public static void setTargets(final IAgent vehicle, final List<IAgent> points) {
-		vehicle.setAttribute(TARGETS, points);
+		// read-only
 	}
 
 	@getter(PROBA_USE_LINKED_ROAD)
@@ -1226,47 +1231,9 @@ public class DrivingSkill extends MovingSkill {
 		graph.setDirected(true);
 
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
-			// Mark reversed roads if any
-			List<IAgent> reversedRoads = new ArrayList<>();
-			if (canIgnoreOneway(vehicle)) {
-				List<IAgent> ss = path.getEdgeList();
-				for(int i = 0; i < ss.size()-1;i++) {
-					IShape edge  = ss.get(i);
-					IAgent sourceNode = (IAgent)edge.getAttribute("source_node");
-					IShape next_edge  = ss.get(i+1);
-					IAgent nextSourceNode = (IAgent)next_edge.getAttribute("source_node");
-					IAgent nextTargetNode = (IAgent)next_edge.getAttribute("target_node");
-					if (sourceNode == nextSourceNode || sourceNode == nextTargetNode) {
-						reversedRoads.add(ss.get(i));
-					}
-				}
-			}
-
-			// Initialize driving states
-			List<IAgent> targets = getTargets(vehicle);
-			for (int i = 0; i < path.getEdgeList().size(); i += 1) {
-				IAgent r = (IAgent) path.getEdgeList().get(i);
-				IAgent startNode, endNode;
-				if (!reversedRoads.contains(r)) {
-					startNode = RoadSkill.getSourceNode(r);
-					endNode = RoadSkill.getTargetNode(r);
-				} else {
-					endNode = RoadSkill.getTargetNode(r);
-					startNode = RoadSkill.getSourceNode(r);
-				}
-
-				// NOTE: the first node in path is also consider a target,
-				// in order to perform the "next road test" when going on a new path as well
-				if (i == 0) {
-					targets.add(startNode);
-				}
-				targets.add(endNode);
-			}
-
 			vehicle.setLocation(source.getLocation());
-			setTargets(vehicle, targets);
 			setCurrentIndex(vehicle, -1);
-			setCurrentTarget(vehicle, targets.get(0));
+			setCurrentTarget(vehicle, (IAgent) path.getVertexList().get(0));
 			setFinalTarget(vehicle, target);
 			setCurrentPath(vehicle, path);
 			return path;
@@ -1845,7 +1812,6 @@ public class DrivingSkill extends MovingSkill {
 	 */
 	private void clearDrivingStates(final IScope scope) {
 		IAgent vehicle = getCurrentAgent(scope);
-		getTargets(vehicle).clear();
 		setCurrentIndex(vehicle, -1);
 		setCurrentTarget(vehicle, null);
 		setFinalTarget(vehicle, null);

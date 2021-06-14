@@ -206,13 +206,13 @@ public class MovingSkill extends Skill {
 	}
 
 	@setter ("current_path")
-	public void setCurrentPath(final IAgent agent, final IPath p) {
+	public static void setCurrentPath(final IAgent agent, final IPath p) {
 		// READ_ONLY
 	}
 
 	@getter (
 			value = "current_path")
-	public IPath getCurrentPath(final IAgent agent) {
+	public static IPath getCurrentPath(final IAgent agent) {
 		if (agent == null) { return null; }
 		return (IPath) agent.getAttribute("current_path");
 	}
