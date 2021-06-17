@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt.jar" sourcepath="lib/jogamp-fat-java-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt-natives-linux-amd64.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt-natives-macosx-universal.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gluegen-rt-natives-windows-amd64.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jogl-all.jar" sourcepath="lib/jogamp-fat-java-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/jogl-all-natives-macosx-universal.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jogl-all-natives-windows-amd64.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jogl-all-noawt-natives-linux-amd64.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry excluding="ummisco/gama/opengl/utils/VertexArrayHandler.java|ummisco/gama/opengl/scene/DEMObject.java|ummisco/gama/opengl/shaders/|ummisco/gama/opengl/view/shaders/" kind="src" path="src"/>
 	<classpathentry kind="src" path="gaml">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/gluegen-rt.jar" sourcepath="lib/jogamp-fat-java-src.zip"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all.jar" sourcepath="lib/jogamp-fat-java-src.zip"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-windows-amd64.jar"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-linux-amd64.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
