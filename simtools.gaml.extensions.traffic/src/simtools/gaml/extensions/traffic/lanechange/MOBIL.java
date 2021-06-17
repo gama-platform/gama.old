@@ -66,10 +66,6 @@ public class MOBIL {
 		}
 		List<Integer> limitedLaneRange = IntStream.rangeClosed(lower, upper).
 			boxed().collect(Collectors.toList());
-		// TODO: remove randomization
-		if (isLaneChangePriorityRandomized(vehicle)) {
-			Collections.shuffle(limitedLaneRange);
-		}
 
 		// Compute acceleration if the vehicle stays on the same lane
 		ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>> pair =
@@ -177,7 +173,7 @@ public class MOBIL {
 			double aBias = getAccBias(vehicle);
 
 			// Safety criterion
-			if (changeAccelB < -bSave) {
+			if (changeAccelB <= -bSave) {
 				continue;
 			}
 

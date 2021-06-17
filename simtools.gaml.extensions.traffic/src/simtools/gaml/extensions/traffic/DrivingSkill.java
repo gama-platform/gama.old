@@ -322,12 +322,6 @@ import ummisco.gama.dev.utils.DEBUG;
 		doc = @doc("the maximum number of lanes that the vehicle can change during a simulation step")
 	),
 	@variable(
-		name = DrivingSkill.LANE_CHANGE_PRIORITY_RANDOMIZED,
-		type = IType.BOOL,
-		init = "false",
-		doc = @doc("whether to randomize the lane choices when changing lane")
-	),
-	@variable(
 		name = DrivingSkill.PROBA_LANE_CHANGE_UP,
 		type = IType.FLOAT,
 		init = "1.0",
@@ -466,7 +460,6 @@ public class DrivingSkill extends MovingSkill {
 	public static final String SEGMENT_INDEX = "segment_index_on_road";
 	public static final String NUM_LANES_OCCUPIED = "num_lanes_occupied";
 	public static final String LANE_CHANGE_LIMIT = "lane_change_limit";
-	public static final String LANE_CHANGE_PRIORITY_RANDOMIZED = "lane_change_priority_randomized";
 	public static final String LEADING_VEHICLE = "leading_vehicle";
 	public static final String LEADING_DISTANCE = "leading_distance";
 	public static final String LEADING_SPEED = "leading_speed";
@@ -785,11 +778,6 @@ public class DrivingSkill extends MovingSkill {
 	@getter(LANE_CHANGE_LIMIT)
 	public static int getLaneChangeLimit(final IAgent vehicle) {
 		return (int) vehicle.getAttribute(LANE_CHANGE_LIMIT);
-	}
-
-	@getter(LANE_CHANGE_PRIORITY_RANDOMIZED)
-	public static boolean isLaneChangePriorityRandomized(final IAgent vehicle) {
-		return (boolean) vehicle.getAttribute(LANE_CHANGE_PRIORITY_RANDOMIZED);
 	}
 
 	@getter(RIGHT_SIDE_DRIVING)
@@ -1800,7 +1788,6 @@ public class DrivingSkill extends MovingSkill {
 		double dt = scope.getSimulation().getClock().getStepInSeconds();
 		double speed = getSpeed(vehicle) + acceleration * dt;
 		speed = Math.min(speed, getSpeedCoeff(vehicle) * RoadSkill.getMaxSpeed(road));
-		speed = Math.min(speed, getMaxSpeed(vehicle));
 		speed = Math.max(0.0, speed);
 		return speed;
 	}

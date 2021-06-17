@@ -26,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -60,7 +61,10 @@ import msi.gaml.types.Types;
 	@variable(
 		name = RoadSkill.LANES,
 		type = IType.INT,
-		doc = @doc("the number of lanes")
+		doc = @doc(
+			value = "the number of lanes",
+			deprecated = "use num_lanes instead"
+		)
 	),
 	@variable(
 		name = RoadSkill.NUM_LANES,
@@ -98,6 +102,7 @@ public class RoadSkill extends Skill {
 	public static final String AGENTS_ON = "agents_on";
 	public static final String SOURCE_NODE = "source_node";
 	public static final String TARGET_NODE = "target_node";
+	// TODO: rename to speed_limit
 	public static final String MAXSPEED = "maxspeed";
 	public static final String LINKED_ROAD = "linked_road";
 	@Deprecated public static final String LANES = "lanes";
@@ -161,6 +166,10 @@ public class RoadSkill extends Skill {
 
 	@setter(NUM_LANES)
 	public static void setNumLanes(final IAgent agent, final int numLanes) {
+		if (numLanes == 0) {
+			GamaRuntimeException.warning(agent.getName() + " has zero lanes",
+					GAMA.getRuntimeScope());
+		}
 		agent.setAttribute(NUM_LANES, numLanes);
 	}
 
