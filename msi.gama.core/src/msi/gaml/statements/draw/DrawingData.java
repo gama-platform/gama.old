@@ -60,6 +60,7 @@ public class DrawingData extends AttributeHolder {
 	final Attribute<Boolean> perspective;
 	final Attribute<Double> lineWidth;
 	final Attribute<Boolean> lighting;
+	final Attribute<Double> precision;
 
 	public DrawingData(final DrawStatement symbol) {
 		super(symbol);
@@ -68,38 +69,35 @@ public class DrawingData extends AttributeHolder {
 				final double val = Cast.asFloat(null, exp.getConstValue());
 				// We do not consider the z ordinate -- see Issue #1539
 				return new GamaPoint(val, val, 0);
-			} else {
+			} else
 				return (GamaPoint) exp.getConstValue();
-			}
 		};
 		this.size = create(IKeyword.SIZE, (scope, exp) -> {
 			if (exp.getGamlType().isNumber()) {
 				final double val = Cast.asFloat(scope, exp.value(scope));
 				// We do not consider the z ordinate -- see Issue #1539
 				return new GamaPoint(val, val, 0);
-			} else {
+			} else
 				return (GamaPoint) exp.value(scope);
-			}
 		}, Types.POINT, null, constSizeCaster);
 		this.lighting = create(IKeyword.LIGHTED, Types.BOOL, true);
 		this.depth = create(IKeyword.DEPTH, Types.FLOAT, null);
+		this.precision = create("precision", Types.FLOAT, 0.1);
 		final Function<IExpression, AxisAngle> constRotationCaster = (exp) -> {
 			if (exp.getGamlType().getGamlType() == Types.PAIR) {
 				final GamaPair currentRotation = Cast.asPair(null, exp.getConstValue(), true);
 				return new AxisAngle((GamaPoint) Cast.asPoint(null, currentRotation.value),
 						Cast.asFloat(null, currentRotation.key));
-			} else {
+			} else
 				return new AxisAngle(Rotation3D.PLUS_K, Cast.asFloat(null, exp.getConstValue()));
-			}
 		};
 		this.rotation = create(IKeyword.ROTATE, (scope, exp) -> {
 			if (exp.getGamlType().getGamlType() == Types.PAIR) {
 				final GamaPair currentRotation = Cast.asPair(scope, exp.value(scope), true);
 				return new AxisAngle((GamaPoint) Cast.asPoint(scope, currentRotation.value),
 						Cast.asFloat(scope, currentRotation.key));
-			} else {
+			} else
 				return new AxisAngle(Rotation3D.PLUS_K, Cast.asFloat(scope, exp.value(scope)));
-			}
 		}, Types.NO_TYPE, null, constRotationCaster);
 		this.anchor = create(IKeyword.ANCHOR, (scope, exp) -> {
 			final GamaPoint p = (GamaPoint) Cast.asPoint(scope, exp.value(scope));
@@ -108,24 +106,22 @@ public class DrawingData extends AttributeHolder {
 			return p;
 		}, Types.POINT, IUnits.bottom_left, (e) -> Cast.asPoint(null, e.getConstValue()));
 		this.location = create(IKeyword.AT, Types.POINT, null);
-		this.empty = create(IKeyword.EMPTY, Types.BOOL, false);
+		this.empty = create(IKeyword.WIREFRAME, Types.BOOL, false);
 		final Function<IExpression, GamaColor> constBorderCaster = (exp) -> {
 			if (exp.getGamlType() == Types.BOOL) {
 				final boolean hasBorder = (boolean) exp.getConstValue();
-				if (hasBorder) { return DEFAULT_BORDER_COLOR; }
+				if (hasBorder) return DEFAULT_BORDER_COLOR;
 				return null;
-			} else {
+			} else
 				return (GamaColor) exp.getConstValue();
-			}
 		};
 		this.border = create(IKeyword.BORDER, (scope, exp) -> {
 			if (exp.getGamlType() == Types.BOOL) {
 				final boolean hasBorder = Cast.asBool(scope, exp.value(scope));
-				if (hasBorder) { return DEFAULT_BORDER_COLOR; }
+				if (hasBorder) return DEFAULT_BORDER_COLOR;
 				return null;
-			} else {
+			} else
 				return (GamaColor) exp.value(scope);
-			}
 		}, Types.COLOR, null, constBorderCaster);
 
 		this.color = create(IKeyword.COLOR, (scope, exp) -> {
@@ -146,18 +142,16 @@ public class DrawingData extends AttributeHolder {
 		});
 		this.font = create(IKeyword.FONT, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
 		final Function<IExpression, IList> constTextureCaster = (exp) -> {
-			if (exp.getGamlType().getGamlType() == Types.LIST) {
+			if (exp.getGamlType().getGamlType() == Types.LIST)
 				return GamaListType.staticCast(null, exp.getConstValue(), Types.STRING, false);
-			} else {
+			else
 				return GamaListFactory.wrap(Types.NO_TYPE, exp.getConstValue());
-			}
 		};
 		this.texture = create(IKeyword.TEXTURE, (scope, exp) -> {
-			if (exp.getGamlType().getGamlType() == Types.LIST) {
+			if (exp.getGamlType().getGamlType() == Types.LIST)
 				return GamaListType.staticCast(scope, exp.value(scope), Types.STRING, false);
-			} else {
+			else
 				return GamaListFactory.wrap(Types.NO_TYPE, exp.value(scope));
-			}
 		}, Types.LIST, null, constTextureCaster);
 		this.material = create(IKeyword.MATERIAL, Types.MATERIAL, null);
 		this.perspective = create(IKeyword.PERSPECTIVE, Types.BOOL, true);

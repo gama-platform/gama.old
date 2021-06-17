@@ -175,7 +175,7 @@ experiment exp {
 		layout #split;
 		display "Strings OpenGL" type: opengl {
 			graphics Strings {
-				draw world.shape empty: true color: #black;
+				draw world.shape wireframe: true color: #black;
 				int y <- 7;
 				
 				// The loop displays for each anchor an associated text

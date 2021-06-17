@@ -93,11 +93,7 @@ public class DEBUG {
 	 */
 	public static void RESET() {
 		final String s = findCallingClassName();
-		if (REGISTERED.containsKey(s)) {
-			if (COUNTERS.containsKey(s)) {
-				COUNTERS.put(s, -1);
-			}
-		}
+		if (REGISTERED.containsKey(s)) { if (COUNTERS.containsKey(s)) { COUNTERS.put(s, -1); } }
 	}
 
 	public interface RunnableWithException<T extends Throwable> {
@@ -125,7 +121,7 @@ public class DEBUG {
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		LOG(title + ": " + (currentTimeMillis() - start) + "ms");
+		LOG(title + " " + (currentTimeMillis() - start) + "ms");
 	}
 
 	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String title,
@@ -136,7 +132,7 @@ public class DEBUG {
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		LOG(title + ": " + (currentTimeMillis() - start) + "ms");
+		LOG(title + " " + (currentTimeMillis() - start) + "ms");
 	}
 
 	/**
@@ -160,7 +156,7 @@ public class DEBUG {
 
 	public static <T> T TIMER(final String title, final Supplier<T> supplier) {
 		final String s = findCallingClassName();
-		if (!IS_ON(s)) { return supplier.get(); }
+		if (!IS_ON(s)) return supplier.get();
 		final long start = System.currentTimeMillis();
 		final T result = supplier.get();
 		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
@@ -171,7 +167,7 @@ public class DEBUG {
 	 * Turns DEBUG on for the calling class
 	 */
 	public static final void ON() {
-		if (GLOBAL_OFF) { return; }
+		if (GLOBAL_OFF) return;
 		final String calling = findCallingClassName();
 		REGISTERED.put(calling, calling);
 	}
@@ -182,7 +178,7 @@ public class DEBUG {
 	 * actions, for instance.
 	 */
 	public static final void OFF() {
-		if (GLOBAL_OFF) { return; }
+		if (GLOBAL_OFF) return;
 		final String name = findCallingClassName();
 		REGISTERED.remove(name);
 	}
@@ -194,7 +190,7 @@ public class DEBUG {
 	 * @return whether DEBUG is active for this class
 	 */
 	public static boolean IS_ON() {
-		if (GLOBAL_OFF) { return false; }
+		if (GLOBAL_OFF) return false;
 		return IS_ON(findCallingClassName());
 	}
 
@@ -204,9 +200,7 @@ public class DEBUG {
 	 * @param string
 	 */
 	public static final void ERR(final Object s) {
-		if (!GLOBAL_OFF) {
-			System.err.println(TO_STRING(s));
-		}
+		if (!GLOBAL_OFF) { System.err.println(TO_STRING(s)); }
 	}
 
 	/**
@@ -227,9 +221,7 @@ public class DEBUG {
 	 * @param string
 	 */
 	public static void LOG(final Object string) {
-		if (!GLOBAL_OFF) {
-			LOG(string, true);
-		}
+		if (!GLOBAL_OFF) { LOG(string, true); }
 	}
 
 	/**
@@ -268,14 +260,13 @@ public class DEBUG {
 	 * @return its string representation
 	 */
 	public static String TO_STRING(final Object object) {
-		if (object == null) { return "null"; }
+		if (object == null) return "null";
 		if (object.getClass().isArray()) {
 			final Class<?> clazz = object.getClass().getComponentType();
-			if (clazz.isPrimitive()) {
+			if (clazz.isPrimitive())
 				return TO_STRING.get(clazz).apply(object);
-			} else {
+			else
 				return Arrays.deepToString((Object[]) object);
-			}
 		}
 		return object.toString();
 
@@ -285,7 +276,7 @@ public class DEBUG {
 		// Necessary to loop on the names as the call can emanate from an inner class or an anonymous class of the
 		// "allowed" class
 		for (final String name : REGISTERED.keySet()) {
-			if (className.startsWith(name)) { return true; }
+			if (className.startsWith(name)) return true;
 		}
 		return false;
 	}
@@ -299,10 +290,8 @@ public class DEBUG {
 	 *            the message to output
 	 */
 	public static final void OUT(final Object s) {
-		if (GLOBAL_OFF) { return; }
-		if (IS_ON(findCallingClassName())) {
-			LOG(s, true);
-		}
+		if (GLOBAL_OFF) return;
+		if (IS_ON(findCallingClassName())) { LOG(s, true); }
 	}
 
 	/**
@@ -314,10 +303,8 @@ public class DEBUG {
 	 *            whether or not to output a new line after the message
 	 */
 	public static final void OUT(final Object s, final boolean newLine) {
-		if (GLOBAL_OFF) { return; }
-		if (IS_ON(findCallingClassName())) {
-			LOG(s, newLine);
-		}
+		if (GLOBAL_OFF) return;
+		if (IS_ON(findCallingClassName())) { LOG(s, newLine); }
 	}
 
 	/**
@@ -331,11 +318,9 @@ public class DEBUG {
 	 *            another object on which TO_STRING() is applied
 	 */
 	public static final void OUT(final String title, final int pad, final Object other) {
-		if (GLOBAL_OFF) { return; }
-		if (title == null) { return; }
-		if (IS_ON(findCallingClassName())) {
-			LOG(PAD(title, pad) + TO_STRING(other));
-		}
+		if (GLOBAL_OFF) return;
+		if (title == null) return;
+		if (IS_ON(findCallingClassName())) { LOG(PAD(title, pad) + TO_STRING(other)); }
 	}
 
 	/**
@@ -350,7 +335,7 @@ public class DEBUG {
 	 *
 	 */
 	public static final void SECTION(final String s) {
-		if (s == null) { return; }
+		if (s == null) return;
 		LINE();
 		LOG(PAD("---------- " + s.toUpperCase() + " ", 80, '-'));
 		LINE();
@@ -380,7 +365,7 @@ public class DEBUG {
 	 */
 
 	public static String PAD(final String string, final int minLength, final char c) {
-		if (string.length() >= minLength) { return string; }
+		if (string.length() >= minLength) return string;
 		final StringBuilder sb = new StringBuilder(minLength);
 		sb.append(string);
 		for (int i = string.length(); i < minLength; i++) {

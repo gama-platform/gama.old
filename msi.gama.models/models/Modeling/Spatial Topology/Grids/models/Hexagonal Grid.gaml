@@ -31,7 +31,7 @@ grid cell height: 10 width: 10 neighbors: 6 horizontal_orientation: orientation 
 experiment hexagonal type: gui {
 	output {
 		display view type: opengl{
-			grid cell lines: #black ;
+			grid cell border: #black ;
 		}
 	}
 }

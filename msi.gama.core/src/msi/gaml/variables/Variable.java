@@ -11,13 +11,16 @@
 package msi.gaml.variables;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Objects;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
+import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -31,6 +34,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.compilation.ISymbol;
@@ -102,14 +106,15 @@ import msi.gaml.types.Types;
 						name = IKeyword.ON_CHANGE,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("Provides a block of statements that will be executed whenever the value of the attribute changes")),
+						doc = @doc (
+								value = "Provides a block of statements that will be executed whenever the value of the attribute changes")),
 
 				@facet (
 						name = IKeyword.FUNCTION,
 						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
+						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:', 'update:' and 'on_change:' (or the equivalent final block)")),
 				@facet (
 						name = IKeyword.CONST,
 						type = IType.BOOL,
@@ -207,6 +212,7 @@ public class Variable extends Symbol implements IVariable {
 						FUNCTION);
 				return;
 			}
+
 			// Verifying that a constant has not 'update' or 'function' facet
 			// and is not a parameter
 			if (TRUE.equals(cd.getLitteral(CONST))) {
@@ -222,7 +228,7 @@ public class Variable extends Symbol implements IVariable {
 							IGamlIssue.REMOVE_CONST);
 					return;
 				} else if (cd.hasFacet(ON_CHANGE)) {
-					cd.warning("A constant attribute cannot declare an on_change facet", IGamlIssue.REMOVE_CONST,
+					cd.warning("A constant attribute cannot declare an 'on_change' facet", IGamlIssue.REMOVE_CONST,
 							ON_CHANGE);
 				}
 			}
@@ -241,8 +247,8 @@ public class Variable extends Symbol implements IVariable {
 			// return;
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
 			final IExpression initExpression = vd.getFacetExpr(INIT);
-			if (amongExpression == null || initExpression == null) { return; }
-			if (!(amongExpression instanceof ListExpression) || !initExpression.isConst()) { return; }
+			if (amongExpression == null || initExpression == null) return;
+			if (!(amongExpression instanceof ListExpression) || !initExpression.isConst()) return;
 			final ListExpression list = (ListExpression) amongExpression;
 			final Object init = initExpression.getConstValue();
 			if (!list.containsValue(init)) {
@@ -358,11 +364,12 @@ public class Variable extends Symbol implements IVariable {
 	protected final IExpression updateExpression, amongExpression, functionExpression, onChangeExpression;
 	protected IType type;
 	protected final boolean isNotModifiable;
-	// protected boolean isSpeciesConst;
 	public IGamaHelper getter, initer, setter;
+	public Map<GamaHelper, IVarAndActionSupport> listeners;
+	protected ISkill gSkill, sSkill;
 	private IExecutable on_changer;
 	protected String pName, cName;
-	protected ISkill gSkill, sSkill;
+	protected boolean mustNotifyOfChanges;
 	// private Object speciesWideValue;
 
 	public Variable(final IDescription sd) {
@@ -388,15 +395,19 @@ public class Variable extends Symbol implements IVariable {
 
 	private void buildHelpers(final AbstractSpecies species) {
 		getter = getDescription().getGetter();
-		if (getter != null) {
-			gSkill = species.getSkillInstanceFor(getter.getSkillClass());
-		}
+		if (getter != null) { gSkill = species.getSkillInstanceFor(getter.getSkillClass()); }
 		initer = getDescription().getIniter();
 		setter = getDescription().getSetter();
-		if (setter != null) {
-			sSkill = species.getSkillInstanceFor(setter.getSkillClass());
-		}
+		if (setter != null) { sSkill = species.getSkillInstanceFor(setter.getSkillClass()); }
+		GamaHelper[] helpers = getDescription().getListeners();
+		mustNotifyOfChanges = helpers != null && helpers.length > 0 || onChangeExpression != null || on_changer != null;
+		if (helpers != null && helpers.length > 0) {
+			listeners = new HashMap<>();
+			for (GamaHelper helper : helpers) {
+				listeners.put(helper, species.getSkillInstanceFor(helper.getSkillClass()));
+			}
 
+		}
 	}
 
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
@@ -489,7 +500,21 @@ public class Variable extends Symbol implements IVariable {
 	// }
 
 	@Override
-	public void setChildren(final Iterable<? extends ISymbol> children) {}
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
+		// Not yet ready to behave like parameter (with 'on_change' moved at the end of the statement) because of the
+		// possible usages of the block for other tasks (like fuction:)
+		// final List<IStatement> statements = new ArrayList<>();
+		// for (final ISymbol c : commands) {
+		// if (c instanceof IStatement) { statements.add((IStatement) c); }
+		// }
+		// if (!statements.isEmpty()) {
+		// final IDescription d =
+		// DescriptionFactory.create(IKeyword.ACTION, getDescription(), IKeyword.NAME, "inline");
+		// ActionStatement action = new ActionStatement(d);
+		// action.setChildren(statements);
+		// on_changer = action;
+		// }
+	}
 
 	@Override
 	public String getName() {
@@ -503,15 +528,46 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public final void setVal(final IScope scope, final IAgent agent, final Object v) throws GamaRuntimeException {
-		if (isNotModifiable) { return; }
-		final Object oldValue = onChangeExpression == null ? null : value(scope, agent);
+		if (isNotModifiable) return;
+		final Object oldValue = !mustNotifyOfChanges ? null : value(scope, agent);
 		_setVal(agent, scope, v);
-		if (onChangeExpression != null && !Objects.equal(oldValue, v)) {
+		if (mustNotifyOfChanges && !Objects.equal(oldValue, v)) {
+			internalNotifyOfValueChange(scope, agent, oldValue, v);
+		}
+	}
+
+	private void internalNotifyOfValueChange(final IScope scope, final IAgent agent, final Object oldValue,
+			final Object newValue) {
+		if (onChangeExpression != null) {
 			if (on_changer == null) {
 				on_changer = agent.getSpecies().getAction(Cast.asString(scope, onChangeExpression.value(scope)));
 			}
 			scope.execute(on_changer, agent, null);
 		}
+
+		if (listeners != null) {
+			listeners.forEach((listener, skill) -> {
+				listener.run(scope, agent, skill == null ? agent : skill, newValue);
+			});
+		}
+	}
+
+	/**
+	 * Public method supposed to be only called from outside (e.g. in setLocation() for 'location') to trigger
+	 * listeners. Notifies listeners declared in GAML (facet 'on_change:') and in Java (annotation 'listener'). Change
+	 * the value of 'mustNotifyOfChanges' to false in order to avoid double notifications
+	 *
+	 * @param scope
+	 * @param agent
+	 * @param oldValue
+	 * @param newValue
+	 */
+	@Override
+	public final void notifyOfValueChange(final IScope scope, final IAgent agent, final Object oldValue,
+			final Object newValue) {
+		// so as to block internal notifications, since notifications are produced somewhere else in GAMA.
+		mustNotifyOfChanges = false;
+		internalNotifyOfValueChange(scope, agent, oldValue, newValue);
 	}
 
 	protected void _setVal(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
@@ -529,11 +585,11 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	protected Object checkAmong(final IAgent agent, final IScope scope, final Object val) throws GamaRuntimeException {
-		if (amongExpression == null) { return val; }
+		if (amongExpression == null) return val;
 		final List among = Cast.asList(scope, scope.evaluate(amongExpression, agent).getValue());
-		if (among == null) { return val; }
-		if (among.contains(val)) { return val; }
-		if (among.isEmpty()) { return null; }
+		if (among == null) return val;
+		if (among.contains(val)) return val;
+		if (among.isEmpty()) return null;
 		throw GamaRuntimeException.error("Value " + val + " is not included in the possible values of variable " + name,
 				scope);
 	}
@@ -546,12 +602,12 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public Object value(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		// if (isSpeciesConst) { return speciesWideValue; }
-		if (getter != null) { return getter.run(scope, agent, gSkill == null ? agent : gSkill); }
-		if (functionExpression != null) { return scope.evaluate(functionExpression, agent).getValue(); }
+		if (getter != null) return getter.run(scope, agent, gSkill == null ? agent : gSkill);
+		if (functionExpression != null) return scope.evaluate(functionExpression, agent).getValue();
 		if (!agent.hasAttribute(name)) {
 			// Var not yet initialized. May happen when asking for its value while initializing an editor
 			// See Issue #2781
-			if (isNotModifiable) { return getInitialValue(scope); }
+			if (isNotModifiable) return getInitialValue(scope);
 		}
 		return agent.getAttribute(name);
 	}
@@ -578,7 +634,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public List getAmongValue(final IScope scope) {
-		if (amongExpression == null) { return null; }
+		if (amongExpression == null) return null;
 		// if (!amongExpression.isConst()) {
 		// return null;
 		// }
@@ -644,15 +700,13 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public void setEnclosing(final ISymbol enclosing) {
-		if (enclosing instanceof AbstractSpecies) {
-			buildHelpers((AbstractSpecies) enclosing);
-		}
+		if (enclosing instanceof AbstractSpecies) { buildHelpers((AbstractSpecies) enclosing); }
 	}
 
 	@Override
 	public boolean isMicroPopulation() {
 		final VariableDescription desc = getDescription();
-		if (desc == null) { return false; }
+		if (desc == null) return false;
 		return desc.isSyntheticSpeciesContainer();
 	}
 

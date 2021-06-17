@@ -10,14 +10,21 @@
  ********************************************************************************************************/
 package msi.gama.util.file;
 
+import static msi.gama.common.geometry.Envelope3D.of;
+import static msi.gama.runtime.GAMA.reportError;
+import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
+import static msi.gama.runtime.exceptions.GamaRuntimeException.warning;
+import static org.geotools.util.factory.Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-// ArcGridReader still requires input streams
 import java.io.StringBufferInputStream;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -31,6 +38,7 @@ import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.GeneralEnvelope;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Envelope;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -43,7 +51,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -61,11 +68,26 @@ import msi.gaml.types.Types;
 		concept = { IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE },
 		doc = @doc ("Represents .asc or .tif files that contain grid descriptions"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaGridFile extends GamaGisFile {
+public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 
-	GamaGridReader reader;
+	class Records {
+		double x[];
+		double y[];
+		final List<double[]> bands = new ArrayList<>();
+
+		public void fill(final int i, final IList<Double> bands2) {
+			for (double[] tab : bands) {
+				bands2.add(tab[i]);
+			}
+		}
+	}
+
 	GridCoverage2D coverage;
-	public int nbBands;
+	public int nbBands, numRows, numCols;
+	IShape geom;
+	Number noData = -9999;
+	GeneralEnvelope genv;
+	Records records;
 
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
@@ -73,41 +95,63 @@ public class GamaGridFile extends GamaGisFile {
 		return GamaListFactory.EMPTY_LIST;
 	}
 
-	private GamaGridReader createReader(final IScope scope, final boolean fillBuffer) {
-		if (reader == null) {
+	private void createCoverage(final IScope scope) {
+		if (coverage == null) {
 			final File gridFile = getFile(scope);
 			gridFile.setReadable(true);
-			FileInputStream fis = null;
+			InputStream fis = null;
 			try {
 				fis = new FileInputStream(gridFile);
-			} catch (final FileNotFoundException e) {
-				// Should not happen;
-			}
+			} catch (FileNotFoundException e1) {}
 			try {
-				reader = new GamaGridReader(scope, fis, fillBuffer);
-			} catch (final GamaRuntimeException e) {
-				if (isTiff(scope)) {
-					final GamaRuntimeException ex = GamaRuntimeException.error(
-							"The format of " + getName(scope) + " is not correct. Error: " + e.getMessage(), scope);
-					ex.addContext("for file " + getPath(scope));
-					throw ex;
-
-				}
-				// A problem appeared, likely related to the wrong format of the
-				// file (see Issue 412)
-				GAMA.reportError(scope,
-						GamaRuntimeException.warning(
-								"The format of " + getName(scope) + " is incorrect. Attempting to read it anyway.",
-								scope),
+				privateCreateCoverage(scope, fis);
+			} catch (final Exception e) {
+				String name = getName(scope);
+				if (isTiff(scope)) throw error("The format of " + name + " seems incorrect: " + e.getMessage(), scope);
+				// A problem appeared, likely related to the wrong format of the file (see Issue 412)
+				reportError(scope, warning("Format of " + name + " seems incorrect. Trying to read it anyway.", scope),
 						false);
-
-				reader = fixFileHeader(scope, fillBuffer);
+				fis = fixFileHeader(scope);
+				try {
+					privateCreateCoverage(scope, fis);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
-		return reader;
 	}
 
-	public GamaGridReader fixFileHeader(final IScope scope, final boolean fillBuffer) {
+	private void privateCreateCoverage(final IScope scope, final InputStream fis)
+			throws DataSourceException, IOException {
+		AbstractGridCoverage2DReader store = null;
+		try {
+			// Necessary to compute it here, because it needs to be passed to the Hints
+			final CoordinateReferenceSystem crs = getExistingCRS(scope);
+			if (isTiff(scope)) {
+				store = crs == null ? new GeoTiffReader(getFile(scope))
+						: new GeoTiffReader(getFile(scope), new Hints(DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+				noData = ((GeoTiffReader) store).getMetadata().getNoData();
+			} else {
+				if (crs == null) {
+					store = new ArcGridReader(fis);
+				} else {
+					store = new ArcGridReader(fis, new Hints(DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+				}
+			}
+			genv = store.getOriginalEnvelope();
+			final Envelope3D env =
+					of(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1), 0, 0);
+			computeProjection(scope, env);
+			numRows = store.getOriginalGridRange().getHigh(1) + 1;
+			numCols = store.getOriginalGridRange().getHigh(0) + 1;
+			coverage = store.read(null);
+		} finally {
+			if (store != null) { store.dispose(); }
+			scope.getGui().getStatus(scope).endSubStatus("Opening file " + getName(scope));
+		}
+	}
+
+	private InputStream fixFileHeader(final IScope scope) {
 		final StringBuilder text = new StringBuilder();
 		final String NL = System.getProperty("line.separator");
 
@@ -115,170 +159,117 @@ public class GamaGridFile extends GamaGisFile {
 			// final int cpt = 0;
 			while (scanner.hasNextLine()) {
 				final String line = scanner.nextLine();
-
 				if (line.contains("dx")) {
 					text.append(line.replace("dx", "cellsize") + NL);
-				} else if (line.contains("dy")) {
-					// continue;
 				} else {
 					text.append(line + NL);
 				}
-
-				// if (cpt < 10) {}
-				// else {
-				// text.append(line + NL);
-				// }
 			}
 		} catch (final FileNotFoundException e2) {
-			final GamaRuntimeException ex = GamaRuntimeException
-					.error("The format of " + getName(scope) + " is not correct. Error: " + e2.getMessage(), scope);
-			ex.addContext("for file " + getPath(scope));
-			throw ex;
+			throw error("The format of " + getName(scope) + " is not correct. Error: " + e2.getMessage(), scope);
 		}
 
 		text.append(NL);
 		// fis = new StringBufferInputStream(text.toString());
-		return new GamaGridReader(scope, new StringBufferInputStream(text.toString()), fillBuffer);
+		return new StringBufferInputStream(text.toString());
 	}
 
-	class GamaGridReader {
+	void read(final IScope scope, final boolean readAll, final boolean createGeometries) {
 
-		int numRows, numCols;
-		IShape geom;
-		Number noData = -9999;
+		try {
+			scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope));
 
-		GamaGridReader(final IScope scope, final InputStream fis, final boolean fillBuffer)
-				throws GamaRuntimeException {
-			setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
-			AbstractGridCoverage2DReader store = null;
-			try {
-				if (fillBuffer) { scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope)); }
-				// Necessary to compute it here, because it needs to be passed
-				// to the Hints
-				final CoordinateReferenceSystem crs = getExistingCRS(scope);
-				if (isTiff(scope)) {
-					if (crs == null) {
-						store = new GeoTiffReader(getFile(scope));
-					} else {
-						store = new GeoTiffReader(getFile(scope),
-								new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
-					}
-					noData = ((GeoTiffReader) store).getMetadata().getNoData();
-				} else {
-					if (crs == null) {
-						store = new ArcGridReader(fis);
-					} else {
-						store = new ArcGridReader(fis, new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
-					}
-				}
-				final GeneralEnvelope genv = store.getOriginalEnvelope();
-				numRows = store.getOriginalGridRange().getHigh(1) + 1;
-				numCols = store.getOriginalGridRange().getHigh(0) + 1;
-				final Envelope3D env = Envelope3D.of(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1),
-						genv.getMaximum(1), 0, 0);
-				computeProjection(scope, env);
-				final Envelope envP = gis.getProjectedEnvelope();
-				final double cellHeight = envP.getHeight() / numRows;
-				final double cellWidth = envP.getWidth() / numCols;
-				final IList<IShape> shapes = GamaListFactory.create(Types.GEOMETRY);
-				final double originX = envP.getMinX();
-				final double originY = envP.getMinY();
-				final double maxY = envP.getMaxY();
-				final double maxX = envP.getMaxX();
-				shapes.add(new GamaPoint(originX, originY));
-				shapes.add(new GamaPoint(maxX, originY));
-				shapes.add(new GamaPoint(maxX, maxY));
-				shapes.add(new GamaPoint(originX, maxY));
-				shapes.add(shapes.get(0));
-				geom = GamaGeometryType.buildPolygon(shapes);
-				if (!fillBuffer) return;
+			final Envelope envP = gis.getProjectedEnvelope();
+			final double cellHeight = envP.getHeight() / numRows;
+			final double cellWidth = envP.getWidth() / numCols;
+			final IList<IShape> shapes = GamaListFactory.create(Types.GEOMETRY);
+			final double originX = envP.getMinX();
+			final double originY = envP.getMinY();
+			final double maxY = envP.getMaxY();
+			final double maxX = envP.getMaxX();
+			shapes.add(new GamaPoint(originX, originY));
+			shapes.add(new GamaPoint(maxX, originY));
+			shapes.add(new GamaPoint(maxX, maxY));
+			shapes.add(new GamaPoint(originX, maxY));
+			shapes.add(shapes.get(0));
+			geom = GamaGeometryType.buildPolygon(shapes);
+			if (!readAll) return;
 
-				final GamaPoint p = new GamaPoint(0, 0);
-				coverage = store.read(null);
-				final double cmx = cellWidth / 2;
-				final double cmy = cellHeight / 2;
-				boolean doubleValues = false;
-				boolean floatValues = false;
-				boolean intValues = false;
-				boolean longValues = false;
-				boolean byteValues = false;
-				final double cellHeightP = genv.getSpan(1) / numRows;
-				final double cellWidthP = genv.getSpan(0) / numCols;
-				final double originXP = genv.getMinimum(0);
-				final double maxYP = genv.getMaximum(1);
-				final double cmxP = cellWidthP / 2;
-				final double cmyP = cellHeightP / 2;
-
+			final double cmx = cellWidth / 2;
+			final double cmy = cellHeight / 2;
+			final double cellHeightP = genv.getSpan(1) / numRows;
+			final double cellWidthP = genv.getSpan(0) / numCols;
+			final double originXP = genv.getMinimum(0);
+			final double maxYP = genv.getMaximum(1);
+			final double cmxP = cellWidthP / 2;
+			final double cmyP = cellHeightP / 2;
+			if (records == null) {
+				records = new Records();
+				records.x = new double[numRows * numCols]; // x
+				records.y = new double[numRows * numCols]; // y
+				records.bands.add(new double[numRows * numCols]); // data
 				for (int i = 0, n = numRows * numCols; i < n; i++) {
 					scope.getGui().getStatus(scope).setSubStatusCompletion(i / (double) n);
+
 					final int yy = i / numCols;
 					final int xx = i - yy * numCols;
-					p.x = originX + xx * cellWidth + cmx;
-					p.y = maxY - (yy * cellHeight + cmy);
-					GamaShape rect = (GamaShape) GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
-					final Object vals = coverage.evaluate(
-							new DirectPosition2D(originXP + xx * cellWidthP + cmxP, maxYP - (yy * cellHeightP + cmyP)));
-					if (i == 0) {
-						doubleValues = vals instanceof double[];
-						intValues = vals instanceof int[];
-						byteValues = vals instanceof byte[];
-						longValues = vals instanceof long[];
-						floatValues = vals instanceof float[];
-					}
-					if (gis == null) {
-						rect = new GamaShape(rect.getInnerGeometry());
-					} else {
-						rect = new GamaShape(gis.transform(rect.getInnerGeometry()));
-					}
-					if (doubleValues) {
-						final double[] vd = (double[]) vals;
-						if (i == 0) { nbBands = vd.length; }
-						rect.setAttribute("grid_value", vd[0]);
-						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vd));
-					} else if (intValues) {
-						final int[] vi = (int[]) vals;
-						if (i == 0) { nbBands = vi.length; }
-						final double v = Double.valueOf(vi[0]);
-						rect.setAttribute("grid_value", v);
-						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
-					} else if (longValues) {
-						final long[] vi = (long[]) vals;
-						if (i == 0) { nbBands = vi.length; }
-						final double v = Double.valueOf(vi[0]);
-						rect.setAttribute("grid_value", v);
-						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
-					} else if (floatValues) {
-						final float[] vi = (float[]) vals;
-						if (i == 0) { nbBands = vi.length; }
-						final double v = Double.valueOf(vi[0]);
-						rect.setAttribute("grid_value", v);
-						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, vi));
-					} else if (byteValues) {
-						final byte[] bv = (byte[]) vals;
-						if (i == 0) { nbBands = bv.length; }
-						if (bv.length == 1) {
-							final double v = Double.valueOf(((byte[]) vals)[0]);
-							rect.setAttribute("grid_value", v);
-						} else if (bv.length == 3) {
-							final int red = bv[0] < 0 ? 256 + bv[0] : bv[0];
-							final int green = bv[0] < 0 ? 256 + bv[1] : bv[1];
-							final int blue = bv[0] < 0 ? 256 + bv[2] : bv[2];
-							rect.setAttribute("grid_value", (red + green + blue) / 3.0);
+
+					records.x[i] = originX + xx * cellWidth + cmx;
+					records.y[i] = maxY - (yy * cellHeight + cmy);
+
+					double[] vd =
+							coverage.evaluate((DirectPosition) new DirectPosition2D(originXP + xx * cellWidthP + cmxP,
+									maxYP - (yy * cellHeightP + cmyP)), (double[]) null);
+					nbBands = vd.length;
+					if (i == 0 && vd.length > 1) {
+						for (int j = 0; j < vd.length - 1; j++) {
+							records.bands.add(new double[numRows * numCols]);
 						}
-						rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, bv));
 					}
-					((IList) getBuffer()).add(rect);
+					for (int j = 0; j < vd.length; j++) {
+						records.bands.get(j)[i] = vd[j];
+					}
+
+					// else if (byteValues) {
+					// final byte[] bv = (byte[]) vals;
+					// if (i == 0) { nbBands = bv.length; }
+					// if (bv.length == 1) {
+					// final double v = Double.valueOf(((byte[]) vals)[0]);
+					// rect.setAttribute("grid_value", v);
+					// } else if (bv.length == 3) {
+					// final int red = bv[0] < 0 ? 256 + bv[0] : bv[0];
+					// final int green = bv[0] < 0 ? 256 + bv[1] : bv[1];
+					// final int blue = bv[0] < 0 ? 256 + bv[2] : bv[2];
+					// rect.setAttribute("grid_value", (red + green + blue) / 3.0);
+					// }
+					// rect.setAttribute("bands", GamaListFactory.create(scope, Types.FLOAT, bv));
+					// }
+
 				}
-			} catch (final Exception e) {
-				final GamaRuntimeException ex = GamaRuntimeException.error(
-						"The format of " + getFile(scope).getName() + " is not correct. Error: " + e.getMessage(),
-						scope);
-				ex.addContext("for file " + getFile(scope).getPath());
-				throw ex;
-			} finally {
-				if (store != null) { store.dispose(); }
-				scope.getGui().getStatus(scope).endSubStatus("Opening file " + getName(scope));
+				if (createGeometries) {
+					System.out.println("Building geometries !");
+					for (int i = 0, n = numRows * numCols; i < n; i++) {
+
+						setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
+						final GamaPoint p = new GamaPoint(records.x[i], records.y[i]);
+						GamaShape rect = (GamaShape) GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
+						if (gis == null) {
+							rect = new GamaShape(rect.getInnerGeometry());
+						} else {
+							rect = new GamaShape(gis.transform(rect.getInnerGeometry()));
+						}
+						IList<Double> bands = GamaListFactory.create(scope, Types.FLOAT);
+						records.fill(i, bands);
+						rect.setAttribute("grid_value", bands.get(0));
+						rect.setAttribute("bands", bands);
+						((IList) getBuffer()).add(rect);
+					}
+				}
 			}
+		} catch (final Exception e) {
+			throw error("The format of " + getName(scope) + " is not correct. Error: " + e.getMessage(), scope);
+		} finally {
+			scope.getGui().getStatus(scope).endSubStatus("Reading file " + getName(scope));
 		}
 
 	}
@@ -290,6 +281,16 @@ public class GamaGridFile extends GamaGisFile {
 					isExecutable = false) })
 
 	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
+		super(scope, pathName, (Integer) null);
+	}
+
+	@doc (
+			value = "This file constructor allows to read a asc file or a tif (geotif) file, but without converting it into shapes. Only a matrix of float values is created",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.asc\", false);",
+					isExecutable = false) })
+
+	public GamaGridFile(final IScope scope, final String pathName, final boolean asMatrix) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
 
@@ -318,22 +319,20 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	public Envelope computeEnvelopeWithoutBuffer(final IScope scope) {
-		if (gis == null) { createReader(scope, false); }
+		if (gis == null) { createCoverage(scope); }
 		return gis.getProjectedEnvelope();
 	}
 
 	@Override
 	protected void fillBuffer(final IScope scope) {
 		if (getBuffer() != null) return;
-		createReader(scope, true);
+		createCoverage(scope);
+		read(scope, true, true);
 	}
 
 	public int getNbRows(final IScope scope) {
-		return createReader(scope, true).numRows;
-	}
-
-	public int getNbCols(final IScope scope) {
-		return createReader(scope, true).numCols;
+		createCoverage(scope);
+		return numRows;
 	}
 
 	public boolean isTiff(final IScope scope) {
@@ -342,7 +341,9 @@ public class GamaGridFile extends GamaGisFile {
 
 	@Override
 	public IShape getGeometry(final IScope scope) {
-		return createReader(scope, true).geom;
+		createCoverage(scope);
+		read(scope, false, false);
+		return geom;
 	}
 
 	@Override
@@ -404,37 +405,24 @@ public class GamaGridFile extends GamaGisFile {
 		return null;
 	}
 
-	// public static RenderedImage getImage(final String pathName) {
-	// return GAMA.run(new InScope<RenderedImage>() {
-	//
-	// @Override
-	// public RenderedImage run(final IScope scope) {
-	// GamaGridFile file = new GamaGridFile(scope, pathName);
-	// file.createReader(scope, true);
-	// return file.coverage.getRenderedImage();
-	// }
-	// });
-	// }
-
 	@Override
 	public void invalidateContents() {
 		super.invalidateContents();
-		reader = null;
 		if (coverage != null) { coverage.dispose(true); }
 		coverage = null;
 	}
 
-	public GridCoverage2D getCoverage() {
-		return coverage;
+	public Double valueOf(final IScope scope, final ILocation loc) {
+		return valueOf(scope, loc.getX(), loc.getY());
 	}
 
-	public Double valueOf(final IScope scope, final ILocation loc) {
+	public Double valueOf(final IScope scope, final double x, final double y) {
 		if (getBuffer() == null) { fillBuffer(scope); }
 		Object vals = null;
 		try {
-			vals = coverage.evaluate(new DirectPosition2D(loc.getLocation().getX(), loc.getLocation().getY()));
+			vals = coverage.evaluate(new DirectPosition2D(x, y));
 		} catch (final Exception e) {
-			vals = reader.noData.doubleValue();
+			vals = noData.doubleValue();
 		}
 		final boolean doubleValues = vals instanceof double[];
 		final boolean intValues = vals instanceof int[];
@@ -469,8 +457,39 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	@Override
+	public int length(final IScope scope) {
+		createCoverage(scope);
+		return numRows * numCols;
+	}
+
+	@Override
 	protected SimpleFeatureCollection getFeatureCollection(final IScope scope) {
 		return null;
+	}
+
+	@Override
+	public int getRows(final IScope scope) {
+		createCoverage(scope);
+		return numRows;
+	}
+
+	@Override
+	public int getCols(final IScope scope) {
+		createCoverage(scope);
+		return numCols;
+	}
+
+	@Override
+	public int getBands(final IScope scope) {
+		createCoverage(scope);
+		return nbBands;
+	}
+
+	@Override
+	public double[] getBand(final IScope scope, final int index) {
+		createCoverage(scope);
+		read(scope, true, false);
+		return records.bands.get(index);
 	}
 
 }

@@ -152,7 +152,7 @@ public class LayerSideControls {
 		createItem(viewer, "OpenGL", null, contents);
 	}
 
-	PointEditor cameraPos, cameraTarget, cameraUp;
+	PointEditor cameraPos, cameraTarget, cameraOrientation;
 	StringEditor preset;
 	IntEditor zoom;
 	FloatEditor rotate;
@@ -175,7 +175,7 @@ public class LayerSideControls {
 			preset.setActive(!newValue);
 			cameraPos.setActive(!newValue);
 			cameraTarget.setActive(!newValue);
-			cameraUp.setActive(!newValue);
+			cameraOrientation.setActive(!newValue);
 			zoom.setActive(!newValue);
 			data.disableCameraInteractions(newValue);
 		});
@@ -192,20 +192,20 @@ public class LayerSideControls {
 					data.setCameraPos((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
-		cameraTarget = EditorFactory.create(scope, contents, "Target:", data.getCameraLookPos(),
+		cameraTarget = EditorFactory.create(scope, contents, "Target:", data.getCameraTarget(),
 				(EditorListener<ILocation>) newValue -> {
 					data.setCameraLookPos((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
-		cameraUp = EditorFactory.create(scope, contents, "Orientation:", data.getCameraUpVector(),
+		cameraOrientation = EditorFactory.create(scope, contents, "Orientation:", data.getCameraOrientation(),
 				(EditorListener<ILocation>) newValue -> {
-					data.setCameraUpVector((GamaPoint) newValue);
+					data.setCameraOrientation((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
 		preset.setActive(!cameraLocked);
 		cameraPos.setActive(!cameraLocked);
 		cameraTarget.setActive(!cameraLocked);
-		cameraUp.setActive(!cameraLocked);
+		cameraOrientation.setActive(!cameraLocked);
 		zoom.setActive(!cameraLocked);
 		data.addListener((p, v) -> {
 			switch (p) {
@@ -215,13 +215,13 @@ public class LayerSideControls {
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_TARGET:
-					cameraTarget.getParam().setValue(scope, data.getCameraLookPos());
+					cameraTarget.getParam().setValue(scope, data.getCameraTarget());
 					cameraTarget.forceUpdateValueAsynchronously();
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
-				case CAMERA_UP:
-					cameraUp.getParam().setValue(scope, data.getCameraUpVector());
-					cameraUp.forceUpdateValueAsynchronously();
+				case CAMERA_ORIENTATION:
+					cameraOrientation.getParam().setValue(scope, data.getCameraOrientation());
+					cameraOrientation.forceUpdateValueAsynchronously();
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_PRESET:
@@ -526,12 +526,12 @@ public class LayerSideControls {
 	}
 
 	private String cameraDefinitionToCopy() {
-		String text = IKeyword.CAMERA_POS + ": "
+		String text = IKeyword.CAMERA_LOCATION + ": "
 				+ new GamaPoint(cameraPos.getCurrentValue().toGamaPoint()).yNegated().withPrecision(4).serialize(false);
-		text += " " + IKeyword.CAMERA_LOOK_POS + ": " + new GamaPoint(cameraTarget.getCurrentValue().toGamaPoint())
+		text += " " + IKeyword.CAMERA_TARGET + ": " + new GamaPoint(cameraTarget.getCurrentValue().toGamaPoint())
 				.yNegated().withPrecision(4).serialize(false);
-		text += " " + IKeyword.CAMERA_UP_VECTOR + ": "
-				+ new GamaPoint(cameraUp.getCurrentValue().toGamaPoint()).withPrecision(4).serialize(false);
+		text += " " + IKeyword.CAMERA_ORIENTATION + ": "
+				+ new GamaPoint(cameraOrientation.getCurrentValue().toGamaPoint()).withPrecision(4).serialize(false);
 		return text;
 	}
 

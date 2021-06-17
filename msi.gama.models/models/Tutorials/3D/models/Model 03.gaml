@@ -45,7 +45,7 @@ experiment Tuto3D type: gui {
 	output {
 		display View1 type: opengl background: rgb(10, 40, 55) {
 			graphics "env" {
-				draw cube(environment_size) color: #black empty: true;
+				draw cube(environment_size) color: #black wireframe: true;
 			}
 			species cell;
 		}

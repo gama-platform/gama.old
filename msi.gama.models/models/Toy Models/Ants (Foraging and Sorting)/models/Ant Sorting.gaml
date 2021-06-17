@@ -73,7 +73,7 @@ experiment "Color sort" type: gui{
 		display OpenGL type: opengl  {
 			grid ant_grid ;
 			species ant transparency: 0.2 {
-				draw circle(5) empty: true color: color;
+				draw circle(5) wireframe: true color: color;
 			}
 		}
 	}

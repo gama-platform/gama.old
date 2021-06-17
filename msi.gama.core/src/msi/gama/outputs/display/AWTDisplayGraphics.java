@@ -64,7 +64,7 @@ import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
-import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.statements.draw.MeshDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 
@@ -164,7 +164,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	}
 
 	@Override
-	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
+	public Rectangle2D drawField(final double[] fieldValues, final MeshDrawingAttributes attributes) {
 		final List<?> textures = attributes.getTextures();
 		if (textures == null) return null;
 		final Object image = textures.get(0);
@@ -264,7 +264,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 			curX = xFromModelUnitsToPixels(attributes.getLocation().getX());
 			curY = yFromModelUnitsToPixels(attributes.getLocation().getY());
 		}
-		setFont(attributes.font);
+		setFont(attributes.getFont());
 		final Rectangle2D r = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
 		final float ascent = currentRenderer.getFontMetrics().getLineMetrics(string, currentRenderer).getAscent();
 		final float descent = currentRenderer.getFontMetrics().getLineMetrics(string, currentRenderer).getDescent();

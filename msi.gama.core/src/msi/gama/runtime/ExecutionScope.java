@@ -510,6 +510,22 @@ public class ExecutionScope implements IScope {
 	}
 
 	/**
+	 * Method setVarValue()
+	 *
+	 * @see msi.gama.runtime.IScope#setVarValue(java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public void setVarValue(final String varName, final Object val, final boolean localScopeOnly) {
+		if (executionContext != null) {
+			if (localScopeOnly) {
+				executionContext.putLocalVar(varName, val);
+			} else {
+				executionContext.setTempVar(varName, val);
+			}
+		}
+	}
+
+	/**
 	 * Method saveAllVarValuesIn()
 	 *
 	 * @see msi.gama.runtime.IScope#saveAllVarValuesIn(java.util.Map)

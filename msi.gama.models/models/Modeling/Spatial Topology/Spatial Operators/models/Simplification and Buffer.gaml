@@ -27,15 +27,15 @@ species shapes {
 
 experiment "Simplify this ! " {
 	
-	parameter "Simplification tolerance" category: "Change the value and observe the visual result" var:tolerance min: 0 max: 800 step: 1 on_change: {
+	parameter "Simplification tolerance" category: "Change the value and observe the visual result" var:tolerance min: 0 max: 800 step: 1 {
 		do update_outputs;
-	};
+	}
 	
-	parameter "Buffer value" category: "Change the value and observe the visual result" var:buffer min: -100 max: 100 step: 1 on_change: {
+	parameter "Buffer value" category: "Change the value and observe the visual result" var:buffer min: -100 max: 100 step: 1  {
 		do update_outputs;
-	};
+	}
 	
-	user_command "Close the simulation"  category:"Change the value and observe the visual result" color: #red{
+	user_command "Close the simulation"  category:"Change the value and observe the visual result" color: #red {
 		do die;
 	}
 	

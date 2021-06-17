@@ -165,8 +165,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		super(100, 100, Types.GEOMETRY);
 		// DEBUG.OUT("GamaSpatialMatrix.GamaSpatialMatrix create
 		// new");
-		numRows = gfile.getNbRows(scope);
-		numCols = gfile.getNbCols(scope);
+		numRows = gfile.getRows(scope);
+		numCols = gfile.getCols(scope);
 
 		environmentFrame = scope.getSimulation().getGeometry();
 		// environmentFrame = gfile.getGeometry(scope);
@@ -184,20 +184,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		this.isHexagon = false;
 		this.useNeighborsCache = useNeighborsCache;
 		this.optimizer = optimizer;
-		this.nbBands = gfile.nbBands;
+		gridValue = gfile.getFieldData(scope).clone();
+		this.nbBands = gfile.getBands(scope);
 		if (nbBands > 1) {
 			bands = new ArrayList<>();
-
-		}
-		for (int i = 0; i < size; i++) {
-			final IShape g = gfile.get(scope, i);
-			final Double val = (Double) g.getAttribute("grid_value");
-			if (val != null) { gridValue[i] = val; }
-			if (nbBands > 1 && g.hasAttribute("bands")) {
-				bands.add((IList<Double>) g.getAttribute("bands"));
-				// WARNING A bit overkill as we only use the GamaGisGeometry for its
-				// attribute...
-				// matrix[i] = g;
+			for (int i = 0; i < size; i++) {
+				IList<Double> bb = GamaListFactory.create(Types.FLOAT);
+				for (int b = 0; b < nbBands; b++) {
+					bb.add(gfile.getBand(scope, b)[i]);
+				}
+				bands.add(bb);
 			}
 		}
 
@@ -210,28 +206,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public GamaSpatialMatrix(final IScope scope, final IList<GamaGridFile> gfiles, final boolean isTorus,
 			final boolean usesVN, final boolean indiv, final boolean useNeighborsCache, final String optimizer)
 			throws GamaRuntimeException {
-		super(100, 100, Types.GEOMETRY);
-		// scope.getGui().debug("GamaSpatialMatrix.GamaSpatialMatrix create
-		// new");
-		final GamaGridFile gfile = gfiles.firstValue(scope);
-		numRows = gfile.getNbRows(scope);
-		numCols = gfile.getNbCols(scope);
-		environmentFrame = scope.getSimulation().getGeometry();
-		// environmentFrame = gfile.getGeometry(scope);
-		bounds = environmentFrame.getEnvelope();
-		cellWidth = bounds.getWidth() / numCols;
-		cellHeight = bounds.getHeight() / numRows;
-		precision = bounds.getWidth() / 1000;
-		final int size = gfile.length(scope);
-		createMatrix(size);
-		supportImagePixels = new int[size];
-		referenceShape = GamaGeometryType.buildRectangle(cellWidth, cellHeight, new GamaPoint(0, 0));
-		this.isTorus = isTorus;
-		this.usesVN = usesVN;
-		useIndividualShapes = indiv;
-		this.isHexagon = false;
-		this.useNeighborsCache = useNeighborsCache;
-		this.optimizer = optimizer;
+		this(scope, gfiles.firstValue(scope), isTorus, usesVN, indiv, useNeighborsCache, optimizer);
+		GamaGridFile gfile = gfiles.firstValue(scope);
+
 		this.nbBands = gfiles.size();
 		bands = new ArrayList<>();
 
@@ -242,16 +219,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			crsF.add(new ArrayList<>(gfiles.get(j).getGis(scope).getInitialCRS(scope).getIdentifiers()).get(0)
 					.toString());
 		}
-		for (int i = 0; i < size; i++) {
-			final IShape g = gfile.get(scope, i);
-			final Double val = (Double) g.getAttribute("grid_value");
+		for (int i = 0; i < matrix.length; i++) {
 			final IList vals = GamaListFactory.create(Types.FLOAT);
-			if (val != null) { gridValue[i] = val; }
-			vals.add(val);
+			vals.add(gridValue[i]);
 			for (int j = 1; j < gfiles.size(); j++) {
 				final GamaGridFile gfile2 = gfiles.get(j);
 				String taCRS = crsF.get(j - 1);
-				ILocation loc = g.getLocation();
+				ILocation loc = matrix[i].getLocation();
 				if (initCRS != null && taCRS != null) {
 					IShape s = Projections.transform_CRS(scope, loc, initCRS, taCRS);
 					if (s != null) { loc = s.getLocation(); }
@@ -2068,6 +2042,26 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public boolean isParallel() {
 		return false;
+	}
+
+	/**
+	 * Inherited from IFieldMatrixProvider
+	 */
+
+	@Override
+	public double[] getBand(final IScope scope, final int index) {
+		if (index == 0) return getFieldData(scope);
+		double[] result = new double[bands.size()];
+		int i = 0;
+		for (List<Double> ll : bands) {
+			result[i++] = ll.get(index);
+		}
+		return result;
+	}
+
+	@Override
+	public double[] getFieldData(final IScope scope) {
+		return gridValue;
 	}
 
 }

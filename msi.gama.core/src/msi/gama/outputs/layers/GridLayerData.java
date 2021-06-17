@@ -47,19 +47,23 @@ public class GridLayerData extends LayerData {
 	Attribute<GamaColor> line;
 	Attribute<GamaImageFile> texture;
 	Attribute<double[]> elevation;
+	Attribute<Boolean> smooth;
 	Attribute<Boolean> triangulation;
 	Attribute<Boolean> grayscale;
 	Attribute<Boolean> text;
 	private GamaPoint cellSize;
+	Attribute<Boolean> wireframe;
 	BufferedImage image;
+	private final GamaPoint dim = new GamaPoint();
 
 	@SuppressWarnings ("unchecked")
 	public GridLayerData(final ILayerStatement def) throws GamaRuntimeException {
 		super(def);
 		shouldComputeImage = !def.hasFacet("hexagonal");
 		name = def.getFacet(IKeyword.SPECIES).literalValue();
-		line = create(IKeyword.LINES, Types.COLOR, null);
-		turnGridOn = def.hasFacet(IKeyword.LINES);
+		line = create(IKeyword.BORDER, Types.COLOR, null);
+		wireframe = create(IKeyword.WIREFRAME, Types.BOOL, false);
+		turnGridOn = def.hasFacet(IKeyword.BORDER);
 		elevation = create(IKeyword.ELEVATION, (scope, exp) -> {
 			if (exp != null) {
 				switch (exp.getGamlType().id()) {
@@ -69,25 +73,24 @@ public class GridLayerData extends LayerData {
 					case IType.INT:
 						return grid.getGridValueOf(scope, exp);
 					case IType.BOOL:
-						if ((Boolean) exp.value(scope)) {
+						if ((Boolean) exp.value(scope))
 							return grid.getGridValue();
-						} else {
+						else
 							return null;
-						}
 				}
 			}
 			return null;
 		}, Types.NO_TYPE, (double[]) null, null);
 		triangulation = create(IKeyword.TRIANGULATION, Types.BOOL, false);
+		smooth = create(IKeyword.SMOOTH, Types.BOOL, false);
 		grayscale = create(IKeyword.GRAYSCALE, Types.BOOL, false);
 		text = create(IKeyword.TEXT, Types.BOOL, false);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
-			if (result instanceof GamaImageFile) {
+			if (result instanceof GamaImageFile)
 				return (GamaImageFile) exp.value(scope);
-			} else {
-				throw GamaRuntimeException.error("The texture of grids must be an image file", scope);
-			}
+			else
+				throw GamaRuntimeException.error("The texture of a grid must be an image file", scope);
 		}, Types.FILE, null, null);
 	}
 
@@ -95,9 +98,9 @@ public class GridLayerData extends LayerData {
 	public void compute(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		if (grid == null) {
 			final IPopulation<? extends IAgent> gridPop = scope.getAgent().getPopulationFor(name);
-			if (gridPop == null) {
+			if (gridPop == null)
 				throw error("No grid species named " + name + " can be found", scope);
-			} else if (!gridPop.isGrid()) { throw error("Species named " + name + " is not a grid", scope); }
+			else if (!gridPop.isGrid()) throw error("Species named " + name + " is not a grid", scope);
 			grid = (IGrid) gridPop.getTopology().getPlaces();
 			// final Envelope env = grid.getEnvironmentFrame().getEnvelope();
 			final Envelope env2 = scope.getSimulation().getEnvelope();
@@ -108,11 +111,10 @@ public class GridLayerData extends LayerData {
 			final double cols = grid.getCols(scope);
 			final double rows = grid.getRows(scope);
 			cellSize = new GamaPoint(width / cols, height / rows);
+			dim.setLocation(grid.getDimensions());
 		}
 		super.compute(scope, g);
-		if (shouldComputeImage) {
-			computeImage(scope, g);
-		}
+		if (shouldComputeImage) { computeImage(scope, g); }
 	}
 
 	public Boolean isTriangulated() {
@@ -159,10 +161,12 @@ public class GridLayerData extends LayerData {
 		return image;
 	}
 
+	public Boolean isWireframe() {
+		return wireframe.get();
+	}
+
 	public void setImage(final BufferedImage im) {
-		if (image != null) {
-			image.flush();
-		}
+		if (image != null) { image.flush(); }
 		image = im;
 	}
 
@@ -176,6 +180,14 @@ public class GridLayerData extends LayerData {
 
 	public double[] getElevationMatrix(final IScope scope) {
 		return elevation.get();
+	}
+
+	public GamaPoint getDimensions() {
+		return dim;
+	}
+
+	public Boolean isSmooth() {
+		return smooth.get();
 	}
 
 }

@@ -73,6 +73,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	public GamaFloatMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows);
+
 		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
 	}
 
@@ -485,6 +486,19 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	@Override
 	public StreamEx<Double> stream(final IScope scope) {
 		return DoubleStreamEx.of(matrix).boxed();
+	}
+
+	/**
+	 * Inherited from IFieldMatrixProvider
+	 */
+	@Override
+	public GamaFloatMatrix getMatrix(final IScope scope) {
+		return this;
+	}
+
+	@Override
+	public double[] getFieldData(final IScope scope) {
+		return matrix;
 	}
 
 }

@@ -140,7 +140,7 @@ public class GamaFont extends Font implements IValue {
 	}
 
 	@operator (
-			value = "font",
+			value = IKeyword.FONT,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.TEXT, IConcept.DISPLAY },
 			can_be_const = true)
@@ -157,7 +157,7 @@ public class GamaFont extends Font implements IValue {
 	}
 
 	@operator (
-			value = "font",
+			value = IKeyword.FONT,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.TEXT, IConcept.DISPLAY },
 			can_be_const = true)

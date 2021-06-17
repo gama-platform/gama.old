@@ -158,7 +158,7 @@ import msi.gaml.types.IType;
 				type = IType.DATE,
 				doc = @doc (
 						value = "Returns the current date in the simulation",
-						comment = "The return value is a date; the starting_date have to be initialized to use this attribute, which otherwise indicates a pseudo-date")),
+						comment = "The return value is a date; the starting_date has to be initialized to use this attribute, which otherwise indicates a pseudo-date")),
 		@variable (
 				name = SimulationAgent.STARTING_DATE,
 				type = IType.DATE,
@@ -214,7 +214,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@getter (IKeyword.EXPERIMENT)
 	public IExperimentAgent getExperiment() {
 		final IMacroAgent agent = getHost();
-		if (agent instanceof IExperimentAgent) { return (IExperimentAgent) agent; }
+		if (agent instanceof IExperimentAgent) return (IExperimentAgent) agent;
 		return null;
 	}
 
@@ -225,9 +225,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	public void setTopology(final RootTopology topology2) {
-		if (topology != null) {
-			topology.dispose();
-		}
+		if (topology != null) { topology.dispose(); }
 		topology = topology2;
 
 	}
@@ -256,9 +254,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public void setName(final String name) {
 		super.setName(name);
 		final SimulationOutputManager m = getOutputManager();
-		if (m != null) {
-			m.updateDisplayOutputsName(this);
-		}
+		if (m != null) { m.updateDisplayOutputsName(this); }
 	}
 
 	public void setScheduled(final Boolean scheduled) {
@@ -303,9 +299,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		super.postStep(scope);
 		executer.executeEndActions();
 		executer.executeOneShotActions();
-		if (outputs != null) {
-			outputs.step(this.getScope());
-		}
+		if (outputs != null) { outputs.step(this.getScope()); }
 		ownClock.step(this.getScope());
 	}
 
@@ -337,14 +331,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void dispose() {
-		if (dead) { return; }
+		if (dead) return;
 		executer.executeDisposeActions();
 		// hqnghi if simulation come from popultion extern, dispose pop first
 		// and then their outputs
 
-		if (externMicroPopulations != null) {
-			externMicroPopulations.clear();
-		}
+		if (externMicroPopulations != null) { externMicroPopulations.clear(); }
 
 		if (outputs != null) {
 			outputs.dispose();
@@ -376,7 +368,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public ILocation getLocation() {
-		if (geometry == null || geometry.getInnerGeometry() == null) { return new GamaPoint(0, 0); }
+		if (geometry == null || geometry.getInnerGeometry() == null) return new GamaPoint(0, 0);
 		return super.getLocation();
 	}
 
@@ -392,9 +384,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			// See Issue #2787, #2795
 			final Geometry gg = geom.getInnerGeometry();
 			Object savedData = null;
-			if (gg != null) {
-				savedData = gg.getUserData();
-			}
+			if (gg != null) { savedData = gg.getUserData(); }
 			geom.setInnerGeometry(geom.getEnvelope().toGeometry());
 			geom.getInnerGeometry().setUserData(savedData);
 		}
@@ -424,9 +414,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final String speciesName) throws GamaRuntimeException {
 		IPopulation<? extends IAgent> pop = super.getPopulationFor(speciesName);
-		if (pop != null) { return pop; }
+		if (pop != null) return pop;
 		final ISpecies microSpec = getSpecies().getMicroSpecies(speciesName);
-		if (microSpec == null) { return null; }
+		if (microSpec == null) return null;
 		pop = GamaPopulation.createPopulation(getScope(), this, microSpec);
 		setAttribute(speciesName, pop);
 		pop.initializeFor(getScope());
@@ -436,7 +426,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@getter (CYCLE)
 	public Integer getCycle(final IScope scope) {
 		final SimulationClock clock = getClock();
-		if (clock != null) { return clock.getCycle(); }
+		if (clock != null) return clock.getCycle();
 		return 0;
 	}
 
@@ -475,7 +465,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			initializer = true)
 	public double getTimeStep(final IScope scope) {
 		final SimulationClock clock = getClock();
-		if (clock != null) { return clock.getStepInSeconds(); }
+		if (clock != null) return clock.getStepInSeconds();
 		return 1d;
 	}
 
@@ -491,7 +481,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@getter (TIME)
 	public double getTime(final IScope scope) {
 		final SimulationClock clock = getClock();
-		if (clock != null) { return clock.getTimeElapsedInSeconds(); }
+		if (clock != null) return clock.getTimeElapsedInSeconds();
 		return 0d;
 	}
 
@@ -556,9 +546,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			doc = @doc ("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be resumed with the manual intervention of the user or the 'resume' action."))
 
 	public Object pause(final IScope scope) {
-		if (!GAMA.isPaused()) {
-			GAMA.pauseFrontmostExperiment();
-		}
+		if (!GAMA.isPaused()) { GAMA.pauseFrontmostExperiment(); }
 		return null;
 	}
 
@@ -567,9 +555,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			doc = @doc ("Allows to resume the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can then be paused with the manual intervention of the user or the 'pause' action."))
 
 	public Object resume(final IScope scope) {
-		if (GAMA.isPaused()) {
-			GAMA.resumeFrontmostExperiment();
-		}
+		if (GAMA.isPaused()) { GAMA.resumeFrontmostExperiment(); }
 		return null;
 	}
 
@@ -593,24 +579,22 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public String buildPostfix() {
 		final boolean noName = !GamaPreferences.Interface.CORE_SIMULATION_NAME.getValue();
 		if (noName) {
-			if (getPopulation().size() > 1) {
+			if (getPopulation().size() > 1)
 				return " (S" + getIndex() + ")";
-			} else {
+			else
 				return "";
-			}
-		} else {
+		} else
 			return " (" + getName() + ")";
-		}
 
 	}
 
 	public void setOutputs(final IOutputManager iOutputManager) {
-		if (iOutputManager == null) { return; }
+		if (iOutputManager == null) return;
 		// hqnghi push outputManager down to Simulation level
 		// create a copy of outputs from description
 		if ( /* !scheduled && */ !getExperiment().getSpecies().isBatch()) {
 			final IDescription des = ((ISymbol) iOutputManager).getDescription();
-			if (des == null) { return; }
+			if (des == null) return;
 			outputs = (SimulationOutputManager) des.compile();
 			final Map<String, IOutput> mm = GamaMapFactory.create();
 			for (final Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet()) {
@@ -660,9 +644,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@setter (SimulationAgent.USAGE)
 	public void setUsage(final Integer s) {
 		Integer usage = s;
-		if (s == null) {
-			usage = 0;
-		}
+		if (s == null) { usage = 0; }
 		getRandomGenerator().setUsage(usage);
 	}
 
@@ -719,9 +701,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	public void initOutputs() {
-		if (outputs != null) {
-			outputs.init(this.getScope());
-		}
+		if (outputs != null) { outputs.init(this.getScope()); }
 	}
 
 	@Override
@@ -766,9 +746,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			// if( attrValue instanceof ReferenceAgent) {
 			if (isReference) {
 				((IReference) attrValue).setAgentAndAttrName(this, varName);
-				if (!list_ref.contains(attrValue)) {
-					list_ref.add((IReference) attrValue);
-				}
+				if (!list_ref.contains(attrValue)) { list_ref.add((IReference) attrValue); }
 			}
 
 			this.setDirectVarValue(scope, varName, attrValue);
@@ -835,9 +813,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 							if (isReference2) {
 								// if( attrValue instanceof ReferenceAgent) {
 								((IReference) attrValue).setAgentAndAttrName(currentAgent, name);
-								if (!list_ref.contains(attrValue)) {
-									list_ref.add((IReference) attrValue);
-								}
+								if (!list_ref.contains(attrValue)) { list_ref.add((IReference) attrValue); }
 							}
 						}
 					}

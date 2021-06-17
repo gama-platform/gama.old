@@ -523,4 +523,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	public StreamEx<Integer> stream(final IScope scope) {
 		return IntStreamEx.of(matrix).boxed();
 	}
+
+	@Override
+	public double[] getFieldData(final IScope scope) {
+		double[] result = new double[matrix.length];
+		for (int i = 0; i < matrix.length; ++i) {
+			result[i] = matrix[i];
+		}
+		return result;
+	}
 }

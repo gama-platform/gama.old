@@ -1,6 +1,7 @@
 package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -28,7 +29,6 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			toArrayOfStrings(inside.symbols(), sb).append(',');
 			toArrayOfInts(inside.kinds(), sb).append(',');
 		} else {
-			context.emitWarning("GAML: an @inside annotation should be defined", e);
 			toArrayOfStrings(null, sb).append(',');
 			toArrayOfInts(null, sb).append(',');
 		}
@@ -66,6 +66,14 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 	@Override
 	protected Class<symbol> getAnnotationClass() {
 		return symbol.class;
+	}
+
+	@Override
+	protected boolean validateElement(final ProcessorContext context, final Element e) {
+		boolean result =
+				assertClassExtends(context, true, (TypeElement) e, context.getType("msi.gaml.compilation.ISymbol"));
+		result &= assertAnnotationPresent(context, false, e, inside.class);
+		return result;
 	}
 
 }

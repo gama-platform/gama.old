@@ -139,7 +139,7 @@ import ummisco.gama.dev.utils.DEBUG;
 						comment = "Always terminated with a trailing separator")) })
 @experiment (
 		value = IKeyword.GUI_)
-@doc ("An experiment is a declaration of a graphical user interface. Any experiment attached to a model is a species (introduced by the keyword 'experiment' which directly or indirectly inherits from an abstract species called 'experiment' itself. This abstract species (sub-species of 'agent') defines several attributes and actions that can then be used in any experiment."
+@doc ("An experiment is a declaration of the way to conduct simulations on a model. Any experiment attached to a model is a species (introduced by the keyword 'experiment' which directly or indirectly inherits from an abstract species called 'experiment' itself. This abstract species (sub-species of 'agent') defines several attributes and actions that can then be used in any experiment."
 		+ "\n"
 		+ " 'experiment' defines several attributes, which, in addition to the attributes inherited from agent, form the minimal set of knowledge any experiment will have access to.")
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {

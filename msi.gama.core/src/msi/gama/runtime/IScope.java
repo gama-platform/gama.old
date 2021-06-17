@@ -613,7 +613,19 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @param val
 	 *            the val
 	 */
-	void setVarValue(String varName, Object val);
+	default void setVarValue(final String varName, final Object val) {
+		setVarValue(varName, val, false);
+	}
+
+	/**
+	 * Sets the var value, and states whether the var should be written in an outer scope (if it is defined there) or
+	 * kept in this scope (like for instance the variable defined in a loop (see Issue #3085)
+	 *
+	 * @param varName
+	 * @param val
+	 * @param localScopeOnly
+	 */
+	void setVarValue(String varName, Object val, boolean localScopeOnly);
 
 	/**
 	 * Save all var values in.

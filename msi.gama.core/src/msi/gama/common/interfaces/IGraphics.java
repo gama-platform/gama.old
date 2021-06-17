@@ -23,7 +23,7 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.statements.draw.DrawingAttributes;
-import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.statements.draw.MeshDrawingAttributes;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 
@@ -61,7 +61,7 @@ public interface IGraphics {
 
 	Rectangle2D drawFile(GamaFile<?, ?> file, DrawingAttributes attributes);
 
-	Rectangle2D drawField(final double[] values, final FieldDrawingAttributes attributes);
+	Rectangle2D drawField(final double[] values, final MeshDrawingAttributes attributes);
 
 	Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes);
 

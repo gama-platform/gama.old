@@ -33,20 +33,20 @@ species dummy { aspect default {draw shape color:#grey;} }
 experiment visu type: gui {
 	output {
 		display map4 {
-			grid cell4 lines:#grey;
+			grid cell4 border:#grey;
 			species dummy;
 			graphics the_graph {
 				draw c_graph4 color:#black;
 			}
 		}	
 		display map6 {
-			grid cell6 lines:#grey;
+			grid cell6 border:#grey;
 			graphics the_graph {
 				draw c_graph6 color:#black;
 			}
 		}
 		display map8 {
-			grid cell8 lines:#grey;
+			grid cell8 border:#grey;
 			graphics the_graph {
 				draw c_graph8 color:#black;
 			}

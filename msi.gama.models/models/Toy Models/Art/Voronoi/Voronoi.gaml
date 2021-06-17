@@ -65,7 +65,7 @@ species center skills: [moving] {
 }
 
 experiment voronoi type: gui autorun: true {
-	parameter 'Number of points:' var: num_points on_change: {
+	parameter 'Number of points:' var: num_points {
 		if (num_points > length(center)) {
 			create center number: num_points - length(center);
 		} else {
@@ -75,15 +75,15 @@ experiment voronoi type: gui autorun: true {
 
 		}
 
-	};
+	}
 	parameter 'Number of neighbours in the grid:' var: num_neighbours;
-	parameter 'Color palette' var: palette on_change: {
+	parameter 'Color palette' var: palette  {
 		colors <- brewer_colors(palette);
 		ask center {
 			color <- colors[int(self) mod length(colors)];
 		}
 
-	};
+	}
 	parameter 'Width of the environment:' var: env_width;
 	parameter 'Height of the environment:' var: env_height;
 	parameter "Simple blur" var: blur1;

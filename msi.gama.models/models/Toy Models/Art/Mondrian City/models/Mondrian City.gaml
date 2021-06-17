@@ -259,7 +259,7 @@ species building {
 		color <- color_per_id[type+size];
 	}
 	aspect default {
-		if show_building {draw shape scaled_by building_scale*1.1 empty:true color: color;}
+		if show_building {draw shape scaled_by building_scale*1.1 wireframe:true color: color;}
 	}
 }
 
@@ -461,9 +461,9 @@ experiment MondrianCity type: gui autorun: true{
 			species road ;
 			species people;
 			species building;
-			event["a"] action: {show_agent<-!show_agent;};
-			event["r"] action: {show_road<-!show_road;};
-			event["b"] action: {show_building<-!show_building;};			  	
+			event["a"] {show_agent<-!show_agent;}
+			event["r"] {show_road<-!show_road;}
+			event["b"] {show_building<-!show_building;}		  	
 		}		
 	}
 }

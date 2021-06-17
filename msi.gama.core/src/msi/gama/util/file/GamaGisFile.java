@@ -112,7 +112,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	protected abstract SimpleFeatureCollection getFeatureCollection(final IScope scope);
 
-	protected final void readShapes(final IScope scope) {
+	protected void readShapes(final IScope scope) {
 		ProgressCounter counter = new ProgressCounter(scope, "Reading " + getName(scope));
 		SimpleFeatureCollection collection = getFeatureCollection(scope);
 		computeEnvelope(scope);

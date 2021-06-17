@@ -18,6 +18,10 @@ import java.io.PipedOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -61,10 +65,11 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -100,9 +105,8 @@ public class ImageViewer extends EditorPart
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		// we need either an IStorage or an input that can return an ImageData
-		if (!(input instanceof IStorageEditorInput) && input.getAdapter(ImageData.class) == null) {
+		if (!(input instanceof IStorageEditorInput) && input.getAdapter(ImageData.class) == null)
 			throw new PartInitException("Unable to read input: " + input); //$NON-NLS-1$
-		}
 		setSite(site);
 		setInput(input, false);
 	}
@@ -143,12 +147,8 @@ public class ImageViewer extends EditorPart
 			}
 		}
 		// this will catch ImageDataEditorInput as well
-		if (imageName == null) {
-			imageName = input.getName();
-		}
-		if (imageName == null) {
-			imageName = getSite().getRegisteredName();
-		}
+		if (imageName == null) { imageName = input.getName(); }
+		if (imageName == null) { imageName = getSite().getRegisteredName(); }
 		setPartName(imageName);
 	}
 
@@ -156,12 +156,12 @@ public class ImageViewer extends EditorPart
 	 * Get the IFile corresponding to the specified editor input, or null for none.
 	 */
 	IFile getFileFor(final IEditorInput input) {
-		if (input instanceof IFileEditorInput) {
+		if (input instanceof IFileEditorInput)
 			return ((IFileEditorInput) input).getFile();
-		} else if (input instanceof IStorageEditorInput) {
+		else if (input instanceof IStorageEditorInput) {
 			try {
 				final IStorage storage = ((IStorageEditorInput) input).getStorage();
-				if (storage instanceof IFile) { return (IFile) storage; }
+				if (storage instanceof IFile) return (IFile) storage;
 			} catch (final CoreException ignore) {
 				// intentionally blank
 			}
@@ -174,9 +174,15 @@ public class ImageViewer extends EditorPart
 		final IGamaFileMetaData md =
 				GAMA.getGui().getMetaDataProvider().getMetaData(getFileFor(getEditorInput()), false, true);
 		final String result = md == null ? "" : md.getSuffix();
-		toolbar.button(color, result,
-				e -> getEditorSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId()).run(),
-				SWT.LEFT);
+		IEditorSite site = getEditorSite();
+		IHandlerService service = site.getService(IHandlerService.class);
+		toolbar.button(color, result, e -> {
+			try {
+				service.executeCommand(IWorkbenchCommandConstants.FILE_PROPERTIES, null);
+			} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e1) {
+				e1.printStackTrace();
+			}
+		}, SWT.LEFT);
 		toolbar.refresh(true);
 	}
 
@@ -195,9 +201,7 @@ public class ImageViewer extends EditorPart
 	 */
 	protected void registerResourceListener(final IEditorInput input) {
 		if (input != null) {
-			if (inputListener != null) {
-				inputListener.stop();
-			}
+			if (inputListener != null) { inputListener.stop(); }
 			inputListener = null;
 			final IFile file = getFileFor(input);
 			if (file != null) {
@@ -279,12 +283,8 @@ public class ImageViewer extends EditorPart
 		// intermediate.getSize().x + "x" + intermediate.getSize().y);
 		intermediate.layout();
 		int x = 0, y = 0;
-		if (width > scrollSize.width) {
-			x = (width - scrollSize.width) / 2;
-		}
-		if (height > scrollSize.height) {
-			y = (height - scrollSize.height) / 2;
-		}
+		if (width > scrollSize.width) { x = (width - scrollSize.width) / 2; }
+		if (height > scrollSize.height) { y = (height - scrollSize.height) / 2; }
 		scroll.setOrigin(x, y);
 	}
 
@@ -294,7 +294,7 @@ public class ImageViewer extends EditorPart
 	void startImageLoad() {
 		// skip if the UI hasn't been initialized yet, because
 		// createPartControl() will do this
-		if (imageCanvas == null) { return; }
+		if (imageCanvas == null) return;
 		// clear out the current image
 		final Runnable r = () -> {
 			if (image != null) {
@@ -385,9 +385,7 @@ public class ImageViewer extends EditorPart
 
 	@Override
 	public void setFocus() {
-		if (scroll != null && !scroll.isDisposed()) {
-			scroll.setFocus();
-		}
+		if (scroll != null && !scroll.isDisposed()) { scroll.setFocus(); }
 	}
 
 	@Override
@@ -421,9 +419,7 @@ public class ImageViewer extends EditorPart
 		int origImageType = imageData.type;
 		// default to PNG, if the imageData doesn't yet have a type (i.e. as
 		// from screenshot)
-		if (origImageType < 0) {
-			origImageType = SWT.IMAGE_PNG;
-		}
+		if (origImageType < 0) { origImageType = SWT.IMAGE_PNG; }
 		final IFile origFile = getFileFor(getEditorInput());
 		if (origFile != null) {
 			d.setOriginalFile(origFile, origImageType);
@@ -432,18 +428,16 @@ public class ImageViewer extends EditorPart
 			d.setOriginalName(initialFileName.toPortableString(), origImageType);
 		}
 		d.create();
-		if (d.open() != Window.OK) { return; }
+		if (d.open() != Window.OK) return;
 
 		// get the selected file path
 		IPath path = d.getResult();
-		if (path == null) { return; }
+		if (path == null) return;
 		// add a file extension if there isn't one
-		if (path.getFileExtension() == null) {
-			path = path.addFileExtension(d.getSaveAsImageExt());
-		}
+		if (path.getFileExtension() == null) { path = path.addFileExtension(d.getSaveAsImageExt()); }
 
 		final IFile dest = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		if (dest == null || origFile != null && dest.equals(origFile)) { return; }
+		if (dest == null || origFile != null && dest.equals(origFile)) return;
 		final int imageType = d.getSaveAsImageType();
 
 		// create a scheduling rule for the file edit/creation
@@ -469,9 +463,8 @@ public class ImageViewer extends EditorPart
 					throws CoreException, InvocationTargetException, InterruptedException {
 				try {
 					if (dest.exists()) {
-						if (!dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell()).isOK()) {
+						if (!dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell()).isOK())
 							return;
-						}
 					}
 					saveTo(imageData, dest, imageType, monitor);
 				} catch (final IOException ex) {
@@ -484,9 +477,7 @@ public class ImageViewer extends EditorPart
 			pmd.run(true, true, op);
 			// reset our editor input to the file, if weren't not open on a
 			// file.
-			if (getFileFor(getEditorInput()) == null) {
-				setInput(new FileEditorInput(dest));
-			}
+			if (getFileFor(getEditorInput()) == null) { setInput(new FileEditorInput(dest)); }
 		} catch (final InvocationTargetException ex) {
 			final Throwable t = ex.getCause();
 
@@ -499,9 +490,7 @@ public class ImageViewer extends EditorPart
 			} else {
 				st = new Status(IStatus.ERROR, "msi.gama.application", 0, t.toString(), t);
 			}
-			if (st.getSeverity() != IStatus.CANCEL) {
-				ErrorDialog.openError(getSite().getShell(), title, mesg, st);
-			}
+			if (st.getSeverity() != IStatus.CANCEL) { ErrorDialog.openError(getSite().getShell(), title, mesg, st); }
 		} catch (final InterruptedException ex) {
 			// ignore
 		}
@@ -517,7 +506,7 @@ public class ImageViewer extends EditorPart
 			if (!dest.getParent().exists()) {
 				final ContainerGenerator gen = new ContainerGenerator(dest.getFullPath().removeLastSegments(1));
 				gen.generateContainer(m.split(500));
-				if (monitor.isCanceled()) { throw new InterruptedException(); }
+				if (monitor.isCanceled()) throw new InterruptedException();
 			}
 			final ImageLoader loader = new ImageLoader();
 			loader.data = new ImageData[] { imageData };
@@ -596,7 +585,7 @@ public class ImageViewer extends EditorPart
 	 * @return { SWT.IMAGE_* type, width, height } or null for no image
 	 */
 	public int[] getCurrentImageInformation() {
-		if (imageData != null) { return new int[] { imageData.type, imageData.width, imageData.height }; }
+		if (imageData != null) return new int[] { imageData.type, imageData.width, imageData.height };
 		return null;
 	}
 

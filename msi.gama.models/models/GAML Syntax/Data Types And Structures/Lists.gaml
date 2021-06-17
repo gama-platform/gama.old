@@ -270,8 +270,8 @@ species looping_on_lists {
 		write sample(l2);
 		// 'loop' can also directly use an integer index (remember lists have a zero-based index)
 		l2 <- [];
-		loop i from: 0 to: length(l1) - 1 step:2 {
-			l2 << l1[i];
+		loop k from: 0 to: length(l1) - 1 step:2 {
+			l2 << l1[k];
 		}
 		write sample(l2);
 		// Finally, list containing agents can be the support of implicit loops in the 'ask' statement

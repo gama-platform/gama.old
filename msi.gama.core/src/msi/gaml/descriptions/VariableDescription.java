@@ -12,6 +12,7 @@ package msi.gaml.descriptions;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,14 +44,6 @@ import msi.gaml.types.Types;
  */
 public class VariableDescription extends SymbolDescription {
 
-	// public static class BuiltIn extends VariableDescription {
-	//
-	// public BuiltIn(final String keyword, final IDescription superDesc, final EObject source, final Facets facets) {
-	// super(keyword, superDesc, source, facets);
-	// }
-	//
-	// }
-
 	private static Map<String, Collection<String>> dependencies = GamaMapFactory.createUnordered();
 	public final static Set<String> INIT_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE, AMONG).build();
@@ -64,6 +57,7 @@ public class VariableDescription extends SymbolDescription {
 	// for variables automatically added to species for containing micro-agents
 	private boolean _isSyntheticSpeciesContainer;
 	private IGamaHelper<?> get, init, set;
+	private GamaHelper<?>[] listeners;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final EObject source,
 			final Facets facets) {
@@ -97,7 +91,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if (isBuiltIn()) { return; }
+		if (isBuiltIn()) return;
 		super.dispose();
 	}
 
@@ -108,29 +102,23 @@ public class VariableDescription extends SymbolDescription {
 
 		v2.visitFacets((facetName, exp) -> {
 			if (isFunction) {
-				if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) { return true; }
+				if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) return true;
 			}
-			if (!hasFacet(facetName)) {
-				setFacet(facetName, exp);
-			}
+			if (!hasFacet(facetName)) { setFacet(facetName, exp); }
 			return true;
 		});
 
-		if (get == null) {
-			get = v2.get;
-		}
-		if (set == null) {
-			set = v2.set;
-		}
-		if (init == null) {
-			init = v2.init;
-		}
+		if (get == null) { get = v2.get; }
+		if (set == null) { set = v2.set; }
+		if (init == null) { init = v2.init; }
+		if (listeners == null) { listeners = v2.listeners; }
 	}
 
 	@Override
 	public VariableDescription copy(final IDescription into) {
 		final VariableDescription vd = new VariableDescription(getKeyword(), into, element, getFacetsCopy());
 		vd.addHelpers(get, init, set);
+		vd.listeners = listeners;
 		vd.originName = getOriginName();
 		return vd;
 	}
@@ -149,7 +137,7 @@ public class VariableDescription extends SymbolDescription {
 	public boolean isContextualType() {
 		String type = getLitteral(TYPE);
 		int provider = GamaIntegerType.staticCast(null, type, null, false);
-		if (provider < 0) { return true; }
+		if (provider < 0) return true;
 		type = getLitteral(OF);
 		provider = GamaIntegerType.staticCast(null, type, null, false);
 		return provider < 0;
@@ -170,21 +158,21 @@ public class VariableDescription extends SymbolDescription {
 				case ITypeProvider.MACRO_TYPE:
 					final IDescription species = this.getEnclosingDescription();
 					final IDescription macro = species.getEnclosingDescription();
-					if (macro == null) { return Types.AGENT; }
+					if (macro == null) return Types.AGENT;
 					return macro.getGamlType();
 				case ITypeProvider.OWNER_TYPE: // This represents the type of the
 												// agents of the enclosing species
-					if (this.getEnclosingDescription() == null) { return Types.AGENT; }
+					if (this.getEnclosingDescription() == null) return Types.AGENT;
 					return this.getEnclosingDescription().getGamlType();
 				case ITypeProvider.MODEL_TYPE: // This represents the type of the
 												// model (used for simulations)
 					final ModelDescription md = this.getModelDescription();
-					if (md == null) { return Types.get("model"); }
+					if (md == null) return Types.get("model");
 					return md.getGamlType();
 				case ITypeProvider.EXPERIMENT_TYPE:
 					return Types.get("experiment");
 				case ITypeProvider.MIRROR_TYPE:
-					if (getEnclosingDescription() == null) { return null; }
+					if (getEnclosingDescription() == null) return null;
 					final IExpression mirrors = getEnclosingDescription().getFacetExpr(MIRRORS);
 					if (mirrors != null) {
 						// We try to change the type of the 'target' variable if the
@@ -216,17 +204,13 @@ public class VariableDescription extends SymbolDescription {
 			if (deps != null) {
 				for (final String s : deps) {
 					final VariableDescription vd = getSpeciesContext().getAttribute(s);
-					if (vd != null) {
-						result.add(vd);
-					}
+					if (vd != null) { result.add(vd); }
 				}
 			}
 
 			this.visitFacets(facetsToVisit, (fName, exp) -> {
 				final IExpression expression = exp.getExpression();
-				if (expression != null) {
-					expression.collectUsedVarsOf(getSpeciesContext(), alreadyProcessed, result);
-				}
+				if (expression != null) { expression.collectUsedVarsOf(getSpeciesContext(), alreadyProcessed, result); }
 				return true;
 			});
 			if (isSyntheticSpeciesContainer()) {
@@ -234,12 +218,8 @@ public class VariableDescription extends SymbolDescription {
 				final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
 				sd.collectUsedVarsOf(mySpecies, alreadyProcessed, result);
 			}
-			if (!includingThis) {
-				result.remove(this);
-			}
-			if (!includingSpecies) {
-				result.removeIf(v -> v.isSyntheticSpeciesContainer());
-			}
+			if (!includingThis) { result.remove(this); }
+			if (!includingSpecies) { result.removeIf(v -> v.isSyntheticSpeciesContainer()); }
 			result.remove(null);
 			return result.items();
 		}
@@ -273,7 +253,7 @@ public class VariableDescription extends SymbolDescription {
 
 	public String getParameterName() {
 		final String pName = getLitteral(PARAMETER);
-		if (pName == null || pName.equals(TRUE)) { return getName(); }
+		if (pName == null || pName.equals(TRUE)) return getName();
 		return pName;
 	}
 
@@ -281,43 +261,38 @@ public class VariableDescription extends SymbolDescription {
 	public String getTitle() {
 		final String title = getGamlType().getTitle()
 				+ (isParameter() ? " parameter " : isNotModifiable() ? " constant " : " attribute ") + getName();
-		if (getEnclosingDescription() == null) { return title; }
+		if (getEnclosingDescription() == null) return title;
 		return title + " of " + this.getEnclosingDescription().getTitle() + "<br/>";
 	}
 
 	@Override
 	public String getDocumentation() {
 		final String doc = getBuiltInDoc();
-		if (isBuiltIn()) { return doc == null ? "Not yet documented" : doc; }
+		if (isBuiltIn()) return doc == null ? "Not yet documented" : doc;
 		String s = "";
-		if (doc != null) {
-			s += doc + "<br/>";
-		}
+		if (doc != null) { s += doc + "<br/>"; }
 		return s + getMeta().getFacetsDocumentation();
 	}
 
 	public String getShortDescription() {
 		String s = ", of type " + getGamlType().getTitle();
 		final String doc = getBuiltInDoc();
-		if (doc != null) {
-			s += ": " + doc;
-		}
+		if (doc != null) { s += ": " + doc; }
 		return s;
 	}
 
 	public String getBuiltInDoc() {
 		final VariableDescription builtIn = getBuiltInAncestor();
-		if (builtIn == null) { return null; }
+		if (builtIn == null) return null;
 		return AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(builtIn.getName());
 	}
 
 	private VariableDescription getBuiltInAncestor() {
 		if (getEnclosingDescription() instanceof TypeDescription) {
 			final TypeDescription td = (TypeDescription) getEnclosingDescription();
-			if (td.isBuiltIn()) { return this; }
-			if (td.getParent() != null && td.getParent().hasAttribute(name)) {
+			if (td.isBuiltIn()) return this;
+			if (td.getParent() != null && td.getParent().hasAttribute(name))
 				return td.getParent().getAttribute(name).getBuiltInAncestor();
-			}
 		}
 		return null;
 	}
@@ -330,9 +305,17 @@ public class VariableDescription extends SymbolDescription {
 
 	public void addHelpers(final Class<?> skill, final IGamaHelper<?> get, final IGamaHelper<?> init,
 			final IGamaHelper<?> set) {
-		this.get = get != null ? new GamaHelper<>(skill, get) : null;
-		this.set = set != null ? new GamaHelper<>(skill, set) : null;
-		this.init = init != null ? new GamaHelper<>(skill, init) : null;
+		addHelpers(get != null ? new GamaHelper<>(name, skill, get) : null,
+				init != null ? new GamaHelper<>(name, skill, init) : null,
+				set != null ? new GamaHelper<>(name, skill, set) : null);
+	}
+
+	public void addListeners(final List<GamaHelper> listeners) {
+		this.listeners = listeners.toArray(new GamaHelper[listeners.size()]);
+	}
+
+	public GamaHelper[] getListeners() {
+		return listeners;
 	}
 
 	public IGamaHelper<?> getGetter() {

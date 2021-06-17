@@ -15,7 +15,7 @@ public class PoolUtils {
 	static Set<ObjectPool> POOLS = new LinkedHashSet<>();
 	static boolean POOL = GamaPreferences.External.USE_POOLING.getValue();
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 		GamaPreferences.External.USE_POOLING.onChange(v -> {
 			POOLS.forEach((p) -> p.dispose());
 			POOL = v;

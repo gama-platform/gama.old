@@ -29,6 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
+import msi.gama.util.file.IFieldMatrixProvider;
 import msi.gaml.types.IType;
 import one.util.streamex.StreamEx;
 
@@ -52,8 +53,8 @@ import one.util.streamex.StreamEx;
 				type = IType.INT,
 				doc = { @doc ("Returns the number of columns of the receiver matrix") }) })
 @SuppressWarnings ({ "rawtypes" })
-public interface IMatrix<T>
-		extends IModifiableContainer<ILocation, T, ILocation, T>, IAddressableContainer<ILocation, T, ILocation, T> {
+public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation, T>,
+		IAddressableContainer<ILocation, T, ILocation, T>, IFieldMatrixProvider {
 
 	/**
 	 * Cols, rows instead of row cols because intended to work with xSize and ySize dimensions.
@@ -65,11 +66,38 @@ public interface IMatrix<T>
 
 	String COLUMNS = "columns";
 
+	@Override
 	@getter (ROWS)
 	int getRows(IScope scope);
 
+	@Override
 	@getter (COLUMNS)
 	int getCols(IScope scope);
+
+	/**
+	 * Inherited from IFieldMatrixProvider
+	 */
+	@Override
+	default int getBands(final IScope scope) {
+		return 1;
+	}
+
+	@Override
+	default double[] getBand(final IScope scope, final int index) {
+		if (index == 0)
+			return getFieldData(scope);
+		else
+			return null;
+	}
+
+	// Redefined so as to reverse the calling (getBand() now calls it)
+	@Override
+	double[] getFieldData(final IScope scope);
+
+	@Override
+	default GamaFloatMatrix getMatrix(final IScope scope) {
+		return GamaFloatMatrix.from(scope, this);
+	}
 
 	@getter (DIMENSION)
 	GamaPoint getDimensions();

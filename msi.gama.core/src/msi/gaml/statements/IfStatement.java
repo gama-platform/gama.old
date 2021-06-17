@@ -45,7 +45,7 @@ import msi.gaml.types.IType;
 		with_sequence = true,
 		concept = { IConcept.CONDITION })
 @inside (
-		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER, ISymbolKind.OUTPUT })
 @facets (
 		value = { @facet (
 				name = IKeyword.CONDITION,
@@ -191,18 +191,14 @@ public class IfStatement extends AbstractStatementSequence {
 	public IfStatement(final IDescription desc) {
 		super(desc);
 		cond = getFacet(IKeyword.CONDITION);
-		if (cond != null) {
-			setName("if " + cond.serialize(false));
-		}
+		if (cond != null) { setName("if " + cond.serialize(false)); }
 
 	}
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		for (final ISymbol c : commands) {
-			if (c instanceof ElseStatement) {
-				alt = (IStatement) c;
-			}
+			if (c instanceof ElseStatement) { alt = (IStatement) c; }
 		}
 		super.setChildren(Iterables.filter(commands, each -> each != alt));
 	}
@@ -210,9 +206,8 @@ public class IfStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final Object condition = cond.value(scope);
-		if (!(condition instanceof Boolean)) {
+		if (!(condition instanceof Boolean))
 			throw GamaRuntimeException.error("Impossible to evaluate condition " + cond.serialize(true), scope);
-		}
 		return (Boolean) condition ? super.privateExecuteIn(scope) : alt != null ? scope.execute(alt).getValue() : null;
 	}
 }

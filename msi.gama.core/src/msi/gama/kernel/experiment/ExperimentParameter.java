@@ -41,8 +41,11 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
@@ -93,7 +96,9 @@ import msi.gaml.variables.Variable;
 						name = IKeyword.ON_CHANGE,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("Provides a block of statements that will be executed whenever the value of the parameter changes")),
+						doc = @doc (
+								deprecated = "Move the block of statements at the end of the parameter declaration instead",
+								value = "Provides a block of statements that will be executed whenever the value of the parameter changes")),
 				@facet (
 						name = IKeyword.ENABLES,
 						type = IType.LIST,
@@ -164,6 +169,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	boolean isDefined = true;
 	final IExpression init, among, min, max, step, slider, onChange;
 	final List<ParameterChangeListener> listeners = new ArrayList<>();
+	ActionStatement action;
 
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
@@ -174,27 +180,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		unitLabel = getLiteral(IKeyword.UNIT);
 		final ModelDescription wd = desc.getModelDescription();
 		final VariableDescription targetedGlobalVar = wd.getAttribute(varName);
-		if (type.equals(Types.NO_TYPE)) {
-			type = targetedGlobalVar.getGamlType();
-		}
+		if (type.equals(Types.NO_TYPE)) { type = targetedGlobalVar.getGamlType(); }
 		setCategory(desc.getLitteral(IKeyword.CATEGORY));
 		min = getFacet(IKeyword.MIN);
 		final IScope runtimeScope = GAMA.getRuntimeScope();
-		if (min != null && min.isConst()) {
-			getMinValue(runtimeScope);
-		}
+		if (min != null && min.isConst()) { getMinValue(runtimeScope); }
 		max = getFacet(IKeyword.MAX);
-		if (max != null && max.isConst()) {
-			getMaxValue(runtimeScope);
-		}
+		if (max != null && max.isConst()) { getMaxValue(runtimeScope); }
 		step = getFacet(IKeyword.STEP);
-		if (step != null && step.isConst()) {
-			getStepValue(runtimeScope);
-		}
+		if (step != null && step.isConst()) { getStepValue(runtimeScope); }
 		among = getFacet(IKeyword.AMONG);
-		if (among != null && among.isConst()) {
-			getAmongValue(runtimeScope);
-		}
+		if (among != null && among.isConst()) { getAmongValue(runtimeScope); }
 		onChange = getFacet(IKeyword.ON_CHANGE);
 		if (onChange != null) {
 			listeners.add((scope, v) -> {
@@ -272,9 +268,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public void setName(final String name2) {
 		varName = name2;
-		if (title == null) {
-			title = name2;
-		}
+		if (title == null) { title = name2; }
 	}
 
 	@Override
@@ -316,9 +310,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public void addChangedListener(final ParameterChangeListener listener) {
-		if (!listeners.contains(listener)) {
-			listeners.add(listener);
-		}
+		if (!listeners.contains(listener)) { listeners.add(listener); }
 	}
 
 	public void setAndVerifyValue(final IScope scope, final Object val) {
@@ -371,17 +363,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	private Object filterWithAmong(final IScope scope, final Object newValue) {
 		getAmongValue(scope);
-		if (amongValue == null || amongValue.isEmpty()) { return newValue; }
+		if (amongValue == null || amongValue.isEmpty()) return newValue;
 		if (Types.FLOAT.equals(this.getType())) {
 			final double newDouble = Cast.asFloat(scope, newValue);
 			for (final Object o : amongValue) {
 				final Double d = Cast.asFloat(scope, o);
 				final Double tolerance = 0.0000001d;
-				if (NumberUtil.equalsWithTolerance(d, newDouble, tolerance)) { return d; }
+				if (NumberUtil.equalsWithTolerance(d, newDouble, tolerance)) return d;
 			}
 
 		} else {
-			if (amongValue.contains(newValue)) { return newValue; }
+			if (amongValue.contains(newValue)) return newValue;
 		}
 		return amongValue.get(0);
 	}
@@ -410,8 +402,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	public void tryToInit(final IScope scope) {
-		if (value != UNDEFINED) { return; }
-		if (init == null) { return; }
+		if (value != UNDEFINED) return;
+		if (init == null) return;
 		setValue(scope, init.value(scope));
 
 	}
@@ -433,9 +425,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		try (Collector.AsSet<Object> neighborValues = Collector.getSet()) {
 			if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
 				final int index = getAmongValue(scope).indexOf(this.value(scope));
-				if (index > 0) {
-					neighborValues.add(getAmongValue(scope).get(index - 1));
-				}
+				if (index > 0) { neighborValues.add(getAmongValue(scope).get(index - 1)); }
 				if (index < getAmongValue(scope).size() - 1) {
 					neighborValues.add(getAmongValue(scope).get(index + 1));
 				}
@@ -446,12 +436,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
 				final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
 				final int val = Cast.asInt(scope, value(scope));
-				if (val >= theMin + (int) theStep) {
-					neighborValues.add(val - (int) theStep);
-				}
-				if (val <= theMax - (int) theStep) {
-					neighborValues.add(val + (int) theStep);
-				}
+				if (val >= theMin + (int) theStep) { neighborValues.add(val - (int) theStep); }
+				if (val <= theMax - (int) theStep) { neighborValues.add(val + (int) theStep); }
 			} else if (type.id() == IType.FLOAT) {
 				final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 				final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
@@ -508,33 +494,25 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Number getMinValue(final IScope scope) {
-		if (minValue == null && min != null) {
-			minValue = (Number) min.value(scope);
-		}
+		if (minValue == null && min != null) { minValue = (Number) min.value(scope); }
 		return minValue;
 	}
 
 	@Override
 	public Number getMaxValue(final IScope scope) {
-		if (maxValue == null && max != null) {
-			maxValue = (Number) max.value(scope);
-		}
+		if (maxValue == null && max != null) { maxValue = (Number) max.value(scope); }
 		return maxValue;
 	}
 
 	@Override
 	public List getAmongValue(final IScope scope) {
-		if (amongValue == null && among != null) {
-			amongValue = Cast.asList(scope, among.value(scope));
-		}
+		if (amongValue == null && among != null) { amongValue = Cast.asList(scope, among.value(scope)); }
 		return amongValue;
 	}
 
 	@Override
 	public Number getStepValue(final IScope scope) {
-		if (stepValue == null && step != null) {
-			stepValue = (Number) step.value(scope);
-		}
+		if (stepValue == null && step != null) { stepValue = (Number) step.value(scope); }
 		return stepValue;
 	}
 
@@ -550,7 +528,21 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void setChildren(final Iterable<? extends ISymbol> commands) {}
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
+		final List<IStatement> statements = new ArrayList<>();
+		for (final ISymbol c : commands) {
+			if (c instanceof IStatement) { statements.add((IStatement) c); }
+		}
+		if (!statements.isEmpty()) {
+			final IDescription d =
+					DescriptionFactory.create(IKeyword.ACTION, getDescription(), IKeyword.NAME, "inline");
+			action = new ActionStatement(d);
+			action.setChildren(statements);
+			listeners.add((scope, v) -> {
+				scope.getExperiment().executeAction(action);
+			});
+		}
+	}
 
 	@Override
 	public String toString() {
@@ -568,13 +560,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String getUnitLabel(final IScope scope) {
-		if (unitLabel == null && canBeExplored()) { return computeExplorableLabel(scope); }
+		if (unitLabel == null && canBeExplored()) return computeExplorableLabel(scope);
 		return unitLabel;
 	}
 
 	private String computeExplorableLabel(final IScope scope) {
 		final List l = getAmongValue(scope);
-		if (l != null) { return "among " + l; }
+		if (l != null) return "among " + l;
 		final Number theMax = getMaxValue(scope);
 		final Number theMin = getMinValue(scope);
 		final Number theStep = getStepValue(scope);
@@ -593,7 +585,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public boolean acceptsSlider(final IScope scope) {
-		if (slider == null) { return true; }
+		if (slider == null) return true;
 		return Cast.asBool(scope, slider.value(scope));
 	}
 

@@ -19,9 +19,10 @@ import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
 
 import java.awt.Color;
 
-import com.jogamp.opengl.util.gl2.GLUT;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
+
+import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
@@ -80,7 +81,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			final Color border = !solid && object.getAttributes().getBorder() == null
 					? object.getAttributes().getColor() : object.getAttributes().getBorder();
 			final Geometry geometry = object.getObject();
-			final double height = object.getAttributes().getHeight() == null ? 0d : object.getAttributes().getHeight();
+			final double height = object.getAttributes().getDepth() == null ? 0d : object.getAttributes().getDepth();
 			final IShape.Type type = object.getAttributes().getType();
 			drawGeometry(geometry, solid, border, height, type);
 		} finally {
@@ -94,8 +95,6 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 *
 	 * @param geom
 	 *            the geometry to draw
-	 * @param file
-	 *            alternatively, can be a file
 	 * @param solid
 	 *            whether the geometry should be considered as solid or not (i.e. filled or textured)
 	 * @param border
@@ -193,9 +192,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	private void drawPolygon(final Polygon p, final boolean solid, final Color border, final boolean clockwise,
 			final boolean computeVertices) {
-		if (computeVertices) {
-			_vertices.setToYNegated(getContourCoordinates(p));
-		}
+		if (computeVertices) { _vertices.setToYNegated(getContourCoordinates(p)); }
 		if (solid) {
 			gl.setNormal(_vertices, clockwise);
 			final boolean hasHoles = getHolesNumber(p) > 0;
@@ -362,7 +359,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 *            the size of the ROI box
 	 */
 	public void drawROIHelper(final Envelope3D envelope) {
-		if (envelope == null) { return; }
+		if (envelope == null) return;
 		final Polygon polygon = envelope.yNegated().toGeometry();
 		gl.setCurrentColor(0, 0.5, 0, 0.15);
 		gl.setZIncrement(0);
@@ -384,5 +381,8 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		final Geometry point = GamaGeometryType.buildCircle(height, position).getInnerGeometry();
 		drawSphere(point, true, height, DEFAULT_BORDER);
 	}
+
+	@Override
+	public void dispose() {}
 
 }

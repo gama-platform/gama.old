@@ -78,27 +78,26 @@ public class ExperimentScheduler implements Runnable {
 				return;
 			}
 		}
-
-		toStep.forEach((stepable, scope) -> {
-			if (!scope.step(stepable).passed()) {
-				toStop.add(stepable);
-			}
-		});
+		try {
+			// synchronized (toStep) {
+			toStep.forEach((stepable, scope) -> {
+				if (!scope.step(stepable).passed()) { toStop.add(stepable); }
+			});
+			// }
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void clean() {
-		if (toStop.isEmpty()) { return; }
+		if (toStop.isEmpty()) return;
 		synchronized (toStop) {
 			for (final IStepable s : toStop) {
 				final IScope scope = toStep.get(s);
-				if (scope != null && !scope.interrupted()) {
-					scope.setInterrupted();
-				}
+				if (scope != null && !scope.interrupted()) { scope.setInterrupted(); }
 				toStep.remove(s);
 			}
-			if (toStep.isEmpty()) {
-				this.pause();
-			}
+			if (toStep.isEmpty()) { this.pause(); }
 			toStop.clear();
 		}
 	}
@@ -139,16 +138,12 @@ public class ExperimentScheduler implements Runnable {
 	}
 
 	public void schedule(final IStepable stepable, final IScope scope) {
-		if (toStep.containsKey(stepable)) {
-			toStep.remove(stepable);
-		}
+		if (toStep.containsKey(stepable)) { toStep.remove(stepable); }
 		toStep.put(stepable, scope);
 		// We first init the stepable before it is scheduled
 		// DEBUG.OUT("ExperimentScheduler.schedule " + stepable);
 		try {
-			if (!scope.init(stepable).passed()) {
-				toStop.add(stepable);
-			}
+			if (!scope.init(stepable).passed()) { toStop.add(stepable); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {
 				toStop.add(stepable);

@@ -34,6 +34,7 @@ import com.google.common.collect.Multimap;
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.outputs.layers.EventLayerStatement;
+import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.IGamlAdditions;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
@@ -87,8 +88,15 @@ public class GamaBundleLoader {
 	private static Multimap<Bundle, String> TEST_PLUGINS = ArrayListMultimap.create();
 	public static Set<String> HANDLED_FILE_EXTENSIONS = new HashSet<>();
 
+	public static final String SYS_ARCH = Platform.getOSArch(); // System.getProperty("os.arch");
+	public static final String SYS_NAME = Platform.getOS();// System.getProperty("os.name");
+	public static final String SYS_VERS = System.getProperty("os.version");
+	public static final String SYS_JAVA = System.getProperty("java.version");
+
 	public static void preBuildContributions() throws Exception {
-		DEBUG.TIMER("> GAMA total load time ", () -> {
+		DEBUG.LOG(DEBUG.PAD("> GAMA " + GAMA.VERSION_NUMBER + " loading ", 45, '.') + " system " + SYS_NAME + " "
+				+ SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
+		DEBUG.TIMER("> GAMA total load time.......................................", () -> {
 			final IExtensionRegistry registry = Platform.getExtensionRegistry();
 			// We retrieve the elements declared as extensions to the GAML language,
 			// either with the new or the deprecated extension
@@ -214,7 +222,7 @@ public class GamaBundleLoader {
 
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
-		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: " + bundle.getSymbolicName(), 45) + " loaded in ", () -> {
+		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: " + bundle.getSymbolicName(), 45, '.') + " loaded in......", () -> {
 			String shortcut = bundle.getSymbolicName();
 			shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);
 			GamaClassLoader.getInstance().addBundle(bundle);

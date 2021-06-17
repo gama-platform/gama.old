@@ -27,6 +27,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -405,6 +406,15 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	@Override
 	public StreamEx<Object> stream(final IScope scope) {
 		return StreamEx.of(matrix);
+	}
+
+	@Override
+	public double[] getFieldData(final IScope scope) {
+		double[] result = new double[matrix.length];
+		for (int i = 0; i < matrix.length; ++i) {
+			result[i] = Cast.asFloat(scope, matrix[i]);
+		}
+		return result;
 	}
 
 }

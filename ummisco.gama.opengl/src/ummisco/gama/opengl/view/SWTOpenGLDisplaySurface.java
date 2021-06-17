@@ -32,6 +32,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.locationtech.jts.geom.Envelope;
 
 import com.jogamp.opengl.FPSCounter;
 import com.jogamp.opengl.GL;
@@ -42,7 +43,6 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.GLBuffers;
-import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -179,17 +179,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			}
 		}
 		final GLCanvas glad = renderer.getCanvas();
-		if (glad == null || glad.getGL() == null || glad.getGL().getContext() == null) { return null; }
+		if (glad == null || glad.getGL() == null || glad.getGL().getContext() == null) return null;
 		final boolean current = glad.getGL().getContext().isCurrent();
-		if (!current) {
-			glad.getGL().getContext().makeCurrent();
-		}
+		if (!current) { glad.getGL().getContext().makeCurrent(); }
 		final BufferedImage image = getImage(glad.getGL().getGL2(), w, h);
 		// final AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(glad.getGLProfile(), false);
 		// final BufferedImage image = glReadBufferUtil.readPixelsToBufferedImage(glad.getGL(), true);
-		if (!current) {
-			glad.getGL().getContext().release();
-		}
+		if (!current) { glad.getGL().getContext().release(); }
 		return image;
 		// return ImageUtils.resize(image, w, h);
 	}
@@ -218,7 +214,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final ByteBuffer buffer = getBuffer(width, height);
 		// be sure you are reading from the right fbo (here is supposed to be the default one)
 		// bind the right buffer to read from
-		gl3.glReadBuffer(GL.GL_BACK);
+		gl3.glReadBuffer(GL.GL_BACK); // or GL.GL_FRONT ?
 		// if the width is not multiple of 4, set unpackPixel = 1
 		gl3.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
 
@@ -243,14 +239,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void updateDisplay(final boolean force) {
 
-		if (alreadyUpdating) { return; }
+		if (alreadyUpdating) return;
 		try {
 			alreadyUpdating = true;
 
 			final boolean oldState = animator.isPaused();
-			if (force) {
-				animator.resume();
-			}
+			if (force) { animator.resume(); }
 			layerManager.drawLayersOn(renderer);
 
 			// EXPERIMENTAL
@@ -262,11 +256,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					focusOn(geometry);
 				}
 			}
-			if (force) {
-				if (oldState) {
-					animator.pause();
-				}
-			}
+			if (force) { if (oldState) { animator.pause(); } }
 		} finally {
 			alreadyUpdating = false;
 		}
@@ -289,7 +279,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomIn() {
-		if (renderer.getData().cameraInteractionDisabled()) { return; }
+		if (renderer.getData().cameraInteractionDisabled()) return;
 		renderer.getCameraHelper().zoom(true);
 	}
 
@@ -300,7 +290,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomOut() {
-		if (renderer.getData().cameraInteractionDisabled()) { return; }
+		if (renderer.getData().cameraInteractionDisabled()) return;
 		renderer.getCameraHelper().zoom(false);
 	}
 
@@ -353,9 +343,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void runAndUpdate(final Runnable r) {
 		r.run();
-		if (getScope().isPaused()) {
-			updateDisplay(true);
-		}
+		if (getScope().isPaused()) { updateDisplay(true); }
 		if (animator.isPaused()) {
 			animator.resume();
 			animator.pause();
@@ -392,16 +380,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void outputReloaded() {
 		setDisplayScope(output.getScope().copy("in opengl display"));
-		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) {
-			getScope().disableErrorReporting();
-		}
+		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) { getScope().disableErrorReporting(); }
 		renderer.initScene();
 		layerManager.outputChanged();
 
 		// resizeImage(getWidth(), getHeight(), true);
-		if (zoomFit) {
-			zoomFit();
-		}
+		if (zoomFit) { zoomFit(); }
 	}
 
 	/**
@@ -458,9 +442,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public ILocation getModelCoordinates() {
 		final GamaPoint mp = renderer.getCameraHelper().getMousePosition();
-		if (mp == null) { return null; }
+		if (mp == null) return null;
 		final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
-		if (p == null) { return null; }
+		if (p == null) return null;
 		return new GamaPoint(p.x, -p.y);
 	}
 
@@ -485,7 +469,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
-		if (currentLayer instanceof OverlayLayer) { return getScope().getSimulation().getEnvelope(); }
+		if (currentLayer instanceof OverlayLayer) return getScope().getSimulation().getEnvelope();
 		Envelope e = currentLayer.getData().getVisibleRegion();
 		if (e == null) {
 			e = new Envelope();
@@ -667,22 +651,16 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	protected void setDisplayScope(final IScope scope) {
-		if (this.scope != null) {
-			GAMA.releaseScope(this.scope);
-		}
+		if (this.scope != null) { GAMA.releaseScope(this.scope); }
 		this.scope = scope;
 	}
 
 	@Override
 	public void dispose() {
-		if (disposed) { return; }
+		if (disposed) return;
 		disposed = true;
-		if (layerManager != null) {
-			layerManager.dispose();
-		}
-		if (animator != null && animator.isStarted()) {
-			animator.stop();
-		}
+		if (layerManager != null) { layerManager.dispose(); }
+		if (animator != null && animator.isStarted()) { animator.stop(); }
 		this.menuManager = null;
 		this.listeners.clear();
 		this.renderer = null;
@@ -702,7 +680,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void changed(final Changes property, final Object value) {
-		if (renderer == null) { return; }
+		if (renderer == null) return;
 		switch (property) {
 
 			case CHANGE_CAMERA:
@@ -725,7 +703,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			case CAMERA_POS:
 				renderer.getCameraHelper().updatePosition();
 				break;
-			case CAMERA_UP:
+			case CAMERA_ORIENTATION:
 				renderer.getCameraHelper().updateOrientation();
 				break;
 			case CAMERA_TARGET:
@@ -776,15 +754,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public boolean isRealized() {
-		if (renderer == null) { return false; }
+		if (renderer == null) return false;
 		final GLAutoDrawable d = renderer.getCanvas();
-		if (d == null) { return false; }
+		if (d == null) return false;
 		return d.isRealized();
 	}
 
 	@Override
 	public boolean isRendered() {
-		if (renderer == null || renderer.getSceneHelper().getSceneToRender() == null) { return false; }
+		if (renderer == null || renderer.getSceneHelper().getSceneToRender() == null) return false;
 		return renderer.getSceneHelper().getSceneToRender().rendered();
 	}
 

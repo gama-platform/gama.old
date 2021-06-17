@@ -10,17 +10,16 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer;
 
-import static ummisco.gama.ui.utils.PlatformHelper.scaleDownIfMac;
-
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.swt.GLCanvas;
-import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
@@ -34,8 +33,8 @@ import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
-import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.statements.draw.MeshDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
@@ -132,9 +131,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	@Override
 	public void initScene() {
 		final ModelScene scene = sceneHelper.getSceneToRender();
-		if (scene != null) {
-			scene.reload();
-		}
+		if (scene != null) { scene.reload(); }
 	}
 
 	@Override
@@ -152,7 +149,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public boolean isNotReadyToUpdate() {
-		if (data.isSynchronized()) { return false; }
+		if (data.isSynchronized()) return false;
 		return sceneHelper.isNotReadyToUpdate();
 	}
 
@@ -181,7 +178,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public void display(final GLAutoDrawable drawable) {
-		if (!sceneHelper.isReady()) { return; }
+		if (!sceneHelper.isReady()) return;
 
 		try (Pass c = keystoneHelper.render(); Pass d = openGL.beginScene();) {
 			cameraHelper.update();
@@ -202,10 +199,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
 		int width = w, height = h;
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
-		//width = scaleDownIfMac(width);
-		//height = scaleDownIfMac(height);
-		if (width <= 0 || height <= 0) { return; }
-		if (openGL.getViewWidth() == width && openGL.getViewHeight() == height) { return; }
+		// width = scaleDownIfMac(width);
+		// height = scaleDownIfMac(height);
+		if (width <= 0 || height <= 0) return;
+		if (openGL.getViewWidth() == width && openGL.getViewHeight() == height) return;
 		// DEBUG.OUT("Reshaped to " + width + " x " + height);
 		// DEBUG.OUT("Zoom size: " + DPIUtil.getDeviceZoom());
 		// DEBUG.OUT("AutoScale down = ", false);
@@ -243,17 +240,15 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public Rectangle2D drawFile(final GamaFile file, final DrawingAttributes attributes) {
-		if (file == null) { return null; }
+		if (file == null) return null;
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
-		if (scene == null) { return null; }
+		if (scene == null) return null;
 		tryToHighlight(attributes);
 		if (file instanceof GamaGeometryFile) {
 			scene.addGeometryFile((GamaGeometryFile) file, attributes);
 			openGL.cacheGeometry((GamaGeometryFile) file);
 		} else if (file instanceof GamaImageFile) {
-			if (attributes.useCache()) {
-				openGL.cacheTexture(file.getFile(getSurface().getScope()));
-			}
+			if (attributes.useCache()) { openGL.cacheTexture(file.getFile(getSurface().getScope())); }
 			scene.addImage(file, attributes);
 		}
 
@@ -261,9 +256,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
+	public Rectangle2D drawField(final double[] fieldValues, final MeshDrawingAttributes attributes) {
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
-		if (scene == null) { return null; }
+		if (scene == null) return null;
 		final List<?> textures = attributes.getTextures();
 		if (textures != null && !textures.isEmpty()) {
 			for (final Object img : textures) {
@@ -285,9 +280,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 	@Override
 	public Rectangle2D drawShape(final Geometry shape, final DrawingAttributes attributes) {
-		if (shape == null) { return null; }
+		if (shape == null) return null;
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
-		if (scene == null) { return null; }
+		if (scene == null) return null;
 		tryToHighlight(attributes);
 		scene.addGeometry(shape, attributes);
 		return rect;
@@ -295,9 +290,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final DrawingAttributes attributes) {
-		if (img == null) { return null; }
+		if (img == null) return null;
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
-		if (scene == null) { return null; }
+		if (scene == null) return null;
 		scene.addImage(img, attributes);
 		tryToHighlight(attributes);
 		if (attributes.getBorder() != null) {
@@ -309,7 +304,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	@Override
 	public Rectangle2D drawChart(final ChartOutput chart) {
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
-		if (scene == null) { return null; }
+		if (scene == null) return null;
 		int x = getLayerWidth();
 		int y = getLayerHeight();
 		x = (int) (Math.min(x, y) * 0.80);
@@ -321,14 +316,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	protected void tryToHighlight(final DrawingAttributes attributes) {
-		if (highlight) {
-			attributes.setHighlighted(data.getHighlightColor());
-		}
+		if (highlight) { attributes.setHighlighted(data.getHighlightColor()); }
 	}
 
 	public void drawGridLine(final GamaPoint dimensions, final Color lineColor) {
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
-		if (scene == null) { return; }
+		if (scene == null) return;
 		double stepX, stepY;
 		final double cellWidth = getEnvHeight() / dimensions.x;
 		final double cellHeight = getEnvWidth() / dimensions.y;
@@ -349,13 +342,13 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
-		if (string == null || string.isEmpty()) { return null; }
+		if (string == null || string.isEmpty()) return null;
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
-		if (scene == null) { return null; }
+		if (scene == null) return null;
 		// Multiline: Issue #780
 		if (string.contains("\n")) {
 			int i = 0;
-			final double shift = attributes.font.getSize() / this.getyRatioBetweenPixelsAndModelUnits();
+			final double shift = attributes.getFont().getSize() / this.getyRatioBetweenPixelsAndModelUnits();
 			for (final String s : string.split("\n")) {
 				// DEBUG.OUT("Attributes Font Size: " + attributes.font.getSize());
 				// DEBUG.OUT("Get Y Ratio: " + getyRatioBetweenPixelsAndModelUnits());
@@ -363,7 +356,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 			}
 			return null;
 		}
-		openGL.cacheFont(attributes.font);
+		// openGL.cacheFont(attributes.getFont());
 		attributes.getLocation().setY(-attributes.getLocation().getY());
 		scene.addString(string, attributes);
 		return null;

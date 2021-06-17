@@ -27,6 +27,7 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.outputs.layers.AgentLayer;
 import msi.gama.outputs.layers.EventLayer;
+import msi.gama.outputs.layers.MeshLayer;
 import msi.gama.outputs.layers.GisLayer;
 import msi.gama.outputs.layers.GraphicLayer;
 import msi.gama.outputs.layers.GridAgentLayer;
@@ -71,6 +72,8 @@ public class LayerManager implements ILayerManager {
 				return new GraphicLayer(layer);
 			case OVERLAY:
 				return new OverlayLayer(layer);
+			case MESH:
+				return new MeshLayer(layer);
 			default:
 				return null;
 		}
@@ -111,14 +114,12 @@ public class LayerManager implements ILayerManager {
 	}
 
 	protected ILayer addLayer(final ILayer d) {
-		if (addItem(d)) { return d; }
+		if (addItem(d)) return d;
 		return null;
 	}
 
 	public void removeLayer(final ILayer found) {
-		if (found != null) {
-			enabledLayers.remove(found);
-		}
+		if (found != null) { enabledLayers.remove(found); }
 		Collections.sort(enabledLayers);
 	}
 
@@ -126,9 +127,7 @@ public class LayerManager implements ILayerManager {
 	public List<ILayer> getLayersIntersecting(final int x, final int y) {
 		final List<ILayer> result = new ArrayList<>();
 		for (final ILayer display : enabledLayers) {
-			if (display.containsScreenPoint(x, y)) {
-				result.add(display);
-			}
+			if (display.containsScreenPoint(x, y)) { result.add(display); }
 		}
 		return result;
 	}
@@ -140,7 +139,7 @@ public class LayerManager implements ILayerManager {
 	 */
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
-		if (geometry == null) { return null; }
+		if (geometry == null) return null;
 		Rectangle2D result = null;
 		for (final ILayer display : enabledLayers) {
 			final Rectangle2D r = display.focusOn(geometry, s);
@@ -172,20 +171,18 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void drawLayersOn(final IGraphics g) {
-		if (g == null || g.cannotDraw()) { return; }
+		if (g == null || g.cannotDraw()) return;
 		final IScope scope = surface.getScope();
 		// If the experiment is already closed
-		if (scope == null || scope.interrupted()) { return; }
+		if (scope == null || scope.interrupted()) return;
 		scope.setGraphics(g);
 		try {
 			if (g.beginDrawingLayers()) {
 				for (final ILayer dis : enabledLayers) {
-					if (scope.interrupted()) { return; }
+					if (scope.interrupted()) return;
 					dis.draw(scope, g);
 				}
-				if (overlay != null) {
-					overlay.draw(scope, g);
-				}
+				if (overlay != null) { overlay.draw(scope, g); }
 			}
 		} catch (final Exception e) {
 			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e, scope), false);
@@ -205,9 +202,7 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void removeItem(final ILayer found) {
-		if (found != null) {
-			enabledLayers.remove(found);
-		}
+		if (found != null) { enabledLayers.remove(found); }
 		Collections.sort(enabledLayers);
 	}
 
@@ -260,7 +255,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public boolean stayProportional() {
 		for (final ILayer i : enabledLayers) {
-			if (i.stayProportional()) { return true; }
+			if (i.stayProportional()) return true;
 		}
 		return false;
 	}
@@ -314,7 +309,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public boolean isProvidingCoordinates() {
 		for (final ILayer i : enabledLayers) {
-			if (i.isProvidingCoordinates()) { return true; }
+			if (i.isProvidingCoordinates()) return true;
 		}
 		return false;
 	}
@@ -327,7 +322,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public boolean isProvidingWorldCoordinates() {
 		for (final ILayer i : enabledLayers) {
-			if (i.isProvidingWorldCoordinates()) { return true; }
+			if (i.isProvidingWorldCoordinates()) return true;
 		}
 		return false;
 	}
@@ -335,9 +330,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public boolean hasMouseMenuEventLayer() {
 		for (final ILayer i : enabledLayers) {
-			if (i instanceof EventLayer) {
-				if (((EventLayer) i).getEvent().equals(IKeyword.MOUSE_MENU)) { return true; }
-			}
+			if (i instanceof EventLayer) { if (((EventLayer) i).getEvent().equals(IKeyword.MOUSE_MENU)) return true; }
 		}
 		return false;
 	}

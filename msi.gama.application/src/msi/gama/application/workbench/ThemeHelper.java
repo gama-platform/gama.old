@@ -63,11 +63,12 @@ public class ThemeHelper {
 	private static Boolean followOSTheme() {
 		final var prefs = getSwtRendererPreferences();
 		final var val = prefs.get(THEME_FOLLOW_PROPERTY, null);
-		if ( val != null ) { return Boolean.valueOf(val); }
+		if ( val != null )
+			return Boolean.valueOf(val);
 		return Boolean.valueOf(System.getProperty(THEME_FOLLOW_PROPERTY, "true"));
 	}
 
-	private static void followOSTheme(Boolean follow) {
+	private static void followOSTheme(final Boolean follow) {
 		Display.getDefault().setData(THEME_FOLLOW_PROPERTY, follow);
 		System.setProperty(THEME_FOLLOW_PROPERTY, follow.toString());
 		// We create a new preference
@@ -91,10 +92,10 @@ public class ThemeHelper {
 			}
 
 		} else {
-			final var theme = (themeEngine.getActiveTheme());
-			id = (theme == null) ? null : (theme.getId());
+			final var theme = themeEngine.getActiveTheme();
+			id = theme == null ? null : theme.getId();
 		}
-		return (id != null) && (id.contains("dark"));
+		return id != null && id.contains("dark");
 	}
 
 	public static void install() {
@@ -123,7 +124,7 @@ public class ThemeHelper {
 	 * @param light whether to choose a light (true) or dark (false) theme
 	 * @return whether a change has been necessary
 	 */
-	private static boolean changeTo(boolean light) {
+	private static boolean changeTo(final boolean light) {
 		// OS.setTheme(!light);
 		return changeTo(light ? E4_LIGHT_THEME_ID : E4_DARK_THEME_ID);
 	}
@@ -132,7 +133,7 @@ public class ThemeHelper {
 	 * Changes the current theme in both the theme engine and the preferences (so that they can stick)
 	 * @param id the identifier of the theme
 	 */
-	private static boolean changeTo(String id) {
+	private static boolean changeTo(final String id) {
 		// even early in the cycle
 		getContext().set(THEME_ID, id);
 		getThemeEclipsePreferences().put(THEME_ID_PREFERENCE, id);
@@ -142,8 +143,9 @@ public class ThemeHelper {
 			e.printStackTrace();
 		}
 		final var themeEngine = getContext().get(IThemeEngine.class);
-		if ( themeEngine == null ) { return true; }
-		final var theme = (themeEngine.getActiveTheme());
+		if ( themeEngine == null )
+			return true;
+		final var theme = themeEngine.getActiveTheme();
 		if ( theme != null ) {
 			if ( theme.getId().startsWith(id) )
 				return false;
@@ -152,29 +154,28 @@ public class ThemeHelper {
 		return true;
 	}
 
-	public static void addListener(IThemeListener l) {
-		if ( !listeners.contains(l) )
-			listeners.add(l);
+	public static void addListener(final IThemeListener l) {
+		if ( !listeners.contains(l) ) { listeners.add(l); }
 	}
 
-	public static void removeListener(IThemeListener l) {
+	public static void removeListener(final IThemeListener l) {
 		listeners.remove(l);
 	}
 
 	public static class WorkbenchThemeChangedHandler implements EventHandler {
 
 		@Override
-		public void handleEvent(org.osgi.service.event.Event event) {
+		public void handleEvent(final org.osgi.service.event.Event event) {
 			final var theme = getTheme(event);
-			System.out.println("PROPERTY " + THEME_FOLLOW_PROPERTY + " = " + System.getProperty(THEME_FOLLOW_PROPERTY));
-			System.out.println("THEME = " + theme);
+			// System.out.println("PROPERTY " + THEME_FOLLOW_PROPERTY + " = " + System.getProperty(THEME_FOLLOW_PROPERTY));
+			// System.out.println("THEME = " + theme);
 			if ( theme == null )
 				return;
 			final var isDark = theme.getId().startsWith(E4_DARK_THEME_ID);
 			listeners.forEach(l -> l.themeChanged(!isDark));
 		}
 
-		protected ITheme getTheme(org.osgi.service.event.Event event) {
+		protected ITheme getTheme(final org.osgi.service.event.Event event) {
 			var theme = (ITheme) event.getProperty(IThemeEngine.Events.THEME);
 			if ( theme == null ) {
 				final var themeEngine = getContext().get(IThemeEngine.class);

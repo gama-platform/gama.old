@@ -23,11 +23,6 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		final String name = op.value().length == 0 ? method.getSimpleName().toString() : op.value()[0];
 		verifyDoc(context, method, "operator " + name, op);
 		verifyTests(context, method, op);
-		final Set<Modifier> modifiers = method.getModifiers();
-		if (!modifiers.contains(Modifier.PUBLIC)) {
-			context.emitError("GAML: operators can only be implemented by public (or public static) methods", method);
-			return;
-		}
 
 		final String declClass = rawNameOf(context, method.getEnclosingElement().asType());
 		final List<? extends VariableElement> argParams = ((ExecutableElement) method).getParameters();
@@ -36,12 +31,12 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			final VariableElement ve = argParams.get(i);
 			switch (ve.asType().getKind()) {
 				case ARRAY:
-					context.emitError("GAML: arrays should be wrapped in a GAML container (IList or IMatrix) ", ve);
+					context.emitError("arrays should be wrapped in a GAML container (IList or IMatrix) ", ve);
 					return;
 				case CHAR:
 				case BYTE:
 				case SHORT:
-					context.emitWarning("GAML: This argument will be casted to int", ve);
+					context.emitWarning("this argument will be casted to int", ve);
 					break;
 				default:
 			}
@@ -51,9 +46,10 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		}
 		final int n = args.length;
 		final boolean hasScope = n > 0 && args[0].contains("IScope");
+		final Set<Modifier> modifiers = method.getModifiers();
 		final boolean isStatic = modifiers.contains(Modifier.STATIC);
 		if (n == 0 && !isStatic || isStatic && hasScope && n == 1) {
-			context.emitError("GAML: an operator needs to have at least one operand", method);
+			context.emitError("an operator needs to have at least one operand", method);
 			return;
 		}
 		final int actualArgsNumber = n + (hasScope ? -1 : 0) + (!isStatic ? 1 : 0);
@@ -73,7 +69,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 				classes[begin + i] = args[i + shift];
 			}
 		} catch (final Exception e1) {
-			context.emitError("An exception occured in the processing of operators: ", e1, method);
+			context.emitError("an exception occured in the processing of operators: ", e1, method);
 			return;
 		}
 
@@ -82,26 +78,26 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 		switch (((ExecutableElement) method).getReturnType().getKind()) {
 			case ARRAY:
-				context.emitError("GAML: Wrap the returned array in a GAML container (IList or IMatrix) ", method);
+				context.emitError("wrap the returned array in a GAML container (IList or IMatrix) ", method);
 				return;
 			case VOID: // does not seem to be recognized
 			case NULL:
 			case NONE:
 			case ERROR:
-				context.emitError("GAML operators need to return a value.", method);
+				context.emitError("operators need to return a value.", method);
 				return;
 			case CHAR:
 			case BYTE:
 			case SHORT:
-				context.emitWarning("GAML: the return type will be casted to integer", method);
+				context.emitWarning("the return type will be casted to integer", method);
 				break;
 			case EXECUTABLE:
-				context.emitError("GAML: operators cannot return Java executables", method);
+				context.emitError("operators cannot return Java executables", method);
 				return;
 			default:
 		}
 		if (ret.equals("void")) {
-			context.emitError("GAML: operators need to return a value", method);
+			context.emitError("operators need to return a value", method);
 			return;
 		}
 		final String met = isStatic ? declClass + "." + method.getSimpleName() : method.getSimpleName().toString();
@@ -134,9 +130,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			sb.append("((").append(classes[0]).append(")o).").append(met).append('(').append(firstArg);
 		}
 		if (start < classes.length) {
-			if (hasScope) {
-				sb.append(',');
-			}
+			if (hasScope) { sb.append(','); }
 			param(sb, classes[0], "o");
 		}
 		sb.append("));");
@@ -153,9 +147,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			sb.append("((").append(classes[0]).append(")o1).").append(met).append('(').append(firstArg);
 		}
 		if (start < classes.length) {
-			if (hasScope) {
-				sb.append(',');
-			}
+			if (hasScope) { sb.append(','); }
 			if (start == 0) {
 				param(sb, classes[0], "o1");
 				sb.append(',');
@@ -177,9 +169,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 					.append(firstArg);
 		}
 		if (start < classes.length) {
-			if (hasScope) {
-				sb.append(',');
-			}
+			if (hasScope) { sb.append(','); }
 			for (int i = start; i < classes.length; i++) {
 				param(sb, classes[i], isUnary ? "o" : "o[" + i + "]");
 				sb.append(i != classes.length - 1 ? "," : "");
@@ -208,16 +198,12 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 				warning = "it is safer to use the GamaColor type";
 				break;
 		}
-		if (warning != null) {
-			context.emitWarning("GAML: " + warning, ve);
-		}
+		if (warning != null) { context.emitWarning(warning, ve); }
 
 	}
 
 	private void verifyTests(final ProcessorContext context, final Element method, final operator op) {
-		if (!hasTests(method, op)) {
-			context.emitWarning("GAML: operator '" + op.value()[0] + "' is not tested", method);
-		}
+		if (!hasTests(method, op)) { context.emitWarning("operator '" + op.value()[0] + "' is not tested", method); }
 	}
 
 	@Override
@@ -231,12 +217,12 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 	}
 
 	protected static String extractMethod(final String s, final boolean stat) {
-		if (!stat) { return s; }
+		if (!stat) return s;
 		return s.substring(s.lastIndexOf('.') + 1);
 	}
 
 	protected static String extractClass(final String name, final String string, final boolean stat) {
-		if (stat) { return name.substring(0, name.lastIndexOf('.')); }
+		if (stat) return name.substring(0, name.lastIndexOf('.'));
 		return string;
 	}
 
@@ -245,9 +231,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		final int start = stat ? 0 : 1;
 		sb.append(toClassObject(extractClass(name, classes[0], stat)));
 		sb.append(".getMethod(").append(toJavaString(extractMethod(name, stat))).append(',');
-		if (scope) {
-			sb.append(toClassObject(ISCOPE)).append(',');
-		}
+		if (scope) { sb.append(toClassObject(ISCOPE)).append(','); }
 		for (int i = start; i < classes.length; i++) {
 			sb.append(toClassObject(classes[i]));
 			sb.append(',');
@@ -264,13 +248,18 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		}
 		sb.append("C(");
 		for (int i = 0; i < segments.length; i++) {
-			if (i > 0) {
-				sb.append(',');
-			}
+			if (i > 0) { sb.append(','); }
 			sb.append(toClassObject(segments[i]));
 		}
 		sb.append(")");
 		return sb;
+	}
+
+	@Override
+	protected boolean validateElement(final ProcessorContext context, final Element e) {
+		boolean result = assertElementIsPublic(context, true, e);
+		// TODO: move all other warnings and errors here
+		return result;
 	}
 
 }

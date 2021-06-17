@@ -116,7 +116,7 @@ experiment "Click and Move" type: gui
 			{
 				if (empty(moved_agents))
 				{
-					draw zone at: target empty: false border: false color: #wheat;
+					draw zone at: target wireframe: false border: false color: #wheat;
 				}
 
 			}
@@ -133,7 +133,7 @@ experiment "Click and Move" type: gui
 				{
 					rgb c1 <- rgb(#darkseagreen, 120);
 					rgb c2 <- rgb(#firebrick, 120);
-					draw zone at: target empty: false border: false color: (can_drop ? c1 : c2);
+					draw zone at: target wireframe: false border: false color: (can_drop ? c1 : c2);
 					draw string(size) at: target + { -30, -30 } font: regular color: # white;
 					draw "'r': remove" at: target + { -30, 0 } font: regular color: # white;
 					draw "'c': copy" at: target + { -30, 30 } font: regular color: # white;
@@ -149,7 +149,7 @@ experiment "Click and Move" type: gui
 			{
 				if (empty(moved_agents))
 				{
-					draw zone at: target empty: false border: false color: #wheat;
+					draw zone at: target wireframe: false border: false color: #wheat;
 				}
 
 			}
@@ -166,7 +166,7 @@ experiment "Click and Move" type: gui
 				{
 					rgb c1 <- rgb(#darkseagreen, 120);
 					rgb c2 <- rgb(#firebrick, 120);
-					draw zone at: target empty: false border: false color: (can_drop ? c1 : c2);
+					draw zone at: target wireframe: false border: false color: (can_drop ? c1 : c2);
 					draw string(size) at: target + { -30, -30 } font: regular color: # white;
 					draw "'r': remove" at: target + { -30, 0 } font: regular color: # white;
 					draw "'c': copy" at: target + { -30, 30 } font: regular color: # white;

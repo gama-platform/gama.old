@@ -3216,14 +3216,14 @@ rule__DisplayStatement__Alternatives
 :
 	(
 		{ before(grammarAccess.getDisplayStatementAccess().getSpeciesOrGridDisplayStatementParserRuleCall_0()); }
-		rulespeciesOrGridDisplayStatement
+		(rulespeciesOrGridDisplayStatement)
 		{ after(grammarAccess.getDisplayStatementAccess().getSpeciesOrGridDisplayStatementParserRuleCall_0()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getDisplayStatementAccess().getS_1Expr_Facets_BlockOrEndParserRuleCall_1()); }
-		ruleS_1Expr_Facets_BlockOrEnd
-		{ after(grammarAccess.getDisplayStatementAccess().getS_1Expr_Facets_BlockOrEndParserRuleCall_1()); }
+		{ before(grammarAccess.getDisplayStatementAccess().getStatementParserRuleCall_1()); }
+		ruleStatement
+		{ after(grammarAccess.getDisplayStatementAccess().getStatementParserRuleCall_1()); }
 	)
 ;
 finally {
@@ -3530,6 +3530,12 @@ rule___LayerKey__Alternatives
 		{ before(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_13()); }
 		'datalist'
 		{ after(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_13()); }
+	)
+	|
+	(
+		{ before(grammarAccess.get_LayerKeyAccess().getMeshKeyword_14()); }
+		'mesh'
+		{ after(grammarAccess.get_LayerKeyAccess().getMeshKeyword_14()); }
 	)
 ;
 finally {

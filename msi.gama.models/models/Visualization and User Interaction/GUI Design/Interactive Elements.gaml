@@ -86,7 +86,7 @@ experiment GUIinteractiveelements type: gui {
 	//////////////////////////////////////////////
 	// Any input chooser can have the on_change: facet in order to call a set of statements (or a single action) every time the associated 
 	// parameter is modified.
-	parameter "Float (with on_change listener)" category:"Interactive" var: float_on_change on_change: {write ""+float_on_change;};
+	parameter "Float (with on_change listener)" category:"Interactive" var: float_on_change {write ""+float_on_change;}
 	// A user_command adds a button to the interface in order to call an action or a set of statements when it is clicked.
 	user_command "Display parameter" category: "Interactive" color:#darkblue {ask world {do writing_parameters;}}
 	

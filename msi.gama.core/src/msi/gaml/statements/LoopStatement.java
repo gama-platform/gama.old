@@ -323,12 +323,13 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		// 25/02/14: Suppressed because already done in loopBody() :
 		// super.enterScope(scope);
 
-		if (varName != null) { scope.addVarWithValue(varName, null); }
+		// if (varName != null) { scope.addVarWithValue(varName, null); }
 	}
 
 	@Override
 	public void leaveScope(final IScope scope) {
 		// Should clear any _loop_halted status present
+		// if (varName != null) { scope.removeAllVars(); }
 		scope.popLoop();
 	}
 
@@ -339,7 +340,8 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	protected boolean loopBody(final IScope scope, final Object var, final Object[] result) {
 		scope.push(this);
-		if (varName != null) { scope.setVarValue(varName, var); }
+		// We set it explicitely to the newly created scope
+		if (varName != null) { scope.setVarValue(varName, var, true); }
 		result[0] = super.privateExecuteIn(scope);
 		scope.pop(this);
 		return !scope.interrupted();

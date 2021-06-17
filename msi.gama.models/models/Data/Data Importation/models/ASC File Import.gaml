@@ -27,11 +27,11 @@ grid cell file: grid_data{
 experiment gridloading type: gui {
 	output {
 		display "As DEM" type: opengl{
-			grid cell lines: #gray elevation: self.grid_value * 300 ;
+			grid cell border: #gray elevation: self.grid_value * 300 ;
 		}
 		
 		display "As 2D grid"  type: java2D {
-			grid cell lines: #black;
+			grid cell border: #black;
 		}
 	} 
 }

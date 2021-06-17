@@ -10,16 +10,28 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
+import java.util.Arrays;
+
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaGridFile;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.draw.MeshDrawingAttributes;
 
 /**
  * Class Deprecated.
@@ -1104,5 +1116,113 @@ public class DeprecatedOperators {
 	// if ( radius <= 0 ) { return new GamaShape(location); }
 	// return GamaGeometryType.buildSphere(radius, location);
 	// }
+
+	@operator (
+			value = "dem",
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+			concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.TEXTURE })
+	@doc (
+			deprecated = "use the 'field' layer statement instead",
+			value = "A polygon that is equivalent to the surface of the texture",
+			masterDoc = true,
+			comment = "",
+			examples = { @example (
+					value = "dem(dem)",
+					equals = "returns a geometry as a rectangle of width and height equal to the texture.",
+					isExecutable = false) },
+			see = {})
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+	public static IShape dem(final IScope scope, final GamaFile demFileName) {
+		return dem(scope, demFileName, demFileName, 1.0);
+	}
+
+	@operator (
+			value = "dem",
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+			concept = {})
+	@doc (
+			deprecated = "use the 'field' layer statement instead",
+			value = "A polygon that is equivalent to the surface of the texture",
+			examples = { @example (
+					value = "dem(dem,z_factor)",
+					equals = "a geometry as a rectangle of weight and height equal to the texture.",
+					isExecutable = false) },
+			see = {})
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+	public static IShape dem(final IScope scope, final GamaFile demFileName, final Double z_factor) {
+		return dem(scope, demFileName, demFileName, z_factor);
+	}
+
+	@operator (
+			value = "dem",
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+			concept = {})
+	@doc (
+			deprecated = "use the 'field' layer statement instead",
+			value = "A polygon equivalent to the surface of the texture",
+			examples = { @example (
+					value = "dem(dem,texture)",
+					equals = "a geometry as a rectangle of weight and height equal to the texture.",
+					isExecutable = false) },
+			see = {})
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+	public static IShape dem(final IScope scope, final GamaFile demFile, final GamaFile textureFile) {
+		return dem(scope, demFile, textureFile, 1.0);
+	}
+
+	@operator (
+			value = "dem",
+			category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
+			concept = {})
+	@doc (
+			deprecated = "use the 'field' layer statement instead",
+			value = "Returns a polygon equivalent to the surface of the textures passed in parameters. This operator only makes sense in the context of the 'draw' command",
+			examples = { @example (
+					value = "dem(dem,texture,z_factor)",
+					equals = "a geometry as a rectangle of width and height equal to the texture.",
+					isExecutable = false) },
+			see = {})
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+	public static IShape dem(final IScope scope, final GamaFile demFile, final GamaFile textureFile,
+			final Double z_factor) {
+		// if (!(textureFile instanceof GamaImageFile))
+		// throw GamaRuntimeException.error("" + textureFile.getPath(scope) + " is not an image", scope);
+		final IGraphics graphics = scope.getGraphics();
+		if (graphics == null || graphics.cannotDraw()) return null;
+		final MeshDrawingAttributes attributes = new MeshDrawingAttributes(null, null, false);
+		attributes.setHeight(z_factor);
+
+		if (!graphics.is2D()) {
+			// If we are in the OpenGL world
+			GamaPoint p = getDimensionsOf(scope, demFile);
+			GamaPoint cs =
+					new GamaPoint(scope.getGraphics().getEnvWidth() / p.x, scope.getGraphics().getEnvHeight() / p.y);
+			attributes.setCellSize(cs);
+			attributes.setGrayscaled(attributes.isGrayscaled() || !(textureFile instanceof GamaImageFile));
+			attributes.setTriangulated(true);
+			if (!attributes.isGrayscaled()) {
+				// TODO AD Understand why we cant use the "normal" way of loading textures in OpenGL.
+				// final BufferedImage dem = ((GamaImageFile) textureFile).getImage(scope, true);
+				attributes.setTextures(Arrays.asList(textureFile));
+			}
+			// graphics.drawField(buildDoubleArrayFrom(scope, demFile), attributes);
+		} else {
+			graphics.drawFile(demFile, attributes);
+		}
+		return null;
+	}
+
+	private static GamaPoint getDimensionsOf(final IScope scope, final GamaFile file) {
+		GamaPoint result = new GamaPoint();
+		if (file instanceof GamaImageFile) {
+			result.x = ((GamaImageFile) file).getCols(scope);
+			result.y = ((GamaImageFile) file).getRows(scope);
+		} else if (file instanceof GamaGridFile) {
+			result.x = ((GamaGridFile) file).getCols(scope);
+			result.y = ((GamaGridFile) file).getRows(scope);
+		}
+
+		return result;
+	}
 
 }

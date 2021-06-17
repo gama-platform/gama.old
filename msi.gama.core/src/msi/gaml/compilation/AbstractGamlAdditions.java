@@ -10,11 +10,21 @@
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
+import static com.google.common.collect.Iterables.addAll;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 import static msi.gama.common.interfaces.IKeyword.OF;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword._DOT;
+import static msi.gama.common.util.JavaUtils.collectImplementationClasses;
+import static msi.gama.util.GamaMapFactory.create;
+import static msi.gama.util.GamaMapFactory.createUnordered;
 import static msi.gaml.compilation.kernel.GamaBundleLoader.CURRENT_PLUGIN_NAME;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
+import static msi.gaml.factories.DescriptionFactory.create;
+import static msi.gaml.factories.DescriptionFactory.getStatementProto;
+import static msi.gaml.factories.DescriptionFactory.getStatementProtoNames;
+import static msi.gaml.types.Types.getBuiltInSpecies;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
@@ -30,7 +40,6 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 import msi.gama.common.interfaces.IDisplayCreator;
@@ -39,7 +48,6 @@ import msi.gama.common.interfaces.IExperimentAgentCreator;
 import msi.gama.common.interfaces.IExperimentAgentCreator.ExperimentAgentDescription;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ISkill;
-import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ISymbolKind;
@@ -89,9 +97,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private static Function<Class, Collection<IDescription>> INTO_DESCRIPTIONS = input -> ADDITIONS.get(input);
 	private final static Multimap<Class, OperatorProto> FIELDS = HashMultimap.create();
 	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
-	// public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS =
-	// new THashMap<>();
 	public final static Map<String, String> TEMPORARY_BUILT_IN_VARS_DOCUMENTATION = new HashMap<>();
+	public final static HashMultimap<Class, GamaHelper> LISTENERS_BY_CLASS = HashMultimap.create();
+	public final static HashMultimap<String, Class> LISTENERS_BY_NAME = HashMultimap.create();
 
 	protected static String[] S(final String... strings) {
 		return strings;
@@ -179,12 +187,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final validator v = (validator) c.getAnnotation(validator.class);
 		final serializer s = (serializer) c.getAnnotation(serializer.class);
 		try {
-			if (v != null) {
-				validator2 = v.value().newInstance();
-			}
-			if (s != null) {
-				serializer2 = s.value().newInstance();
-			}
+			if (v != null) { validator2 = v.value().newInstance(); }
+			if (s != null) { serializer2 = s.value().newInstance(); }
 		} catch (InstantiationException | IllegalAccessException e) {}
 
 		final Collection<String> keywords;
@@ -220,9 +224,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		for (final String keyword : keywords) {
 			final String kw = keyword;
-			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, GamaMapFactory.createUnordered());
-			}
+			if (!OPERATORS.containsKey(kw)) { OPERATORS.put(kw, GamaMapFactory.createUnordered()); }
 			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if (!map.containsKey(signature)) {
 				OperatorProto proto;
@@ -256,9 +258,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		for (final String keyword : keywords) {
 			final String kw = keyword;
-			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, GamaMapFactory.createUnordered());
-			}
+			if (!OPERATORS.containsKey(kw)) { OPERATORS.put(kw, GamaMapFactory.createUnordered()); }
 			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if (!map.containsKey(signature)) {
 				OperatorProto proto;
@@ -293,6 +293,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	}
 
+	public void _listener(final String varName, final Class clazz, final IGamaHelper helper) {
+		GamaHelper gh = new GamaHelper(varName, clazz, helper);
+		LISTENERS_BY_CLASS.put(clazz, gh);
+		LISTENERS_BY_NAME.put(varName, clazz);
+	}
+
 	public void _unary(final String[] keywords, final AccessibleObject method, final Class[] classes,
 			final int[] expectedContentTypes, final Object returnClassOrType, final boolean c, final int t,
 			final int content, final int index, final int contentContentType, final GamaGetter.Unary helper) {
@@ -300,9 +306,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		for (final String keyword : keywords) {
 			final String kw = keyword;
-			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, GamaMapFactory.createUnordered());
-			}
+			if (!OPERATORS.containsKey(kw)) { OPERATORS.put(kw, createUnordered()); }
 			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if (!map.containsKey(signature)) {
 				OperatorProto proto;
@@ -329,9 +333,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		int indexOfIType = -1;
 		for (int i = 0; i < classes.length; i++) {
 			final Class cl = classes[i];
-			if (IType.class.isAssignableFrom(cl)) {
-				indexOfIType = i;
-			}
+			if (IType.class.isAssignableFrom(cl)) { indexOfIType = i; }
 		}
 		final int content =
 				indexOfIType == -1 ? ITypeProvider.NONE : ITypeProvider.DENOTED_TYPE_AT_INDEX + indexOfIType + 1;
@@ -346,9 +348,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		int indexOfIType = -1;
 		for (int i = 0; i < classes.length; i++) {
 			final Class cl = classes[i];
-			if (IType.class.isAssignableFrom(cl)) {
-				indexOfIType = i;
-			}
+			if (IType.class.isAssignableFrom(cl)) { indexOfIType = i; }
 		}
 		final int content =
 				indexOfIType == -1 ? ITypeProvider.NONE : ITypeProvider.DENOTED_TYPE_AT_INDEX + indexOfIType + 1;
@@ -374,10 +374,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			if (v.name().equals(name)) {
 				final doc[] docs = v.doc();
 				// final String d = "";
-				if (docs.length > 0) {
-					// documentation of fields is not used
+				if (docs.length > 0) // documentation of fields is not used
 					return docs[0].value();
-				}
 			}
 		}
 		return "";
@@ -399,11 +397,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected IDescription desc(final String keyword, final Children children, final String... facets) {
-		return DescriptionFactory.create(keyword, null, children.getChildren(), facets);
+		return create(keyword, null, children.getChildren(), facets);
 	}
 
 	protected IDescription desc(final String keyword, final String... facets) {
-		return DescriptionFactory.create(keyword, facets);
+		return create(keyword, facets);
 	}
 
 	/**
@@ -415,13 +413,13 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 */
 	protected IDescription desc(final int keyword, final String... facets) {
 		final IType t = Types.get(keyword);
-		if (t == null) { throw new RuntimeException("Types not defined"); }
+		if (t == null) throw new RuntimeException("Types not defined");
 		return desc(t.toString(), facets);
 	}
 
 	protected void _action(final IGamaHelper e, final IDescription desc, final Method method) {
 		final Class clazz = method.getDeclaringClass();
-		((PrimitiveDescription) desc).setHelper(new GamaHelper(clazz, e), method);
+		((PrimitiveDescription) desc).setHelper(new GamaHelper(desc.getName(), clazz, e), method);
 		((PrimitiveDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		add(clazz, desc);
 	}
@@ -442,9 +440,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Map<String, OperatorProto> getAllFields(final Class clazz) {
-		final List<Class> classes =
-				JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, FIELDS.keySet());
-		final Map<String, OperatorProto> fieldsMap = GamaMapFactory.create();
+		final List<Class> classes = collectImplementationClasses(clazz, Collections.EMPTY_SET, FIELDS.keySet());
+		final Map<String, OperatorProto> fieldsMap = create();
 		for (final Class c : classes) {
 			for (final OperatorProto desc : FIELDS.get(c)) {
 				fieldsMap.put(desc.getName(), desc);
@@ -455,8 +452,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Iterable<IDescription> getAllChildrenOf(final Class base,
 			final Iterable<Class<? extends ISkill>> skills) {
-		final List<Class> classes = JavaUtils.collectImplementationClasses(base, skills, ADDITIONS.keySet());
-		return Iterables.concat(Iterables.transform(classes, INTO_DESCRIPTIONS));
+		final List<Class> classes = collectImplementationClasses(base, skills, ADDITIONS.keySet());
+		return concat(transform(classes, INTO_DESCRIPTIONS));
 	}
 
 	public static Collection<OperatorProto> getAllFields() {
@@ -472,7 +469,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		};
 
 		final DescriptionVisitor<IDescription> actionVisitor = desc -> {
-			Iterables.addAll(result, ((StatementDescription) desc).getFormalArgs());
+			addAll(result, ((StatementDescription) desc).getFormalArgs());
 			return true;
 		};
 
@@ -492,24 +489,22 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Collection<SymbolProto> getStatementsForSkill(final String s) {
 		final Set<SymbolProto> result = new LinkedHashSet();
-		for (final String p : DescriptionFactory.getStatementProtoNames()) {
-			final SymbolProto proto = DescriptionFactory.getStatementProto(p, s);
-			if (proto != null && proto.shouldBeDefinedIn(s)) {
-				result.add(proto);
-			}
+		for (final String p : getStatementProtoNames()) {
+			final SymbolProto proto = getStatementProto(p, s);
+			if (proto != null && proto.shouldBeDefinedIn(s)) { result.add(proto); }
 		}
 		return result;
 	}
 
 	public static Collection<IDescription> getAllActions() {
-		final IMap<String, IDescription> result = GamaMapFactory.createUnordered();
+		final IMap<String, IDescription> result = createUnordered();
 
 		final DescriptionVisitor<IDescription> visitor = desc -> {
 			result.putIfAbsent(desc.getName(), desc);
 			return true;
 		};
 
-		for (final TypeDescription s : Types.getBuiltInSpecies()) {
+		for (final TypeDescription s : getBuiltInSpecies()) {
 			s.visitOwnActions(visitor);
 		}
 		GamaSkillRegistry.INSTANCE.visitSkills(desc -> {
@@ -532,10 +527,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 * @return
 	 */
 	public static boolean isUnaryOperator(final String name) {
-		if (!OPERATORS.containsKey(name)) { return false; }
+		if (!OPERATORS.containsKey(name)) return false;
 		final Map<Signature, OperatorProto> map = OPERATORS.get(name);
 		for (final Signature s : map.keySet()) {
-			if (s.isUnary()) { return true; }
+			if (s.isUnary()) return true;
 		}
 		return false;
 	}

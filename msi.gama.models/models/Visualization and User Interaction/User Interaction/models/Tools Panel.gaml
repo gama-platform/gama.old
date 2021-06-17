@@ -83,7 +83,7 @@ experiment ToolsPanel type: gui {
 	output {
 			layout horizontal([0.0::7285,1::2715]) tabs:true;
 		display map {
-			grid cell lines: #white;
+			grid cell border: #white;
 			species cell;
 			event mouse_down action:cell_management;
 			

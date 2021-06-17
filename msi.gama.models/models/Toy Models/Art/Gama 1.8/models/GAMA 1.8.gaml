@@ -201,7 +201,7 @@ species runner skills: [moving] {
 experiment "Run me !" type: gui  autorun: true {
 	output {
 		display "1.8" type: opengl fullscreen: true toolbar: #black background: #black draw_env: false 
-			camera_pos: {1298.0375, 3277.2938, 2177.5545} camera_look_pos: {1261.3366, 1174.7007, 0.0} camera_up_vector: {-0.0126, 0.7192, 0.6947}{
+			camera_location: {1298.0375, 3277.2938, 2177.5545} camera_target: {1261.3366, 1174.7007, 0.0} camera_orientation: {-0.0126, 0.7192, 0.6947}{
 			species roads;
 			species runner {
 				draw my_shape at: location depth: depth color: color;

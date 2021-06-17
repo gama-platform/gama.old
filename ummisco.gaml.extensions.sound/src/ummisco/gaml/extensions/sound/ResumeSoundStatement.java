@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.sound;
@@ -33,7 +33,7 @@ import ummisco.gaml.extensions.sound.ResumeSoundStatement.ResumeSoundValidator;
 		with_sequence = true,
 		concept = { IConcept.SOUND })
 @inside (
-		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER, ISymbolKind.OUTPUT })
 @validator (ResumeSoundValidator.class)
 @doc ("Allows to resume the sound output")
 public class ResumeSoundStatement extends AbstractStatementSequence {
@@ -42,7 +42,7 @@ public class ResumeSoundStatement extends AbstractStatementSequence {
 
 		/**
 		 * Method validate()
-		 * 
+		 *
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -72,9 +72,7 @@ public class ResumeSoundStatement extends AbstractStatementSequence {
 		final GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
 		soundPlayer.resume(scope);
 
-		if (sequence != null) {
-			scope.execute(sequence, currentAgent, null);
-		}
+		if (sequence != null) { scope.execute(sequence, currentAgent, null); }
 
 		return null;
 	}

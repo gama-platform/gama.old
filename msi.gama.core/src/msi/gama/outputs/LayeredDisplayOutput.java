@@ -108,6 +108,11 @@ import msi.gaml.types.IType;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("Indicates whether the display should be directly synchronized with the simulation")),
+				@facet (
+						name = "antialias",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Indicates whether to use advanced antialiasing for the display or not. The default value is the one indicated in the preferences of GAMA ('false' is its factory default). Antialising produces smoother outputs, but comes with a cost in terms of speed and memory used. ")),
 
 				@facet (
 						name = IKeyword.REFRESH,
@@ -188,20 +193,41 @@ import msi.gaml.types.IType;
 						doc = @doc (
 								value = "Allows to show/hide a representation of the lights. Default is false.")),
 				@facet (
-						name = IKeyword.CAMERA_POS,
+						name = "camera_pos",
 						type = { IType.POINT, IType.AGENT },
 						optional = true,
-						doc = @doc ("Allows to define the position of the camera")),
+						doc = @doc (
+								deprecated = "Use 'camera_location' instead",
+								value = "Allows to define the position of the camera")),
 				@facet (
-						name = IKeyword.CAMERA_LOOK_POS,
+						name = IKeyword.CAMERA_LOCATION,
+						type = { IType.POINT, IType.AGENT },
+						optional = true,
+						doc = @doc ("Allows to define the location of the camera, the origin being the center of the model")),
+				@facet (
+						name = IKeyword.CAMERA_TARGET,
 						type = IType.POINT,
 						optional = true,
-						doc = @doc ("Allows to define the direction of the camera")),
+						doc = @doc ("Allows to define the target of the camera (what does it look at)")),
 				@facet (
-						name = IKeyword.CAMERA_UP_VECTOR,
+						name = "camera_look_pos",
 						type = IType.POINT,
 						optional = true,
-						doc = @doc ("Allows to define the orientation of the camera")),
+						doc = @doc (
+								deprecated = "Use 'camera_target' instead",
+								value = "Allows to define the direction of the camera")),
+				@facet (
+						name = IKeyword.CAMERA_ORIENTATION,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("Allows to define the orientation of the 'up-vector' of the camera")),
+				@facet (
+						name = "camera_up_vector",
+						type = IType.POINT,
+						optional = true,
+						doc = @doc (
+								deprecated = "Use 'camera_orientation' instead",
+								value = "Allows to define the orientation of the 'up-vector' of the camera")),
 				@facet (
 						name = IKeyword.CAMERA_LENS,
 						internal = true,
@@ -318,9 +344,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		public void validate(final IDescription d) {
 
 			final IExpressionDescription parent = d.getFacet(PARENT);
-			if (parent != null) {
-				handleInheritance(d, parent.toString());
-			}
+			if (parent != null) { handleInheritance(d, parent.toString()); }
 
 			final IExpressionDescription auto = d.getFacet(AUTOSAVE);
 			if (auto != null && auto.getExpression().isConst() && auto.getExpression().literalValue().equals(TRUE)) {
@@ -341,15 +365,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 							IGamlIssue.UNKNOWN_KEYWORD, TYPE);
 					return;
 				}
-				;
 			} else {
-				if (isOpenGLDefault) {
-					d.setFacet(TYPE, LabelExpressionDescription.create(LayeredDisplayData.OPENGL));
-				}
+				if (isOpenGLDefault) { d.setFacet(TYPE, LabelExpressionDescription.create(LayeredDisplayData.OPENGL)); }
 			}
 
-			final String camera = d.firstFacetFoundAmong(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR, CAMERA_LENS,
-					"z_near", "z_far");
+			final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,
+					CAMERA_LENS, "z_near", "z_far");
 			if (!isOpenGLWanted && camera != null) {
 				d.warning(
 						"camera-related facets will have no effect on 2D displays. Use 'focus:' instead if you want to change the default zoom and position.",
@@ -360,13 +381,19 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final IExpressionDescription trace = d.getFacet(TRACE);
 			if (trace != null) {
 				d.visitChildren(layer -> {
-					if (!layer.hasFacet(TRACE)) {
-						layer.setFacet(TRACE, trace);
-					}
+					if (!layer.hasFacet(TRACE)) { layer.setFacet(TRACE, trace); }
 					return true;
 				});
 
 			}
+			// AD: addressing the deprecation of camera_up_vector, camera_look_pos and camera_pos
+			IExpressionDescription c = d.getFacet("camera_up_vector");
+			if (c != null) { d.setFacet(CAMERA_ORIENTATION, c); }
+			c = d.getFacet("camera_look_pos");
+			if (c != null) { d.setFacet(CAMERA_TARGET, c); }
+			c = d.getFacet("camera_pos");
+			if (c != null) { d.setFacet(CAMERA_LOCATION, c); }
+			d.removeFacets("camera_pos", "camera_look_pos", "camera_up_vector");
 		}
 
 		private void handleInheritance(final IDescription d, final String string) {
@@ -385,9 +412,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final boolean hasVirtual = childFacets.containsKey(VIRTUAL);
 			final Facets parentFacets = parent.getFacets();
 			childFacets.complementWith(parentFacets);
-			if (!hasVirtual) {
-				childFacets.remove(VIRTUAL);
-			}
+			if (!hasVirtual) { childFacets.remove(VIRTUAL); }
 			child.replaceChildrenWith(Iterables.concat(parent.getOwnChildren(), child.getOwnChildren()));
 
 		}
@@ -397,9 +422,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
 
-		if (hasFacet(IKeyword.TYPE)) {
-			data.setDisplayType(getLiteral(IKeyword.TYPE));
-		}
+		if (hasFacet(IKeyword.TYPE)) { data.setDisplayType(getLiteral(IKeyword.TYPE)); }
 		layers = new ArrayList<>();
 	}
 
@@ -416,18 +439,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		final boolean result = super.init(scope);
-		if (!result) { return false; }
+		if (!result) return false;
 		data.initWith(getScope(), description);
 
 		for (final ILayerStatement layer : getLayers()) {
 			layer.setDisplayOutput(this);
-			if (!getScope().init(layer).passed()) { return false; }
+			if (!getScope().init(layer).passed()) return false;
 		}
 
 		final IExpression sync = getFacet("synchronized");
-		if (sync != null) {
-			setSynchronized(Cast.asBool(getScope(), sync.value(getScope())));
-		}
+		if (sync != null) { setSynchronized(Cast.asBool(getScope(), sync.value(getScope()))); }
 
 		createSurface(getScope());
 		return true;
@@ -444,12 +465,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void update() throws GamaRuntimeException {
-		if (surface == null) { return; }
+		if (surface == null) return;
 		data.update(getScope(), description.getFacets());
 
-		if (overlayInfo != null) {
-			getScope().step(overlayInfo);
-		}
+		if (overlayInfo != null) { getScope().step(overlayInfo); }
 
 		super.update();
 
@@ -457,12 +476,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void dispose() {
-		if (disposed) { return; }
+		if (disposed) return;
 		setSynchronized(false);
 		super.dispose();
-		if (surface != null) {
-			surface.dispose();
-		}
+		if (surface != null) { surface.dispose(); }
 		surface = null;
 		getLayers().clear();
 		data.dispose();
@@ -476,18 +493,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (scope.getExperiment().isHeadless()) {
 			// If in headless mode, we need to get the 'image' surface
 			data.setDisplayType(IKeyword.IMAGE);
-		} else if (data.isOpenGL()) {
-			// The surface will be crezated later
+		} else if (data.isOpenGL()) // The surface will be crezated later
 			return;
-		}
-		surface = scope.getGui().getDisplaySurfaceFor(this);
+		surface = scope.getGui().createDisplaySurfaceFor(this);
 	}
 
 	@Override
 	public String getViewId() {
-		if (data.isWeb()) { return IGui.GL_LAYER_VIEW_ID3; }
-		if (data.isOpenGL2()) { return IGui.GL_LAYER_VIEW_ID2; }
-		if (data.isOpenGL()) { return IGui.GL_LAYER_VIEW_ID; }
+		if (data.isWeb()) return IGui.GL_LAYER_VIEW_ID3;
+		if (data.isOpenGL2()) return IGui.GL_LAYER_VIEW_ID2;
+		if (data.isOpenGL()) return IGui.GL_LAYER_VIEW_ID;
 		return IGui.LAYER_VIEW_ID;
 	}
 
@@ -516,9 +531,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public void setSurface(final IDisplaySurface surface) {
 		this.surface = surface;
-		if (surface == null) {
-			view = null;
-		}
+		if (surface == null) { view = null; }
 	}
 
 	public BufferedImage getImage() {
@@ -542,13 +555,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void setPaused(final boolean paused) {
 		final boolean wasPaused = isPaused();
 		super.setPaused(paused);
-		if (surface == null) { return; }
-		if (data.isOpenGL()) {
-			((IDisplaySurface.OpenGL) surface).setPaused(paused);
-		}
-		if (wasPaused && !paused) {
-			surface.updateDisplay(false);
-		}
+		if (surface == null) return;
+		if (data.isOpenGL()) { ((IDisplaySurface.OpenGL) surface).setPaused(paused); }
+		if (wasPaused && !paused) { surface.updateDisplay(false); }
 	}
 
 	public LayeredDisplayData getData() {
@@ -582,8 +591,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public boolean isAutoSave() {
 		final IExpression e = getFacet(IKeyword.AUTOSAVE);
-		if (e == null) { return false; }
-		if (e == IExpressionFactory.FALSE_EXPR) { return false; }
+		if (e == null) return false;
+		if (e == IExpressionFactory.FALSE_EXPR) return false;
 		return true;
 	}
 

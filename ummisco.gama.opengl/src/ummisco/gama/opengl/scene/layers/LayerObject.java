@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.google.common.collect.ImmutableList;
 import com.jogamp.opengl.GL2;
-import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -33,15 +34,15 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
-import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.statements.draw.MeshDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.FieldObject;
 import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.MeshObject;
 import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.StringObject;
 
@@ -90,9 +91,7 @@ public class LayerObject {
 	public void computeScale() {
 		if (!overlay) {
 			double zScale = layer.getData().getSize().getZ();
-			if (zScale <= 0) {
-				zScale = 1;
-			}
+			if (zScale <= 0) { zScale = 1; }
 			scale.setLocation(renderer.getLayerWidth() / renderer.getWidth(),
 					renderer.getLayerHeight() / renderer.getHeight(), zScale);
 		} else {
@@ -108,18 +107,10 @@ public class LayerObject {
 		if (expr != null) {
 			final boolean containsPixels = expr.findAny((e) -> e instanceof PixelUnitExpression);
 			offset.setLocation((GamaPoint) Cast.asPoint(scope, expr.value(scope)));
-			if (Math.abs(offset.x) <= 1 && !containsPixels) {
-				offset.x *= renderer.getEnvWidth();
-			}
-			if (offset.x < 0) {
-				offset.x = renderer.getEnvWidth() - offset.x;
-			}
-			if (Math.abs(offset.y) <= 1 && !containsPixels) {
-				offset.y *= renderer.getEnvHeight();
-			}
-			if (offset.y < 0) {
-				offset.y = renderer.getEnvHeight() - offset.y;
-			}
+			if (Math.abs(offset.x) <= 1 && !containsPixels) { offset.x *= renderer.getEnvWidth(); }
+			if (offset.x < 0) { offset.x = renderer.getEnvWidth() - offset.x; }
+			if (Math.abs(offset.y) <= 1 && !containsPixels) { offset.y *= renderer.getEnvHeight(); }
+			if (offset.y < 0) { offset.y = renderer.getEnvHeight() - offset.y; }
 
 		}
 		if (!overlay) {
@@ -146,7 +137,7 @@ public class LayerObject {
 	}
 
 	public void draw(final OpenGL gl) {
-		if (isInvalid()) { return; }
+		if (isInvalid()) return;
 		drawWithoutShader(gl);
 	}
 
@@ -182,9 +173,7 @@ public class LayerObject {
 
 			final boolean picking = renderer.getPickingHelper().isPicking() && isPickable();
 			if (picking) {
-				if (!overlay) {
-					gl.runWithNames(() -> drawAllObjects(gl, true));
-				}
+				if (!overlay) { gl.runWithNames(() -> drawAllObjects(gl, true)); }
 			} else {
 				if (isAnimated || overlay) {
 					drawAllObjects(gl, false);
@@ -213,12 +202,8 @@ public class LayerObject {
 		final IExpression expr = layer.getDefinition().getFacet(IKeyword.SIZE);
 		if (expr != null) {
 			size = (GamaPoint) Cast.asPoint(scope, expr.value(scope));
-			if (size.x <= 1) {
-				size.x *= renderer.getEnvWidth();
-			}
-			if (size.y <= 1) {
-				size.y *= renderer.getEnvHeight();
-			}
+			if (size.x <= 1) { size.x *= renderer.getEnvWidth(); }
+			if (size.y <= 1) { size.y *= renderer.getEnvHeight(); }
 		}
 		gl.pushMatrix();
 		gl.translateBy(0, -size.y, 0);
@@ -230,9 +215,7 @@ public class LayerObject {
 	}
 
 	protected void drawAllObjects(final OpenGL gl, final boolean picking) {
-		if (overlay) {
-			addFrame(gl);
-		}
+		if (overlay) { addFrame(gl); }
 		if (traces != null) {
 			double delta = 0;
 			if (isFading) {
@@ -259,7 +242,7 @@ public class LayerObject {
 	}
 
 	public boolean isStatic() {
-		if (layer == null) { return true; }
+		if (layer == null) return true;
 		return !layer.getData().isDynamic();
 	}
 
@@ -318,8 +301,8 @@ public class LayerObject {
 		addGeometry(geometry, attributes);
 	}
 
-	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		currentList.add(new FieldObject(fieldValues, attributes));
+	public void addField(final double[] fieldValues, final MeshDrawingAttributes attributes) {
+		currentList.add(new MeshObject(fieldValues, attributes));
 	}
 
 	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
@@ -328,13 +311,13 @@ public class LayerObject {
 	}
 
 	protected int getTrace() {
-		if (layer == null) { return 0; }
+		if (layer == null) return 0;
 		final Integer trace = layer.getData().getTrace();
 		return trace == null ? 0 : trace;
 	}
 
 	protected boolean getFading() {
-		if (layer == null) { return false; }
+		if (layer == null) return false;
 		final Boolean fading = layer.getData().getFading();
 		return fading == null ? false : fading;
 	}
@@ -400,15 +383,19 @@ public class LayerObject {
 	protected void addSyntheticObject(final List<AbstractObject<?, ?>> list, final IShape shape, final GamaColor color,
 			final IShape.Type type, final boolean empty) {
 		final DrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
-				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
+				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue(), null);
 		att.setEmpty(empty);
 		att.setHeight(shape.getDepth());
 		att.setLighting(false);
 		list.add(new GeometryObject(shape.getInnerGeometry(), att));
 	}
 
-	public void forceRedraw() {
-		if (layer == null) { return; }
+	public void forceRedraw(final OpenGL gl) {
+		if (layer == null) return;
+		if (openGLListIndex != null) {
+			gl.deleteList(openGLListIndex);
+			openGLListIndex = null;
+		}
 		layer.draw(renderer.getSurface().getScope(), renderer);
 
 	}

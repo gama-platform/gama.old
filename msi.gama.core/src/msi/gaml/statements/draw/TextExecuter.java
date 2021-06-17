@@ -31,19 +31,27 @@ class TextExecuter extends DrawExecuter {
 	@Override
 	Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingData data) throws GamaRuntimeException {
 		final String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
-		if (info == null || info.length() == 0) { return null; }
+		if (info == null || info.length() == 0) return null;
 		final TextDrawingAttributes attributes = computeAttributes(scope, data);
 		return g.drawString(info, attributes);
 	}
 
 	TextDrawingAttributes computeAttributes(final IScope scope, final DrawingData data) {
-		final TextDrawingAttributes attributes =
-				new TextDrawingAttributes(Scaling3D.of(data.size.get()), data.rotation.get(), data.getLocation(),
-						data.getAnchor(), data.color.get(), data.font.get(), data.perspective.get());
+		final TextDrawingAttributes attributes = new TextDrawingAttributes(Scaling3D.of(data.size.get()),
+				data.rotation.get(), data.getLocation(), data.color.get());
 		// We push the location of the agent if none has been provided
 		if (attributes.getLocation() == null) {
 			attributes.setLocation(scope.getAgent().getLocation().toGamaPoint().clone());
 		}
+		attributes.setFont(data.font.get());
+		attributes.setAnchor(data.getAnchor());
+		attributes.setBorder(data.border.get());
+		attributes.setEmpty(data.empty.get());
+		attributes.setHeight(data.depth.get());
+		attributes.setPerspective(data.perspective.get());
+		attributes.setTextures(data.texture.get());
+		attributes.setLineWidth(data.lineWidth.get());
+		attributes.setPrecision(data.precision.get());
 		return attributes;
 	}
 }

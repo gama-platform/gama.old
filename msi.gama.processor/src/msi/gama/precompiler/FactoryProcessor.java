@@ -3,6 +3,7 @@ package msi.gama.precompiler;
 import java.util.Collection;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 
 import msi.gama.precompiler.GamlAnnotations.factory;
 
@@ -31,5 +32,12 @@ public class FactoryProcessor extends ElementProcessor<factory> {
 		super.serialize(context, elements, sb);
 		sb.setLength(sb.length() - 1);
 		sb.append(");");
+	}
+
+	@Override
+	protected boolean validateElement(final ProcessorContext context, final Element e) {
+		boolean result =
+				assertClassExtends(context, true, (TypeElement) e, context.getType("msi.gaml.factories.SymbolFactory"));
+		return result;
 	}
 }

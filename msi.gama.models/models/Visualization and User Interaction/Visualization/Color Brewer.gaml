@@ -93,7 +93,7 @@ experiment BrewerColoredAgent type: gui {
 	parameter "Number of data classes" var:nb_classes category:"Brewer";
 	output {
 		display View1 {
-			grid cell lines: #black ;
+			grid cell border: #black ;
 			graphics "Names" {
 				loop i from:0 to:length(palettes)-1 {
 					draw string(i)+":"+cell[0,i].palette at:cell[0,i].location-{9,-1,0} color:#black;

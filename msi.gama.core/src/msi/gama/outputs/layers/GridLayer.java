@@ -25,7 +25,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
-import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.statements.draw.MeshDrawingAttributes;
 
 public class GridLayer extends AbstractLayer {
 
@@ -46,7 +46,7 @@ public class GridLayer extends AbstractLayer {
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		final IAgent a = geometry.getAgent();
-		if (a == null || a.getSpecies() != getData().getGrid().getCellSpecies()) { return null; }
+		if (a == null || a.getSpecies() != getData().getGrid().getCellSpecies()) return null;
 		return super.focusOn(a, s);
 	}
 
@@ -60,15 +60,13 @@ public class GridLayer extends AbstractLayer {
 	public void privateDraw(final IScope scope, final IGraphics dg) {
 		GamaColor lineColor = null;
 		final GridLayerData data = getData();
-		if (data.drawLines()) {
-			lineColor = data.getLineColor();
-		}
-
+		if (data.drawLines()) { lineColor = data.getLineColor(); }
 		final double[] gridValueMatrix = data.getElevationMatrix(scope);
 		final GamaImageFile textureFile = data.textureFile();
-		final FieldDrawingAttributes attributes =
-				new FieldDrawingAttributes(getName(), lineColor, gridValueMatrix == null);
-		attributes.grayScaled = data.isGrayScaled();
+		final MeshDrawingAttributes attributes =
+				new MeshDrawingAttributes(getName(), lineColor, gridValueMatrix == null);
+		attributes.setGrayscaled(data.isGrayScaled());
+		attributes.setEmpty(data.isWireframe());
 		final BufferedImage image = data.getImage();
 		if (textureFile != null) {
 			attributes.setTextures(Arrays.asList(textureFile));
@@ -77,10 +75,12 @@ public class GridLayer extends AbstractLayer {
 			System.arraycopy(data.getGrid().getDisplayData(), 0, imageData, 0, imageData.length);
 			attributes.setTextures(Arrays.asList(image));
 		}
-		attributes.triangulated = data.isTriangulated();
-		attributes.withText = data.isShowText();
+		attributes.setTriangulated(data.isTriangulated());
+		attributes.setWithText(data.isShowText());
 		attributes.setCellSize(data.getCellSize());
 		attributes.setBorder(lineColor);
+		attributes.setXYDimension(data.getDimensions());
+		attributes.setSmooth(data.isSmooth());
 
 		if (gridValueMatrix == null) {
 			dg.drawImage(image, attributes);

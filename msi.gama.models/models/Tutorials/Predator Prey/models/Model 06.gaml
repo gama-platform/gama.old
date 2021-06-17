@@ -145,7 +145,7 @@ experiment prey_predator type: gui {
 
 	output {
 		display main_display {
-			grid vegetation_cell lines: #black;
+			grid vegetation_cell border: #black;
 			species prey aspect: base;
 			species predator aspect: base;
 		}

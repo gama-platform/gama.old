@@ -89,9 +89,9 @@ species people {
 	// In an aspect, it is possible to draw several layers one after the other.	
 	aspect simple {
 		draw circle(0.5) color: #grey border: #darkgrey;
-		// The facet empty: sets whether the drawn geometry is plain or empty.  
-		draw circle(1.0) border: #darkgreen empty: true ;
-		draw square(3.0) border: #darkgreen empty: true ;
+		// The facet wireframe: sets whether the drawn geometry is plain or empty.  
+		draw circle(1.0) border: #darkgreen wireframe: true ;
+		draw square(3.0) border: #darkgreen wireframe: true ;
 	}
 
 	// In an aspect, it is possible to draw several layers one after the other.	

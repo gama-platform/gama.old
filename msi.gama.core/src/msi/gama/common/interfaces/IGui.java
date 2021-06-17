@@ -99,15 +99,17 @@ public interface IGui {
 
 	boolean openSimulationPerspective(IModel model, String experimentId);
 
-	IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
+	Iterable<IDisplaySurface> getAllDisplaySurfaces();
+
+	IDisplaySurface createDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters, GamaFont font);
 
-	public IMap<String, IMap<String, Object>> openWizard(IScope scope, String title, ActionDescription finish , IList<IMap<String, Object>> pages);
+	IMap<String, IMap<String, Object>> openWizard(IScope scope, String title, ActionDescription finish,
+			IList<IMap<String, Object>> pages);
 
-	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) ;
-	
-		
+	Boolean openUserInputDialogConfirm(final IScope scope, final String title, final String message);
+
 	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 
 	void closeDialogs(IScope scope);

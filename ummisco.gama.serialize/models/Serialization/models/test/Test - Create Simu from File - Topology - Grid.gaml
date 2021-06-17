@@ -19,7 +19,7 @@ experiment saveSimu type: gui {
 	
 	output {
 		display main_display {
-			grid vegetation_cell lines: #black ;
+			grid vegetation_cell border: #black ;
 			species prey aspect: base;
 		}
 	}	
@@ -34,7 +34,7 @@ experiment reloadSimu type: gui  {
 
 	output {
 		display main_display {
-			grid vegetation_cell lines: #black ;
+			grid vegetation_cell border: #black ;
 			species prey aspect: base;
 			
 		}
@@ -50,7 +50,7 @@ experiment reloadSingleSimu type: gui {
 	
 	output {
 		display main_display {
-			grid vegetation_cell lines: #black ;
+			grid vegetation_cell border: #black ;
 			species prey aspect: base;
 			
 		}

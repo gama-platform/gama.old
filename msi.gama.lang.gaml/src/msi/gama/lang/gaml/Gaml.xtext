@@ -142,7 +142,7 @@ displayBlock returns Block:
 ;
 
 displayStatement returns Statement:
-	speciesOrGridDisplayStatement | S_1Expr_Facets_BlockOrEnd
+	=>speciesOrGridDisplayStatement | Statement
 ;
 
 speciesOrGridDisplayStatement:
@@ -170,7 +170,7 @@ _1Expr_Facets_BlockOrEnd_Key:
 	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status" | "highlight" | "focus_on" | "layout" ;
 
 _LayerKey:
-	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"
+	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist" | "mesh"
 ;
 _DoKey:
 	"do" | "invoke";

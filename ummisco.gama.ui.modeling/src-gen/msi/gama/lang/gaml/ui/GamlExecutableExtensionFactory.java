@@ -3,29 +3,25 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import org.eclipse.core.runtime.Platform;
+import com.google.inject.Injector;
 import org.eclipse.xtext.ui.guice.AbstractGuiceAwareExecutableExtensionFactory;
 import org.osgi.framework.Bundle;
-
-import com.google.inject.Injector;
-
-import msi.gama.headless.core.HeadlessSimulationLoader;
-import msi.gama.runtime.GAMA;
+import org.osgi.framework.FrameworkUtil;
 import ummisco.gama.ui.modeling.internal.ModelingActivator;
 
 /**
- * This class was generated. Customizations should only happen in a newly introduced subclass.
+ * This class was generated. Customizations should only happen in a newly
+ * introduced subclass. 
  */
 public class GamlExecutableExtensionFactory extends AbstractGuiceAwareExecutableExtensionFactory {
 
 	@Override
 	protected Bundle getBundle() {
-		return Platform.getBundle(ModelingActivator.PLUGIN_ID);
+		return FrameworkUtil.getBundle(ModelingActivator.class);
 	}
-
+	
 	@Override
 	protected Injector getInjector() {
-		if (GAMA.isInHeadLessMode()) return HeadlessSimulationLoader.getInjector();
 		ModelingActivator activator = ModelingActivator.getInstance();
 		return activator != null ? activator.getInjector(ModelingActivator.MSI_GAMA_LANG_GAML_GAML) : null;
 	}

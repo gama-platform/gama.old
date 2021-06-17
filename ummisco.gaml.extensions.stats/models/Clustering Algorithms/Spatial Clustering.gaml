@@ -131,7 +131,7 @@ experiment clustering type: gui {
 			species group_people;
 		}
 		display map_forest_clusters {
-			grid vegetation_cell lines: #black;
+			grid vegetation_cell border: #black;
 			species forest;
 		}
 	}

@@ -20,7 +20,7 @@ import msi.gama.util.GamaColor;
 public class FileDrawingAttributes extends DrawingAttributes {
 
 	public final IAgent agentIdentifier;
-	public boolean useCache = true;
+	public static final int USE_CACHE = 16;
 
 	public FileDrawingAttributes(final Scaling3D size, final AxisAngle rotation, final GamaPoint location,
 			final GamaColor color, final GamaColor border, final IAgent agent, final Double lineWidth,
@@ -29,17 +29,19 @@ public class FileDrawingAttributes extends DrawingAttributes {
 		this.agentIdentifier = agent;
 		setLineWidth(lineWidth);
 		setType(isImage ? IShape.Type.POLYGON : IShape.Type.THREED_FILE);
+		setUseCache(true); // by default
 	}
 
 	public FileDrawingAttributes(final GamaPoint location, final boolean isImage) {
 		super(null, null, location, null, null, null);
 		agentIdentifier = null;
 		setType(isImage ? IShape.Type.POLYGON : IShape.Type.THREED_FILE);
+		setUseCache(true); // by default
 	}
 
 	@Override
 	public boolean useCache() {
-		return useCache;
+		return isSet(USE_CACHE);
 	}
 
 	@Override
@@ -48,7 +50,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	}
 
 	public void setUseCache(final boolean b) {
-		useCache = b;
+		setFlag(USE_CACHE, b);
 	}
 
 }

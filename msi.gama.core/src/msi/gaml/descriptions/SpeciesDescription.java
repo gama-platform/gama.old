@@ -13,6 +13,7 @@ package msi.gaml.descriptions;
 import static com.google.common.collect.Iterables.transform;
 import static msi.gaml.compilation.AbstractGamlAdditions.getAllChildrenOf;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -27,6 +28,7 @@ import com.google.common.collect.Iterables;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.util.JavaUtils;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -37,7 +39,9 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
@@ -227,8 +231,9 @@ public class SpeciesDescription extends TypeDescription {
 			return;
 		}
 		Class<? extends IAgent> javaBase = getJavaBase();
-		Iterable<IDescription> java_children = getAllChildrenOf(javaBase, transform(getSkills(), TO_CLASS));
-		for (final IDescription v : java_children) {
+		Iterable<Class<? extends ISkill>> skillClasses = transform(getSkills(), TO_CLASS);
+		Iterable<IDescription> javaChildren = getAllChildrenOf(javaBase, skillClasses);
+		for (final IDescription v : javaChildren) {
 			if (isBuiltIn()) { v.setOriginName("built-in species " + getName()); }
 			if (v instanceof VariableDescription) {
 				boolean toAdd = false;
@@ -661,8 +666,38 @@ public class SpeciesDescription extends TypeDescription {
 		// recursively finalize the sorted micro-species
 		if (!visitMicroSpecies(visitor)) return false;
 		// Calling sortAttributes later (in compilation)
-
+		// add the listeners to the variables (if any)
+		addListenersToVariables();
 		return true;
+	}
+
+	/**
+	 * // AD 2021: addition of the listeners
+	 */
+	private void addListenersToVariables() {
+		if (isBuiltIn()) return;
+		if (javaBase == null) return;
+		Iterable<Class<? extends ISkill>> skillClasses = transform(getSkills(), TO_CLASS);
+		this.visitAllAttributes(v -> {
+			VariableDescription var = (VariableDescription) v;
+			String varName = var.getName();
+			if (AbstractGamlAdditions.LISTENERS_BY_NAME.containsKey(varName)) {
+				List<Class> classes = JavaUtils.collectImplementationClasses(javaBase, skillClasses,
+						AbstractGamlAdditions.LISTENERS_BY_NAME.get(varName));
+				if (!classes.isEmpty()) {
+					List<GamaHelper> listeners = new ArrayList();
+					for (Class c : classes) {
+						Set<GamaHelper> helpers = AbstractGamlAdditions.LISTENERS_BY_CLASS.get(c);
+						for (GamaHelper h : helpers) {
+							if (h.getName().equals(varName)) { listeners.add(h); }
+						}
+					}
+					if (!listeners.isEmpty()) { var.addListeners(listeners); }
+				}
+
+			}
+			return true;
+		});
 	}
 
 	/**
@@ -746,6 +781,13 @@ public class SpeciesDescription extends TypeDescription {
 	// list.remove(0);
 	// return Iterables.transform(list, each -> each.getData());
 	//
+	// }
+
+	// protected void addAttributeNoCheck(final VariableDescription vd) {
+	// super.addAttributeNoCheck(vd);
+	// this.getSkills().forEach(s->{
+	// if (s.)
+	// });
 	// }
 
 	public boolean isMirror() {

@@ -19,13 +19,12 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 
 public abstract class AbstractObject<T, ATT extends DrawingAttributes> implements IDisposable {
 
 	public enum DrawerType {
-		GEOMETRY, STRING, FIELD, RESOURCE
+		GEOMETRY, STRING, MESH, RESOURCE
 	}
 
 	private final ATT attributes;
@@ -73,8 +72,8 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 	}
 
 	private int getTexture(final OpenGL gl, final int order) {
-		if (textures == null) { return OpenGL.NO_TEXTURE; }
-		if (order < 0 || order > textures.length - 1) { return OpenGL.NO_TEXTURE; }
+		if (textures == null) return OpenGL.NO_TEXTURE;
+		if (order < 0 || order > textures.length - 1) return OpenGL.NO_TEXTURE;
 		if (isAnimated() || textures[order] == OpenGL.NO_TEXTURE) {
 			Object obj = null;
 			try {
@@ -84,7 +83,7 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 			if (obj instanceof BufferedImage) {
 				textures[order] = gl.getTextureId((BufferedImage) obj);
 			} else if (obj instanceof GamaImageFile) {
-				final FileDrawingAttributes fd = (FileDrawingAttributes) getAttributes();
+				final DrawingAttributes fd = getAttributes();
 				textures[order] = gl.getTextureId((GamaImageFile) obj, fd.useCache());
 			}
 		}
@@ -102,15 +101,11 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 	@SuppressWarnings ("unchecked")
 	public final <T extends AbstractObject<?, ?>> void draw(final OpenGL gl, final ObjectDrawer<T> drawer,
 			final boolean isPicking) {
-		if (isPicking) {
-			gl.registerForSelection(getAttributes().getIndex());
-		}
+		if (isPicking) { gl.registerForSelection(getAttributes().getIndex()); }
 		final boolean previous = gl.setLighting(getAttributes().isLighting());
 		drawer.draw((T) this);
 		gl.setLighting(previous);
-		if (isPicking) {
-			gl.markIfSelected(getAttributes());
-		}
+		if (isPicking) { gl.markIfSelected(getAttributes()); }
 	}
 
 	public boolean isFilled() {

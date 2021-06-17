@@ -21,8 +21,8 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.ExecutionResult;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -61,7 +61,7 @@ import msi.gaml.types.Types;
 						doc = @doc ("an expression that evaluates to a species")) },
 		omissible = IKeyword.TARGET)
 @inside (
-		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT },
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER, ISymbolKind.OUTPUT },
 		symbols = IKeyword.CHART)
 @doc (
 		value = "Allows an agent, the sender agent (that can be the [Sections161#global world agent]), to ask another (or other) agent(s) to perform a set of statements. If the value of the target facet is nil or empty, the statement is ignored.",
@@ -183,9 +183,7 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
 		parallel = getFacet("parallel");
-		if (target != null) {
-			setName("ask " + target.serialize(false));
-		}
+		if (target != null) { setName("ask " + target.serialize(false)); }
 	}
 
 	@Override
@@ -214,7 +212,7 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 			return result.getValue();
 		} else {
 			final IAgent agent = Cast.asAgent(scope, t);
-			if (agent == null) { throw GamaRuntimeException.error("Can not execute ask on a nil agent", scope); }
+			if (agent == null) throw GamaRuntimeException.error("Can not execute ask on a nil agent", scope);
 			final ExecutionResult result = scope.execute(sequence, agent, null);
 			return result.getValue();
 		}

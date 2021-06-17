@@ -26,21 +26,11 @@ import javax.tools.FileObject;
 
 import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.tests.TestProcessor;
- 
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 @SupportedAnnotationTypes ({ "*" })
 @SupportedSourceVersion (SourceVersion.RELEASE_11)
 public class GamaProcessor extends AbstractProcessor implements Constants {
-
-//	public final static String[] IMPORTS = new String[] { "java.util", "java.lang", "gama.util.map", "gama.util.list",
-//			"gama.util.file", "gama.util.matrix", "gama.util.path", "gama.util.graph", "gama.util.random",
-//			"gama.util.tree", "gama.util", "gama.metamodel.agent", "gama.metamodel.population", "gama.metamodel.shape",
-//			"gaml.types", "gaml.skills", "gama.common.interfaces.batch", "gama.common.interfaces.experiment",
-//			"gama.common.interfaces.gui", "gama.common.interfaces.outputs", "gama.common.interfaces",
-//			"gama.runtime.scope", "gaml.operators.noisegeneration", "gaml.operators", "gama.kernel.batch",
-//			"gama.kernel.experiment", "gama.kernel.root", "gama.kernel.model", "gama.kernel.simulation", "gaml.species",
-//			"gaml.expressions" };
 
 	public final static String[] IMPORTS = new String[] { "msi.gaml.extensions.multi_criteria",
 			"msi.gama.outputs.layers.charts", "msi.gama.outputs.layers", "msi.gama.outputs", "msi.gama.kernel.batch",
@@ -76,9 +66,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment env) {
-		if (complete == 0) {
-			complete = System.currentTimeMillis();
-		}
+		if (complete == 0) { complete = System.currentTimeMillis(); }
 		context.setRoundEnvironment(env);
 
 		if (context.getRoots().size() > 0) {
@@ -122,9 +110,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 
 	public void generateJavaSource(final FileObject file) {
 		try (Writer source = context.createSourceWriter(file)) {
-			if (source != null) {
-				source.append(writeJavaBody());
-			}
+			if (source != null) { source.append(writeJavaBody()); }
 		} catch (final IOException io) {
 			context.emitWarning("An IO exception occured in the generation of Java files: ", io);
 		} catch (final Exception e) {
@@ -154,9 +140,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		processors.values().forEach(p -> {
 			if (p.outputToJava() && p.hasElements()) {
 				final String method = p.getInitializationMethodName();
-				if (method != null) {
-					sb.append(ln).append(tab).append(method).append("();");
-				}
+				if (method != null) { sb.append(ln).append(tab).append(method).append("();"); }
 			}
 		});
 
@@ -169,9 +153,7 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		sb.append(ln).append(JAVA_HEADER);
 		writeMutableHeader(sb);
 		processors.values().forEach(p -> {
-			if (p.outputToJava() && p.hasElements()) {
-				p.writeJavaBody(sb, context);
-			}
+			if (p.outputToJava() && p.hasElements()) { p.writeJavaBody(sb, context); }
 		});
 
 		sb.append(ln).append('}');

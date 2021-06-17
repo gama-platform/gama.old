@@ -5,6 +5,7 @@ import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -30,14 +31,10 @@ public class FileProcessor extends ElementProcessor<file> {
 			if (m.getKind() == ElementKind.CONSTRUCTOR) {
 				final List<? extends VariableElement> argParams = ((ExecutableElement) m).getParameters();
 				final int n = argParams.size();
-				if (n <= 1) {
-					continue;
-				}
+				if (n <= 1) { continue; }
 				// If the first parameter is not IScope, we consider it is not a constructor usable in GAML
 				final String scope = rawNameOf(context, argParams.get(0).asType());
-				if (!scope.contains("IScope")) {
-					continue;
-				}
+				if (!scope.contains("IScope")) { continue; }
 				verifyDoc(context, m, "constructor of " + f.name(), null);
 				final String[] args = new String[n - 1];
 				for (int i = 1; i < n; i++) {
@@ -65,9 +62,7 @@ public class FileProcessor extends ElementProcessor<file> {
 		sb.append("),C(");
 		for (int i = 0; i < names.length; i++) {
 			sb.append(toClassObject(names[i]));
-			if (i < names.length - 1) {
-				sb.append(',');
-			}
+			if (i < names.length - 1) { sb.append(','); }
 		}
 		sb.append("),I(0),GF,false,").append(toJavaString(name)).append(',');
 		if (isBinary) {
@@ -106,6 +101,14 @@ public class FileProcessor extends ElementProcessor<file> {
 	@Override
 	public String getExceptions() {
 		return "throws SecurityException, NoSuchMethodException";
+	}
+
+	@Override
+	protected boolean validateElement(final ProcessorContext context, final Element e) {
+		boolean result =
+				assertClassExtends(context, true, (TypeElement) e, context.getType("msi.gama.util.file.IGamaFile"));
+		result &= assertOneScopeAndStringConstructor(context, true, (TypeElement) e);
+		return result;
 	}
 
 }

@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
+import msi.gama.common.interfaces.INamed;
 import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -22,12 +23,18 @@ import msi.gama.runtime.IScope;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public class GamaHelper<T> implements IGamaHelper<T> {
+public class GamaHelper<T> implements IGamaHelper<T>, INamed {
 
+	final String name;
 	final Class skillClass;
 	final IGamaHelper<T> delegate;
 
 	public GamaHelper(final Class clazz, final IGamaHelper<T> delegate) {
+		this(null, clazz, delegate);
+	}
+
+	public GamaHelper(final String name, final Class clazz, final IGamaHelper<T> delegate) {
+		this.name = name;
 		skillClass = clazz;
 		this.delegate = delegate;
 	}
@@ -38,8 +45,13 @@ public class GamaHelper<T> implements IGamaHelper<T> {
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill, final Object values) {
-		if (delegate == null) { return null; }
+		if (delegate == null) return null;
 		return delegate.run(scope, agent, skill, values);
 	}
 

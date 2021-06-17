@@ -32,10 +32,10 @@ global
 experiment Display
 {
 	
-	parameter "Zoom" var: zoom_text on_change: {
+	parameter "Zoom" var: zoom_text  {
 		ask simulation  {do load_map;}
 		do update_outputs(true);
-	};
+	}
 	 
 	output
 	{

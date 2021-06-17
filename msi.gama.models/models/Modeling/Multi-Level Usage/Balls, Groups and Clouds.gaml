@@ -458,7 +458,7 @@ species cloud {
 	}
 
 	aspect default {
-		draw shape color: color empty: true;
+		draw shape color: color wireframe: true;
 		draw (name + ' with ' + (string(length(members))) + ' groups.') size: 15 color: color at: {location.x - 65, location.y};
 	}
 

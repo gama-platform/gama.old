@@ -20,12 +20,13 @@ import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
 import static msi.gama.common.geometry.GeometryUtils.iterateOverTriangles;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
+
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
@@ -34,11 +35,8 @@ import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Polygon;
 
 import jogamp.opengl.glu.tessellator.GLUtessellatorImpl;
 import msi.gama.common.geometry.Envelope3D;
@@ -56,7 +54,6 @@ import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.opengl.renderer.caches.FontCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache.BuiltInGeometry;
 import ummisco.gama.opengl.renderer.caches.ITextureCache;
@@ -64,12 +61,11 @@ import ummisco.gama.opengl.renderer.caches.TextureCache2;
 import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.FieldDrawer;
 import ummisco.gama.opengl.scene.GeometryDrawer;
+import ummisco.gama.opengl.scene.MeshDrawer;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.ResourceDrawer;
 import ummisco.gama.opengl.scene.StringDrawer;
-import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
  * A class that represents an intermediate state between the rendering and the opengl state. It captures all the
@@ -95,7 +91,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	// Special drawers
 	private final GeometryDrawer geometryDrawer;
 	private final StringDrawer stringDrawer;
-	private final FieldDrawer fieldDrawer;
+	private final MeshDrawer fieldDrawer;
 	private final ResourceDrawer resourceDrawer;
 
 	// Matrices of the display
@@ -126,8 +122,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	// Text
 	private boolean inRasterTextMode;
-	protected final FontCache fontCache = new FontCache();
-	protected final float textSizeMultiplier = 2f;
+	// protected final FontCache fontCache = new FontCache();
 
 	// Geometries
 	protected final GeometryCache geometryCache;
@@ -165,7 +160,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, this);
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
 		geometryDrawer = new GeometryDrawer(this);
-		fieldDrawer = new FieldDrawer(this);
+		fieldDrawer = new MeshDrawer(this);
 		stringDrawer = new StringDrawer(this);
 		resourceDrawer = new ResourceDrawer(this);
 	}
@@ -176,7 +171,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 				return stringDrawer;
 			case GEOMETRY:
 				return geometryDrawer;
-			case FIELD:
+			case MESH:
 				return fieldDrawer;
 			case RESOURCE:
 				return resourceDrawer;
@@ -189,7 +184,11 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void dispose() {
-		fontCache.dispose();
+		stringDrawer.dispose();
+		fieldDrawer.dispose();
+		resourceDrawer.dispose();
+		geometryDrawer.dispose();
+		// fontCache.dispose();
 		geometryCache.dispose();
 		textureCache.dispose();
 		gl = null;
@@ -236,10 +235,10 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		viewHeight = height;
 		resetMatrix(GL2.GL_MODELVIEW);
 		resetMatrix(GL2.GL_PROJECTION);
-		updatePerspective();
-		newGL.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-		newGL.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-		newGL.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
+		updatePerspective(newGL);
+		// newGL.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+		// newGL.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+		// newGL.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 
 		final double[] pixelSize = new double[4];
 		glu.gluProject(getWorldWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, pixelSize, 0);
@@ -274,18 +273,14 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	}
 
-	public void updatePerspective() {
+	public void updatePerspective(final GL2 gl) {
 		final double height = getViewHeight();
 		final double aspect = getViewWidth() / (height == 0d ? 1d : height);
 		final double maxDim = getMaxEnvDim();
 		double zNear = getZNear();
-		if (zNear < 0.0) {
-			zNear = maxDim / 100d;
-		}
+		if (zNear < 0.0) { zNear = maxDim / 100d; }
 		double zFar = getZFar();
-		if (zFar < 0.0) {
-			zFar = maxDim * 100d;
-		}
+		if (zFar < 0.0) { zFar = maxDim * 100d; }
 
 		if (!getData().isOrtho()) {
 			try {
@@ -312,6 +307,9 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 			gl.glTranslated(0d, 0d, maxDim * 0.05);
 		}
 		getRenderer().getCameraHelper().animate();
+		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+		gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+		gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 	}
 
 	public double[] getPixelWidthAndHeightOfWorld() {
@@ -322,7 +320,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	public GamaPoint getWorldPositionFrom(final GamaPoint mouse) {
 		final GamaPoint camera = getData().getCameraPos();
-		if (gl == null) { return new GamaPoint(); }
+		if (gl == null) return new GamaPoint();
 		final double[] wcoord = new double[4];
 		final double x = (int) mouse.x, y = viewport[3] - (int) mouse.y;
 		glu.gluUnProject(x, y, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
@@ -353,9 +351,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	 * translations are cumulative
 	 */
 	public void translateByZIncrement() {
-		if (!ZTranslationSuspended) {
-			currentZTranslation += currentZIncrement;
-		}
+		if (!ZTranslationSuspended) { currentZTranslation += currentZIncrement; }
 	}
 
 	public void suspendZTranslation() {
@@ -369,6 +365,10 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		currentZTranslation = savedZTranslation;
 	}
 
+	public double getCurrentZTranslation() {
+		return currentZTranslation;
+	}
+
 	/**
 	 * Returns the previous state
 	 *
@@ -376,7 +376,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	 * @return
 	 */
 	public boolean setLighting(final boolean lighted) {
-		if (this.lighted == lighted) { return lighted; }
+		if (this.lighted == lighted) return lighted;
 		if (lighted) {
 			gl.glEnable(GL2.GL_LIGHTING);
 		} else {
@@ -497,9 +497,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	public void drawSimpleShape(final ICoordinates yNegatedVertices, final int number, final boolean solid,
 			final boolean clockwise, final boolean computeNormal, final Color border) {
 		if (solid) {
-			if (computeNormal) {
-				setNormal(yNegatedVertices, clockwise);
-			}
+			if (computeNormal) { setNormal(yNegatedVertices, clockwise); }
 			final int style = number == 4 ? GL2.GL_QUADS : number == -1 ? GL2.GL_POLYGON : GL2.GL_TRIANGLES;
 			drawVertices(style, yNegatedVertices, number, clockwise);
 		}
@@ -537,7 +535,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void drawClosedLine(final ICoordinates yNegatedVertices, final Color color, final int number) {
-		if (color == null) { return; }
+		if (color == null) return;
 		final Color previous = swapCurrentColor(color);
 		drawClosedLine(yNegatedVertices, number);
 		setCurrentColor(previous);
@@ -570,12 +568,8 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void drawVertex(final GamaPoint coords, final GamaPoint normal, final GamaPoint tex) {
-		if (normal != null) {
-			outputNormal(normal.x, normal.y, normal.z);
-		}
-		if (tex != null) {
-			gl.glTexCoord3d(tex.x, tex.y, tex.z);
-		}
+		if (normal != null) { outputNormal(normal.x, normal.y, normal.z); }
+		if (tex != null) { gl.glTexCoord3d(tex.x, tex.y, tex.z); }
 		outputVertex(coords.x, coords.y, coords.z);
 	}
 
@@ -654,9 +648,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	public GamaPoint setNormal(final ICoordinates yNegatedVertices, final boolean clockwise) {
 		yNegatedVertices.getNormal(clockwise, 1, currentNormal);
 		outputNormal(currentNormal.x, currentNormal.y, currentNormal.z);
-		if (isTextured()) {
-			computeTextureCoordinates(yNegatedVertices, clockwise);
-		}
+		if (isTextured()) { computeTextureCoordinates(yNegatedVertices, clockwise); }
 		return currentNormal;
 	}
 
@@ -669,7 +661,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void setCurrentColor(final Color c, final double alpha) {
-		if (c == null) { return; }
+		if (c == null) return;
 		setCurrentColor(c.getRed() / 255d, c.getGreen() / 255d, c.getBlue() / 255d, c.getAlpha() / 255d * alpha);
 	}
 
@@ -734,13 +726,13 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void enablePrimaryTexture() {
-		if (primaryTexture == NO_TEXTURE) { return; }
+		if (primaryTexture == NO_TEXTURE) return;
 		bindTexture(primaryTexture);
 		gl.glEnable(GL.GL_TEXTURE_2D);
 	}
 
 	public void enableAlternateTexture() {
-		if (alternateTexture == NO_TEXTURE) { return; }
+		if (alternateTexture == NO_TEXTURE) return;
 		bindTexture(alternateTexture);
 		gl.glEnable(GL.GL_TEXTURE_2D);
 	}
@@ -755,19 +747,19 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void cacheTexture(final File file) {
-		if (file == null) { return; }
+		if (file == null) return;
 		textureCache.processs(file);
 	}
 
 	public int getTextureId(final GamaImageFile file, final boolean useCache) {
 		final Texture r = textureCache.getTexture(file.getFile(null), file.isAnimated(), useCache);
-		if (r == null) { return NO_TEXTURE; }
+		if (r == null) return NO_TEXTURE;
 		return r.getTextureObject();
 	}
 
 	public int getTextureId(final BufferedImage img) {
 		final Texture r = textureCache.getTexture(img);
-		if (r == null) { return NO_TEXTURE; }
+		if (r == null) return NO_TEXTURE;
 		return r.getTextureObject();
 	}
 
@@ -782,20 +774,20 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public Envelope3D getEnvelopeFor(final Object obj) {
-		if (obj instanceof GamaGeometryFile) { return geometryCache.getEnvelope((GamaGeometryFile) obj); }
-		if (obj instanceof Geometry) { return Envelope3D.of((Geometry) obj); }
+		if (obj instanceof GamaGeometryFile) return geometryCache.getEnvelope((GamaGeometryFile) obj);
+		if (obj instanceof Geometry) return Envelope3D.of((Geometry) obj);
 		return null;
 	}
 
 	// TEXT
 
-	private int computeFontSize(final int size) {
-		return PlatformHelper.scaleUpIfWin(Math.round(size * textSizeMultiplier));
-	}
+	// private int computeFontSize(final int size) {
+	// return PlatformHelper.scaleToHiDPI(Math.round(size * textSizeMultiplier));
+	// }
 
-	public void cacheFont(final Font f) {
-		fontCache.process(f, computeFontSize(f.getSize()));
-	}
+	// public void cacheFont(final Font f) {
+	// fontCache.process(f, computeFontSize(f.getSize()));
+	// }
 
 	/**
 	 * Draws one string in raster at the given coords and with the given font. Enters and exits raster mode before and
@@ -809,9 +801,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	 *            the {x, y, z} coordinates
 	 */
 	public void rasterText(final String s, final int font, final double x, final double y, final double z) {
-		if (!inRasterTextMode) {
-			beginRasterTextMode();
-		}
+		beginRasterTextMode();
 		final boolean previous = setLighting(false);
 		gl.glRasterPos3d(x, y, z);
 		glut.glutBitmapString(font, s);
@@ -819,37 +809,14 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		exitRasterTextMode();
 	}
 
-	/**
-	 * Draws a sequence of strings at the given coords (where s.length = 3 * coords.length). Enters and exits raster
-	 * mode before and after drawing the sequence
-	 *
-	 * @param seq
-	 *            the sequence of strings
-	 * @param font
-	 *            the font to draw with
-	 * @param coords
-	 *            the sequence of {x, y, z} coordinates
-	 */
-	public void rasterText(final String[] seq, final int font, final double[] coords) {
-		if (!inRasterTextMode) {
-			beginRasterTextMode();
-		}
-		final boolean previous = setLighting(false);
-		for (int i = 0; i < seq.length; i++) {
-			gl.glRasterPos3d(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2] + currentZTranslation);
-			glut.glutBitmapString(font, seq[i]);
-		}
-		setLighting(previous);
-		exitRasterTextMode();
-	}
-
-	private void exitRasterTextMode() {
+	public void exitRasterTextMode() {
 		gl.glEnable(GL.GL_BLEND);
 		popMatrix();
 		inRasterTextMode = false;
 	}
 
-	private void beginRasterTextMode() {
+	public void beginRasterTextMode() {
+		if (inRasterTextMode) return;
 		pushMatrix();
 		gl.glDisable(GL.GL_BLEND);
 		inRasterTextMode = true;
@@ -867,28 +834,21 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	 * @param scale
 	 *            the scale to apply
 	 */
-	public void perspectiveText(final String string, final Font font, final double x, final double y, final double z,
-			final GamaPoint anchor) {
-		final int fontSize = computeFontSize(font.getSize());
-		final TextRenderer r = fontCache.get(font, fontSize);
-		if (r == null) { return; }
-
-		if (getCurrentColor() != null) {
-			r.setColor(getCurrentColor());
-		}
-		r.begin3DRendering();
-		final Rectangle2D bounds = r.getBounds(string);
-
-		final float ratio = (float) ratios.y;
-		final float scale = 1f / ratio / textSizeMultiplier;
-
-		final double curX = x - bounds.getWidth() * scale * anchor.x;
-		final double curY = y + bounds.getY() * scale * anchor.y;
-
-		r.draw3D(string, (float) curX, (float) curY, (float) (z + currentZTranslation), scale);
-		r.flush();
-		r.end3DRendering();
-	}
+	// public void perspectiveText(final String string, final Font f, final double x, final double y, final double z,
+	// final GamaPoint anchor, final float depth, final boolean wireframe) {
+	// Font font = f;
+	// final int fontSize = computeFontSize(font.getSize());
+	// if (fontSize != font.getSize()) { font = f.deriveFont(fontSize); }
+	// TextRenderer3D t = new TextRenderer3D(font);
+	// final float ratio = (float) ratios.y;
+	// final float scale = 1f / ratio /* textSizeMultiplier */;
+	// final Rectangle2D bounds = t.getBounds(string);
+	// final double curX = x - bounds.getWidth() * scale * anchor.x;
+	// final double curY = y + bounds.getY() * scale * anchor.y;
+	// final double curZ = z + currentZTranslation;
+	//
+	// t.draw(gl, string, (float) curX, (float) curY, (float) curZ, scale, depth, wireframe);
+	// }
 
 	public double getWorldWidth() {
 		return getData().getEnvWidth();
@@ -900,7 +860,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	public void setWireframe(final boolean wireframe) {
 		isWireframe = wireframe;
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, !isWireframe ? GL2GL3.GL_FILL : GL2GL3.GL_LINE);
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, !isWireframe ? GL2.GL_FILL : GL2.GL_LINE);
 	}
 
 	public boolean isWireframe() {
@@ -943,11 +903,9 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void drawCachedGeometry(final GamaGeometryFile file, final Color border) {
-		if (file == null) { return; }
+		if (file == null) return;
 		final Integer index = geometryCache.get(file);
-		if (index != null) {
-			drawList(index);
-		}
+		if (index != null) { drawList(index); }
 		if (border != null && !isWireframe() && index != null) {
 			final Color old = swapCurrentColor(border);
 			getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
@@ -958,13 +916,11 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void drawCachedGeometry(final IShape.Type id, final boolean solid, final Color border) {
-		if (geometryCache == null) { return; }
-		if (id == null) { return; }
+		if (geometryCache == null) return;
+		if (id == null) return;
 		final BuiltInGeometry object = geometryCache.get(id);
 		if (object != null) {
-			if (solid && !isWireframe()) {
-				object.draw(this);
-			}
+			if (solid && !isWireframe()) { object.draw(this); }
 
 			if (!solid || isWireframe() || border != null) {
 				final Color old = swapCurrentColor(border != null ? border : getCurrentColor());
@@ -1018,7 +974,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		gl.glClearDepth(1.0f);
 		setLighting(getData().isLightOn());
 		resetMatrix(GL2.GL_PROJECTION);
-		updatePerspective();
+		updatePerspective(gl);
 		resetMatrix(GL2.GL_MODELVIEW);
 		rotateModel();
 		return endScene;
@@ -1027,7 +983,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	public void processUnloadedCacheObjects() {
 		textureCache.processUnloaded();
 		geometryCache.processUnloaded();
-		fontCache.processUnloaded();
+		// fontCache.processUnloaded();
 	}
 
 	private boolean isContinuousRotationActive() {
@@ -1035,9 +991,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void rotateModel() {
-		if (isContinuousRotationActive()) {
-			getData().incrementZRotation();
-		}
+		if (isContinuousRotationActive()) { getData().incrementZRotation(); }
 		if (getData().getCurrentRotationAboutZ() != 0d) {
 			final double env_width = getWorldWidth();
 			final double env_height = getWorldHeight();
@@ -1080,11 +1034,12 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		gl.glFrontFace(GL.GL_CW);
 
 		// Hints
-		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-		gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
-		gl.glHint(GL2.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
-		gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
-		gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT_NV, GL2.GL_NICEST);
+		int hint = getData().isAntialias() ? GL.GL_NICEST : GL.GL_FASTEST;
+		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, hint);
+		gl.glHint(GL.GL_LINE_SMOOTH_HINT, hint);
+		gl.glHint(GL2.GL_POINT_SMOOTH_HINT, hint);
+		gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, hint);
+		gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT_NV, hint);
 		// Enable texture 2D
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		// Blending & alpha control
@@ -1094,9 +1049,9 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		gl.glEnable(GL2.GL_ALPHA_TEST);
 		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
 		// Disabling line smoothing to only rely on FSAA
-		 gl.glEnable(GL.GL_LINE_SMOOTH);
-		 gl.glEnable(GL2.GL_POINT_SMOOTH);
-		 gl.glEnable(GL2.GL_POLYGON_SMOOTH);
+		gl.glEnable(GL.GL_LINE_SMOOTH);
+		gl.glEnable(GL2.GL_POINT_SMOOTH);
+		gl.glEnable(GL2.GL_POLYGON_SMOOTH);
 		// Enabling forced normalization of normal vectors (important)
 		gl.glEnable(GL2.GL_NORMALIZE);
 		// Enabling multi-sampling (necessary ?)
@@ -1126,7 +1081,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void drawFPS() {
-		if (!getData().isShowfps()) { return; }
+		if (!getData().isShowfps()) return;
 		setCurrentColor(Color.black);
 		final int nb = (int) getCanvas().getAnimator().getLastFPS();
 		final String s = nb == 0 ? "(computing FPS...)" : nb + " FPS";
@@ -1135,17 +1090,17 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	public void drawROI() {
 		final Envelope3D env = roiEnvelope;
-		if (env == null) { return; }
+		if (env == null) return;
 		geometryDrawer.drawROIHelper(env);
 	}
 
 	public double sizeOfRotationElements() {
-		return Math.min(getMaxEnvDim() / 4d, getData().getCameraPos().minus(getData().getCameraLookPos()).norm() / 6d);
+		return Math.min(getMaxEnvDim() / 4d, getData().getCameraPos().minus(getData().getCameraTarget()).norm() / 6d);
 	}
 
 	public void drawRotation() {
 		if (rotationMode && SHOULD_DRAW_ROTATION_SPHERE) {
-			final GamaPoint target = getData().getCameraLookPos();
+			final GamaPoint target = getData().getCameraTarget();
 			final double distance = getData().getCameraPos().minus(target).norm();
 			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxEnvDim() / 4d, distance / 6d));
 		}
@@ -1164,7 +1119,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void cancelROI() {
-		if (isROISticky) { return; }
+		if (isROISticky) return;
 		roiEnvelope = null;
 	}
 
@@ -1176,7 +1131,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	public boolean mouseInROI(final GamaPoint mousePosition) {
 		final Envelope3D env = getROIEnvelope();
-		if (env == null) { return false; }
+		if (env == null) return false;
 		final GamaPoint p = getWorldPositionFrom(mousePosition);
 		return env.contains(p);
 	}

@@ -19,18 +19,8 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 
 public class VarsProcessor extends ElementProcessor<vars> {
 
-	static final StringBuilder CONCAT = new StringBuilder();
 	Map<Element, Map<String, ExecutableElement>> setters = new HashMap<>();
 	Map<Element, Map<String, ExecutableElement>> getters = new HashMap<>();
-
-	protected final static String concat(final String... array) {
-		for (final String element : array) {
-			CONCAT.append(element);
-		}
-		final String result = CONCAT.toString();
-		CONCAT.setLength(0);
-		return result;
-	}
 
 	@Override
 	public void process(final ProcessorContext context) {
@@ -59,16 +49,12 @@ public class VarsProcessor extends ElementProcessor<vars> {
 			final String clazz = rawNameOf(context, e.asType());
 			final String clazzObject = toClassObject(clazz);
 
-			sb.append(in).append(isField ? "_field(" : "_var(").append(clazzObject);
-			// if (!isField) {
-			// sb.append(",").append(toJavaString(escapeDoubleQuotes(d)));
-			// }
-			sb.append(",");
+			sb.append(in).append(isField ? "_field(" : "_var(").append(clazzObject).append(",");
 			if (isField) {
 				sb.append("_proto(").append(toJavaString(node.name())).append(',');
 				writeHelpers(sb, context, node, clazz, e, isField, true);
 				sb.append(',').append(node.type()).append(',').append(clazzObject).append(',').append(node.type())
-						.append(",").append(node.of()).append(',').append(node.index()).append(')');
+						.append(',').append(node.of()).append(',').append(node.index()).append(')');
 			} else {
 				sb.append("desc(").append(node.type()).append(',');
 				writeFacets(sb, node);
@@ -95,7 +81,8 @@ public class VarsProcessor extends ElementProcessor<vars> {
 					final int n = argParams.size();
 					if (n == 0) {
 						context.emitError(
-								"GAML: Setters must declare at least one argument (or 2 if the scope is passed", ex);
+								"setters must declare at least one argument corresponding to the value of the variable (or 2 if the scope is passed)",
+								ex);
 						return;
 					}
 					final String[] args = new String[n];

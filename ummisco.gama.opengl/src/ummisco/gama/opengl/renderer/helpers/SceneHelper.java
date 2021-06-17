@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
@@ -44,15 +44,13 @@ public class SceneHelper extends AbstractRendererHelper {
 	public void initialize() {}
 
 	public void layerOffsetChanged() {
-		if (getSceneToRender() == null) { return; }
+		if (getSceneToRender() == null) return;
 		getSceneToRender().layerOffsetChanged();
 	}
 
 	public void beginDrawingLayer(final ILayer layer, final Double currentLayerAlpha) {
 		final ModelScene scene = getSceneToUpdate();
-		if (scene != null) {
-			scene.beginDrawingLayer(layer, currentLayerAlpha);
-		}
+		if (scene != null) { scene.beginDrawingLayer(layer, currentLayerAlpha); }
 	}
 
 	public boolean beginUpdatingScene() {
@@ -68,11 +66,9 @@ public class SceneHelper extends AbstractRendererHelper {
 		}
 		// If we are not synchronized (or if the wait is over), we verify that
 		// backScene is null and create a new one
-		if (backScene != null) {
-			// We should also prevent the draw to happen by skipping everything
+		if (backScene != null) // We should also prevent the draw to happen by skipping everything
 			// if it the case ?
 			return false;
-		}
 		backScene = createSceneFrom(staticScene);
 		// We prepare it for drawing
 		backScene.beginDrawingLayers();
@@ -80,8 +76,8 @@ public class SceneHelper extends AbstractRendererHelper {
 	}
 
 	public boolean isNotReadyToUpdate() {
-		if (frontScene == null) { return false; }
-		if (!frontScene.rendered()) { return true; }
+		if (frontScene == null) return false;
+		if (!frontScene.rendered()) return true;
 		return false;
 	}
 
@@ -89,7 +85,7 @@ public class SceneHelper extends AbstractRendererHelper {
 		// If there is no scene to update, it means it has been cancelled by
 		// another thread (hiding/showing layers, most probably) so we just skip
 		// this step
-		if (backScene == null) { return; }
+		if (backScene == null) return;
 		// We ask the backScene to stop updating
 		backScene.endDrawingLayers();
 		// We create the static scene from it if it does not exist yet or if it
@@ -120,7 +116,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	/**
 	 * This method creates a new scene and copies to it the static layers from a given existing scene. If no existing
 	 * scene is passed, a completely new scene is created
-	 * 
+	 *
 	 * @return a new scene
 	 */
 	protected ModelScene createSceneFrom(final ModelScene existing) {
@@ -135,7 +131,7 @@ public class SceneHelper extends AbstractRendererHelper {
 
 	/**
 	 * Returns the scene to be rendered by the renderer. Can be null.
-	 * 
+	 *
 	 * @return
 	 */
 
@@ -145,7 +141,7 @@ public class SceneHelper extends AbstractRendererHelper {
 
 	/**
 	 * Returns the scene to update. Can be null
-	 * 
+	 *
 	 * @return
 	 */
 
@@ -155,7 +151,7 @@ public class SceneHelper extends AbstractRendererHelper {
 
 	/**
 	 * Performs the management and disposal of discarded scenes
-	 * 
+	 *
 	 * @param gl
 	 */
 	public void garbageCollect(final OpenGL gl) {
@@ -172,17 +168,11 @@ public class SceneHelper extends AbstractRendererHelper {
 	 */
 
 	public void dispose() {
-		if (frontScene != null) {
-			frontScene.dispose();
-		}
+		if (frontScene != null) { frontScene.dispose(); }
 		frontScene = null;
-		if (backScene != null) {
-			backScene.dispose();
-		}
+		if (backScene != null) { backScene.dispose(); }
 		backScene = null;
-		if (staticScene != null) {
-			staticScene.dispose();
-		}
+		if (staticScene != null) { staticScene.dispose(); }
 		staticScene = null;
 	}
 
@@ -224,8 +214,8 @@ public class SceneHelper extends AbstractRendererHelper {
 	}
 
 	public void reshape(final int width, final int height) {
-		if (getSceneToRender() == null) { return; }
-		getSceneToRender().recomputeLayoutDimensions();
+		if (getSceneToRender() == null) return;
+		getSceneToRender().recomputeLayoutDimensions(this.getOpenGL());
 	}
 
 }

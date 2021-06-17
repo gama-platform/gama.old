@@ -55,7 +55,7 @@ import msi.gaml.types.Types;
 		concept = { IConcept.CSV, IConcept.FILE },
 		doc = @doc ("A type of text file that contains comma-separated values"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
+public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IFieldMatrixProvider {
 
 	public static class CSVInfo extends GamaFileMetaData {
 
@@ -453,6 +453,36 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 
 	public Boolean hasHeader() {
 		return hasHeader == null ? false : hasHeader;
+	}
+
+	@Override
+	public int getRows(final IScope scope) {
+		return getInfo(scope, null).rows;
+	}
+
+	@Override
+	public int getCols(final IScope scope) {
+		return getInfo(scope, null).cols;
+	}
+
+	@Override
+	public int getBands(final IScope scope) {
+		return 1;
+	}
+
+	@Override
+	public GamaFloatMatrix getMatrix(final IScope scope) {
+		IMatrix matrix = getContents(scope);
+		GamaFloatMatrix m =
+				matrix instanceof GamaFloatMatrix ? (GamaFloatMatrix) matrix : GamaFloatMatrix.from(scope, matrix);
+		return m;
+	}
+
+	@Override
+	public double[] getBand(final IScope scope, final int index) {
+		if (index > 0) return null;
+		return getMatrix(scope).getMatrix();
+
 	}
 
 }

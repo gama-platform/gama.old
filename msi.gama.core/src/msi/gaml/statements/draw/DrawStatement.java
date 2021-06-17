@@ -79,7 +79,14 @@ import msi.gaml.types.Types;
 						name = EMPTY,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("a condition specifying whether the geometry is empty or full")),
+						doc = @doc (
+								deprecated = "Use 'wireframe' instead",
+								value = "a condition specifying whether the geometry is empty or full")),
+				@facet (
+						name = IKeyword.WIREFRAME,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("a condition specifying whether to draw the geometry in wireframe or not")),
 				@facet (
 						name = BORDER,
 						type = { IType.COLOR, IType.BOOL },
@@ -129,6 +136,14 @@ import msi.gaml.types.Types;
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("(only if the display type is opengl) Add an artificial depth to the geometry previously defined (a line becomes a plan, a circle becomes a cylinder, a square becomes a cube, a polygon becomes a polyhedron with height equal to the depth value). Note: This only works if the geometry is not a point ")),
+
+				@facet (
+						name = "precision",
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("(only if the display type is opengl and only for text drawing) controls the accuracy with which curves are rendered in glyphs. Between 0 and 1, the default is 0.1. "
+								+ "Smaller values will output much more faithful curves but can be considerably slower, "
+								+ "so it is better if they concern text that does not change and can be drawn inside layers marked as 'refresh: false'")),
 				@facet (
 						name = DrawStatement.BEGIN_ARROW,
 						type = { IType.INT, IType.FLOAT },
@@ -234,6 +249,11 @@ public class DrawStatement extends AbstractStatementSequence {
 		 */
 		@Override
 		public void validate(final StatementDescription description) {
+			final IExpressionDescription empty = description.getFacet(IKeyword.EMPTY);
+			if (empty != null) {
+				description.setFacet(IKeyword.WIREFRAME, empty);
+				description.removeFacets(EMPTY);
+			}
 			final IExpressionDescription persp = description.getFacet("bitmap");
 			if (persp != null) {
 				if (description.getFacet(PERSPECTIVE) != null) {
@@ -280,7 +300,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		private boolean canDraw(final IExpression exp) {
 			IType<?> type = exp.getGamlType();
-			if (type.isDrawable()) { return true; }
+			if (type.isDrawable()) return true;
 			// In case we have a generic file operator, for instance
 			type = type.typeIfCasting(exp);
 			return type.isDrawable();
@@ -315,16 +335,14 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if (executer == null) { return null; }
+		if (executer == null) return null;
 		final IGraphics g = scope.getGraphics();
-		if (g == null) { return null; }
+		if (g == null) return null;
 		try {
 			final DrawingData d = data.get();
 			d.refresh(scope);
 			final Rectangle2D result = executer.executeOn(scope, g, d);
-			if (result != null) {
-				g.accumulateTemporaryEnvelope(result);
-			}
+			if (result != null) { g.accumulateTemporaryEnvelope(result); }
 			return result;
 		} catch (final GamaRuntimeException e) {
 			throw e;
