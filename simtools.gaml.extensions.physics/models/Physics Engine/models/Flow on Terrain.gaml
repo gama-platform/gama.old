@@ -10,14 +10,13 @@ model Terrain
 global parent: physical_world {
 
 	// We scale the DEM up a little
-	float z_scale <- 0.1;
+	float z_scale <- 0.5;
 	float step <-  1.0/30;	
 	bool flowing <- true;
 	point gravity <- {-z_scale/4, z_scale, -9.81};
 	int number_of_water_units <- 1 min: 0 max: 10;
 	list<point> origins_of_flow <- [{17,3}, {55,3}];
-	//matrix<float> terrain <- matrix<float>(grid_file("../images/DEM/RedRiver.asc"));
-	matrix<float> terrain <- matrix<float>(image_file("../images/DEM/heightmap-2.png"));
+	matrix<float> terrain <- matrix<float>(grid_file("../images/DEM/RedRiver.asc"));
 
 	geometry shape <- box({terrain.columns, terrain.rows, max(terrain)*z_scale});
 	float friction <- 0.0;
@@ -90,3 +89,29 @@ experiment "3D view" type: gui {
 
 
 
+
+
+experiment name type: gui {
+
+	
+	// Define parameters here if necessary
+	// parameter "My parameter" category: "My parameters" var: one_global_attribute;
+	
+	// Define attributes, actions, a init section and behaviors if necessary
+	// init { }
+	
+	
+	output {
+	// Define inspectors, browsers and displays here
+	
+	// inspect one_or_several_agents;
+	//
+	// display "My display" { 
+	//		species one_species;
+	//		species another_species;
+	// 		grid a_grid;
+	// 		...
+	// }
+
+	}
+}
