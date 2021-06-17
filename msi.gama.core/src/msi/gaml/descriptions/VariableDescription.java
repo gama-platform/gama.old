@@ -12,7 +12,6 @@ package msi.gaml.descriptions;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,7 +56,7 @@ public class VariableDescription extends SymbolDescription {
 	// for variables automatically added to species for containing micro-agents
 	private boolean _isSyntheticSpeciesContainer;
 	private IGamaHelper<?> get, init, set;
-	private GamaHelper<?>[] listeners;
+	// private GamaHelper<?>[] listeners;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final EObject source,
 			final Facets facets) {
@@ -111,14 +110,14 @@ public class VariableDescription extends SymbolDescription {
 		if (get == null) { get = v2.get; }
 		if (set == null) { set = v2.set; }
 		if (init == null) { init = v2.init; }
-		if (listeners == null) { listeners = v2.listeners; }
+		// if (listeners == null) { listeners = v2.listeners; }
 	}
 
 	@Override
 	public VariableDescription copy(final IDescription into) {
 		final VariableDescription vd = new VariableDescription(getKeyword(), into, element, getFacetsCopy());
 		vd.addHelpers(get, init, set);
-		vd.listeners = listeners;
+		// vd.listeners = listeners;
 		vd.originName = getOriginName();
 		return vd;
 	}
@@ -310,13 +309,13 @@ public class VariableDescription extends SymbolDescription {
 				set != null ? new GamaHelper<>(name, skill, set) : null);
 	}
 
-	public void addListeners(final List<GamaHelper> listeners) {
-		this.listeners = listeners.toArray(new GamaHelper[listeners.size()]);
-	}
-
-	public GamaHelper[] getListeners() {
-		return listeners;
-	}
+	// public void addListeners(final List<GamaHelper> listeners) {
+	// this.listeners = listeners.toArray(new GamaHelper[listeners.size()]);
+	// }
+	//
+	// public GamaHelper[] getListeners() {
+	// return listeners;
+	// }
 
 	public IGamaHelper<?> getGetter() {
 		return get;

@@ -10,10 +10,14 @@
  ********************************************************************************************************/
 package msi.gaml.variables;
 
+import static com.google.common.collect.Iterables.transform;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Objects;
 
@@ -21,6 +25,7 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.IVarAndActionSupport;
+import msi.gama.common.util.JavaUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -34,6 +39,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.IGamaHelper;
@@ -43,6 +49,7 @@ import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
@@ -399,15 +406,44 @@ public class Variable extends Symbol implements IVariable {
 		initer = getDescription().getIniter();
 		setter = getDescription().getSetter();
 		if (setter != null) { sSkill = species.getSkillInstanceFor(setter.getSkillClass()); }
-		GamaHelper[] helpers = getDescription().getListeners();
-		mustNotifyOfChanges = helpers != null && helpers.length > 0 || onChangeExpression != null || on_changer != null;
-		if (helpers != null && helpers.length > 0) {
+		addListeners(species);
+		mustNotifyOfChanges =
+				listeners != null && listeners.size() > 0 || onChangeExpression != null || on_changer != null;
+	}
+
+	/**
+	 * // AD 2021: addition of the listeners
+	 */
+	private void addListeners(final AbstractSpecies species) {
+		VariableDescription var = (VariableDescription) description;
+		SpeciesDescription sp = species.getDescription();
+		if (var.isBuiltIn()) return;
+		Class base = sp.getJavaBase();
+		if (base == null) return;
+		List<GamaHelper> helpers = new ArrayList<>();
+		Iterable<Class<? extends ISkill>> skillClasses = transform(sp.getSkills(), SpeciesDescription.TO_CLASS);
+		if (AbstractGamlAdditions.LISTENERS_BY_NAME.containsKey(getName())) {
+			List<Class> classes = JavaUtils.collectImplementationClasses(base, skillClasses,
+					AbstractGamlAdditions.LISTENERS_BY_NAME.get(getName()));
+			if (!classes.isEmpty()) {
+				for (Class c : classes) {
+					Set<GamaHelper> set = AbstractGamlAdditions.LISTENERS_BY_CLASS.get(c);
+					for (GamaHelper h : set) {
+						if (h.getName().equals(getName())) { helpers.add(h); }
+					}
+				}
+			}
+
+		}
+
+		if (!helpers.isEmpty()) {
 			listeners = new HashMap<>();
 			for (GamaHelper helper : helpers) {
 				listeners.put(helper, species.getSkillInstanceFor(helper.getSkillClass()));
 			}
 
 		}
+
 	}
 
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
