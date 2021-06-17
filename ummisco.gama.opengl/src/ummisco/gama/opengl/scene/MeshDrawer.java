@@ -63,7 +63,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		private final boolean outputsTextures;
 		private final boolean outputsColors;
 		private final boolean outputsLines;
-		double[] normals = { 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 };
+		double[] normals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
 
 		public FieldMeshDrawer(final MeshObject object) {
 			MeshDrawingAttributes attributes = object.getAttributes();
