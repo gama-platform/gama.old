@@ -85,11 +85,12 @@ import ummisco.gama.dev.utils.DEBUG;
 				doc = @doc (
 						value = "Contains a reference to the current simulation being run by this experiment",
 						comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
-		// @var(name = GAMA._FATAL, type = IType.BOOL),
 		@variable (
 				name = GAMA._WARNINGS,
 				type = IType.BOOL,
-				doc = @doc ("The value of the preference 'Consider warnings as errors'")),
+				doc = @doc (
+						deprecated = "use gama.pref_errors_warnings_errors instead",
+						value = "The value of the preference 'Consider warnings as errors'")),
 		@variable (
 				name = ExperimentAgent.MODEL_PATH,
 				type = IType.STRING,
@@ -145,7 +146,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	public static final String MODEL_PATH = "model_path";
@@ -172,7 +173,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ownScope = new ExperimentAgentScope();
 		ownClock = new ExperimentClock(ownScope);
 		executer = new ActionExecuter(ownScope);
-		DEBUG.OUT("Creation of " + this);
 		// Should not perform a whole reset as it shuts down UI outputs in comodels (see #2813)
 		if (s.getSpecies().getDescription().belongsToAMicroModel()) {
 			initialize();
