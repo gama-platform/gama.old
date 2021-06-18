@@ -22,17 +22,18 @@ public class BulletActivator implements BundleActivator {
 	public void start(final BundleContext context) throws Exception {
 
 		if (LOAD_NATIVE_BULLET_LIBRARY) {
-			TIMER_WITH_EXCEPTIONS(PAD("> GAMA: native Bullet library", 45, '.') + " loaded in......", () -> {
-				try {
-					System.loadLibrary("bulletjme");
-					NATIVE_BULLET_LIBRARY_LOADED = true;
-				} catch (Exception e) {
-					ERR(">> Impossible to load Bullet native library from " + context.getBundle().getSymbolicName()
-							+ " because of " + e.getMessage());
-					ERR(">> GAMA will revert to JBullet instead");
-					throw e;
-				}
-			});
+			TIMER_WITH_EXCEPTIONS(PAD("> GAMA: native Bullet library", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'),
+					() -> {
+						try {
+							System.loadLibrary("bulletjme");
+							NATIVE_BULLET_LIBRARY_LOADED = true;
+						} catch (Exception e) {
+							ERR(">> Impossible to load Bullet native library from "
+									+ context.getBundle().getSymbolicName() + " because of " + e.getMessage());
+							ERR(">> GAMA will revert to JBullet instead");
+							throw e;
+						}
+					});
 
 		}
 	}

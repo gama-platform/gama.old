@@ -95,7 +95,7 @@ import ummisco.gama.ui.parameters.GamaWizardPage;
 public class SwtGui implements IGui {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	public volatile static boolean ALL_TESTS_RUNNING;

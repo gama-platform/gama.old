@@ -12,8 +12,6 @@
  **********************************************************************************************/
 package msi.gama.ext;
 
-import java.util.Arrays;
-
 import javax.imageio.ImageIO;
 import javax.media.jai.JAI;
 
@@ -25,6 +23,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import it.geosolutions.jaiext.ConcurrentOperationRegistry;
+import one.util.streamex.StreamEx;
 
 public class Activator implements BundleActivator {
 
@@ -65,8 +64,8 @@ public class Activator implements BundleActivator {
 		//
 		// // }
 
-		System.out.println(
-				PAD("> JAI/ImageIO subsystem ", 45) + " loaded for " + Arrays.asList(ImageIO.getReaderFileSuffixes()));
+		System.out.println(PAD("> JAI : ImageIO extensions", 45, ' ') + PAD(" loaded for", 15, '_') + " "
+				+ StreamEx.of(ImageIO.getReaderFileSuffixes()).joining("|"));
 	}
 
 	/*
@@ -79,12 +78,12 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 
-	public static String PAD(final String string, final int minLength) {
+	public static String PAD(final String string, final int minLength, final char pad) {
 		if (string.length() >= minLength) return string;
 		final StringBuilder sb = new StringBuilder(minLength);
 		sb.append(string);
 		for (int i = string.length(); i < minLength; i++) {
-			sb.append('.');
+			sb.append(pad);
 		}
 		return sb.toString();
 	}
