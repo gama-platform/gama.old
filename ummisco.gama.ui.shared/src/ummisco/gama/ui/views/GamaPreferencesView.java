@@ -71,6 +71,10 @@ import ummisco.gama.ui.views.toolbar.Selector;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPreferencesView {
 
+	static {
+		DEBUG.ON();
+	}
+
 	static Pref<GamaPoint> DIALOG_LOCATION = GamaPreferences.create("dialog_location",
 			"Location of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT, false).hidden();
 	static Pref<GamaPoint> DIALOG_SIZE = GamaPreferences.create("dialog_size",
@@ -90,9 +94,23 @@ public class GamaPreferencesView {
 		}
 		for (final IParameterEditor ed : instance.editors.values()) {
 			ed.updateValue(true);
-
 		}
 		instance.open();
+	}
+
+	public static void preload() {
+		DEBUG.TIMER(DEBUG.PAD("> GAMA: preferences", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
+			WorkbenchHelper.run(() -> {
+				if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
+					instance = new GamaPreferencesView(WorkbenchHelper.getShell());
+				}
+
+			});
+			for (final IParameterEditor ed : instance.editors.values()) {
+				ed.updateValue(true);
+			}
+		});
+
 	}
 
 	static {
@@ -207,9 +225,7 @@ public class GamaPreferencesView {
 		if (e.getRefreshment() != null) {
 			for (final String activable : e.getRefreshment()) {
 				final var ed = editors.get(activable);
-				if (ed != null) {
-					ed.updateValue(true);
-				}
+				if (ed != null) { ed.updateValue(true); }
 			}
 		}
 	}
@@ -235,9 +251,7 @@ public class GamaPreferencesView {
 					modelValues.put(e.getKey(), value);
 					checkActivables(e, value);
 					checkRefreshables(e, value);
-					if (e.isRestartRequired()) {
-						setRestartRequired();
-					}
+					if (e.isRestartRequired()) { setRestartRequired(); }
 				} else {
 					GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());
 				}
@@ -260,9 +274,7 @@ public class GamaPreferencesView {
 		// Initial activations of editors
 		for (final String s : activations.keySet()) {
 			final var ed = editors.get(s);
-			if (ed != null) {
-				ed.setActive(activations.get(s));
-			}
+			if (ed != null) { ed.setActive(activations.get(s)); }
 		}
 		activations.clear();
 		compo.layout();
@@ -333,8 +345,7 @@ public class GamaPreferencesView {
 				final var fd = new FileDialog(shell, SWT.OPEN);
 				fd.setFilterExtensions(new String[] { "*.prefs" });
 				final var path = fd.open();
-				if (path == null)
-					return;
+				if (path == null) return;
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
 				for (final IParameterEditor ed : editors.values()) {
 					ed.updateValue(true);
@@ -355,8 +366,7 @@ public class GamaPreferencesView {
 				fd.setFilterExtensions(new String[] { "*.gaml" });
 				fd.setOverwrite(false);
 				final var path = fd.open();
-				if (path == null)
-					return;
+				if (path == null) return;
 				GamaPreferences.savePreferencesTo(path);
 			}
 
@@ -483,8 +493,7 @@ public class GamaPreferencesView {
 	}
 
 	private void saveDialogProperties() {
-		if (shell.isDisposed())
-			return;
+		if (shell.isDisposed()) return;
 		saveLocation();
 		saveSize();
 		saveTab();
@@ -513,9 +522,7 @@ public class GamaPreferencesView {
 		shell.open();
 
 		while (!this.shell.isDisposed() && this.shell.isVisible()) {
-			if (!this.shell.getDisplay().readAndDispatch()) {
-				this.shell.getDisplay().sleep();
-			}
+			if (!this.shell.getDisplay().readAndDispatch()) { this.shell.getDisplay().sleep(); }
 		}
 
 		saveDialogProperties();

@@ -47,6 +47,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.views.GamaPreferencesView;
 
 public class CleanupHelper {
 
@@ -60,6 +61,7 @@ public class CleanupHelper {
 		RearrangeMenus.run();
 		ForceMaximizeRestoration.run();
 		RemoveActivities.run();
+		GamaPreferencesView.preload();
 	}
 
 	static class RemoveActivities {
@@ -149,7 +151,7 @@ public class CleanupHelper {
 			// DEBUG.OUT("Perspective " + perspective.getId() + " activated");
 			// }
 			final WorkbenchWindow w = (WorkbenchWindow) page.getWorkbenchWindow();
-			if (w.isClosing()) { return; }
+			if (w.isClosing()) return;
 			WorkbenchHelper.runInUI("Cleaning menus", 0, m -> {
 				try {
 
@@ -187,9 +189,7 @@ public class CleanupHelper {
 
 		@Override
 		public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {
-			if (c.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) {
-				perspectiveActivated(p, d);
-			}
+			if (c.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) { perspectiveActivated(p, d); }
 
 		}
 
@@ -247,7 +247,7 @@ public class CleanupHelper {
 				"converstLineDelimitersTo", "org.eclipse.equinox.p2.ui.sdk.update",
 				"org.eclipse.equinox.p2.ui.sdk.install", "org.eclipse.equinox.p2.ui.sdk.installationDetails",
 				"org.eclipse.e4.ui.importer.openDirectory.menu"));
-		public final static Map<String, String> MENU_IMAGES = new HashMap<String, String>() {
+		public final static Map<String, String> MENU_IMAGES = new HashMap<>() {
 			{
 				put("print", "menu.print2");
 				put("save", "menu.save2");
@@ -285,9 +285,7 @@ public class CleanupHelper {
 								menu = (MenuManager) ((ActionSetContributionItem) item).getInnerItem();
 							}
 						}
-						if (menu != null) {
-							processItems(menu);
-						}
+						if (menu != null) { processItems(menu); }
 					}
 					menuManager.updateAll(true);
 				}
@@ -306,9 +304,7 @@ public class CleanupHelper {
 					item.setVisible(false);
 					continue;
 				}
-				if (item.isGroupMarker() || item.isSeparator() || !item.isVisible()) {
-					continue;
-				}
+				if (item.isGroupMarker() || item.isSeparator() || !item.isVisible()) { continue; }
 				if (MENU_IMAGES.containsKey(name)) {
 					changeIcon(menu, item, GamaIcons.create(MENU_IMAGES.get(name)).descriptor());
 				}
@@ -333,9 +329,7 @@ public class CleanupHelper {
 				item.dispose();
 			} else if (item instanceof ActionSetContributionItem) {
 				changeIcon(menu, ((ActionSetContributionItem) item).getInnerItem(), image);
-			} else if (item instanceof MenuManager) {
-				((MenuManager) item).setImageDescriptor(image);
-			}
+			} else if (item instanceof MenuManager) { ((MenuManager) item).setImageDescriptor(image); }
 		}
 
 	}
