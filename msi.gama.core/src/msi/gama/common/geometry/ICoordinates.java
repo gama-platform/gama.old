@@ -232,13 +232,18 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * of the points will not change (only the first 'size' points will be replaced if the length of the parameter / 3
 	 * is greater than the size of the sequence). Allows to maintain 'working sequences' without having to create new
 	 * ones (be aware that if the same working sequence is used in different methods, it might create unexpected side
-	 * effects)
+	 * effects). In the method with an index, the index is expressed in terms of ordinates, not points (an index of 6
+	 * means me will be entering point 2 -- or the 3rd one)
 	 *
 	 * @param points
 	 *            an Array of double x, y, z
 	 * @return this
 	 */
-	ICoordinates setTo(double... ordinates);
+	default ICoordinates setTo(final double... ordinates) {
+		return setTo(0, ordinates);
+	}
+
+	ICoordinates setTo(int begin, double... ordinates);
 
 	/**
 	 * Equivalent to the setOrdinate(i, d) method but sets all the ordinates at once. No measure is taken for ensuring

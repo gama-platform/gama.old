@@ -53,7 +53,6 @@ public class DrawingData extends AttributeHolder {
 	final Attribute<ILocation> anchor;
 	final Attribute<Boolean> empty;
 	final Attribute<GamaColor> border, color;
-	// private final Attribute<IList<GamaColor>> colors;
 	final Attribute<GamaFont> font;
 	final Attribute<IList> texture;
 	final Attribute<GamaMaterial> material;
@@ -82,7 +81,7 @@ public class DrawingData extends AttributeHolder {
 		}, Types.POINT, null, constSizeCaster);
 		this.lighting = create(IKeyword.LIGHTED, Types.BOOL, true);
 		this.depth = create(IKeyword.DEPTH, Types.FLOAT, null);
-		this.precision = create("precision", Types.FLOAT, 0.1);
+		this.precision = create("precision", Types.FLOAT, 0.01);
 		final Function<IExpression, AxisAngle> constRotationCaster = (exp) -> {
 			if (exp.getGamlType().getGamlType() == Types.PAIR) {
 				final GamaPair currentRotation = Cast.asPair(null, exp.getConstValue(), true);

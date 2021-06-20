@@ -153,7 +153,8 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public ICoordinates setTo(final double... points) {
+	public ICoordinates setTo(final int index, final double... points) {
+		if (index > 0) return this;
 		if (points.length < 3) return this;
 		point.x = points[0];
 		point.y = points[1];

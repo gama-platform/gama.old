@@ -111,7 +111,7 @@ public class LayeredDisplayData {
 	private Double zoomLevel = INITIAL_ZOOM;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
 	public static final ICoordinates KEYSTONE_IDENTITY =
-			ICoordinates.ofLength(4).setTo(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
+			ICoordinates.ofLength(4).setTo(0d, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
 
 	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
 	private double zRotationAngleDelta = 0;

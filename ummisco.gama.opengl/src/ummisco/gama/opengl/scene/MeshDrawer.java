@@ -240,14 +240,14 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 		public void drawOn(final OpenGL openGL) {
 			final GL2 gl = openGL.getGL();
-			gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-			gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+			openGL.enable(GL2.GL_VERTEX_ARRAY);
+			openGL.enable(GL2.GL_NORMAL_ARRAY);
 			if (outputsTextures) {
-				gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+				openGL.enable(GL2.GL_TEXTURE_COORD_ARRAY);
 			} else {
 				gl.glDisable(GL.GL_TEXTURE_2D);
 			}
-			if (outputsColors) { gl.glEnableClientState(GL2.GL_COLOR_ARRAY); }
+			if (outputsColors) { openGL.enable(GL2.GL_COLOR_ARRAY); }
 			try {
 				gl.glVertexPointer(3, GL2.GL_DOUBLE, 0, vertexBuffer);
 				gl.glNormalPointer(GL2.GL_DOUBLE, 0, normalBuffer);
@@ -264,7 +264,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 					}
 				}
 				if (outputsLines) {
-					if (!outputsColors) { gl.glEnableClientState(GL2.GL_COLOR_ARRAY); }
+					if (!outputsColors) { openGL.enable(GL2.GL_COLOR_ARRAY); }
 					gl.glColorPointer(3, GL2.GL_DOUBLE, 0, lineColorBuffer);
 					gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
 					if (triangles) {
@@ -276,10 +276,10 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 					gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 				}
 			} finally {
-				gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-				gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-				if (outputsTextures) { gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY); }
-				if (outputsColors || outputsLines) { gl.glDisableClientState(GL2.GL_COLOR_ARRAY); }
+				openGL.disable(GL2.GL_VERTEX_ARRAY);
+				openGL.disable(GL2.GL_NORMAL_ARRAY);
+				if (outputsTextures) { openGL.disable(GL2.GL_TEXTURE_COORD_ARRAY); }
+				if (outputsColors || outputsLines) { openGL.disable(GL2.GL_COLOR_ARRAY); }
 
 			}
 			if (withText) { drawLabels(openGL); }

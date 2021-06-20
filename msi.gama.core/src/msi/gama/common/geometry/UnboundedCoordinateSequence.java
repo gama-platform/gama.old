@@ -273,10 +273,10 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public ICoordinates setTo(final double... points2) {
+	public ICoordinates setTo(final int index, final double... points2) {
 		growTo(points2.length / 3);
 		nbPoints = points2.length / 3;
-		for (int i = 0; i < nbPoints; i++) {
+		for (int i = index / 3; i < nbPoints; i++) {
 			points[i].setLocation(points2[i * 3], points2[i * 3 + 1], points2[i * 3 + 2]);
 		}
 		ensureClockwiseness();

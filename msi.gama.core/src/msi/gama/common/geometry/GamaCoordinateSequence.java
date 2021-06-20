@@ -365,9 +365,9 @@ public class GamaCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public ICoordinates setTo(final double... points2) {
+	public ICoordinates setTo(final int index, final double... points2) {
 		final int size = Math.min(points2.length, points.length * 3);
-		for (int i = 0; i < size; i += 3) {
+		for (int i = index; i < size; i += 3) {
 			final GamaPoint self = points[i / 3];
 			self.x = points2[i];
 			self.y = points2[i + 1];
