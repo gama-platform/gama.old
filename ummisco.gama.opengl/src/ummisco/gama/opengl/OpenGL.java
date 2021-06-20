@@ -236,9 +236,6 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		resetMatrix(GL2.GL_MODELVIEW);
 		resetMatrix(GL2.GL_PROJECTION);
 		updatePerspective(newGL);
-		// newGL.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-		// newGL.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-		// newGL.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 
 		final double[] pixelSize = new double[4];
 		glu.gluProject(getWorldWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, pixelSize, 0);
@@ -369,6 +366,10 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		return currentZTranslation;
 	}
 
+	public double getCurrentZIncrement() {
+		return currentZIncrement;
+	}
+
 	/**
 	 * Returns the previous state
 	 *
@@ -421,6 +422,14 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	public void push(final int mode) {
 		matrixMode(mode);
 		pushMatrix();
+	}
+
+	public void enable(final int state) {
+		gl.glEnableClientState(state);
+	}
+
+	public void disable(final int state) {
+		gl.glDisableClientState(state);
 	}
 
 	@Override
@@ -611,25 +620,6 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		}, number, clockwise);
 		endDrawing();
 	}
-
-	// /**
-	// * Draw the vertices using the style provided (e.g. GL_QUADS, GL_LINE), the color provided (which will be reverted
-	// * as soon as the draw has finished), a given number of vertices in this sequence, in the clockwise or CCW
-	// direction
-	// *
-	// * @param style
-	// * @param color
-	// * @param yNegatedVertices
-	// * @param number
-	// * @param clockwise
-	// */
-	// public void drawVertices(final int style, final Color color, final ICoordinates yNegatedVertices, final int
-	// number,
-	// final boolean clockwise) {
-	// final Color previous = swapCurrentColor(color);
-	// drawVertices(style, yNegatedVertices, number, clockwise);
-	// setCurrentColor(previous);
-	// }
 
 	/**
 	 * Replaces the current color by the parameter, sets the alpha of the parameter to be the one of the current color,
@@ -949,8 +939,15 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		setLineWidth(object.getAttributes().getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		setCurrentColor(object.getAttributes().getColor());
+//		if (isTextured()) {
+//			if ((object.isFilled() || object.isBordered()) && !object.getAttributes().isSynthetic()) {
+//				gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
+//			} else {
+//				gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+//			}
 		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
+
 		}
 
 	}
