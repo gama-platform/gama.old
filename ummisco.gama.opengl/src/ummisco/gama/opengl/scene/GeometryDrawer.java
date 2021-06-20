@@ -168,15 +168,15 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	}
 
 	private void drawPolyhedron(final Polygon polygon, final boolean solid, final double height, final Color border) {
-		final boolean hasHoles = getHolesNumber(polygon) > 0;
+		// final boolean hasHoles = getHolesNumber(polygon) > 0;
 		// Draw bottom
-		drawPolygon(polygon, solid, hasHoles ? border : null, true, true);
+		drawPolygon(polygon, solid, border, /* hasHoles ? border : null, */ true, true);
 		_vertices.getNormal(true, height, _normal);
 		try {
 			gl.pushMatrix();
 			gl.translateBy(_normal.x, _normal.y, _normal.z);
 			// Draw top
-			drawPolygon(polygon, solid, hasHoles ? border : null, true, false);
+			drawPolygon(polygon, solid, border, /* hasHoles ? border null, */ true, false);
 		} finally {
 			gl.popMatrix();
 		}
