@@ -137,4 +137,8 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 		p.setLocation(0, 0, 0);
 	}
 
+	public boolean isBordered() {
+		return getAttributes().getBorder() != null;
+	}
+
 }
