@@ -1105,40 +1105,41 @@ public class DrivingSkill extends MovingSkill {
 					(GamaPoint) currentRoad.getLocation(), (GamaPoint) newRoad.getLocation());
 
 			// TODO: adjust the speed diff condition
-			double speed = Math.max(0.5, getSpeed(vehicle) + getMaxAcceleration(vehicle));
-			double safetyDistCoeff = vehicle.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(vehicle)
-					: getSecurityDistanceCoeff(vehicle);
+			// TODO: always return false if vehicle decides to make an U-turn
+			// double speed = Math.max(0.5, getSpeed(vehicle) + getMaxAcceleration(vehicle));
+			// double safetyDistCoeff = vehicle.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(vehicle)
+			// 		: getSecurityDistanceCoeff(vehicle);
 
-			List<IAgent> roadsIn = (List) intersectionNode.getAttribute(RoadNodeSkill.ROADS_IN);
-			for (IAgent otherInRoad : roadsIn) {
-				if (otherInRoad == currentRoad) {
-					continue;
-				}
-				double angle = Punctal.angleInDegreesBetween(scope, (GamaPoint) intersectionNode.getLocation(),
-						(GamaPoint) currentRoad.getLocation(), (GamaPoint) otherInRoad.getLocation());
-				boolean otherRoadIsPriortized = priorityRoads != null && priorityRoads.contains(otherInRoad);
-				boolean hasPriority = onPriorityRoad && !otherRoadIsPriortized;
-				boolean shouldRespectPriority = !onPriorityRoad && otherRoadIsPriortized;
-				// be careful of vehicles coming from the right/left side
-				if (!hasPriority
-						&& (shouldRespectPriority || rightSide && angle > angleRef || !rightSide && angle < angleRef)) {
-					List<IAgent> otherVehicles = (List) otherInRoad.getAttribute(RoadSkill.ALL_AGENTS);
-					for (IAgent otherVehicle : otherVehicles) {
-						if (otherVehicle == null || otherVehicle.dead()) {
-							continue;
-						}
-						double otherVehicleLength = getVehicleLength(otherVehicle);
-						double otherSpeed = getSpeed(otherVehicle);
-						double dist = otherVehicle.euclidianDistanceTo(vehicle);
+			// List<IAgent> roadsIn = (List) intersectionNode.getAttribute(RoadNodeSkill.ROADS_IN);
+			// for (IAgent otherInRoad : roadsIn) {
+			// 	if (otherInRoad == currentRoad) {
+			// 		continue;
+			// 	}
+			// 	double angle = Punctal.angleInDegreesBetween(scope, (GamaPoint) intersectionNode.getLocation(),
+			// 			(GamaPoint) currentRoad.getLocation(), (GamaPoint) otherInRoad.getLocation());
+			// 	boolean otherRoadIsPriortized = priorityRoads != null && priorityRoads.contains(otherInRoad);
+			// 	boolean hasPriority = onPriorityRoad && !otherRoadIsPriortized;
+			// 	boolean shouldRespectPriority = !onPriorityRoad && otherRoadIsPriortized;
+			// 	// be careful of vehicles coming from the right/left side
+			// 	if (!hasPriority
+			// 			&& (shouldRespectPriority || rightSide && angle > angleRef || !rightSide && angle < angleRef)) {
+			// 		List<IAgent> otherVehicles = (List) otherInRoad.getAttribute(RoadSkill.ALL_AGENTS);
+			// 		for (IAgent otherVehicle : otherVehicles) {
+			// 			if (otherVehicle == null || otherVehicle.dead()) {
+			// 				continue;
+			// 			}
+			// 			double otherVehicleLength = getVehicleLength(otherVehicle);
+			// 			double otherSpeed = getSpeed(otherVehicle);
+			// 			double dist = otherVehicle.euclidianDistanceTo(vehicle);
 
-						if (Maths.round(getSpeed(otherVehicle), 1) > 0.0 &&
-								0.5 + safetyDistCoeff * Math.max(0, speed - otherSpeed) >
-								dist - (vehicleLength / 2 + otherVehicleLength / 2)) {
-							return false;
-						}
-					}
-				}
-			}
+			// 			if (Maths.round(getSpeed(otherVehicle), 1) > 0.0 &&
+			// 					0.5 + safetyDistCoeff * Math.max(0, speed - otherSpeed) >
+			// 					dist - (vehicleLength / 2 + otherVehicleLength / 2)) {
+			// 				return false;
+			// 			}
+			// 		}
+			// 	}
+			// }
 		}
 
 		return true;
