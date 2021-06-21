@@ -1006,8 +1006,7 @@ public class DrivingSkill extends MovingSkill {
 				block.remove(dr);
 			}
 		}
-		return isReadyNextRoad(scope, vehicle, road)
-				&& (testBlockNode || DrivingOperators.enoughSpaceToEnterRoad(scope, road, lane, numLanesOccupied, vehicleLength / 2));
+		return isReadyNextRoad(scope, vehicle, road);
 	}
 
 	@action(
