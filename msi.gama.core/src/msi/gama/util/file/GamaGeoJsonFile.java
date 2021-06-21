@@ -15,17 +15,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.locationtech.jts.geom.Geometry;
-
-import msi.gama.common.geometry.Envelope3D;
-import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -109,7 +102,7 @@ public class GamaGeoJsonFile extends GamaGisFile {
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) { return; }
+		if (getBuffer() != null) return;
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		readShapes(scope);
 	}
@@ -133,11 +126,6 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	}
 
 	@Override
-	protected CoordinateReferenceSystem getOwnCRS(final IScope scope) {
-		final SimpleFeatureCollection store = getFeatureCollection(scope);
-		return store.getSchema().getCoordinateReferenceSystem();
-	}
-
 	protected SimpleFeatureCollection getFeatureCollection(final IScope scope) {
 		try (FileReader fileReader = new FileReader(getFile(scope))) {
 			final FeatureJSON fJSON = new FeatureJSON();
@@ -146,58 +134,6 @@ public class GamaGeoJsonFile extends GamaGisFile {
 			GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 		}
 		return null;
-	}
-
-	public void readShapes(final IScope scope) {
-		final IList<IShape> list = getBuffer();
-		int size = 0;
-		final SimpleFeatureCollection fc = getFeatureCollection(scope);
-		if (fc == null) { return; }
-		final Envelope3D env = Envelope3D.of(fc.getBounds());
-		size = fc.size();
-		int index = 0;
-		computeProjection(scope, env);
-		try (SimpleFeatureIterator reader = fc.features()) {
-			while (reader.hasNext()) {
-				index++;
-				if (index % 20 == 0) {
-					scope.getGui().getStatus(scope).setSubStatusCompletion(index / (double) size);
-				}
-				final SimpleFeature feature = reader.next();
-				Geometry g = (Geometry) feature.getDefaultGeometry();
-				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-					g = gis.transform(g);
-					if (!with3D) {
-						g.apply(ZERO_Z);
-						g.geometryChanged();
-					}
-					list.add(new GamaGisGeometry(g, feature));
-				} else if (g == null) {
-					// See Issue 725
-					GAMA.reportError(scope,
-							GamaRuntimeException
-									.warning("GamaGeoJsonFile.fillBuffer; geometry could not be added  as it is "
-											+ "nil: " + feature.getIdentifier(), scope),
-							false);
-				}
-			}
-		}
-		if (size > list.size()) {
-			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile(scope) + ": only "
-					+ list.size() + " of the " + size + " geometries could be added", scope), false);
-		}
-	}
-
-	@Override
-	public Envelope3D computeEnvelope(final IScope scope) {
-		if (gis == null) {
-			final SimpleFeatureCollection store = getFeatureCollection(scope);
-			if (store == null) { return Envelope3D.EMPTY; }
-			final Envelope3D env = Envelope3D.of(store.getBounds());
-			computeProjection(scope, env);
-		}
-		return gis.getProjectedEnvelope();
-
 	}
 
 }

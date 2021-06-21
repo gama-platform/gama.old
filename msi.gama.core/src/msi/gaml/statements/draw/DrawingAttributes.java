@@ -31,6 +31,13 @@ public class DrawingAttributes {
 	public static final GamaColor TEXTURED_COLOR = new GamaColor(Color.white);
 	public static final GamaColor SELECTED_COLOR = new GamaColor(Color.red);
 
+	public static final int EMPTY = 1;
+	public static final int SELECTED = 2;
+	public static final int SYNTHETIC = 4;
+	public static final int LIGHTING = 8;
+
+	int flags = LIGHTING;
+
 	private final int uniqueIndex;
 	GamaPoint location;
 	Scaling3D size;
@@ -39,7 +46,6 @@ public class DrawingAttributes {
 	public IShape.Type type;
 	GamaColor fill, highlight, border;
 	List<?> textures;
-	boolean empty = false, selected = false, synthetic = false, lighting = true;
 	GamaMaterial material;
 
 	private DrawingAttributes() {
@@ -57,32 +63,22 @@ public class DrawingAttributes {
 		setRotation(rotation);
 		setLighting(lighting);
 	}
-	//
-	// public void setRotation(final Double angle, final GamaPoint axis) {
-	// if (angle == null || axis != null && axis.x == 0d && axis.y == 0d && axis.z == 0d) {
-	// setRotation(null);
-	// } else if (axis == null) {
-	// setRotation(new AxisAngle(Rotation3D.PLUS_K, angle));
-	// } else {
-	// setRotation(new AxisAngle(axis, angle));
-	// }
-	// }
 
 	public int getIndex() {
 		return uniqueIndex;
 	}
 
 	public void setSynthetic(final boolean s) {
-		synthetic = s;
+		setFlag(SYNTHETIC, s);
 	}
 
 	public boolean isSynthetic() {
-		return synthetic;
+		return isSet(SYNTHETIC);
 	}
 
 	public void setLighting(final Boolean lighting) {
-		if (lighting == null) { return; }
-		this.lighting = lighting;
+		if (lighting == null) return;
+		setFlag(LIGHTING, lighting);
 	}
 
 	public void setEmpty(final Boolean b) {
@@ -107,7 +103,7 @@ public class DrawingAttributes {
 	 * @return
 	 */
 	public Double getAngle() {
-		if (getRotation() == null) { return null; }
+		if (getRotation() == null) return null;
 		return getRotation().angle;
 	}
 
@@ -135,7 +131,7 @@ public class DrawingAttributes {
 		return size;
 	}
 
-	public Double getHeight() {
+	public Double getDepth() {
 		return depth;
 	}
 
@@ -176,21 +172,21 @@ public class DrawingAttributes {
 	}
 
 	public void setRotation(final AxisAngle rotation) {
-		if (rotation == null) { return; }
+		if (rotation == null) return;
 		this.rotation = rotation;
 	}
 
 	public void setHeight(final Double depth) {
-		if (depth == null) { return; }
+		if (depth == null) return;
 		this.depth = depth;
 	}
 
 	public GamaColor getColor() {
-		if (selected) { return SELECTED_COLOR; }
-		if (highlight != null) { return highlight; }
-		if (empty) { return null; }
+		if (isSet(SELECTED)) return SELECTED_COLOR;
+		if (highlight != null) return highlight;
+		if (isSet(EMPTY)) return null;
 		if (fill == null) {
-			if (textures != null) { return TEXTURED_COLOR; }
+			if (textures != null) return TEXTURED_COLOR;
 			// Always returns the color as we are solid; so null cannot be an option
 			// see issue #2724
 			return GamaPreferences.Displays.CORE_COLOR.getValue();
@@ -201,16 +197,16 @@ public class DrawingAttributes {
 	}
 
 	public GamaColor getBorder() {
-		if (empty && border == null) { return fill; }
+		if (isSet(EMPTY) && border == null) return fill;
 		return border;
 	}
 
 	public void setEmpty() {
-		empty = true;
+		setFlag(EMPTY, true);
 	}
 
 	public void setFilled() {
-		empty = false;
+		setFlag(EMPTY, false);
 	}
 
 	public void setFill(final GamaColor color) {
@@ -222,7 +218,7 @@ public class DrawingAttributes {
 	}
 
 	void setLighting(final boolean lighting) {
-		this.lighting = lighting;
+		setFlag(LIGHTING, lighting);
 	}
 
 	public void setNoBorder() {
@@ -238,35 +234,35 @@ public class DrawingAttributes {
 	}
 
 	public boolean isEmpty() {
-		return empty;
+		return isSet(EMPTY);
 	}
 
 	public boolean isAnimated() {
-		if (!useCache()) { return true; }
-		if (textures == null) { return false; }
+		if (!useCache()) return true;
+		if (textures == null) return false;
 		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile)) { return false; }
+		if (!(o instanceof GamaGifFile)) return false;
 		return true;
 	}
 
 	public int getFrameCount() {
-		if (textures == null) { return 1; }
+		if (textures == null) return 1;
 		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile)) { return 1; }
+		if (!(o instanceof GamaGifFile)) return 1;
 		return ((GamaGifFile) o).getFrameCount();
 
 	}
 
 	public int getAverageDelay() {
-		if (textures == null) { return 0; }
+		if (textures == null) return 0;
 		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile)) { return 0; }
+		if (!(o instanceof GamaGifFile)) return 0;
 		return ((GamaGifFile) o).getAverageDelay();
 
 	}
 
 	public boolean isLighting() {
-		return lighting;
+		return isSet(LIGHTING);
 	}
 
 	public void setHighlighted(final GamaColor color) {
@@ -274,11 +270,11 @@ public class DrawingAttributes {
 	}
 
 	public boolean isSelected() {
-		return selected;
+		return isSet(SELECTED);
 	}
 
 	public void setSelected(final boolean b) {
-		selected = b;
+		setFlag(SELECTED, b);
 	}
 
 	/**
@@ -292,6 +288,15 @@ public class DrawingAttributes {
 
 	public void setMaterial(final GamaMaterial m) {
 		material = m;
+
+	}
+
+	public boolean isSet(final int value) {
+		return (flags & value) == value;
+	}
+
+	public void setFlag(final int value, final boolean b) {
+		flags = b ? flags | value : flags & ~value;
 	}
 
 }

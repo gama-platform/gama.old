@@ -48,8 +48,8 @@ species observedAgents {
 experiment Server_testdd type: gui {
 	output {
 		display d type: opengl 
-				camera_look_pos: cam_loc
-				camera_up_vector:{0.0,-1.0,0.0}{
+				camera_target: cam_loc
+				camera_orientation:{0.0,-1.0,0.0}{
 			species observedAgents;	
 		}
 	}

@@ -22,8 +22,6 @@
 
 package msi.gama.ext.svgsalamander;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -39,8 +37,7 @@ public class SVGRoot extends Group {
 	NumberWithUnits y;
 	NumberWithUnits width;
 	NumberWithUnits height;
-
-	// final Rectangle2D.Float viewBox = new Rectangle2D.Float();
+	Rectangle2D boundingBox;
 	Rectangle2D.Float viewBox = null;
 
 	public static final int PA_X_NONE = 0;
@@ -63,72 +60,20 @@ public class SVGRoot extends Group {
 	final AffineTransform viewXform = new AffineTransform();
 	final Rectangle2D.Float clipRect = new Rectangle2D.Float();
 
-	/** Creates a new instance of SVGRoot */
-	public SVGRoot() {}
-	/*
-	 * public void loaderStartElement(SVGLoaderHelper helper, Attributes attrs, SVGElement parent) { //Load style string
-	 * super.loaderStartElement(helper, attrs, parent);
-	 *
-	 * x = XMLParseUtil.parseNumberWithUnits(attrs.getValue("x")); y =
-	 * XMLParseUtil.parseNumberWithUnits(attrs.getValue("y")); width =
-	 * XMLParseUtil.parseNumberWithUnits(attrs.getValue("width")); height =
-	 * XMLParseUtil.parseNumberWithUnits(attrs.getValue("height"));
-	 *
-	 * String viewBox = attrs.getValue("viewBox"); float[] coords = XMLParseUtil.parseFloatList(viewBox);
-	 *
-	 * if (coords == null) { //this.viewBox.setRect(0, 0, width.getValue(), height.getValue()); this.viewBox = null; }
-	 * else { this.viewBox = new Rectangle2D.Float(coords[0], coords[1], coords[2], coords[3]); }
-	 *
-	 * String par = attrs.getValue("preserveAspectRatio"); if (par != null) { String[] parList =
-	 * XMLParseUtil.parseStringList(par);
-	 *
-	 * if (parList[0].equals("none")) { parAlignX = PA_X_NONE; parAlignY = PA_Y_NONE; } else if
-	 * (parList[0].equals("xMinYMin")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MIN; } else if
-	 * (parList[0].equals("xMidYMin")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MIN; } else if
-	 * (parList[0].equals("xMaxYMin")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MIN; } else if
-	 * (parList[0].equals("xMinYMid")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MID; } else if
-	 * (parList[0].equals("xMidYMid")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MID; } else if
-	 * (parList[0].equals("xMaxYMid")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MID; } else if
-	 * (parList[0].equals("xMinYMax")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MAX; } else if
-	 * (parList[0].equals("xMidYMax")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MAX; } else if
-	 * (parList[0].equals("xMaxYMax")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MAX; }
-	 *
-	 * if (parList[1].equals("meet")) parSpecifier = PS_MEET; else if (parList[1].equals("slice")) parSpecifier =
-	 * PS_SLICE; }
-	 *
-	 * build(); }
-	 */
-
 	@Override
 	public void build() throws SVGException {
 		super.build();
-
 		final StyleAttribute sty = new StyleAttribute();
-
-		if (getPres(sty.setName("x"))) {
-			x = sty.getNumberWithUnits();
-		}
-
-		if (getPres(sty.setName("y"))) {
-			y = sty.getNumberWithUnits();
-		}
-
-		if (getPres(sty.setName("width"))) {
-			width = sty.getNumberWithUnits();
-		}
-
-		if (getPres(sty.setName("height"))) {
-			height = sty.getNumberWithUnits();
-		}
-
+		if (getPres(sty.setName("x"))) { x = sty.getNumberWithUnits(); }
+		if (getPres(sty.setName("y"))) { y = sty.getNumberWithUnits(); }
+		if (getPres(sty.setName("width"))) { width = sty.getNumberWithUnits(); }
+		if (getPres(sty.setName("height"))) { height = sty.getNumberWithUnits(); }
 		if (getPres(sty.setName("viewBox"))) {
 			final float[] coords = sty.getFloatList();
 			viewBox = new Rectangle2D.Float(coords[0], coords[1], coords[2], coords[3]);
 		}
-
 		if (getPres(sty.setName("preserveAspectRatio"))) {
 			final String preserve = sty.getStringValue();
-
 			if (contains(preserve, "none")) {
 				parAlignX = PA_X_NONE;
 				parAlignY = PA_Y_NONE;
@@ -163,27 +108,8 @@ public class SVGRoot extends Group {
 
 			if (contains(preserve, "meet")) {
 				parSpecifier = PS_MEET;
-			} else if (contains(preserve, "slice")) {
-				parSpecifier = PS_SLICE;
-			}
+			} else if (contains(preserve, "slice")) { parSpecifier = PS_SLICE; }
 
-			/*
-			 * String[] parList = sty.getStringList();
-			 *
-			 * if (parList[0].equals("none")) { parAlignX = PA_X_NONE; parAlignY = PA_Y_NONE; } else if
-			 * (parList[0].equals("xMinYMin")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MIN; } else if
-			 * (parList[0].equals("xMidYMin")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MIN; } else if
-			 * (parList[0].equals("xMaxYMin")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MIN; } else if
-			 * (parList[0].equals("xMinYMid")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MID; } else if
-			 * (parList[0].equals("xMidYMid")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MID; } else if
-			 * (parList[0].equals("xMaxYMid")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MID; } else if
-			 * (parList[0].equals("xMinYMax")) { parAlignX = PA_X_MIN; parAlignY = PA_Y_MAX; } else if
-			 * (parList[0].equals("xMidYMax")) { parAlignX = PA_X_MID; parAlignY = PA_Y_MAX; } else if
-			 * (parList[0].equals("xMaxYMax")) { parAlignX = PA_X_MAX; parAlignY = PA_Y_MAX; }
-			 *
-			 * if (parList[1].equals("meet")) parSpecifier = PS_MEET; else if (parList[1].equals("slice")) parSpecifier
-			 * = PS_SLICE;
-			 */
 		}
 
 		prepareViewport();
@@ -194,7 +120,6 @@ public class SVGRoot extends Group {
 	}
 
 	protected void prepareViewport() {
-		final Rectangle deviceViewport = diagram.getDeviceViewport();
 
 		Rectangle2D defaultBounds;
 		try {
@@ -208,12 +133,10 @@ public class SVGRoot extends Group {
 		if (width != null) {
 			xx = x == null ? 0 : StyleAttribute.convertUnitsToPixels(x.getUnits(), x.getValue());
 			if (width.getUnits() == NumberWithUnits.UT_PERCENT) {
-				ww = width.getValue() * deviceViewport.width;
+				ww = width.getValue() * 100;
 			} else {
 				ww = StyleAttribute.convertUnitsToPixels(width.getUnits(), width.getValue());
 			}
-			// setAttribute("x", AnimationElement.AT_XML, "" + xx);
-			// setAttribute("width", AnimationElement.AT_XML, "" + ww);
 		} else if (viewBox != null) {
 			xx = viewBox.x;
 			ww = viewBox.width;
@@ -230,7 +153,7 @@ public class SVGRoot extends Group {
 		if (height != null) {
 			yy = y == null ? 0 : StyleAttribute.convertUnitsToPixels(y.getUnits(), y.getValue());
 			if (height.getUnits() == NumberWithUnits.UT_PERCENT) {
-				hh = height.getValue() * deviceViewport.height;
+				hh = height.getValue() * 100;
 			} else {
 				hh = StyleAttribute.convertUnitsToPixels(height.getUnits(), height.getValue());
 			}
@@ -258,22 +181,6 @@ public class SVGRoot extends Group {
 			viewXform.translate(-viewBox.x, -viewBox.y);
 		}
 
-		// For now, treat all preserveAspectRatio as 'none'
-		// viewXform.setToTranslation(viewBox.x, viewBox.y);
-		// viewXform.scale(clipRect.width / viewBox.width, clipRect.height / viewBox.height);
-		// viewXform.translate(-clipRect.x, -clipRect.y);
-	}
-
-	@Override
-	public void render(final Graphics2D g) throws SVGException {
-		prepareViewport();
-
-		final AffineTransform cachedXform = g.getTransform();
-		g.transform(viewXform);
-
-		super.render(g);
-
-		g.setTransform(cachedXform);
 	}
 
 	@Override
@@ -282,83 +189,42 @@ public class SVGRoot extends Group {
 		return viewXform.createTransformedShape(shape);
 	}
 
-	@Override
-	public Rectangle2D getBoundingBox() throws SVGException {
-		final Rectangle2D bbox = super.getBoundingBox();
-		return viewXform.createTransformedShape(bbox).getBounds2D();
-	}
-
-	public float getDeviceWidth() {
-		return clipRect.width;
-	}
-
-	public float getDeviceHeight() {
-		return clipRect.height;
-	}
-
 	public Rectangle2D getDeviceRect(final Rectangle2D rect) {
 		rect.setRect(clipRect);
 		return rect;
 	}
 
 	/**
-	 * Updates all attributes in this diagram associated with a time event. Ie, all attributes with track information.
-	 *
-	 * @return - true if this node has changed state as a result of the time update
+	 * Retrieves the cached bounding box of this group
 	 */
-	// @Override
-	// public boolean updateTime(final double curTime) throws SVGException {
-	// final boolean changeState = super.updateTime(curTime);
-	//
-	// final StyleAttribute sty = new StyleAttribute();
-	// boolean shapeChange = false;
-	//
-	// if (getPres(sty.setName("x"))) {
-	// final NumberWithUnits newVal = sty.getNumberWithUnits();
-	// if (!newVal.equals(x)) {
-	// x = newVal;
-	// shapeChange = true;
-	// }
-	// }
-	//
-	// if (getPres(sty.setName("y"))) {
-	// final NumberWithUnits newVal = sty.getNumberWithUnits();
-	// if (!newVal.equals(y)) {
-	// y = newVal;
-	// shapeChange = true;
-	// }
-	// }
-	//
-	// if (getPres(sty.setName("width"))) {
-	// final NumberWithUnits newVal = sty.getNumberWithUnits();
-	// if (!newVal.equals(width)) {
-	// width = newVal;
-	// shapeChange = true;
-	// }
-	// }
-	//
-	// if (getPres(sty.setName("height"))) {
-	// final NumberWithUnits newVal = sty.getNumberWithUnits();
-	// if (!newVal.equals(height)) {
-	// height = newVal;
-	// shapeChange = true;
-	// }
-	// }
-	//
-	// if (getPres(sty.setName("viewBox"))) {
-	// final float[] coords = sty.getFloatList();
-	// final Rectangle2D.Float newViewBox = new Rectangle2D.Float(coords[0], coords[1], coords[2], coords[3]);
-	// if (!newViewBox.equals(viewBox)) {
-	// viewBox = newViewBox;
-	// shapeChange = true;
-	// }
-	// }
-	//
-	// if (shapeChange) {
-	// build();
-	// }
-	//
-	// return changeState || shapeChange;
-	// }
+	public Rectangle2D getBoundingBox() throws SVGException {
+		if (boundingBox == null) { calcBoundingBox(); }
+		// calcBoundingBox();
+		return boundingBox;
+	}
+
+	/**
+	 * Recalculates the bounding box by taking the union of the bounding boxes of all children. Caches the result.
+	 */
+	public void calcBoundingBox() throws SVGException {
+		Rectangle2D retRect = null;
+		for (final Object element : children) {
+			final SVGElement ele = (SVGElement) element;
+			if (ele instanceof ShapeElement) {
+				final ShapeElement rendEle = (ShapeElement) ele;
+				final Rectangle2D bounds = rendEle.getShape().getBounds2D();
+				if (bounds != null) {
+					if (retRect == null) {
+						retRect = bounds;
+					} else {
+						retRect = retRect.createUnion(bounds);
+					}
+				}
+			}
+		}
+		// If no contents, use degenerate rectangle
+		if (retRect == null) { retRect = new Rectangle2D.Float(); }
+		boundingBox = xform == null ? retRect : xform.createTransformedShape(retRect).getBounds2D();
+	}
 
 }

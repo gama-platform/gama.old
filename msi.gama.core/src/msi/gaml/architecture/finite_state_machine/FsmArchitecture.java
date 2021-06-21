@@ -41,16 +41,16 @@ import msi.gaml.types.Types;
 @vars ({ @variable (
 		name = IKeyword.STATE,
 		type = IType.STRING,
-		doc = @doc ("Returns the current state in which the agent is")),
+		doc = @doc ("Returns the name of the current state of the agent")),
 		@variable (
 				name = IKeyword.STATES,
 				type = IType.LIST,
 				constant = true,
-				doc = @doc ("Returns the list of all possible states the agents can be in")) })
+				doc = @doc ("Returns the list of all the states defined in the species")) })
 @skill (
 		name = IKeyword.FSM,
 		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE },
-		doc = @doc ("The Finite State Machine architecture, that allows to program agents using a finite set of states and conditional transitions between them"))
+		doc = @doc ("The Finite State Machine architecture allows to program agents using a finite set of states and conditional transitions between them"))
 public class FsmArchitecture extends ReflexArchitecture {
 
 	protected final Map<String, FsmStateStatement> states = GamaMapFactory.createUnordered();
@@ -66,13 +66,9 @@ public class FsmArchitecture extends ReflexArchitecture {
 	public void verifyBehaviors(final ISpecies context) {
 		super.verifyBehaviors(context);
 		for (final FsmStateStatement s : states.values()) {
-			if (s.isInitial()) {
-				initialState = s;
-			}
+			if (s.isInitial()) { initialState = s; }
 		}
-		if (initialState != null) {
-			context.getVar(IKeyword.STATE).setValue(null, initialState.getName());
-		}
+		if (initialState != null) { context.getVar(IKeyword.STATE).setValue(null, initialState.getName()); }
 	}
 
 	@getter (
@@ -88,7 +84,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 	@getter (IKeyword.STATE)
 	public String getStateName(final IAgent agent) {
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
-		if (currentState == null) { return null; }
+		if (currentState == null) return null;
 		return currentState.getName();
 	}
 
@@ -98,9 +94,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	@setter (IKeyword.STATE)
 	public void setStateName(final IAgent agent, final String stateName) {
-		if (stateName != null && states.containsKey(stateName)) {
-			setCurrentState(agent, states.get(stateName));
-		}
+		if (stateName != null && states.containsKey(stateName)) { setCurrentState(agent, states.get(stateName)); }
 	}
 
 	@Override
@@ -121,15 +115,15 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	protected Object executeCurrentState(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		if (scope.interrupted()) { return null; }
+		if (scope.interrupted()) return null;
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
-		if (currentState == null) { return null; }
+		if (currentState == null) return null;
 		return scope.execute(currentState).getValue();
 	}
 
 	public void setCurrentState(final IAgent agent, final FsmStateStatement state) {
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
-		if (currentState == state) { return; }
+		if (currentState == state) return;
 		// if ( currentState != null && currentState.hasExitActions() ) {
 		// agent.setAttribute(IKeyword.STATE_TO_EXIT, currentState);
 		// }
@@ -143,9 +137,9 @@ public class FsmArchitecture extends ReflexArchitecture {
 	@Override
 	public boolean abort(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		if (scope.interrupted() || agent == null) { return true; }
+		if (scope.interrupted() || agent == null) return true;
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
-		if (currentState == null) { return true; }
+		if (currentState == null) return true;
 		currentState.haltOn(scope);
 		// and we return the regular abort behavior
 		return super.abort(scope);

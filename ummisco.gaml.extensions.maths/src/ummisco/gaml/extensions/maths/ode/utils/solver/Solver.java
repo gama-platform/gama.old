@@ -35,10 +35,10 @@ public abstract class Solver {
 
 	final FirstOrderIntegrator integrator;
 	int count;
-	final double step;
+	// final double step;
 
 	Solver(final double step, final FirstOrderIntegrator integrator, final IMap<String, IList<Double>> integrated_val) {
-		this.step = step;
+		// this.step = step;
 		this.integrator = integrator;
 		if (integrated_val != null) {
 			integrator.addStepHandler(new StepHandler() {
@@ -96,9 +96,7 @@ public abstract class Solver {
 					} catch (final Exception ex1) {
 						DEBUG.OUT(ex1.getMessage());
 					} finally {
-						if (pushed) {
-							scope.pop(a);
-						}
+						if (pushed) { scope.pop(a); }
 					}
 				}
 
@@ -108,9 +106,7 @@ public abstract class Solver {
 						GamaListFactory.create(Double.class));
 			}
 
-			if (scope.getClock().getCycle() == 0) {
-				storeValues(initialTime, y, integrationValues);
-			}
+			if (scope.getClock().getCycle() == 0) { storeValues(initialTime, y, integrationValues); }
 			if (y.length > 0) {
 				try {
 					integrator.integrate(seq, initialTime, y, finalTime, y);

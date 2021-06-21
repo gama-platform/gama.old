@@ -31,6 +31,7 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 
@@ -57,6 +58,7 @@ public interface IGui {
 	String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
 	String GL_LAYER_VIEW_ID = "msi.gama.application.view.OpenGLDisplayView";
 	String GL_LAYER_VIEW_ID2 = "msi.gama.application.view.OpenGLDisplayView2";
+	String GL_LAYER_VIEW_ID3 = "msi.gama.application.view.WebDisplayView";
 
 	String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	String TEST_VIEW_ID = "msi.gama.application.view.TestView";
@@ -97,15 +99,17 @@ public interface IGui {
 
 	boolean openSimulationPerspective(IModel model, String experimentId);
 
-	IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
+	Iterable<IDisplaySurface> getAllDisplaySurfaces();
+
+	IDisplaySurface createDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args);
 
 	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters, GamaFont font);
 
-	IMap<String, IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages);
+	IMap<String, IMap<String, Object>> openWizard(IScope scope, String title, ActionDescription finish,
+			IList<IMap<String, Object>> pages);
 
-	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) ;
-	
-		
+	Boolean openUserInputDialogConfirm(final IScope scope, final String title, final String message);
+
 	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 
 	void closeDialogs(IScope scope);

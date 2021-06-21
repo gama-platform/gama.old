@@ -14,13 +14,12 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.jdbc.JDBCDataStoreFactory;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.FileUtils;
@@ -142,7 +141,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
 																		// connection
 		// DEBUG.LOG("data store postgress:" + dStore);
-		if (dStore == null) { throw new IOException("Can't connect to " + database); }
+		if (dStore == null) throw new IOException("Can't connect to " + database);
 		return dStore;
 	}
 
@@ -152,9 +151,8 @@ public class GamaSqlConnection extends GamaGisFile {
 	public void close(final IScope scope) throws GamaRuntimeException {
 		if (dataStore != null) {
 			dataStore.dispose();
-		} else {
+		} else
 			throw GamaRuntimeException.error("The connection to " + this.database + " is not opened ", scope);
-		}
 	}
 
 	public void setDataStore(final DataStore dataStore) {
@@ -208,7 +206,7 @@ public class GamaSqlConnection extends GamaGisFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) { return; }
+		if (getBuffer() != null) return;
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		readTable(scope);
 	}
@@ -290,5 +288,10 @@ public class GamaSqlConnection extends GamaGisFile {
 			return features;
 		}
 	}// end of class QueryInfo
+
+	@Override
+	protected SimpleFeatureCollection getFeatureCollection(final IScope scope) {
+		return null;
+	}
 
 }

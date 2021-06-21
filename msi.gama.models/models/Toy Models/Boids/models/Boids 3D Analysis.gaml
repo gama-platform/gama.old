@@ -139,7 +139,7 @@ species boids_goal skills: [moving] {
 	
 	aspect default {
 		draw circle(10) color: rgb ('red');
-		draw circle(40) color: rgb ('orange')  empty: true;
+		draw circle(40) color: rgb ('orange')  wireframe: true;
 	}
 	
 } 
@@ -429,9 +429,9 @@ experiment "Multiple views" type: gui {
 			species boids  aspect: dynamicColor transparency:0.2 position:{0,0,0.24};		
 		}
 		
-		display ThirdPersonn  type:opengl camera_interaction:false camera_pos:{int(first(boids).location.x),int(first(boids).location.y),250} 
-		camera_look_pos:{int(first(boids).location.x),first(boids).location.y,0} 
-		camera_up_vector:{0.0,-1.0,0.0} {
+		display ThirdPersonn  type:opengl camera_interaction:false camera_location:{int(first(boids).location.x),int(first(boids).location.y),250} 
+		camera_target:{int(first(boids).location.x),first(boids).location.y,0} 
+		camera_orientation:{0.0,-1.0,0.0} {
 		
 			image 'background' file:file_path_to_ocean;
 			species obstacle;
@@ -440,10 +440,10 @@ experiment "Multiple views" type: gui {
 		}
 		
 			
-		display FirstPerson  type:opengl camera_interaction:false camera_pos:{int(first(boids).location.x),int(first(boids).location.y),10} 
-			camera_look_pos:{cos(first(boids).heading)*first(boids).speed+int(first(boids).location.x),
+		display FirstPerson  type:opengl camera_interaction:false camera_location:{int(first(boids).location.x),int(first(boids).location.y),10} 
+			camera_target:{cos(first(boids).heading)*first(boids).speed+int(first(boids).location.x),
 			sin(first(boids).heading)*first(boids).speed+int(first(boids).location.y),10} 
-			camera_up_vector:{0.0,0.0,1.0} {	
+			camera_orientation:{0.0,0.0,1.0} {	
 			image 'background' file:file_path_to_ocean;
 			species obstacle ;
 			species boids  aspect: dynamicColor transparency:0.2 ;

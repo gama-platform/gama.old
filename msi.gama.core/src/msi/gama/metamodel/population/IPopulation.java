@@ -29,6 +29,7 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.RemoteSequence;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -93,16 +94,32 @@ public interface IPopulation<T extends IAgent>
 	 *            The initial values of agents' variables.
 	 * @param isRestored
 	 *            Indicates that the agents are newly created or they are restored (on a capture or release). If agents
-	 *            are restored on a capture or release then don't run their "init" reflex again.
+	 *            are restored on a capture or release then don't run their "init" reflex again
+	 * @param toBeScheduled
+	 *            Whether the agent should be immediately scheduled or not
+	 * @param sequence
+	 *            an optional sequence of code to be run after the agent has been scheduled (and then inited). Can be
+	 *            null.
 	 *
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
 	IList<T> createAgents(IScope scope, int number, List<? extends Map<String, Object>> initialValues,
-			boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
+			boolean isRestored, boolean toBeScheduled, RemoteSequence sequence) throws GamaRuntimeException;
 
-	IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries)
+	IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries, RemoteSequence sequence)
 			throws GamaRuntimeException;
+
+	default IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries)
+			throws GamaRuntimeException {
+		return this.createAgents(scope, geometries, null);
+	}
+
+	default IList<T> createAgents(final IScope scope, final int number,
+			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
+			final boolean toBeScheduled) throws GamaRuntimeException {
+		return this.createAgents(scope, number, initialValues, isRestored, toBeScheduled, null);
+	}
 
 	T createAgentAt(final IScope s, int index, Map<String, Object> initialValues, boolean isRestored,
 			boolean toBeScheduled) throws GamaRuntimeException;
@@ -143,7 +160,7 @@ public interface IPopulation<T extends IAgent>
 	 * @return
 	 */
 	IMacroAgent getHost();
-	
+
 	/**
 	 * Set the macro-agent hosting this population.
 	 *

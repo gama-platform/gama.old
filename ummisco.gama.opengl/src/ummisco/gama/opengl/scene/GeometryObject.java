@@ -38,7 +38,61 @@ public class GeometryObject extends AbstractObject<Geometry, DrawingAttributes> 
 	public void getTranslationForRotationInto(final GamaPoint p) {
 		final GamaPoint explicitLocation = getAttributes().getLocation();
 		if (explicitLocation == null) {
+			// System.out.println(GeometryUtils.getContourCoordinates(getObject()).getEnvelope());
 			GeometryUtils.getContourCoordinates(getObject()).getCenter(p);
+			Double depth = getAttributes().getDepth();
+			if (depth != null) {
+				switch (getAttributes().type) {
+					case SPHERE:
+						p.z += depth;
+						break;
+					case CYLINDER:
+					case PYRAMID:
+					case CONE:
+					case BOX:
+					case CUBE:
+						p.z += depth / 2;
+						break;
+					case CIRCLE:
+						break;
+					case GRIDLINE:
+						break;
+					case LINEARRING:
+						break;
+					case LINECYLINDER:
+						break;
+					case LINESTRING:
+						break;
+					case MULTILINESTRING:
+						break;
+					case MULTIPOINT:
+						break;
+					case MULTIPOLYGON:
+						break;
+					case NULL:
+						break;
+					case PLAN:
+						break;
+					case POINT:
+						break;
+					case POLYGON:
+						break;
+					case POLYHEDRON:
+						break;
+					case POLYPLAN:
+						break;
+					case ROUNDED:
+						break;
+					case SQUARE:
+						break;
+					case TEAPOT:
+						break;
+					case THREED_FILE:
+						break;
+					default:
+						break;
+				}
+			}
 		} else {
 			p.setLocation(explicitLocation);
 		}

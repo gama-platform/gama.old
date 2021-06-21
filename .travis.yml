@@ -16,9 +16,9 @@ cache:
   directories:
     - "$HOME/.m2"    
     - "$HOME/.sonarscanner"
-addons:
+addons: 
     apt:
-        packages:      
+        packages:       
             - sshpass
             - oracle-java8-installer
     ssh_known_hosts:

@@ -12,8 +12,8 @@ model geotiffimport
 
 global {
 	//definiton of the file to import
-	file grid_data <- file('../includes/bogota_grid.tif') ;
-	
+	file grid_data <- grid_file("../includes/bogota_grid.tif");
+
 	//computation of the environment size from the geotiff file
 	geometry shape <- envelope(grid_data);	
 	
@@ -35,7 +35,7 @@ grid cell file: grid_data;
 experiment show_example type: gui {
 	output {
 		display test {
-			grid cell lines: #black;
+			grid cell border: #black;
 		}
 	} 
 }

@@ -25,6 +25,7 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.file.IFieldMatrixProvider;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
@@ -46,17 +47,18 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param, final IType contentType,
 			final boolean copy) {
-		if (obj == null && param == null) { return null; }
+		if (obj == null && param == null) return null;
 		final GamaPoint size = param instanceof GamaPoint ? (GamaPoint) param : null;
 
 		if (size == null) {
-			if (obj instanceof IContainer) { return ((IContainer) obj).matrixValue(scope, contentType, copy); }
+			if (obj instanceof IFieldMatrixProvider && contentType.id() == IType.FLOAT)
+				return ((IFieldMatrixProvider) obj).getMatrix(scope);
+			if (obj instanceof IContainer) return ((IContainer) obj).matrixValue(scope, contentType, copy);
 			return with(scope, obj, new GamaPoint(1, 1), contentType);
-		} else if (size.x <= 0 || size.y < 0) {
+		} else if (size.x <= 0 || size.y < 0)
 			throw GamaRuntimeException.error("Dimensions of a matrix should be positive.", scope);
-		}
 
-		if (obj instanceof IContainer) { return ((IContainer) obj).matrixValue(scope, contentType, size, copy); }
+		if (obj instanceof IContainer) return ((IContainer) obj).matrixValue(scope, contentType, size, copy);
 		return with(scope, obj, size, contentType);
 
 	}
@@ -69,14 +71,13 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	public static IMatrix from(final IScope scope, final IList list, final IType desiredType,
 			final ILocation preferredSize) {
-		if (list == null || list.isEmpty()) { return new GamaObjectMatrix(0, 0, desiredType); }
-		if (desiredType.id() == IType.INT) {
+		if (list == null || list.isEmpty()) return new GamaObjectMatrix(0, 0, desiredType);
+		if (desiredType.id() == IType.INT)
 			return new GamaIntMatrix(scope, list, preferredSize);
-		} else if (desiredType.id() == IType.FLOAT) {
+		else if (desiredType.id() == IType.FLOAT)
 			return new GamaFloatMatrix(scope, list, preferredSize);
-		} else {
+		else
 			return new GamaObjectMatrix(scope, list, preferredSize, desiredType);
-		}
 
 	}
 
@@ -96,7 +97,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	public static IMatrix from(final IScope scope, final IMatrix matrix, final IType desiredType,
 			final ILocation preferredSize, final boolean copy) {
 		final IType contentsType = matrix.getGamlType().getContentType();
-		if (!GamaType.requiresCasting(desiredType, contentsType)) { return matrix.copy(scope, preferredSize, copy); }
+		if (!GamaType.requiresCasting(desiredType, contentsType)) return matrix.copy(scope, preferredSize, copy);
 		int cols, rows;
 		if (preferredSize == null) {
 			cols = matrix.getCols(scope);
@@ -128,7 +129,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	public static IMatrix with(final IScope scope, final IExpression fillExpr, final int cols, final int rows) {
 		IMatrix result;
-		if (fillExpr == null) { return new GamaObjectMatrix(cols, rows, Types.NO_TYPE); }
+		if (fillExpr == null) return new GamaObjectMatrix(cols, rows, Types.NO_TYPE);
 		switch (fillExpr.getGamlType().id()) {
 			case IType.FLOAT:
 				result = new GamaFloatMatrix(cols, rows);
@@ -205,17 +206,16 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		if (itemType.id() == IType.LIST && cType.id() == IType.LIST) {
 			if (exp instanceof ListExpression) {
 				final IExpression[] array = ((ListExpression) exp).getElements();
-				if (array.length == 0) { return Types.NO_TYPE; }
+				if (array.length == 0) return Types.NO_TYPE;
 				return array[0].getGamlType().getContentType();
 			} else if (exp instanceof MapExpression) {
 				final IExpression[] array = ((MapExpression) exp).valuesArray();
-				if (array.length == 0) { return Types.NO_TYPE; }
+				if (array.length == 0) return Types.NO_TYPE;
 				return array[0].getGamlType().getContentType();
-			} else {
+			} else
 				return cType.getContentType();
-			}
 		}
-		if (Types.CONTAINER.isAssignableFrom(itemType)) { return itemType.getContentType(); }
+		if (Types.CONTAINER.isAssignableFrom(itemType)) return itemType.getContentType();
 		return itemType;
 	}
 

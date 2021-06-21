@@ -125,7 +125,7 @@ species miner skills: [moving] control:simple_bdi {
 
     aspect default {
       draw circle(200) color: my_color border: #black depth: gold_sold;
-      draw circle(view_dist) color: my_color border: #black depth: gold_sold empty: true;
+      draw circle(view_dist) color: my_color border: #black depth: gold_sold wireframe: true;
     }
 }
 

@@ -45,7 +45,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * The empty coordinate sequence
 	 */
-	ICoordinates EMPTY = new GamaCoordinateSequence(new GamaPoint[] {});
+	ICoordinates EMPTY = new GamaCoordinateSequence(3, new GamaPoint[] {});
 
 	/**
 	 * Returns the geometric center of this sequence of points
@@ -62,9 +62,10 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 		center.setLocation(0, 0, 0);
 		addCenterTo(center);
 	}
-	
+
+	@Override
 	@Deprecated
-	default CoordinateSequence clone()  {
+	default CoordinateSequence clone() {
 		return copy();
 	}
 
@@ -86,7 +87,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * @return a point or null
 	 */
 	default GamaPoint at(final int i) {
-		if (i > size() || i < 0) { return null; }
+		if (i > size() || i < 0) return null;
 		return getCoordinate(i);
 	}
 
@@ -175,7 +176,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 		final GamaPoint normal = new GamaPoint();
 		getNormal(clockwise, 1, normal);
 		return normal;
-	};
+	}
 
 	/**
 	 * Computes the normal to this sequence, multiplying the resulting unit vector by a given factor, and fills the
@@ -231,13 +232,18 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * of the points will not change (only the first 'size' points will be replaced if the length of the parameter / 3
 	 * is greater than the size of the sequence). Allows to maintain 'working sequences' without having to create new
 	 * ones (be aware that if the same working sequence is used in different methods, it might create unexpected side
-	 * effects)
+	 * effects). In the method with an index, the index is expressed in terms of ordinates, not points (an index of 6
+	 * means me will be entering point 2 -- or the 3rd one)
 	 *
 	 * @param points
 	 *            an Array of double x, y, z
 	 * @return this
 	 */
-	ICoordinates setTo(double... ordinates);
+	default ICoordinates setTo(final double... ordinates) {
+		return setTo(0, ordinates);
+	}
+
+	ICoordinates setTo(int begin, double... ordinates);
 
 	/**
 	 * Equivalent to the setOrdinate(i, d) method but sets all the ordinates at once. No measure is taken for ensuring

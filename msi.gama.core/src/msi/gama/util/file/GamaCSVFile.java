@@ -55,7 +55,7 @@ import msi.gaml.types.Types;
 		concept = { IConcept.CSV, IConcept.FILE },
 		doc = @doc ("A type of text file that contains comma-separated values"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
+public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IFieldMatrixProvider {
 
 	public static class CSVInfo extends GamaFileMetaData {
 
@@ -267,34 +267,29 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 	}
 
 	public void setCsvSeparators(final String string) {
-		if (string == null) { return; }
-		if (string.length() >= 1) {
-			csvSeparator = string;
-		}
+		if (string == null) return;
+		if (string.length() >= 1) { csvSeparator = string; }
 	}
 
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		if (getBuffer() == null) {
 			final CSVInfo info = getInfo(scope, null);
-			if (info != null) {
+			if (info != null)
 				return info.header ? GamaListFactory.wrap(Types.STRING, info.headers) : GamaListFactory.EMPTY_LIST;
-			}
 		}
 		fillBuffer(scope);
 		return headers == null ? GamaListFactory.EMPTY_LIST : headers;
 	}
 
 	private CSVInfo getInfo(final IScope scope, final String CSVSep) {
-		if (info != null) { return info; }
+		if (info != null) return info;
 		final IFileMetaDataProvider p = scope.getGui().getMetaDataProvider();
 		if (p != null) {
 			final IGamaFileMetaData metaData = p.getMetaData(getFile(scope), false, true);
 			if (metaData instanceof CSVInfo) {
 				info = (CSVInfo) metaData;
-				if (CSVSep != null && info != null && !info.delimiter.equals(CSVSep.charAt(0))) {
-					info = null;
-				}
+				if (CSVSep != null && info != null && !info.delimiter.equals(CSVSep.charAt(0))) { info = null; }
 			}
 		}
 		if (info == null) {
@@ -308,9 +303,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 			if (!info.header) {
 				try {
 					final CsvReader reader = new CsvReader(getPath(scope), info.delimiter);
-					if (reader.readHeaders()) {
-						info.headers = reader.getHeaders();
-					}
+					if (reader.readHeaders()) { info.headers = reader.getHeaders(); }
 					reader.close();
 				} catch (final FileNotFoundException e) {} catch (final IOException e) {}
 			}
@@ -321,13 +314,14 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 
 	@Override
 	public void fillBuffer(final IScope scope) {
-		if (getBuffer() != null) { return; }
+		if (getBuffer() != null) return;
 		if (csvSeparator == null || contentsType == null || userSize == null) {
 			scope.getGui().getStatus(scope).beginSubStatus("Opening file " + getName(scope));
 			final CSVInfo stats = getInfo(scope, csvSeparator);
 			csvSeparator = csvSeparator == null ? "" + stats.delimiter : csvSeparator;
 			contentsType = contentsType == null ? stats.type : contentsType;
-			userSize = userSize == null ? new GamaPoint(stats.cols, stats.rows) : userSize;
+			if (userSize == null) { userSize = new GamaPoint(stats.cols, stats.rows); }
+
 			// AD We take the decision for the modeler is he/she hasn't
 			// specified if the header must be read or not.
 			hasHeader = hasHeader == null ? stats.header : hasHeader;
@@ -341,10 +335,9 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 			if (hasHeader) {
 				reader.readHeaders();
 				headers = GamaListFactory.createWithoutCasting(Types.STRING, reader.getHeaders());
-				// we remove one row
+				// we remove one row so as to not read the headers as well
+				// Cause for issue #3036
 				userSize.y = userSize.y - 1;
-				// we remove one line so as to not read the headers as well
-				// Not necessary: userSize.y--;
 			}
 			// long t = System.currentTimeMillis();
 			setBuffer(createMatrixFrom(scope, reader));
@@ -356,18 +349,11 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			if (reader != null) {
-				reader.close();
-			}
+			if (reader != null) { reader.close(); }
+			// See Issue #3036 -- value must be modified when the file is reloaded
+			if (hasHeader != null && hasHeader) { userSize.y++; }
 		}
 
-		// if ( csvSeparator != null ) {} else {
-		// GamaTextFile textFile = new GamaTextFile(scope, path);
-		// final String string = textFile.stringValue(scope);
-		// if ( string == null ) { return; }
-		// setBuffer(GamaMatrixType.from(scope, string, null)); // Use the
-		// default CVS reader
-		// }
 	}
 
 	@Override
@@ -467,6 +453,36 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> {
 
 	public Boolean hasHeader() {
 		return hasHeader == null ? false : hasHeader;
+	}
+
+	@Override
+	public int getRows(final IScope scope) {
+		return getInfo(scope, null).rows;
+	}
+
+	@Override
+	public int getCols(final IScope scope) {
+		return getInfo(scope, null).cols;
+	}
+
+	@Override
+	public int getBands(final IScope scope) {
+		return 1;
+	}
+
+	@Override
+	public GamaFloatMatrix getMatrix(final IScope scope) {
+		IMatrix matrix = getContents(scope);
+		GamaFloatMatrix m =
+				matrix instanceof GamaFloatMatrix ? (GamaFloatMatrix) matrix : GamaFloatMatrix.from(scope, matrix);
+		return m;
+	}
+
+	@Override
+	public double[] getBand(final IScope scope, final int index) {
+		if (index > 0) return null;
+		return getMatrix(scope).getMatrix();
+
 	}
 
 }

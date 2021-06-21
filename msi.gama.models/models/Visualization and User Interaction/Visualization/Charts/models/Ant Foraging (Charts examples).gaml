@@ -106,7 +106,7 @@ species ant skills: [moving] control: fsm {
 	}
 
 	aspect default {
-		draw circle(1.0) empty: !hasFood color: #orange ; 
+		draw circle(1.0) wireframe: !hasFood color: #orange ; 
 	}
 }
 experiment "Experiment" type: gui {
@@ -129,14 +129,12 @@ experiment "Experiment" type: gui {
 		statesnames<-list<string>([]);
 		categnames<-["empty","carry"];
 		nbantsbydist<-list<list<int>>([]);
-		ant x<-one_of(world.ant);
-		loop x over:list(world.ant)
+		loop x over:(world.ant)
 		{
 			if !(statesnames contains (x.state))
 			{				
 			add [(list(ant) count (each.state=x.state and !each.hasFood)),(list(ant) count (each.state=x.state and each.hasFood))] to: nbants;
 			add (x.state) to:statesnames;				
-			int d<-0;
 			list<int> nl<-list<int>([]);
 			loop d from:0 to:9
 				{

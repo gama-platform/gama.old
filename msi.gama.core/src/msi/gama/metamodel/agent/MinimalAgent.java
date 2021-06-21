@@ -87,9 +87,8 @@ public class MinimalAgent extends AbstractAgent {
 		// Addition to address Issue 817: if the new geometry is exactly the one
 		// possessed by the agent, no need to change anything.
 		if (newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead()
-				|| this.getSpecies().isGrid() && ((GamlSpecies) this.getSpecies()).belongsToAMicroModel()) {
+				|| this.getSpecies().isGrid() && ((GamlSpecies) this.getSpecies()).belongsToAMicroModel())
 			return;
-		}
 
 		final ITopology topology = getTopology();
 		final ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
@@ -108,9 +107,7 @@ public class MinimalAgent extends AbstractAgent {
 		}
 		topology.normalizeLocation(newGeomLocation, false);
 
-		if (!newGeomLocation.equals(newLocalGeom.getLocation())) {
-			newLocalGeom.setLocation(newGeomLocation);
-		}
+		if (!newGeomLocation.equals(newLocalGeom.getLocation())) { newLocalGeom.setLocation(newGeomLocation); }
 
 		newLocalGeom.setAgent(this);
 		final Envelope3D previous = Envelope3D.of(geometry);
@@ -124,39 +121,39 @@ public class MinimalAgent extends AbstractAgent {
 		// for ( final IPopulation pop : getMicroPopulations() ) {
 		// pop.hostChangesShape();
 		// }
+
+		notifyVarValueChange(IKeyword.SHAPE, newLocalGeom);
 	}
 
 	@Override
 	public String getName() {
-		if (name == null) {
-			name = super.getName();
-		}
-		if (dead()) {
+		if (name == null) { name = super.getName(); }
+		if (dead())
 			return name + " (dead)";
-		} else {
+		else
 			return name;
-		}
 	}
 
 	@Override
 	public void setName(final String name) {
 		this.name = name;
+		notifyVarValueChange(IKeyword.NAME, name);
 	}
 
 	@SuppressWarnings ("rawtypes")
 	@Override
 	public/* synchronized */void setLocation(final ILocation point) {
-		if (point == null || dead() || this.getSpecies().isGrid()) { return; }
+		if (point == null || dead() || this.getSpecies().isGrid()) return;
 		final ILocation newLocation = point.copy(getScope());
 		final ITopology topology = getTopology();
-		if (topology == null) { return; }
+		if (topology == null) return;
 		topology.normalizeLocation(newLocation, false);
 
 		if (geometry == null || geometry.getInnerGeometry() == null) {
 			setGeometry(GamaGeometryType.createPoint(newLocation));
 		} else {
 			final ILocation previousPoint = geometry.getLocation();
-			if (newLocation.equals(previousPoint)) { return; }
+			if (newLocation.equals(previousPoint)) return;
 			final Envelope3D previous = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
 			topology.updateAgent(previous, this);
@@ -179,6 +176,7 @@ public class MinimalAgent extends AbstractAgent {
 			}
 
 		}
+		notifyVarValueChange(IKeyword.LOCATION, newLocation);
 	}
 
 	@Override
@@ -187,7 +185,7 @@ public class MinimalAgent extends AbstractAgent {
 			final IScope scope = this.getScope();
 			final ITopology t = getTopology();
 			final ILocation randomLocation = t == null ? null : t.getRandomLocation(scope);
-			if (randomLocation == null) { return null; }
+			if (randomLocation == null) return null;
 			setGeometry(GamaGeometryType.createPoint(randomLocation));
 			return randomLocation;
 		}
@@ -197,7 +195,7 @@ public class MinimalAgent extends AbstractAgent {
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
 		// TODO and direct ?
-		if (s.getName().equals(IKeyword.AGENT)) { return true; }
+		if (s.getName().equals(IKeyword.AGENT)) return true;
 		return super.isInstanceOf(s, direct);
 	}
 
@@ -234,9 +232,8 @@ public class MinimalAgent extends AbstractAgent {
 		if (!getPopulation().isStepOverriden()) {
 			super.doStep(scope);
 			return !scope.interrupted();
-		} else {
+		} else
 			return scope.execute(getSpecies().getAction(ISpecies.stepActionName), this, null).passed();
-		}
 	}
 
 	/**
@@ -338,7 +335,7 @@ public class MinimalAgent extends AbstractAgent {
 	/**
 	 * Method getHeight()
 	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getHeight()
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getDepth()
 	 */
 	@Override
 	public Double getHeight() {

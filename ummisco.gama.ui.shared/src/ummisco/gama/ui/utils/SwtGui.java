@@ -70,6 +70,7 @@ import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.Symbol;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.dev.utils.DEBUG;
@@ -94,7 +95,7 @@ import ummisco.gama.ui.parameters.GamaWizardPage;
 public class SwtGui implements IGui {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	public volatile static boolean ALL_TESTS_RUNNING;
@@ -111,7 +112,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
-		if (exp == null || !GamaPreferences.Runtime.CORE_ASK_CLOSING.getValue()) { return true; }
+		if (exp == null || !GamaPreferences.Runtime.CORE_ASK_CLOSING.getValue()) return true;
 		PerspectiveHelper.switchToSimulationPerspective();
 		return Messages.question("Close simulation confirmation", "Do you want to close experiment '" + exp.getName()
 				+ "' of model '" + exp.getModel().getName() + "' ?");
@@ -129,12 +130,10 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
-		if (g.isReported()) { return; }
-		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) { return; }
+		if (g.isReported()) return;
+		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) return;
 		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
-		if (!handler.isRunning()) {
-			handler.start();
-		}
+		if (!handler.isRunning()) { handler.start(); }
 		handler.offer(g);
 		g.setReported();
 	}
@@ -145,9 +144,7 @@ public class SwtGui implements IGui {
 			WorkbenchHelper.hideView(ERROR_VIEW_ID);
 		} else {
 			final IGamaView.Error v = (Error) showView(scope, ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-			if (v != null) {
-				v.displayErrors();
-			}
+			if (v != null) { v.displayErrors(); }
 		}
 	}
 
@@ -155,26 +152,20 @@ public class SwtGui implements IGui {
 	public IGamaView.Test openTestView(final IScope scope, final boolean allTests) {
 		ALL_TESTS_RUNNING = allTests;
 		final IGamaView.Test v = (Test) showView(scope, TEST_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-		if (v != null) {
-			v.startNewTestSequence(allTests);
-		}
+		if (v != null) { v.startNewTestSequence(allTests); }
 		return v;
 	}
 
 	@Override
 	public void displayTestsResults(final IScope scope, final CompoundSummary<?, ?> summary) {
 		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
-		if (v != null) {
-			v.addTestResult(summary);
-		}
+		if (v != null) { v.addTestResult(summary); }
 	}
 
 	@Override
 	public void endTestDisplay() {
 		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
-		if (v != null) {
-			v.finishTestSequence();
-		}
+		if (v != null) { v.finishTestSequence(); }
 		WorkbenchHelper.getService(IRefreshHandler.class).refreshNavigator();
 	}
 
@@ -185,7 +176,7 @@ public class SwtGui implements IGui {
 	}
 
 	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
-		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) { return null; }
+		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) return null;
 		final Object[] result = new Object[1];
 		WorkbenchHelper.run(() -> {
 			try {
@@ -228,7 +219,7 @@ public class SwtGui implements IGui {
 
 		Object o = internalShowView(viewId, secondaryId, code);
 		if (o instanceof IWorkbenchPart) {
-			if (o instanceof IGamaView) { return (IGamaView) o; }
+			if (o instanceof IGamaView) return (IGamaView) o;
 			o = GamaRuntimeException.error("Impossible to open view " + viewId, GAMA.getRuntimeScope());
 		}
 		if (o instanceof Throwable) {
@@ -257,17 +248,21 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args) {
+	public IDisplaySurface createDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... args) {
 		IDisplaySurface surface = null;
 		final String keyword = output.getData().getDisplayType();
 		final DisplayDescription creator = DISPLAYS.get(keyword);
 		if (creator != null) {
 			surface = creator.create(output, args);
 			surface.outputReloaded();
-		} else {
+		} else
 			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", output.getScope());
-		}
 		return surface;
+	}
+
+	@Override
+	public Iterable<IDisplaySurface> getAllDisplaySurfaces() {
+		return allDisplaySurfaces();
 	}
 
 	@Override
@@ -279,57 +274,45 @@ public class SwtGui implements IGui {
 		}
 		WorkbenchHelper.run(() -> {
 			final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), parameters, title, font);
-			if (dialog.open() == Window.OK) {
-				result.putAll(dialog.getValues());
-			}
+			if (dialog.open() == Window.OK) { result.putAll(dialog.getValues()); }
 		});
 		return result;
 	}
-	
+
 	@Override
-	public IMap<String,IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
-		final IMap<String,IMap<String, Object>> result = GamaMapFactory.create();
+	public IMap<String, IMap<String, Object>> openWizard(final IScope scope, final String title,
+			final ActionDescription finish, final IList<IMap<String, Object>> pages) {
+		final IMap<String, IMap<String, Object>> result = GamaMapFactory.create();
 		final IList<GamaWizardPage> wizardPages = GamaListFactory.create();
 		for (IMap<String, Object> l : pages) {
 			GamaFont f = (GamaFont) l.get(IKeyword.FONT);
 			String t = (String) l.get(IKeyword.TITLE);
 			String d = (String) l.get(IKeyword.DESCRIPTION);
-			List<IParameter> ps  = (List<IParameter>) l.get(IKeyword.PARAMETERS);
-			
-			wizardPages.add(new GamaWizardPage(scope, ps,t,d, f)); 
-		
+			List<IParameter> ps = (List<IParameter>) l.get(IKeyword.PARAMETERS);
+
+			wizardPages.add(new GamaWizardPage(scope, ps, t, d, f));
+
 		}
-		
-		
+
 		WorkbenchHelper.run(() -> {
-			final GamaWizard wizard = new GamaWizard(title, wizardPages);
-			GamaWizardDialog wizardDialog = new GamaWizardDialog(WorkbenchHelper.getShell(),wizard);
-			if (wizardDialog.open() == Window.OK) {
-				result.putAll(wizardDialog.getValues());
-		    }
+			final GamaWizard wizard = new GamaWizard(title, finish, wizardPages);
+			GamaWizardDialog wizardDialog = new GamaWizardDialog(WorkbenchHelper.getShell(), wizard);
+			if (wizardDialog.open() == Window.OK) { result.putAll(wizardDialog.getValues()); }
 		});
 		return result;
 	}
-	
-	/*@Override
-	public Map<String, Object> openWizard(final IScope scope, final String title,
-			final List<IParameter> parameters, final GamaFont font) {
-		final IMap<String, Object> result = GamaMapFactory.createUnordered();
-		for (final IParameter p : parameters) {
-			result.put(p.getName(), p.getInitialValue(scope));
-		}
-		WorkbenchHelper.run(() -> {
-			final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), parameters, title, font);
-			if (dialog.open() == Window.OK) {
-				result.putAll(dialog.getValues());
-			}
-		});
-		return result;
-	}*/
-	
+
+	/*
+	 * @Override public Map<String, Object> openWizard(final IScope scope, final String title, final List<IParameter>
+	 * parameters, final GamaFont font) { final IMap<String, Object> result = GamaMapFactory.createUnordered(); for
+	 * (final IParameter p : parameters) { result.put(p.getName(), p.getInitialValue(scope)); } WorkbenchHelper.run(()
+	 * -> { final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), parameters, title, font);
+	 * if (dialog.open() == Window.OK) { result.putAll(dialog.getValues()); } }); return result; }
+	 */
+
 	@Override
-	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) {
-		final List<Boolean> result = new ArrayList<>();	
+	public Boolean openUserInputDialogConfirm(final IScope scope, final String title, final String message) {
+		final List<Boolean> result = new ArrayList<>();
 		WorkbenchHelper.run(() -> {
 			result.add(MessageDialog.openConfirm(WorkbenchHelper.getShell(), title, message));
 		});
@@ -341,9 +324,7 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.run(() -> {
 			IGamaView.User part = null;
 			part = (User) showView(scope, USER_CONTROL_VIEW_ID, null, IWorkbenchPage.VIEW_CREATE);
-			if (part != null) {
-				part.initFor(scope, panel);
-			}
+			if (part != null) { part.initFor(scope, panel); }
 			scope.setOnUserHold(true);
 			try {
 				WorkbenchHelper.getPage().showView(USER_CONTROL_VIEW_ID);
@@ -359,9 +340,7 @@ public class SwtGui implements IGui {
 
 		WorkbenchHelper.run(() -> {
 			final IUserDialogFactory userDialogFactory = WorkbenchHelper.getService(IUserDialogFactory.class);
-			if (userDialogFactory != null) {
-				userDialogFactory.closeUserDialog();
-			}
+			if (userDialogFactory != null) { userDialogFactory.closeUserDialog(); }
 			WorkbenchHelper.hideView(USER_CONTROL_VIEW_ID);
 
 		});
@@ -385,14 +364,14 @@ public class SwtGui implements IGui {
 	@Override
 	public void editModel(final IScope scope, final Object eObject) {
 		final IModelRunner modelRunner = getModelRunner();
-		if (modelRunner == null) { return; }
+		if (modelRunner == null) return;
 		modelRunner.editModel(eObject);
 	}
 
 	@Override
 	public List<TestExperimentSummary> runHeadlessTests(final Object model) {
 		final IModelRunner modelRunner = getModelRunner();
-		if (modelRunner == null) { return null; }
+		if (modelRunner == null) return null;
 		return modelRunner.runHeadlessTests(model);
 	}
 
@@ -400,7 +379,7 @@ public class SwtGui implements IGui {
 	public void updateParameterView(final IScope scope, final IExperimentPlan exp) {
 
 		WorkbenchHelper.run(() -> {
-			if (!exp.hasParametersOrUserCommands()) { return; }
+			if (!exp.hasParametersOrUserCommands()) return;
 			final IGamaView.Parameters view =
 					(Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			view.addItem(exp);
@@ -413,12 +392,10 @@ public class SwtGui implements IGui {
 	public void showParameterView(final IScope scope, final IExperimentPlan exp) {
 
 		WorkbenchHelper.run(() -> {
-			if (!exp.hasParametersOrUserCommands()) { return; }
+			if (!exp.hasParametersOrUserCommands()) return;
 			final IGamaView.Parameters view =
 					(Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-			if (view != null) {
-				view.addItem(exp);
-			}
+			if (view != null) { view.addItem(exp); }
 		});
 	}
 
@@ -430,8 +407,8 @@ public class SwtGui implements IGui {
 	@Override
 	public void setSelectedAgent(final IAgent a) {
 		WorkbenchHelper.asyncRun(() -> {
-			if (WorkbenchHelper.getPage() == null) { return; }
-			if (a == null) { return; }
+			if (WorkbenchHelper.getPage() == null) return;
+			if (a == null) return;
 			try {
 				final InspectDisplayOutput output = new InspectDisplayOutput(a);
 				output.launch(a.getScope());
@@ -440,9 +417,7 @@ public class SwtGui implements IGui {
 				GAMA.reportError(GAMA.getRuntimeScope(), g, false);
 			}
 			final IViewReference r = WorkbenchHelper.getPage().findViewReference(IGui.AGENT_VIEW_ID, "");
-			if (r != null) {
-				WorkbenchHelper.getPage().bringToTop(r.getPart(true));
-			}
+			if (r != null) { WorkbenchHelper.getPage().bringToTop(r.getPart(true)); }
 		});
 	}
 
@@ -451,16 +426,12 @@ public class SwtGui implements IGui {
 		if (exp.isGui()) {
 			// hideScreen();
 			final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
-			if (initializer != null && !initializer.isDone()) {
-				initializer.run();
-			}
+			if (initializer != null && !initializer.isDone()) { initializer.run(); }
 			WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 			final ExperimentAgent agent = exp.getAgent();
 			final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
 			Symbol layout = manager.getLayout();
-			if (layout == null) {
-				layout = manager;
-			}
+			if (layout == null) { layout = manager; }
 			final Boolean keepTabs = layout.getFacetValue(scope, "tabs", true);
 			final Boolean keepToolbars = layout.getFacetValue(scope, "toolbars", null);
 			final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
@@ -487,15 +458,9 @@ public class SwtGui implements IGui {
 				} else {
 					updateParameterView(scope, exp);
 				}
-				if (showNavigator != null && !showNavigator) {
-					WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID);
-				}
-				if (showControls != null) {
-					WorkbenchHelper.getWindow().setCoolBarVisible(showControls);
-				}
-				if (keepTray != null) {
-					PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray);
-				}
+				if (showNavigator != null && !showNavigator) { WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID); }
+				if (showControls != null) { WorkbenchHelper.getWindow().setCoolBarVisible(showControls); }
+				if (keepTray != null) { PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray); }
 
 				final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
 				if (sd != null) {
@@ -521,9 +486,7 @@ public class SwtGui implements IGui {
 		hideMonitorView();
 		getConsole().eraseConsole(true);
 		final IGamaView icv = (IGamaView) WorkbenchHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
-		if (icv != null) {
-			icv.reset();
-		}
+		if (icv != null) { icv.reset(); }
 		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		handler.stop();
 	}
@@ -535,7 +498,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void runModel(final Object object, final String exp) {
 		final IModelRunner modelRunner = getModelRunner();
-		if (modelRunner == null) { return; }
+		if (modelRunner == null) return;
 		modelRunner.runModel(object, exp);
 	}
 
@@ -544,9 +507,7 @@ public class SwtGui implements IGui {
 		final IViewReference[] viewRefs = WorkbenchHelper.getPage().getViewReferences();
 		for (final IViewReference ref : viewRefs) {
 			final IWorkbenchPart part = ref.getPart(false);
-			if (part instanceof IGamaView.Display) {
-				result.add(((IGamaView.Display) part).getDisplaySurface());
-			}
+			if (part instanceof IGamaView.Display) { result.add(((IGamaView.Display) part).getDisplaySurface()); }
 		}
 		return result;
 	}
@@ -609,9 +570,9 @@ public class SwtGui implements IGui {
 	@Override
 	public String getExperimentState(final String uid) {
 		final IExperimentController controller = GAMA.getFrontmostController();
-		if (controller == null) {
+		if (controller == null)
 			return NONE;
-		} else if (controller.getScheduler().paused) { return PAUSED; }
+		else if (controller.getScheduler().paused) return PAUSED;
 		return RUNNING;
 	}
 
@@ -621,9 +582,7 @@ public class SwtGui implements IGui {
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
-		if (stateProvider != null) {
-			WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState));
-		}
+		if (stateProvider != null) { WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState)); }
 	}
 
 	@Override
@@ -636,9 +595,7 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.run(() -> {
 			final IViewPart part =
 					WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
-			if (part != null && part instanceof IGamaView) {
-				((IGamaView) part).changePartNameWithSimulation(agent);
-			}
+			if (part != null && part instanceof IGamaView) { ((IGamaView) part).changePartNameWithSimulation(agent); }
 		});
 
 	}
@@ -680,9 +637,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void applyLayout(final IScope scope, final Object layout) {
 		final IDisplayLayoutManager manager = WorkbenchHelper.getService(IDisplayLayoutManager.class);
-		if (manager != null) {
-			manager.applyLayout(layout);
-		}
+		if (manager != null) { manager.applyLayout(layout); }
 	}
 
 	@Override
@@ -720,9 +675,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void refreshNavigator() {
 		final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
-		if (refresh != null) {
-			refresh.completeRefresh(null);
-		}
+		if (refresh != null) { refresh.completeRefresh(null); }
 
 	}
 

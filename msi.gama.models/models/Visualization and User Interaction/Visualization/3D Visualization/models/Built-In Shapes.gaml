@@ -67,7 +67,7 @@ species Geometry2D{
 	}
 	
 	aspect default {
-		draw myGeometry color:#gamaorange at:location border:#gamablue empty: emptiness ;
+		draw myGeometry color:#gamaorange at:location border:#gamablue wireframe: emptiness ;
     }
 } 
 
@@ -89,7 +89,7 @@ species Geometry3D{
 		myGeometry <- myGeometry rotated_by (-1,{1,0,0});
 	}
 	aspect default {
-		draw myGeometry color:#gamaorange at:location border: #gamablue empty: emptiness ;
+		draw myGeometry color:#gamaorange at:location border: #gamablue wireframe: emptiness ;
     }
 }
 
@@ -99,7 +99,7 @@ species TexturedGeometry3D{
 	file myTexture;
 
 	aspect default {
-		draw myGeometry rotated_by (-angle, {0,0,1}) texture:myTexture.path at:location ;
+		draw myGeometry rotate: (-angle::{0,0,1}) texture:myTexture.path at:location ;
     }
 }
 

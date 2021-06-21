@@ -136,7 +136,7 @@ global{
 			bool with_mobility1 <- "mobility1" in selected_road.allowed_mobility;
 			bool with_mobility2 <- "mobility2" in selected_road.allowed_mobility;
 			bool with_pedestrian <- "walk" in selected_road.allowed_mobility;
-			map input_values <- user_input([enter("mobility1 allowed",with_mobility1),enter("mobility2 allowed",with_mobility2),enter("pedestrian allowed",with_pedestrian)]);
+			map input_values <- user_input_dialog([enter("mobility1 allowed",with_mobility1),enter("mobility2 allowed",with_mobility2),enter("pedestrian allowed",with_pedestrian)]);
 			if (with_mobility1 != input_values["mobility1 allowed"]) {
 				if (with_mobility1) {selected_road.allowed_mobility >> "mobility1";}
 				else {selected_road.allowed_mobility << "mobility1";}
@@ -259,7 +259,7 @@ species building {
 		color <- color_per_id[type+size];
 	}
 	aspect default {
-		if show_building {draw shape scaled_by building_scale*1.1 empty:true color: color;}
+		if show_building {draw shape scaled_by building_scale*1.1 wireframe:true color: color;}
 	}
 }
 
@@ -461,9 +461,9 @@ experiment MondrianCity type: gui autorun: true{
 			species road ;
 			species people;
 			species building;
-			event["a"] action: {show_agent<-!show_agent;};
-			event["r"] action: {show_road<-!show_road;};
-			event["b"] action: {show_building<-!show_building;};			  	
+			event["a"] {show_agent<-!show_agent;}
+			event["r"] {show_road<-!show_road;}
+			event["b"] {show_building<-!show_building;}		  	
 		}		
 	}
 }

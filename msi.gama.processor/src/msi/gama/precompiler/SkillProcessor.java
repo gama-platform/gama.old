@@ -1,6 +1,7 @@
 package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 
 import msi.gama.precompiler.GamlAnnotations.skill;
 
@@ -18,6 +19,12 @@ public class SkillProcessor extends ElementProcessor<skill> {
 		sb.append(in).append("_skill(").append(toJavaString(skill.name())).append(',')
 				.append(toClassObject(rawNameOf(context, e.asType()))).append(',');
 		toArrayOfStrings(skill.attach_to(), sb).append(");");
+	}
+
+	@Override
+	protected boolean validateElement(final ProcessorContext context, final Element e) {
+		boolean result = assertClassExtends(context, true, (TypeElement) e, context.getISkill());
+		return result;
 	}
 
 }

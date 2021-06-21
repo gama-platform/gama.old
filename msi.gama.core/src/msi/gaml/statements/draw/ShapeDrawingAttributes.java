@@ -51,12 +51,12 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 
 	public ShapeDrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color,
 			final GamaColor border) {
-		this(shape, agent, color, border, shape.getGeometricalType(), null);
+		this(shape, agent, color, border, shape.getGeometricalType(), null, shape.getDepth());
 	}
 
 	public ShapeDrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color, final GamaColor border,
-			final IShape.Type type, final Double lineWidth) {
-		this(null, null, null, (GamaPoint) shape.getLocation(), color == null, color, /* null, */ border, null, null,
+			final IShape.Type type, final Double lineWidth, final Double depth) {
+		this(null, depth, null, (GamaPoint) shape.getLocation(), color == null, color, /* null, */ border, null, null,
 				agent, type, lineWidth, null);
 	}
 

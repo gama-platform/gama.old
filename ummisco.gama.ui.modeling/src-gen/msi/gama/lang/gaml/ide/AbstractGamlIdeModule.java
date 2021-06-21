@@ -48,7 +48,7 @@ public abstract class AbstractGamlIdeModule extends DefaultIdeModule {
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
-	public Class<? extends IRenameService2> bindIRenameService() {
+	public Class<? extends IRenameService2> bindIRenameService2() {
 		return RenameService2.class;
 	}
 	

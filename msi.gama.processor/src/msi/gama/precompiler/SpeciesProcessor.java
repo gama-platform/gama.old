@@ -1,6 +1,7 @@
 package msi.gama.precompiler;
 
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 
 import msi.gama.precompiler.GamlAnnotations.species;
 
@@ -19,6 +20,13 @@ public class SpeciesProcessor extends ElementProcessor<species> {
 		sb.append(in).append("_species(").append(toJavaString(spec.name())).append(",").append(toClassObject(clazz))
 				.append(",(p, i)->").append("new ").append(clazz).append("(p, i),");
 		toArrayOfStrings(spec.skills(), sb).append(");");
+	}
+
+	@Override
+	protected boolean validateElement(final ProcessorContext context, final Element e) {
+		boolean result =
+				assertClassExtends(context, true, (TypeElement) e, context.getType("msi.gama.metamodel.agent.IAgent"));
+		return result;
 	}
 
 }

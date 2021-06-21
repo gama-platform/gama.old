@@ -43,25 +43,17 @@ public class Arc extends PathCommand {
 	public float xAxisRot = 0f;
 	public boolean largeArc = false;
 	public boolean sweep = false;
-	public float x = 0f;
-	public float y = 0f;
-
-	/** Creates a new instance of MoveTo */
-	public Arc() {}
 
 	public Arc(final boolean isRelative, final float rx, final float ry, final float xAxisRot, final boolean largeArc,
 			final boolean sweep, final float x, final float y) {
-		super(isRelative);
+		super(x, y, 6, isRelative);
 		this.rx = rx;
 		this.ry = ry;
 		this.xAxisRot = xAxisRot;
 		this.largeArc = largeArc;
 		this.sweep = sweep;
-		this.x = x;
-		this.y = y;
 	}
 
-	// public void appendPath(ExtendedGeneralPath path, BuildHistory hist)
 	@Override
 	public void appendPath(final GeneralPath path, final BuildHistory hist) {
 		final float offx = isRelative ? hist.history[0].x : 0f;
@@ -70,11 +62,6 @@ public class Arc extends PathCommand {
 		arcTo(path, rx, ry, xAxisRot, largeArc, sweep, x + offx, y + offy, hist.history[0].x, hist.history[0].y);
 		// path.lineTo(x + offx, y + offy);
 		hist.setPoint(x + offx, y + offy);
-	}
-
-	@Override
-	public int getNumKnotsAdded() {
-		return 6;
 	}
 
 	/**
@@ -116,11 +103,9 @@ public class Arc extends PathCommand {
 			return;
 		}
 
-		if (x0 == x && y0 == y) {
-			// If the endpoints (x, y) and (x0, y0) are identical, then this
+		if (x0 == x && y0 == y) // If the endpoints (x, y) and (x0, y0) are identical, then this
 			// is equivalent to omitting the elliptical arc segment entirely.
 			return;
-		}
 
 		final Arc2D arc = computeArc(x0, y0, rx, ry, angle, largeArcFlag, sweepFlag, x, y);
 
@@ -211,9 +196,7 @@ public class Arc extends PathCommand {
 		double angleExtent = Math.toDegrees(sign * Math.acos(p / n));
 		if (!sweepFlag && angleExtent > 0) {
 			angleExtent -= 360f;
-		} else if (sweepFlag && angleExtent < 0) {
-			angleExtent += 360f;
-		}
+		} else if (sweepFlag && angleExtent < 0) { angleExtent += 360f; }
 		angleExtent %= 360f;
 		angleStart %= 360f;
 

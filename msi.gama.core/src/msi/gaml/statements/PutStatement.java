@@ -23,7 +23,9 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
@@ -169,9 +171,7 @@ public class PutStatement extends AddStatement {
 			final IExpression at = cd.getFacetExpr(AT);
 			sb.append(list.serialize(includingBuiltIn));
 			sb.append('[');
-			if (at != null) {
-				sb.append(at.serialize(includingBuiltIn));
-			}
+			if (at != null) { sb.append(at.serialize(includingBuiltIn)); }
 			sb.append(']');
 			sb.append(" <- ");
 			sb.append(item.serialize(includingBuiltIn)).append(';');
@@ -225,11 +225,14 @@ public class PutStatement extends AddStatement {
 	protected void apply(final IScope scope, final Object object, final Object position,
 			final IContainer.Modifiable container) throws GamaRuntimeException {
 		if (!asAll) {
-			if (!container.checkBounds(scope, position, false)) {
-				throw GamaRuntimeException.error("Index " + position + " out of bounds of " + list.serialize(false),
-						scope);
+			if (!container.checkBounds(scope, position, false)) throw GamaRuntimeException
+					.error("Index " + position + " out of bounds of " + list.serialize(false), scope);
+			// Issue #3099
+			if (container instanceof IList && position instanceof GamaPair) {
+				((IList<Object>) container).replaceRange(scope, (GamaPair) position, object);
+			} else {
+				container.setValueAtIndex(scope, position, object);
 			}
-			container.setValueAtIndex(scope, position, object);
 		} else {
 			container.setAllValues(scope, object);
 		}

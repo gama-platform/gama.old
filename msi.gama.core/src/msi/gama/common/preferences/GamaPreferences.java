@@ -169,14 +169,20 @@ public class GamaPreferences {
 		public static Pref<String> OPERATORS_MENU_SORT = GamaPreferences
 				.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING, false)
 				.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
-		public static final Pref<Boolean> CORE_CLOSE_CURLY =
-				GamaPreferences.create("pref_editor_close_curly", "Close curly brackets ( { )", true, IType.BOOL, false)
-						.in(NAME, TEXT);
-		public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences
-				.create("pref_editor_close_square", "Close square brackets ( [ )", true, IType.BOOL, false)
+
+		public static final Pref<Boolean> CORE_CLOSE_QUOTE = GamaPreferences
+				.create("pref_editor_close_quote", "Automatically close single quotes — '..'", true, IType.BOOL, false)
 				.in(NAME, TEXT);
-		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES = GamaPreferences
-				.create("pref_editor_close_parentheses", "Close parentheses", true, IType.BOOL, false).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_DOUBLE = GamaPreferences.create("pref_editor_close_double",
+				"Automatically close double quotes — \"..\"", true, IType.BOOL, false).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_CURLY = GamaPreferences
+				.create("pref_editor_close_curly", "Automatically close curly brackets — {..}", true, IType.BOOL, false)
+				.in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences.create("pref_editor_close_square",
+				"Automatically close square brackets — [..]", true, IType.BOOL, false).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES =
+				GamaPreferences.create("pref_editor_close_parentheses", "Automatically close parentheses — (..)", true,
+						IType.BOOL, false).in(NAME, TEXT);
 		public static final Pref<Boolean> EDITOR_CLEAN_UP =
 				GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL, false)
 						.in(NAME, GamaPreferences.Modeling.OPTIONS);
@@ -352,7 +358,7 @@ public class GamaPreferences {
 		 */
 		public static final String CHARTS = "Charts Preferences";
 		public static final Pref<Boolean> CHART_FLAT =
-				create("pref_display_flat_charts", "Display 'flat' histograms", false, IType.BOOL, true).in(NAME,
+				create("pref_display_flat_charts", "Display 'flat' histograms", true, IType.BOOL, true).in(NAME,
 						CHARTS);
 		public static final Pref<Boolean> CHART_MEMORIZE = create("pref_display_memorize_charts",
 				"Keep values in memory (to save them as CSV)", true, IType.BOOL, true).in(NAME, CHARTS);
@@ -527,8 +533,7 @@ public class GamaPreferences {
 				32648, IType.INT, true).in(NAME, GEOTOOLS)
 						.addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final var codes = CRS.getSupportedCodes(newValue.toString());
-							if (codes.isEmpty())
-								return false;
+							if (codes.isEmpty()) return false;
 							return true;
 						});
 
@@ -536,8 +541,7 @@ public class GamaPreferences {
 				create("pref_gis_initial_crs", "...or use the following CRS (EPSG code)", 4326, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final var codes = CRS.getSupportedCodes(newValue.toString());
-							if (codes.isEmpty())
-								return false;
+							if (codes.isEmpty()) return false;
 							return true;
 						});
 
@@ -545,8 +549,7 @@ public class GamaPreferences {
 				create("pref_gis_output_crs", "... or use this following CRS (EPSG code)", 4326, IType.INT, true)
 						.in(NAME, GEOTOOLS).addChangeListener((IPreferenceBeforeChangeListener<Integer>) newValue -> {
 							final var codes = CRS.getSupportedCodes(newValue.toString());
-							if (codes.isEmpty())
-								return false;
+							if (codes.isEmpty()) return false;
 							return true;
 						});
 
@@ -560,11 +563,9 @@ public class GamaPreferences {
 			final var osbit = System.getProperty("os.arch");
 			if (os.startsWith("Mac"))
 				return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
-			else if (os.startsWith("Linux"))
-				return "/usr/local/lib/libjri.so";
+			else if (os.startsWith("Linux")) return "/usr/local/lib/libjri.so";
 			if (os.startsWith("Windows")) {
-				if (osbit.endsWith("64"))
-					return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
+				if (osbit.endsWith("64")) return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 				return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 			}
 			return "";
@@ -642,8 +643,7 @@ public class GamaPreferences {
 	private static void register(final Pref gp) {
 		final IScope scope = null;
 		final var key = gp.key;
-		if (key == null)
-			return;
+		if (key == null) return;
 		prefs.put(key, gp);
 		final var value = gp.value;
 		if (storeKeys.contains(key)) {
@@ -672,8 +672,7 @@ public class GamaPreferences {
 				case IType.FONT:
 					gp.init(() -> {
 						final var font = store.get(key, asString(scope, value));
-						if (DEFAULT_FONT.equals(font))
-							return null;
+						if (DEFAULT_FONT.equals(font)) return null;
 						return GamaFontType.staticCast(scope, font, false);
 					});
 					break;
@@ -741,9 +740,7 @@ public class GamaPreferences {
 	public static Map<String, Map<String, List<Pref>>> organizePrefs() {
 		final Map<String, Map<String, List<Pref>>> result = GamaMapFactory.create();
 		for (final Pref e : prefs.values()) {
-			if (e.isHidden()) {
-				continue;
-			}
+			if (e.isHidden()) { continue; }
 			final var tab = e.tab;
 			var groups = result.get(tab);
 			if (groups == null) {
@@ -764,9 +761,7 @@ public class GamaPreferences {
 	public static void setNewPreferences(final Map<String, Object> modelValues) {
 		for (final String name : modelValues.keySet()) {
 			final Pref e = prefs.get(name);
-			if (e == null) {
-				continue;
-			}
+			if (e == null) { continue; }
 			e.set(modelValues.get(name));
 			writeToStore(e);
 			try {
@@ -828,9 +823,7 @@ public class GamaPreferences {
 			final var read = new StringBuilder(1000);
 			final var write = new StringBuilder(1000);
 			for (final Pref e : entries) {
-				if (e.isHidden() || !e.inGaml()) {
-					continue;
-				}
+				if (e.isHidden() || !e.inGaml()) { continue; }
 				read.append(Strings.TAB).append("//").append(e.getTitle()).append(Strings.LN);
 				read.append(Strings.TAB).append("write sample(gama.").append(e.getName()).append(");")
 						.append(Strings.LN).append(Strings.LN);

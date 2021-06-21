@@ -67,7 +67,7 @@ experiment prey_predator type: gui {
 	parameter "Prey energy consumption: " var: prey_energy_consum  category: "Prey";
 	output {
 		display main_display {
-			grid vegetation_cell lines: #black;
+			grid vegetation_cell border: #black;
 			species prey aspect: base;
 		}
 

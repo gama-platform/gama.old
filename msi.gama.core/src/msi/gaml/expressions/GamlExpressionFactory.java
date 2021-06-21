@@ -87,9 +87,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public UnitConstantExpression createUnit(final Object value, final IType t, final String name, final String doc,
 			final String deprecated, final boolean isTime, final String[] names) {
 		final UnitConstantExpression exp = UnitConstantExpression.create(value, t, name, doc, isTime, names);
-		if (deprecated != null && !deprecated.isEmpty()) {
-			exp.setDeprecated(deprecated);
-		}
+		if (deprecated != null && !deprecated.isEmpty()) { exp.setDeprecated(deprecated); }
 		return exp;
 
 	}
@@ -101,18 +99,18 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public SpeciesConstantExpression createSpeciesConstant(final IType type) {
-		if (type.getGamlType() != Types.SPECIES) { return null; }
+		if (type.getGamlType() != Types.SPECIES) return null;
 		final SpeciesDescription sd = type.getContentType().getSpecies();
-		if (sd == null) { return null; }
+		if (sd == null) return null;
 		return new SpeciesConstantExpression(sd.getName(), type);
 	}
 
 	@Override
 	public ConstantExpression createConst(final Object val, final IType type, final String name) {
-		if (type.getGamlType() == Types.SPECIES) { return createSpeciesConstant(type); }
-		if (type == Types.SKILL) { return new SkillConstantExpression((String) val, type); }
-		if (val == null) { return NIL_EXPR; }
-		if (val instanceof Boolean) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
+		if (type.getGamlType() == Types.SPECIES) return createSpeciesConstant(type);
+		if (type == Types.SKILL) return new SkillConstantExpression((String) val, type);
+		if (val == null) return NIL_EXPR;
+		if (val instanceof Boolean) return (Boolean) val ? TRUE_EXPR : FALSE_EXPR;
 		return new ConstantExpression(val, type, name);
 	}
 
@@ -123,28 +121,28 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createExpr(final IExpressionDescription ied, final IDescription context) {
-		if (ied == null) { return null; }
+		if (ied == null) return null;
 		final IExpression p = ied.getExpression();
 		return p == null ? getParser().compile(ied, context) : p;
 	}
 
 	@Override
 	public IExpression createExpr(final String s, final IDescription context) {
-		if (s == null || s.isEmpty()) { return null; }
+		if (s == null || s.isEmpty()) return null;
 		return getParser().compile(StringBasedExpressionDescription.create(s), context);
 	}
 
 	@Override
 	public IExpression createExpr(final String s, final IDescription context,
 			final IExecutionContext additionalContext) {
-		if (s == null || s.isEmpty()) { return null; }
+		if (s == null || s.isEmpty()) return null;
 		return getParser().compile(s, context, additionalContext);
 	}
 
 	@Override
 	public Arguments createArgumentMap(final ActionDescription action, final IExpressionDescription args,
 			final IDescription context) {
-		if (args == null) { return null; }
+		if (args == null) return null;
 		return getParser().parseArguments(action, args.getTarget(), context, false);
 	}
 
@@ -190,12 +188,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public boolean hasOperator(final String op, final IDescription context, final EObject object,
 			final IExpression... args) {
 		// If arguments are invalid, we have no match
-		if (args == null || args.length == 0) { return false; }
+		if (args == null || args.length == 0) return false;
 		for (final IExpression exp : args) {
-			if (exp == null) { return false; }
+			if (exp == null) return false;
 		}
 		// If the operator is not known, we have no match
-		if (!OPERATORS.containsKey(op)) { return false; }
+		if (!OPERATORS.containsKey(op)) return false;
 		final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 		final Signature sig = new Signature(args).simplified();
 		// Does any known operator signature match with the signatue of the expressions ?
@@ -211,16 +209,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
 		final boolean isReverse = op.equals("reverse");
-		if (isReverse) {
-			DEBUG.OUT("");
-		}
+		if (isReverse) { DEBUG.OUT(""); }
 		if (!hasOperator(op, context, eObject, args)) {
 			final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 			final Signature userSignature = new Signature(args).simplified();
 			String msg = "No operator found for applying '" + op + "' to " + userSignature;
-			if (ops != null) {
-				msg += " (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")";
-			}
+			if (ops != null) { msg += " (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")"; }
 			context.error(msg, IGamlIssue.UNMATCHED_OPERANDS, eObject);
 			return null;
 		}
@@ -235,10 +229,10 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			final Signature[] matching = Iterables.toArray(
 					filter(ops.keySet(), s -> originalUserSignature.matchesDesiredSignature(s)), Signature.class);
 			final int size = matching.length;
-			if (size == 0) {
+			if (size == 0)
 				// It is a varArg, we call recursively the method
 				return createOperator(op, context, eObject, createList(args));
-			} else if (size == 1) {
+			else if (size == 1) {
 				// Only one choice
 				userSignature = matching[0];
 			} else {
@@ -285,9 +279,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	private IExpression createDirectly(final IDescription context, final EObject eObject, final OperatorProto proto,
 			final IExpression... args) {
 		// We finally make an instance of the operator and init it with the arguments
-		if (proto.getName().equals("reverse")) {
-			DEBUG.OUT("");
-		}
 		final IExpression copy = proto.create(context, eObject, args);
 		if (copy != null) {
 			// We verify that it is not deprecated
@@ -302,9 +293,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createAction(final String op, final IDescription callerContext, final ActionDescription action,
 			final IExpression call, final Arguments arguments) {
-		if (action.verifyArgs(callerContext, arguments)) {
+		if (action.verifyArgs(callerContext, arguments))
 			return new PrimitiveOperator(callerContext, action, call, arguments, call instanceof SuperExpression);
-		}
 		return null;
 	}
 

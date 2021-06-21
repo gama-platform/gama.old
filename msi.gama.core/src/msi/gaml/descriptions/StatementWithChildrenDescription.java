@@ -44,7 +44,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.process(d)) { return false; }
+			if (!visitor.process(d)) return false;
 		}
 		return true;
 	}
@@ -52,8 +52,8 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.process(d)) { return false; }
-			if (!d.visitOwnChildrenRecursively(visitor)) { return false; }
+			if (!visitor.process(d)) return false;
+			if (!d.visitOwnChildrenRecursively(visitor)) return false;
 		}
 		return true;
 
@@ -62,7 +62,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.process(d)) { return false; }
+			if (!visitor.process(d)) return false;
 		}
 		return true;
 	}
@@ -92,7 +92,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public IExpression getVarExpr(final String name, final boolean asField) {
-		if (temps != null) { return temps.get(name); }
+		if (temps != null) return temps.get(name);
 		return null;
 	}
 
@@ -104,31 +104,46 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		// TODO Should separate validation from execution, here.
 
 		if (!getMeta().hasScope() /* canHaveTemps */) {
-			if (getEnclosingDescription() == null) { return null; }
-			if (!(getEnclosingDescription() instanceof StatementWithChildrenDescription)) { return null; }
+			if (getEnclosingDescription() == null) return null;
+			if (!(getEnclosingDescription() instanceof StatementWithChildrenDescription)) return null;
 
 			return ((StatementWithChildrenDescription) getEnclosingDescription()).addTemp(declaration, name, type);
 		}
 		final String kw = getKeyword();
 		final String facet = LET.equals(kw) || LOOP.equals(kw) ? NAME : RETURNS;
-		if (temps == null) {
-			temps = GamaMapFactory.createUnordered();
+		if (temps == null) { temps = GamaMapFactory.createUnordered(); }
+		if (!name.equals(MYSELF)) {
+			IVarDescriptionProvider description = getDescriptionDeclaringVar(name);
+			if (description != null) {
+				if (description instanceof SpeciesDescription) {
+					declaration.warning("This declaration of " + name + " shadows the declaration of an attribute of "
+							+ ((SpeciesDescription) description).getName(), IGamlIssue.SHADOWS_NAME, facet);
+				} else if (description instanceof ModelDescription) {
+					declaration.warning(
+							"This declaration of " + name + " shadows the declaration of a global attribute",
+							IGamlIssue.SHADOWS_NAME, facet);
+				} else {
+					declaration.warning("This declaration of " + name + " shadows a previous declaration",
+							IGamlIssue.SHADOWS_NAME, facet);
+				}
+			}
 		}
-		if (temps.containsKey(name) && !name.equals(MYSELF)) {
-			declaration.warning("This declaration of " + name + " shadows a previous declaration",
-					IGamlIssue.SHADOWS_NAME, facet);
-		}
-		final SpeciesDescription sd = declaration.getSpeciesContext();
-		final ModelDescription md = declaration.getModelDescription();
-		if (sd != null && sd != md && sd.hasAttribute(name)) {
-			declaration.warning(
-					"This declaration of " + name + " shadows the declaration of an attribute of " + sd.getName(),
-					IGamlIssue.SHADOWS_NAME, facet);
-		}
-		if (md != null && md.hasAttribute(name)) {
-			declaration.warning("This declaration of " + name + " shadows the declaration of a global attribute",
-					IGamlIssue.SHADOWS_NAME, facet);
-		}
+
+		// if (temps.containsKey(name) && !name.equals(MYSELF)) {
+		// declaration.warning("This declaration of " + name + " shadows a previous declaration",
+		// IGamlIssue.SHADOWS_NAME, facet);
+		// }
+		// final SpeciesDescription sd = declaration.getSpeciesContext();
+		// final ModelDescription md = declaration.getModelDescription();
+		// if (sd != null && sd != md && sd.hasAttribute(name)) {
+		// declaration.warning(
+		// "This declaration of " + name + " shadows the declaration of an attribute of " + sd.getName(),
+		// IGamlIssue.SHADOWS_NAME, facet);
+		// }
+		// if (md != null && md.hasAttribute(name)) {
+		// declaration.warning("This declaration of " + name + " shadows the declaration of a global attribute",
+		// IGamlIssue.SHADOWS_NAME, facet);
+		// }
 		final IExpression result =
 				name.equals(MYSELF) ? getExpressionFactory().createVar(name, type, false, IVarExpression.MYSELF, this)
 						: getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
@@ -139,9 +154,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 		final IDescription d = super.addChild(child);
-		if (d != null) {
-			children.add(child);
-		}
+		if (d != null) { children.add(child); }
 		return d;
 	}
 
@@ -170,10 +183,9 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type) {
-		if (getKeyword().equals(LOOP) && facetName.equals(NAME)) {
-			// Case of loops: the variable is inside the loop (not outside)
+		if (getKeyword().equals(LOOP) && facetName.equals(NAME)) // Case of loops: the variable is inside the loop (not
+																	// outside)
 			return (IVarExpression) addTemp(this, getLitteral(facetName), type);
-		}
 		return super.addNewTempIfNecessary(facetName, type);
 	}
 

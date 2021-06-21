@@ -197,7 +197,7 @@ experiment default_experiment type: gui autorun: true
 				draw circle(2) color: color;
 			}
 			species corridor {
-				draw shape empty: true color: #white;
+				draw shape wireframe: true color: #white;
 			}
 			species corridor_info_drawer aspect: base;
 		}

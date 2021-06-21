@@ -39,7 +39,8 @@ public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerSt
 		GRAPHICS(IKeyword.GRAPHICS),
 		OVERLAY(IKeyword.OVERLAY),
 		CAMERA(IKeyword.CAMERA),
-		LIGHT("light");
+		LIGHT("light"),
+		MESH(IKeyword.MESH);
 
 		private final String name;
 

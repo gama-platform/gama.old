@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
@@ -92,8 +92,11 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			// build axis
 			addSyntheticObject(list, axes[i], COLORS[i], IShape.Type.LINECYLINDER, false);
 			// build labels
-			final TextDrawingAttributes text = new TextDrawingAttributes(of(1), null, p.times(1.3).yNegated(),
-					ANCHORS[i], COLORS[i], AXES_FONT, false);
+			final TextDrawingAttributes text =
+					new TextDrawingAttributes(of(1), null, p.times(1.3).yNegated(), COLORS[i]);
+			text.setAnchor(ANCHORS[i]);
+			text.setFont(AXES_FONT);
+			text.setPerspective(false);
 			list.add(new StringObject(LABELS[i], text));
 			// build arrows
 			final GamaShape s = new GamaShape(arrow, null, ROTATIONS[i], p.times(0.98));

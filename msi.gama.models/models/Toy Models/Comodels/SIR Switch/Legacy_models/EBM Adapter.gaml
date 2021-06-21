@@ -5,17 +5,17 @@ experiment "Adapter" type: gui
 {
 	int get_num_S
 	{
-		return first(agent_with_SIR_dynamic).S;
+		return int(first(agent_with_SIR_dynamic).S);
 	}
 
 	int get_num_I
 	{
-		return first(agent_with_SIR_dynamic).I;
+		return int(first(agent_with_SIR_dynamic).I);
 	}
 
 	int get_num_R
 	{
-		return first(agent_with_SIR_dynamic).R;
+		return int(first(agent_with_SIR_dynamic).R);
 	}
 
 	action set_num_S_I_R (int numS, int numI, int numR)

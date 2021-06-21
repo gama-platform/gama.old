@@ -44,7 +44,7 @@ experiment "With Visualization" type: gui {
 	output {
 		display map {
 			
-			grid cell lines:#black;
+			grid cell border: #black;
 			species polygon_square;
 		}	
 	}	

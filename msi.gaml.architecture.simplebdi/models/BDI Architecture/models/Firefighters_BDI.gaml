@@ -126,7 +126,7 @@ species firefighter skills: [moving] control: simple_bdi{
 	
 	aspect bdi {
 		draw triangle(2) color:color rotate: 90 + heading;	
-		draw circle(15) color: color empty: true;
+		draw circle(15) color: color wireframe: true;
 		draw ("B:" + length(belief_base) + ":" + belief_base) color:#black size:displatTextSize; 
 		draw ("D:" + length(desire_base) + ":" + desire_base) color:#black size:displatTextSize at:{location.x,location.y+displatTextSize}; 
 		draw ("I:" + length(intention_base) + ":" + intention_base) color:#black size:displatTextSize at:{location.x,location.y+2*displatTextSize}; 
@@ -166,7 +166,7 @@ experiment fight_fire type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {					
 		display view1 { 
-			grid grille lines: #darkgreen;
+			grid grille border: #darkgreen;
 			species fireArea aspect:base;
 			species waterArea aspect:base;
 			species firefighter aspect: bdi;

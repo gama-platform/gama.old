@@ -63,9 +63,9 @@ public interface IKeyword {
 	String BRIGHTER = "brighter";
 	String BROWSE = "browse";
 	String CAMERA = "camera";
-	String CAMERA_POS = "camera_pos";
-	String CAMERA_LOOK_POS = "camera_look_pos";
-	String CAMERA_UP_VECTOR = "camera_up_vector";
+	String CAMERA_LOCATION = "camera_location";
+	String CAMERA_TARGET = "camera_target";
+	String CAMERA_ORIENTATION = "camera_orientation";
 	String CAMERA_LENS = "camera_lens";
 	String CAMERA_INTERACTION = "camera_interaction";
 	String CAPTURE = "capture";
@@ -130,6 +130,7 @@ public interface IKeyword {
 	String EDGE_SPECIES = "edge_species";
 	String ELSE = "else";
 	String EMPTY = "empty";
+	String WIREFRAME = "wireframe";
 	String BORDER = "border";
 	String ENTER = "enter";
 	String ENTITIES = "entities";
@@ -176,6 +177,7 @@ public interface IKeyword {
 	String FILES = "files";
 	String OUTPUT_FILE = "output_file";
 	String FILL_WITH = "fill_with";
+	String FIELD = "field";
 	String FOCUS = "focus";
 	String FOCUS_ON = "focus_on";
 	String FONT = "font";
@@ -264,6 +266,7 @@ public interface IKeyword {
 	String MEMORIZE = "memorize";
 	String MERSENNE = "mersenne";
 	String MESSAGE = "message";
+	String MESH = "mesh";
 	String METHOD = "method";
 	String MICRO = "micro";
 	String MICRO_LAYER = "micro_layer";
@@ -437,6 +440,7 @@ public interface IKeyword {
 	String USER_CONTROLLED = "user_controlled";
 	String USER_COMMAND = "user_command";
 	String USER_INPUT = "user_input";
+	String USER_INPUT_DIALOG = "user_input_dialog";
 	String USER_CONFIRM = "user_confirm";
 	String WIZARD = "wizard";
 	String WIZARD_PAGE = "wizard_page";
@@ -514,4 +518,5 @@ public interface IKeyword {
 	String PLATFORM = "platform";
 	String INVOKE = "invoke";
 	String TOOLBAR = "toolbar";
+	String SMOOTH = "smooth";
 }

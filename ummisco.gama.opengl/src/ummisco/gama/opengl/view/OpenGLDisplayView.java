@@ -46,7 +46,7 @@ public class OpenGLDisplayView extends SWTDisplayView {
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
 		final SWTOpenGLDisplaySurface surface =
-				(SWTOpenGLDisplaySurface) GAMA.getGui().getDisplaySurfaceFor(getOutput(), parent);
+				(SWTOpenGLDisplaySurface) GAMA.getGui().createDisplaySurfaceFor(getOutput(), parent);
 		surfaceComposite = surface.renderer.getCanvas();
 		surface.outputReloaded();
 		return surfaceComposite;

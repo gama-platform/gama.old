@@ -127,9 +127,9 @@ experiment "Corridor" type: gui autorun: true {
 	output {
 		display defaut_display background: #black fullscreen: true toolbar: false {
 			graphics back {
-				draw shape color: #black empty: false;
-				draw corridor_wall_0_display color: #gray empty: true;
-				draw corridor_wall_1_display color: #gray empty: true ;
+				draw shape color: #black wireframe: false;
+				draw corridor_wall_0_display color: #gray wireframe: true;
+				draw corridor_wall_1_display color: #gray wireframe: true ;
 			}
 
 			species corridor {
@@ -137,11 +137,11 @@ experiment "Corridor" type: gui autorun: true {
 			}
 			
 			agents "Captured" value: list(corridor(0).captured_pedestrian) transparency: 0.5 {
-				draw square(30) empty: false color: #white;
+				draw square(30) wireframe: false color: #white;
 			}
 
 			species pedestrian {
-				draw square(20) empty: false color: color;
+				draw square(20) wireframe: false color: color;
 			}
 
 			graphics front {
@@ -156,14 +156,14 @@ experiment "Corridor" type: gui autorun: true {
 				draw circle(40) color: !capture_pedestrians ? (button_hover ? #red : #darkred) : (button_hover ? #lightgreen : #darkgreen) at:  button_location;
 			}
 
-			event mouse_down action: {
+			event mouse_down {
 				if (button_location distance_to #user_location <= 40) {
 					capture_pedestrians <- !capture_pedestrians;
 				}
-			};
-			event mouse_move action: {
+			}
+			event mouse_move {
 				button_hover <- (button_location distance_to #user_location <= 40);
-			};
+			}
 		}
 	}
 

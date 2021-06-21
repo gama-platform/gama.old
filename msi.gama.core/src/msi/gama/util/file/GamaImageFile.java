@@ -12,6 +12,7 @@ package msi.gama.util.file;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,9 +27,8 @@ import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 
-import org.opengis.referencing.FactoryException;
-
 import org.locationtech.jts.geom.Envelope;
+import org.opengis.referencing.FactoryException;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.ImageUtils;
@@ -65,11 +65,11 @@ import msi.gaml.types.Types;
 		concept = { IConcept.IMAGE, IConcept.FILE },
 		doc = @doc ("Image files can be of 6 different formats: tiff, jpeg, png, pict or bmp. Their internal representation is a matrix of colors"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
+public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implements IFieldMatrixProvider {
 
 	public static class ImageInfo extends GamaFileMetaData {
 
-		public final static Map<Integer, String> formatsShortNames = new HashMap<Integer, String>() {
+		public final static Map<Integer, String> formatsShortNames = new HashMap<>() {
 
 			{
 				// Hack: Corresponds to SWT.IMAGE_xxx + ImagePropertyPage
@@ -88,7 +88,6 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 			}
 		};
 
-		// private Object thumbnail;
 		private final int type;
 		private final int width;
 		private final int height;
@@ -96,7 +95,6 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		public ImageInfo(final long modificationStamp, /* final Object thumbnail, */final int origType,
 				final int origWidth, final int origHeight) {
 			super(modificationStamp);
-			// this.thumbnail = thumbnail;
 			this.type = origType;
 			this.width = origWidth;
 			this.height = origHeight;
@@ -108,16 +106,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 			type = Integer.parseInt(segments[1]);
 			width = Integer.parseInt(segments[2]);
 			height = Integer.parseInt(segments[3]);
-			// thumbnail = null;
 		}
 
 		public String getShortLabel(final int type) {
 			return formatsShortNames.containsKey(type) ? formatsShortNames.get(type) : formatsShortNames.get(-1);
 		}
-
-		// public void setThumbnail(final Object thumb) {
-		// thumbnail = thumb;
-		// }
 
 		@Override
 		public String getSuffix() {
@@ -136,11 +129,6 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 			sb.append("Dimensions: ").append(width + " pixels x " + height + " pixels").append(Strings.LN);
 			return sb.toString();
 		}
-
-		// @Override
-		// public Object getThumbnail() {
-		// return thumbnail;
-		// }
 
 		public int getType() {
 			return type;
@@ -229,7 +217,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) { return; }
+		if (getBuffer() != null) return;
 		// Temporary workaround for pgm files, which can be read by ImageIO but
 		// produce wrong results. See Issue 880.
 		// TODO change this behavior
@@ -248,7 +236,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	 */
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		if (!writable || getBuffer() == null || getBuffer().isEmpty(scope)) { return; }
+		if (!writable || getBuffer() == null || getBuffer().isEmpty(scope)) return;
 		try {
 			final File f = getFile(scope);
 			f.setWritable(true);
@@ -262,9 +250,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
-		if (preferredSize != null) {
+		if (preferredSize != null)
 			return matrixValueFromImage(scope, preferredSize).matrixValue(scope, contentsType, copy);
-		}
 		return getBuffer().matrixValue(scope, contentsType, copy);
 	}
 
@@ -273,11 +260,9 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		final BufferedImage image;
 		try {
 			image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope), useCache);
-			if (image == null) {
-				throw GamaRuntimeFileException.error("This image format (." + getExtension(scope)
-						+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
-						scope);
-			}
+			if (image == null) throw GamaRuntimeFileException.error("This image format (." + getExtension(scope)
+					+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
+					scope);
 		} catch (final IOException e) {
 			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeFileException.create(e, scope), true);
 			return null;
@@ -289,19 +274,6 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 	public BufferedImage getImage(final IScope scope, final boolean useCache) {
 		return loadImage(scope, useCache);
 		// return image;
-	}
-
-	public int getWidth(final IScope scope) {
-		final BufferedImage image = loadImage(scope, true);
-		if (image == null) { return 0; }
-		return image.getWidth();
-	}
-
-	public int getHeight(final IScope scope) {
-		final BufferedImage image = loadImage(scope, true);
-		if (image == null) { return 0; }
-		return image.getHeight();
-
 	}
 
 	private IMatrix matrixValueFromImage(final IScope scope, final ILocation preferredSize)
@@ -353,11 +325,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			StringTokenizer tok;
 			String str = in.readLine();
-			if (str != null && !str.equals("P2")) {
+			if (str != null && !str.equals("P2"))
 				throw new UnsupportedEncodingException("File is not in PGM ascii format");
-			}
 			str = in.readLine();
-			if (str == null) { return GamaMatrixType.with(scope, 0, preferredSize, Types.INT); }
+			if (str == null) return GamaMatrixType.with(scope, 0, preferredSize, Types.INT);
 			tok = new StringTokenizer(str);
 			final int xSize = Integer.parseInt(tok.nextToken());
 			final int ySize = Integer.parseInt(tok.nextToken());
@@ -397,11 +368,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 		} else if (extension.equals("tiff") || extension.equals("tif")) {
 			geodataFile = geodataFile + "tfw";
 			val = "";
-		} else {
+		} else
 			return null;
-		}
 		final File infodata = new File(geodataFile);
-		if (infodata.exists()) { return geodataFile; }
+		if (infodata.exists()) return geodataFile;
 		return val;
 	}
 
@@ -472,8 +442,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 			}
 
 		}
-		final int nbCols = getWidth(scope);
-		final int nbRows = getHeight(scope);
+		final int nbCols = getCols(scope);
+		final int nbRows = getRows(scope);
 
 		final double x1 = xllcorner;
 		final double x2 = xllcorner + cellSizeX * nbCols;
@@ -505,6 +475,43 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> {
 
 	public boolean isAnimated() {
 		return false;
+	}
+
+	@Override
+	public int getRows(final IScope scope) {
+		final BufferedImage image = loadImage(scope, true);
+		if (image == null) return 0;
+		return image.getHeight();
+	}
+
+	@Override
+	public int getCols(final IScope scope) {
+		final BufferedImage image = loadImage(scope, true);
+		if (image == null) return 0;
+		return image.getWidth();
+	}
+
+	@Override
+	public int getBands(final IScope scope) {
+		BufferedImage image = getImage(scope, true);
+		return image.getColorModel().getNumComponents();
+	}
+
+	@Override
+	public double[] getBand(final IScope scope, final int index) {
+		BufferedImage image = getImage(scope, true);
+		final double[] values = new double[image.getWidth() * image.getHeight()];
+		int[] pixels = new int[values.length];
+		PixelGrabber pgb =
+				new PixelGrabber(image, 0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+		try {
+			pgb.grabPixels();
+		} catch (InterruptedException e) {}
+		for (int i = 0; i < values.length; ++i) {
+			// Verify this ... Especially if the number of color components does not correspond
+			values[i] = pixels[i] & (index + 1) * 255;
+		}
+		return values;
 	}
 
 }

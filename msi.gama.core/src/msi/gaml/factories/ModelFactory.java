@@ -12,11 +12,14 @@ package msi.gaml.factories;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -48,10 +51,21 @@ public class ModelFactory extends SymbolFactory {
 
 	@SuppressWarnings ("rawtypes")
 	public static ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
-			final SpeciesDescription parent) {
-		ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, null, null,
-				ValidationContext.NULL, Collections.EMPTY_SET);
-		return ModelDescription.ROOT;
+			final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills,
+			final String plugin) {
+		if (name.equals(IKeyword.MODEL)) {
+			ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, null, null,
+					ValidationContext.NULL, Collections.EMPTY_SET, helper);
+			return ModelDescription.ROOT;
+		} else {
+			// we are with a built-in model species
+			// for the moment we suppose its parent is the root (macro)
+			ModelDescription model = new ModelDescription(name, clazz, "", "", null, null, ModelDescription.ROOT, null,
+					null, ValidationContext.NULL, Collections.EMPTY_SET, helper, skills);
+			ModelDescription.BUILT_IN_MODELS.put(name, model);
+			return model;
+		}
+
 	}
 
 	@Override

@@ -129,7 +129,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		public boolean containsKey(final Object key) {
 			for (int i = 0; i < contents.length; i += 2) {
 				final String k = contents[i];
-				if (k.equals(key)) { return true; }
+				if (k.equals(key)) return true;
 			}
 			return false;
 		}
@@ -143,7 +143,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		public boolean containsValue(final Object value) {
 			for (int i = 1; i < contents.length; i += 2) {
 				final String k = contents[i];
-				if (k.equals(value)) { return true; }
+				if (k.equals(value)) return true;
 			}
 			return false;
 
@@ -158,7 +158,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		public String get(final Object key) {
 			for (int i = 0; i < contents.length; i += 2) {
 				final String k = contents[i];
-				if (k.equals(key)) { return contents[i + 1]; }
+				if (k.equals(key)) return contents[i + 1];
 			}
 			return null;
 
@@ -266,12 +266,11 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		while (!GamaMetaModel.INSTANCE.isInitialized) {
 			try {
 				Thread.sleep(100);
-				// DEBUG.OUT("> GAMA: Waiting for GAML artefacts to build");
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		DEBUG.TIMER("> GAMA building GAML artefacts in ", () -> {
+		DEBUG.TIMER(DEBUG.PAD("> GAMA: GAML artefacts", 45, ' ') + DEBUG.PAD(" built in", 15, '_'), () -> {
 			IUnits.initialize();
 			createDescriptions();
 		});
@@ -280,10 +279,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 	static Resource createResource(final String uri) {
 		Resource r = rs.getResource(URI.createURI(uri, false), false);
-		if (r == null) {
-			r = rs.createResource(URI.createURI(uri, false));
-		}
-		// DescriptionFactory.documentResource(r);
+		if (r == null) { r = rs.createResource(URI.createURI(uri, false)); }
 		return r;
 	}
 
@@ -416,11 +412,9 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	}
 
 	public TerminalMapBasedScope getGlobalScope(final EClass eClass) {
-		if (GLOBAL_SCOPES.containsKey(eClass)) { return GLOBAL_SCOPES.get(eClass); }
+		if (GLOBAL_SCOPES.containsKey(eClass)) return GLOBAL_SCOPES.get(eClass);
 		IMap<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eClass);
-		if (descriptions == null) {
-			descriptions = EMPTY_MAP;
-		}
+		if (descriptions == null) { descriptions = EMPTY_MAP; }
 		final TerminalMapBasedScope result = new TerminalMapBasedScope(descriptions);
 		GLOBAL_SCOPES.put(eClass, result);
 		return result;
@@ -445,9 +439,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 			for (final OperatorProto t : AbstractGamlAdditions.getAllFields()) {
 				addVar(t.getName(), t, "field");
 			}
-			if (!GAMA.isInHeadLessMode()) {
-				addVar(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform");
-			}
+			if (!GAMA.isInHeadLessMode()) { addVar(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform"); }
 			for (final IDescription t : AbstractGamlAdditions.getAllVars()) {
 				addVar(t.getName(), t, "variable");
 			}
@@ -490,7 +482,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 			final Predicate<IEObjectDescription> filter) {
 		IScope scope = getGlobalScope(type);
 		final Collection<URI> uniqueImportURIs = getAllImportedURIs(resource, resource.getResourceSet()).keySet();
-		if (uniqueImportURIs.size() == 1) { return scope; }
+		if (uniqueImportURIs.size() == 1) return scope;
 		final List<URI> urisAsList = Lists.newArrayList(uniqueImportURIs);
 		urisAsList.remove(resource.getURI());
 		Collections.reverse(urisAsList);
@@ -500,7 +492,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	}
 
 	public static IEObjectDescription getVar(final String name) {
-		if (name == null) { return null; }
+		if (name == null) return null;
 		return descriptions.get(eVar).get(QualifiedName.create(name));
 	}
 

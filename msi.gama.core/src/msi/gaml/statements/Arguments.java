@@ -10,8 +10,11 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
+import java.util.Map;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -26,9 +29,16 @@ public class Arguments extends Facets {
 
 	public Arguments(final Arguments args) {
 		super(args);
-		if (args != null) {
-			setCaller(args.caller.get());
-		}
+		if (args != null) { setCaller(args.caller.get()); }
+	}
+
+	/*
+	 * A constructor that takes a caller and arguments defined as a map <string, values>. Values are then transformed
+	 * into a constant expression
+	 */
+	public Arguments(final IAgent caller, final Map<String, Object> args) {
+		setCaller(caller);
+		args.forEach((k, v) -> put(k, ConstantExpressionDescription.create(v)));
 	}
 
 	public Arguments() {}
@@ -48,9 +58,7 @@ public class Arguments extends Facets {
 		result.setCaller(caller.get());
 		for (final Facet f : facets) {
 			final IExpression exp = getExpr(f.key);
-			if (exp != null) {
-				result.put(f.key, exp.resolveAgainst(scope));
-			}
+			if (exp != null) { result.put(f.key, exp.resolveAgainst(scope)); }
 		}
 		return result;
 	}

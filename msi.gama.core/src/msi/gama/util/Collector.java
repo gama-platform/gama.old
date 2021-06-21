@@ -36,14 +36,15 @@ import msi.gaml.types.Types;
 
 public abstract class Collector<E, C extends Collection<E>> implements ICollector<E>, Collection<E> {
 
-	private static final PoolUtils.ObjectPool<ICollector<?>> LISTS =
-			PoolUtils.create("Ordered Collectors", true, () -> new Collector.AsList<>(), c -> c.clear());
+	private static final PoolUtils.ObjectPool<ICollector<?>> LISTS = PoolUtils.create("Ordered Collectors", true,
+			() -> new Collector.AsList<>(), (from, to) -> to.set(from), c -> c.clear());
 
-	private static final PoolUtils.ObjectPool<ICollector<?>> SETS =
-			PoolUtils.create("Unique Collectors", true, () -> new Collector.AsSet<>(), c -> c.clear());
+	private static final PoolUtils.ObjectPool<ICollector<?>> SETS = PoolUtils.create("Unique Collectors", true,
+			() -> new Collector.AsSet<>(), (from, to) -> to.set(from), c -> c.clear());
 
 	private static final PoolUtils.ObjectPool<ICollector<?>> ORDERED_SETS =
-			PoolUtils.create("Unique Ordered Collectors", true, () -> new Collector.AsOrderedSet<>(), c -> c.clear());
+			PoolUtils.create("Unique Ordered Collectors", true, () -> new Collector.AsOrderedSet<>(),
+					(from, to) -> to.set(from), c -> c.clear());
 
 	@SuppressWarnings ("unchecked")
 	public static final <T> Collector.AsList<T> getList() {
@@ -65,32 +66,36 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 			LISTS.release(coll);
 		} else if (coll instanceof AsOrderedSet) {
 			ORDERED_SETS.release(coll);
-		} else if (coll instanceof AsSet) {
-			SETS.release(coll);
-		}
+		} else if (coll instanceof AsSet) { SETS.release(coll); }
+	}
+
+	@SuppressWarnings ("unchecked")
+	@Override
+	public void set(final ICollector<?> c) {
+		this.addAll((Collection<? extends E>) c.items());
 	}
 
 	@Override
 	public boolean removeIf(final Predicate<? super E> filter) {
-		if (collect != null) { return collect.removeIf(filter); }
+		if (collect != null) return collect.removeIf(filter);
 		return ICollector.super.removeIf(filter);
 	}
 
 	@Override
 	public Spliterator<E> spliterator() {
-		if (collect != null) { return collect.spliterator(); }
+		if (collect != null) return collect.spliterator();
 		return ICollector.super.spliterator();
 	}
 
 	@Override
 	public Stream<E> stream() {
-		if (collect != null) { return collect.stream(); }
+		if (collect != null) return collect.stream();
 		return ICollector.super.stream();
 	}
 
 	@Override
 	public Stream<E> parallelStream() {
-		if (collect != null) { return collect.parallelStream(); }
+		if (collect != null) return collect.parallelStream();
 		return ICollector.super.parallelStream();
 	}
 
@@ -101,29 +106,25 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		public static class Concurrent<E> extends AsSet<E> {
 			@Override
 			protected void initCollect() {
-				if (collect == null) {
-					collect = Sets.newConcurrentHashSet();
-				}
+				if (collect == null) { collect = Sets.newConcurrentHashSet(); }
 			}
 
 			@Override
 			public boolean remove(final Object o) {
-				if (o == null) { return false; }
+				if (o == null) return false;
 				return super.remove(o);
 			}
 
 			@Override
 			public boolean removeAll(final Collection<?> o) {
-				if (o == null) { return false; }
+				if (o == null) return false;
 				return super.removeAll(o);
 			}
 		}
 
 		@Override
 		protected void initCollect() {
-			if (collect == null) {
-				collect = new HashSet<>();
-			}
+			if (collect == null) { collect = new HashSet<>(); }
 		}
 
 		@Override
@@ -139,9 +140,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 		@Override
 		protected void initCollect() {
-			if (collect == null) {
-				collect = GamaListFactory.create();
-			}
+			if (collect == null) { collect = GamaListFactory.create(); }
 		}
 
 		@Override
@@ -150,9 +149,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		}
 
 		public void setSize(final int size) {
-			if (size > 0 && collect == null) {
-				collect = GamaListFactory.create(Types.NO_TYPE, size);
-			}
+			if (size > 0 && collect == null) { collect = GamaListFactory.create(Types.NO_TYPE, size); }
 
 		}
 
@@ -168,40 +165,38 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 		@Override
 		protected void initCollect() {
-			if (collect == null) {
-				collect = new LinkedHashSet<>();
-			}
+			if (collect == null) { collect = new LinkedHashSet<>(); }
 		}
 
 	}
 
 	@Override
 	public int size() {
-		if (collect == null) { return 0; }
+		if (collect == null) return 0;
 		return collect.size();
 	}
 
 	@Override
 	public boolean contains(final Object o) {
-		if (collect == null) { return false; }
+		if (collect == null) return false;
 		return collect.contains(o);
 	}
 
 	@Override
 	public Object[] toArray() {
-		if (collect == null) { return new Object[0]; }
+		if (collect == null) return new Object[0];
 		return collect.toArray();
 	}
 
 	@Override
 	public <T> T[] toArray(final T[] a) {
-		if (collect == null) { return a; }
+		if (collect == null) return a;
 		return collect.toArray(a);
 	}
 
 	@Override
 	public boolean containsAll(final Collection<?> c) {
-		if (collect == null) { return false; }
+		if (collect == null) return false;
 		return collect.containsAll(c);
 	}
 
@@ -213,13 +208,13 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	@Override
 	public boolean removeAll(final Collection<?> c) {
-		if (collect == null) { return false; }
+		if (collect == null) return false;
 		return collect.removeAll(c);
 	}
 
 	@Override
 	public boolean retainAll(final Collection<?> c) {
-		if (collect == null) { return false; }
+		if (collect == null) return false;
 		return collect.retainAll(c);
 	}
 
@@ -258,7 +253,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 	 */
 	@Override
 	public boolean remove(final Object e) {
-		if (collect == null) { return false; }
+		if (collect == null) return false;
 		return collect.remove(e);
 	}
 

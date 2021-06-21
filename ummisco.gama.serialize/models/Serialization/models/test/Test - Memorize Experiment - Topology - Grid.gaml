@@ -42,7 +42,7 @@ experiment prey_predator type: memorize keep_seed: true {
 	
 	output {
 		display main_display {
-			grid vegetation_cell lines: #black ;
+			grid vegetation_cell border: #black ;
 			species prey aspect: base;
 		}
 	}

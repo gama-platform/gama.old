@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
+import static msi.gama.common.interfaces.IKeyword.EMPTY;
 import static msi.gaml.expressions.IExpressionFactory.TRUE_EXPR;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -33,6 +34,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
@@ -85,6 +87,13 @@ import msi.gaml.types.Types;
 						name = IKeyword.LINES,
 						type = IType.COLOR,
 						optional = true,
+						doc = @doc (
+								deprecated = "use 'border' instead",
+								value = "the color to draw lines (borders of cells)")),
+				@facet (
+						name = IKeyword.BORDER,
+						type = IType.COLOR,
+						optional = true,
 						doc = @doc ("the color to draw lines (borders of cells)")),
 				@facet (
 						name = IKeyword.ELEVATION,
@@ -97,6 +106,11 @@ import msi.gaml.types.Types;
 						type = { IType.FILE },
 						optional = true,
 						doc = @doc ("Either file  containing the texture image to be applied on the grid or, if not specified, the use of the image composed by the colors of the cells")),
+				@facet (
+						name = IKeyword.SMOOTH,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Applies a simple convolution (box filter) to smooth out the terrain produced by this field. Does not change the values of course.")),
 				@facet (
 						name = IKeyword.GRAYSCALE,
 						type = IType.BOOL,
@@ -124,6 +138,18 @@ import msi.gaml.types.Types;
 						optional = true,
 						doc = @doc (
 								deprecated = "use 'elevation' instead. This facet is not functional anymore")),
+				@facet (
+						name = EMPTY,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc (
+								deprecated = "Use 'wireframe' instead",
+								value = "if true displays the grid in wireframe using the lines color")),
+				@facet (
+						name = IKeyword.WIREFRAME,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("if true displays the grid in wireframe using the lines color")),
 				@facet (
 						name = "dem",
 						type = IType.MATRIX,
@@ -181,6 +207,11 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 		@Override
 		public void validate(final StatementDescription d) {
+			final IExpressionDescription empty = d.getFacet(IKeyword.EMPTY);
+			if (empty != null) {
+				d.setFacet(IKeyword.WIREFRAME, empty);
+				d.removeFacets(EMPTY);
+			}
 			final String name = d.getFacet(SPECIES).serialize(true);
 			final SpeciesDescription sd = d.getModelDescription().getSpeciesDescription(name);
 			if (sd == null || !sd.isGrid()) {
@@ -190,10 +221,10 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			final IExpression exp = sd.getFacetExpr(NEIGHBORS);
 			if (exp != null && exp.isConst()) {
 				final Integer n = (Integer) exp.getConstValue();
-				if (n == 6) {
-					d.setFacet("hexagonal", TRUE_EXPR);
-				}
+				if (n == 6) { d.setFacet("hexagonal", TRUE_EXPR); }
 			}
+			final IExpression lines = d.getFacetExpr(LINES);
+			if (lines != null) { d.setFacet(BORDER, lines); }
 			final IExpression tx = d.getFacetExpr(TEXTURE);
 			final IExpression el = d.getFacetExpr(ELEVATION);
 			if (el == null || FALSE.equals(el.serialize(true))) {

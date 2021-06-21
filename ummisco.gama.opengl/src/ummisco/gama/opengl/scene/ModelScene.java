@@ -10,16 +10,16 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import com.jogamp.opengl.GL2;
 import org.locationtech.jts.geom.Geometry;
+
+import com.jogamp.opengl.GL2;
 
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
-import msi.gaml.statements.draw.FieldDrawingAttributes;
-import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.MeshDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
@@ -52,9 +52,7 @@ public class ModelScene {
 
 	public ModelScene(final IOpenGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
-		if (withWorld) {
-			initWorld();
-		}
+		if (withWorld) { initWorld(); }
 	}
 
 	protected void initWorld() {
@@ -70,9 +68,7 @@ public class ModelScene {
 	 */
 	public void wipe(final OpenGL gl) {
 		layers.forEach((name, obj) -> {
-			if (obj != null && (!obj.isStatic() || obj.isInvalid())) {
-				obj.clear(gl);
-			}
+			if (obj != null && (!obj.isStatic() || obj.isInvalid())) { obj.clear(gl); }
 		});
 
 		// Wipe the textures.
@@ -101,7 +97,7 @@ public class ModelScene {
 	}
 
 	private double computeVisualZIncrement() {
-		if (objectNumber <= 1) { return 0d; }
+		if (objectNumber <= 1) return 0d;
 		// The maximum visual z allowance between the object at the bottom and the one at the top
 		final double maxZ = renderer.getMaxEnvDim() / 2000d;
 		// The increment is simply
@@ -109,44 +105,34 @@ public class ModelScene {
 	}
 
 	public boolean cannotAdd() {
-		if (currentLayer == null) { return true; }
+		if (currentLayer == null) return true;
 		return currentLayer.isStatic() && currentLayer.isLocked();
 	}
 
 	private boolean increment() {
-		if (cannotAdd()) { return false; }
+		if (cannotAdd()) return false;
 		objectNumber += currentLayerTrace;
 		return true;
 	}
 
 	public void addString(final String string, final TextDrawingAttributes attributes) {
-		if (increment()) {
-			currentLayer.addString(string, attributes);
-		}
+		if (increment()) { currentLayer.addString(string, attributes); }
 	}
 
 	public void addGeometryFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
-		if (increment()) {
-			currentLayer.addFile(file, attributes);
-		}
+		if (increment()) { currentLayer.addFile(file, attributes); }
 	}
 
 	public void addImage(final Object img, final DrawingAttributes attributes) {
-		if (increment()) {
-			currentLayer.addImage(img, attributes);
-		}
+		if (increment()) { currentLayer.addImage(img, attributes); }
 	}
 
 	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
-		if (increment()) {
-			currentLayer.addGeometry(geometry, attributes);
-		}
+		if (increment()) { currentLayer.addGeometry(geometry, attributes); }
 	}
 
-	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if (increment()) {
-			currentLayer.addField(fieldValues, attributes);
-		}
+	public void addField(final double[] fieldValues, final MeshDrawingAttributes attributes) {
+		if (increment()) { currentLayer.addField(fieldValues, attributes); }
 	}
 
 	public void dispose() {
@@ -195,9 +181,7 @@ public class ModelScene {
 	public ModelScene copyStatic() {
 		final ModelScene newScene = new ModelScene(renderer, false);
 		layers.forEach((name, layer) -> {
-			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) {
-				newScene.layers.put(name, layer);
-			}
+			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) { newScene.layers.put(name, layer); }
 		});
 
 		return newScene;
@@ -214,18 +198,14 @@ public class ModelScene {
 
 	public void layerOffsetChanged() {
 		layers.forEach((name, layer) -> {
-			if (layer.canSplit()) {
-				layer.computeOffset();
-			}
+			if (layer.canSplit()) { layer.computeOffset(); }
 		});
 
 	}
 
-	public void recomputeLayoutDimensions() {
+	public void recomputeLayoutDimensions(final OpenGL gl) {
 		layers.forEach((name, layer) -> {
-			if (layer.isOverlay()) {
-				layer.forceRedraw();
-			}
+			if (layer.isOverlay() || layer.isStatic()) { layer.forceRedraw(gl); }
 		});
 
 	}

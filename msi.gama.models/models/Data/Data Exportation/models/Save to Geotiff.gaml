@@ -23,7 +23,7 @@ grid cell width: 50 height: 50 {
 experiment main type: gui {
 	output {
 		display map {
-			grid cell lines: #black;
+			grid cell border: #black;
 		}
 	}
 }

@@ -211,7 +211,7 @@ public class DiffusionStatement extends AbstractStatement {
 	}
 
 	public double[][] translateMatrix(final IScope scope, final IMatrix<?> mm) {
-		if (mm == null) { return null; }
+		if (mm == null) return null;
 		final int rows = mm.getRows(scope);
 		final int cols = mm.getCols(scope);
 		final double[][] res = new double[cols][rows];
@@ -265,9 +265,7 @@ public class DiffusionStatement extends AbstractStatement {
 			final IList<IAgent> ags = Cast.asList(scope, obj);
 			if (!ags.isEmpty()) {
 				final ISpecies sp = ags.get(0).getSpecies();
-				if (sp.isGrid()) {
-					pop = (GridPopulation<? extends IAgent>) sp.getPopulation(scope);
-				}
+				if (sp.isGrid()) { pop = (GridPopulation<? extends IAgent>) sp.getPopulation(scope); }
 			}
 		}
 		return pop;
@@ -298,9 +296,8 @@ public class DiffusionStatement extends AbstractStatement {
 		final Object obj = getFacetValue(scope, IKeyword.ON);
 		if (obj instanceof ISpecies) {
 			// the diffusion is applied to the whole grid
-			if (!((ISpecies) obj).isGrid()) {
+			if (!((ISpecies) obj).isGrid())
 				throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
-			}
 		} else {
 			// the diffusion is applied just to a certain part of the grid.
 			// Search the mask.
@@ -321,9 +318,8 @@ public class DiffusionStatement extends AbstractStatement {
 						mask[ag.getIndex() - ag.getIndex() / pop.getNbCols() * pop.getNbCols()][ag.getIndex()
 								/ pop.getNbCols()] = 1;
 					}
-				} else {
+				} else
 					throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
-				}
 			}
 		}
 		return mask;
@@ -335,12 +331,8 @@ public class DiffusionStatement extends AbstractStatement {
 		final double variation = Cast.asFloat(scope, getFacetValue(scope, IKeyword.VARIATION));
 		int range = Cast.asInt(scope, getFacetValue(scope, IKeyword.RADIUS));
 
-		if (range == 0) {
-			range = 1;
-		}
-		if (proportion == 0) {
-			proportion = 1;
-		}
+		if (range == 0) { range = 1; }
+		if (proportion == 0) { proportion = 1; }
 		if (is_gradient) {
 			final int mat_diff_size = range * 2 + 1;
 			mat_diffu = new double[mat_diff_size][mat_diff_size];
@@ -354,9 +346,7 @@ public class DiffusionStatement extends AbstractStatement {
 					}
 					mat_diffu[i][j] =
 							proportion / Math.pow(nb_neighbors, distanceFromCenter) - distanceFromCenter * variation;
-					if (mat_diffu[i][j] < 0) {
-						mat_diffu[i][j] = 0;
-					}
+					if (mat_diffu[i][j] < 0) { mat_diffu[i][j] = 0; }
 				}
 			}
 		} else {
@@ -383,19 +373,16 @@ public class DiffusionStatement extends AbstractStatement {
 				mat_diffu[2][1] = proportion / 5.0;
 				mat_diffu[1][1] = proportion / 5.0;
 			}
-			if (range > 1) {
-				mat_diffu = computeMatrix(mat_diffu, range, is_gradient);
-			}
+			if (range > 1) { mat_diffu = computeMatrix(mat_diffu, range, is_gradient); }
 			if (variation > 0) {
 				final int mat_diff_size = mat_diffu.length;
 				for (int i = 0; i < mat_diff_size; i++) {
 					for (int j = 0; j < mat_diff_size; j++) {
 						if (nb_neighbors == 8) {
-							distanceFromCenter = Math.max(Math.abs(i - mat_diff_size / 2),
-									Math.abs(j - mat_diff_size / 2));
-						} else {
 							distanceFromCenter =
-									Math.abs(i - mat_diff_size / 2) + Math.abs(j - mat_diff_size / 2);
+									Math.max(Math.abs(i - mat_diff_size / 2), Math.abs(j - mat_diff_size / 2));
+						} else {
+							distanceFromCenter = Math.abs(i - mat_diff_size / 2) + Math.abs(j - mat_diff_size / 2);
 						}
 						mat_diffu[i][j] = mat_diffu[i][j] - distanceFromCenter * variation;
 					}
@@ -434,9 +421,7 @@ public class DiffusionStatement extends AbstractStatement {
 			// cycle !
 			final IExpression nb = pop.getSpecies().getFacet(IKeyword.NEIGHBORS);
 			int nb_neighbors = 8;
-			if (nb != null) {
-				nb_neighbors = Cast.asInt(scope, nb.value(scope));
-			}
+			if (nb != null) { nb_neighbors = Cast.asInt(scope, nb.value(scope)); }
 			mat_diffu = computeDiffusionMatrix(scope, nb_neighbors, is_gradient);
 		}
 		if (cLen != 1) {
@@ -445,7 +430,7 @@ public class DiffusionStatement extends AbstractStatement {
 			mat_diffu = computeMatrix(mat_diffu, cLen, is_gradient);
 		}
 
-		if (minValue < 0) { throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope); }
+		if (minValue < 0) throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope);
 
 		if (pop != null) {
 			getEnvironment(scope).diffuseVariable(scope, use_convolution, is_gradient, mat_diffu, mask, var_diffu, pop,

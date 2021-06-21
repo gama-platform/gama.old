@@ -12,10 +12,15 @@ package msi.gaml.operators;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.emf.ecore.EObject;
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -336,11 +341,10 @@ public class Colors {
 			examples = { @example (
 					value = "grayscale (rgb(255,0,0))",
 					equals = "to a dark grey",
-					isExecutable = false),
-			},
+					isExecutable = false), },
 			see = { "rgb", "hsb" })
 	@test ("int(grayscale (rgb(255,0,0))) = -11776948")
-	@test("grayscale (rgb(255,0,0)) = rgb(76,76,76)")
+	@test ("grayscale (rgb(255,0,0)) = rgb(76,76,76)")
 	public static GamaColor grayscale(final GamaColor c) {
 		final int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
@@ -395,9 +399,9 @@ public class Colors {
 			value = "Blend two colors with an optional ratio (c1 `*` r + c2 `*` (1 - r)) between 0 and 1",
 			masterDoc = true,
 			examples = { @example (
-							value = "blend(#red, #blue, 0.3)",
-							equals = "to a color between the purple and the blue",
-							isExecutable = false) },
+					value = "blend(#red, #blue, 0.3)",
+					equals = "to a color between the purple and the blue",
+					isExecutable = false) },
 			see = { "rgb", "hsb" })
 	@test ("blend(#red, #blue, 0.3) = rgb(76,0,178)")
 	public static GamaColor blend(final GamaColor c1, final GamaColor c2, final double r) {
@@ -416,9 +420,9 @@ public class Colors {
 			usages = @usage (
 					value = "If the ratio is omitted, an even blend is done",
 					examples = { @example (
-									value = "blend(#red, #blue)",
-									equals = "to a color very close to the purple",
-									isExecutable = false) }),
+							value = "blend(#red, #blue)",
+							equals = "to a color very close to the purple",
+							isExecutable = false) }),
 			see = { "rgb", "hsb" })
 	@test ("blend(#red, #blue) = rgb(127,0,127)")
 	public static GamaColor blend(final GamaColor color1, final GamaColor color2) {
@@ -458,17 +462,33 @@ public class Colors {
 			}
 			return true;
 		}
-
 	}
+
+	static final ColorBrewer BREWER = ColorBrewer.instance();
+	static final LoadingCache<String, IList<GamaColor>> BREWER_CACHE =
+			CacheBuilder.newBuilder().build(new CacheLoader<String, IList<GamaColor>>() {
+
+				@Override
+				public IList<GamaColor> load(final String name) throws Exception {
+					final IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
+					BrewerPalette p = BREWER.getPalette(name);
+					for (final Color col : p.getColors()) {
+						if (col != null) { colors.add(new GamaColor(col)); }
+					}
+					return colors;
+				}
+			});
 
 	@validator (BrewerValidator.class)
 	@operator (
 			value = "brewer_colors",
+			content_type = IType.COLOR,
 			can_be_const = false,
 			category = { IOperatorCategory.COLOR },
 			concept = { IConcept.COLOR })
 	@doc (
-			value = "Build a list of colors of a given type (see website http://colorbrewer2.org/). The list of palettes can be obtained by calling brewer_palettes",
+			value = "Build a list of colors of a given type (see website http://colorbrewer2.org/). The list of palettes can be obtained by calling brewer_palettes. "
+					+ "This list can be safely modified afterwards (adding or removing colors)",
 			examples = { @example (
 					value = "list<rgb> colors <- brewer_colors(\"OrRd\");",
 					equals = "a list of 6 blue colors",
@@ -476,18 +496,12 @@ public class Colors {
 			see = { "brewer_palettes" })
 	@no_test
 	public static IList<GamaColor> brewerPaletteColors(final IScope scope, final String type) {
-		final IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
-		final ColorBrewer brewer = ColorBrewer.instance();
-		if (brewer.hasPalette(type)) {
-			for (final Color col : brewer.getPalette(type).getColors()) {
-				if (col != null) {
-					colors.add(new GamaColor(col));
-				}
-			}
-		} else {
-			throw GamaRuntimeException.error(type + " does not exist", scope);
+		if (!BREWER.hasPalette(type)) throw GamaRuntimeException.error(type + " does not exist", scope);
+		try {
+			return BREWER_CACHE.get(type);
+		} catch (ExecutionException e) {
+			throw GamaRuntimeException.error(type + " cannot be retrieved", scope);
 		}
-		return colors;
 	}
 
 	@validator (BrewerValidator.class)
@@ -507,9 +521,8 @@ public class Colors {
 	@no_test
 	public static IList<GamaColor> brewerPaletteColors(final IScope scope, final String type, final int nbClasses) {
 		final IList<GamaColor> cols = brewerPaletteColors(scope, type);
-		if (cols.size() < nbClasses) {
+		if (cols.size() < nbClasses)
 			throw GamaRuntimeException.error(type + " has less than " + nbClasses + " colors", scope);
-		}
 		while (cols.size() > nbClasses) {
 			cols.remove(cols.size() - 1);
 		}
@@ -532,11 +545,8 @@ public class Colors {
 	@no_test
 	public static IList<String> brewerPaletteNames(final int min, final int max) {
 		final IList<String> palettes = GamaListFactory.create(Types.STRING);
-		final ColorBrewer brewer = ColorBrewer.instance();
-		for (final BrewerPalette p : brewer.getPalettes()) {
-			if (p.getCount() >= min && p.getCount() <= max) {
-				palettes.add(p.getName());
-			}
+		for (final BrewerPalette p : BREWER.getPalettes()) {
+			if (p.getCount() >= min && p.getCount() <= max) { palettes.add(p.getName()); }
 		}
 		return palettes;
 	}
@@ -557,11 +567,8 @@ public class Colors {
 	@no_test
 	public static IList<String> brewerPaletteNames(final int min) {
 		final IList<String> palettes = GamaListFactory.create(Types.STRING);
-		final ColorBrewer brewer = ColorBrewer.instance();
-		for (final BrewerPalette p : brewer.getPalettes()) {
-			if (p.getCount() >= min) {
-				palettes.add(p.getName());
-			}
+		for (final BrewerPalette p : BREWER.getPalettes()) {
+			if (p.getCount() >= min) { palettes.add(p.getName()); }
 		}
 		return palettes;
 	}

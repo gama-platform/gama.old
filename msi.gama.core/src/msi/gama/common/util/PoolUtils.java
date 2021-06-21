@@ -15,7 +15,7 @@ public class PoolUtils {
 	static Set<ObjectPool> POOLS = new LinkedHashSet<>();
 	static boolean POOL = GamaPreferences.External.USE_POOLING.getValue();
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 		GamaPreferences.External.USE_POOLING.onChange(v -> {
 			POOLS.forEach((p) -> p.dispose());
 			POOL = v;
@@ -23,16 +23,22 @@ public class PoolUtils {
 	}
 
 	public static void WriteStats() {
-		if (!DEBUG.IS_ON()) { return; }
+		if (!DEBUG.IS_ON()) return;
 		DEBUG.SECTION("Pool statistics");
 		POOLS.forEach((p) -> {
-			DEBUG.OUT(p.name, 30, "accessed " + p.accessed + " times | created " + p.created + " times | released "
-					+ p.released + " times | objects size: " + p.objects.size());
+			long percentage = p.accessed == 0 ? 100 : 100 - (long) (p.created * 100d / p.accessed);
+			DEBUG.OUT(p.name, 30, "instances created " + p.created + " / instances asked " + p.accessed + " = "
+					+ percentage + "% of coverage");
 		});
 	}
 
 	public interface ObjectFactory<T> {
 		T createNew();
+	}
+
+	public interface ObjectCopy<T> {
+
+		void createNew(T copyFrom, T copyTo);
 	}
 
 	public interface ObjectCleaner<T> {
@@ -44,18 +50,20 @@ public class PoolUtils {
 		private String name;
 		private long accessed, released, created;
 		private final ObjectFactory<T> factory;
+		private final ObjectCopy<T> copy;
 		private final ObjectCleaner<T> cleaner;
 		private final Queue<T> objects;
 		public boolean active;
 
-		private ObjectPool(final ObjectFactory<T> factory, final ObjectCleaner<T> cleaner) {
+		private ObjectPool(final ObjectFactory<T> factory, final ObjectCopy<T> copy, final ObjectCleaner<T> cleaner) {
 			this.factory = factory;
+			this.copy = copy;
 			this.cleaner = cleaner;
 			objects = Queues.synchronizedDeque(Queues.newArrayDeque());
 		}
 
 		public T get() {
-			if (!POOL || !active) { return factory.createNew(); }
+			if (!POOL || !active) return factory.createNew();
 			accessed++;
 
 			T result = objects.poll();
@@ -66,14 +74,20 @@ public class PoolUtils {
 			return result;
 		}
 
-		public void release(final T t) {
-			if (t == null) { return; }
-			if (cleaner != null) {
-				cleaner.clean(t);
-			}
-			if (POOL && active) {
-				released++;
-				objects.offer(t);
+		public T get(final T from) {
+			T result = get();
+			if (copy != null) { copy.createNew(from, result); }
+			return result;
+		}
+
+		public void release(final T... tt) {
+			if (tt == null) return;
+			for (T t : tt) {
+				if (cleaner != null) { cleaner.clean(t); }
+				if (POOL && active) {
+					released++;
+					objects.offer(t);
+				}
 			}
 
 		}
@@ -84,10 +98,28 @@ public class PoolUtils {
 		}
 	}
 
+	/**
+	 * Creates a new object pool
+	 *
+	 * @param <T>
+	 *            the type of objects created and maintained in the poool
+	 * @param name
+	 *            the name of the pool
+	 * @param active
+	 *            whether or not it is active
+	 * @param factory
+	 *            the factory to create new objects
+	 * @param copy
+	 *            the factory to create new objects from existing ones
+	 * @param cleaner
+	 *            the code to execute to return the object to its pristine state
+	 * @return
+	 */
+
 	public static <T> ObjectPool<T> create(final String name, final boolean active, final ObjectFactory<T> factory,
-			final ObjectCleaner<T> cleaner) {
+			final ObjectCopy<T> copy, final ObjectCleaner<T> cleaner) {
 		DEBUG.OUT("Adding object pool: " + name);
-		final ObjectPool<T> result = new ObjectPool<>(factory, cleaner);
+		final ObjectPool<T> result = new ObjectPool<>(factory, copy, cleaner);
 		result.active = active;
 		result.name = name;
 		// if (DEBUG.IS_ON()) {

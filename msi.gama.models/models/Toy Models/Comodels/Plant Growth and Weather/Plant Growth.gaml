@@ -41,7 +41,7 @@ grid plotGrow height: grid_size width: grid_size neighbors: 8 {
 experiment "Plant Growth" type: gui {
 	output {
 		display d {
-			grid plotGrow lines: #black;
+			grid plotGrow border: #black;
 		}
 		display biomass {
 			chart "levels" type: series {

@@ -3191,21 +3191,24 @@ ruledisplayStatement returns [EObject current=null]
 	leaveRule();
 }:
 	(
-		{
-			newCompositeNode(grammarAccess.getDisplayStatementAccess().getSpeciesOrGridDisplayStatementParserRuleCall_0());
-		}
-		this_speciesOrGridDisplayStatement_0=rulespeciesOrGridDisplayStatement
-		{
-			$current = $this_speciesOrGridDisplayStatement_0.current;
-			afterParserOrEnumRuleCall();
-		}
+		(
+			(rulespeciesOrGridDisplayStatement)=>
+			{
+				newCompositeNode(grammarAccess.getDisplayStatementAccess().getSpeciesOrGridDisplayStatementParserRuleCall_0());
+			}
+			this_speciesOrGridDisplayStatement_0=rulespeciesOrGridDisplayStatement
+			{
+				$current = $this_speciesOrGridDisplayStatement_0.current;
+				afterParserOrEnumRuleCall();
+			}
+		)
 		    |
 		{
-			newCompositeNode(grammarAccess.getDisplayStatementAccess().getS_1Expr_Facets_BlockOrEndParserRuleCall_1());
+			newCompositeNode(grammarAccess.getDisplayStatementAccess().getStatementParserRuleCall_1());
 		}
-		this_S_1Expr_Facets_BlockOrEnd_1=ruleS_1Expr_Facets_BlockOrEnd
+		this_Statement_1=ruleStatement
 		{
-			$current = $this_S_1Expr_Facets_BlockOrEnd_1.current;
+			$current = $this_Statement_1.current;
 			afterParserOrEnumRuleCall();
 		}
 	)
@@ -3692,6 +3695,12 @@ rule_LayerKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken
 		{
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDatalistKeyword_13());
+		}
+		    |
+		kw='mesh'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getMeshKeyword_14());
 		}
 	)
 ;

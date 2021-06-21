@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
@@ -43,12 +44,10 @@ public class ActionProcessor extends ElementProcessor<action> {
 		// TODO Argument types not taken into account when declaring them
 		for (int i = 0; i < args.length; i++) {
 			final arg arg = args[i];
-			if (i > 0) {
-				sb.append(',');
-			}
+			if (i > 0) { sb.append(','); }
 			final String argName = arg.name();
 			if (RESERVED_FACETS.contains(argName)) {
-				context.emitWarning("GAML: Argument '" + argName
+				context.emitWarning("Argument '" + argName
 						+ "' prevents this action to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
 						e);
 			}
@@ -64,16 +63,27 @@ public class ActionProcessor extends ElementProcessor<action> {
 
 	private String getReturnType(final ProcessorContext context, final ExecutableElement ex) {
 		final TypeMirror tm = ex.getReturnType();
-		if (tm.getKind().equals(TypeKind.VOID)) {
+		if (tm.getKind().equals(TypeKind.VOID))
 			return "void";
-		} else {
+		else
 			return rawNameOf(context, tm);
-		}
 	}
 
 	@Override
 	public String getExceptions() {
 		return "throws SecurityException, NoSuchMethodException";
+	}
+
+	/**
+	 * By construction, action can only annotate methods so no need to verify this
+	 */
+	@Override
+	protected boolean validateElement(final ProcessorContext context, final Element e) {
+		boolean result = assertNotVoid(context, false, (ExecutableElement) e);
+		result &= assertArgumentsSize(context, true, (ExecutableElement) e, 1);
+		result &= assertContainsScope(context, true, (ExecutableElement) e);
+		result &= assertClassIsAgentOrSkill(context, true, (TypeElement) e.getEnclosingElement());
+		return result;
 	}
 
 }

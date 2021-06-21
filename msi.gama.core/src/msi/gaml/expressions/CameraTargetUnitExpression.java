@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
+import com.google.common.collect.Iterables;
+
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -24,10 +27,14 @@ public class CameraTargetUnitExpression extends UnitConstantExpression {
 
 	@Override
 	public ILocation _value(final IScope scope) {
-		if (scope == null) { return (ILocation) getConstValue(); }
 		final IGraphics g = scope.getGraphics();
-		if (g == null || g.is2D()) { return (ILocation) getConstValue(); }
-		return ((IGraphics.ThreeD) g).getCameraTarget();
+		if (g == null) {
+			Iterable<IDisplaySurface> surfaces = scope.getGui().getAllDisplaySurfaces();
+			// Returns a clone to avoid any side effect
+			if (Iterables.size(surfaces) == 1) return Iterables.get(surfaces, 0).getData().getCameraTarget().clone();
+			return null;
+		} else if (g.is2D()) return null;
+		return ((IGraphics.ThreeD) g).getCameraTarget().copy(scope);
 	}
 
 	@Override

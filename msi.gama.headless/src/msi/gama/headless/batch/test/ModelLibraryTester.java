@@ -43,7 +43,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	@Override
 	public int start(final List<String> args) throws IOException {
 		DEBUG.ON();
-		final Injector injector = HeadlessSimulationLoader.preloadGAMA();
+		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 
 		original = System.out;
@@ -89,11 +89,11 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		try {
 			final IModel model = builder.compile(p, errors);
-			if (model == null || model.getDescription() == null) { return; }
+			if (model == null || model.getDescription() == null) return;
 			final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
 					.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
 
-			if (testExpNames.isEmpty()) { return; }
+			if (testExpNames.isEmpty()) return;
 			for (final String expName : testExpNames) {
 				final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 				if (exp != null) {
@@ -121,9 +121,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	}
 
 	public static ModelLibraryTester getInstance() {
-		if (instance == null) {
-			instance = new ModelLibraryTester();
-		}
+		if (instance == null) { instance = new ModelLibraryTester(); }
 		return instance;
 	}
 }

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.layers.MouseEventLayerDelegate;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.IConcept;
@@ -759,7 +760,7 @@ public interface IUnits {
 	@SuppressWarnings ("rawtypes")
 	static Object add(final String name, final Object value, final String doc, final String deprec,
 			final boolean isTime, final String[] names) {
-		if (UNITS_EXPR.containsKey(name)) { return null; }
+		if (UNITS_EXPR.containsKey(name)) return null;
 		final IType t = Types.get(value.getClass());
 		final UnitConstantExpression exp =
 				GAML.getExpressionFactory().createUnit(value, t, name, doc, deprec, isTime, names);
@@ -780,6 +781,11 @@ public interface IUnits {
 			add(entry.getKey(), c, doc, null, false, null);
 		}
 
+		for (final String entry : MouseEventLayerDelegate.EVENTS) {
+			final String doc = "Constant corresponding to the " + entry + " event";
+			add(entry, entry, doc, null, false, null);
+		}
+
 		for (final Map.Entry<String, GamaMaterial> entry : GamaMaterial.materials.entrySet()) {
 			final GamaMaterial m = entry.getValue();
 			final String doc = "standard materials.";
@@ -788,9 +794,7 @@ public interface IUnits {
 
 		for (final Field f : IUnits.class.getDeclaredFields()) {
 			try {
-				if (f.getName().equals("UNITS_EXPR")) {
-					continue;
-				}
+				if (f.getName().equals("UNITS_EXPR")) { continue; }
 				final Object v = f.get(IUnits.class);
 				String[] names = null;
 				final constant annotation = f.getAnnotation(constant.class);
@@ -804,9 +808,7 @@ public interface IUnits {
 						final doc d = ds[0];
 						documentation += d.value();
 						deprecated = d.deprecated();
-						if (deprecated.isEmpty()) {
-							deprecated = null;
-						}
+						if (deprecated.isEmpty()) { deprecated = null; }
 					}
 					final String[] e = annotation.category();
 					isTime = Arrays.asList(e).contains(IConstantCategory.TIME);

@@ -62,12 +62,7 @@ public class GamlResourceServices {
 	private static GamlSyntacticConverter converter = new GamlSyntacticConverter();
 	private static final Map<URI, IGamlBuilderListener> resourceListeners = GamaMapFactory.createUnordered();
 	private static final Map<URI, ValidationContext> resourceErrors = GamaMapFactory.createUnordered();
-	private static final XtextResourceSet poolSet = new XtextResourceSet() {
-		{
-			setClasspathURIContext(GamlResourceServices.class);
-		}
-
-	};
+	private static XtextResourceSet poolSet;
 	private static final LoadingCache<URI, IMap<EObject, IGamlDescription>> documentationCache =
 			CacheBuilder.newBuilder().build(new CacheLoader<URI, IMap<EObject, IGamlDescription>>() {
 
@@ -91,11 +86,11 @@ public class GamlResourceServices {
 	 *         encoded version of the parameter.
 	 */
 	public static URI properlyEncodedURI(final URI uri) {
-		if (uri == null) { return null; }
+		if (uri == null) return null;
 		URI pre_properlyEncodedURI = uri;
 		if (GAMA.isInHeadLessMode() && !uri.isPlatformResource()) {
 			final String filePath = uri.toFileString();
-			if (filePath == null) { return null; }
+			if (filePath == null) return null;
 			final File file = new File(filePath);
 			try {
 				pre_properlyEncodedURI = URI.createFileURI(file.getCanonicalPath());
@@ -125,7 +120,7 @@ public class GamlResourceServices {
 		final URI newURI = properlyEncodedURI(uri);
 
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
-		if (listener == null) { return; }
+		if (listener == null) return;
 		// DEBUG.LOG("Finishing updating the state of editor for " +
 		// uri.lastSegment());
 		final Iterable exps = model == null ? newState ? Collections.EMPTY_SET : null
@@ -200,9 +195,9 @@ public class GamlResourceServices {
 
 	public static String getModelPathOf(final Resource r) {
 		// Likely in a headless scenario (w/o workspace)
-		if (r.getURI().isFile()) {
+		if (r.getURI().isFile())
 			return new Path(r.getURI().toFileString()).toOSString();
-		} else {
+		else {
 			final IPath path = getPathOf(r);
 			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			final IPath fullPath = file.getLocation();
@@ -214,16 +209,16 @@ public class GamlResourceServices {
 		final String[] files = f.list();
 		if (files != null) {
 			for (final String s : files) {
-				if (".project".equals(s)) { return true; }
+				if (".project".equals(s)) return true;
 			}
 		}
 		return false;
 	}
 
 	public static String getProjectPathOf(final Resource r) {
-		if (r == null) { return ""; }
+		if (r == null) return "";
 		final URI uri = r.getURI();
-		if (uri == null) { return ""; }
+		if (uri == null) return "";
 		// Cf. #2983 -- we are likely in a headless scenario
 		if (uri.isFile()) {
 			File project = new File(uri.toFileString());
@@ -248,15 +243,11 @@ public class GamlResourceServices {
 				final EObject e = desc.getUnderlyingElement();
 				if (e != null) {
 					r = (GamlResource) e.eResource();
-					if (r != null) {
-						rs = r.getResourceSet();
-					}
+					if (r != null) { rs = r.getResourceSet(); }
 				}
 			}
 		}
-		if (rs == null) {
-			rs = poolSet;
-		}
+		if (rs == null) { rs = getPoolSet(); }
 		final URI uri = URI.createURI(IKeyword.SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false);
 		// TODO Modifier le cache de la resource ici ?
 		final GamlResource result = (GamlResource) rs.createResource(uri);
@@ -285,6 +276,18 @@ public class GamlResourceServices {
 
 	public static ISyntacticElement buildSyntacticContents(final GamlResource r) {
 		return converter.buildSyntacticContents(r.getParseResult().getRootASTElement(), null);
+	}
+
+	private static XtextResourceSet getPoolSet() {
+		if (poolSet == null) {
+			poolSet = new XtextResourceSet() {
+				{
+					setClasspathURIContext(GamlResourceServices.class);
+				}
+
+			};
+		}
+		return poolSet;
 	}
 
 }

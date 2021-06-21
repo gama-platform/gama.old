@@ -23,6 +23,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 
 public class UnboundedCoordinateSequence implements ICoordinates {
 
+	final int dimension;
 	final static int INITIAL_SIZE = 1000;
 	GamaPoint[] points = null;
 	int nbPoints;
@@ -35,6 +36,11 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	public UnboundedCoordinateSequence() {
+		this(3);
+	}
+
+	public UnboundedCoordinateSequence(final int dimension) {
+		this.dimension = dimension;
 		growTo(INITIAL_SIZE);
 	}
 
@@ -43,7 +49,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		if (points == null) {
 			points = new GamaPoint[size];
 		} else {
-			if (size <= points.length) { return; }
+			if (size <= points.length) return;
 			begin = points.length;
 			points = Arrays.copyOf(points, Math.max(size, begin + begin / 2));
 		}
@@ -55,22 +61,22 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		return 3;
 	}
 
-	UnboundedCoordinateSequence(final boolean copy, final int size, final GamaPoint[] points2) {
+	UnboundedCoordinateSequence(final int dimension, final boolean copy, final int size, final GamaPoint[] points2) {
+		this.dimension = dimension;
 		growTo(size);
 		nbPoints = size;
 		for (int i = 0; i < size; i++) {
 			points[i].setLocation(points2[i]);
 		}
-		if (copy) {
-			ensureClockwiseness();
-		}
+		if (copy) { ensureClockwiseness(); }
 	}
 
 	@Override
 	public final UnboundedCoordinateSequence copy() {
-		return new UnboundedCoordinateSequence(true, nbPoints, points);
+		return new UnboundedCoordinateSequence(dimension, true, nbPoints, points);
 	}
 
+	@Override
 	@Deprecated
 	public UnboundedCoordinateSequence clone() {
 		return copy();
@@ -156,7 +162,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 			// CW property is ensured by reversing the resulting array
 			points2[i] = points[size - i - 1].yNegated();
 		}
-		return new GamaCoordinateSequence(false, points2);
+		return new GamaCoordinateSequence(dimension, false, points2);
 
 	}
 
@@ -220,7 +226,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	@Override
 	public void getNormal(final boolean clockwise, final double factor, final GamaPoint normal) {
 		normal.setLocation(0, 0, 0);
-		if (nbPoints < 3) { return; }
+		if (nbPoints < 3) return;
 		for (int i = 0; i < nbPoints - 1; i++) {
 			final GamaPoint v0 = points[i];
 			final GamaPoint v1 = points[i + 1];
@@ -249,7 +255,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	@Override
 	public double averageZ() {
 		double sum = 0d;
-		if (nbPoints == 0) { return sum; }
+		if (nbPoints == 0) return sum;
 		for (int i = 0; i < nbPoints; i++) {
 			sum += points[i].z;
 		}
@@ -267,10 +273,10 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public ICoordinates setTo(final double... points2) {
+	public ICoordinates setTo(final int index, final double... points2) {
 		growTo(points2.length / 3);
 		nbPoints = points2.length / 3;
-		for (int i = 0; i < nbPoints; i++) {
+		for (int i = index / 3; i < nbPoints; i++) {
 			points[i].setLocation(points2[i * 3], points2[i * 3 + 1], points2[i * 3 + 2]);
 		}
 		ensureClockwiseness();
@@ -279,7 +285,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void replaceWith(final int i, final double x, final double y, final double z) {
-		if (i < 0 || i >= nbPoints) { return; }
+		if (i < 0 || i >= nbPoints) return;
 		points[i].setLocation(x, y, z);
 
 	}
@@ -308,7 +314,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	public boolean isHorizontal() {
 		final double z = points[0].z;
 		for (int i = 1; i < nbPoints; i++) {
-			if (points[i].z != z) { return false; }
+			if (points[i].z != z) return false;
 		}
 		return true;
 	}
@@ -332,7 +338,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 	@Override
 	public boolean isCoveredBy(final Envelope3D envelope3d) {
 		for (int i = 0; i < nbPoints; i++) {
-			if (!envelope3d.covers(points[i])) { return false; }
+			if (!envelope3d.covers(points[i])) return false;
 		}
 		return true;
 	}
@@ -357,18 +363,16 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void ensureClockwiseness() {
-		if (isRing() && signedArea() <= 0) {
-			reverse();
-		}
+		if (isRing() && signedArea() <= 0) { reverse(); }
 	}
 
 	public boolean isRing() {
-		if (nbPoints < 4) { return false; }
+		if (nbPoints < 4) return false;
 		return points[0].equals(points[nbPoints - 1]);
 	}
 
 	public double signedArea() {
-		if (nbPoints < 3) { return 0.0; }
+		if (nbPoints < 3) return 0.0;
 		double sum = 0.0;
 		/**
 		 * Based on the Shoelace formula. http://en.wikipedia.org/wiki/Shoelace_formula
@@ -390,9 +394,7 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		for (final GamaPoint p : other) {
 			points[i++].setLocation(p.x, -p.y, p.z);
 		}
-		if (isRing()) {
-			reverse();
-		}
+		if (isRing()) { reverse(); }
 	}
 
 	public void setTo(final ICoordinates other) {

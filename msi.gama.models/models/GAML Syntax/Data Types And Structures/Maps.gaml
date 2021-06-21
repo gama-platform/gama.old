@@ -260,8 +260,8 @@ species looping_on_maps {
 		write(sample(l2));
 		// Looping on indexes allows to gain access to each element in turn
 		l2 <- [];
-		loop i over: l1.keys {
-			l2 <+ l1[i];
+		loop k over: l1.keys {
+			l2 <+ l1[k];
 		}
 		write sample(l2);
 		// Finally, maps containing agents can be the support of implicit loops in the 'ask' statement

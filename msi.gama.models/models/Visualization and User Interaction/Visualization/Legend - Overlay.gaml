@@ -23,7 +23,7 @@ experiment overlay type: gui
 {
     output 
     {
-        display map 
+        display map type: opengl
         {
         	//define a new overlay layer positioned at the coordinate 5,5, with a constant size of 180 pixels per 100 pixels.
             overlay position: { 5, 5 } size: { 180 #px, 100 #px } background: # black transparency: 0.5 border: #black rounded: true
@@ -33,13 +33,13 @@ experiment overlay type: gui
                 loop type over: color_per_type.keys
                 {
                     draw square(10#px) at: { 20#px, y } color: color_per_type[type] border: #white;
-                    draw type at: { 40#px, y + 4#px } color: # white font: font("SansSerif", 18, #bold);
+                    draw type at: { 40#px, y + 4#px } color: # white font: font("Helvetica", 18, #bold);
                     y <- y + 25#px;
                 }
 
             }
             //then we display the grid
-			grid cell lines: #black;
+			grid cell border: #black;
         }
 
     }

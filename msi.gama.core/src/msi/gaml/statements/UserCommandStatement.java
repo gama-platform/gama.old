@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.UserCommandStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
+ * msi.gaml.statements.UserCommandStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8.1)
+ *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -121,7 +121,11 @@ public class UserCommandStatement extends AbstractStatementSequence
 		@Override
 		public void validate(final IDescription description) {
 			final String action = description.getLitteral(ACTION);
-
+			if (action != null && action.contains(SYNTHETIC)) {
+				description.warning(
+						"This use of 'action' is deprecated. Move the sequence to execute at the end of the 'user_command' statement instead.",
+						IGamlIssue.DEPRECATED, ACTION, (String[]) null);
+			}
 			final IDescription enclosing = description.getEnclosingDescription();
 			if (action != null && enclosing.getAction(action) == null) {
 				// 2 cases: we are in a simulation or in a "normal" species and
@@ -174,9 +178,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
 		for (final ISymbol c : children) {
-			if (c instanceof UserInputStatement) {
-				inputs.add((UserInputStatement) c);
-			}
+			if (c instanceof UserInputStatement) { inputs.add((UserInputStatement) c); }
 		}
 		super.setChildren(FluentIterable.from(children).filter(each -> !inputs.contains(each)));
 	}
@@ -184,13 +186,12 @@ public class UserCommandStatement extends AbstractStatementSequence
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if (isEnabled(scope)) {
+			// Addition of a simplification to the definition of this statement.
 			if (actionName == null) {
-				if (runtimeArgs != null) {
-					scope.stackArguments(runtimeArgs);
-				}
+				if (runtimeArgs != null) { scope.stackArguments(runtimeArgs); }
 				// AD 2/1/16 : Addition of this to address Issue #1339
 				for (final UserInputStatement s : inputs) {
-					if (!scope.execute(s).passed()) { return null; }
+					if (!scope.execute(s).passed()) return null;
 				}
 				final Object result = super.privateExecuteIn(scope);
 				runtimeArgs = null;
@@ -205,14 +206,11 @@ public class UserCommandStatement extends AbstractStatementSequence
 					context = ((ExperimentPlan) context).getModel();
 					executer = context.getAction(actionName);
 					isWorkaroundForIssue1595 = true;
-				} else {
+				} else
 					throw GamaRuntimeException.error("Unknown action: " + actionName, scope);
-				}
 			}
 			final Arguments tempArgs = new Arguments(args);
-			if (runtimeArgs != null) {
-				tempArgs.complementWith(runtimeArgs);
-			}
+			if (runtimeArgs != null) { tempArgs.complementWith(runtimeArgs); }
 			if (isWorkaroundForIssue1595) {
 				final SimulationPopulation simulations = scope.getExperiment().getSimulationPopulation();
 				for (final SimulationAgent sim : simulations.iterable(scope)) {
@@ -238,13 +236,13 @@ public class UserCommandStatement extends AbstractStatementSequence
 
 	public GamaColor getColor(final IScope scope) {
 		final IExpression exp = getFacet(IKeyword.COLOR);
-		if (exp == null) { return null; }
+		if (exp == null) return null;
 		return Cast.asColor(scope, exp.value(scope));
 	}
 
 	public boolean isContinue(final IScope scope) {
 		final IExpression exp = getFacet(IKeyword.CONTINUE);
-		if (exp == null) { return false; }
+		if (exp == null) return false;
 		return Cast.asBool(scope, exp.value(scope));
 	}
 

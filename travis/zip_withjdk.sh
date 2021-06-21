@@ -121,14 +121,25 @@ mv jdk_win/jdk-15.0.1 jdk_win/jdk
 
 
 sudo cp -R jdk_linux/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-sudo cp $GITHUB_WORKSPACE/travis/jdk/linux/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+#sudo cp $GITHUB_WORKSPACE/travis/jdk/linux/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+echo "-vm" > Gama.ini
+echo "./jdk/bin/java" >> Gama.ini
+cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini >> Gama.ini
+rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini
+mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini
 sudo cp $GITHUB_WORKSPACE/travis/jdk/linux/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
 
 
 
 
 sudo cp -R jdk_win/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-sudo cp $GITHUB_WORKSPACE/travis/jdk/win/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+#sudo cp $GITHUB_WORKSPACE/travis/jdk/win/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+echo "-vm" > Gama.ini
+echo "./jdk/bin/" >> Gama.ini
+cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini >> Gama.ini
+rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini
+mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini
+
 sudo cp $GITHUB_WORKSPACE/travis/jdk/win/gama-headless.bat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/headless
 
 
@@ -138,7 +149,13 @@ sudo cp $GITHUB_WORKSPACE/travis/jdk/win/gama-headless.bat $GITHUB_WORKSPACE/umm
 
 
 sudo cp -R jdk_osx/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents
-sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
+#sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
+echo "-vm" > Gama.ini
+echo "../jdk/Contents/Home/bin/java" >> Gama.ini
+cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini >> Gama.ini
+rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini
+mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini
+
 sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless
 
 

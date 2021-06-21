@@ -51,7 +51,8 @@ public class GamaWizardPage extends WizardPage{
 		});
 		composite.layout();
 		setControl(composite);
-		composite.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
+		if (font != null)
+			composite.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
 		
 	}
 
@@ -61,9 +62,6 @@ public class GamaWizardPage extends WizardPage{
 	
 	@Override
 	public boolean isPageComplete() {
-		/*for(Object v : values.values()) {
-			if (v == null) return false;
-		}*/
 		return true;
 	}
 	

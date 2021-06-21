@@ -25,7 +25,6 @@ import msi.gaml.statements.Facets;
  * @todo Description
  *
  */
-// @factory(handles = { ISymbolKind.ENVIRONMENT })
 public abstract class SymbolFactory {
 
 	protected final Set<Integer> kindsHandled;

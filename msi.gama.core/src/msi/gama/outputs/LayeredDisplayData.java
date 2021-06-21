@@ -49,7 +49,7 @@ public class LayeredDisplayData {
 		CHANGE_CAMERA,
 		CAMERA_POS,
 		CAMERA_TARGET,
-		CAMERA_UP,
+		CAMERA_ORIENTATION,
 		CAMERA_PRESET,
 		BACKGROUND,
 		HIGHLIGHT,
@@ -62,6 +62,7 @@ public class LayeredDisplayData {
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
 	public static final String OPENGL2 = "opengl2";
+	public static final String WEB = "web";
 	public static final String THREED = "3D";
 	public static final Double INITIAL_ZOOM = 1.0;
 
@@ -98,6 +99,7 @@ public class LayeredDisplayData {
 	 * Properties
 	 */
 	private boolean isAutosaving = false;
+	private String autosavingPath = "";
 	private boolean isToolbarVisible = GamaPreferences.Displays.CORE_DISPLAY_TOOLBAR.getValue();
 	private boolean isSynchronized = GamaPreferences.Runtime.CORE_SYNC.getValue();
 	private String displayType =
@@ -109,7 +111,7 @@ public class LayeredDisplayData {
 	private Double zoomLevel = INITIAL_ZOOM;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
 	public static final ICoordinates KEYSTONE_IDENTITY =
-			ICoordinates.ofLength(4).setTo(0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
+			ICoordinates.ofLength(4).setTo(0d, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
 
 	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
 	private double zRotationAngleDelta = 0;
@@ -128,7 +130,7 @@ public class LayeredDisplayData {
 	private boolean isLightOn = true; // GamaPreferences.CORE_IS_LIGHT_ON.getValue();
 	private GamaPoint cameraPos = null;
 	private GamaPoint cameraLookPos = null;
-	private GamaPoint cameraUpVector = null;
+	private GamaPoint cameraOrientation = null;
 	private String presetCamera = "";
 	private int cameraLens = 45;
 	private Double splitDistance;
@@ -191,6 +193,14 @@ public class LayeredDisplayData {
 	 */
 	public void setAutosave(final boolean autosave) {
 		this.isAutosaving = autosave;
+	}
+
+	public void setAutosavePath(final String p) {
+		this.autosavingPath = p;
+	}
+
+	public String getAutosavePath() {
+		return autosavingPath;
 	}
 
 	public boolean isWireframe() {
@@ -297,9 +307,7 @@ public class LayeredDisplayData {
 	}
 
 	public void setLightActive(final int lightId, final boolean value) {
-		if (lights[lightId] == null) {
-			lights[lightId] = new LightPropertiesStructure();
-		}
+		if (lights[lightId] == null) { lights[lightId] = new LightPropertiesStructure(); }
 		lights[lightId].id = lightId;
 		lights[lightId].active = value;
 	}
@@ -374,7 +382,7 @@ public class LayeredDisplayData {
 	}
 
 	public boolean isCameraUpVectorDefined() {
-		return cameraUpVector != null;
+		return getCameraOrientation() != null;
 	}
 
 	/**
@@ -389,12 +397,12 @@ public class LayeredDisplayData {
 	 *            the cameraPos to set
 	 */
 	public void setCameraPos(final GamaPoint point) {
-		if (point == null) { return; }
+		if (point == null) return;
 		final GamaPoint c = point;
 		if (cameraPos != null) {
-			if (c.equals(cameraPos)) {
+			if (c.equals(cameraPos))
 				return;
-			} else {
+			else {
 				cameraPos.setLocation(c);
 			}
 		} else {
@@ -407,7 +415,7 @@ public class LayeredDisplayData {
 	/**
 	 * @return the cameraLookPos
 	 */
-	public GamaPoint getCameraLookPos() {
+	public GamaPoint getCameraTarget() {
 		return cameraLookPos;
 	}
 
@@ -416,12 +424,12 @@ public class LayeredDisplayData {
 	 *            the cameraLookPos to set
 	 */
 	public void setCameraLookPos(final GamaPoint point) {
-		if (point == null) { return; }
+		if (point == null) return;
 		final GamaPoint c = point;
 		if (cameraLookPos != null) {
-			if (c.equals(cameraLookPos)) {
+			if (c.equals(cameraLookPos))
 				return;
-			} else {
+			else {
 				cameraLookPos.setLocation(c);
 			}
 		} else {
@@ -434,29 +442,29 @@ public class LayeredDisplayData {
 	/**
 	 * @return the cameraUpVector
 	 */
-	public GamaPoint getCameraUpVector() {
-		return cameraUpVector;
+	public GamaPoint getCameraOrientation() {
+		return cameraOrientation;
 	}
 
 	/**
-	 * @param cameraUpVector
+	 * @param cameraOrientation
 	 *            the cameraUpVector to set
 	 */
-	public void setCameraUpVector(final GamaPoint point) {
-		if (point == null) { return; }
+	public void setCameraOrientation(final GamaPoint point) {
+		if (point == null) return;
 		final GamaPoint c = point;
-		if (cameraUpVector != null) {
-			if (c.equals(cameraUpVector)) {
+		if (cameraOrientation != null) {
+			if (c.equals(cameraOrientation))
 				return;
-			} else {
-				DEBUG.OUT("UpVectors different: x " + point.x + " != " + cameraUpVector.x);
-				cameraUpVector.setLocation(c);
+			else {
+				DEBUG.OUT("UpVectors different: x " + point.x + " != " + cameraOrientation.x);
+				cameraOrientation.setLocation(c);
 			}
 		} else {
-			cameraUpVector = new GamaPoint(c);
+			cameraOrientation = new GamaPoint(c);
 		}
 
-		notifyListeners(Changes.CAMERA_UP, cameraUpVector);
+		notifyListeners(Changes.CAMERA_ORIENTATION, cameraOrientation);
 	}
 
 	/**
@@ -471,9 +479,7 @@ public class LayeredDisplayData {
 	 *            the cameraLens to set
 	 */
 	public void setCameraLens(final int cameraLens) {
-		if (this.cameraLens != cameraLens) {
-			this.cameraLens = cameraLens;
-		}
+		if (this.cameraLens != cameraLens) { this.cameraLens = cameraLens; }
 	}
 
 	/**
@@ -572,12 +578,8 @@ public class LayeredDisplayData {
 
 	public void setContinuousRotation(final boolean r) {
 		isRotating = r;
-		if (r && zRotationAngleDelta == 0) {
-			zRotationAngleDelta = 0.2;
-		}
-		if (!r) {
-			zRotationAngleDelta = 0;
-		}
+		if (r && zRotationAngleDelta == 0) { zRotationAngleDelta = 0.2; }
+		if (!r) { zRotationAngleDelta = 0; }
 	}
 
 	public double getCurrentRotationAboutZ() {
@@ -627,17 +629,13 @@ public class LayeredDisplayData {
 	}
 
 	public Double getSplitDistance() {
-		if (splitDistance == null) {
-			splitDistance = 0.05;
-		}
+		if (splitDistance == null) { splitDistance = 0.05; }
 		return splitDistance;
 	}
 
 	public void setSplitDistance(final Double s) {
 		splitDistance = s;
-		if (isSplittingLayers) {
-			notifyListeners(Changes.SPLIT_LAYER, s);
-		}
+		if (isSplittingLayers) { notifyListeners(Changes.SPLIT_LAYER, s); }
 	}
 
 	public boolean isSynchronized() {
@@ -660,11 +658,9 @@ public class LayeredDisplayData {
 	 *            the zoomLevel to set
 	 */
 	public void setZoomLevel(final Double zoomLevel, final boolean notify, final boolean force) {
-		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) { return; }
+		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) return;
 		this.zoomLevel = zoomLevel;
-		if (notify) {
-			notifyListeners(Changes.ZOOM, this.zoomLevel);
-		}
+		if (notify) { notifyListeners(Changes.ZOOM, this.zoomLevel); }
 	}
 
 	public int fullScreen() {
@@ -676,13 +672,13 @@ public class LayeredDisplayData {
 	}
 
 	public void setKeystone(final List<GamaPoint> value) {
-		if (value == null) { return; }
+		if (value == null) return;
 		this.keystone.setTo(value.toArray(new GamaPoint[4]));
 		notifyListeners(Changes.KEYSTONE, this.keystone);
 	}
 
 	public void setKeystone(final ICoordinates value) {
-		if (value == null) { return; }
+		if (value == null) return;
 		this.keystone.setTo(value.toCoordinateArray());
 		notifyListeners(Changes.KEYSTONE, this.keystone);
 	}
@@ -745,6 +741,9 @@ public class LayeredDisplayData {
 			if (auto.getGamlType().equals(Types.POINT)) {
 				setAutosave(true);
 				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
+			} else if (auto.getGamlType().equals(Types.STRING)) {
+				setAutosave(true);
+				setAutosavePath(Cast.asString(scope, auto.value(scope)));
 			} else {
 				setAutosave(Cast.asBool(scope, auto.value(scope)));
 			}
@@ -759,41 +758,27 @@ public class LayeredDisplayData {
 			}
 		}
 		final IExpression fps = facets.getExpr(IKeyword.SHOWFPS);
-		if (fps != null) {
-			setShowfps(Cast.asBool(scope, fps.value(scope)));
-		}
+		if (fps != null) { setShowfps(Cast.asBool(scope, fps.value(scope))); }
 
 		final IExpression nZ = facets.getExpr("z_near");
-		if (nZ != null) {
-			setZNear(Cast.asFloat(scope, nZ.value(scope)));
-		}
+		if (nZ != null) { setZNear(Cast.asFloat(scope, nZ.value(scope))); }
 
 		final IExpression fZ = facets.getExpr("z_far");
-		if (fZ != null) {
-			setZFar(Cast.asFloat(scope, fZ.value(scope)));
-		}
+		if (fZ != null) { setZFar(Cast.asFloat(scope, fZ.value(scope))); }
 		final IExpression denv = facets.getExpr(IKeyword.DRAWENV);
-		if (denv != null) {
-			setDrawEnv(Cast.asBool(scope, denv.value(scope)));
-		}
+		if (denv != null) { setDrawEnv(Cast.asBool(scope, denv.value(scope))); }
 
 		final IExpression ortho = facets.getExpr(IKeyword.ORTHOGRAPHIC_PROJECTION);
-		if (ortho != null) {
-			setOrtho(Cast.asBool(scope, ortho.value(scope)));
-		}
+		if (ortho != null) { setOrtho(Cast.asBool(scope, ortho.value(scope))); }
 
 		final IExpression fixed_cam = facets.getExpr(IKeyword.CAMERA_INTERACTION);
-		if (fixed_cam != null) {
-			disableCameraInteractions(!Cast.asBool(scope, fixed_cam.value(scope)));
-		}
+		if (fixed_cam != null) { disableCameraInteractions(!Cast.asBool(scope, fixed_cam.value(scope))); }
 
 		final IExpression keystone_exp = facets.getExpr(IKeyword.KEYSTONE);
 		if (keystone_exp != null) {
 			@SuppressWarnings ("unchecked") final List<GamaPoint> val =
 					GamaListFactory.create(scope, Types.POINT, Cast.asList(scope, keystone_exp.value(scope)));
-			if (val.size() >= 4) {
-				setKeystone(val);
-			}
+			if (val.size() >= 4) { setKeystone(val); }
 		}
 
 		final IExpression rotate_exp = facets.getExpr(IKeyword.ROTATE);
@@ -803,9 +788,7 @@ public class LayeredDisplayData {
 		}
 
 		final IExpression lightOn = facets.getExpr(IKeyword.IS_LIGHT_ON);
-		if (lightOn != null) {
-			setLightOn(Cast.asBool(scope, lightOn.value(scope)));
-		}
+		if (lightOn != null) { setLightOn(Cast.asBool(scope, lightOn.value(scope))); }
 
 		final IExpression light2 = facets.getExpr(IKeyword.DIFFUSE_LIGHT);
 		// this facet is deprecated...
@@ -856,11 +839,11 @@ public class LayeredDisplayData {
 		}
 
 		// Set the up vector of the opengl Camera (see gluPerspective)
-		final IExpression cameraUp = facets.getExpr(IKeyword.CAMERA_UP_VECTOR);
+		final IExpression cameraUp = facets.getExpr(IKeyword.CAMERA_ORIENTATION);
 		if (cameraUp != null) {
 			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraUp.value(scope));
 			location.setY(-location.getY()); // y component need to be reverted
-			setCameraUpVector(location);
+			setCameraOrientation(location);
 		}
 
 		// Set the up vector of the opengl Camera (see gluPerspective)
@@ -903,7 +886,10 @@ public class LayeredDisplayData {
 			constantAmbientLight = light.isConst();
 		}
 
-		final IExpression camera = facets.getExpr(IKeyword.CAMERA_POS);
+		final IExpression antialias = facets.getExpr("antialias");
+		if (antialias != null) { setAntialias(Cast.asBool(scope, antialias.value(scope))); }
+
+		final IExpression camera = facets.getExpr(IKeyword.CAMERA_LOCATION);
 		if (camera != null) {
 			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
 			location.y = -location.y; // y component need to be reverted
@@ -912,7 +898,7 @@ public class LayeredDisplayData {
 			// cameraFix = true;
 		}
 
-		final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_LOOK_POS);
+		final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_TARGET);
 		if (cameraLook != null) {
 			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
 			location.setY(-location.getY()); // y component need to be reverted
@@ -937,6 +923,9 @@ public class LayeredDisplayData {
 			if (auto.getGamlType().equals(Types.POINT)) {
 				setAutosave(true);
 				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
+			} else if (auto.getGamlType().equals(Types.STRING)) {
+				setAutosave(true);
+				setAutosavePath(Cast.asString(scope, auto.value(scope)));
 			} else {
 				setAutosave(Cast.asBool(scope, auto.value(scope)));
 			}
@@ -946,9 +935,7 @@ public class LayeredDisplayData {
 		if (!constantBackground) {
 
 			final IExpression color = facets.getExpr(IKeyword.BACKGROUND);
-			if (color != null) {
-				setBackgroundColor(Cast.asColor(scope, color.value(scope)));
-			}
+			if (color != null) { setBackgroundColor(Cast.asColor(scope, color.value(scope))); }
 
 		}
 
@@ -966,7 +953,7 @@ public class LayeredDisplayData {
 
 		// /////////////////// dynamic camera ///////////////////
 		if (!constantCamera) {
-			final IExpression camera = facets.getExpr(IKeyword.CAMERA_POS);
+			final IExpression camera = facets.getExpr(IKeyword.CAMERA_LOCATION);
 			if (camera != null) {
 				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
 				if (location != null) {
@@ -979,7 +966,7 @@ public class LayeredDisplayData {
 		}
 
 		if (!constantCameraLook) {
-			final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_LOOK_POS);
+			final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_TARGET);
 			if (cameraLook != null) {
 				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
 				if (location != null) {
@@ -994,6 +981,10 @@ public class LayeredDisplayData {
 
 	public boolean isOpenGL2() {
 		return displayType.equals(OPENGL2);
+	}
+
+	public boolean isWeb() {
+		return displayType.equals(WEB);
 	}
 
 	public boolean isOpenGL() {

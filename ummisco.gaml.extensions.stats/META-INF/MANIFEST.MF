@@ -4,7 +4,8 @@ Bundle-Name: Stats
 Bundle-SymbolicName: ummisco.gaml.extensions.stats;singleton:=true
 Bundle-Version: 1.8.1.qualifier
 Require-Bundle: msi.gama.core,
- msi.gama.ext
+ ummisco.gaml.extensions.maths;bundle-version="1.8.1",
+ msi.gama.ext;bundle-version="1.8.1"
 Bundle-ActivationPolicy: lazy
 Export-Package: ummisco.gaml.extensions.stats
 Bundle-ClassPath: .,

@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.runtime;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +40,6 @@ import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
@@ -48,6 +47,7 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.dev.utils.DEBUG;
@@ -85,29 +85,30 @@ public class HeadlessListener implements IGui {
 		});
 		return initialValues;
 	}
+
 	@Override
-	public IMap<String,IMap<String, Object>> openWizard(IScope scope, String title, IList<IMap<String, Object>> pages) {
+	public IMap<String, IMap<String, Object>> openWizard(final IScope scope, final String title,
+			final ActionDescription finish, final IList<IMap<String, Object>> pages) {
 		final IMap<String, IMap<String, Object>> initialValues = GamaMapFactory.create();
 		for (IMap l : pages) {
 			final IMap<String, Object> initialValuesPage = GamaMapFactory.create();
 			String t = (String) l.get(IKeyword.TITLE);
-			
-			initialValues.put(t,initialValuesPage);
+
+			initialValues.put(t, initialValuesPage);
 			IList<IParameter> ps = (IList<IParameter>) l.get(IKeyword.PARAMETERS);
 			if (ps != null) {
 				ps.forEach(p -> {
 					initialValuesPage.put(p.getName(), p.getInitialValue(scope));
 				});
 			}
-			
+
 		}
-		
+
 		return initialValues;
 	}
 
-	
 	@Override
-	public Boolean openUserInputDialogConfirm(final IScope scope, final String title,final String message) {
+	public Boolean openUserInputDialogConfirm(final IScope scope, final String title, final String message) {
 		return true;
 	}
 
@@ -180,16 +181,15 @@ public class HeadlessListener implements IGui {
 	// @SuppressWarnings ("rawtypes") static Map<String, Class> displayClasses = null;
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... objects) {
+	public IDisplaySurface createDisplaySurfaceFor(final LayeredDisplayOutput output, final Object... objects) {
 
 		IDisplaySurface surface = null;
 		final IDisplayCreator creator = DISPLAYS.get("image");
 		if (creator != null) {
 			surface = creator.create(output);
 			surface.outputReloaded();
-		} else {
+		} else
 			return new NullDisplaySurface();
-		}
 		return surface;
 	}
 
@@ -516,6 +516,11 @@ public class HeadlessListener implements IGui {
 	public boolean isInDisplayThread() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public Iterable<IDisplaySurface> getAllDisplaySurfaces() {
+		return Collections.EMPTY_LIST;
 	}
 
 }

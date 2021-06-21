@@ -26,6 +26,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010
@@ -35,6 +36,10 @@ import msi.gaml.types.Types;
  */
 @SuppressWarnings ({ "rawtypes" })
 public class Strings {
+
+//	static {
+//		DEBUG.ON();
+//	}
 
 	public static final String LN = java.lang.System.getProperty("line.separator");
 	public static final String TAB = "\t";
@@ -115,7 +120,7 @@ public class Strings {
 					equals = "true"))
 	public static Boolean opContainsAny(final String target, final IList l) {
 		for (final Object o : l) {
-			if (o instanceof String && opContains(target, (String) o)) { return true; }
+			if (o instanceof String && opContains(target, (String) o)) return true;
 		}
 		return false;
 	}
@@ -133,7 +138,7 @@ public class Strings {
 							equals = "false")))
 	public static Boolean opContainsAll(final String target, final IList l) {
 		for (final Object o : l) {
-			if (!(o instanceof String && opContains(target, (String) o))) { return false; }
+			if (!(o instanceof String && opContains(target, (String) o))) return false;
 		}
 		return true;
 	}
@@ -180,7 +185,7 @@ public class Strings {
 	public static String opCopy(final String target, final Integer beginIndex, final Integer endIndex) {
 		final int bIndex = beginIndex < 0 ? 0 : beginIndex;
 		final int eIndex = endIndex > target.length() ? target.length() : endIndex;
-		if (bIndex >= eIndex) { return ""; }
+		if (bIndex >= eIndex) return "";
 		return target.substring(bIndex, eIndex);
 	}
 
@@ -209,13 +214,17 @@ public class Strings {
 			concept = { IConcept.STRING })
 	@doc (
 			value = "Returns a list containing the sub-strings (tokens) of the left-hand operand delimited either by each of the characters of the right-hand operand (false) or by the whole right-hand operand (true).",
-			usages = @usage(value = "when used  with an  additional boolean operand, it returns a list containing the sub-strings (tokens) of the left-hand operand delimited either by each of the characters of the right-hand operand (false) or by the whole right-hand operand (true)."),
-			examples = {
-					@example (value = "'aa::bb:cc' split_with ('::', true)",equals = "['aa','bb:cc']"),
-					@example (value = "'aa::bb:cc' split_with ('::', false)", equals = "['aa','bb','cc']")})
+			usages = @usage (
+					value = "when used  with an  additional boolean operand, it returns a list containing the sub-strings (tokens) of the left-hand operand delimited either by each of the characters of the right-hand operand (false) or by the whole right-hand operand (true)."),
+			examples = { @example (
+					value = "'aa::bb:cc' split_with ('::', true)",
+					equals = "['aa','bb:cc']"),
+					@example (
+							value = "'aa::bb:cc' split_with ('::', false)",
+							equals = "['aa','bb','cc']") })
 	public static IList opTokenize(final IScope scope, final String target, final String pattern,
 			final Boolean completeSep) {
-		if (completeSep) { return GamaListFactory.create(scope, Types.STRING, target.split(pattern)); }
+		if (completeSep) return GamaListFactory.create(scope, Types.STRING, target.split(pattern));
 		final StringTokenizer st = new StringTokenizer(target, pattern);
 		return GamaListFactory.create(scope, Types.STRING, st);
 	}
@@ -247,6 +256,7 @@ public class Strings {
 					equals = "'col, col'"),
 			see = { "replace" })
 	public static String opReplaceRegex(final String target, final String pattern, final String replacement) {
+//		DEBUG.OUT("String pattern = " + pattern);
 		return target.replaceAll(pattern, replacement);
 	}
 
@@ -279,9 +289,9 @@ public class Strings {
 		// original code taken from
 		// org.apache.commons.lang.NumberUtils.isNumber(String)
 
-		if (s == null) { return false; }
+		if (s == null) return false;
 		final int length = s.length();
-		if (length == 0) { return false; }
+		if (length == 0) return false;
 		int sz = length;
 		boolean hasExp = false;
 		boolean hasDecPoint = false;
@@ -293,13 +303,11 @@ public class Strings {
 		if (sz > start + 1) {
 			if (s.charAt(start) == '#') {
 				int i = start + 1;
-				if (i == sz) {
-					return false; // str == "#"
-				}
+				if (i == sz) return false; // str == "#"
 				// Checking hex (it can't be anything else)
 				for (; i < length; i++) {
 					final char c = s.charAt(i);
-					if ((c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F')) { return false; }
+					if ((c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F')) return false;
 				}
 
 				return true;
@@ -320,44 +328,35 @@ public class Strings {
 				foundDigit = true;
 				allowSigns = false;
 			} else if (c == '.') {
-				if (hasDecPoint || hasExp) {
-					// Two decimal points or dec in exponent
+				if (hasDecPoint || hasExp) // Two decimal points or dec in exponent
 					return false;
-				}
 				hasDecPoint = true;
 			} else if (c == 'e' || c == 'E') {
 				// We've already taken care of hex.
-				if (hasExp) {
-					// Two E's
+				if (hasExp) // Two E's
 					return false;
-				}
 				if (foundDigit) {
 					hasExp = true;
 					allowSigns = true;
-				} else {
+				} else
 					return false;
-				}
 			} else if (c == '-') {
 				if (allowSigns) {
 					allowSigns = false;
 					foundDigit = false; // We need a digit after the E
-				} else {
+				} else
 					return false;
-				}
-			} else {
+			} else
 				return false;
-			}
 
 			i++;
 		}
 
 		if (i < length) {
 			final char c = s.charAt(i);
-			if (c >= '0' && c <= '9') {
+			if (c >= '0' && c <= '9')
 				return true; // No type qualifier, OK
-			} else if (c == 'e' || c == 'E') {
-				return false; // can't have an E at the last byte
-			}
+			else if (c == 'e' || c == 'E') return false; // can't have an E at the last byte
 		}
 
 		// allowSigns is true iff the val ends in 'E'
@@ -410,7 +409,7 @@ public class Strings {
 							value = "first ('abce')",
 							equals = "'a'")))
 	static public String first(final String s) {
-		if (s == null || s.isEmpty()) { return ""; }
+		if (s == null || s.isEmpty()) return "";
 		return String.valueOf(s.charAt(0));
 	}
 
@@ -426,7 +425,7 @@ public class Strings {
 							value = "last ('abce')",
 							equals = "'e'")))
 	static public String last(final String s) {
-		if (s == null || s.isEmpty()) { return ""; }
+		if (s == null || s.isEmpty()) return "";
 		return String.valueOf(s.charAt(s.length() - 1));
 	}
 
@@ -442,7 +441,7 @@ public class Strings {
 							value = "length ('I am an agent')",
 							equals = "13")))
 	static public Integer length(final String s) {
-		if (s == null) { return 0; }
+		if (s == null) return 0;
 		return s.length();
 	}
 
@@ -471,7 +470,7 @@ public class Strings {
 							value = "char (34)",
 							equals = "'\"'")))
 	static public String asChar(final Integer s) {
-		if (s == null) { return ""; }
+		if (s == null) return "";
 		return Character.toString((char) s.intValue());
 	}
 
@@ -486,7 +485,7 @@ public class Strings {
 					value = "\"my\" + indented_by(\"text\", 1)",
 					equals = "\"my	text\""))
 	static public String indent(final String s, final int nb) {
-		if (nb <= 0) { return s; }
+		if (nb <= 0) return s;
 		final StringBuilder sb = new StringBuilder(nb);
 		for (int i = 0; i < nb; i++) {
 			sb.append(TAB);
@@ -507,7 +506,7 @@ public class Strings {
 					equals = "'abc'"),
 			see = { "upper_case" })
 	static public String toLowerCase(final String s) {
-		if (s == null) { return s; }
+		if (s == null) return s;
 		return s.toLowerCase();
 	}
 
@@ -523,7 +522,7 @@ public class Strings {
 					equals = "'ABC'"),
 			see = { "lower_case" })
 	static public String toUpperCase(final String s) {
-		if (s == null) { return s; }
+		if (s == null) return s;
 		return s.toUpperCase();
 	}
 

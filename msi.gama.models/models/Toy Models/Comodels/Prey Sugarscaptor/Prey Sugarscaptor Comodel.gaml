@@ -95,7 +95,7 @@ experiment main type: gui
 		display "Co-display"
 		{
 
-				grid G lines: # red transparency:0.2;				
+				grid G border: # red transparency:0.2;				
 				
 				agents "vegetation_cell" value: veg_cells ;
 				

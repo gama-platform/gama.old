@@ -75,7 +75,7 @@ public class PickingHelper extends AbstractRendererHelper {
 	/**
 	 * First pass prepare select buffer for select mode by clearing it, prepare openGL to select mode and tell it where
 	 * should draw object by using gluPickMatrix() method
-	 * 
+	 *
 	 * @return if returned value is true that mean the picking is enabled
 	 */
 	public void beginPicking() {
@@ -107,7 +107,7 @@ public class PickingHelper extends AbstractRendererHelper {
 		glu.gluPickMatrix(camera.getMousePosition().x, viewport[3] - camera.getMousePosition().y, 4, 4, viewport, 0);
 		// JOGLRenderer r = getRenderer();
 		// FIXME Why do we have to call updatePerspective() here ?
-		openGL.updatePerspective();
+		openGL.updatePerspective(gl);
 		openGL.matrixMode(GL2.GL_MODELVIEW);
 	}
 

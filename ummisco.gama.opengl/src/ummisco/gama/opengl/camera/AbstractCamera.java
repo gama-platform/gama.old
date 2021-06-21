@@ -71,10 +71,14 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean keystoneMode = false;
 	protected double zCorrector = 1d;
 	private final boolean useNumKeys = GamaPreferences.Displays.OPENGL_NUM_KEYS_CAM.getValue();
+	private static final GamaPoint UP_Z = new GamaPoint(0, 0, 1);
 
 	public AbstractCamera(final IOpenGLRenderer renderer2) {
 		this.renderer = renderer2;
+		// LayeredDisplayData data = renderer.getData();
+		// if (!data.isCameraUpVectorDefined() && !data.getCameraOrientation().equals(UP_Z)) {
 		setUpVector(0.0, 1.0, 0.0);
+		// }
 		glu = new GLU();
 	}
 
@@ -98,13 +102,13 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void updateTarget() {
-		target.setLocation(renderer.getData().getCameraLookPos());
+		target.setLocation(renderer.getData().getCameraTarget());
 	}
 
 	@Override
 	public void updateOrientation() {
 		// DEBUG.OUT("Upvector updatd as " + upVector);
-		upVector.setLocation(renderer.getData().getCameraUpVector());
+		upVector.setLocation(renderer.getData().getCameraOrientation());
 	}
 
 	@Override
@@ -143,7 +147,7 @@ public abstract class AbstractCamera implements ICamera {
 	public void setUpVector(final double xPos, final double yPos, final double zPos) {
 		upVector.setLocation(xPos, yPos, zPos);
 		// DEBUG.OUT("Upvector modified as " + upVector);
-		getRenderer().getData().setCameraUpVector(new GamaPoint(upVector));
+		getRenderer().getData().setCameraOrientation(new GamaPoint(upVector));
 	}
 
 	/* -------Get commands--------- */
@@ -198,9 +202,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void mouseScrolled(final MouseEvent e) {
 		invokeOnGLThread(drawable -> {
-			if (cameraInteraction) {
-				internalMouseScrolled(e);
-			}
+			if (cameraInteraction) { internalMouseScrolled(e); }
 			return false;
 		});
 
@@ -228,8 +230,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected void internalMouseMove(final MouseEvent e) {
-		mousePosition.x = PlatformHelper.scaleUpIfWin(e.x);
-		mousePosition.y = PlatformHelper.scaleUpIfWin(e.y);
+		mousePosition.x = PlatformHelper.scaleToHiDPI(e.x);
+		mousePosition.y = PlatformHelper.scaleToHiDPI(e.y);
 		setCtrlPressed(GamaKeyBindings.ctrl(e));
 		setShiftPressed(GamaKeyBindings.shift(e));
 	}
@@ -268,9 +270,7 @@ public abstract class AbstractCamera implements ICamera {
 		// Already taken in charge by the ZoomListener in the view
 		if (keystoneMode) {
 			final int corner = clickOnKeystone(e);
-			if (corner != -1) {
-				getRenderer().getKeystoneHelper().resetCorner(corner);
-			}
+			if (corner != -1) { getRenderer().getKeystoneHelper().resetCorner(corner); }
 		}
 	}
 
@@ -291,9 +291,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected GamaPoint getNormalizedCoordinates(final double x, final double y) {
 		final double xCoordNormalized = x / getRenderer().getWidth();
 		double yCoordNormalized = y / getRenderer().getHeight();
-		if (!renderer.useShader()) {
-			yCoordNormalized = 1 - yCoordNormalized;
-		}
+		if (!renderer.useShader()) { yCoordNormalized = 1 - yCoordNormalized; }
 		return new GamaPoint(xCoordNormalized, yCoordNormalized);
 	}
 
@@ -332,9 +330,7 @@ public abstract class AbstractCamera implements ICamera {
 				return;
 			}
 			final int cornerSelected = clickOnKeystone(e);
-			if (cornerSelected != -1) {
-				getRenderer().getKeystoneHelper().setCornerSelected(cornerSelected);
-			}
+			if (cornerSelected != -1) { getRenderer().getKeystoneHelper().setCornerSelected(cornerSelected); }
 		}
 
 		lastMousePressedPosition.setLocation(x, y, 0);
@@ -343,16 +339,12 @@ public abstract class AbstractCamera implements ICamera {
 			if (renderer.getOpenGLHelper().mouseInROI(lastMousePressedPosition)) {
 				renderer.getSurface().selectionIn(renderer.getOpenGLHelper().getROIEnvelope());
 			} else {
-				if (renderer.getSurface().canTriggerContextualMenu()) {
-					renderer.getPickingHelper().setPicking(true);
-				}
+				if (renderer.getSurface().canTriggerContextualMenu()) { renderer.getPickingHelper().setPicking(true); }
 			}
 		} else if (e.button == 2 && cameraInteraction) { // mouse wheel
 			resetPivot();
 		} else {
-			if (GamaKeyBindings.shift(e) && isViewInXYPlan()) {
-				startROI(e);
-			}
+			if (GamaKeyBindings.shift(e) && isViewInXYPlan()) { startROI(e); }
 			// else {
 			// renderer.getPickingState().setPicking(false);
 			// }
@@ -385,14 +377,8 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected void internalMouseUp(final MouseEvent e) {
 		firsttimeMouseDown = true;
-		if (canSelectOnRelease(e) && isViewInXYPlan()) {
-			if (GamaKeyBindings.shift(e)) {
-				finishROISelection();
-			}
-		}
-		if (e.button == 1) {
-			setMouseLeftPressed(false);
-		}
+		if (canSelectOnRelease(e) && isViewInXYPlan()) { if (GamaKeyBindings.shift(e)) { finishROISelection(); } }
+		if (e.button == 1) { setMouseLeftPressed(false); }
 
 	}
 
@@ -406,9 +392,7 @@ public abstract class AbstractCamera implements ICamera {
 	void finishROISelection() {
 		if (ROICurrentlyDrawn) {
 			final Envelope3D env = renderer.getOpenGLHelper().getROIEnvelope();
-			if (env != null) {
-				renderer.getSurface().selectionIn(env);
-			}
+			if (env != null) { renderer.getSurface().selectionIn(env); }
 		}
 	}
 
@@ -480,32 +464,22 @@ public abstract class AbstractCamera implements ICamera {
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction) {
-							AbstractCamera.this.strafeLeft = true;
-						}
+						if (cameraInteraction) { AbstractCamera.this.strafeLeft = true; }
 						break;
 					case SWT.ARROW_RIGHT:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction) {
-							AbstractCamera.this.strafeRight = true;
-						}
+						if (cameraInteraction) { AbstractCamera.this.strafeRight = true; }
 						break;
 					case SWT.ARROW_UP:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction) {
-							AbstractCamera.this.goesForward = true;
-						}
+						if (cameraInteraction) { AbstractCamera.this.goesForward = true; }
 						break;
 					case SWT.ARROW_DOWN:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction) {
-							AbstractCamera.this.goesBackward = true;
-						}
+						if (cameraInteraction) { AbstractCamera.this.goesBackward = true; }
 						break;
 					case SWT.SPACE:
-						if (cameraInteraction) {
-							resetPivot();
-						}
+						if (cameraInteraction) { resetPivot(); }
 						break;
 					case SWT.CTRL:
 						setCtrlPressed(!firsttimeMouseDown);
@@ -516,55 +490,31 @@ public abstract class AbstractCamera implements ICamera {
 				}
 				switch (e.character) {
 					case '+':
-						if (cameraInteraction) {
-							zoom(true);
-						}
+						if (cameraInteraction) { zoom(true); }
 						break;
 					case '-':
-						if (cameraInteraction) {
-							zoom(false);
-						}
+						if (cameraInteraction) { zoom(false); }
 						break;
 					case '4':
-						if (cameraInteraction) {
-							if (useNumKeys) {
-								quickLeftTurn();
-							}
-						}
+						if (cameraInteraction) { if (useNumKeys) { quickLeftTurn(); } }
 						break;
 					case '6':
-						if (cameraInteraction) {
-							if (useNumKeys) {
-								quickRightTurn();
-							}
-						}
+						if (cameraInteraction) { if (useNumKeys) { quickRightTurn(); } }
 						break;
 					case '8':
-						if (cameraInteraction) {
-							if (useNumKeys) {
-								quickUpTurn();
-							}
-						}
+						if (cameraInteraction) { if (useNumKeys) { quickUpTurn(); } }
 						break;
 					case '2':
-						if (cameraInteraction) {
-							if (useNumKeys) {
-								quickDownTurn();
-							}
-						}
+						if (cameraInteraction) { if (useNumKeys) { quickDownTurn(); } }
 						break;
 					case 'k':
-						if (!GamaKeyBindings.ctrl(e)) {
-							activateKeystoneMode();
-						}
+						if (!GamaKeyBindings.ctrl(e)) { activateKeystoneMode(); }
 						break;
 					default:
 						return true;
 				}
 			} else if (e.character == 'k') {
-				if (!GamaKeyBindings.ctrl(e)) {
-					activateKeystoneMode();
-				}
+				if (!GamaKeyBindings.ctrl(e)) { activateKeystoneMode(); }
 				return true;
 			}
 			return true;
@@ -603,24 +553,16 @@ public abstract class AbstractCamera implements ICamera {
 			if (!keystoneMode) {
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT: // turns left (scene rotates right)
-						if (cameraInteraction) {
-							strafeLeft = false;
-						}
+						if (cameraInteraction) { strafeLeft = false; }
 						break;
 					case SWT.ARROW_RIGHT: // turns right (scene rotates left)
-						if (cameraInteraction) {
-							strafeRight = false;
-						}
+						if (cameraInteraction) { strafeRight = false; }
 						break;
 					case SWT.ARROW_UP:
-						if (cameraInteraction) {
-							goesForward = false;
-						}
+						if (cameraInteraction) { goesForward = false; }
 						break;
 					case SWT.ARROW_DOWN:
-						if (cameraInteraction) {
-							goesBackward = false;
-						}
+						if (cameraInteraction) { goesBackward = false; }
 						break;
 					case SWT.CTRL:
 						setCtrlPressed(false);
@@ -656,7 +598,7 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	public double getInitialZFactor() {
-		if (renderer.getData().isDrawEnv()) { return 1.46 / zCorrector; }
+		if (renderer.getData().isDrawEnv()) return 1.46 / zCorrector;
 		return 1.2 / zCorrector;
 	}
 

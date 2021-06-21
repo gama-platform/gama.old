@@ -59,7 +59,7 @@ experiment "Moran" type: gui {
 	
 	output {
 		display map {
-			grid cell lines: #red;
+			grid cell border: #red;
 			graphics "moran" {
 				draw "I = " + (I with_precision 3) color: #green font:font("Helvetica", 60 * #zoom, #bold);
 			}

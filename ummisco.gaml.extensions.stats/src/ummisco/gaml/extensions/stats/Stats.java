@@ -1050,6 +1050,7 @@ public class Stats {
 					equals = "[[0,2,3],[1]]") })
 	public static IList<IList> KMeansPlusplusApache(final IScope scope, final IList data, final Integer k,
 			final Integer maxIt) throws GamaRuntimeException {
+		// AD 04/21 : Is it ok to use an additional generator here ?
 		final MersenneTwister rand = new MersenneTwister(scope.getRandom().getSeed().longValue());
 
 		final List<DoublePoint> instances = new ArrayList<>();

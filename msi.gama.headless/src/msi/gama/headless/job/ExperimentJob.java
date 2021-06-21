@@ -29,10 +29,10 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.Display2D;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
+import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.core.IRichExperiment;
 import msi.gama.headless.core.RichExperiment;
 import msi.gama.headless.core.RichOutput;
-import msi.gama.headless.runtime.RuntimeContext;
 import msi.gama.headless.xml.Writer;
 import msi.gama.headless.xml.XmlTAG;
 import msi.gama.kernel.model.IModel;
@@ -41,6 +41,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -163,10 +164,10 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	@Override
-	public void loadAndBuild(final RuntimeContext rtx) throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException, IOException, GamaHeadlessException {
+	public void loadAndBuild() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
+			IOException, GamaHeadlessException {
 
-		this.load(rtx);
+		this.load();
 		this.listenedVariables = new ListenedVariable[outputs.size()];
 
 		for (final Parameter temp : parameters) {
@@ -191,16 +192,16 @@ public class ExperimentJob implements IExperimentJob {
 			endCondition = GAML.getExpressionFactory().createExpr(untilCond, simulator.getModel().getDescription());
 			// endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);
 		}
-		if (endCondition.getGamlType() != Types.BOOL) {
+		if (endCondition.getGamlType() != Types.BOOL)
 			throw GamaRuntimeException.error("The until condition of the experiment should be a boolean",
 					simulator.getSimulation().getScope());
-		}
 	}
 
-	public void load(final RuntimeContext ctx) throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException, IOException, GamaHeadlessException {
+	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
+			GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);
-		final IModel mdl = ctx.loadModel(new File(this.sourcePath));
+		final List<GamlCompilationError> errors = new ArrayList<>();
+		final IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath), errors);
 		this.modelName = mdl.getName();
 		this.simulator = new RichExperiment(mdl);
 	}
@@ -220,9 +221,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void play() {
-		if (this.outputFile != null) {
-			this.outputFile.writeSimulationHeader(this);
-		}
+		if (this.outputFile != null) { this.outputFile.writeSimulationHeader(this); }
 		// DEBUG.LOG("Simulation is running...", false);
 		final long affDelay = finalStep < 100 ? 1 : finalStep / 100;
 
@@ -230,17 +229,11 @@ public class ExperimentJob implements IExperimentJob {
 			int step = 0;
 			// Added because the simulation may be null in case we deal with a batch experiment
 			while (finalStep >= 0 ? step < finalStep : true) {
-				if (step % affDelay == 0) {
-					DEBUG.LOG(".", false);
-				}
-				if (simulator.isInterrupted()) {
-					break;
-				}
+				if (step % affDelay == 0) { DEBUG.LOG(".", false); }
+				if (simulator.isInterrupted()) { break; }
 				final SimulationAgent sim = simulator.getSimulation();
 				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
-				if (Cast.asBool(scope, endCondition.value(scope))) {
-					break;
-				}
+				if (Cast.asBool(scope, endCondition.value(scope))) { break; }
 				doStep();
 				step++;
 			}
@@ -251,12 +244,8 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void dispose() {
-		if (this.simulator != null) {
-			this.simulator.dispose();
-		}
-		if (this.outputFile != null) {
-			this.outputFile.close();
-		}
+		if (this.simulator != null) { this.simulator.dispose(); }
+		if (this.outputFile != null) { this.outputFile.close(); }
 	}
 
 	@Override
@@ -276,7 +265,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	private void exportVariables() {
 		final int size = this.listenedVariables.length;
-		if (size == 0) { return; }
+		if (size == 0) return;
 		for (int i = 0; i < size; i++) {
 			final ListenedVariable v = this.listenedVariables[i];
 			if (this.step % v.frameRate == 0) {
@@ -291,9 +280,7 @@ public class ExperimentJob implements IExperimentJob {
 				v.setValue(null, this.step);
 			}
 		}
-		if (this.outputFile != null) {
-			this.outputFile.writeResultStep(this.step, this.listenedVariables);
-		}
+		if (this.outputFile != null) { this.outputFile.writeResultStep(this.step, this.listenedVariables); }
 
 	}
 
@@ -453,7 +440,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	private Parameter getParameter(final String name) {
 		for (final Parameter p : parameters) {
-			if (p.getName().equals(name)) { return p; }
+			if (p.getName().equals(name)) return p;
 		}
 		return null;
 	}
@@ -465,7 +452,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	private Output getOutput(final String name) {
 		for (final Output p : outputs) {
-			if (p.getName().equals(name)) { return p; }
+			if (p.getName().equals(name)) return p;
 		}
 		return null;
 	}

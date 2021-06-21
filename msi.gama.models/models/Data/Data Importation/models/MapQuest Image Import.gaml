@@ -11,7 +11,7 @@ global
 {
 	image_file static_map_request;
 	map
-	answers <- user_input("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Address","")]);
+	answers <- user_input_dialog("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Address","")]);
 	string center_text <- answers["Address"]; 
 	int zoom_text <- 10;
 	action load_map
@@ -32,10 +32,10 @@ global
 experiment Display
 {
 	
-	parameter "Zoom" var: zoom_text on_change: {
+	parameter "Zoom" var: zoom_text  {
 		ask simulation  {do load_map;}
 		do update_outputs(true);
-	};
+	}
 	 
 	output
 	{

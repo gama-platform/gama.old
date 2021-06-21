@@ -104,10 +104,8 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 						String text;
 						if (contextobj != null) {
 							text = EGaml.getInstance().getKeyOf(contextobj);
-							if (text == null) {
-								text = token;
-							}
-							msg += "Symbol '" + text + "' seems to be incomplete";
+							if (text == null) { text = token; }
+							msg += "Symbol '" + text + "' seems to be incomplete or misplaced";
 
 						} else {
 							switch (token) {
@@ -132,7 +130,7 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		// if (DEBUG.IS_ON()) {
 		// DEBUG.OUT("Message : " + msg);
 		// }
-		if (msg.isEmpty()) msg = context.getDefaultMessage();
+		if (msg.isEmpty()) { msg = context.getDefaultMessage(); }
 		return new SyntaxErrorMessage(msg, Diagnostic.SYNTAX_DIAGNOSTIC);
 	}
 

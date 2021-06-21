@@ -136,9 +136,10 @@ experiment explore_model type: batch until: time > 2#h repeat: 2 {
 	parameter "proba_leave" var: proba_leave among: [0, 0.01, 0.05, 0.1, 1.0];
 	
 	reflex save_results {
+		
 		ask simulations {
 			write "proba_leave: " + proba_leave + " infected_rate: " + self.infected_rate;
-			save [proba_leave, self.infected_rate] type: csv to:"results.csv";
+			save [proba_leave, self.infected_rate] type: csv to:"results.csv" rewrite: (int(self) = 0) ? true : false header: true ;
 		}
 	}
 }

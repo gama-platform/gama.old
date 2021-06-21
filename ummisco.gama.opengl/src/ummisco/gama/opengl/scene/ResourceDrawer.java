@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -34,7 +34,7 @@ public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 	protected boolean applyRotation(final ResourceObject object) {
 		final AxisAngle rotation = object.getAttributes().getRotation();
 		final AxisAngle initRotation = object.getObject().getInitRotation();
-		if (rotation == null && initRotation == null) { return false; }
+		if (rotation == null && initRotation == null) return false;
 		final GamaPoint loc = object.getAttributes().getLocation();
 		try {
 			gl.translateBy(loc.x, -loc.y, loc.z);
@@ -74,15 +74,14 @@ public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 			final Color border = !solid && object.getAttributes().getBorder() == null
 					? object.getAttributes().getColor() : object.getAttributes().getBorder();
 			final GamaGeometryFile file = object.getObject();
-			if (file != null) {
-				gl.drawCachedGeometry(file, border);
-			}
+			if (file != null) { gl.drawCachedGeometry(file, border); }
 		} finally {
-			if (push) {
-				gl.popMatrix();
-			}
+			if (push) { gl.popMatrix(); }
 		}
 
 	}
+
+	@Override
+	public void dispose() {}
 
 }

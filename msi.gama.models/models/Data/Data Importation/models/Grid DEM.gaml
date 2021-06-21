@@ -13,8 +13,10 @@ model gridloading
 
 global {
 	file grid_data <- file("../includes/DEM-Vulcano/vulcano_50.asc");
-	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
+	file dem_file parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
+	image_file europe <- image_file("../images/mnt/europe.jpg");
 	file texture parameter: 'Texture' <- file('../includes/DEM-Vulcano/Texture.jpg');
+	
 	geometry shape <- envelope(200);
 
 	init {
@@ -31,7 +33,6 @@ global {
 				g <- 51 + (173 * (grid_value - 20) / 19);
 				b <- 224 * (grid_value - 20) / 19;
 			}
-
 			self.color <- rgb(r, g, b);
 		}
 
@@ -39,45 +40,54 @@ global {
 
 }
 
-grid cell file: grid_data {
-	rgb color;
+grid cell file: grid_data;
 
-	reflex decreaseValue {
-		grid_value <- grid_value + rnd(0.2) - 0.1;
-	}
-
-}
-
-experiment DEM type: gui {
+experiment Comparison type: gui {
 	output {
 		layout #split;
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
-		display gridWithElevationTriangulated type: opengl {
+		display "Grid with triangles" type: opengl {
 			grid cell elevation: true triangulation: true;
 		}
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
-		display gridGrayScaledTriangulated type: opengl {
+		display "Grid with triangles and grayscale" type: opengl {
 			grid cell elevation: true grayscale: true triangulation: true;
 		}
 
 		//Display the textured grid in 3D with the cell altitude corresponding to its grid_value.				
-		display gridTextured type: opengl {
-			grid cell texture: texture text: false triangulation: true elevation: true;
+		display "Grid with triangles and texture" type: opengl {
+			grid cell texture: texture triangulation: true elevation: true;
+		}
+		
+		
+		//Display the field triangulated in 3D with the cell altitude corresponding to its value and the color defined (otherwise in default color)
+		display "Field with triangles, green color" type: opengl {
+			mesh grid_data triangulation: true color: #green;
+		}
+
+		//Display the field triangulated in 3D with the cell altitude corresponding to its value and the color of cells as a gray value corresponding to grid_value / maxZ *255
+		display "Field with triangles and grayscale" type: opengl {
+			mesh grid_data grayscale: true triangulation: true;
+		}
+
+		//Display the textured field in 3D with the cell altitude corresponding to its value.				
+		display "Field scaled by 2, with triangles and texture" type: opengl {
+			mesh grid_data texture: texture triangulation: true scale: 2.0;
 		}
 
 	}
 
 }
 
-experiment GridDEMComplete type: gui {
+experiment "Grids" type: gui {
 	output {
 		layout #split toolbars: false;
 
 		//Display the grid on a plan with cell color (if defined otherwise in black)
 		display grid type: opengl { //Same as in java2D
-			grid cell lines:#black ;
+			grid cell border:#black ;
 		}
 
 		//Display the grid in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
@@ -110,44 +120,52 @@ experiment GridDEMComplete type: gui {
 		}
 
 		display gridWithText type: opengl {
-			grid cell text: true elevation: true grayscale: true;
+			grid cell text: true elevation: true wireframe: true refresh:false;
 		}
 
 	}
 
 }
 
-experiment GraphicDEMComplete type: gui {
+experiment "Meshes" type: gui {
 
 	output {
 		layout #split toolbars: false;
-		display VulcanoTexturedScaled type: opengl draw_env: false {
-			graphics 'GraphicPrimitive' {
-				draw dem(dem, texture, 0.1);
-			}
-
+		display "Large file, rectangles, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+			mesh europe wireframe: true border: #green refresh: false size: {1,1,0.2};
+		}
+		
+		display "Large file, triangles, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+			mesh europe grayscale: true triangulation: true smooth: true refresh: false size: {1,1,0.2};
+		}
+		
+		display "Large file, triangles, smooth, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+			mesh europe wireframe: true triangulation: true border: #green refresh: false size: {1,1,0.2} smooth: true;
 		}
 
-		display VulcanoDEMScaled type: opengl draw_env: false {
-			graphics 'GraphicPrimitive' {
-				draw dem(dem, 0.1);
-			}
-
+		display "Triangles, grayscale, lines, colored and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+			mesh grid_data size: {1, 1, 0.75}  triangulation: true border: #yellow color: #violet;
 		}
 
-		display VulcanoTextured type: opengl draw_env: false {
-			graphics 'GraphicPrimitive' {
-				draw dem(dem, texture);
-			}
-
+		display "Triangles, textured, no scale" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+			mesh grid_data texture: texture triangulation: true;
+		}
+		
+		display "Triangles, textured and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+			mesh grid_data texture: texture triangulation: true scale: 0.75;
+		}
+		
+		display "Triangles, textured, smooth and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+			mesh grid_data texture: texture smooth: true triangulation: true size: {1, 1, 0.75};
+		}
+		
+		display "Triangles, textured, scaled, with labels" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+			mesh grid_data texture: texture triangulation: true size: {1, 1, 0.5} text: true;
 		}
 
-		display VulcanoDEM type: opengl draw_env: false {
-			graphics 'GraphicPrimitive' {
-				draw dem(dem);
-			}
-
-		}
+		display "Large file, trianges, grayscale, scaled" type: opengl draw_env: false camera_location: {119.8782,301.7184,408.395} camera_target: {119.8782,-3.3383,103.3383} camera_orientation: {0.0,0.7071,0.7071} {
+			mesh dem_file grayscale: true triangulation: true scale: 2.0;
+	}
 
 	}
 

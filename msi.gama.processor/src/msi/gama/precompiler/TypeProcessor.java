@@ -7,6 +7,7 @@ import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
@@ -51,6 +52,13 @@ public class TypeProcessor extends ElementProcessor<type> {
 	@Override
 	protected Class<type> getAnnotationClass() {
 		return type.class;
+	}
+
+	@Override
+	protected boolean validateElement(final ProcessorContext context, final Element e) {
+		boolean result = assertClassExtends(context, true, (TypeElement) e, context.getType("msi.gaml.types.IType"));
+		// TODO Add existence of casting procedure ?
+		return result;
 	}
 
 }

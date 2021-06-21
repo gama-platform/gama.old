@@ -1,0 +1,29 @@
+--- BspDemo.cpp.orig	2007-12-10 03:18:38.000000000 +0100
++++ BspDemo.cpp	2008-01-26 10:53:19.497747800 +0100
+@@ -48,16 +48,26 @@
+ class BspToBulletConverter : public BspConverter
+ {
+ 	BspDemo* m_demoApp;
++   FILE *f;
+ 
+ public:
+ 
+ 	BspToBulletConverter(BspDemo*	demoApp)
+ 		:m_demoApp(demoApp)
+ 	{
++      f = fopen("_export_bsp_", "wb");
+ 	}
+ 
++   virtual ~BspToBulletConverter() {
++      fclose(f);
++   }
++
+ 		virtual void	addConvexVerticesCollider(btAlignedObjectArray<btVector3>& vertices, bool isEntity, const btVector3& entityTargetLocation)
+ 		{
++         fprintf(f, "%d\n", vertices.size());
++         for (int i=0; i<vertices.size(); i++) {
++            fprintf(f, "%f %f %f\n", vertices[i][0], vertices[i][1], vertices[i][2]);
++         }
+ 			///perhaps we can do something special with entities (isEntity)
+ 			///like adding a collision Triggering (as example)
+ 			

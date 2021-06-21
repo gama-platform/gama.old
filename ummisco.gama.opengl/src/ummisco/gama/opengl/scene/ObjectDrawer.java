@@ -100,9 +100,9 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 	 */
 	protected boolean applyRotation(final T object) {
 		final AxisAngle rotation = object.getAttributes().getRotation();
-		if (rotation == null) { return false; }
+		if (rotation == null) return false;
 		object.getTranslationForRotationInto(loc);
-		gl.translateBy(loc.x, -loc.y, loc.z);
+		gl.translateBy(+loc.x, -loc.y, +loc.z);
 		final GamaPoint axis = rotation.getAxis();
 		// AD Change to a negative rotation to fix Issue #1514
 		gl.rotateBy(-rotation.getAngle(), axis.x, axis.y, axis.z);
@@ -111,5 +111,10 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 	}
 
 	protected abstract void _draw(T object);
+
+	/**
+	 * Release any resource kept by this drawer
+	 */
+	public abstract void dispose();
 
 }

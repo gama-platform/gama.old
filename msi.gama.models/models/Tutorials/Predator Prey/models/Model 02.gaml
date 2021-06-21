@@ -38,7 +38,7 @@ experiment prey_predator type: gui {
 	parameter "Initial number of preys: " var: nb_preys_init min: 1 max: 1000 category: "Prey";
 	output {
 		display main_display {
-			grid vegetation_cell lines: #black;
+			grid vegetation_cell border: #black;
 			species prey aspect: base;
 		}
 	}

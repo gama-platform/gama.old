@@ -10,6 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.common.util;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.singleton;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,10 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.common.collect.UnmodifiableIterator;
 
 import msi.gama.common.interfaces.ISkill;
@@ -49,7 +52,7 @@ public class JavaUtils {
 	}
 
 	private static final Set<Class> allInterfacesOf(final Class c, final Set<Class> in) {
-		if (c == null) { return Collections.EMPTY_SET; }
+		if (c == null) return Collections.EMPTY_SET;
 		if (!INTERFACES.containsKey(c)) {
 			final Class[] interfaces = c.getInterfaces();
 			for (final Class c1 : interfaces) {
@@ -64,13 +67,11 @@ public class JavaUtils {
 	}
 
 	private static final Set<Class> allSuperclassesOf(final Class c, final Set<Class> in) {
-		if (c == null) { return null; }
+		if (c == null) return null;
 		if (!SUPERCLASSES.containsKey(c)) {
 			Class c2 = c.getSuperclass();
 			while (c2 != null) {
-				if (in.contains(c2)) {
-					SUPERCLASSES.put(c, c2);
-				}
+				if (in.contains(c2)) { SUPERCLASSES.put(c, c2); }
 				c2 = c2.getSuperclass();
 			}
 		}
@@ -81,18 +82,17 @@ public class JavaUtils {
 			final Iterable<Class<? extends ISkill>> skillClasses, final Set<Class> in) {
 		final int key = keyOf(baseClass, skillClasses);
 		if (!IMPLEMENTATION_CLASSES.containsKey(key)) {
-			final Iterable<Class> basis =
-					Iterables.concat(Collections.singleton(baseClass), skillClasses, allInterfacesOf(baseClass, in));
-			final Iterable<Class> extensions =
-					Iterables.concat(Iterables.transform(basis, each -> allSuperclassesOf(each, in)));
-			final Set<Class> classes = Sets.newHashSet(Iterables.concat(basis, extensions));
+			final Iterable<Class> basis = concat(singleton(baseClass), skillClasses,
+					concat(transform(skillClasses, each -> allInterfacesOf(each, in))), allInterfacesOf(baseClass, in));
+			final Iterable<Class> extensions = concat(transform(basis, each -> allSuperclassesOf(each, in)));
+			final Set<Class> classes = newHashSet(concat(basis, extensions));
 			final ArrayList<Class> classes2 = new ArrayList(classes);
 			Collections.sort(classes2, (o1, o2) -> {
-				if (o1 == o2) { return 0; }
-				if (o1.isAssignableFrom(o2)) { return -1; }
-				if (o2.isAssignableFrom(o1)) { return 1; }
-				if (o1.isInterface() && !o2.isInterface()) { return -1; }
-				if (o2.isInterface() && !o1.isInterface()) { return 1; }
+				if (o1 == o2) return 0;
+				if (o1.isAssignableFrom(o2)) return -1;
+				if (o2.isAssignableFrom(o1)) return 1;
+				if (o1.isInterface() && !o2.isInterface()) return -1;
+				if (o2.isInterface() && !o1.isInterface()) return 1;
 				return 1;
 			});
 
@@ -103,8 +103,8 @@ public class JavaUtils {
 	}
 
 	public static <F> Iterator<F> iterator(final Object[] array) {
-		if (array != null) { return (Iterator<F>) Iterators.forArray(array); }
-		return new UnmodifiableIterator<F>() {
+		if (array != null) return (Iterator<F>) Iterators.forArray(array);
+		return new UnmodifiableIterator<>() {
 
 			@Override
 			public boolean hasNext() {

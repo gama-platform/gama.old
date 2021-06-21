@@ -177,7 +177,7 @@ public class Containers {
 				special_cases = "Passing 0 will return a singleton list with 0.")
 		@test ("range(2) = [0,1,2]")
 		public static IList range(final IScope scope, final Integer end) {
-			if (end == 0) { return GamaListFactory.wrap(Types.INT, Integer.valueOf(0)); }
+			if (end == 0) return GamaListFactory.wrap(Types.INT, Integer.valueOf(0));
 			return range(scope, 0, end);
 		}
 
@@ -188,11 +188,12 @@ public class Containers {
 				can_be_const = true)
 		@doc (
 				value = "the list of int representing all contiguous values from the first to the second argument.",
-				usages = {@usage( value = "When used with 2 operands, it returns the list of int representing all contiguous values from the first to the second argument. "
-						+ "Passing the same value for both will return a singleton list with this value",
-				examples = { @example (
-						value = "range(0,2)",
-						equals = "[0,1,2]") })})
+				usages = { @usage (
+						value = "When used with 2 operands, it returns the list of int representing all contiguous values from the first to the second argument. "
+								+ "Passing the same value for both will return a singleton list with this value",
+						examples = { @example (
+								value = "range(0,2)",
+								equals = "[0,1,2]") }) })
 		@test ("range(0,2) = [0,1,2]")
 		public static IList range(final IScope scope, final Integer start, final Integer end) {
 			final Integer step = start > end ? -1 : 1;
@@ -206,21 +207,20 @@ public class Containers {
 				can_be_const = true)
 		@doc (
 				value = "a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument.",
-			usages = { @usage( value = "When used with 3 operands, it returns a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value. Passing a step of 0 will result in an exception. Attempting to build infinite ranges (e.g. end > start with a negative step) will similarly not be accepted and yield an exception",
-			examples = { @example (
-					value = "range(0,6,2)",
-					equals = "[0,2,4,6]") })})
+				usages = { @usage (
+						value = "When used with 3 operands, it returns a list of int representing all contiguous values from the first to the second argument, using the step represented by the third argument. The range can be increasing or decreasing. Passing the same value for both will return a singleton list with this value. Passing a step of 0 will result in an exception. Attempting to build infinite ranges (e.g. end > start with a negative step) will similarly not be accepted and yield an exception",
+						examples = { @example (
+								value = "range(0,6,2)",
+								equals = "[0,2,4,6]") }) })
 		public static IList range(final IScope scope, final Integer start, final Integer end, final Integer step) {
-			if (step == 0) { throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope); }
-			if (start.equals(end)) { return GamaListFactory.wrap(Types.INT, start); }
+			if (step == 0) throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope);
+			if (start.equals(end)) return GamaListFactory.wrap(Types.INT, start);
 			if (end > start) {
-				if (step < 0) {
+				if (step < 0)
 					throw GamaRuntimeException.error("Negative step would result in an infinite range", scope);
-				}
 			} else {
-				if (step > 0) {
+				if (step > 0)
 					throw GamaRuntimeException.error("Positive step would result in an infinite range", scope);
-				}
 			}
 			return IntStreamEx.rangeClosed(start, end, step).boxed().toCollection(listOf(Types.INT));
 
@@ -235,15 +235,14 @@ public class Containers {
 				value = "Retrieves elements from the first argument every `step` (second argument) elements. Raises an error if the step is negative or equal to zero")
 		@test ("[1,2,3,4,5] every 2 = [1,3,5]")
 		public static IList every(final IScope scope, final IList source, final Integer step) {
-			if (step <= 0) {
+			if (step <= 0)
 				throw GamaRuntimeException.error("The step value in `every` should be strictly positive", scope);
-			}
 			return IntStreamEx.range(0, notNull(scope, source).size(), step).mapToObj(source::get)
 					.toCollection(listLike(source));
 		}
 
 		@operator (
-				value = { "copy_between" /* , "copy" */ },
+				value = { "copy_between", "between" /* , "copy" */ },
 				can_be_const = true,
 				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.LIST },
@@ -262,25 +261,40 @@ public class Containers {
 			final int size = notNull(scope, l1).size();
 			final int endIndex = end > size ? size : end;
 			final IList result = listLike(l1).get();
-			if (beginIndex < endIndex) {
-				result.addAll(l1.subList(beginIndex, endIndex));
-			}
+			if (beginIndex < endIndex) { result.addAll(l1.subList(beginIndex, endIndex)); }
 			return result;
+		}
+
+		@operator (
+				internal = true,
+				value = { "internal_between" },
+				can_be_const = true,
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.LIST },
+				concept = { IConcept.CONTAINER, IConcept.LIST })
+		@doc (
+				value = "For internal use only. Corresponds to the implementation, for containers, of the access with [begin::end]",
+				masterDoc = true)
+		public static IList copy_between(final IScope scope, final IList l1, final GamaPair p) {
+			return copy_between(scope, l1, Cast.asInt(scope, p.key), Cast.asInt(scope, p.value));
 		}
 
 	}
 
 	@operator (
+			internal = true,
 			value = { "internal_at" },
 			content_type = IType.NONE,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER, IConcept.GEOMETRY })
-	@doc (value = "For internal use only. Corresponds to the implementation, for geometries, of the access to containers with [index]", masterDoc = true)
+	@doc (
+			value = "For internal use only. Corresponds to the implementation, for geometries, of the access to containers with [index]",
+			masterDoc = true)
 	@no_test
 	public static Object internal_at(final IScope scope, final IShape shape, final IList indices)
 			throws GamaRuntimeException {
 		// TODO How to test if the index is correct ?
-		if (shape == null) { return null; }
+		if (shape == null) return null;
 		final String key = Cast.asString(scope, indices.get(0));
 		return shape.getAttribute(key);
 		// final IMap map = (IMap) shape.getAttributes();
@@ -289,6 +303,7 @@ public class Containers {
 	}
 
 	@operator (
+			internal = true,
 			value = { "internal_at" },
 			content_type = IType.NONE,
 			category = { IOperatorCategory.CONTAINER },
@@ -297,11 +312,12 @@ public class Containers {
 	@no_test
 	public static Object internal_at(final IScope scope, final IAgent agent, final IList indices)
 			throws GamaRuntimeException {
-		if (agent == null) { return null; }
+		if (agent == null) return null;
 		return agent.getFromIndicesList(scope, indices);
 	}
 
 	@operator (
+			internal = true,
 			value = { "internal_at" },
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
@@ -313,9 +329,8 @@ public class Containers {
 	@validator (InternalAtValidator.class)
 	public static Object internal_at(final IScope scope, final IContainer container, final IList indices)
 			throws GamaRuntimeException {
-		if (container instanceof IContainer.Addressable) {
+		if (container instanceof IContainer.Addressable)
 			return ((IContainer.Addressable) container).getFromIndicesList(scope, indices);
-		}
 		throw GamaRuntimeException.error("" + container + " cannot be accessed using " + indices, scope);
 	}
 
@@ -349,9 +364,7 @@ public class Containers {
 			see = { "contains_all", "contains_any" })
 	@validator (AtValidator.class)
 	public static Object at(final IScope scope, final IContainer container, final Object key) {
-		if (container instanceof IContainer.Addressable) {
-			return ((IContainer.Addressable) container).get(scope, key);
-		}
+		if (container instanceof IContainer.Addressable) return ((IContainer.Addressable) container).get(scope, key);
 		throw GamaRuntimeException.error("" + container + " cannot be accessed using " + key, scope);
 	}
 
@@ -361,9 +374,7 @@ public class Containers {
 		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
 			IType type = arguments[0].getGamlType();
 			final IType indexType = arguments[1].getGamlType();
-			if (Types.FILE.isAssignableFrom(type)) {
-				type = type.getWrappedType();
-			}
+			if (Types.FILE.isAssignableFrom(type)) { type = type.getWrappedType(); }
 			final IType keyType = type.getKeyType();
 			final boolean wrongKey = keyType != Types.NO_TYPE && !indexType.isTranslatableInto(keyType);
 			if (wrongKey) {
@@ -381,13 +392,11 @@ public class Containers {
 		@Override
 		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
 			// Used in remove, for instance
-			if (Types.isEmpty(arguments[1])) { return true; }
+			if (Types.isEmpty(arguments[1])) return true;
 			IType type = arguments[0].getGamlType();
 			// It is normally a list with 1 or 2 indices
 			final IType indexType = arguments[1].getGamlType().getContentType();
-			if (Types.FILE.isAssignableFrom(type)) {
-				type = type.getWrappedType();
-			}
+			if (Types.FILE.isAssignableFrom(type)) { type = type.getWrappedType(); }
 			final IType keyType = type.getKeyType();
 			final boolean wrongKey = keyType != Types.NO_TYPE && !indexType.isTranslatableInto(keyType)
 					&& !(Types.MATRIX.isAssignableFrom(type) && indexType == Types.INT);
@@ -407,7 +416,7 @@ public class Containers {
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
-	@doc("the element at the right operand index of the container")
+	@doc ("the element at the right operand index of the container")
 	@no_test
 	public static Object at(final IScope scope, final IList container, final Integer key) {
 		return container.get(scope, key);
@@ -419,7 +428,7 @@ public class Containers {
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
-	@doc("the element at the right (point) operand index of the matrix")	
+	@doc ("the element at the right (point) operand index of the matrix")
 	@no_test
 	public static Object at(final IScope scope, final IMatrix container, final GamaPoint key) {
 		return container.get(scope, key);
@@ -431,7 +440,7 @@ public class Containers {
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
-	@doc("the agent at the right operand index of the given species")	
+	@doc ("the agent at the right operand index of the given species")
 	@no_test
 	public static IAgent at(final IScope scope, final ISpecies species, final Integer key) {
 		return species.get(scope, key);
@@ -457,7 +466,7 @@ public class Containers {
 		final IContainer<?, IShape> m = t.getPlaces();
 		if (m instanceof IGrid) {
 			final IShape shp = ((IGrid) m).get(scope, val);
-			if (shp != null) { return shp.getAgent(); }
+			if (shp != null) return shp.getAgent();
 		}
 		return null;
 	}
@@ -628,8 +637,8 @@ public class Containers {
 			masterDoc = true)
 	@no_test
 	public static Integer index_of(final IScope scope, final ISpecies s, final Object o) {
-		if (!(o instanceof IAgent)) { return -1; }
-		if (!((IAgent) o).isInstanceOf(notNull(scope, s), true)) { return -1; }
+		if (!(o instanceof IAgent)) return -1;
+		if (!((IAgent) o).isInstanceOf(notNull(scope, s), true)) return -1;
 		return ((IAgent) o).getIndex();
 	}
 
@@ -669,7 +678,7 @@ public class Containers {
 	@test ("[1::2, 3::4, 5::6] index_of 4 = 3")
 	public static Object index_of(final IScope scope, final IMap<?, ?> c, final Object o) {
 		for (final Map.Entry<?, ?> k : notNull(scope, c).entrySet()) {
-			if (k.getValue().equals(o)) { return k.getKey(); }
+			if (k.getValue().equals(o)) return k.getKey();
 		}
 		return null;
 	}
@@ -689,7 +698,7 @@ public class Containers {
 	public static ILocation index_of(final IScope scope, final IMatrix c, final Object o) {
 		for (int i = 0; i < notNull(scope, c).getCols(scope); i++) {
 			for (int j = 0; j < c.getRows(scope); j++) {
-				if (c.get(scope, i, j).equals(o)) { return new GamaPoint(i, j); }
+				if (c.get(scope, i, j).equals(o)) return new GamaPoint(i, j);
 			}
 		}
 		return null;
@@ -717,9 +726,7 @@ public class Containers {
 	public static IList all_indexes_of2(final IScope scope, final IList c, final Object o) {
 		final IList results = GamaListFactory.create(Types.INT);
 		for (int i = 0; i < notNull(scope, c).size(); i++) {
-			if (o == c.get(scope, i)) {
-				results.add(i);
-			}
+			if (o == c.get(scope, i)) { results.add(i); }
 		}
 		return results;
 
@@ -781,7 +788,7 @@ public class Containers {
 	public static ILocation last_index_of(final IScope scope, final IMatrix c, final Object o) {
 		for (int i = notNull(scope, c).getCols(scope) - 1; i > -1; i--) {
 			for (int j = c.getRows(scope) - 1; j > -1; j--) {
-				if (c.get(scope, i, j).equals(o)) { return new GamaPoint(i, j); }
+				if (c.get(scope, i, j).equals(o)) return new GamaPoint(i, j);
 			}
 		}
 		return null;
@@ -803,7 +810,7 @@ public class Containers {
 	@test ("[1::2, 3::4, 5::4] last_index_of 4 = 5")
 	public static Object last_index_of(final IScope scope, final IMap<?, ?> c, final Object o) {
 		for (final Map.Entry<?, ?> k : Lists.reverse(new ArrayList<>(notNull(scope, c).entrySet()))) {
-			if (k.getValue().equals(o)) { return k.getKey(); }
+			if (k.getValue().equals(o)) return k.getKey();
 		}
 		return null;
 	}
@@ -1146,7 +1153,8 @@ public class Containers {
 											equals = "(5::6)") }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] last_with (each > 3)",
-					equals = "8",  returnType = IKeyword.INT),
+					equals = "8",
+					returnType = IKeyword.INT),
 					@example (
 							value = "graph g2 <- graph([]);",
 							isTestOnly = true),
@@ -1180,10 +1188,12 @@ public class Containers {
 							value = "if the left-operand is a map, the keyword each will contain each value",
 							examples = { @example (
 									value = "[1::2, 3::4, 5::6] first_with (each >= 4)",
-									equals = "4", returnType = IKeyword.INT),
+									equals = "4",
+									returnType = IKeyword.INT),
 									@example (
 											value = "[1::2, 3::4, 5::6].pairs first_with (each.value >= 4)",
-											equals = "(3::4)", returnType = IKeyword.PAIR) }) },
+											equals = "(3::4)",
+											returnType = IKeyword.PAIR) }) },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] first_with (each > 3)",
 					equals = "4"),
@@ -1291,7 +1301,7 @@ public class Containers {
 			concept = { IConcept.GRAPH })
 	@test ("sum(as_edge_graph(line([{10,10},{30,10}]))) = 20.0")
 	public static double sum(final IScope scope, final IGraph g) {
-		if (g == null) { return 0.0; }
+		if (g == null) return 0.0;
 		return g.computeTotalWeight();
 	}
 
@@ -1362,12 +1372,10 @@ public class Containers {
 
 		final Object s = Containers.sum(scope, l);
 		int size = l.length(scope);
-		if (size == 0) {
-			size = 1;
-		}
-		if (s instanceof Number) { return ((Number) s).doubleValue() / size; }
-		if (s instanceof ILocation) { return Points.divide(scope, (GamaPoint) s, size); }
-		if (s instanceof GamaColor) { return Colors.divide((GamaColor) s, size); }
+		if (size == 0) { size = 1; }
+		if (s instanceof Number) return ((Number) s).doubleValue() / size;
+		if (s instanceof ILocation) return Points.divide(scope, (GamaPoint) s, size);
+		if (s instanceof GamaColor) return Colors.divide((GamaColor) s, size);
 		return Cast.asFloat(scope, s) / size;
 	}
 
@@ -1472,7 +1480,7 @@ public class Containers {
 		}
 		final IList l = notNull(scope, c).listValue(scope, c.getGamlType().getContentType(), false);
 		final int size = l.size();
-		if (number >= size) { return l; }
+		if (number >= size) return l;
 		final int[] indexes = new int[size];
 		for (int i = 0; i < indexes.length; i++) {
 			indexes[i] = i;
@@ -1601,9 +1609,7 @@ public class Containers {
 		final IList result = GamaListFactory.create(contentType);
 		for (final Object o : c) {
 			scope.setEach(o);
-			if ((Boolean) filter.value(scope)) {
-				result.add(o);
-			}
+			if ((Boolean) filter.value(scope)) { result.add(o); }
 		}
 		scope.setEach(null);
 		return result;
@@ -1729,9 +1735,7 @@ public class Containers {
 		// WARNING TODO The resulting type is not computed
 		final IType type = filter.getGamlType();
 		IType resultingContentsType = type;
-		if (resultingContentsType.isContainer()) {
-			resultingContentsType = resultingContentsType.getContentType();
-		}
+		if (resultingContentsType.isContainer()) { resultingContentsType = resultingContentsType.getContentType(); }
 		return (IList) stream(scope, c).flatCollection(with(scope, filter).andThen(toLists))
 				.toCollection(listOf(resultingContentsType));
 
@@ -1785,9 +1789,7 @@ public class Containers {
 	public static IList interleave(final IScope scope, final IContainer cc) {
 		final Iterable iterable = notNull(scope, cc).iterable(scope);
 		IType type = cc.getGamlType().getContentType();
-		if (type.isContainer()) {
-			type = type.getContentType();
-		}
+		if (type.isContainer()) { type = type.getContentType(); }
 		final Iterator it = new InterleavingIterator(scope, toArray(iterable, Object.class));
 		return GamaListFactory.create(scope, type, it);
 	}
@@ -1857,7 +1859,7 @@ public class Containers {
 			value = "Returns true if none of the elements of the left-hand operand make the right-hand operand evaluate to true. 'c none_matches each.property' is strictly equivalent to '(c count each.property) = 0'",
 			comment = "In the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.",
 			usages = { @usage ("If the left-hand operand is nil, none_matches throws an error."),
-					@usage ("If the left-hand operand is empty, none_matches returns true.")},
+					@usage ("If the left-hand operand is empty, none_matches returns true.") },
 			examples = { @example (
 					value = "[1,2,3,4,5,6,7,8] none_matches (each > 3)",
 					equals = "false"),
@@ -1935,13 +1937,11 @@ public class Containers {
 							equals = "[2::4, 4::8, 6::12] ") },
 			see = {})
 	public static IMap as_map(final IScope scope, final IContainer original, final IExpression filter) {
-		if (!(filter instanceof BinaryOperator)) {
+		if (!(filter instanceof BinaryOperator))
 			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
-		}
 		final BinaryOperator pair = (BinaryOperator) filter;
-		if (!pair.getName().equals("::")) {
+		if (!pair.getName().equals("::"))
 			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
-		}
 		final IExpression key = pair.arg(0);
 		final IExpression value = pair.arg(1);
 		return (IMap) stream(scope, original).collect(Collectors.toMap(with(scope, key), with(scope, value),
@@ -1979,9 +1979,8 @@ public class Containers {
 			GamaRuntimeException.warning("'create_map' expects two lists of the same length", scope);
 		}
 		final HashSet newSet = new HashSet(keys);
-		if (newSet.size() < keys.length(scope)) {
+		if (newSet.size() < keys.length(scope))
 			throw GamaRuntimeException.error("'create_map' expects unique values in the keys list", scope);
-		}
 		return GamaMapFactory.create(scope, keys.getGamlType(), values.getGamlType(), keys, values);
 	}
 

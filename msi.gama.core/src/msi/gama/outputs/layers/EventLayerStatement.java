@@ -16,6 +16,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.EventLayerStatement.EventLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,10 +31,15 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.statements.ActionStatement;
+import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 /**
@@ -72,13 +78,14 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.ACTION,
 						type = IType.ACTION,
-						optional = false,
-						doc = @doc ("Either a block of statements to execute in the context of the experiment or the identifier of the action to be executed in the context of the simulation. This action needs to be defined in 'global' or in the current experiment, without any arguments. The location of the mouse in the world can be retrieved in this action with the pseudo-constant #user_location")) },
+						optional = true,
+						doc = @doc ("The identifier of the action to be executed in the context of the simulation. This action needs to be defined in 'global' or in the current experiment, without any arguments. The location of the mouse in the world can be retrieved in this action with the pseudo-constant #user_location")) },
 		omissible = IKeyword.NAME)
 @validator (EventLayerValidator.class)
 @doc (
 		value = "`" + IKeyword.EVENT
-				+ "` allows to interact with the simulation by capturing mouse or key events and doing an action. This action needs to be defined in 'global' or in the current experiment, without any arguments. The location of the mouse in the world can be retrieved in this action with the pseudo-constant #user_location",
+				+ "` allows to interact with the simulation by capturing mouse or key events and doing an action. The name of this action can be defined with the 'action:' facet, in which case the action needs to be defined in 'global' or in the current experiment, without any arguments."
+				+ " The location of the mouse in the world can be retrieved in this action with the pseudo-constant #user_location. The statements to execute can also be defined in the block at the end of this statement, in which case they will be executed in the context of the experiment",
 		usages = { @usage (
 				value = "The general syntax is:",
 				examples = { @example (
@@ -145,9 +152,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 				boolean foundEventName = false;
 				for (final IEventLayerDelegate delegate : delegates) {
 					error += delegate.getEvents() + " ";
-					if (delegate.getEvents().contains(name)) {
-						foundEventName = true;
-					}
+					if (delegate.getEvents().contains(name)) { foundEventName = true; }
 				}
 				if (!foundEventName) {
 					description.error("No event can be triggered for '" + name + "'. Acceptable values are " + error
@@ -157,27 +162,37 @@ public class EventLayerStatement extends AbstractLayerStatement {
 			}
 
 			final String actionName = description.getLitteral(ACTION);
-			StatementDescription sd = description.getModelDescription().getAction(actionName);
-			if (sd == null) {
-				// we look into the experiment
-				final IDescription superDesc = description.getSpeciesContext();
-				sd = superDesc.getAction(actionName);
-			}
-			if (sd == null) {
-				description.error("Action '" + actionName + "' is not defined in neither 'global' nor 'experiment'",
-						IGamlIssue.UNKNOWN_ACTION, ACTION);
-				return;
-			} else if (sd.getPassedArgs().size() > 0) {
-				description.error("Action '" + actionName
-						+ "' cannot have arguments. Use '#user_location' inside to obtain the location of the mouse, and compute the selected agents in the action using GAML spatial operators",
-						IGamlIssue.DIFFERENT_ARGUMENTS, ACTION);
+			if (actionName != null) {
+				if (actionName.contains(IKeyword.SYNTHETIC)) {
+					description.warning(
+							"This use of 'action' is deprecated. Move the sequence to execute at the end of the 'event' statement instead.",
+							IGamlIssue.DEPRECATED, ACTION);
+				}
+				StatementDescription sd = description.getModelDescription().getAction(actionName);
+				if (sd == null) {
+					// we look into the experiment
+					final IDescription superDesc = description.getSpeciesContext();
+					sd = superDesc.getAction(actionName);
+				}
+				if (sd == null) {
+					description.error("Action '" + actionName + "' is not defined in neither 'global' nor 'experiment'",
+							IGamlIssue.UNKNOWN_ACTION, ACTION);
+					return;
+				} else if (sd.getPassedArgs().size() > 0) {
+					description.error("Action '" + actionName
+							+ "' cannot have arguments. Use '#user_location' inside to obtain the location of the mouse, and compute the selected agents in the action using GAML spatial operators",
+							IGamlIssue.DIFFERENT_ARGUMENTS, ACTION);
+				}
+
 			}
 		}
 	}
 
-	private final boolean executesInSimulation;
+	private boolean executesInSimulation;
 	private final IExpression type;
 	public static List<IEventLayerDelegate> delegates = new ArrayList<>();
+	private String actionName;
+	private ActionStatement action;
 
 	/**
 	 * @param createExecutableExtension
@@ -188,14 +203,24 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
-		final String actionName = description.getLitteral(IKeyword.ACTION);
-		final StatementDescription sd = description.getSpeciesContext().getAction(actionName);
-		executesInSimulation = sd == null;
+		executesInSimulation = false;
+		if (description.hasFacet(IKeyword.ACTION)) {
+			actionName = description.getLitteral(IKeyword.ACTION);
+			final StatementDescription sd = description.getSpeciesContext().getAction(actionName);
+			executesInSimulation = sd == null;
+		}
+
 		type = getFacet(IKeyword.TYPE);
 	}
 
-	public boolean executesInSimulation() {
-		return executesInSimulation;
+	public IAgent getExecuter(final IScope scope) {
+		return executesInSimulation ? scope.getSimulation() : scope.getExperiment();
+	}
+
+	public IExecutable getExecutable(final IScope scope) {
+		if (action != null) return action;
+		IAgent agent = getExecuter(scope);
+		return agent == null ? null : agent.getSpecies().getAction(actionName);
 	}
 
 	@Override
@@ -204,9 +229,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 		final Object source = getSource(scope);
 
 		for (final IEventLayerDelegate delegate : delegates) {
-			if (delegate.acceptSource(scope, source)) {
-				delegate.createFrom(scope, source, this);
-			}
+			if (delegate.acceptSource(scope, source)) { delegate.createFrom(scope, source, this); }
 		}
 		return true;
 	}
@@ -234,5 +257,20 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	private Object getSource(final IScope scope) {
 		final Object source = type == null ? IKeyword.DEFAULT : type.value(scope);
 		return source;
+	}
+
+	@Override
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
+		final List<IStatement> statements = new ArrayList<>();
+		for (final ISymbol c : commands) {
+			if (c instanceof IStatement) { statements.add((IStatement) c); }
+		}
+		if (!statements.isEmpty()) {
+			actionName = "inline";
+			final IDescription d =
+					DescriptionFactory.create(IKeyword.ACTION, getDescription(), IKeyword.NAME, "inline");
+			action = new ActionStatement(d);
+			action.setChildren(statements);
+		}
 	}
 }

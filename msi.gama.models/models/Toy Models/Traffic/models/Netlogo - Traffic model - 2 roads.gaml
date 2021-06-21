@@ -152,7 +152,7 @@ experiment NetlogoTrafficmodel type: gui {
 	output {
 		layout #vertical;
 		display road {
-			grid pavement /*lines: #black*/;
+			grid pavement /*border: #black*/;
 			species car aspect: icon;
 			
 		}

@@ -47,7 +47,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	public static final StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
 	private final ProcessingEnvironment delegate;
 	private RoundEnvironment round;
-	private TypeMirror iSkill, iAgent;
+	private TypeMirror iSkill, iAgent, iVarAndActionSupport, iScope, string;
 	public volatile String currentPlugin;
 	public volatile String shortcut;
 	public List<String> roots;
@@ -70,8 +70,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	}
 
 	public String nameOf(final TypeElement e) {
-		if (e.getNestingKind() == NestingKind.TOP_LEVEL)
-			return e.getQualifiedName().toString();
+		if (e.getNestingKind() == NestingKind.TOP_LEVEL) return e.getQualifiedName().toString();
 		return nameOf((TypeElement) e.getEnclosingElement()) + "." + e.getSimpleName().toString();
 	}
 
@@ -107,16 +106,35 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	}
 
 	public TypeMirror getISkill() {
-		if (iSkill == null) {
-			iSkill = delegate.getElementUtils().getTypeElement("msi.gama.common.interfaces.ISkill").asType();
-		}
+		if (iSkill == null) { iSkill = getType("msi.gama.common.interfaces.ISkill"); }
 		return iSkill;
 	}
 
-	TypeMirror getIAgent() {
-		if (iAgent == null) {
-			iAgent = delegate.getElementUtils().getTypeElement("msi.gama.metamodel.agent.IAgent").asType();
+	public TypeMirror getIScope() {
+		if (iScope == null) { iScope = getType("msi.gama.runtime.IScope"); }
+		return iScope;
+	}
+
+	public TypeMirror getString() {
+		if (string == null) { string = getType("java.lang.String"); }
+		return string;
+	}
+
+	public TypeMirror getType(final String qualifiedName) {
+		TypeElement e = delegate.getElementUtils().getTypeElement(qualifiedName);
+		if (e == null) return null;
+		return e.asType();
+	}
+
+	public TypeMirror getIVarAndActionSupport() {
+		if (iVarAndActionSupport == null) {
+			iVarAndActionSupport = getType("msi.gama.common.interfaces.IVarAndActionSupport");
 		}
+		return iVarAndActionSupport;
+	}
+
+	TypeMirror getIAgent() {
+		if (iAgent == null) { iAgent = getType("msi.gama.metamodel.agent.IAgent"); }
 		return iAgent;
 	}
 
@@ -172,12 +190,11 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	}
 
 	public void emit(final Kind kind, final String s, final Element e) {
-		if (!PRODUCES_WARNING)
-			return;
+		if (!PRODUCES_WARNING) return;
 		if (e == null) {
-			getMessager().printMessage(kind, s);
+			getMessager().printMessage(kind, "GAML: " + s);
 		} else {
-			getMessager().printMessage(kind, s, e);
+			getMessager().printMessage(kind, "GAML: " + s, e);
 		}
 	}
 
@@ -356,9 +373,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 		final List<Annotation> result = new ArrayList<>();
 		for (final Class<? extends Annotation> clazz : processors.keySet()) {
 			final Annotation a = e.getAnnotation(clazz);
-			if (a != null) {
-				result.add(a);
-			}
+			if (a != null) { result.add(a); }
 		}
 		return result;
 	}

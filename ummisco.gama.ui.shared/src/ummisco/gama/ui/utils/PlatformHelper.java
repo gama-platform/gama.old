@@ -60,8 +60,16 @@ public class PlatformHelper extends DPIUtil {
 		return isDeveloper;
 	}
 
+	public static int scaleToHiDPI(final int size) {
+		return autoScaleUp(size);
+	}
+
 	public static int scaleDownIfMac(final int size) {
 		return isMac ? autoScaleDown(size) : size;
+	}
+
+	public static int scaleUpIfMac(final int size) {
+		return isMac ? autoScaleUp(size) : size;
 	}
 
 	public static float scaleUpIfWin(final float size) {
@@ -101,7 +109,7 @@ public class PlatformHelper extends DPIUtil {
 	}
 
 	static int parseVersion(final String version) {
-		if (version == null) { return 0; }
+		if (version == null) return 0;
 		int major = 0, minor = 0, micro = 0;
 		final int length = version.length();
 		int index = 0, start = 0;
@@ -109,27 +117,21 @@ public class PlatformHelper extends DPIUtil {
 			index++;
 		}
 		try {
-			if (start < length) {
-				major = Integer.parseInt(version.substring(start, index));
-			}
+			if (start < length) { major = Integer.parseInt(version.substring(start, index)); }
 		} catch (final NumberFormatException e) {}
 		start = ++index;
 		while (index < length && Character.isDigit(version.charAt(index))) {
 			index++;
 		}
 		try {
-			if (start < length) {
-				minor = Integer.parseInt(version.substring(start, index));
-			}
+			if (start < length) { minor = Integer.parseInt(version.substring(start, index)); }
 		} catch (final NumberFormatException e) {}
 		start = ++index;
 		while (index < length && Character.isDigit(version.charAt(index))) {
 			index++;
 		}
 		try {
-			if (start < length) {
-				micro = Integer.parseInt(version.substring(start, index));
-			}
+			if (start < length) { micro = Integer.parseInt(version.substring(start, index)); }
 		} catch (final NumberFormatException e) {}
 		return javaVersion(major, minor, micro);
 	}

@@ -4,9 +4,9 @@
 package msi.gama.lang.gaml.ui;
 
 import com.google.inject.Injector;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.xtext.ui.guice.AbstractGuiceAwareExecutableExtensionFactory;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import ummisco.gama.ui.modeling.internal.ModelingActivator;
 
 /**
@@ -17,7 +17,7 @@ public class GamlExecutableExtensionFactory extends AbstractGuiceAwareExecutable
 
 	@Override
 	protected Bundle getBundle() {
-		return Platform.getBundle(ModelingActivator.PLUGIN_ID);
+		return FrameworkUtil.getBundle(ModelingActivator.class);
 	}
 	
 	@Override

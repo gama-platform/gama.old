@@ -32,6 +32,13 @@ import java.lang.annotation.Target;
 
 public final class GamlAnnotations {
 
+	/**
+	 * An annotation for signalling an implementation of msi.gama.common.interfaces.IDisplaySurface as a potential
+	 * display surface for GAMA models
+	 *
+	 * @author drogoul
+	 *
+	 */
 	@Retention (RetentionPolicy.RUNTIME)
 	@Target (ElementType.TYPE)
 	@Inherited
@@ -78,15 +85,6 @@ public final class GamlAnnotations {
 		 * @return an Array of @facet, each representing a facet name, type..
 		 */
 		facet[] value();
-
-		// /**
-		// * Combinations.
-		// *
-		// * @return The different combinations of facets that are allowed. Not
-		// completely functional
-		// * yet.
-		// */
-		// combination[] combinations() default {};
 
 		/**
 		 * Ommissible.
@@ -192,23 +190,10 @@ public final class GamlAnnotations {
 		boolean remote_context() default false;
 	}
 
-	//
-	// @Retention(RetentionPolicy.SOURCE)
-	// public static @interface combination {
-	//
-	// /**
-	// * Value.
-	// *
-	// * @return an Array of String, each representing a possible combination of
-	// facets names
-	// */
-	// String[] value();
-	//
-	// }
-
 	/**
 	 *
-	 * The class type. Allows to declare a new datatype in GAML.
+	 * The class type. Allows to declare a new datatype in GAML. Should annotate a class that implements IType<...> or
+	 * subclasses GamaType<...>
 	 *
 	 * @author drogoul
 	 * @since 2 juin 2012
@@ -924,6 +909,25 @@ public final class GamlAnnotations {
 	}
 
 	/**
+	 * The class listener. Indicates that a method is to be used as a listener for a variable, even if this variable is
+	 * not defined in the vars of this class. Allows to "listen" to the evolution of the variables managed by other
+	 * skills. If the var doesn't exist, this annotation has no effect.
+	 *
+	 * @see vars
+	 */
+	@Retention (RetentionPolicy.RUNTIME)
+	@Target (ElementType.METHOD)
+	public static @interface listener {
+
+		/**
+		 * Value.
+		 *
+		 * @return the name of the variable for which the annotated method is to be considered as a listener.
+		 */
+		String value();
+	}
+
+	/**
 	 *
 	 * The class factory. Denotes that a class (that must implement ISymbolFactory) can be used to parse and compile
 	 * specific kinds of symbols
@@ -1443,8 +1447,7 @@ public final class GamlAnnotations {
 	/**
 	 * Written by gaudou Modified on 24 mars 2014
 	 *
-	 * Used to annotate fields that are used as constants in GAML. Note that these constants need to be either a String
-	 * or a Java primitive type. No other constants can be defined.
+	 * Used to annotate fields that are used as constants in GAML.
 	 *
 	 */
 	@Retention (RetentionPolicy.RUNTIME)

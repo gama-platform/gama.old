@@ -106,7 +106,7 @@ species squares {
 
 experiment MondiranGenerator type: gui {
 	parameter "Nb max of squares: " var: nb_max_squares;
-	parameter "Nb max of lines: " var: nb_max_lines;
+	parameter "Nb max of border: " var: nb_max_lines;
 	parameter "Nb max of columns: " var: nb_max_columns;
 	
 	output {

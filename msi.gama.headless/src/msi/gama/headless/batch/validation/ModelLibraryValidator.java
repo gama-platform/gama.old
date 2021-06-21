@@ -29,7 +29,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
 	@Override
 	public int start(final List<String> args) throws IOException {
-		final Injector injector = HeadlessSimulationLoader.preloadGAMA();
+		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 		final int[] count = { 0 };
 		final int[] code = { 0, 0 };
@@ -98,9 +98,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	}
 
 	public static ModelLibraryValidator getInstance() {
-		if (instance == null) {
-			instance = new ModelLibraryValidator();
-		}
+		if (instance == null) { instance = new ModelLibraryValidator(); }
 		return instance;
 	}
 }

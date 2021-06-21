@@ -16,6 +16,7 @@ import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayData;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -36,9 +37,10 @@ public class SnapshotMaker {
 
 		final int width = w == -1 ? surface.getWidth() : w;
 		final int height = h == -1 ? surface.getHeight() : h;
-		final String file = snapshotFile + "_size_" + width + "x" + height + "_cycle_" + scope.getClock().getCycle()
-				+ "_time_" + java.lang.System.currentTimeMillis() + ".png";
-
+		final String autosavePath=data.getAutosavePath();
+		final String file =autosavePath!=""?autosavePath:(snapshotFile + "_size_" + width + "x" + height + "_cycle_" + scope.getClock().getCycle()
+				+ "_time_" + java.lang.System.currentTimeMillis() + ".png");
+System.out.println("xxx  "+file);
 		BufferedImage image = null;
 		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {

@@ -106,9 +106,7 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void updateToolbarState() {
-		if (toolbarUpdater != null) {
-			toolbarUpdater.updateToReflectState();
-		}
+		if (toolbarUpdater != null) { toolbarUpdater.updateToReflectState(); }
 	}
 
 	@Override
@@ -123,9 +121,7 @@ public abstract class GamaViewPart extends ViewPart
 		String s_id = site.getSecondaryId();
 		if (s_id != null) {
 			final int i = s_id.indexOf("@@@");
-			if (i != -1) {
-				s_id = s_id.substring(0, i);
-			}
+			if (i != -1) { s_id = s_id.substring(0, i); }
 		}
 		final String id = site.getId() + (s_id == null ? "" : s_id);
 		IDisplayOutput out = null;
@@ -136,9 +132,7 @@ public abstract class GamaViewPart extends ViewPart
 			for (final IOutputManager manager : concat(
 					transform(GAMA.getControllers(), each -> each.getExperiment().getActiveOutputManagers()))) {
 				out = (IDisplayOutput) manager.getOutputWithId(id);
-				if (out != null) {
-					break;
-				}
+				if (out != null) { break; }
 			}
 
 			// hqngh in case of micro-model
@@ -154,9 +148,7 @@ public abstract class GamaViewPart extends ViewPart
 								final SimulationAgent spec = ((ExperimentAgent) expAgent).getSimulation();
 								if (spec != null) {
 									final IOutputManager manager = spec.getOutputManager();
-									if (manager != null) {
-										out = (IDisplayOutput) manager.getOutputWithId(s_id);
-									}
+									if (manager != null) { out = (IDisplayOutput) manager.getOutputWithId(s_id); }
 								}
 							}
 						}
@@ -166,9 +158,7 @@ public abstract class GamaViewPart extends ViewPart
 		} else {
 			if (shouldBeClosedWhenNoExperiments()) {
 				WorkbenchHelper.asyncRun(() -> {
-					if (shouldBeClosedWhenNoExperiments()) {
-						close(GAMA.getRuntimeScope());
-					}
+					if (shouldBeClosedWhenNoExperiments()) { close(GAMA.getRuntimeScope()); }
 				});
 
 			}
@@ -195,7 +185,7 @@ public abstract class GamaViewPart extends ViewPart
 	public void createPartControl(final Composite composite) {
 		this.rootComposite = composite;
 		composite.addDisposeListener(this);
-		if (needsOutput() && getOutput() == null) { return; }
+		if (needsOutput() && getOutput() == null) return;
 		this.setParentComposite(GamaToolbarFactory.createToolbars(this, composite));
 		ownCreatePartControl(getParentComposite());
 		// activateContext();
@@ -209,9 +199,7 @@ public abstract class GamaViewPart extends ViewPart
 	public abstract void ownCreatePartControl(Composite parent);
 
 	protected final GamaUIJob getUpdateJob() {
-		if (updateJob == null) {
-			updateJob = createUpdateJob();
-		}
+		if (updateJob == null) { updateJob = createUpdateJob(); }
 		return updateJob;
 	}
 
@@ -231,13 +219,13 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public IDisplayOutput getOutput() {
-		if (outputs.isEmpty()) { return null; }
+		if (outputs.isEmpty()) return null;
 		return outputs.get(0);
 	}
 
 	@Override
 	public void addOutput(final IDisplayOutput out) {
-		if (out == null) { return; }
+		if (out == null) return;
 		if (!outputs.contains(out)) {
 			outputs.add(out);
 		} else {
@@ -264,7 +252,8 @@ public abstract class GamaViewPart extends ViewPart
 	public void dispose() {
 		DEBUG.OUT("+++ Part " + this.getPartName() + " is being disposed");
 		toolbarUpdater = null;
-		super.dispose();
+		WorkbenchHelper.run(() -> super.dispose());
+
 	}
 
 	/**
@@ -275,15 +264,13 @@ public abstract class GamaViewPart extends ViewPart
 	 */
 	@Override
 	public void stopDisplayingTooltips() {
-		if (toolbar == null || toolbar.isDisposed()) { return; }
-		if (toolbar.hasTooltip()) {
-			toolbar.wipe(SWT.LEFT, false);
-		}
+		if (toolbar == null || toolbar.isDisposed()) return;
+		if (toolbar.hasTooltip()) { toolbar.wipe(SWT.LEFT, false); }
 	}
 
 	@Override
 	public void displayTooltip(final String text, final GamaUIColor color) {
-		if (toolbar == null || toolbar.isDisposed()) { return; }
+		if (toolbar == null || toolbar.isDisposed()) return;
 		toolbar.tooltip(text, color, SWT.LEFT);
 	}
 
@@ -303,9 +290,7 @@ public abstract class GamaViewPart extends ViewPart
 	@Override
 	public void removeOutput(final IDisplayOutput output) {
 		outputs.remove(output);
-		if (outputs.isEmpty()) {
-			close(output.getScope());
-		}
+		if (outputs.isEmpty()) { close(output.getScope()); }
 	}
 
 	@Override
@@ -314,9 +299,7 @@ public abstract class GamaViewPart extends ViewPart
 		final int first = old.lastIndexOf('(');
 		final int second = old.lastIndexOf(')');
 		if (first == -1) {
-			if (agent.getPopulation().size() > 1) {
-				setPartName(old + " (" + agent.getName() + ")");
-			}
+			if (agent.getPopulation().size() > 1) { setPartName(old + " (" + agent.getName() + ")"); }
 		} else {
 
 			setPartName(overlay(old, agent.getName(), first + 1, second));
@@ -328,23 +311,13 @@ public abstract class GamaViewPart extends ViewPart
 		String overlay = over;
 		int start = s;
 		int end = e;
-		if (str == null) { return null; }
-		if (overlay == null) {
-			overlay = "";
-		}
+		if (str == null) return null;
+		if (overlay == null) { overlay = ""; }
 		final int len = str.length();
-		if (start < 0) {
-			start = 0;
-		}
-		if (start > len) {
-			start = len;
-		}
-		if (end < 0) {
-			end = 0;
-		}
-		if (end > len) {
-			end = len;
-		}
+		if (start < 0) { start = 0; }
+		if (start > len) { start = len; }
+		if (end < 0) { end = 0; }
+		if (end > len) { end = len; }
 		if (start > end) {
 			final int temp = start;
 			start = end;

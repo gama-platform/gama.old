@@ -22,7 +22,6 @@
 
 package msi.gama.ext.svgsalamander;
 
-import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.File;
@@ -122,7 +121,7 @@ public class StyleAttribute implements Serializable {
 
 	public String getUnits() {
 		matchFpNumUnits.reset(stringValue);
-		if (!matchFpNumUnits.matches()) { return null; }
+		if (!matchFpNumUnits.matches()) return null;
 		return matchFpNumUnits.group(6);
 	}
 
@@ -136,7 +135,7 @@ public class StyleAttribute implements Serializable {
 	}
 
 	static public float convertUnitsToPixels(final int unitType, final float value) {
-		if (unitType == NumberWithUnits.UT_UNITLESS || unitType == NumberWithUnits.UT_PERCENT) { return value; }
+		if (unitType == NumberWithUnits.UT_UNITLESS || unitType == NumberWithUnits.UT_PERCENT) return value;
 
 		float pixPerInch;
 		try {
@@ -163,19 +162,15 @@ public class StyleAttribute implements Serializable {
 		return value;
 	}
 
-	public Color getColorValue() {
-		return ColorTable.parseColor(stringValue);
-	}
-
 	public String parseURLFn() {
 		matchUrl.reset(stringValue);
-		if (!matchUrl.matches()) { return null; }
+		if (!matchUrl.matches()) return null;
 		return matchUrl.group(1);
 	}
 
 	public URL getURLValue(final URL docRoot) {
 		final String fragment = parseURLFn();
-		if (fragment == null) { return null; }
+		if (fragment == null) return null;
 		try {
 			return new URL(docRoot, fragment);
 		} catch (final Exception e) {
@@ -186,7 +181,7 @@ public class StyleAttribute implements Serializable {
 
 	public URL getURLValue(final URI docRoot) {
 		final String fragment = parseURLFn();
-		if (fragment == null) { return null; }
+		if (fragment == null) return null;
 		try {
 			final URI ref = docRoot.resolve(fragment);
 			return ref.toURL();
@@ -209,10 +204,8 @@ public class StyleAttribute implements Serializable {
 	public URI getURIValue(final URI base) {
 		try {
 			String fragment = parseURLFn();
-			if (fragment == null) {
-				fragment = stringValue.replaceAll("\\s+", "");
-			}
-			if (fragment == null) { return null; }
+			if (fragment == null) { fragment = stringValue.replaceAll("\\s+", ""); }
+			if (fragment == null) return null;
 
 			// ======================
 			// This gets around a bug in the 1.5.0 JDK
@@ -225,12 +218,10 @@ public class StyleAttribute implements Serializable {
 			// [scheme:]scheme-specific-part[#fragment]
 
 			final URI uriFrag = new URI(fragment);
-			if (uriFrag.isAbsolute()) {
-				// Has scheme
+			if (uriFrag.isAbsolute()) // Has scheme
 				return uriFrag;
-			}
 
-			if (base == null) { return uriFrag; }
+			if (base == null) return uriFrag;
 
 			final URI relBase = new URI(null, base.getSchemeSpecificPart(), null);
 			URI relUri;

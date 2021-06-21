@@ -38,7 +38,7 @@ grid cell width: 5 height: 5 parallel: true {
 experiment multithread type: gui {
 	output {
 		display map {
-			grid cell lines: #black;
+			grid cell border: #black;
 		}
 	}
 }

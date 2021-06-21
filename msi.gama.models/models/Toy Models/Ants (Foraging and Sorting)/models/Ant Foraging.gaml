@@ -146,12 +146,12 @@ species ant skills: [moving] control: fsm {
 		if(use_icons) {
 			draw ant_shape size: {7, 5} rotate: my heading + 1; 			
 		}
-		draw circle(1) empty: !has_food color: #red;
+		draw circle(1) wireframe: !has_food color: #red;
 		if (destination != nil) {
 			draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false end_arrow: 1.2;
 		}
 		if (state != "wandering") {
-			draw circle(4) empty: true color: #white;
+			draw circle(4) wireframe: true color: #white;
 			draw string(self as int) color: #white font: font("Helvetica", 14 , #bold) at: my location - {1, 1, -0.5};			
 			if(display_state) {
 				draw state color: #yellow font: font("Helvetica", 18, #bold) at: my location + {1, 1, 0.5} ;
@@ -164,7 +164,7 @@ species ant skills: [moving] control: fsm {
 	}
 
 	aspect icon {
-		draw ant_shape size: {7, 5} rotate: my heading + 1 empty: true;
+		draw ant_shape size: {7, 5} rotate: my heading + 1 wireframe: true;
 	}
 	
 	aspect icon_svg {

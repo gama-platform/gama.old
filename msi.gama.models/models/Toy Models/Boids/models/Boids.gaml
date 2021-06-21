@@ -71,7 +71,7 @@ species boids_goal skills: [moving] {
 	
 	aspect default {
 		draw circle(10) color: #red ;
-		draw circle(40) color: #orange empty: true;
+		draw circle(40) color: #orange wireframe: true;
 	}
 } 
 //Species boids which represents the boids agents whom follow the boid goal agents, using the skill moving
@@ -180,7 +180,7 @@ species boids skills: [moving] {
 	}
 	
 	aspect default { 
-		draw circle(20) color: #lightblue empty: true;
+		draw circle(20) color: #lightblue wireframe: true;
 	}
 } 
 
