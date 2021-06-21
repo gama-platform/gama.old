@@ -68,33 +68,4 @@ public class DrivingOperators {
 		}
 		return graph;
 	}
-
-	/**
-	 * Checks if there is enough space for the vehicle to enter the specified lanes on the new road.
-	 *
-	 *
-	 * @param scope
-	 * @param road The new road
-	 * @param startingLane The lane index to check
-	 * @return true if there is enough space, false otherwise
-	 */
-	// TODO: remove this later on
-	@operator(value = "enough_space_to_enter_road")
-	public static boolean enoughSpaceToEnterRoad(IScope scope, IAgent road, int startingLane, int numLanesOccupied, double requiredLength) {
-		List<List<List<IAgent>>> otherDrivers = (List<List<List<IAgent>>>)
-				road.getAttribute(RoadSkill.AGENTS_ON);
-		// check if any vehicle in these lanes is too close to the source node of the road
-		for (int i = 0; i < numLanesOccupied; i += 1) {
-			List<List<IAgent>> laneDrivers = otherDrivers.get(startingLane + i);
-			for (List<IAgent> segmentDrivers : laneDrivers)
-			for (IAgent otherDriver : segmentDrivers) {
-				if (otherDriver == null || otherDriver.dead()) continue;
-				if (GeometryUtils.getFirstPointOf(road).euclidianDistanceTo(otherDriver) <
-						requiredLength + (double) otherDriver.getAttribute(DrivingSkill.VEHICLE_LENGTH) / 2) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
 }
