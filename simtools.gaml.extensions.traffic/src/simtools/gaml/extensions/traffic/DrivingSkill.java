@@ -1805,6 +1805,7 @@ public class DrivingSkill extends MovingSkill {
 		setCurrentPath(vehicle, null);
 	}
 
+	// TODO: this action is not overridden
 	@action(
 		name = "die",
 		doc = @doc(
