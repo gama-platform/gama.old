@@ -16,19 +16,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.kabeja.dxf.DXFArc;
-import org.kabeja.dxf.DXFBlock;
-import org.kabeja.dxf.DXFCircle;
-import org.kabeja.dxf.DXFDocument;
-import org.kabeja.dxf.DXFEntity;
-import org.kabeja.dxf.DXFLayer;
-import org.kabeja.dxf.DXFLine;
-import org.kabeja.dxf.DXFPolyline;
-import org.kabeja.dxf.DXFSolid;
-import org.kabeja.dxf.DXFVertex;
-import org.kabeja.parser.DXFParser;
-import org.kabeja.parser.Parser;
-import org.kabeja.parser.ParserBuilder;
+import msi.gama.ext.kabeja.dxf.DXFArc;
+import msi.gama.ext.kabeja.dxf.DXFBlock;
+import msi.gama.ext.kabeja.dxf.DXFCircle;
+import msi.gama.ext.kabeja.dxf.DXFDocument;
+import msi.gama.ext.kabeja.dxf.DXFEntity;
+import msi.gama.ext.kabeja.dxf.DXFLayer;
+import msi.gama.ext.kabeja.dxf.DXFLine;
+import msi.gama.ext.kabeja.dxf.DXFPolyline;
+import msi.gama.ext.kabeja.dxf.DXFSolid;
+import msi.gama.ext.kabeja.dxf.DXFVertex;
+import msi.gama.ext.kabeja.parser.DXFParser;
+import msi.gama.ext.kabeja.parser.Parser;
+import msi.gama.ext.kabeja.parser.ParserBuilder;
 
 import org.locationtech.jts.geom.Envelope;
 

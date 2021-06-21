@@ -25,18 +25,15 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.operators.Containers;
-import msi.gaml.operators.Stats;
 import msi.gaml.types.IType;
 
 @SuppressWarnings ({ "rawtypes" })
-public class Stats2 extends Stats {
+public class Stats2 {
 
 	static DoubleArrayList from(final IScope scope, final IContainer values) {
 		final DoubleArrayList d = new DoubleArrayList(values.length(scope));
 		for (final Object o : values.iterable(scope)) {
-			if (o instanceof Number) {
-				d.add(((Number) o).doubleValue());
-			}
+			if (o instanceof Number) { d.add(((Number) o).doubleValue()); }
 		}
 
 		return d;

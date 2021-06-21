@@ -45,21 +45,24 @@ jobs:
 
       - name: Validate and test Maven
         shell: bash
-        run: $GITHUB_WORKSPACE/travis/validate_and_test.sh
+        run: |
+            $GITHUB_WORKSPACE/travis/validate_and_test.sh
+            cat /home/runner/work/gama/gama/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless/.work/.metadata/.log
 
       - name: Prepare SSH (if needed)
         if: ${{ contains(github.event.head_commit.message, 'ci clean') && contains(github.event.head_commit.message, 'ci deploy') }} 
         shell: bash
         run: |
+          export SSHPASS=${{ secrets.USER_PWD }} 
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
+          ssh-keyscan -H 51.255.46.42 >> ~/.ssh/known_hosts
           chmod 700 ~/.ssh
           cat << EOF > ~/.ssh/config
           Host *
               ServerAliveInterval 60
               StrictHostKeyChecking no
           EOF
+          chmod 400 ~/.ssh/config
 
       - name: Publish to Github
         shell: bash

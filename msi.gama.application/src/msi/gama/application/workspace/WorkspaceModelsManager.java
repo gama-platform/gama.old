@@ -141,15 +141,18 @@ public class WorkspaceModelsManager {
 	private IFile findAndLoadIFile(final String filePath) {
 		// GAMA.getGui().debug("WorkspaceModelsManager.findAndLoadIFile " + filePath);
 		// No error in case of an empty argument
-		if ( isBlank(filePath) ) { return null; }
+		if ( isBlank(filePath) )
+			return null;
 		final IPath path = new Path(filePath);
 
 		// 1st case: the path can be identified as a file residing in the workspace
 		IFile result = findInWorkspace(path);
-		if ( result != null ) { return result; }
+		if ( result != null )
+			return result;
 		// 2nd case: the path is outside the workspace
 		result = findOutsideWorkspace(path);
-		if ( result != null ) { return result; }
+		if ( result != null )
+			return result;
 		// DEBUG.OUT(
 		// "File " + filePath + " cannot be located. Please check its name and location. Arguments provided were : " +
 		// Arrays.toString(CommandLineArgs.getApplicationArgs()));
@@ -157,11 +160,14 @@ public class WorkspaceModelsManager {
 	}
 
 	private boolean isBlank(final String cs) {
-		if ( cs == null ) { return true; }
-		if ( cs.isEmpty() ) { return true; }
+		if ( cs == null )
+			return true;
+		if ( cs.isEmpty() )
+			return true;
 		final int sz = cs.length();
 		for ( int i = 0; i < sz; i++ ) {
-			if ( !Character.isWhitespace(cs.charAt(i)) ) { return false; }
+			if ( !Character.isWhitespace(cs.charAt(i)) )
+				return false;
 		}
 		return true;
 	}
@@ -181,7 +187,8 @@ public class WorkspaceModelsManager {
 		} catch (final Exception e) {
 			return null;
 		}
-		if ( !file.exists() ) { return null; }
+		if ( !file.exists() )
+			return null;
 		return file;
 	}
 
@@ -189,7 +196,8 @@ public class WorkspaceModelsManager {
 		// GAMA.getGui().debug("WorkspaceModelsManager.findOutsideWorkspace " + originalPath);
 		final File modelFile = new File(originalPath.toOSString());
 		// TODO If the file does not exist we return null (might be a good idea to check other locations)
-		if ( !modelFile.exists() ) { return null; }
+		if ( !modelFile.exists() )
+			return null;
 
 		// We try to find a folder containing the model file which can be considered as a project
 		File projectFileBean = new File(modelFile.getPath());
@@ -308,18 +316,14 @@ public class WorkspaceModelsManager {
 		if ( result == MessageDialog.CANCEL ) {
 			project = createOrUpdateProject(UNCLASSIFIED_MODELS);
 			modelFolder = project.getFolder(new Path("models"));
-			if ( !modelFolder.exists() ) {
-				modelFolder.create(true, true, null);
-			}
+			if ( !modelFolder.exists() ) { modelFolder.create(true, true, null); }
 		} else {
 			final IContainer container =
 				(IContainer) ResourcesPlugin.getWorkspace().getRoot().findMember((IPath) dialog.getResult()[0]);
 			if ( container instanceof IProject ) {
 				project = (IProject) container;
 				modelFolder = project.getFolder(new Path("models"));
-				if ( !modelFolder.exists() ) {
-					modelFolder.create(true, true, null);
-				}
+				if ( !modelFolder.exists() ) { modelFolder.create(true, true, null); }
 			} else {
 				modelFolder = (IFolder) container;
 			}
@@ -337,11 +341,11 @@ public class WorkspaceModelsManager {
 			if ( iFile.exists() ) {
 				if ( iFile.isLinked() ) {
 					final IPath path = iFile.getLocation();
-					if ( path.equals(location) ) {
+					if ( path.equals(location) )
 						// First case, this is a linked resource to the same location. In that case, we simply return
 						// its name.
 						return iFile;
-					} else {
+					else {
 						// Second case, this resource is a link to another location. We create a filename that is
 						// guaranteed not to exist and change iFile accordingly.
 						iFile = createUniqueFileFrom(iFile, modelFolder);
@@ -454,18 +458,18 @@ public class WorkspaceModelsManager {
 		findProjects(modelsRep, foundProjects);
 		importBuiltInProjects(bundle, core, tests, foundProjects);
 
-		if ( core ) {
-			stampWorkspaceFromModels();
-		}
+		if ( core ) { stampWorkspaceFromModels(); }
 
 	}
 
 	private static final FilenameFilter isDotFile = (dir, name) -> name.equals(".project");
 
 	private static void findProjects(final File folder, final Map<File, IPath> found) {
-		if ( folder == null ) { return; }
+		if ( folder == null )
+			return;
 		final File[] dotFile = folder.listFiles(isDotFile);
-		if ( dotFile == null ) { return; } // not a directory
+		if ( dotFile == null )
+			return;
 		if ( dotFile.length == 0 ) { // no .project file
 			final File[] files = folder.listFiles();
 			if ( files != null ) {
@@ -535,7 +539,8 @@ public class WorkspaceModelsManager {
 					final IProjectDescription desc = ws.newProjectDescription(name);
 					project.create(desc, m.split(1000));
 				}
-				if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
+				if ( monitor.isCanceled() )
+					throw new OperationCanceledException();
 				project.open(IResource.BACKGROUND_REFRESH, m.split(1000));
 				projectHandle[0] = project;
 				setValuesProjectDescription(project, false, false, false, null);
@@ -571,9 +576,7 @@ public class WorkspaceModelsManager {
 				ids.add(TEST_NATURE);
 			} else if ( inPlugin ) {
 				ids.add(PLUGIN_NATURE);
-			} else if ( builtin ) {
-				ids.add(BUILTIN_NATURE);
-			}
+			} else if ( builtin ) { ids.add(BUILTIN_NATURE); }
 			desc = proj.getDescription();
 			desc.setNatureIds(ids.toArray(new String[ids.size()]));
 			// Addition of a special nature to the project.
@@ -614,16 +617,12 @@ public class WorkspaceModelsManager {
 			if ( oldStamp != null ) {
 				final File stampFile =
 					new File(new Path(root.getLocation().toOSString() + File.separator + oldStamp).toOSString());
-				if ( stampFile.exists() ) {
-					stampFile.delete();
-				}
+				if ( stampFile.exists() ) { stampFile.delete(); }
 			}
 			root.setPersistentProperty(BUILTIN_PROPERTY, stamp);
 			final File stampFile =
 				new File(new Path(root.getLocation().toOSString() + File.separator + stamp).toOSString());
-			if ( !stampFile.exists() ) {
-				stampFile.createNewFile();
-			}
+			if ( !stampFile.exists() ) { stampFile.createNewFile(); }
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		} catch (final IOException e) {
@@ -639,7 +638,8 @@ public class WorkspaceModelsManager {
 					IPath p = new Path(f.getAbsolutePath());
 					p = p.append(".project");
 					final IProjectDescription pd = ResourcesPlugin.getWorkspace().loadProjectDescription(p);
-					if ( pd.hasNature(this.GAMA_NATURE) ) { return true; }
+					if ( pd.hasNature(this.GAMA_NATURE) )
+						return true;
 				}
 			}
 		}

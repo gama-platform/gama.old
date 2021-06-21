@@ -12,6 +12,8 @@
  **********************************************************************************************/
 package msi.gama.ext;
 
+import java.util.Arrays;
+
 import javax.imageio.ImageIO;
 import javax.media.jai.JAI;
 
@@ -50,19 +52,21 @@ public class Activator implements BundleActivator {
 		Hints.putSystemDefault(Hints.FEATURE_FACTORY, CommonFactoryFinder.getFeatureFactory(null));
 		Hints.putSystemDefault(Hints.USE_JAI_IMAGEREAD, true);
 		final Hints defHints = GeoTools.getDefaultHints();
-//
-//		// Initialize GridCoverageFactory so that we don't make a lookup every time a factory is
-//		// needed
+		//
+		// // Initialize GridCoverageFactory so that we don't make a lookup every time a factory is
+		// // needed
 		Hints.putSystemDefault(Hints.GRID_COVERAGE_FACTORY, CoverageFactoryFinder.getGridCoverageFactory(defHints));
-//		// Forces early initialisation of operation registry of JAI.
-//		// It fixes initialisation problems in some third party equinox
-//		// applications such as OpenMOLE.
-//
-//		// final String os = System.getProperty("os.name");
-//		// if (!os.startsWith("Mac")) {
-//
-//		// }
-	System.out.println("> JAI/ImageIO subsystem activated");
+		// // Forces early initialisation of operation registry of JAI.
+		// // It fixes initialisation problems in some third party equinox
+		// // applications such as OpenMOLE.
+		//
+		// // final String os = System.getProperty("os.name");
+		// // if (!os.startsWith("Mac")) {
+		//
+		// // }
+
+		System.out
+				.println("> JAI/ImageIO subsystem activated to read " + Arrays.asList(ImageIO.getReaderFileSuffixes()));
 	}
 
 	/*

@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IGamaFile;
@@ -66,8 +67,8 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
 		final FileDialog dialog = new FileDialog(WorkbenchHelper.getDisplay().getActiveShell(), SWT.NULL);
-		IGamaFile file = currentValue;
-		dialog.setFileName(file.getPath(getScope()));
+		IGamaFile file = currentValue ;
+		dialog.setFileName(file != null ? file.getPath(getScope()) : GAMA.getModel().getFilePath());
 		dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
 		final String path = dialog.open();
 		if (path != null) {

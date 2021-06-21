@@ -1342,29 +1342,6 @@ public class Containers {
 	}
 
 	@operator (
-			value = { "product_of" },
-			type = ITypeProvider.TYPE_AT_INDEX + 2,
-			iterator = true,
-			category = IOperatorCategory.CONTAINER,
-			concept = { IConcept.CONTAINER, IConcept.FILTER })
-	@doc (
-			value = "the product of the right-hand expression evaluated on each of the elements of the left-hand operand",
-			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
-			usages = { @usage (
-					value = "if the left-operand is a map, the keyword each will contain each value",
-					examples = { @example (
-							value = "[1::2, 3::4, 5::6] product_of (each)",
-							equals = "48") }) },
-			examples = { @example (
-					value = "[1,2] product_of (each * 10 )",
-					equals = "200") },
-			see = { "min_of", "max_of", "sum_of", "mean_of" })
-	@test ("[3,4] product_of (each *2) = 48")
-	public static Object product_of(final IScope scope, final IContainer container, final IExpression filter) {
-		return Stats.product(scope, collect(scope, container, filter));
-	}
-
-	@operator (
 			value = "mean",
 			can_be_const = true,
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1 + ITypeProvider.FLOAT_IN_CASE_OF_INT,
@@ -1417,26 +1394,6 @@ public class Containers {
 	@test ("[1,2] mean_of (each * 10 ) = 15")
 	public static Object mean_of(final IScope scope, final IContainer container, final IExpression filter) {
 		return mean(scope, collect(scope, container, filter));
-	}
-
-	@operator (
-			value = { "variance_of" },
-			type = ITypeProvider.TYPE_AT_INDEX + 2,
-			iterator = true,
-			category = IOperatorCategory.CONTAINER,
-			concept = { IConcept.CONTAINER, IConcept.FILTER })
-	@doc (
-			value = "the variance of the right-hand expression evaluated on each of the elements of the left-hand operand",
-			comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ",
-			see = { "min_of", "max_of", "sum_of", "product_of" },
-			examples = { @example (
-					value = "[1,2,3,4,5,6] variance_of each with_precision 2",
-					equals = "2.92",
-					returnType = "float") })
-
-	@test ("[1,2,3,4,5,6] variance_of each with_precision 2 = 2.92")
-	public static Object variance_of(final IScope scope, final IContainer container, final IExpression filter) {
-		return Stats.opVariance(scope, collect(scope, container, filter));
 	}
 
 	@operator (
