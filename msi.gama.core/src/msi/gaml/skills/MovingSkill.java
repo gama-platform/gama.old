@@ -196,7 +196,6 @@ public class MovingSkill extends Skill {
 				oldLocation.getZ());
 		if (!topology.isTorus() && p != null &&
 				!p.equalsWithTolerance(oldCoords, 0.01)) {
-		// if (!topology.isTorus() && p != null && p.euclidianDistanceTo(oldLocation)) {
 			final Double newHeading = topology.directionInDegreesTo(agent.getScope(), oldLocation, p);
 			if (newHeading != null) {
 				setHeading(agent, newHeading);
