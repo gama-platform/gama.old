@@ -20,7 +20,7 @@ commit_wiki_files() {
 	
 
 }
-
+ 
 commit_io_website_files() {
 	echo "Trigger to githubio"
 	git config --global user.email "my.gama.bot@gmail.com"
