@@ -253,12 +253,12 @@ import msi.gaml.types.IType;
 						doc = @doc ("setting this facet to 'true' will allow 'perceive' to use concurrency with a parallel_bdi architecture; setting it to an integer will set the threshold under which they will be run sequentially (the default is initially 20, but can be fixed in the preferences). This facet is true by default.")),
 				@facet (
 						name = RuleStatement.STRENGTH,
-						type = { IType.FLOAT, IType.INT },
+						type = { IType.FLOAT, IType.INT , IType.LIST},
 						optional = true,
 						doc = @doc ("The stregth of the mental state created")),
 				@facet (
 						name = "lifetime",
-						type = IType.INT,
+						type = { IType.INT , IType.LIST},
 						optional = true,
 						doc = @doc ("the lifetime value of the mental state created")),
 				@facet (
@@ -1072,41 +1072,67 @@ public class RuleStatement extends AbstractStatement {
 																		SimpleBdiArchitecture.removeObligation(scope,
 																				tempRemoveObl);
 																	}
-																}
+																}																
 																if (newDesires != null) {
 																	final List<Predicate> newDess =
 																			(List<Predicate>) newDesires.value(scope);
+																	int i = 0;
 																	for (final Predicate newDes : newDess) {
 																		final MentalState tempDesires =
 																				new MentalState("Desire", newDes);
 																		if (strength != null) {
-																			tempDesires.setStrength(Cast.asFloat(scope,
-																					strength.value(scope)));
+																			if (strength.value(scope) instanceof Double || strength.value(scope) instanceof Float || strength.value(scope) instanceof Integer) {
+																				tempDesires.setStrength(Cast.asFloat(scope,
+																						strength.value(scope)));
+																			} else {
+																				tempDesires.setStrength(Cast.asFloat(scope,
+																						((List<Float>)strength.value(scope)).get(i)));
+																			}																			
 																		}
 																		if (lifetime != null) {
-																			tempDesires.setLifeTime(Cast.asInt(scope,
-																					lifetime.value(scope)));
+																			if(lifetime.value(scope) instanceof List ) {
+																				tempDesires.setLifeTime(Cast.asInt(scope,
+																						((List<Integer>)lifetime.value(scope)).get(i)));
+																			} else {
+																				tempDesires.setLifeTime(Cast.asInt(scope,
+																						lifetime.value(scope)));
+																			}
+																			
 																		}
 																		SimpleBdiArchitecture.addDesire(scope, null,
 																				tempDesires);
+																		i = i+1;
 																	}
 																}
 																if (newBeliefs != null) {
 																	final List<Predicate> newBels =
 																			(List<Predicate>) newBeliefs.value(scope);
+																	int i = 0;
 																	for (final Predicate newBel : newBels) {
 																		final MentalState tempBeliefs =
 																				new MentalState("Belief", newBel);
 																		if (strength != null) {
-																			tempBeliefs.setStrength(Cast.asFloat(scope,
-																					strength.value(scope)));
+																			if (strength.value(scope) instanceof Double || strength.value(scope) instanceof Float || strength.value(scope) instanceof Integer) {
+																				tempBeliefs.setStrength(Cast.asFloat(scope,
+																						strength.value(scope)));
+																			} else {
+																				tempBeliefs.setStrength(Cast.asFloat(scope,
+																						((List<Float>)strength.value(scope)).get(i)));
+																			}																			
 																		}
 																		if (lifetime != null) {
-																			tempBeliefs.setLifeTime(Cast.asInt(scope,
-																					lifetime.value(scope)));
+																			if(lifetime.value(scope) instanceof List ) {
+																				tempBeliefs.setLifeTime(Cast.asInt(scope,
+																						((List<Integer>)lifetime.value(scope)).get(i)));
+																			} else {
+																				tempBeliefs.setLifeTime(Cast.asInt(scope,
+																						lifetime.value(scope)));
+																			}
+																			
 																		}
 																		SimpleBdiArchitecture.addBelief(scope,
 																				tempBeliefs);
+																		i = i+1;
 																	}
 																}
 																if (newEmotions != null) {
@@ -1119,38 +1145,64 @@ public class RuleStatement extends AbstractStatement {
 																	final List<Predicate> newUncerts =
 																			(List<Predicate>) newUncertainties
 																					.value(scope);
+																	int i = 0;
 																	for (final Predicate newUncert : newUncerts) {
 																		final MentalState tempUncertainties =
 																				new MentalState("Uncertainty",
 																						newUncert);
 																		if (strength != null) {
-																			tempUncertainties.setStrength(Cast.asFloat(
-																					scope, strength.value(scope)));
+																			if (strength.value(scope) instanceof Double || strength.value(scope) instanceof Float || strength.value(scope) instanceof Integer) {
+																				tempUncertainties.setStrength(Cast.asFloat(scope,
+																						strength.value(scope)));
+																			} else {
+																				tempUncertainties.setStrength(Cast.asFloat(scope,
+																						((List<Float>)strength.value(scope)).get(i)));
+																			}																			
 																		}
 																		if (lifetime != null) {
-																			tempUncertainties.setLifeTime(Cast.asInt(
-																					scope, lifetime.value(scope)));
+																			if(lifetime.value(scope) instanceof List ) {
+																				tempUncertainties.setLifeTime(Cast.asInt(scope,
+																						((List<Integer>)lifetime.value(scope)).get(i)));
+																			} else {
+																				tempUncertainties.setLifeTime(Cast.asInt(scope,
+																						lifetime.value(scope)));
+																			}
+																			
 																		}
 																		SimpleBdiArchitecture.addUncertainty(scope,
 																				tempUncertainties);
+																		i = i+1;
 																	}
 																}
 																if (newIdeals != null) {
 																	final List<Predicate> newIdes =
 																			(List<Predicate>) newIdeals.value(scope);
+																	int i = 0;
 																	for (final Predicate newIde : newIdes) {
 																		final MentalState tempIdeals =
 																				new MentalState("Ideal", newIde);
 																		if (strength != null) {
-																			tempIdeals.setStrength(Cast.asFloat(scope,
-																					strength.value(scope)));
+																			if (strength.value(scope) instanceof Double || strength.value(scope) instanceof Float || strength.value(scope) instanceof Integer) {
+																				tempIdeals.setStrength(Cast.asFloat(scope,
+																						strength.value(scope)));
+																			} else {
+																				tempIdeals.setStrength(Cast.asFloat(scope,
+																						((List<Float>)strength.value(scope)).get(i)));
+																			}																			
 																		}
 																		if (lifetime != null) {
-																			tempIdeals.setLifeTime(Cast.asInt(scope,
-																					lifetime.value(scope)));
+																			if(lifetime.value(scope) instanceof List ) {
+																				tempIdeals.setLifeTime(Cast.asInt(scope,
+																						((List<Integer>)lifetime.value(scope)).get(i)));
+																			} else {
+																				tempIdeals.setLifeTime(Cast.asInt(scope,
+																						lifetime.value(scope)));
+																			}
+																			
 																		}
 																		SimpleBdiArchitecture.addIdeal(scope,
 																				tempIdeals);
+																		i = i+1;
 																	}
 																}
 																if (removeBeliefs != null) {
