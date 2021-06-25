@@ -11,7 +11,7 @@ import msi.gaml.species.ISpecies;
  *
  * @author Alexis Drogoul 2021
  */
-public interface IBody<BodyType, ShapeType> extends IPhysicalConstants {
+public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhysicalEntity<VectorType> {
 
 	default float clamp(final Double value) {
 		float result = value == null ? 0f : value.floatValue();
@@ -20,9 +20,7 @@ public interface IBody<BodyType, ShapeType> extends IPhysicalConstants {
 
 	BodyType getBody();
 
-	default BodyType createAndInitializeBody(final ShapeType shape) {
-		return null;
-	}
+	BodyType createAndInitializeBody(final ShapeType shape, WorldType world);
 
 	default boolean noContactNotificationWanted(final IAgent agent) {
 		ISpecies species = agent.getSpecies();

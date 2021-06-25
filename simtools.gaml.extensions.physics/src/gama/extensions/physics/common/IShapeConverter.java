@@ -2,13 +2,12 @@ package gama.extensions.physics.common;
 
 import gama.extensions.physics.gaml.PhysicalSimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.skills.GridSkill.IGridAgent;
 
-public interface IShapeConverter<ShapeType, VectorType> extends IPhysicalConstants {
+public interface IShapeConverter<ShapeType, VectorType> extends IPhysicalEntity<VectorType> {
 
 	default float computeDepth(final IAgent agent) {
 		// Special case for grids, where the grid_value is used as the elevation
@@ -49,7 +48,5 @@ public interface IShapeConverter<ShapeType, VectorType> extends IPhysicalConstan
 
 	ShapeType convertTerrain(final IScope scope, final GamaFloatMatrix field, final Double width, final Double height,
 			final float depth);
-
-	VectorType toVector(final GamaPoint v);
 
 }

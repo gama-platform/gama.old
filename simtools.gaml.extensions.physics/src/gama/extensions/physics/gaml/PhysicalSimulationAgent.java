@@ -16,9 +16,9 @@ import java.util.Collection;
 
 import gama.extensions.physics.BulletActivator;
 import gama.extensions.physics.common.IPhysicalConstants;
-import gama.extensions.physics.common.IPhysicalWorldGateway;
-import gama.extensions.physics.java_version.PhysicalWorldGateway;
-import gama.extensions.physics.native_version.NativePhysicalWorldGateway;
+import gama.extensions.physics.common.IPhysicalWorld;
+import gama.extensions.physics.java_version.BulletPhysicalWorld;
+import gama.extensions.physics.native_version.NativeBulletPhysicalWorld;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -102,7 +102,7 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	Boolean automatedRegistration = true;
 	final GamaPoint gravity = new GamaPoint(0, 0, -9.81d);
 	GamaFloatMatrix terrain;
-	IPhysicalWorldGateway gateway;
+	IPhysicalWorld gateway;
 	Boolean useNativeLibrary = BulletActivator.NATIVE_BULLET_LIBRARY_LOADED;
 
 	private final AsOrderedSet<IAgent> registeredAgents = Collector.getOrderedSet();
@@ -249,9 +249,9 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 		return true;
 	}
 
-	IPhysicalWorldGateway getGateway() {
+	IPhysicalWorld getGateway() {
 		if (gateway == null) {
-			gateway = useNativeLibrary ? new NativePhysicalWorldGateway(this) : new PhysicalWorldGateway(this);
+			gateway = useNativeLibrary ? new NativeBulletPhysicalWorld(this) : new BulletPhysicalWorld(this);
 		}
 		return gateway;
 	}

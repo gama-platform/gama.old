@@ -1,33 +1,6 @@
 package gama.extensions.physics.common;
 
-public interface IPhysicalConstants {
-
-	/*
-	 * Constants from Bullet
-	 */
-
-	/**
-	 * Use ActivationStates
-	 *
-	 * @author drogoul
-	 *
-	 */
-	enum ActivationState {
-		UNKNOWN(-1), ACTIVE(1), SLEEPING(2), WANTING_DEACTIVATION(3), ALWAYS_ON(4), ALWAYS_OFF(5);
-
-		private final int bulletCode;
-
-		ActivationState(final int i) {
-			bulletCode = i;
-		}
-
-		public static ActivationState of(final int code) {
-			for (ActivationState a : values()) {
-				if (a.bulletCode == code) return a;
-			}
-			return UNKNOWN;
-		}
-	}
+public interface IPhysicalConstants<VectorType> {
 
 	double EPS = 0.000001;
 

@@ -217,7 +217,7 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	 * @author drogoul
 	 *
 	 */
-	public class FakeBody implements IBody<Object, Object> {
+	public class FakeBody implements IBody<Object, Object, Object, GamaPoint> {
 		public final Map<String, Object> values = new HashMap<>();
 
 		@Override
@@ -247,13 +247,23 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		@Override
 		public GamaPoint getAngularVelocity(final GamaPoint v) {
 			GamaPoint result = (GamaPoint) values.get(ANGULAR_VELOCITY);
-			return result == null ? new GamaPoint() : result;
+			if (result == null) {
+				v.setLocation(0, 0, 0);
+			} else {
+				v.setLocation(result);
+			}
+			return v;
 		}
 
 		@Override
 		public GamaPoint getLinearVelocity(final GamaPoint v) {
 			GamaPoint result = (GamaPoint) values.get(VELOCITY);
-			return result == null ? new GamaPoint() : result;
+			if (result == null) {
+				v.setLocation(0, 0, 0);
+			} else {
+				v.setLocation(result);
+			}
+			return v;
 		}
 
 		@Override
@@ -340,12 +350,27 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 
 		@Override
 		public Object getBody() {
-			return null;
+			return this;
 		}
 
 		@Override
 		public IAgent getAgent() {
 			return null;
+		}
+
+		@Override
+		public GamaPoint toVector(final GamaPoint v) {
+			return v;
+		}
+
+		@Override
+		public GamaPoint toGamaPoint(final GamaPoint v) {
+			return v;
+		}
+
+		@Override
+		public Object createAndInitializeBody(final Object shape, final Object world) {
+			return this;
 		}
 
 	}
