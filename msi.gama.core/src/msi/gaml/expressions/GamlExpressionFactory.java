@@ -41,7 +41,6 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The static class ExpressionFactory.
@@ -208,8 +207,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
-		final boolean isReverse = op.equals("reverse");
-		if (isReverse) { DEBUG.OUT(""); }
 		if (!hasOperator(op, context, eObject, args)) {
 			final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 			final Signature userSignature = new Signature(args).simplified();
