@@ -7,14 +7,16 @@
 		<server>
 			<id>p2Repo</id>
 			<username>${{secret.USER_ID}}</username>
-			<password>${{ secrets.USER_PWD }}</password>
+			<password>${{secrets.USER_PWD}}</password>
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
 			
-			<configuration>
-				<sshExecutable>plink</sshExecutable>
-				<scpExecutable>pscp</scpExecutable>
-				<timeout>120000000</timeout> 
+			<configuration> 
+				<sshExecutable>plink</sshExecutable>  
+				<StrictHostKeyChecking>no</StrictHostKeyChecking>				
+				<knownHostsProvider implementation="org.apache.maven.wagon.providers.ssh.knownhost.NullKnownHostProvider">
+                	<hostKeyChecking>no</hostKeyChecking>
+            	</knownHostsProvider>
 			</configuration>
 		</server>
 	</servers>
