@@ -6,8 +6,7 @@
 	<servers>
 		<server>
 			<id>p2Repo</id>
-			<username>$SSH_USER_ID</username>
-			<password>$SSH_USER_PWD</password>
+			<username>$SSH_USER_ID</username> 
 			<privateKey>$SSH_PRIVATE_KEY</privateKey>
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
