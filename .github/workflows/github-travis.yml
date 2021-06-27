@@ -45,11 +45,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build with Maven
-        shell: bash
-        run: $GITHUB_WORKSPACE/travis/compile.sh 
-        env:
-          MSG: ${ github.event.head_commit.message }
           
       - name: Prepare SSH (if needed)
         if: ${{ contains(github.event.head_commit.message, 'ci clean') && contains(github.event.head_commit.message, 'ci deploy') }} 
