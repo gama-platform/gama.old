@@ -36,7 +36,13 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-    
+            
+      - name: Decrypt large secret
+        run: $GITHUB_WORKSPACE/travis/decrypt_secret.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.USER_PWD }}
+      - name: Test printing your secret (Remove this step in production)
+        run: cat $GITHUB_WORKSPACE/secrets/my_secret.json
       - name: Publish to Github
         shell: bash
         run: $GITHUB_WORKSPACE/travis/publish.sh
