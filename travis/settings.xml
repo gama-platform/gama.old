@@ -6,12 +6,15 @@
 	<servers>
 		<server>
 			<id>p2Repo</id>
-			<username>gamaws</username>
+			<username>${{ secrets.USER_ID }}</username>        
+			<password>${{ secrets.USER_PWD }}</password>
 			<privateKey>${{ secrets.SSH_PRIVATE_KEY }}</privateKey>
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
 			
 			<configuration> 
+				<host>${{ secrets.SSH_HOST }}</host>
+				<port>22</port>
 				<sshExecutable>plink</sshExecutable>  
 				<StrictHostKeyChecking>no</StrictHostKeyChecking>				
 				<knownHostsProvider implementation="org.apache.maven.wagon.providers.ssh.knownhost.NullKnownHostProvider">
