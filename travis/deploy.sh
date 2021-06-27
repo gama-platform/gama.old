@@ -12,7 +12,7 @@ echo -e "StrictHostKeyChecking no\n" >> ~/.ssh/config
 echo -e "PubkeyAuthentication no\n" >> ~/.ssh/config 
 cat ~/.ssh/config 
 ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-cd msi.gama.p2updatesite &&
-mvn clean install -P p2Repo --settings ../travis/settings.xml && 
+cd msi.gama.p2updatesite
+mvn deploy -P p2Repo --settings ../travis/settings.xml
 cd - 
 
