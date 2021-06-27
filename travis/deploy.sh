@@ -4,7 +4,8 @@ echo "DEPLOY"
 echo $SSH_USER_ID
 
 mkdir -m 0700 -p ~/.ssh 
- 
+chmod 750 ~
+chmod 700 ~/.ssh 
 echo -e "Host *\n" >> ~/.ssh/config 
 echo -e "IdentitiesOnly yes\n" >> ~/.ssh/config 
 echo -e "Port 22\n" >> ~/.ssh/config 
