@@ -44,3 +44,4 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_USER_ID: ${{ secrets.USER_ID }}
           SSH_USER_PWD: ${{ secrets.USER_PWD }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
