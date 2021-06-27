@@ -34,7 +34,6 @@ jobs:
       - name: Prepare build
         run: |
           echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
-          sudo apt install sshpass -y
           sudo chmod +x $GITHUB_WORKSPACE/travis/*.sh
 
       - name: Cache local Maven repository
@@ -47,12 +46,4 @@ jobs:
     
       - name: Publish to Github
         shell: bash
-        run: |
-          export SSHPASS=${{secrets.USER_PWD}}  
-          $GITHUB_WORKSPACE/travis/publish.sh
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          SSHPASS: ${{ secrets.USER_PWD }}
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          TRAVIS_COMMIT: ${ GITHUB_SHA }
-          TRAVIS_EVENT_TYPE: ${{ github.event_name }}
+        run: $GITHUB_WORKSPACE/travis/publish.sh
