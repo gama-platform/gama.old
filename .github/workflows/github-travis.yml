@@ -42,7 +42,7 @@ jobs:
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.USER_PWD }}
       - name: Test printing your secret (Remove this step in production)
-        run: cat $GITHUB_WORKSPACE/secrets/my_secret.json
+        run: export $USER_PWD=$(cat $GITHUB_WORKSPACE/travis/my_secret.json)
       - name: Publish to Github
         shell: bash
         run: $GITHUB_WORKSPACE/travis/publish.sh

@@ -6,8 +6,8 @@
 	<servers>
 		<server>
 			<id>p2Repo</id>
-			<username>gamaws</username> 
-			<privateKey>${{ secrets.SSH_PRIVATE_KEY }}</privateKey>
+			<username>$SSH_USER_ID</username>
+			<password>$USER_PWD</password> 
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
 			
