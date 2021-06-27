@@ -41,8 +41,6 @@ jobs:
         run: $GITHUB_WORKSPACE/travis/decrypt_secret.sh
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.USER_PWD }}
-      - name: Test printing your secret (Remove this step in production)
-        run: export $USER_PWD=$(cat $GITHUB_WORKSPACE/travis/my_secret.json)
       - name: Publish to Github
         shell: bash
         run: $GITHUB_WORKSPACE/travis/publish.sh
