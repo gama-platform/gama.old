@@ -16,7 +16,7 @@ cache:
   directories:
     - "$HOME/.m2"    
     - "$HOME/.sonarscanner"
-addons: 
+addons:  
     apt:
         packages:       
             - sshpass
