@@ -6,13 +6,14 @@
 	<servers>
 		<server>
 			<id>p2Repo</id>
-			<username>${secret.USER_ID}</username>
-			<password>${secret.USER_PWD}</password>
+			<username>$SSH_USER_ID</username>
+			<password>$SSH_USER_PWD</password>
+			<privateKey>$SSH_PRIVATE_KEY</privateKey>
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
 			
 			<configuration>
-				<host>${secret.SSH_HOST}</host>
+				<host>$SSH_HOST</host>
 				<port>22</port>
 				<sshExecutable>plink</sshExecutable>
 				<scpExecutable>pscp</scpExecutable>
