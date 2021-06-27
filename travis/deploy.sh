@@ -12,7 +12,7 @@ function mvn_deploy() {
 	cd -
 }
  
-cd msi.gama.processor &&
+cd msi.gama.parent &&
 mvn clean install -P p2Repo --settings ../travis/settings.xml && 
 cd - 
 
