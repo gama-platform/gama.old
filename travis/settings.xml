@@ -12,7 +12,7 @@
 			<directoryPermissions>777</directoryPermissions>
 			
 			<configuration> 
-				<host>${{ secrets.SSH_HOST }}</host>
+				<host>$SSH_HOST</host>
 				<port>22</port>
 				<sshExecutable>plink</sshExecutable>  
 				<StrictHostKeyChecking>no</StrictHostKeyChecking>				
