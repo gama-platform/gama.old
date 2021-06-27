@@ -2,7 +2,8 @@
 
 echo "DEPLOY"
 echo $SSH_USER_ID
-USER_PWD=$(cat $GITHUB_WORKSPACE/travis/my_secret.json)
+file="$GITHUB_WORKSPACE/travis/my_secret.json"  
+USER_PWD=$(cat "$file") 
 mkdir -m 0700 -p ~/.ssh 
 chmod 750 ~
 chmod 700 ~/.ssh 
