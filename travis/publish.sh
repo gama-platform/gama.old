@@ -67,8 +67,6 @@ clean(){
 
 deploy(){	
 	echo "Deploy to p2 update site"	
-	echo -e "StrictHostKeyChecking no\n" >> ~/.ssh/config 
-	mkdir -m 0700 -p ~/.ssh && ssh-keyscan github.com | tee -a ~/.ssh/known_hosts
 	bash ./travis/deploy.sh
 }
 embed_jdk(){
