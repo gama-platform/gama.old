@@ -6,9 +6,9 @@
 	<servers>
 		<server>
 			<id>p2Repo</id>
-			<username>${{ secrets.USER_ID }}</username>        
-			<password>${{ secrets.USER_PWD }}</password>
-			<privateKey>${{ secrets.SSH_PRIVATE_KEY }}</privateKey>
+			<username>$SSH_USER_ID</username>        
+			<password>$SSH_USER_PWD</password>
+			<privateKey>$SSH_PRIVATE_KEY</privateKey>
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
 			

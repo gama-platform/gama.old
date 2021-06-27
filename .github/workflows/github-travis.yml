@@ -47,3 +47,7 @@ jobs:
       - name: Publish to Github
         shell: bash
         run: $GITHUB_WORKSPACE/travis/publish.sh
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USER_ID: ${{ secrets.USER_ID }}
+          SSH_USER_PWD: ${{ secrets.USER_PWD }}
