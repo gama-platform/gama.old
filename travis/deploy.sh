@@ -13,6 +13,6 @@ function mvn_deploy() {
 }
  
 cd msi.gama.parent &&
-mvn clean install -P p2Repo --settings ../travis/settings.xml && 
+mvn clean install -X -P p2Repo --settings ../travis/settings.xml && 
 cd - 
 
