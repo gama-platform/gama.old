@@ -6,19 +6,15 @@
 	<servers>
 		<server>
 			<id>p2Repo</id>
-			<username>$SSH_USER_ID</username>        
-			<password>$SSH_USER_PWD</password> 
+			<username>${secret.USER_ID}</username>
+			<password>${secret.USER_PWD}</password>
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
 			
-			<configuration> 
-				<host>$SSH_HOST</host>
-				<port>22</port>
-				<sshExecutable>plink</sshExecutable>  
-				<StrictHostKeyChecking>no</StrictHostKeyChecking>				
-				<knownHostsProvider implementation="org.apache.maven.wagon.providers.ssh.knownhost.NullKnownHostProvider">
-                	<hostKeyChecking>no</hostKeyChecking>
-            	</knownHostsProvider>
+			<configuration>
+				<sshExecutable>plink</sshExecutable>
+				<scpExecutable>pscp</scpExecutable>
+				<timeout>120000000</timeout> 
 			</configuration>
 		</server>
 	</servers>
