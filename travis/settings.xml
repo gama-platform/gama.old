@@ -6,8 +6,8 @@
 	<servers>
 		<server>
 			<id>p2Repo</id>
-			<username>${{secret.USER_ID}}</username>
-			<password>${{secrets.USER_PWD}}</password>
+			<username>${{ secret.USER_ID }}</username>
+			<password>${{ secrets.USER_PWD }}</password>
 			<filePermissions>666</filePermissions>
 			<directoryPermissions>777</directoryPermissions>
 			
