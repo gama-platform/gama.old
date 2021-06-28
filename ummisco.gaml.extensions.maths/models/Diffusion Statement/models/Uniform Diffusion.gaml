@@ -57,7 +57,8 @@ grid cells_four_nb height: size width: size neighbors: 4 {
 
 experiment diffusion type: gui {
 	output {
-		display uniform_diffusion_in_8_neighbors_grid type: opengl {
+		layout #split;
+		display uniform_diffusion_in_8_neighbors_grid type: opengl synchronized: true {
 			// Display the grid with elevation
 			grid cells_eight_nb elevation: true triangulation: true;
 		}
