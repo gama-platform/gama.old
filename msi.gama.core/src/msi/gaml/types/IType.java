@@ -50,7 +50,7 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	int MAP = 10;
 	int AGENT = 11;
 	int FILE = 12;
-	int DIRECTORY = 30 ;
+
 	int GEOMETRY = 13;
 	int SPECIES = 14;
 	int GRAPH = 15;
@@ -67,9 +67,12 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	int ACTION = 26;
 	int ATTRIBUTES = 27;
 
-	int KML = 29;
 	// Represents the meta-type (type of values type)
 	int TYPE = 28;
+	int KML = 29;
+	int DIRECTORY = 30;
+	int FIELD = 31;
+
 	int AVAILABLE_TYPES = 50;
 	int SPECIES_TYPES = 100;
 
@@ -217,7 +220,7 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Returns the number of type parameters this type can accept (for instance list is 1, int is 0, map is 2, file
 	 * depends on the wrapped buffer type, etc.)
-	 * 
+	 *
 	 * @return
 	 */
 	int getNumberOfParameters();

@@ -27,12 +27,11 @@ import com.bulletphysics.util.ObjectArrayList;
 
 import gama.extensions.physics.common.IShapeConverter;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.util.FieldUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.IField;
 
 public class BulletShapeConverter implements IShapeConverter<CollisionShape, Vector3f>, IBulletPhysicalEntity {
 
@@ -131,16 +130,13 @@ public class BulletShapeConverter implements IShapeConverter<CollisionShape, Vec
 	}
 
 	@Override
-	public CollisionShape convertTerrain(final IScope scope, final GamaFloatMatrix field, final Double width,
+	public CollisionShape convertTerrain(final IScope scope, final IField field, final Double width,
 			final Double height, final float depth) {
-		float max = Float.MIN_VALUE, min = Float.MAX_VALUE;
+		double[] minMax = field.getMinMax(null);
+		float max = (float) minMax[1], min = (float) minMax[0];
 		GamaPoint dim = field.getDimensions();
-		float[] data = FieldUtils.toFloats(field.getMatrix());
-		for (float f : data) {
-			if (f > max) {
-				max = f;
-			} else if (f < min) { min = f; }
-		}
+		float[] data = toFloats(field.getMatrix());
+
 		// AD TODO: verify min and max
 		float scale = max == min ? 1f : depth / (max - min);
 		HeightfieldTerrainShape shape =

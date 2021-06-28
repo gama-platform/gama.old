@@ -50,6 +50,7 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -522,6 +523,8 @@ public class Stats {
 							+ "transformed into float") },
 			see = { "min" })
 	public static Object max(final IScope scope, final IContainer l) {
+
+		if (l instanceof GamaField) return ((GamaField) l).getMinMax(null)[1];
 		Number maxNum = null;
 		ILocation maxPoint = null;
 		for (final Object o : l.iterable(scope)) {
@@ -580,6 +583,7 @@ public class Stats {
 									+ " transformed into float") },
 			see = { "max" })
 	public static Object min(final IScope scope, final IContainer l) {
+		if (l instanceof GamaField) return ((GamaField) l).getMinMax(null)[0];
 		Number minNum = null;
 		ILocation minPoint = null;
 		for (final Object o : l.iterable(scope)) {

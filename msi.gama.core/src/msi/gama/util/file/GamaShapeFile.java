@@ -22,22 +22,29 @@ import java.util.Map;
 
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.geotools.util.factory.Hints;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import msi.gama.common.geometry.GamaGeometryFactory;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.util.GISUtils;
+import msi.gama.metamodel.shape.GamaGisGeometry;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -68,7 +75,7 @@ public class GamaShapeFile extends GamaGisFile {
 		DEBUG.ON();
 	}
 
-	FileDataStore store;
+	// FileDataStore store;
 
 	public static class ShapeInfo extends GamaFileMetaData {
 
@@ -318,7 +325,6 @@ public class GamaShapeFile extends GamaGisFile {
 		if (fds instanceof ShapefileDataStore) {
 			ShapefileDataStore store = (ShapefileDataStore) fds;
 			store.setGeometryFactory(GeometryUtils.GEOMETRY_FACTORY);
-			store.setBufferCachingEnabled(true);
 			store.setMemoryMapped(true);
 			store.setCharset(Charset.forName("UTF8"));
 		}
@@ -326,62 +332,57 @@ public class GamaShapeFile extends GamaGisFile {
 
 	}
 
-	// @Override
-	// protected final void readShapes(final IScope scope) {
-	// ProgressCounter counter = new ProgressCounter(scope, "Reading file " + getName(scope));
-	// counter.started();
-	// computeEnvelope(scope);
-	// try (ShapefileReader reader =
-	// new ShapefileReader(new ShpFiles(getFile(scope)), false, true, GeometryUtils.GEOMETRY_FACTORY)) {
-	// float size = length(scope);
-	// int index = 0;
-	// reader.setFlatGeometry(true);
-	// DEBUG.LINE();
-	// while (reader.hasNext()) {
-	// index++;
-	// Geometry g = (Geometry) reader.nextRecord().shape();
-	// if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-	// // if (!with3D && !g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
-	// g = gis.transform(g);
-	// if (!with3D) {
-	// g.apply(ZERO_Z);
-	// g.geometryChanged();
-	// }
-	// g = multiPolygonManagement(g);
-	// GamaShape gt = new GamaGisGeometry(g, null);
-	// if (gt.getInnerGeometry() != null) { getBuffer().add(gt); }
-	// } else if (g == null) {
-	// // See Issue 725
-	// GAMA.reportError(scope,
-	// GamaRuntimeException.warning("geometry could not be added as it is " + "nil: ", scope),
-	// false);
-	// }
-	// if (index % 100 == 0) {
-	// DEBUG.OUT(index + "...", false);
-	// counter.progress(index / size);
-	// if (index % 5000 == 0) { DEBUG.OUT(""); }
-	// }
-	// }
-	// counter.complete();
-	// DEBUG.LINE();
-	// } catch (final IOException e) {
-	// throw GamaRuntimeException.create(e, scope);
-	// }
-	// // finally {
-	// // if (store != null) { store.dispose(); }
-	// // }
-	// // if (size > list.size()) {
-	// // reportError(scope, warning("Problem with file " + getFile(scope) + ": only " + list.size() + " of the "
-	// // + size + " geometries could be added", scope), false);
-	// // }
-	// }
+	@Override
+	protected final void readShapes(final IScope scope) {
+		ProgressCounter counter = new ProgressCounter(scope, "Reading " + getName(scope));
+		SimpleFeatureCollection collection = getFeatureCollection(scope);
+		computeEnvelope(scope);
+		try {
+			collection.accepts(feature -> {
+				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
+				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
+					if (!with3D && !g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
+					g = gis.transform(g);
+					if (!with3D) {
+						g.apply(ZERO_Z);
+						g.geometryChanged();
+					}
+					g = multiPolygonManagement(g);
+					GamaShape gt = new GamaGisGeometry(g, feature);
+					if (gt.getInnerGeometry() != null) { getBuffer().add(gt); }
+				} else if (g == null) {
+					// See Issue 725
+					GAMA.reportError(scope,
+							GamaRuntimeException.warning(
+									"geometry could not be added as it is " + "nil: " + feature.getIdentifier(), scope),
+							false);
+				}
+			}, counter);
+		} catch (final IOException e) {
+			throw GamaRuntimeException.create(e, scope);
+		}
+		// finally {
+		// if (store != null) { store.dispose(); }
+		// }
+		// if (size > list.size()) {
+		// reportError(scope, warning("Problem with file " + getFile(scope) + ": only " + list.size() + " of the "
+		// + size + " geometries could be added", scope), false);
+		// }
+	}
 
 	@Override
 	protected SimpleFeatureCollection getFeatureCollection(final IScope scope) {
 		try {
-			if (store == null) { store = getDataStore(getFile(scope).toURI().toURL()); }
-			final SimpleFeatureSource source = store.getFeatureSource();
-			return source.getFeatures();
+
+			// if (store == null) { store = getDataStoreOld(getFile(scope).toURI().toURL()); }
+			final SimpleFeatureSource source = getDataStore(getFile(scope).toURI().toURL()).getFeatureSource();
+			// AD See Issue #3094. This constitutes a workaround
+			Query query = new Query();
+			// if (!with3D) { query.setHints(new Hints(Hints.FEATURE_2D, true)); }
+			query.getHints().put(Hints.JTS_COORDINATE_SEQUENCE_FACTORY, GamaGeometryFactory.COORDINATES_FACTORY);
+			query.getHints().put(Hints.JTS_GEOMETRY_FACTORY, GeometryUtils.GEOMETRY_FACTORY);
+			// AD
+			return source.getFeatures(query);
 		} catch (IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
@@ -396,8 +397,8 @@ public class GamaShapeFile extends GamaGisFile {
 	@Override
 	public void invalidateContents() {
 		super.invalidateContents();
-		if (store != null) { store.dispose(); }
-		store = null;
+		// if (store != null) { store.dispose(); }
+		// store = null;
 	}
 
 }

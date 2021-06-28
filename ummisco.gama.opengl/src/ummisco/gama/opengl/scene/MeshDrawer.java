@@ -24,6 +24,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 
@@ -45,6 +46,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	protected void _draw(final MeshObject object) {
 		try {
 			gl.pushMatrix();
+			if (object.getAttributes().getScale() != null) {
+				double zScale = object.getAttributes().getScale();
+				gl.scaleBy(1, 1, zScale);
+			}
+
 			FieldMeshDrawer hmap = new FieldMeshDrawer(object);
 			hmap.drawOn(gl);
 		} finally {
@@ -54,7 +60,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	private class FieldMeshDrawer {
 		final double[] data;
-		private DoubleBuffer vertexBuffer, colorBuffer, lineColorBuffer, normalBuffer, texBuffer;
+		private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer;
 		private final int cols, rows;
 		private final double cx, cy, minHeight, maxHeight;
 		private IntBuffer indexBuffer;
@@ -63,6 +69,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		private final boolean outputsTextures;
 		private final boolean outputsColors;
 		private final boolean outputsLines;
+		private Double noData;
 		double[] normals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
 
 		public FieldMeshDrawer(final MeshObject object) {
@@ -70,23 +77,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			this.cols = (int) attributes.getXYDimension().x;
 			this.rows = (int) attributes.getXYDimension().y;
 			data = clone(cols, rows, object.getObject(), true, attributes.isSmooth());
-			double zScale = attributes.getScale() == null ? 1d : attributes.getScale();
-			double zMin = Double.MAX_VALUE, zMax = Double.MIN_VALUE;
-			for (double f : data) {
-				if (f > zMax) {
-					zMax = f;
-				} else if (f < zMin) { zMin = f; }
-			}
-			// If zScale represents an absolute value
-			// this rule is suppressed. The depth now represents a scale, even when bigger than one.
-			// if (zScale > 1) { zScale = zScale / (zMax - zMin); }
-			zMin *= zScale;
-			zMax *= zScale;
-			for (int i = 0; i < data.length; ++i) {
-				data[i] *= zScale;
-			}
-			this.minHeight = zMin;
-			this.maxHeight = zMax;
+			noData = attributes.getNoDataValue();
+			if (noData == null) { noData = object.getObject().getNoData(null); }
+			double[] minMax = object.getObject().getMinMax(null);
+			maxHeight = minMax[1];
+			minHeight = minMax[0];
 			this.cx = attributes.getCellSize().x;
 			this.cy = attributes.getCellSize().y;
 			this.wireframe = attributes.isEmpty();
@@ -101,7 +96,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			outputsLines = wireframe || line != null;
 
 			initializeBuffers();
-			fillBuffers(data);
+			fillBuffers();
 			closeBuffers();
 		}
 
@@ -111,9 +106,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			vertexBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
 			normalBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
 			if (triangles) { indexBuffer = Buffers.newDirectIntBuffer(lengthM1 * 6); }
-			if (outputsLines) { lineColorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
+			if (outputsLines) {
+				lineColorBuffer = Buffers.newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
+			}
 			if (outputsTextures) { texBuffer = newDirectDoubleBuffer(triangles ? length * 2 : lengthM1 * 8); }
-			if (outputsColors) { colorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
+			if (outputsColors) { colorBuffer = Buffers.newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
 		}
 
 		private void colorize(final double z, final int x, final int y) {
@@ -144,7 +141,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 		}
 
-		public void fillBuffers(final double[] data) {
+		public void fillBuffers() {
 			if (triangles) {
 				int[] normalCount = new int[data.length];
 				int[] ix = new int[3];
@@ -155,13 +152,16 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 					double x1 = x * cx;
 					for (int y = 0; y < rows; ++y) {
 						double z = data[y * cols + x];
+						// if (IntervalSize.isZeroWidth(min, max))
+
 						// Outputs the 3 ordinates of the vertex
 						vertexBuffer.put(x1);
+
 						vertexBuffer.put(-y * cy);
 						vertexBuffer.put(z);
 						colorize(z, x, y);
 						// Builds the index buffer: references vertices in the vertex buffer to avoid duplications
-						if (x == 0 || y == 0) { continue; }
+						if (x == 0 || y == 0 || z == noData) { continue; }
 						buildIndexesAndNormals(normalCount, ix, normal, surface, x, y);
 					}
 				}
@@ -171,6 +171,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 					double x1 = x * cx, x2 = (x + 1) * cx;
 					for (int y = 0; y < rows - 1; ++y) {
 						double y1 = -y * cy, y2 = -(y + 1) * cy, z = data[y * cols + x];
+						if (z == noData) { continue; }
 						vertexBuffer.put(new double[] { x1, y1, z, x2, y1, z, x2, y2, z, x1, y2, z });
 						colorize(z, x, y);
 						colorize(z, x + 1, y);
@@ -239,6 +240,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		}
 
 		public void drawOn(final OpenGL openGL) {
+			if (vertexBuffer.limit() == 0) return;
 			final GL2 gl = openGL.getGL();
 			openGL.enable(GL2.GL_VERTEX_ARRAY);
 			openGL.enable(GL2.GL_NORMAL_ARRAY);
@@ -314,10 +316,12 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 		}
 
-		double[] clone(final int width, final int height, final double[] data, final boolean smoothEdges,
+		double[] clone(final int width, final int height, final IField field, final boolean smoothEdges,
 				final boolean smooth) {
+			double[] data = field.getMatrix();
+
+			if (!smooth) return data;
 			double[] result = data.clone();
-			if (!smooth) return result;
 			// Temporary values for traversing single dimensional arrays
 			int x = 0;
 			int z = 0;

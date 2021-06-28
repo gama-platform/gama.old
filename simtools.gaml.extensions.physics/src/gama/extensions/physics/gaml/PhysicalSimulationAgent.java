@@ -36,7 +36,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.Collector.AsOrderedSet;
 import msi.gama.util.IList;
-import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.IField;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -80,8 +80,7 @@ import msi.gaml.types.IType;
 				doc = @doc ("If equal to 0 (the default), makes the simulation engine be stepped alongside the simulation (no substeps allowed). Otherwise, sets the maximum number of physical simulation substeps that may occur within one GAMA simulation step")),
 		@variable (
 				name = IPhysicalConstants.TERRAIN,
-				type = IType.MATRIX,
-				of = IType.FLOAT,
+				type = IType.FIELD,
 				doc = { @doc ("This attribute is a matrix of float that can be used to represent a 3D terrain. The shape of the world, in that case, should be a box, where the"
 						+ "dimension on the z-axis is used to scale the z-values of the DEM. The world needs to be register itself as a physical object") }),
 		@variable (
@@ -101,7 +100,7 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	Boolean ccd = false;
 	Boolean automatedRegistration = true;
 	final GamaPoint gravity = new GamaPoint(0, 0, -9.81d);
-	GamaFloatMatrix terrain;
+	IField terrain;
 	IPhysicalWorld gateway;
 	Boolean useNativeLibrary = BulletActivator.NATIVE_BULLET_LIBRARY_LOADED;
 
@@ -150,12 +149,12 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	}
 
 	@getter (IPhysicalConstants.TERRAIN)
-	public GamaFloatMatrix getTerrain() {
+	public IField getTerrain() {
 		return terrain;
 	}
 
 	@setter (IPhysicalConstants.TERRAIN)
-	public void setTerrain(final GamaFloatMatrix t) {
+	public void setTerrain(final IField t) {
 		terrain = t;
 	}
 

@@ -46,6 +46,11 @@ import msi.gaml.types.IType;
 				optional = true,
 				doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1 for x and y. The z-ordinate can only be defined between 0 and 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
 				@facet (
+						name = "no_data",
+						type = { IType.FLOAT },
+						optional = true,
+						doc = @doc ("Can be used to specify a 'no_data' value, forcing the renderer to not render the cells with this value. If not specified, that value will be searched in the field to display")),
+				@facet (
 						name = IKeyword.SCALE,
 						type = { IType.FLOAT },
 						optional = true,
@@ -92,7 +97,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("if true, gives a grey color to each polygon depending on its elevation (false by default). Supersedes 'color' if it is defined.")),
 				@facet (
 						name = IKeyword.COLOR,
-						type = IType.COLOR,
+						type = { IType.COLOR, IType.LIST },
 						optional = true,
 						doc = @doc ("if true, and if neither 'grayscale' or 'texture' are specified, displays the field in the given color")),
 				@facet (

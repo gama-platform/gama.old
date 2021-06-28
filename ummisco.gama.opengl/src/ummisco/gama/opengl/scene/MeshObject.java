@@ -10,11 +10,12 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
+import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 
-public class MeshObject extends AbstractObject<double[], MeshDrawingAttributes> {
+public class MeshObject extends AbstractObject<IField, MeshDrawingAttributes> {
 
-	public MeshObject(final double[] dem, final MeshDrawingAttributes attributes) {
+	public MeshObject(final IField dem, final MeshDrawingAttributes attributes) {
 		super(dem, attributes, DrawerType.MESH);
 	}
 

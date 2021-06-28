@@ -4,10 +4,18 @@ import gama.extensions.physics.gaml.PhysicalSimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.IField;
 import msi.gaml.skills.GridSkill.IGridAgent;
 
 public interface IShapeConverter<ShapeType, VectorType> extends IPhysicalEntity<VectorType> {
+
+	default float[] toFloats(final double[] array) {
+		float[] result = new float[array.length];
+		for (int i = 0; i < array.length; ++i) {
+			result[i] = (float) array[i];
+		}
+		return result;
+	}
 
 	default float computeDepth(final IAgent agent) {
 		// Special case for grids, where the grid_value is used as the elevation
@@ -33,7 +41,7 @@ public interface IShapeConverter<ShapeType, VectorType> extends IPhysicalEntity<
 		float depth = computeDepth(agent);
 		computeTranslation(agent, type, depth, aabbTranslation, visualTranslation);
 		if (agent instanceof PhysicalSimulationAgent) {
-			GamaFloatMatrix terrain = ((PhysicalSimulationAgent) agent).getTerrain();
+			IField terrain = ((PhysicalSimulationAgent) agent).getTerrain();
 			if (terrain != null)
 				return convertTerrain(agent.getScope(), terrain, agent.getWidth(), agent.getHeight(), depth);
 		}
@@ -46,7 +54,7 @@ public interface IShapeConverter<ShapeType, VectorType> extends IPhysicalEntity<
 
 	ShapeType convertShape(final IShape shape, final IShape.Type type, final float depth);
 
-	ShapeType convertTerrain(final IScope scope, final GamaFloatMatrix field, final Double width, final Double height,
+	ShapeType convertTerrain(final IScope scope, final IField field, final Double width, final Double height,
 			final float depth);
 
 }

@@ -25,6 +25,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.matrix.GamaField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 
 public class GridLayer extends AbstractLayer {
@@ -85,7 +86,8 @@ public class GridLayer extends AbstractLayer {
 		if (gridValueMatrix == null) {
 			dg.drawImage(image, attributes);
 		} else {
-			dg.drawField(gridValueMatrix, attributes);
+			dg.drawField(new GamaField(scope, (int) data.getDimensions().x, (int) data.getDimensions().y,
+					gridValueMatrix, Double.MAX_VALUE), attributes);
 		}
 	}
 

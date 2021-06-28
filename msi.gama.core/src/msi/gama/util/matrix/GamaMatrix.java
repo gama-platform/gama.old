@@ -47,14 +47,6 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return type;
 	}
 
-	protected IContainer<?, ILocation> buildIndexes(final IScope scope, final IContainer value) {
-		final IList<ILocation> result = GamaListFactory.create(Types.POINT);
-		for (final Object o : value.iterable(scope)) {
-			result.add(buildIndex(scope, o));
-		}
-		return result;
-	}
-
 	protected T buildValue(final IScope scope, final Object object) {
 		return (T) type.getContentType().cast(scope, object, null, false);
 	}
@@ -300,10 +292,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			final int x = (int) index.getX();
 			final int y = (int) index.getY();
 			return x >= 0 && x < numCols && y >= 0 && y < numRows;
-		} else if (object instanceof IContainer) {
-			for (final Object o : ((IContainer) object).iterable(scope)) {
-				if (!checkBounds(scope, o, forAdding)) return false;
-			}
+		} else if (object instanceof IList) {
+			IList list = (IList) object;
+			if (list.size() != 2) return false;
+			int x = Cast.asInt(scope, list.get(0));
+			int y = Cast.asInt(scope, list.get(1));
+			return x >= 0 && x < numCols && y >= 0 && y < numRows;
 		} else if (object instanceof Integer) return (Integer) object < numCols * numRows;
 		return false;
 	}
@@ -654,6 +648,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	@Override
 	public IMatrix minus(final Integer val) throws GamaRuntimeException {
 		return this;
+	}
+
+	@Override
+	public double getNoData(final IScope scope) {
+		return Double.MAX_VALUE;
 	}
 
 }

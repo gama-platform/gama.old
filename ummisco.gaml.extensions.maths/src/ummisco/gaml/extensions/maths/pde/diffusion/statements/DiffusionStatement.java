@@ -16,8 +16,8 @@ import java.util.Arrays;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
-import msi.gama.metamodel.topology.grid.IGrid;
+import msi.gama.metamodel.topology.grid.FieldDiffuser;
+import msi.gama.metamodel.topology.grid.IDiffusionTarget;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -35,14 +35,12 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement.DiffusionValidator;
 
 @facets (
@@ -50,13 +48,12 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 				name = IKeyword.VAR,
 				type = IType.ID,
 				optional = false,
-				doc = @doc ("the variable to be diffused")),
+				doc = @doc ("the variable to be diffused. If diffused over a field, then this name will serve to identify the diffusion")),
 				@facet (
 						name = IKeyword.ON,
-						type = { IType.CONTAINER, IType.SPECIES },
-						of = IType.AGENT,
+						type = { IType.SPECIES, IType.FIELD, IType.LIST },
 						optional = false,
-						doc = @doc ("the list of agents (in general cells of a grid), on which the diffusion will occur")),
+						doc = @doc ("the list of agents (in general cells of a grid), or a field on which the diffusion will occur")),
 				@facet (
 						name = IKeyword.MATRIX,
 						type = IType.MATRIX,
@@ -68,9 +65,9 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 						type = IType.ID,
 						optional = true,
 						values = { IKeyword.CONVOLUTION, "dot_product" },
-						doc = @doc ("the diffusion method")),
+						doc = @doc ("the diffusion method. One of 'convolution' or 'dot_product'")),
 				@facet (
-						name = IKeyword.MINVALUE,
+						name = IKeyword.MIN,
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("if a value is smaller than this value, it will not be diffused. By default, this value is equal to 0.0. This value cannot be smaller than 0.")),
@@ -79,7 +76,7 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 						type = IType.MATRIX,
 						of = IType.FLOAT,
 						optional = true,
-						doc = @doc ("a matrix masking the diffusion (matrix created from a image for example). The cells corresponding to the values smaller than \"-1\" in the mask matrix will not diffuse, and the other will diffuse.")),
+						doc = @doc ("a matrix that masks the diffusion ( created from an image for instance). The cells corresponding to the values smaller than \"-1\" in the mask matrix will not diffuse, and the other will diffuse.")),
 				@facet (
 						name = IKeyword.PROPORTION,
 						type = IType.FLOAT,
@@ -155,17 +152,16 @@ public class DiffusionStatement extends AbstractStatement {
 						IGamlIssue.DEPRECATED);
 			}
 			IExpression spec = desc.getFacetExpr(IKeyword.ON);
-			// FIXME Terrible hack, while spec.getType().getSpecies() will give
-			// the species...
-			if (spec.getGamlType().getTitle().split("\\[")[0].equals(Types.SPECIES.toString())) {
-				if (!desc.getSpeciesDescription(spec.getName()).isGrid()) {
+			if (spec.getGamlType().isAgentType()) {
+				if (spec.getGamlType().getSpecies().isGrid()) {
 					desc.error("Diffusions can only be executed on grid species", IGamlIssue.GENERAL);
 				}
-			} else {
-				if (!spec.getGamlType().getContentType().isAgentType()) {
-					desc.error("Diffusions can only be executed on list of agents", IGamlIssue.GENERAL);
-				}
 			}
+
+			// if (!spec.getGamlType().getContentType().isAgentType()) {
+			// desc.error("Diffusions can only be executed on list of agents", IGamlIssue.GENERAL);
+			// }
+
 			spec = desc.getFacetExpr(IKeyword.MINVALUE);
 			if (spec != null && spec.isConst()) {
 				final double min = Cast.asFloat(null, spec.literalValue());
@@ -197,17 +193,64 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 	}
 
-	final String envName;
+	IDiffusionTarget terrain;
+	String variableName;
+	double minValue;
+	boolean initialized, useConvolution, isGradient, avoidMask;
+	int cycleLength, nbNeighbors;
 
 	public DiffusionStatement(final IDescription desc) {
 		super(desc);
-		final SpeciesDescription s = getFacet(IKeyword.ON).getGamlType().getContentType().getSpecies();
-		envName = s.getName();
-
 	}
 
-	private IGrid getEnvironment(final IScope scope) {
-		return (IGrid) scope.getAgent().getScope().getSimulation().getPopulationFor(envName).getTopology().getPlaces();
+	private void buildConstants(final IScope scope) {
+		if (initialized) return;
+		initialized = true;
+		variableName = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
+		minValue = Cast.asFloat(scope, getFacetValue(scope, IKeyword.MINVALUE, 0.0));
+		if (minValue < 0) throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope);
+		useConvolution = getLiteral(IKeyword.METHOD, IKeyword.CONVOLUTION).equals(IKeyword.CONVOLUTION);
+		isGradient = getLiteral(IKeyword.PROPAGATION, IKeyword.DIFFUSION).equals(IKeyword.GRADIENT);
+		Object on = getFacetValue(scope, IKeyword.ON);
+		if (on instanceof ISpecies) {
+			on = ((ISpecies) on).getPopulation(scope).getTopology().getPlaces();
+		} else if (on instanceof IList) {
+			Object first = ((IList) on).get(0);
+			if (first instanceof IAgent) { on = ((IAgent) first).getPopulation().getTopology().getPlaces(); }
+		}
+		this.terrain = (IDiffusionTarget) on;
+		cycleLength = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
+		nbNeighbors = terrain.getNbNeighbours();
+		avoidMask = false;
+		if (getFacet(IKeyword.AVOID_MASK) != null) {
+			avoidMask = Cast.asBool(scope, getFacet(IKeyword.AVOID_MASK).value(scope));
+		}
+	}
+
+	@Override
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		buildConstants(scope);
+		final IMatrix<?> rawMask = Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK));
+		double[][] diffusionMatrix =
+				translateMatrix(scope, Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MATRIX)));
+
+		final double[][] mask = computeMask(scope, rawMask);
+
+		if (diffusionMatrix == null) {
+			// build a diffusion matrix from proportion, variation and range
+			// parameters
+			diffusionMatrix = computeDiffusionMatrix(scope);
+		}
+		if (cycleLength != 1) {
+			// the cycle length is already computed in "computeDiffusionMatrix"
+			// if no diffusion matrix is defined
+			diffusionMatrix = computeMatrix(diffusionMatrix, cycleLength, isGradient);
+		}
+
+		FieldDiffuser.getDiffuser(scope).addDiffusion(scope, variableName, terrain, useConvolution, isGradient,
+				diffusionMatrix, mask, minValue, avoidMask);
+
+		return null;
 	}
 
 	public double[][] translateMatrix(final IScope scope, final IMatrix<?> mm) {
@@ -252,28 +295,7 @@ public class DiffusionStatement extends AbstractStatement {
 		return input_mat_diffu;
 	}
 
-	private GridPopulation<? extends IAgent> computePopulation(final IScope scope) {
-		GridPopulation<? extends IAgent> pop = null;
-		final Object obj = getFacetValue(scope, IKeyword.ON);
-		if (obj instanceof ISpecies) {
-			// the diffusion is applied to the whole grid
-			if (((ISpecies) obj).isGrid()) {
-				pop = (GridPopulation<? extends IAgent>) ((ISpecies) obj).getPopulation(scope);
-			}
-		} else {
-			// the diffusion is applied just to a certain part of the grid.
-			final IList<IAgent> ags = Cast.asList(scope, obj);
-			if (!ags.isEmpty()) {
-				final ISpecies sp = ags.get(0).getSpecies();
-				if (sp.isGrid()) { pop = (GridPopulation<? extends IAgent>) sp.getPopulation(scope); }
-			}
-		}
-		return pop;
-	}
-
-	private double[][] computeMask(final IScope scope, final IMatrix<?> mm,
-			final GridPopulation<? extends IAgent> population) {
-		GridPopulation<? extends IAgent> pop = population;
+	private double[][] computeMask(final IScope scope, final IMatrix<?> mm) {
 		double[][] mask = null;
 
 		// if the mask is not null, translate the mask
@@ -291,41 +313,30 @@ public class DiffusionStatement extends AbstractStatement {
 				}
 			}
 			mask = res;
-		}
-
-		final Object obj = getFacetValue(scope, IKeyword.ON);
-		if (obj instanceof ISpecies) {
-			// the diffusion is applied to the whole grid
-			if (!((ISpecies) obj).isGrid())
-				throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
 		} else {
-			// the diffusion is applied just to a certain part of the grid.
-			// Search the mask.
-			final IList<IAgent> ags = Cast.asList(scope, obj);
-			if (!ags.isEmpty()) {
-				final ISpecies sp = ags.get(0).getSpecies();
-				if (sp.isGrid()) {
-					pop = (GridPopulation<? extends IAgent>) sp.getPopulation(scope);
-					if (mask == null) {
-						mask = new double[pop.getNbCols()][pop.getNbRows()];
-						for (int i = 0; i < mask.length; i++) {
-							for (int j = 0; j < mask[0].length; j++) {
-								mask[i][j] = 0;
-							}
+			final Object obj = getFacetValue(scope, IKeyword.ON);
+			if (!(obj instanceof IDiffusionTarget)) {
+				// the diffusion is applied just to a certain part of the grid.
+				// Search the mask.
+				final IList<IAgent> ags = Cast.asList(scope, obj);
+				if (!ags.isEmpty()) {
+					final ISpecies sp = ags.get(0).getSpecies();
+					if (sp.isGrid()) {
+						mask = new double[terrain.getCols(scope)][terrain.getRows(scope)];
+						for (final IAgent ag : ags) {
+							int i = ag.getIndex();
+							int cols = terrain.getCols(scope);
+							mask[i - i / cols * cols][i / cols] = 1;
 						}
-					}
-					for (final IAgent ag : ags) {
-						mask[ag.getIndex() - ag.getIndex() / pop.getNbCols() * pop.getNbCols()][ag.getIndex()
-								/ pop.getNbCols()] = 1;
-					}
-				} else
-					throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
+					} else
+						throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
+				}
 			}
 		}
 		return mask;
 	}
 
-	public double[][] computeDiffusionMatrix(final IScope scope, final int nb_neighbors, final boolean is_gradient) {
+	public double[][] computeDiffusionMatrix(final IScope scope) {
 		double[][] mat_diffu;
 		double proportion = Cast.asFloat(scope, getFacetValue(scope, IKeyword.PROPORTION));
 		final double variation = Cast.asFloat(scope, getFacetValue(scope, IKeyword.VARIATION));
@@ -333,52 +344,52 @@ public class DiffusionStatement extends AbstractStatement {
 
 		if (range == 0) { range = 1; }
 		if (proportion == 0) { proportion = 1; }
-		if (is_gradient) {
+		if (isGradient) {
 			final int mat_diff_size = range * 2 + 1;
 			mat_diffu = new double[mat_diff_size][mat_diff_size];
 			int distanceFromCenter = 0;
 			for (int i = 0; i < mat_diff_size; i++) {
 				for (int j = 0; j < mat_diff_size; j++) {
-					if (nb_neighbors == 8) {
+					if (nbNeighbors == 8) {
 						distanceFromCenter = Math.max(Math.abs(i - mat_diff_size / 2), Math.abs(j - mat_diff_size / 2));
 					} else {
 						distanceFromCenter = Math.abs(i - mat_diff_size / 2) + Math.abs(j - mat_diff_size / 2);
 					}
 					mat_diffu[i][j] =
-							proportion / Math.pow(nb_neighbors, distanceFromCenter) - distanceFromCenter * variation;
+							proportion / Math.pow(nbNeighbors, distanceFromCenter) - distanceFromCenter * variation;
 					if (mat_diffu[i][j] < 0) { mat_diffu[i][j] = 0; }
 				}
 			}
 		} else {
 			mat_diffu = new double[3][3];
 			int distanceFromCenter = 0;
-			if (nb_neighbors == 8) {
+			if (nbNeighbors == 8) {
 				for (int i = 0; i < 3; i++) {
 					for (int j = 0; j < 3; j++) {
 						distanceFromCenter = Math.max(Math.abs(i - 3 / 2), Math.abs(j - 3 / 2));
 						if (distanceFromCenter == 0) {
-							mat_diffu[i][j] = 1.0 / (nb_neighbors + 1.0);
+							mat_diffu[i][j] = 1.0 / (nbNeighbors + 1.0);
 						} else if (distanceFromCenter == 1) {
-							mat_diffu[i][j] = proportion / (nb_neighbors + 1.0);
+							mat_diffu[i][j] = proportion / (nbNeighbors + 1.0);
 						} else {
 							mat_diffu[i][j] = 0;
 						}
 					}
 				}
 			}
-			if (nb_neighbors == 4) {
+			if (nbNeighbors == 4) {
 				mat_diffu[0][1] = proportion / 5.0;
 				mat_diffu[1][0] = proportion / 5.0;
 				mat_diffu[1][2] = proportion / 5.0;
 				mat_diffu[2][1] = proportion / 5.0;
 				mat_diffu[1][1] = proportion / 5.0;
 			}
-			if (range > 1) { mat_diffu = computeMatrix(mat_diffu, range, is_gradient); }
+			if (range > 1) { mat_diffu = computeMatrix(mat_diffu, range, isGradient); }
 			if (variation > 0) {
 				final int mat_diff_size = mat_diffu.length;
 				for (int i = 0; i < mat_diff_size; i++) {
 					for (int j = 0; j < mat_diff_size; j++) {
-						if (nb_neighbors == 8) {
+						if (nbNeighbors == 8) {
 							distanceFromCenter =
 									Math.max(Math.abs(i - mat_diff_size / 2), Math.abs(j - mat_diff_size / 2));
 						} else {
@@ -392,51 +403,4 @@ public class DiffusionStatement extends AbstractStatement {
 		return mat_diffu;
 	}
 
-	@Override
-	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-
-		final int cLen = Cast.asInt(scope, getFacetValue(scope, IKeyword.CYCLE_LENGTH, 1));
-		final IMatrix<?> raw_mask = Cast.asMatrix(scope, getFacetValue(scope, IKeyword.MASK));
-		double[][] mat_diffu = translateMatrix(scope,
-				Cast.asMatrix(scope, getFacetValue(scope, "mat_diffu", getFacetValue(scope, IKeyword.MATRIX))));
-		// FIXME: this one should be considered as a constant, no ?
-		final String var_diffu = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
-		// true for convolution, false for dot_product
-		final boolean use_convolution = getLiteral(IKeyword.METHOD, IKeyword.CONVOLUTION).equals(IKeyword.CONVOLUTION);
-		final boolean is_gradient = getLiteral(IKeyword.PROPAGATION, IKeyword.DIFFUSION).equals(IKeyword.GRADIENT);
-		boolean avoid_mask = false;
-		if (getFacet(IKeyword.AVOID_MASK) != null) {
-			avoid_mask = Cast.asBool(scope, getFacet(IKeyword.AVOID_MASK).value(scope));
-		}
-		final double minValue = Cast.asFloat(scope, getFacetValue(scope, IKeyword.MINVALUE, 0.0));
-
-		final GridPopulation<? extends IAgent> pop = computePopulation(scope);
-
-		final double[][] mask = computeMask(scope, raw_mask, pop);
-
-		if (mat_diffu == null) {
-			// build a diffusion matrix from proportion, variation and range
-			// parameters
-			// FIXME: this one is a constant too. No need to recompute it every
-			// cycle !
-			final IExpression nb = pop.getSpecies().getFacet(IKeyword.NEIGHBORS);
-			int nb_neighbors = 8;
-			if (nb != null) { nb_neighbors = Cast.asInt(scope, nb.value(scope)); }
-			mat_diffu = computeDiffusionMatrix(scope, nb_neighbors, is_gradient);
-		}
-		if (cLen != 1) {
-			// the cycle length is already computed in "computeDiffusionMatrix"
-			// if no diffusion matrix is defined
-			mat_diffu = computeMatrix(mat_diffu, cLen, is_gradient);
-		}
-
-		if (minValue < 0) throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope);
-
-		if (pop != null) {
-			getEnvironment(scope).diffuseVariable(scope, use_convolution, is_gradient, mat_diffu, mask, var_diffu, pop,
-					minValue, avoid_mask);
-		}
-
-		return null;
-	}
 }

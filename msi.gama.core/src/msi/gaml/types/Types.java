@@ -55,6 +55,7 @@ public class Types {
 	public static GamaPointType POINT;
 	public static GamaGeometryType GEOMETRY;
 	public static GamaTopologyType TOPOLOGY;
+	public static GamaFieldType FIELD;
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
 
 	public static final IMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = GamaMapFactory.createUnordered();
@@ -133,6 +134,8 @@ public class Types {
 			case IType.ACTION:
 				ACTION = instance;
 				break;
+			case IType.FIELD:
+				FIELD = (GamaFieldType) instance;
 			default:
 		}
 	}
@@ -214,9 +217,7 @@ public class Types {
 
 			}
 		}
-		if (newEntry) {
-			Types.CLASSES_TYPES_CORRESPONDANCE.put(type, t[0].toString());
-		}
+		if (newEntry) { Types.CLASSES_TYPES_CORRESPONDANCE.put(type, t[0].toString()); }
 		return t[0];
 	}
 
@@ -288,7 +289,7 @@ public class Types {
 	private static List<SpeciesDescription> builtInSpecies;
 
 	public static Collection<? extends SpeciesDescription> getBuiltInSpecies() {
-		if (builtInSpecies != null) { return builtInSpecies; }
+		if (builtInSpecies != null) return builtInSpecies;
 		final ModelDescription root = ModelDescription.ROOT;
 		final List<SpeciesDescription> result = new ArrayList<>();
 		root.getAllSpecies(result);
@@ -317,13 +318,13 @@ public class Types {
 	public static boolean isEmptyContainerCase(final IType receiverType, final IExpression expr2) {
 		final IType receiver = receiverType.getGamlType();
 		final boolean result = (receiver == MAP || receiver == LIST) && isEmpty(expr2);
-		if (result) { return true; }
+		if (result) return true;
 
 		// One last chance if receiverType is a list of lists/maps and expr2 is a list expression containing empty
 		// lists. This case is treated recursively in case of complex data structures
 		if (expr2 instanceof ListExpression) {
 			for (final IExpression subExpr : ((ListExpression) expr2).getElements()) {
-				if (!isEmptyContainerCase(receiverType.getContentType(), subExpr)) { return false; }
+				if (!isEmptyContainerCase(receiverType.getContentType(), subExpr)) return false;
 			}
 			return true;
 		}
@@ -334,15 +335,14 @@ public class Types {
 	public static boolean isEmpty(final IExpression expr2) {
 		switch (expr2.getGamlType().getGamlType().id()) {
 			case IType.LIST:
-				if (expr2 instanceof ListExpression) { return ((ListExpression) expr2).isEmpty(); }
+				if (expr2 instanceof ListExpression) return ((ListExpression) expr2).isEmpty();
 				// if (expr2.isConst()) {
 				// final Object o = expr2.getConstValue();
 				// return ((List) o).isEmpty();
 				// }
 				break;
 			case IType.MAP:
-				if (expr2 instanceof MapExpression) { return ((MapExpression) expr2).isEmpty(); }
-				// if (expr2.isConst()) { return ((Map) expr2.getConstValue()).isEmpty(); }
+				if (expr2 instanceof MapExpression) return ((MapExpression) expr2).isEmpty();
 		}
 		return false;
 	}

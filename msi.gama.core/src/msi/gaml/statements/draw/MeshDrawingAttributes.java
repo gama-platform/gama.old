@@ -25,6 +25,7 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	GamaPoint dimensions;
 	GamaPoint cellSize;
 	Double scale;
+	Double noData;
 
 	public MeshDrawingAttributes(final String name, final GamaColor border, final boolean isImage) {
 		super(null, isImage);
@@ -130,4 +131,11 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		return isSet(SMOOTH);
 	}
 
+	public void setNoData(final Double noData) {
+		this.noData = noData;
+	}
+
+	public Double getNoDataValue() {
+		return noData;
+	}
 }

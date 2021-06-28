@@ -283,6 +283,20 @@ public class Containers {
 
 	@operator (
 			internal = true,
+			value = { "internal_list" },
+			content_type = IType.INT,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER, IConcept.MATRIX })
+	@doc (
+			value = "For internal use only.Corresponds to the 2 elements list created when accessed matrices with int cols and rows",
+			masterDoc = true)
+	@no_test
+	public static IList internal_list(final IScope scope, final Integer i, final Integer j) {
+		return GamaListFactory.create(scope, Types.INT, i, j);
+	}
+
+	@operator (
+			internal = true,
 			value = { "internal_at" },
 			content_type = IType.NONE,
 			category = { IOperatorCategory.CONTAINER },
@@ -308,7 +322,7 @@ public class Containers {
 			content_type = IType.NONE,
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.SPECIES })
-	@doc ("For internal use only. Corresponds to the implementation, for agents, of the access to containers with [index]")
+	@doc ("For internal use only. Corresponds to the implementation of the access to agents with [index]")
 	@no_test
 	public static Object internal_at(final IScope scope, final IAgent agent, final IList indices)
 			throws GamaRuntimeException {

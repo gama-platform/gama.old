@@ -36,7 +36,7 @@ import msi.gaml.species.ISpecies;
  * @since 13 mai 2013
  *
  */
-public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
+public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget {
 
 	List<IAgent> getAgents();
 
@@ -45,11 +45,6 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	Boolean isHorizontalOrientation();
 
 	void setCellSpecies(final IPopulation<? extends IAgent> pop);
-
-	// this was once used for "Signal" statement (deprecated since GAMA 1.8). It
-	// will have to be removed soon.
-	void diffuseVariable(final IScope scope, boolean method_diffu, boolean is_gradient, double[][] mat_diffu,
-			double[][] mask, String var_diffu, IPopulation<? extends IAgent> pop, double min_value, boolean avoid_mask);
 
 	IAgent getAgentAt(final ILocation c);
 

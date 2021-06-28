@@ -61,6 +61,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.matrix.IField;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -164,7 +165,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	}
 
 	@Override
-	public Rectangle2D drawField(final double[] fieldValues, final MeshDrawingAttributes attributes) {
+	public Rectangle2D drawField(final IField fieldValues, final MeshDrawingAttributes attributes) {
 		final List<?> textures = attributes.getTextures();
 		if (textures == null) return null;
 		final Object image = textures.get(0);

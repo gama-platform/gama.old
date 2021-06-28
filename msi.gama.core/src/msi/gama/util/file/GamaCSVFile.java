@@ -36,6 +36,7 @@ import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
+import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -466,22 +467,10 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	}
 
 	@Override
-	public int getBands(final IScope scope) {
-		return 1;
-	}
-
-	@Override
-	public GamaFloatMatrix getMatrix(final IScope scope) {
-		IMatrix matrix = getContents(scope);
-		GamaFloatMatrix m =
-				matrix instanceof GamaFloatMatrix ? (GamaFloatMatrix) matrix : GamaFloatMatrix.from(scope, matrix);
-		return m;
-	}
-
-	@Override
 	public double[] getBand(final IScope scope, final int index) {
 		if (index > 0) return null;
-		return getMatrix(scope).getMatrix();
+		GamaFloatMatrix m = (GamaFloatMatrix) GamaMatrixType.from(scope, getContents(scope), Types.FLOAT, null, false);
+		return m.getMatrix();
 
 	}
 

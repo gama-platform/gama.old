@@ -421,7 +421,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		} else if (extension.equals("tiff") || extension.equals("tif")) {
 			final GamaGridFile file = new GamaGridFile(null, this.getPath(scope));
 
-			final Envelope e = file.computeEnvelopeWithoutBuffer(scope);
+			final Envelope e = file.computeEnvelope(scope);
 			if (e != null) {
 				GamaPoint minCorner = new GamaPoint(e.getMinX(), e.getMinY());
 				GamaPoint maxCorner = new GamaPoint(e.getMaxX(), e.getMaxY());
@@ -478,6 +478,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 	}
 
 	@Override
+	public double getNoData(final IScope scope) {
+		return Double.MAX_VALUE;
+	}
+
+	@Override
 	public int getRows(final IScope scope) {
 		final BufferedImage image = loadImage(scope, true);
 		if (image == null) return 0;
@@ -492,7 +497,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 	}
 
 	@Override
-	public int getBands(final IScope scope) {
+	public int getBandsNumber(final IScope scope) {
 		BufferedImage image = getImage(scope, true);
 		return image.getColorModel().getNumComponents();
 	}

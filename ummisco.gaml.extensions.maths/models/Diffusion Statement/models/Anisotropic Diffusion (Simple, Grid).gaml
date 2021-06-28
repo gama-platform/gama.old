@@ -15,9 +15,9 @@ global {
   	
   	// Declare the anisotropic matrix (diffuse to the left-upper direction)
 	matrix<float> mat_diff <- matrix([
-									[4/9,2/9,0/9],
-									[2/9,1/9,0.0],
-									[0/9,0.0,0.0]]);
+									[5/9,1.5/9,0/9],
+									[1.5/9,1/9,0.0],
+									[0/9,0.0,0.2/9]]);
 	
 	reflex diff { 
 		diffuse var: phero on: cells matrix:mat_diff;
@@ -29,13 +29,13 @@ global {
 	}
 	reflex new_Value {
 		ask selected_cells {
-			phero <- 1.0;
+			phero <- rnd(2.0);
 		}
 	}
 }
 
 
-grid cells height: size width: size {
+grid cells height: size width: size neighbors: 8 {
 	// "phero" is the variable storing the value of the diffusion
 	float phero  <- 0.0;
 	// the color of the cell is linked to the value of "phero".

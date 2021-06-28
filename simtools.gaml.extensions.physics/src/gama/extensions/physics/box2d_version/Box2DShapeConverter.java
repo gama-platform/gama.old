@@ -14,7 +14,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.runtime.IScope;
-import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.IField;
 
 public class Box2DShapeConverter implements IShapeConverter<Shape, Vec2>, IBox2DPhysicalEntity {
 
@@ -75,8 +75,8 @@ public class Box2DShapeConverter implements IShapeConverter<Shape, Vec2>, IBox2D
 	}
 
 	@Override
-	public Shape convertTerrain(final IScope scope, final GamaFloatMatrix field, final Double width,
-			final Double height, final float depth) {
+	public Shape convertTerrain(final IScope scope, final IField field, final Double width, final Double height,
+			final float depth) {
 		// No way to support "depth" here to build the shape :)
 		PolygonShape rectangle = new PolygonShape();
 		rectangle.setAsBox(width.floatValue(), height.floatValue());
