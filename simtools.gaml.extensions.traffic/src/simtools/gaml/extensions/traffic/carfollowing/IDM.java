@@ -20,7 +20,7 @@ public class IDM {
 			final double leadingDist,
 			final double leadingSpeed) {
 		// IDM params
-		double T = getMaxTimeHeadway(vehicle);
+		double T = getTimeHeadway(vehicle);
 		double a = getMaxAcceleration(vehicle);
 		double b = getMaxDeceleration(vehicle);
 		double v0 = getMaxSpeed(vehicle);

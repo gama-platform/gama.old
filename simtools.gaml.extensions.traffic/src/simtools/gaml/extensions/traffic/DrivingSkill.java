@@ -191,11 +191,10 @@ import ummisco.gama.dev.utils.DEBUG;
 		)
 	),
 	@variable(
-		name = DrivingSkill.MAX_TIME_HEADWAY,
+		name = DrivingSkill.TIME_HEADWAY,
 		type = IType.FLOAT,
 		init = "1.5",
-		// TODO: this might be a bit confusing
-		doc = @doc("the maximum time difference between the front bumpers of this vehicle and its leading vehicle. " +
+		doc = @doc("the time gap that to the leading vehicle that the driver must maintain. " +
 			"Known as the parameter 'T' in the Intelligent Driver Model"
 		)
 	),
@@ -447,7 +446,7 @@ public class DrivingSkill extends MovingSkill {
 	public static final String ACCELERATION = "acceleration";
 	public static final String MAX_ACCELERATION = "max_acceleration";
 	public static final String MAX_DECELERATION = "max_deceleration";
-	public static final String MAX_TIME_HEADWAY = "max_time_headway";
+	public static final String TIME_HEADWAY = "time_headway";
 	public static final String DELTA_IDM = "delta_idm";
 	public static final String POLITENESS_FACTOR = "politeness_factor";
 	public static final String MAX_SAFE_DECELERATION = "max_safe_deceleration";
@@ -519,9 +518,9 @@ public class DrivingSkill extends MovingSkill {
 		return (Double) vehicle.getAttribute(MAX_DECELERATION);
 	}
 
-	@getter(MAX_TIME_HEADWAY)
-	public static double getMaxTimeHeadway(final IAgent vehicle) {
-		return (Double) vehicle.getAttribute(MAX_TIME_HEADWAY);
+	@getter(TIME_HEADWAY)
+	public static double getTimeHeadway(final IAgent vehicle) {
+		return (Double) vehicle.getAttribute(TIME_HEADWAY);
 	}
 
 	@getter(DELTA_IDM)
