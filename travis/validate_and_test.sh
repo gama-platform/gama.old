@@ -1,10 +1,10 @@
 #! /bin/bash
 
-if  [[ $MSG == *"ci notest"* ]]; then	 
+MESSAGE=$(git log -1 HEAD --pretty=format:%s)
+echo $MESSAGE 
+if  [[ $MESSAGE == *"ci notest"* ]]; then	 
 	exit 0
 else
-	MESSAGE=$(git log -1 HEAD --pretty=format:%s)
-	echo $MESSAGE 
 
 	cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
 	memory=3048m 
