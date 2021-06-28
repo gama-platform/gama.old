@@ -145,7 +145,7 @@ public class Utils {
 					return ImmutablePair.of(leadingTriple, backTriple);
 				// Might need to slow down at the intersection if it is not possible to enter the next road
 				} else {
-					if (!isReadyNextRoad(scope, vehicle, nextRoad)) {
+					if (!readyToCross(scope, vehicle, stoppingNode, nextRoad)) {
 						return ImmutablePair.of(leadingTriple, backTriple);
 					}
 				}
