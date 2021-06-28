@@ -488,14 +488,6 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return DoubleStreamEx.of(matrix).boxed();
 	}
 
-	/**
-	 * Inherited from IFieldMatrixProvider
-	 */
-	@Override
-	public GamaFloatMatrix getMatrix(final IScope scope) {
-		return this;
-	}
-
 	@Override
 	public double[] getFieldData(final IScope scope) {
 		return matrix;

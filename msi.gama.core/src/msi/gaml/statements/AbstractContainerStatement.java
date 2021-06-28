@@ -209,7 +209,9 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 					if (Types.LIST.isAssignableFrom(list.getGamlType())) {
 						if (Types.PAIR.of(Types.INT, Types.INT).equals(index.getGamlType())) return;
 					}
-					if (!(Types.MATRIX.isAssignableFrom(list.getGamlType()) && index.getGamlType() == Types.INT)) {
+					// These indices are accepted for matrices (int and list<int>)
+					if (!(Types.MATRIX.isAssignableFrom(list.getGamlType()) && (index.getGamlType() == Types.INT
+							|| index.getGamlType().equals(Types.LIST.of(Types.INT))))) {
 						cd.warning(
 								"The type of the index of " + list.serialize(false) + " (" + keyType
 										+ ") does not match with the type of " + index.serialize(false) + " ("

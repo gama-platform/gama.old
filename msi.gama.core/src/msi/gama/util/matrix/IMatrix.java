@@ -75,13 +75,8 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	int getCols(IScope scope);
 
 	/**
-	 * Inherited from IFieldMatrixProvider
+	 * Redefined to reverse the logic (calls getFieldData())
 	 */
-	@Override
-	default int getBands(final IScope scope) {
-		return 1;
-	}
-
 	@Override
 	default double[] getBand(final IScope scope, final int index) {
 		if (index == 0)
@@ -93,11 +88,6 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	// Redefined so as to reverse the calling (getBand() now calls it)
 	@Override
 	double[] getFieldData(final IScope scope);
-
-	@Override
-	default GamaFloatMatrix getMatrix(final IScope scope) {
-		return GamaFloatMatrix.from(scope, this);
-	}
 
 	@getter (DIMENSION)
 	GamaPoint getDimensions();

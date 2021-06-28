@@ -32,6 +32,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
@@ -256,7 +257,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public Rectangle2D drawField(final double[] fieldValues, final MeshDrawingAttributes attributes) {
+	public Rectangle2D drawField(final IField fieldValues, final MeshDrawingAttributes attributes) {
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) return null;
 		final List<?> textures = attributes.getTextures();

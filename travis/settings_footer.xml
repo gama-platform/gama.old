@@ -1,0 +1,13 @@
+
+			<filePermissions>666</filePermissions>
+			<directoryPermissions>777</directoryPermissions>
+			
+			<configuration>
+				<sshExecutable>plink</sshExecutable>
+				<scpExecutable>pscp</scpExecutable>
+				<timeout>120000000</timeout> 
+			</configuration>
+		</server>
+	</servers>
+
+</settings>

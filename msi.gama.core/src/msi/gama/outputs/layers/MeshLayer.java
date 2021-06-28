@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 
 public class MeshLayer extends AbstractLayer {
@@ -40,7 +41,7 @@ public class MeshLayer extends AbstractLayer {
 		GamaColor lineColor = null;
 		final MeshLayerData data = getData();
 		if (data.drawLines()) { lineColor = data.getLineColor(); }
-		final double[] values = data.getElevationMatrix(scope);
+		final IField values = data.getElevationMatrix(scope);
 		// final double[] bis = Arrays.copyOf(values, values.length);
 		// double min = Doubles.min(bis);
 		// for (int i = 0; i < bis.length; ++i) {
@@ -70,6 +71,7 @@ public class MeshLayer extends AbstractLayer {
 		attributes.setScale(data.getScale());
 		attributes.setFill(data.getColor());
 		attributes.setSmooth(data.isSmooth());
+		attributes.setNoData(data.getNoDataValue());
 		dg.drawField(values, attributes);
 
 	}

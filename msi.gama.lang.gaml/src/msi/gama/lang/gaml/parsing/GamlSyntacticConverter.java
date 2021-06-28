@@ -43,7 +43,6 @@ import static msi.gama.common.interfaces.IKeyword.MODEL;
 import static msi.gama.common.interfaces.IKeyword.NAME;
 import static msi.gama.common.interfaces.IKeyword.OUTPUT;
 import static msi.gama.common.interfaces.IKeyword.OUTPUT_FILE;
-import static msi.gama.common.interfaces.IKeyword.POINT;
 import static msi.gama.common.interfaces.IKeyword.POPULATION;
 import static msi.gama.common.interfaces.IKeyword.PUT;
 import static msi.gama.common.interfaces.IKeyword.REMOVE;
@@ -438,7 +437,7 @@ public class GamlSyntacticConverter {
 					if (args.size() == 1) { // Integer index -- or pair index see #3099
 						addFacet(elt, AT, convExpr(args.get(0), errors), errors);
 					} else { // Point index
-						final IExpressionDescription p = new OperatorExpressionDescription(POINT,
+						final IExpressionDescription p = new OperatorExpressionDescription("internal_list",
 								convExpr(args.get(0), errors), convExpr(args.get(1), errors));
 						addFacet(elt, AT, p, errors);
 					}

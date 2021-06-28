@@ -21,6 +21,7 @@ global skills: [moving] control: fsm {
 	float x;
 	float y;
 	float t;
+	
 	equation eq {
 		diff(x, t) = x / 2;
 		diff(y, t) = x + y * 2;
@@ -33,7 +34,7 @@ global skills: [moving] control: fsm {
  */
 
 // Attributes can be declared in different ways, ranging from "classic"...
-	list<int> a1 const: true <- [1, 2, 3] of: int;
+	list a1 of: int const: true init: [1, 2, 3] ;
 	list a2 <- [1, 2, 3] of: int;
 	// ... to "compact" Java-like syntax.
 	list<int> a3 <- [1, 2, 3];

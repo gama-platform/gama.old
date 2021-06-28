@@ -52,7 +52,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 		if (size == null) {
 			if (obj instanceof IFieldMatrixProvider && contentType.id() == IType.FLOAT)
-				return ((IFieldMatrixProvider) obj).getMatrix(scope);
+				return ((IFieldMatrixProvider) obj).getField(scope);
 			if (obj instanceof IContainer) return ((IContainer) obj).matrixValue(scope, contentType, copy);
 			return with(scope, obj, new GamaPoint(1, 1), contentType);
 		} else if (size.x <= 0 || size.y < 0)
@@ -223,10 +223,5 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	public boolean canCastToConst() {
 		return true;
 	}
-
-	// @Override
-	// public boolean canCastToConst() {
-	// return true;
-	// }
 
 }

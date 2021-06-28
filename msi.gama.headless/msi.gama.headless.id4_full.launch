@@ -19,8 +19,8 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.JAVA_COMMAND" value="java"/>
-    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-15"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -v D:\Downloads\GAMA_1.8.1_Windows_with_JDK\headless\samples\wave3rd.xml  D:\Downloads\GAMA_1.8.1_Windows_with_JDK\headless\samples\toto"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-15.0.2"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -v C:\Users\hqngh\Downloads\GAMA1.8_Continuous_withJDK_Win_12.08.20_0bb5694\headless\samples\predatorPrey.xml  C:\Users\hqngh\Downloads\GAMA1.8_Continuous_withJDK_Win_12.08.20_0bb5694\headless\samples\toto"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
     <booleanAttribute key="pde.generated.config" value="false"/>
     <stringAttribute key="pde.version" value="3.3"/>
@@ -28,10 +28,10 @@
     <setAttribute key="selected_target_bundles">
         <setEntry value="com.google.guava*21.0.0.v20170206-1425@default:default"/>
         <setEntry value="com.google.guava*27.1.0.v20190517-1946@default:default"/>
+        <setEntry value="com.google.guava*30.1.0.v20210127-2300@default:default"/>
         <setEntry value="com.google.inject@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="com.jcraft.jsch@default:default"/>
-        <setEntry value="com.jcraft.jzlib@default:default"/>
         <setEntry value="com.sun.jna.platform@default:default"/>
         <setEntry value="com.sun.jna@default:default"/>
         <setEntry value="javax.activation*1.2.2.v20201119-1642@default:default"/>
@@ -42,12 +42,16 @@
         <setEntry value="org.antlr.runtime@default:default"/>
         <setEntry value="org.apache.ant@default:default"/>
         <setEntry value="org.apache.batik.constants@default:default"/>
-        <setEntry value="org.apache.batik.css@default:default"/>
+        <setEntry value="org.apache.batik.css*1.13.0.v20200622-2037@default:default"/>
+        <setEntry value="org.apache.batik.css*1.6.0.v201011041432@default:default"/>
         <setEntry value="org.apache.batik.i18n@default:default"/>
-        <setEntry value="org.apache.batik.util@default:default"/>
+        <setEntry value="org.apache.batik.util*1.13.0.v20200622-2037@default:default"/>
+        <setEntry value="org.apache.batik.util*1.6.0.v201011041432@default:default"/>
+        <setEntry value="org.apache.batik.util.gui@default:default"/>
         <setEntry value="org.apache.commons.cli@default:default"/>
         <setEntry value="org.apache.commons.compress@default:default"/>
-        <setEntry value="org.apache.commons.io@default:default"/>
+        <setEntry value="org.apache.commons.io*2.2.0.201405120000@default:default"/>
+        <setEntry value="org.apache.commons.io*2.6.0.v20190123-2029@default:default"/>
         <setEntry value="org.apache.commons.jxpath@default:default"/>
         <setEntry value="org.apache.commons.lang@default:default"/>
         <setEntry value="org.apache.commons.logging@default:default"/>
@@ -166,6 +170,7 @@
         <setEntry value="org.eclipse.ui@default:default"/>
         <setEntry value="org.eclipse.urischeme@default:default"/>
         <setEntry value="org.eclipse.xpand@default:default"/>
+        <setEntry value="org.eclipse.xsd@default:default"/>
         <setEntry value="org.eclipse.xtend.lib.macro@default:default"/>
         <setEntry value="org.eclipse.xtend.lib@default:default"/>
         <setEntry value="org.eclipse.xtend.typesystem.emf@default:default"/>

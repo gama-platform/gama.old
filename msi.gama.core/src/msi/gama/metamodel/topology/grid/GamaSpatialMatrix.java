@@ -110,7 +110,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	protected Boolean isHexagon = null;
 
 	protected Boolean isHorizontalOrientation = null;
-	protected GridDiffuser diffuser;
 	public INeighborhood neighborhood;
 
 	int actualNumberOfCells;
@@ -130,7 +129,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		gridValue = null;
 		_clear();
 		matrix = null;
-		diffuser = null;
 		cellSpecies = null;
 	}
 
@@ -185,7 +183,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		this.useNeighborsCache = useNeighborsCache;
 		this.optimizer = optimizer;
 		gridValue = gfile.getFieldData(scope).clone();
-		this.nbBands = gfile.getBands(scope);
+		this.nbBands = gfile.getBandsNumber(scope);
 		if (nbBands > 1) {
 			bands = new ArrayList<>();
 			for (int i = 0; i < size; i++) {
@@ -419,8 +417,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 			if (ok) {
 				if (firstCell == -1) { firstCell = i; }
-				// scope.getGui().debug("GamaSpatialMatrix.createCells: " +
-				// rect.getLocation() + " at " + xx + ";" + yy);
 				matrix[i] = rect;
 				actualNumberOfCells++;
 				lastCell = i;
@@ -1215,24 +1211,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final IShape g = getPlaceAt(c);
 		if (g == null) return null;
 		return g.getAgent();
-	}
-
-	private GridDiffuser getDiffuser(final IScope scope) {
-		if (diffuser != null) return diffuser;
-		diffuser = new GridDiffuser();
-		scope.getSimulation().postEndAction(s -> {
-			if (diffuser != null) { diffuser.diffuse(); }
-			return null;
-		});
-		return diffuser;
-	}
-
-	@Override
-	public void diffuseVariable(final IScope scope, final boolean method_diffu, final boolean is_gradient,
-			final double[][] mat_diffu, final double[][] mask, final String var_diffu, final IPopulation pop,
-			final double min_value, final boolean avoid_mask) {
-		getDiffuser(scope).addDiffusion(scope, var_diffu, (GridPopulation) pop, method_diffu, is_gradient, mat_diffu,
-				mask, min_value, avoid_mask);
 	}
 
 	@Override
@@ -2062,6 +2040,36 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public double[] getFieldData(final IScope scope) {
 		return gridValue;
+	}
+
+	/**
+	 * Inherited from IDiffusionTarget
+	 */
+
+	@Override
+	public int getNbNeighbours() {
+		// AD: And hex ?
+		return getNeighborhood().isVN() ? 4 : 8;
+	}
+
+	@Override
+	public double getValueAtIndex(final IScope scope, final int i, final String varName) {
+		IAgent a = matrix[i].getAgent();
+		return Cast.asFloat(scope, a.getDirectVarValue(scope, varName));
+	}
+
+	@Override
+	public void setValueAtIndex(final IScope scope, final int i, final String varName, final double valToPut) {
+		IAgent a = matrix[i].getAgent();
+		a.setDirectVarValue(scope, varName, valToPut);
+	}
+
+	@Override
+	public void getValuesInto(final IScope scope, final String varName, final double minValue, final double[] input) {
+		for (int i = 0; i < input.length; i++) {
+			double val = Cast.asFloat(scope, getValueAtIndex(scope, i, varName));
+			input[i] = val < minValue ? 0 : val;
+		}
 	}
 
 }

@@ -18,6 +18,7 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
@@ -131,7 +132,7 @@ public class ModelScene {
 		if (increment()) { currentLayer.addGeometry(geometry, attributes); }
 	}
 
-	public void addField(final double[] fieldValues, final MeshDrawingAttributes attributes) {
+	public void addField(final IField fieldValues, final MeshDrawingAttributes attributes) {
 		if (increment()) { currentLayer.addField(fieldValues, attributes); }
 	}
 

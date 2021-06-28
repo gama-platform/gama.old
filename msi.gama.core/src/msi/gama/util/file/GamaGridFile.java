@@ -314,13 +314,11 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 
 	@Override
 	public Envelope3D computeEnvelope(final IScope scope) {
-		fillBuffer(scope);
-		return gis.getProjectedEnvelope();
-	}
-
-	public Envelope computeEnvelopeWithoutBuffer(final IScope scope) {
 		if (gis == null) { createCoverage(scope); }
 		return gis.getProjectedEnvelope();
+		// OLD : see what it changes to not do it
+		// fillBuffer(scope);
+		// return gis.getProjectedEnvelope();
 	}
 
 	@Override
@@ -468,6 +466,11 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	}
 
 	@Override
+	public double getNoData(final IScope scope) {
+		return noData.doubleValue();
+	}
+
+	@Override
 	public int getRows(final IScope scope) {
 		createCoverage(scope);
 		return numRows;
@@ -480,7 +483,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	}
 
 	@Override
-	public int getBands(final IScope scope) {
+	public int getBandsNumber(final IScope scope) {
 		createCoverage(scope);
 		return nbBands;
 	}

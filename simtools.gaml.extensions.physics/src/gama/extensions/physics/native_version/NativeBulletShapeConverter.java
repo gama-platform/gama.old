@@ -23,12 +23,11 @@ import com.jme3.math.Vector3f;
 
 import gama.extensions.physics.common.IShapeConverter;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.util.FieldUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.IField;
 
 public class NativeBulletShapeConverter
 		implements IShapeConverter<CollisionShape, Vector3f>, INativeBulletPhysicalEntity {
@@ -121,18 +120,14 @@ public class NativeBulletShapeConverter
 	}
 
 	@Override
-	public CollisionShape convertTerrain(final IScope scope, final GamaFloatMatrix field, final Double width,
+	public CollisionShape convertTerrain(final IScope scope, final IField field, final Double width,
 			final Double height, final float depth) {
-		float max = Float.MIN_VALUE, min = Float.MAX_VALUE;
+		double[] minMax = field.getMinMax(null);
+		float max = (float) minMax[1], min = (float) minMax[0];
 		GamaPoint dim = field.getDimensions();
-		float[] data = FieldUtils.toFloats(field.getMatrix());
+		float[] data = toFloats(field.getMatrix());
 		// We apply some "translation" here as the center is automatically computed and there is no way to translate the
-		// shape
-		for (float f : data) {
-			if (f > max) {
-				max = f;
-			} else if (f < min) { min = f; }
-		}
+		// shape. The data is a copy anyway
 		for (int i = 0; i < data.length; i++) {
 			data[i] = data[i] - (max - min) / 2;
 		}

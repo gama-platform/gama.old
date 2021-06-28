@@ -16,28 +16,30 @@ import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.FieldUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.matrix.IField;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaFieldType;
 import msi.gaml.types.Types;
 
 public class MeshLayerData extends LayerData {
 
 	static GamaColor defaultLineColor = GamaColor.getInt(Color.black.getRGB());
 	boolean shouldComputeValues = true;
-	double[] values;
+	IField values;
 	Attribute<GamaColor> line;
 	Attribute<GamaImageFile> texture;
 	Attribute<Boolean> smooth;
-	Attribute<double[]> elevation;
+	Attribute<IField> elevation;
 	Attribute<Boolean> triangulation;
 	Attribute<Boolean> grayscale;
 	Attribute<Boolean> text;
 	Attribute<Boolean> wireframe;
+	Attribute<Double> noData;
 	Attribute<GamaColor> color;
 	Attribute<Double> scale;
 	private GamaPoint cellSize;
@@ -60,7 +62,7 @@ public class MeshLayerData extends LayerData {
 		elevation = create(IKeyword.SOURCE, (scope, exp) -> {
 			if (exp != null) return buildValues(scope, exp.value(scope));
 			return null;
-		}, Types.NO_TYPE, (double[]) null, null);
+		}, Types.NO_TYPE, (IField) null, null);
 		triangulation = create(IKeyword.TRIANGULATION, Types.BOOL, false);
 		smooth = create(IKeyword.SMOOTH, Types.BOOL, false);
 		grayscale = create(IKeyword.GRAYSCALE, Types.BOOL, false);
@@ -68,6 +70,7 @@ public class MeshLayerData extends LayerData {
 		text = create(IKeyword.TEXT, Types.BOOL, false);
 		color = create(IKeyword.COLOR, Types.COLOR, null);
 		scale = create(IKeyword.SCALE, Types.FLOAT, null);
+		noData = create("no_data", Types.FLOAT, null);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
 			if (result instanceof GamaImageFile)
@@ -87,8 +90,11 @@ public class MeshLayerData extends LayerData {
 		cellSize = new GamaPoint(width / dim.x, height / dim.y);
 	}
 
-	private double[] buildValues(final IScope scope, final Object from) {
-		if (values == null || shouldComputeValues) { values = FieldUtils.buildDoubleArrayFrom(scope, from, dim); }
+	private IField buildValues(final IScope scope, final Object from) {
+		if (values == null || shouldComputeValues) {
+			values = GamaFieldType.buildField(scope, from);
+			dim.setLocation(values.getCols(scope), values.getRows(scope), 0);
+		}
 		return values;
 	}
 
@@ -128,7 +134,7 @@ public class MeshLayerData extends LayerData {
 		return dim;
 	}
 
-	public double[] getElevationMatrix(final IScope scope) {
+	public IField getElevationMatrix(final IScope scope) {
 		return elevation.get();
 	}
 
@@ -143,6 +149,10 @@ public class MeshLayerData extends LayerData {
 
 	public Double getScale() {
 		return scale.get();
+	}
+
+	public Double getNoDataValue() {
+		return noData.get();
 	}
 
 }

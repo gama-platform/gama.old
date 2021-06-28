@@ -30,6 +30,7 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.matrix.IField;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.PixelUnitExpression;
 import msi.gaml.operators.Cast;
@@ -301,7 +302,7 @@ public class LayerObject {
 		addGeometry(geometry, attributes);
 	}
 
-	public void addField(final double[] fieldValues, final MeshDrawingAttributes attributes) {
+	public void addField(final IField fieldValues, final MeshDrawingAttributes attributes) {
 		currentList.add(new MeshObject(fieldValues, attributes));
 	}
 

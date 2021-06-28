@@ -16,7 +16,7 @@ global parent: physical_world {
 	point gravity <- {-z_scale/4, z_scale, -9.81};
 	int number_of_water_units <- 1 min: 0 max: 10;
 	list<point> origins_of_flow <- [{17,3}, {55,3}];
-	matrix<float> terrain <- matrix<float>(grid_file("../images/DEM/RedRiver.asc"));
+	field terrain <- field(grid_file("../images/DEM/RedRiver.asc"));
 
 	geometry shape <- box({terrain.columns, terrain.rows, max(terrain)*z_scale});
 	float friction <- 0.0;
@@ -25,14 +25,13 @@ global parent: physical_world {
 
 	init {
 		do register([self]);
-	 	write "" + shape.width + "x" + shape.height;
 	}
 
 	reflex flow {
 			loop origin_of_flow over: origins_of_flow {
-				float x <- min(terrain.columns - 1, max(0, origin_of_flow.x + rnd(10) - 5));
-				float y <- min(terrain.rows - 1, max(0, origin_of_flow.y + rnd(10) - 5));
-				point p <- origin_of_flow + {rnd(10) - 5, rnd(10 - 5), terrain[{x, y}] + 4};
+				int x <- int(min(terrain.columns - 1, max(0, origin_of_flow.x + rnd(10) - 5)));
+				int y <- int(min(terrain.rows - 1, max(0, origin_of_flow.y + rnd(10) - 5)));
+				point p <- origin_of_flow + {rnd(10) - 5, rnd(10 - 5), terrain[x, y] + 4};
 				create water number: number_of_water_units with: [location::p];
 			}
 	}
