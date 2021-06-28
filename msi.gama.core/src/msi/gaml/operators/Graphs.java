@@ -14,16 +14,15 @@ import static one.util.streamex.StreamEx.of;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.alg.BronKerboschCliqueFinder;
-import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.clique.BronKerboschCliqueFinder;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
 
@@ -691,12 +690,12 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
 		ConnectivityInspector ci;
-		// there is an error with connectivity inspector of JGrapht....
-		ci = new ConnectivityInspector((DirectedGraph) graph);
+		ci = new ConnectivityInspector(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
 		}
+			
 		return results;
 	}
 
@@ -721,8 +720,7 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
 		ConnectivityInspector ci;
-		// there is an error with connectivity inspector of JGrapht....
-		ci = new ConnectivityInspector((DirectedGraph) graph);
+		ci = new ConnectivityInspector(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			if (edge) {
@@ -800,9 +798,9 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
-		final Collection cliques = cls.getAllMaximalCliques();
-		for (final Object obj : cliques) {
-			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
+		Iterator it = cls.iterator();
+		while (it.hasNext()) {
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) it.next()));
 		}
 		return results;
 	}
@@ -829,9 +827,9 @@ public class Graphs {
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
-		final Collection cliques = cls.getBiggestMaximalCliques();
-		for (final Object obj : cliques) {
-			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
+		Iterator it = cls.maximumIterator();
+		while (it.hasNext()) {
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) it.next()));
 		}
 		return results;
 	}
@@ -984,6 +982,7 @@ public class Graphs {
 				Object vc = v1;
 				for (final Object edge : edges) {
 					Object node = graph.getEdgeTarget(edge);
+					
 					if (node == vc) {
 						node = graph.getEdgeSource(edge);
 					}
@@ -1712,7 +1711,7 @@ public class Graphs {
 		final EdmondsKarpMFImpl ek = new EdmondsKarpMFImpl(graph);
 		final MaximumFlow<IShape> mf = ek.getMaximumFlow(source, sink);
 		final IMap<Object, Double> result = GamaMapFactory.create();
-		result.putAll(mf.getFlow());
+		result.putAll(mf.getFlowMap());
 		return result;
 	}
 
@@ -2132,17 +2131,19 @@ public class Graphs {
 	public static IMap strahlerNumber(final IScope scope, final GamaGraph graph) {
 		final IMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
 		if (graph == null || graph.isEmpty(scope)) { return results; }
-		if (!graph.getConnected() || graph.hasCycle()) {
+		
+		IGraph g = graph.getConnected() ? asDirectedGraph(graph):  asDirectedGraph(ReduceToMainconnectedComponentOf(scope, graph));
+		if ( g.hasCycle()) {
 			throw GamaRuntimeException
 					.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope);
 		}
 
-		List currentEdges = of(graph.getEdges()).filter(a -> graph.outDegreeOf(graph.getEdgeTarget(a)) == 0).toList();
+		List currentEdges = of(g.getEdges()).filter(a -> g.outDegreeOf(g.getEdgeTarget(a)) == 0).toList();
 		while (!currentEdges.isEmpty()) {
 			final List newList = new ArrayList<>();
 			for (final Object e : currentEdges) {
-				final List previousEdges = inEdgesOf(scope, graph, graph.getEdgeSource(e));
-				final List nextEdges = outEdgesOf(scope, graph, graph.getEdgeTarget(e));
+				final List previousEdges = inEdgesOf(scope, g, g.getEdgeSource(e));
+				final List nextEdges = outEdgesOf(scope, g, g.getEdgeTarget(e));
 				if (nextEdges.isEmpty()) {
 					results.put(e, 1);
 					newList.addAll(previousEdges);

@@ -10,7 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
-import org.jgrapht.WeightedGraph;
+
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -26,7 +27,7 @@ public class _Edge<V, E> extends GraphObject<GamaGraph<V, E>, V, E> {
 
 	public _Edge(final GamaGraph<V, E> gamaGraph, final Object edge, final Object source, final Object target)
 			throws GamaRuntimeException {
-		this(gamaGraph, edge, source, target, WeightedGraph.DEFAULT_EDGE_WEIGHT);
+		this(gamaGraph, edge, source, target, DefaultDirectedWeightedGraph.DEFAULT_EDGE_WEIGHT);
 	}
 
 	public _Edge(final GamaGraph<V, E> gamaGraph, final Object edge, final Object source, final Object target,
@@ -52,8 +53,10 @@ public class _Edge<V, E> extends GraphObject<GamaGraph<V, E>, V, E> {
 	}
 
 	public void removeFromVerticesAs(final Object edge) {
-		graph.getVertex(source).removeOutEdge(edge);
-		graph.getVertex(target).removeInEdge(edge);
+		_Vertex<V,E> s = graph.getVertex(source);
+		if (s != null)s.removeOutEdge(edge);
+		_Vertex<V,E> t = graph.getVertex(target);
+		if (t != null)t.removeInEdge(edge);
 	}
 
 	@Override
