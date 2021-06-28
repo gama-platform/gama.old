@@ -64,6 +64,7 @@ import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.layout.LayoutCircle;
 import msi.gama.util.graph.layout.LayoutForceDirected;
 import msi.gama.util.graph.layout.LayoutGrid;
+import msi.gama.util.graph.loader.AvailableGraphParsers;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaMatrix;
@@ -1794,7 +1795,8 @@ public class Graphs {
 	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename,
 			final ISpecies vertex_specy, final ISpecies edge_specy, final Boolean spatial) throws GamaRuntimeException {
 
-		return null;//GraphLoader.loadGraph(scope, filename, vertex_specy, edge_specy, null, null, format, spatial);
+		return null;
+		//return AvailableGraphParsers.loadGraph(scope, filename, vertex_specy, edge_specy, null, null, format, spatial);
 
 	}
 
