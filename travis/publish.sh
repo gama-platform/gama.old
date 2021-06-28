@@ -67,6 +67,7 @@ clean(){
 
 deploy(){	
 	echo "Deploy to p2 update site"	
+	echo -e "StrictHostKeyChecking no\n" >> ~/.ssh/config 
 	bash ./travis/deploy.sh
 }
 embed_jdk(){

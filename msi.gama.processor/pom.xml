@@ -25,7 +25,7 @@
 
  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<tycho.version>2.3.0</tycho.version>
+	<tycho.version>2.2.0</tycho.version>
 	<jdk.version>15</jdk.version>
   </properties>
 
@@ -146,19 +146,7 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho.version}</version>		
-				<configuration>
-					<filters>
-						<filter>
-							<type>eclipse-plugin</type>
-							<id>org.eclipse.jdt.core</id>
-							<restrictTo>
-								<version>3.11.2.v20160128-0629</version>
-								<!--<version>3.4.0.v20150518-1201</version> -->
-							</restrictTo>
-						</filter>
-					</filters>
-				</configuration>		 
+				<version>${tycho.version}</version>				 
 			</plugin>
 		</plugins>
 	</build>
