@@ -10,7 +10,21 @@
  ********************************************************************************************************/
 package msi.gama.util.graph.loader;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import org.jgrapht.nio.GraphImporter;
+import org.jgrapht.nio.csv.CSVImporter;
+import org.jgrapht.nio.dimacs.DIMACSImporter;
+import org.jgrapht.nio.dot.DOTImporter;
+import org.jgrapht.nio.gexf.SimpleGEXFImporter;
+import org.jgrapht.nio.gml.GmlImporter;
+import org.jgrapht.nio.graph6.Graph6Sparse6Importer;
+import org.jgrapht.nio.graphml.GraphMLImporter;
+import org.jgrapht.nio.json.JSONImporter;
+import org.jgrapht.nio.tsplib.TSPLIBImporter;
+
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -23,41 +37,23 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class AvailableGraphParsers {
 
-	private static final Map<String, Class<? extends IGraphParser>> name2parser =
-		new HashMap<String, Class<? extends IGraphParser>>() {
+	private static final Map<String, Class<? extends GraphImporter>> name2parser =
+		new HashMap<String, Class<? extends GraphImporter>>() {
 
 			{
 				// we store both the default version (ex. forcedirected is implemented by default by prefuse,
 				// but also a prefixed version for disambiguation (like "prefuse.forcedirected")
 
 				// default
-				put("pajek", GraphstreamGraphParserPajek.class);
-				put("net", GraphstreamGraphParserPajek.class);
-				put("lgl", GraphstreamGraphParserLGL.class);
-				put("dot", GraphstreamGraphParserDOT.class);
-				put("gexf", GraphstreamGraphParserGEXF.class);
-				put("graphml", GraphstreamGraphParserGraphML.class);
-				put("gml", GraphstreamGraphParserGraphML.class);
-
-				put("tlp", GraphstreamGraphParserTLP.class);
-				put("tulip", GraphstreamGraphParserTLP.class);
-				put("ncol", GraphstreamGraphParserNCOL.class);
-				put("edge", GraphstreamGraphParserEdge.class);
-				put("dgs", GraphstreamGraphParserDGS.class);
-
-				// graphstream
-				put("graphstream.pajek", GraphstreamGraphParserPajek.class);
-				put("graphstream.net", GraphstreamGraphParserPajek.class);
-				put("graphstream.lgl", GraphstreamGraphParserLGL.class);
-				put("graphstream.dot", GraphstreamGraphParserDOT.class);
-				put("graphstream.gexf", GraphstreamGraphParserGEXF.class);
-				put("graphstream.graphml", GraphstreamGraphParserGraphML.class);
-				put("graphstream.gml", GraphstreamGraphParserGraphML.class);
-				put("graphstream.tlp", GraphstreamGraphParserTLP.class);
-				put("graphstream.tulip", GraphstreamGraphParserTLP.class);
-				put("graphstream.ncol", GraphstreamGraphParserNCOL.class);
-				put("graphstream.edge", GraphstreamGraphParserEdge.class);
-				put("graphstream.dgs", GraphstreamGraphParserDGS.class);
+				put("csv", CSVImporter.class); 
+				put("dimacs", DIMACSImporter.class);
+				put("dot", DOTImporter.class); 
+				put("gexf", SimpleGEXFImporter.class);
+				put("graphml", GraphMLImporter.class);
+				put("graph6", Graph6Sparse6Importer.class);
+				put("gml", GmlImporter.class);
+				put("json", JSONImporter.class);
+				put("tsplib", TSPLIBImporter.class);
 
 			}
 		};
@@ -69,18 +65,18 @@ public class AvailableGraphParsers {
 		private static final List<String> parsersForAutomaticDetection = new LinkedList<String>() {
 
 			{
-				add("pajek");
 				add("graphml");
 				add("gexf");
-				add("edge");
+				add("dimacs");
 
-				add("ncol");
-				add("dot");
-				add("dgs");
+				add("graph6");
+				add("gml");
+				add("tsplib");
+				
+				add("json");
 
-				add("lgl"); // too tolerant => end of the list
-
-				add("tulip"); // creates problems? => end of the list
+				add("csv");
+				
 
 			}
 		};
@@ -106,27 +102,36 @@ public class AvailableGraphParsers {
 		return parsersForAutomaticDetection;
 	}
 
-	private static Map<String, IGraphParser> name2singleton = new HashMap<String, IGraphParser>();
+	private static Map<String, GraphImporter> name2singleton = new HashMap<String, GraphImporter>();
 
-	public static IGraphParser getLoader(final String name) {
-		IGraphParser res = name2singleton.get(name);
+	public static GraphImporter getLoader(final String name) {
+		GraphImporter res = name2singleton.get(name);
 
 		if ( res == null ) {
 			// no singleton created
-			Class<? extends IGraphParser> classLayout = name2parser.get(name);
-			if ( classLayout == null ) { throw GamaRuntimeException.error(
+			Class<? extends GraphImporter> clazz = name2parser.get(name);
+			if ( clazz == null ) { throw GamaRuntimeException.error(
 				"unknown parser name: " + name + "; please choose one of " + getAvailableLoaders().toString(),
 				GAMA.getRuntimeScope()); }
+			Constructor<?> ctor;
 			try {
-				res = classLayout.newInstance();
+				ctor = clazz.getConstructor();
+				res = (GraphImporter) ctor.newInstance();
+				name2singleton.put(name, res);
+			} catch (NoSuchMethodException e) {
+				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
+			} catch (SecurityException e) {
+				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
+			} catch (IllegalArgumentException e) {
+				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
+			} catch (InvocationTargetException e) {
+				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 			} catch (InstantiationException e) {
 				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 			} catch (IllegalAccessException e) {
 				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 			}
-			name2singleton.put(name, res);
 		}
-
 		return res;
 	}
 

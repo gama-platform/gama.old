@@ -406,7 +406,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					if (getAvailableWriters().contains(type)) {
 						final IGraph g = Cast.asGraph(scope, item);
 						if (g == null) { return null; }
-						getGraphWriter(type).writeGraph(scope, g, null, path);
+					//	getGraphWriter(type).writeGraph(scope, g, null, path);
 					} else {
 						throw GamaRuntimeFileException.error("Format is not recognized ('" + type + "')", scope);
 					}
