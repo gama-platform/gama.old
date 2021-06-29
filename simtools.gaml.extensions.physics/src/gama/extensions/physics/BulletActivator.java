@@ -31,7 +31,7 @@ public class BulletActivator implements BundleActivator {
 							ERR(">> Impossible to load Bullet native library from "
 									+ context.getBundle().getSymbolicName() + " because of " + e.getMessage());
 							ERR(">> GAMA will revert to JBullet instead");
-							throw e;
+							// throw e;
 						}
 					});
 
