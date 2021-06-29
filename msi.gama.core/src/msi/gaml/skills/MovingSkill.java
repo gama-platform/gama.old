@@ -155,25 +155,25 @@ public class MovingSkill extends Skill {
 	}
 
 	@getter (IKeyword.SPEED)
-	public double getSpeed(final IAgent agent) {
+	public static double getSpeed(final IAgent agent) {
 		if (agent == null) { return 0.0; }
 		return (Double) agent.getAttribute(IKeyword.SPEED);
 	}
 
 	@getter (IKeyword.REAL_SPEED)
-	public double getRealSpeed(final IAgent agent) {
+	public static double getRealSpeed(final IAgent agent) {
 		if (agent == null) { return 0.0; }
 		return (Double) agent.getAttribute(IKeyword.REAL_SPEED);
 	}
 
 	@setter (IKeyword.SPEED)
-	public void setSpeed(final IAgent agent, final double s) {
+	public static void setSpeed(final IAgent agent, final double s) {
 		if (agent == null) { return; }
 		agent.setAttribute(IKeyword.SPEED, s);
 	}
 
 	@setter (IKeyword.REAL_SPEED)
-	public void setRealSpeed(final IAgent agent, final double s) {
+	public static void setRealSpeed(final IAgent agent, final double s) {
 		if (agent == null) { return; }
 		agent.setAttribute(IKeyword.REAL_SPEED, s);
 	}
@@ -192,7 +192,10 @@ public class MovingSkill extends Skill {
 		if (agent == null) { return; }
 		final ITopology topology = getTopology(agent);
 		final ILocation oldLocation = agent.getLocation();
-		if (!topology.isTorus() && p != null && !p.equals(oldLocation)) {
+		Coordinate oldCoords = new Coordinate(oldLocation.getX(), oldLocation.getY(),
+				oldLocation.getZ());
+		if (!topology.isTorus() && p != null &&
+				!p.equalsWithTolerance(oldCoords, 0.01)) {
 			final Double newHeading = topology.directionInDegreesTo(agent.getScope(), oldLocation, p);
 			if (newHeading != null) {
 				setHeading(agent, newHeading);
@@ -202,13 +205,13 @@ public class MovingSkill extends Skill {
 	}
 
 	@setter ("current_path")
-	public void setCurrentPath(final IAgent agent, final IPath p) {
+	public static void setCurrentPath(final IAgent agent, final IPath p) {
 		// READ_ONLY
 	}
 
 	@getter (
 			value = "current_path")
-	public IPath getCurrentPath(final IAgent agent) {
+	public static IPath getCurrentPath(final IAgent agent) {
 		if (agent == null) { return null; }
 		return (IPath) agent.getAttribute("current_path");
 	}

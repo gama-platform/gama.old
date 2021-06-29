@@ -26,91 +26,99 @@ import msi.gama.precompiler.IConcept;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@vars ({ @variable (
-		name = "roads_in",
+@vars({
+	@variable(
+		name = RoadNodeSkill.ROADS_IN,
 		type = IType.LIST,
 		of = IType.AGENT,
-		doc = @doc ("the list of input roads")),
-		@variable (
-				name = "priority_roads",
-				type = IType.LIST,
-				of = IType.AGENT,
-				doc = @doc ("the list of priority roads")),
-		@variable (
-				name = "roads_out",
-				type = IType.LIST,
-				of = IType.AGENT,
-				doc = @doc ("the list of output roads")),
-		@variable (
-				name = "stop",
-				type = IType.LIST,
-				of = IType.LIST,
-				doc = @doc ("define for each type of stop, the list of concerned roads")),
-		@variable (
-				name = "block",
-				type = IType.MAP,
-				doc = @doc ("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
-@skill (
-		name = "skill_road_node",
-		concept = { IConcept.TRANSPORT, IConcept.SKILL },
-		doc = @doc ("A skill for agents representing intersections on roads"))
+		doc = @doc("the list of input roads")
+	),
+	@variable(
+		name = RoadNodeSkill.PRIORITY_ROADS,
+		type = IType.LIST,
+		of = IType.AGENT,
+		doc = @doc("the list of priority roads")
+	),
+	@variable(
+		name = RoadNodeSkill.ROADS_OUT,
+		type = IType.LIST,
+		of = IType.AGENT,
+		doc = @doc("the list of output roads")
+	),
+	@variable(
+		name = RoadNodeSkill.STOP,
+		type = IType.LIST,
+		of = IType.LIST,
+		doc = @doc("define for each type of stop, the list of concerned roads")
+	),
+	@variable(
+		name = RoadNodeSkill.BLOCK,
+		type = IType.MAP,
+		doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")
+	)
+})
+@skill(
+	name = RoadNodeSkill.SKILL_ROAD_NODE,
+	concept = { IConcept.TRANSPORT, IConcept.SKILL },
+	doc = @doc ("A skill for agents representing intersections on roads")
+)
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RoadNodeSkill extends Skill {
+	public static final String SKILL_ROAD_NODE = "skill_road_node";
 
-	public final static String ROADS_IN = "roads_in";
-	public final static String PRIORITY_ROADS = "priority_roads";
-	public final static String ROADS_OUT = "roads_out";
-	public final static String STOP = "stop";
-	public final static String BLOCK = "block";
+	public static final String ROADS_IN = "roads_in";
+	public static final String PRIORITY_ROADS = "priority_roads";
+	public static final String ROADS_OUT = "roads_out";
+	public static final String STOP = "stop";
+	public static final String BLOCK = "block";
 
-	@getter (ROADS_IN)
-	public List getRoadsIn(final IAgent agent) {
+	@getter(ROADS_IN)
+	public static List getRoadsIn(final IAgent agent) {
 		return (List) agent.getAttribute(ROADS_IN);
 	}
 
-	@getter (ROADS_OUT)
-	public List getRoadsOut(final IAgent agent) {
+	@getter(ROADS_OUT)
+	public static List getRoadsOut(final IAgent agent) {
 		return (List) agent.getAttribute(ROADS_OUT);
 	}
 
-	@setter (ROADS_IN)
-	public void setSourceNode(final IAgent agent, final List rds) {
+	@setter(ROADS_IN)
+	public static void setRoadsIn(final IAgent agent, final List rds) {
 		agent.setAttribute(ROADS_IN, rds);
 	}
 
-	@setter (ROADS_OUT)
-	public void setTargetNode(final IAgent agent, final List rds) {
+	@setter(ROADS_OUT)
+	public static void setRoadsOut(final IAgent agent, final List rds) {
 		agent.setAttribute(ROADS_OUT, rds);
 	}
 
-	@getter (STOP)
-	public List<List> getStop(final IAgent agent) {
+	@getter(STOP)
+	public static List<List> getStop(final IAgent agent) {
 		return (List<List>) agent.getAttribute(STOP);
 	}
 
-	@setter (STOP)
-	public void setStop(final IAgent agent, final List<List> stop) {
+	@setter(STOP)
+	public static void setStop(final IAgent agent, final List<List> stop) {
 		agent.setAttribute(STOP, stop);
 	}
 
-	@getter (BLOCK)
-	public Map<IAgent, List> getBlock(final IAgent agent) {
+	@getter(BLOCK)
+	public static Map<IAgent, List> getBlock(final IAgent agent) {
 		return (Map<IAgent, List>) agent.getAttribute(BLOCK);
 	}
 
-	@setter (BLOCK)
-	public void setBlock(final IAgent agent, final Map<IAgent, List> block) {
+	@setter(BLOCK)
+	public static void setBlock(final IAgent agent, final Map<IAgent, List> block) {
 		agent.setAttribute(BLOCK, block);
 	}
 
-	@getter (PRIORITY_ROADS)
-	public List getPriorityRoads(final IAgent agent) {
+	@getter(PRIORITY_ROADS)
+	public static List getPriorityRoads(final IAgent agent) {
 		return (List) agent.getAttribute(PRIORITY_ROADS);
 	}
 
-	@setter (PRIORITY_ROADS)
-	public void setPriorityRoads(final IAgent agent, final List rds) {
+	@setter(PRIORITY_ROADS)
+	public static void setPriorityRoads(final IAgent agent, final List rds) {
 		agent.setAttribute(PRIORITY_ROADS, rds);
 	}
-
 }
