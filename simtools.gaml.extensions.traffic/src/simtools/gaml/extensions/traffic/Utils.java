@@ -1,5 +1,14 @@
 package simtools.gaml.extensions.traffic;
 
+import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentTarget;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getDistanceToGoal;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getMinSafetyDistance;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getNextRoad;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getNumLanesOccupied;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getVehicleLength;
+import static simtools.gaml.extensions.traffic.DrivingSkill.isViolatingOneway;
+import static simtools.gaml.extensions.traffic.DrivingSkill.readyToCross;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +20,6 @@ import org.locationtech.jts.geom.Coordinate;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
-import static simtools.gaml.extensions.traffic.DrivingSkill.*;
 
 public class Utils {
 	/**

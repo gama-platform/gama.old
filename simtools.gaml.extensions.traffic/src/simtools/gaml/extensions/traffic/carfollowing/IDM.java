@@ -1,8 +1,15 @@
 package simtools.gaml.extensions.traffic.carfollowing;
 
+import static simtools.gaml.extensions.traffic.DrivingSkill.getDeltaIDM;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxAcceleration;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxDeceleration;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxSpeed;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getMinSafetyDistance;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getSpeed;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getTimeHeadway;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import static simtools.gaml.extensions.traffic.DrivingSkill.*;
 
 public class IDM {
 	/**

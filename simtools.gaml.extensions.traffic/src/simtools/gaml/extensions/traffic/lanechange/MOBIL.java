@@ -1,6 +1,28 @@
 package simtools.gaml.extensions.traffic.lanechange;
 
-import java.util.Collections;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getAccBias;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getAccGainThreshold;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getAllowedLanes;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getLCCooldown;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getLaneChangeLimit;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getLeadingVehicle;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getLinkedLaneLimit;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getLowestLane;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxSafeDeceleration;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getNumLanesOccupied;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getPolitenessFactor;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getProbaUseLinkedRoad;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getRightSideDriving;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getSpeed;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getTimeSinceLC;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getVehicleLength;
+import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingDistance;
+import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingSpeed;
+import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingVehicle;
+import static simtools.gaml.extensions.traffic.DrivingSkill.setTimeSinceLC;
+import static simtools.gaml.extensions.traffic.Utils.findLeadingAndBackVehicle;
+import static simtools.gaml.extensions.traffic.Utils.rescaleProba;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -13,9 +35,6 @@ import msi.gama.runtime.IScope;
 import simtools.gaml.extensions.traffic.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.RoadSkill;
 import simtools.gaml.extensions.traffic.carfollowing.IDM;
-import static simtools.gaml.extensions.traffic.DrivingSkill.*;
-import static simtools.gaml.extensions.traffic.Utils.findLeadingAndBackVehicle;
-import static simtools.gaml.extensions.traffic.Utils.rescaleProba;
 
 public class MOBIL {
 	/**
@@ -41,8 +60,6 @@ public class MOBIL {
 
 		// Rescale probabilities based on step duration
 		double timeStep = scope.getSimulation().getClock().getStepInSeconds();
-		Double probaChangeLaneUp = rescaleProba(getProbaLaneChangeUp(vehicle), timeStep);
-		Double probaChangeLaneDown = rescaleProba(getProbaLaneChangeDown(vehicle), timeStep);
 		Double probaUseLinkedRoad = rescaleProba(getProbaUseLinkedRoad(vehicle), timeStep);
 
 		IAgent linkedRoad = RoadSkill.getLinkedRoad(road);
