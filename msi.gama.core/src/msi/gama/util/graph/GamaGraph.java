@@ -13,6 +13,7 @@ package msi.gama.util.graph;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,9 @@ import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
 import org.jgrapht.alg.tour.HamiltonianCycleAlgorithmBase;
 import org.jgrapht.alg.tour.PalmerHamiltonianCycle;
 import org.jgrapht.alg.util.Pair;
+import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
@@ -65,6 +68,7 @@ import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Graphs.EdgeToAdd;
+import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
@@ -145,6 +149,82 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		shortestPathComputed = new ConcurrentHashMap<>();
 		this.graphScope = scope;
 		type = Types.GRAPH.of(nodeType, vertexType);
+	}
+	
+	public GamaGraph(IScope scope, AbstractBaseGraph<String, DefaultEdge> graph, ISpecies nodeS, ISpecies edgeS ) {
+		this(scope,nodeS == null ?Types.STRING : Types.AGENT,edgeS == null ?Types.STRING : Types.AGENT);
+		Map<String, IAgent> verticesAg = new HashMap();
+		for (Object v : graph.vertexSet()) { 
+			if (nodeS == null)
+				addVertex(v.toString());
+			else {
+				IList atts = GamaListFactory.create();
+				 final IList<IAgent> listAgt =(IList<IAgent>) nodeS.getPopulation(scope).createAgents(scope, 1,atts,false, false, null);
+				 IAgent ag = listAgt.get(0);
+				 if (v != null) ag.setName(v.toString());
+				 addVertex(ag);
+				 verticesAg.put(v.toString(), ag);
+			}
+		}
+		for (DefaultEdge e : graph.edgeSet()) {
+			Object s = graph.getEdgeSource(e);
+			Object t = graph.getEdgeTarget(e);
+			
+			if (edgeS == null) {
+				addEdge(s, t, e);
+				setEdgeWeight(e, graph.getEdgeWeight(e));
+			} else {
+				IList atts = GamaListFactory.create();
+				final IList<IAgent> listAgt =(IList<IAgent>) edgeS.getPopulation(scope).createAgents(scope, 1,atts,false, true, null);
+				IAgent ag = listAgt.get(0);
+				if(e != null) ag.setName(e.toString());
+				 
+				if (nodeS != null) {
+					IAgent n1 = verticesAg.get(s.toString());
+					IAgent n2 = verticesAg.get(t.toString());
+					 addEdge(n1, n2, ag);
+					ag.setGeometry(Spatial.Creation.link(scope, n1,n2));
+				} else
+					 addEdge(s, t, ag);
+				 
+				setEdgeWeight(ag, graph.getEdgeWeight(e));
+			} 
+
+		}
+	}
+		
+		public GamaGraph(IScope scope, AbstractBaseGraph<String, DefaultEdge> graph, IList nodes, ISpecies edgeS ) {
+			this(scope, Types.get(nodes.get(0).getClass()) ,edgeS == null ?Types.STRING : Types.AGENT);
+			Map<String, Object> verticesAg = new HashMap();
+			for (Object v : graph.vertexSet()) { 
+				Object d = nodes.get(Integer.valueOf(v.toString()));
+				addVertex(d);
+				verticesAg.put(v.toString(), d);
+			}
+			for (DefaultEdge e : graph.edgeSet()) {
+				Object s = graph.getEdgeSource(e);
+				Object t = graph.getEdgeTarget(e);
+				
+				if (edgeS == null) {
+					addEdge(s, t, e);
+					setEdgeWeight(e, graph.getEdgeWeight(e));
+				} else {
+					IList atts = GamaListFactory.create();
+					final IList<IAgent> listAgt =(IList<IAgent>) edgeS.getPopulation(scope).createAgents(scope, 1,atts,false, true, null);
+					IAgent ag = listAgt.get(0);
+					if(e != null) ag.setName(e.toString());
+					 
+					Object n1 = verticesAg.get(s.toString());
+					Object n2 = verticesAg.get(t.toString());
+					 addEdge(n1, n2, ag);
+					 if (n1 instanceof IShape)
+						 ag.setGeometry(Spatial.Creation.link(scope, (IShape)n1,(IShape)n2));
+					 
+					setEdgeWeight(ag, graph.getEdgeWeight(e));
+				}
+				
+				
+			}
 	}
 
 	public IScope getScope() {

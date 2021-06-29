@@ -17,7 +17,7 @@ global {
 	graph<node_agent,edge_agent> my_graph ;
 	
 	//Number of agents to create
-	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
 	//Number of value per class
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
 	//Boolean to know if we display a spatial graph or not
@@ -79,7 +79,7 @@ global {
 			
 		}
         else{
-          my_graph <- graph<node_agent, edge_agent>(generate_barabasi_albert(node_agent,edge_agent,nbAgent,2,true));	
+          my_graph <- graph<node_agent, edge_agent>(generate_barabasi_albert(nbAgent * 0.5,5,nbAgent,false,node_agent,edge_agent));	
         }
         
 		//For each node agent, we compute its class value

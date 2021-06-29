@@ -21,6 +21,7 @@ global {
 		do importation;
 	}
 	action importation {
+		
 		switch type {
 			match "graphml" {
 				g <- graphml_file("../includes/simple.graphml").contents;
