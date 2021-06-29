@@ -8,7 +8,6 @@ Require-Bundle: msi.gama.core,
  org.eclipse.osgi
 Bundle-ClassPath: .,
  lib/Libbulletjme-10.4.0.jar,
- native/,
  lib/jbullet-1.0.1.jar
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
