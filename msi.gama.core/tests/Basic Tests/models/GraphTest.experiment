@@ -20,6 +20,9 @@ global {
 	}
 	
 		
+		the_graph <- directed(as_distance_graph(node_agent, 30.0));
+		
+		
 	}
 	
 	
@@ -58,10 +61,7 @@ experiment GraphTest type: test autorun: true {
 	}
 	
 	test "My Graph Test" {
-	
-		the_graph <- directed(as_distance_graph(node_agent, 30.0));
-		
-		write "DIRECTED:" + the_graph;
+	write "DIRECTED:" + the_graph;
 		
 		write (node_agent[2]);
 		
