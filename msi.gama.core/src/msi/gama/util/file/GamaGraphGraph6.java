@@ -19,25 +19,25 @@ import msi.gama.util.graph.IGraph;
 import msi.gaml.types.IType;
 
 @file (
-		name = "graphml",
-		extensions = { "graphml" },
+		name = "graph6",
+		extensions = { "graph6" },
 		buffer_type = IType.GRAPH,
 		concept = { IConcept.GRAPH, IConcept.FILE },
 		doc = @doc ("Represents files that contain Graph information. The internal representation is a graph"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaGraphMLFile extends GamaGraphFile {
+public class GamaGraphGraph6 extends GamaGraphFile {
 
-	public GamaGraphMLFile(final IScope scope, final String pn) throws GamaRuntimeException {
+	public GamaGraphGraph6(final IScope scope, final String pn) throws GamaRuntimeException {
 		super(scope, pn);
 	}
 
-	public GamaGraphMLFile(final IScope scope, final String pathName, final IGraph<?, ?> container) {
+	public GamaGraphGraph6(final IScope scope, final String pathName, final IGraph<?, ?> container) {
 		super(scope, pathName, container);
 	}
 
 	@Override
 	protected String getFileType() {
-		return "graphml";
+		return "graph6";
 	}
 
 }

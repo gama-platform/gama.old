@@ -344,6 +344,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			}
 		});
 		
+		//TODO: WE HAVE TO FIND A SOLUTION FOR CYCLES IN VARIABLES 
 		
 		// June 2021: Temporary patch remove cycles to avoid infinite loop in TopologicalOrderIterator and add variables after
 		Set<String> varToAdd = new HashSet<>();

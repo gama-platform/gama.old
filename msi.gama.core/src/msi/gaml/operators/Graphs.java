@@ -64,7 +64,7 @@ import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.layout.LayoutCircle;
 import msi.gama.util.graph.layout.LayoutForceDirected;
 import msi.gama.util.graph.layout.LayoutGrid;
-import msi.gama.util.graph.loader.AvailableGraphParsers;
+import msi.gama.util.graph.loader.GraphParsers;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaMatrix;

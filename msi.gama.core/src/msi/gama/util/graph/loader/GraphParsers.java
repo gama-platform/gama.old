@@ -12,7 +12,11 @@ package msi.gama.util.graph.loader;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.nio.GraphImporter;
 import org.jgrapht.nio.csv.CSVImporter;
@@ -29,13 +33,13 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
- * Lists all the layouts available, independently of the underlying libraries.
+ * Lists all the graph importer available.
  * If you add a parser, add it there.
  *
- * @author Samuel Thiriot
+ * @author Patrick Taillandier
  *
  */
-public class AvailableGraphParsers {
+public class GraphParsers {
 
 	private static final Map<String, Class<? extends GraphImporter>> name2parser =
 		new HashMap<String, Class<? extends GraphImporter>>() {
@@ -45,14 +49,14 @@ public class AvailableGraphParsers {
 				// but also a prefixed version for disambiguation (like "prefuse.forcedirected")
 
 				// default
-				put("csv", CSVImporter.class); 
+				//put("csv", CSVImporter.class); 
 				put("dimacs", DIMACSImporter.class);
 				put("dot", DOTImporter.class); 
 				put("gexf", SimpleGEXFImporter.class);
 				put("graphml", GraphMLImporter.class);
 				put("graph6", Graph6Sparse6Importer.class);
 				put("gml", GmlImporter.class);
-				put("json", JSONImporter.class);
+				//put("json", JSONImporter.class);
 				put("tsplib", TSPLIBImporter.class);
 
 			}
@@ -104,20 +108,21 @@ public class AvailableGraphParsers {
 
 	private static Map<String, GraphImporter> name2singleton = new HashMap<String, GraphImporter>();
 
-	public static GraphImporter getLoader(final String name) {
-		GraphImporter res = name2singleton.get(name);
+	public static GraphImporter getGraphImporter(final String fileType) {
+		GraphImporter res = name2singleton.get(fileType);
 
 		if ( res == null ) {
 			// no singleton created
-			Class<? extends GraphImporter> clazz = name2parser.get(name);
+			Class<? extends GraphImporter> clazz = name2parser.get(fileType);
 			if ( clazz == null ) { throw GamaRuntimeException.error(
-				"unknown parser name: " + name + "; please choose one of " + getAvailableLoaders().toString(),
+				"unknown parser name: " + fileType + "; please choose one of " + getAvailableLoaders().toString(),
 				GAMA.getRuntimeScope()); }
 			Constructor<?> ctor;
 			try {
 				ctor = clazz.getConstructor();
 				res = (GraphImporter) ctor.newInstance();
-				name2singleton.put(name, res);
+				name2singleton.put(fileType, res);
+				return res;
 			} catch (NoSuchMethodException e) {
 				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 			} catch (SecurityException e) {

@@ -1639,7 +1639,6 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Supplier<V> getVertexSupplier() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
