@@ -9,7 +9,7 @@ model GraphImportation
 
 global {
 	
-	string type <- "gml" among: ["graphml", "gml","dot", "dimacs", "gexf", "tsplib", "graph6"] parameter: true; 
+	string type <- "graphml" among: ["graphml", "gml","dot", "dimacs", "gexf", "tsplib", "graph6"] parameter: true; 
 	
 	map loc_nodes;
 	

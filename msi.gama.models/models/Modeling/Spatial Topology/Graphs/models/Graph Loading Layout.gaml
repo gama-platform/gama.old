@@ -9,7 +9,7 @@ model graphloadinglayout
 
 global {
 	graph<agent,agent> the_graph ;
-	string barabasi_file <- "../includes/ProteinSimple.dgs";
+	string barabasi_file <- "../includes/simple.graphml";
 	geometry shape <- rectangle(500,500);
 	string layout_type;
 	int layout_time <- 1000 min: 0 max: 10000 parameter: "Max number of iterations" category: "Force";
@@ -21,7 +21,8 @@ global {
 	//The operator load_graph_from_file generates the graph from the file, and chose the vertices as agents of node_agent 
 	//species, and edges as edge_agent agents
 	init {
-		the_graph <- load_graph_from_file(barabasi_file, node_agent, edge_agent);
+		the_graph <- graphml_file("../includes/simple.graphml", node_agent, edge_agent).contents;
+		write the_graph.edges;
 	}
 	
 	//In case the layout type is forcedirected or random, the reflex will change at each step the layout of the graph

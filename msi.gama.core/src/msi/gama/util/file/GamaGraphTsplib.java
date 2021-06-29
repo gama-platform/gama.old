@@ -16,6 +16,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 @file (
@@ -31,8 +32,12 @@ public class GamaGraphTsplib extends GamaGraphFile {
 		super(scope, pn);
 	}
 
-	public GamaGraphTsplib(final IScope scope, final String pathName, final IGraph<?, ?> container) {
-		super(scope, pathName, container);
+	public GamaGraphTsplib(final IScope scope, final String pathName, final ISpecies nodeSpecies) {
+		super(scope, pathName, nodeSpecies);
+	}
+
+	public GamaGraphTsplib(final IScope scope, final String pathName, final ISpecies nodeSpecies, final ISpecies edgeSpecies) {
+		super(scope, pathName,nodeSpecies,edgeSpecies);
 	}
 
 	@Override
