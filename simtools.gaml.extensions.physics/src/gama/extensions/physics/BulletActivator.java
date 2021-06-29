@@ -27,11 +27,10 @@ public class BulletActivator implements BundleActivator {
 						try {
 							System.loadLibrary("bulletjme");
 							NATIVE_BULLET_LIBRARY_LOADED = true;
-						} catch (Exception e) {
+						} catch (Throwable e) {
 							ERR(">> Impossible to load Bullet native library from "
 									+ context.getBundle().getSymbolicName() + " because of " + e.getMessage());
 							ERR(">> GAMA will revert to JBullet instead");
-							// throw e;
 						}
 					});
 
