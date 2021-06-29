@@ -23,7 +23,6 @@ import com.bulletphysics.collision.shapes.SphereShape;
 import com.bulletphysics.collision.shapes.TriangleShape;
 import com.bulletphysics.collision.shapes.UniformScalingShape;
 import com.bulletphysics.dom.HeightfieldTerrainShape;
-import com.bulletphysics.util.ObjectArrayList;
 
 import gama.extensions.physics.common.IShapeConverter;
 import msi.gama.common.geometry.GeometryUtils;
@@ -116,12 +115,13 @@ public class BulletShapeConverter implements IShapeConverter<CollisionShape, Vec
 						return new BU_Simplex1to4(toVector(points[0]), toVector(points[1]), toVector(points[2]),
 								toVector(points[3]));
 					default:
-						ObjectArrayList<Vector3f> vertices = new ObjectArrayList<>(points.length);
+						ConvexHullShape result = new ConvexHullShape();
+						// ObjectArrayList<Vector3f> vertices = new ObjectArrayList<>(points.length);
 						for (final GamaPoint p : points) {
-							vertices.add(toVector(p));
+							// vertices.add(toVector(p));
+							result.addPoint(toVector(p));
 						}
-						ConvexHullShape result = new ConvexHullShape(vertices);
-
+						// ConvexHullShape result = new ConvexHullShape(vertices);
 						return result;
 				}
 

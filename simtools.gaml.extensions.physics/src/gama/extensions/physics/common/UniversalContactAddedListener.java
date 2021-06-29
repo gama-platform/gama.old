@@ -14,7 +14,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 
-public class UniversalContactAddedListener extends ContactAddedCallback implements PhysicsCollisionListener, ContactListener {
+public class UniversalContactAddedListener implements ContactAddedCallback, PhysicsCollisionListener, ContactListener {
 
 	Multimap<IBody, IBody> newContacts = MultimapBuilder.hashKeys().hashSetValues().build();
 

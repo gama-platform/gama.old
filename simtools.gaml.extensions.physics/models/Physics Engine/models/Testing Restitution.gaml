@@ -16,12 +16,11 @@ global parent: physical_world {
 	float step <- 1.0/60;
 	float wall_restitution <- 1.0  min: 0.0 max: 1.0 ;
 	float ball_restitution <- 0.8  min: 0.0 max: 1.0 ;
-	point ball_impulse <- {300,300,0} ;
+	point ball_impulse <- {100,100,0} ;
 	geometry shape <- box(100,100,0.001);
 	float friction <- 0.0;
 	float restitution <- 0.0;
 
-	bool accurate_collision_detection <- true;
 	point ball_contact <- nil;
 	int ball_timer <- 0;
 	point wall_contact <- nil;
@@ -58,7 +57,7 @@ species ball skills: [dynamic_body] {
 	float contact_damping <- 0.0;
 	float damping <- 0.0;
 	float angular_damping <- 0.1;
-	float mass <- 1.0;
+	float mass <- 5.0;
 	float restitution <- ball_restitution;
 	float friction <- 0.0;
 	
