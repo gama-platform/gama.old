@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.jgrapht.nio.GraphExporter;
+
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -25,13 +27,13 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class AvailableGraphWriters {
 
-	private static final Map<String, Class<? extends IGraphWriter>> name2writer =
-			new HashMap<String, Class<? extends IGraphWriter>>() {
+	private static final Map<String, Class<? extends GraphExporter>> name2writer =
+			new HashMap<String, Class<? extends GraphExporter>>() {
 
 				{
 
 					// defaults
-					put("dgs", GraphStreamWriterDGS.class);
+			/*		put("dgs", GraphStreamWriterDGS.class);
 					put("gml", GraphStreamWriterGML.class);
 					// put("tikz", GraphStreamWriterTikz.class);
 					// put("gexf", GephiWriterGEXF.class);
@@ -77,7 +79,7 @@ public class AvailableGraphWriters {
 					// put("gephi.guess", GephiWriterGDF.class);
 					// put("gephi.csv", GephiWriterCSV.class);
 
-					// not ok: put("gephi.vna", GephiWriterVNA.class);
+					// not ok: put("gephi.vna", GephiWriterVNA.class);*/
 
 				}
 			};
@@ -86,26 +88,20 @@ public class AvailableGraphWriters {
 		return name2writer.keySet();
 	}
 
-	private static Map<String, IGraphWriter> name2singleton = new HashMap<>();
+	private static Map<String, GraphExporter> name2singleton = new HashMap<>();
 
-	public static IGraphWriter getGraphWriter(final String name) {
-		IGraphWriter res = name2singleton.get(name);
+	public static GraphExporter getGraphWriter(final String name) {
+		GraphExporter res = name2singleton.get(name);
 
 		if (res == null) {
 			// no singleton created
-			final Class<? extends IGraphWriter> classWriter = name2writer.get(name);
+			final Class<? extends GraphExporter> classWriter = name2writer.get(name);
 			if (classWriter == null) {
 				throw GamaRuntimeException.error(
 						"unknown writer name: " + name + "; please choose one of " + getAvailableWriters().toString(),
 						GAMA.getRuntimeScope());
 			}
-			try {
-				res = classWriter.newInstance();
-			} catch (final InstantiationException e) {
-				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
-			} catch (final IllegalAccessException e) {
-				throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
-			}
+		
 			name2singleton.put(name, res);
 		}
 

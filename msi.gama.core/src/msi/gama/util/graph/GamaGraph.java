@@ -20,23 +20,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
+import org.jgrapht.GraphType;
 import org.jgrapht.Graphs;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.WeightedGraph;
-import org.jgrapht.alg.ConnectivityInspector;
-import org.jgrapht.alg.CycleDetector;
-import org.jgrapht.alg.HamiltonianCycle;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.cycle.CycleDetector;
+import org.jgrapht.alg.interfaces.KShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.BellmanFordShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.alg.shortestpath.KShortestPaths;
+import org.jgrapht.alg.shortestpath.YenKShortestPath;
 import org.jgrapht.alg.spanning.KruskalMinimumSpanningTree;
+import org.jgrapht.alg.tour.HamiltonianCycleAlgorithmBase;
+import org.jgrapht.alg.tour.PalmerHamiltonianCycle;
 import org.jgrapht.alg.util.Pair;
-import org.jgrapht.graph.AsUndirectedGraph;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -556,10 +556,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		return o == null && !directed ? getVertex(v2).edgeTo(v1) : o;
 	}
 
-	@Override
-	public EdgeFactory getEdgeFactory() {
-		return null; // NOT USED
-	}
+	
 
 	@Override
 	public Object getEdgeSource(final Object e) {
@@ -575,7 +572,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public double getEdgeWeight(final Object e) {
-		if (!containsEdge(e)) { return WeightedGraph.DEFAULT_EDGE_WEIGHT; }
+		if (!containsEdge(e)) { return 
+				DefaultDirectedWeightedGraph.DEFAULT_EDGE_WEIGHT; }
 		return getEdge(e).getWeight();
 	}
 
@@ -595,7 +593,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public Set incomingEdgesOf(final Object vertex) {
 		final _Vertex<V, E> v = getVertex(vertex);
-		return v == null ? Collections.EMPTY_SET : v.inEdges;
+		return v == null ? Collections.EMPTY_SET : (isDirected() ?v.inEdges : v.getEdges());
 	}
 
 	@Override
@@ -610,13 +608,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public int degreeOf(final Object v) {
-		return inDegreeOf(v) + outDegreeOf(v);
+		return isDirected() ? (inDegreeOf(v) + outDegreeOf(v)) : inDegreeOf(v);
 	}
 
 	@Override
 	public Set outgoingEdgesOf(final Object vertex) {
 		final _Vertex<V, E> v = getVertex(vertex);
-		return v == null ? Collections.EMPTY_SET : v.outEdges;
+		return v == null ? Collections.EMPTY_SET : (isDirected() ?v.outEdges : v.getEdges());
 	}
 
 	@Override
@@ -784,7 +782,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				spl2 = GamaListFactory.create(getGamlType().getContentType());
 
 				try {
-					final DijkstraShortestPath<V, V> p2 = new DijkstraShortestPath(getProxyGraph());
+					final DijkstraShortestPath p2 =  new DijkstraShortestPath<>(this);
 					final GraphPath ph = p2.getPath(source, target);
 					if (ph == null) {
 						spl2 = GamaListFactory.create(getGamlType().getContentType());
@@ -842,7 +840,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			IList<E> spl1 = null;
 			if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
 				spl1 = GamaListFactory.create(getGamlType().getContentType());
-				final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<>(getProxyGraph());
+				final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<>(this);
 				final GraphPath ph = p1.getPath(source, target);
 				if (ph == null) {
 					spl1 = GamaListFactory.create(getGamlType().getContentType());
@@ -930,9 +928,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				paths.add(GamaListFactory.create(scope, getGamlType().getContentType(), sp));
 			}
 		} else {
-			final KShortestPaths<V, E> kp = new KShortestPaths<>(getProxyGraph(), k);
+			final KShortestPathAlgorithm<V, E> kp = new YenKShortestPath(this);
 
-			final List<GraphPath<V, E>> pathsJGT = kp.getPaths(source, target);
+			final List<GraphPath<V, E>> pathsJGT = kp.getPaths(source, target,k);
 			final IList<IList<E>> el = GamaListFactory.create(Types.LIST.of(getGamlType().getContentType()));
 			for (final GraphPath<V, E> p : pathsJGT) {
 				paths.add(GamaListFactory.create(scope, getGamlType().getContentType(), p.getEdgeList()));
@@ -947,9 +945,6 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		return paths;
 	}
 
-	protected Graph<V, E> getProxyGraph() {
-		return directed ? this : new AsUndirectedGraph<>(this);
-	}
 
 	@Override
 	public IList<E> listValue(final IScope scope, final IType contentsType, final boolean copy) {
@@ -1076,9 +1071,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IPath getCircuit(final IScope scope) {
-		final SimpleWeightedGraph g = new SimpleWeightedGraph(getEdgeFactory());
+		final SimpleWeightedGraph g = new SimpleWeightedGraph(null);
 		Graphs.addAllEdges(g, this, edgeSet());
-		final List vertices = HamiltonianCycle.getApproximateOptimalForCompleteGraph(g);
+		HamiltonianCycleAlgorithmBase hamilton = new PalmerHamiltonianCycle();
+		final List vertices = hamilton.getTour(this).getVertexList();
 		final int size = vertices.size();
 		final IList edges = GamaListFactory.create(getGamlType().getContentType());
 		for (int i = 0; i < size - 1; i++) {
@@ -1089,13 +1085,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Boolean getConnected() {
-		ConnectivityInspector c;
-		if (directed) {
-			c = new ConnectivityInspector((DirectedGraph) this);
-		} else {
-			c = new ConnectivityInspector((UndirectedGraph) this);
-		}
-		return c.isGraphConnected();
+		ConnectivityInspector<V, E> c = new ConnectivityInspector(this);
+		return c.isConnected();
 	}
 
 	@Override
@@ -1626,6 +1617,29 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				((IAgent) obj).dispose();
 			}
 		}
+	}
+
+	@Override
+	public V addVertex() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Supplier<E> getEdgeSupplier() {
+		return null;
+	}
+
+	@Override
+	public GraphType getType() {
+		if (isDirected())
+			return DefaultGraphType.simple().asDirected().asWeighted();
+		return DefaultGraphType.simple().asUndirected().asWeighted();
+	}
+
+	@Override
+	public Supplier<V> getVertexSupplier() {
+		return null;
 	}
 
 }

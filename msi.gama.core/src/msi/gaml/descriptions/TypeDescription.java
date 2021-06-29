@@ -27,9 +27,9 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
-import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
@@ -77,7 +77,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			// DEBUG.LOG("Origin name " + getOriginName() + " and plugin "
 			// + plugin + " of " + this);
 		}
-
+		
 	}
 
 	public String getAttributeDocumentation() {
@@ -316,21 +316,25 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
 		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
-		final DirectedGraph<String, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		
+		final DefaultDirectedGraph<String, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		final Map<String, VariableDescription> all = new HashMap<>();
 		this.visitAllAttributes((d) -> {
 			all.put(d.getName(), (VariableDescription) d);
 			return true;
 		});
+		
 		Graphs.addAllVertices(dependencies, all.keySet());
 		final VariableDescription shape = getAttribute(SHAPE);
 		final Collection<VariableDescription> shapeDependencies =
 				shape == null ? Collections.EMPTY_LIST : shape.getDependencies(facetsToConsider, false, true);
+		
 		all.forEach((an, var) -> {
 			for (final VariableDescription newVar : var.getDependencies(facetsToConsider, false, true)) {
 				final String other = newVar.getName();
 				// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
 				if (!dependencies.containsEdge(an, other)) {
+					
 					dependencies.addEdge(other, an);
 				}
 			}
@@ -339,11 +343,37 @@ public abstract class TypeDescription extends SymbolDescription {
 				dependencies.addEdge(SHAPE, an);
 			}
 		});
+		
+		//TODO: WE HAVE TO FIND A SOLUTION FOR CYCLES IN VARIABLES 
+		
+		// June 2021: Temporary patch remove cycles to avoid infinite loop in TopologicalOrderIterator and add variables after
+		Set<String> varToAdd = new HashSet<>();
+		while (true) {
+			CycleDetector c  = new CycleDetector<>(dependencies);
+			if (c.detectCycles()) {
+				Set<String> cycle = c.findCycles();
+				for(String s : cycle) {
+					dependencies.removeVertex(s);
+					varToAdd.add(s);
+					break;
+				}
+			} else {
+				break;
+			}
+			
+		}
+			
 		// June 2020: moving (back) to Iterables instead of Streams.
+		//ArrayList<String> list = Lists.newArrayList((dependencies.vertexSet()));
 		ArrayList<String> list = Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
-
+		
 		// March 2021: Temporary patch for #3068 - just add missing variables. TopologicalOrderIterator have to be fixed
 		for (String s : dependencies.vertexSet()) {
+			if (!list.contains(s)) {
+				list.add(s);
+			}
+		}
+		for (String s : varToAdd) {
 			if (!list.contains(s)) {
 				list.add(s);
 			}
@@ -361,7 +391,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (attributes == null || attributes.size() <= 1)
 			return true;
 		final VariableDescription shape = attributes.get(SHAPE);
-		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		final DefaultDirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
 			dependencies.addVertex(shape);
 		}
@@ -398,7 +428,8 @@ public abstract class TypeDescription extends SymbolDescription {
 			}
 			return false;
 		}
-		final DirectedGraph<VariableDescription, Object> fDependencies = new DefaultDirectedGraph<>(Object.class);
+
+		final DefaultDirectedGraph<VariableDescription, Object> fDependencies = new DefaultDirectedGraph<>(Object.class);
 		attributes.forEachPair((aName, var) -> {
 			if (!var.hasFacet(FUNCTION))
 				return true;
@@ -428,7 +459,6 @@ public abstract class TypeDescription extends SymbolDescription {
 
 			}
 		}
-
 		return true;
 	}
 

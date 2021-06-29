@@ -10,32 +10,39 @@
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import msi.gama.common.geometry.Envelope3D;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.types.IContainerType;
-import msi.gaml.types.Types;
+import msi.gaml.species.ISpecies;
+import msi.gaml.types.IType;
 
+@file (
+		name = "graphml",
+		extensions = { "graphml" },
+		buffer_type = IType.GRAPH,
+		concept = { IConcept.GRAPH, IConcept.FILE },
+		doc = @doc ("Represents files that contain Graph information. The internal representation is a graph"))
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGraphMLFile extends GamaGraphFile {
 
 	public GamaGraphMLFile(final IScope scope, final String pn) throws GamaRuntimeException {
 		super(scope, pn);
 	}
 
-	public GamaGraphMLFile(final IScope scope, final String pathName, final IGraph<?, ?> container) {
-		super(scope, pathName, container);
+	public GamaGraphMLFile(final IScope scope, final String pathName, final ISpecies nodeSpecies) {
+		super(scope, pathName, nodeSpecies);
+	}
+
+	public GamaGraphMLFile(final IScope scope, final String pathName,  final ISpecies nodeSpecies, final ISpecies edgeSpecies) {
+		super(scope, pathName,nodeSpecies,edgeSpecies);
 	}
 
 	@Override
-	public Envelope3D computeEnvelope(final IScope scope) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IContainerType<?> getGamlType() {
-		return Types.GRAPH;
+	protected String getFileType() {
+		return "graphml";
 	}
 
 }

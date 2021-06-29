@@ -20,9 +20,9 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gaml.types.Types; 
 import one.util.streamex.StreamEx;
-
+ 
 /**
  * Written by drogoul Modified on 21 nov. 2008
  *
