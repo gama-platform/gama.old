@@ -89,6 +89,10 @@ public class Utils {
 		Triple<IAgent, Double, Boolean> leadingTriple;
 		Triple<IAgent, Double, Boolean> backTriple;
 
+		// TODO: rework this spaghetti bowl
+		// Should probably construct a map of Agent -> gapBetweenCentroids first 
+		// (including agents from other segments & roads),
+		// then iterate through the keys to find leader & follower
 		for (IAgent otherVehicle : neighbors) {
 			if (otherVehicle == vehicle || otherVehicle == null || otherVehicle.dead()) {
 				continue;
@@ -104,25 +108,70 @@ public class Utils {
 			}
 
 			// Calculate bumper-to-bumper distances
-			double otherFrontToMyRear = otherDistToSegmentEnd - 0.5 * otherVL - (distToSegmentEnd + 0.5 * vL);
-			double myFrontToOtherRear = distToSegmentEnd - 0.5 * vL - (otherDistToSegmentEnd + 0.5 * otherVL);
+			double gapBetweenCentroids = distToSegmentEnd - otherDistToSegmentEnd;
+			double gap = Math.abs(gapBetweenCentroids) - 0.5 * vL - 0.5 * otherVL;
 
-			if ((otherFrontToMyRear <= 0 && -otherFrontToMyRear < vL) ||
-					(myFrontToOtherRear <= 0 && -myFrontToOtherRear < otherVL)) {
+			if (Math.abs(gapBetweenCentroids) < 0.5 * vL + 0.5 * otherVL) {
 				// Overlap with another vehicle
 				return null;
-			} else if (myFrontToOtherRear > 0 && myFrontToOtherRear < minLeadingDist) {
+			} else if (gapBetweenCentroids > 0 && gap < minLeadingDist) {
 				leadingVehicle = otherVehicle;
-				minLeadingDist = myFrontToOtherRear;
+				minLeadingDist = Math.abs(gap);
 				leadingSameDirection = sameDirection;
-			} else if (otherFrontToMyRear > 0 && otherFrontToMyRear < minBackDist) {
+			} else if (gapBetweenCentroids < 0 && gap < minBackDist) {
 				backVehicle = otherVehicle;
-				minBackDist = otherFrontToMyRear;
+				minBackDist = Math.abs(gap);
 				backSameDirection = sameDirection;
 			}
 		}
 
-		// We don't look further behind to find a back vehicle for now?
+		if (backVehicle == null) {
+			int numSegments = RoadSkill.getNumSegments(road);
+			// TODO: check for previous roads as well (all roads connected to last target?)
+			if ((!violatingOneway && segment > 0) ||
+					(violatingOneway && segment < numSegments - 1)) {
+				int prevSegment;
+				Coordinate prevPoint;
+				Coordinate coords[] = road.getInnerGeometry().getCoordinates();
+				if (!violatingOneway) {
+					prevSegment = segment - 1;
+					prevPoint = coords[segment];
+				} else {
+					prevSegment = segment + 1;
+					prevPoint = coords[segment + 1];
+				}
+				GamaPoint loc = (GamaPoint) vehicle.getLocation();
+				double distToPrevTarget = loc.distance(prevPoint);
+				Set<IAgent> prevNeighbors = new HashSet<>();
+				for (int i = 0; i < numLanesOccupied; i += 1) {
+					prevNeighbors.addAll(
+						RoadSkill.getVehiclesOnLaneSegment(scope, road, lowestLane + i, prevSegment)
+					);
+				}
+				for (IAgent otherVehicle : prevNeighbors) {
+					boolean sameDirection = target == getCurrentTarget(otherVehicle);
+					double otherVL = getVehicleLength(otherVehicle);
+					double otherDistToSegmentEnd;
+					if (sameDirection) {
+						otherDistToSegmentEnd = getDistanceToGoal(otherVehicle);
+					} else {
+						GamaPoint otherLocation = (GamaPoint) otherVehicle.getLocation();
+						otherDistToSegmentEnd = otherLocation.distance(segmentEndPt);
+					}
+
+					double gap = otherDistToSegmentEnd + distToPrevTarget - 0.5 * vL - 0.5 * otherVL;
+					if (gap < 0) {
+						//overlap
+						return null;
+					} else if (gap < minBackDist) {
+						backVehicle = otherVehicle;
+						minBackDist = gap;
+						backSameDirection = sameDirection;
+					}
+				}
+			}
+		}
+
 		if (backVehicle == null) {
 			backTriple = null;
 		} else {
@@ -139,7 +188,7 @@ public class Utils {
 				// Return a virtual leading vehicle of length 0 to simulate deceleration at intersections
 				// NOTE: the added minSafetyDist is necessary for the vehicle to ignore the safety dist when stopping at an endpoint
 				IAgent stoppingNode = target;
-				leadingTriple = ImmutableTriple.of(stoppingNode, distToSegmentEnd + minSafetyDist, false);
+				leadingTriple = ImmutableTriple.of(stoppingNode, distToSegmentEnd - 0.5 * vL, false);
 				// Slowing down at final target, since at this point we don't know which road will be taken next
 				if (nextRoad == null) {
 					return ImmutablePair.of(leadingTriple, backTriple);
@@ -151,9 +200,7 @@ public class Utils {
 				}
 			}
 
-			// TODO: rework this spaghetti bowl
 			// Continue to find leading vehicle on next segment or next road in path
-			minLeadingDist = distToSegmentEnd - 0.5 * vL;
 			IAgent roadToCheck = null;
 			IAgent targetToCheck = null;
 			int lowestLaneToCheck = 0;
@@ -188,30 +235,33 @@ public class Utils {
 					);
 				}
 
-				double minGap = Double.MAX_VALUE;
 				for (IAgent otherVehicle : furtherVehicles) {
 					if (otherVehicle == vehicle || otherVehicle == null || otherVehicle.dead()) {
 						continue;
 					}
 					// check if the other vehicle going in opposite direction
-					double gap;
+					double targetToOtherVehicle;
 					boolean sameDirection = targetToCheck == getCurrentTarget(otherVehicle);
 					if (sameDirection) {
 						Coordinate coords[] = roadToCheck.getInnerGeometry().getCoordinates();
+						// TODO: verify the correctness of this, regarding one-way
 						double segmentLength = coords[segmentToCheck].distance(coords[segmentToCheck + 1]);
-						gap = segmentLength - getDistanceToGoal(otherVehicle);
+						targetToOtherVehicle = segmentLength - getDistanceToGoal(otherVehicle);
 					} else {
-						gap = getDistanceToGoal(otherVehicle);
+						targetToOtherVehicle = getDistanceToGoal(otherVehicle);
 					}
-					gap -= 0.5 * getVehicleLength(otherVehicle);
+					double otherVL = getVehicleLength(otherVehicle);
+					double gap = distToSegmentEnd + targetToOtherVehicle - 0.5 * vL - 0.5 * otherVL;
 
-					if (gap < minGap) {
+					if (gap < 0) {
+						// crash
+						return null;
+					} else if (gap < minLeadingDist) {
 						leadingVehicle = otherVehicle;
-						minGap = gap;
+						minLeadingDist = gap;
 						leadingSameDirection = sameDirection;
 					}
 				}
-				minLeadingDist += minGap;
 			}
 		}
 

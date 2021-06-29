@@ -1309,7 +1309,7 @@ public class DrivingSkill extends MovingSkill {
 			IAgent target = getCurrentTarget(vehicle);
 			GamaPoint targetLoc = (GamaPoint) target.getLocation();
 
-			if (loc.equalsWithTolerance(targetLoc, EPSILON)) {
+			if (loc.equals(targetLoc)) {
 				// At the end point of a road
 				IAgent newRoad = getNextRoad(vehicle);
 				if (!readyToCross(scope, vehicle, target, newRoad)) {
@@ -1365,11 +1365,6 @@ public class DrivingSkill extends MovingSkill {
 				IAgent currentTarget = getCurrentTarget(vehicle);
 				int currentSegment = getSegmentIndex(vehicle);
 				double distToGoal = getDistanceToGoal(vehicle);
-				if (distToGoal < EPSILON) {
-					// At segment's end point
-					currentSegment = !isViolatingOneway(vehicle) ?
-						currentSegment + 1 : currentSegment - 1;
-				}
 				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, currentTarget, currentRoad, currentSegment, distToGoal);
 			}
 			int lowestLane = laneAndAccPair.getLeft();
@@ -1454,10 +1449,10 @@ public class DrivingSkill extends MovingSkill {
 			ILocation loc = vehicle.getLocation();
 			GamaPoint targetLoc = (GamaPoint) getCurrentTarget(vehicle).getLocation();
 
-			if (loc.equalsWithTolerance(finalTargetLoc, EPSILON)) {  // Final node in path
+			if (loc.equals(finalTargetLoc)) {  // Final node in path
 				clearDrivingStates(scope);
 				return;
-			} else if (loc.equalsWithTolerance(targetLoc, EPSILON)) {  // Intermediate node in path
+			} else if (loc.equals(targetLoc)) {  // Intermediate node in path
 				// get next road in path
 				IAgent newRoad = getNextRoad(vehicle);
 				int newEdgeIdx = getCurrentIndex(vehicle) + 1;
