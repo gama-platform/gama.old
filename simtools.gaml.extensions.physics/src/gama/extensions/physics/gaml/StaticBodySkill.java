@@ -246,24 +246,26 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 
 		@Override
 		public GamaPoint getAngularVelocity(final GamaPoint v) {
-			GamaPoint result = (GamaPoint) values.get(ANGULAR_VELOCITY);
-			if (result == null) {
-				v.setLocation(0, 0, 0);
+			GamaPoint result = v == null ? new GamaPoint() : v;
+			GamaPoint existing = (GamaPoint) values.get(ANGULAR_VELOCITY);
+			if (existing == null) {
+				result.setLocation(0, 0, 0);
 			} else {
-				v.setLocation(result);
+				result.setLocation(existing);
 			}
-			return v;
+			return result;
 		}
 
 		@Override
 		public GamaPoint getLinearVelocity(final GamaPoint v) {
-			GamaPoint result = (GamaPoint) values.get(VELOCITY);
-			if (result == null) {
-				v.setLocation(0, 0, 0);
+			GamaPoint result = v == null ? new GamaPoint() : v;
+			GamaPoint existing = (GamaPoint) values.get(VELOCITY);
+			if (existing == null) {
+				result.setLocation(0, 0, 0);
 			} else {
-				v.setLocation(result);
+				result.setLocation(existing);
 			}
-			return v;
+			return result;
 		}
 
 		@Override
