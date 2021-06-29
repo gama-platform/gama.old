@@ -7,6 +7,7 @@
 model graph
 
 global {
+	int init_nb_nodes <- 1 parameter: true min: 1;
 	int nb_nodes <- 10 parameter: true min: 1;
 	int av_degree <- 4 parameter: true;
 	int x_cells <- 10;
@@ -55,11 +56,14 @@ global {
 		write "- Scale-free : Barabási–Albert = generate_barabasi_albert(node_species, edge_species, nb_nodes, new_edges, synchronize)";
 		do clean;
 		int new_edges_addition_per_node_introduction <- 4;
-		g_graph <- generate_barabasi_albert(regular_agent_node, // The species of nodes
-		regular_agent_edge, // The species of edges
-		nb_nodes, // The number of nodes in the graph
+		g_graph <- generate_barabasi_albert(
+		init_nb_nodes, // The number of nodes in the graph
 		new_edges_addition_per_node_introduction, // the number of edges created when a new node enter the graph
-		true);
+		nb_nodes, // The number of nodes in the graph
+		true, //directed grah
+		regular_agent_node, // The species of nodes
+		regular_agent_edge // The species of edges
+		);
 	}
 
 	/*
@@ -72,12 +76,14 @@ global {
 		do clean;
 		float rewirering_probability <- 0.1;
 		int fake_lattice_start_degree <- 4; // Even and more than 2
-		g_graph <- generate_watts_strogatz(regular_agent_node, // The species of nodes
-		regular_agent_edge, // The species of edges
+		g_graph <- generate_watts_strogatz(
 		nb_nodes, // The number of nodes
 		rewirering_probability, // The probability to rewire a node in the generation process
 		fake_lattice_start_degree, // The degree of node at start, before the rewirering process
-		true);
+		false, //is directed
+		regular_agent_node, // The species of nodes
+		regular_agent_edge // The species of edges
+		);
 	}
 
 	/*
@@ -86,10 +92,12 @@ global {
 	action complete {
 		write "- Complete = generate_complete_graph(node_species, edge_species, nb_node)";
 		do clean;
-		g_graph <- generate_complete_graph(regular_agent_node, // The species of nodes
-		regular_agent_edge, // The species of edges 
-		nb_nodes, // The number of nodes in the graph
-		true);
+		g_graph <- generate_complete_graph(
+			nb_nodes,// The number of nodes in the graph
+			false, //is directed
+			regular_agent_node, // The species of nodes
+		regular_agent_edge // The species of edges 
+		);
 	}
 
 	action from_nodes {
