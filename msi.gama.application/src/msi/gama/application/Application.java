@@ -121,7 +121,7 @@ public class Application implements IApplication {
 
 		});
 		Display.setAppName("Gama Platform");
-		Display.setAppVersion("1.8.1");
+		Display.setAppVersion("1.8.2");
 		// DEBUG.OUT(System.getProperties());
 		createProcessor();
 		final Object check = checkWorkspace();
@@ -194,8 +194,11 @@ public class Application implements IApplication {
 				 * If there's any problem with the workspace, force a dialog
 				 */
 				final String ret = checkWorkspaceDirectory(lastUsedWs, false, false, false);
-				remember = "models".equals(ret) && !openQuestion(null, "Different version of the models library",
-					"The workspace contains a different version of the models library. Do you want to use another workspace ?");
+				// AD Added this check explicitly as the checkWorkspaceDirectory() was not supposed to return null at this stage
+				if ( ret != null ) {
+					remember = "models".equals(ret) && !openQuestion(null, "Different version of the models library",
+						"The workspace contains a different version of the models library. Do you want to use another workspace ?");
+				}
 			}
 		}
 
