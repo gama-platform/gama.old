@@ -65,6 +65,7 @@ import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
@@ -363,9 +364,9 @@ public class Application implements IApplication {
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
 		
-		final IExperimentPlan exp = mdl.getExperiment(args.get(args.size() - 2));
+		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
 		
-		exp.open();
+		expPlan.open();
 		
 		System.exit(0);
 	} 
