@@ -53,6 +53,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
@@ -1532,6 +1533,58 @@ public class Graphs {
 		}
 		return graph;
 	}
+	
+	@operator (
+			value = "with_k_shortest_path_algorithm",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH, IConcept.GRAPH_WEIGHT, IConcept.OPTIMIZATION,
+					IConcept.ALGORITHM })
+	@doc (
+			value = "changes the K shortest paths computation algorithm of the given graph",
+			comment = "the right-hand operand can be Yen, Bhandari, Eppstein, Suurballe to use the associated algorithm. ",
+			examples = @example (
+					value = "graphEpidemio <- graphEpidemio with_optimizer_type \"static\";",
+					isExecutable = false))
+	@no_test 
+	public static IGraph setKShortestPathAlgorithm(final IScope scope, final IGraph graph, final String shortestpathAlgo) {
+		final List<String> existingAlgo = Arrays.asList(GamaGraph.kShortestPathAlgorithm.values()).stream()
+				.map(a -> a.toString()).collect(Collectors.toList());
+		if (existingAlgo.contains(shortestpathAlgo)) {
+			graph.setKShortestPathAlgorithm(shortestpathAlgo);
+		} else {
+			throw GamaRuntimeException.error("The K shortest paths algorithm " + shortestpathAlgo
+					+ " does not exist. Possible K shortest paths algorithms: " + existingAlgo, scope);
+		}
+		return graph;
+	}
+	
+	@operator (
+			value = "with_shortest_path_algorithm",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH, IConcept.GRAPH_WEIGHT, IConcept.OPTIMIZATION,
+					IConcept.ALGORITHM })
+	@doc (
+			value = "changes the shortest path computation algorithm of the given graph",
+			comment = "the right-hand operand can be Djikstra, BidirectionalDijkstra, BellmannFord, FloydWarshall, Astar, NBAStar, NBAStarApprox, DeltaStepping, CHBidirectionalDijkstra, TransitNodeRouting to use the associated algorithm. ",
+			examples = @example (
+					value = "road_network <- road_network with_shortestpath_algorithm TransitNodeRouting;",
+					isExecutable = false))
+	@no_test 
+	public static IGraph setShortestPathAlgorithm(final IScope scope, final IGraph graph, final String shortestpathAlgo) {
+		final List<String> existingAlgo = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream()
+				.map(a -> a.toString()).collect(Collectors.toList());
+		if (existingAlgo.contains(shortestpathAlgo)) {
+			graph.setShortestPathAlgorithm(shortestpathAlgo);
+		} else {
+			throw GamaRuntimeException.error("The shortest path algorithm " + shortestpathAlgo
+					+ " does not exist. Possible shortest path algorithms: " + existingAlgo, scope);
+		}
+		return graph;
+	}
 
 	@operator (
 			value = "with_optimizer_type",
@@ -1542,24 +1595,15 @@ public class Graphs {
 					IConcept.ALGORITHM })
 	@doc (
 			value = "changes the shortest path computation method of the given graph",
-			comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\", \"NBAStar\", \"NBAStarApprox\" to use the associated algorithm. "
-					+ "Note that these methods are dynamic: the path is computed when needed. In contrarily, if the operand is another string, "
-					+ "a static method will be used, i.e. all the shortest are previously computed.",
-			examples = @example (
-					value = "graphEpidemio <- graphEpidemio with_optimizer_type \"static\";",
+			deprecated = "with_shortestpath_algorithm instead",
+					comment = "the right-hand operand can be Djikstra, BidirectionalDijkstra, BellmannFord, FloydWarshall, Astar, NBAStar, NBAStarApprox, DeltaStepping, CHBidirectionalDijkstra, TransitNodeRouting to use the associated algorithm. ",
+				examples = @example (
+					value = "road_network <- road_network with_optimizer_type TransitNodeRouting;",
 					isExecutable = false),
 			see = "set_verbose")
-	@no_test
+	@no_test (Reason.DEPRECATED)
 	public static IGraph setOptimizeType(final IScope scope, final IGraph graph, final String optimizerType) {
-		final List<String> existingOptimizer = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream()
-				.map(a -> a.toString()).collect(Collectors.toList());
-		if (existingOptimizer.contains(optimizerType)) {
-			graph.setOptimizerType(optimizerType);
-		} else {
-			throw GamaRuntimeException.error("The Optimizer type " + optimizerType
-					+ " does not exist. Possible optimizer types: " + existingOptimizer, scope);
-		}
-		return graph;
+		return setShortestPathAlgorithm(scope,graph,optimizerType);
 	}
 
 	@operator (
@@ -1697,6 +1741,7 @@ public class Graphs {
 			+ " length((paths_between(g, {10,5}:: {80,35}, 2))) = 2")
 	public static IList<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
 			final GamaPair sourTarg, final int k) throws GamaRuntimeException {
+		
 		return Cast.asTopology(scope, graph).KpathsBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value, k);
 	}
 

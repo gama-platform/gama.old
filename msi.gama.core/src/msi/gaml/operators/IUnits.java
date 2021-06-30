@@ -104,6 +104,90 @@ public interface IUnits {
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
 			doc = @doc ("HighamHall54 solver")) String HighamHall54 = "HighamHall54";
 
+	
+	/**
+	 * Shortest Path algorithm constants 
+	 */
+	@constant (
+			value = "FloydWarshall",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.EQUATION, IConcept.CONSTANT },
+			doc = @doc ("FloydWarshall shortest path computation algorithm")) String FloydWarshall = "FloydWarshall";
+	@constant (
+			value = "BellmannFord",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("BellmannFord shortest path computation algorithm")) String BellmannFord = "BellmannFord";
+	@constant (
+			value = "Dijkstra",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("Dijkstra shortest path computation algorithm")) String Dijkstra = "Dijkstra";
+	@constant (
+			value = "AStar",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("AStar shortest path computation algorithm")) String AStar = "AStar";
+	@constant (
+			value = "NBAStar",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("NBAStar shortest path computation algorithm")) String NBAStar = "NBAStar";
+	@constant (
+			value = "NBAStarApprox",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("NBAStarApprox shortest path computation algorithm")) String NBAStarApprox = "NBAStarApprox";
+	@constant (
+			value = "DeltaStepping",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("DeltaStepping shortest path computation algorithm")) String DeltaStepping = "DeltaStepping";
+	@constant (
+			value = "CHBidirectionalDijkstra",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("CHBidirectionalDijkstra shortest path computation algorithm")) String CHBidirectionalDijkstra = "CHBidirectionalDijkstra";
+	@constant (
+			value = "BidirectionalDijkstra",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("BidirectionalDijkstra shortest path computation algorithm")) String BidirectionalDijkstra = "BidirectionalDijkstra";
+	
+	@constant (
+			value = "TransitNodeRouting",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("TransitNodeRouting shortest path computation algorithm")) String TransitNodeRouting = "TransitNodeRouting";
+
+	@constant (
+			value = "Yen",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("Yen K shortest paths computation algorithm")) String Yen = "Yen";
+
+	@constant (
+			value = "Bhandari",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("Bhandari K shortest paths computation algorithm")) String Bhandari = "Bhandari";
+
+	@constant (
+			value = "Eppstein",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("Eppstein K shortest paths computation algorithm")) String Eppstein = "Eppstein";
+
+	@constant (
+			value = "Suurballe",
+			category = { IConstantCategory.CONSTANT },
+			concept = { IConcept.GRAPH, IConcept.CONSTANT },
+			doc = @doc ("Suurballe K shortest paths computation algorithm")) String Suurballe = "Suurballe";
+
+	
+
+	
+	
 	/**
 	 * Buffer constants
 	 */

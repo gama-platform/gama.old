@@ -108,11 +108,14 @@ public interface IGraph<Node, Edge>
 
 	Object addEdge(Object p);
 
-	void setOptimizerType(String optiType);
+	void setShortestPathAlgorithm(String optiType);
+	void setKShortestPathAlgorithm(String optiType);
+	
+	
 
-	FloydWarshallShortestPathsGAMA<Node, Edge> getOptimizer();
+	FloydWarshallShortestPathsGAMA<Node, Edge> getFloydWarshallShortestPaths();
 
-	void setOptimizer(FloydWarshallShortestPathsGAMA<Node, Edge> optimizer);
+	void setFloydWarshallShortestPaths(FloydWarshallShortestPathsGAMA<Node, Edge> optimizer);
 
 	int getVersion();
 

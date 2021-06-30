@@ -17,12 +17,15 @@ import java.util.Set;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.Collector;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph._Edge;
 import msi.gama.util.graph._Vertex;
+import msi.gaml.types.Types;
 
 public class AStar<V, E> {
 
@@ -64,14 +67,15 @@ public class AStar<V, E> {
 		isSpatialGraph = graph instanceof GamaSpatialGraph;
 	}
 
-	public void compute() {
+	public IList<E> compute() {
 		if (source != null && target != null) {
 			aStar(source, target);
 		}
-	}
-
-	public List<E> getShortestPath() {
-		return result;
+		if (result == null || result.isEmpty()) 
+			return GamaListFactory.EMPTY_LIST;
+		
+		return GamaListFactory.create(GAMA.getRuntimeScope(), Types.NO_TYPE, result);
+		
 	}
 
 	public IList<E> buildPath(final ASNode target) {
