@@ -23,6 +23,13 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.ArrayUtils;
 import org.jgrapht.alg.clique.BronKerboschCliqueFinder;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.drawing.FRLayoutAlgorithm2D;
+import org.jgrapht.alg.drawing.IndexedFRLayoutAlgorithm2D;
+import org.jgrapht.alg.drawing.MedianGreedyTwoLayeredBipartiteLayout2D;
+import org.jgrapht.alg.drawing.model.Box2D;
+import org.jgrapht.alg.drawing.model.LayoutModel2D;
+import org.jgrapht.alg.drawing.model.MapLayoutModel2D;
+import org.jgrapht.alg.drawing.model.Point2D;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
@@ -36,6 +43,7 @@ import org.jgrapht.graph.Multigraph;
 import org.jgrapht.util.SupplierUtil;
 import org.locationtech.jts.geom.Coordinate;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -1859,6 +1867,74 @@ public class Graphs {
 		return graph;
 	}
 
+
+	@operator (
+			value = "layout_force_FR",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "layouts a GAMA graph using Fruchterman and Reingold Force-Directed Placement Algorithm (in a given spatial bound, normalization factor and max_iteration parameters). ",
+			masterDoc = true,
+			special_cases = "usage: layoutForce(graph, bounds, normalization_factor, max_iteration, equilibirum criterion). graph is the graph to which "
+					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; normalization_factor is the normalization factor for the optimal distance, typical value is 1.0; "
+					+ "  max_iteration is the maximal number of iterations")
+	@no_test
+	public static IGraph layoutForceFR(final IScope scope, final GamaGraph graph, final IShape bounds,
+			final double normalization_factor,  final int maxIteration) {
+		final FRLayoutAlgorithm2D sim = new FRLayoutAlgorithm2D(maxIteration,normalization_factor,scope.getSimulation().getRandomGenerator().getGenerator());
+		LayoutModel2D model = toModel(graph,bounds);
+		sim.layout(graph, model);
+		return update_loc(graph,model);
+	}
+	
+	@operator (
+			value = "layout_force_FR_indexed",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "layouts a GAMA graph using Fruchterman and Reingold Force-Directed Placement Algorithm with The Barnes-Hut indexing technique(in a given spatial bound, theta, normalization factor and max_iteration parameters). ",
+			masterDoc = true,
+			special_cases = "usage: layoutForce(graph, bounds, normalization_factor, max_iteration, equilibirum criterion). graph is the graph to which "
+					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; theta value for approximation using the Barnes-Hut technique, typical value is 0.5; normalization_factor is the normalization factor for the optimal distance, typical value is 1.0; "
+					+ "  max_iteration is the maximal number of iterations")
+	@no_test
+	public static IGraph indexedFRLayout(final IScope scope, final GamaGraph graph, final IShape bounds,
+			final double theta, final double normalizationFactor,  final int maxIteration) {
+		final IndexedFRLayoutAlgorithm2D sim = new IndexedFRLayoutAlgorithm2D(maxIteration,theta, normalizationFactor,scope.getSimulation().getRandomGenerator().getGenerator());
+		LayoutModel2D model = toModel(graph,bounds);
+		sim.layout(graph, model);
+		return update_loc(graph,model);
+	}
+	
+	
+
+	static IGraph update_loc(IGraph graph, LayoutModel2D model) {
+		for (Object s : graph.vertexSet()) {
+			if (s instanceof IShape) {
+				Point2D pt = model.get(s);
+				((IShape) s).setLocation(new GamaPoint(pt.getX(), pt.getY()));
+			}
+		}
+		return graph;
+	}
+	
+	static LayoutModel2D toModel(final GamaGraph graph, final IShape bounds) {
+		Envelope3D env = bounds.getEnvelope();
+		LayoutModel2D model = new MapLayoutModel2D<>(new Box2D(env.getMinY(), env.getMinY(), env.getWidth(), env.getHeight()));
+		for (Object s : graph.vertexSet()) {
+			if (s instanceof IShape) {
+				model.put(s, new Point2D(((IShape)s).getLocation().getX(), ((IShape)s).getLocation().getY()));
+			}
+		}
+		return model;
+	}
+	
 	@operator (
 			value = "layout_force",
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
