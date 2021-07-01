@@ -85,7 +85,9 @@ public class Application implements IApplication {
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
 	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
+	
 	final public static String BATCH_PARAMETER = "-batch";
+	final public static String GAML_PARAMETER = "-gaml";
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
@@ -115,7 +117,9 @@ public class Application implements IApplication {
 				+ "\n                                   -- build an xml parameter file from a model"
 				+ "\n" 
 				+ "\n      -batch [experimentName] [modelFile.gaml]"
-				+ "\n                                   -- Run batch experiment in headless mode";
+				+ "\n                                   -- Run batch experiment in headless mode"
+				+ "\n      -gaml [experimentName] [modelFile.gaml]"
+				+ "\n                                   -- Run single gaml experiment in headless mode";
 
 		return res;
 	}
@@ -213,6 +217,9 @@ public class Application implements IApplication {
 
 		} else if (args.contains(BATCH_PARAMETER)) {
 			runBatchSimulation(args);
+		} else if (args.contains(GAML_PARAMETER)) {
+			runGamlSimulation(args);
+			
 		} else if (args.contains(RUN_LIBRARY_PARAMETER))
 			return ModelLibraryRunner.getInstance().start(args);
 		else if (args.contains(VALIDATE_LIBRARY_PARAMETER))
@@ -367,6 +374,16 @@ public class Application implements IApplication {
 		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
 		
 		expPlan.open();
+		
+		System.exit(0);
+	} 
+
+	public void runGamlSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
+		final String pathToModel = args.get(args.size() - 1);
+		
+		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+
+
 		
 		System.exit(0);
 	} 
