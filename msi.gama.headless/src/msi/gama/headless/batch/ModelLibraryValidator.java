@@ -1,4 +1,4 @@
-package msi.gama.headless.batch.validation;
+package msi.gama.headless.batch;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,7 +12,6 @@ import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
-import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GamlCompilationError;

@@ -1,4 +1,4 @@
-package msi.gama.headless.batch.test;
+package msi.gama.headless.batch;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,7 +16,6 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;

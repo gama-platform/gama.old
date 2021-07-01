@@ -45,10 +45,10 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.headless.batch.ModelLibraryRunner;
+import msi.gama.headless.batch.ModelLibraryTester;
+import msi.gama.headless.batch.ModelLibraryValidator;
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
-import msi.gama.headless.batch.test.ModelLibraryTester;
-import msi.gama.headless.batch.validation.ModelLibraryRunner;
-import msi.gama.headless.batch.validation.ModelLibraryValidator;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.GamaHeadlessException;
@@ -381,8 +381,16 @@ public class Application implements IApplication {
 		final String pathToModel = args.get(args.size() - 1);
 		
 		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+	
+		final Injector injector = HeadlessSimulationLoader.getInjector();
+		final GamlModelBuilder builder = new GamlModelBuilder(injector);
 
-
+		final List<GamlCompilationError> errors = new ArrayList<>();
+		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
+		
+		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
+		
+		expPlan.open();
 		
 		System.exit(0);
 	} 
