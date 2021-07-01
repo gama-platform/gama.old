@@ -17,6 +17,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
 import msi.gama.util.IList;
+import msi.gama.util.matrix.IField;
 import msi.gaml.operators.Colors.GamaGradient;
 import msi.gaml.operators.Colors.GamaPalette;
 import msi.gaml.operators.Colors.GamaScale;
@@ -57,7 +58,12 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		}
 
 		else if (colors instanceof IList) {
-			color = new ListBasedMeshColorProvider((IList<Color>) colors);
+			if (((IList) colors).get(0) instanceof IField) {
+				// We have bands
+				color = new BandsBasedMeshColorProvider((IList<IField>) colors);
+			} else {
+				color = new ListBasedMeshColorProvider((IList<Color>) colors);
+			}
 		} else if (isGrayscaled()) {
 			color = IMeshColorProvider.GRAYSCALE;
 		} else {
