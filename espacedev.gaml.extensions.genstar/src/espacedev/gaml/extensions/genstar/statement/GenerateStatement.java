@@ -82,6 +82,11 @@ import one.util.streamex.StreamEx;
 								+ "  <li>bayesian network: describe a conditional distribution of three or more attributes</li>"
 								+ "</ul>")),
 				@facet (
+						/*
+						 * TODO :  make those attributes like in csv map 
+						 * to directly recognize species' attributes rather than use string
+						 * with potential mispells
+						 */
 						name = GenStarConstant.GSATTRIBUTES,
 						type = { IType.MAP },
 						optional = false,
@@ -312,6 +317,9 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 				for (final IType genType : types) {
 					found = genType.isAssignableFrom(type);
 					if (found) { break; }
+				}
+				if (type==Types.MATRIX) {
+					// TODO verify that x,y matrix match possible attributes values
 				}
 				if (!found) {
 					description.warning("Facet 'from' expects an expression with one of the following types: " + types,

@@ -18,8 +18,19 @@ import msi.gaml.types.IType;
  */
 public interface IGenstarGenerator {
 	
+	/**
+	 * Gives the type of the main source of data to inform generation process
+	 * @return
+	 */
 	@SuppressWarnings("rawtypes")
 	IType sourceType();
+	
+	/**
+	 * Tests if the source type fit the required type for this generator 
+	 * @param scope
+	 * @param source
+	 * @return
+	 */
 	boolean sourceMatch(IScope scope, Object source);
 	
 	/**
