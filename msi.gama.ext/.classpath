@@ -2,12 +2,9 @@
 <classpath>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/antlr4-runtime-4.8-1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jheaps-0.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-demo-1.5.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-ext-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-guava-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-io-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-opt-1.5.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-unimi-dsi-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-core-1.5.1.jar" sourcepath="C:/Users/admin_ptaillandie/Desktop/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools/bigint-0.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools/ehcache-2.10.3.jar"/>
