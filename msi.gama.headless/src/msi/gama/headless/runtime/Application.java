@@ -83,7 +83,8 @@ public class Application implements IApplication {
 	final public static String BUILD_XML_PARAMETER = "-xml";
 	final public static String CHECK_MODEL_PARAMETER = "-check";
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
-	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
+	//final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
+	// -> Code still exist, but not documented
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
 	
 	final public static String BATCH_PARAMETER = "-batch";
@@ -110,9 +111,8 @@ public class Application implements IApplication {
 				+ "\n" 
 				+ "\n      -p                           -- start pipeline to interact with another framework"
 				+ "\n"
-				+ "\n      -validate [directory]        -- invokes GAMA to validate the models present in the directory passed as argument"
-				+ "\n      -test [directory]            -- invokes GAMA to execute the tests present in the directory and display their results"
-				+ "\n      -failed                      -- only display the failed and aborted test results"
+				+ "\n      -validate                    -- invokes GAMA to validate models present in built-in library and plugins"
+				+ "\n      -test                        -- invokes GAMA to execute the tests present in built-in library and plugins and display their results"
 				+ "\n      -xml [experimentName] [modelFile.gaml] [xmlOutputFile.xml]"
 				+ "\n                                   -- build an xml parameter file from a model"
 				+ "\n" 
@@ -219,13 +219,12 @@ public class Application implements IApplication {
 			runBatchSimulation(args);
 		} else if (args.contains(GAML_PARAMETER)) {
 			runGamlSimulation(args);
-			
-		} else if (args.contains(RUN_LIBRARY_PARAMETER))
-			return ModelLibraryRunner.getInstance().start(args);
+		}//else if (args.contains(RUN_LIBRARY_PARAMETER))
+		//	return ModelLibraryRunner.getInstance().start(args);
 		else if (args.contains(VALIDATE_LIBRARY_PARAMETER))
-			return ModelLibraryValidator.getInstance().start(args);
+			return ModelLibraryValidator.getInstance().start();
 		else if (args.contains(TEST_LIBRARY_PARAMETER))
-			return ModelLibraryTester.getInstance().start(args);
+			return ModelLibraryTester.getInstance().start();
 		else if (args.contains(CHECK_MODEL_PARAMETER)) {
 			ModelLibraryGenerator.start(this, args);
 		} else if (args.contains(BUILD_XML_PARAMETER)) {

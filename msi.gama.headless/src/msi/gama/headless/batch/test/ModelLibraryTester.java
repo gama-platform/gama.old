@@ -33,15 +33,17 @@ import ummisco.gama.dev.utils.DEBUG;
 public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	private static ModelLibraryTester instance;
-	private final static String FAILED_PARAMETER = "-failed";
 
 	PrintStream original;
 	PrintStream nullStream;
 
-	private ModelLibraryTester() {}
+	private ModelLibraryTester() {
+		super();
+	}
+	
 
 	@Override
-	public int start(final List<String> args) throws IOException {
+	public int start() throws IOException {
 		DEBUG.ON();
 		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
@@ -55,9 +57,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		});
 		final int[] count = { 0 };
 		final int[] code = { 0 };
-		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
-		final boolean oldPref = GamaPreferences.Runtime.FAILED_TESTS.getValue();
-		GamaPreferences.Runtime.FAILED_TESTS.set(onlyFailed);
 		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithTests();
 		final List<URL> allURLs = new ArrayList<>();
 		for (final Bundle bundle : plugins.keySet()) {
@@ -77,7 +76,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		builder.loadURLs(allURLs);
 
 		allURLs.forEach(u -> test(builder, count, code, u));
-		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
 
 		DEBUG.OUT("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		DEBUG.OUT(code[0]);

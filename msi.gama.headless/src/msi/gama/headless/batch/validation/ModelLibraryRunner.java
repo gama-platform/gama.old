@@ -30,11 +30,11 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 	private static ModelLibraryRunner instance;
 
 	private ModelLibraryRunner() {
-		DEBUG.ON();
+		super();
 	}
 
 	@Override
-	public int start(final List<String> args) throws IOException {
+	public int start() throws IOException {
 		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 		final int[] count = { 0 };

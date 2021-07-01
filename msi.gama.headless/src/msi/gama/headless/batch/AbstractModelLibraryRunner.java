@@ -29,5 +29,5 @@ public abstract class AbstractModelLibraryRunner {
 		return isModel(url) && url.toString().contains("tests");
 	}
 
-	public abstract int start(List<String> args) throws IOException;
+	public abstract int start() throws IOException;
 }
