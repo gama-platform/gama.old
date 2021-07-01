@@ -10,15 +10,15 @@ model BingMapImageImport
 global
 {
 	image_file static_map_request;
-	map
-	answers <- user_input_dialog("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Address","")]);
-	string center_text <- answers["Address"]; 
 	int zoom_text <- 15;
 	geometry shape<-square(500);
 	action load_map
 	{ 
+		map	answers <- user_input_dialog("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Address","48.8566140,2.3522219")]);
+		string center_text <- answers["Address"]; 
 		string zoom <- "zoom=" + zoom_text;
 		string center <- "center=" + center_text;
+		
 		string rest_link<- "https://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/"+center_text+"/"+zoom_text+"?mapSize="+int(world.shape.width)+","+int(world.shape.height)+"&key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln";
 		write rest_link;
 		static_map_request <- image_file(rest_link);
