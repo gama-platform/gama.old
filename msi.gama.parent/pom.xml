@@ -223,7 +223,6 @@
 		<module>../espacedev.gaml.extensions.genstar</module>
 
 
-		<module>../simtools.graphanalysis.fr</module>
 		<module>../simtools.graphlayout.feature</module>
 
 		<module>../ummisco.gama.feature.audio</module>
