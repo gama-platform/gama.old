@@ -4,7 +4,7 @@ Bundle-Name: Genstar
 Bundle-SymbolicName: espacedev.gaml.extensions.genstar;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: espacedev.gaml.extensions.genstar
-Bundle-RequiredExecutionEnvironment: JavaSE-15
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: msi.gama.core;bundle-version="1.8.1",
  msi.gama.ext;bundle-version="1.8.1"
 Bundle-ClassPath: lib/genstar-core-1.0.4.jar,
