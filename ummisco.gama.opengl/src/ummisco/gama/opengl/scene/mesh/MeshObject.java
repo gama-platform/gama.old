@@ -8,10 +8,12 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl.scene.mesh;
 
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
+import ummisco.gama.opengl.scene.AbstractObject;
+import ummisco.gama.opengl.scene.AbstractObject.DrawerType;
 
 public class MeshObject extends AbstractObject<IField, MeshDrawingAttributes> {
 

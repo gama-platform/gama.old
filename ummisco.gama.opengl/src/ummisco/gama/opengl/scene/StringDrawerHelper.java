@@ -189,7 +189,7 @@ class StringDrawerHelper {
 
 	private class SideBuffer {
 		double previousX = Double.MIN_VALUE, previousY = Double.MIN_VALUE;
-		ICoordinates temp = ICoordinates.ofLength(9);
+		ICoordinates temp = ICoordinates.ofLength(4);
 		GamaPoint normal = new GamaPoint();
 		int currentIndex = -1;
 		int[] indices = new int[1000]; // Indices of the "move_to" or "close"
@@ -227,7 +227,7 @@ class StringDrawerHelper {
 			if (depth > 0) {
 				// If depth > 0, then we will build side faces, and we need to calculate their normal
 				if (previousX > Double.MIN_VALUE) {
-					temp.setTo(previousX, previousY, 0, previousX, previousY, depth, x, y, 0);
+					temp.setTo(previousX, previousY, 0, previousX, previousY, depth, x, y, 0, previousX, previousY, 0);
 					temp.getNormal(true, 1, normal);
 					// We add two normal vectors as the vertex buffer will be filled by 2 coordinates
 					addNormal(normal.x, normal.y, normal.z, normal.x, normal.y, normal.z);

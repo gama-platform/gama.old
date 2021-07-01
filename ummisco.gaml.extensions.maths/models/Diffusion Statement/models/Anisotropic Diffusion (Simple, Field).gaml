@@ -8,14 +8,16 @@
 model anisotropic_diffusion
 
 global {
+	geometry shape <- rectangle(100,100);
 	int size <- 128; // better to have a pow of 2 for the size of the grid
-	field cells <- field(size, size, 0.0, 0.0);
+	field cells <- field(size, size, 0.0);
+			int rnd_component -> rnd(8) - 4;
 
 	// Declare the anisotropic matrix (diffuse to the left-upper direction)
 	matrix<float> mat_diff <- matrix([
-		[4 / 9, 1.5 / 9, 1 / 9], 
-		[1.5 / 9, 0 / 9, 0 / 9], 
-		[1 / 9, 0 / 9, 0.1 / 9]
+		[4 / 9, 2.5 / 9, 0 / 9], 
+		[2.5 / 9, 0 / 9, 0 / 9], 
+		[0 / 9, 0 / 9, 0.1 / 9]
 	]);
 
 	reflex diff {
@@ -23,20 +25,37 @@ global {
 	}
 
 	reflex new_Value {
-		cells[size / 2 + rnd(8) - 4, size / 2 + rnd(8) - 4] <- 15;
+int i <- 0;
+		//loop i from: -10 to: 10 step: 5 {
+			cells[size / 2 - i + rnd_component, size / 2 + i + rnd_component] <- 15;
+		//}
+		
 	}
 }
 
 experiment diffusion type: gui {
 	output {
-		display a type: opengl synchronized: true {
-			graphics text {
-				draw "Max " + string(float(max(cells)) with_precision 2) + " min " + string(float(min(cells)) with_precision 2) at: location + {-20, 20, 10};
-			}
-
-			mesh cells scale: 3 color: one_of(#lightgreen, #lightblue, #lightsalmon) triangulation: true;
+		layout #split;
+		display "Brewer" type: opengl  background: #black antialias:true  {
+			mesh cells scale: 3 grayscale: true color:(brewer_colors("Set3")) triangulation: true;
 		}
 
+		display "HSB" type: opengl background: #black {
+			mesh cells scale: 3 color: cells collect hsb(float(each)/5,1,1) triangulation: true;
+		}
+		display "One Color" type: opengl background: #black {
+			mesh cells scale: 3 color: #white triangulation: true border: #yellow;
+		}
+		
+		
+		display "Scale" type: opengl background: #black {
+			mesh cells scale:3 color: scale([#red::1, #yellow::2, #green::3, #blue::6]) triangulation: true ;
+		}
+		
+		display "Simple gradient" type: opengl background: #black antialias:true { 
+			mesh cells scale:3 color: palette([#lightblue, #blue, #blue, #darkblue]) triangulation: true ;
+			
+		}
 	}
 
 }

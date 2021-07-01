@@ -18,7 +18,7 @@ import ummisco.gama.opengl.OpenGL;
 
 public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 
-	final OpenGL gl;
+	protected final OpenGL gl;
 
 	public ObjectDrawer(final OpenGL gl) {
 		this.gl = gl;

@@ -43,9 +43,9 @@ import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.scene.MeshObject;
 import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.StringObject;
+import ummisco.gama.opengl.scene.mesh.MeshObject;
 
 /**
  * Class LayerObject.

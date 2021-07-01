@@ -97,9 +97,9 @@ import msi.gaml.types.IType;
 						doc = @doc ("if true, gives a grey color to each polygon depending on its elevation (false by default). Supersedes 'color' if it is defined.")),
 				@facet (
 						name = IKeyword.COLOR,
-						type = { IType.COLOR, IType.LIST },
+						type = { IType.COLOR, IType.LIST, IType.MAP },
 						optional = true,
-						doc = @doc ("if true, and if neither 'grayscale' or 'texture' are specified, displays the field in the given color")),
+						doc = @doc ("if true, and if neither 'grayscale' or 'texture' are specified, displays the field using the given color or colors. List of colors, palettes (with interpolation), gradients and scales are supported")),
 				@facet (
 						name = IKeyword.TRIANGULATION,
 						type = IType.BOOL,

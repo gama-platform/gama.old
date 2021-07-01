@@ -12,6 +12,9 @@ package msi.gaml.operators;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.emf.ecore.EObject;
@@ -21,6 +24,7 @@ import org.geotools.brewer.color.ColorBrewer;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -36,8 +40,12 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.IOperatorValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
@@ -139,6 +147,23 @@ public class Colors {
 	@test ("rgb([255, 128, 32]) * 2 = rgb([255,255,64])")
 	public static GamaColor multiply(final GamaColor c, final Integer i) {
 		return new GamaColor(c.getRed() * i, c.getGreen() * i, c.getBlue() * i, c.alpha());
+	}
+
+	@operator (
+			value = IKeyword.MULTIPLY,
+			can_be_const = true,
+			category = { IOperatorCategory.COLOR },
+			concept = { IConcept.COLOR })
+	@doc (
+			value = "a new color resulting from the product of each component of the color with the right operand",
+			usages = @usage (
+					value = "if one operand is a color and the other a float, returns a new color resulting from the product of each component of the color with the right operand (with a maximum value at 255)",
+					examples = { @example (
+							value = "rgb([255, 128, 32]) * 2.0",
+							equals = "rgb([255,255,64])") }))
+	@test ("rgb([255, 128, 32]) * 2.0 = rgb([255,255,64])")
+	public static GamaColor multiply(final GamaColor c, final Double i) {
+		return new GamaColor((int) (c.getRed() * i), (int) (c.getGreen() * i), (int) (c.getBlue() * i), c.alpha());
 	}
 
 	@operator (
@@ -465,23 +490,24 @@ public class Colors {
 	}
 
 	static final ColorBrewer BREWER = ColorBrewer.instance();
-	static final LoadingCache<String, IList<GamaColor>> BREWER_CACHE =
-			CacheBuilder.newBuilder().build(new CacheLoader<String, IList<GamaColor>>() {
+	static final LoadingCache<String, GamaPalette> BREWER_CACHE =
+			CacheBuilder.newBuilder().build(new CacheLoader<String, GamaPalette>() {
 
 				@Override
-				public IList<GamaColor> load(final String name) throws Exception {
-					final IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
+				public GamaPalette load(final String name) throws Exception {
+					IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
 					BrewerPalette p = BREWER.getPalette(name);
 					for (final Color col : p.getColors()) {
 						if (col != null) { colors.add(new GamaColor(col)); }
 					}
-					return colors;
+					return new GamaPalette(colors);
 				}
 			});
 
 	@validator (BrewerValidator.class)
 	@operator (
 			value = "brewer_colors",
+			type = IType.LIST,
 			content_type = IType.COLOR,
 			can_be_const = false,
 			category = { IOperatorCategory.COLOR },
@@ -495,7 +521,7 @@ public class Colors {
 					isExecutable = false) },
 			see = { "brewer_palettes" })
 	@no_test
-	public static IList<GamaColor> brewerPaletteColors(final IScope scope, final String type) {
+	public static GamaPalette brewerPaletteColors(final IScope scope, final String type) {
 		if (!BREWER.hasPalette(type)) throw GamaRuntimeException.error(type + " does not exist", scope);
 		try {
 			return BREWER_CACHE.get(type);
@@ -508,6 +534,7 @@ public class Colors {
 	@operator (
 			value = "brewer_colors",
 			can_be_const = false,
+			type = IType.LIST,
 			content_type = IType.COLOR,
 			category = { IOperatorCategory.COLOR },
 			concept = {})
@@ -519,8 +546,8 @@ public class Colors {
 					isExecutable = false) },
 			see = { "brewer_palettes" })
 	@no_test
-	public static IList<GamaColor> brewerPaletteColors(final IScope scope, final String type, final int nbClasses) {
-		final IList<GamaColor> cols = brewerPaletteColors(scope, type);
+	public static GamaPalette brewerPaletteColors(final IScope scope, final String type, final int nbClasses) {
+		final GamaPalette cols = brewerPaletteColors(scope, type);
 		if (cols.size() < nbClasses)
 			throw GamaRuntimeException.error(type + " has less than " + nbClasses + " colors", scope);
 		while (cols.size() > nbClasses) {
@@ -571,6 +598,213 @@ public class Colors {
 			if (p.getCount() >= min) { palettes.add(p.getName()); }
 		}
 		return palettes;
+	}
+
+	@SuppressWarnings ("unchecked")
+	public static class GamaGradient extends GamaMap<GamaColor, Double> {
+
+		protected GamaGradient() {
+			super(100, Types.COLOR, Types.FLOAT);
+		}
+
+		public void set(final IScope scope, final IMap<Object, Object> values) {
+			for (Map.Entry<Object, Object> entry : values.entrySet()) {
+				this.put(Cast.asColor(scope, entry.getKey()), Cast.asFloat(scope, entry.getValue()));
+			}
+		}
+
+	}
+
+	@SuppressWarnings ("unchecked")
+	public static class GamaScale extends GamaMap<Double, GamaColor> {
+
+		public GamaScale(final IScope scope, final IMap<Double, GamaColor> values) {
+			super(values.size(), Types.FLOAT, Types.COLOR);
+			sort(values);
+		}
+
+		void sort(final IMap<Double, GamaColor> values) {
+			List<Map.Entry<Double, GamaColor>> entries = Lists.newArrayList(values.entrySet());
+			Collections.sort(entries, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
+			for (Map.Entry<Double, GamaColor> entry : entries) {
+				put(entry.getKey(), entry.getValue());
+			}
+		}
+
+	}
+
+	public static class GamaPalette extends GamaList<GamaColor> {
+
+		GamaPalette(final IList<GamaColor> colors) {
+			super(100, Types.COLOR);
+			addAll(colors);
+		}
+	}
+
+	@operator (
+			value = "gradient",
+			can_be_const = true,
+			type = IType.MAP,
+			content_type = IType.FLOAT,
+			index_type = IType.COLOR,
+			category = { IOperatorCategory.COLOR },
+			concept = {})
+	@doc (
+			value = "returns the definition of a linear gradient between two colors, represented internally as a color map [start::0.5,stop::0.5]")
+	@no_test
+	public static GamaGradient gradient(final GamaColor start, final GamaColor stop) {
+		GamaGradient cm = new GamaGradient();
+		cm.put(start, 0.5);
+		cm.put(stop, 0.5);
+		return cm;
+	}
+
+	@operator (
+			value = "gradient",
+			can_be_const = true,
+			type = IType.MAP,
+			content_type = IType.FLOAT,
+			index_type = IType.COLOR,
+			category = { IOperatorCategory.COLOR },
+			concept = {})
+	@doc (
+			value = "returns the definition of a linear gradient between two colors, with a ratio (between 0 and 1, otherwise clamped) represented internally as a color map [start::r,stop::(1-r)]")
+	@no_test
+	public static GamaGradient gradient(final GamaColor start, final GamaColor stop, final Double r) {
+		double val = r < 0 ? 0 : r > 1 ? 1 : r;
+		GamaGradient cm = new GamaGradient();
+		cm.put(start, val);
+		cm.put(stop, 1 - val);
+		return cm;
+	}
+
+	@operator (
+			value = "gradient",
+			can_be_const = true,
+			type = IType.MAP,
+			content_type = IType.FLOAT,
+			index_type = IType.COLOR,
+			category = { IOperatorCategory.COLOR },
+			concept = {})
+	@doc (
+			value = "returns the definition of a linear gradient between n colors, represented internally as a color map [c1::1/n,c2::1/n, ... cn::1/n]")
+	@no_test
+	public static GamaGradient gradient(final IList<GamaColor> colors) {
+		GamaGradient cm = new GamaGradient();
+		int nb = colors.size();
+		for (GamaColor c : colors) {
+			cm.put(c, 1d / nb);
+		}
+		return cm;
+	}
+
+	@operator (
+			value = "gradient",
+			can_be_const = true,
+			type = IType.MAP,
+			content_type = IType.FLOAT,
+			index_type = IType.COLOR,
+			category = { IOperatorCategory.COLOR },
+			concept = {})
+	@doc (
+			value = "returns the definition of a linear gradient between n colors provided with their weight. "
+					+ "A similar color map is returned, in the same color order, with all the weights normalized (so that they range from 0 to 1 and sum up to 1): [c1::x,c2::y, ... cn::z] where x+y+...+z = 1 and each> 0 ")
+	@no_test
+	public static GamaGradient gradient(final IMap<GamaColor, Double> colors) {
+		GamaGradient cm = new GamaGradient();
+		Double sum = 0d;
+		Double min = Double.MAX_VALUE;
+		for (Double v : colors.values()) {
+			if (v < min) { min = v; }
+			sum += Math.abs(v);
+		}
+		return null;
+		// final double div = sum;
+		// Il faut calculer la distance entre chacun des stops et normaliser ça. Et aprés trouver les ratios qui
+		// permettent de le faire
+		// colors.forEach((c, f) -> cm.put(c, (f + min) / div));
+		// return cm;
+	}
+
+	@operator (
+			value = "scale",
+			can_be_const = true,
+			type = IType.MAP,
+			content_type = IType.FLOAT,
+			index_type = IType.COLOR,
+			category = { IOperatorCategory.COLOR },
+			concept = {})
+	@doc (
+			see = "gradient",
+			value = "Similar to gradient(map<rgb, float>) but reorders the colors based on their weight and does not normalize them, so as to effectively represent a color scale (i.e. a correspondance between a range of value and a color that implicitly begins with the lowest value)"
+					+ "For instance scale([#red::10, #green::0, #blue::30]) would produce the reverse map and associate #green to the interval 0-10, #red to 10-30, and #blue above 30. The main difference in usages is that, for instance in the definition of a "
+					+ "mesh to display, a gradient will produce interpolated colors to accomodate for the intermediary values, while a scale will stick to the colors defined.")
+	@no_test
+	public static GamaScale scale(final IScope scope, final IMap<GamaColor, Object> colors) {
+		// Ensure that numbers are Doubles... If a constant is passed, it might be integer.
+
+		IMap<Double, GamaColor> map = GamaMapFactory.createOrdered();
+		colors.forEach((c, f) -> map.put(Cast.asFloat(scope, f), c));
+		return new GamaScale(scope, map);
+	}
+
+	@operator (
+			value = "scale",
+			can_be_const = true,
+
+			type = IType.MAP,
+			content_type = IType.COLOR,
+			index_type = IType.FLOAT,
+			category = { IOperatorCategory.COLOR },
+			concept = { IConcept.COLOR })
+	@doc (
+			see = "gradient",
+			value = "Expects a gradient, i.e. a map<rgb,float>, where values represent the weight of colors. "
+					+ "First normalizes the passed gradient, and then applies the resulting weights to the interval represented by min and max, so as to return a scale (i.e. absolute values instead of the weights")
+	@no_test
+	public static GamaScale scale(final IScope scope, final IMap<GamaColor, Object> colors, final double min,
+			final double max) {
+		Double sum = 0d;
+		for (Map.Entry<GamaColor, Object> entry : colors.entrySet()) {
+			// To make sure ?
+			Double d = Cast.asFloat(scope, entry.getValue());
+			entry.setValue(d);
+			sum += d;
+		}
+		double div = sum;
+		IMap<Double, GamaColor> map = GamaMapFactory.createOrdered();
+		colors.forEach((c, f) -> map.put(min + (max - min) * Cast.asFloat(scope, f) / div, c));
+		return new GamaScale(scope, map);
+	}
+
+	@operator (
+			value = "palette",
+			can_be_const = true,
+			type = IType.LIST,
+			content_type = IType.COLOR,
+			category = { IOperatorCategory.COLOR },
+			concept = {})
+	@doc (
+			value = "returns a list of n colors chosen in the gradient provided. Colors are chosen by interpolating the stops of the gradient (the colors) using their weight, in the order described in the gradient. In case the map<rgb, float> passed in argument is not a gradient but a scale, the colors will be chosen in the set of colors and might appear duplicated in the palette")
+	@no_test
+	public static GamaPalette palette(final IScope scope, final IMap<GamaColor, Double> colors, final int nb) {
+		GamaGradient cm = gradient(colors); // to make sure it is normalized
+		return null;
+	}
+
+	@operator (
+			value = "palette",
+			can_be_const = true,
+			type = IType.LIST,
+			expected_content_type = IType.COLOR,
+			content_type = IType.COLOR,
+			category = { IOperatorCategory.COLOR },
+			concept = { IConcept.COLOR })
+	@doc (
+			value = "returns a list of n colors chosen in the gradient provided. Colors are chosen by interpolating the stops of the gradient (the colors) using their weight, in the order described in the gradient. In case the map<rgb, float> passed in argument is not a gradient but a scale, the colors will be chosen in the set of colors and might appear duplicated in the palette")
+	@no_test
+	public static GamaPalette palette(final IScope scope, final IList<GamaColor> colors) {
+		return new GamaPalette(colors);
 	}
 
 }

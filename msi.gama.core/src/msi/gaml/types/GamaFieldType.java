@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -13,6 +15,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.file.IFieldMatrixProvider;
 import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.GamaFloatMatrix;
@@ -91,6 +94,16 @@ public class GamaFieldType extends GamaMatrixType {
 		return Types.FLOAT;
 	}
 
+	@Override
+	public IType<?> getContentType() {
+		return Types.FLOAT;
+	}
+
+	@Override
+	public boolean isDrawable() {
+		return true;
+	}
+
 	/**
 	 * Constructors to be used in GAML besides the default "casting" one (i.e. field(xxx))
 	 */
@@ -135,12 +148,42 @@ public class GamaFieldType extends GamaMatrixType {
 			can_be_const = false,
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
-			doc = { @doc ("Allows to build a field by specifying, in order, its number of columns and number of rows. "
-					+ "The initial value of its cells is set to 0.0 and the value representing the absence of value is set to #max_float") })
+			doc = { @doc ("Allows to build a field by specifying an arbitrary object (assuming this object can return a matrix of float) "
+					+ "and a value representing the absence of data. ") })
 	public static IField buildFieldWithNoData(final IScope scope, final Object object, final double noData) {
 		IField field = buildField(scope, object);
 		field.setNoData(scope, noData);
 		return field;
+	}
+
+	@operator (
+			value = "cell_at",
+			can_be_const = false,
+			category = { IOperatorCategory.GRID },
+			concept = { IConcept.GRID },
+			doc = { @doc ("Returns the rectangular shape that corresponds to the 'cell' in the field at this location. This cell has no attributes. A future version may load it with the value of the field at this attribute") })
+	public static IShape buildShapeFromFieldLocation(final IScope scope, final IField field, final ILocation location) {
+		return field.getCellShapeAt(scope, location);
+	}
+
+	@operator (
+			value = "cells_in",
+			can_be_const = false,
+			category = { IOperatorCategory.GRID },
+			concept = { IConcept.GRID },
+			doc = { @doc ("Returns the list of 'cells' that 'intersect' with the geometry passed in argument. The cells are ordered by their x-, then y-coordinates") })
+	public static IList<IShape> getShapesFromGeometry(final IScope scope, final IField field, final IShape shape) {
+		return field.getCellsIntersecting(scope, shape);
+	}
+
+	@operator (
+			value = "values_in",
+			can_be_const = false,
+			category = { IOperatorCategory.GRID },
+			concept = { IConcept.GRID },
+			doc = { @doc ("Returns the list of values in the field whose 'cell' 'intersects' with the geometry passed in argument. The values are ordered by the x-, then y-coordinate, of their 'cell'") })
+	public static IList<Double> getValuesFromGeometry(final IScope scope, final IField field, final IShape shape) {
+		return field.getValuesIntersecting(scope, shape);
 	}
 
 }

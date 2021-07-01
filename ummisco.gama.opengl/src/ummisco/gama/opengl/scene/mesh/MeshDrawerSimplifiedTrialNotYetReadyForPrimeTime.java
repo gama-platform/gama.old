@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl.scene.mesh;
 
 import static com.jogamp.common.nio.Buffers.newDirectDoubleBuffer;
 
@@ -23,10 +23,13 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.ICoordinates;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.matrix.IField;
+import msi.gaml.statements.draw.IMeshColorProvider;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
+import ummisco.gama.opengl.scene.ObjectDrawer;
 
 /**
  *
@@ -36,9 +39,9 @@ import ummisco.gama.opengl.OpenGL;
  * @since 15 mai 2013
  *
  */
-public class MeshDrawer extends ObjectDrawer<MeshObject> {
+public class MeshDrawerSimplifiedTrialNotYetReadyForPrimeTime extends ObjectDrawer<MeshObject> {
 
-	public MeshDrawer(final OpenGL gl) {
+	public MeshDrawerSimplifiedTrialNotYetReadyForPrimeTime(final OpenGL gl) {
 		super(gl);
 	}
 
@@ -60,15 +63,18 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	private class FieldMeshDrawer {
 		final double[] data;
-		private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer;
+		final boolean[] noDataList;
+		private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer, displayNormalBuffer;
 		private final int cols, rows;
 		private final double cx, cy, minHeight, maxHeight;
 		private IntBuffer indexBuffer;
 		private final boolean wireframe, grayscale, triangles, withText;
-		private final Color line, fill;
+		private final Color line;
+		private final IMeshColorProvider fill;
 		private final boolean outputsTextures;
 		private final boolean outputsColors;
 		private final boolean outputsLines;
+		private final boolean outputsNormals = false;
 		private Double noData;
 		double[] normals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
 
@@ -76,6 +82,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			MeshDrawingAttributes attributes = object.getAttributes();
 			this.cols = (int) attributes.getXYDimension().x;
 			this.rows = (int) attributes.getXYDimension().y;
+			noDataList = new boolean[cols * rows];
 			data = clone(cols, rows, object.getObject(), true, attributes.isSmooth());
 			noData = attributes.getNoDataValue();
 			if (noData == null) { noData = object.getObject().getNoData(null); }
@@ -88,7 +95,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			this.grayscale = attributes.isGrayscaled();
 			this.withText = attributes.isWithText();
 			this.line = attributes.getBorder();
-			this.fill = attributes.getColor();
+			this.fill = attributes.getColorProvider();
 			this.triangles = attributes.isTriangulated();
 
 			outputsTextures = attributes.isTextured() && !grayscale && !wireframe;
@@ -97,7 +104,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 			initializeBuffers();
 			fillBuffers();
-			closeBuffers();
+			finalizeBuffers();
 		}
 
 		private void initializeBuffers() {
@@ -105,6 +112,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			final int lengthM1 = (cols - 1) * (rows - 1);
 			vertexBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
 			normalBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
+			if (triangles && outputsNormals) { displayNormalBuffer = newDirectDoubleBuffer(length * 6); }
 			if (triangles) { indexBuffer = Buffers.newDirectIntBuffer(lengthM1 * 6); }
 			if (outputsLines) {
 				lineColorBuffer = Buffers.newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
@@ -120,52 +128,65 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				texBuffer.put((double) y / rows);
 			}
 			if (outputsColors) {
-				double d = (z - minHeight) / (maxHeight - minHeight);
-				if (fill != null && !grayscale) {
-					colorBuffer.put(d * fill.getRed() / 255d);
-					colorBuffer.put(d * fill.getGreen() / 255d);
-					colorBuffer.put(d * fill.getBlue() / 255d);
-				} else {
-					colorBuffer.put(d);
-					colorBuffer.put(d);
-					colorBuffer.put(d);
-				}
+				fill.getColor(y * cols + x, z, minHeight, maxHeight, rgb);
+				colorBuffer.put(rgb[0]).put(rgb[1]).put(rgb[2]);
 			}
 			// If the line color is specified, outputs it
 			if (outputsLines) {
-				Color c = line == null ? fill == null ? Color.black : fill : line;
-				lineColorBuffer.put(c.getRed() / 255d);
-				lineColorBuffer.put(c.getGreen() / 255d);
-				lineColorBuffer.put(c.getBlue() / 255d);
+				Color c = line == null ? fill == null ? Color.black : GamaPreferences.Displays.CORE_COLOR.getValue()
+						: line;
+				lineColorBuffer.put(c.getRed() / 255d).put(c.getGreen() / 255d).put(c.getBlue() / 255d);
 			}
 
 		}
 
+		ICoordinates surface = ICoordinates.ofLength(9);
+		GamaPoint normal = new GamaPoint();
+		double[] rgb = new double[3];
+
+		double get(final int x0, final int y0) {
+			int x = x0 < 0 ? 0 : x0 > cols - 1 ? cols - 1 : x0;
+			int y = y0 < 0 ? 0 : y0 > rows - 1 ? rows - 1 : y0;
+			return data[y * cols + x];
+		}
+
+		public void fillNormals() {
+			for (int x = 0; x < cols; x++) {
+				double x1 = x * cx;
+				for (int y = 0; y < rows; y++) {
+					double y1 = y * cy;
+					surface.setTo(x1 - cx, y1 - cy, get(x - 1, y - 1), x1, y1 - cy, get(x, y - 1), x1 + cx, y1 - cy,
+							get(x + 1, y - 1), x1 + cx, y1, get(x + 1, y), x1 + cx, y1 + cy, get(x + 1, y + 1), x1,
+							y1 + cy, get(x, y + 1), x1 - cx, y1 + cy, get(x - 1, y + 1), x1 - cx, y1, get(x - 1, y),
+							x1 - cx, y1 - cy, get(x - 1, y - 1)).getNormal(false, 1, normal);
+					int iz = y * cols + x;
+					normalBuffer.put(iz * 3, normal.x).put(iz * 3 + 1, normal.y).put(iz * 3 + 2, normal.z);
+				}
+			}
+		}
+
 		public void fillBuffers() {
+
 			if (triangles) {
-				int[] normalCount = new int[data.length];
-				int[] ix = new int[3];
-				ICoordinates surface = ICoordinates.ofLength(3);
-				GamaPoint normal = new GamaPoint();
-
-				for (int x = 0; x < cols; ++x) {
-					double x1 = x * cx;
-					for (int y = 0; y < rows; ++y) {
-						double z = data[y * cols + x];
-						// if (IntervalSize.isZeroWidth(min, max))
-
-						// Outputs the 3 ordinates of the vertex
-						vertexBuffer.put(x1);
-
-						vertexBuffer.put(-y * cy);
-						vertexBuffer.put(z);
-						colorize(z, x, y);
-						// Builds the index buffer: references vertices in the vertex buffer to avoid duplications
-						if (x == 0 || y == 0 || z == noData) { continue; }
-						buildIndexesAndNormals(normalCount, ix, normal, surface, x, y);
+				for (int i = 0; i < cols; i++) {
+					double x = i * cx;
+					for (int j = 0; j < rows; j++) {
+						double y = -j * cy;
+						int index = j * cols + i;
+						double z = data[index];
+						noDataList[index] = z == noData;
+						vertexBuffer.put(x).put(y).put(z);
+						colorize(z, i, j);
+						if (j > 0 && i > 0) {
+							int previous = index - cols;
+							indexBuffer.put(previous - 1).put(previous).put(index - 1);
+							indexBuffer.put(previous).put(index).put(index - 1);
+						}
 					}
 				}
-				normalize(normalCount);
+
+				fillNormals();
+
 			} else {
 				for (int x = 0; x < cols - 1; ++x) {
 					double x1 = x * cx, x2 = (x + 1) * cx;
@@ -183,7 +204,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			}
 		}
 
-		private void closeBuffers() {
+		private void finalizeBuffers() {
 			if (outputsTextures) { texBuffer = texBuffer.flip(); }
 			if (outputsColors) { colorBuffer = colorBuffer.flip(); }
 			if (outputsLines) { lineColorBuffer = lineColorBuffer.flip(); }
@@ -191,51 +212,15 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			if (triangles) { indexBuffer = indexBuffer.flip(); }
 			// AD No need to flip the buffer because triangulation always uses indexed put
 			if (!triangles) { normalBuffer = normalBuffer.flip(); }
-		}
-
-		private void buildIndexesAndNormals(final int[] normalCount, final int[] ix, final GamaPoint normal,
-				final ICoordinates surface, final int x, final int y) {
-			// Shared between triangles
-			indexBuffer.put(ix[0] = y + x * rows);
-			indexBuffer.put(ix[1] = ix[0] - 1);
-			indexBuffer.put(ix[2] = ix[0] - rows);
-			// Normals are computed for each triplet (triangle) or rectangle
-
-			surface.setTo(vertexBuffer.get(ix[0] * 3), vertexBuffer.get(ix[0] * 3 + 1), vertexBuffer.get(ix[0] * 3 + 2),
-					vertexBuffer.get(ix[1] * 3), vertexBuffer.get(ix[1] * 3 + 1), vertexBuffer.get(ix[1] * 3 + 2),
-					vertexBuffer.get(ix[2] * 3), vertexBuffer.get(ix[2] * 3 + 1), vertexBuffer.get(ix[2] * 3 + 2))
-					.getNormal(false, 1, normal);
-
-			for (int i : ix) {
-				int i3 = i * 3;
-				normalBuffer.put(i3, normalBuffer.get(i3) + normal.x);
-				normalBuffer.put(i3 + 1, normalBuffer.get(i3 + 1) + normal.y);
-				normalBuffer.put(i3 + 2, normalBuffer.get(i3 + 2) + normal.z);
-				normalCount[i]++;
-			}
-
-			indexBuffer.put(ix[0] = ix[2] - 1);
-			indexBuffer.put(ix[2]);
-			indexBuffer.put(ix[1]);
-			surface.setTo(vertexBuffer.get(ix[0] * 3), vertexBuffer.get(ix[0] * 3 + 1), vertexBuffer.get(ix[0] * 3 + 2),
-					vertexBuffer.get(ix[2] * 2), vertexBuffer.get(ix[2] * 3 + 1), vertexBuffer.get(ix[2] * 3 + 2),
-					vertexBuffer.get(ix[1] * 3), vertexBuffer.get(ix[1] * 3 + 1), vertexBuffer.get(ix[1] * 3 + 2))
-					.getNormal(false, 1, normal);
-			for (int i : ix) {
-				int i3 = i * 3;
-				normalBuffer.put(i3, normalBuffer.get(i3) + normal.x);
-				normalBuffer.put(i3 + 1, normalBuffer.get(i3 + 1) + normal.y);
-				normalBuffer.put(i3 + 2, normalBuffer.get(i3 + 2) + normal.z);
-				normalCount[i]++;
-			}
-		}
-
-		// Rescan the normals and perform the average function on them
-		private void normalize(final int[] normalCount) {
-			for (int i = 0, i2 = 0; i < normalCount.length && i2 < normalBuffer.limit() - 2; i++, i2 += 3) {
-				normalBuffer.put(i2, normalBuffer.get(i2) / normalCount[i]);
-				normalBuffer.put(i2 + 1, normalBuffer.get(i2 + 1) / normalCount[i]);
-				normalBuffer.put(i2 + 2, normalBuffer.get(i2 + 2) / normalCount[i]);
+			if (triangles && outputsNormals) {
+				for (int i = 0; i < vertexBuffer.limit(); i += 3) {
+					displayNormalBuffer.put(vertexBuffer.get(i)).put(vertexBuffer.get(i + 1))
+							.put(vertexBuffer.get(i + 2));
+					displayNormalBuffer.put(vertexBuffer.get(i) - 2 * normalBuffer.get(i))
+							.put(vertexBuffer.get(i + 1) - 2 * normalBuffer.get(i + 1))
+							.put(vertexBuffer.get(i + 2) - 2 * normalBuffer.get(i + 2));
+				}
+				displayNormalBuffer.flip();
 			}
 		}
 
@@ -277,11 +262,19 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 					}
 					gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 				}
+
 			} finally {
-				openGL.disable(GL2.GL_VERTEX_ARRAY);
 				openGL.disable(GL2.GL_NORMAL_ARRAY);
 				if (outputsTextures) { openGL.disable(GL2.GL_TEXTURE_COORD_ARRAY); }
 				if (outputsColors || outputsLines) { openGL.disable(GL2.GL_COLOR_ARRAY); }
+
+				if (triangles && outputsNormals) {
+					openGL.setCurrentColor(Color.white);
+					openGL.setLineWidth(3);
+					gl.glVertexPointer(3, GL2.GL_DOUBLE, 0, displayNormalBuffer);
+					gl.glDrawArrays(GL2.GL_LINES, 0, displayNormalBuffer.limit() / 3);
+				}
+				openGL.disable(GL2.GL_VERTEX_ARRAY);
 
 			}
 			if (withText) { drawLabels(openGL); }

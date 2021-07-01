@@ -62,6 +62,7 @@ public class MeshLayer extends AbstractLayer {
 		// System.arraycopy(data.getGrid().getDisplayData(), 0, imageData, 0, imageData.length);
 		// attributes.setTextures(Arrays.asList(image));
 		// }
+		attributes.setLocation(data.getPosition().toGamaPoint());
 		attributes.setTriangulated(data.isTriangulated());
 		attributes.setWithText(data.isShowText());
 		attributes.setCellSize(data.getCellSize());
@@ -69,7 +70,7 @@ public class MeshLayer extends AbstractLayer {
 		attributes.setXYDimension(data.getDimension());
 		attributes.setSize(Scaling3D.of(data.getSize()));
 		attributes.setScale(data.getScale());
-		attributes.setFill(data.getColor());
+		attributes.setColors(data.getColor());
 		attributes.setSmooth(data.isSmooth());
 		attributes.setNoData(data.getNoDataValue());
 		dg.drawField(values, attributes);

@@ -62,10 +62,10 @@ import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryDrawer;
-import ummisco.gama.opengl.scene.MeshDrawer;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.ResourceDrawer;
 import ummisco.gama.opengl.scene.StringDrawer;
+import ummisco.gama.opengl.scene.mesh.MeshDrawer;
 
 /**
  * A class that represents an intermediate state between the rendering and the opengl state. It captures all the
@@ -939,12 +939,12 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		setLineWidth(object.getAttributes().getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		setCurrentColor(object.getAttributes().getColor());
-//		if (isTextured()) {
-//			if ((object.isFilled() || object.isBordered()) && !object.getAttributes().isSynthetic()) {
-//				gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
-//			} else {
-//				gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-//			}
+		// if (isTextured()) {
+		// if ((object.isFilled() || object.isBordered()) && !object.getAttributes().isSynthetic()) {
+		// gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
+		// } else {
+		// gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+		// }
 		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_DECAL);
 

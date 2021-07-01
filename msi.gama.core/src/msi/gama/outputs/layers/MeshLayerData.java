@@ -40,7 +40,7 @@ public class MeshLayerData extends LayerData {
 	Attribute<Boolean> text;
 	Attribute<Boolean> wireframe;
 	Attribute<Double> noData;
-	Attribute<GamaColor> color;
+	Attribute<Object> color;
 	Attribute<Double> scale;
 	private GamaPoint cellSize;
 	private final GamaPoint dim = new GamaPoint();
@@ -68,7 +68,7 @@ public class MeshLayerData extends LayerData {
 		grayscale = create(IKeyword.GRAYSCALE, Types.BOOL, false);
 		wireframe = create(IKeyword.WIREFRAME, Types.BOOL, false);
 		text = create(IKeyword.TEXT, Types.BOOL, false);
-		color = create(IKeyword.COLOR, Types.COLOR, null);
+		color = create(IKeyword.COLOR, Types.NO_TYPE, null);
 		scale = create(IKeyword.SCALE, Types.FLOAT, null);
 		noData = create("no_data", Types.FLOAT, null);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
@@ -138,7 +138,7 @@ public class MeshLayerData extends LayerData {
 		return elevation.get();
 	}
 
-	public GamaColor getColor() {
+	public Object getColor() {
 		// Should be a bit more complex in the future when color scales / palettes are introduced
 		return color.get();
 	}

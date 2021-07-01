@@ -1,5 +1,9 @@
 package msi.gama.util.matrix;
 
+import javax.annotation.Nonnull;
+
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.IDiffusionTarget;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -82,5 +86,33 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	default void setBands(final IScope scope, final IList<IField> bands) {
 		// Nothing to do by default as this value is supposed to be read-only
 	}
+
+	/**
+	 * Returns the 'cell' (a rectangle shape) that represents the cell at this location
+	 *
+	 * @param loc
+	 *            a world location (location of an agent, for instance)
+	 * @return A list of values at this location. Never null nor empty (as there is at least one band).
+	 */
+	IShape getCellShapeAt(IScope scope, ILocation loc);
+
+	/**
+	 * Returns a list of all the values present in the bands at this world location
+	 *
+	 * @param loc
+	 *            a world location (location of an agent, for instance)
+	 * @return A list of values at this location. Never null nor empty (as there is at least one band).
+	 */
+	@Nonnull
+	IList<Double> getValuesIntersecting(IScope scope, IShape shape);
+
+	/**
+	 * Returns a list of the 'cells' (rectangle shapes) that intersect the geometry passed in parameter
+	 *
+	 * @param scope
+	 * @param shape
+	 * @return
+	 */
+	IList<IShape> getCellsIntersecting(IScope scope, IShape shape);
 
 }

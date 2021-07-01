@@ -286,7 +286,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object)
 	 */
 	@Override
-	public final boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
+	public boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
 		if (object instanceof ILocation) {
 			final ILocation index = (ILocation) object;
 			final int x = (int) index.getX();
