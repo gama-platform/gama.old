@@ -39,7 +39,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @author Patrick Taillandier
  *
  */
-public class GraphParsers {
+public class GraphImporters {
 
 	private static final Map<String, Class<? extends GraphImporter>> name2parser =
 		new HashMap<String, Class<? extends GraphImporter>>() {
