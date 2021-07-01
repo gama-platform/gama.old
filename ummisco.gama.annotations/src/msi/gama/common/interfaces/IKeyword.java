@@ -189,6 +189,7 @@ public interface IKeyword {
 	String FUNCTION = "function";
 	String FULLSCREEN = "fullscreen";
 	String GAP = "gap";
+	String GENERATE = "generate";
 	String GENETIC = "genetic";
 	String GIS = "gis";
 	String GLOBAL = "global";

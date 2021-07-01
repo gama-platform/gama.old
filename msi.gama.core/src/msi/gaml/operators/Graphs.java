@@ -14,21 +14,36 @@ import static one.util.streamex.StreamEx.of;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.alg.BronKerboschCliqueFinder;
-import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.clique.BronKerboschCliqueFinder;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.drawing.FRLayoutAlgorithm2D;
+import org.jgrapht.alg.drawing.IndexedFRLayoutAlgorithm2D;
+import org.jgrapht.alg.drawing.MedianGreedyTwoLayeredBipartiteLayout2D;
+import org.jgrapht.alg.drawing.model.Box2D;
+import org.jgrapht.alg.drawing.model.LayoutModel2D;
+import org.jgrapht.alg.drawing.model.MapLayoutModel2D;
+import org.jgrapht.alg.drawing.model.Point2D;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
-
+import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
+import org.jgrapht.generate.ComplementGraphGenerator;
+import org.jgrapht.generate.GnmRandomGraphGenerator;
+import org.jgrapht.generate.WattsStrogatzGraphGenerator;
+import org.jgrapht.graph.AbstractBaseGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.graph.Multigraph;
+import org.jgrapht.util.SupplierUtil;
 import org.locationtech.jts.geom.Coordinate;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -46,6 +61,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
@@ -57,7 +73,6 @@ import msi.gama.util.ICollector;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.GamaFile;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.GraphAlgorithmsHandmade;
 import msi.gama.util.graph.GraphFromAgentContainerSynchronizer;
@@ -65,7 +80,6 @@ import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.layout.LayoutCircle;
 import msi.gama.util.graph.layout.LayoutForceDirected;
 import msi.gama.util.graph.layout.LayoutGrid;
-import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaMatrix;
@@ -691,12 +705,12 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
 		ConnectivityInspector ci;
-		// there is an error with connectivity inspector of JGrapht....
-		ci = new ConnectivityInspector((DirectedGraph) graph);
+		ci = new ConnectivityInspector(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
 		}
+			
 		return results;
 	}
 
@@ -721,8 +735,7 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 
 		ConnectivityInspector ci;
-		// there is an error with connectivity inspector of JGrapht....
-		ci = new ConnectivityInspector((DirectedGraph) graph);
+		ci = new ConnectivityInspector(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
 		for (final Object obj : ci.connectedSets()) {
 			if (edge) {
@@ -800,9 +813,9 @@ public class Graphs {
 		if (graph == null) { throw GamaRuntimeException.error("The graph is nil", scope); }
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
-		final Collection cliques = cls.getAllMaximalCliques();
-		for (final Object obj : cliques) {
-			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
+		Iterator it = cls.iterator();
+		while (it.hasNext()) {
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) it.next()));
 		}
 		return results;
 	}
@@ -829,9 +842,9 @@ public class Graphs {
 		final BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
 
 		final IList<IList> results = GamaListFactory.create(Types.LIST);
-		final Collection cliques = cls.getBiggestMaximalCliques();
-		for (final Object obj : cliques) {
-			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) obj));
+		Iterator it = cls.maximumIterator();
+		while (it.hasNext()) {
+			results.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) it.next()));
 		}
 		return results;
 	}
@@ -984,6 +997,7 @@ public class Graphs {
 				Object vc = v1;
 				for (final Object edge : edges) {
 					Object node = graph.getEdgeTarget(edge);
+					
 					if (node == vc) {
 						node = graph.getEdgeSource(edge);
 					}
@@ -1527,6 +1541,58 @@ public class Graphs {
 		}
 		return graph;
 	}
+	
+	@operator (
+			value = "with_k_shortest_path_algorithm",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH, IConcept.GRAPH_WEIGHT, IConcept.OPTIMIZATION,
+					IConcept.ALGORITHM })
+	@doc (
+			value = "changes the K shortest paths computation algorithm of the given graph",
+			comment = "the right-hand operand can be Yen, Bhandari, Eppstein, Suurballe to use the associated algorithm. ",
+			examples = @example (
+					value = "graphEpidemio <- graphEpidemio with_optimizer_type \"static\";",
+					isExecutable = false))
+	@no_test 
+	public static IGraph setKShortestPathAlgorithm(final IScope scope, final IGraph graph, final String shortestpathAlgo) {
+		final List<String> existingAlgo = Arrays.asList(GamaGraph.kShortestPathAlgorithm.values()).stream()
+				.map(a -> a.toString()).collect(Collectors.toList());
+		if (existingAlgo.contains(shortestpathAlgo)) {
+			graph.setKShortestPathAlgorithm(shortestpathAlgo);
+		} else {
+			throw GamaRuntimeException.error("The K shortest paths algorithm " + shortestpathAlgo
+					+ " does not exist. Possible K shortest paths algorithms: " + existingAlgo, scope);
+		}
+		return graph;
+	}
+	
+	@operator (
+			value = "with_shortest_path_algorithm",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.SHORTEST_PATH, IConcept.GRAPH_WEIGHT, IConcept.OPTIMIZATION,
+					IConcept.ALGORITHM })
+	@doc (
+			value = "changes the shortest path computation algorithm of the given graph",
+			comment = "the right-hand operand can be Djikstra, BidirectionalDijkstra, BellmannFord, FloydWarshall, Astar, NBAStar, NBAStarApprox, DeltaStepping, CHBidirectionalDijkstra, TransitNodeRouting to use the associated algorithm. ",
+			examples = @example (
+					value = "road_network <- road_network with_shortestpath_algorithm TransitNodeRouting;",
+					isExecutable = false))
+	@no_test 
+	public static IGraph setShortestPathAlgorithm(final IScope scope, final IGraph graph, final String shortestpathAlgo) {
+		final List<String> existingAlgo = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream()
+				.map(a -> a.toString()).collect(Collectors.toList());
+		if (existingAlgo.contains(shortestpathAlgo)) {
+			graph.setShortestPathAlgorithm(shortestpathAlgo);
+		} else {
+			throw GamaRuntimeException.error("The shortest path algorithm " + shortestpathAlgo
+					+ " does not exist. Possible shortest path algorithms: " + existingAlgo, scope);
+		}
+		return graph;
+	}
 
 	@operator (
 			value = "with_optimizer_type",
@@ -1537,24 +1603,15 @@ public class Graphs {
 					IConcept.ALGORITHM })
 	@doc (
 			value = "changes the shortest path computation method of the given graph",
-			comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\", \"NBAStar\", \"NBAStarApprox\" to use the associated algorithm. "
-					+ "Note that these methods are dynamic: the path is computed when needed. In contrarily, if the operand is another string, "
-					+ "a static method will be used, i.e. all the shortest are previously computed.",
-			examples = @example (
-					value = "graphEpidemio <- graphEpidemio with_optimizer_type \"static\";",
+			deprecated = "with_shortestpath_algorithm instead",
+					comment = "the right-hand operand can be Djikstra, BidirectionalDijkstra, BellmannFord, FloydWarshall, Astar, NBAStar, NBAStarApprox, DeltaStepping, CHBidirectionalDijkstra, TransitNodeRouting to use the associated algorithm. ",
+				examples = @example (
+					value = "road_network <- road_network with_optimizer_type TransitNodeRouting;",
 					isExecutable = false),
 			see = "set_verbose")
-	@no_test
+	@no_test (Reason.DEPRECATED)
 	public static IGraph setOptimizeType(final IScope scope, final IGraph graph, final String optimizerType) {
-		final List<String> existingOptimizer = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream()
-				.map(a -> a.toString()).collect(Collectors.toList());
-		if (existingOptimizer.contains(optimizerType)) {
-			graph.setOptimizerType(optimizerType);
-		} else {
-			throw GamaRuntimeException.error("The Optimizer type " + optimizerType
-					+ " does not exist. Possible optimizer types: " + existingOptimizer, scope);
-		}
-		return graph;
+		return setShortestPathAlgorithm(scope,graph,optimizerType);
 	}
 
 	@operator (
@@ -1692,6 +1749,7 @@ public class Graphs {
 			+ " length((paths_between(g, {10,5}:: {80,35}, 2))) = 2")
 	public static IList<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
 			final GamaPair sourTarg, final int k) throws GamaRuntimeException {
+		
 		return Cast.asTopology(scope, graph).KpathsBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value, k);
 	}
 
@@ -1712,7 +1770,7 @@ public class Graphs {
 		final EdmondsKarpMFImpl ek = new EdmondsKarpMFImpl(graph);
 		final MaximumFlow<IShape> mf = ek.getMaximumFlow(source, sink);
 		final IMap<Object, Double> result = GamaMapFactory.create();
-		result.putAll(mf.getFlow());
+		result.putAll(mf.getFlowMap());
 		return result;
 	}
 
@@ -1736,245 +1794,7 @@ public class Graphs {
 		return path;
 	}
 
-	/**
-	 * the comment for all the operators
-	 */
-	static private final String comment = "Available formats: "
-			+ "\"pajek\": Pajek (Slovene word for Spider) is a program, for Windows, for analysis and visualization of large networks. See: http://pajek.imfm.si/doku.php?id=pajek for more details."
-			+
-			// "\"dgs_old\", \"dgs\": DGS is a file format allowing to store
-			// graphs and dynamic graphs in a textual human readable way, yet
-			// with a small size allowing to store large graphs. Graph dynamics
-			// is defined using events like adding, deleting or changing a node
-			// or edge. With DGS, graphs will therefore be seen as stream of
-			// such events. [From GraphStream related page:
-			// http://graphstream-project.org/]"+
-			"\"lgl\": LGL is a compendium of applications for making the visualization of large networks and trees tractable. See: http://lgl.sourceforge.net/ for more details."
-			+ "\"dot\": DOT is a plain text graph description language. It is a simple way of describing graphs that both humans and computer programs can use. See: http://en.wikipedia.org/wiki/DOT_language for more details."
-			+ "\"edge\": This format is a simple text file with numeric vertex ids defining the edges."
-			+ "\"gexf\": GEXF (Graph Exchange XML Format) is a language for describing complex networks structures, their associated data and dynamics. Started in 2007 at Gephi project by different actors, deeply involved in graph exchange issues, the gexf specifications are mature enough to claim being both extensible and open, and suitable for real specific applications. See: http://gexf.net/format/ for more details."
-			+ "\"graphml\": GraphML is a comprehensive and easy-to-use file format for graphs based on XML. See: http://graphml.graphdrawing.org/ for more details."
-			+ "\"tlp\" or \"tulip\": TLP is the Tulip software graph format. See: http://tulip.labri.fr/TulipDrupal/?q=tlp-file-format for more details. "
-			+ "\"ncol\": This format is used by the Large Graph Layout progra. It is simply a symbolic weighted edge list. It is a simple text file with one edge per line. An edge is defined by two symbolic vertex names separated by whitespace. (The symbolic vertex names themselves cannot contain whitespace.) They might followed by an optional number, this will be the weight of the edge. See: http://bioinformatics.icmb.utexas.edu/lgl for more details."
-			+ "The map operand should includes following elements:";
-
-	// version depuis un filename avec edge et specy et indication si spatial ou
-	// pas
-
-	@operator (
-			value = "load_graph_from_file",
-			category = { IOperatorCategory.GRAPH },
-			concept = { IConcept.GRAPH, IConcept.FILE })
-	@doc (
-			value = "returns a graph loaded from a given file encoded into a given format. The last boolean parameter indicates whether the resulting graph will be considered as spatial or not by GAMA",
-			masterDoc = true,
-			comment = comment,
-			usages = { @usage (
-					value = "\"format\": the format of the file"),
-					@usage (
-							value = "\"filename\": the filename of the file containing the network"),
-					@usage (
-							value = "\"edges_species\": the species of edges"),
-					@usage (
-							value = "\"vertices_specy\": the species of vertices") },
-			examples = { @example (
-					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-					isExecutable = false),
-					@example (
-							value = "			\"pajek\",",
-							isExecutable = false),
-					@example (
-							value = "			\"./example_of_Pajek_file\",",
-							isExecutable = false),
-					@example (
-							value = "			myVertexSpecy,",
-							isExecutable = false),
-					@example (
-							value = "			myEdgeSpecy , true);",
-							isExecutable = false) })
-	@no_test
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename,
-			final ISpecies vertex_specy, final ISpecies edge_specy, final Boolean spatial) throws GamaRuntimeException {
-
-		return GraphLoader.loadGraph(scope, filename, vertex_specy, edge_specy, null, null, format, spatial);
-
-	}
-
-	@operator (
-			value = "load_graph_from_file",
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			value = "returns a graph loaded from a given file encoded into a given format. This graph will not be spatial. Nodes and edges will be of the given sprecies.",
-			usages = { @usage (
-					value = "\"format\": the format of the file"),
-					@usage (
-							value = "\"filename\": the filename of the file containing the network"),
-					@usage (
-							value = "\"edges_species\": the species of edges"),
-					@usage (
-							value = "\"vertices_specy\": the species of vertices") },
-			examples = { @example (
-					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-					isExecutable = false),
-					@example (
-							value = "			\"pajek\",",
-							isExecutable = false),
-					@example (
-							value = "			\"./example_of_Pajek_file\",",
-							isExecutable = false),
-					@example (
-							value = "			myVertexSpecy,",
-							isExecutable = false),
-					@example (
-							value = "			myEdgeSpecy);",
-							isExecutable = false) })
-	@no_test
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename,
-			final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {
-
-		return primLoadGraphFromFile(scope, format, filename, vertex_specy, edge_specy, false);
-
-	}
-
-	@operator (
-			value = "load_graph_from_file",
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			value = "loads a graph from a file (with given  node and edge species).",
-			usages = @usage (
-					value = "\"filename\": the filename of the file containing the network, \"edges_species\": the species of edges, \"vertices_specy\": the species of vertices",
-					examples = { @example (
-							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-							isExecutable = false),
-							@example (
-									value = "			\"pajek\",",
-									isExecutable = false),
-							@example (
-									value = "			\"./example_of_Pajek_file\",",
-									isExecutable = false),
-							@example (
-									value = "			myVertexSpecy,",
-									isExecutable = false),
-							@example (
-									value = "			myEdgeSpecy );",
-									isExecutable = false) }))
-	@no_test
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String filename, final ISpecies vertex_specy,
-			final ISpecies edge_specy) throws GamaRuntimeException {
-
-		return primLoadGraphFromFile(scope, null, filename, vertex_specy, edge_specy);
-
-	}
-
-	// version depuis un file avec edge et specy
-
-	@operator (
-			value = "load_graph_from_file",
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			usages = @usage (
-					value = "\"format\": the format of the file, \"file\": the file containing the network, \"edges_species\": the species of edges, \"vertices_specy\": the species of vertices",
-					examples = { @example (
-							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-							isExecutable = false),
-							@example (
-									value = "			\"pajek\",",
-									isExecutable = false),
-							@example (
-									value = "			\"example_of_Pajek_file\",",
-									isExecutable = false),
-							@example (
-									value = "			myVertexSpecy,",
-									isExecutable = false),
-							@example (
-									value = "			myEdgeSpecy );",
-									isExecutable = false) }))
-	@no_test
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile gamaFile,
-			final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {
-		return primLoadGraphFromFile(scope, gamaFile.getPath(scope), vertex_specy, edge_specy);
-
-	}
-
-	// version depuis un filename sans edge et sans specy
-
-	@operator (
-			value = "load_graph_from_file",
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			usages = { @usage (
-					value = "\"format\": the format of the file, \"filename\": the filename of the file containing the network",
-					examples = { @example (
-							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-							isExecutable = false),
-							@example (
-									value = "			\"pajek\",",
-									isExecutable = false),
-							@example (
-									value = "			\"example_of_Pajek_file\");",
-									isExecutable = false) }) })
-	@no_test
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename)
-			throws GamaRuntimeException {
-		// AD 29/09/13: Changed the previous code that was triggering an
-		// overflow.
-		return primLoadGraphFromFile(scope, format, filename, null, null);
-	}
-
-	// version depuis un file avec edge et specy
-
-	@operator (
-			value = "load_graph_from_file",
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			usages = { @usage (
-					value = "\"format\": the format of the file, \"file\": the file containing the network",
-					examples = { @example (
-							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-							isExecutable = false),
-							@example (
-									value = "			\"pajek\",",
-									isExecutable = false),
-							@example (
-									value = "			\"example_of_Pajek_file\");",
-									isExecutable = false) }) })
-	@no_test
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile gamaFile)
-			throws GamaRuntimeException {
-		// AD 29/09/13 : Simply called the previous method with the path of the
-		// file. Not efficient, but should work.
-		return primLoadGraphFromFile(scope, format, gamaFile.getPath(scope));
-		// throw GamaRuntimeException.error("not implemented: loading from gama
-		// file");
-
-	}
-
-	@operator (
-			value = "load_graph_from_file",
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			usages = { @usage (
-					value = "\"file\": the file containing the network",
-					examples = { @example (
-							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-							isExecutable = false),
-							@example (
-									value = "			\"pajek\",",
-									isExecutable = false),
-							@example (
-									value = "			\"example_of_Pajek_file\");",
-									isExecutable = false) }) })
-	@no_test
-	public static IGraph primLoadGraphFromFile(final IScope scope, final String filename) throws GamaRuntimeException {
-		return primLoadGraphFromFile(scope, null, filename);
-	}
-
+	
 	@operator (
 			value = "load_shortest_paths",
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
@@ -1988,7 +1808,7 @@ public class Graphs {
 					equals = "return my_graph with all the shortest paths computed",
 					isExecutable = false) })
 	@no_test
-	public static IGraph primLoadGraphFromFile(final IScope scope, final GamaGraph graph, final GamaMatrix matrix)
+	public static IGraph primShortestPathFile(final IScope scope, final GamaGraph graph, final GamaMatrix matrix)
 			throws GamaRuntimeException {
 		if (graph == null) {
 			throw GamaRuntimeException.error("In the load_shortest_paths operator, the graph should not be null!",
@@ -2047,6 +1867,74 @@ public class Graphs {
 		return graph;
 	}
 
+
+	@operator (
+			value = "layout_force_FR",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "layouts a GAMA graph using Fruchterman and Reingold Force-Directed Placement Algorithm (in a given spatial bound, normalization factor and max_iteration parameters). ",
+			masterDoc = true,
+			special_cases = "usage: layoutForce(graph, bounds, normalization_factor, max_iteration, equilibirum criterion). graph is the graph to which "
+					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; normalization_factor is the normalization factor for the optimal distance, typical value is 1.0; "
+					+ "  max_iteration is the maximal number of iterations")
+	@no_test
+	public static IGraph layoutForceFR(final IScope scope, final GamaGraph graph, final IShape bounds,
+			final double normalization_factor,  final int maxIteration) {
+		final FRLayoutAlgorithm2D sim = new FRLayoutAlgorithm2D(maxIteration,normalization_factor,scope.getSimulation().getRandomGenerator().getGenerator());
+		LayoutModel2D model = toModel(graph,bounds);
+		sim.layout(graph, model);
+		return update_loc(graph,model);
+	}
+	
+	@operator (
+			value = "layout_force_FR_indexed",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			index_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
+
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "layouts a GAMA graph using Fruchterman and Reingold Force-Directed Placement Algorithm with The Barnes-Hut indexing technique(in a given spatial bound, theta, normalization factor and max_iteration parameters). ",
+			masterDoc = true,
+			special_cases = "usage: layoutForce(graph, bounds, normalization_factor, max_iteration, equilibirum criterion). graph is the graph to which "
+					+ "applied the layout;  bounds is the shape (geometry) in which the graph should be located; theta value for approximation using the Barnes-Hut technique, typical value is 0.5; normalization_factor is the normalization factor for the optimal distance, typical value is 1.0; "
+					+ "  max_iteration is the maximal number of iterations")
+	@no_test
+	public static IGraph indexedFRLayout(final IScope scope, final GamaGraph graph, final IShape bounds,
+			final double theta, final double normalizationFactor,  final int maxIteration) {
+		final IndexedFRLayoutAlgorithm2D sim = new IndexedFRLayoutAlgorithm2D(maxIteration,theta, normalizationFactor,scope.getSimulation().getRandomGenerator().getGenerator());
+		LayoutModel2D model = toModel(graph,bounds);
+		sim.layout(graph, model);
+		return update_loc(graph,model);
+	}
+	
+	
+
+	static IGraph update_loc(IGraph graph, LayoutModel2D model) {
+		for (Object s : graph.vertexSet()) {
+			if (s instanceof IShape) {
+				Point2D pt = model.get(s);
+				((IShape) s).setLocation(new GamaPoint(pt.getX(), pt.getY()));
+			}
+		}
+		return graph;
+	}
+	
+	static LayoutModel2D toModel(final GamaGraph graph, final IShape bounds) {
+		Envelope3D env = bounds.getEnvelope();
+		LayoutModel2D model = new MapLayoutModel2D<>(new Box2D(env.getMinY(), env.getMinY(), env.getWidth(), env.getHeight()));
+		for (Object s : graph.vertexSet()) {
+			if (s instanceof IShape) {
+				model.put(s, new Point2D(((IShape)s).getLocation().getX(), ((IShape)s).getLocation().getY()));
+			}
+		}
+		return model;
+	}
+	
 	@operator (
 			value = "layout_force",
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
@@ -2132,17 +2020,19 @@ public class Graphs {
 	public static IMap strahlerNumber(final IScope scope, final GamaGraph graph) {
 		final IMap<Object, Integer> results = GamaMapFactory.create(Types.NO_TYPE, Types.INT);
 		if (graph == null || graph.isEmpty(scope)) { return results; }
-		if (!graph.getConnected() || graph.hasCycle()) {
+		
+		IGraph g = graph.getConnected() ? asDirectedGraph(graph):  asDirectedGraph(ReduceToMainconnectedComponentOf(scope, graph));
+		if ( g.hasCycle()) {
 			throw GamaRuntimeException
 					.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope);
 		}
 
-		List currentEdges = of(graph.getEdges()).filter(a -> graph.outDegreeOf(graph.getEdgeTarget(a)) == 0).toList();
+		List currentEdges = of(g.getEdges()).filter(a -> g.outDegreeOf(g.getEdgeTarget(a)) == 0).toList();
 		while (!currentEdges.isEmpty()) {
 			final List newList = new ArrayList<>();
 			for (final Object e : currentEdges) {
-				final List previousEdges = inEdgesOf(scope, graph, graph.getEdgeSource(e));
-				final List nextEdges = outEdgesOf(scope, graph, graph.getEdgeTarget(e));
+				final List previousEdges = inEdgesOf(scope, g, g.getEdgeSource(e));
+				final List nextEdges = outEdgesOf(scope, g, g.getEdgeTarget(e));
 				if (nextEdges.isEmpty()) {
 					results.put(e, 1);
 					newList.addAll(previousEdges);
@@ -2372,44 +2262,655 @@ public class Graphs {
 		return EdgesToAdd.from(scope, nodes);
 	}
 
-	// TODO "complete" (pour créer un graphe complet)
+	/**
+	 * TODO this version of the barabasi albert generator is too simple. Switch to the implementation of another
+	 * library.
+	 *
+	 * @param scope
+	 * @param parameters
+	 * @return
+	 */
+	/*@operator (
+			value = "generate_barabasi_albert",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
+			masterDoc = true,
+			comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
+					+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
+					+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+//			usages = { @usage ("\"vertices_specy\": the species of vertices"),
+//					@usage ("\"edges_species\": the species of edges"),
+//					@usage ("\"size\": the graph will contain (size + 1) nodes"),
+//					@usage ("\"m\": the number of edges added per novel node"),
+//					@usage ("\"synchronized\": is the graph and the species of vertices and edges synchronized?") },
+			usages = { 
+				@usage (value = "\"vertices_specy\": the species of vertices; \"edges_species\": the species of edges ; "
+					+ "\"size\": the graph will contain (size + 1) nodes; "
+					+ "\"m\": the number of edges added per novel node; "
+					+ "\"synchronized\": is the graph and the species of vertices and edges synchronized?",
+				examples = { @example (
+					value = "graph<yourNodeSpecy,yourEdgeSpecy> graphEpidemio <- generate_barabasi_albert(",
+					isExecutable = false),
+					@example (
+							value = "		yourNodeSpecy,",
+							isExecutable = false),
+					@example (
+							value = "		yourEdgeSpecy,",
+							isExecutable = false),
+					@example (
+							value = "		3,",
+							isExecutable = false),
+					@example (
+							value = "		5,",
+							isExecutable = false),
+					@example (
+							value = "		true);",
+							isExecutable = false) })},
+			see = { "generate_watts_strogatz" })
+	@no_test
+	public static IGraph generateGraphstreamBarabasiAlbert(final IScope scope, final ISpecies vertices_specy,
+			final ISpecies edges_species, final Integer size, final Integer m, final Boolean isSychronized) {
 
-	// vertices_to_graph [vertices] with_weights (vertices collect: each.val) ->
-	// renvoie un graphe
-	// construit à partir des vertex (edges g�n�r�s soit sous la forme d'une
-	// paire vertex::vertex,
-	// soit sous la forme d'un lien géométrique)
-	// vertices_to_graph [a1, a2, a3] with_weights ([1, 4, 8]) -> même chose
-	// edges_to_graph [edges] with_weights (edges collect: each.length) ->
-	// renvoie un graphe
-	// construit à partir des edges (vertex g�n�r�s soit sous la forme d'une
-	// paire edge::edge, soit
-	// sous la forme d'un point pour les géométries)
-	// edges_to_graph [a1::a2, a2::a3] with_weights ([3.0, 1.3]) -> même chose
-	// add item: v1 to:g weight: 1 -> ajout d'un vertex
-	// add item: v1::v2 to:g weight:1 -> ajout d'un edge g�n�r� (et des vertex
-	// correspondants si
-	// nécessaire)
-	// add item: (v1::v2)::e to: g weight: 1 -> edge (ajout d'un edge explicite
-	// et des vertex
-	// correspondants si nécessaire)
-	// remove item: v1::v2 from: g -> remove edge
-	// remove item: o from: g -> remove edge / vertex
-	// put item: e2 at: v1::v2 in: g -> replace/add an edge (on peut aussi faire
-	// la même chose pour
-	// remplacer un vertex)
+		BarabasiAlbertGraphGenerator gen = new BarabasiAlbertGraphGenerator<>(m, m, n, scope.getSimulation().getRandomGenerator());
+		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_species,
+				new BarabasiAlbertGenerator(m), size - 2 // nota: in
+															// graphstream, two
+															// nodes are already
+															// created by
+															// default.,
+				, isSychronized);
 
-	// TODO Transformer peu à peu toutes les primitives (GeometricFunctions,
-	// GeometricSkill, etc.)
-	// en opérateurs (as_graph, as_network, as_triangle_graph, as_complete_graph
-	// -- En créant les
-	// liens dynamiques correspondants --, as_weighted_graph ...).
+	}
 
-	// TODO Ajouter les opérateurs d'union, d'intersection, d'égalité, de
-	// différence
+	@operator (
+			value = "generate_barabasi_albert",
+			concept = {})
+	@doc (
+			value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
+//			comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
+//					+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
+//					+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
+//					+ "The map operand should includes following elements:",
+//			usages = { @usage ("\"agents\": list of existing node agents"),
+//					@usage ("\"edges_species\": the species of edges"),
+//					@usage ("\"m0\": the graph will contain (size + 1) nodes"),
+//					@usage ("\"m\": the number of edges added per novel node"),
+//					@usage ("\"synchronized\": is the graph and the species of vertices and edges synchronized?") },
+			usages = { @usage (
+				value = "\"agents\": list of existing node agents; \"edges_species\": the species of edges; "
+					+ "\"size\": the graph will contain (size + 1) nodes; "
+					+ "\"m\": the number of edges added per novel node.",
+				examples = { @example (
+					value = "graph<yourNodeSpecy,yourEdgeSpecy> graphEpidemio <- generate_barabasi_albert(",
+					isExecutable = false),
+					@example (
+							value = "		yourListOfNodes,",
+							isExecutable = false),
+					@example (
+							value = "		yourEdgeSpecy,",
+							isExecutable = false),
+					@example (
+							value = "		3,",
+							isExecutable = false),
+					@example (
+							value = "		5,",
+							isExecutable = false),
+					@example (
+							value = "		true);",
+							isExecutable = false) })},
+			see = { "generate_watts_strogatz" })
+	@no_test
+	public static IGraph generateGraphstreamBarabasiAlbert(final IScope scope, final IContainer<?, IAgent> agents,
+			final ISpecies edges_species, final Integer m, final Boolean isSychronized) {
+		if (agents.isEmpty(scope)) { return null; }
+		final IList<IAgent> nodes = GamaListFactory.create(Types.AGENT);
+		nodes.addAll(agents.listValue(scope, Types.AGENT, false));
+		return loadGraphWithGraphstreamFromGeneratorSource(scope, nodes, edges_species, new BarabasiAlbertGenerator(m),
+				nodes.size() - 2 // nota: in graphstream, two nodes are already
+									// created by default.,
+				, isSychronized);
 
-	// TODO Ajouter des générateurs spécifiques a partir de GraphGenerator (pb:
-	// quelles classes pour
-	// les vertices/edges ??
+	}
 
+	
+
+	
+*/
+	
+	
+	@operator (
+			value = "generate_barabasi_albert",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
+			masterDoc = true,
+			comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
+					+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
+					+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+					usages = { @usage (
+							value =   "\"nbInitNodes\": number of initial nodes; "
+								+ "\"nbEdgesAdded\": number of edges of each new node added during the network growth; "
+								+"\"nbNodes\": final number of nodes; "
+								+ "\"directed\": is the graph directed or not; "
+								+"\"node_species\": the species of vertices; \"edges_species\": the species of edges",
+										
+							examples = { @example (
+								value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
+								isExecutable = false),
+								
+								@example (
+										value = "			60,",
+										isExecutable = false),
+								@example (
+										value = "			1,",
+										isExecutable = false),
+								@example (
+										value = "			100,",
+										isExecutable = false),
+								@example (
+										value = "		true,",
+										isExecutable = false),
+								@example (
+										value = "			myVertexSpecies,",
+										isExecutable = false),
+								@example (
+										value = "			myEdgeSpecies);",
+										isExecutable = false)})},
+			see = { "generate_watts_strogatz" })
+	@no_test
+	public static IGraph generateGraphBarabasiAlbert(final IScope scope, final Integer initNbNodes ,final Integer nbEdgesAdded, final Integer nbNodes,  final Boolean directed, final ISpecies node_species,
+			final ISpecies edges_species) {
+
+		BarabasiAlbertGraphGenerator gen = new BarabasiAlbertGraphGenerator(initNbNodes, nbEdgesAdded, nbNodes, scope.getSimulation().getRandomGenerator().getGenerator());
+		AbstractBaseGraph<String, DefaultEdge> graph = 
+				directed ?
+					new DirectedMultigraph(
+				            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true) :
+				new Multigraph(
+	            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
+		
+		gen.generateGraph(graph);
+		return new GamaGraph<>(scope, graph, node_species, edges_species);
+		
+
+	}
+	
+	@operator (
+			value = "generate_barabasi_albert",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
+			masterDoc = true,
+			comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
+					+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
+					+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+					usages = { @usage (
+							value =   "\"nbInitNodes\": number of initial nodes; "
+									+ "\"nbEdgesAdded\": number of edges of each new node added during the network growth; "
+									+"\"nbNodes\": final number of nodes; "
+										+ "\"directed\": is the graph directed or not; "
+								+"\"node_species\": the species of vertices; \"edges_species\": the species of edges",
+										
+							examples = { @example (
+								value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
+								isExecutable = false),
+								
+								@example (
+										value = "			60,",
+										isExecutable = false),
+								@example (
+										value = "			1,",
+										isExecutable = false),
+								@example (
+										value = "			100,",
+										isExecutable = false),
+								@example (
+										value = "		true,",
+										isExecutable = false),
+								@example (
+										value = "			myVertexSpecies);",
+										isExecutable = false)})},
+			see = { "generate_watts_strogatz" })
+	@no_test
+	public static IGraph generateGraphBarabasiAlbert(final IScope scope, final Integer InitNbNodes, final Integer nbEdgesAdded,final Integer nbNodes,  final Boolean directed, final ISpecies node_species) {
+		
+		return generateGraphBarabasiAlbert(scope,InitNbNodes,nbEdgesAdded,nbNodes,directed,node_species, null);
+	}
+	
+	
+	@operator (
+			value = "generate_barabasi_albert",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
+			masterDoc = true,
+			comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
+					+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
+					+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+					usages = { @usage (
+							value =   "\"nbInitNodes\": number of initial nodes; "
+									+ "\"nbEdgesAdded\": number of edges of each new node added during the network growth; "
+									+"\"nbNodes\": final number of nodes; "
+											+ "\"directed\": is the graph directed or not; ",
+										
+							examples = { @example (
+								value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
+								isExecutable = false),
+								
+								@example (
+										value = "			60,",
+										isExecutable = false),
+								@example (
+										value = "			1,",
+										isExecutable = false),
+								@example (
+										value = "			100,",
+										isExecutable = false),
+								@example (
+										value = "		true);",
+										isExecutable = false)})},
+			see = { "generate_watts_strogatz" })
+	@no_test
+	public static IGraph generateGraphBarabasiAlbert(final IScope scope, final Integer InitNbNodes, final Integer nbEdgesAdded,final Integer nbNodes,  final Boolean directed) {
+		
+		return generateGraphBarabasiAlbert(scope,InitNbNodes,nbEdgesAdded,nbNodes,directed,null, null);
+	}
+	
+	
+	
+	@operator (
+			value = "generate_watts_strogatz",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random small-world network (following Watts-Strogatz model).",
+			masterDoc = true,
+			comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering."
+					+ "A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+			usages = { @usage (
+				value =  "\"nbNodes\": the graph will contain (size + 1) nodes (size must be greater than k); "
+					+ "\"p\": probability to \"rewire\" an edge (so it must be between 0 and 1, the parameter is often called beta in the literature); "
+					+ "\"k\": the base degree of each node (k must be greater than 2 and even); "
+					+ "\"directed\": is the graph directed or not; "
+					+"\"node_species\": the species of vertices; \"edges_species\": the species of edges",
+							
+				examples = { @example (
+					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
+					isExecutable = false),
+					
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			0.3,",
+							isExecutable = false),
+					@example (
+							value = "			5,",
+							isExecutable = false),
+					@example (
+							value = "		true,",
+							isExecutable = false),
+					@example (
+							value = "			myVertexSpecies,",
+							isExecutable = false),
+					@example (
+							value = "			myEdgeSpecies);",
+							isExecutable = false)})},
+			see = { "generate_barabasi_albert" })
+	@no_test
+	public static IGraph generateGraphWattsStrogatz(final IScope scope,final Integer nbNodes, final Double p, final Integer k,
+			 final Boolean directed, final ISpecies node_species,
+			final ISpecies edges_species) {
+		
+		WattsStrogatzGraphGenerator wsg = new WattsStrogatzGraphGenerator(nbNodes, k, p, false, scope.getSimulation().getRandomGenerator().getGenerator());
+		AbstractBaseGraph<String, DefaultEdge> graph = 
+				directed ?
+					new DirectedMultigraph(
+				            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true) :
+				new Multigraph(
+	            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
+		wsg.generateGraph(graph);
+		return new GamaGraph<>(scope, graph, node_species, edges_species);
+		
+	}
+	
+	@operator (
+			value = "generate_watts_strogatz",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random small-world network (following Watts-Strogatz model).",
+			masterDoc = true,
+			comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering."
+					+ "A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+			usages = { @usage (
+				value =  "\"nbNodes\": the graph will contain (size + 1) nodes (size must be greater than k); "
+					+ "\"p\": probability to \"rewire\" an edge (so it must be between 0 and 1, the parameter is often called beta in the literature); "
+					+ "\"k\": the base degree of each node (k must be greater than 2 and even); "
+					+ "\"directed\": is the graph directed or not; " 
+					+"\"node_species\": the species of vertices" ,
+							
+				examples = { @example (
+					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
+					isExecutable = false),
+					
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			0.3,",
+							isExecutable = false),
+					@example (
+							value = "			5,",
+							isExecutable = false),
+					@example (
+							value = "		true,",
+							isExecutable = false),
+					@example (
+							value = "			myVertexSpecies);",
+							isExecutable = false)})},
+			see = { "generate_barabasi_albert" })
+	@no_test
+	public static IGraph generateGraphWattsStrogatz(final IScope scope,final Integer nbNodes, final Double p, final Integer k,
+			 final Boolean directed, final ISpecies node_species) {
+		
+		return generateGraphWattsStrogatz(scope,nbNodes,p,k,directed,node_species,null);
+		
+	}
+	
+	@operator (
+			value = "generate_watts_strogatz",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random small-world network (following Watts-Strogatz model).",
+			masterDoc = true,
+			comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering."
+					+ "A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+			usages = { @usage (
+				value =  "\"nbNodes\": the graph will contain (size + 1) nodes (size must be greater than k); "
+					+ "\"p\": probability to \"rewire\" an edge (so it must be between 0 and 1, the parameter is often called beta in the literature); "
+					+ "\"k\": the base degree of each node (k must be greater than 2 and even); "
+					+ "\"directed\": is the graph directed or not",
+							
+				examples = { @example (
+					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
+					isExecutable = false),
+					
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			0.3,",
+							isExecutable = false),
+					@example (
+							value = "			5,",
+							isExecutable = false),
+					@example (
+							value = "		true);",
+							isExecutable = false)})},
+			see = { "generate_barabasi_albert" })
+	@no_test
+	public static IGraph generateGraphWattsStrogatz(final IScope scope,final Integer nbNodes, final Double p, final Integer k,
+			 final Boolean directed) {
+		
+		return generateGraphWattsStrogatz(scope,nbNodes,p,k,directed,null,null);
+		
+	}
+
+
+	@operator (
+			value = "generate_random_graph",
+			concept = {})
+	@doc (
+			value = "returns a random graph.",
+			usages = { 
+				@usage (value = "\"nbNodes\": number of nodes to created;\"nbEdges\": number of edges to created;\"directed\": is the graph has to be directed or not;\"node_species\": the species of nodes; \"edges_species\": the species of edges ",
+				examples = { @example (
+					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_random_graph(",
+					isExecutable = false),
+					@example (
+							value = "			50,",
+							isExecutable = false),
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			true,",
+							isExecutable = false),
+					@example (
+							value = "			node_species,",
+							isExecutable = false),
+					@example (
+							value = "		edge_species);",
+							isExecutable = false) })},
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test 
+	public static IGraph generateGraphRandom(final IScope scope, final int nbNodes, final int nbEdges, final Boolean directed, final ISpecies node_species, final ISpecies edges_species) {
+		AbstractBaseGraph<String, DefaultEdge> graph = 
+				directed ?
+					new DirectedMultigraph(
+				            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true) :
+				new Multigraph(
+	            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
+		GnmRandomGraphGenerator gen = new GnmRandomGraphGenerator(nbNodes,nbEdges,scope.getSimulation().getSeed().longValue());
+		gen.generateGraph(graph, null);
+		
+		return new GamaGraph<>(scope, graph, node_species, edges_species);
+		
+	}
+	
+	@operator (
+			value = "generate_random_graph",
+			concept = {})
+	@doc (
+			value = "returns a random graph.",
+			usages = { 
+				@usage (value = "\"nbNodes\": number of nodes to created;\"nbEdges\": number of edges to created;\"directed\": is the graph has to be directed or not;\"node_species\": the species of nodes",
+				examples = { @example (
+					value = "graph myGraph <- generate_random_graph(",
+					isExecutable = false),
+					@example (
+							value = "			50,",
+							isExecutable = false),
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			true,",
+							isExecutable = false),
+					@example (
+							value = "			node_species);",
+							isExecutable = false)})},
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test 
+	public static IGraph generateGraphRandom(final IScope scope, final int nbNodes, int nbEdges, final Boolean directed, final ISpecies node_species) {
+		return generateGraphRandom(scope, nbNodes,nbEdges,directed, node_species,null);
+		
+	}
+	
+	@operator (
+			value = "generate_random_graph",
+			concept = {})
+	@doc (
+			value = "returns a random graph.",
+			usages = { 
+				@usage (value = "\"nbNodes\": number of nodes to created;\"nbEdges\": number of edges to created;\"directed\": is the graph has to be directed or not",
+				examples = { @example (
+					value = "graph myGraph <- generate_random_graph(",
+					isExecutable = false),
+					@example (
+							value = "			50,",
+							isExecutable = false),
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			true);",
+							isExecutable = false) })},
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test 
+	public static IGraph generateGraphRandom(final IScope scope, final int nbNodes, final int nbEdges, final Boolean directed) {
+		return generateGraphRandom(scope, nbNodes, nbEdges,directed, (ISpecies)null, (ISpecies)null);
+		
+	}
+
+	
+	
+	/******************************/
+	
+	@operator (
+			value = "generate_complete_graph",
+			concept = {})
+	@doc (
+			value = "returns a fully connected graph.",
+			usages = { 
+				@usage (value = "\"directed\": is the graph has to be directed or not;\"nodes\": the list of existing nodes; \"edges_species\": the species of edges ",
+				examples = { @example (
+					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",
+					isExecutable = false),
+					@example (
+							value = "			true,",
+							isExecutable = false),
+					@example (
+							value = "			nodes,",
+							isExecutable = false),
+					@example (
+							value = "		edge_species);",
+							isExecutable = false) })},
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test 
+	public static IGraph generateGraphComplete(final IScope scope, final Boolean directed, final IList nodes, final ISpecies edges_species) {
+		AbstractBaseGraph<String, DefaultEdge> graph = 
+				directed ?
+					new DirectedMultigraph(
+				            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true) :
+				new Multigraph(
+	            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
+		for (int i = 0; i < nodes.size(); i++) {
+			graph.addVertex(i + "");
+		}
+		ComplementGraphGenerator gen = new ComplementGraphGenerator(graph);
+		gen.generateGraph(graph, null);
+		
+		return new GamaGraph<>(scope, graph, nodes,edges_species);
+		
+	}
+	
+	@operator (
+			value = "generate_complete_graph",
+			concept = {})
+	@doc (
+			value = "returns a fully connected graph.",
+			usages = { 
+				@usage (value = "\"directed\": is the graph has to be directed or not;\"nodes\": the list of existing nodes",
+				examples = { @example (
+					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",
+					isExecutable = false),
+					@example (
+							value = "			true,",
+							isExecutable = false),
+					@example (
+							value = "			nodes);",
+							isExecutable = false)})},
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test 
+	public static IGraph generateGraphComplete(final IScope scope, final Boolean directed, final IList nodes) {
+		return generateGraphComplete(scope, directed,nodes, null);	
+	}
+	
+	@operator (
+			value = "generate_complete_graph",
+			concept = {})
+	@doc (
+			value = "returns a fully connected graph.",
+			usages = { 
+				@usage (value = "\"nbNodes\": number of nodes to created;\"directed\": is the graph has to be directed or not;\"node_species\": the species of nodes; \"edges_species\": the species of edges ",
+				examples = { @example (
+					value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",
+					isExecutable = false),
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			true,",
+							isExecutable = false),
+					@example (
+							value = "			node_species,",
+							isExecutable = false),
+					@example (
+							value = "		edge_species);",
+							isExecutable = false) })},
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test 
+	public static IGraph generateGraphComplete(final IScope scope, final int nbNodes,  final Boolean directed, final ISpecies node_species, final ISpecies edges_species) {
+		AbstractBaseGraph<String, DefaultEdge> graph = 
+				directed ?
+					new DirectedMultigraph(
+				            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true) :
+				new Multigraph(
+	            SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
+		for (int i = 0; i < nbNodes;i++) {
+			graph.addVertex(""+i);
+		}
+		ComplementGraphGenerator gen = new ComplementGraphGenerator(graph);
+		gen.generateGraph(graph, null);
+		
+		return new GamaGraph<>(scope, graph, node_species, edges_species);
+		
+	}
+	
+	@operator (
+			value = "generate_complete_graph",
+			concept = {})
+	@doc (
+			value = "returns a fully connected graph.",
+			usages = { 
+				@usage (value = "\"nbNodes\": number of nodes to created;\"directed\": is the graph has to be directed or not;\"node_species\": the species of nodes",
+				examples = { @example (
+					value = "graph myGraph <- generate_complete_graph(",
+					isExecutable = false),
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			true,",
+							isExecutable = false),
+					@example (
+							value = "			node_species);",
+							isExecutable = false)})},
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test 
+	public static IGraph generateGraphComplete(final IScope scope, final int nbNodes,  final Boolean directed, final ISpecies node_species) {
+		return generateGraphComplete(scope, nbNodes,directed, node_species,null);
+		
+	}
+	
+	@operator (
+			value = "generate_complete_graph",
+			concept = {})
+	@doc (
+			value = "returns a fully connected graph.",
+			usages = { 
+				@usage (value = "\"nbNodes\": number of nodes to created;\"directed\": is the graph has to be directed or not",
+				examples = { @example (
+					value = "graph myGraph <- generate_complete_graph(",
+					isExecutable = false),
+					@example (
+							value = "			100,",
+							isExecutable = false),
+					@example (
+							value = "			true);",
+							isExecutable = false) })},
+			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	@no_test 
+	public static IGraph generateGraphComplete(final IScope scope, final int nbNodes,  final Boolean directed) {
+		return generateGraphComplete(scope, nbNodes,directed, (ISpecies)null, (ISpecies)null);
+		
+	}
 }

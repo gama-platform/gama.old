@@ -2,18 +2,15 @@
  *
  * simtools.gaml.extensions.traffic.RoadSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source
  * code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
+ *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
 import java.util.List;
-
-import org.locationtech.jts.algorithm.CGAlgorithms;
-import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -29,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -37,223 +35,347 @@ import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars ({ @variable (
-		name = "agents_on",
+@vars({
+	@variable(
+		name = RoadSkill.AGENTS_ON,
 		type = IType.LIST,
 		of = IType.LIST,
-		doc = @doc ("for each lane of the road, the list of agents for each segment")),
-		@variable (
-				name = "all_agents",
-				type = IType.LIST,
-				of = IType.AGENT,
-				doc = @doc ("the list of agents on the road")),
-		@variable (
-				name = "source_node",
-				type = IType.AGENT,
-				doc = @doc ("the source node of the road")),
-		@variable (
-				name = "target_node",
-				type = IType.AGENT,
-				doc = @doc ("the target node of the road")),
-		@variable (
-				name = "lanes",
-				type = IType.INT,
-				doc = @doc ("the number of lanes")),
-		@variable (
-				name = "linked_road",
-				type = ITypeProvider.OWNER_TYPE,
-				doc = @doc ("the linked road: the lanes of this linked road will be usable by drivers on the road")),
-		@variable (
-				name = "maxspeed",
-				type = IType.FLOAT,
-				doc = @doc ("the maximal speed on the road")) })
-@skill (
-		name = "skill_road",
-		concept = { IConcept.TRANSPORT, IConcept.SKILL },
-		doc = @doc ("A skill for agents representing roads in traffic simulations"))
+		doc = @doc("for each lane of the road, the list of agents for each segment")
+	),
+	@variable(
+		name = RoadSkill.ALL_AGENTS,
+		type = IType.LIST,
+		of = IType.AGENT,
+		doc = @doc("the list of agents on the road")
+	),
+	@variable(
+		name = RoadSkill.SOURCE_NODE,
+		type = IType.AGENT,
+		doc = @doc("the source node of the road")
+	),
+	@variable(
+		name = RoadSkill.TARGET_NODE,
+		type = IType.AGENT,
+		doc = @doc("the target node of the road")
+	),
+	@variable(
+		name = RoadSkill.LANES,
+		type = IType.INT,
+		doc = @doc(
+			value = "the number of lanes",
+			deprecated = "use num_lanes instead"
+		)
+	),
+	@variable(
+		name = RoadSkill.NUM_LANES,
+		type = IType.INT,
+		doc = @doc("the number of lanes")
+	),
+	@variable(
+		name = RoadSkill.NUM_SEGMENTS,
+		type = IType.INT,
+		doc = @doc("the number of road segments")
+	),
+	@variable(
+		name = RoadSkill.LINKED_ROAD,
+		type = ITypeProvider.OWNER_TYPE,
+		doc = @doc("the linked road: the lanes of this linked road will be usable by drivers on the road")
+	),
+	@variable(
+		name = RoadSkill.MAXSPEED,
+		type = IType.FLOAT,
+		init = "50#km/#h",
+		doc = @doc("the maximal speed on the road")
+	)
+})
+@skill(
+	name = RoadSkill.SKILL_ROAD,
+	concept = { IConcept.TRANSPORT, IConcept.SKILL },
+	doc = @doc ("A skill for agents representing roads in traffic simulations")
+)
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class RoadSkill extends Skill {
+	public static final String SKILL_ROAD = "skill_road";
 
-	public final static String AGENTS = "all_agents";
+	// TODO: rename these two lists?
+	public static final String ALL_AGENTS = "all_agents";
+	public static final String AGENTS_ON = "agents_on";
+	public static final String SOURCE_NODE = "source_node";
+	public static final String TARGET_NODE = "target_node";
+	// TODO: rename to speed_limit
+	public static final String MAXSPEED = "maxspeed";
+	public static final String LINKED_ROAD = "linked_road";
+	@Deprecated public static final String LANES = "lanes";
+	public static final String NUM_LANES = "num_lanes";
+	public static final String NUM_SEGMENTS = "num_segments";
 
-	public final static String AGENTS_ON = "agents_on";
-	public final static String SOURCE_NODE = "source_node";
-	public final static String TARGET_NODE = "target_node";
-	public final static String LANES = "lanes";
-	public final static String MAXSPEED = "maxspeed";
-	public final static String LINKED_ROAD = "linked_road";
-
-	@getter (AGENTS_ON)
+	@getter(AGENTS_ON)
 	public static List getAgentsOn(final IAgent agent) {
 		return (List) agent.getAttribute(AGENTS_ON);
 	}
-	
+
+	@setter(AGENTS_ON)
 	public static void setAgentsOn(final IAgent agent, final List agents) {
 		agent.setAttribute(AGENTS_ON, agents);
 	}
-	
 
-	@getter (AGENTS)
+	@getter(ALL_AGENTS)
 	public static List getAgents(final IAgent agent) {
-		return (List) agent.getAttribute(AGENTS);
-	}
-	
-	public static void setAgents(final IAgent agent, final List agents) {
-		agent.setAttribute(AGENTS, agents);
+		return (List) agent.getAttribute(ALL_AGENTS);
 	}
 
-	@getter (SOURCE_NODE)
+	@setter(ALL_AGENTS)
+	public static void setAgents(final IAgent agent, final List agents) {
+		agent.setAttribute(ALL_AGENTS, agents);
+	}
+
+	@getter(SOURCE_NODE)
 	public static IAgent getSourceNode(final IAgent agent) {
 		return (IAgent) agent.getAttribute(SOURCE_NODE);
 	}
 
-	@getter (TARGET_NODE)
-	public static IAgent getTargetNode(final IAgent agent) {
-		return (IAgent) agent.getAttribute(TARGET_NODE);
-	}
-
-	@getter (LANES)
-	public static Integer getLanes(final IAgent agent) {
-		return (Integer) agent.getAttribute(LANES);
-	}
-
-	@getter (MAXSPEED)
-	public static Double getMaxSpeed(final IAgent agent) {
-		return (Double) agent.getAttribute(MAXSPEED);
-	}
-
-	@setter (LANES)
-	public static void setLanes(final IAgent agent, final int ln) {
-		agent.setAttribute(LANES, ln);
-	}
-
-	@setter (MAXSPEED)
-	public static void setMaxSpeed(final IAgent agent, final Double sp) {
-		agent.setAttribute(MAXSPEED, sp);
-	}
-
-	@setter (SOURCE_NODE)
+	@setter(SOURCE_NODE)
 	public static void setSourceNode(final IAgent agent, final IAgent nd) {
 		agent.setAttribute(SOURCE_NODE, nd);
 	}
 
-	@setter (TARGET_NODE)
+	@getter(TARGET_NODE)
+	public static IAgent getTargetNode(final IAgent agent) {
+		return (IAgent) agent.getAttribute(TARGET_NODE);
+	}
+
+	@setter(TARGET_NODE)
 	public void setTargetNode(final IAgent agent, final IAgent nd) {
 		agent.setAttribute(TARGET_NODE, nd);
 	}
 
-	@getter (LINKED_ROAD)
+	@getter(LANES)
+	public static int getLanes(final IAgent agent) {
+		return getNumLanes(agent);
+	}
+
+	@setter(LANES)
+	public static void setLanes(final IAgent agent, final int numLanes) {
+		setNumLanes(agent, numLanes);
+	}
+
+	@getter(NUM_LANES)
+	public static int getNumLanes(final IAgent agent) {
+		return (int) agent.getAttribute(NUM_LANES);
+	}
+
+	@setter(NUM_LANES)
+	public static void setNumLanes(final IAgent agent, final int numLanes) {
+		if (numLanes == 0) {
+			GamaRuntimeException.warning(agent.getName() + " has zero lanes",
+					GAMA.getRuntimeScope());
+		}
+		agent.setAttribute(NUM_LANES, numLanes);
+	}
+
+	@getter(MAXSPEED)
+	public static Double getMaxSpeed(final IAgent agent) {
+		return (Double) agent.getAttribute(MAXSPEED);
+	}
+
+	@setter(MAXSPEED)
+	public static void setMaxSpeed(final IAgent agent, final Double sp) {
+		agent.setAttribute(MAXSPEED, sp);
+	}
+
+	@getter(LINKED_ROAD)
 	public static IAgent getLinkedRoad(final IAgent agent) {
 		return (IAgent) agent.getAttribute(LINKED_ROAD);
 	}
 
-	@setter (LINKED_ROAD)
+	@setter(LINKED_ROAD)
 	public static void setLinkedRoad(final IAgent agent, final IAgent rd) {
 		agent.setAttribute(LINKED_ROAD, rd);
 	}
 
-	public static void register(final IAgent road, final IAgent driver, final int currentLane)
+	@getter(NUM_SEGMENTS)
+	public static int getNumSegments(final IAgent road) {
+		return GeometryUtils.getPointsOf(road).length - 1;
+	}
+
+	@setter(NUM_SEGMENTS)
+	public static void setNumSegments(final IAgent road, final int numSegments) {
+		// read-only
+	}
+
+	//TODO: update doc string
+	/**
+	 * Converts the "overflow" lane to the correct lane index on the linked road.
+	 * Simply returns the input lane if it is already a valid lane on the current road.
+	 * Computes the correct segment index on the linked road.
+	 * @param scope
+	 * @param lane the input lane index
+	 * @return
+	 */
+	public static List<IAgent> getVehiclesOnLaneSegment(final IScope scope,
+			final IAgent correctRoad,
+			final int lane,
+			final int segment) {
+		int numLanesCorrect = getNumLanes(correctRoad);
+		IAgent actualRoad;
+		int actualLane, actualSegment;
+
+		if (lane < numLanesCorrect) {
+			actualRoad = correctRoad;
+			actualLane = lane;
+			actualSegment = segment;
+		} else {
+			IAgent linkedRoad = getLinkedRoad(correctRoad);
+			int numLanesLinked = getNumLanes(linkedRoad);
+			actualRoad = linkedRoad;
+			actualLane = numLanesCorrect + numLanesLinked - 1 - lane;
+			actualSegment = getNumSegments(actualRoad) - segment - 1;
+		}
+
+		List<List<List<IAgent>>> vehicles = RoadSkill.getAgentsOn(actualRoad);
+		return vehicles.get(actualLane).get(actualSegment);
+	}
+
+	@action(
+		name = "register",
+		args = {
+			@arg(
+				name = "agent",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc("the agent to register on the road.")
+			),
+			@arg(
+				name = "lane",
+				type = IType.INT,
+				optional = false,
+				doc = @doc("the lane index on which to register; if lane index >= number of lanes, then register on the linked road")
+			)
+		},
+		doc = @doc(
+			value = "register the agent on the road at the given lane",
+			examples = { @example ("do register agent: the_driver lane: 0") }
+		)
+	)
+	public void primRegister(final IScope scope) throws GamaRuntimeException {
+		final IAgent road = getCurrentAgent(scope);
+		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
+		int lane = scope.getIntArg("lane");
+
+		register(scope, driver, road, lane);
+	}
+
+	/**
+	 * Registers the driver on the specified road and starting lane.
+	 *
+	 * @param scope
+	 * @param vehicle the agent to register
+	 * @param road the new road
+	 * @param lowestLane the new starting lane
+	 *
+	 * @throws GamaRuntimeException
+	 */
+	public static void register(IScope scope, IAgent vehicle, IAgent road, int lowestLane)
 			throws GamaRuntimeException {
-		int lane = currentLane;
-		final IAgent linkedRoad = (IAgent) road.getAttribute(LINKED_ROAD);
-		final boolean agentOnLinkedRoad =
-				driver == null ? false : (Boolean) driver.getAttribute(DrivingSkill.ON_LINKED_ROAD);
-		final int nbLanes = (Integer) road.getAttribute(LANES);
+		if (vehicle == null) return;
 
-		if (driver != null) {
-			final IAgent cr = (IAgent) driver.getAttribute(DrivingSkill.CURRENT_ROAD);
-			final Integer pl = (Integer) driver.getAttribute(DrivingSkill.CURRENT_LANE);
-			if (cr != null && pl != null) {
-				Integer segmentIndex = (Integer) driver.getAttribute(DrivingSkill.SEGMENT_INDEX);
-				if (agentOnLinkedRoad) {
-					final IAgent lr = getLinkedRoad(cr);
-					final List agsLane = (List) getAgentsOn(lr).get(pl);
-					if (segmentIndex == null) {
-						segmentIndex = getSegmentIndex(lr, driver);
-					}
-					((List) agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
-					getAgents(cr).remove(driver);
-				} else {
-					if (segmentIndex == null) {
-						segmentIndex = getSegmentIndex(cr, driver);
-					}
-					((List) ((List) getAgentsOn(cr).get(pl)).get(segmentIndex)).remove(driver);
-					getAgents(cr).remove(driver);
-				}
-			}
-			int indexSegment = 0;
-			boolean onLinkedRoad = false;
-			if (lane >= nbLanes && linkedRoad != null) {
-				final int nbLanesLinked = (Integer) linkedRoad.getAttribute(LANES);
-				onLinkedRoad = true;
-				lane = nbLanesLinked - nbLanes - lane + 1;
+		int numLanesOccupied = DrivingSkill.getNumLanesOccupied(vehicle);
 
-				lane = Math.max(0, Math.min(lane, nbLanesLinked - 1));
-				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, true);
+		GamaPoint roadEndPt = (GamaPoint) getTargetNode(road).getLocation();
+		boolean violatingOneway = !DrivingSkill.getCurrentTarget(vehicle).getLocation().equals(roadEndPt);
 
-				final List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
-				final List ags = (List) agentsOn.get(lane);
-				((List) ags.get(ags.size() - 1)).add(driver);
-				getAgents(road).add(driver);
-			} else {
-				final List agentsOn = (List) road.getAttribute(AGENTS_ON);
-				lane = nbLanes == 0 ? Math.min(lane,  ((List) agentsOn.get(lane)).size() - 1) : Math.min(lane, nbLanes - 1);
-				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, false);
-				indexSegment = getSegmentIndex(road, driver);
-				((List) ((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
-				getAgents(road).add(driver);
-			}
-			driver.setAttribute(DrivingSkill.DISTANCE_TO_GOAL,
-					driver.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[indexSegment + 1]));
-			driver.setAttribute(DrivingSkill.CURRENT_ROAD, road);
-			driver.setAttribute(DrivingSkill.CURRENT_LANE, lane);
-			driver.setAttribute(DrivingSkill.SEGMENT_INDEX,
-					onLinkedRoad ? road.getInnerGeometry().getNumPoints() - indexSegment - 2 : indexSegment);
-
+		// TODO: why not just set to 0
+		int indexSegment = !violatingOneway ? 0 : getNumSegments(road) - 1;
+		for (int i = 0; i < numLanesOccupied; i += 1) {
+			int lane = lowestLane + i;
+			List<IAgent> newVehicleList = getVehiclesOnLaneSegment(scope, road, lane, indexSegment);
+			newVehicleList.add(vehicle);
 		}
+		getAgents(road).add(vehicle);
+
+		DrivingSkill.setViolatingOneway(vehicle, violatingOneway);
+		if (!violatingOneway) {
+			DrivingSkill.setDistanceToGoal(vehicle,
+					vehicle.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[1]));
+		} else {
+			int numSegments = getNumSegments(road);
+			DrivingSkill.setDistanceToGoal(vehicle,
+					vehicle.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[numSegments - 1]));
+		}
+		DrivingSkill.setCurrentRoad(vehicle, road);
+		DrivingSkill.setLowestLane(vehicle, lowestLane);
+		DrivingSkill.setSegmentIndex(vehicle, indexSegment);
 	}
 
-	public static int getSegmentIndex(final IAgent road, final IAgent driver) {
-		final GamaPoint[] coords = GeometryUtils.getPointsOf(road);
-		if (coords.length == 2) { return 0; }
-
-		final GamaPoint loc = driver.getLocation().toGamaPoint();
-		for (int i = 0; i < coords.length - 1; i++) {
-			if (coords[i].equals(loc)) { return i; }
-		}
-		double distanceS = Double.MAX_VALUE;
-		int indexSegment = 0;
-		final int nbSp = coords.length;
-		for (int i = 0; i < nbSp - 1; i++) {
-			final double distS = CGAlgorithms.distancePointLine(loc, coords[i], coords[i + 1]);
-			if (distS < distanceS) {
-				distanceS = distS;
-				indexSegment = i;
-			}
-		}
-		return indexSegment;
-
+	@action(
+		name = "unregister",
+		args = {
+			@arg(
+				name = "agent",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc ("the agent to unregister on the road.")
+			)
+		},
+		doc = @doc(
+			value = "unregister the agent on the road",
+			examples = { @example ("do unregister agent: the_driver") }
+		)
+	)
+	public void primUnregister(final IScope scope) throws GamaRuntimeException {
+		IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
+		unregister(scope, driver);
 	}
-	
-	
-	@action (
-			name = "update_lanes",
-			args = { @arg (
-					name = "lanes",
-					type = IType.INT,
-					optional = false,
-					doc = @doc ("the new number of lanes."))},
-			doc = @doc (
-					value = "change the number of lanes of the road",
-					examples = { @example ("do update_lanes lanes: 2") }))
+
+	/**
+	 * Unregisters the driver from all the roads that it's currently on.
+	 *
+	 * @param scope
+	 * @param driver the agent that we want to unregister.
+	 *
+	 * @throws GamaRuntimeException
+	 */
+	public static void unregister(IScope scope, final IAgent driver)
+			throws GamaRuntimeException {
+		IAgent currentRoad = (IAgent) driver.getAttribute(DrivingSkill.CURRENT_ROAD);
+		if (currentRoad == null) return;
+
+		Integer lowestLane = (Integer) driver.getAttribute(DrivingSkill.LOWEST_LANE);
+		int numLanesOccupied = (int) driver.getAttribute(DrivingSkill.NUM_LANES_OCCUPIED);
+		int currentSegment = DrivingSkill.getSegmentIndex(driver);
+		for (int i = 0; i < numLanesOccupied; i += 1) {
+			int lane = lowestLane + i;
+			List<IAgent> oldVehicleList = getVehiclesOnLaneSegment(
+					scope, currentRoad, lane, currentSegment);
+			oldVehicleList.remove(driver);
+		}
+		getAgents(currentRoad).remove(driver);
+	}
+
+	@action(
+		name = "update_lanes",
+		args = {
+			@arg(
+				name = "lanes",
+				type = IType.INT,
+				optional = false,
+				doc = @doc("the new number of lanes.")
+			)
+		},
+		doc = @doc(
+			value = "change the number of lanes of the road",
+			examples = { @example ("do update_lanes lanes: 2") }
+		)
+	)
 	public void primChangeLaneNumber(final IScope scope) throws GamaRuntimeException {
+		// TODO: update this for multi-lane
 		final IAgent road = getCurrentAgent(scope);
 		final Integer lanes = scope.getIntArg("lanes");
 		setLanes(road, lanes);
 		if (lanes == 0) {
 			return;
 		}
-		int prev = getLanes(road);
+		int prev = getNumLanes(road);
 		final IList agentsOn = (IList) road.getAttribute(RoadSkill.AGENTS_ON);
 		if (prev == 0){
 			for (int i = 0; i < prev; i++) {
@@ -292,7 +414,7 @@ public class RoadSkill extends Skill {
 						IList<IAgent> ags = (IList<IAgent>) agsPerLanes.get(j);
 						for (IAgent ag: ags) {
 							((List)((List)newAgentsOn.get(lanes - 1)).get(j)).add(ag);
-							ag.setAttribute(DrivingSkill.CURRENT_LANE, lanes - 1);
+							ag.setAttribute(DrivingSkill.LOWEST_LANE, lanes - 1);
 						}
 					} 	
 				}
@@ -300,138 +422,4 @@ public class RoadSkill extends Skill {
 			setAgentsOn(road, newAgentsOn);		
 		}
 	}
-
-	@action (
-			name = "register",
-			args = { @arg (
-					name = "agent",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the agent to register on the road.")),
-					@arg (
-							name = "lane",
-							type = IType.INT,
-							optional = false,
-							doc = @doc ("the lane index on which to register; if lane index >= number of lanes, then register on the linked road")) },
-			doc = @doc (
-					value = "register the agent on the road at the given lane",
-					examples = { @example ("do register agent: the_driver lane: 0") }))
-	public void primRegister(final IScope scope) throws GamaRuntimeException {
-		final IAgent road = getCurrentAgent(scope);
-		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
-		final IAgent linkedRoad = getLinkedRoad(road);
-		final boolean agentOnLinkedRoad =
-				driver == null ? false : (Boolean) driver.getAttribute(DrivingSkill.ON_LINKED_ROAD);
-		final int nbLanes = getLanes(road);
-		int lane = scope.getIntArg("lane");
-
-		if (driver != null) {
-			final IAgent cr = (IAgent) driver.getAttribute(DrivingSkill.CURRENT_ROAD);
-			final Integer pl = (Integer) driver.getAttribute(DrivingSkill.CURRENT_LANE);
-			if (cr != null && pl != null) {
-				Integer segmentIndex = (Integer) driver.getAttribute(DrivingSkill.SEGMENT_INDEX);
-				if (agentOnLinkedRoad) {
-					final IAgent lr = getLinkedRoad(cr);
-					final List agsLane = (List) getAgentsOn(lr).get(pl);
-					if (segmentIndex == null) {
-						segmentIndex = getSegmentIndex(lr, driver);
-					}
-					((List) agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
-					getAgents(cr).remove(driver);
-				} else {
-					if (segmentIndex == null) {
-						segmentIndex = getSegmentIndex(cr, driver);
-					}
-					((List) ((List) getAgentsOn(cr).get(pl)).get(segmentIndex)).remove(driver);
-					getAgents(cr).remove(driver);
-				}
-			}
-			int indexSegment = 0;
-			if (lane >= nbLanes && linkedRoad != null) {
-				final int nbLanesLinked = (Integer) linkedRoad.getAttribute(LANES);
-				lane = nbLanesLinked - nbLanes - lane + 1;
-
-				lane = Math.max(0, Math.min(lane, nbLanesLinked - 1));
-				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, true);
-
-				final List agentsOn = (List) linkedRoad.getAttribute(AGENTS_ON);
-				final List ags = (List) agentsOn.get(lane);
-				((List) ags.get(ags.size() - 1)).add(driver);
-				getAgents(road).add(driver);
-			} else {
-				lane = Math.min(lane, nbLanes - 1);
-				driver.setAttribute(DrivingSkill.ON_LINKED_ROAD, false);
-				indexSegment = getSegmentIndex(road, driver);
-				final List agentsOn = (List) road.getAttribute(AGENTS_ON);
-				((List) ((List) agentsOn.get(lane)).get(indexSegment)).add(driver);
-				getAgents(road).add(driver);
-			}
-			// DEBUG.LOG("register " + driver + " lane : " + lane);
-			final Coordinate[] coords = road.getInnerGeometry().getCoordinates();
-			final Coordinate pt = (Coordinate) driver.getLocation();
-			if (coords[0].equals(pt)) {
-				driver.setAttribute(DrivingSkill.DISTANCE_TO_GOAL, coords[1].distance(pt));
-			} else {
-				Coordinate cc = coords[1];
-				double min = coords[0].distance(pt) + coords[1].distance(pt);
-				for (int i = 1; i < coords.length - 2; i++) {
-					final double dt = coords[i].distance(pt) + coords[i + 1].distance(pt);
-					if (dt < min) {
-						min = dt;
-						cc = coords[i + 1];
-					}
-				}
-				driver.setAttribute(DrivingSkill.DISTANCE_TO_GOAL, cc.distance(pt));
-			}
-
-			driver.setAttribute(DrivingSkill.CURRENT_ROAD, road);
-			driver.setAttribute(DrivingSkill.CURRENT_LANE, lane);
-			driver.setAttribute(DrivingSkill.SEGMENT_INDEX, indexSegment);
-			// driver.setAttribute(AdvancedDrivingSkill.SEGMENT_INDEX, 0);
-		}
-	}
-
-	@action (
-			name = "unregister",
-			args = { @arg (
-					name = "agent",
-					type = IType.AGENT,
-					optional = false,
-					doc = @doc ("the agent to unregister on the road.")) },
-			doc = @doc (
-					value = "unregister the agent on the road",
-					examples = { @example ("do unregister agent: the_driver") }))
-	public void primUnregister(final IScope scope) throws GamaRuntimeException {
-		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
-		unregister(driver);
-	}
-	
-	public static void unregister(final IAgent driver)
-			throws GamaRuntimeException {
-		final boolean agentOnLinkedRoad = (Boolean) driver.getAttribute(DrivingSkill.ON_LINKED_ROAD);
-		if (driver.hasAttribute("current_road") && driver.hasAttribute("current_lane")) {
-			final IAgent cr = (IAgent) driver.getAttribute("current_road");
-			final Integer pl = (Integer) driver.getAttribute("current_lane");
-			Integer segmentIndex = (Integer) driver.getAttribute(DrivingSkill.SEGMENT_INDEX);
-			if (cr != null && pl != null) {
-				if (agentOnLinkedRoad) {
-					final IAgent lr = getLinkedRoad(cr);
-					final List agsLane = (List) getAgentsOn(lr).get(pl);
-					if (segmentIndex == null) {
-						segmentIndex = getSegmentIndex(lr, driver);
-					}
-					((List) agsLane.get(agsLane.size() - 1 - segmentIndex)).remove(driver);
-					getAgents(cr).remove(driver);
-				} else {
-					if (segmentIndex == null) {
-						segmentIndex = getSegmentIndex(cr, driver);
-					}
-					((List) ((List) getAgentsOn(cr).get(pl)).get(segmentIndex)).remove(driver);
-					getAgents(cr).remove(driver);
-				}
-			}
-		}
-	}
-	
-
 }

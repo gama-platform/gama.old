@@ -8,10 +8,13 @@ import com.bulletphysics.collision.broadphase.DbvtBroadphase;
 import com.bulletphysics.collision.dispatch.CollisionConfiguration;
 import com.bulletphysics.collision.dispatch.CollisionDispatcher;
 import com.bulletphysics.collision.dispatch.DefaultCollisionConfiguration;
+import com.bulletphysics.collision.narrowphase.ManifoldPoint;
+import com.bulletphysics.collision.narrowphase.PersistentManifold;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.dynamics.DiscreteDynamicsWorld;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
+import com.google.common.collect.Multimap;
 
 import gama.extensions.physics.common.AbstractPhysicalWorld;
 import gama.extensions.physics.common.IBody;
@@ -42,7 +45,7 @@ public class BulletPhysicalWorld extends AbstractPhysicalWorld<DiscreteDynamicsW
 		world = new DiscreteDynamicsWorld(dispatcher, pairCache, solver, config);
 		setGravity(simulation.getGravity(simulation.getScope()));
 		setCCD(simulation.getCCD(simulation.getScope()));
-		BulletGlobals.setContactAddedCallback(contactListener);
+		// BulletGlobals.setContactAddedCallback(contactListener);
 		return world;
 	}
 
@@ -76,23 +79,23 @@ public class BulletPhysicalWorld extends AbstractPhysicalWorld<DiscreteDynamicsW
 		updatableAgents.clear();
 	}
 
-	// @Override
-	// public void collectContacts(final Multimap<IBody, IBody> newContacts) {
-	// for (PersistentManifold pm : dispatcher.getInternalManifoldPointer()) {
-	// if (pm == null) { continue; }
-	// IBody b0 = (IBody) ((RigidBody) pm.getBody0()).getUserPointer();
-	// IBody b1 = (IBody) ((RigidBody) pm.getBody1()).getUserPointer();
-	// if (b0.isNoNotification() && b1.isNoNotification()) { continue; }
-	// int n = pm.getNumContacts();
-	// for (int i = 0; i < n; i++) {
-	// ManifoldPoint pt = pm.getContactPoint(i);
-	// if (pt.getDistance() < 0.1) {
-	// newContacts.put(b0, b1);
-	// break;
-	// }
-	// }
-	// }
-	// }
+	@Override
+	public void collectContacts(final Multimap<IBody, IBody> newContacts) {
+		for (PersistentManifold pm : dispatcher.getInternalManifoldPointer()) {
+			if (pm == null) { continue; }
+			IBody b0 = (IBody) ((RigidBody) pm.getBody0()).getUserPointer();
+			IBody b1 = (IBody) ((RigidBody) pm.getBody1()).getUserPointer();
+			if (b0.isNoNotification() && b1.isNoNotification()) { continue; }
+			int n = pm.getNumContacts();
+			for (int i = 0; i < n; i++) {
+				ManifoldPoint pt = pm.getContactPoint(i);
+				if (pt.getDistance() < 0.1) {
+					newContacts.put(b0, b1);
+					break;
+				}
+			}
+		}
+	}
 
 	@Override
 	public void setCCD(final boolean ccd) {
@@ -116,6 +119,7 @@ public class BulletPhysicalWorld extends AbstractPhysicalWorld<DiscreteDynamicsW
 			world.destroy();
 			world = null;
 		}
+		BulletGlobals.cleanCurrentThread();
 	}
 
 	@Override

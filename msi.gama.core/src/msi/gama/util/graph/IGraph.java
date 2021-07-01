@@ -14,9 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.WeightedGraph;
 
 import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -35,6 +32,7 @@ import msi.gaml.operators.Graphs;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
+import org.jgrapht.Graph;
 /**
  * Written by drogoul Modified on 24 nov. 2011
  *
@@ -68,8 +66,7 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "rawtypes" })
 public interface IGraph<Node, Edge>
 		extends IModifiableContainer<Node, Edge, GamaPair<Node, Node>, Graphs.GraphObjectToAdd>,
-		IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, WeightedGraph<Node, Edge>,
-		DirectedGraph<Node, Edge>, UndirectedGraph<Node, Edge>, IGraphEventProvider {
+		IAddressableContainer<Node, Edge, GamaPair<Node, Node>, List<Edge>>, Graph<Node, Edge>, IGraphEventProvider {
 
 	double getVertexWeight(final Object v);
 
@@ -111,11 +108,14 @@ public interface IGraph<Node, Edge>
 
 	Object addEdge(Object p);
 
-	void setOptimizerType(String optiType);
+	void setShortestPathAlgorithm(String optiType);
+	void setKShortestPathAlgorithm(String optiType);
+	
+	
 
-	FloydWarshallShortestPathsGAMA<Node, Edge> getOptimizer();
+	FloydWarshallShortestPathsGAMA<Node, Edge> getFloydWarshallShortestPaths();
 
-	void setOptimizer(FloydWarshallShortestPathsGAMA<Node, Edge> optimizer);
+	void setFloydWarshallShortestPaths(FloydWarshallShortestPathsGAMA<Node, Edge> optimizer);
 
 	int getVersion();
 

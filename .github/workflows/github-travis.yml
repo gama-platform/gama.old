@@ -46,6 +46,8 @@ jobs:
       - name: Validate and test Maven
         shell: bash
         run: $GITHUB_WORKSPACE/travis/validate_and_test.sh
+        env:
+          MSG: ${ github.event.head_commit.message }
 
              
       - name: Publish to Github
@@ -54,6 +56,7 @@ jobs:
         env:  
           SSH_USER_PWD: ${{ secrets.USER_PWD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
+          MSG: ${ github.event.head_commit.message }
           GITHUB_TOKEN: ${{ github.token }}
           SSHPASS: ${{ secrets.USER_PWD }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}

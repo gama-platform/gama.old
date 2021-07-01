@@ -820,8 +820,12 @@ public class GraphTopology extends AbstractTopology {
 	@Override
 	public IList KpathsBetween(final IScope scope, final IShape source, final IShape target, final int k) {
 		final ISpatialGraph graph = getPlaces();
+		if (source == target) {
+			return GamaListFactory.create();
+		}
 		final boolean sourceNode = graph.containsVertex(source);
 		final boolean targetNode = graph.containsVertex(target);
+		
 		if (sourceNode && targetNode) { return graph.computeKShortestPathsBetween(scope, source, target, k); }
 
 		IShape edgeS = null, edgeT = null;

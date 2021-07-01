@@ -64,6 +64,10 @@
       </win>
    </launcher>
 
+   <vm>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-15</macos>
+   </vm>
+
    <license>
         <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
    </license>

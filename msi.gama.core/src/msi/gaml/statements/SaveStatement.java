@@ -11,8 +11,7 @@
 package msi.gaml.statements;
 
 import static msi.gama.common.util.FileUtils.constructAbsoluteFilePath;
-import static msi.gama.util.graph.writer.AvailableGraphWriters.getAvailableWriters;
-import static msi.gama.util.graph.writer.AvailableGraphWriters.getGraphWriter;
+import static msi.gama.util.graph.writer.GraphExporters.getAvailableWriters;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -47,14 +46,8 @@ import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.referencing.CRS;
-import org.opengis.coverage.grid.GridCoverageWriter;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.locationtech.jts.algorithm.CGAlgorithms;
+import org.jgrapht.nio.GraphExporter;
+import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Geometry;
@@ -68,6 +61,12 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
+import org.opengis.coverage.grid.GridCoverageWriter;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -99,6 +98,7 @@ import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph.writer.GraphExporters;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
@@ -133,7 +133,7 @@ import msi.gaml.types.Types;
 				name = IKeyword.TYPE,
 				type = IType.ID,
 				optional = true,
-				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz", "json" },
+				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz", "json", "dimacs", "dot", "gexf", "graphml", "gml","graph6"  },
 				doc = @doc ("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 				@facet (
 						name = IKeyword.DATA,
@@ -400,13 +400,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					} else {
 						((GamaKmlExport) kml).saveAsKmz(scope, path);
 					}
-
 					break;
 				default:
 					if (getAvailableWriters().contains(type)) {
 						final IGraph g = Cast.asGraph(scope, item);
 						if (g == null) { return null; }
-						getGraphWriter(type).writeGraph(scope, g, null, path);
+						this.saveGraph(g, fileToSave, type, scope);
 					} else {
 						throw GamaRuntimeFileException.error("Format is not recognized ('" + type + "')", scope);
 					}
@@ -623,6 +622,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		return geomType;
 	}
+	
+	public void saveGraph(final IGraph g, final File f, final String type, final IScope scope) {
+		GraphExporter exp = GraphExporters.getGraphWriter(type);
+		if (exp != null) {
+			exp.exportGraph(g, f.getAbsoluteFile());
+		}
+	}
+	
 
 	public void saveShape(final IList<? extends IShape> agents, final File f, final IScope scope, final boolean geoJson)
 			throws GamaRuntimeException {
@@ -892,15 +899,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	private static Geometry fixesPolygonCWS(final Geometry g) {
 		if (g instanceof Polygon) {
 			final Polygon p = (Polygon) g;
-			final boolean clockwise = CGAlgorithms.isCCW(p.getExteriorRing().getCoordinates());
+			final boolean clockwise = Orientation.isCCW(p.getExteriorRing().getCoordinates());
 			if (p.getNumInteriorRing() == 0) { return g; }
 			boolean change = false;
 			final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
 			final GeometryFactory geomFact = new GeometryFactory();
 			for (int i = 0; i < p.getNumInteriorRing(); i++) {
 				final LinearRing hole = (LinearRing) p.getInteriorRingN(i);
-				if (!clockwise && !CGAlgorithms.isCCW(hole.getCoordinates())
-						|| clockwise && CGAlgorithms.isCCW(hole.getCoordinates())) {
+				if (!clockwise && !Orientation.isCCW(hole.getCoordinates())
+						|| clockwise && Orientation.isCCW(hole.getCoordinates())) {
 					change = true;
 					final Coordinate[] coords = hole.getCoordinates();
 					ArrayUtils.reverse(coords);
@@ -1008,7 +1015,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		final FeatureJSON io = new FeatureJSON();
 		io.writeFeatureCollection(featureCollection, f.getAbsolutePath());
-
+		
 	}
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries

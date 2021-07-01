@@ -45,6 +45,7 @@ public class PathFactory {
 	public static <V, E> GamaPath<V, E, IGraph<V, E>> newInstance(final IGraph<V, E> g, final V start, final V target,
 			final IList<E> edges) {
 		if (g instanceof GamaSpatialGraph) {
+			edges.removeIf(e -> e == null);
 			return (GamaPath) new GamaSpatialPath((GamaSpatialGraph) g, (IShape) start, (IShape) target,
 					(IList<IShape>) edges);
 		} else {

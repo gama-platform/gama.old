@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/jbullet-1.0.1.jar" sourcepath="lib/jbullet-1.0.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/native/"/>
 	<classpathentry exported="true" kind="lib" path="lib/Libbulletjme-10.4.0.jar" sourcepath="lib/Libbulletjme-10.4.0-sources.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="simtools.gaml.extensions.physics/lib/native"/>

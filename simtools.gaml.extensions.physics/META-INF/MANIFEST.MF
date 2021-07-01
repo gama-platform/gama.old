@@ -8,10 +8,10 @@ Require-Bundle: msi.gama.core,
  org.eclipse.osgi
 Bundle-ClassPath: .,
  lib/Libbulletjme-10.4.0.jar,
- native/,
- lib/jbullet-1.0.1.jar
+ lib/native/
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: simtools.gaml.extensions.physics
+Eclipse-BundleShape: dir
 Bundle-Activator: gama.extensions.physics.BulletActivator
-Bundle-NativeCode: lib/native/libbulletjme.so;osname=Linux;processor=x86_64,lib/native/libbulletjme.dylib;osname=MacOS;processor=x86_64,lib/native/bulletjme.dll;osname=Win32;processor=x86_64,*
+Bundle-NativeCode: os/Linux/x86_64/libbulletjme.so;osname=Linux;processor=x86_64,os/MacOS/x86_64/libbulletjme.dylib;osname=MacOS;processor=x86_64,os/Win32/x86_64/bulletjme.dll;osname=Win32;processor=x86_64,*

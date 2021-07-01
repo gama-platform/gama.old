@@ -58,12 +58,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="simtools.gaml.extensions.physics"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="ummisco.gama.network"
          download-size="0"
          install-size="0"
@@ -77,6 +71,19 @@
 
    <plugin
          id="miat.gaml..extension.pedestrian"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="simtools.gaml.extensions.physics"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="espacedev.gaml.extensions.genstar"
          download-size="0"
          install-size="0"
          version="0.0.0"

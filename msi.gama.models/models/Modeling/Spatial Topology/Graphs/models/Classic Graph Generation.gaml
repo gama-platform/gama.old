@@ -9,27 +9,28 @@ model classicgraphgeneration
 
 global {
 	graph the_graph ;
-	string graph_type <- "small-world";
+	string graph_type <- "scale-free" among: ["small-world", "scale-free","complete", "random" ];
 	int nb_nodes <- 30;
+	int nb_edges <- 100;
 	float p <- 0.2;
 	int k <- 4;
 	int m <- 4;
-	int radius <- 20;
 	
 	init {
 		switch graph_type {
+			match "random" {
+				the_graph <- generate_random_graph(nb_nodes,nb_edges, true,node_agent,edge_agent);
+			}
 			match "scale-free" {
-				the_graph <- generate_barabasi_albert(node_agent, edge_agent, nb_nodes,m, true);	
+				the_graph <- generate_barabasi_albert(int(nb_nodes/2), 5, nb_nodes,true,node_agent,edge_agent);	
 			}
 			match "small-world" {
-				the_graph <- generate_watts_strogatz(node_agent, edge_agent, nb_nodes, p, k, true);	
+				the_graph <- generate_watts_strogatz(nb_nodes, p, k, true,node_agent, edge_agent);	
 			}
 			match "complete" {
-				the_graph <- generate_complete_graph(node_agent, edge_agent, nb_nodes,true);	
+				the_graph <- generate_complete_graph(nb_nodes, true,node_agent,edge_agent);
 			}
-			match "complete-with-radius" {
-				the_graph <- generate_complete_graph(node_agent, edge_agent, nb_nodes, radius,true);	
-			}		
+				
 		}
 		write the_graph;
 		write "Edges : "+length(the_graph.edges);
@@ -51,7 +52,7 @@ species node_agent {
 }
 
 experiment loadgraph type: gui {
-	parameter "Graph type" var: graph_type among: [ "scale-free", "small-world", "complete"];
+	parameter "Graph type" var: graph_type;
 	parameter "Number of nodes" var: nb_nodes min: 5 ;
 	parameter "Probability to rewire an edge (beta)" var: p min: 0.0 max: 1.0 category: "small-world";
 	parameter "Base degree of each node. k must be even" var: k min: 2 max: 10 category: "small-world";

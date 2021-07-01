@@ -15,7 +15,7 @@ global {
 	map<int,rgb> color_index <- [1::#lightblue, 2::#green,3::#orange, 4::#red];
 	init {
 		create river from:river_shapefile ;
-		river_network <- directed(main_connected_component(as_edge_graph(river)));
+		river_network <- directed(as_edge_graph(river));
 		strahler_numbers <- strahler(river_network);
 		ask river {
 			index <- strahler_numbers[self] as int;
@@ -24,7 +24,7 @@ global {
 }
 
 species river {
-	int index;
+	int index <- 1;
 	aspect default {
 		draw shape + index/2.0 color: color_index[index] end_arrow: 5;
 		draw ""+index color: #black font: font(30);
