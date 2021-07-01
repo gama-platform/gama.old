@@ -97,7 +97,8 @@ public class EditorsDialog extends Dialog {
 		final var text = new Label(composite, SWT.None);
 		text.setBackground(IGamaColors.OK.inactive());
 		text.setForeground(GamaColors.getTextColorForBackground(text.getBackground()).color());
-		text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
+		if (font != null) 
+			text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
 		text.setText(title);
 		var data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		text.setLayoutData(data);
