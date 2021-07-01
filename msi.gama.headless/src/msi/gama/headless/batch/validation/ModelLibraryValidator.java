@@ -24,11 +24,12 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	private static ModelLibraryValidator instance;
 
 	private ModelLibraryValidator() {
-		super();
+		DEBUG.ON();
 	}
 
 	@Override
 	public int start() throws IOException {
+		
 		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 		final int[] count = { 0 };

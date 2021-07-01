@@ -30,7 +30,7 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 	private static ModelLibraryRunner instance;
 
 	private ModelLibraryRunner() {
-		super();
+		DEBUG.ON();
 	}
 
 	@Override

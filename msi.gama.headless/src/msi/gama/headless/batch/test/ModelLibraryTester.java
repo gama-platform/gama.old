@@ -38,13 +38,12 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	PrintStream nullStream;
 
 	private ModelLibraryTester() {
-		super();
+		DEBUG.ON();
 	}
 	
 
 	@Override
 	public int start() throws IOException {
-		DEBUG.ON();
 		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 
