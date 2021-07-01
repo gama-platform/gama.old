@@ -1,7 +1,7 @@
 /**
 * Name: Multicriteria
 * Author: Patrick Taillandier
-* Description: This model show how to use different methods of multicriteria analysis to look for the best house. Five methods are used : 
+* Description: This model shows how to use different methods of multicriteria analysis to look for the best house. Five methods are used : 
 * the Weighted_Means method , the Electre method , the Promethee method, the Fuzzy Choquet Integral  anc the Evidence Theory method. Each method uses 
 * different criteria with different weights according to the methods used. 
 * Tags: multi_criteria
