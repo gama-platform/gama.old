@@ -110,8 +110,8 @@ public class Application implements IApplication {
 				+ "\n\t=== GAMA Headless Runner ===" 
 				+ "\n\t\t" + BATCH_PARAMETER + " [experimentName] [modelFile.gaml]"
 				+ "\n\t\t                             -- Run batch experiment in headless mode"
-				+ "\n\t\t" + GAML_PARAMETER + " [experimentName] [modelFile.gaml]"
-				+ "\n\t\t                             -- Run single gaml experiment in headless mode"
+				//+ "\n\t\t" + GAML_PARAMETER + " [experimentName] [modelFile.gaml]"
+				//+ "\n\t\t                             -- Run single gaml experiment in headless mode"
 				+ "\n\t\t" + BUILD_XML_PARAMETER + " [experimentName] [modelFile.gaml] [xmlOutputFile.xml]"
 				+ "\n\t\t                             -- build an xml parameter file from a model"
 				+ "\n\t\t[xmlHeadlessFile.xml] [outputDirectory]"
@@ -201,7 +201,7 @@ public class Application implements IApplication {
 			DEBUG.OFF();
 
 		} else if (args.contains(BATCH_PARAMETER)) {
-			runBatchSimulation(args);
+			runBatchSimulation(args.get(args.size() - 2), args.get(args.size() - 1));
 		} else if (args.contains(GAML_PARAMETER)) {
 			runGamlSimulation(args);
 		}//else if (args.contains(RUN_LIBRARY_PARAMETER))
@@ -344,42 +344,6 @@ public class Application implements IApplication {
 		System.exit(0);
 	}
 
-	public void runBatchSimulation(final List<String> args) {
-		final String pathToModel = args.get(args.size() - 1);
-		
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
-	
-		final Injector injector = HeadlessSimulationLoader.getInjector();
-		final GamlModelBuilder builder = new GamlModelBuilder(injector);
-
-		final List<GamlCompilationError> errors = new ArrayList<>();
-		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
-		
-		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
-		
-		expPlan.open();
-		
-		System.exit(0);
-	} 
-
-	public void runGamlSimulation(final List<String> args) {
-		final String pathToModel = args.get(args.size() - 1);
-		
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
-	
-		final Injector injector = HeadlessSimulationLoader.getInjector();
-		final GamlModelBuilder builder = new GamlModelBuilder(injector);
-
-		final List<GamlCompilationError> errors = new ArrayList<>();
-		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
-		
-		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
-		
-		expPlan.open();
-		
-		System.exit(0);
-	} 
-	
 	public void buildAndRunSimulation(final Collection<ExperimentJob> sims) {
 		final Iterator<ExperimentJob> it = sims.iterator();
 		while (it.hasNext()) {
@@ -405,4 +369,48 @@ public class Application implements IApplication {
 	@Override
 	public void stop() {}
 
+	/*
+	 * New runner implementations
+	 */
+
+	/**
+	 * Gather 
+	 * @param args
+	 */
+	public void runBatchSimulation(String experimentName, String pathToModel) {
+		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+		
+		final Injector injector = HeadlessSimulationLoader.getInjector();
+		final GamlModelBuilder builder = new GamlModelBuilder(injector);
+
+		final List<GamlCompilationError> errors = new ArrayList<>();
+		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
+		
+		final IExperimentPlan expPlan = mdl.getExperiment(experimentName);
+		expPlan.setHeadless(true);
+		
+		expPlan.open();
+		
+		System.exit(0);
+	} 
+
+	public void runGamlSimulation(final List<String> args) {
+		final String pathToModel = args.get(args.size() - 1);
+		
+		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+	
+		final Injector injector = HeadlessSimulationLoader.getInjector();
+		final GamlModelBuilder builder = new GamlModelBuilder(injector);
+
+		final List<GamlCompilationError> errors = new ArrayList<>();
+		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
+		
+		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
+		expPlan.setHeadless(true);
+		
+		expPlan.open();
+		
+		System.exit(0);
+	} 
+		
 }

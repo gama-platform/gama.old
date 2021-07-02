@@ -527,7 +527,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				seed = null;
 			}
 		}
-		System.out.println(seed);
 		open(seed);
 	}
 
