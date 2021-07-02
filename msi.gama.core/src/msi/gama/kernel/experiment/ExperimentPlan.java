@@ -519,7 +519,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public synchronized void open() {
-		open(null);
+		Double seed = null;
+		if (isHeadless()) {
+			try {
+				seed = this.getAgent().getSeed();
+			} catch (Exception e) { // Catch no seed
+				seed = null;
+			}
+		}
+		System.out.println(seed);
+		open(seed);
 	}
 
 	/*
