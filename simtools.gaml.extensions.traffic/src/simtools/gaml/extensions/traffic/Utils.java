@@ -195,8 +195,10 @@ public class Utils {
 					(violatingOneway && segment == 0)) {
 				// Return a virtual leading vehicle of length 0 to simulate deceleration at intersections
 				// NOTE: the added minSafetyDist is necessary for the vehicle to ignore the safety dist when stopping at an endpoint
+				// TODO: make the vehicles stop in front of the lights,
+				// this would require changes in the drive loop as well
 				IAgent stoppingNode = target;
-				leadingTriple = ImmutableTriple.of(stoppingNode, distToSegmentEnd - 0.5 * vL, false);
+				leadingTriple = ImmutableTriple.of(stoppingNode, distToSegmentEnd + minSafetyDist, false);
 				// Slowing down at final target, since at this point we don't know which road will be taken next
 				if (nextRoad == null) {
 					return ImmutablePair.of(leadingTriple, backTriple);
