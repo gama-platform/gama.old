@@ -6,7 +6,7 @@ name: Github Travis
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [ GAMA_1.8.2 ]
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:  # For manual trigger
@@ -26,7 +26,6 @@ jobs:
       - name: Prepare build
         run: |
           echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
-          sudo apt install sshpass -y
           sudo chmod +x $GITHUB_WORKSPACE/travis/*.sh
 
       - name: Cache local Maven repository
@@ -47,24 +46,13 @@ jobs:
         shell: bash
         run: $GITHUB_WORKSPACE/travis/validate_and_test.sh
 
-      - name: Prepare SSH (if needed)
-        if: ${{ contains(github.event.head_commit.message, 'ci clean') && contains(github.event.head_commit.message, 'ci deploy') }} 
-        shell: bash
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
-          chmod 700 ~/.ssh
-          cat << EOF > ~/.ssh/config
-          Host *
-              ServerAliveInterval 60
-              StrictHostKeyChecking no
-          EOF
-
+             
       - name: Publish to Github
         shell: bash
         run: $GITHUB_WORKSPACE/travis/publish.sh
-        env:
+        env:  
+          SSH_USER_PWD: ${{ secrets.USER_PWD }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
           GITHUB_TOKEN: ${{ github.token }}
           SSHPASS: ${{ secrets.USER_PWD }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
