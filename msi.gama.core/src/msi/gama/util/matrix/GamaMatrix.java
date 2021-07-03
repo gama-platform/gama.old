@@ -413,8 +413,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	@Override
 	public void addValue(final IScope scope, final T value) {}
 
-	// The same but with an index (this index represents the old notion of
-	// parameter where it is needed.
+	// The same but with an index
 	@Override
 	public void addValueAtIndex(final IScope scope, final Object index, final T value) {}
 

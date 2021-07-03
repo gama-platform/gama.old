@@ -167,8 +167,20 @@ public class GamaFieldType extends GamaMatrixType {
 	}
 
 	@operator (
+			value = "cell_at",
+			can_be_const = false,
+			category = { IOperatorCategory.GRID },
+			concept = { IConcept.GRID },
+			doc = { @doc ("Returns the rectangular shape that corresponds to the 'cell' in the field at this location in the matrix (column, row). This cell has no attributes. A future version may load it with the value of the field at this attribute") })
+	public static IShape buildShapeFromFieldLocation(final IScope scope, final IField field, final int columns,
+			final int rows) {
+		return field.getCellShapeAt(scope, columns, rows);
+	}
+
+	@operator (
 			value = "cells_in",
 			can_be_const = false,
+			content_type = IType.GEOMETRY,
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Returns the list of 'cells' that 'intersect' with the geometry passed in argument. The cells are ordered by their x-, then y-coordinates") })
@@ -179,11 +191,34 @@ public class GamaFieldType extends GamaMatrixType {
 	@operator (
 			value = "values_in",
 			can_be_const = false,
+			content_type = IType.FLOAT,
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Returns the list of values in the field whose 'cell' 'intersects' with the geometry passed in argument. The values are ordered by the x-, then y-coordinate, of their 'cell'") })
 	public static IList<Double> getValuesFromGeometry(final IScope scope, final IField field, final IShape shape) {
 		return field.getValuesIntersecting(scope, shape);
+	}
+
+	@operator (
+			value = "points_in",
+			can_be_const = false,
+			content_type = IType.POINT,
+			category = { IOperatorCategory.GRID },
+			concept = { IConcept.GRID },
+			doc = { @doc ("Returns the list of values in the field whose 'cell' 'intersects' with the geometry passed in argument. The values are ordered by the x-, then y-coordinate, of their 'cell'") })
+	public static IList<GamaPoint> getPointsFromGeometry(final IScope scope, final IField field, final IShape shape) {
+		return field.getLocationsIntersecting(scope, shape);
+	}
+
+	@operator (
+			value = "neighbors_of",
+			can_be_const = false,
+			content_type = IType.POINT,
+			category = { IOperatorCategory.GRID },
+			concept = { IConcept.GRID },
+			doc = { @doc ("Returns the list of the 'neighbors' of a given world coordinate point, which correspond to the world coordinates of the cells that surround the cell located at this point") })
+	public static IList<GamaPoint> getNeighborsOf(final IScope scope, final IField field, final GamaPoint point) {
+		return field.getNeighborsOf(scope, point);
 	}
 
 }

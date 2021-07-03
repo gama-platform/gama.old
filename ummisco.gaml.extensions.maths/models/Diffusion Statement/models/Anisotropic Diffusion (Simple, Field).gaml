@@ -25,10 +25,9 @@ global {
 	}
 
 	reflex new_Value {
-int i <- 0;
-		//loop i from: -10 to: 10 step: 5 {
+		loop i from: -10 to: 10 step: 5 {
 			cells[size / 2 - i + rnd_component, size / 2 + i + rnd_component] <- 15;
-		//}
+		}
 		
 	}
 }
