@@ -99,18 +99,18 @@ public class GamaPreferencesView {
 	}
 
 	public static void preload() {
-		DEBUG.TIMER(DEBUG.PAD("> GAMA: preferences", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
-			WorkbenchHelper.run(() -> {
-				if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
-					instance = new GamaPreferencesView(WorkbenchHelper.getShell());
-				}
-
-			});
-			for (final IParameterEditor ed : instance.editors.values()) {
-				ed.updateValue(true);
-			}
-		});
-
+		 DEBUG.TIMER(DEBUG.PAD("> GAMA: preferences", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
+		 WorkbenchHelper.run(() -> {
+		 if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
+		 instance = new GamaPreferencesView(WorkbenchHelper.getShell());
+		 }
+		
+		 });
+		 for (final IParameterEditor ed : instance.editors.values()) {
+		 ed.updateValue(true);
+		 }
+		 });
+		
 	}
 
 	static {
