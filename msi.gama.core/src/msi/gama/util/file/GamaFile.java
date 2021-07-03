@@ -59,9 +59,8 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	protected GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
 		originalPath = pn;
 		String tempPath = originalPath;
-		if (originalPath == null) {
+		if (originalPath == null)
 			throw GamaRuntimeException.error("Attempt to " + (forReading ? "read" : "write") + " a null file", scope);
-		}
 		if (originalPath.startsWith("http")) {
 			url = buildURL(scope, originalPath);
 		} else {
@@ -115,7 +114,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	protected String fetchFromURL(final IScope scope) {
-		if (!automaticallyFetchFromURL()) { return null; }
+		if (!automaticallyFetchFromURL()) return null;
 		return FileUtils.fetchToTempFile(scope, url);
 	}
 
@@ -153,10 +152,8 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
-		if (getFile(scope).exists() && getFile(scope).isDirectory()) {
-			throw GamaRuntimeException
-					.error(getFile(scope).getAbsolutePath() + " is a folder. Files can not overwrite folders", scope);
-		}
+		if (getFile(scope).exists() && getFile(scope).isDirectory()) throw GamaRuntimeException
+				.error(getFile(scope).getAbsolutePath() + " is a folder. Files can not overwrite folders", scope);
 	}
 
 	@Override
@@ -178,9 +175,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public final void setContents(final Container cont) throws GamaRuntimeException {
-		if (writable) {
-			setBuffer(cont);
-		}
+		if (writable) { setBuffer(cont); }
 	}
 
 	protected String _stringValue(final IScope scope) throws GamaRuntimeException {
@@ -263,12 +258,12 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	 *
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object, boolean)
 	 */
-	@Override
-	public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
-		getContents(scope);
-		return getBuffer().checkBounds(scope, index, forAdding);
-
-	}
+	// @Override
+	// public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
+	// getContents(scope);
+	// return getBuffer().checkBounds(scope, index, forAdding);
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -325,7 +320,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		final String path = getOriginalPath().toLowerCase();
 		// final String path = getPath(scope).toLowerCase();
 		final int mid = path.lastIndexOf('.');
-		if (mid == -1) { return ""; }
+		if (mid == -1) return "";
 		return path.substring(mid + 1, path.length());
 	}
 
@@ -341,9 +336,8 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 	@Override
 	public Container getContents(final IScope scope) throws GamaRuntimeException {
-		if (buffer == null && !exists(scope)) {
+		if (buffer == null && !exists(scope))
 			throw GamaRuntimeException.error("File " + getFile(scope).getAbsolutePath() + " does not exist", scope);
-		}
 		fillBuffer(scope);
 		return getBuffer();
 	}
@@ -448,9 +442,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	public File getFile(final IScope scope) {
-		if (file == null) {
-			file = new File(getPath(scope));
-		}
+		if (file == null) { file = new File(getPath(scope)); }
 		return file;
 	}
 
@@ -490,15 +482,11 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 
 		final IExpression exp = saveFacets.getExpr(IKeyword.REWRITE);
 		final boolean overwrite = exp == null || Cast.asBool(scope, exp.value(scope));
-		if (overwrite && getFile(scope).exists()) {
-			getFile(scope).delete();
-		}
-		if (!writable) { throw GamaRuntimeException.error("File " + getName(scope) + " is not writable", scope); }
+		if (overwrite && getFile(scope).exists()) { getFile(scope).delete(); }
+		if (!writable) throw GamaRuntimeException.error("File " + getName(scope) + " is not writable", scope);
 		// This will save to the local file
 		flushBuffer(scope, saveFacets);
-		if (isRemote()) {
-			sendToURL(scope);
-		}
+		if (isRemote()) { sendToURL(scope); }
 
 	}
 

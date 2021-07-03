@@ -285,22 +285,22 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 *
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object)
 	 */
-	@Override
-	public boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
-		if (object instanceof ILocation) {
-			final ILocation index = (ILocation) object;
-			final int x = (int) index.getX();
-			final int y = (int) index.getY();
-			return x >= 0 && x < numCols && y >= 0 && y < numRows;
-		} else if (object instanceof IList) {
-			IList list = (IList) object;
-			if (list.size() != 2) return false;
-			int x = Cast.asInt(scope, list.get(0));
-			int y = Cast.asInt(scope, list.get(1));
-			return x >= 0 && x < numCols && y >= 0 && y < numRows;
-		} else if (object instanceof Integer) return (Integer) object < numCols * numRows;
-		return false;
-	}
+	// @Override
+	// public boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
+	// if (object instanceof ILocation) {
+	// final ILocation index = (ILocation) object;
+	// final int x = (int) index.getX();
+	// final int y = (int) index.getY();
+	// return x >= 0 && x < numCols && y >= 0 && y < numRows;
+	// } else if (object instanceof IList) {
+	// IList list = (IList) object;
+	// if (list.size() != 2) return false;
+	// int x = Cast.asInt(scope, list.get(0));
+	// int y = Cast.asInt(scope, list.get(1));
+	// return x >= 0 && x < numCols && y >= 0 && y < numRows;
+	// } else if (object instanceof Integer) return (Integer) object < numCols * numRows;
+	// return false;
+	// }
 
 	public void fillWith(final IScope scope, final IExpression expr) {
 

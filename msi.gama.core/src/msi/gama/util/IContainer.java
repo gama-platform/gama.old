@@ -63,7 +63,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	 */
 	@SuppressWarnings ("unchecked")
 	default StreamEx<ValueType> stream(final IScope scope) {
-		if (this instanceof Collection) { return StreamEx.of(((Collection<ValueType>) this).stream()); }
+		if (this instanceof Collection) return StreamEx.of(((Collection<ValueType>) this).stream());
 		return StreamEx.of(listValue(scope, Types.NO_TYPE, false));
 	}
 
@@ -91,7 +91,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 	public interface Modifiable<KeyType, ValueType> {
 
-		boolean checkBounds(IScope scope, Object index, boolean forAdding);
+		// AD 3/7/21: Removed to let this function be handled by the containers themselves
+		// boolean checkBounds(IScope scope, Object index, boolean forAdding);
 
 		// The simple method, that simply contains the object to add
 		void addValue(IScope scope, final ValueType value);
@@ -354,7 +355,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 			value = "one of the values stored in this container  at a random key",
 			masterDoc = true,
 			comment = "the one_of operator behavior depends on the nature of the operand",
-			usages = { @usage (value = "if the operand is empty, one_of returns nil"),
+			usages = { @usage (
+					value = "if the operand is empty, one_of returns nil"),
 					@usage (
 							value = "if it is a list or a matrix, one_of returns one of the values of the list or of the matrix",
 							examples = { @example (
@@ -363,8 +365,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 									equals = "1, 2 or 3",
 									returnType = IKeyword.INT,
 									test = false),
-									@example ("string sMat <- one_of(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])); 	// sMat equals \"c11\",\"c12\",\"c13\", \"c21\",\"c22\" or \"c23\""),
-							}),
+									@example ("string sMat <- one_of(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])); 	// sMat equals \"c11\",\"c12\",\"c13\", \"c21\",\"c22\" or \"c23\""), }),
 					@usage (
 							value = "if it is a map, one_of returns one the value of a random pair of the map",
 							examples = { @example ("int im <- one_of ([2::3, 4::5, 6::7]);	// im equals 3, 5 or 7"),
@@ -378,15 +379,14 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 							value = "if it is a file, one_of returns one of the elements of the content of the file (that is also a container)"),
 					@usage (
 							value = "if it is a population, one_of returns one of the agents of the population",
-							examples = {
-									@example (
-											value = "bug b <- one_of(bug);  	// Given a previously defined species bug, b is one of the created bugs, e.g. bug3",
-											isExecutable = false) }) },
+							examples = { @example (
+									value = "bug b <- one_of(bug);  	// Given a previously defined species bug, b is one of the created bugs, e.g. bug3",
+									isExecutable = false) }) },
 			see = { "contains" })
-	@test("one_of([]) = nil")
-	@test("int i  <- any([1,2,3]); [1,2,3] contains i")
-	@test("string sMat <- one_of(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])); matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) contains sMat")
-	@test("agent b <- one_of(agents);")
+	@test ("one_of([]) = nil")
+	@test ("int i  <- any([1,2,3]); [1,2,3] contains i")
+	@test ("string sMat <- one_of(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])); matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) contains sMat")
+	@test ("agent b <- one_of(agents);")
 	ValueType anyValue(IScope scope);
 
 }

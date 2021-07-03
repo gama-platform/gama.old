@@ -122,24 +122,24 @@ public class GamaField extends GamaFloatMatrix implements IField {
 			return GamaPointType.staticCast(scope, object, false);
 	}
 
-	@Override
-	public final boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
-		if (object instanceof ILocation) {
-			computeDimensions(scope);
-			final ILocation index = worldCoordinatesToIndices(scope, (ILocation) object, temp);
-			if (index == null) return false;
-			final int x = (int) index.getX();
-			final int y = (int) index.getY();
-			return x >= 0 && x < numCols && y >= 0 && y < numRows;
-		} else if (object instanceof IList) {
-			IList list = (IList) object;
-			if (list.size() != 2) return false;
-			int x = Cast.asInt(scope, list.get(0));
-			int y = Cast.asInt(scope, list.get(1));
-			return x >= 0 && x < numCols && y >= 0 && y < numRows;
-		} else if (object instanceof Integer) return (Integer) object < numCols * numRows;
-		return false;
-	}
+	// @Override
+	// public final boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
+	// if (object instanceof ILocation) {
+	// computeDimensions(scope);
+	// final ILocation index = worldCoordinatesToIndices(scope, (ILocation) object, temp);
+	// if (index == null) return false;
+	// final int x = (int) index.getX();
+	// final int y = (int) index.getY();
+	// return x >= 0 && x < numCols && y >= 0 && y < numRows;
+	// } else if (object instanceof IList) {
+	// IList list = (IList) object;
+	// if (list.size() != 2) return false;
+	// int x = Cast.asInt(scope, list.get(0));
+	// int y = Cast.asInt(scope, list.get(1));
+	// return x >= 0 && x < numCols && y >= 0 && y < numRows;
+	// } else if (object instanceof Integer) return (Integer) object < numCols * numRows;
+	// return false;
+	// }
 
 	@Nullable
 	private GamaPoint worldCoordinatesToIndices(final IScope scope, final ILocation p, final GamaPoint into) {
