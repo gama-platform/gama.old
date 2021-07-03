@@ -9,9 +9,6 @@
    <feature url="features/ummisco.gama.feature.stats_0.0.0.jar" id="ummisco.gama.feature.stats" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/simtools.graphlayout.feature_0.0.0.jar" id="simtools.graphlayout.feature" version="0.0.0">
-      <category name="gama.optional"/>
-   </feature>
    <feature url="features/ummisco.gama.feature.core.extensions_1.8.1.qualifier.jar" id="ummisco.gama.feature.core.extensions" version="0.0.0">
       <category name="gama.core"/>
    </feature>
