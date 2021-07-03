@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.core.runtime,
  msi.gama.processor;visibility:=reexport,
  com.google.guava,
  org.eclipse.core.filesystem,
- org.apache.commons.compress
+ org.apache.commons.compress,
+ org.apache.commons.lang
 Bundle-ActivationPolicy: lazy
 Export-Package: msi.gama.common,
  msi.gama.common.geometry,
@@ -415,7 +416,6 @@ Export-Package: msi.gama.common,
    msi.gaml.skills,
    msi.gaml.compilation,
    msi.gaml.types"
-Import-Package: org.apache.commons.lang;version="2.4.0"
 Bundle-ClassPath: schema/,
  .
 Bundle-Activator: msi.gama.common.Activator
