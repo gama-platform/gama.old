@@ -255,9 +255,7 @@ public class AddStatement extends AbstractContainerStatement {
 			final IExpression at = cd.getFacetExpr(AT);
 			final boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
 			sb.append(list.serialize(false));
-			if (at != null) {
-				sb.append('[').append(at.serialize(includingBuiltIn)).append(']');
-			}
+			if (at != null) { sb.append('[').append(at.serialize(includingBuiltIn)).append(']'); }
 			sb.append(isAll ? " <<+ " : " <+ ");
 			sb.append(item.serialize(includingBuiltIn)).append(';');
 		}
@@ -271,7 +269,7 @@ public class AddStatement extends AbstractContainerStatement {
 			final IExpression item = cd.getFacetExpr(ITEM);
 			final IExpression list = cd.getFacetExpr(TO);
 			final IExpression allFacet = cd.getFacetExpr(ALL);
-			if (item == null) { return; }
+			if (item == null) return;
 			if (allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue())) {
 				if (!item.getGamlType().isContainer()) {
 					cd.warning(
@@ -325,10 +323,10 @@ public class AddStatement extends AbstractContainerStatement {
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 			final IContainer.Modifiable container) throws GamaRuntimeException {
-		if (position != null && !container.checkBounds(scope, position, true)) {
-			throw GamaRuntimeException.warning("Index " + position + " out of bounds of " + list.serialize(false),
-					scope);
-		}
+		// if (position != null && !container.checkBounds(scope, position, true)) {
+		// throw GamaRuntimeException.warning("Index " + position + " out of bounds of " + list.serialize(false),
+		// scope);
+		// }
 		if (!asAll) {
 			if (position == null) {
 				container.addValue(scope, object);
