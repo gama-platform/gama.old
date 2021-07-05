@@ -86,7 +86,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		name = DrivingSkill.CURRENT_PATH,
 		type = IType.PATH,
 		init = "nil",
-		doc = @doc("the current path that tha agent follow")
+		doc = @doc("the path which the agent is currently following")
 	),
 	@variable(
 		name = DrivingSkill.FINAL_TARGET,
@@ -628,12 +628,18 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@setter(CURRENT_PATH)
-	public static void setCurrentPathReadOnly(final IAgent vehicle, final IPath path) {
-		vehicle.setAttribute(CURRENT_PATH, path);
-	}
-
 	public static void setCurrentPath(final IAgent vehicle, final IPath path) {
 		vehicle.setAttribute(CURRENT_PATH, path);
+
+		if (path != null) {
+			// Also set other states
+			IAgent source = (IAgent) path.getStartVertex();
+			IAgent target = (IAgent) path.getEndVertex();
+			vehicle.setLocation(source.getLocation());
+			setCurrentIndex(vehicle, -1);
+			setCurrentTarget(vehicle, (IAgent) path.getVertexList().get(0));
+			setFinalTarget(vehicle, target);
+		}
 	}
 
 	public static List<IAgent> getTargets(final IAgent vehicle) {
@@ -1202,10 +1208,6 @@ public class DrivingSkill extends MovingSkill {
 		graph.setDirected(true);
 
 		if (path != null && !path.getEdgeGeometry().isEmpty()) {
-			vehicle.setLocation(source.getLocation());
-			setCurrentIndex(vehicle, -1);
-			setCurrentTarget(vehicle, (IAgent) path.getVertexList().get(0));
-			setFinalTarget(vehicle, target);
 			setCurrentPath(vehicle, path);
 			return path;
 		} else {
