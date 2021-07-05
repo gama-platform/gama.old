@@ -69,6 +69,7 @@ import msi.gaml.types.Types;
 	@variable(
 		name = RoadSkill.NUM_LANES,
 		type = IType.INT,
+		init = "2",
 		doc = @doc("the number of lanes")
 	),
 	@variable(
