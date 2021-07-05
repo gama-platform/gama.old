@@ -1459,12 +1459,14 @@ public class DrivingSkill extends MovingSkill {
 					return;
 				}
 
-				// Choose a lane on the new road
-				GamaPoint firstSegmentEndPt = new GamaPoint(
-					newRoad.getInnerGeometry().getCoordinates()[1]
-				);
+				GamaPoint srcNodeLoc = (GamaPoint) RoadSkill.getSourceNode(newRoad).getLocation();
+				boolean violatingOneway = !loc.equals(srcNodeLoc);
+				int firstSegment = !violatingOneway ? 0 : RoadSkill.getNumSegments(newRoad) - 1;
+				int secondPtIdx = !violatingOneway ? 1 : RoadSkill.getNumSegments(newRoad) - 1;
+				GamaPoint firstSegmentEndPt = new GamaPoint(newRoad.getInnerGeometry().getCoordinates()[secondPtIdx]);
 				double firstSegmentLength = loc.euclidianDistanceTo(firstSegmentEndPt);
-				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, newTarget, newRoad, 0, firstSegmentLength);
+				// Choose a lane on the new road
+				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, newTarget, newRoad, firstSegment, firstSegmentLength);
 				if (laneAndAccPair == null) {
 					return;
 				}
@@ -1499,8 +1501,7 @@ public class DrivingSkill extends MovingSkill {
 				RoadSkill.unregister(scope, vehicle);
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
 
-				GamaPoint srcNodeLoc = (GamaPoint) RoadSkill.getSourceNode(newRoad).getLocation();
-				setViolatingOneway(vehicle, !loc.equals(srcNodeLoc));
+				setViolatingOneway(vehicle, violatingOneway);
 
 				if (newEdgeIdx < path.getEdgeList().size() - 1) {
 					setNextRoad(vehicle, (IAgent) path.getEdgeList().get(newEdgeIdx + 1));
