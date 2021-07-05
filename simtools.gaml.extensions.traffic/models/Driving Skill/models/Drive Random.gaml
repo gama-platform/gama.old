@@ -1,16 +1,16 @@
 /**
 * Name: Drive Random
 * Description: Vehicles driving randomly in a road graph
-* Author: minhduc0711
+* Author: Duc Pham
 * Tags: gis, shapefile, graph, agent_movement, skill, transport
 */
 
-model ring
+model DriveRandom
 
 import "Traffic.gaml"
 
 global {
-	float traffic_light_interval parameter: 'Traffic light interval' init: 30#s;
+	float traffic_light_interval parameter: 'Traffic light interval' init: 60#s;
 	float step <- 0.1#s;
     graph full_road_graph;
    
@@ -27,21 +27,13 @@ global {
 		create road from: shp_roads {
 			num_lanes <- 5;
 			
-			switch oneway {
-				match "no" {
-					create road {
-						num_lanes <- 5;
-						shape <- polyline(reverse(myself.shape.points));
-						maxspeed <- myself.maxspeed;
-						linked_road <- myself;
-						myself.linked_road <- self;
-					}
-				}
-
-				match "-1" {
-					shape <- polyline(reverse(shape.points));
-				}
-
+			// Create another in the opposite direction
+			create road {
+				num_lanes <- 5;
+				shape <- polyline(reverse(myself.shape.points));
+				maxspeed <- myself.maxspeed;
+				linked_road <- myself;
+				myself.linked_road <- self;
 			}
 		}
 		
@@ -49,7 +41,6 @@ global {
 				with: [is_traffic_signal::(read("type") = "traffic_signals")] {
 			time_to_change <- traffic_light_interval;
 		}
-		map general_speed_map <- road as_map (each::(each.shape.perimeter / each.maxspeed));
 		
 		full_road_graph <- as_driving_graph(road, intersection);
 		ask intersection {
@@ -90,6 +81,28 @@ global {
 	}
 }
 
+species vehicle_random parent: base_vehicle {
+	reflex commute {
+		do drive_random graph: road_graph;
+	}
+}
+
+species motorbike_random parent: vehicle_random {
+	init {
+		vehicle_length <- 1.9 #m;
+		num_lanes_occupied <- 1;
+		max_speed <- (50 + rnd(20)) #km / #h;
+	}
+}
+
+species car_random parent: vehicle_random {
+	init {
+		vehicle_length <- 3.8 #m;
+		num_lanes_occupied <- 2;
+		max_speed <- (60 + rnd(10)) #km / #h;
+	}
+}
+
 experiment ring type: gui {
 	action _init_{ 
 		create simulation with:[
@@ -108,23 +121,3 @@ experiment ring type: gui {
 		}
 	}
 }
-
-// TODO: bad shape files (some intersections have no outgoing roads)
-//experiment rouen type: gui {
-//	action _init_{ 
-//		create simulation with:[
-//			map_name::"rouen",
-//			num_cars::100,
-//			num_motorbikes::250
-//		];
-//	}
-//
-//	output {
-//		display city type: java2D background: #gray synchronized: true {
-//			species road aspect: base;
-//			species car_random aspect: base;
-//			species motorbike_random aspect: base;
-//			species intersection aspect: base;
-//		}
-//	}
-//}

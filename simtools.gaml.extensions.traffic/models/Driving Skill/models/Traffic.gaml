@@ -1,15 +1,15 @@
 /**
 * Name: Traffic
 * Description: define species for traffic simulation
-* Author: Duc Pham
-* Tags: driving skill
+* Author: Patrick Taillandier & Duc Pham
+* Tags: driving skill, graph, agent_movement, skill, transport
 */
 
 model traffic
 
 global {
 	// This is for visualization purposes only, 
-	// the width of a vehicle in specified using num_lanes_occupied
+	// the width of a vehicle is specified using num_lanes_occupied
 	float lane_width <- 0.7;  
 }
 
@@ -23,6 +23,7 @@ species road skills: [skill_road] {
 }
 
 species intersection skills: [skill_road_node] {
+	rgb color;
 	bool is_traffic_signal;
 	float time_to_change <- 30#s;
 	float counter <- rnd(time_to_change);
@@ -93,7 +94,7 @@ species intersection skills: [skill_road_node] {
 		if (is_traffic_signal) {
 			draw circle(1) color: color_fire;
 		} else {
-			draw circle(1) color: #black;
+			draw circle(1) color: color;
 		}
 	}
 }
@@ -127,29 +128,5 @@ species base_vehicle skills: [advanced_driving] {
 			draw triangle(lane_width * num_lanes_occupied) 
 				at: pos color: #white rotate: heading + 90 border: #black;
 		}
-	}
-}
-
-species vehicle_random parent: base_vehicle {
-	intersection init_node;
-
-	reflex commute {
-		do drive_random graph: road_graph;
-	}
-}
-
-species motorbike_random parent: vehicle_random {
-	init {
-		vehicle_length <- 1.9 #m;
-		num_lanes_occupied <- 1;
-		max_speed <- (50 + rnd(20)) #km / #h;
-	}
-}
-
-species car_random parent: vehicle_random {
-	init {
-		vehicle_length <- 3.8 #m;
-		num_lanes_occupied <- 2;
-		max_speed <- (60 + rnd(10)) #km / #h;
 	}
 }
