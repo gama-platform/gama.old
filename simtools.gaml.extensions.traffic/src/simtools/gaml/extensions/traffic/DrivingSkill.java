@@ -461,10 +461,6 @@ public class DrivingSkill extends MovingSkill {
 	public static final String LEADING_DISTANCE = "leading_distance";
 	public static final String LEADING_SPEED = "leading_speed";
 
-	// A small threshold representing zero (used to handle approximations in IDM)
-	// TODO: not sure if this is the right threshold
-	private static final Double EPSILON = 1e-4;
-
 	@getter (IKeyword.SPEED)
 	public static double getSpeed(final IAgent vehicle) {
 		if (vehicle == null || vehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) {
@@ -1445,7 +1441,8 @@ public class DrivingSkill extends MovingSkill {
 		// main loop to move the agent until the simulation step ends
 		while (remainingTime > 0) {
 			ILocation loc = vehicle.getLocation();
-			GamaPoint targetLoc = (GamaPoint) getCurrentTarget(vehicle).getLocation();
+			IAgent target = getCurrentTarget(vehicle);
+			GamaPoint targetLoc = (GamaPoint) target.getLocation();
 
 			if (loc.equals(finalTargetLoc)) {  // Final node in path
 				clearDrivingStates(scope);
@@ -1456,7 +1453,7 @@ public class DrivingSkill extends MovingSkill {
 				int newEdgeIdx = getCurrentIndex(vehicle) + 1;
 				IAgent newTarget = getTargets(vehicle).get(newEdgeIdx + 1);
 				// check traffic lights and vehicles coming from other roads
-				if (!readyToCross(scope, vehicle, newTarget, newRoad)) {
+				if (!readyToCross(scope, vehicle, target, newRoad)) {
 					return;
 				}
 
@@ -1513,11 +1510,6 @@ public class DrivingSkill extends MovingSkill {
 				IAgent currentTarget = getCurrentTarget(vehicle);
 				int currentSegment = getSegmentIndex(vehicle);
 				double distToGoal = getDistanceToGoal(vehicle);
-				if (distToGoal < EPSILON) {
-					// At segment's end point
-					currentSegment = !isViolatingOneway(vehicle) ?
-						currentSegment + 1 : currentSegment - 1;
-				}
 				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, currentTarget, currentRoad, currentSegment, distToGoal);
 			}
 			int lowestLane = laneAndAccPair.getLeft();
@@ -1716,8 +1708,6 @@ public class DrivingSkill extends MovingSkill {
 			distMoved = -0.5 * Math.pow(speed, 2) / accel;
 			newSpeed = 0.0;
 		}
-		setSpeed(vehicle, newSpeed);
-		setAcceleration(vehicle, accel);
 
 		Coordinate coords[] = currentRoad.getInnerGeometry().getCoordinates();
 		GamaPoint endPt = !violatingOneway ?
@@ -1725,6 +1715,8 @@ public class DrivingSkill extends MovingSkill {
 		if (distMoved > distToGoal) {
 			if (endPt.equals(currentTarget.getLocation())) {
 				// Move to a new road
+				// NOTE: although distToGoal but won't never reach exactly zero as the vehicle move towards a stopping leader,
+				// this block will eventually be triggered when distMoved > distToGoal, due to approximation errors in IDM
 				setLocation(vehicle, endPt);
 				setDistanceToGoal(vehicle, 0.0);
 				// Return to the main loop in `drive` to continue moving across the intersection
@@ -1746,6 +1738,8 @@ public class DrivingSkill extends MovingSkill {
 		setLocation(vehicle, new GamaPoint(newX, newY));
 		updateLaneSegment(scope, newLowestLane, currentSegment);
 		setDistanceToGoal(vehicle, distToGoal - distMoved);
+		setSpeed(vehicle, newSpeed);
+		setAcceleration(vehicle, accel);
 		return 0.0;
 	}
 
