@@ -461,6 +461,10 @@ public class DrivingSkill extends MovingSkill {
 	public static final String LEADING_DISTANCE = "leading_distance";
 	public static final String LEADING_SPEED = "leading_speed";
 
+	// NOTE: Due to approximations in IDM, vehicles will never have the exact same location as its target.
+	// Therefore we consider the vehicle has reached its goal when distToGoal is smaller than this threshold.
+	private static final double EPSILON = 1e-2;
+
 	@getter (IKeyword.SPEED)
 	public static double getSpeed(final IAgent vehicle) {
 		if (vehicle == null || vehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) {
@@ -1715,11 +1719,9 @@ public class DrivingSkill extends MovingSkill {
 		Coordinate coords[] = currentRoad.getInnerGeometry().getCoordinates();
 		GamaPoint endPt = !violatingOneway ?
 			new GamaPoint(coords[currentSegment + 1]) : new GamaPoint(coords[currentSegment]);
-		if (distMoved > distToGoal) {
+		if (distMoved > distToGoal || distToGoal < EPSILON) {
 			if (endPt.equals(currentTarget.getLocation())) {
 				// Move to a new road
-				// NOTE: although distToGoal but won't never reach exactly zero as the vehicle move towards a stopping leader,
-				// this block will eventually be triggered when distMoved > distToGoal, due to approximation errors in IDM
 				setLocation(vehicle, endPt);
 				setDistanceToGoal(vehicle, 0.0);
 				// Return to the main loop in `drive` to continue moving across the intersection
