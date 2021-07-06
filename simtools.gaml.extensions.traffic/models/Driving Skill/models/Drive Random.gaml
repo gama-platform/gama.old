@@ -27,7 +27,7 @@ global {
 		create road from: shp_roads {
 			num_lanes <- 5;
 			
-			// Create another in the opposite direction
+			// Create another road in the opposite direction
 			create road {
 				num_lanes <- 5;
 				shape <- polyline(reverse(myself.shape.points));
@@ -55,7 +55,7 @@ global {
 			proba_block_node <- 0.0;
 			proba_respect_priorities <- 1.0;
 			proba_respect_stops <- [1.0];
-			proba_use_linked_road <- 0.1;
+			proba_use_linked_road <- 0.5;
 			
 			linked_lane_limit <- 2;
 			lane_change_limit <- 1;
@@ -107,8 +107,8 @@ experiment ring type: gui {
 	action _init_{ 
 		create simulation with:[
 			map_name::"ring",
-			num_cars::20,
-			num_motorbikes::70
+			num_cars::50,
+			num_motorbikes::100
 		];
 	}
 

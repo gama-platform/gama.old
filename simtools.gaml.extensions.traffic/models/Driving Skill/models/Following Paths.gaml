@@ -38,7 +38,7 @@ species vehicle_following_path parent: base_vehicle {
 	init {
 		vehicle_length <- 3.0;
 		max_speed <- 120 #km / #h;
-		max_acceleration <- 0.3 #m / #s;
+		max_acceleration <- 1 #m / #s;
 		location <- intersection[0].location;
 		loop i over: range(0, length(intersection) - 1) {
 			int src <- i;
@@ -91,7 +91,7 @@ species particle {
 	float decel <- 0.01;
 	float heading;
 
-	float lifespan <- 180 #s;
+	float lifespan <- 150 #s;
 	float time_left;
 	
 	init {
