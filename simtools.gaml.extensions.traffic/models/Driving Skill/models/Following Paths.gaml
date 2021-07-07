@@ -1,5 +1,5 @@
 /**
-* Name: FollowingPaths
+* Name: Following Paths
 * Description: Demonstrate the use of drive action to make drivers follow certain paths
 * Author: Duc Pham
 * Tags: driving skill, graph, agent_movement, skill, transport
@@ -25,7 +25,10 @@ global {
 			num_lanes <- 1;
 		}
 		create intersection from: shp_nodes;
-		full_road_graph <- as_driving_graph(road, intersection);
+		
+		// Create a graph representing the road network, with road lengths as weights
+		map edge_weights <- road as_map (each::each.shape.perimeter);
+		full_road_graph <- as_driving_graph(road, intersection) with_weights edge_weights;
 		
 		create vehicle_following_path number: 1;
 	}
@@ -40,9 +43,11 @@ species vehicle_following_path parent: base_vehicle {
 		max_speed <- 120 #km / #h;
 		max_acceleration <- 1 #m / #s;
 		location <- intersection[0].location;
+		// Compute paths that will lead the vehicle from node 0 to node 1,
+		// node 1 to node 2,... and node N back to node 0
 		loop i over: range(0, length(intersection) - 1) {
 			int src <- i;
-			int dst <- i != length(intersection) - 1 ?  i + 1 : 0;
+			int dst <- i != length(intersection) - 1 ? i + 1 : 0;
 			add path_between(full_road_graph, intersection[src], intersection[dst]) 
 				to: paths;
 		}
@@ -54,7 +59,7 @@ species vehicle_following_path parent: base_vehicle {
 		current_path <- paths[path_idx];
 	}
 	
-	reflex commute {
+	reflex commute when: current_path != nil {
 		do drive;
 	}
 	

@@ -42,46 +42,27 @@ global {
 			time_to_change <- traffic_light_interval;
 		}
 		
-		full_road_graph <- as_driving_graph(road, intersection);
+		// Create a graph representing the road network, with road lengths as weights
+		map edge_weights <- road as_map (each::each.shape.perimeter);
+		full_road_graph <- as_driving_graph(road, intersection) with_weights edge_weights;
+		
+		// Initialize the traffic lights
 		ask intersection {
 			do initialize;
 		}
 		
-		create motorbike_random number: num_motorbikes {
-			road_graph <- full_road_graph;
-
-			right_side_driving <- true;
-			
-			proba_block_node <- 0.0;
-			proba_respect_priorities <- 1.0;
-			proba_respect_stops <- [1.0];
-			proba_use_linked_road <- 0.5;
-			
-			linked_lane_limit <- 2;
-			lane_change_limit <- 1;
-			
-			location <- one_of(intersection where empty(each.stop)).location;
-		}
-		
-		create car_random number: num_cars {
-			road_graph <- full_road_graph;
-	
-			right_side_driving <- true;
-			
-			proba_block_node <- 0.0;
-			proba_respect_priorities <- 1.0;
-			proba_respect_stops <- [1.0];
-			proba_use_linked_road <- 0.0;
-
-			lane_change_limit <- 2;			
-			linked_lane_limit <- 0;
-
-			location <- one_of(intersection where empty(each.stop)).location;
-		}
+		create motorbike_random number: num_motorbikes;
+		create car_random number: num_cars;
 	}
 }
 
 species vehicle_random parent: base_vehicle {
+	init {
+		road_graph <- full_road_graph;
+		location <- one_of(intersection where empty(each.stop)).location;
+		right_side_driving <- true;
+	}
+	
 	reflex commute {
 		do drive_random graph: road_graph;
 	}
@@ -92,6 +73,14 @@ species motorbike_random parent: vehicle_random {
 		vehicle_length <- 1.9 #m;
 		num_lanes_occupied <- 1;
 		max_speed <- (50 + rnd(20)) #km / #h;
+
+		proba_block_node <- 0.0;
+		proba_respect_priorities <- 1.0;
+		proba_respect_stops <- [1.0];
+		proba_use_linked_road <- 0.5;
+
+		lane_change_limit <- 1;		
+		linked_lane_limit <- 2;
 	}
 }
 
@@ -100,6 +89,14 @@ species car_random parent: vehicle_random {
 		vehicle_length <- 3.8 #m;
 		num_lanes_occupied <- 2;
 		max_speed <- (60 + rnd(10)) #km / #h;
+				
+		proba_block_node <- 0.0;
+		proba_respect_priorities <- 1.0;
+		proba_respect_stops <- [1.0];
+		proba_use_linked_road <- 0.0;
+
+		lane_change_limit <- 2;			
+		linked_lane_limit <- 0;
 	}
 }
 
