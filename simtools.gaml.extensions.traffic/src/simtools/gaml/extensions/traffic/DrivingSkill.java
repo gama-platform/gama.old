@@ -1691,7 +1691,7 @@ public class DrivingSkill extends MovingSkill {
 	 * @param accel         acceleration
 	 * @param time          the amount of time available to move
 	 * @param newLowestLane the lane to move on
-	 * @return
+	 * @return the remaining amount of time in the simulation step
 	 */
 	private double move(final IScope scope,
 			final double accel,
@@ -1707,13 +1707,18 @@ public class DrivingSkill extends MovingSkill {
 
 		double speed = getSpeed(vehicle);
 		double distMoved, newSpeed;
-		if (speed + accel * time > 0.0) {
-			distMoved = speed * time + 0.5 * accel * Math.pow(time, 2);
-			newSpeed = computeSpeed(scope, accel, currentRoad);
-		} else {
+		if (speed == 0.0 && accel == 0.0) {
+			// Not moving at all
+			return 0.0;
+		} else if (speed + accel * time < 0.0) {
 			// Special case when there is a stopped vehicle or traffic light
+			// causing the speed to have a negative value,
+			// and we don't want the vehicle to move backwards
 			distMoved = -0.5 * Math.pow(speed, 2) / accel;
 			newSpeed = 0.0;
+		} else {
+			distMoved = speed * time + 0.5 * accel * Math.pow(time, 2);
+			newSpeed = computeSpeed(scope, accel, currentRoad);
 		}
 
 		Coordinate coords[] = currentRoad.getInnerGeometry().getCoordinates();
