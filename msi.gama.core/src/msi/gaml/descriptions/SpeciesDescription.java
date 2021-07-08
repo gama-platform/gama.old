@@ -766,9 +766,10 @@ public class SpeciesDescription extends TypeDescription {
 	 *         know if a skill extends another skill, so this possibility is not considered in this method.
 	 */
 	public Boolean implementsSkill(final String skill) {
-		if (skills == null) return false;
-		for (final SkillDescription sk : skills) {
-			if (sk.getName().equals(skill)) return true;
+		if (skills != null) {
+			for (final SkillDescription sk : skills) {
+				if (sk.getName().equals(skill)) return true;
+			}
 		}
 		if (parent != null && parent != this) return getParent().implementsSkill(skill);
 		return false;
