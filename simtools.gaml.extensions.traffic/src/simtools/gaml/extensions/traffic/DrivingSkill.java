@@ -466,11 +466,12 @@ public class DrivingSkill extends MovingSkill {
 	private static final double EPSILON = 1e-2;
 
 	@getter (IKeyword.SPEED)
-	public static double getSpeed(final IAgent vehicle) {
-		if (vehicle == null || vehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) {
+	public static double getSpeed(final IAgent agent) {
+		// The second condition is used when `agent` is a road_node with a stop signal
+		if (agent == null || !agent.hasAttribute(IKeyword.SPEED)) {
 			return 0.0;
 		} else {
-			return (Double) vehicle.getAttribute(IKeyword.SPEED);
+			return (Double) agent.getAttribute(IKeyword.SPEED);
 		}
 	}
 
