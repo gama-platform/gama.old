@@ -97,7 +97,9 @@ import msi.gaml.variables.Variable;
 						type = IType.NONE,
 						optional = true,
 						doc = @doc (
-								deprecated = "Move the block of statements at the end of the parameter declaration instead",
+								// AD deprecation temporarily removed as this facet is used internally now
+								// deprecated = "Move the block of statements at the end of the parameter declaration
+								// instead",
 								value = "Provides a block of statements that will be executed whenever the value of the parameter changes")),
 				@facet (
 						name = IKeyword.ENABLES,
@@ -134,7 +136,8 @@ import msi.gaml.variables.Variable;
 @symbol (
 		name = { IKeyword.PARAMETER },
 		kind = ISymbolKind.PARAMETER,
-		with_sequence = false,
+		with_sequence = true,
+
 		concept = { IConcept.EXPERIMENT, IConcept.PARAMETER })
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })
