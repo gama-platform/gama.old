@@ -72,8 +72,7 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 	}
 
 	private int getTexture(final OpenGL gl, final int order) {
-		if (textures == null) return OpenGL.NO_TEXTURE;
-		if (order < 0 || order > textures.length - 1) return OpenGL.NO_TEXTURE;
+		if ((textures == null) || order < 0 || order > textures.length - 1) return OpenGL.NO_TEXTURE;
 		if (isAnimated() || textures[order] == OpenGL.NO_TEXTURE) {
 			Object obj = null;
 			try {
@@ -102,7 +101,7 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 	public final <T extends AbstractObject<?, ?>> void draw(final OpenGL gl, final ObjectDrawer<T> drawer,
 			final boolean isPicking) {
 		if (isPicking) { gl.registerForSelection(getAttributes().getIndex()); }
-		final boolean previous = gl.setLighting(getAttributes().isLighting());
+		final var previous = gl.setLighting(getAttributes().isLighting());
 		drawer.draw((T) this);
 		gl.setLighting(previous);
 		if (isPicking) { gl.markIfSelected(getAttributes()); }
@@ -121,7 +120,7 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 	}
 
 	public void getTranslationInto(final GamaPoint p) {
-		final GamaPoint explicitLocation = getAttributes().getLocation();
+		final var explicitLocation = getAttributes().getLocation();
 		if (explicitLocation == null) {
 			p.setLocation(0, 0, 0);
 		} else {

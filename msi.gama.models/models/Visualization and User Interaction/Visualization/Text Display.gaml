@@ -21,7 +21,7 @@ experiment Strings {
 
 	output {
 		layout #split;
-		display "With antialias" type: opengl antialias: true synchronized: true draw_env: false show_fps: true {
+		display "With antialias" type: opengl antialias: true synchronized: true draw_env: false {
 			graphics Strings {
 				draw world.shape wireframe: true color: #black;
 				int y <- 5;

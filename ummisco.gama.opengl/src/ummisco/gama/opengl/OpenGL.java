@@ -59,6 +59,7 @@ import ummisco.gama.opengl.renderer.caches.GeometryCache.BuiltInGeometry;
 import ummisco.gama.opengl.renderer.caches.ITextureCache;
 import ummisco.gama.opengl.renderer.caches.TextureCache2;
 import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper;
+import ummisco.gama.opengl.renderer.helpers.KeystoneHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryDrawer;
@@ -425,11 +426,11 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void enable(final int state) {
-		gl.glEnableClientState(state);
+		if (!gl.glIsEnabled(state)) { gl.glEnableClientState(state); }
 	}
 
 	public void disable(final int state) {
-		gl.glDisableClientState(state);
+		if (gl.glIsEnabled(state)) { gl.glDisableClientState(state); }
 	}
 
 	@Override
@@ -1137,6 +1138,11 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	public void initialize() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean isRenderingKeystone() {
+		KeystoneHelper k = getRenderer().getKeystoneHelper();
+		return k.isActive() || getRenderer().getData().isKeystoneDefined();
 	}
 
 }

@@ -651,7 +651,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	@Override
 	public double getNoData(final IScope scope) {
-		return Double.MAX_VALUE;
+		return IField.NO_NO_DATA;
 	}
 
 }

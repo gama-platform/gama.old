@@ -28,7 +28,6 @@ import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.RandomUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -371,7 +370,7 @@ public class Colors {
 	@test ("int(grayscale (rgb(255,0,0))) = -11776948")
 	@test ("grayscale (rgb(255,0,0)) = rgb(76,76,76)")
 	public static GamaColor grayscale(final GamaColor c) {
-		final int grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
+		final var grayValue = (int) (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
 	}
 
@@ -389,8 +388,8 @@ public class Colors {
 			see = { "rgb", "hsb" })
 	@test ("seed <- 1.0; int(rnd_color(255)) = -3749758")
 	public static GamaColor random_color(final IScope scope, final Integer max) {
-		final RandomUtils r = scope.getRandom();
-		final int realMax = Math.max(0, Math.min(max, 255));
+		final var r = scope.getRandom();
+		final var realMax = Math.max(0, Math.min(max, 255));
 		return new GamaColor(r.between(0, realMax), r.between(0, realMax), r.between(0, realMax), 255);
 	}
 
@@ -408,9 +407,9 @@ public class Colors {
 			see = { "rgb", "hsb" })
 	@test ("seed <- 1.0; int(rnd_color(100, 200)) = -5065833")
 	public static GamaColor random_color(final IScope scope, final Integer min, final Integer max) {
-		final RandomUtils r = scope.getRandom();
-		final int realMax = Math.max(0, Math.min(max, 255));
-		final int realMin = Math.max(0, Math.min(min, realMax));
+		final var r = scope.getRandom();
+		final var realMax = Math.max(0, Math.min(max, 255));
+		final var realMin = Math.max(0, Math.min(min, realMax));
 		return new GamaColor(r.between(realMin, realMax), r.between(realMin, realMax), r.between(realMin, realMax),
 				255);
 	}
@@ -430,7 +429,7 @@ public class Colors {
 			see = { "rgb", "hsb" })
 	@test ("blend(#red, #blue, 0.3) = rgb(76,0,178)")
 	public static GamaColor blend(final GamaColor c1, final GamaColor c2, final double r) {
-		final double ir = 1.0 - r;
+		final var ir = 1.0 - r;
 		return new GamaColor((int) (c1.getRed() * r + c2.getRed() * ir), (int) (c1.getGreen() * r + c2.getGreen() * ir),
 				(int) (c1.getBlue() * r + c2.getBlue() * ir), (int) (c1.getAlpha() * r + c2.getAlpha() * ir));
 	}
@@ -459,10 +458,10 @@ public class Colors {
 		@Override
 		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
 			if (arguments[0].isConst()) {
-				final Object palette = arguments[0].getConstValue();
+				final var palette = arguments[0].getConstValue();
 				if (palette instanceof String) {
-					final String p = (String) palette;
-					final ColorBrewer brewer = ColorBrewer.instance();
+					final var p = (String) palette;
+					final var brewer = ColorBrewer.instance();
 					if (!brewer.hasPalette(p)) {
 						context.error(
 								"Palette " + p + " does not exist. Available palette names are: "
@@ -470,11 +469,11 @@ public class Colors {
 								UNKNOWN_ARGUMENT, getArg(emfContext, 1));
 						return false;
 					} else if (arguments.length > 1) {
-						final IExpression exp = arguments[1];
+						final var exp = arguments[1];
 						if (exp.isConst()) {
-							final Object number = exp.getConstValue();
+							final var number = exp.getConstValue();
 							if (number instanceof Integer) {
-								final BrewerPalette pal = brewer.getPalette(p);
+								final var pal = brewer.getPalette(p);
 								if (pal.getCount() < (Integer) number) {
 									context.warning("Palette " + p + " has only " + pal.getCount() + " colors.",
 											IGamlIssue.WRONG_VALUE, getArg(emfContext, 1),
@@ -496,7 +495,7 @@ public class Colors {
 				@Override
 				public GamaPalette load(final String name) throws Exception {
 					IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
-					BrewerPalette p = BREWER.getPalette(name);
+					var p = BREWER.getPalette(name);
 					for (final Color col : p.getColors()) {
 						if (col != null) { colors.add(new GamaColor(col)); }
 					}
@@ -547,7 +546,7 @@ public class Colors {
 			see = { "brewer_palettes" })
 	@no_test
 	public static GamaPalette brewerPaletteColors(final IScope scope, final String type, final int nbClasses) {
-		final GamaPalette cols = brewerPaletteColors(scope, type);
+		final var cols = brewerPaletteColors(scope, type);
 		if (cols.size() < nbClasses)
 			throw GamaRuntimeException.error(type + " has less than " + nbClasses + " colors", scope);
 		while (cols.size() > nbClasses) {
@@ -623,7 +622,7 @@ public class Colors {
 			sort(values);
 		}
 
-		void sort(final IMap<Double, GamaColor> values) {
+		void sort(final Map<Double, GamaColor> values) {
 			List<Map.Entry<Double, GamaColor>> entries = Lists.newArrayList(values.entrySet());
 			Collections.sort(entries, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
 			for (Map.Entry<Double, GamaColor> entry : entries) {
@@ -653,7 +652,7 @@ public class Colors {
 			value = "returns the definition of a linear gradient between two colors, represented internally as a color map [start::0.5,stop::0.5]")
 	@no_test
 	public static GamaGradient gradient(final GamaColor start, final GamaColor stop) {
-		GamaGradient cm = new GamaGradient();
+		var cm = new GamaGradient();
 		cm.put(start, 0.5);
 		cm.put(stop, 0.5);
 		return cm;
@@ -671,8 +670,8 @@ public class Colors {
 			value = "returns the definition of a linear gradient between two colors, with a ratio (between 0 and 1, otherwise clamped) represented internally as a color map [start::r,stop::(1-r)]")
 	@no_test
 	public static GamaGradient gradient(final GamaColor start, final GamaColor stop, final Double r) {
-		double val = r < 0 ? 0 : r > 1 ? 1 : r;
-		GamaGradient cm = new GamaGradient();
+		var val = r < 0 ? 0 : r > 1 ? 1 : r;
+		var cm = new GamaGradient();
 		cm.put(start, val);
 		cm.put(stop, 1 - val);
 		return cm;
@@ -690,8 +689,8 @@ public class Colors {
 			value = "returns the definition of a linear gradient between n colors, represented internally as a color map [c1::1/n,c2::1/n, ... cn::1/n]")
 	@no_test
 	public static GamaGradient gradient(final IList<GamaColor> colors) {
-		GamaGradient cm = new GamaGradient();
-		int nb = colors.size();
+		var cm = new GamaGradient();
+		var nb = colors.size();
 		for (GamaColor c : colors) {
 			cm.put(c, 1d / nb);
 		}
@@ -702,6 +701,7 @@ public class Colors {
 			value = "gradient",
 			can_be_const = true,
 			type = IType.MAP,
+			expected_content_type = IType.FLOAT,
 			content_type = IType.FLOAT,
 			index_type = IType.COLOR,
 			category = { IOperatorCategory.COLOR },
@@ -710,15 +710,18 @@ public class Colors {
 			value = "returns the definition of a linear gradient between n colors provided with their weight. "
 					+ "A similar color map is returned, in the same color order, with all the weights normalized (so that they range from 0 to 1 and sum up to 1): [c1::x,c2::y, ... cn::z] where x+y+...+z = 1 and each> 0 ")
 	@no_test
-	public static GamaGradient gradient(final IMap<GamaColor, Double> colors) {
-		GamaGradient cm = new GamaGradient();
-		Double sum = 0d;
+	public static GamaGradient gradient(final IMap<GamaColor, Number> colors) {
+		var cm = new GamaGradient();
+		var sum = 0d;
 		Double min = Double.MAX_VALUE;
-		for (Double v : colors.values()) {
+		for (Number n : colors.values()) {
+			var v = n.doubleValue();
 			if (v < min) { min = v; }
 			sum += Math.abs(v);
 		}
-		return null;
+		final var div = sum;
+		colors.forEach((c, f) -> cm.put(c, f.doubleValue() / div));
+		return cm;
 		// final double div = sum;
 		// Il faut calculer la distance entre chacun des stops et normaliser ça. Et aprés trouver les ratios qui
 		// permettent de le faire
@@ -741,8 +744,6 @@ public class Colors {
 					+ "mesh to display, a gradient will produce interpolated colors to accomodate for the intermediary values, while a scale will stick to the colors defined.")
 	@no_test
 	public static GamaScale scale(final IScope scope, final IMap<GamaColor, Object> colors) {
-		// Ensure that numbers are Doubles... If a constant is passed, it might be integer.
-
 		IMap<Double, GamaColor> map = GamaMapFactory.createOrdered();
 		colors.forEach((c, f) -> map.put(Cast.asFloat(scope, f), c));
 		return new GamaScale(scope, map);
@@ -764,14 +765,14 @@ public class Colors {
 	@no_test
 	public static GamaScale scale(final IScope scope, final IMap<GamaColor, Object> colors, final double min,
 			final double max) {
-		Double sum = 0d;
+		var sum = 0d;
 		for (Map.Entry<GamaColor, Object> entry : colors.entrySet()) {
 			// To make sure ?
-			Double d = Cast.asFloat(scope, entry.getValue());
+			var d = Cast.asFloat(scope, entry.getValue());
 			entry.setValue(d);
 			sum += d;
 		}
-		double div = sum;
+		var div = sum;
 		IMap<Double, GamaColor> map = GamaMapFactory.createOrdered();
 		colors.forEach((c, f) -> map.put(min + (max - min) * Cast.asFloat(scope, f) / div, c));
 		return new GamaScale(scope, map);
@@ -787,8 +788,9 @@ public class Colors {
 	@doc (
 			value = "returns a list of n colors chosen in the gradient provided. Colors are chosen by interpolating the stops of the gradient (the colors) using their weight, in the order described in the gradient. In case the map<rgb, float> passed in argument is not a gradient but a scale, the colors will be chosen in the set of colors and might appear duplicated in the palette")
 	@no_test
-	public static GamaPalette palette(final IScope scope, final IMap<GamaColor, Double> colors, final int nb) {
-		GamaGradient cm = gradient(colors); // to make sure it is normalized
+	public static GamaPalette palette(final IScope scope, final IMap<GamaColor, Number> colors, final int nb) {
+		var cm = gradient(colors); // to make sure it is normalized
+		// Not yet ready...
 		return null;
 	}
 
@@ -801,7 +803,7 @@ public class Colors {
 			category = { IOperatorCategory.COLOR },
 			concept = { IConcept.COLOR })
 	@doc (
-			value = "returns a list of n colors chosen in the gradient provided. Colors are chosen by interpolating the stops of the gradient (the colors) using their weight, in the order described in the gradient. In case the map<rgb, float> passed in argument is not a gradient but a scale, the colors will be chosen in the set of colors and might appear duplicated in the palette")
+			value = "transforms a list of n colors into a palette (necessary for some layers)")
 	@no_test
 	public static GamaPalette palette(final IScope scope, final IList<GamaColor> colors) {
 		return new GamaPalette(colors);

@@ -10,12 +10,15 @@ model BuildingHeatmap
 import "3D Visualization/models/Building Elevation.gaml"
 
 global {
-	field heatmap <- field(100, 100);
+	int size <- 300;
+	field heatmap <- field(size, size);
 
 	reflex update {
 		ask people {
-			loop i from: -5 to: 5 {
-				heatmap[location + {i, i}] <- heatmap[location + {i, i}] + 5 / (abs(i) + 1);
+			loop i from: -(size/100) to: size/100 step: 2 {
+				loop j from:  -(size/100) to: size/100 step: 2 {
+					heatmap[location + {i, j}] <- heatmap[location + {i, j}] + 5 / (abs(i) + 1);
+				}
 			}
 		}
 	}
@@ -24,7 +27,23 @@ global {
 experiment "Show heatmap" type: gui {
 	output {
 		layout #split;
-		display Heatmap2 type: opengl draw_env: false background: #black {
+		display HeatmapPalette type: opengl draw_env: false background: #black {
+//			species building refresh: false {
+//				draw shape border: #white wireframe: true width: 3;
+//			}
+//
+//			species road refresh: false {
+//				draw shape color: #white width: 3;
+//			}
+//
+//			species people {
+//				draw circle(1) color: #white at: {location.x, location.y};
+//			}
+			//palette([#black, #darkorange, #orange, #orangered, #red])
+			// The resulting field is displayed a little bit above the other layers, with no 3D rendering, and a smoothness of 3 (meaning three passes of box blur are being done to "spread" the values)
+			mesh heatmap scale: 0 color: palette([ #black, #cyan, #yellow, #yellow, #red, #red, #red]) transparency: 0.2 position: {0, 0, 0.001} smooth: 4 ;
+		}
+		display HeatmapGradient type: opengl draw_env: false background: #black {
 			species building refresh: false {
 				draw shape border: #white wireframe: true width: 3;
 			}
@@ -36,9 +55,11 @@ experiment "Show heatmap" type: gui {
 			species people {
 				draw circle(1) color: #white at: {location.x, location.y};
 			}
-
-			mesh heatmap scale: 0 color: palette([#black, #darkorange, #orange, #orangered, #red]) transparency: 0.2 position: {0, 0, 0.001} smooth: true ;
+			//palette([#black, #darkorange, #orange, #orangered, #red])
+			// The resulting field is displayed a little bit above the other layers, with no 3D rendering, and a smoothness of 3 (meaning three passes of box blur are being done to "spread" the values)
+			mesh heatmap scale: 0 color: gradient([#black::0.1, #orange:: 0.5, #red::1]) transparency: 0.2 position: {0, 0, 0.001} smooth:4 ;
 		}
+		
 
 	}
 

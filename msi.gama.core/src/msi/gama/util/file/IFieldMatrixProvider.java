@@ -39,7 +39,7 @@ public interface IFieldMatrixProvider {
 	 * @return a value representing "no value"
 	 */
 	default double getNoData(final IScope scope) {
-		return Double.MAX_VALUE;
+		return IField.NO_NO_DATA;
 	}
 
 	/**

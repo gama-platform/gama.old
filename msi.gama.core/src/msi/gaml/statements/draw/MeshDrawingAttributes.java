@@ -27,13 +27,13 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	public static final int TRIANGULATED = 32;
 	public static final int GRAYSCALED = 64;
 	public static final int WITH_TEXT = 128;
-	public static final int SMOOTH = 256;
 	public IMeshColorProvider color;
 	public String speciesName;
 	GamaPoint dimensions;
 	GamaPoint cellSize;
 	Double scale;
-	Double noData;
+	double noData;
+	int smooth;
 
 	public MeshDrawingAttributes(final String name, final GamaColor border, final boolean isImage) {
 		super(null, isImage);
@@ -52,12 +52,9 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 			color = new PaletteBasedMeshColorProvider((GamaPalette) colors);
 		} else if (colors instanceof GamaScale) {
 			color = new ScaleBasedMeshColorProvider((GamaScale) colors);
-
 		} else if (colors instanceof GamaGradient) {
-			// manque le gradient
-		}
-
-		else if (colors instanceof IList) {
+			color = new GradientBasedMeshColorProvider((GamaGradient) colors);
+		} else if (colors instanceof IList) {
 			if (((IList) colors).get(0) instanceof IField) {
 				// We have bands
 				color = new BandsBasedMeshColorProvider((IList<IField>) colors);
@@ -165,19 +162,19 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		return getTextures() != null;
 	}
 
-	public void setSmooth(final Boolean smooth) {
-		setFlag(SMOOTH, smooth);
+	public void setSmooth(final int smooth) {
+		this.smooth = smooth;
 	}
 
-	public boolean isSmooth() {
-		return isSet(SMOOTH);
+	public int getSmooth() {
+		return smooth;
 	}
 
-	public void setNoData(final Double noData) {
+	public void setNoData(final double noData) {
 		this.noData = noData;
 	}
 
-	public Double getNoDataValue() {
+	public double getNoDataValue() {
 		return noData;
 	}
 

@@ -26,6 +26,7 @@ import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.GamaField;
+import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 
 public class GridLayer extends AbstractLayer {
@@ -81,13 +82,13 @@ public class GridLayer extends AbstractLayer {
 		attributes.setCellSize(data.getCellSize());
 		attributes.setBorder(lineColor);
 		attributes.setXYDimension(data.getDimensions());
-		attributes.setSmooth(data.isSmooth());
+		attributes.setSmooth(data.isSmooth() ? 1 : 0);
 
 		if (gridValueMatrix == null) {
 			dg.drawImage(image, attributes);
 		} else {
 			dg.drawField(new GamaField(scope, (int) data.getDimensions().x, (int) data.getDimensions().y,
-					gridValueMatrix, Double.MAX_VALUE), attributes);
+					gridValueMatrix, IField.NO_NO_DATA), attributes);
 		}
 	}
 

@@ -129,7 +129,7 @@ public class GamaFieldType extends GamaMatrixType {
 			doc = { @doc ("Allows to build a field by specifying, in order, its number of columns, "
 					+ "number of rows and the initial value of its cells. The value representing the absence of value is set to #max_float") })
 	public static IField buildField(final IScope scope, final int cols, final int rows, final double init) {
-		return buildField(scope, cols, rows, init, Double.MAX_VALUE);
+		return buildField(scope, cols, rows, init, IField.NO_NO_DATA);
 	}
 
 	@operator (

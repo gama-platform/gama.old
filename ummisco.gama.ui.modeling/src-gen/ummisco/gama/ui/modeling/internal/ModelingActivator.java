@@ -29,17 +29,17 @@ public class ModelingActivator extends AbstractUIPlugin {
 
 	private static ModelingActivator INSTANCE;
 
-	private Map<String, Injector> injectors =
+	private final Map<String, Injector> injectors =
 			Collections.synchronizedMap(Maps.<String, Injector> newHashMapWithExpectedSize(1));
 
 	@Override
-	public void start(BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		INSTANCE = this;
 	}
 
 	@Override
-	public void stop(BundleContext context) throws Exception {
+	public void stop(final BundleContext context) throws Exception {
 		injectors.clear();
 		INSTANCE = null;
 		super.stop(context);
@@ -49,17 +49,15 @@ public class ModelingActivator extends AbstractUIPlugin {
 		return INSTANCE;
 	}
 
-	public Injector getInjector(String language) {
-		synchronized (injectors) {
-			Injector injector = injectors.get(language);
-			if (injector == null) {
-				injectors.put(language, injector = createInjector(language));
-			}
-			return injector;
-		}
+	public Injector getInjector(final String language) {
+		// synchronized (injectors) {
+		Injector injector = injectors.get(language);
+		if (injector == null) { injectors.put(language, injector = createInjector(language)); }
+		return injector;
+		// }
 	}
 
-	protected Injector createInjector(String language) {
+	protected Injector createInjector(final String language) {
 		try {
 			com.google.inject.Module runtimeModule = getRuntimeModule(language);
 			com.google.inject.Module sharedStateModule = getSharedStateModule();
@@ -73,13 +71,13 @@ public class ModelingActivator extends AbstractUIPlugin {
 		}
 	}
 
-	protected com.google.inject.Module getRuntimeModule(String grammar) {
-		if (MSI_GAMA_LANG_GAML_GAML.equals(grammar)) { return new GamlRuntimeModule(); }
+	protected com.google.inject.Module getRuntimeModule(final String grammar) {
+		if (MSI_GAMA_LANG_GAML_GAML.equals(grammar)) return new GamlRuntimeModule();
 		throw new IllegalArgumentException(grammar);
 	}
 
-	protected com.google.inject.Module getUiModule(String grammar) {
-		if (MSI_GAMA_LANG_GAML_GAML.equals(grammar)) { return new GamlUiModule(this); }
+	protected com.google.inject.Module getUiModule(final String grammar) {
+		if (MSI_GAMA_LANG_GAML_GAML.equals(grammar)) return new GamlUiModule(this);
 		throw new IllegalArgumentException(grammar);
 	}
 

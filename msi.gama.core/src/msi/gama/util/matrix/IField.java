@@ -42,6 +42,8 @@ import msi.gaml.types.IType;
 				doc = @doc ("The list of bands that are optionnaly present in the field. The first band is the primary field itself, and each of these bands is a field w/o bands ")) })
 public interface IField extends IMatrix<Double>, IDiffusionTarget {
 
+	double NO_NO_DATA = Double.MAX_VALUE;
+
 	@Override
 	default IField getField(final IScope scope) {
 		return this;

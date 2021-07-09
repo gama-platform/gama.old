@@ -11,15 +11,19 @@
 package ummisco.gama.opengl.scene.mesh;
 
 import static com.jogamp.common.nio.Buffers.newDirectDoubleBuffer;
+import static com.jogamp.common.nio.Buffers.newDirectIntBuffer;
 
 import java.awt.Color;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.Locale;
 
-import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.GL2ES3;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.ICoordinates;
@@ -40,11 +44,8 @@ import ummisco.gama.opengl.scene.ObjectDrawer;
  */
 public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
-	final double currentAlpha;
-
 	public MeshDrawer(final OpenGL gl) {
 		super(gl);
-		currentAlpha = gl.getCurrentObjectAlpha();
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				gl.scaleBy(1, 1, zScale);
 			}
 
-			FieldMeshDrawer hmap = new FieldMeshDrawer(object);
+			var hmap = new FieldMeshDrawer(object);
 			hmap.drawOn(gl);
 		} finally {
 			gl.popMatrix();
@@ -65,28 +66,58 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	}
 
 	private class FieldMeshDrawer {
-		final double[] data;
-		private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer;
-		private final int cols, rows;
-		private final double cx, cy, min, max;
+		// ARRAYS
+		// The attribute holding the data
+		private final double[] data;
+		// The attribute holding the position of the vertex indices (in case of no_data)
+		private final int[] realIndexes;
+
+		// BUFFERS
+		// The buffers for vertices, normals, textures, colors, line colors and the normals to display (if debugging)
+		private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer, displayNormalBuffer;
+		// The buffer holding the indices to the points to draw
 		private IntBuffer indexBuffer;
+
+		// The number of columns and rows of the data
+		private final int cols, rows;
+		// The widht and height of each cell in world coordinates; the minimal and maximal values found in the data
+		private final double cx, cy, min, max;
+		// The value representing the absence of data
+		private double noData;
+
+		// FLAGS
+		// Flags indicating if the data is to be drawn in wireframe, in grayscale, as triangles and with the value
 		private final boolean wireframe, grayscale, triangles, withText;
+		// Flags indicating what to output: textures, colors, lines, normals ?
+		private final boolean outputsTextures, outputsColors, outputsLines, outputsNormals = false;
+
+		// COLORS
+		// An array holding the three components of the line color
+		private final double[] lineColor;
+		// An array used for the transfer of colors from the color provider
+		double[] rgb = new double[3];
+		// The provider of color for the vertices
 		private final IMeshColorProvider fill;
-		private final boolean outputsTextures;
-		private final boolean outputsColors;
-		private final boolean outputsLines;
-		private Double noData;
-		double[] rgbTransfer = new double[4];
-		double[] lineColor;
+
+		// NORMALS
+		// The normals used for quads drawing
+		final double[] quadNormals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+		// The temporary coordinate sequence used to hold vertices to compute normals
+		final ICoordinates surface = ICoordinates.ofLength(9);
+		// The temporary transfer value for the normal
+		final GamaPoint normal = new GamaPoint();
 
 		public FieldMeshDrawer(final MeshObject object) {
-			MeshDrawingAttributes attributes = object.getAttributes();
+			var attributes = object.getAttributes();
 			this.cols = (int) attributes.getXYDimension().x;
 			this.rows = (int) attributes.getXYDimension().y;
-			data = clone(cols, rows, object.getObject(), true, attributes.isSmooth());
+
+			data = smooth(object.getObject().getMatrix(), attributes.getSmooth());
 			noData = attributes.getNoDataValue();
-			if (noData == null) { noData = object.getObject().getNoData(null); }
-			double[] minMax = object.getObject().getMinMax(null);
+			if (noData == IField.NO_NO_DATA) { noData = object.getObject().getNoData(null); }
+			realIndexes = new int[cols * rows];
+
+			var minMax = object.getObject().getMinMax(null);
 			max = minMax[1];
 			min = minMax[0];
 			this.cx = attributes.getCellSize().x;
@@ -94,18 +125,14 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			this.wireframe = attributes.isEmpty();
 			this.grayscale = attributes.isGrayscaled();
 			this.withText = attributes.isWithText();
-			this.fill = attributes.getColorProvider();
 			Color line = attributes.getBorder();
+			this.fill = attributes.getColorProvider();
 			if (line == null) {
-				lineColor = new double[] { 0, 0, 0, currentAlpha };
-				if (fill != null) { lineColor = fill.getColor(0, data[0], min, max, lineColor); }
+				lineColor = fill != null ? fill.getColor(0, data[0], min, max, null) : new double[] { 0, 0, 0 };
 			} else {
-				lineColor = new double[] { line.getRed() / 255d, line.getGreen() / 255d, line.getBlue() / 255d,
-						currentAlpha };
+				lineColor = new double[] { line.getRed() / 255d, line.getGreen() / 255d, line.getBlue() / 255d };
 			}
-			rgbTransfer[3] = currentAlpha;
 			this.triangles = attributes.isTriangulated();
-
 			outputsTextures = attributes.isTextured() && !grayscale && !wireframe;
 			outputsColors = (fill != null || grayscale) && !wireframe;
 			outputsLines = wireframe || line != null;
@@ -113,60 +140,71 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			initializeBuffers();
 			fillBuffers();
 			finalizeBuffers();
-
 		}
 
 		private void initializeBuffers() {
-			final int length = cols * rows;
-			final int lengthM1 = (cols - 1) * (rows - 1);
+			final var length = cols * rows;
+			final var lengthM1 = (cols - 1) * (rows - 1);
 			vertexBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
 			normalBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
-			if (triangles) { indexBuffer = Buffers.newDirectIntBuffer(lengthM1 * 6); }
-			if (outputsLines) {
-				lineColorBuffer = Buffers.newDirectDoubleBuffer(triangles ? length * 4 : lengthM1 * 16);
-			}
+			if (triangles && outputsNormals) { displayNormalBuffer = newDirectDoubleBuffer(length * 6); }
+			if (triangles) { indexBuffer = newDirectIntBuffer(lengthM1 * 6); }
+			if (outputsLines) { lineColorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
 			if (outputsTextures) { texBuffer = newDirectDoubleBuffer(triangles ? length * 2 : lengthM1 * 8); }
-			if (outputsColors) { colorBuffer = Buffers.newDirectDoubleBuffer(triangles ? length * 4 : lengthM1 * 16); }
+			if (outputsColors) { colorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
 		}
 
 		private void colorize(final double z, final int x, final int y) {
 			// Outputs either a texture coordinate or the color of the vertex
 			if (outputsTextures) { texBuffer.put((double) x / cols).put((double) y / rows); }
-			if (outputsColors) { colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgbTransfer)); }
+			if (outputsColors) { colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb)); }
 			// If the line color is specified, outputs it
 			if (outputsLines) { lineColorBuffer.put(lineColor); }
+		}
 
+		double get(final int x0, final int y0) {
+			var x = x0 < 0 ? 0 : x0 > cols - 1 ? cols - 1 : x0;
+			var y = y0 < 0 ? 0 : y0 > rows - 1 ? rows - 1 : y0;
+			return data[y * cols + x];
 		}
 
 		public void fillBuffers() {
 			if (triangles) {
-				int[] normalCount = new int[data.length];
-				int[] ix = new int[3];
-				ICoordinates surface = ICoordinates.ofLength(4);
-				GamaPoint normal = new GamaPoint();
-
-				for (int x = 0; x < cols; ++x) {
-					double x1 = x * cx;
-					for (int y = 0; y < rows; ++y) {
-						double z = data[y * cols + x];
-						// if (IntervalSize.isZeroWidth(min, max))
-
-						// Outputs the 3 ordinates of the vertex
-						vertexBuffer.put(x1);
-						vertexBuffer.put(-y * cy);
-						vertexBuffer.put(z);
-						colorize(z, x, y);
-						// Builds the index buffer: references vertices in the vertex buffer to avoid duplications
-						if (x == 0 || y == 0 || z == noData) { continue; }
-						buildIndexesAndNormals(normalCount, ix, normal, surface, x, y);
+				var realIndex = 0;
+				for (var j = 0; j < rows; j++) {
+					var y = j * cy;
+					for (var i = 0; i < cols; i++) {
+						var x = i * cx;
+						var index = j * cols + i;
+						var z = data[index];
+						if (z == noData) {
+							realIndexes[index] = -1;
+							continue;
+						} else {
+							realIndexes[index] = realIndex++;
+						}
+						vertexBuffer.put(x).put(-y).put(z);
+						colorize(z, i, j);
+						surface.setTo(x - cx, y - cy, get(i - 1, j - 1), x, y - cy, get(i, j - 1), x + cx, y - cy,
+								get(i + 1, j - 1), x + cx, y, get(i + 1, j), x + cx, y + cy, get(i + 1, j + 1), x,
+								y + cy, get(i, j + 1), x - cx, y + cy, get(i - 1, j + 1), x - cx, y, get(i - 1, j),
+								x - cx, y - cy, get(i - 1, j - 1)).getNormal(true, 1, normal);
+						normalBuffer.put(normal.x).put(normal.y).put(normal.z);
+						if (j > 0 && i > 0) {
+							var current = realIndexes[index];
+							var minus1 = realIndexes[index - 1];
+							var minusCols = realIndexes[index - cols];
+							var minusColsAnd1 = realIndexes[index - cols - 1];
+							if (minus1 == -1 || minusCols == -1 || minusColsAnd1 == -1) { continue; }
+							indexBuffer.put(current).put(minus1).put(minusCols);
+							indexBuffer.put(minusColsAnd1).put(minusCols).put(minus1);
+						}
 					}
 				}
-				normalize(normalCount);
 			} else {
-				double[] quadNormals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
-				for (int x = 0; x < cols - 1; ++x) {
+				for (var x = 0; x < cols - 1; ++x) {
 					double x1 = x * cx, x2 = (x + 1) * cx;
-					for (int y = 0; y < rows - 1; ++y) {
+					for (var y = 0; y < rows - 1; ++y) {
 						double y1 = -y * cy, y2 = -(y + 1) * cy, z = data[y * cols + x];
 						if (z == noData) { continue; }
 						vertexBuffer.put(new double[] { x1, y1, z, x2, y1, z, x2, y2, z, x1, y2, z });
@@ -186,107 +224,142 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			if (outputsLines) { lineColorBuffer = lineColorBuffer.flip(); }
 			vertexBuffer = vertexBuffer.flip();
 			if (triangles) { indexBuffer = indexBuffer.flip(); }
-			// AD No need to flip the buffer because triangulation always uses indexed put
-			if (!triangles) { normalBuffer = normalBuffer.flip(); }
-		}
-
-		private void buildIndexesAndNormals(final int[] normalCount, final int[] ix, final GamaPoint normal,
-				final ICoordinates surface, final int x, final int y) {
-			// Shared between triangles
-			indexBuffer.put(ix[0] = y + x * rows);
-			indexBuffer.put(ix[1] = ix[0] - 1);
-			indexBuffer.put(ix[2] = ix[0] - rows);
-			// Normals are computed for each triplet (triangle) or rectangle
-
-			surface.setTo(vertexBuffer.get(ix[0] * 3), vertexBuffer.get(ix[0] * 3 + 1), vertexBuffer.get(ix[0] * 3 + 2),
-					vertexBuffer.get(ix[1] * 3), vertexBuffer.get(ix[1] * 3 + 1), vertexBuffer.get(ix[1] * 3 + 2),
-					vertexBuffer.get(ix[2] * 3), vertexBuffer.get(ix[2] * 3 + 1), vertexBuffer.get(ix[2] * 3 + 2),
-					vertexBuffer.get(ix[0] * 3), vertexBuffer.get(ix[0] * 3 + 1), vertexBuffer.get(ix[0] * 3 + 2))
-					.getNormal(false, 1, normal);
-
-			for (int i : ix) {
-				int i3 = i * 3;
-				normalBuffer.put(i3, normalBuffer.get(i3) + normal.x);
-				normalBuffer.put(i3 + 1, normalBuffer.get(i3 + 1) + normal.y);
-				normalBuffer.put(i3 + 2, normalBuffer.get(i3 + 2) + normal.z);
-				normalCount[i]++;
-			}
-
-			indexBuffer.put(ix[0] = ix[2] - 1);
-			indexBuffer.put(ix[2]);
-			indexBuffer.put(ix[1]);
-			surface.setTo(vertexBuffer.get(ix[0] * 3), vertexBuffer.get(ix[0] * 3 + 1), vertexBuffer.get(ix[0] * 3 + 2),
-					vertexBuffer.get(ix[2] * 3), vertexBuffer.get(ix[2] * 3 + 1), vertexBuffer.get(ix[2] * 3 + 2),
-					vertexBuffer.get(ix[1] * 3), vertexBuffer.get(ix[1] * 3 + 1), vertexBuffer.get(ix[1] * 3 + 2),
-					vertexBuffer.get(ix[0] * 3), vertexBuffer.get(ix[0] * 3 + 1), vertexBuffer.get(ix[0] * 3 + 2))
-					.getNormal(false, 1, normal);
-			for (int i : ix) {
-				int i3 = i * 3;
-				normalBuffer.put(i3, normalBuffer.get(i3) + normal.x);
-				normalBuffer.put(i3 + 1, normalBuffer.get(i3 + 1) + normal.y);
-				normalBuffer.put(i3 + 2, normalBuffer.get(i3 + 2) + normal.z);
-				normalCount[i]++;
+			normalBuffer = normalBuffer.flip();
+			if (triangles && outputsNormals) {
+				for (var i = 0; i < vertexBuffer.limit(); i += 3) {
+					displayNormalBuffer.put(vertexBuffer.get(i)).put(vertexBuffer.get(i + 1))
+							.put(vertexBuffer.get(i + 2));
+					displayNormalBuffer.put(vertexBuffer.get(i) - 2 * normalBuffer.get(i))
+							.put(vertexBuffer.get(i + 1) - 2 * normalBuffer.get(i + 1))
+							.put(vertexBuffer.get(i + 2) - 2 * normalBuffer.get(i + 2));
+				}
+				displayNormalBuffer.flip();
 			}
 		}
 
-		// Rescan the normals and perform the average function on them
-		private void normalize(final int[] normalCount) {
-			for (int i = 0, i2 = 0; i < normalCount.length && i2 < normalBuffer.limit() - 2; i++, i2 += 3) {
-				normalBuffer.put(i2, normalBuffer.get(i2) / normalCount[i]);
-				normalBuffer.put(i2 + 1, normalBuffer.get(i2 + 1) / normalCount[i]);
-				normalBuffer.put(i2 + 2, normalBuffer.get(i2 + 2) / normalCount[i]);
+		public void fixedPipelineFallback(final OpenGL openGL) {
+			if (vertexBuffer.limit() == 0) return;
+			final var gl = openGL.getGL();
+			// Forcing alpha
+			gl.glBlendColor(0.0f, 0.0f, 0.0f, (float) openGL.getCurrentObjectAlpha());
+			gl.glBlendFunc(GL2ES2.GL_CONSTANT_ALPHA, GL2ES2.GL_ONE_MINUS_CONSTANT_ALPHA);
+			if (triangles) {
+				openGL.beginDrawing(GL.GL_TRIANGLES);
+				for (var index = 0; index < indexBuffer.limit(); index++) {
+					var i = indexBuffer.get(index);
+					// System.out.println("Index " + index + " -> " + i);
+					if (!wireframe && outputsColors) {
+						openGL.setCurrentColor(colorBuffer.get(i * 3), colorBuffer.get(i * 3 + 1),
+								colorBuffer.get(i * 3 + 2), 1);
+					}
+					if (outputsTextures) { openGL.outputTexCoord(texBuffer.get(i * 2), texBuffer.get(i * 2 + 1)); }
+					openGL.outputNormal(normalBuffer.get(i * 3), normalBuffer.get(i * 3 + 1),
+							normalBuffer.get(i * 3 + 2));
+					// System.out.println("Point: " + vertexBuffer.get(i) + " " + vertexBuffer.get(i + 1) + " "
+					// + vertexBuffer.get(i + 2));
+					gl.glVertex3d(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1), vertexBuffer.get(i * 3 + 2));
+				}
+				if (outputsLines) {
+					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+					for (var index = 0; index < indexBuffer.limit(); index++) {
+						var i = indexBuffer.get(index);
+						openGL.setCurrentColor(lineColorBuffer.get(i * 3), lineColorBuffer.get(i * 3 + 1),
+								lineColorBuffer.get(i + 1), 1);
+						openGL.outputVertex(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1),
+								vertexBuffer.get(i * 3 + 2));
+					}
+					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+				}
+			} else {
+				openGL.beginDrawing(GL2ES3.GL_QUADS);
+				for (var i = 0; i < vertexBuffer.limit(); i += 3) {
+					if (!wireframe && outputsColors) {
+						openGL.setCurrentColor(colorBuffer.get(i), colorBuffer.get(i + 1), colorBuffer.get(i + 2), 1);
+					}
+					if (outputsTextures) {
+						openGL.outputTexCoord(texBuffer.get(2 * i / 3), texBuffer.get(2 * i / 3 + 1));
+					}
+					openGL.outputNormal(normalBuffer.get(i), normalBuffer.get(i + 1), normalBuffer.get(i + 2));
+					gl.glVertex3d(vertexBuffer.get(i), vertexBuffer.get(i + 1), vertexBuffer.get(i + 2));
+				}
+				if (outputsLines) {
+					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+					gl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, lineColorBuffer);
+					for (var i = 0; i < vertexBuffer.limit(); i += 3) {
+						openGL.setCurrentColor(lineColorBuffer.get(i), lineColorBuffer.get(i + 1),
+								lineColorBuffer.get(i + 2), 1);
+						openGL.outputVertex(vertexBuffer.get(i), vertexBuffer.get(i + 1), vertexBuffer.get(i + 2));
+					}
+					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+				}
 			}
+			openGL.endDrawing();
+			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		public void drawOn(final OpenGL openGL) {
+			// AD - See issue #3125
+			if (openGL.isRenderingKeystone()) {
+				fixedPipelineFallback(openGL);
+				return;
+			}
 			if (vertexBuffer.limit() == 0) return;
-			final GL2 gl = openGL.getGL();
+			final var gl = openGL.getGL();
 			// Forcing alpha
 			gl.glBlendColor(0.0f, 0.0f, 0.0f, (float) openGL.getCurrentObjectAlpha());
-			gl.glBlendFunc(GL2.GL_CONSTANT_ALPHA, GL2.GL_ONE_MINUS_CONSTANT_ALPHA);
+			gl.glBlendFunc(GL2ES2.GL_CONSTANT_ALPHA, GL2ES2.GL_ONE_MINUS_CONSTANT_ALPHA);
 
-			openGL.enable(GL2.GL_VERTEX_ARRAY);
-			openGL.enable(GL2.GL_NORMAL_ARRAY);
+			openGL.enable(GLPointerFunc.GL_VERTEX_ARRAY);
+			openGL.enable(GLPointerFunc.GL_NORMAL_ARRAY);
 			if (outputsTextures) {
-				openGL.enable(GL2.GL_TEXTURE_COORD_ARRAY);
+				openGL.enable(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
 			} else {
 				gl.glDisable(GL.GL_TEXTURE_2D);
 			}
-			if (outputsColors) { openGL.enable(GL2.GL_COLOR_ARRAY); }
+			if (outputsColors) { openGL.enable(GLPointerFunc.GL_COLOR_ARRAY); }
 			try {
-				gl.glVertexPointer(3, GL2.GL_DOUBLE, 0, vertexBuffer);
-				gl.glNormalPointer(GL2.GL_DOUBLE, 0, normalBuffer);
+				gl.glVertexPointer(3, GL2GL3.GL_DOUBLE, 0, vertexBuffer);
+				gl.glNormalPointer(GL2GL3.GL_DOUBLE, 0, normalBuffer);
 
-				if (outputsTextures) { gl.glTexCoordPointer(2, GL2.GL_DOUBLE, 0, texBuffer); }
-				if (outputsColors) { gl.glColorPointer(4, GL2.GL_DOUBLE, 0, colorBuffer); }
+				if (outputsTextures) { gl.glTexCoordPointer(2, GL2GL3.GL_DOUBLE, 0, texBuffer); }
+				if (outputsColors) { gl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, colorBuffer); }
 
 				if (!wireframe) {
 					if (triangles) {
-						gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL2.GL_UNSIGNED_INT, indexBuffer);
+						gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
 					} else {
 						// AD Warning. GL_QUADS have been deprecated and removed from OpenGL 4.0
-						gl.glDrawArrays(GL2.GL_QUADS, 0, vertexBuffer.limit() / 3);
+						gl.glDrawArrays(GL2ES3.GL_QUADS, 0, vertexBuffer.limit() / 3);
 					}
 				}
 				if (outputsLines) {
-					if (!outputsColors) { openGL.enable(GL2.GL_COLOR_ARRAY); }
-					gl.glColorPointer(4, GL2.GL_DOUBLE, 0, lineColorBuffer);
-					gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+					if (!outputsColors) { openGL.enable(GLPointerFunc.GL_COLOR_ARRAY); }
+					gl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, lineColorBuffer);
+					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 					if (triangles) {
-						gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL2.GL_UNSIGNED_INT, indexBuffer);
+						gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
 					} else {
 						// AD Warning. GL_QUADS have been deprecated and removed from OpenGL 4.0
-						gl.glDrawArrays(GL2.GL_QUADS, 0, vertexBuffer.limit() / 3);
+						gl.glDrawArrays(GL2ES3.GL_QUADS, 0, vertexBuffer.limit() / 3);
 					}
-					gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
+					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 				}
+
 			} finally {
-				openGL.disable(GL2.GL_VERTEX_ARRAY);
-				openGL.disable(GL2.GL_NORMAL_ARRAY);
-				if (outputsTextures) { openGL.disable(GL2.GL_TEXTURE_COORD_ARRAY); }
-				if (outputsColors || outputsLines) { openGL.disable(GL2.GL_COLOR_ARRAY); }
+				openGL.disable(GLPointerFunc.GL_NORMAL_ARRAY);
+				if (outputsTextures) { openGL.disable(GLPointerFunc.GL_TEXTURE_COORD_ARRAY); }
+				if (outputsColors || outputsLines) { openGL.disable(GLPointerFunc.GL_COLOR_ARRAY); }
+
+				if (triangles && outputsNormals) {
+					openGL.setCurrentColor(Color.white);
+					openGL.setLineWidth(3);
+					gl.glVertexPointer(3, GL2GL3.GL_DOUBLE, 0, displayNormalBuffer);
+					gl.glDrawArrays(GL.GL_LINES, 0, displayNormalBuffer.limit() / 3);
+				}
+				openGL.disable(GLPointerFunc.GL_VERTEX_ARRAY);
 				// Putting back alpha to normal
 				gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+
 			}
 			if (withText) { drawLabels(openGL); }
 
@@ -295,13 +368,13 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		public void drawLabels(final OpenGL gl) {
 			// Draw gridvalue as text inside each cell
 			gl.setCurrentColor(Color.black);
-			final String[] strings = new String[data.length];
-			final double[] coords = new double[strings.length * 3];
+			final var strings = new String[data.length];
+			final var coords = new double[strings.length * 3];
 			for (int i = 0, c = 0; i < cols; i++) {
-				final double stepX = i * cx;
-				for (int j = 0; j < rows; j++, c += 3) {
-					final double stepY = j * cy;
-					final double gridValue = data[j * cols + i];
+				final var stepX = i * cx;
+				for (var j = 0; j < rows; j++, c += 3) {
+					final var stepY = j * cy;
+					final var gridValue = data[j * cols + i];
 					strings[j * cols + i] = String.format(Locale.US, "%.2f", gridValue);
 					coords[c] = stepX + cx / 2;
 					coords[c + 1] = -(stepY + cy / 2);
@@ -309,8 +382,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				}
 			}
 			gl.beginRasterTextMode();
-			final boolean previous = gl.setLighting(false);
-			for (int i = 0; i < strings.length; i++) {
+			final var previous = gl.setLighting(false);
+			for (var i = 0; i < strings.length; i++) {
 				gl.getGL().glRasterPos3d(coords[i * 3], coords[i * 3 + 1],
 						coords[i * 3 + 2] + gl.getCurrentZTranslation());
 				gl.getGlut().glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, strings[i]);
@@ -320,67 +393,31 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 		}
 
-		double[] clone(final int width, final int height, final IField field, final boolean smoothEdges,
-				final boolean smooth) {
-			double[] data = field.getMatrix();
-
-			if (!smooth) return data;
-			double[] result = data.clone();
-			// Temporary values for traversing single dimensional arrays
-			int x = 0;
-			int z = 0;
-			long widthClamp = smoothEdges ? width : width - 1;
-			long heightClamp = smoothEdges ? height : height - 1;
-			int bounds = width * height;
-			for (z = smoothEdges ? 0 : 1; z < heightClamp; ++z) {
-				for (x = smoothEdges ? 0 : 1; x < widthClamp; ++x) {
-					// Sample a 3x3 filtering grid based on surrounding neighbors
-
-					double value = 0.0f;
-					double cellAverage = 1.0f;
-
-					// Sample top row
-					if (x - 1 + (z - 1) * width >= 0 && x - 1 + (z - 1) * width < bounds) {
-						value += data[x - 1 + (z - 1) * width];
-						++cellAverage;
-					}
-					if (x - 0 + (z - 1) * width >= 0 && x - 0 + (z - 1) * width < bounds) {
-						value += data[x + (z - 1) * width];
-						++cellAverage;
-					}
-					if (x + 1 + (z - 1) * width >= 0 && x + 1 + (z - 1) * width < bounds) {
-						value += data[x + 1 + (z - 1) * width];
-						++cellAverage;
-					}
-					// Sample middle row
-					if (x - 1 + (z - 0) * width >= 0 && x - 1 + (z - 0) * width < bounds) {
-						value += data[x - 1 + z * width];
-						++cellAverage;
-					}
-					// Sample center point (will always be in bounds)
-					value += data[x + z * width];
-					if (x + 1 + (z - 0) * width >= 0 && x + 1 + (z - 0) * width < bounds) {
-						value += data[x + 1 + z * width];
-						++cellAverage;
-					}
-					// Sample bottom row
-					if (x - 1 + (z + 1) * width >= 0 && x - 1 + (z + 1) * width < bounds) {
-						value += data[x - 1 + (z + 1) * width];
-						++cellAverage;
-					}
-					if (x - 0 + (z + 1) * width >= 0 && x - 0 + (z + 1) * width < bounds) {
-						value += data[x + (z + 1) * width];
-						++cellAverage;
-					}
-					if (x + 1 + (z + 1) * width >= 0 && x + 1 + (z + 1) * width < bounds) {
-						value += data[x + 1 + (z + 1) * width];
-						++cellAverage;
-					}
-					result[x + z * width] = value / cellAverage;
-				}
-			}
-			return result;
+		double get(final double[] data, final int x0, final int y0) {
+			var x = x0 < 0 ? 0 : x0 > cols - 1 ? cols - 1 : x0;
+			var y = y0 < 0 ? 0 : y0 > rows - 1 ? rows - 1 : y0;
+			return data[y * cols + x];
 		}
+
+		double[] smooth(final double[] data, final int passes) {
+			if (passes == 0) return data;
+			var input = data;
+			var output = data.clone();
+			for (var i = 0; i < passes; i++) {
+				for (var y = 0; y < rows; ++y) {
+					for (var x = 0; x < cols; ++x) {
+						// Sample a 3x3 filtering grid based on surrounding neighbors
+						var value = get(input, x - 1, y - 1) + get(input, x, y - 1) + get(input, x + 1, y - 1)
+								+ get(input, x - 1, y) + get(input, x, y) + get(input, x + 1, y)
+								+ get(input, x - 1, y + 1) + get(input, x, y + 1) + get(input, x + 1, y + 1);
+						output[x + y * cols] = value / 9d;
+					}
+				}
+				input = output;
+			}
+			return output;
+		}
+
 	}
 
 	@Override

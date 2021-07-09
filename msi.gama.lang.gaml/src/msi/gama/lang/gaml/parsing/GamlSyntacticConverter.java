@@ -132,6 +132,8 @@ public class GamlSyntacticConverter {
 
 	final static ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
+	private static int SYNTHETIC_ACTION = 0;
+
 	public static String getAbsoluteContainerFolderPathOf(final Resource r) {
 		URI uri = r.getURI();
 		if (uri.isFile()) {
@@ -145,10 +147,6 @@ public class GamlSyntacticConverter {
 		}
 		return URI.decode(uri.toString());
 
-		// final IPath fullPath = file.getLocation();
-		// path = fullPath; // toOSString ?
-		// if (path == null) { return null; }
-		// return path.uptoSegment(path.segmentCount() - 1);
 	}
 
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES =
@@ -172,7 +170,6 @@ public class GamlSyntacticConverter {
 		if (!(root instanceof Model)) return null;
 		final ModelImpl m = (ModelImpl) root;
 		final List<String> prgm = collectPragmas(m);
-		// final Object[] imps = collectImports(m);<>
 
 		final String path = getAbsoluteContainerFolderPathOf(root.eResource());
 		final SyntacticModelElement model = (SyntacticModelElement) SyntacticFactory.create(MODEL, m,
@@ -184,19 +181,6 @@ public class GamlSyntacticConverter {
 		model.compactModel();
 		return model;
 	}
-
-	// private Object[] collectImports(final ModelImpl m) {
-	// if (m.eIsSet(GamlPackage.MODEL__IMPORTS)) {
-	// final List<Import> imports = m.getImports();
-	// final Object[] imps = new Object[imports.size()];
-	// for (int i = 0; i < imps.length; i++) {
-	// final URI uri = URI.createURI(imports.get(i).getImportURI(), false);
-	// imps[i] = uri;
-	// }
-	// return imps;
-	// }
-	// return null;
-	// }
 
 	private List<String> collectPragmas(final ModelImpl m) {
 		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) return null;
@@ -218,33 +202,10 @@ public class GamlSyntacticConverter {
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
 
-	private boolean doesNotContainVirtual(final Statement stm) {
-		return !EGaml.getInstance().hasFacet(stm, IKeyword.VIRTUAL);
-	}
-
-	// private void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
-	// if (!GamaPreferences.Runtime.CORE_WARNINGS.getValue()) { return; }
-	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "", message, object, null, 0, null);
-	// if (errors != null)
-	// errors.add(d);
-	// }
-
-	// private void addInfo(final String message, final EObject object, final
-	// Set<Diagnostic> errors) {
-	// if (!GamaPreferences.INFO_ENABLED.getValue()) {
-	// return;
-	// }
-	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.INFO, "",
-	// message, object, null, 0, null);
-	// if (errors != null)
-	// errors.add(d);
-	// }
-
 	private final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
 			final Set<Diagnostic> errors) {
 		// We catch its keyword
 		String keyword = EGaml.getInstance().getKeyOf(stm);
-
 		if (keyword == null)
 			throw new NullPointerException(
 					"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
@@ -312,7 +273,20 @@ public class GamlSyntacticConverter {
 		} else if (stm instanceof S_Solve) {
 			final Expression e = stm.getExpr();
 			addFacet(elt, EQUATION, convertToLabel(e, EGaml.getInstance().getKeyOf(e)), errors);
-		} else if (stm instanceof S_Try) { convCatch((S_Try) stm, elt, errors); }
+		} else if (stm instanceof S_Try) {
+			convCatch((S_Try) stm, elt, errors);
+		} else if (keyword.equals(IKeyword.PARAMETER)) {
+			// As the description of parameters does not accept children, we move the block to the
+			// 'on_change' facet.
+			Block b = stm.getBlock();
+			if (b != null) {
+				final ISyntacticElement blockElt =
+						SyntacticFactory.create(ACTION, new Facets(NAME, SYNTHETIC + SYNTHETIC_ACTION++), true);
+				convertBlock(blockElt, b, errors);
+				IExpressionDescription fexpr = convExpr(blockElt, errors);
+				addFacet(elt, IKeyword.ON_CHANGE, fexpr, errors);
+			}
+		}
 
 		// We apply some conversions to the facets expressed in the statement
 		convertFacets(stm, keyword, elt, errors);
@@ -320,11 +294,7 @@ public class GamlSyntacticConverter {
 		if (stm instanceof S_Experiment) {
 			// We do it also for experiments, and change their name
 			final IExpressionDescription type = elt.getExpressionAt(TYPE);
-			if (type == null) {
-				// addInfo("Facet 'type' is missing, set by default to 'gui'",
-				// stm, errors);
-				elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_));
-			}
+			if (type == null) { elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_)); }
 			// We modify the names of experiments so as not to confuse them with
 			// species
 			final String name = elt.getName();
@@ -336,41 +306,19 @@ public class GamlSyntacticConverter {
 			final String type = elt.getName();
 			if (type != null) { elt.setKeyword(type); }
 		} else if (stm instanceof S_Equations) { convStatements(elt, EGaml.getInstance().getEquationsOf(stm), errors); }
-		// We add the dependencies (only for variable declarations)
-		// if (isVar) {
-		// elt.setDependencies(varDependenciesOf(stm));
-		// }
 		// We convert the block of statements (if any)
-		convertBlock(stm, elt, errors);
-
+		if (!keyword.equals(IKeyword.PARAMETER)) { convertBlock(elt, stm.getBlock(), errors); }
 		return elt;
 	}
 
-	private void convertBlock(final Statement stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
-		final Block block = stm.getBlock();
-		convertBlock(elt, block, errors);
-	}
-
 	public void convertBlock(final ISyntacticElement elt, final Block block, final Set<Diagnostic> errors) {
-		if (block != null) {
-			// final Expression function = block.getFunction();
-			// if (function != null) {
-			// // If it is a function (and not a regular block), we add it as a
-			// // facet
-			// addFacet(elt, FUNCTION, convExpr(function, errors), errors);
-			// } else {
-			convStatements(elt, EGaml.getInstance().getStatementsOf(block), errors);
-			// }
-		}
+		if (block != null) { convStatements(elt, EGaml.getInstance().getStatementsOf(block), errors); }
 	}
 
 	private void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 			final Set<Diagnostic> errors) {
 		if (e.hasFacet(key)) {
 			e.setFacet(IGamlIssue.DOUBLED_CODE + key, expr);
-			// addWarning("Double definition of facet " + key + ". Only the last one will be considered",
-			// e.getElement(),
-			// errors);
 		} else {
 			e.setFacet(key, expr);
 		}
@@ -562,8 +510,6 @@ public class GamlSyntacticConverter {
 		final IExpressionDescription result = builder.create(expr, errors);
 		return result;
 	}
-
-	private static int SYNTHETIC_ACTION = 0;
 
 	private final IExpressionDescription convExpr(final Facet facet, final boolean label,
 			final Set<Diagnostic> errors) {
