@@ -38,7 +38,6 @@ public class ExperimentsParametersList extends EditorsList<String> {
 
 	public ExperimentsParametersList(final IScope scope,
 			final Collection<? extends IExperimentDisplayable> paramsAndCommands) {
-		super();
 		this.scope = scope;
 		add(paramsAndCommands, null);
 	}
@@ -46,7 +45,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	@Override
 	public boolean isEnabled(final AbstractEditor<?> gpParam) {
 		final IParameter p = gpParam.getParam();
-		if (p == null) { return true; }
+		if (p == null) return true;
 		final Boolean b = activations.get(p.getName());
 		return b == null ? true : b;
 	}
@@ -65,7 +64,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		for (final Map<String, IParameterEditor<?>> m : categories.values()) {
 			for (final IParameterEditor<?> ed : m.values()) {
 				final IParameter param = ed.getParam();
-				if (param != null && param.getName().equals(var)) { return ed; }
+				if (param != null && param.getName().equals(var)) return ed;
 			}
 		}
 		return null;
@@ -89,9 +88,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 						param.addChangedListener((scope, val) -> {
 							for (final String enabled : enablements) {
 								final IParameterEditor ed = getEditorForVar(enabled);
-								if (ed != null) {
-									ed.setActive((Boolean) val);
-								}
+								if (ed != null) { ed.setActive((Boolean) val); }
 							}
 						});
 					}
@@ -103,9 +100,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 						param.addChangedListener((scope, val) -> {
 							for (final String disabled : disablements) {
 								final IParameterEditor ed = getEditorForVar(disabled);
-								if (ed != null) {
-									ed.setActive(!(Boolean) val);
-								}
+								if (ed != null) { ed.setActive(!(Boolean) val); }
 							}
 						});
 					}
@@ -122,7 +117,6 @@ public class ExperimentsParametersList extends EditorsList<String> {
 						}));
 			}
 			String cat = var.getCategory();
-			cat = cat == null ? "General" : cat;
 			addItem(cat);
 			categories.get(cat).put(var.getName(), gp);
 
@@ -144,7 +138,6 @@ public class ExperimentsParametersList extends EditorsList<String> {
 			for (final IParameterEditor gp : entry.getValue().values()) {
 				gp.updateValue(true);
 			}
-			;
 		}
 	}
 

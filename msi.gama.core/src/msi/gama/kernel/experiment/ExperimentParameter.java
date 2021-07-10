@@ -171,6 +171,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	boolean isEditable;
 	boolean canBeNull;
 	boolean isDefined = true;
+	// if true, means the target of the parameter is a variable defined in experiment
+	boolean isExperiment = false;
 	final IExpression init, among, min, max, step, slider, onChange;
 	final List<ParameterChangeListener> listeners = new ArrayList<>();
 	ActionStatement action;
@@ -183,7 +185,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		title = sd.getName();
 		unitLabel = getLiteral(IKeyword.UNIT);
 
-		setCategory(desc.getLitteral(IKeyword.CATEGORY));
 		min = getFacet(IKeyword.MIN);
 		final IScope runtimeScope = GAMA.getRuntimeScope();
 		if (min != null && min.isConst()) { getMinValue(runtimeScope); }
@@ -210,6 +211,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		final VariableDescription targetedGlobalVar = findTargetedVar(sd);
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
 		isEditable = !targetedGlobalVar.isNotModifiable();
+		isExperiment = targetedGlobalVar.isDefinedInExperiment();
+
+		setCategory(desc.getLitteral(IKeyword.CATEGORY));
 	}
 
 	private VariableDescription findTargetedVar(final IDescription parameterDescription) {
@@ -219,6 +223,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if (targetedGlobalVar == null) {
 			final ExperimentDescription ed = (ExperimentDescription) parameterDescription.getEnclosingDescription();
 			targetedGlobalVar = ed.getAttribute(varName);
+			isExperiment = true;
 		}
 		return targetedGlobalVar;
 	}
@@ -276,6 +281,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			setValue(scope, p.getInitialValue(scope));
 		}
 		setEditable(p.isEditable());
+		this.isExperiment = p.isDefinedInExperiment();
 	}
 
 	@Override
@@ -472,7 +478,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String getCategory() {
-		return category;
+		return category == null ? IParameter.Batch.super.getCategory() : category;
 	}
 
 	@Override
@@ -601,6 +607,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public String[] getDisablement() {
 		return this.disables;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		return isExperiment;
 	}
 
 }

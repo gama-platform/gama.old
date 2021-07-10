@@ -2,7 +2,7 @@
 * Name: NotifyingVariables
 * This model shows how certain variables, which are directly manipulated by skills (like `location` by the `moving` skill) can notify a model that they have been changed (allowing the modeler to take appropriate measures if any). 
 * Author: Alexis Drogoul
-* Tags: 
+* Tags: variables, attributes
 */
 model NotifyingVariables
 

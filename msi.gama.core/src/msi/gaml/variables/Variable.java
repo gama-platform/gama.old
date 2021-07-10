@@ -382,7 +382,7 @@ public class Variable extends Symbol implements IVariable {
 	public Map<GamaHelper, IVarAndActionSupport> listeners;
 	protected ISkill gSkill, sSkill;
 	private IExecutable on_changer;
-	protected String pName, cName;
+	protected String parameter, category;
 	protected boolean mustNotifyOfChanges;
 	// private Object speciesWideValue;
 
@@ -390,8 +390,8 @@ public class Variable extends Symbol implements IVariable {
 		super(sd);
 		final VariableDescription desc = (VariableDescription) sd;
 		setName(sd.getName());
-		pName = desc.getParameterName();
-		cName = getLiteral(IKeyword.CATEGORY, null);
+		parameter = desc.getParameterName();
+		category = getLiteral(IKeyword.CATEGORY, null);
 		updateExpression = getFacet(IKeyword.VALUE, IKeyword.UPDATE);
 		functionExpression = getFacet(IKeyword.FUNCTION);
 		initExpression = getFacet(IKeyword.INIT);
@@ -529,12 +529,13 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public String getTitle() {
-		return pName;
+		return parameter;
 	}
 
 	@Override
 	public String getCategory() {
-		return cName;
+		if (category == null) { category = IVariable.super.getCategory(); }
+		return category;
 	}
 
 	// @Override
@@ -759,6 +760,11 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public boolean isNotModifiable() {
 		return isNotModifiable;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		return getDescription().isDefinedInExperiment();
 	}
 
 }

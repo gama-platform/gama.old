@@ -194,7 +194,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			// desc.warning("The memorize experiment is still in development. It should not be used.",
 			// IGamlIssue.DEPRECATED);
 			// }
-			if (!BATCH.equals(type) && (desc.getChildWithKeyword(METHOD) != null)) {
+			if (!BATCH.equals(type) && desc.getChildWithKeyword(METHOD) != null) {
 				desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
 						METHOD);
 			}
@@ -397,7 +397,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			// We look first in the experiment itself
 			for (final IVariable v : getVars()) {
 				if (v.isParameter()) {
-					final IParameter p = new ExperimentParameter(myScope, v);
+					final ExperimentParameter p = new ExperimentParameter(myScope, v);
 					final String parameterName = "(Experiment) " + p.getName();
 					final boolean already = parameters.containsKey(parameterName);
 					if (!already) { parameters.put(parameterName, p); }

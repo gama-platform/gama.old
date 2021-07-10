@@ -30,7 +30,7 @@ public interface IParameter extends IExperimentDisplayable {
 		void changed(IScope scope, Object newValue);
 	}
 
-	String[] EMPTY_STRINGS = new String[0];
+	String[] EMPTY_STRINGS = {};
 
 	void setValue(IScope scope, Object value);
 
