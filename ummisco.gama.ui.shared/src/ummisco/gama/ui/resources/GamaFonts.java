@@ -14,6 +14,7 @@ package ummisco.gama.ui.resources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Display;
 
 import ummisco.gama.ui.utils.GraphicsHelper;
@@ -44,9 +45,7 @@ public class GamaFonts {
 	public static Font categoryBoldHelpFont;
 
 	private static java.awt.Font getAwtBaseFont() {
-		if (awtBaseFont == null) {
-			awtBaseFont = PreferencesHelper.BASE_BUTTON_FONT.getValue();
-		}
+		if (awtBaseFont == null) { awtBaseFont = PreferencesHelper.BASE_BUTTON_FONT.getValue(); }
 		return awtBaseFont;
 	}
 
@@ -55,23 +54,17 @@ public class GamaFonts {
 	}
 
 	public static String getBaseFont() {
-		if (baseFont == null) {
-			baseFont = getBaseData().getName();
-		}
+		if (baseFont == null) { baseFont = getBaseData().getName(); }
 		return baseFont;
 	}
 
 	public static FontData getBaseData() {
-		if (baseData == null) {
-			baseData = getSystemFont().getFontData()[0];
-		}
+		if (baseData == null) { baseData = getSystemFont().getFontData()[0]; }
 		return baseData;
 	}
 
 	public static Font getSystemFont() {
-		if (systemFont == null) {
-			systemFont = WorkbenchHelper.getDisplay().getSystemFont();
-		}
+		if (systemFont == null) { systemFont = WorkbenchHelper.getDisplay().getSystemFont(); }
 		return systemFont;
 	}
 
@@ -107,15 +100,11 @@ public class GamaFonts {
 		categoryHelpFont = new Font(d, fd);
 		fd = new FontData(fd.getName(), 14, SWT.BOLD);
 		categoryBoldHelpFont = new Font(d, fd);
+		Resource.setNonDisposeHandler(null);
 	}
 
 	public static void setLabelFont(final Font f) {
-		if (labelFont == null) {
-			labelFont = f;
-			return;
-		} else {
-			labelFont = f;
-		}
+		labelFont = f;
 	}
 
 	public static void setLabelFont(final java.awt.Font font) {
@@ -125,65 +114,47 @@ public class GamaFonts {
 	}
 
 	public static Font getLabelfont() {
-		if (labelFont == null) {
-			initFonts();
-		}
+		if (labelFont == null) { initFonts(); }
 		return labelFont;
 	}
 
 	public static Font getSmallFont() {
-		if (smallFont == null) {
-			initFonts();
-		}
+		if (smallFont == null) { initFonts(); }
 		return smallFont;
 	}
 
 	public static Font getExpandfont() {
-		if (expandFont == null) {
-			initFonts();
-		}
+		if (expandFont == null) { initFonts(); }
 		return expandFont;
 	}
 
 	public static Font getHelpFont() {
-		if (helpFont == null) {
-			initFonts();
-		}
+		if (helpFont == null) { initFonts(); }
 		return helpFont;
 	}
 
 	public static Font getNavigFolderFont() {
-		if (navigRegularFont == null) {
-			initFonts();
-		}
+		if (navigRegularFont == null) { initFonts(); }
 		return navigRegularFont;
 	}
 
 	public static Font getNavigLinkFont() {
-		if (smallNavigLinkFont == null) {
-			initFonts();
-		}
+		if (smallNavigLinkFont == null) { initFonts(); }
 		return smallNavigLinkFont;
 	}
 
 	public static Font getNavigFileFont() {
-		if (navigFileFont == null) {
-			initFonts();
-		}
+		if (navigFileFont == null) { initFonts(); }
 		return navigFileFont;
 	}
 
 	public static Font getNavigHeaderFont() {
-		if (navigHeaderFont == null) {
-			initFonts();
-		}
+		if (navigHeaderFont == null) { initFonts(); }
 		return navigHeaderFont;
 	}
 
 	public static Font getResourceFont() {
-		if (navigResourceFont == null) {
-			initFonts();
-		}
+		if (navigResourceFont == null) { initFonts(); }
 		return navigResourceFont;
 	}
 
