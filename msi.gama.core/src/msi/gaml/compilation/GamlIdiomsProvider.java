@@ -33,7 +33,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.expressions.UnitConstantExpression;
+import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.IType;

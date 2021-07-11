@@ -26,7 +26,7 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.expressions.VariableExpression;
+import msi.gaml.expressions.variables.VariableExpression;
 import msi.gaml.operators.Cast;
 
 @type (

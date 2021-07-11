@@ -45,13 +45,13 @@ experiment diffusion type: gui {
 	output {
 		layout #split;
 		display "Brewer" type: opengl  background: #black antialias:true  {
-			mesh cells scale: 5 grayscale: true color:(brewer_colors("Set3")) triangulation: true no_data: 0.0;
+			mesh cells scale: 5 grayscale: true color:(brewer_colors("Set3")) triangulation: true;
 		}
 
-		display "HSB" type: opengl background: #black {
-			mesh cells scale: 5 color: cells collect hsb(float(each)/5,1,1) triangulation: true;
+		display "HSB Smoothed 2" type: opengl background: #black {
+			mesh cells scale: 5 color: cells collect hsb(float(each)/5,1,1) triangulation: true smooth: true;
 		}
-		display "One Color" type: opengl background: #black {
+		display "One Color Smoothed 4 with Lines" type: opengl background: #black {
 			mesh cells scale: 5 color:  palette([#lightblue, #blue, #blue, #darkblue]) triangulation: true border: #yellow smooth: 4;
 		}
 		

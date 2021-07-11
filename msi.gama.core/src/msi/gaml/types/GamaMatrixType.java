@@ -31,8 +31,8 @@ import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.ListExpression;
-import msi.gaml.expressions.MapExpression;
+import msi.gaml.expressions.data.ListExpression;
+import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 
 @type (

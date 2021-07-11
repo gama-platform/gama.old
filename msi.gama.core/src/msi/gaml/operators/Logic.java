@@ -22,7 +22,7 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IOperator;
+import msi.gaml.expressions.operators.IOperator;
 
 /**
  * Written by drogoul Modified on 20 dec. 2010

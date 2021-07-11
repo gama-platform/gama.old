@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.util.StringUtils;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.TypeExpression;
+import msi.gaml.expressions.types.TypeExpression;
 import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;

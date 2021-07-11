@@ -32,7 +32,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.PixelUnitExpression;
+import msi.gaml.expressions.units.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.AttributeHolder;
 

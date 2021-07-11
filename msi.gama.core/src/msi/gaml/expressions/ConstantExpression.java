@@ -23,7 +23,7 @@ import msi.gaml.types.IType;
 
 public class ConstantExpression extends AbstractExpression {
 
-	Object value;
+	protected Object value;
 
 	public ConstantExpression(final Object val, final IType<?> t, final String name) {
 		value = val;

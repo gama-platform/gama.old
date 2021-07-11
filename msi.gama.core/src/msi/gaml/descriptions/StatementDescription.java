@@ -22,8 +22,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IOperator;
 import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.operators.IOperator;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;

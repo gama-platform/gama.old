@@ -16,7 +16,7 @@ import msi.gama.util.tree.GamaTree;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IOperator;
+import msi.gaml.expressions.operators.IOperator;
 
 public class BenchmarkTree extends GamaTree<IBenchmarkable> {
 
