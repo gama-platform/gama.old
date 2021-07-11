@@ -8,6 +8,7 @@ import static java.awt.geom.PathIterator.WIND_EVEN_ODD;
 
 import java.awt.Color;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
@@ -23,7 +24,6 @@ import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
-import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 
 /**
@@ -34,60 +34,30 @@ import ummisco.gama.opengl.OpenGL;
  */
 class TextDrawerHelper {
 
-	static {
-		DEBUG.OFF();
-	}
-	// private final int RESTART = Integer.MIN_VALUE;
-	private static int BYTES_PER_DOUBLE = Double.SIZE / Byte.SIZE;
 	private static final int BUFFER_SIZE = 1000000;
-	private FaceBuffer faceBuffer;
-	private SideBuffer sideBuffer;
-	final GLU glu;
-	final GLUtessellator tobj;
-	int windingRule;
+	final GLUtessellator tobj = GLU.gluNewTess();
+	private final FaceBuffer faceBuffer = new FaceBuffer();
+	private final SideBuffer sideBuffer = new SideBuffer();
 	boolean wireframe, textured;
 	Color border;
 	double width, height, depth;
 
-	TextDrawerHelper(final OpenGL openGL) {
-		glu = GLU.createGLU(openGL.getGL());
-		tobj = GLU.gluNewTess();
-	}
-
-	void clear() {
-		if (faceBuffer != null) { faceBuffer.clear(); }
-		if (sideBuffer != null) { sideBuffer.clear(); }
-	}
-
-	void prepare() {
-		if (!wireframe && faceBuffer == null) { faceBuffer = new FaceBuffer(); }
-		if (sideBuffer == null) { sideBuffer = new SideBuffer(); }
-		if (faceBuffer != null) { faceBuffer.prepare(); }
-		if (sideBuffer != null) { sideBuffer.prepare(); }
-	}
-
-	void flip() {
-		if (sideBuffer != null) { sideBuffer.flip(); }
-		if (faceBuffer != null) { faceBuffer.flip(); }
-	}
-
-	public void resetWith(final Double depth, final boolean wireframe, final GamaColor border,
-			final boolean withTexture, final double width, final double height) {
-		clear();
+	public void init(final Double depth, final boolean wireframe, final GamaColor border, final boolean withTexture,
+			final Rectangle2D bounds) {
 		this.depth = depth;
 		this.wireframe = wireframe;
 		this.border = border;
 		this.textured = withTexture;
-		this.width = width;
-		this.height = height;
-		prepare();
+		this.width = bounds.getWidth();
+		this.height = bounds.getHeight();
+		faceBuffer.prepare();
+		sideBuffer.prepare();
 	}
 
 	void process(final PathIterator pi) {
-		windingRule = pi.getWindingRule();
 		if (!wireframe) {
 			GLU.gluTessProperty(tobj, GLU_TESS_WINDING_RULE,
-					windingRule == WIND_EVEN_ODD ? GLU_TESS_WINDING_ODD : GLU_TESS_WINDING_NONZERO);
+					pi.getWindingRule() == WIND_EVEN_ODD ? GLU_TESS_WINDING_ODD : GLU_TESS_WINDING_NONZERO);
 			GLU.gluTessNormal(tobj, 0, 0, -1);
 			GLU.gluTessBeginPolygon(tobj, (double[]) null);
 		}
@@ -123,7 +93,8 @@ class TextDrawerHelper {
 			pi.next();
 		}
 		if (!wireframe) { GLU.gluTessEndPolygon(tobj); }
-		flip();
+		sideBuffer.flip();
+		faceBuffer.flip();
 	}
 
 	void drawOn(final OpenGL openGL) {
@@ -172,7 +143,7 @@ class TextDrawerHelper {
 		GamaPoint normal = new GamaPoint();
 		int currentIndex = -1;
 		int[] indices = new int[1000]; // Indices of the "move_to" or "close"
-		private DoubleBuffer normalBuffer;
+		private final DoubleBuffer normalBuffer = newDirectDoubleBuffer(BUFFER_SIZE);
 		private final DoubleBuffer quadsBuffer = newDirectDoubleBuffer(BUFFER_SIZE); // Contains the sides
 		private final IntBuffer bottomIndices = Buffers.newDirectIntBuffer(BUFFER_SIZE / 2);
 
@@ -186,7 +157,7 @@ class TextDrawerHelper {
 
 		public void flip() {
 			quadsBuffer.flip();
-			if (normalBuffer != null) { normalBuffer.flip(); }
+			normalBuffer.flip();
 		}
 
 		/**
@@ -204,7 +175,7 @@ class TextDrawerHelper {
 					temp.setTo(previousX, previousY, 0, previousX, previousY, depth, x, y, 0, previousX, previousY, 0);
 					temp.getNormal(true, 1, normal);
 					// We add two normal vectors as the vertex buffer will be filled by 2 coordinates
-					addNormal(normal.x, normal.y, normal.z, normal.x, normal.y, normal.z);
+					normalBuffer.put(new double[] { normal.x, normal.y, normal.z, normal.x, normal.y, normal.z });
 				}
 				// And we store the upper face
 				quadsBuffer.put(x).put(y).put(depth);
@@ -213,24 +184,14 @@ class TextDrawerHelper {
 			previousY = y;
 		}
 
-		public void addNormal(final double... ordinates) {
-			normalBuffer.put(ordinates);
-		}
-
-		public void clear() {
-			if (normalBuffer != null) { normalBuffer.clear(); }
+		public void prepare() {
+			normalBuffer.clear();
 			quadsBuffer.clear();
 			bottomIndices.clear();
-
-		}
-
-		public void prepare() {
 			currentIndex = -1;
-			normalBuffer = depth > 0 ? newDirectDoubleBuffer(BUFFER_SIZE) : null;
 		}
 
 		public void fixedPipelineFallback(final OpenGL openGL) {
-
 			var i = -1;
 			while (i < currentIndex) {
 				var begin = indices[++i];
@@ -268,8 +229,8 @@ class TextDrawerHelper {
 				fixedPipelineFallback(openGL);
 				return;
 			}
-			openGL.enable(GLPointerFunc.GL_VERTEX_ARRAY);
 			var gl = openGL.getGL();
+			openGL.enable(GLPointerFunc.GL_VERTEX_ARRAY);
 			openGL.enable(GLPointerFunc.GL_NORMAL_ARRAY);
 			gl.glNormalPointer(GL2GL3.GL_DOUBLE, 0, normalBuffer);
 			gl.glVertexPointer(3, GL2GL3.GL_DOUBLE, 0, quadsBuffer);
@@ -289,7 +250,7 @@ class TextDrawerHelper {
 			var gl = openGL.getGL();
 			// To draw the border, we provide a stride of 0 (= 3*BYTES_PER_DOUBLE) if depth = 0, as the bottom
 			// coordinates are contiguous, or 6*BYTES_PER_DOUBLE to take the upper coordinates into account
-			gl.glVertexPointer(3, GL2GL3.GL_DOUBLE, depth == 0 ? 0 : 6 * BYTES_PER_DOUBLE, quadsBuffer);
+			gl.glVertexPointer(3, GL2GL3.GL_DOUBLE, depth == 0 ? 0 : 6 * Double.SIZE / Byte.SIZE, quadsBuffer);
 			// We use the sides buffer to draw only the top contours. Depending on whether or not there is a
 			// depth, we rely on the indices of the different contours as either every 3 ordinates (if depth ==
 			// 0), or every 6 ordinates to account for the added 'z = depth' coordinates.
@@ -302,8 +263,8 @@ class TextDrawerHelper {
 	}
 
 	private class FaceBuffer extends GLUtessellatorCallbackAdapter {
-		DoubleBuffer current = newDirectDoubleBuffer(BUFFER_SIZE);
-		DoubleBuffer texture;
+		final DoubleBuffer current = newDirectDoubleBuffer(BUFFER_SIZE);
+		final DoubleBuffer texture = newDirectDoubleBuffer(BUFFER_SIZE * 2 / 3);
 
 		FaceBuffer() {
 			GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, this);
@@ -319,13 +280,9 @@ class TextDrawerHelper {
 			if (texture != null) { texture.flip(); }
 		}
 
-		public void clear() {
-			current.clear();
-			if (texture != null) { texture = null; }
-		}
-
 		public void prepare() {
-			if (textured && texture == null) { texture = newDirectDoubleBuffer(BUFFER_SIZE * 2 / 3); }
+			current.clear();
+			texture.clear();
 		}
 
 		public void fixedPipelineFallback(final OpenGL openGL, final boolean up) {
@@ -361,11 +318,6 @@ class TextDrawerHelper {
 			var d = (double[]) data;
 			if (textured) { texture.put(d[0] / width).put(d[1] / height); }
 			current.put(d[0]).put(d[1]).put(d[2]);
-		}
-
-		@Override
-		public void error(final int errnum) {
-			DEBUG.OUT("Error in tesselation: " + glu.gluErrorString(errnum));
 		}
 
 		@Override
