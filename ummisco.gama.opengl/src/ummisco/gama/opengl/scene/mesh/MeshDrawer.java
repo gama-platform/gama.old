@@ -84,7 +84,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 		// FLAGS
 		// Flags indicating if the data is to be drawn in wireframe, in grayscale, as triangles and with the value
-		private final boolean wireframe, grayscale, triangles, withText;
+		private final boolean grayscale, triangles, withText;
 		// Flags indicating what to output: textures, colors, lines ?
 		private final boolean outputsTextures, outputsColors, outputsLines;
 
@@ -98,7 +98,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 		// NORMALS
 		// The normals used for quads drawing
-		final double[] quadNormals = { 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 };
+		final double[] quadNormals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
 		// The temporary coordinate sequence used to hold vertices to compute normals
 		final ICoordinates surface = ICoordinates.ofLength(9);
 		// The temporary transfer value for the normal
@@ -119,7 +119,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			min = minMax[0];
 			this.cx = attributes.getCellSize().x;
 			this.cy = attributes.getCellSize().y;
-			this.wireframe = attributes.isEmpty();
+
 			this.grayscale = attributes.isGrayscaled();
 			this.withText = attributes.isWithText();
 			Color line = attributes.getBorder();
@@ -130,6 +130,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				lineColor = new double[] { line.getRed() / 255d, line.getGreen() / 255d, line.getBlue() / 255d };
 			}
 			this.triangles = attributes.isTriangulated();
+			boolean wireframe = gl.isWireframe();
 			outputsTextures = attributes.isTextured() && !grayscale && !wireframe;
 			outputsColors = (fill != null || grayscale) && !wireframe;
 			outputsLines = wireframe || line != null;
@@ -228,7 +229,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			for (var index = 0; index < indexBuffer.limit(); index++) {
 				var i = indexBuffer.get(index);
 				int one = i * 3, two = i * 3 + 1, three = i * 3 + 2;
-				if (!wireframe && outputsColors) {
+				if (!openGL.isWireframe() && outputsColors) {
 					openGL.setCurrentColor(colorBuffer.get(one), colorBuffer.get(two), colorBuffer.get(three), 1);
 				}
 				if (outputsTextures) { openGL.outputTexCoord(texBuffer.get(i * 2), texBuffer.get(i * 2 + 1)); }
@@ -277,7 +278,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				if (outputsTextures) { gl.glTexCoordPointer(2, GL2GL3.GL_DOUBLE, 0, texBuffer); }
 				if (outputsColors) { gl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, colorBuffer); }
 
-				if (!wireframe) {
+				if (!openGL.isWireframe()) {
 					gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
 				}
 				if (outputsLines) {
