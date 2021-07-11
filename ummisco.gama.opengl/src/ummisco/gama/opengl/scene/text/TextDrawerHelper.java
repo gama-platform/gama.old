@@ -1,4 +1,4 @@
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl.scene.text;
 
 import static com.jogamp.common.nio.Buffers.newDirectDoubleBuffer;
 import static com.jogamp.opengl.glu.GLU.GLU_TESS_WINDING_NONZERO;
@@ -32,7 +32,7 @@ import ummisco.gama.opengl.OpenGL;
  * @author Alexis Drogoul
  *
  */
-class StringDrawerHelper {
+class TextDrawerHelper {
 
 	static {
 		DEBUG.OFF();
@@ -49,7 +49,7 @@ class StringDrawerHelper {
 	Color border;
 	double width, height, depth;
 
-	StringDrawerHelper(final OpenGL openGL) {
+	TextDrawerHelper(final OpenGL openGL) {
 		glu = GLU.createGLU(openGL.getGL());
 		tobj = GLU.gluNewTess();
 	}

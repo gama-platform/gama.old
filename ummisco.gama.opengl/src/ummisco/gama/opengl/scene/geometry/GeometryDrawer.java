@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl.scene.geometry;
 
 import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
 import static msi.gama.common.geometry.GeometryUtils.applyToInnerGeometries;
@@ -35,6 +35,7 @@ import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
+import ummisco.gama.opengl.scene.ObjectDrawer;
 
 /**
  *

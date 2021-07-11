@@ -62,11 +62,11 @@ import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper;
 import ummisco.gama.opengl.renderer.helpers.KeystoneHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.GeometryDrawer;
 import ummisco.gama.opengl.scene.ObjectDrawer;
-import ummisco.gama.opengl.scene.ResourceDrawer;
-import ummisco.gama.opengl.scene.StringDrawer;
+import ummisco.gama.opengl.scene.geometry.GeometryDrawer;
 import ummisco.gama.opengl.scene.mesh.MeshDrawer;
+import ummisco.gama.opengl.scene.resources.ResourceDrawer;
+import ummisco.gama.opengl.scene.text.TextDrawer;
 
 /**
  * A class that represents an intermediate state between the rendering and the opengl state. It captures all the
@@ -91,7 +91,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	// Special drawers
 	private final GeometryDrawer geometryDrawer;
-	private final StringDrawer stringDrawer;
+	private final TextDrawer stringDrawer;
 	private final MeshDrawer fieldDrawer;
 	private final ResourceDrawer resourceDrawer;
 
@@ -162,7 +162,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
 		geometryDrawer = new GeometryDrawer(this);
 		fieldDrawer = new MeshDrawer(this);
-		stringDrawer = new StringDrawer(this);
+		stringDrawer = new TextDrawer(this);
 		resourceDrawer = new ResourceDrawer(this);
 	}
 

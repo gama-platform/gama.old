@@ -8,10 +8,12 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl.scene.resources;
 
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.opengl.scene.AbstractObject;
+import ummisco.gama.opengl.scene.AbstractObject.DrawerType;
 
 public class ResourceObject extends AbstractObject<GamaGeometryFile, DrawingAttributes> {
 

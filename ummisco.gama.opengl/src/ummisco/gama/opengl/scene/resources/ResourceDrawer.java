@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl.scene.resources;
 
 import java.awt.Color;
 
@@ -18,6 +18,7 @@ import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaGeometryFile;
 import ummisco.gama.opengl.OpenGL;
+import ummisco.gama.opengl.scene.ObjectDrawer;
 
 public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 

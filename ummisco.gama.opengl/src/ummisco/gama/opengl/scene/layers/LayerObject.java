@@ -32,7 +32,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.matrix.IField;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.PixelUnitExpression;
+import msi.gaml.expressions.units.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
@@ -42,10 +42,10 @@ import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.scene.ResourceObject;
-import ummisco.gama.opengl.scene.StringObject;
+import ummisco.gama.opengl.scene.geometry.GeometryObject;
 import ummisco.gama.opengl.scene.mesh.MeshObject;
+import ummisco.gama.opengl.scene.resources.ResourceObject;
+import ummisco.gama.opengl.scene.text.StringObject;
 
 /**
  * Class LayerObject.

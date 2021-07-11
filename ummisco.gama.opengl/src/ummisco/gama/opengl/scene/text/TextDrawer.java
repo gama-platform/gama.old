@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl.scene.text;
 
 import java.awt.Font;
 import java.awt.Shape;
@@ -26,6 +26,7 @@ import msi.gama.util.GamaColor;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaFontType;
 import ummisco.gama.opengl.OpenGL;
+import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
@@ -37,12 +38,12 @@ import ummisco.gama.ui.utils.PlatformHelper;
  *
  */
 
-public class StringDrawer extends ObjectDrawer<StringObject> {
-	private StringDrawerHelper builder;
+public class TextDrawer extends ObjectDrawer<StringObject> {
+	private TextDrawerHelper builder;
 	final static AffineTransform AT = AffineTransform.getScaleInstance(1.0, -1.0);
 	final static FontRenderContext CONTEXT = new FontRenderContext(new AffineTransform(), true, true);
 
-	public StringDrawer(final OpenGL gl) {
+	public TextDrawer(final OpenGL gl) {
 		super(gl);
 	}
 
@@ -112,8 +113,8 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 	@Override
 	public void dispose() {}
 
-	StringDrawerHelper getBuilder() {
-		if (builder == null) { builder = new StringDrawerHelper(gl); }
+	TextDrawerHelper getBuilder() {
+		if (builder == null) { builder = new TextDrawerHelper(gl); }
 		return builder;
 	}
 

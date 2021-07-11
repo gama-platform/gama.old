@@ -8,13 +8,15 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.scene;
+package ummisco.gama.opengl.scene.geometry;
 
 import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.opengl.scene.AbstractObject;
+import ummisco.gama.opengl.scene.AbstractObject.DrawerType;
 
 public class GeometryObject extends AbstractObject<Geometry, DrawingAttributes> {
 

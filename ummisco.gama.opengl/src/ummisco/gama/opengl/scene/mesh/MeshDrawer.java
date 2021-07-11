@@ -19,9 +19,7 @@ import java.nio.IntBuffer;
 import java.util.Locale;
 
 import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -30,7 +28,6 @@ import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.IMeshColorProvider;
-import msi.gaml.statements.draw.MeshDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 
@@ -73,8 +70,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		private final int[] realIndexes;
 
 		// BUFFERS
-		// The buffers for vertices, normals, textures, colors, line colors and the normals to display (if debugging)
-		private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer, displayNormalBuffer;
+		// The buffers for vertices, normals, textures, colors, line colors
+		private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer;
 		// The buffer holding the indices to the points to draw
 		private IntBuffer indexBuffer;
 
@@ -88,8 +85,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		// FLAGS
 		// Flags indicating if the data is to be drawn in wireframe, in grayscale, as triangles and with the value
 		private final boolean wireframe, grayscale, triangles, withText;
-		// Flags indicating what to output: textures, colors, lines, normals ?
-		private final boolean outputsTextures, outputsColors, outputsLines, outputsNormals = false;
+		// Flags indicating what to output: textures, colors, lines ?
+		private final boolean outputsTextures, outputsColors, outputsLines;
 
 		// COLORS
 		// An array holding the three components of the line color
@@ -101,7 +98,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 		// NORMALS
 		// The normals used for quads drawing
-		final double[] quadNormals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+		final double[] quadNormals = { 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 };
 		// The temporary coordinate sequence used to hold vertices to compute normals
 		final ICoordinates surface = ICoordinates.ofLength(9);
 		// The temporary transfer value for the normal
@@ -111,10 +108,10 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			var attributes = object.getAttributes();
 			this.cols = (int) attributes.getXYDimension().x;
 			this.rows = (int) attributes.getXYDimension().y;
-
-			data = smooth(object.getObject().getMatrix(), attributes.getSmooth());
 			noData = attributes.getNoDataValue();
 			if (noData == IField.NO_NO_DATA) { noData = object.getObject().getNoData(null); }
+			data = smooth(object.getObject().getMatrix(), attributes.getSmooth());
+
 			realIndexes = new int[cols * rows];
 
 			var minMax = object.getObject().getMinMax(null);
@@ -147,8 +144,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			final var lengthM1 = (cols - 1) * (rows - 1);
 			vertexBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
 			normalBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
-			if (triangles && outputsNormals) { displayNormalBuffer = newDirectDoubleBuffer(length * 6); }
-			if (triangles) { indexBuffer = newDirectIntBuffer(lengthM1 * 6); }
+			indexBuffer = newDirectIntBuffer(lengthM1 * 6);
 			if (outputsLines) { lineColorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
 			if (outputsTextures) { texBuffer = newDirectDoubleBuffer(triangles ? length * 2 : lengthM1 * 8); }
 			if (outputsColors) { colorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
@@ -162,12 +158,6 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			if (outputsLines) { lineColorBuffer.put(lineColor); }
 		}
 
-		double get(final int x0, final int y0) {
-			var x = x0 < 0 ? 0 : x0 > cols - 1 ? cols - 1 : x0;
-			var y = y0 < 0 ? 0 : y0 > rows - 1 ? rows - 1 : y0;
-			return data[y * cols + x];
-		}
-
 		public void fillBuffers() {
 			if (triangles) {
 				var realIndex = 0;
@@ -177,18 +167,15 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 						var x = i * cx;
 						var index = j * cols + i;
 						var z = data[index];
-						if (z == noData) {
-							realIndexes[index] = -1;
-							continue;
-						} else {
-							realIndexes[index] = realIndex++;
-						}
+						realIndexes[index] = z == noData ? -1 : realIndex++;
+						if (z == noData) { continue; }
 						vertexBuffer.put(x).put(-y).put(z);
 						colorize(z, i, j);
-						surface.setTo(x - cx, y - cy, get(i - 1, j - 1), x, y - cy, get(i, j - 1), x + cx, y - cy,
-								get(i + 1, j - 1), x + cx, y, get(i + 1, j), x + cx, y + cy, get(i + 1, j + 1), x,
-								y + cy, get(i, j + 1), x - cx, y + cy, get(i - 1, j + 1), x - cx, y, get(i - 1, j),
-								x - cx, y - cy, get(i - 1, j - 1)).getNormal(true, 1, normal);
+						surface.setTo(x - cx, y - cy, get(data, i - 1, j - 1), x, y - cy, get(data, i, j - 1), x + cx,
+								y - cy, get(data, i + 1, j - 1), x + cx, y, get(data, i + 1, j), x + cx, y + cy,
+								get(data, i + 1, j + 1), x, y + cy, get(data, i, j + 1), x - cx, y + cy,
+								get(data, i - 1, j + 1), x - cx, y, get(data, i - 1, j), x - cx, y - cy,
+								get(data, i - 1, j - 1)).getNormal(true, 1, normal);
 						normalBuffer.put(normal.x).put(normal.y).put(normal.z);
 						if (j > 0 && i > 0) {
 							var current = realIndexes[index];
@@ -202,17 +189,21 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 					}
 				}
 			} else {
-				for (var x = 0; x < cols - 1; ++x) {
-					double x1 = x * cx, x2 = (x + 1) * cx;
-					for (var y = 0; y < rows - 1; ++y) {
-						double y1 = -y * cy, y2 = -(y + 1) * cy, z = data[y * cols + x];
+				int index = 0;
+				for (var i = 0; i < cols - 1; ++i) {
+					double x1 = i * cx, x2 = (i + 1) * cx;
+					for (var j = 0; j < rows - 1; ++j) {
+						double y1 = -j * cy, y2 = -(j + 1) * cy, z = data[j * cols + i];
 						if (z == noData) { continue; }
 						vertexBuffer.put(new double[] { x1, y1, z, x2, y1, z, x2, y2, z, x1, y2, z });
-						colorize(z, x, y);
-						colorize(z, x + 1, y);
-						colorize(z, x + 1, y + 1);
-						colorize(z, x, y + 1);
+						colorize(z, i, j);
+						colorize(z, i + 1, j);
+						colorize(z, i + 1, j + 1);
+						colorize(z, i, j + 1);
 						normalBuffer.put(quadNormals);
+						indexBuffer.put(index).put(index + 1).put(index + 3);
+						indexBuffer.put(index + 1).put(index + 2).put(index + 3);
+						index += 4;
 					}
 				}
 			}
@@ -223,18 +214,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			if (outputsColors) { colorBuffer = colorBuffer.flip(); }
 			if (outputsLines) { lineColorBuffer = lineColorBuffer.flip(); }
 			vertexBuffer = vertexBuffer.flip();
-			if (triangles) { indexBuffer = indexBuffer.flip(); }
+			indexBuffer = indexBuffer.flip();
 			normalBuffer = normalBuffer.flip();
-			if (triangles && outputsNormals) {
-				for (var i = 0; i < vertexBuffer.limit(); i += 3) {
-					displayNormalBuffer.put(vertexBuffer.get(i)).put(vertexBuffer.get(i + 1))
-							.put(vertexBuffer.get(i + 2));
-					displayNormalBuffer.put(vertexBuffer.get(i) - 2 * normalBuffer.get(i))
-							.put(vertexBuffer.get(i + 1) - 2 * normalBuffer.get(i + 1))
-							.put(vertexBuffer.get(i + 2) - 2 * normalBuffer.get(i + 2));
-				}
-				displayNormalBuffer.flip();
-			}
 		}
 
 		public void fixedPipelineFallback(final OpenGL openGL) {
@@ -243,55 +224,27 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			// Forcing alpha
 			gl.glBlendColor(0.0f, 0.0f, 0.0f, (float) openGL.getCurrentObjectAlpha());
 			gl.glBlendFunc(GL2ES2.GL_CONSTANT_ALPHA, GL2ES2.GL_ONE_MINUS_CONSTANT_ALPHA);
-			if (triangles) {
-				openGL.beginDrawing(GL.GL_TRIANGLES);
+			openGL.beginDrawing(GL.GL_TRIANGLES);
+			for (var index = 0; index < indexBuffer.limit(); index++) {
+				var i = indexBuffer.get(index);
+				int one = i * 3, two = i * 3 + 1, three = i * 3 + 2;
+				if (!wireframe && outputsColors) {
+					openGL.setCurrentColor(colorBuffer.get(one), colorBuffer.get(two), colorBuffer.get(three), 1);
+				}
+				if (outputsTextures) { openGL.outputTexCoord(texBuffer.get(i * 2), texBuffer.get(i * 2 + 1)); }
+				openGL.outputNormal(normalBuffer.get(one), normalBuffer.get(two), normalBuffer.get(three));
+				gl.glVertex3d(vertexBuffer.get(one), vertexBuffer.get(two), vertexBuffer.get(three));
+			}
+			if (outputsLines) {
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 				for (var index = 0; index < indexBuffer.limit(); index++) {
 					var i = indexBuffer.get(index);
-					// System.out.println("Index " + index + " -> " + i);
-					if (!wireframe && outputsColors) {
-						openGL.setCurrentColor(colorBuffer.get(i * 3), colorBuffer.get(i * 3 + 1),
-								colorBuffer.get(i * 3 + 2), 1);
-					}
-					if (outputsTextures) { openGL.outputTexCoord(texBuffer.get(i * 2), texBuffer.get(i * 2 + 1)); }
-					openGL.outputNormal(normalBuffer.get(i * 3), normalBuffer.get(i * 3 + 1),
-							normalBuffer.get(i * 3 + 2));
-					// System.out.println("Point: " + vertexBuffer.get(i) + " " + vertexBuffer.get(i + 1) + " "
-					// + vertexBuffer.get(i + 2));
-					gl.glVertex3d(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1), vertexBuffer.get(i * 3 + 2));
+					openGL.setCurrentColor(lineColorBuffer.get(i * 3), lineColorBuffer.get(i * 3 + 1),
+							lineColorBuffer.get(i + 1), 1);
+					openGL.outputVertex(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1),
+							vertexBuffer.get(i * 3 + 2));
 				}
-				if (outputsLines) {
-					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-					for (var index = 0; index < indexBuffer.limit(); index++) {
-						var i = indexBuffer.get(index);
-						openGL.setCurrentColor(lineColorBuffer.get(i * 3), lineColorBuffer.get(i * 3 + 1),
-								lineColorBuffer.get(i + 1), 1);
-						openGL.outputVertex(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1),
-								vertexBuffer.get(i * 3 + 2));
-					}
-					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-				}
-			} else {
-				openGL.beginDrawing(GL2ES3.GL_QUADS);
-				for (var i = 0; i < vertexBuffer.limit(); i += 3) {
-					if (!wireframe && outputsColors) {
-						openGL.setCurrentColor(colorBuffer.get(i), colorBuffer.get(i + 1), colorBuffer.get(i + 2), 1);
-					}
-					if (outputsTextures) {
-						openGL.outputTexCoord(texBuffer.get(2 * i / 3), texBuffer.get(2 * i / 3 + 1));
-					}
-					openGL.outputNormal(normalBuffer.get(i), normalBuffer.get(i + 1), normalBuffer.get(i + 2));
-					gl.glVertex3d(vertexBuffer.get(i), vertexBuffer.get(i + 1), vertexBuffer.get(i + 2));
-				}
-				if (outputsLines) {
-					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-					gl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, lineColorBuffer);
-					for (var i = 0; i < vertexBuffer.limit(); i += 3) {
-						openGL.setCurrentColor(lineColorBuffer.get(i), lineColorBuffer.get(i + 1),
-								lineColorBuffer.get(i + 2), 1);
-						openGL.outputVertex(vertexBuffer.get(i), vertexBuffer.get(i + 1), vertexBuffer.get(i + 2));
-					}
-					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-				}
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 			}
 			openGL.endDrawing();
 			gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -325,23 +278,13 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				if (outputsColors) { gl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, colorBuffer); }
 
 				if (!wireframe) {
-					if (triangles) {
-						gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
-					} else {
-						// AD Warning. GL_QUADS have been deprecated and removed from OpenGL 4.0
-						gl.glDrawArrays(GL2ES3.GL_QUADS, 0, vertexBuffer.limit() / 3);
-					}
+					gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
 				}
 				if (outputsLines) {
 					if (!outputsColors) { openGL.enable(GLPointerFunc.GL_COLOR_ARRAY); }
 					gl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, lineColorBuffer);
 					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-					if (triangles) {
-						gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
-					} else {
-						// AD Warning. GL_QUADS have been deprecated and removed from OpenGL 4.0
-						gl.glDrawArrays(GL2ES3.GL_QUADS, 0, vertexBuffer.limit() / 3);
-					}
+					gl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
 					gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 				}
 
@@ -349,13 +292,6 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				openGL.disable(GLPointerFunc.GL_NORMAL_ARRAY);
 				if (outputsTextures) { openGL.disable(GLPointerFunc.GL_TEXTURE_COORD_ARRAY); }
 				if (outputsColors || outputsLines) { openGL.disable(GLPointerFunc.GL_COLOR_ARRAY); }
-
-				if (triangles && outputsNormals) {
-					openGL.setCurrentColor(Color.white);
-					openGL.setLineWidth(3);
-					gl.glVertexPointer(3, GL2GL3.GL_DOUBLE, 0, displayNormalBuffer);
-					gl.glDrawArrays(GL.GL_LINES, 0, displayNormalBuffer.limit() / 3);
-				}
 				openGL.disable(GLPointerFunc.GL_VERTEX_ARRAY);
 				// Putting back alpha to normal
 				gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -406,11 +342,16 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			for (var i = 0; i < passes; i++) {
 				for (var y = 0; y < rows; ++y) {
 					for (var x = 0; x < cols; ++x) {
+						double z00 = get(input, x - 1, y - 1), z01 = get(input, x - 1, y - 1),
+								z02 = get(input, x + 1, y - 1), z03 = get(input, x - 1, y), z = get(input, x, y),
+								z05 = get(input, x + 1, y), z06 = get(input, x - 1, y + 1), z07 = get(input, x, y + 1),
+								z08 = get(input, x + 1, y + 1);
+						if (z00 == noData || z01 == noData || z02 == noData || z03 == noData || z == noData
+								|| z05 == noData || z06 == noData || z07 == noData || z08 == noData) {
+							continue;
+						}
 						// Sample a 3x3 filtering grid based on surrounding neighbors
-						var value = get(input, x - 1, y - 1) + get(input, x, y - 1) + get(input, x + 1, y - 1)
-								+ get(input, x - 1, y) + get(input, x, y) + get(input, x + 1, y)
-								+ get(input, x - 1, y + 1) + get(input, x, y + 1) + get(input, x + 1, y + 1);
-						output[x + y * cols] = value / 9d;
+						output[x + y * cols] = (z00 + z01 + z02 + z03 + z + z05 + z06 + z07 + z08) / 9d;
 					}
 				}
 				input = output;

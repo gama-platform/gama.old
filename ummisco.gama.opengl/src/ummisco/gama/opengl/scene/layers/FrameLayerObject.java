@@ -21,7 +21,7 @@ import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.geometry.GeometryObject;
 
 public class FrameLayerObject extends StaticLayerObject.World {
 
