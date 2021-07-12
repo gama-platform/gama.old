@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v2 
         with:
           distribution: 'adopt'
-          java-version: '15'
+          java-version: '16'
           java-package: jdk  
       - name: Prepare build
         run: |
