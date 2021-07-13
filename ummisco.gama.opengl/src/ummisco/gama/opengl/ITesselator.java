@@ -2,7 +2,7 @@ package ummisco.gama.opengl;
 
 import com.jogamp.opengl.glu.GLUtessellatorCallback;
 
-public interface Tesselator extends GLUtessellatorCallback {
+public interface ITesselator extends GLUtessellatorCallback {
 
 	@Override
 	default void begin(final int type) {
@@ -18,16 +18,16 @@ public interface Tesselator extends GLUtessellatorCallback {
 		drawVertex(0, v[0], v[1], v[2]);
 	}
 
-	public void drawVertex(final int i, final double x, final double y, final double z);
+	void drawVertex(final int i, final double x, final double y, final double z);
 
 	@Override
 	default void end() {
 		endDrawing();
 	}
 
-	public void endDrawing();
+	default void endDrawing() {}
 
-	public void beginDrawing(int type);
+	default void beginDrawing(final int type) {}
 
 	@Override
 	default void error(final int errnum) {}

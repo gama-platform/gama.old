@@ -79,7 +79,7 @@ import ummisco.gama.opengl.scene.text.TextDrawer;
  * @author drogoul
  *
  */
-public class OpenGL extends AbstractRendererHelper implements Tesselator {
+public class OpenGL extends AbstractRendererHelper implements ITesselator {
 
 	static {
 		DEBUG.OFF();
@@ -775,14 +775,6 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 
 	// TEXT
 
-	// private int computeFontSize(final int size) {
-	// return PlatformHelper.scaleToHiDPI(Math.round(size * textSizeMultiplier));
-	// }
-
-	// public void cacheFont(final Font f) {
-	// fontCache.process(f, computeFontSize(f.getSize()));
-	// }
-
 	/**
 	 * Draws one string in raster at the given coords and with the given font. Enters and exits raster mode before and
 	 * after drawing the string
@@ -830,6 +822,7 @@ public class OpenGL extends AbstractRendererHelper implements Tesselator {
 	}
 
 	public void setObjectWireframe(final boolean wireframe) {
+		if (wireframe == (displayIsWireframe || objectIsWireframe)) return;
 		objectIsWireframe = wireframe;
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, !isWireframe() ? GL2GL3.GL_FILL : GL2GL3.GL_LINE);
 	}

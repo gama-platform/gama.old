@@ -158,10 +158,6 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		setFlag(WITH_TEXT, showText);
 	}
 
-	public boolean isTextured() {
-		return getTextures() != null;
-	}
-
 	public void setSmooth(final int smooth) {
 		this.smooth = smooth;
 	}
