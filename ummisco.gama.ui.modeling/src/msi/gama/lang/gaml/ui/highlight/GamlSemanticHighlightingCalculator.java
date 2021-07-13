@@ -48,11 +48,14 @@ import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Facet;
+import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.S_Assignment;
 import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 
@@ -74,7 +77,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	@Override
 	public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor arg1,
 			final CancelIndicator arg2) {
-		if (resource == null) { return; }
+		if (resource == null) return;
 		acceptor = arg1;
 		final var root = resource.getAllContents();
 		while (root.hasNext()) {
@@ -92,7 +95,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	}
 
 	void process(final EObject object) {
-		if (object == null) { return; }
+		if (object == null) return;
 		process(object, object.eClass());
 	}
 
@@ -116,15 +119,11 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 					setStyle(object, FACET_ID, 0);
 					if (key.startsWith("type")) {
 						setStyle(TYPE_ID, NodeModelUtils.getNode(f.getExpr()));
-					} else if (f.getName() != null) {
-						setStyle(object, VARDEF_ID, 1);
-					}
+					} else if (f.getName() != null) { setStyle(object, VARDEF_ID, 1); }
 				}
 				break;
 			case GamlPackage.TERMINAL_EXPRESSION:
-				if (!(object instanceof StringLiteral)) {
-					setStyle(object, NUMBER_ID, 0);
-				}
+				if (!(object instanceof StringLiteral)) { setStyle(object, NUMBER_ID, 0); }
 				break;
 			case GamlPackage.RESERVED_LITERAL:
 				setStyle(object, RESERVED_ID, 0);
@@ -157,16 +156,23 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				setStyle(object, VARDEF_ID, ((ArgumentDefinition) object).getName(), false);
 				break;
 			case GamlPackage.STATEMENT:
-				final var stat = (Statement) object;
-				setStyle(object, VARDEF_ID, EGaml.getInstance().getNameOf(stat), false);
-				setStyle(object, KEYWORD_ID, stat.getKey(), false);
+				Statement stat = (Statement) object;
+				String name = findNameOf(stat);
+				if (name != null) { setStyle(stat, VARDEF_ID, name, false); }
+				setStyle(stat, KEYWORD_ID, stat.getKey(), false);
 				break;
 			default:
 				final List<EClass> eSuperTypes = clazz.getESuperTypes();
-				if (!eSuperTypes.isEmpty()) {
-					process(object, eSuperTypes.get(0));
-				}
+				if (!eSuperTypes.isEmpty()) { process(object, eSuperTypes.get(0)); }
 		}
+	}
+
+	private String findNameOf(final EObject o) {
+		if (o instanceof GamlDefinition) return ((GamlDefinition) o).getName();
+		if (o instanceof S_Display) return ((S_Display) o).getName();
+		if (o instanceof HeadlessExperiment) return ((HeadlessExperiment) o).getName();
+
+		return null;
 	}
 
 	private final boolean setStyle(final EObject obj, final String s, final int position) {
@@ -174,7 +180,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		// second one, etc.
 		if (obj != null && s != null) {
 			INode n = NodeModelUtils.getNode(obj);
-			if (n == null) { return false; }
+			if (n == null) return false;
 			if (position > -1) {
 				var i = 0;
 				for (final ILeafNode node : n.getLeafNodes()) {
@@ -202,18 +208,16 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	}
 
 	private final boolean setStyle(final EObject obj, final String s, final String text, final boolean all) {
-		if (text == null) { return false; }
+		if (text == null) return false;
 		if (obj != null && s != null) {
 			INode n = NodeModelUtils.getNode(obj);
-			if (n == null) { return false; }
+			if (n == null) return false;
 			for (final ILeafNode node : n.getLeafNodes()) {
 				if (!node.isHidden()) {
 					final var sNode = StringUtils.toJavaString(NodeModelUtils.getTokenText(node));
 					if (equalsFacetOrString(text, sNode)) {
 						n = node;
-						if (!all) {
-							break;
-						}
+						if (!all) { break; }
 					}
 				}
 			}
@@ -223,7 +227,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	}
 
 	boolean equalsFacetOrString(final String text, final String s) {
-		if (s.equals(text)) { return true; }
+		if (s.equals(text)) return true;
 		final var length = s.length();
 		final var first = s.charAt(0);
 		final var last = s.charAt(length - 1);
@@ -232,7 +236,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				return text.equals(s.substring(0, length - 1));
 			case '\"':
 			case '\'':
-				return (first == last) && text.equals(s.substring(1, length - 1));
+				return first == last && text.equals(s.substring(1, length - 1));
 
 		}
 		return false;
