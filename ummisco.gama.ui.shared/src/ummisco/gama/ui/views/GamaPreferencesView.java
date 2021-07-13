@@ -99,18 +99,18 @@ public class GamaPreferencesView {
 	}
 
 	public static void preload() {
-		 DEBUG.TIMER(DEBUG.PAD("> GAMA: preferences", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
-		 WorkbenchHelper.run(() -> {
-		 if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
-		 instance = new GamaPreferencesView(WorkbenchHelper.getShell());
-		 }
-		
-		 });
-		 for (final IParameterEditor ed : instance.editors.values()) {
-		 ed.updateValue(true);
-		 }
-		 });
-		
+		DEBUG.TIMER(DEBUG.PAD("> GAMA: preferences", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
+			WorkbenchHelper.run(() -> {
+				if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
+					instance = new GamaPreferencesView(WorkbenchHelper.getShell());
+				}
+
+			});
+			for (final IParameterEditor ed : instance.editors.values()) {
+				ed.updateValue(true);
+			}
+		});
+
 	}
 
 	static {
@@ -165,7 +165,6 @@ public class GamaPreferencesView {
 		final var viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
 		contents.add(viewer);
 		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		// viewer.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		viewer.setBackground(
 				!ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.darker());
 		viewer.setLayoutData(data);
@@ -200,12 +199,10 @@ public class GamaPreferencesView {
 					} else {
 						activations.put(activable, true);
 					}
+				} else if (value instanceof Boolean) {
+					ed.setActive((Boolean) value);
 				} else {
-					if (value instanceof Boolean) {
-						ed.setActive((Boolean) value);
-					} else {
-						ed.setActive(true);
-					}
+					ed.setActive(true);
 				}
 			}
 		}
