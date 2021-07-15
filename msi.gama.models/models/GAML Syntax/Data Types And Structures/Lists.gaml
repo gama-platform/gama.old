@@ -134,6 +134,7 @@ species accessing_list_elements {
 species combining_lists {
 	list<int> l1 <- [1,2,3,4,5,6,7,8,9,10];
 	list<int> l2 <- [1,3,5,7,9];
+	list<list> useful_list_of_lists <- [['A','B'],['C','D']]; 
 	init {
 		write "";
 		write "== COMBINING LISTS ==";
@@ -149,6 +150,7 @@ species combining_lists {
 		list<string> l3 <- list<string>(l1 + l2);
 		write "list<string> l3 <- l1 + l2; " + sample(l3);
 		write sample(l1 as list<float>);
+		write sample(cartesian_product(useful_list_of_lists));
 	}
 }
 

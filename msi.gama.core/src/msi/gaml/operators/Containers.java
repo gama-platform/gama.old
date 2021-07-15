@@ -18,8 +18,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -32,6 +35,7 @@ import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -55,6 +59,7 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaListFactory.GamaListSupplier;
@@ -1317,6 +1322,29 @@ public class Containers {
 	public static double sum(final IScope scope, final IGraph g) {
 		if (g == null) return 0.0;
 		return g.computeTotalWeight();
+	}
+	
+	@operator (
+			value = "cartesian_product",
+			//can_be_const = true,
+			doc = @doc ("Returns the cartesian product of elements in all given sub-lists"),
+			expected_content_type = { IType.LIST },
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER }
+			)
+	@test ("cartesian_product([['A','B'],['C','D']]) = [['A','C'],['A','D'],['B','C'],['B','D']]")
+	public static Object cart_prod(final IScope scope, final IList list) {
+		IType ct = list.getGamlType().getContentType();
+		if (!ct.isContainer()) { GamaRuntimeException.error("Must be a list of list", scope); }
+		
+		final IList<IList> l = notNull(scope, list).listValue(scope, list.getGamlType().getContentType(), false);
+		List<? extends Set<Object>> setOfSet = l.stream(scope).map(ilist -> new LinkedHashSet<>(ilist)).collect(Collectors.toList());
+		
+		IList<IList> res = GamaListFactory.create(ct);
+		Set<List<Object>> cp = Sets.cartesianProduct(setOfSet);
+		for (List cartList : cp) { res.add(GamaListFactory.create(scope, ct.getContentType(), cartList)); }
+		
+		return res;
 	}
 
 	@operator (
