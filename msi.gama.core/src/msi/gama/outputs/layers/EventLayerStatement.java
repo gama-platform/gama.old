@@ -148,15 +148,15 @@ public class EventLayerStatement extends AbstractLayerStatement {
 		public void validate(final StatementDescription description) {
 			final String name = description.getLitteral(NAME);
 			if (name.length() > 1) {
-				String error = "";
+				StringBuilder error = new StringBuilder();
 				boolean foundEventName = false;
 				for (final IEventLayerDelegate delegate : delegates) {
-					error += delegate.getEvents() + " ";
+					error.append(delegate.getEvents()).append(" ");
 					if (delegate.getEvents().contains(name)) { foundEventName = true; }
 				}
 				if (!foundEventName) {
-					description.error("No event can be triggered for '" + name + "'. Acceptable values are " + error
-							+ " or a character", IGamlIssue.UNKNOWN_ARGUMENT, NAME);
+					description.error("No event can be triggered for '" + name + "'. Acceptable values are "
+							+ error.append(" or a character").toString(), IGamlIssue.UNKNOWN_ARGUMENT, NAME);
 					return;
 				}
 			}
@@ -177,7 +177,6 @@ public class EventLayerStatement extends AbstractLayerStatement {
 				if (sd == null) {
 					description.error("Action '" + actionName + "' is not defined in neither 'global' nor 'experiment'",
 							IGamlIssue.UNKNOWN_ACTION, ACTION);
-					return;
 				} else if (sd.getPassedArgs().size() > 0) {
 					description.error("Action '" + actionName
 							+ "' cannot have arguments. Use '#user_location' inside to obtain the location of the mouse, and compute the selected agents in the action using GAML spatial operators",
@@ -215,6 +214,10 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	public IAgent getExecuter(final IScope scope) {
 		return executesInSimulation ? scope.getSimulation() : scope.getExperiment();
+	}
+
+	public boolean executesInSimulation() {
+		return executesInSimulation;
 	}
 
 	public IExecutable getExecutable(final IScope scope) {
@@ -255,8 +258,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	}
 
 	private Object getSource(final IScope scope) {
-		final Object source = type == null ? IKeyword.DEFAULT : type.value(scope);
-		return source;
+		return type == null ? IKeyword.DEFAULT : type.value(scope);
 	}
 
 	@Override

@@ -42,26 +42,11 @@ public class MeshLayer extends AbstractLayer {
 		final MeshLayerData data = getData();
 		if (data.drawLines()) { lineColor = data.getLineColor(); }
 		final IField values = data.getElevationMatrix(scope);
-		// final double[] bis = Arrays.copyOf(values, values.length);
-		// double min = Doubles.min(bis);
-		// for (int i = 0; i < bis.length; ++i) {
-		// bis[i] -= min;
-		// }
-		// double max = Doubles.max(bis) / 100d;
-		// for (int i = 0; i < bis.length; ++i) {
-		// bis[i] /= max;
-		// }
 		final GamaImageFile textureFile = data.textureFile();
 		final MeshDrawingAttributes attributes = new MeshDrawingAttributes("", lineColor, false);
 		attributes.setGrayscaled(data.isGrayScaled());
 		attributes.setEmpty(data.isWireframe());
 		if (textureFile != null) { attributes.setTextures(Arrays.asList(textureFile)); }
-		// See later to directly interpret an image from the values
-		// else if (image != null) {
-		// final int[] imageData = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-		// System.arraycopy(data.getGrid().getDisplayData(), 0, imageData, 0, imageData.length);
-		// attributes.setTextures(Arrays.asList(image));
-		// }
 		attributes.setLocation(data.getPosition().toGamaPoint());
 		attributes.setTriangulated(data.isTriangulated());
 		attributes.setWithText(data.isShowText());
@@ -71,7 +56,7 @@ public class MeshLayer extends AbstractLayer {
 		attributes.setSize(Scaling3D.of(data.getSize()));
 		attributes.setScale(data.getScale());
 		attributes.setColors(data.getColor());
-		attributes.setSmooth(data.isSmooth());
+		attributes.setSmooth(data.getSmooth());
 		attributes.setNoData(data.getNoDataValue());
 		dg.drawField(values, attributes);
 

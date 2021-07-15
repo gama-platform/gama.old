@@ -154,7 +154,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 	Arguments args;
 	Arguments runtimeArgs;
 	final String actionName;
-	final String category;
+	String category;
 	final IExpression when;
 	List<UserInputStatement> inputs = new ArrayList<>();
 
@@ -248,6 +248,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 
 	@Override
 	public String getCategory() {
+		if (category == null) { category = IExperimentDisplayable.super.getCategory(); }
 		return category;
 	}
 
@@ -263,5 +264,11 @@ public class UserCommandStatement extends AbstractStatementSequence
 
 	@Override
 	public void setUnitLabel(final String label) {}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		// By default. Maybe it should be computed (looking at the action in experiment or in model ?
+		return false;
+	}
 
 }

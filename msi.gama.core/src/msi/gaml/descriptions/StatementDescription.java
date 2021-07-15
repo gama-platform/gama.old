@@ -22,8 +22,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IOperator;
 import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.operators.IOperator;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
@@ -41,7 +41,6 @@ public class StatementDescription extends SymbolDescription {
 
 	// Corresponds to the "with" facet
 	protected final Arguments passedArgs;
-	private static int COMMAND_INDEX = 0;
 
 	public StatementDescription(final String keyword, final IDescription superDesc, final boolean hasArgs,
 			final EObject source, final Facets facets, final Arguments alreadyComputedArgs) {
@@ -56,30 +55,25 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if (isBuiltIn()) { return; }
+		if (isBuiltIn()) return;
 		super.dispose();
 
-		if (passedArgs != null) {
-			passedArgs.dispose();
-		}
+		if (passedArgs != null) { passedArgs.dispose(); }
 	}
 
 	private Arguments createArgs() {
-		if (!hasFacets()) { return null; }
+		if (!hasFacets()) return null;
 		if (!hasFacet(WITH)) {
-			if (!isInvocation()) { return null; }
+			if (!isInvocation()) return null;
 			if (hasFacetsNotIn(DO_FACETS)) {
 				final Arguments args = new Arguments();
 				visitFacets((facet, b) -> {
-					if (!DO_FACETS.contains(facet)) {
-						args.put(facet, b);
-					}
+					if (!DO_FACETS.contains(facet)) { args.put(facet, b); }
 					return true;
 				});
 				return args;
-			} else {
+			} else
 				return null;
-			}
 		} else {
 			try {
 				return GAML.getExpressionFactory().createArgumentMap(getAction(), getFacet(WITH), this);
@@ -100,13 +94,11 @@ public class StatementDescription extends SymbolDescription {
 
 	private ActionDescription getAction() {
 		final String actionName = getLitteral(ACTION);
-		if (actionName == null) { return null; }
+		if (actionName == null) return null;
 		final TypeDescription declPlace =
 				(TypeDescription) getDescriptionDeclaringAction(actionName, isSuperInvocation());
 		ActionDescription executer = null;
-		if (declPlace != null) {
-			executer = declPlace.getAction(actionName);
-		}
+		if (declPlace != null) { executer = declPlace.getAction(actionName); }
 		return executer;
 	}
 
@@ -120,7 +112,7 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public boolean manipulatesVar(final String nm) {
-		if (getKeyword().equals(EQUATION)) {
+		if (EQUATION.equals(getKeyword())) {
 			final Iterable<IDescription> equations = getChildrenWithKeyword(EQUATION_OP);
 			for (final IDescription equation : equations) {
 				final IExpressionDescription desc = equation.getFacet(EQUATION_LEFT);
@@ -128,8 +120,8 @@ public class StatementDescription extends SymbolDescription {
 				final IExpression exp = desc.getExpression();
 				if (exp instanceof IOperator) {
 					final IOperator op = (IOperator) exp;
-					if (op.arg(0).getName().equals(nm)) { return true; }
-					if (op.arg(1) != null && op.arg(1).getName().equals(nm)) { return true; }
+					if (op.arg(0).getName().equals(nm) || op.arg(1) != null && op.arg(1).getName().equals(nm))
+						return true;
 				}
 			}
 		}
@@ -138,7 +130,7 @@ public class StatementDescription extends SymbolDescription {
 
 	public boolean verifyArgs(final Arguments args) {
 		final ActionDescription executer = getAction();
-		if (executer == null) { return false; }
+		if (executer == null) return false;
 		return executer.verifyArgs(this, args);
 	}
 
@@ -155,13 +147,13 @@ public class StatementDescription extends SymbolDescription {
 		String s = super.getName();
 		if (s == null) {
 			// Special case for aspects
-			if (getKeyword().equals(ASPECT)) {
+			if (ASPECT.equals(getKeyword())) {
 				s = DEFAULT;
 			} else {
-				if (getKeyword().equals(REFLEX)) {
+				if (REFLEX.equals(getKeyword())) {
 					warning("Reflexes should be named", MISSING_NAME, getUnderlyingElement());
 				}
-				s = INTERNAL + getKeyword() + String.valueOf(COMMAND_INDEX++);
+				s = INTERNAL + getKeyword() + String.valueOf(GAML.COMMAND_INDEX++);
 			}
 			setName(s);
 		}
@@ -179,9 +171,7 @@ public class StatementDescription extends SymbolDescription {
 		String nm = getName();
 		if (nm.contains(INTERNAL)) {
 			nm = getLitteral(ACTION);
-			if (nm == null) {
-				nm = "statement";
-			}
+			if (nm == null) { nm = "statement"; }
 		}
 		String in = "";
 		if (getMeta().isTopLevel()) {
@@ -197,27 +187,21 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated) { return this; }
+		if (validated) return this;
 		final IDescription result = super.validate();
-		if (passedArgs != null) {
-			validatePassedArgs();
-		}
+		if (passedArgs != null) { validatePassedArgs(); }
 		return result;
 	}
 
 	public Arguments validatePassedArgs() {
 		final IDescription superDesc = getEnclosingDescription();
 		passedArgs.forEachFacet((nm, exp) -> {
-			if (exp != null) {
-				exp.compile(superDesc);
-			}
+			if (exp != null) { exp.compile(superDesc); }
 			return true;
 		});
 		if (isInvocation()) {
 			verifyArgs(passedArgs);
-		} else if (keyword.equals(CREATE)) {
-			verifyInits(passedArgs);
-		}
+		} else if (CREATE.equals(keyword)) { verifyInits(passedArgs); }
 		return passedArgs;
 	}
 
@@ -243,19 +227,15 @@ public class StatementDescription extends SymbolDescription {
 				IType<?> initType = NO_TYPE;
 				IType<?> varType = NO_TYPE;
 				final VariableDescription vd = denotedSpecies.getAttribute(nm);
-				if (vd != null) {
-					varType = vd.getGamlType();
-				}
+				if (vd != null) { varType = vd.getGamlType(); }
 				if (exp != null) {
 					final IExpression expr = exp.getExpression();
-					if (expr != null) {
-						initType = expr.getGamlType();
-					}
+					if (expr != null) { initType = expr.getGamlType(); }
 					if (varType != NO_TYPE && !initType.isTranslatableInto(varType)) {
-						if (getKeyword().equals(CREATE)) {
+						if (CREATE.equals(getKeyword())) {
 							final boolean isDB = getFacet(FROM) != null
 									&& getFacet(FROM).getExpression().getGamlType().isAssignableFrom(Types.LIST);
-							if (isDB && initType.equals(Types.STRING)) { return true; }
+							if (isDB && initType.equals(Types.STRING)) return true;
 						}
 						warning("The type of attribute " + nm + " should be " + varType, SHOULD_CAST, exp.getTarget(),
 								varType.toString());
@@ -278,16 +258,14 @@ public class StatementDescription extends SymbolDescription {
 		IType t = super.getGamlType();
 		final String kw = getKeyword();
 		IType ct = t.getContentType();
-		if (kw.equals(CREATE) || kw.equals(CAPTURE) || kw.equals(RELEASE)) {
+		if (CREATE.equals(kw) || CAPTURE.equals(kw) || RELEASE.equals(kw)) {
 			ct = t;
 			t = Types.LIST;
 
 		} else if (t == NO_TYPE) {
 			if (hasFacet(VALUE)) {
 				final IExpression value = getFacetExpr(VALUE);
-				if (value != null) {
-					t = value.getGamlType();
-				}
+				if (value != null) { t = value.getGamlType(); }
 			} else if (hasFacet(OVER)) {
 				final IExpression expr = getFacetExpr(OVER);
 				if (expr != null) {
@@ -301,9 +279,7 @@ public class StatementDescription extends SymbolDescription {
 				}
 			} else if (hasFacet(FROM) && hasFacet(TO)) {
 				final IExpression expr = getFacetExpr(FROM);
-				if (expr != null) {
-					t = expr.getGamlType();
-				}
+				if (expr != null) { t = expr.getGamlType(); }
 			}
 		}
 

@@ -16,8 +16,8 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.types.DenotedActionExpression;
 import msi.gaml.factories.DescriptionFactory;
 
 public class BlockExpressionDescription extends EcoreBasedExpressionDescription {

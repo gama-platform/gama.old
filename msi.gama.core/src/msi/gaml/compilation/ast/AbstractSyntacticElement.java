@@ -19,6 +19,7 @@ import msi.gaml.descriptions.IDescription.IFacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class AbstractSyntacticElement.
@@ -168,10 +169,8 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 */
 	@Override
 	public void setFacet(final String string, final IExpressionDescription expr) {
-		if (expr == null) { return; }
-		if (facets == null) {
-			facets = new Facets();
-		}
+		if (expr == null) return;
+		if (facets == null) { facets = new Facets(); }
 		facets.put(string, expr);
 	}
 
@@ -194,11 +193,9 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 *            the name
 	 */
 	protected void removeFacet(final String name) {
-		if (facets == null) { return; }
+		if (facets == null) return;
 		facets.remove(name);
-		if (facets.isEmpty()) {
-			facets = null;
-		}
+		if (facets.isEmpty()) { facets = null; }
 	}
 
 	/*
@@ -245,7 +242,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 */
 	@Override
 	public void visitFacets(final IFacetVisitor visitor) {
-		if (facets == null) { return; }
+		if (facets == null) return;
 		facets.forEachFacet(visitor);
 	}
 
@@ -256,11 +253,10 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 */
 	@Override
 	public void compact() {
-		if (facets == null) { return; }
+		if (facets == null) return;
 		if (facets.isEmpty()) {
 			facets.dispose();
 			facets = null;
-			return;
 		}
 	}
 
@@ -332,9 +328,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 */
 	@Override
 	public void dispose() {
-		if (facets != null) {
-			facets.dispose();
-		}
+		if (facets != null) { facets.dispose(); }
 	}
 
 }

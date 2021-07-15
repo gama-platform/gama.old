@@ -9,9 +9,18 @@ model anisotropic_diffusion
 
 global {
 	geometry shape <- rectangle(100,100);
-	int size <- 128; // better to have a pow of 2 for the size of the grid
+	int size <- 100; // better to have a pow of 2 for the size of the grid
 	field cells <- field(size, size, 0.0);
-			int rnd_component -> rnd(8) - 4;
+	int rnd_component -> rnd(8) - 4;
+	
+	
+	init {
+		loop i from: 0 to: size - 1 {
+			loop j from: 0 to: size - 1 {
+				cells[i,j] <- j*size+i;
+			}
+		} 
+	}
 
 	// Declare the anisotropic matrix (diffuse to the left-upper direction)
 	matrix<float> mat_diff <- matrix([
@@ -25,10 +34,9 @@ global {
 	}
 
 	reflex new_Value {
-int i <- 0;
-		//loop i from: -10 to: 10 step: 5 {
+		loop i from: -10 to: 10 step: 5 {
 			cells[size / 2 - i + rnd_component, size / 2 + i + rnd_component] <- 15;
-		//}
+		}
 		
 	}
 }
@@ -37,23 +45,23 @@ experiment diffusion type: gui {
 	output {
 		layout #split;
 		display "Brewer" type: opengl  background: #black antialias:true  {
-			mesh cells scale: 3 grayscale: true color:(brewer_colors("Set3")) triangulation: true;
+			mesh cells scale: 5 grayscale: true color:(brewer_colors("Set3")) triangulation: true;
 		}
 
-		display "HSB" type: opengl background: #black {
-			mesh cells scale: 3 color: cells collect hsb(float(each)/5,1,1) triangulation: true;
+		display "HSB Smoothed 2" type: opengl background: #black {
+			mesh cells scale: 5 color: cells collect hsb(float(each)/5,1,1) triangulation: true smooth: true;
 		}
-		display "One Color" type: opengl background: #black {
-			mesh cells scale: 3 color: #white triangulation: true border: #yellow;
+		display "One Color Smoothed 4 with Lines" type: opengl background: #black {
+			mesh cells scale: 5 color:  palette([#lightblue, #blue, #blue, #darkblue]) triangulation: true border: #yellow smooth: 4;
 		}
 		
 		
 		display "Scale" type: opengl background: #black {
-			mesh cells scale:3 color: scale([#red::1, #yellow::2, #green::3, #blue::6]) triangulation: true ;
+			mesh cells scale:5 color: scale([#red::1, #yellow::2, #green::3, #blue::6])  ;
 		}
 		
-		display "Simple gradient" type: opengl background: #black antialias:true { 
-			mesh cells scale:3 color: palette([#lightblue, #blue, #blue, #darkblue]) triangulation: true ;
+		display "Simple gradient" type: opengl background: #white antialias:true { 
+			mesh cells scale:0 color: palette([#lightblue, #blue, #blue, #darkblue]) ;
 			
 		}
 	}

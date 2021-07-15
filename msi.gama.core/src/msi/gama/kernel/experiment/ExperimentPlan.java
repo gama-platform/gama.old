@@ -32,7 +32,6 @@ import msi.gama.kernel.experiment.ExperimentPlan.BatchValidator;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
@@ -195,19 +194,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			// desc.warning("The memorize experiment is still in development. It should not be used.",
 			// IGamlIssue.DEPRECATED);
 			// }
-			if (!type.equals(BATCH)) {
-				if (desc.getChildWithKeyword(METHOD) != null) {
-					desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
-							METHOD);
-				}
+			if (!BATCH.equals(type) && desc.getChildWithKeyword(METHOD) != null) {
+				desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
+						METHOD);
 			}
-			if (type.equals(BATCH)) {
-				if (!desc.hasFacet(UNTIL)) {
-					desc.warning(
-							"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the "
-									+ type + " experiment",
-							IGamlIssue.MISSING_FACET, desc.getUnderlyingElement(), UNTIL, "true");
-				}
+			if (BATCH.equals(type) && !desc.hasFacet(UNTIL)) {
+				desc.warning(
+						"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the "
+								+ type + " experiment",
+						IGamlIssue.MISSING_FACET, desc.getUnderlyingElement(), UNTIL, "true");
 			}
 		}
 	}
@@ -304,11 +299,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		setName(description.getName());
 		experimentType = description.getLitteral(IKeyword.TYPE);
 		// final String type = description.getFacets().getLabel(IKeyword.TYPE);
-		if (experimentType.equals(IKeyword.BATCH) || experimentType.equals(IKeyword.TEST)) {
+		if (IKeyword.BATCH.equals(experimentType) || IKeyword.TEST.equals(experimentType)) {
 			exploration = new ExhaustiveSearch(null);
-		} else if (experimentType.equals(IKeyword.HEADLESS_UI)) {
-			setHeadless(true);
-		}
+		} else if (IKeyword.HEADLESS_UI.equals(experimentType)) { setHeadless(true); }
 		final IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if (expr != null && expr.isConst()) {
 			keepSeed = Cast.asBool(myScope, expr.value(myScope));
@@ -350,9 +343,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public void dispose() {
 		// DEBUG.LOG("ExperimentPlan.dipose BEGIN");
 		// Dec 2015 Addition
-		if (controller != null) {
-			controller.dispose();
-		}
+		if (controller != null) { controller.dispose(); }
 		if (agent != null) {
 			agent.dispose();
 			agent = null;
@@ -403,14 +394,22 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public void setModel(final IModel model) {
 		this.model = model;
 		if (!isBatch()) {
+			// We look first in the experiment itself
+			for (final IVariable v : getVars()) {
+				if (v.isParameter()) {
+					final ExperimentParameter p = new ExperimentParameter(myScope, v);
+					final String parameterName = "(Experiment) " + p.getName();
+					final boolean already = parameters.containsKey(parameterName);
+					if (!already) { parameters.put(parameterName, p); }
+				}
+			}
+
 			for (final IVariable v : model.getVars()) {
 				if (v.isParameter()) {
 					final IParameter p = new ExperimentParameter(myScope, v);
 					final String parameterName = p.getName();
 					final boolean already = parameters.containsKey(parameterName);
-					if (!already) {
-						parameters.put(parameterName, p);
-					}
+					if (!already) { parameters.put(parameterName, p); }
 				}
 
 			}
@@ -449,19 +448,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				}
 			} else if (s instanceof IParameter.Batch) {
 				final IParameter.Batch pb = (IParameter.Batch) s;
-				if (isBatch()) {
-					if (pb.canBeExplored()) {
-						pb.setEditable(false);
-						addExplorableParameter(pb);
-						continue;
-					}
+				if (isBatch() && pb.canBeExplored()) {
+					pb.setEditable(false);
+					addExplorableParameter(pb);
+					continue;
 				}
 				final IParameter p = (IParameter) s;
 				final String parameterName = p.getName();
 				final boolean already = parameters.containsKey(parameterName);
-				if (!already) {
-					parameters.put(parameterName, p);
-				}
+				if (!already) { parameters.put(parameterName, p); }
 			} else if (s instanceof ExperimentOutputManager) {
 				if (experimentOutputs != null) {
 					experimentOutputs.setChildren((ExperimentOutputManager) s);
@@ -470,12 +465,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				}
 			}
 		}
-		if (originalSimulationOutputs == null) {
-			originalSimulationOutputs = SimulationOutputManager.createEmpty();
-		}
-		if (experimentOutputs == null) {
-			experimentOutputs = ExperimentOutputManager.createEmpty();
-		}
+		if (originalSimulationOutputs == null) { originalSimulationOutputs = SimulationOutputManager.createEmpty(); }
+		if (experimentOutputs == null) { experimentOutputs = ExperimentOutputManager.createEmpty(); }
 		if (experimentOutputs.getLayout() == null) {
 			if (layout != null) {
 				experimentOutputs.setLayout(layout);
@@ -483,19 +474,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				experimentOutputs.setLayout(originalSimulationOutputs.getLayout());
 			}
 		}
-		if (fileOutputDescription != null) {
-			createOutput(fileOutputDescription);
-		}
+		if (fileOutputDescription != null) { createOutput(fileOutputDescription); }
 
 	}
 
 	private void createOutput(final BatchOutput output) throws GamaRuntimeException {
 		// TODO revoir tout ceci. Devrait plut�t �tre une commande
-		if (output == null) { return; }
+		if (output == null) return;
 		IExpression data = output.getFacet(IKeyword.DATA);
-		if (data == null) {
-			data = exploration.getFitnessExpression();
-		}
+		if (data == null) { data = exploration.getFitnessExpression(); }
 		final String dataString = data == null ? "time" : data.serialize(false);
 		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}
@@ -593,41 +580,35 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	public IParameter.Batch getParameterByTitle(final String title) {
 		for (final IParameter p : parameters.values()) {
-			if (p.getTitle().equals(title) && p instanceof IParameter.Batch) { return (IParameter.Batch) p; }
+			if (p.getTitle().equals(title) && p instanceof IParameter.Batch) return (IParameter.Batch) p;
 		}
 		return null;
 	}
 
 	public IParameter.Batch getParameter(final String parameterName) {
 		final IParameter p = parameters.get(parameterName);
-		if (p instanceof IParameter.Batch) { return (IParameter.Batch) p; }
+		if (p instanceof IParameter.Batch) return (IParameter.Batch) p;
 		return null;
 	}
 
 	public void addParameter(final IParameter p) {
 		final String parameterName = p.getName();
 		final IParameter already = parameters.get(parameterName);
-		if (already != null) {
-			p.setValue(myScope, already.getInitialValue(myScope));
-		}
+		if (already != null) { p.setValue(myScope, already.getInitialValue(myScope)); }
 		parameters.put(parameterName, p);
 	}
 
 	protected IParameter.Batch checkGetParameterByTitle(final String parameterName) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameterByTitle(parameterName);
-		if (v == null) {
-			throw GamaRuntimeException.error("No parameter named " + parameterName + " in experiment " + getName(),
-					getExperimentScope());
-		}
+		if (v == null) throw GamaRuntimeException
+				.error("No parameter named " + parameterName + " in experiment " + getName(), getExperimentScope());
 		return v;
 	}
 
 	protected IParameter.Batch checkGetParameter(final String parameterName) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameter(parameterName);
-		if (v == null) {
-			throw GamaRuntimeException.error("No parameter named " + parameterName + " in experiment " + getName(),
-					getExperimentScope());
-		}
+		if (v == null) throw GamaRuntimeException
+				.error("No parameter named " + parameterName + " in experiment " + getName(), getExperimentScope());
 		return v;
 	}
 
@@ -638,7 +619,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public SimulationAgent getCurrentSimulation() {
-		if (agent == null) { return null; }
+		if (agent == null) return null;
 		return agent.getSimulation();
 	}
 
@@ -664,16 +645,14 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				return;
 			}
 			final SimulationAgent a = getCurrentSimulation();
-			if (a != null) {
-				a.setDirectVarValue(this, name, v);
-			}
+			if (a != null) { a.setDirectVarValue(this, name, v); }
 		}
 
 		@Override
 		public Object getGlobalVarValue(final String varName) throws GamaRuntimeException {
-			if (hasParameter(varName)) { return getParameterValue(varName); }
+			if (hasParameter(varName)) return getParameterValue(varName);
 			final SimulationAgent a = getCurrentSimulation();
-			if (a != null) { return a.getDirectVarValue(this, varName); }
+			if (a != null) return a.getDirectVarValue(this, varName);
 			return null;
 		}
 
@@ -707,9 +686,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 */
 	@Override
 	public IExperimentController getController() {
-		if (controller == null) {
-			controller = new ExperimentController(this);
-		}
+		if (controller == null) { controller = new ExperimentController(this); }
 		return controller;
 	}
 
@@ -793,7 +770,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public Iterable<IOutputManager> getActiveOutputManagers() {
-		if (agent == null) { return Collections.EMPTY_LIST; }
+		if (agent == null) return Collections.EMPTY_LIST;
 		return Iterables.concat(agent.getAllSimulationOutputs(), Arrays.asList(experimentOutputs));
 
 	}

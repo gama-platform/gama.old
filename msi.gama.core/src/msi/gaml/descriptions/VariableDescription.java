@@ -88,6 +88,10 @@ public class VariableDescription extends SymbolDescription {
 		return _isSyntheticSpeciesContainer;
 	}
 
+	public boolean isDefinedInExperiment() {
+		return getEnclosingDescription() instanceof ExperimentDescription;
+	}
+
 	@Override
 	public void dispose() {
 		if (isBuiltIn()) return;
@@ -100,9 +104,8 @@ public class VariableDescription extends SymbolDescription {
 		// We dont replace existing facets
 
 		v2.visitFacets((facetName, exp) -> {
-			if (isFunction) {
-				if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) return true;
-			}
+			if (isFunction && (INIT.equals(facetName) || UPDATE.equals(facetName) || VALUE.equals(facetName)))
+				return true;
 			if (!hasFacet(facetName)) { setFacet(facetName, exp); }
 			return true;
 		});
@@ -218,7 +221,7 @@ public class VariableDescription extends SymbolDescription {
 				sd.collectUsedVarsOf(mySpecies, alreadyProcessed, result);
 			}
 			if (!includingThis) { result.remove(this); }
-			if (!includingSpecies) { result.removeIf(v -> v.isSyntheticSpeciesContainer()); }
+			if (!includingSpecies) { result.removeIf(VariableDescription::isSyntheticSpeciesContainer); }
 			result.remove(null);
 			return result.items();
 		}
@@ -240,9 +243,8 @@ public class VariableDescription extends SymbolDescription {
 	public IExpression getVarExpr(final boolean asField) {
 		final boolean asGlobal = _isGlobal && !asField;
 
-		final IExpression varExpr = GAML.getExpressionFactory().createVar(getName(), getGamlType(), isNotModifiable(),
+		return GAML.getExpressionFactory().createVar(getName(), getGamlType(), isNotModifiable(),
 				asGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
-		return varExpr;
 	}
 
 	@Override
@@ -252,7 +254,7 @@ public class VariableDescription extends SymbolDescription {
 
 	public String getParameterName() {
 		final String pName = getLitteral(PARAMETER);
-		if (pName == null || pName.equals(TRUE)) return getName();
+		if (pName == null || TRUE.equals(pName)) return getName();
 		return pName;
 	}
 
@@ -268,16 +270,16 @@ public class VariableDescription extends SymbolDescription {
 	public String getDocumentation() {
 		final String doc = getBuiltInDoc();
 		if (isBuiltIn()) return doc == null ? "Not yet documented" : doc;
-		String s = "";
-		if (doc != null) { s += doc + "<br/>"; }
-		return s + getMeta().getFacetsDocumentation();
+		StringBuilder s = new StringBuilder();
+		if (doc != null) { s.append(doc).append("<br/>"); }
+		return s.append(getMeta().getFacetsDocumentation()).toString();
 	}
 
 	public String getShortDescription() {
-		String s = ", of type " + getGamlType().getTitle();
+		StringBuilder s = new StringBuilder(", of type ").append(getGamlType().getTitle());
 		final String doc = getBuiltInDoc();
-		if (doc != null) { s += ": " + doc; }
-		return s;
+		if (doc != null) { s.append(": ").append(doc); }
+		return s.toString();
 	}
 
 	public String getBuiltInDoc() {

@@ -20,7 +20,6 @@ import ummisco.gama.opengl.renderer.shaders.AbstractPostprocessingShader;
 import ummisco.gama.opengl.renderer.shaders.AbstractShader;
 import ummisco.gama.opengl.renderer.shaders.FrameBufferObject;
 import ummisco.gama.opengl.renderer.shaders.KeystoneShaderProgram;
-import ummisco.gama.ui.utils.PlatformHelper;
 
 public class KeystoneHelper extends AbstractRendererHelper {
 
@@ -43,11 +42,13 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	}
 
 	int getViewWidth() {
-		return PlatformHelper.scaleDownIfMac(getRenderer().getViewWidth());
+		return getRenderer().getViewWidth();
+		// return PlatformHelper.scaleDownIfMac(getRenderer().getViewWidth());
 	}
 
 	int getViewHeight() {
-		return PlatformHelper.scaleDownIfMac(getRenderer().getViewHeight());
+		return getRenderer().getViewHeight();
+		// return PlatformHelper.scaleDownIfMac(getRenderer().getViewHeight());
 	}
 
 	@Override
@@ -82,9 +83,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	public void dispose() {
 		final GL2 gl = getGL();
-		if (fboScene != null) {
-			fboScene.cleanUp();
-		}
+		if (fboScene != null) { fboScene.cleanUp(); }
 		if (gl != null) {
 			gl.glDeleteBuffers(3, new int[] { indexBufferIndex, verticesBufferIndex, uvMappingBufferIndex }, 0);
 		}
@@ -95,9 +94,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		final GL2 gl = getGL();
 		gl.glClearColor(0, 0, 0, 1.0f);
 		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-		if (fboScene == null) {
-			fboScene = new FrameBufferObject(gl, getViewWidth(), getViewHeight());
-		}
+		if (fboScene == null) { fboScene = new FrameBufferObject(gl, getViewWidth(), getViewHeight()); }
 		// redirect the rendering to the fbo_scene (will be rendered later, as a texture)
 		fboScene.bindFrameBuffer();
 
@@ -181,9 +178,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	}
 
 	public void finishRenderToTexture() {
-		if (drawKeystoneHelper) {
-			drawKeystoneMarks();
-		}
+		if (drawKeystoneHelper) { drawKeystoneMarks(); }
 		// gl.glDisable(GL2.GL_DEPTH_TEST); // disables depth testing
 		final AbstractPostprocessingShader theShader = getShader();
 		// unbind the last fbo
@@ -301,33 +296,29 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	public int cornerSelected(final GamaPoint mouse) {
 		if (mouse.x < getViewWidth() / 2) {
-			if (mouse.y < getViewHeight() / 2) {
+			if (mouse.y < getViewHeight() / 2)
 				return 1;
-			} else {
+			else
 				return 0;
-			}
 		} else {
-			if (mouse.y < getViewHeight() / 2) {
+			if (mouse.y < getViewHeight() / 2)
 				return 2;
-			} else {
+			else
 				return 3;
-			}
 		}
 	}
 
 	public int cornerHovered(final GamaPoint mouse) {
 		if (mouse.x < getViewWidth() / 2) {
-			if (mouse.y < getViewHeight() / 2) {
+			if (mouse.y < getViewHeight() / 2)
 				return 1;
-			} else {
+			else
 				return 0;
-			}
 		} else {
-			if (mouse.y < getViewHeight() / 2) {
+			if (mouse.y < getViewHeight() / 2)
 				return 2;
-			} else {
+			else
 				return 3;
-			}
 		}
 	}
 
@@ -354,9 +345,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	}
 
 	public void reshape(final int width, final int height) {
-		if (fboScene != null) {
-			fboScene.setDisplayDimensions(width, height);
-		}
+		if (fboScene != null) { fboScene.setDisplayDimensions(width, height); }
 
 	}
 

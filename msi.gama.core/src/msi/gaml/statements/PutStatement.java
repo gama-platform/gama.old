@@ -225,8 +225,8 @@ public class PutStatement extends AddStatement {
 	protected void apply(final IScope scope, final Object object, final Object position,
 			final IContainer.Modifiable container) throws GamaRuntimeException {
 		if (!asAll) {
-			if (!container.checkBounds(scope, position, false)) throw GamaRuntimeException
-					.error("Index " + position + " out of bounds of " + list.serialize(false), scope);
+			// if (!container.checkBounds(scope, position, false)) throw GamaRuntimeException
+			// .error("Index " + position + " out of bounds of " + list.serialize(false), scope);
 			// Issue #3099
 			if (container instanceof IList && position instanceof GamaPair) {
 				((IList<Object>) container).replaceRange(scope, (GamaPair) position, object);

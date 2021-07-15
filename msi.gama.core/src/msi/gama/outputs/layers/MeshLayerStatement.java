@@ -77,9 +77,9 @@ import msi.gaml.types.IType;
 						doc = @doc ("if true displays the field in wireframe using the lines color")),
 				@facet (
 						name = IKeyword.SMOOTH,
-						type = IType.BOOL,
+						type = { IType.BOOL, IType.INT },
 						optional = true,
-						doc = @doc ("Applies a simple convolution (box filter) to smooth out the terrain produced by this field. Does not change the values of course.")),
+						doc = @doc ("Applies a simple convolution (box filter) to smooth out the terrain produced by this field. If true, one pass is done with a simple 3x3 kernel. Otherwise, the user can specify the number of successive passes (up to 4). Specifying 0 is equivalent to passing false")),
 				@facet (
 						name = IKeyword.SOURCE,
 						type = { IType.FILE, IType.MATRIX, IType.SPECIES },

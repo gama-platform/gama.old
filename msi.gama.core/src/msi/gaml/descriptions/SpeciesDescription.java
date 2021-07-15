@@ -41,11 +41,11 @@ import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
-import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.ListExpression;
-import msi.gaml.expressions.SkillConstantExpression;
-import msi.gaml.expressions.SpeciesConstantExpression;
+import msi.gaml.expressions.data.ListExpression;
+import msi.gaml.expressions.types.DenotedActionExpression;
+import msi.gaml.expressions.types.SkillConstantExpression;
+import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
@@ -235,13 +235,11 @@ public class SpeciesDescription extends TypeDescription {
 				boolean toAdd = false;
 				if (this.isBuiltIn() && !hasAttribute(v.getName()) || ((VariableDescription) v).isContextualType()) {
 					toAdd = true;
+				} else if (parent != null && parent != this) {
+					final VariableDescription existing = parent.getAttribute(v.getName());
+					if (existing == null || !existing.getOriginName().equals(v.getOriginName())) { toAdd = true; }
 				} else {
-					if (parent != null && parent != this) {
-						final VariableDescription existing = parent.getAttribute(v.getName());
-						if (existing == null || !existing.getOriginName().equals(v.getOriginName())) { toAdd = true; }
-					} else {
-						toAdd = true;
-					}
+					toAdd = true;
 				}
 				if (toAdd) {
 					final VariableDescription var = (VariableDescription) v.copy(this);
@@ -298,8 +296,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	protected boolean useMinimalAgents() {
-		if (!canUseMinimalAgents) return false;
-		if (parent != null && parent != this && !getParent().useMinimalAgents()) return false;
+		if (!canUseMinimalAgents || parent != null && parent != this && !getParent().useMinimalAgents()) return false;
 		if (!hasFacet("use_regular_agents")) return GamaPreferences.External.AGENT_OPTIMIZATION.getValue();
 		return FALSE.equals(getLitteral("use_regular_agents"));
 	}
@@ -308,7 +305,7 @@ public class SpeciesDescription extends TypeDescription {
 		final String behaviorName = r.getName();
 		if (behaviors == null) { behaviors = GamaMapFactory.create(); }
 		final StatementDescription existing = getBehavior(behaviorName);
-		if (existing != null) { if (existing.getKeyword().equals(r.getKeyword())) { duplicateInfo(r, existing); } }
+		if (existing != null && existing.getKeyword().equals(r.getKeyword())) { duplicateInfo(r, existing); }
 		behaviors.put(behaviorName, r);
 	}
 
@@ -329,7 +326,7 @@ public class SpeciesDescription extends TypeDescription {
 			aspectName = DEFAULT;
 			ce.setName(aspectName);
 		}
-		if (!aspectName.equals(DEFAULT) && hasAspect(aspectName)) { duplicateInfo(ce, getAspect(aspectName)); }
+		if (!DEFAULT.equals(aspectName) && hasAspect(aspectName)) { duplicateInfo(ce, getAspect(aspectName)); }
 		if (aspects == null) { aspects = GamaMapFactory.createUnordered(); }
 		aspects.put(aspectName, ce);
 	}
@@ -355,7 +352,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public Iterable<StatementDescription> getAspects() {
-		return Iterables.transform(getAspectNames(), input -> getAspect(input));
+		return Iterables.transform(getAspectNames(), this::getAspect);
 	}
 
 	public SkillDescription getControl() {
@@ -456,7 +453,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public boolean isGrid() {
-		return getKeyword().equals(GRID);
+		return GRID.equals(getKeyword());
 	}
 
 	@Override
@@ -521,11 +518,9 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	public void setParent(final TypeDescription parent) {
 		super.setParent(parent);
-		if (!isBuiltIn()) {
-			if (!verifyParent()) {
-				super.setParent(null);
-				return;
-			}
+		if (!isBuiltIn() && !verifyParent()) {
+			super.setParent(null);
+			return;
 		}
 		if (parent instanceof SpeciesDescription && parent != this && !canUseMinimalAgents && !parent.isBuiltIn()) {
 			((SpeciesDescription) parent).invalidateMinimalAgents();
@@ -761,25 +756,34 @@ public class SpeciesDescription extends TypeDescription {
 		return hasFacet(MIRRORS);
 	}
 
+	/**
+	 * Returns whether or not a species implements (directly or indirectly through its parents) a skill named after the
+	 * parameter.
+	 *
+	 * @param skill
+	 *            the name of the skill
+	 * @return true if this species implements a skill or if its parent does. WARNING: no possibility, right now, to
+	 *         know if a skill extends another skill, so this possibility is not considered in this method.
+	 */
 	public Boolean implementsSkill(final String skill) {
-		if (skills == null) return false;
-		for (final SkillDescription sk : skills) {
-			if (sk.getName().equals(skill)) return true;
+		if (skills != null) {
+			for (final SkillDescription sk : skills) {
+				if (sk.getName().equals(skill)) return true;
+			}
 		}
+		if (parent != null && parent != this) return getParent().implementsSkill(skill);
 		return false;
 	}
 
 	@Override
 	public Class<? extends IAgent> getJavaBase() {
 		if (javaBase == null) {
-			if (parent != null && parent != this && !getParent().getName().equals(AGENT)) {
+			if (parent != null && parent != this && !AGENT.equals(getParent().getName())) {
 				javaBase = getParent().getJavaBase();
+			} else if (useMinimalAgents()) {
+				javaBase = isGrid() ? MinimalGridAgent.class : MinimalAgent.class;
 			} else {
-				if (useMinimalAgents()) {
-					javaBase = isGrid() ? MinimalGridAgent.class : MinimalAgent.class;
-				} else {
-					javaBase = isGrid() ? GamlGridAgent.class : GamlAgent.class;
-				}
+				javaBase = isGrid() ? GamlGridAgent.class : GamlAgent.class;
 			}
 		}
 		return javaBase;
@@ -814,10 +818,10 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
-		if (!super.visitOwnChildren(visitor)) return false;
-		if (microSpecies != null && !microSpecies.forEachValue(visitor)) return false;
-		if (behaviors != null && !behaviors.forEachValue(visitor)) return false;
-		if (aspects != null && !aspects.forEachValue(visitor)) return false;
+		if (!super.visitOwnChildren(visitor) || microSpecies != null && !microSpecies.forEachValue(visitor))
+			return false;
+		if (behaviors != null && !behaviors.forEachValue(visitor) || aspects != null && !aspects.forEachValue(visitor))
+			return false;
 		return true;
 	}
 
@@ -827,11 +831,12 @@ public class SpeciesDescription extends TypeDescription {
 			if (!visitor.process(each)) return false;
 			return each.visitOwnChildrenRecursively(visitor);
 		};
-		if (!super.visitOwnChildrenRecursively(visitor)) return false;
-		if (microSpecies != null && !microSpecies.forEachValue(recursiveVisitor)) return false;
-		if (behaviors != null && !behaviors.forEachValue(recursiveVisitor)) return false;
-
-		if (aspects != null) { if (!aspects.forEachValue(recursiveVisitor)) return false; }
+		if (!super.visitOwnChildrenRecursively(visitor)
+				|| microSpecies != null && !microSpecies.forEachValue(recursiveVisitor))
+			return false;
+		if (behaviors != null && !behaviors.forEachValue(recursiveVisitor)
+				|| aspects != null && !aspects.forEachValue(recursiveVisitor))
+			return false;
 		return true;
 	}
 
@@ -864,7 +869,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * @return
 	 */
 	public Iterable<StatementDescription> getBehaviors() {
-		return Iterables.transform(getBehaviorNames(), input -> getBehavior(input));
+		return Iterables.transform(getBehaviorNames(), this::getBehavior);
 	}
 	//
 	// @Override

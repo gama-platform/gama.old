@@ -213,6 +213,10 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		with3D = withZ;
 	}
 
+	public GamaGisFile(final IScope scope, final String pathName, final boolean b) {
+		super(scope, pathName, b);
+	}
+
 	public IProjection getGis(final IScope scope) {
 		if (gis == null) { fillBuffer(scope); }
 		return gis;

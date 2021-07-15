@@ -18,7 +18,7 @@ import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.ListExpression;
+import msi.gaml.expressions.data.ListExpression;
 import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 
 // SIRS (with demography) equation is defined by

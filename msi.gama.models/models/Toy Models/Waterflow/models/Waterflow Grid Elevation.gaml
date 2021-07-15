@@ -87,10 +87,10 @@ global {
       }
    }   
 	
-	reflex d {
-		write "min  " + cell min_of(each.grid_value);
-		write "max  " + cell max_of(each.grid_value);		
-	}
+//	reflex d {
+//		write "min  " + cell min_of(each.grid_value);
+//		write "max  " + cell max_of(each.grid_value);		
+//	}
 }
 
    grid cell file: dem_file neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbors_cache: false {

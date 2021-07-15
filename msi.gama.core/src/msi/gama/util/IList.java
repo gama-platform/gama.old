@@ -210,21 +210,21 @@ public interface IList<E>
 	 *
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object)
 	 */
-	@Override
-	default boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
-		if (object instanceof Integer) {
-			final Integer index = (Integer) object;
-			final int size = size();
-			final boolean upper = forAdding ? index <= size : index < size;
-			return index >= 0 && upper;
-		} else if (object instanceof IContainer) {
-			for (final Object o : ((IContainer) object).iterable(scope)) {
-				if (!checkBounds(scope, o, forAdding)) return false;
-			}
-			return true;
-		}
-		return false;
-	}
+	// @Override
+	// default boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
+	// if (object instanceof Integer) {
+	// final Integer index = (Integer) object;
+	// final int size = size();
+	// final boolean upper = forAdding ? index <= size : index < size;
+	// return index >= 0 && upper;
+	// } else if (object instanceof IContainer) {
+	// for (final Object o : ((IContainer) object).iterable(scope)) {
+	// if (!checkBounds(scope, o, forAdding)) return false;
+	// }
+	// return true;
+	// }
+	// return false;
+	// }
 
 	@Override
 	default E anyValue(final IScope scope) {

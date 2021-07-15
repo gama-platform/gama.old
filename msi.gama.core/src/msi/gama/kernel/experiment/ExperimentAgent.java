@@ -514,16 +514,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public Double getSeed() {
 		final Double seed = random.getSeed();
 		// DEBUG.LOG("experiment agent get seed: " + seed);
-		return seed == null ? Double.valueOf(0d) : seed;
+		return seed == null ? 0d : seed;
 	}
 
 	@setter (IKeyword.SEED)
 	public void setSeed(final Double s) {
 		// DEBUG.LOG("experiment agent set seed: " + s);
 		Double seed;
-		if (s == null) {
-			seed = null;
-		} else if (s.doubleValue() == 0d) {
+		if (s == null || s.doubleValue() == 0d) {
 			seed = null;
 		} else {
 			seed = s;
@@ -722,9 +720,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		@Override
 		public boolean hasAccessToGlobalVar(final String varName) {
-			if (ExperimentAgent.this.hasAttribute(varName) || getSpecies().hasVar(varName)) return true;
-			if (this.getModel().getSpecies().hasVar(varName)) return true;
-			if (getSpecies().hasParameter(varName)) return true;
+			if (ExperimentAgent.this.hasAttribute(varName) || getSpecies().hasVar(varName)
+					|| this.getModel().getSpecies().hasVar(varName) || getSpecies().hasParameter(varName))
+				return true;
 			return extraParametersMap.containsKey(varName);
 		}
 
@@ -771,7 +769,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public Iterable<IOutputManager> getAllSimulationOutputs() {
 		final SimulationPopulation pop = getSimulationPopulation();
 		if (pop != null)
-			return Iterables.filter(Iterables.concat(Iterables.transform(pop, each -> each.getOutputManager()),
+			return Iterables.filter(Iterables.concat(Iterables.transform(pop, SimulationAgent::getOutputManager),
 					Collections.singletonList(getOutputManager())), each -> each != null);
 		return Collections.EMPTY_LIST;
 	}

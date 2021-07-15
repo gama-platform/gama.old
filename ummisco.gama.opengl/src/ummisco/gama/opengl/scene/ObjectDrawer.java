@@ -24,7 +24,7 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 		this.gl = gl;
 	}
 
-	void draw(final T object) {
+	final void draw(final T object) {
 		gl.beginObject(object);
 		_draw(object);
 		gl.endObject(object);

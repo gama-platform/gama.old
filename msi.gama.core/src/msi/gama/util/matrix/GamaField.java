@@ -2,34 +2,41 @@ package msi.gama.util.matrix;
 
 import static msi.gaml.types.GamaGeometryType.buildRectangle;
 
+import java.util.Arrays;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Doubles;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.file.IFieldMatrixProvider;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.GamaPointType;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.DoubleStreamEx;
 import one.util.streamex.StreamEx;
 
 public class GamaField extends GamaFloatMatrix implements IField {
 
-	final GamaPoint temp = new GamaPoint();
 	GamaPoint worldDimensions = null;
 	GamaPoint cellDimensions = null;
 	double epsilon, noDataValue;
-	IList<IField> bands = GamaListFactory.create(Types.FIELD);
+	IList<GamaField> bands = GamaListFactory.create(Types.FIELD);
 
 	public GamaField(final IScope scope, final IFieldMatrixProvider provider) {
 		this(scope, provider.getCols(scope), provider.getRows(scope), provider.getFieldData(scope),
@@ -69,7 +76,18 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		worldDimensions = new GamaPoint(world.getWidth(), world.getHeight());
 		cellDimensions = new GamaPoint(world.getWidth() / this.numCols, world.getHeight() / this.numRows);
 		epsilon = cellDimensions.x / 1000;
+	}
 
+	int getGridX(final double x) {
+		return (int) ((x == worldDimensions.x ? x - epsilon : x) / cellDimensions.x);
+	}
+
+	int getGridY(final double y) {
+		return (int) ((y == worldDimensions.y ? y - epsilon : y) / cellDimensions.y);
+	}
+
+	int getIndex(final GamaPoint p) {
+		return getGridY(p.y) * numCols + getGridX(p.x);
 	}
 
 	@Override
@@ -81,15 +99,9 @@ public class GamaField extends GamaFloatMatrix implements IField {
 			if (index instanceof GamaPoint)
 				return get(scope, (GamaPoint) index);
 			else
-				return this.getNthElement(Cast.asInt(scope, index));
+				return matrix[Cast.asInt(scope, index)];
 		}
-		final int px = Cast.asInt(scope, indices.get(0));
-		final int py = Cast.asInt(scope, indices.get(1));
-		if (px > numCols - 1 || px < 0)
-			throw GamaRuntimeException.error("Access to a field element out of its bounds: " + px, scope);
-		if (py > numRows - 1 || py < 0)
-			throw GamaRuntimeException.error("Access to a field element out of its bounds: " + py, scope);
-		return get(scope, px, py);
+		return get(scope, Cast.asInt(scope, indices.get(0)), Cast.asInt(scope, indices.get(1)));
 	}
 
 	/**
@@ -99,9 +111,8 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	@Nullable
 	public Double get(final IScope scope, final ILocation p) {
-		worldCoordinatesToIndices(scope, p, temp);
-		if (temp == null) return null;
-		return get(scope, (int) temp.x, (int) temp.y);
+		computeDimensions(scope);
+		return matrix[getIndex(p.toGamaPoint())];
 	}
 
 	/**
@@ -109,52 +120,22 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	 * through world coordinates by agents.
 	 */
 	@Override
-	@Nullable
-	protected ILocation buildIndex(final IScope scope, final Object object) {
-		if (object instanceof IList) {
-			IList list = (IList) object;
-			return new GamaPoint(Cast.asInt(scope, list.get(0)), Cast.asInt(scope, list.get(1)));
-		} else if (object instanceof ILocation) {
-			computeDimensions(scope);
-			ILocation p = (ILocation) object;
-			return worldCoordinatesToIndices(scope, p, temp);
-		} else
-			return GamaPointType.staticCast(scope, object, false);
+	public void setValueAtIndex(final IScope scope, final Object at, final Double value) {
+		computeDimensions(scope);
+		int index = -1;
+		if (at instanceof Integer) {
+			index = ((Integer) at).intValue();
+		} else if (at instanceof IList) {
+			IList list = (IList) at;
+			index = (Integer) list.get(1) * numCols + (Integer) list.get(0);
+		} else if (at instanceof GamaPoint) { index = getIndex((GamaPoint) at); }
+		if (index > -1 && index < matrix.length) { matrix[index] = value; }
 	}
 
 	@Override
-	public final boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
-		if (object instanceof ILocation) {
-			computeDimensions(scope);
-			final ILocation index = worldCoordinatesToIndices(scope, (ILocation) object, temp);
-			if (index == null) return false;
-			final int x = (int) index.getX();
-			final int y = (int) index.getY();
-			return x >= 0 && x < numCols && y >= 0 && y < numRows;
-		} else if (object instanceof IList) {
-			IList list = (IList) object;
-			if (list.size() != 2) return false;
-			int x = Cast.asInt(scope, list.get(0));
-			int y = Cast.asInt(scope, list.get(1));
-			return x >= 0 && x < numCols && y >= 0 && y < numRows;
-		} else if (object instanceof Integer) return (Integer) object < numCols * numRows;
-		return false;
-	}
-
-	@Nullable
-	private GamaPoint worldCoordinatesToIndices(final IScope scope, final ILocation p, final GamaPoint into) {
+	public GamaPoint getCellSize(final IScope scope) {
 		computeDimensions(scope);
-		final double px = p.getX();
-		final double py = p.getY();
-		final double xx = (px == worldDimensions.x ? px - epsilon : px) / cellDimensions.x;
-		final double yy = (py == worldDimensions.y ? py - epsilon : py) / cellDimensions.y;
-		final int cols = (int) xx;
-		final int rows = (int) yy;
-		if (cols > numCols - 1 || cols < 0 || rows > numRows - 1 || rows < 0) return null;
-		if (into == null) return new GamaPoint(cols, rows);
-		into.setLocation(cols, rows, 0);
-		return into;
-
+		return cellDimensions;
 	}
 
 	@Override
@@ -173,7 +154,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	}
 
 	@Override
-	public IList<IField> getBands(final IScope scope) {
+	public IList<? extends IField> getBands(final IScope scope) {
 		return bands;
 	}
 
@@ -194,7 +175,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	}
 
 	/**
-	 * Inherited from IDiffusionTarger. The variable name (to diffuse) is not considered and the number of neighbours is
+	 * Inherited from IDiffusionTarget. The variable name (to diffuse) is not considered and the number of neighbours is
 	 * 8 by default (should be set as a property of the diffuser...)
 	 */
 
@@ -205,17 +186,17 @@ public class GamaField extends GamaFloatMatrix implements IField {
 
 	@Override
 	public double getValueAtIndex(final IScope scope, final int i, final String var_diffu) {
-		return getMatrix()[i];
+		return matrix[i];
 	}
 
 	@Override
 	public void setValueAtIndex(final IScope scope, final int i, final String var_diffu, final double val) {
-		getMatrix()[i] = val;
+		matrix[i] = val;
 	}
 
 	@Override
 	public void getValuesInto(final IScope scope, final String varName, final double minValue, final double[] input) {
-		System.arraycopy(getMatrix(), 0, input, 0, input.length);
+		System.arraycopy(matrix, 0, input, 0, input.length);
 		for (int i = 0; i < input.length; i++) {
 			if (input[i] < minValue) { input[i] = 0; }
 		}
@@ -243,16 +224,25 @@ public class GamaField extends GamaFloatMatrix implements IField {
 
 	@Nullable
 	@Override
-	public IShape getCellShapeAt(final IScope scope, final ILocation loc) {
+	public IShape getCellShapeAt(final IScope scope, final ILocation at) {
 		computeDimensions(scope);
-		GamaPoint xyCoords = worldCoordinatesToIndices(scope, loc, null);
-		if (xyCoords == null) return null;
+		final GamaPoint p = (GamaPoint) at;
+		return getCellShapeAt(scope, getGridX(p.x), getGridY(p.y));
+
+	}
+
+	@Override
+	public IShape getCellShapeAt(final IScope scope, final int columns, final int rows) {
+		computeDimensions(scope);
+		// Necessary to add the z ? Verify the translations
 		return buildRectangle(cellDimensions.x, cellDimensions.y,
-				new GamaPoint(xyCoords.x * cellDimensions.x, xyCoords.y * cellDimensions.y));
+				new GamaPoint(columns * cellDimensions.x + cellDimensions.x / 2,
+						rows * cellDimensions.y + cellDimensions.y / 2, get(scope, columns, rows)));
 	}
 
 	@Override
 	public IList<Double> getValuesIntersecting(final IScope scope, final IShape shape) {
+		computeDimensions(scope);
 		Envelope3D env = Envelope3D.of(shape);
 		IList<Double> inEnv = GamaListFactory.create(Types.FLOAT);
 		GamaPoint p = new GamaPoint();
@@ -270,6 +260,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 
 	@Override
 	public IList<IShape> getCellsIntersecting(final IScope scope, final IShape shape) {
+		computeDimensions(scope);
 		Envelope3D env = Envelope3D.of(shape);
 		IList<IShape> inEnv = GamaListFactory.create(Types.GEOMETRY);
 		GamaPoint p = new GamaPoint();
@@ -284,6 +275,270 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		}
 		return inEnv;
 
+	}
+
+	@Override
+	public IList<GamaPoint> getLocationsIntersecting(final IScope scope, final IShape shape) {
+		computeDimensions(scope);
+		Envelope3D env = Envelope3D.of(shape);
+		IList<GamaPoint> inEnv = GamaListFactory.create(Types.POINT);
+		GamaPoint p = new GamaPoint();
+		for (double i = env.getMinX(); i < env.getMaxX(); i += cellDimensions.x) {
+			for (double j = env.getMinY(); j < env.getMaxY(); j += cellDimensions.y) {
+				p.setLocation(i, j, 0);
+				if (GamaShape.pl.intersects(p, shape.getInnerGeometry())) { inEnv.add(p.copy(scope)); }
+			}
+		}
+		return inEnv;
+
+	}
+
+	@Override
+	public IList<GamaPoint> getNeighborsOf(final IScope scope, final GamaPoint point) {
+		computeDimensions(scope);
+		IList<GamaPoint> result = GamaListFactory.create(Types.POINT);
+		int x = (int) (point.x / cellDimensions.x);
+		int y = (int) (point.y / cellDimensions.y);
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				int x1 = x + i;
+				int y1 = y + j;
+				if (x1 < 0 || x1 > numCols - 1 || y1 < 0 || y1 > numRows - 1 || i == 0 && j == 0) { continue; }
+				// We add the z ?
+				result.add(new GamaPoint(x1 * cellDimensions.x, y1 * cellDimensions.y, this.get(scope, x1, y1)));
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public double[] getBand(final IScope scope, final int index) {
+		double[] result = super.getBand(scope, index);
+		if (result == null) { if (index < bands.size()) { result = bands.get(index).getBand(scope, 0); } }
+		return result;
+	}
+
+	@Override
+	public int getBandsNumber(final IScope scope) {
+		return bands.size();
+	}
+
+	@Override
+	public GamaField copy(final IScope scope, final ILocation size, final boolean copy) {
+		if (size == null) {
+			if (copy) {
+				GamaField result = new GamaField(scope, numCols, numRows,
+						Arrays.copyOf(getMatrix(), getMatrix().length), noDataValue);
+				if (bands.size() > 1) {
+					for (GamaField f : bands) {
+						result.bands.add(new GamaField(scope, numCols, numRows,
+								Arrays.copyOf(f.getMatrix(), f.getMatrix().length), noDataValue));
+					}
+				}
+				return result;
+			} else
+				return this;
+		}
+		GamaField result = new GamaField(scope, (int) size.getX(), (int) size.getY(),
+				Arrays.copyOf(getMatrix(), getMatrix().length), noDataValue);
+		if (bands.size() > 1) {
+			for (GamaField f : bands) {
+				result.bands.add(new GamaField(scope, (int) size.getX(), (int) size.getY(),
+						Arrays.copyOf(f.getMatrix(), f.getMatrix().length), noDataValue));
+			}
+		}
+		return result;
+	}
+
+	@operator (
+			value = IKeyword.PLUS,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = { IConcept.MATRIX },
+			doc = @doc (
+					side_effects = "Modifies the left field. Use an explicit copy operation to prevent this",
+					value = "Adds a matrix or a field to the left field"))
+	@Override
+	public GamaField plus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		if (other instanceof GamaFloatMatrix) {
+			GamaFloatMatrix nm = (GamaFloatMatrix) other;
+			for (int i = 0; i < matrix.length; i++) {
+				matrix[i] += nm.matrix[i];
+			}
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.MINUS,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = { IConcept.MATRIX },
+			doc = @doc (
+					side_effects = "Modifies the left field. Use an explicit copy operation to prevent this",
+					value = "Subtracts a matrix or a field from the left field"))
+	@Override
+	public GamaField minus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		if (other instanceof GamaFloatMatrix) {
+			GamaFloatMatrix nm = (GamaFloatMatrix) other;
+			for (int i = 0; i < matrix.length; i++) {
+				matrix[i] -= nm.matrix[i];
+			}
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.MULTIPLY,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
+					value = "Scales the values in the field by the float parameter"))
+	@Override
+	public GamaField times(final Double val) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i] *= val;
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.MULTIPLY,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
+					value = "Scales the values in the field by the int parameter"))
+	@Override
+	public GamaField times(final Integer val) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i] *= val;
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.DIVIDE,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
+					value = "Scales the values in the field by 1 on the float parameter"))
+	@Override
+	public GamaField divides(final Double val) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i] /= val;
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.DIVIDE,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
+					value = "Scales the values in the field by 1 on the int parameter"))
+	@Override
+	public GamaField divides(final Integer val) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i] /= val;
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.PLUS,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
+					value = "Adds a float value to all the values in the field"))
+	@Override
+	public GamaField plus(final Double val) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i] += val;
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.PLUS,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
+					value = "Adds an int value to all the values in the field"))
+	@Override
+	public GamaField plus(final Integer val) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i] += val;
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.MINUS,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
+					value = "Subtracts a float value from all the values in the field"))
+	@Override
+	public GamaField minus(final Double val) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i] -= val;
+		}
+		return this;
+	}
+
+	@operator (
+			value = IKeyword.MINUS,
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
+					value = "Subtracts an int value from all the values in the field"))
+	@Override
+	public GamaField minus(final Integer val) throws GamaRuntimeException {
+		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
+		for (int i = 0; i < matrix.length; i++) {
+			matrix[i] -= val;
+		}
+		return this;
+	}
+
+	@Override
+	public IContainerType getGamlType() {
+		return Types.FIELD;
 	}
 
 }

@@ -270,7 +270,7 @@ public class Pref<T> implements IParameter {
 	 */
 	public boolean acceptChange(final T newValue) {
 		for (final IPreferenceChangeListener<T> listener : listeners) {
-			if (!listener.beforeValueChange(newValue)) { return false; }
+			if (!listener.beforeValueChange(newValue)) return false;
 		}
 		return true;
 	}
@@ -332,6 +332,11 @@ public class Pref<T> implements IParameter {
 	@Override
 	public List<GamaColor> getColor(final IScope scope) {
 		return null;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		return false;
 	}
 
 }

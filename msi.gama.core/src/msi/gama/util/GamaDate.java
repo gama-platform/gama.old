@@ -49,7 +49,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.TimeUnitConstantExpression;
+import msi.gaml.expressions.units.TimeUnitConstantExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Dates;
 import msi.gaml.types.GamaDateType;

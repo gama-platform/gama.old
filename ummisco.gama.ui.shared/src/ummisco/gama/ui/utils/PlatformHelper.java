@@ -87,8 +87,8 @@ public class PlatformHelper extends DPIUtil {
 	}
 
 	private static MouseEvent autoScaleUp(final MouseEvent e) {
-		e.x = autoScaleDown(e.x);
-		e.y = autoScaleDown(e.y);
+		e.x = autoScaleUp(e.x);
+		e.y = autoScaleUp(e.y);
 		return e;
 	}
 

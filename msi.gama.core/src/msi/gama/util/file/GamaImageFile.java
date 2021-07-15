@@ -47,6 +47,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.IField;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Spatial.Projections;
 import msi.gaml.operators.Strings;
@@ -479,7 +480,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 
 	@Override
 	public double getNoData(final IScope scope) {
-		return Double.MAX_VALUE;
+		return IField.NO_NO_DATA;
 	}
 
 	@Override

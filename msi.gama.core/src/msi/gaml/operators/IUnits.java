@@ -26,7 +26,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
 import msi.gama.util.GamaMaterial;
 import msi.gaml.compilation.GAML;
-import msi.gaml.expressions.UnitConstantExpression;
+import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;

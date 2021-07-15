@@ -75,7 +75,7 @@ experiment "3D view" type: gui {
 				draw "Scale: " + z_scale color: #cadetblue font: font("Helvetica", 18, #bold) at: {world.location.x, -10, 25} anchor: #center depth: 2 rotate: -90::{1,0,0};
 				draw aabb wireframe: true color: #lightblue;
 			}
-			mesh terrain grayscale: true triangulation: true refresh: false scale: z_scale;
+			mesh terrain grayscale: true triangulation: true refresh: false scale: z_scale smooth: 2;
 			species water;
 			event #mouse_down {
 				point p <- #user_location;

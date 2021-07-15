@@ -976,6 +976,13 @@ public final class GamlAnnotations {
 	public static @interface doc {
 
 		/**
+		 * Used to document the side effects an operator or an action might have on its operands. If none, leave blank.
+		 *
+		 * @return
+		 */
+		String side_effects() default "";
+
+		/**
 		 * Value.
 		 *
 		 * @return a String representing the documentation of a GAML element

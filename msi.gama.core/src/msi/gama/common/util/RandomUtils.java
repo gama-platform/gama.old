@@ -147,9 +147,7 @@ public class RandomUtils {
 			final BitString bs = new BitString(trials, generator);
 			final int successes = bs.countSetBits();
 			trials -= successes;
-			if (pBits.getBit(pIndex)) {
-				totalSuccesses += successes;
-			}
+			if (pBits.getBit(pIndex)) { totalSuccesses += successes; }
 			--pIndex;
 		}
 		return totalSuccesses;
@@ -170,9 +168,7 @@ public class RandomUtils {
 		double t = 0.0;
 		while (true) {
 			t -= Math.log(next()) / mean;
-			if (t > 1.0) {
-				break;
-			}
+			if (t > 1.0) { break; }
 			++x;
 		}
 		return x;
@@ -182,12 +178,8 @@ public class RandomUtils {
 	private byte[] createSeed(final Double s, final int length) {
 		this.seed = s;
 		Double realSeed = seed;
-		if (realSeed < 0) {
-			realSeed *= -1;
-		}
-		if (realSeed < 1) {
-			realSeed *= Long.MAX_VALUE;
-		}
+		if (realSeed < 0) { realSeed *= -1; }
+		if (realSeed < 1) { realSeed *= Long.MAX_VALUE; }
 		long l = Double.doubleToRawLongBits(realSeed);
 		final byte[] result = new byte[length];
 		switch (length) {
@@ -218,12 +210,8 @@ public class RandomUtils {
 
 	public void setSeed(final Double newSeed, final boolean init) {
 		seed = newSeed;
-		if (seed == null) {
-			seed = SEED_SOURCE.nextDouble();
-		}
-		if (init) {
-			initGenerator();
-		}
+		if (seed == null) { seed = SEED_SOURCE.nextDouble(); }
+		if (init) { initGenerator(); }
 	}
 
 	/**
@@ -234,9 +222,7 @@ public class RandomUtils {
 	 */
 	public void setGenerator(final String newGen, final boolean init) {
 		generatorName = newGen;
-		if (init) {
-			initGenerator();
-		}
+		if (init) { initGenerator(); }
 	}
 
 	// public void shuffleInPlace(final Collection list) {
@@ -255,7 +241,7 @@ public class RandomUtils {
 
 	public void shuffleInPlace(final Collection list) {
 		final int size = list.size();
-		if (size < 2) { return; }
+		if (size < 2) return;
 		final Object[] a = list.toArray(new Object[size]);
 		list.clear();
 		shuffleInPlace(a);
@@ -286,6 +272,15 @@ public class RandomUtils {
 		for (int i = 0; i < a.length; i++) {
 			final int change = between(i, a.length - 1);
 			final int helper = a[i];
+			a[i] = a[change];
+			a[change] = helper;
+		}
+	}
+
+	public void shuffleInPlace(final short[] a) {
+		for (int i = 0; i < a.length; i++) {
+			final int change = between(i, a.length - 1);
+			final short helper = a[i];
 			a[i] = a[change];
 			a[change] = helper;
 		}
@@ -410,7 +405,7 @@ public class RandomUtils {
 		 *            The number of bits.
 		 */
 		public BitString(final int length) {
-			if (length < 0) { throw new IllegalArgumentException("Length must be non-negative."); }
+			if (length < 0) throw new IllegalArgumentException("Length must be non-negative.");
 			this.length = length;
 			this.data = new int[(length + WORD_LENGTH - 1) / WORD_LENGTH];
 		}
@@ -456,9 +451,8 @@ public class RandomUtils {
 			for (int i = 0; i < value.length(); i++) {
 				if (value.charAt(i) == '1') {
 					setBit(value.length() - (i + 1), true);
-				} else if (value.charAt(i) != '0') {
+				} else if (value.charAt(i) != '0')
 					throw new IllegalArgumentException("Illegal character at position " + i);
-				}
 			}
 		}
 
@@ -516,9 +510,8 @@ public class RandomUtils {
 		 *             If the index is not valid.
 		 */
 		private void assertValidIndex(final int index) {
-			if (index >= length || index < 0) {
+			if (index >= length || index < 0)
 				throw new IndexOutOfBoundsException("Invalid index: " + index + " (length: " + length + ")");
-			}
 		}
 
 		/**
@@ -543,33 +536,33 @@ public class RandomUtils {
 	}
 
 	public <K> K oneOf(final Collection<K> c) {
-		if (c == null || c.isEmpty()) { return null; }
+		if (c == null || c.isEmpty()) return null;
 		return (K) oneOf(c.toArray());
 	}
 
 	public <K> K oneOf(final List<K> c) {
-		if (c == null || c.isEmpty()) { return null; }
+		if (c == null || c.isEmpty()) return null;
 		return c.get(between(0, c.size() - 1));
 	}
 
 	public <K> K oneOf(final K[] c) {
-		if (c == null || c.length == 0) { return null; }
+		if (c == null || c.length == 0) return null;
 		return c[between(0, c.length - 1)];
 
 	}
 
 	public int oneOf(final int[] c) {
-		if (c == null || c.length == 0) { return -1; }
+		if (c == null || c.length == 0) return -1;
 		return c[between(0, c.length - 1)];
 	}
 
 	public double oneOf(final double[] c) {
-		if (c == null || c.length == 0) { return -1; }
+		if (c == null || c.length == 0) return -1;
 		return c[between(0, c.length - 1)];
 	}
 
 	public boolean oneOf(final boolean[] c) {
-		if (c == null || c.length == 0) { return false; }
+		if (c == null || c.length == 0) return false;
 		return c[between(0, c.length - 1)];
 	}
 

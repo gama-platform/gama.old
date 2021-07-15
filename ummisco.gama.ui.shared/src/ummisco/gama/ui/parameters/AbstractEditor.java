@@ -96,7 +96,7 @@ public abstract class AbstractEditor<T>
 					applyBrowse();
 					break;
 				case CHANGE:
-					if (e.detail != SWT.ARROW) { return; }
+					if (e.detail != SWT.ARROW) return;
 					applyChange();
 					break;
 				case DEFINE:
@@ -145,17 +145,13 @@ public abstract class AbstractEditor<T>
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {
-			if (GAMA.getExperiment() == null || !GAMA.getExperiment().isBatch()) {
-				showToolbar();
-			}
+			if (GAMA.getExperiment() == null || !GAMA.getExperiment().isBatch()) { showToolbar(); }
 		}
 
 		@Override
 		public void mouseExit(final MouseEvent e) {
-			if (isCombo && combo != null && combo.getListVisible()) { return; }
-			if (GAMA.getExperiment() == null || !GAMA.getExperiment().isBatch()) {
-				hideToolbar();
-			}
+			if (isCombo && combo != null && combo.getListVisible()) return;
+			if (GAMA.getExperiment() == null || !GAMA.getExperiment().isBatch()) { hideToolbar(); }
 		}
 
 		@Override
@@ -178,9 +174,9 @@ public abstract class AbstractEditor<T>
 
 	@Override
 	public IScope getScope() {
-		if (dontUseScope) { return null; }
-		if (scope != null) { return scope; }
-		if (agent != null) { return agent.getScope(); }
+		if (dontUseScope) return null;
+		if (scope != null) return scope;
+		if (agent != null) return agent.getScope();
 		return GAMA.getRuntimeScope();
 	}
 
@@ -217,14 +213,12 @@ public abstract class AbstractEditor<T>
 	public void setActive(final Boolean active) {
 		if (titleLabel != null) {
 			titleLabel.setForeground(
-					active ? (ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color())
+					active ? ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color()
 							: GamaColors.system(SWT.COLOR_GRAY));
 		}
 		if (!active) {
 			for (final Button t : items) {
-				if (t == null) {
-					continue;
-				}
+				if (t == null) { continue; }
 				t.setEnabled(false);
 			}
 		} else {
@@ -241,29 +235,19 @@ public abstract class AbstractEditor<T>
 		if (param instanceof ExperimentParameter) {
 			if (a == null) {
 				final var exp = GAMA.getExperiment();
-				if (exp != null) {
-					a = exp.getAgent();
-				}
+				if (exp != null) { a = exp.getAgent(); }
 			}
 			if (a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
 				GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
 			}
 			// Introduced to deal with #2306
-			if (agent == null) {
-				param.setValue(a == null ? null : a.getScope(), newValue);
-			}
+			if (agent == null) { param.setValue(a == null ? null : a.getScope(), newValue); }
+		} else if (a == null) {
+			param.setValue(null, newValue);
+		} else if (param instanceof Variable) {
+			((Variable) param).setVal(scope, a, newValue);
 		} else {
-			// param.setValue(a == null ? null : a.getScope(), newValue);
-			if (a == null) {
-				param.setValue(null, newValue);
-			} else {
-				if (param instanceof Variable) {
-					((Variable) param).setVal(scope, a, newValue);
-				} else {
-					// a.setDirectVarValue(scope, param.getName(), newValue);
-					param.setValue(a.getScope(), newValue);
-				}
-			}
+			param.setValue(a.getScope(), newValue);
 		}
 	}
 
@@ -324,9 +308,7 @@ public abstract class AbstractEditor<T>
 		label.setBackground(parent.getBackground());
 		final var d = new GridData(SWT.END, SWT.CENTER, true, true);
 		d.minimumWidth = 70;
-		if (isSubParameter) {
-			d.horizontalIndent = 30;
-		}
+		if (isSubParameter) { d.horizontalIndent = 30; }
 		label.setLayoutData(d);
 		label.setFont(GamaFonts.getLabelfont());
 		label.setText(title);
@@ -335,15 +317,14 @@ public abstract class AbstractEditor<T>
 
 	public void resizeLabel(final int width) {
 		final var l = getLabel();
-		if (l != null) {
-			((GridData) l.getLayoutData()).widthHint = width;
-		}
+		if (l != null) { ((GridData) l.getLayoutData()).widthHint = width; }
 	}
 
 	public void createComposite(final Composite comp) {
 		this.parent = comp;
 		internalModification = true;
-		titleLabel = createLeftLabel(comp, name, isSubParameter);
+		titleLabel =
+				createLeftLabel(comp, param.isDefinedInExperiment() ? "(Experiment) " + name : name, isSubParameter);
 		titleLabel.setForeground(GamaColors.getTextColorForBackground(titleLabel.getBackground()).color());
 		// IGamaColors.BLACK.color()); by default, see #2601
 		try {
@@ -366,9 +347,7 @@ public abstract class AbstractEditor<T>
 		createEditorControl(composite);
 		toolbar = createToolbar2();
 
-		if (isEditable && !isCombo) {
-			displayParameterValueAndCheckButtons();
-		}
+		if (isEditable && !isCombo) { displayParameterValueAndCheckButtons(); }
 		internalModification = false;
 		composite.layout();
 
@@ -383,23 +362,19 @@ public abstract class AbstractEditor<T>
 				controlsThatShowHideToolbars.remove(c);
 			});
 		}
-		if (GAMA.getExperiment() == null || !GAMA.getExperiment().isBatch()) {
-			hideToolbar();
-		}
+		if (GAMA.getExperiment() == null || !GAMA.getExperiment().isBatch()) { hideToolbar(); }
 	}
 
 	protected void addToolbarHiders(final Control... c) {
 		for (final Control control : c) {
-			if (control != null) {
-				controlsThatShowHideToolbars.add(control);
-			}
+			if (control != null) { controlsThatShowHideToolbars.add(control); }
 		}
 	}
 
 	protected void hideToolbar() {
-		if (toolbar == null || toolbar.isDisposed()) { return; }
+		if (toolbar == null || toolbar.isDisposed()) return;
 		final var d = (GridData) toolbar.getLayoutData();
-		if (d.exclude) { return; }
+		if (d.exclude) return;
 		d.exclude = true;
 		toolbar.setVisible(false);
 		composite.setBackground(getNormalBackground());
@@ -408,9 +383,9 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected void showToolbar() {
-		if (toolbar == null || toolbar.isDisposed()) { return; }
+		if (toolbar == null || toolbar.isDisposed()) return;
 		final var d = (GridData) toolbar.getLayoutData();
-		if (!d.exclude) { return; }
+		if (!d.exclude) return;
 		d.exclude = false;
 		toolbar.setVisible(true);
 		composite.setBackground(HOVERED_BACKGROUND());
@@ -419,28 +394,22 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected String computeUnitLabel() {
-		var s = typeToDisplay();
+		StringBuilder s = new StringBuilder().append(typeToDisplay());
 		if (minValue != null) {
 			final var min = StringUtils.toGaml(minValue, false);
 			if (maxValue != null) {
-				s += " [" + min + ".." + StringUtils.toGaml(maxValue, false) + "]";
+				s.append(" [").append(min).append("..").append(StringUtils.toGaml(maxValue, false)).append("]");
 			} else {
-				s += ">= " + min;
+				s.append(">= ").append(min);
 			}
-		} else {
-			if (maxValue != null) {
-				s += "<=" + StringUtils.toGaml(maxValue, false);
-			}
-		}
+		} else if (maxValue != null) { s.append("<=").append(StringUtils.toGaml(maxValue, false)); }
 		final var u = param.getUnitLabel(getScope());
-		if (u != null) {
-			s += " " + u;
-		}
-		return s;
+		if (u != null) { s.append(" ").append(u); }
+		return s.toString();
 	}
 
 	protected String typeToDisplay() {
-		if (!this.isEditable) { return ""; }
+		if (!this.isEditable) return "";
 		return param.getType().serialize(false);
 	}
 
@@ -509,13 +478,11 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected ToolItem createPlusItem(final ToolBar t) {
-		final var item = createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
-		return item;
+		return createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
 	}
 
 	protected Button createPlusItem(final Composite t) {
-		final var item = createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
-		return item;
+		return createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
 	}
 
 	/**
@@ -544,9 +511,8 @@ public abstract class AbstractEditor<T>
 		} else {
 			result = scope.getAgentVarValue(getAgent(), param.getName());
 		}
-		if (getExpectedType() == Types.STRING) {
+		if (getExpectedType() == Types.STRING)
 			return (T) StringUtils.toJavaString(GamaStringType.staticCast(scope, result, false));
-		}
 		return (T) getExpectedType().cast(scope, result, null, false);
 
 	}
@@ -637,7 +603,7 @@ public abstract class AbstractEditor<T>
 
 	protected void checkButtons() {
 		final var revert = items[REVERT];
-		if (revert == null || revert.isDisposed()) { return; }
+		if (revert == null || revert.isDisposed()) return;
 		revert.setEnabled(currentValue == null ? originalValue != null : !currentValue.equals(originalValue));
 	}
 
@@ -663,30 +629,24 @@ public abstract class AbstractEditor<T>
 	@SuppressWarnings ("unchecked")
 	// Passes Object on purpose so that Float and Int editors can cast it.
 	protected void modifyValue(final Object val) throws GamaRuntimeException {
-		if (!isValueDifferent(val)) { return; }
+		if (!isValueDifferent(val)) return;
 		currentValue = (T) val;
 		WorkbenchHelper.asyncRun(() -> {
-			if (CORE_EDITORS_HIGHLIGHT.getValue()) {
-				if (titleLabel != null && !titleLabel.isDisposed()) {
-					titleLabel.setBackground(isValueModified() ? getChangedBackground() : getNormalBackground());
-				}
+			if (CORE_EDITORS_HIGHLIGHT.getValue() && titleLabel != null && !titleLabel.isDisposed()) {
+				titleLabel.setBackground(isValueModified() ? getChangedBackground() : getNormalBackground());
 			}
 		});
 
-		if (!internalModification) {
-			setParameterValue((T) val);
-		}
+		if (!internalModification) { setParameterValue((T) val); }
 	}
 
 	@Override
 	public void updateValue(final boolean force) {
 		try {
 			final var newVal = getParameterValue();
-			if (!force && !isValueDifferent(newVal)) { return; }
+			if (!force && !isValueDifferent(newVal)) return;
 			internalModification = true;
-			if (titleLabel != null && !titleLabel.isDisposed()) {
-				modifyAndDisplayValue(newVal);
-			}
+			if (titleLabel != null && !titleLabel.isDisposed()) { modifyAndDisplayValue(newVal); }
 			internalModification = false;
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);
@@ -738,22 +698,18 @@ public abstract class AbstractEditor<T>
 					fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val, false));
 				}
 			} else if (isCombo) {
-				if (!combo.isDisposed()) {
-					combo.select(possibleValues.indexOf(val));
-				}
+				if (!combo.isDisposed()) { combo.select(possibleValues.indexOf(val)); }
 			} else {
 				displayParameterValueAndCheckButtons();
 			}
-			if (!composite.isDisposed()) {
-				composite.update();
-			}
+			if (!composite.isDisposed()) { composite.update(); }
 		});
 
 	}
 
 	protected IAgent getAgent() {
-		if (agent != null) { return agent; }
-		if (scope == null) { return null; }
+		if (agent != null) return agent;
+		if (scope == null) return null;
 		return scope.getSimulation();
 
 	}

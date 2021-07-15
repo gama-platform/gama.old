@@ -107,7 +107,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
-import msi.gaml.expressions.MapExpression;
+import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Comparison;
 import msi.gaml.operators.Strings;

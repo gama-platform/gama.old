@@ -77,8 +77,9 @@ experiment Fields type: gui {
 
 experiment Field_view type:gui{
 	output {
+		layout #split;
 		display "field through mesh" type:opengl {
-			mesh field_display grayscale:true scale: -0.01 refresh: false triangulation: true smooth: true;
+			mesh field_display grayscale:true scale: 0.05 refresh: false triangulation: true smooth: true;
 		}
 		display "rgb field through mesh" type:opengl {
 			mesh field_display color:field_display.bands scale: 0.0 refresh: false;

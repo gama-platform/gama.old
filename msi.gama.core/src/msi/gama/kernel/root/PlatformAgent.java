@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -258,8 +259,10 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 			value = WORKSPACE_PATH,
 			initializer = true)
 	public String getWorkspacePath() {
-		final URL url = Platform.getInstanceLocation().getURL();
-		return url.getPath();
+		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
+	//Patrick : previous version: does not work well on windows (/C:/....)
+	//	final URL url = Platform.getInstanceLocation().getURL();
+	//	return url.getPath();
 	}
 
 	@SuppressWarnings ("unchecked")

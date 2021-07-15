@@ -2,6 +2,7 @@ package msi.gama.util.matrix;
 
 import javax.annotation.Nonnull;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.IDiffusionTarget;
@@ -29,11 +30,19 @@ import msi.gaml.types.IType;
 				+ "Setting it will only change the interpretation made by the field "
 				+ "of the values it contains, but not the values themselves")),
 		@variable (
+				name = "cell_size",
+				type = IType.POINT,
+				doc = @doc ("Represents the dimension of an individual cell as a point (width, height)"
+						+ "Setting it will only change the interpretation made by the field "
+						+ "of the values it contains, but not the values themselves")),
+		@variable (
 				name = "bands",
 				type = IType.LIST,
 				of = IType.FIELD,
 				doc = @doc ("The list of bands that are optionnaly present in the field. The first band is the primary field itself, and each of these bands is a field w/o bands ")) })
 public interface IField extends IMatrix<Double>, IDiffusionTarget {
+
+	double NO_NO_DATA = Double.MAX_VALUE;
 
 	@Override
 	default IField getField(final IScope scope) {
@@ -80,10 +89,18 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	 * @return a list of fields, never null as the first band is this field itself.
 	 */
 	@getter ("bands")
-	IList<IField> getBands(IScope scope);
+	IList<? extends IField> getBands(IScope scope);
 
 	@setter ("bands")
 	default void setBands(final IScope scope, final IList<IField> bands) {
+		// Nothing to do by default as this value is supposed to be read-only
+	}
+
+	@getter ("cell_size")
+	GamaPoint getCellSize(IScope scope);
+
+	@setter ("cell_size")
+	default void setCellSize(final IScope scope, final GamaPoint size) {
 		// Nothing to do by default as this value is supposed to be read-only
 	}
 
@@ -95,6 +112,8 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	 * @return A list of values at this location. Never null nor empty (as there is at least one band).
 	 */
 	IShape getCellShapeAt(IScope scope, ILocation loc);
+
+	IShape getCellShapeAt(IScope scope, int columns, int rows);
 
 	/**
 	 * Returns a list of all the values present in the bands at this world location
@@ -114,5 +133,9 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	 * @return
 	 */
 	IList<IShape> getCellsIntersecting(IScope scope, IShape shape);
+
+	IList<GamaPoint> getLocationsIntersecting(final IScope scope, final IShape shape);
+
+	IList<GamaPoint> getNeighborsOf(IScope scope, GamaPoint point);
 
 }

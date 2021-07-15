@@ -35,6 +35,7 @@ import msi.gama.util.GamaColor;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -97,7 +98,9 @@ import msi.gaml.variables.Variable;
 						type = IType.NONE,
 						optional = true,
 						doc = @doc (
-								deprecated = "Move the block of statements at the end of the parameter declaration instead",
+								// AD deprecation temporarily removed as this facet is used internally now
+								// deprecated = "Move the block of statements at the end of the parameter declaration
+								// instead",
 								value = "Provides a block of statements that will be executed whenever the value of the parameter changes")),
 				@facet (
 						name = IKeyword.ENABLES,
@@ -134,7 +137,8 @@ import msi.gaml.variables.Variable;
 @symbol (
 		name = { IKeyword.PARAMETER },
 		kind = ISymbolKind.PARAMETER,
-		with_sequence = false,
+		with_sequence = true,
+
 		concept = { IConcept.EXPERIMENT, IConcept.PARAMETER })
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })
@@ -167,6 +171,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	boolean isEditable;
 	boolean canBeNull;
 	boolean isDefined = true;
+	// if true, means the target of the parameter is a variable defined in experiment
+	boolean isExperiment = false;
 	final IExpression init, among, min, max, step, slider, onChange;
 	final List<ParameterChangeListener> listeners = new ArrayList<>();
 	ActionStatement action;
@@ -178,10 +184,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		type = desc.getGamlType();
 		title = sd.getName();
 		unitLabel = getLiteral(IKeyword.UNIT);
-		final ModelDescription wd = desc.getModelDescription();
-		final VariableDescription targetedGlobalVar = wd.getAttribute(varName);
-		if (type.equals(Types.NO_TYPE)) { type = targetedGlobalVar.getGamlType(); }
-		setCategory(desc.getLitteral(IKeyword.CATEGORY));
+
 		min = getFacet(IKeyword.MIN);
 		final IScope runtimeScope = GAMA.getRuntimeScope();
 		if (min != null && min.isConst()) { getMinValue(runtimeScope); }
@@ -205,9 +208,24 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		final IExpressionDescription e = type.equals(Types.BOOL) ? getDescription().getFacet(IKeyword.ENABLES) : null;
 		disables = d != null ? d.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
 		enables = e != null ? e.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
+		final VariableDescription targetedGlobalVar = findTargetedVar(sd);
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
-
 		isEditable = !targetedGlobalVar.isNotModifiable();
+		isExperiment = targetedGlobalVar.isDefinedInExperiment();
+
+		setCategory(desc.getLitteral(IKeyword.CATEGORY));
+	}
+
+	private VariableDescription findTargetedVar(final IDescription parameterDescription) {
+		// We look first in the model to make sure that built-in parameters (like seed) are correctly retrieved
+		final ModelDescription wd = parameterDescription.getModelDescription();
+		VariableDescription targetedGlobalVar = wd.getAttribute(varName);
+		if (targetedGlobalVar == null) {
+			final ExperimentDescription ed = (ExperimentDescription) parameterDescription.getEnclosingDescription();
+			targetedGlobalVar = ed.getAttribute(varName);
+			isExperiment = true;
+		}
+		return targetedGlobalVar;
 	}
 
 	public ExperimentParameter(final IScope scope, final IParameter p) {
@@ -263,6 +281,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			setValue(scope, p.getInitialValue(scope));
 		}
 		setEditable(p.isEditable());
+		this.isExperiment = p.isDefinedInExperiment();
 	}
 
 	@Override
@@ -315,26 +334,20 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	public void setAndVerifyValue(final IScope scope, final Object val) {
 		Object newValue = val;
-		if (minValue != null) {
-			if (newValue instanceof Number) {
-				if (((Number) newValue).doubleValue() < minValue.doubleValue()) {
-					if (type.id() == IType.INT) {
-						newValue = minValue.intValue();
-					} else {
-						newValue = minValue.doubleValue();
-					}
-				}
+		if (minValue != null && newValue instanceof Number
+				&& ((Number) newValue).doubleValue() < minValue.doubleValue()) {
+			if (type.id() == IType.INT) {
+				newValue = minValue.intValue();
+			} else {
+				newValue = minValue.doubleValue();
 			}
 		}
-		if (maxValue != null) {
-			if (newValue instanceof Number) {
-				if (((Number) newValue).doubleValue() > maxValue.doubleValue()) {
-					if (type.id() == IType.INT) {
-						newValue = maxValue.intValue();
-					} else {
-						newValue = maxValue.doubleValue();
-					}
-				}
+		if (maxValue != null && newValue instanceof Number
+				&& ((Number) newValue).doubleValue() > maxValue.doubleValue()) {
+			if (type.id() == IType.INT) {
+				newValue = maxValue.intValue();
+			} else {
+				newValue = maxValue.doubleValue();
 			}
 		}
 
@@ -372,9 +385,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				if (NumberUtil.equalsWithTolerance(d, newDouble, tolerance)) return d;
 			}
 
-		} else {
-			if (amongValue.contains(newValue)) return newValue;
-		}
+		} else if (amongValue.contains(newValue)) return newValue;
 		return amongValue.get(0);
 	}
 
@@ -402,8 +413,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	public void tryToInit(final IScope scope) {
-		if (value != UNDEFINED) return;
-		if (init == null) return;
+		if (value != UNDEFINED || init == null) return;
 		setValue(scope, init.value(scope));
 
 	}
@@ -468,7 +478,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String getCategory() {
-		return category;
+		return category == null ? IParameter.Batch.super.getCategory() : category;
 	}
 
 	@Override
@@ -483,7 +493,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Object value() {
-		return GAMA.run(scope -> getValue(scope));
+		return GAMA.run(this::getValue);
 
 	}
 
@@ -597,6 +607,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public String[] getDisablement() {
 		return this.disables;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		return isExperiment;
 	}
 
 }

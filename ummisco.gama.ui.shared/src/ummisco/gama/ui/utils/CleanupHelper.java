@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
@@ -61,7 +65,18 @@ public class CleanupHelper {
 		RearrangeMenus.run();
 		ForceMaximizeRestoration.run();
 		RemoveActivities.run();
-		GamaPreferencesView.preload();
+		Job prefs = new Job("Preloading preferences") {
+
+			@Override
+			protected IStatus run(final IProgressMonitor monitor) {
+				GamaPreferencesView.preload();
+				return Status.OK_STATUS;
+			}
+		};
+		prefs.setUser(true);
+		prefs.setPriority(Job.DECORATE);
+		prefs.schedule();
+
 	}
 
 	static class RemoveActivities {
