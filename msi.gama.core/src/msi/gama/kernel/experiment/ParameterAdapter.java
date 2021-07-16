@@ -113,12 +113,12 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public Number getMinValue(final IScope scope) {
+	public Comparable getMinValue(final IScope scope) {
 		return null;
 	}
 
 	@Override
-	public Number getMaxValue(final IScope scope) {
+	public Comparable getMaxValue(final IScope scope) {
 		return null;
 	}
 
@@ -140,7 +140,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public Number getStepValue(final IScope scope) {
+	public Comparable getStepValue(final IScope scope) {
 		return null;
 	}
 

@@ -58,8 +58,8 @@ public class GamaToolbarFactory {
 	}
 
 	public static GamaComposite findGamaComposite(final Control c) {
-		if (c instanceof Shell) { return null; }
-		if (c instanceof GamaComposite) { return (GamaComposite) c; }
+		if (c instanceof Shell) return null;
+		if (c instanceof GamaComposite) return (GamaComposite) c;
 		return findGamaComposite(c.getParent());
 	}
 
@@ -224,9 +224,7 @@ public class GamaToolbarFactory {
 	}
 
 	public static void disposeToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
-		if (tb != null && !tb.isDisposed()) {
-			tb.dispose();
-		}
+		if (tb != null && !tb.isDisposed()) { tb.dispose(); }
 	}
 
 	public static void buildToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {

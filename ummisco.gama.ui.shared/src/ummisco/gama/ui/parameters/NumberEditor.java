@@ -1,22 +1,18 @@
 /*********************************************************************************************
  *
- * 'NumberEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * 'NumberEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.kernel.experiment.IParameter;
@@ -27,28 +23,24 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaIcons;
 
-public abstract class NumberEditor<T extends Number> extends ExpressionBasedEditor<T> {
+public abstract class NumberEditor<T extends Comparable> extends ExpressionBasedEditor<T> {
 
-	Number stepValue;
 	static final String UNDEFINED_LABEL = "-- Undefined --";
 
 	public NumberEditor(final IScope scope, final IParameter param, final boolean canBeNull) {
 		super(scope, param);
-		computeStepValue();
 		acceptNull = canBeNull;
 	}
 
 	public NumberEditor(final IScope scope, final InputParameter supportParameter, final EditorListener<T> whenModified,
 			final boolean canBeNull) {
 		super(scope, supportParameter, whenModified);
-		computeStepValue();
 		acceptNull = canBeNull;
 	}
 
 	public NumberEditor(final IScope scope, final IAgent a, final IParameter p, final EditorListener<T> l,
 			final boolean canBeNull) {
 		super(scope, a, p, l);
-		computeStepValue();
 		acceptNull = canBeNull;
 	}
 
@@ -60,15 +52,11 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 
 	protected abstract Number normalizeValues() throws GamaRuntimeException;
 
-	protected abstract void computeStepValue();
-
 	@Override
 	protected void checkButtons() {
 		super.checkButtons();
-		final Button t = items[DEFINE];
-		if (t == null || t.isDisposed()) {
-			return;
-		}
+		final ToolItem t = items[DEFINE];
+		if (t == null || t.isDisposed()) return;
 		if (param.isDefined()) {
 			t.setToolTipText("Set the parameter to undefined");
 			t.setImage(GamaIcons.create("small.undefine").image());
@@ -98,19 +86,8 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 	}
 
 	@Override
-	protected ToolItem createPlusItem(final ToolBar t) {
-		final ToolItem item = super.createPlusItem(t);
-		final ToolItem unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
-		unitItem.setText(String.valueOf(stepValue));
-		unitItem.setEnabled(false);
-		return item;
-	}
-
-	@Override
 	protected int[] getToolItems() {
-		if (acceptNull) {
-			return new int[] { DEFINE, PLUS, MINUS, REVERT };
-		}
+		if (acceptNull) return new int[] { DEFINE, PLUS, MINUS, REVERT };
 		return new int[] { PLUS, MINUS, REVERT };
 	}
 }

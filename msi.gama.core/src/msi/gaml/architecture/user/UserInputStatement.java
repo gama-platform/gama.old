@@ -170,13 +170,13 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public Number getMinValue(final IScope scope) {
-		return min == null ? null : (Number) min.value(scope);
+	public Comparable getMinValue(final IScope scope) {
+		return min == null ? null : (Comparable) min.value(scope);
 	}
 
 	@Override
-	public Number getMaxValue(final IScope scope) {
-		return max == null ? null : (Number) max.value(scope);
+	public Comparable getMaxValue(final IScope scope) {
+		return max == null ? null : (Comparable) max.value(scope);
 	}
 
 	@Override
@@ -200,7 +200,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public Number getStepValue(final IScope scope) {
+	public Comparable getStepValue(final IScope scope) {
 		return null;
 	}
 

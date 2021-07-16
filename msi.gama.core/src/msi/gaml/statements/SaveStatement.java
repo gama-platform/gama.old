@@ -905,7 +905,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
 			final GeometryFactory geomFact = new GeometryFactory();
 			for (int i = 0; i < p.getNumInteriorRing(); i++) {
-				final LinearRing hole = (LinearRing) p.getInteriorRingN(i);
+				final LinearRing hole = p.getInteriorRingN(i);
 				if (!clockwise && !Orientation.isCCW(hole.getCoordinates())
 						|| clockwise && Orientation.isCCW(hole.getCoordinates())) {
 					change = true;
@@ -917,7 +917,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					holes[i] = hole;
 				}
 			}
-			if (change) { return geomFact.createPolygon((LinearRing) p.getExteriorRing(), holes); }
+			if (change) { return geomFact.createPolygon(p.getExteriorRing(), holes); }
 		} else if (g instanceof GeometryCollection) {
 			final GeometryCollection gc = (GeometryCollection) g;
 			boolean change = false;

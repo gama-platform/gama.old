@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import static msi.gaml.operators.Cast.asFloat;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +84,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 
 	@Override
 	public void dispose() {
-		if (dead) { return; }
+		if (dead) return;
 		getScope().getGui().displayTestsResults(getScope(), summary);
 		getScope().getGui().endTestDisplay();
 		super.dispose();
@@ -109,7 +111,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 			@Override
 			public String value() {
 				final Map<String, IParameter.Batch> explorable = getSpecies().getExplorableParameters();
-				if (explorable.isEmpty()) { return "1"; }
+				if (explorable.isEmpty()) return "1";
 				String result = "";
 				int dim = 1;
 				for (final Map.Entry<String, IParameter.Batch> entry : explorable.entrySet()) {
@@ -118,17 +120,18 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 					dim = dim * entryDim;
 					result += String.valueOf(entryDim) + ") * ";
 				}
-				if (!result.isEmpty()) {
-					result = result.substring(0, result.length() - 2);
-				}
+				if (!result.isEmpty()) { result = result.substring(0, result.length() - 2); }
 				result += " = " + dim;
 				return result;
 			}
 
 			int getExplorationDimension(final IParameter.Batch p) {
-				if (p.getAmongValue(getScope()) != null) { return p.getAmongValue(getScope()).size(); }
-				return (int) ((p.getMaxValue(getScope()).doubleValue() - p.getMinValue(getScope()).doubleValue())
-						/ p.getStepValue(getScope()).doubleValue()) + 1;
+				IScope scope = getScope();
+				// AD TODO Issue a warning in the compilation if a batch experiment tries to explore non-int or
+				// non-float values
+				if (p.getAmongValue(scope) != null) return p.getAmongValue(scope).size();
+				return (int) ((asFloat(scope, p.getMaxValue(scope)) - asFloat(scope, p.getMinValue(scope)))
+						/ asFloat(scope, p.getStepValue(scope))) + 1;
 			}
 
 		});
@@ -137,9 +140,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 
 	@Override
 	public TestExperimentSummary getSummary() {
-		if (summary == null) {
-			summary = new TestExperimentSummary(this);
-		}
+		if (summary == null) { summary = new TestExperimentSummary(this); }
 		return summary;
 	}
 
@@ -159,9 +160,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 	public Collection<? extends WithTestSummary<?>> getSubElements() {
 		final List<TestStatement> tests = getModel().getAllTests();
 		final Consumer<IStatement> filter = t -> {
-			if (t instanceof TestStatement) {
-				tests.add((TestStatement) t);
-			}
+			if (t instanceof TestStatement) { tests.add((TestStatement) t); }
 		};
 		getSpecies().getBehaviors().forEach(filter);
 		return tests;

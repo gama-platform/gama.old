@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.user;
@@ -83,13 +83,12 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
 		parent.setBackground(IGamaColors.WHITE.color());
-		if (scope == null) { return; }
+		if (scope == null) return;
 		inspectItem.setEnabled(true);
 		continueItem.setEnabled(true);
 		setPartName(
 				"[" + scope.getAgent().getName() + " in " + scope.getSimulation().getName() + "] " + panel.getName());
 		parent.setLayout(new FillLayout());
-		parent.setBackground(IGamaColors.WHITE.color());
 		toolbar.status((Image) null,
 				"User control, agent " + scope.getAgent().getName() + ", cycle " + scope.getClock().getCycle(),
 				IGamaColors.NEUTRAL, SWT.LEFT);
@@ -110,9 +109,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 				final int nbLines = inputs.size() > 1 ? inputs.size() : 1;
 				final int nbCol = inputs.size() > 0 ? 1 : 3;
 				GamaUIColor color = GamaColors.get(c.getColor(scope));
-				if (color == null) {
-					color = IGamaColors.BLUE;
-				}
+				if (color == null) { color = IGamaColors.BLUE; }
 				final Image image = GamaIcons.create(c.isContinue(scope) ? "small.continue" : "small.run").image();
 				final FlatButton b = FlatButton.button(commandComposite, color, c.getName(), image);
 				b.setEnabled(c.isEnabled(scope));
@@ -124,9 +121,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 					public void widgetSelected(final SelectionEvent e) {
 						scope.execute(c);
 						GAMA.getExperiment().refreshAllOutputs();
-						if (c.isContinue(scope)) {
-							doContinue();
-						}
+						if (c.isContinue(scope)) { doContinue(); }
 					}
 
 				});
@@ -174,7 +169,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 
 	/**
 	 * Method createToolItem()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
 	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */

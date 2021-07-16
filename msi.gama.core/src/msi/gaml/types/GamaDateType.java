@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaDateType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * msi.gaml.types.GamaDateType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -37,7 +37,7 @@ import msi.gaml.operators.Cast;
 		name = "date",
 		id = IType.DATE,
 		wraps = { GamaDate.class },
-		kind = ISymbolKind.Variable.REGULAR,
+		kind = ISymbolKind.Variable.NUMBER,
 		concept = { IConcept.TYPE, IConcept.DATE, IConcept.TIME },
 		doc = { @doc ("GAML objects that represent a date") })
 public class GamaDateType extends GamaType<GamaDate> {
@@ -62,14 +62,14 @@ public class GamaDateType extends GamaType<GamaDate> {
 
 	public static GamaDate staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
-		if (obj == null) { return null; }
+		if (obj == null) return null;
 		if (obj instanceof GamaDate) {
-			if (copy) { return new GamaDate(scope, (GamaDate) obj); }
+			if (copy) return new GamaDate(scope, (GamaDate) obj);
 			return (GamaDate) obj;
 		}
-		if (obj instanceof IContainer) { return new GamaDate(scope,
-				((IContainer<?, ?>) obj).listValue(scope, Types.INT, false)); }
-		if (obj instanceof String) { return new GamaDate(scope, (String) obj); }
+		if (obj instanceof IContainer)
+			return new GamaDate(scope, ((IContainer<?, ?>) obj).listValue(scope, Types.INT, false));
+		if (obj instanceof String) return new GamaDate(scope, (String) obj);
 		// If everything fails, we assume it is a duration in seconds since the starting date of the model
 		final Double d = Cast.asFloat(scope, obj);
 		return new GamaDate(scope, d);

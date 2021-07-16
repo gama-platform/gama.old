@@ -116,13 +116,17 @@ import msi.gaml.variables.Variable;
 						name = "slider",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. If no max or min value is defined, setting this facet to true will have no effect")),
+						doc = @doc ("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. "
+								+ "If no max or min value is defined, setting this facet to true will have no effect")),
 				@facet (
 						name = "colors",
 						type = IType.LIST,
 						of = IType.COLOR,
 						optional = true,
-						doc = @doc ("The colors of the control in the UI. An empty list has no effects. Only used for sliders and switches so far. For sliders, 3 colors will allow to specify the color of the left section, the thumb and the right section (in this order); 2 colors will define the left and right sections only (thumb will be dark green); 1 color will define the left section and the thumb. For switches, 2 colors will define the background for respectively the left 'true' and right 'false' sections. 1 color will define both backgrounds")),
+						doc = @doc ("The colors of the control in the UI. An empty list has no effects. Only used for sliders and switches so far. For sliders, "
+								+ "3 colors will allow to specify the color of the left section, the thumb and the right section (in this order); 2 colors will "
+								+ "define the left and right sections only (thumb will be dark green); 1 color will define the left section and the thumb. "
+								+ "For switches, 2 colors will define the background for respectively the left 'true' and right 'false' sections. 1 color will define both backgrounds")),
 				@facet (
 						name = IKeyword.STEP,
 						type = IType.FLOAT,
@@ -163,7 +167,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
 	private Object value = UNDEFINED;
-	Number minValue, maxValue, stepValue;
+	Object minValue, maxValue;
+	Object stepValue;
 	private List amongValue;
 	final private String[] disables, enables;
 	String varName, title, category, unitLabel;
@@ -334,22 +339,30 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	public void setAndVerifyValue(final IScope scope, final Object val) {
 		Object newValue = val;
-		if (minValue != null && newValue instanceof Number
-				&& ((Number) newValue).doubleValue() < minValue.doubleValue()) {
-			if (type.id() == IType.INT) {
-				newValue = minValue.intValue();
-			} else {
-				newValue = minValue.doubleValue();
-			}
+		if (newValue instanceof Comparable && minValue instanceof Comparable
+				&& ((Comparable) minValue).compareTo(newValue) > 0) {
+			newValue = minValue;
+		} else
+		// if (minValue != null && newValue instanceof Number
+		// && ((Number) newValue).doubleValue() < minValue.doubleValue()) {
+		// if (type.id() == IType.INT) {
+		// newValue = minValue.intValue();
+		// } else {
+		// newValue = minValue.doubleValue();
+		// }
+		// }
+		if (newValue instanceof Comparable && maxValue instanceof Comparable
+				&& ((Comparable) maxValue).compareTo(newValue) < 0) {
+			newValue = maxValue;
 		}
-		if (maxValue != null && newValue instanceof Number
-				&& ((Number) newValue).doubleValue() > maxValue.doubleValue()) {
-			if (type.id() == IType.INT) {
-				newValue = maxValue.intValue();
-			} else {
-				newValue = maxValue.doubleValue();
-			}
-		}
+		// if (maxValue != null && newValue instanceof Number
+		// && ((Number) newValue).doubleValue() > maxValue.doubleValue()) {
+		// if (type.id() == IType.INT) {
+		// newValue = maxValue.intValue();
+		// } else {
+		// newValue = maxValue.doubleValue();
+		// }
+		// }
 
 		// See #3006
 		// final List among = getAmongValue(scope);
@@ -418,19 +431,22 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	}
 
-	private Number drawRandomValue(final IScope scope) {
-		final double theStep = stepValue == null ? 1.0 : stepValue.doubleValue();
+	// AD TODO Will not work with points and dates for the moment
+	private Comparable drawRandomValue(final IScope scope) {
+		final double theStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
 		if (type.id() == IType.INT) {
-			final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
-			final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
+			final int theMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
+			final int theMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
 			return scope.getRandom().between(theMin, theMax, (int) theStep);
 		}
-		final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
-		final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
+		final double theMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
+		final double theMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
 		return scope.getRandom().between(theMin, theMax, theStep);
 	}
 
 	@Override
+	// AD TODO Will not work with points and dates for the moment
+
 	public Set<Object> neighborValues(final IScope scope) throws GamaRuntimeException {
 		try (Collector.AsSet<Object> neighborValues = Collector.getSet()) {
 			if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
@@ -441,16 +457,16 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				}
 				return neighborValues.items();
 			}
-			final double theStep = stepValue == null ? 1.0 : stepValue.doubleValue();
+			final double theStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
 			if (type.id() == IType.INT) {
-				final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
-				final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
+				final int theMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
+				final int theMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
 				final int val = Cast.asInt(scope, value(scope));
 				if (val >= theMin + (int) theStep) { neighborValues.add(val - (int) theStep); }
 				if (val <= theMax - (int) theStep) { neighborValues.add(val + (int) theStep); }
 			} else if (type.id() == IType.FLOAT) {
-				final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
-				final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
+				final double theMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
+				final double theMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
 				final double removeZ = Math.max(100000.0, 1.0 / theStep);
 				final double val = Cast.asFloat(null, value(scope));
 				if (val >= theMin + theStep) {
@@ -503,15 +519,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public Number getMinValue(final IScope scope) {
-		if (minValue == null && min != null) { minValue = (Number) min.value(scope); }
-		return minValue;
+	public Comparable getMinValue(final IScope scope) {
+		if (minValue == null && min != null) { minValue = min.value(scope); }
+		return (Comparable) minValue;
 	}
 
 	@Override
-	public Number getMaxValue(final IScope scope) {
-		if (maxValue == null && max != null) { maxValue = (Number) max.value(scope); }
-		return maxValue;
+	public Comparable getMaxValue(final IScope scope) {
+		if (maxValue == null && max != null) { maxValue = max.value(scope); }
+		return (Comparable) maxValue;
 	}
 
 	@Override
@@ -521,9 +537,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public Number getStepValue(final IScope scope) {
-		if (stepValue == null && step != null) { stepValue = (Number) step.value(scope); }
-		return stepValue;
+	public Comparable getStepValue(final IScope scope) {
+		if (stepValue == null && step != null) { stepValue = step.value(scope); }
+		return (Comparable) stepValue;
 	}
 
 	@Override
@@ -577,10 +593,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	private String computeExplorableLabel(final IScope scope) {
 		final List l = getAmongValue(scope);
 		if (l != null) return "among " + l;
-		final Number theMax = getMaxValue(scope);
-		final Number theMin = getMinValue(scope);
-		final Number theStep = getStepValue(scope);
-		return "between " + theMin + " and " + theMax + " every " + theStep;
+		return "between " + getMinValue(scope) + " and " + getMaxValue(scope) + " every " + getStepValue(scope);
 	}
 
 	@Override

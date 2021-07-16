@@ -45,35 +45,7 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
-		if (!internalModification) {
-			modifyAndDisplayValue(button.getSelection());
-		}
-	}
-
-	@Override
-	protected void hideToolbar() {
-		super.hideToolbar();
-		if (getEditor() != null) {
-			this.getEditor().setBackground(getNormalBackground());
-		}
-	}
-
-	@Override
-	protected void showToolbar() {
-		super.showToolbar();
-		if (getEditor() != null) {
-			this.getEditor().setBackground(HOVERED_BACKGROUND());
-			// AD 26/12/15 Commented for the moment to not force the focus (see
-			// Issues #1339 and #1248)
-			// if ( combo != null ) {
-			// combo.forceFocus();
-			// } else {
-			// Control c = getEditorControl();
-			// if ( c != null ) {
-			// c.forceFocus();
-			// }
-			// }
-		}
+		if (!internalModification) { modifyAndDisplayValue(button.getSelection()); }
 	}
 
 	@Override
@@ -98,9 +70,7 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	protected void displayParameterValue() {
 		internalModification = true;
 		var b = currentValue;
-		if (b == null) {
-			b = false;
-		}
+		if (b == null) { b = false; }
 		button.setSelection(b);
 		internalModification = false;
 

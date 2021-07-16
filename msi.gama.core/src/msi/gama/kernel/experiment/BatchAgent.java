@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import static msi.gaml.operators.Cast.asFloat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -368,9 +370,13 @@ public class BatchAgent extends ExperimentAgent {
 			}
 
 			int getExplorationDimension(final IParameter.Batch p) {
-				if (p.getAmongValue(getScope()) != null) return p.getAmongValue(getScope()).size();
-				return (int) ((p.getMaxValue(getScope()).doubleValue() - p.getMinValue(getScope()).doubleValue())
-						/ p.getStepValue(getScope()).doubleValue()) + 1;
+				IScope scope = getScope();
+
+				// AD TODO Issue a warning in the compilation if a batch experiment tries to explore non-int or
+				// non-float values
+				if (p.getAmongValue(scope) != null) return p.getAmongValue(scope).size();
+				return (int) ((asFloat(scope, p.getMaxValue(scope)) - asFloat(scope, p.getMinValue(scope)))
+						/ asFloat(scope, p.getStepValue(scope))) + 1;
 			}
 
 		});

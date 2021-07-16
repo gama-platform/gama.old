@@ -27,6 +27,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 @symbol (
@@ -104,8 +105,8 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 				}
 			}
 		} else {
-			double varValue = var.getMinValue(scope).doubleValue();
-			while (varValue <= var.getMaxValue(scope).doubleValue()) {
+			double varValue = Cast.asFloat(scope, var.getMinValue(scope));
+			while (varValue <= Cast.asFloat(scope, var.getMaxValue(scope))) {
 				if (var.getType().id() == IType.INT) {
 					solution.put(var.getName(), (int) varValue);
 				} else if (var.getType().id() == IType.FLOAT) {
@@ -118,7 +119,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 				} else {
 					testSolutions(scope, solution, index + 1);
 				}
-				varValue = varValue + var.getStepValue(scope).doubleValue();
+				varValue = varValue + Cast.asFloat(scope, var.getStepValue(scope));
 			}
 		}
 

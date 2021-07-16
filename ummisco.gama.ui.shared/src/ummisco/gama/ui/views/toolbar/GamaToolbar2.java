@@ -31,7 +31,6 @@ import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PlatformHelper;
@@ -61,12 +60,8 @@ public class GamaToolbar2 extends Composite {
 	@Override
 	public void setBackground(final Color c) {
 		super.setBackground(c);
-		if (left != null) {
-			left.setBackground(c);
-		}
-		if (right != null) {
-			right.setBackground(c);
-		}
+		if (left != null) { left.setBackground(c); }
+		if (right != null) { right.setBackground(c); }
 	}
 
 	@Override
@@ -113,9 +108,7 @@ public class GamaToolbar2 extends Composite {
 		final var icon = GamaIcons.createSizer(getBackground(), n, height);
 		final var item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
 		item.setDisabledImage(icon.image());
-		if (!PlatformHelper.isLinux()) {
-			item.setEnabled(false);
-		}
+		if (!PlatformHelper.isLinux()) { item.setEnabled(false); }
 		return item;
 	}
 
@@ -136,8 +129,9 @@ public class GamaToolbar2 extends Composite {
 		return item;
 	}
 
-	public ToolItem tooltip(final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		if (s == null) { return null; }
+	public ToolItem tooltip(final String s, final GamaUIColor rgb, final int side /* SWT.LEFT or SWT.RIGHT */) {
+		Color color = rgb == null ? getBackground() : rgb.color();
+		if (s == null) return null;
 		hasTooltip = true;
 		final var tb = getToolbar(side);
 		wipe(side, false);
@@ -146,25 +140,27 @@ public class GamaToolbar2 extends Composite {
 		final var remainingLeftSize = tb.getSize().x;
 		final var rightSize = other.getSize().x;
 
-		final var width = mySize - remainingLeftSize - rightSize - 100;
+		final var width = mySize - remainingLeftSize - rightSize - 50;
 		// wipe(side, false);
-		final var label = new Label(tb, SWT.WRAP);
+		tb.setLayout(new GridLayout(1, false));
+		final var label = new Label(tb, SWT.WRAP | SWT.LEFT);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// data.verticalIndent = 0;
+		label.setLayoutData(data);
 		label.setForeground(GamaColors.getTextColorForBackground(color).color());
-		var newString = "";
+		StringBuilder newString = new StringBuilder();
 		// java.util.List<String> result = new ArrayList<>();
 		try {
 			final var reader = new BufferedReader(new StringReader(s));
 			var line = reader.readLine();
 			while (line != null) {
-				if (!line.trim().isEmpty()) {
-					newString += line + java.lang.System.getProperty("line.separator");
-				}
+				if (!line.trim().isEmpty()) { newString.append(line).append(System.lineSeparator()); }
 				line = reader.readLine();
 			}
 		} catch (final IOException exc) {}
-		label.setText(newString);
-		label.setFont(GamaFonts.getSmallFont());
-		label.setBackground(color.inactive());
+		label.setText(newString.toString());
+		// label.setFont(GamaFonts.getSmallFont());
+		label.setBackground(color/* .inactive() */);
 		final var t = control(label, /* c.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + 10 */width, side);
 		refresh(true);
 		return t;
@@ -249,9 +245,7 @@ public class GamaToolbar2 extends Composite {
 		for (final ToolItem t : items) {
 			final var c = t.getControl();
 			if (c == null && includingToolItems || c != null) {
-				if (c != null) {
-					c.dispose();
-				}
+				if (c != null) { c.dispose(); }
 				t.dispose();
 			}
 		}
@@ -269,22 +263,14 @@ public class GamaToolbar2 extends Composite {
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		final var tb = getToolbar(side);
 		final var button = new ToolItem(tb, style);
-		if (text != null && forceText) {
-			button.setText(text);
-		}
-		if (tip != null) {
-			button.setToolTipText(tip);
-		}
+		if (text != null && forceText) { button.setText(text); }
+		if (tip != null) { button.setToolTipText(tip); }
 		if (image != null) {
 			final var im = GamaIcons.create(image).image();
 			button.setImage(im);
 		}
-		if (listener != null) {
-			button.addSelectionListener(listener);
-		}
-		if (control != null) {
-			button.setControl(control);
-		}
+		if (listener != null) { button.addSelectionListener(listener); }
+		if (control != null) { button.setControl(control); }
 		normalizeToolbars();
 
 		return button;

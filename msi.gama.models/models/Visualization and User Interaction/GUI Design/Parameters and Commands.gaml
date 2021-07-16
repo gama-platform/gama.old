@@ -40,9 +40,9 @@ global {
 	action writing_parameters {
 		write "Float on change: " + float_on_change;
 	}
-}
+} 
 
-experiment GUIinteractiveelements type: gui {
+experiment "Show Parameters" type: gui {
 	
 	// Category: Various types	
 	//////////////////////////////////////////////

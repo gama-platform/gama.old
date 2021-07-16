@@ -107,7 +107,7 @@ public class LayerObject {
 
 		if (expr != null) {
 			final boolean containsPixels = expr.findAny((e) -> e instanceof PixelUnitExpression);
-			offset.setLocation((GamaPoint) Cast.asPoint(scope, expr.value(scope)));
+			offset.setLocation(Cast.asPoint(scope, expr.value(scope)));
 			if (Math.abs(offset.x) <= 1 && !containsPixels) { offset.x *= renderer.getEnvWidth(); }
 			if (offset.x < 0) { offset.x = renderer.getEnvWidth() - offset.x; }
 			if (Math.abs(offset.y) <= 1 && !containsPixels) { offset.y *= renderer.getEnvHeight(); }
@@ -202,7 +202,7 @@ public class LayerObject {
 		final IScope scope = renderer.getSurface().getScope();
 		final IExpression expr = layer.getDefinition().getFacet(IKeyword.SIZE);
 		if (expr != null) {
-			size = (GamaPoint) Cast.asPoint(scope, expr.value(scope));
+			size = Cast.asPoint(scope, expr.value(scope));
 			if (size.x <= 1) { size.x *= renderer.getEnvWidth(); }
 			if (size.y <= 1) { size.y *= renderer.getEnvHeight(); }
 		}

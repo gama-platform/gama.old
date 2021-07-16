@@ -186,13 +186,13 @@ public class DynamicBodySkill extends StaticBodySkill {
 			body.setAngularVelocity(null);
 			return this;
 		}
-		GamaPoint impulse = (GamaPoint) Cast.asPoint(scope, scope.getArg(IMPULSE, IType.POINT));
+		GamaPoint impulse = Cast.asPoint(scope, scope.getArg(IMPULSE, IType.POINT));
 		body.applyImpulse(impulse);
 
-		GamaPoint force = (GamaPoint) Cast.asPoint(scope, scope.getArg(FORCE, IType.POINT));
+		GamaPoint force = Cast.asPoint(scope, scope.getArg(FORCE, IType.POINT));
 		body.applyForce(force);
 
-		GamaPoint torque = (GamaPoint) Cast.asPoint(scope, scope.getArg(TORQUE, IType.POINT));
+		GamaPoint torque = Cast.asPoint(scope, scope.getArg(TORQUE, IType.POINT));
 		body.applyTorque(torque);
 
 		return this;

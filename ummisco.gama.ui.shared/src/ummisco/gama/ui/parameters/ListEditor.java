@@ -12,7 +12,7 @@
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -36,18 +36,14 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List<?>> {
 		if (currentValue instanceof IList) {
 			final ListEditorDialog d =
 					new ListEditorDialog(WorkbenchHelper.getShell(), (IList) currentValue, param.getName());
-			if (d.open() == IDialogConstants.OK_ID) {
-				modifyAndDisplayValue(d.getList(ListEditor.this));
-			}
+			if (d.open() == IDialogConstants.OK_ID) { modifyAndDisplayValue(d.getList(ListEditor.this)); }
 		}
 	}
 
 	@Override
 	protected void checkButtons() {
-		final Button edit = items[EDIT];
-		if (edit != null && !edit.isDisposed()) {
-			edit.setEnabled(currentValue instanceof IList);
-		}
+		final ToolItem edit = items[EDIT];
+		if (edit != null && !edit.isDisposed()) { edit.setEnabled(currentValue instanceof IList); }
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })

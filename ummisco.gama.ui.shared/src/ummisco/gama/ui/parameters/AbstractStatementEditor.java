@@ -10,7 +10,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.resources.GamaFonts;
 
 public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> {
 
@@ -46,7 +45,7 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 	}
 
 	@Override
-	protected String computeUnitLabel() {
+	protected String computeLabelTooltip() {
 		return "";
 	}
 
@@ -55,9 +54,9 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 		this.parent = parent;
 		internalModification = true;
 		if (!isSubParameter) {
-			titleLabel = createLeftLabel(parent, name, isSubParameter);
+			titleLabel = new EditorLabel(parent, name, "", isSubParameter);
 		} else {
-			createLeftLabel(parent, " ", isSubParameter);
+			new EditorLabel(parent, " ", "", isSubParameter);
 		}
 		currentValue = getOriginalValue();
 		composite = new Composite(parent, SWT.NONE);
@@ -70,17 +69,13 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 		composite.setLayout(layout);
 		createEditorControl(composite);
 		if (isSubParameter) {
-			titleLabel = createLeftLabel(composite, name, isSubParameter);
-			titleLabel.setFont(GamaFonts.getNavigFolderFont());
-			final var d = new GridData(SWT.LEAD, SWT.CENTER, true, false);
-			titleLabel.setLayoutData(d);
+			titleLabel = new EditorLabel(composite, name, "", isSubParameter);
+			// titleLabel.getLabel().setFont(GamaFonts.getNavigFolderFont());
+			// final var d = new GridData(SWT.LEAD, SWT.CENTER, true, false);
+			titleLabel.setHorizontalAlignment(SWT.LEAD);
 		}
 
 		internalModification = false;
-		if (isSubParameter) {
-			titleLabel.setBackground(HOVERED_BACKGROUND());
-			composite.setBackground(HOVERED_BACKGROUND());
-		}
 		composite.layout();
 	}
 
@@ -90,9 +85,6 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 		d.minimumWidth = 70;
 		return d;
 	}
-
-	@Override
-	protected final void addToolbarHiders(final Control... c) {}
 
 	@Override
 	protected final void displayParameterValue() {}

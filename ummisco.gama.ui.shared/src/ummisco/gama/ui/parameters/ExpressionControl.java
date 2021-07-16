@@ -11,6 +11,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
+import static ummisco.gama.ui.resources.GamaColors.get;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -20,6 +23,11 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -35,8 +43,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
@@ -44,7 +51,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	private final Text text;
 	private final ExpressionBasedEditor<Object> editor;
-	private GamaUIColor background;
+	// private GamaUIColor background;
 	private Object currentValue;
 	protected Exception currentException;
 	final boolean evaluateExpression;
@@ -71,12 +78,11 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		text.addFocusListener(this);
 		text.addSelectionListener(this);
 		text.addMouseTrackListener(tooltipListener);
-		if (ed != null) { ed.getLabel().addMouseTrackListener(tooltipListener); }
+		// if (ed != null) { ed.getLabel().getLabel().addMouseTrackListener(tooltipListener); }
 	}
 
 	@Override
 	public void modifyText(final ModifyEvent event) {
-		// if ( editor == null ) { return; }
 		if (editor != null && editor.internalModification) return;
 		modifyValue();
 		displayTooltip();
@@ -88,15 +94,15 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			removeTooltip();
 		} else {
 			final var displayer = GamaToolbarFactory.findTooltipDisplayer(text);
-			if (displayer != null) { displayer.displayTooltip(s, background); }
+			if (displayer != null) { displayer.displayTooltip(s, null); }
 		}
-		if (editor != null && background != null) { editor.getComposite().setBackground(background.inactive()); }
+		if (editor != null && currentException != null) { editor.getLabel().signalErrored(); }
 	}
 
 	protected void removeTooltip() {
 		final var displayer = GamaToolbarFactory.findTooltipDisplayer(text);
 		if (displayer != null) { displayer.stopDisplayingTooltips(); }
-		if (editor != null) { editor.getComposite().setBackground(editor.getNormalBackground()); }
+		if (editor != null) { editor.getLabel().cancelErrored(); }
 
 	}
 
@@ -172,39 +178,37 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	protected Text createTextBox(final Composite comp, final int controlStyle) {
-		final var t = new Text(comp, controlStyle);
-		t.setForeground(ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color());
+		var c = new Composite(comp, SWT.NONE);
+		var f = new FillLayout();
+		f.marginHeight = 2;
+		f.marginWidth = 2;
+		c.setLayout(f);
+		final var d = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		d.heightHint = 20;
+		c.setLayoutData(d);
+
+		c.addListener(SWT.Paint, e -> {
+			GC gc = e.gc;
+			Rectangle bounds = c.getBounds();
+			Color ref = comp.getBackground();
+			gc.setBackground(ThemeHelper.isDark() ? get(ref).lighter() : get(ref).darker());
+			// gc.setForeground(gc.getBackground());
+			gc.fillRoundRectangle(0, 0, bounds.width, bounds.height, 5, 5);
+		});
+		final var t = new Text(c, controlStyle);
+		t.setForeground(GamaColors.getTextColorForBackground(comp.getBackground()).color());
+
 		// force the color, see #2601
 		return t;
 	}
 
 	@Override
-	public void focusGained(final FocusEvent e) {
-		// if ( editor != null ) {
-		// DEBUG.LOG("Focus gained:" + editor.getParam().getName());
-		// }
-		// // if ( e.widget == null || !e.widget.equals(text) ) { return; }
-		// computeValue();
-	}
+	public void focusGained(final FocusEvent e) {}
 
 	@Override
 	public void focusLost(final FocusEvent e) {
 		if (e.widget == null || !e.widget.equals(text)) return;
 		widgetDefaultSelected(null);
-		/* async is needed to wait until focus reaches its new Control */
-		removeTooltip();
-		// SwtGui.getDisplay().timerExec(100, new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// if ( SwtGui.getDisplay().isDisposed() ) { return; }
-		// final Control control = SwtGui.getDisplay().getFocusControl();
-		// if ( control != text ) {
-		// widgetDefaultSelected(null);
-		// }
-		// }
-		// });
-
 	}
 
 	public Text getControl() {
@@ -219,17 +223,10 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	 */
 	public String getPopupText() {
 		StringBuilder result = new StringBuilder();
-		// if ( getCurrentValue() == null ) {
-		// final Object value = computeValue();
-		// }
 		final var value = getCurrentValue();
 		if (currentException != null) {
-			background = IGamaColors.ERROR;
 			result.append(currentException.getMessage());
-		} else if (isOK(value)) {
-			background = IGamaColors.OK;
-		} else {
-			background = IGamaColors.WARNING;
+		} else if (!isOK(value)) {
 			result.append("The current value should be of type ").append(expectedType.toString());
 		}
 		return result.toString();

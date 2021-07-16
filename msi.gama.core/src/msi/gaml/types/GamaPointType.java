@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaPointType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * msi.gaml.types.GamaPointType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -37,7 +37,7 @@ import msi.gaml.operators.Cast;
 		name = IKeyword.POINT,
 		id = IType.POINT,
 		wraps = { ILocation.class, GamaPoint.class },
-		kind = ISymbolKind.Variable.REGULAR,
+		kind = ISymbolKind.Variable.NUMBER,
 		concept = { IConcept.TYPE, IConcept.POINT },
 		doc = @doc ("Represent locations in either 2 or 3 dimensions"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -50,14 +50,14 @@ public class GamaPointType extends GamaType<ILocation> {
 	}
 
 	public static ILocation staticCast(final IScope scope, final Object obj, final boolean copy) {
-		if (obj instanceof ILocation) { return (ILocation) obj; }
-		if (obj instanceof IShape) { return ((IShape) obj).getLocation(); }
+		if (obj instanceof ILocation) return (ILocation) obj;
+		if (obj instanceof IShape) return ((IShape) obj).getLocation();
 		if (obj instanceof List) {
 			final List l = (List) obj;
-			if (l.size() > 2) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)),
-					Cast.asFloat(scope, l.get(2))); }
-			if (l.size() > 1) { return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1))); }
-			if (l.size() > 0) { return staticCast(scope, l.get(0), copy); }
+			if (l.size() > 2) return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)),
+					Cast.asFloat(scope, l.get(2)));
+			if (l.size() > 1) return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)));
+			if (l.size() > 0) return staticCast(scope, l.get(0), copy);
 			return new GamaPoint(0, 0, 0);
 		}
 		if (obj instanceof Map) {
@@ -72,12 +72,12 @@ public class GamaPointType extends GamaType<ILocation> {
 			String s = ((String) obj).trim();
 			if (s.startsWith("{") && s.endsWith("}")) {
 				s = s.replace("{", "").replace("}", "").trim();
-			    return staticCast(scope, Arrays.asList(s.split(",")), false);
+				return staticCast(scope, Arrays.asList(s.split(",")), false);
 			}
 		}
-		if (obj instanceof GamaPair) { return new GamaPoint(Cast.asFloat(scope, ((GamaPair) obj).first()),
-				Cast.asFloat(scope, ((GamaPair) obj).last())); }
-		if (obj == null) { return null; }
+		if (obj instanceof GamaPair) return new GamaPoint(Cast.asFloat(scope, ((GamaPair) obj).first()),
+				Cast.asFloat(scope, ((GamaPair) obj).last()));
+		if (obj == null) return null;
 		final double dval = Cast.asFloat(scope, obj);
 		return new GamaPoint(dval, dval, dval);
 	}

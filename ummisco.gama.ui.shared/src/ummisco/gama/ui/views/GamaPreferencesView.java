@@ -279,7 +279,7 @@ public class GamaPreferencesView {
 	}
 
 	private static Menu getMenuFor(final Pref e, final AbstractEditor ed) {
-		final var m = new Menu(ed.getLabel());
+		final var m = ed.getLabel().createMenu();
 		final var title = new MenuItem(m, SWT.PUSH);
 		title.setEnabled(false);
 
@@ -451,8 +451,7 @@ public class GamaPreferencesView {
 			@Override
 			public void controlResized(final ControlEvent e) {
 				for (final IParameterEditor ed : editors.values()) {
-					((AbstractEditor) ed).resizeLabel(shell.getSize().x / (NB_DIVISIONS * 2));
-					((AbstractEditor) ed).getLabel().update();
+					((AbstractEditor) ed).getLabel().resize(shell.getSize().x / (NB_DIVISIONS * 2));
 				}
 				for (final ParameterExpandBar bar : contents) {
 					for (final ParameterExpandItem item : bar.getItems()) {

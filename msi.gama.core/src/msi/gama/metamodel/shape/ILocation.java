@@ -74,8 +74,8 @@ public interface ILocation extends IShape, Comparable<Coordinate> {
 
 	ILocation withPrecision(int i);
 
-	default int compareTo(ILocation location) {
-		return compareTo((Coordinate)toGamaPoint());
+	default int compareTo(final ILocation location) {
+		return compareTo((Coordinate) toGamaPoint());
 	}
 
 }

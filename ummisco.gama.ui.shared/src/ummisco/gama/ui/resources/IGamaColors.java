@@ -38,12 +38,14 @@ public interface IGamaColors {
 	GamaUIColor WARNING = get(create("palette/palette.orange2"));
 	GamaUIColor NEUTRAL = get(create("palette/palette.gray2"));
 	GamaUIColor TOOLTIP = get(create("palette/palette.yellow2"));
-	GamaUIColor GRAY_LABEL = get(0x88, 0x88, 0x88);
+	GamaUIColor GRAY_LABEL = get(136, 136, 136);
+	GamaUIColor GRAY = new GamaUIColor(system(SWT.COLOR_GRAY));
+	GamaUIColor LIGHT_GRAY = get(200, 200, 200);
 	GamaUIColor VERY_LIGHT_GRAY = get(245, 245, 245);
 	GamaUIColor DARK_GRAY = new GamaUIColor(system(SWT.COLOR_DARK_GRAY));
 	GamaUIColor WHITE = new GamaUIColor(system(SWT.COLOR_WHITE), system(SWT.COLOR_WHITE));
 	GamaUIColor BLACK = new GamaUIColor(system(SWT.COLOR_BLACK));
-	GamaUIColor PARAMETERS_BACKGROUND = (isDark() ? get(120, 120, 120) : get(255, 255, 255));
+	GamaUIColor PARAMETERS_BACKGROUND = isDark() ? get(120, 120, 120) : get(255, 255, 255);
 	GamaUIColor DARK_ORANGE = get(225, 92, 15);
 
 }

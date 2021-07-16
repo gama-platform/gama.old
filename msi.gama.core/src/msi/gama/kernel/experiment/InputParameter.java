@@ -23,7 +23,8 @@ public class InputParameter extends ParameterAdapter {
 
 	private Object value;
 	private final List among;
-	private Number min, max, step;
+	private Comparable min, max;
+	private Comparable step;
 
 	public InputParameter(final String name, final Object value) {
 		this(name, value, Types.get(value == null ? Object.class : (Class<Object>) value.getClass()));
@@ -39,22 +40,22 @@ public class InputParameter extends ParameterAdapter {
 		this.among = among;
 	}
 
-	public InputParameter(final String name, final Object value, final Number min, final Number max) {
+	public InputParameter(final String name, final Object value, final Comparable min, final Comparable max) {
 		this(name, value);
 		this.min = min;
 		this.max = max;
 	}
 
-	public InputParameter(final String name, final Object value, final Number min, final Number max,
-			final Number step) {
+	public InputParameter(final String name, final Object value, final Comparable min, final Comparable max,
+			final Comparable step) {
 		this(name, value);
 		this.min = min;
 		this.max = max;
 		this.step = step;
 	}
 
-	public InputParameter(final String name, final String unit, final Object value, final Number min, final Number max,
-			final Number step) {
+	public InputParameter(final String name, final String unit, final Object value, final Comparable min,
+			final Comparable max, final Comparable step) {
 		this(name, value, min, max);
 		unitLabel = unit;
 		this.step = step;
@@ -71,12 +72,12 @@ public class InputParameter extends ParameterAdapter {
 	}
 
 	@Override
-	public Number getMinValue(final IScope scope) {
+	public Comparable getMinValue(final IScope scope) {
 		return min;
 	}
 
 	@Override
-	public Number getMaxValue(final IScope scope) {
+	public Comparable getMaxValue(final IScope scope) {
 		return max;
 	}
 
@@ -86,7 +87,7 @@ public class InputParameter extends ParameterAdapter {
 	}
 
 	@Override
-	public Number getStepValue(final IScope scope) {
+	public Comparable getStepValue(final IScope scope) {
 		return step;
 	}
 

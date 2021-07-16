@@ -24,7 +24,7 @@ global {
 	point source;
 	point goal;
 	path the_path;
-	init {    
+	init toto {    
 		if (scenario = "wall") {
 			ask cell {is_obstacle <- false;}
 			int x_max <- round(grid_size * 2/3);
