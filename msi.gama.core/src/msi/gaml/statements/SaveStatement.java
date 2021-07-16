@@ -92,6 +92,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
@@ -99,6 +100,7 @@ import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.GraphExporters;
+import msi.gama.util.matrix.GamaField;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
@@ -110,6 +112,7 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Comparison;
+import msi.gaml.operators.Maths;
 import msi.gaml.operators.Strings;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
@@ -381,15 +384,25 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					saveText(type, fileToSave, addHeader, scope);
 					break;
 				case "asc":
-					final ISpecies species1 = Cast.asSpecies(scope, item.value(scope));
-					if (species1 == null || !species1.isGrid()) { return null; }
-					saveAsc(species1, fileToSave, scope);
+					Object v = item.value(scope);
+					if (v instanceof GamaField) {
+						saveAsc((GamaField)v, fileToSave, scope);
+					} else {
+						final ISpecies species1 = Cast.asSpecies(scope, v);
+						if (species1 == null || !species1.isGrid()) { return null; }
+						saveAsc(species1, fileToSave, scope);
+					}
 					break;
 				case "geotiff":
 				case "image":
-					final ISpecies species2 = Cast.asSpecies(scope, item.value(scope));
-					if (species2 == null || !species2.isGrid()) { return null; }
-					saveRasterImage(species2, path, scope, type.equals("geotiff"));
+					v = item.value(scope);
+					if (v instanceof GamaField) {
+						saveRasterImage((GamaField)v, path, scope, type.equals("geotiff"));
+					} else {
+						final ISpecies species2 = Cast.asSpecies(scope, v);
+						if (species2 == null || !species2.isGrid()) { return null; }
+						saveRasterImage(species2, path, scope, type.equals("geotiff"));
+					}
 					break;
 				case "kml":
 				case "kmz":
@@ -427,10 +440,52 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
+	public void saveAsc(final GamaField field, final File f, final IScope scope) {
+		if (field == null || field.isEmpty(scope)) return;
+		if (f.exists()) {
+			f.delete();
+		}
+		try (FileWriter fw = new FileWriter(f)) {
+			String header = "";
+			final int nbCols = field.numCols;
+			final int nbRows = field.numRows;
+			header += "ncols         " + nbCols + Strings.LN;
+			header += "nrows         " + nbRows + Strings.LN;
+			savePrj(scope, f.getAbsolutePath());
+			final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
+			header += "xllcorner     "
+					+ (nullProjection ? "0"
+							: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())
+					+ Strings.LN;
+			header += "yllcorner     "
+					+ (nullProjection ? "0"
+							: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())
+					+ Strings.LN;
+			final double dx = scope.getSimulation().getEnvelope().getWidth() / nbCols;
+			final double dy = scope.getSimulation().getEnvelope().getHeight() / nbRows;
+			if (Comparison.equal(dx, dy)) {
+				header += "cellsize      " + dx + Strings.LN;
+			} else {
+				header += "dx            " + dx + Strings.LN;
+				header += "dy            " + dy + Strings.LN;
+			}
+			fw.write(header);
+
+			for (int i = 0; i < nbRows; i++) {
+				String val = "";
+				for (int j = 0; j < nbCols; j++) {
+					val += field.get(scope, j, i) + " ";
+				}
+				fw.write(val + Strings.LN);
+			}
+			fw.close();
+		} catch (final IOException e) {}
+	}
 	public void saveAsc(final ISpecies species, final File f, final IScope scope) {
 		if (f.exists()) {
 			f.delete();
 		}
+		
 		try (FileWriter fw = new FileWriter(f)) {
 			String header = "";
 			final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
@@ -438,6 +493,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final int nbRows = gp.getNbRows();
 			header += "ncols         " + nbCols + Strings.LN;
 			header += "nrows         " + nbRows + Strings.LN;
+			savePrj(scope, f.getAbsolutePath());
 			final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
 			header += "xllcorner     "
 					+ (nullProjection ? "0"
@@ -464,7 +520,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 				fw.write(val + Strings.LN);
 			}
-			// fw.close();
+			 fw.close();
 		} catch (final IOException e) {}
 
 	}
@@ -480,21 +536,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (f.exists()) {
 			f.delete();
 		}
-		CoordinateReferenceSystem crs = null;
+		CoordinateReferenceSystem crs = savePrj(scope, path);
 		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
-		try {
-			crs = nullProjection ? CRS.decode("EPSG:2154")
-					: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS(scope);
-		} catch (final Exception e1) {
-			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e1, scope), false);
-			return;
-		}
-		try (FileWriter fw = new FileWriter(path.replace(".png", ".prj").replace(".tif", ".prj"))) {
-			fw.write(crs.toString());
-			// fw.close();
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
+		
 		final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
 
 		final int cols = gp.getNbCols();
@@ -531,6 +575,113 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			for (int row = 0; row < rows; row++) {
 				for (int col = 0; col < cols; col++) {
 					imagePixelData[row][col] = gp.getGridValue(col, row).floatValue();
+				}
+
+			}
+			final double width = scope.getSimulation().getEnvelope().getWidth();
+			final double height = scope.getSimulation().getEnvelope().getHeight();
+
+			Envelope2D refEnvelope;
+			refEnvelope = new Envelope2D(crs, x, y, width, height);
+
+			// In order to fix issue #2793, it seems that (before the GAMA 1.8 release), GAMA is only able,
+			// to read GeoTiff files with Byte format data.
+			// The use of the following create from org.geotools.coverage.grid.GridCoverageFactory, will produce a
+			// dataset of floats.
+			// This is perfectly possible for the GeoTiff, but as GAMA can only read Byte format GeoTiff files, we limit
+			// the save to this
+			// specific format of data.
+			final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+			// final GridCoverage2D coverage = createCoverageByteFromFloat("data", imagePixelData, refEnvelope);
+
+			try {
+
+				final GeoTiffFormat format = new GeoTiffFormat();
+				final GridCoverageWriter writer = format.getWriter(f);
+				writer.write(coverage, null);
+				/*
+				 * final WorldImageWriter writer = new WorldImageWriter(f); writer.write(coverage, null);
+				 */
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	CoordinateReferenceSystem savePrj(final IScope scope, String path) {
+		CoordinateReferenceSystem crs = null;
+		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
+		try {
+			crs = nullProjection ? CRS.decode("EPSG:3857")
+					: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS(scope);
+		} catch (final Exception e1) {
+			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e1, scope), false);
+			return crs;
+		}
+		try (FileWriter fw = new FileWriter(path.replace(".png", ".prj").replace(".tif", ".prj").replace(".asc", ".prj"))) {
+			fw.write(crs.toString());
+			fw.close();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		return crs;
+		
+	}
+	
+	public void saveRasterImage(final GamaField field, final String p, final IScope scope, final boolean toGeotiff) {
+		if (field == null || field.isEmpty(scope)) return;
+		
+		String path = p;
+		if (!toGeotiff && !path.contains("png")) {
+			path += ".png";
+		}
+		final File f = new File(path);
+
+		if (f.exists()) {
+			f.delete();
+		}
+		CoordinateReferenceSystem crs = savePrj(scope, path);
+		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
+		
+		final int cols = field.numCols;
+		final int rows = field.numRows;
+		double x = nullProjection ? 0
+				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX();
+		double y = nullProjection ? 0
+				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY();
+
+		if (!toGeotiff) {
+			final BufferedImage image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_RGB);
+			double[] minmaxVal = field.getMinMax(null);
+			for (int row = 0; row < rows; row++) {
+				for (int col = 0; col < cols; col++) {
+					double v = field.get(scope, col,row ); 
+					
+					int vRef =  Maths.round((((v - minmaxVal[0]) / (minmaxVal[1] - minmaxVal[0]))) * 255); 
+					image.setRGB(col, rows - 1 - row, new GamaColor(vRef, vRef, vRef).getRGB());
+				}
+			}
+			
+			try {
+				ImageIO.write(image, "png", f);
+				final double cw = scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getWidth() / cols;
+				final double ch =scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getHeight()/ rows;
+				x += cw / 2;
+				y += ch / 2;
+				try (final FileWriter fw = new FileWriter(path.replace(".png", ".pgw"));) {
+					fw.write(cw + "\n0.0\n0.0\n" + ch + "\n" + x + "\n" + y);
+				}
+
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+
+		} else {
+
+			final float[][] imagePixelData = new float[rows][cols];
+			for (int row = 0; row < rows; row++) {
+				for (int col = 0; col < cols; col++) {
+					imagePixelData[row][col] = field.get(scope, col, row).floatValue();
 				}
 
 			}
@@ -1045,13 +1196,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					break;
 				}
 			}
+			 fw.close();
 			// Writes the prj file
 			if (gis != null) {
 				final CoordinateReferenceSystem crs = gis.getInitialCRS(scope);
 				if (crs != null) {
 					try (FileWriter fw1 = new FileWriter(f.getAbsolutePath().replace(".shp", ".prj"))) {
 						fw1.write(crs.toString());
-						// fw.close();
+						 fw1.close();
 					} catch (final IOException e) {
 						e.printStackTrace();
 					}
@@ -1063,6 +1215,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					scope);
 		} finally {
 			store.dispose();
+			
 		}
 	}
 
