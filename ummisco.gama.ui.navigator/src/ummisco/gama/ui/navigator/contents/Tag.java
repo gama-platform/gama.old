@@ -14,12 +14,10 @@ package ummisco.gama.ui.navigator.contents;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaFonts;
 
 /**
  * Class LinkedFile.
@@ -48,10 +46,10 @@ public class Tag extends VirtualContent<Tags> {
 		return false;
 	}
 
-	@Override
-	public Font getFont() {
-		return GamaFonts.getNavigLinkFont(); // by default
-	}
+	// @Override
+	// public Font getFont() {
+	// return GamaFonts.getNavigLinkFont(); // by default
+	// }
 
 	/**
 	 * Method getNavigatorChildren()

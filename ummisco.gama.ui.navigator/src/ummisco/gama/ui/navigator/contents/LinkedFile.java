@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
@@ -17,14 +17,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
 import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -51,7 +49,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
 	/**
 	 * Method hasChildren()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#hasChildren()
 	 */
 	@Override
@@ -59,14 +57,14 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 		return false;
 	}
 
-	@Override
-	public Font getFont() {
-		return GamaFonts.getNavigLinkFont(); // by default
-	}
+	// @Override
+	// public Font getFont() {
+	// return GamaFonts.getNavigLinkFont(); // by default
+	// }
 
 	/**
 	 * Method getNavigatorChildren()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getNavigatorChildren()
 	 */
 	@Override
@@ -76,7 +74,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
 	/**
 	 * Method getImage()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
@@ -86,7 +84,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
 	/**
 	 * Method getColor()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getColor()
 	 */
 	@Override
@@ -96,7 +94,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
 	/**
 	 * Method isParentOf()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#isParentOf(java.lang.Object)
 	 */
 	// @Override
@@ -117,7 +115,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
 	/**
 	 * Method getAdapter()
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })

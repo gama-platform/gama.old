@@ -3,19 +3,17 @@ package ummisco.gama.ui.navigator.contents;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 public class WrappedFolder extends WrappedContainer<IFolder> {
 
 	Image image;
-	Font font;
+	// Font font;
 	boolean canBeDecorated;
 
 	public WrappedFolder(final WrappedContainer<?> root, final IFolder wrapped) {
@@ -31,10 +29,10 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 	public int countModels() {
 		if (modelsCount == NOT_COMPUTED) {
 			super.countModels();
-			final var isExternal = getName().equals("external");
+			final var isExternal = "external".equals(getName());
 			image = GamaIcons.create(isExternal ? "navigator/file.svn2"
 					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
-			font = modelsCount == 0 ? GamaFonts.getResourceFont() : GamaFonts.getNavigFolderFont();
+			// font = modelsCount == 0 ? GamaFonts.getResourceFont() : GamaFonts.getNavigFolderFont();
 			canBeDecorated = modelsCount > 0;
 		}
 		return modelsCount;
@@ -57,11 +55,11 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 		return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
 	}
 
-	@Override
-	public Font getFont() {
-		countModels();
-		return font;
-	}
+	// @Override
+	// public Font getFont() {
+	// countModels();
+	// return font;
+	// }
 
 	@Override
 	public VirtualContentType getType() {

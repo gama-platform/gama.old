@@ -16,13 +16,11 @@ import java.util.Collection;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -56,10 +54,10 @@ public class Tags extends VirtualContent<WrappedFile> {
 		return !tags.isEmpty();
 	}
 
-	@Override
-	public Font getFont() {
-		return GamaFonts.getSmallFont(); // by default
-	}
+	// @Override
+	// public Font getFont() {
+	// return GamaFonts.getSmallFont(); // by default
+	// }
 
 	@Override
 	public WrappedFile getParent() {
@@ -73,7 +71,7 @@ public class Tags extends VirtualContent<WrappedFile> {
 	 */
 	@Override
 	public Object[] getNavigatorChildren() {
-		if (tags.isEmpty()) { return EMPTY; }
+		if (tags.isEmpty()) return EMPTY;
 		return tags.stream().map(each -> new Tag(this, each)).toArray();
 	}
 

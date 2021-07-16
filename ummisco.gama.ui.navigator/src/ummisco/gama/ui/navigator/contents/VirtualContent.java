@@ -20,12 +20,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -37,7 +35,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 
 	public static ILabelProvider DEFAULT_LABEL_PROVIDER = WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider();
 
-	public static final Map<Integer, ImageDescriptor> DESCRIPTORS = new HashMap<Integer, ImageDescriptor>() {
+	public static final Map<Integer, ImageDescriptor> DESCRIPTORS = new HashMap<>() {
 		{
 
 			put(CLOSED, GamaIcons.create("navigator/overlay.closed2").descriptor());
@@ -58,7 +56,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	public static final int LINK_BROKEN = -4;
 	public static final int WEBLINK_OK = -5;
 	public static final int WEBLINK_BROKEN = -6;
-	public static Object[] EMPTY = new Object[0];
+	public static Object[] EMPTY = {};
 
 	private final P root;
 	private final String name;
@@ -106,9 +104,9 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 
 	public abstract void getSuffix(StringBuilder sb);
 
-	public Font getFont() {
-		return GamaFonts.getNavigFolderFont(); // by default
-	}
+	// public Font getFont() {
+	// return GamaFonts.getNavigFolderFont(); // by default
+	// }
 
 	public abstract int findMaxProblemSeverity();
 
@@ -116,13 +114,13 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 
 	public TopLevelFolder getTopLevelFolder() {
 		final Object p = getParent();
-		if (p instanceof VirtualContent) { return ((VirtualContent<?>) p).getTopLevelFolder(); }
+		if (p instanceof VirtualContent) return ((VirtualContent<?>) p).getTopLevelFolder();
 		return null;
 	}
 
 	public WrappedProject getProject() {
 		final Object p = getParent();
-		if (p instanceof VirtualContent) { return ((VirtualContent<?>) p).getProject(); }
+		if (p instanceof VirtualContent) return ((VirtualContent<?>) p).getProject();
 		return null;
 	}
 
@@ -143,7 +141,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	}
 
 	public boolean isContainedIn(final VirtualContent<?> current) {
-		if (root == null) { return false; }
+		if (root == null) return false;
 		return root == current || root.isContainedIn(current);
 	}
 

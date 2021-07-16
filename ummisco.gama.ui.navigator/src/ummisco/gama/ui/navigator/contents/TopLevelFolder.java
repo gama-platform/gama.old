@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
@@ -25,14 +25,12 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.application.workbench.ThemeHelper;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -83,10 +81,10 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 		return children.length > 0;
 	}
 
-	@Override
-	public Font getFont() {
-		return GamaFonts.getNavigHeaderFont();
-	}
+	// @Override
+	// public Font getFont() {
+	// return GamaFonts.getNavigHeaderFont();
+	// }
 
 	@Override
 	public Object[] getNavigatorChildren() {
@@ -98,12 +96,8 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 		var severity = NO_PROBLEM;
 		for (final WrappedProject p : children) {
 			final var s = p.findMaxProblemSeverity();
-			if (s > severity) {
-				severity = s;
-			}
-			if (severity == IMarker.SEVERITY_ERROR) {
-				break;
-			}
+			if (s > severity) { severity = s; }
+			if (severity == IMarker.SEVERITY_ERROR) { break; }
 		}
 		return severity;
 	}
@@ -113,11 +107,10 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	 * @return
 	 */
 	public final boolean privateAccepts(final IProject project) {
-		if (project == null) { return false; }
-		if (!project.exists()) { return false; }
+		if ((project == null) || !project.exists()) return false;
 		// TODO This one is clearly a hack. Should be replaced by a proper way
 		// to track persistently the closed projects
-		if (!project.isOpen()) { return estimateLocation(project.getLocation()) == location; }
+		if (!project.isOpen()) return estimateLocation(project.getLocation()) == location;
 		try {
 			return accepts(project.getDescription());
 		} catch (final CoreException e) {
@@ -134,10 +127,10 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 			final var urlRep = resolvedURI.toURL();
 			final var osString = location.toOSString();
 			final var isTest = osString.contains(GamaBundleLoader.REGULAR_TESTS_LAYOUT);
-			if (!isTest && osString.startsWith(urlRep.getPath())) { return Location.CoreModels; }
+			if (!isTest && osString.startsWith(urlRep.getPath())) return Location.CoreModels;
 			if (osString
 					.startsWith(urlRep.getPath().replace(GamaBundleLoader.CORE_MODELS.getSymbolicName() + "/", ""))) {
-				if (isTest) { return Location.Tests; }
+				if (isTest) return Location.Tests;
 				return Location.Plugins;
 			}
 			return Location.Other;
@@ -148,7 +141,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	}
 
 	public final boolean accepts(final IProjectDescription desc) {
-		if (nature != null) { return desc.hasNature(nature); }
+		if (nature != null) return desc.hasNature(nature);
 		return desc.getNatureIds().length < 3;
 	}
 
@@ -181,9 +174,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	public void getSuffix(final StringBuilder sb) {
 		final var projectCount = children.length;
 		sb.append(projectCount).append(" project");
-		if (projectCount > 1) {
-			sb.append("s");
-		}
+		if (projectCount > 1) { sb.append("s"); }
 	}
 
 	@Override
