@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.TypedListener;
 
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -81,7 +80,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	private FlatButton(final Composite parent, final int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
-		setFont(GamaFonts.getSystemFont());
+		// setFont(GamaFonts.getSystemFont());
 		addPaintListener(this);
 		addListeners();
 	}
@@ -100,14 +99,10 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 				e.doit = true;
 				break;
 			case SWT.MouseUp:
-				if (e.button == 1 && getClientArea().contains(e.x, e.y)) {
-					doButtonUp();
-				}
+				if (e.button == 1 && getClientArea().contains(e.x, e.y)) { doButtonUp(); }
 				break;
 			case SWT.MouseDown:
-				if (e.button == 1 && getClientArea().contains(e.x, e.y)) {
-					doButtonDown();
-				}
+				if (e.button == 1 && getClientArea().contains(e.x, e.y)) { doButtonDown(); }
 				break;
 			default:
 				;
@@ -120,36 +115,30 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * @param listener
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		if (listener == null) { return; }
+		if (listener == null) return;
 		addListener(SWT.Selection, new TypedListener(listener));
 	}
 
 	public void doButtonDown() {
-		if (!enabled) { return; }
+		if (!enabled) return;
 		down = true;
-		if (!isDisposed()) {
-			redraw();
-		}
+		if (!isDisposed()) { redraw(); }
 	}
 
 	private void doButtonUp() {
-		if (!enabled) { return; }
+		if (!enabled) return;
 		final Event e = new Event();
 		e.item = this;
 		e.widget = this;
 		e.type = SWT.Selection;
 		notifyListeners(SWT.Selection, e);
 		down = false;
-		if (!isDisposed()) {
-			redraw();
-		}
+		if (!isDisposed()) { redraw(); }
 	}
 
 	private void doHover(final boolean hover) {
 		hovered = hover;
-		if (!isDisposed()) {
-			redraw();
-		}
+		if (!isDisposed()) { redraw(); }
 	}
 
 	private void drawBackground(final GC gc, final Rectangle rect) {
@@ -194,14 +183,10 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		int x = FlatButton.innerMarginWidth;
 		int y_image = 0;
 		final Image image = getImage();
-		if (image != null) {
-			y_image += (getBounds().height - image.getBounds().height) / 2;
-		}
+		if (image != null) { y_image += (getBounds().height - image.getBounds().height) / 2; }
 		int y_text = 0;
 		final String text = newText();
-		if (text != null) {
-			y_text += (getBounds().height - gc.textExtent(text).y) / 2;
-		}
+		if (text != null) { y_text += (getBounds().height - gc.textExtent(text).y) / 2; }
 
 		if (imageStyle == IMAGE_RIGHT) {
 			gc.drawText(text, x, y_text, SWT.DRAW_TRANSPARENT);
@@ -216,7 +201,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	private int drawImage(final GC gc, final int x, final int y) {
-		if (getImage() == null) { return x; }
+		if (getImage() == null) return x;
 		gc.drawImage(getImage(), x, y);
 		return x + getImage().getBounds().width + imagePadding;
 	}
@@ -229,8 +214,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		} else {
 			width = computeMinWidth();
 		}
-		final Point result = new Point(width, height);
-		return result;
+		return new Point(width, height);
 	}
 
 	public int computeMinWidth() {
@@ -255,7 +239,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public String newText() {
-		if (text == null) { return null; }
+		if (text == null) return null;
 		final int parentWidth = getParent().getBounds().width;
 		final int width = computeMinWidth();
 		if (parentWidth < width) {
@@ -272,9 +256,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			final float r = (float) (parentWidth - imageWidth) / (float) width;
 			final int nbChars = text.length();
 			final int newNbChars = Math.max(0, (int) (nbChars * r));
-			final String newText =
-					text.substring(0, newNbChars / 2) + "..." + text.substring(nbChars - newNbChars / 2, nbChars);
-			return newText;
+			return text.substring(0, newNbChars / 2) + "..." + text.substring(nbChars - newNbChars / 2, nbChars);
 		}
 		return text;
 	}
@@ -287,7 +269,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * @param image
 	 */
 	public FlatButton setImage(final Image image) {
-		if (this.image == image) { return this; }
+		if (this.image == image) return this;
 		this.image = image;
 		redraw();
 		return this;
@@ -312,8 +294,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public FlatButton setText(final String text) {
-		if (text == null) { return this; }
-		if (text.equals(this.text)) { return this; }
+		if ((text == null) || text.equals(this.text)) return this;
 		this.text = text;
 		redraw();
 		return this;
@@ -357,7 +338,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public FlatButton small() {
-		if (height == 20) { return this; }
+		if (height == 20) return this;
 		height = 20;
 		redraw();
 		return this;
@@ -366,7 +347,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public FlatButton setColor(final GamaUIColor c) {
 		final RGB oldColorCode = colorCode;
 		final RGB newColorCode = c.getRGB();
-		if (newColorCode.equals(oldColorCode)) { return this; }
+		if (newColorCode.equals(oldColorCode)) return this;
 		colorCode = c.getRGB();
 		redraw();
 		return this;

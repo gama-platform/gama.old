@@ -25,8 +25,6 @@ import static ummisco.gama.ui.menus.GamaColorMenu.byName;
 import static ummisco.gama.ui.menus.GamaColorMenu.byRGB;
 import static ummisco.gama.ui.menus.GamaColorMenu.colorComp;
 import static ummisco.gama.ui.resources.GamaColors.toGamaColor;
-import static ummisco.gama.ui.resources.GamaFonts.baseSize;
-import static ummisco.gama.ui.resources.GamaFonts.getBaseFont;
 import static ummisco.gama.ui.resources.IGamaColors.WARNING;
 
 import java.io.BufferedReader;
@@ -42,17 +40,14 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.SWT;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.runtime.MemoryUtils;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.menus.GamaColorMenu;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.GamaPreferencesView;
 
@@ -80,9 +75,9 @@ public class PreferencesHelper {
 			create("pref_image_background_color", "Image viewer background color", () -> GamaColor.getNamed("white"),
 					IType.COLOR, false).in(NAME, APPEARANCE);
 
-	public static final Pref<GamaFont> BASE_BUTTON_FONT = create("pref_button_font", "Font of buttons and dialogs",
-			() -> new GamaFont(getBaseFont(), SWT.BOLD, baseSize), IType.FONT, false).in(NAME, APPEARANCE)
-					.onChange(GamaFonts::setLabelFont);
+	// public static final Pref<GamaFont> BASE_BUTTON_FONT = create("pref_button_font", "Font of buttons and dialogs",
+	// () -> new GamaFont(getBaseFont(), SWT.BOLD, baseSize), IType.FONT, false).in(NAME, APPEARANCE)
+	// .onChange(GamaFonts::setLabelFont);
 
 	public static Pref<String> COLOR_MENU_SORT =
 			create("pref_menu_colors_sort", "Sort colors menu by", "RGB value", IType.STRING, false).among(SORT_NAMES)
@@ -151,9 +146,7 @@ public class PreferencesHelper {
 		final var p = GamaPreferences
 				.create("pref_memory_max", text, memory == 0 ? (int) MemoryUtils.availableMemory() : memory, 1, false)
 				.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.MEMORY);
-		if (memory == 0) {
-			p.disabled();
-		}
+		if (memory == 0) { p.disabled(); }
 		p.onChange(newValue -> {
 			changeMaxMemory(ini, newValue);
 			GamaPreferencesView.setRestartRequired();
@@ -191,9 +184,7 @@ public class PreferencesHelper {
 							}
 							var trim = s;
 							trim = trim.replace("-Xmx", "");
-							if (unit) {
-								trim = trim.substring(0, trim.length() - 1);
-							}
+							if (unit) { trim = trim.substring(0, trim.length() - 1); }
 							final var result = Integer.parseInt(trim);
 							return (int) (result / divider);
 
@@ -216,9 +207,7 @@ public class PreferencesHelper {
 						final var reader = new BufferedReader(new InputStreamReader(stream));) {
 					var s = reader.readLine();
 					while (s != null) {
-						if (s.startsWith("-Xmx")) {
-							s = "-Xmx" + mem + "m";
-						}
+						if (s.startsWith("-Xmx")) { s = "-Xmx" + mem + "m"; }
 						contents.add(s);
 						s = reader.readLine();
 					}

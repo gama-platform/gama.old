@@ -27,7 +27,6 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,17 +36,17 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.quickaccess.QuickAccessEntry;
 
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gaml.compilation.GamlIdiomsProvider;
 import ummisco.gama.ui.controls.IPopupProvider;
 import ummisco.gama.ui.controls.Popup2;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public abstract class GamlAccessContents implements IPopupProvider {
 
-	private static final int[][] EMPTY_INDICES = new int[0][0];
+	private static final int[][] EMPTY_INDICES = {};
 
 	protected Text filterText;
 
@@ -96,9 +95,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 	}
 
 	private int refreshTable(final List<GamlAccessEntry>[] entries) {
-		if (table.getItemCount() > entries.length && table.getItemCount() - entries.length > 20) {
-			table.removeAll();
-		}
+		if (table.getItemCount() > entries.length && table.getItemCount() - entries.length > 20) { table.removeAll(); }
 		final TableItem[] items = table.getItems();
 		int selectionIndex = -1;
 		int index = 0;
@@ -109,9 +106,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 					final GamlAccessEntry entry = it.next();
 					entry.firstInCategory = firstEntry;
 					firstEntry = false;
-					if (!it.hasNext()) {
-						entry.lastInCategory = true;
-					}
+					if (!it.hasNext()) { entry.lastInCategory = true; }
 					TableItem item;
 					if (index < items.length) {
 						item = items[index];
@@ -127,12 +122,8 @@ public abstract class GamlAccessContents implements IPopupProvider {
 				}
 			}
 		}
-		if (index < items.length) {
-			table.remove(index, items.length - 1);
-		}
-		if (selectionIndex == -1) {
-			selectionIndex = 0;
-		}
+		if (index < items.length) { table.remove(index, items.length - 1); }
+		if (selectionIndex == -1) { selectionIndex = 0; }
 		// table.setSize(table.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		// table.layout();
 		return selectionIndex;
@@ -193,9 +184,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 						}
 
 						// }
-						if (entryEnabled(provider, entry)) {
-							entries[i].add(entry);
-						}
+						if (entryEnabled(provider, entry)) { entries[i].add(entry); }
 
 						j++;
 					}
@@ -206,9 +195,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 					for (final GamlAccessEntry quickAccessEntry : poorFilterMatches) {
 						entries[i].add(quickAccessEntry);
 					}
-					if (j < sortedElements.length) {
-						done = false;
-					}
+					if (j < sortedElements.length) { done = false; }
 				}
 			}
 		} while (!done);
@@ -230,11 +217,9 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		index = combinedLabel.toLowerCase().indexOf(filter);
 		if (index != -1) {
 			final int lengthOfElementMatch = index + filter.length() - providerForMatching.name.length() - 1;
-			if (lengthOfElementMatch > 0) {
-				return new GamlAccessEntry(element, providerForMatching,
-						new int[][] { { 0, lengthOfElementMatch - 1 } },
-						new int[][] { { index, index + filter.length() - 1 } }, GamlAccessEntry.MATCH_GOOD);
-			}
+			if (lengthOfElementMatch > 0) return new GamlAccessEntry(element, providerForMatching,
+					new int[][] { { 0, lengthOfElementMatch - 1 } },
+					new int[][] { { index, index + filter.length() - 1 } }, GamlAccessEntry.MATCH_GOOD);
 			return new GamlAccessEntry(element, providerForMatching, EMPTY_INDICES,
 					new int[][] { { index, index + filter.length() - 1 } }, GamlAccessEntry.MATCH_GOOD);
 		}
@@ -247,14 +232,12 @@ public abstract class GamlAccessContents implements IPopupProvider {
 	 * @return <code>true</code> if the entry is enabled
 	 */
 	private boolean entryEnabled(final GamlIdiomsProvider<?> provider, final GamlAccessEntry entry) {
-		if (entry == null) { return false; }
+		if (entry == null) return false;
 		return true;
 	}
 
 	private void doDispose() {
-		if (textLayout != null && !textLayout.isDisposed()) {
-			textLayout.dispose();
-		}
+		if (textLayout != null && !textLayout.isDisposed()) { textLayout.dispose(); }
 	}
 
 	protected abstract void handleElementSelected(String text, GamlAccessEntry selectedElement);
@@ -298,15 +281,11 @@ public abstract class GamlAccessContents implements IPopupProvider {
 						break;
 					case SWT.ARROW_DOWN:
 						int index = table.getSelectionIndex();
-						if (index != -1 && table.getItemCount() > index + 1) {
-							table.setSelection(index + 1);
-						}
+						if (index != -1 && table.getItemCount() > index + 1) { table.setSelection(index + 1); }
 						break;
 					case SWT.ARROW_UP:
 						index = table.getSelectionIndex();
-						if (index != -1 && index >= 1) {
-							table.setSelection(index - 1);
-						}
+						if (index != -1 && index >= 1) { table.setSelection(index - 1); }
 						break;
 					case SWT.ESC:
 						doClose();
@@ -346,8 +325,8 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		table.setLinesVisible(true);
 		textLayout = new TextLayout(table.getDisplay());
 		textLayout.setOrientation(defaultOrientation);
-		final Font boldFont = GamaFonts.getHelpFont();
-		table.setFont(boldFont);
+		// final Font boldFont = GamaFonts.getHelpFont();
+		// table.setFont(boldFont);
 		textLayout.setText("Available categories");
 		// if (maxProviderWidth == 0) {
 		// maxProviderWidth = (int) (textLayout.getBounds().width * 1.1);
@@ -389,9 +368,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			public void keyPressed(final KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_UP && table.getSelectionIndex() == 0) {
 					filterText.setFocus();
-				} else if (e.character == SWT.ESC) {
-					doClose();
-				}
+				} else if (e.character == SWT.ESC) { doClose(); }
 			}
 
 			@Override
@@ -404,32 +381,24 @@ public abstract class GamlAccessContents implements IPopupProvider {
 			@Override
 			public void mouseDown(final MouseEvent e) {
 
-				if (table.getSelectionCount() < 1) { return; }
-
-				if (e.button != 1) { return; }
+				if ((table.getSelectionCount() < 1) || (e.button != 1)) return;
 
 				if (table.equals(e.getSource())) {
 					final Object o = table.getItem(new Point(e.x, e.y));
 					final TableItem selection = table.getSelection()[0];
-					if (selection.equals(o)) {
-						handleClick();
-					}
+					if (selection.equals(o)) { handleClick(); }
 				}
 			}
 
 			@Override
 			public void mouseUp(final MouseEvent e) {
 
-				if (table.getSelectionCount() < 1) { return; }
-
-				if (e.button != 1) { return; }
+				if ((table.getSelectionCount() < 1) || (e.button != 1)) return;
 
 				if (table.equals(e.getSource())) {
 					final Object o = table.getItem(new Point(e.x, e.y));
 					final TableItem selection = table.getSelection()[0];
-					if (selection.equals(o)) {
-						handleSelection();
-					}
+					if (selection.equals(o)) { handleSelection(); }
 				}
 			}
 		});
@@ -450,9 +419,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 							table.setSelection(new TableItem[] { lastItem });
 							popup.display();
 						}
-					} else if (o == null) {
-						lastItem = null;
-					}
+					} else if (o == null) { lastItem = null; }
 				}
 			}
 		});
@@ -473,9 +440,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 							table.setSelection(new TableItem[] { lastItem });
 							popup.display();
 						}
-					} else if (o == null) {
-						lastItem = null;
-					}
+					} else if (o == null) { lastItem = null; }
 				}
 			}
 

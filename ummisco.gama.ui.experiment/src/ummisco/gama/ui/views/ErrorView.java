@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views;
@@ -38,7 +38,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -73,7 +72,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	protected ParameterExpandItem createItem(final Composite parent, final GamaRuntimeException data,
 			final boolean expanded, final GamaUIColor color) {
 		createViewer(parent);
-		if (getViewer() == null) { return null; }
+		if (getViewer() == null) return null;
 		final ScrolledComposite control = createItemContentsFor(data);
 		ParameterExpandItem item;
 		if (expanded) {
@@ -98,7 +97,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	private void createStackTrace(final ScrolledComposite compo, final GamaRuntimeException exception) {
 		final Table t = new Table(compo, SWT.H_SCROLL);
-		t.setFont(GamaFonts.getExpandfont());
+		// t.setFont(GamaFonts.getExpandfont());
 
 		t.addSelectionListener(new SelectionListener() {
 
@@ -154,11 +153,9 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
 		final StringBuilder sb = new StringBuilder(300);
 		final String a = obj.getAgentSummary();
-		if (a != null) {
-			sb.append(a).append(" at ");
-		}
+		if (a != null) { sb.append(a).append(" at "); }
 		sb.append("cycle ").append(obj.getCycle()).append(ItemList.SEPARATION_CODE)
-		.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE).append(obj.getMessage());
+				.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE).append(obj.getMessage());
 		return sb.toString();
 	}
 
@@ -172,15 +169,13 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		final List<GamaRuntimeException> errors = new ArrayList<>();
 		final List<GamaRuntimeException> exceptions = getExceptionHandler().getCleanExceptions();
 		final int size = exceptions.size();
-		if (size == 0) { return errors; }
+		if (size == 0) return errors;
 		final int end = size;
 		int begin = end - numberOfDisplayedErrors;
 		begin = begin < 0 ? 0 : begin;
 		final List<GamaRuntimeException> except = new ArrayList<>(exceptions);
 		errors.addAll(except.subList(begin, end));
-		if (mostRecentFirst) {
-			Collections.reverse(errors);
-		}
+		if (mostRecentFirst) { Collections.reverse(errors); }
 		return errors;
 	}
 
@@ -201,7 +196,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	/**
 	 * Method handleMenu()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object)
 	 */
 	@Override
@@ -216,7 +211,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	}
 
 	private void reportError(final GamaRuntimeException item) {
-		//		final String data = item.getAllText();
+		// final String data = item.getAllText();
 		WebHelper.openPage("https://github.com/gama-platform/gama/issues/new");
 	}
 

@@ -54,7 +54,6 @@ import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -151,7 +150,7 @@ public class GamaPreferencesView {
 		final var prefs = GamaPreferences.organizePrefs();
 		for (final String tabName : prefs.keySet()) {
 			final var item = new CTabItem(tabFolder, SWT.NONE);
-			item.setFont(GamaFonts.getNavigHeaderFont());
+			// item.setFont(GamaFonts.getNavigHeaderFont());
 			item.setText(tabName);
 			item.setImage(prefs_images.get(tabName));
 			item.setShowClose(false);
@@ -313,7 +312,7 @@ public class GamaPreferencesView {
 	private void buildButtons() {
 		final var doc = new Label(shell, SWT.NONE);
 		doc.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
-		doc.setFont(GamaFonts.boldHelpFont);
+		// doc.setFont(GamaFonts.boldHelpFont);
 		doc.setText(
 				"Some preferences can also be set in GAML, using 'gama.pref_name <- new_value;'. 'pref_name' is displayed in the contextual menu of each preference");
 

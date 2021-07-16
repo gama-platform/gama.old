@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**
@@ -127,7 +126,7 @@ public class SwitchButton extends Canvas {
 		this.trueBackgroundColor = selectedBackgroundColor;
 		this.falseBackgroundColor = unselectedBackgroundColor;
 
-		setFont(GamaFonts.getSmallFont());
+		// setFont(GamaFonts.getSmallFont());
 		this.gap = 10;
 		this.listOfSelectionListeners = new HashSet<>();
 		this.addPaintListener(SwitchButton.this::onPaint);

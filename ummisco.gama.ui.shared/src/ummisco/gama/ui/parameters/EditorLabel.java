@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Menu;
 
 import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class EditorLabel {
@@ -39,7 +38,7 @@ public class EditorLabel {
 		d.minimumWidth = 70;
 		d.horizontalIndent = isSubParameter ? 30 : 0;
 		label.setLayoutData(d);
-		label.setFont(GamaFonts.getLabelfont());
+		// label.setFont(GamaFonts.getLabelfont());
 		label.setText(title);
 		label.setToolTipText(tooltip);
 		label.setBackground(parent.getBackground());

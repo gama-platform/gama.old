@@ -24,7 +24,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaFont;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -47,9 +46,9 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		final var data = currentValue != null ? currentValue : toGamaFont(GamaFonts.getSmallFont().getFontData()[0]);
+		final var data = currentValue != null ? currentValue
+				: toGamaFont(WorkbenchHelper.getDisplay().getSystemFont().getFontData()[0]);
 		edit.setText(currentValue == null ? "Default" : data.toString());
-		// TODO Dispose the font ??
 		edit.setFont(new Font(WorkbenchHelper.getDisplay(), toFontData(data)));
 		internalModification = false;
 	}
@@ -81,9 +80,7 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 			dialog.setFontList(new FontData[] { data });
 		}
 		final var data = dialog.open();
-		if (data != null) {
-			modifyAndDisplayValue(toGamaFont(data));
-		}
+		if (data != null) { modifyAndDisplayValue(toGamaFont(data)); }
 
 	}
 }

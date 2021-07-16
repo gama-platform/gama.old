@@ -20,10 +20,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gaml.compilation.GamlIdiomsProvider;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamlAccessEntry {
 	boolean firstInCategory;
@@ -120,10 +121,10 @@ public class GamlAccessEntry {
 		event.width = 0;
 		switch (event.index) {
 			case 0:
-				textLayout.setFont(GamaFonts.categoryHelpFont);
+				// textLayout.setFont(GamaFonts.categoryHelpFont);
 				if (firstInCategory || providerMatchRegions.length > 0) {
-					final TextStyle boldStyle =
-							new TextStyle(GamaFonts.categoryBoldHelpFont, null, IGamaColors.TOOLTIP.color());
+					final TextStyle boldStyle = new TextStyle(WorkbenchHelper.getDisplay().getSystemFont(), null,
+							ThemeHelper.isDark() ? IGamaColors.BLUE.color() : IGamaColors.TOOLTIP.color());
 					textLayout.setText(provider.name);
 					for (final int[] matchRegion : providerMatchRegions) {
 						textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);
@@ -134,7 +135,8 @@ public class GamlAccessEntry {
 				break;
 			case 1:
 				textLayout.setText(element.getTitle());
-				final TextStyle boldStyle = new TextStyle(GamaFonts.boldHelpFont, null, IGamaColors.TOOLTIP.color());
+				final TextStyle boldStyle = new TextStyle(WorkbenchHelper.getDisplay().getSystemFont(), null,
+						ThemeHelper.isDark() ? IGamaColors.BLUE.color() : IGamaColors.TOOLTIP.color());
 				for (final int[] matchRegion : elementMatchRegions) {
 					textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);
 				}
@@ -152,9 +154,9 @@ public class GamlAccessEntry {
 		switch (event.index) {
 			case 0:
 				if (firstInCategory || providerMatchRegions.length > 0) {
-					textLayout.setFont(GamaFonts.categoryHelpFont);
-					final TextStyle boldStyle =
-							new TextStyle(GamaFonts.categoryBoldHelpFont, null, IGamaColors.TOOLTIP.color());
+					// textLayout.setFont(GamaFonts.categoryHelpFont);
+					final TextStyle boldStyle = new TextStyle(WorkbenchHelper.getDisplay().getSystemFont(), null,
+							ThemeHelper.isDark() ? IGamaColors.BLUE.color() : IGamaColors.TOOLTIP.color());
 					textLayout.setText(provider.name);
 
 					for (final int[] matchRegion : providerMatchRegions) {
@@ -173,7 +175,8 @@ public class GamlAccessEntry {
 			case 1:
 				final String label = element.getTitle();
 				textLayout.setText(label);
-				final TextStyle boldStyle = new TextStyle(GamaFonts.boldHelpFont, null, IGamaColors.TOOLTIP.color());
+				final TextStyle boldStyle = new TextStyle(WorkbenchHelper.getDisplay().getSystemFont(), null,
+						ThemeHelper.isDark() ? IGamaColors.BLUE.color() : IGamaColors.TOOLTIP.color());
 
 				for (final int[] matchRegion : elementMatchRegions) {
 					textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);

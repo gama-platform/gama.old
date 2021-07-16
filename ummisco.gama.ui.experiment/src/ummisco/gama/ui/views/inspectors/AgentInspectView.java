@@ -44,7 +44,6 @@ import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.AgentAttributesEditorsList;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
@@ -111,7 +110,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 		d.minimumWidth = 70;
 		d.horizontalIndent = isSubParameter ? 30 : 0;
 		label.setLayoutData(d);
-		label.setFont(GamaFonts.getLabelfont());
+		// label.setFont(GamaFonts.getLabelfont());
 		label.setText(title);
 		label.setToolTipText(tooltip);
 		return label;
@@ -121,7 +120,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 	protected Composite createItemContentsFor(final IAgent agent) {
 		final Composite attributes = super.createItemContentsFor(agent);
 		final Label l = createLeftLabel(attributes, "Actions", "", false);
-		l.setFont(GamaFonts.getExpandfont());
+		// l.setFont(GamaFonts.getExpandfont());
 		final Composite composite = new Composite(attributes, SWT.NONE);
 		composite.setBackground(attributes.getBackground());
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);

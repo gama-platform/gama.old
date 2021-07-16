@@ -25,7 +25,6 @@ import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.ItemList;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -140,7 +139,7 @@ public class ParameterExpandItem extends Item {
 			} else {
 				title = getText();
 			}
-			gc.setFont(GamaFonts.getExpandfont());
+			// gc.setFont(GamaFonts.getExpandfont());
 			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			var size = gc.stringExtent(title);
 			gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
@@ -189,7 +188,7 @@ public class ParameterExpandItem extends Item {
 		var width = ParameterExpandItem.TEXT_INSET * 2 + ParameterExpandItem.CHEVRON_SIZE;
 		if (getImage() != null) { width += ParameterExpandItem.TEXT_INSET + imageWidth; }
 		if (getText().length() > 0) {
-			gc.setFont(GamaFonts.getExpandfont());
+			// gc.setFont(GamaFonts.getExpandfont());
 			width += gc.stringExtent(getText()).x;
 		}
 		if (control != null) { width += control.computeSize(SWT.DEFAULT, SWT.DEFAULT).x; }

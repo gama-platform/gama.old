@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 import ummisco.gama.ui.navigator.contents.ResourceManager;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public abstract class AbstractNewModelWizardPage extends WizardPage {
@@ -57,12 +56,8 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 	@Override
 	public void setVisible(final boolean b) {
 		super.setVisible(b);
-		if (containerText.getText().isEmpty()) {
-			WorkbenchHelper.asyncRun(() -> handleContainerBrowse());
-		}
-		if (b) {
-			fileText.setFocus();
-		}
+		if (containerText.getText().isEmpty()) { WorkbenchHelper.asyncRun(this::handleContainerBrowse); }
+		if (b) { fileText.setFocus(); }
 	}
 
 	/** Gets the author of the new file */
@@ -99,9 +94,7 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 				ResourcesPlugin.getWorkspace().getRoot(), false, "Select a project or a folder");
 		if (dialog.open() == Window.OK) {
 			final Object[] result = dialog.getResult();
-			if (result.length == 1) {
-				containerText.setText(((Path) result[0]).toString());
-			}
+			if (result.length == 1) { containerText.setText(((Path) result[0]).toString()); }
 		}
 	}
 
@@ -150,15 +143,12 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 			obj = ((IStructuredSelection) selection).getFirstElement();
 		}
 		IResource r = ResourceManager.getResource(obj);
-		if (r == null) { return null; }
-		if (r instanceof IProject) {
-			r = ((IProject) r).getFolder(getInnerDefaultFolder());
-		}
-		if (r instanceof IContainer) {
+		if (r == null) return null;
+		if (r instanceof IProject) { r = ((IProject) r).getFolder(getInnerDefaultFolder()); }
+		if (r instanceof IContainer)
 			return (IContainer) r;
-		} else {
+		else
 			return r.getParent();
-		}
 	}
 
 	protected String getInnerDefaultFolder() {
@@ -171,7 +161,7 @@ public abstract class AbstractNewModelWizardPage extends WizardPage {
 		// d.minimumHeight = 20;
 		// d.heightHint = 30;
 		label.setLayoutData(d);
-		label.setFont(GamaFonts.getLabelfont());
+		// label.setFont(GamaFonts.getLabelfont());
 		label.setText(t == null ? " " : t);
 		return label;
 	}
