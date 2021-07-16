@@ -82,7 +82,7 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.setFont(parentComposite.getFont());
+		// composite.setFont(parentComposite.getFont());
 
 		final Label l = new Label(composite, SWT.RIGHT);
 		l.setText("Type:");
@@ -138,15 +138,15 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 	 *            the SWT.IMAGE_ type.
 	 */
 	public void setOriginalName(final String name, final int type) {
-		String basename = name;
+		StringBuilder basename = new StringBuilder().append(name);
 		for (int i = 0; i < IMAGE_TYPES.length; i++) {
 			if (type == IMAGE_TYPES[i]) {
 				initialImageTypeIndex = i;
-				basename += "." + IMAGE_EXTS[i]; //$NON-NLS-1$
+				basename.append(".").append(IMAGE_EXTS[i]); //$NON-NLS-1$
 				break;
 			}
 		}
-		setOriginalName(basename);
+		setOriginalName(basename.toString());
 	}
 
 	/**
@@ -175,21 +175,19 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 	 * Get the selected image type.
 	 */
 	public int getSaveAsImageType() {
-		if (selectedImageTypeIndex >= 0 && selectedImageTypeIndex < IMAGE_TYPES.length) {
+		if (selectedImageTypeIndex >= 0 && selectedImageTypeIndex < IMAGE_TYPES.length)
 			return IMAGE_TYPES[selectedImageTypeIndex];
-		} else {
+		else
 			return IMAGE_TYPES[0];
-		}
 	}
 
 	/**
 	 * Get the selected image type.
 	 */
 	public String getSaveAsImageExt() {
-		if (selectedImageTypeIndex >= 0 && selectedImageTypeIndex < IMAGE_TYPES.length) {
+		if (selectedImageTypeIndex >= 0 && selectedImageTypeIndex < IMAGE_TYPES.length)
 			return IMAGE_EXTS[selectedImageTypeIndex];
-		} else {
+		else
 			return IMAGE_EXTS[0];
-		}
 	}
 }

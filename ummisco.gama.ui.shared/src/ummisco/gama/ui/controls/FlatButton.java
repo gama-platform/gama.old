@@ -16,6 +16,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Path;
@@ -162,10 +163,30 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	}
 
+	private static class Clipping extends Path {
+
+		public Clipping(final Device device, final float x, final float y, final float width, final float height,
+				final float arcWidth, final float arcHeight) {
+			super(device);
+			if (this.isDisposed()) { SWT.error(SWT.ERROR_GRAPHIC_DISPOSED); }
+			// Top left corner
+			this.cubicTo(x, y, x, y, x, y + arcHeight);
+			this.cubicTo(x, y, x, y, x + arcWidth, y);
+			// Top right corner
+			this.cubicTo(x + width, y, x + width, y, x + width - arcWidth, y);
+			this.cubicTo(x + width, y, x + width, y, x + width, y + arcHeight);
+			// Bottom right corner
+			this.cubicTo(x + width, y + height, x + width, y + height, x + width, y + height - arcHeight);
+			this.cubicTo(x + width, y + height, x + width, y + height, x + width - arcWidth, y + height);
+			// Bottom left corner
+			this.cubicTo(x, y + height, x, y + height, x + arcWidth, y + height);
+			this.cubicTo(x, y + height, x, y + height, x, y + height - arcHeight);
+		}
+
+	}
+
 	private Path createClipping(final Rectangle rect) {
-		final AdvancedPath path = new AdvancedPath(WorkbenchHelper.getDisplay());
-		path.addRoundRectangle(rect.x, rect.y, rect.width, rect.height, 8, 8);
-		return path;
+		return new Clipping(WorkbenchHelper.getDisplay(), rect.x, rect.y, rect.width, rect.height, 8, 8);
 	}
 
 	@Override
@@ -294,7 +315,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public FlatButton setText(final String text) {
-		if ((text == null) || text.equals(this.text)) return this;
+		if (text == null || text.equals(this.text)) return this;
 		this.text = text;
 		redraw();
 		return this;

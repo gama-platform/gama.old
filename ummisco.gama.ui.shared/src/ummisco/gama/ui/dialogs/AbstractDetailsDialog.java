@@ -100,9 +100,7 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	@Override
 	protected void configureShell(final Shell shell) {
 		super.configureShell(shell);
-		if (title != null) {
-			shell.setText(title);
-		}
+		if (title != null) { shell.setText(title); }
 	}
 
 	/**
@@ -132,7 +130,7 @@ public abstract class AbstractDetailsDialog extends Dialog {
 			final GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			label.setLayoutData(data);
-			label.setFont(parent.getFont());
+			// label.setFont(parent.getFont());
 		}
 		return composite;
 	}
