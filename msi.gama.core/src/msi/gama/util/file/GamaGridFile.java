@@ -25,6 +25,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
@@ -48,11 +49,13 @@ import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.GeneralEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Envelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -64,6 +67,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -192,10 +196,24 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 				field.getBandsNumber(scope));
 		WritableRaster raster = Raster.createWritableRaster(sample, buffer, null);
 		Envelope2D envelope =
-				new Envelope2D(null, 0, 0, scope.getSimulation().getWidth(), scope.getSimulation().getHeight());
+				new Envelope2D(getCRS(scope), 0, 0, scope.getSimulation().getWidth(), scope.getSimulation().getHeight());
 		GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
 		GridCoverage2D cov = factory.create(getName(scope), raster, envelope);
 		coverage = cov;
+	}
+	
+	protected CoordinateReferenceSystem getCRS(final IScope scope) {
+		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
+		CoordinateReferenceSystem crs = null;
+		try {
+			crs = nullProjection ? CRS.decode("EPSG:3857")
+						: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS(scope);
+		} catch (NoSuchAuthorityCodeException e) {
+			e.printStackTrace();
+		} catch (FactoryException e) {
+			e.printStackTrace();
+		}
+		return crs;
 	}
 
 	@Override
