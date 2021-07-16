@@ -19,10 +19,11 @@ import java.net.URI;
 import org.locationtech.jts.awt.ShapeReader;
 import org.locationtech.jts.geom.Geometry;
 
+import com.kitfox.svg.SVGRoot;
+import com.kitfox.svg.SVGUniverse;
+
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.Scaling3D;
-import msi.gama.ext.svgsalamander.SVGRoot;
-import msi.gama.ext.svgsalamander.SVGUniverse;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
@@ -90,9 +91,9 @@ public class GamaSVGFile extends GamaGeometryFile {
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
-			final SVGUniverse svg = SVGUniverse.getInstance();
+			final SVGUniverse svg = new SVGUniverse();
 			final URI uri = svg.loadSVG(in, getPath(scope));
-			final SVGRoot diagram = svg.getRoot(uri);
+			final SVGRoot diagram = svg.getDiagram(uri).getRoot();
 			final Shape shape = diagram.getShape();
 			final Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.GEOMETRY_FACTORY); // flatness
 			final IShape gs = new GamaShape(null, geom, null, new GamaPoint(0, 0), size, true);
