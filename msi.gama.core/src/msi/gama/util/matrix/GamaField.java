@@ -112,7 +112,15 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Nullable
 	public Double get(final IScope scope, final ILocation p) {
 		computeDimensions(scope);
-		return matrix[getIndex(p.toGamaPoint())];
+		GamaPoint gp = p.toGamaPoint();
+		// May happen in case of torus environment (see #3132)
+		if (gp.x < 0) {
+			gp.x = 0;
+		} else if (gp.x > worldDimensions.x) { gp.x = worldDimensions.x; }
+		if (gp.y < 0) {
+			gp.y = 0;
+		} else if (gp.y > worldDimensions.y) { gp.y = worldDimensions.y; }
+		return matrix[getIndex(gp)];
 	}
 
 	/**
@@ -124,7 +132,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		computeDimensions(scope);
 		int index = -1;
 		if (at instanceof Integer) {
-			index = ((Integer) at).intValue();
+			index = (Integer) at;
 		} else if (at instanceof IList) {
 			IList list = (IList) at;
 			index = (Integer) list.get(1) * numCols + (Integer) list.get(0);
@@ -314,7 +322,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public double[] getBand(final IScope scope, final int index) {
 		double[] result = super.getBand(scope, index);
-		if (result == null) { if (index < bands.size()) { result = bands.get(index).getBand(scope, 0); } }
+		if (result == null && index < bands.size()) { result = bands.get(index).getBand(scope, 0); }
 		return result;
 	}
 
