@@ -49,7 +49,9 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 		final var data = currentValue != null ? currentValue
 				: toGamaFont(WorkbenchHelper.getDisplay().getSystemFont().getFontData()[0]);
 		edit.setText(currentValue == null ? "Default" : data.toString());
+		Font old = edit.getFont();
 		edit.setFont(new Font(WorkbenchHelper.getDisplay(), toFontData(data)));
+		if (old != null && old != WorkbenchHelper.getDisplay().getSystemFont()) { old.dispose(); }
 		internalModification = false;
 	}
 
