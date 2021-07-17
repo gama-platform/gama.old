@@ -75,6 +75,32 @@ public class GamaToolbarFactory {
 
 	}
 
+	public static class ExpandAll extends Action {
+
+		ExpandAll() {
+			super("Expand all items", IAction.AS_PUSH_BUTTON);
+			setIcon();
+		}
+
+		protected void setIcon() {
+			setImageDescriptor(GamaIcons.create("action.toolbar.expand2").descriptor());
+		}
+
+	}
+
+	public static class CollapseAll extends Action {
+
+		CollapseAll() {
+			super("Collapse all items", IAction.AS_PUSH_BUTTON);
+			setIcon();
+		}
+
+		protected void setIcon() {
+			setImageDescriptor(GamaIcons.create("action.toolbar.collapse2").descriptor());
+		}
+
+	}
+
 	public static class ToggleSideControls extends Action {
 
 		ToggleSideControls() {
@@ -200,6 +226,23 @@ public class GamaToolbarFactory {
 		if (site instanceof IViewSite) {
 			final IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();
 			tm.add(toggle);
+			if (view instanceof IToolbarDecoratedView.Expandable) {
+				final Action collapseAll = new CollapseAll() {
+					@Override
+					public void run() {
+						((IToolbarDecoratedView.Expandable) view).collapseAll();
+					}
+				};
+				final Action expandAll = new ExpandAll() {
+					@Override
+					public void run() {
+						((IToolbarDecoratedView.Expandable) view).expandAll();
+					}
+				};
+				tm.add(collapseAll);
+				tm.add(expandAll);
+			}
+
 			if (view instanceof IGamaView.Display) {
 				final Action toggleSideControls = new ToggleSideControls() {
 					@Override

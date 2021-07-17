@@ -30,8 +30,10 @@ import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
-public abstract class ExpandableItemsView<T> extends GamaViewPart implements ItemList<T> {
+public abstract class ExpandableItemsView<T> extends GamaViewPart
+		implements ItemList<T>, IToolbarDecoratedView.Expandable {
 
 	private ParameterExpandBar viewer;
 
@@ -197,5 +199,19 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 
 	@Override
 	public abstract void updateItemValues();
+
+	@Override
+	public void collapseAll() {
+		for (final ParameterExpandItem p : getViewer().getItems()) {
+			p.setExpanded(false);
+		}
+	}
+
+	@Override
+	public void expandAll() {
+		for (final ParameterExpandItem p : getViewer().getItems()) {
+			p.setExpanded(true);
+		}
+	}
 
 }

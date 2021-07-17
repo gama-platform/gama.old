@@ -48,6 +48,11 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public static FlatButton label(final Composite comp, final GamaUIColor color, final String text,
+			final int forcedWidth) {
+		return create(comp, SWT.None).setWidth(forcedWidth).setText(text).setColor(color);
+	}
+
+	public static FlatButton label(final Composite comp, final GamaUIColor color, final String text,
 			final Image image) {
 		return label(comp, color, text).setImage(image);
 	}
@@ -82,6 +87,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public static int IMAGE_LEFT = 0;
 	public static int IMAGE_RIGHT = 1;
 	private int imageStyle = IMAGE_LEFT;
+	private int forcedWidth = -1;
 
 	private FlatButton(final Composite parent, final int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
@@ -272,6 +278,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			preferredWidth += extent.x + FlatButton.innerMarginWidth * 2;
 			preferredHeight = Math.max(preferredHeight, extent.y + innerMarginWidth);
 		}
+		if (forcedWidth > 0) { preferredWidth = forcedWidth; }
 
 		// DEBUG.OUT("Computing min height for button " + text + " = " + preferredHeight);
 
@@ -357,6 +364,12 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	public int getHeight() {
 		return preferredHeight;
+	}
+
+	public FlatButton setWidth(final int width) {
+		forcedWidth = width;
+		preferredWidth = width;
+		return this;
 	}
 
 	public GamaUIColor getColor() {
