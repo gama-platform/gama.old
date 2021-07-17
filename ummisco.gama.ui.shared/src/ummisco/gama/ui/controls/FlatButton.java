@@ -16,11 +16,9 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -34,7 +32,6 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
 
@@ -149,62 +146,10 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		if (!isDisposed()) { redraw(); }
 	}
 
-	private void drawBackground(final GC gc, final Rectangle rect) {
-		setBackground(getParent().getBackground());
-		final GamaUIColor color = GamaColors.get(colorCode);
-		final Color background = hovered ? color.lighter() : color.color();
-		final Color foreground = GamaColors.getTextColorForBackground(background).color();
-		gc.setForeground(foreground);
-		gc.setBackground(background);
-
-		if (down) {
-			gc.fillRoundRectangle(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, 5, 5);
-		} else {
-			gc.fillRoundRectangle(rect.x, rect.y, rect.width , rect.height, 5, 5);
-			
-			
-			
-//			final Path path = createClipping(rect);
-//			gc.setClipping(path);
-//			gc.fillRectangle(rect);
-//			gc.setClipping((Rectangle) null);
-//			path.dispose();
-		}
-
-	}
-
-	private static class Clipping extends Path {
-
-		public Clipping(final Device device, final float x, final float y, final float width, final float height,
-				final float arcWidth, final float arcHeight) {
-			super(device);
-			if (this.isDisposed()) { SWT.error(SWT.ERROR_GRAPHIC_DISPOSED); }
-			// Top left corner
-			this.cubicTo(x, y, x, y, x, y + arcHeight);
-			this.cubicTo(x, y, x, y, x + arcWidth, y);
-			// Top right corner
-			this.cubicTo(x + width, y, x + width, y, x + width - arcWidth, y);
-			this.cubicTo(x + width, y, x + width, y, x + width, y + arcHeight);
-			// Bottom right corner
-			this.cubicTo(x + width, y + height, x + width, y + height, x + width, y + height - arcHeight);
-			this.cubicTo(x + width, y + height, x + width, y + height, x + width - arcWidth, y + height);
-			// Bottom left corner
-			this.cubicTo(x, y + height, x, y + height, x + arcWidth, y + height);
-			this.cubicTo(x, y + height, x, y + height, x, y + height - arcHeight);
-		}
-
-	}
-
-	private Path createClipping(final Rectangle rect) {
-		return new Clipping(WorkbenchHelper.getDisplay(), rect.x, rect.y, rect.width, rect.height, 8, 8);
-	}
-
 	@Override
 	public void paintControl(final PaintEvent e) {
-		// Init GC
 		final GC gc = e.gc;
 		gc.setAntialias(SWT.ON);
-		gc.setAdvanced(true);
 		Font f = getFont();
 		gc.setFont(f);
 		int v_inset;
@@ -214,7 +159,18 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			v_inset = 0;
 		}
 		final Rectangle rect = new Rectangle(0, v_inset, preferredWidth, preferredHeight);
-		drawBackground(gc, rect);
+		setBackground(getParent().getBackground());
+		final GamaUIColor color = GamaColors.get(colorCode);
+		final Color background = hovered ? color.lighter() : color.color();
+		final Color foreground = GamaColors.getTextColorForBackground(background).color();
+		gc.setForeground(foreground);
+		gc.setBackground(background);
+
+		if (down) {
+			gc.fillRoundRectangle(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, 8, 8);
+		} else {
+			gc.fillRoundRectangle(rect.x, rect.y, rect.width, rect.height, 8, 8);
+		}
 
 		int x = FlatButton.innerMarginWidth;
 		int y_image = 0;
@@ -317,7 +273,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			preferredHeight = Math.max(preferredHeight, extent.y + innerMarginWidth);
 		}
 
-		//DEBUG.OUT("Computing min height for button " + text + " = " + preferredHeight);
+		// DEBUG.OUT("Computing min height for button " + text + " = " + preferredHeight);
 
 	}
 
