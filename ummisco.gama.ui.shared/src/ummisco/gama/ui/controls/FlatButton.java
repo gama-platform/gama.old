@@ -74,7 +74,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	private static final int innerMarginWidth = 5;
 	// private static int DEFAULT_HEIGHT =
 	// WorkbenchHelper.getDisplay().getSystemFont().getFontData()[0].getHeight() + innerMarginWidth;
-	private int height = -1; // DEFAULT_HEIGHT;
+	private int preferredHeight = -1; // DEFAULT_HEIGHT;
+	private int preferredWidth = -1;
 	private static final int imagePadding = 5;
 	private boolean enabled = true;
 	private boolean hovered = false;
@@ -149,7 +150,6 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	private void drawBackground(final GC gc, final Rectangle rect) {
 		setBackground(getParent().getBackground());
-
 		final GamaUIColor color = GamaColors.get(colorCode);
 		final Color background = hovered ? color.lighter() : color.color();
 		final Color foreground = GamaColors.getTextColorForBackground(background).color();
@@ -201,9 +201,13 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		gc.setAntialias(SWT.ON);
 		gc.setAdvanced(true);
 		gc.setFont(getFont());
-		final int width = getSize().x;
-		final int v_inset = (getBounds().height - height) / 2;
-		final Rectangle rect = new Rectangle(0, v_inset, width, height);
+		int v_inset;
+		if (preferredHeight < getBounds().height) {
+			v_inset = (getBounds().height - preferredHeight) / 2;
+		} else {
+			v_inset = 0;
+		}
+		final Rectangle rect = new Rectangle(0, v_inset, preferredWidth, preferredHeight);
 		drawBackground(gc, rect);
 
 		int x = FlatButton.innerMarginWidth;
@@ -234,63 +238,24 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	@Override
 	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
-		int width = 0;
+		int width = 0, height = 0;
 		if (wHint != SWT.DEFAULT) {
 			width = wHint;
 		} else {
-			width = computeMinWidth();
+			width = preferredWidth;
 		}
 		if (hHint != SWT.DEFAULT) {
 			height = hHint;
 		} else {
-			height = computeMinHeight();
+			height = preferredHeight;
 		}
 		return new Point(width, height);
-	}
-
-	public int computeMinWidth() {
-		int width = 0;
-		final Image image = getImage();
-		if (image != null) {
-			final Rectangle bounds = image.getBounds();
-			if (imageStyle == IMAGE_LEFT) {
-				width = bounds.width + imagePadding;
-			} else {
-				width = (bounds.width + imagePadding) * 2;
-			}
-		}
-		if (text != null) {
-			final GC gc = new GC(this);
-			gc.setFont(getFont());
-			final Point extent = gc.textExtent(text + "...");
-			gc.dispose();
-			width += extent.x + FlatButton.innerMarginWidth * 2;
-		}
-		return width;
-	}
-
-	public int computeMinHeight() {
-		int height = 0;
-		final Image image = getImage();
-		if (image != null) {
-			final Rectangle bounds = image.getBounds();
-			height = bounds.height + imagePadding;
-		}
-		if (text != null) {
-			final GC gc = new GC(this);
-			gc.setFont(getFont());
-			final Point extent = gc.textExtent(text + "...");
-			gc.dispose();
-			height = Math.max(height, extent.y + innerMarginWidth);
-		}
-		DEBUG.OUT("Computing min height for button " + text + " = " + height);
-		return height;
 	}
 
 	public String newText() {
 		if (text == null) return null;
 		final int parentWidth = getParent().getBounds().width;
-		final int width = computeMinWidth();
+		final int width = preferredWidth;
 		if (parentWidth < width) {
 			int imageWidth = 0;
 			final Image image = getImage();
@@ -320,8 +285,34 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public FlatButton setImage(final Image image) {
 		if (this.image == image) return this;
 		this.image = image;
+		computePreferredSize();
 		redraw();
 		return this;
+	}
+
+	private void computePreferredSize() {
+
+		final Image image = getImage();
+		if (image != null) {
+			final Rectangle bounds = image.getBounds();
+			if (imageStyle == IMAGE_LEFT) {
+				preferredWidth = bounds.width + imagePadding;
+			} else {
+				preferredWidth = (bounds.width + imagePadding) * 2;
+			}
+			preferredHeight = bounds.height + imagePadding;
+		}
+		if (text != null) {
+			final GC gc = new GC(this);
+			gc.setFont(getFont());
+			final Point extent = gc.textExtent(text + "...");
+			gc.dispose();
+			preferredWidth += extent.x + FlatButton.innerMarginWidth * 2;
+			preferredHeight = Math.max(preferredHeight, extent.y + innerMarginWidth);
+		}
+
+		DEBUG.OUT("Computing min height for button " + text + " = " + preferredHeight);
+
 	}
 
 	/**
@@ -331,6 +322,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 */
 	public FlatButton setImageStyle(final int imageStyle) {
 		this.imageStyle = imageStyle;
+		computePreferredSize(); // The inset is not the same
+		redraw();
 		return this;
 	}
 
@@ -345,6 +338,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public FlatButton setText(final String text) {
 		if (text == null || text.equals(this.text)) return this;
 		this.text = text;
+		computePreferredSize();
 		redraw();
 		return this;
 	}
@@ -387,9 +381,6 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public FlatButton small() {
-		// if (height == 20) return this;
-		// height = 20;
-		// redraw();
 		return this;
 	}
 
@@ -403,8 +394,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public int getHeight() {
-		if (height == -1) { height = computeMinHeight(); }
-		return height;
+		return preferredHeight;
 	}
 
 	public GamaUIColor getColor() {
@@ -414,4 +404,15 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public Image getImage() {
 		return image;
 	}
+
+	@Override
+	public void setBounds(final int x, final int y, final int width, final int height) {
+		super.setBounds(x, y, width, height);
+	}
+
+	@Override
+	public void setBounds(final Rectangle rect) {
+		super.setBounds(rect);
+	}
+
 }
