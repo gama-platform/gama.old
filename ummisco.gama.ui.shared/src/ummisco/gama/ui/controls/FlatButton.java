@@ -72,9 +72,9 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	private String text;
 	private RGB colorCode;
 	private static final int innerMarginWidth = 5;
-	private static int DEFAULT_HEIGHT =
-			WorkbenchHelper.getDisplay().getSystemFont().getFontData()[0].getHeight() + innerMarginWidth;
-	private int height = DEFAULT_HEIGHT;
+	// private static int DEFAULT_HEIGHT =
+	// WorkbenchHelper.getDisplay().getSystemFont().getFontData()[0].getHeight() + innerMarginWidth;
+	private int height = -1; // DEFAULT_HEIGHT;
 	private static final int imagePadding = 5;
 	private boolean enabled = true;
 	private boolean hovered = false;
@@ -278,7 +278,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		}
 		if (text != null) {
 			final GC gc = new GC(this);
-			// gc.setFont(getFont());
+			gc.setFont(getFont());
 			final Point extent = gc.textExtent(text + "...");
 			gc.dispose();
 			height = Math.max(height, extent.y + innerMarginWidth);
@@ -403,6 +403,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public int getHeight() {
+		if (height == -1) { height = computeMinHeight(); }
 		return height;
 	}
 
