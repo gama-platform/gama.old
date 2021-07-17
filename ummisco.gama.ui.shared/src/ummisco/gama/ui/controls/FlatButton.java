@@ -29,12 +29,17 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TypedListener;
 
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
+
+	static {
+		DEBUG.ON();
+	}
 
 	public static FlatButton create(final Composite comp, final int style) {
 		return new FlatButton(comp, style);
@@ -63,13 +68,13 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 				.setImage(GamaIcons.create("small.dropdown").image());
 	}
 
-	private static int FIXED_HEIGHT = 20;
-
-	private int height = FIXED_HEIGHT;
 	private Image image;
 	private String text;
 	private RGB colorCode;
 	private static final int innerMarginWidth = 5;
+	private static int DEFAULT_HEIGHT =
+			WorkbenchHelper.getDisplay().getSystemFont().getFontData()[0].getHeight() + innerMarginWidth;
+	private int height = DEFAULT_HEIGHT;
 	private static final int imagePadding = 5;
 	private boolean enabled = true;
 	private boolean hovered = false;
@@ -235,6 +240,11 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		} else {
 			width = computeMinWidth();
 		}
+		if (hHint != SWT.DEFAULT) {
+			height = hHint;
+		} else {
+			height = computeMinHeight();
+		}
 		return new Point(width, height);
 	}
 
@@ -257,6 +267,24 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			width += extent.x + FlatButton.innerMarginWidth * 2;
 		}
 		return width;
+	}
+
+	public int computeMinHeight() {
+		int height = 0;
+		final Image image = getImage();
+		if (image != null) {
+			final Rectangle bounds = image.getBounds();
+			height = bounds.height + imagePadding;
+		}
+		if (text != null) {
+			final GC gc = new GC(this);
+			// gc.setFont(getFont());
+			final Point extent = gc.textExtent(text + "...");
+			gc.dispose();
+			height = Math.max(height, extent.y + innerMarginWidth);
+		}
+		DEBUG.OUT("Computing min height for button " + text + " = " + height);
+		return height;
 	}
 
 	public String newText() {
@@ -359,9 +387,9 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public FlatButton small() {
-		if (height == 20) return this;
-		height = 20;
-		redraw();
+		// if (height == 20) return this;
+		// height = 20;
+		// redraw();
 		return this;
 	}
 
