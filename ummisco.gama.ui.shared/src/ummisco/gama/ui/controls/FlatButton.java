@@ -17,6 +17,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Path;
@@ -159,11 +160,15 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		if (down) {
 			gc.fillRoundRectangle(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2, 5, 5);
 		} else {
-			final Path path = createClipping(rect);
-			gc.setClipping(path);
-			gc.fillRectangle(rect);
-			gc.setClipping((Rectangle) null);
-			path.dispose();
+			gc.fillRoundRectangle(rect.x, rect.y, rect.width , rect.height, 5, 5);
+			
+			
+			
+//			final Path path = createClipping(rect);
+//			gc.setClipping(path);
+//			gc.fillRectangle(rect);
+//			gc.setClipping((Rectangle) null);
+//			path.dispose();
 		}
 
 	}
@@ -200,7 +205,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		final GC gc = e.gc;
 		gc.setAntialias(SWT.ON);
 		gc.setAdvanced(true);
-		gc.setFont(getFont());
+		Font f = getFont();
+		gc.setFont(f);
 		int v_inset;
 		if (preferredHeight < getBounds().height) {
 			v_inset = (getBounds().height - preferredHeight) / 2;
@@ -219,14 +225,14 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		if (text != null) { y_text += (getBounds().height - gc.textExtent(text).y) / 2; }
 
 		if (imageStyle == IMAGE_RIGHT) {
-			gc.drawText(text, x, y_text, SWT.DRAW_TRANSPARENT);
+			gc.drawString(text, x, y_text);
 			if (image != null) {
 				x = rect.width - x - image.getBounds().width;
 				drawImage(gc, x, y_image);
 			}
 		} else {
 			x = drawImage(gc, x, y_image);
-			gc.drawText(text, x, y_text, SWT.DRAW_TRANSPARENT);
+			gc.drawString(text, x, y_text);
 		}
 	}
 
@@ -311,7 +317,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			preferredHeight = Math.max(preferredHeight, extent.y + innerMarginWidth);
 		}
 
-		DEBUG.OUT("Computing min height for button " + text + " = " + preferredHeight);
+		//DEBUG.OUT("Computing min height for button " + text + " = " + preferredHeight);
 
 	}
 
