@@ -168,7 +168,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 				} else {
 					editor.modifyValue(evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
 				}
-				editor.checkButtons();
+				editor.updateToolbar();
 
 			} catch (final GamaRuntimeException e) {
 				setCurrentValue(oldValue);

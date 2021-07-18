@@ -41,8 +41,9 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List<?>> {
 	}
 
 	@Override
-	protected void checkButtons() {
-		final ToolItem edit = items[EDIT];
+	protected void updateToolbar() {
+		super.updateToolbar();
+		final ToolItem edit = toolbar.getItem(EDIT);
 		if (edit != null && !edit.isDisposed()) { edit.setEnabled(currentValue instanceof IList); }
 	}
 

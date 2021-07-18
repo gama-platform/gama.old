@@ -97,14 +97,14 @@ public class FloatEditor extends NumberEditor<Double> {
 	}
 
 	@Override
-	protected void checkButtons() {
-		super.checkButtons();
-		final ToolItem plus = items[PLUS];
+	protected void updateToolbar() {
+		super.updateToolbar();
+		final ToolItem plus = toolbar.getItem(PLUS);
 		if (plus != null && !plus.isDisposed()) {
 			plus.setEnabled(param.isDefined()
 					&& (getMaxValue() == null || applyPlus() < Cast.asFloat(getScope(), getMaxValue())));
 		}
-		final ToolItem minus = items[MINUS];
+		final ToolItem minus = toolbar.getItem(MINUS);
 		if (minus != null && !minus.isDisposed()) {
 			minus.setEnabled(param.isDefined()
 					&& (getMinValue() == null || applyMinus() > Cast.asFloat(getScope(), getMinValue())));

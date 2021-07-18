@@ -53,9 +53,9 @@ public abstract class NumberEditor<T extends Comparable> extends ExpressionBased
 	protected abstract Number normalizeValues() throws GamaRuntimeException;
 
 	@Override
-	protected void checkButtons() {
-		super.checkButtons();
-		final ToolItem t = items[DEFINE];
+	protected void updateToolbar() {
+		super.updateToolbar();
+		final ToolItem t = toolbar.getItem(DEFINE);
 		if (t == null || t.isDisposed()) return;
 		if (param.isDefined()) {
 			t.setToolTipText("Set the parameter to undefined");
@@ -82,7 +82,7 @@ public abstract class NumberEditor<T extends Comparable> extends ExpressionBased
 			expression.modifyValue();
 			internalModification = false;
 		}
-		checkButtons();
+		updateToolbar();
 	}
 
 	@Override

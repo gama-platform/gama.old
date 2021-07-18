@@ -12,7 +12,6 @@
 package ummisco.gama.ui.parameters;
 
 import static msi.gama.common.util.StringUtils.toGaml;
-import static ummisco.gama.ui.resources.GamaIcons.create;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +25,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 
 import com.google.common.primitives.Ints;
 
@@ -51,54 +47,11 @@ import msi.gaml.types.Types;
 import msi.gaml.variables.Variable;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public abstract class AbstractEditor<T>
 		implements SelectionListener, ModifyListener, Comparable<AbstractEditor<T>>, IParameterEditor<T> {
-
-	private class ItemSelectionListener extends SelectionAdapter {
-
-		private final int code;
-
-		ItemSelectionListener(final int code) {
-			this.code = code;
-		}
-
-		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			switch (code) {
-				case REVERT:
-					modifyAndDisplayValue(applyRevert());
-					break;
-				case PLUS:
-					modifyAndDisplayValue(applyPlus());
-					break;
-				case MINUS:
-					modifyAndDisplayValue(applyMinus());
-					break;
-				case EDIT:
-					applyEdit();
-					break;
-				case INSPECT:
-					applyInspect();
-					break;
-				case BROWSE:
-					applyBrowse();
-					break;
-				case CHANGE:
-					if (e.detail != SWT.ARROW) return;
-					applyChange();
-					break;
-				case DEFINE:
-					applyDefine();
-					break;
-			}
-		}
-
-	}
 
 	private static int ORDER;
 	private final int order = ORDER++;
@@ -113,15 +66,18 @@ public abstract class AbstractEditor<T>
 	protected T originalValue, currentValue, minValue, maxValue, stepValue;
 
 	// Properties
-	protected boolean isCombo = false, isEditable = true, isSubParameter = false, noScope = false, acceptNull = true;
+	protected boolean noScope = false, acceptNull = true;
+	protected final boolean isCombo;
+	protected /* almost final */ boolean isSubParameter;
+	protected final boolean isEditable;
 	protected volatile boolean internalModification;
 
 	// UI Components
 	protected Combo combo;
 	protected EditorLabel titleLabel;
 	private CLabel fixedValue;
-	protected Composite composite, parent, toolbar;
-	protected final ToolItem[] items = new ToolItem[9];
+	protected Composite composite, parent;
+	final EditorToolbar toolbar;
 
 	public AbstractEditor(final IScope scope, final IParameter variable) {
 		this(scope, null, variable, null);
@@ -164,7 +120,7 @@ public abstract class AbstractEditor<T>
 			name = "";
 		}
 		listener = l;
-
+		toolbar = new EditorToolbar(this);
 	}
 
 	@Override
@@ -183,15 +139,8 @@ public abstract class AbstractEditor<T>
 				titleLabel.setInactive();
 			}
 		}
-		if (!active) {
-			for (final ToolItem t : items) {
-				if (t == null) { continue; }
-				t.setEnabled(false);
-			}
-		} else {
-			checkButtons();
-		}
-
+		toolbar.setActive(active);
+		if (active) { updateToolbar(); }
 		this.getEditor().setEnabled(active);
 	}
 
@@ -264,29 +213,25 @@ public abstract class AbstractEditor<T>
 	public void createComposite(final Composite comp) {
 		// Necessary to force SWT to "reskin" and give the right background to the composite (issue in the CSS engine)
 		comp.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		this.parent = comp;
-		internalModification = true;
-		titleLabel = new EditorLabel(comp, name, computeLabelTooltip(), isSubParameter);
 		try {
 			setOriginalValue(getParameterValue());
+			currentValue = getOriginalValue();
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to obtain the value of " + name);
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 		}
-		currentValue = getOriginalValue();
+		parent = comp;
+		internalModification = true;
+		titleLabel = new EditorLabel(comp, name, computeLabelTooltip(), isSubParameter);
 		composite = new Composite(comp, SWT.NONE);
 		composite.setBackground(getNormalBackground());
 		final var data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		// data.minimumWidth = 150;
 		composite.setLayoutData(data);
-
 		final var layout = new GridLayout(2, false);
 		layout.marginWidth = 5;
-
 		composite.setLayout(layout);
 		createEditorControl(composite);
-		toolbar = createToolbar2();
-
+		toolbar.build(composite);
 		if (isEditable && !isCombo) { displayParameterValueAndCheckButtons(); }
 		internalModification = false;
 		comp.layout();
@@ -327,74 +272,6 @@ public abstract class AbstractEditor<T>
 	protected String typeToDisplay() {
 		if (!this.isEditable) return "";
 		return param.getType().serialize(false);
-	}
-
-	protected Composite createToolbar2() {
-		final var t = new ToolBar(composite, SWT.NONE);
-		final var d = new GridData(SWT.END, SWT.FILL, false, false);
-		t.setLayoutData(d);
-		if (isEditable) {
-			final var codes = this.getToolItems();
-			for (final int i : codes) {
-				ToolItem item = null;
-				switch (i) {
-					case REVERT:
-						item = createItem(t, "Revert to original value", create("small.revert").image());
-						break;
-					case PLUS:
-						item = createPlusItem(t);
-						break;
-					case MINUS:
-						item = createMinusItem(t);
-						break;
-					case EDIT:
-						item = createItem(t, "Edit the parameter", create("small.edit").image());
-						break;
-					case INSPECT:
-						item = createItem(t, "Inspect the agent", create("small.inspect").image());
-						break;
-					case BROWSE:
-						item = createItem(t, "Browse the list of agents", create("small.browse").image());
-						break;
-					case CHANGE:
-						item = createItem(t, "Choose another agent", create("small.change").image());
-						break;
-					case DEFINE:
-						item = createItem(t, "Set the parameter to undefined", create("small.undefine").image());
-						break;
-					case VALUE:
-						item = createItem(t, "Value of the parameter", null);
-				}
-				if (item != null) {
-					items[i] = item;
-					item.addSelectionListener(new ItemSelectionListener(i));
-
-				}
-			}
-		}
-		return t;
-
-	}
-
-	protected ToolItem createPlusItem(final ToolBar t) {
-		return createItem(t, "Increment " + (stepValue == null ? "" : " by " + stepValue),
-				GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
-	}
-
-	protected ToolItem createMinusItem(final ToolBar t) {
-		return createItem(t, "Decrement " + (stepValue == null ? "" : " by " + stepValue),
-				GamaIcons.create(IGamaIcons.SMALL_MINUS).image());
-	}
-
-	/**
-	 * @param string
-	 * @param image
-	 */
-	private ToolItem createItem(final ToolBar t, final String string, final Image image) {
-		final var i = new ToolItem(t, SWT.FLAT | SWT.PUSH);
-		i.setToolTipText(string);
-		i.setImage(image);
-		return i;
 	}
 
 	@SuppressWarnings ("unchecked")
@@ -484,12 +361,6 @@ public abstract class AbstractEditor<T>
 
 	protected abstract void displayParameterValue();
 
-	protected void checkButtons() {
-		final var revert = items[REVERT];
-		if (revert == null || revert.isDisposed()) return;
-		revert.setEnabled(isValueDifferent(originalValue));
-	}
-
 	@Override
 	public boolean isValueModified() {
 		return isValueDifferent(getOriginalValue());
@@ -561,7 +432,7 @@ public abstract class AbstractEditor<T>
 					combo.select(possibleValues.indexOf(newVal));
 				} else {
 					displayParameterValue();
-					checkButtons();
+					updateToolbar();
 				}
 				composite.update();
 				internalModification = false;
@@ -573,7 +444,7 @@ public abstract class AbstractEditor<T>
 	private void displayParameterValueAndCheckButtons() {
 		WorkbenchHelper.run(() -> {
 			displayParameterValue();
-			checkButtons();
+			updateToolbar();
 		});
 
 	}
@@ -595,10 +466,14 @@ public abstract class AbstractEditor<T>
 		} else {
 			WorkbenchHelper.asyncRun(() -> {
 				displayParameterValue();
-				checkButtons();
+				updateToolbar();
 			});
 		}
 
+	}
+
+	protected void updateToolbar() {
+		toolbar.update();
 	}
 
 	protected IAgent getAgent() {

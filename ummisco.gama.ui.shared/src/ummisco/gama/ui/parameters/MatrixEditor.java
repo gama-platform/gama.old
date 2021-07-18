@@ -38,8 +38,9 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix<?>> {
 	}
 
 	@Override
-	protected void checkButtons() {
-		final ToolItem edit = items[EDIT];
+	protected void updateToolbar() {
+		super.updateToolbar();
+		final ToolItem edit = toolbar.getItem(EDIT);
 		if (edit != null && !edit.isDisposed()) { edit.setEnabled(true); }
 	}
 

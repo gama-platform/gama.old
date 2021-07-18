@@ -145,6 +145,7 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 			}
 		}
 		slider = new SimpleSlider(comp, left, right, thumb, false) {};
+		slider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		if (stepValue != null) {
 			final Double realStep = stepValue.doubleValue()
@@ -169,24 +170,14 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		result.heightHint = 24;
 		return result;
 	}
-
-	@Override
-	public void createComposite(final Composite comp) {
-		super.createComposite(comp);
-		final GridData data = new GridData(SWT.FILL, SWT.BOTTOM, false, false);
-		toolbar.setLayoutData(data);
-		toolbar.layout();
-	}
-
-	@Override
-	protected Composite createToolbar2() {
-		final Composite t = super.createToolbar2();
-		t.setBackground(getNormalBackground());
-		for (final Control c : t.getChildren()) {
-			c.setBackground(getNormalBackground());
-		}
-		return t;
-	}
+	//
+	// @Override
+	// public void createComposite(final Composite comp) {
+	// super.createComposite(comp);
+	// final GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+	// toolbar.setLayoutData(data);
+	// toolbar.layout();
+	// }
 
 	protected abstract T computeValue(final double position);
 
@@ -196,7 +187,7 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		final double position = (Cast.asFloat(getScope(), p) - Cast.asFloat(getScope(), getMinValue()))
 				/ (Cast.asFloat(getScope(), getMaxValue()) - Cast.asFloat(getScope(), getMinValue()));
 		slider.updateSlider(position, false);
-		items[VALUE].setText(truncateCurrentValue());
+		toolbar.updateValue(truncateCurrentValue());
 		composite.layout();
 	}
 

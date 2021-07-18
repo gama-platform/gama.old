@@ -25,10 +25,6 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "rawtypes" })
 public interface IParameterEditor<T> extends IScoped {
 
-	enum item {
-		PLUS, MINUS, EDIT, INSPECT, BROWSE, CHANGE, REVERT, DEFINE, VALUE;
-	}
-
 	IType getExpectedType();
 
 	boolean isValueModified();

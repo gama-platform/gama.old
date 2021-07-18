@@ -69,14 +69,14 @@ public class IntEditor extends NumberEditor<Integer> {
 	}
 
 	@Override
-	protected void checkButtons() {
-		super.checkButtons();
-		final ToolItem plus = items[PLUS];
+	protected void updateToolbar() {
+		super.updateToolbar();
+		final ToolItem plus = toolbar.getItem(PLUS);
 		if (plus != null && !plus.isDisposed()) {
 			plus.setEnabled(
 					param.isDefined() && (maxValue == null || applyPlus() < Cast.asInt(getScope(), getMaxValue())));
 		}
-		final ToolItem minus = items[MINUS];
+		final ToolItem minus = toolbar.getItem(MINUS);
 		if (minus != null && !minus.isDisposed()) {
 			minus.setEnabled(param.isDefined()
 					&& (getMinValue() == null || applyMinus() > Cast.asInt(getScope(), getMinValue())));
