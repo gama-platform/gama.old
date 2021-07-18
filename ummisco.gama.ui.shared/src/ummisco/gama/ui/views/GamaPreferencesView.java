@@ -136,21 +136,19 @@ public class GamaPreferencesView {
 		gridLayout.marginWidth = gridLayout.marginHeight = 5;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
 		shell.setLayout(gridLayout);
-		// shell.setBackground(ThemeHelper.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
+		// shell.setBackground(ThemeHelper.isDark() ? IGamaColors.LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.color());
 		buildContents();
 	}
 
 	private void buildContents() {
 		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
 		tabFolder.setBorderVisible(true);
-		// tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setMRUVisible(true);
 		tabFolder.setSimple(false); // rounded tabs
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		final var prefs = GamaPreferences.organizePrefs();
 		for (final String tabName : prefs.keySet()) {
 			final var item = new CTabItem(tabFolder, SWT.NONE);
-			// item.setFont(GamaFonts.getNavigHeaderFont());
 			item.setText(tabName);
 			item.setImage(prefs_images.get(tabName));
 			item.setShowClose(false);
@@ -175,11 +173,10 @@ public class GamaPreferencesView {
 		for (final String groupName : entries.keySet()) {
 			final var item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
-			// item.setColor(new GamaColor(230, 230, 230, 255));
 			final var compo = new Composite(viewer, SWT.NONE);
-			// compo.setBackground(viewer.getBackground());
-			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
 			item.setControl(compo);
+			// Build the contents *after* setting the control to the item. 
+			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			item.setExpanded(true);
 		}
@@ -231,12 +228,11 @@ public class GamaPreferencesView {
 		final var comps = new Composite[nbColumns];
 		for (var i = 0; i < nbColumns; i++) {
 			comps[i] = new Composite(compo, SWT.BORDER);
-			// comps[i].setBackground(compo.getBackground());
+			comps[i].setBackground(compo.getBackground());
 			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).equalWidth(false).applyTo(comps[i]);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(comps[i]);
-		}
-		// final int compositeIndex = 0;
 
+		}
 		var i = 0;
 		for (final Pref e : list) {
 			modelValues.put(e.getKey(), e.getValue());

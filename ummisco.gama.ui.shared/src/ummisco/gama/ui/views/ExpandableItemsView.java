@@ -55,7 +55,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart
 			}
 			viewer.setBackground(!ThemeHelper.isDark() ? IGamaColors.WHITE.color() : IGamaColors.DARK_GRAY.darker());
 			viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
-			viewer.setSpacing(5);
+			viewer.setSpacing(8);
 		}
 	}
 
@@ -78,7 +78,6 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart
 		if (name != null) { i.setText(name); }
 		control.pack(true);
 		control.layout();
-		// control.setBackground(bar.getBackground());
 		i.setControl(control);
 		i.setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		i.setExpanded(expanded);

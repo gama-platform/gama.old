@@ -21,6 +21,7 @@ import org.osgi.service.event.EventHandler;
 import org.osgi.service.prefs.BackingStoreException;
 import msi.gama.common.preferences.Pref;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class ThemeHelper {
 
@@ -34,6 +35,10 @@ public class ThemeHelper {
 	public static final String SWT_PREFERENCES = "org.eclipse.e4.ui.workbench.renderers.swt";
 
 	private static final List<IThemeListener> listeners = new ArrayList<>();
+
+	static {
+		DEBUG.ON();
+	}
 
 	public static final Pref<Boolean> CORE_THEME_FOLLOW =
 		create("pref_theme_follow", "Follow OS theme", followOSTheme(), IType.BOOL, false).in(NAME, APPEARANCE)
@@ -63,9 +68,14 @@ public class ThemeHelper {
 	private static Boolean followOSTheme() {
 		final var prefs = getSwtRendererPreferences();
 		final var val = prefs.get(THEME_FOLLOW_PROPERTY, null);
-		if ( val != null )
-			return Boolean.valueOf(val);
-		return Boolean.valueOf(System.getProperty(THEME_FOLLOW_PROPERTY, "true"));
+		Boolean result;
+		if ( val != null ) {
+			result = Boolean.valueOf(val);
+		} else {
+			result = Boolean.valueOf(System.getProperty(THEME_FOLLOW_PROPERTY, "true"));
+		}
+		DEBUG.OUT("Follow OS Theme: " + result);
+		return result;
 	}
 
 	private static void followOSTheme(final Boolean follow) {
@@ -81,6 +91,7 @@ public class ThemeHelper {
 	}
 
 	public static boolean isDark() {
+		// DEBUG.OUT("Asks for isDark(): ", false);
 		String id;
 		final var themeEngine = getContext().get(IThemeEngine.class);
 		if ( themeEngine == null ) {
@@ -95,6 +106,7 @@ public class ThemeHelper {
 			final var theme = themeEngine.getActiveTheme();
 			id = theme == null ? null : theme.getId();
 		}
+		// DEBUG.OUT(" " + (id != null && id.contains("dark")) + " and OS is dark = " + isSystemDarkTheme());
 		return id != null && id.contains("dark");
 	}
 
@@ -146,10 +158,8 @@ public class ThemeHelper {
 		if ( themeEngine == null )
 			return true;
 		final var theme = themeEngine.getActiveTheme();
-		if ( theme != null ) {
-			if ( theme.getId().startsWith(id) )
-				return false;
-		}
+		if ( theme != null && theme.getId().startsWith(id) )
+			return false;
 		themeEngine.setTheme(id, true);
 		return true;
 	}

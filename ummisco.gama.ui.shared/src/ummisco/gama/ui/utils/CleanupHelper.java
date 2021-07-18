@@ -142,9 +142,9 @@ public class CleanupHelper {
 
 	static class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements IStartup */ {
 
-		String[] TOOLBAR_ACTION_SETS_TO_REMOVE = new String[] { "org.eclipse", "msi.gama.lang.gaml.Gaml",
+		String[] TOOLBAR_ACTION_SETS_TO_REMOVE = { "org.eclipse", "msi.gama.lang.gaml.Gaml",
 				"org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo" };
-		String[] MENUS_TO_REMOVE = new String[] { "org.eclipse.ui.run", "window", "navigate", "project" };
+		String[] MENUS_TO_REMOVE = { "org.eclipse.ui.run", "window", "navigate", "project" };
 
 		public static void run() {
 			final RemoveUnwantedActionSets remove = new RemoveUnwantedActionSets();
@@ -169,7 +169,7 @@ public class CleanupHelper {
 			if (w.isClosing()) return;
 			WorkbenchHelper.runInUI("Cleaning menus", 0, m -> {
 				try {
-
+					if (w.isClosing()) return;
 					final CoolBarToTrimManager cm = (CoolBarToTrimManager) w.getCoolBarManager2();
 					final IContributionItem[] items = cm.getItems();
 					// We remove all contributions to the toolbar that do not relate to gama
@@ -204,7 +204,7 @@ public class CleanupHelper {
 
 		@Override
 		public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {
-			if (c.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) { perspectiveActivated(p, d); }
+			if (IWorkbenchPage.CHANGE_RESET_COMPLETE.equals(c)) { perspectiveActivated(p, d); }
 
 		}
 
@@ -212,14 +212,14 @@ public class CleanupHelper {
 
 	static class RemoveUnwantedWizards {
 
-		private static Set<String> CATEGORIES_TO_REMOVE = new HashSet<>(Arrays
-				.asList(new String[] { "org.eclipse.pde.PDE", "org.eclipse.emf.codegen.ecore.ui.wizardCategory" }));
+		private static Set<String> CATEGORIES_TO_REMOVE =
+				new HashSet<>(Arrays.asList("org.eclipse.pde.PDE", "org.eclipse.emf.codegen.ecore.ui.wizardCategory"));
 
-		private static Set<String> IDS_TO_REMOVE = new HashSet<>(Arrays.asList(
-				new String[] { "org.eclipse.ui.wizards.new.project", "org.eclipse.equinox.p2.replication.import",
+		private static Set<String> IDS_TO_REMOVE = new HashSet<>(
+				Arrays.asList("org.eclipse.ui.wizards.new.project", "org.eclipse.equinox.p2.replication.import",
 						"org.eclipse.equinox.p2.replication.importfrominstallation",
 						"org.eclipse.team.ui.ProjectSetImportWizard", "org.eclipse.equinox.p2.replication.export",
-						"org.eclipse.team.ui.ProjectSetExportWizard" }));
+						"org.eclipse.team.ui.ProjectSetExportWizard"));
 
 		static void run() {
 			final List<IWizardCategory> cats = new ArrayList<>();
@@ -295,10 +295,9 @@ public class CleanupHelper {
 						IMenuManager menu = null;
 						if (item instanceof MenuManager) {
 							menu = (MenuManager) item;
-						} else if (item instanceof ActionSetContributionItem) {
-							if (((ActionSetContributionItem) item).getInnerItem() instanceof MenuManager) {
-								menu = (MenuManager) ((ActionSetContributionItem) item).getInnerItem();
-							}
+						} else if ((item instanceof ActionSetContributionItem)
+								&& (((ActionSetContributionItem) item).getInnerItem() instanceof MenuManager)) {
+							menu = (MenuManager) ((ActionSetContributionItem) item).getInnerItem();
 						}
 						if (menu != null) { processItems(menu); }
 					}

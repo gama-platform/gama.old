@@ -14,10 +14,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 
 import msi.gama.application.workbench.ThemeHelper;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class EditorLabel {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public static final Color ERROR = IGamaColors.ERROR.color();
 	public static final Color CHANGED = IGamaColors.TOOLTIP.color();
@@ -41,7 +46,8 @@ public class EditorLabel {
 		// label.setFont(GamaFonts.getLabelfont());
 		label.setText(title);
 		label.setToolTipText(tooltip);
-		label.setBackground(parent.getBackground());
+		//DEBUG.OUT("Initial background for " + title + ": " + parent.getBackground());
+		setBackgroundColor(parent.getBackground());
 		setTextColor(ThemeHelper.isDark() ? DARK_ACTIVE : LIGHT_ACTIVE);
 	}
 
@@ -86,22 +92,35 @@ public class EditorLabel {
 	private void setTextColor(final Color c) {
 		label.setForeground(c);
 		// Necessary to override the CSS Theming Engine
-		label.setData("style", "color: " + String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue()));
+		setCSSData();
+	}
+
+	private void setBackgroundColor(final Color c) {
+		label.setBackground(c);
+		setCSSData();
+	}
+
+	private void setCSSData() {
+		Color c = label.getForeground();
+		String foreground = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
+		c = label.getBackground();
+		String background = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
+		label.setData("style", "color: " + foreground + "; background-color: " + background + ";");
 	}
 
 	private void redraw() {
 		if (label.isDisposed()) return;
 		if (states.contains(State.errored)) {
-			label.setBackground(ERROR);
+			setBackgroundColor(ERROR);
 			setTextColor(textColorFor(ERROR));
 		} else if (states.contains(State.changed) && CORE_EDITORS_HIGHLIGHT.getValue()) {
-			label.setBackground(CHANGED);
+			setBackgroundColor(CHANGED);
 			setTextColor(textColorFor(CHANGED));
 		} else if (states.contains(State.active)) {
-			label.setBackground(label.getParent().getBackground());
+			setBackgroundColor(label.getParent().getBackground());
 			setTextColor(ThemeHelper.isDark() ? DARK_ACTIVE : LIGHT_ACTIVE);
 		} else { // Inactive
-			label.setBackground(label.getParent().getBackground());
+			setBackgroundColor(label.getParent().getBackground());
 			setTextColor(INACTIVE);
 		}
 	}

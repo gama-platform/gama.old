@@ -262,6 +262,8 @@ public abstract class AbstractEditor<T>
 	}
 
 	public void createComposite(final Composite comp) {
+		// Necessary to force SWT to "reskin" and give the right background to the composite (issue in the CSS engine)
+		comp.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		this.parent = comp;
 		internalModification = true;
 		titleLabel = new EditorLabel(comp, name, computeLabelTooltip(), isSubParameter);

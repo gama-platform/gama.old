@@ -110,7 +110,6 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 		d.minimumWidth = 70;
 		d.horizontalIndent = isSubParameter ? 30 : 0;
 		label.setLayoutData(d);
-		// label.setFont(GamaFonts.getLabelfont());
 		label.setText(title);
 		label.setToolTipText(tooltip);
 		return label;
@@ -119,8 +118,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 	@Override
 	protected Composite createItemContentsFor(final IAgent agent) {
 		final Composite attributes = super.createItemContentsFor(agent);
-		final Label l = createLeftLabel(attributes, "Actions", "", false);
-		// l.setFont(GamaFonts.getExpandfont());
+		createLeftLabel(attributes, "Actions", "", false);
 		final Composite composite = new Composite(attributes, SWT.NONE);
 		composite.setBackground(attributes.getBackground());
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);

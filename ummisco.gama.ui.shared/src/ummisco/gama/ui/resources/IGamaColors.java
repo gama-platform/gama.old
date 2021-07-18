@@ -42,7 +42,8 @@ public interface IGamaColors {
 	GamaUIColor GRAY = new GamaUIColor(system(SWT.COLOR_GRAY));
 	GamaUIColor LIGHT_GRAY = get(200, 200, 200);
 	GamaUIColor VERY_LIGHT_GRAY = get(245, 245, 245);
-	GamaUIColor DARK_GRAY = new GamaUIColor(system(SWT.COLOR_DARK_GRAY));
+	GamaUIColor DARK_GRAY = get(100, 100, 100);
+	GamaUIColor VERY_DARK_GRAY = get(50, 50, 50);
 	GamaUIColor WHITE = new GamaUIColor(system(SWT.COLOR_WHITE), system(SWT.COLOR_WHITE));
 	GamaUIColor BLACK = new GamaUIColor(system(SWT.COLOR_BLACK));
 	GamaUIColor PARAMETERS_BACKGROUND = isDark() ? get(120, 120, 120) : get(255, 255, 255);

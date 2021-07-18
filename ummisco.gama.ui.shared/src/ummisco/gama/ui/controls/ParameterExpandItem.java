@@ -43,7 +43,7 @@ public class ParameterExpandItem extends Item {
 	int visiblePosition = -1;
 	int selectablePosition = -1;
 	int closePosition = -1;
-	Color backgroundColor = ThemeHelper.isDark() ? IGamaColors.DARK_GRAY.color() : IGamaColors.VERY_LIGHT_GRAY.color();
+	Color headerColor = ThemeHelper.isDark() ? IGamaColors.DARK_GRAY.color() : IGamaColors.VERY_LIGHT_GRAY.color();
 
 	private static int imageHeight = 16, imageWidth = 16;
 	boolean isPaused = false;
@@ -63,7 +63,7 @@ public class ParameterExpandItem extends Item {
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style, final int index,
 			final GamaUIColor color) {
 		super(parent, style);
-		if (color != null) { backgroundColor = color.color(); }
+		if (color != null) { headerColor = color.color(); }
 		this.parent = parent;
 		setData(data);
 		parent.createItem(this, style, index);
@@ -88,7 +88,7 @@ public class ParameterExpandItem extends Item {
 		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6, 6);
-		gc.setBackground(backgroundColor);
+		gc.setBackground(headerColor);
 		gc.fillRoundRectangle(x, y, width, headerHeight, 6, 6);
 		if (drawHover) {
 			gc.setForeground(IGamaColors.GRAY_LABEL.color());
@@ -142,7 +142,7 @@ public class ParameterExpandItem extends Item {
 			// gc.setFont(GamaFonts.getExpandfont());
 			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			var size = gc.stringExtent(title);
-			gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
+			gc.setForeground(GamaColors.getTextColorForBackground(headerColor).color());
 			gc.drawString(title, drawX, y + (headerHeight - size.y) / 2, true);
 			if (other != null) {
 				final var j = other.indexOf(ItemList.ERROR_CODE);
@@ -158,7 +158,7 @@ public class ParameterExpandItem extends Item {
 					other = other.substring(l + 1);
 					gc.setForeground(IGamaColors.WARNING.color());
 				} else {
-					gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
+					gc.setForeground(GamaColors.getTextColorForBackground(headerColor).color());
 				}
 				drawX += size.x + 2 * SEPARATION;
 				size = gc.stringExtent(other);
@@ -265,7 +265,7 @@ public class ParameterExpandItem extends Item {
 			final var headerHeight = parent.bandHeight;
 			control.setBounds(x + BORDER, y + headerHeight, Math.max(0, width - 2 * BORDER),
 					Math.max(0, height + BORDER));
-			// control.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+			control.setBackground(this.parent.getBackground());
 		}
 	}
 
@@ -368,7 +368,7 @@ public class ParameterExpandItem extends Item {
 	 * @param itemDisplayColor
 	 */
 	public void setColor(final java.awt.Color color) {
-		if (color != null) { backgroundColor = GamaColors.get(color).color(); }
+		if (color != null) { headerColor = GamaColors.get(color).color(); }
 	}
 
 	public void onExpand(final Runnable r) {
