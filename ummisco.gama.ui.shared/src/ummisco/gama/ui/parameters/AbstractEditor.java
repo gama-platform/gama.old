@@ -231,7 +231,7 @@ public abstract class AbstractEditor<T>
 		layout.marginWidth = 5;
 		composite.setLayout(layout);
 		createEditorControl(composite);
-		toolbar.build(composite);
+		toolbar.createOn(composite);
 		if (isEditable && !isCombo) { displayParameterValueAndCheckButtons(); }
 		internalModification = false;
 		comp.layout();

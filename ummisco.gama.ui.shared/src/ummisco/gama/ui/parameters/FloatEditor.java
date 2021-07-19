@@ -12,7 +12,6 @@
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
@@ -99,16 +98,9 @@ public class FloatEditor extends NumberEditor<Double> {
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		final ToolItem plus = toolbar.getItem(PLUS);
-		if (plus != null && !plus.isDisposed()) {
-			plus.setEnabled(param.isDefined()
-					&& (getMaxValue() == null || applyPlus() < Cast.asFloat(getScope(), getMaxValue())));
-		}
-		final ToolItem minus = toolbar.getItem(MINUS);
-		if (minus != null && !minus.isDisposed()) {
-			minus.setEnabled(param.isDefined()
-					&& (getMinValue() == null || applyMinus() > Cast.asFloat(getScope(), getMinValue())));
-		}
+		toolbar.enable(PLUS,
+				param.isDefined() && (getMaxValue() == null || applyPlus() < Cast.asFloat(getScope(), getMaxValue())));
+		toolbar.enable(MINUS,
+				param.isDefined() && (getMinValue() == null || applyMinus() > Cast.asFloat(getScope(), getMinValue())));
 	}
-
 }

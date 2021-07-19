@@ -13,7 +13,7 @@ package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Label;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
@@ -55,7 +55,7 @@ public abstract class NumberEditor<T extends Comparable> extends ExpressionBased
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		final ToolItem t = toolbar.getItem(DEFINE);
+		final Label t = toolbar.getItem(DEFINE);
 		if (t == null || t.isDisposed()) return;
 		if (param.isDefined()) {
 			t.setToolTipText("Set the parameter to undefined");

@@ -13,6 +13,8 @@ package ummisco.gama.ui.resources;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ummisco.gama.dev.utils.DEBUG;
@@ -85,12 +87,36 @@ public class GamaIcon {
 	}
 
 	public Image image() {
-		final Image[] image = new Image[] { GamaIcons.getInstance().getImageInCache(code) };
+		final Image[] image = { GamaIcons.getInstance().getImageInCache(code) };
 		if (image[0] == null) {
 			WorkbenchHelper
 					.run(() -> image[0] = GamaIcons.getInstance().putImageInCache(code, descriptor().createImage()));
 		}
 		return image[0];
+	}
+
+	public Image disabled() {
+		final Image[] image = { GamaIcons.getInstance().getImageInCache(code + "_disabled") };
+		if (image[0] == null) {
+			WorkbenchHelper.run(() -> image[0] =
+					GamaIcons.getInstance().putImageInCache(code + "_disabled", disabledVersionOf(image())));
+		}
+		return image[0];
+	}
+
+	Image disabledVersionOf(final Image im) {
+		Rectangle bounds = im.getBounds();
+		ImageData srcData = im.getImageData();
+		ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
+		dstData.transparentPixel = srcData.transparentPixel;
+		dstData.alpha = srcData.alpha;
+		for (int sx = 0; sx < bounds.width; sx++) {
+			for (int sy = 0; sy < bounds.height; sy++) {
+				dstData.setAlpha(sx, sy, srcData.getAlpha(sx, sy) / 2);
+				dstData.setPixel(sx, sy, srcData.getPixel(sx, sy));
+			}
+		}
+		return new Image(im.getDevice(), dstData);
 	}
 
 	public String getCode() {

@@ -12,7 +12,6 @@
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -43,8 +42,7 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List<?>> {
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		final ToolItem edit = toolbar.getItem(EDIT);
-		if (edit != null && !edit.isDisposed()) { edit.setEnabled(currentValue instanceof IList); }
+		toolbar.enable(EDIT, currentValue instanceof IList);
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })

@@ -12,7 +12,6 @@
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -40,8 +39,7 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix<?>> {
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		final ToolItem edit = toolbar.getItem(EDIT);
-		if (edit != null && !edit.isDisposed()) { edit.setEnabled(true); }
+		toolbar.enable(EDIT, currentValue != null);
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })

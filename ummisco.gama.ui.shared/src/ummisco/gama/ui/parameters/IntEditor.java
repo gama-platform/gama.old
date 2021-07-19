@@ -12,7 +12,6 @@
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
@@ -71,16 +70,10 @@ public class IntEditor extends NumberEditor<Integer> {
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		final ToolItem plus = toolbar.getItem(PLUS);
-		if (plus != null && !plus.isDisposed()) {
-			plus.setEnabled(
-					param.isDefined() && (maxValue == null || applyPlus() < Cast.asInt(getScope(), getMaxValue())));
-		}
-		final ToolItem minus = toolbar.getItem(MINUS);
-		if (minus != null && !minus.isDisposed()) {
-			minus.setEnabled(param.isDefined()
-					&& (getMinValue() == null || applyMinus() > Cast.asInt(getScope(), getMinValue())));
-		}
+		toolbar.enable(PLUS,
+				param.isDefined() && (getMaxValue() == null || applyPlus() < Cast.asInt(getScope(), getMaxValue())));
+		toolbar.enable(MINUS,
+				param.isDefined() && (getMinValue() == null || applyMinus() > Cast.asInt(getScope(), getMinValue())));
 	}
 
 	@Override
