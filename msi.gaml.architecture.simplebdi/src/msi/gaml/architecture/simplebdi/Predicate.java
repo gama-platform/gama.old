@@ -12,7 +12,6 @@
  **********************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +22,10 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -292,14 +293,14 @@ public class Predicate implements IValue {
 
 	@Override
 	public Predicate copy(final IScope scope) throws GamaRuntimeException {
-		return new Predicate(name, values == null ? null : new LinkedHashMap<>(values));
+		return new Predicate(name, values == null ? null : ((GamaMap<String, Object>) values).copy(scope));
 	}
 
 	public Predicate copy() throws GamaRuntimeException {
 		if (values != null && agentCause != null) {
-			return new Predicate(name, new LinkedHashMap<>(values), is_true, agentCause);
+			return new Predicate(name,((GamaMap<String, Object>) values).copy(GAMA.getRuntimeScope()), is_true, agentCause);
 		}
-		if (values != null) { return new Predicate(name, new LinkedHashMap<>(values), is_true); }
+		if (values != null) { return new Predicate(name, ((GamaMap<String, Object>) values).copy(GAMA.getRuntimeScope())); }
 		return new Predicate(name);
 	}
 
