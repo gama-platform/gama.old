@@ -11,12 +11,24 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
+import static msi.gama.application.workbench.ThemeHelper.isDark;
+import static org.eclipse.jface.layout.RowLayoutFactory.fillDefaults;
+import static org.eclipse.swt.SWT.HORIZONTAL;
+import static ummisco.gama.ui.resources.GamaColors.get;
+
+import org.eclipse.jface.layout.RowDataFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -37,11 +49,16 @@ import ummisco.gama.ui.interfaces.EditorListener;
 
 public class PointEditor extends AbstractEditor<ILocation> implements VerifyListener {
 
-	private final Text[] ordinates = new Text[3];
-	private static final String[] labels = { "x", "y", "z" };
+	private static final String[] LABELS = { "x", "y", "z" };
+	private static final int LABEL_WIDTH = 15;
+	private static final int SPACING = 4;
+	private static final int MARGIN = 2;
+
 	private Composite pointEditor;
 	private boolean allowVerification;
 	private boolean isReverting;
+	private final Text[] ordinates = new Text[3];
+	private final Label[] labels = new Label[3];
 
 	PointEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<ILocation> l) {
 		super(scope, agent, param, l);
@@ -57,32 +74,45 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
 		pointEditor = new Composite(comp, SWT.NONE);
-		final var pointEditorLayout = new GridLayout(3, true);
-		pointEditorLayout.horizontalSpacing = 5;
-		pointEditorLayout.verticalSpacing = 0;
-		pointEditorLayout.marginHeight = 0;
-		pointEditorLayout.marginWidth = 0;
+		final RowLayout pointEditorLayout = fillDefaults().center(true).spacing(SPACING).margins(MARGIN, MARGIN)
+				.type(HORIZONTAL).fill(true).wrap(false).create();
+		final var d = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		pointEditor.setLayoutData(d);
 		pointEditor.setLayout(pointEditorLayout);
-		// pointEditor.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
-
+		pointEditor.addListener(SWT.Paint, e -> {
+			GC gc = e.gc;
+			Rectangle bounds = pointEditor.getBounds();
+			Color ref = comp.getBackground();
+			Color back = isDark() ? get(ref).lighter() : get(ref).darker();
+			gc.setBackground(back);
+			gc.fillRoundRectangle(0, 0, bounds.width, bounds.height, 5, 5);
+			for (Label c : labels) {
+				c.setBackground(back);
+			}
+			for (Text t : ordinates) {
+				t.setBackground(ref);
+			}
+		});
 		for (var i = 0; i < 3; i++) {
-			final var xComposite = new Composite(pointEditor, SWT.NO_BACKGROUND);
-			// xComposite.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
-			final var subCompositeLayout = new GridLayout(2, false);
-			subCompositeLayout.marginHeight = 0;
-			subCompositeLayout.marginWidth = 0;
-			xComposite.setLayout(subCompositeLayout);
-			final var subCompositeGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
-			xComposite.setLayoutData(subCompositeGridData);
-			final var xLabel = new Label(xComposite, SWT.NONE);
-			xLabel.setText(labels[i]);
-			ordinates[i] = new Text(xComposite, SWT.BORDER);
-			final var textGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
-			ordinates[i].setLayoutData(textGridData);
+			labels[i] = new Label(pointEditor, SWT.LEFT);
+			labels[i].setText(LABELS[i]);
+			RowDataFactory.swtDefaults().hint(LABEL_WIDTH, SWT.DEFAULT).applyTo(labels[i]);
+			ordinates[i] = new Text(pointEditor, SWT.NONE);
+			RowDataFactory.swtDefaults().applyTo(ordinates[i]);
 			ordinates[i].addModifyListener(this);
 			ordinates[i].addVerifyListener(this);
 		}
+		pointEditor.addControlListener(new ControlAdapter() {
 
+			@Override
+			public void controlResized(final ControlEvent e) {
+				int size = (pointEditor.getSize().x - (3 * LABEL_WIDTH + 2 * MARGIN + 5 * SPACING)) / 3;
+				for (Text text : ordinates) {
+					((RowData) text.getLayoutData()).width = size;
+				}
+			}
+
+		});
 		displayParameterValue();
 		return pointEditor;
 	}
@@ -124,11 +154,9 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	@Override
 	protected boolean modifyValue(final Object val) throws GamaRuntimeException {
 		GamaPoint i = Cast.asPoint(getScope(), val).toGamaPoint();
-		// throw GamaRuntimeException.error("Value " + i + " should be greater than " + minValue, getScope());
 		if (minValue != null && i.smallerThan(Cast.asPoint(getScope(), minValue))
 				|| maxValue != null && i.biggerThan(Cast.asPoint(getScope(), maxValue)))
 			return false;
-		// throw GamaRuntimeException.error("Value " + i + " should be smaller than " + maxValue, getScope());
 		return super.modifyValue(i);
 	}
 
@@ -162,6 +190,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 
 	@Override
 	protected ILocation applyPlus() {
+		isReverting = true;
 		GamaPoint p = currentValue.toGamaPoint().clone();
 		p.add(stepValue.toGamaPoint());
 		return p;
@@ -169,6 +198,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 
 	@Override
 	protected ILocation applyMinus() {
+		isReverting = true;
 		GamaPoint p = currentValue.toGamaPoint().clone();
 		p.subtract(stepValue.toGamaPoint());
 		return p;

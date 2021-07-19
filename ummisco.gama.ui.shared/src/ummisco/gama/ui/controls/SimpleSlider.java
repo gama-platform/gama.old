@@ -72,10 +72,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	private boolean notify = true;
 	private final IPositionChangeListener popupListener = (slider, position) -> popup.display();
 
-	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor, final Color thumbColor) {
-		this(parent, leftColor, rightColor, thumbColor, true);
-	}
-
 	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor, final Color thumbColor,
 			final boolean withPopup) {
 		super(parent, SWT.DOUBLE_BUFFERED);
@@ -318,7 +314,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			gc.setBackground(getParent().getBackground());
 			gc.fillRectangle(r);
 			gc.setBackground(color);
-			gc.fillRoundRectangle(0, thumbHeight / 2, thumbWidth, thumbHeight, 3, 3);
+			gc.fillRoundRectangle(0, (r.height - thumbHeight) / 2 + 1, thumbWidth, thumbHeight, 3, 3);
 		}
 	}
 

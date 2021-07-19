@@ -144,7 +144,7 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 				right = GamaColors.get(colors.get(2)).color();
 			}
 		}
-		slider = new SimpleSlider(comp, left, right, thumb, false) {};
+		slider = new SimpleSlider(comp, left, right, thumb, false);
 		slider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		if (stepValue != null) {

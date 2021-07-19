@@ -184,7 +184,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		f.marginWidth = 2;
 		c.setLayout(f);
 		final var d = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		d.heightHint = 20;
+		// d.heightHint = 20;
 		c.setLayoutData(d);
 
 		c.addListener(SWT.Paint, e -> {
