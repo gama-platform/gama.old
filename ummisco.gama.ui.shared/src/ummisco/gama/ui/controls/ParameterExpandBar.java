@@ -19,7 +19,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -156,33 +155,35 @@ public class ParameterExpandBar extends Composite {
 
 	@Override
 	protected void checkSubclass() {}
-
-	@Override
-	public Point computeSize(final int wHint, final int hHint, final boolean changed) {
-		checkWidget();
-		// Necessary to force SWT to "skin" the widget and determine the color of the viewer
-		super.computeSize(wHint, hHint, changed);
-		int height = 0, width = 0;
-		if ((wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) && itemCount > 0) {
-			height += spacing;
-			final var gc = new GC(this);
-			for (var i = 0; i < itemCount; i++) {
-				final var item = items[i];
-				height += item.getHeaderHeight();
-				if (item.expanded) { height += item.height + 2; }
-				height += spacing;
-				width = Math.max(width, item.getPreferredWidth(gc));
-			}
-			gc.dispose();
-			height += ParameterExpandItem.BORDER;
-		}
-		if (width == 0) { width = 64; }
-		if (height == 0) { height = 64; }
-		if (wHint != SWT.DEFAULT) { width = wHint; }
-		if (hHint != SWT.DEFAULT) { height = hHint; }
-		final var trim = computeTrim(0, 0, width, height);
-		return new Point(trim.width, trim.height);
-	}
+	//
+	// @Override
+	// public Point computeSize(final int wHint, final int hHint, final boolean changed) {
+	// checkWidget();
+	// // Necessary to force SWT to "skin" the widget and determine the color of the viewer
+	// super.computeSize(wHint, hHint, changed);
+	// int height = 0, width = 0;
+	// if ((wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) && itemCount > 0) {
+	// height += spacing;
+	// final var gc = new GC(this);
+	// for (var i = 0; i < itemCount; i++) {
+	// final var item = items[i];
+	// height += item.getHeaderHeight();
+	// if (item.expanded) { height += item.height + 2; }
+	// height += spacing;
+	// width = Math.max(width, item.getPreferredWidth(gc));
+	// }
+	// gc.dispose();
+	// height += ParameterExpandItem.BORDER;
+	// }
+	// if (width == 0) { width = 64; }
+	// if (height == 0) { height = 64; }
+	// if (wHint != SWT.DEFAULT) { width = wHint; }
+	// if (hHint != SWT.DEFAULT) { height = hHint; }
+	//
+	// final var trim = computeTrim(0, 0, width, height);
+	// trim.height += 30;
+	// return new Point(trim.width, trim.height);
+	// }
 
 	void createItem(final ParameterExpandItem item, final int style, final int index) {
 		if (0 > index || index > itemCount) { SWT.error(SWT.ERROR_INVALID_RANGE); }

@@ -53,7 +53,7 @@ public class ParameterExpandItem extends Item {
 	private static final int TEXT_INSET = 4;
 	private static final int SEPARATION = 3;
 	static final int BORDER = 4;
-	static final int CHEVRON_SIZE = 24;
+	static final int CHEVRON_SIZE = 20;
 
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style,
 			final GamaUIColor color) {
@@ -85,11 +85,13 @@ public class ParameterExpandItem extends Item {
 	void drawItem(final GC gc, final boolean drawHover) {
 		if (parent == null) return;
 		final var headerHeight = parent.bandHeight;
-		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
-		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
-		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6, 6);
+		// gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		// gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		// gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6,
+		// 6);
+		control.setBackground(this.parent.getBackground());
 		gc.setBackground(headerColor);
-		gc.fillRoundRectangle(x, y, width, headerHeight, 6, 6);
+		gc.fillRoundRectangle(x + 1, y, width - 2, headerHeight, 6, 6);
 		if (drawHover) {
 			gc.setForeground(IGamaColors.GRAY_LABEL.color());
 			gc.drawRoundRectangle(x + 1, y + 1, width - 2, headerHeight - 2, 6, 6);
@@ -265,7 +267,7 @@ public class ParameterExpandItem extends Item {
 			final var headerHeight = parent.bandHeight;
 			control.setBounds(x + BORDER, y + headerHeight, Math.max(0, width - 2 * BORDER),
 					Math.max(0, height + BORDER));
-			control.setBackground(this.parent.getBackground());
+
 		}
 	}
 

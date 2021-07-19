@@ -136,7 +136,7 @@ public class GamaPreferencesView {
 		gridLayout.marginWidth = gridLayout.marginHeight = 5;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
 		shell.setLayout(gridLayout);
-		// shell.setBackground(ThemeHelper.isDark() ? IGamaColors.LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.color());
+		// shell.setBackground(!ThemeHelper.isDark() ? IGamaColors.LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.color());
 		buildContents();
 	}
 
@@ -146,6 +146,9 @@ public class GamaPreferencesView {
 		tabFolder.setMRUVisible(true);
 		tabFolder.setSimple(false); // rounded tabs
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
+		// tabFolder.setBackground(!ThemeHelper.isDark() ? IGamaColors.LIGHT_GRAY.color() :
+		// IGamaColors.DARK_GRAY.color());
+
 		final var prefs = GamaPreferences.organizePrefs();
 		for (final String tabName : prefs.keySet()) {
 			final var item = new CTabItem(tabFolder, SWT.NONE);
@@ -174,8 +177,9 @@ public class GamaPreferencesView {
 			final var item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
 			final var compo = new Composite(viewer, SWT.NONE);
+			// compo.setBackground(viewer.getBackground());
 			item.setControl(compo);
-			// Build the contents *after* setting the control to the item. 
+			// Build the contents *after* setting the control to the item.
 			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			item.setExpanded(true);
@@ -227,9 +231,9 @@ public class GamaPreferencesView {
 		GridLayoutFactory.fillDefaults().numColumns(NB_DIVISIONS).spacing(0, 0).equalWidth(true).applyTo(compo);
 		final var comps = new Composite[nbColumns];
 		for (var i = 0; i < nbColumns; i++) {
-			comps[i] = new Composite(compo, SWT.BORDER);
-			comps[i].setBackground(compo.getBackground());
-			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).equalWidth(false).applyTo(comps[i]);
+			comps[i] = new Composite(compo, SWT.NONE);
+			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).extendedMargins(0, 0, 10, 5).equalWidth(false)
+					.applyTo(comps[i]);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(comps[i]);
 
 		}
