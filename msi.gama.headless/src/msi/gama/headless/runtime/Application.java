@@ -89,6 +89,14 @@ public class Application implements IApplication {
 	public boolean verbose = false;
 	public SimulationRuntime processorQueue;
 
+	private static void showVersion() {
+		DEBUG.ON();
+		DEBUG.LOG(
+			"Welcome to Gama-platform.org version " + GAMA.VERSION + "\n"
+		);
+		DEBUG.OFF();
+	}
+
 	private static void showHelp() {
 		DEBUG.ON();
 		DEBUG.LOG(
