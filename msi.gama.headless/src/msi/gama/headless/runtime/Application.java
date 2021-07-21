@@ -131,35 +131,61 @@ public class Application implements IApplication {
 	}
 
 	private boolean checkParameters(final List<String> args) {
+		return checkParameters(args, false);
+	}
+
+	private boolean checkParameters(final List<String> args, boolean apply) {
 
 		int size = args.size();
 		boolean mustContainInFile = true;
 		boolean mustContainOutFile = true;
 
+		// Parameters flag
+		// ========================
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
+
+			// Change value only if function should apply parameter
+			this.consoleMode = apply;
 		}
 		if (args.contains(TUNNELING_PARAMETER)) {
 			size = size - 1;
 			mustContainOutFile = false;
+
+			// Change value only if function should apply parameter
+			this.tunnelingMode = apply;
 		}
 		if (args.contains(SOCKET_PARAMETER)) {
 			size = size - 2;
 			mustContainOutFile = false;
+
+			// Change value only if function should apply parameter
+			this.socket = apply ? Integer.valueOf(after(args, SOCKET_PARAMETER)) : -1;
 		}
-		if (args.contains(GAMA_VERSION)) {
+		if (args.contains(THREAD_PARAMETER)) {
+			size = size - 2;
+
+			// Change value only if function should apply parameter
+			this.numberOfThread = apply ? Integer.valueOf(after(args, THREAD_PARAMETER)) : SimulationRuntime.UNDEFINED_QUEUE_SIZE;
+		}
+		if (args.contains(VERBOSE_PARAMETER)) {
 			size = size - 1;
-			mustContainOutFile = false;
 		}
 
+		// Commands
+		// ========================
+		if (args.contains(GAMA_VERSION) || args.contains(HELP_PARAMETER) ) {
+			size = size - 1;
+			mustContainOutFile = mustContainInFile = false;
+		}
 		if (args.contains(BATCH_PARAMETER)) {
 			size = size - 3;
 			mustContainOutFile = false;
 		}
-		
-		if (args.contains(THREAD_PARAMETER)) { size = size - 2; }
-		if (args.contains(VERBOSE_PARAMETER)) { size = size - 1; }
+
+		// Runner verification
+		// ========================
 		if (mustContainInFile && mustContainOutFile && size < 2) {
 			return showError(HeadLessErrors.INPUT_NOT_DEFINED, null);
 		}
@@ -167,18 +193,24 @@ public class Application implements IApplication {
 			return showError(HeadLessErrors.OUTPUT_NOT_DEFINED, null);
 		}
 
+		// In/out files
+		// ========================
 		if (mustContainOutFile) {
-			final int outIndex = args.size() - 1;
-			Globals.OUTPUT_PATH = args.get(outIndex);
-			Globals.IMAGES_PATH = Globals.OUTPUT_PATH + "/snapshot";
+			// Check and create output folder
+			Globals.OUTPUT_PATH = args.get(args.size() - 1);
 			final File output = new File(Globals.OUTPUT_PATH);
-			if (!output.exists()) { output.mkdir(); }
+			if (!output.exists()) {
+				output.mkdir();
+			}
+			// Check and create output image folder
+			Globals.IMAGES_PATH = Globals.OUTPUT_PATH + "/snapshot";
 			final File images = new File(Globals.IMAGES_PATH);
-			if (!images.exists()) { images.mkdir(); }
+			if (!images.exists()) {
+				images.mkdir();
+			}
 		}
-
 		if (mustContainInFile) {
-			final int inIndex = mustContainOutFile ? args.size() - 2 : args.size() - 1;
+			final int inIndex = args.size() - (mustContainOutFile ? 2 : 1);
 			final File input = new File(args.get(inIndex));
 			if (!input.exists()) {
 				return showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args.get(inIndex));
