@@ -39,6 +39,7 @@ import org.w3c.dom.Document;
 import com.google.inject.Injector;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.headless.batch.ModelLibraryRunner;
 import msi.gama.headless.batch.ModelLibraryTester;
 import msi.gama.headless.batch.ModelLibraryValidator;
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
@@ -75,8 +76,8 @@ public class Application implements IApplication {
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
 	final public static String BUILD_XML_PARAMETER = "-xml";
 	final public static String CHECK_MODEL_PARAMETER = "-check";
-	// final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
-	// -> Code still exist, but not documented
+	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
+	// -> Code still exist, but not documented nor used
 
 	final public static String BATCH_PARAMETER = "-batch";
 	final public static String GAML_PARAMETER = "-gaml";
@@ -228,8 +229,8 @@ public class Application implements IApplication {
 			return ModelLibraryValidator.getInstance().start();
 		else if (args.contains(TEST_LIBRARY_PARAMETER))
 			return ModelLibraryTester.getInstance().start();
-		// else if (args.contains(RUN_LIBRARY_PARAMETER))
-		// 	return ModelLibraryRunner.getInstance().start(args);
+		else if (args.contains(RUN_LIBRARY_PARAMETER))
+			return ModelLibraryRunner.getInstance().start();
 		else if (args.contains(CHECK_MODEL_PARAMETER))
 			ModelLibraryGenerator.start(this, args);
 
