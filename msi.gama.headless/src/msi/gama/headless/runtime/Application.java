@@ -232,9 +232,17 @@ public class Application implements IApplication {
 
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
-		boolean shouldExit = false;
+		
+		// Check and apply parameters
+		if ( !checkParameters(args, true) ) {
+			System.exit(-1);
+		}
 
+		// ========================
 		// No GAMA run
+		// ========================		
+		boolean shouldExit = false;
+		
 		if (args.contains(GAMA_VERSION)) {
 			showVersion();
 			shouldExit = true;
@@ -243,18 +251,14 @@ public class Application implements IApplication {
 			shouldExit = true;
 		} 
 		
-		if (shouldExit) {
+		if (shouldExit)
 			System.exit(0);
-		}
-		
+
+		// ========================
 		// With GAMA run
+		// ========================
 		HeadlessSimulationLoader.preloadGAMA();
 		DEBUG.OFF();
-		
-		// Check and apply parameters
-		if ( !checkParameters(args, true) ) {
-			System.exit(-1);
-		}
 		
 		// Debug runner
 		if (args.contains(VALIDATE_LIBRARY_PARAMETER))
@@ -267,15 +271,15 @@ public class Application implements IApplication {
 			ModelLibraryGenerator.start(this, args);
 
 		// User runner
-		else if (args.contains(BATCH_PARAMETER)) {
+		else if (args.contains(BATCH_PARAMETER))
 			runBatchSimulation(args.get(args.size() - 2), args.get(args.size() - 1));
-		} else if (args.contains(GAML_PARAMETER)) {
+		else if (args.contains(GAML_PARAMETER))
 			runGamlSimulation(args);
-		} else if (args.contains(BUILD_XML_PARAMETER)) {
+		else if (args.contains(BUILD_XML_PARAMETER))
 			buildXML(args);
-		} else {
+		else
 			runSimulation(args);
-		}
+		
 		return null;
 	}
 
