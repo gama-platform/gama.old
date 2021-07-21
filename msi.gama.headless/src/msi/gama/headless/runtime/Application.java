@@ -284,9 +284,11 @@ public class Application implements IApplication {
 	}
 
 	public String after(final List<String> args, final String arg) {
-		if (args == null || args.size() < 2) return null;
+		if (args == null || args.size() < 2)
+			return null;
 		for (int i = 0; i < args.size() - 1; i++) {
-			if (args.get(i).equals(arg)) return args.get(i + 1);
+			if (args.get(i).equals(arg))
+				return args.get(i + 1);
 		}
 		return null;
 	}
@@ -306,10 +308,16 @@ public class Application implements IApplication {
 			return;
 		}
 
-		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(arg.get(arg.size() - 2));
+		
+		// -xml [exp] [gaml] [xml]
+		final String argExperimentName = arg.get(arg.size() - 3);
+		final String argGamlFile = arg.get(arg.size() - 2);
+		final String argXMLFile = arg.get(arg.size() - 1);
+		
+		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(argGamlFile);
 		final ArrayList<IExperimentJob> selectedJob = new ArrayList<>();
 		for (final IExperimentJob j : jb) {
-			if (j.getExperimentName().equals(arg.get(arg.size() - 3))) {
+			if (j.getExperimentName().equals(argExperimentName)) {
 				selectedJob.add(j);
 				break;
 			}
@@ -319,7 +327,7 @@ public class Application implements IApplication {
 		final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		final Transformer transformer = transformerFactory.newTransformer();
 		final DOMSource source = new DOMSource(dd);
-		final File output = new File(arg.get(arg.size() - 1));
+		final File output = new File(argXMLFile);
 		final StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
 		DEBUG.ON();
@@ -367,30 +375,23 @@ public class Application implements IApplication {
 	}
 
 	public void runSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
-		if (!checkParameters(args)) { System.exit(-1); }
+		if (!checkParameters(args)) {
+			System.exit(-1);
+		}
 
 		verbose = args.contains(VERBOSE_PARAMETER);
 		if (verbose) {
 			DEBUG.ON();
 
 		}
-		this.tunnelingMode = args.contains(TUNNELING_PARAMETER);
-		this.consoleMode = args.contains(CONSOLE_PARAMETER);
-		if (args.contains(SOCKET_PARAMETER)) {
-			this.socket = Integer.valueOf(after(args, SOCKET_PARAMETER));
-		} else {
-			this.socket = -1;
-		}
 
-		if (args.contains(THREAD_PARAMETER)) {
-			this.numberOfThread = Integer.valueOf(after(args, THREAD_PARAMETER));
-		} else {
-			numberOfThread = SimulationRuntime.UNDEFINED_QUEUE_SIZE;
-		}
+
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 
 		Reader in = null;
-		if (this.verbose && !this.tunnelingMode) { DEBUG.ON(); }
+		if (this.verbose && !this.tunnelingMode) {
+			DEBUG.ON();
+		}
 
 		if (this.consoleMode) {
 			in = new Reader(ConsoleReader.readOnConsole());
@@ -430,50 +431,78 @@ public class Application implements IApplication {
 	}
 
 	@Override
-	public void stop() {}
+	public void stop() {
+	}
 
 	/*
 	 * New runner implementations
 	 */
 
 	/**
-	 * Gather 
-	 * @param args
+	 * Auto launch batch experiment in headless mode from a gaml file
+	 * 
+	 * @param experimentName
+	 * @param pathToModel
 	 */
 	public void runBatchSimulation(String experimentName, String pathToModel) {
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
-		
+		if (!GamlFileExtension.isGaml(pathToModel)) {
+			System.exit(-1);
+		}
+
 		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = new GamlModelBuilder(injector);
 
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
-		
+
 		final IExperimentPlan expPlan = mdl.getExperiment(experimentName);
 		expPlan.setHeadless(true);
-		
-		expPlan.open();
-		
-		System.exit(0);
-	} 
 
-	public void runGamlSimulation(final List<String> args) {
+		expPlan.open();
+
+		System.exit(0);
+	}
+
+	/**
+	 * Auto launch gui experiment in headless mode from a gaml file
+	 * 
+	 * @param experimentName
+	 * @param pathToModel
+	 */
+	public void runGamlSimulation(final List<String> args) throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
-		
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
-	
-		final Injector injector = HeadlessSimulationLoader.getInjector();
-		final GamlModelBuilder builder = new GamlModelBuilder(injector);
 
-		final List<GamlCompilationError> errors = new ArrayList<>();
-		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
+		if (!GamlFileExtension.isGaml(pathToModel)) {
+			System.exit(-1);
+		}
+		final String argExperimentName = args.get(args.size() - 2);
+		final String argGamlFile = args.get(args.size() - 1);
 		
-		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
-		expPlan.setHeadless(true);
+		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(argGamlFile);
+		ExperimentJob selectedJob = null;
+		for (final IExperimentJob j : jb) {
+			if (j.getExperimentName().equals(argExperimentName)) {
+				selectedJob = (ExperimentJob) j;
+				break;
+			}
+		}
 		
-		expPlan.open();
+		Globals.OUTPUT_PATH = args.get(args.size() - 3);
+		
+		selectedJob.setBufferedWriter(
+				new XMLWriter(Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME + ".xml")
+			);
+		
+		if (args.contains(THREAD_PARAMETER)) {
+			this.numberOfThread = Integer.valueOf(after(args, THREAD_PARAMETER));
+		} else {
+			numberOfThread = SimulationRuntime.UNDEFINED_QUEUE_SIZE;
+		}
+		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
+
+		processorQueue.pushSimulation(selectedJob);
 		
 		System.exit(0);
-	} 
-		
+	}
+
 }
