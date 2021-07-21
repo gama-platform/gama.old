@@ -59,7 +59,6 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 
-
 public class Application implements IApplication {
 
 	final public static String HELP_PARAMETER = "-help";
@@ -71,14 +70,14 @@ public class Application implements IApplication {
 	final public static String SOCKET_PARAMETER = "-socket";
 
 	final public static String TUNNELING_PARAMETER = "-p";
-	
+
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
 	final public static String BUILD_XML_PARAMETER = "-xml";
 	final public static String CHECK_MODEL_PARAMETER = "-check";
-	//final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
+	// final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
 	// -> Code still exist, but not documented
-	
+
 	final public static String BATCH_PARAMETER = "-batch";
 	final public static String GAML_PARAMETER = "-gaml";
 
@@ -90,34 +89,36 @@ public class Application implements IApplication {
 	public boolean verbose = false;
 	public SimulationRuntime processorQueue;
 
-	private static String showHelp() {
-		final String res = " Welcome to Gama-platform.org version " + GAMA.VERSION + "\n"
-				+ "sh ./gama-headless.sh [Options]\n" 
-				+ "\nList of available options:"
-				+ "\n\t=== Headless Options ==="
-				+ "\n\t\t-m [mem]                     -- allocate memory (ex 2048m)"
-				+ "\n\t\t" + CONSOLE_PARAMETER + "                           -- start the console to write xml parameter file"
-				+ "\n\t\t" + VERBOSE_PARAMETER + "                           -- verbose mode"
-				+ "\n\t\t" + THREAD_PARAMETER + " [core]                  -- set the number of core available for experimentation"
-				+ "\n\t\t" + SOCKET_PARAMETER + " [socketPort]         -- start socket pipeline to interact with another framework"
-				+ "\n\t\t" + TUNNELING_PARAMETER + "                           -- start pipeline to interact with another framework"
-				+ "\n\t=== Infos ==="
-				+ "\n\t\t" + HELP_PARAMETER + "                        -- get the help of the command line"
-				+ "\n\t\t" + GAMA_VERSION + "                     -- get the the version of gama"
-				+ "\n\t=== Library Runner ==="
-				+ "\n\t\t" + VALIDATE_LIBRARY_PARAMETER + "                    -- invokes GAMA to validate models present in built-in library and plugins"
-				+ "\n\t\t" + TEST_LIBRARY_PARAMETER + "                        -- invokes GAMA to execute the tests present in built-in library and plugins and display their results"
-				+ "\n\t=== GAMA Headless Runner ===" 
-				+ "\n\t\t" + BATCH_PARAMETER + " [experimentName] [modelFile.gaml]"
-				+ "\n\t\t                             -- Run batch experiment in headless mode"
-				//+ "\n\t\t" + GAML_PARAMETER + " [experimentName] [modelFile.gaml]"
-				//+ "\n\t\t                             -- Run single gaml experiment in headless mode"
-				+ "\n\t\t" + BUILD_XML_PARAMETER + " [experimentName] [modelFile.gaml] [xmlOutputFile.xml]"
-				+ "\n\t\t                             -- build an xml parameter file from a model"
-				+ "\n\t\t[xmlHeadlessFile.xml] [outputDirectory]"
-				+ "\n\t\t                             -- default usage of GAMA headless";
-
-		return res;
+	private static void showHelp() {
+		DEBUG.ON();
+		DEBUG.LOG(
+			" Welcome to Gama-platform.org version " + GAMA.VERSION + "\n"
+			+ "sh ./gama-headless.sh [Options]\n" 
+			+ "\nList of available options:" 
+			+ "\n\t=== Headless Options ==="
+			+ "\n\t\t-m [mem]                     -- allocate memory (ex 2048m)" 
+			+ "\n\t\t" + CONSOLE_PARAMETER + "                           -- start the console to write xml parameter file" 
+			+ "\n\t\t" + VERBOSE_PARAMETER + "                           -- verbose mode" 
+			+ "\n\t\t" + THREAD_PARAMETER + " [core]                  -- set the number of core available for experimentation" 
+			+ "\n\t\t" + SOCKET_PARAMETER + " [socketPort]         -- start socket pipeline to interact with another framework"
+			+ "\n\t\t" + TUNNELING_PARAMETER + "                           -- start pipeline to interact with another framework"
+			+ "\n\t=== Infos ===" 
+			+ "\n\t\t" + HELP_PARAMETER + "                        -- get the help of the command line" 
+			+ "\n\t\t" + GAMA_VERSION + "                     -- get the the version of gama" 
+			+ "\n\t=== Library Runner ===" 
+			+ "\n\t\t" + VALIDATE_LIBRARY_PARAMETER + "                    -- invokes GAMA to validate models present in built-in library and plugins"
+			+ "\n\t\t" + TEST_LIBRARY_PARAMETER + "                        -- invokes GAMA to execute the tests present in built-in library and plugins and display their results"
+			+ "\n\t=== GAMA Headless Runner ===" 
+			+ "\n\t\t" + BATCH_PARAMETER + " [experimentName] [modelFile.gaml]"
+			+ "\n\t\t                             -- Run batch experiment in headless mode"
+			// + "\n\t\t" + GAML_PARAMETER + " [experimentName] [modelFile.gaml]"
+			// + "\n\t\t -- Run single gaml experiment in headless mode"
+			+ "\n\t\t" + BUILD_XML_PARAMETER + " [experimentName] [modelFile.gaml] [xmlOutputFile.xml]"
+			+ "\n\t\t                             -- build an xml parameter file from a model"
+			+ "\n\t\t[xmlHeadlessFile.xml] [outputDirectory]"
+			+ "\n\t\t                             -- default usage of GAMA headless"
+		);
+		DEBUG.OFF();
 	}
 
 	private boolean checkParameters(final List<String> args) {
@@ -125,7 +126,7 @@ public class Application implements IApplication {
 		int size = args.size();
 		boolean mustContainInFile = true;
 		boolean mustContainOutFile = true;
-		
+
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
@@ -196,10 +197,7 @@ public class Application implements IApplication {
 		if (args.contains(GAMA_VERSION)) {
 
 		} else if (args.contains(HELP_PARAMETER)) {
-			DEBUG.ON();
-			DEBUG.LOG(showHelp());
-			DEBUG.OFF();
-
+			showHelp();
 		} else if (args.contains(BATCH_PARAMETER)) {
 			runBatchSimulation(args.get(args.size() - 2), args.get(args.size() - 1));
 		} else if (args.contains(GAML_PARAMETER)) {
@@ -239,7 +237,7 @@ public class Application implements IApplication {
 		if (arg.size() < 3) {
 			DEBUG.ON();
 			DEBUG.ERR("Check your parameters!");
-			DEBUG.ERR(showHelp());
+			showHelp();
 			return;
 		}
 
