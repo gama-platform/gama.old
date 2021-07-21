@@ -142,6 +142,14 @@ public class Application implements IApplication {
 
 		// Parameters flag
 		// ========================
+		if (args.contains(VERBOSE_PARAMETER)) {
+			size = size - 1;
+			if (apply) {
+				this.verbose = true;
+				DEBUG.ON();
+				DEBUG.LOG("Log active", true);
+			}
+		}
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
@@ -168,9 +176,6 @@ public class Application implements IApplication {
 
 			// Change value only if function should apply parameter
 			this.numberOfThread = apply ? Integer.valueOf(after(args, THREAD_PARAMETER)) : SimulationRuntime.UNDEFINED_QUEUE_SIZE;
-		}
-		if (args.contains(VERBOSE_PARAMETER)) {
-			size = size - 1;
 		}
 
 		// Commands
@@ -295,12 +300,6 @@ public class Application implements IApplication {
 
 	public void buildXML(final List<String> arg)
 			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
-		verbose = arg.contains(VERBOSE_PARAMETER);
-		if (this.verbose) {
-			DEBUG.ON();
-			DEBUG.LOG("Log active", true);
-		}
-
 		if (arg.size() < 3) {
 			DEBUG.ON();
 			DEBUG.ERR("Check your parameters!");
@@ -378,13 +377,6 @@ public class Application implements IApplication {
 		if (!checkParameters(args)) {
 			System.exit(-1);
 		}
-
-		verbose = args.contains(VERBOSE_PARAMETER);
-		if (verbose) {
-			DEBUG.ON();
-
-		}
-
 
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 
