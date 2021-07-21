@@ -98,10 +98,10 @@ public class Application implements IApplication {
 	}
 
 	private static void showHelp() {
+		showVersion();
 		DEBUG.ON();
 		DEBUG.LOG(
-			" Welcome to Gama-platform.org version " + GAMA.VERSION + "\n"
-			+ "sh ./gama-headless.sh [Options]\n" 
+			"sh ./gama-headless.sh [Options]\n" 
 			+ "\nList of available options:" 
 			+ "\n\t=== Headless Options ==="
 			+ "\n\t\t-m [mem]                     -- allocate memory (ex 2048m)" 
@@ -197,27 +197,47 @@ public class Application implements IApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 
-		HeadlessSimulationLoader.preloadGAMA();
-		DEBUG.OFF();
-
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
-		if (args.contains(GAMA_VERSION)) {
+		boolean shouldExit = false;
 
+		// No GAMA run
+		if (args.contains(GAMA_VERSION)) {
+			showVersion();
+			shouldExit = true;
 		} else if (args.contains(HELP_PARAMETER)) {
 			showHelp();
-		} else if (args.contains(BATCH_PARAMETER)) {
-			runBatchSimulation(args.get(args.size() - 2), args.get(args.size() - 1));
-		} else if (args.contains(GAML_PARAMETER)) {
-			runGamlSimulation(args);
-		}//else if (args.contains(RUN_LIBRARY_PARAMETER))
-		//	return ModelLibraryRunner.getInstance().start(args);
-		else if (args.contains(VALIDATE_LIBRARY_PARAMETER))
+			shouldExit = true;
+		} 
+		
+		if (shouldExit) {
+			System.exit(0);
+		}
+		
+		// With GAMA run
+		HeadlessSimulationLoader.preloadGAMA();
+		DEBUG.OFF();
+		
+		// Check and apply parameters
+		if ( !checkParameters(args, true) ) {
+			System.exit(-1);
+		}
+		
+		// Debug runner
+		if (args.contains(VALIDATE_LIBRARY_PARAMETER))
 			return ModelLibraryValidator.getInstance().start();
 		else if (args.contains(TEST_LIBRARY_PARAMETER))
 			return ModelLibraryTester.getInstance().start();
-		else if (args.contains(CHECK_MODEL_PARAMETER)) {
+		// else if (args.contains(RUN_LIBRARY_PARAMETER))
+		// 	return ModelLibraryRunner.getInstance().start(args);
+		else if (args.contains(CHECK_MODEL_PARAMETER))
 			ModelLibraryGenerator.start(this, args);
+
+		// User runner
+		else if (args.contains(BATCH_PARAMETER)) {
+			runBatchSimulation(args.get(args.size() - 2), args.get(args.size() - 1));
+		} else if (args.contains(GAML_PARAMETER)) {
+			runGamlSimulation(args);
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else {
