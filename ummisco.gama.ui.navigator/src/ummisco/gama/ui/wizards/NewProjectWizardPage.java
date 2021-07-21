@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * </p>
  * <p>
  * Example usage:
- * 
+ *
  * <pre>
  * mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");
  * mainPage.setTitle("Project");
@@ -100,7 +100,7 @@ public class NewProjectWizardPage extends WizardPage {
 
 	/**
 	 * Get an error reporter for the receiver.
-	 * 
+	 *
 	 * @return IErrorMessageReporter
 	 */
 	// private IErrorMessageReporter getErrorReporter() {
@@ -137,14 +137,14 @@ public class NewProjectWizardPage extends WizardPage {
 		// new project label
 		final Label projectLabel = new Label(projectGroup, SWT.NONE);
 		projectLabel.setText(IDEWorkbenchMessages.WizardNewProjectCreationPage_nameLabel);
-		projectLabel.setFont(parent.getFont());
+		// projectLabel.setFont(parent.getFont());
 
 		// new project name entry field
 		projectNameField = new Text(projectGroup, SWT.BORDER);
 		final GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		projectNameField.setLayoutData(data);
-		projectNameField.setFont(parent.getFont());
+		// projectNameField.setFont(parent.getFont());
 		final Button test = new Button(projectGroup, SWT.CHECK);
 		final Button newModel = new Button(projectGroup, SWT.CHECK);
 		test.setText("Configure as a test project");
@@ -174,9 +174,7 @@ public class NewProjectWizardPage extends WizardPage {
 
 		// Set the initial value first before listener
 		// to avoid handling an event during the creation.
-		if (initialProjectFieldValue != null) {
-			projectNameField.setText(initialProjectFieldValue);
-		}
+		if (initialProjectFieldValue != null) { projectNameField.setText(initialProjectFieldValue); }
 		projectNameField.addListener(SWT.Modify, nameModifyListener);
 	}
 
@@ -208,8 +206,7 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @since 3.2
 	 */
 	public URI getLocationURI() {
-		final URI u = Platform.getLocation().addTrailingSeparator().append(getProjectName()).toFile().toURI();
-		return u;
+		return Platform.getLocation().addTrailingSeparator().append(getProjectName()).toFile().toURI();
 		// DEBUG.LOG("PATH: " + s);
 		// final URI uri = URI.create(s);
 		// DEBUG.LOG("URI: " + uri);
@@ -239,7 +236,7 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @return the project name, its anticipated initial value, or <code>null</code> if no project name is known
 	 */
 	public String getProjectName() {
-		if (projectNameField == null) { return initialProjectFieldValue; }
+		if (projectNameField == null) return initialProjectFieldValue;
 
 		return getProjectNameFieldValue();
 	}
@@ -250,8 +247,7 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @return the project name in the field
 	 */
 	private String getProjectNameFieldValue() {
-		if (projectNameField == null) { return ""; //$NON-NLS-1$
-		}
+		if (projectNameField == null) return ""; //$NON-NLS-1$
 
 		return projectNameField.getText().trim();
 	}
@@ -295,7 +291,7 @@ public class NewProjectWizardPage extends WizardPage {
 		final IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 
 		final String projectFieldContents = getProjectNameFieldValue();
-		if (projectFieldContents.equals("")) { //$NON-NLS-1$
+		if ("".equals(projectFieldContents)) { //$NON-NLS-1$
 			setErrorMessage(null);
 			setMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectNameEmpty);
 			return false;
@@ -334,14 +330,12 @@ public class NewProjectWizardPage extends WizardPage {
 	@Override
 	public void setVisible(final boolean visible) {
 		super.setVisible(visible);
-		if (visible) {
-			projectNameField.setFocus();
-		}
+		if (visible) { projectNameField.setFocus(); }
 	}
 
 	/**
 	 * Returns the useDefaults.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	// public boolean useDefaults() {

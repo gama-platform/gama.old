@@ -47,13 +47,14 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.ConstantExpressionDescription;
+import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.ListExpression;
-import msi.gaml.expressions.TimeUnitConstantExpression;
+import msi.gaml.expressions.data.ListExpression;
+import msi.gaml.expressions.units.TimeUnitConstantExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.AbstractSpecies;
 import msi.gaml.statements.IExecutable;
@@ -196,19 +197,17 @@ public class Variable extends Symbol implements IVariable {
 				// time-dependent units. Should be done, actually, for any
 				// variable that manipulates time-dependent units
 				// May 2019: a warning is emitted instead (see why in #2574)
-				if (name.equals(STEP)) {
-					if (cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
-						final IExpression expr = cd.getFacetExpr(INIT);
-						if (expr.findAny(e -> e instanceof TimeUnitConstantExpression && !e.isConst())) {
-							cd.warning(
-									"Time dependent constants used in 'init' are computed once. The resulting durations may be irrelevant after a few cycles. An 'update' facet should better be defined to recompute 'step' every cycle",
-									IGamlIssue.CONFLICTING_FACETS, INIT);
-						}
+				if (STEP.equals(name) && cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
+					final IExpression expr = cd.getFacetExpr(INIT);
+					if (expr.findAny(e -> e instanceof TimeUnitConstantExpression && !e.isConst())) {
+						cd.warning(
+								"Time dependent constants used in 'init' are computed once. The resulting durations may be irrelevant after a few cycles. An 'update' facet should better be defined to recompute 'step' every cycle",
+								IGamlIssue.CONFLICTING_FACETS, INIT);
 					}
-					// if (cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
-					// cd.setFacet(UPDATE, cd.getFacet(INIT));
-					// }
 				}
+				// if (cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
+				// cd.setFacet(UPDATE, cd.getFacet(INIT));
+				// }
 			}
 			// The name is ok. Now verifying the logic of facets
 			// Verifying that 'function' is not used in conjunction with other
@@ -254,8 +253,9 @@ public class Variable extends Symbol implements IVariable {
 			// return;
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
 			final IExpression initExpression = vd.getFacetExpr(INIT);
-			if (amongExpression == null || initExpression == null) return;
-			if (!(amongExpression instanceof ListExpression) || !initExpression.isConst()) return;
+			if (amongExpression == null || initExpression == null || !(amongExpression instanceof ListExpression)
+					|| !initExpression.isConst())
+				return;
 			final ListExpression list = (ListExpression) amongExpression;
 			final Object init = initExpression.getConstValue();
 			if (!list.containsValue(init)) {
@@ -301,15 +301,26 @@ public class Variable extends Symbol implements IVariable {
 		public void assertCanBeParameter(final VariableDescription cd) {
 			if (PARAMETER.equals(cd.getKeyword()) /* facets.equals(KEYWORD, PARAMETER) */) {
 				final String varName = cd.getLitteral(VAR);
-				final VariableDescription targetedVar = cd.getModelDescription().getAttribute(varName);
+				VariableDescription targetedVar = cd.getModelDescription().getAttribute(varName);
+
 				if (targetedVar == null) {
-					final String p = "Parameter '" + cd.getParameterName() + "' ";
-					cd.error(p + "cannot refer to the non-global variable " + varName, IGamlIssue.UNKNOWN_VAR,
-							IKeyword.VAR);
+					// AD 07/21 : Adds the possibility for experiment variables to become parameters
+					// We keep on looking after looking in the model so as to make sure that built-in parameters (like
+					// seed, for instance) can be correctly retrieved
+					targetedVar = ((ExperimentDescription) cd.getEnclosingDescription()).getAttribute(varName);
+					if (targetedVar == null) {
+						final String p = "Parameter '" + cd.getParameterName() + "' ";
+						cd.error(p + "cannot refer to the non-global variable " + varName, IGamlIssue.UNKNOWN_VAR,
+								IKeyword.VAR);
+						return;
+					}
+				}
+				if (cd.getGamlType().equals(Types.NO_TYPE)) {
+					cd.error("Impossible to determine the type of the parameter " + varName, IGamlIssue.UNMATCHED_TYPES,
+							IKeyword.TYPE);
 					return;
 				}
-				if (!cd.getGamlType().equals(Types.NO_TYPE)
-						&& cd.getGamlType().id() != targetedVar.getGamlType().id()) {
+				if (cd.getGamlType().id() != targetedVar.getGamlType().id()) {
 					final String p = "Parameter '" + cd.getParameterName() + "' ";
 					cd.error(p + "type must be the same as that of " + varName, IGamlIssue.UNMATCHED_TYPES,
 							IKeyword.TYPE);
@@ -334,21 +345,17 @@ public class Variable extends Symbol implements IVariable {
 
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + " must have an initial value...", IGamlIssue.NO_INIT, cd.getUnderlyingElement(NAME, false),
+				cd.error(p + " must have an initial value.", IGamlIssue.NO_INIT, cd.getUnderlyingElement(NAME, false),
 						Cast.toGaml(cd.getGamlType().getDefault()));
 				return;
 			}
-			if (cd.hasFacet(ENABLES)) {
-				if (!cd.getGamlType().equals(Types.BOOL)) {
-					cd.warning("The 'enables' facet has no meaning for non-boolean parameters",
-							IGamlIssue.CONFLICTING_FACETS, ENABLES);
-				}
+			if (cd.hasFacet(ENABLES) && !cd.getGamlType().equals(Types.BOOL)) {
+				cd.warning("The 'enables' facet has no meaning for non-boolean parameters",
+						IGamlIssue.CONFLICTING_FACETS, ENABLES);
 			}
-			if (cd.hasFacet(DISABLES)) {
-				if (!cd.getGamlType().equals(Types.BOOL)) {
-					cd.warning("The 'disables' facet has no meaning for non-boolean parameters",
-							IGamlIssue.CONFLICTING_FACETS, DISABLES);
-				}
+			if (cd.hasFacet(DISABLES) && !cd.getGamlType().equals(Types.BOOL)) {
+				cd.warning("The 'disables' facet has no meaning for non-boolean parameters",
+						IGamlIssue.CONFLICTING_FACETS, DISABLES);
 			}
 			// AD 15/04/14: special case for files
 			// AD 17/06/16 The restriction is temporarily removed
@@ -375,7 +382,7 @@ public class Variable extends Symbol implements IVariable {
 	public Map<GamaHelper, IVarAndActionSupport> listeners;
 	protected ISkill gSkill, sSkill;
 	private IExecutable on_changer;
-	protected String pName, cName;
+	protected String parameter, category;
 	protected boolean mustNotifyOfChanges;
 	// private Object speciesWideValue;
 
@@ -383,8 +390,8 @@ public class Variable extends Symbol implements IVariable {
 		super(sd);
 		final VariableDescription desc = (VariableDescription) sd;
 		setName(sd.getName());
-		pName = desc.getParameterName();
-		cName = getLiteral(IKeyword.CATEGORY, null);
+		parameter = desc.getParameterName();
+		category = getLiteral(IKeyword.CATEGORY, null);
 		updateExpression = getFacet(IKeyword.VALUE, IKeyword.UPDATE);
 		functionExpression = getFacet(IKeyword.FUNCTION);
 		initExpression = getFacet(IKeyword.INIT);
@@ -421,7 +428,7 @@ public class Variable extends Symbol implements IVariable {
 		Class base = sp.getJavaBase();
 		if (base == null) return;
 		List<GamaHelper> helpers = new ArrayList<>();
-		Iterable<Class<? extends ISkill>> skillClasses = transform(sp.getSkills(), SpeciesDescription.TO_CLASS);
+		Iterable<Class<? extends ISkill>> skillClasses = transform(sp.getSkills(), IDescription.TO_CLASS);
 		if (AbstractGamlAdditions.LISTENERS_BY_NAME.containsKey(getName())) {
 			List<Class> classes = JavaUtils.collectImplementationClasses(base, skillClasses,
 					AbstractGamlAdditions.LISTENERS_BY_NAME.get(getName()));
@@ -452,9 +459,9 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public String toString() {
-		String result = isNotModifiable() ? IKeyword.CONST : IKeyword.VAR;
-		result += " " + type.toString() + "[" + getName() + "]";
-		return result;
+		StringBuilder result = new StringBuilder().append(isNotModifiable() ? IKeyword.CONST : IKeyword.VAR);
+		result.append(" ").append(type.toString()).append("[").append(getName()).append("]");
+		return result.toString();
 	}
 
 	@Override
@@ -522,12 +529,13 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public String getTitle() {
-		return pName;
+		return parameter;
 	}
 
 	@Override
 	public String getCategory() {
-		return cName;
+		if (category == null) { category = IVariable.super.getCategory(); }
+		return category;
 	}
 
 	// @Override
@@ -623,8 +631,7 @@ public class Variable extends Symbol implements IVariable {
 	protected Object checkAmong(final IAgent agent, final IScope scope, final Object val) throws GamaRuntimeException {
 		if (amongExpression == null) return val;
 		final List among = Cast.asList(scope, scope.evaluate(amongExpression, agent).getValue());
-		if (among == null) return val;
-		if (among.contains(val)) return val;
+		if (among == null || among.contains(val)) return val;
 		if (among.isEmpty()) return null;
 		throw GamaRuntimeException.error("Value " + val + " is not included in the possible values of variable " + name,
 				scope);
@@ -640,11 +647,9 @@ public class Variable extends Symbol implements IVariable {
 		// if (isSpeciesConst) { return speciesWideValue; }
 		if (getter != null) return getter.run(scope, agent, gSkill == null ? agent : gSkill);
 		if (functionExpression != null) return scope.evaluate(functionExpression, agent).getValue();
-		if (!agent.hasAttribute(name)) {
-			// Var not yet initialized. May happen when asking for its value while initializing an editor
-			// See Issue #2781
-			if (isNotModifiable) return getInitialValue(scope);
-		}
+		// Var not yet initialized. May happen when asking for its value while initializing an editor
+		// See Issue #2781
+		if (!agent.hasAttribute(name) && isNotModifiable) return getInitialValue(scope);
 		return agent.getAttribute(name);
 	}
 
@@ -654,17 +659,17 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public Number getMinValue(final IScope scope) {
+	public Comparable getMinValue(final IScope scope) {
 		return null;
 	}
 
 	@Override
-	public Number getMaxValue(final IScope scope) {
+	public Comparable getMaxValue(final IScope scope) {
 		return null;
 	}
 
 	@Override
-	public Number getStepValue(final IScope scope) {
+	public Comparable getStepValue(final IScope scope) {
 		return null;
 	}
 
@@ -755,6 +760,11 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public boolean isNotModifiable() {
 		return isNotModifiable;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		return getDescription().isDefinedInExperiment();
 	}
 
 }

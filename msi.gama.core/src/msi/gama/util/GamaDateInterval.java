@@ -131,7 +131,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	 */
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj) { return true; }
+		if (this == obj) return true;
 		if (obj instanceof GamaDateInterval) {
 			final GamaDateInterval other = (GamaDateInterval) obj;
 			return start.equals(other.start) && end.equals(other.end);
@@ -170,7 +170,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 
 	@Override
 	public IList<GamaDate> listValue(final IScope scope, final IType contentType, final boolean copy) {
-		if (copy) { return GamaListFactory.createWithoutCasting(Types.DATE, this); }
+		if (copy) return GamaListFactory.createWithoutCasting(Types.DATE, this);
 		return this;
 	}
 
@@ -225,11 +225,11 @@ public final class GamaDateInterval implements IList<GamaDate> {
 		return "(" + start.serialize(includingBuiltIn) + " to " + end.serialize(includingBuiltIn) + ") every ("
 				+ (double) step.get(ChronoUnit.SECONDS) + ")";
 	}
-
-	@Override
-	public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
-		return false;
-	}
+	//
+	// @Override
+	// public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
+	// return false;
+	// }
 
 	@Override
 	public void addValue(final IScope scope, final GamaDate value) {}
@@ -273,26 +273,26 @@ public final class GamaDateInterval implements IList<GamaDate> {
 
 	@Override
 	public int size() {
-		if (size != null) { return size; }
+		if (size != null) return size;
 		final int size = Iterators.size(iterator());
 		return size;
 	}
 
 	@Override
 	public boolean contains(final Object o) {
-		if (!(o instanceof GamaDate)) { return false; }
+		if (!(o instanceof GamaDate)) return false;
 		return this.contains((GamaDate) o);
 	}
 
 	@Override
 	public Iterator<GamaDate> iterator() {
-		return new Iterator<GamaDate>() {
+		return new Iterator<>() {
 
 			GamaDate current = null;
 
 			@Override
 			public boolean hasNext() {
-				if (current == null) { return !isEmpty(); }
+				if (current == null) return !isEmpty();
 				return current.plus(step).isBefore(end);
 			}
 
@@ -332,7 +332,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	@Override
 	public boolean containsAll(final Collection<?> c) {
 		for (final Object o : c) {
-			if (!contains(o)) { return false; }
+			if (!contains(o)) return false;
 		}
 		return true;
 	}
@@ -383,7 +383,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 		int i = 0;
 		for (final GamaDate d : this) {
 
-			if (d.equals(o)) { return i; }
+			if (d.equals(o)) return i;
 			i++;
 		}
 		return -1;

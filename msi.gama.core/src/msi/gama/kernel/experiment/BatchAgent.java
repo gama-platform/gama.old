@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import static msi.gaml.operators.Cast.asFloat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -62,9 +64,7 @@ public class BatchAgent extends ExperimentAgent {
 		final IScope scope = getSpecies().getExperimentScope();
 		final IExpression expr = getSpecies().getFacet(IKeyword.REPEAT);
 		int innerLoopRepeat = 1;
-		if (expr != null && expr.isConst()) {
-			innerLoopRepeat = Cast.asInt(scope, expr.value(scope));
-		}
+		if (expr != null && expr.isConst()) { innerLoopRepeat = Cast.asInt(scope, expr.value(scope)); }
 		setSeeds(new Double[innerLoopRepeat]);
 
 		if (getSpecies().hasFacet(IKeyword.UNTIL)) {
@@ -144,9 +144,7 @@ public class BatchAgent extends ExperimentAgent {
 			lastFitnessValue = Cast.asFloat(sim.getScope(), fitness.value(sim.getScope()));
 			fitnessValues.add(lastFitnessValue);
 		}
-		if (output != null) {
-			getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
-		}
+		if (output != null) { getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue); }
 		sim.dispose();
 	}
 
@@ -183,7 +181,7 @@ public class BatchAgent extends ExperimentAgent {
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		final SimulationPopulation pop = getSimulationPopulation();
-		if (pop == null) { return 0d; }
+		if (pop == null) return 0d;
 		currentSolution = new ParametersSet(sol);
 		fitnessValues.clear();
 		runNumber = runNumber + 1;
@@ -191,9 +189,7 @@ public class BatchAgent extends ExperimentAgent {
 		// the experiment
 		for (final Map.Entry<String, Object> entry : sol.entrySet()) {
 			final IParameter p = getSpecies().getExplorableParameters().get(entry.getKey());
-			if (p != null) {
-				p.setValue(getScope(), entry.getValue());
-			}
+			if (p != null) { p.setValue(getScope(), entry.getValue()); }
 		}
 
 		// We update the parameters (parameter to explore)
@@ -202,18 +198,14 @@ public class BatchAgent extends ExperimentAgent {
 		// We then create a number of simulations with the same solution
 
 		int numberOfCores = pop.getMaxNumberOfConcurrentSimulations();
-		if (numberOfCores == 0) {
-			numberOfCores = 1;
-		}
+		if (numberOfCores == 0) { numberOfCores = 1; }
 		int repeatIndex = 0;
 		while (repeatIndex < getSeeds().length && !dead) {
 			for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
 				setSeed(getSeeds()[repeatIndex]);
 				createSimulation(currentSolution, true);
 				repeatIndex++;
-				if (repeatIndex == getSeeds().length || dead) {
-					break;
-				}
+				if (repeatIndex == getSeeds().length || dead) { break; }
 			}
 			int i = 0;
 			while (pop.hasScheduledSimulations() && !dead) {
@@ -231,9 +223,7 @@ public class BatchAgent extends ExperimentAgent {
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);
-						if (!getSpecies().keepsSimulations()) {
-							memorizeFitnessAndCloseSimulation(agent);
-						}
+						if (!getSpecies().keepsSimulations()) { memorizeFitnessAndCloseSimulation(agent); }
 					}
 				}
 				// We inform the status line
@@ -244,9 +234,7 @@ public class BatchAgent extends ExperimentAgent {
 											+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
 									"small.batch" + i / 5);
 				}
-				if (++i == 20) {
-					i = 0;
-				}
+				if (++i == 20) { i = 0; }
 				// We then verify that the front scheduler has not been paused
 				while (getSpecies().getController().getScheduler().paused && !dead) {
 					try {
@@ -268,7 +256,7 @@ public class BatchAgent extends ExperimentAgent {
 		super.step(getScope());
 
 		// If the agent is dead, we return immediately
-		if (dead) { return 0.0; }
+		if (dead) return 0.0;
 		// We reset the experiment agent to erase traces of the current
 		// simulations if any
 		this.reset();
@@ -329,18 +317,18 @@ public class BatchAgent extends ExperimentAgent {
 			@Override
 			public String getUnitLabel(final IScope scope) {
 				final IExploration algo = getSpecies().getExplorationAlgorithm();
-				if (algo == null) { return ""; }
+				if (algo == null) return "";
 				final ParametersSet solutions = algo.getBestSolution();
-				if (solutions == null) { return ""; }
+				if (solutions == null) return "";
 				return "with " + solutions;
 			}
 
 			@Override
 			public String value() {
 				final IExploration algo = getSpecies().getExplorationAlgorithm();
-				if (algo == null) { return "-"; }
+				if (algo == null) return "-";
 				final Double best = algo.getBestFitness();
-				if (best == null) { return "-"; }
+				if (best == null) return "-";
 				return best.toString();
 			}
 
@@ -350,13 +338,13 @@ public class BatchAgent extends ExperimentAgent {
 
 			@Override
 			public String getUnitLabel(final IScope scope) {
-				if (lastSolution == null) { return ""; }
+				if (lastSolution == null) return "";
 				return "with " + lastSolution.toString();
 			}
 
 			@Override
 			public String value() {
-				if (lastFitness == null) { return "-"; }
+				if (lastFitness == null) return "-";
 				return lastFitness.toString();
 			}
 
@@ -367,7 +355,7 @@ public class BatchAgent extends ExperimentAgent {
 			@Override
 			public String value() {
 				final Map<String, IParameter.Batch> explorable = getSpecies().getExplorableParameters();
-				if (explorable.isEmpty()) { return "1"; }
+				if (explorable.isEmpty()) return "1";
 				String result = "";
 				int dim = 1;
 				for (final Map.Entry<String, IParameter.Batch> entry : explorable.entrySet()) {
@@ -382,9 +370,13 @@ public class BatchAgent extends ExperimentAgent {
 			}
 
 			int getExplorationDimension(final IParameter.Batch p) {
-				if (p.getAmongValue(getScope()) != null) { return p.getAmongValue(getScope()).size(); }
-				return (int) ((p.getMaxValue(getScope()).doubleValue() - p.getMinValue(getScope()).doubleValue())
-						/ p.getStepValue(getScope()).doubleValue()) + 1;
+				IScope scope = getScope();
+
+				// AD TODO Issue a warning in the compilation if a batch experiment tries to explore non-int or
+				// non-float values
+				if (p.getAmongValue(scope) != null) return p.getAmongValue(scope).size();
+				return (int) ((asFloat(scope, p.getMaxValue(scope)) - asFloat(scope, p.getMinValue(scope)))
+						/ asFloat(scope, p.getStepValue(scope))) + 1;
 			}
 
 		});
@@ -404,9 +396,7 @@ public class BatchAgent extends ExperimentAgent {
 	public void closeSimulations() {
 		// We interrupt the simulation scope directly (as it cannot be
 		// interrupted by the global scheduler)
-		if (getSimulation() != null) {
-			getSimulation().getScope().setInterrupted();
-		}
+		if (getSimulation() != null) { getSimulation().getScope().setInterrupted(); }
 	}
 
 }

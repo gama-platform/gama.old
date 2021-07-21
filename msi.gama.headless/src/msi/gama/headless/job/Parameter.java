@@ -16,8 +16,8 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.DataType;
 import msi.gama.kernel.model.IModel; 
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.operators.BinaryOperator;
 import msi.gaml.types.GamaFileType;
 import msi.gaml.types.IType;
 

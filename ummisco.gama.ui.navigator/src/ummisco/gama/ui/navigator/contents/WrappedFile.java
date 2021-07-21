@@ -14,14 +14,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 
@@ -61,15 +59,13 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	private void computeFileParent() {
 		if (isShapeFileSupport) {
 			final IResource shape = shapeFileSupportedBy(getResource());
-			if (shape != null) {
-				fileParent = (WrappedFile) getManager().findWrappedInstanceOf(shape);
-			}
+			if (shape != null) { fileParent = (WrappedFile) getManager().findWrappedInstanceOf(shape); }
 		}
 	}
 
 	@Override
 	public WrappedResource<?, ?> getParent() {
-		if (fileParent != null) { return fileParent; }
+		if (fileParent != null) return fileParent;
 		return super.getParent();
 	}
 
@@ -85,9 +81,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	@Override
 	public Object[] getNavigatorChildren() {
-		if (NavigatorContentProvider.FILE_CHILDREN_ENABLED) {
-			if (isGamaFile() || isShapeFile) { return getFileChildren(); }
-		}
+		if (NavigatorContentProvider.FILE_CHILDREN_ENABLED && (isGamaFile() || isShapeFile)) return getFileChildren();
 		return EMPTY;
 	}
 
@@ -107,17 +101,15 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		}
 		return VirtualContent.EMPTY;
 	}
-
-	@Override
-	public Font getFont() {
-		return GamaFonts.getNavigFileFont();
-	}
+	//
+	// @Override
+	// public Font getFont() {
+	// return GamaFonts.getNavigFileFont();
+	// }
 
 	@Override
 	public Image getImage() {
-		if (image == null) {
-			computeFileImage();
-		}
+		if (image == null) { computeFileImage(); }
 		return image;
 	}
 
@@ -130,9 +122,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	public void getSuffix(final StringBuilder sb) {
 		if (PreferencesHelper.NAVIGATOR_METADATA.getValue()) {
 			final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, true);
-			if (data != null) {
-				data.appendSuffix(sb);
-			}
+			if (data != null) { data.appendSuffix(sb); }
 		}
 	}
 

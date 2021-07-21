@@ -96,7 +96,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = WIDTH;
 		data.heightHint = 24;
-		label = FlatButton.label(compo, IGamaColors.NEUTRAL, "No simulation running");
+		label = FlatButton.label(compo, IGamaColors.NEUTRAL, "No simulation running", WIDTH);
 		label.setLayoutData(data);
 
 		label.addMouseListener(new MouseAdapter() {
@@ -104,14 +104,12 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				final ITopLevelAgent agent = getStatusAgent();
-				if (agent == null) { return; }
+				if (agent == null) return;
 
 				final IExperimentAgent exp = agent.getExperiment();
 				final int all = exp.getSimulationPopulation().size() + 1;
 				agentIndex++;
-				if (agentIndex > all) {
-					agentIndex = 0;
-				}
+				if (agentIndex > all) { agentIndex = 0; }
 				exp.informStatus();
 			}
 		});
@@ -125,16 +123,14 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	ITopLevelAgent getStatusAgent() {
-		if (agentIndex < 0) {
-			agentIndex = 0;
-		}
+		if (agentIndex < 0) { agentIndex = 0; }
 		final IExperimentPlan exp = GAMA.getExperiment();
-		if (exp == null) { return null; }
+		if (exp == null) return null;
 		// final ITopLevelAgent agent;
-		if (agentIndex == 0) { return exp.getAgent(); }
-		if (exp.getAgent() == null) { return null; }
+		if (agentIndex == 0) return exp.getAgent();
+		if (exp.getAgent() == null) return null;
 		final IPopulation<? extends IAgent> pop = exp.getAgent().getSimulationPopulation();
-		if (pop.isEmpty()) { return null; }
+		if (pop.isEmpty()) return null;
 		final IAgent[] simulations = pop.toArray();
 		if (agentIndex > simulations.length) {
 			agentIndex = 0;
@@ -195,7 +191,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	// @Override
 	public GamaUIColor getPopupBackground() {
-		if (inUserStatus && color != null) { return color; }
+		if (inUserStatus && color != null) return color;
 		return state == IGui.ERROR ? IGamaColors.ERROR : state == IGui.WAIT ? IGamaColors.WARNING
 				: state == IGui.NEUTRAL ? IGamaColors.NEUTRAL : IGamaColors.OK;
 	}
@@ -222,23 +218,24 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public void updateWith(final IStatusMessage m) {
-		if (isUpdating) { return; }
+		if (isUpdating) return;
 		isUpdating = true;
 		if (m instanceof SubTaskMessage) {
-			if (inUserStatus) { return; }
+			if (inUserStatus) return;
 			final SubTaskMessage m2 = (SubTaskMessage) m;
 			final Boolean beginOrEnd = m2.getBeginOrEnd();
 			if (beginOrEnd == null) {
 				// completion
 				subTaskCompletion = ((SubTaskMessage) m).getCompletion();
-			} else if (beginOrEnd) {
-				// begin task
-				subTaskName = m.getText();
-				inSubTask = true;
-				subTaskCompletion = null;
 			} else {
-				// end task
-				inSubTask = false;
+				if (beginOrEnd) {
+					// begin task
+					subTaskName = m.getText();
+					inSubTask = true;
+				} else {
+					// end task
+					inSubTask = false;
+				}
 				subTaskCompletion = null;
 			}
 		} else if (m instanceof UserStatusMessage) {
@@ -258,7 +255,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				mainTaskName = m.getText();
 			}
 		} else if (m instanceof StatusMessage) {
-			if (inUserStatus) { return; }
+			if (inUserStatus) return;
 			inSubTask = false; // in case
 			mainTaskName = m.getText();
 			state = m.getCode();
@@ -285,29 +282,23 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		} else {
 			label.setText(mainTaskName == null ? getClockMessage(getStatusAgent()) : mainTaskName);
 		}
-		if (popup.isVisible()) {
-			popup.display();
-		}
+		if (popup.isVisible()) { popup.display(); }
 		isUpdating = false;
 		inUserStatus = false;
 
 	}
 
 	private String getClockMessage(final ITopLevelAgent agent) {
-		if (agent == null) { return ""; }
+		if (agent == null) return "";
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append(agent.getClock().getInfo());
 		final IExperimentAgent exp = agent.getExperiment();
 		final int nbThreads = exp.getSimulationPopulation().getNumberOfActiveThreads();
 		if (agent.getScope().isOnUserHold()) {
 			sb.append(" (waiting)");
-		} else if (nbThreads > 1) {
-			sb.append(" (" + nbThreads + " threads)");
-		}
+		} else if (nbThreads > 1) { sb.append(" (" + nbThreads + " threads)"); }
 		final IExperimentPlan plan = exp.getSpecies();
-		if (plan.shouldBeBenchmarked()) {
-			sb.append(" [benchmarking]");
-		}
+		if (plan.shouldBeBenchmarked()) { sb.append(" [benchmarking]"); }
 		return sb.toString();
 	}
 

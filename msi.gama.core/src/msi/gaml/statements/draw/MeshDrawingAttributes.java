@@ -10,22 +10,30 @@
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
+import java.awt.Color;
+
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
+import msi.gama.util.IList;
+import msi.gama.util.matrix.IField;
+import msi.gaml.operators.Colors.GamaGradient;
+import msi.gaml.operators.Colors.GamaPalette;
+import msi.gaml.operators.Colors.GamaScale;
 
 public class MeshDrawingAttributes extends FileDrawingAttributes {
 
 	public static final int TRIANGULATED = 32;
 	public static final int GRAYSCALED = 64;
 	public static final int WITH_TEXT = 128;
-	public static final int SMOOTH = 256;
+	public IMeshColorProvider color;
 	public String speciesName;
 	GamaPoint dimensions;
 	GamaPoint cellSize;
 	Double scale;
-	Double noData;
+	double noData;
+	int smooth;
 
 	public MeshDrawingAttributes(final String name, final GamaColor border, final boolean isImage) {
 		super(null, isImage);
@@ -37,7 +45,37 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		speciesName = name;
 	}
 
+	public void setColors(final Object colors) {
+		if (colors instanceof GamaColor) {
+			color = new ColorBasedMeshColorProvider((GamaColor) colors);
+		} else if (colors instanceof GamaPalette) {
+			color = new PaletteBasedMeshColorProvider((GamaPalette) colors);
+		} else if (colors instanceof GamaScale) {
+			color = new ScaleBasedMeshColorProvider((GamaScale) colors);
+		} else if (colors instanceof GamaGradient) {
+			color = new GradientBasedMeshColorProvider((GamaGradient) colors);
+		} else if (colors instanceof IList) {
+			if (((IList) colors).get(0) instanceof IField) {
+				// We have bands
+				color = new BandsBasedMeshColorProvider((IList<IField>) colors);
+			} else {
+				color = new ListBasedMeshColorProvider((IList<Color>) colors);
+			}
+		} else if (isGrayscaled()) {
+			color = IMeshColorProvider.GRAYSCALE;
+		} else {
+			color = IMeshColorProvider.DEFAULT;
+		}
+	}
+
 	// Rules are a bit different for the fill color for fields.
+
+	public IMeshColorProvider getColorProvider() {
+		if (isSet(SELECTED)) return new ColorBasedMeshColorProvider(SELECTED_COLOR);
+		if (highlight != null) return new ColorBasedMeshColorProvider(highlight);
+		if (isSet(EMPTY)) return null;
+		return color;
+	}
 
 	@Override
 	public GamaColor getColor() {
@@ -108,6 +146,7 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	}
 
 	public void setGrayscaled(final Boolean grayScaled2) {
+		if (color == null) { color = new GrayscaleMeshColorProvider(); }
 		setFlag(GRAYSCALED, grayScaled2);
 	}
 
@@ -119,23 +158,24 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		setFlag(WITH_TEXT, showText);
 	}
 
-	public boolean isTextured() {
-		return getTextures() != null;
+	public void setSmooth(final int smooth) {
+		this.smooth = smooth;
 	}
 
-	public void setSmooth(final Boolean smooth) {
-		setFlag(SMOOTH, smooth);
+	public int getSmooth() {
+		return smooth;
 	}
 
-	public boolean isSmooth() {
-		return isSet(SMOOTH);
-	}
-
-	public void setNoData(final Double noData) {
+	public void setNoData(final double noData) {
 		this.noData = noData;
 	}
 
-	public Double getNoDataValue() {
+	public double getNoDataValue() {
 		return noData;
+	}
+
+	public void setTransparency(final Double transparency) {
+		// TODO Auto-generated method stub
+
 	}
 }

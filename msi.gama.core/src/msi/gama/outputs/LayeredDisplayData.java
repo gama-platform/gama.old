@@ -806,7 +806,7 @@ public class LayeredDisplayData {
 		// this facet is deprecated...
 		if (light3 != null) {
 			setLightActive(1, true);
-			setLightDirection(1, (GamaPoint) Cast.asPoint(scope, light3.value(scope)));
+			setLightDirection(1, Cast.asPoint(scope, light3.value(scope)));
 		}
 
 		final IExpression drawLights = facets.getExpr(IKeyword.DRAW_DIFFUSE_LIGHT);
@@ -841,7 +841,7 @@ public class LayeredDisplayData {
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraUp = facets.getExpr(IKeyword.CAMERA_ORIENTATION);
 		if (cameraUp != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraUp.value(scope));
+			final GamaPoint location = Cast.asPoint(scope, cameraUp.value(scope));
 			location.setY(-location.getY()); // y component need to be reverted
 			setCameraOrientation(location);
 		}
@@ -891,7 +891,7 @@ public class LayeredDisplayData {
 
 		final IExpression camera = facets.getExpr(IKeyword.CAMERA_LOCATION);
 		if (camera != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
+			final GamaPoint location = Cast.asPoint(scope, camera.value(scope));
 			location.y = -location.y; // y component need to be reverted
 			setCameraPos(location);
 			constantCamera = camera.isConst();
@@ -900,7 +900,7 @@ public class LayeredDisplayData {
 
 		final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_TARGET);
 		if (cameraLook != null) {
-			final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
+			final GamaPoint location = Cast.asPoint(scope, cameraLook.value(scope));
 			location.setY(-location.getY()); // y component need to be reverted
 			setCameraLookPos(location);
 			constantCameraLook = cameraLook.isConst();
@@ -955,7 +955,7 @@ public class LayeredDisplayData {
 		if (!constantCamera) {
 			final IExpression camera = facets.getExpr(IKeyword.CAMERA_LOCATION);
 			if (camera != null) {
-				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, camera.value(scope));
+				final GamaPoint location = Cast.asPoint(scope, camera.value(scope));
 				if (location != null) {
 					location.y = -location.y; // y component need to be
 				}
@@ -968,7 +968,7 @@ public class LayeredDisplayData {
 		if (!constantCameraLook) {
 			final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_TARGET);
 			if (cameraLook != null) {
-				final GamaPoint location = (GamaPoint) Cast.asPoint(scope, cameraLook.value(scope));
+				final GamaPoint location = Cast.asPoint(scope, cameraLook.value(scope));
 				if (location != null) {
 					location.setY(-location.getY()); // y component need to be
 				}

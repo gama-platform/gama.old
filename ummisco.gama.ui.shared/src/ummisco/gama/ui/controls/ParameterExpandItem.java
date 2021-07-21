@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
@@ -25,7 +25,6 @@ import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.ItemList;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -44,7 +43,7 @@ public class ParameterExpandItem extends Item {
 	int visiblePosition = -1;
 	int selectablePosition = -1;
 	int closePosition = -1;
-	Color backgroundColor = ThemeHelper.isDark() ? IGamaColors.DARK_GRAY.color() : IGamaColors.VERY_LIGHT_GRAY.color();
+	Color headerColor = ThemeHelper.isDark() ? IGamaColors.DARK_GRAY.color() : IGamaColors.VERY_LIGHT_GRAY.color();
 
 	private static int imageHeight = 16, imageWidth = 16;
 	boolean isPaused = false;
@@ -54,7 +53,7 @@ public class ParameterExpandItem extends Item {
 	private static final int TEXT_INSET = 4;
 	private static final int SEPARATION = 3;
 	static final int BORDER = 4;
-	static final int CHEVRON_SIZE = 24;
+	static final int CHEVRON_SIZE = 20;
 
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style,
 			final GamaUIColor color) {
@@ -64,9 +63,7 @@ public class ParameterExpandItem extends Item {
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style, final int index,
 			final GamaUIColor color) {
 		super(parent, style);
-		if (color != null) {
-			backgroundColor = color.color();
-		}
+		if (color != null) { headerColor = color.color(); }
 		this.parent = parent;
 		setData(data);
 		parent.createItem(this, style, index);
@@ -74,10 +71,8 @@ public class ParameterExpandItem extends Item {
 
 	@Override
 	public void dispose() {
-		if (isDisposed()) { return; }
-		if (parent != null) {
-			parent.destroyItem(this);
-		}
+		if (isDisposed()) return;
+		if (parent != null) { parent.destroyItem(this); }
 		super.dispose();
 		if (control != null) {
 			control.dispose();
@@ -88,13 +83,15 @@ public class ParameterExpandItem extends Item {
 	}
 
 	void drawItem(final GC gc, final boolean drawHover) {
-		if (parent == null) { return; }
+		if (parent == null) return;
 		final var headerHeight = parent.bandHeight;
-		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
-		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
-		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6, 6);
-		gc.setBackground(backgroundColor);
-		gc.fillRoundRectangle(x, y, width, headerHeight, 6, 6);
+		// gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		// gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		// gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6,
+		// 6);
+		control.setBackground(this.parent.getBackground());
+		gc.setBackground(headerColor);
+		gc.fillRoundRectangle(x + 1, y, width - 2, headerHeight, 6, 6);
 		if (drawHover) {
 			gc.setForeground(IGamaColors.GRAY_LABEL.color());
 			gc.drawRoundRectangle(x + 1, y + 1, width - 2, headerHeight - 2, 6, 6);
@@ -144,10 +141,10 @@ public class ParameterExpandItem extends Item {
 			} else {
 				title = getText();
 			}
-			gc.setFont(GamaFonts.getExpandfont());
+			// gc.setFont(GamaFonts.getExpandfont());
 			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			var size = gc.stringExtent(title);
-			gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
+			gc.setForeground(GamaColors.getTextColorForBackground(headerColor).color());
 			gc.drawString(title, drawX, y + (headerHeight - size.y) / 2, true);
 			if (other != null) {
 				final var j = other.indexOf(ItemList.ERROR_CODE);
@@ -163,7 +160,7 @@ public class ParameterExpandItem extends Item {
 					other = other.substring(l + 1);
 					gc.setForeground(IGamaColors.WARNING.color());
 				} else {
-					gc.setForeground(GamaColors.getTextColorForBackground(backgroundColor).color());
+					gc.setForeground(GamaColors.getTextColorForBackground(headerColor).color());
 				}
 				drawX += size.x + 2 * SEPARATION;
 				size = gc.stringExtent(other);
@@ -185,27 +182,23 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public int getHeaderHeight() {
-		if (parent == null) { return imageHeight; }
+		if (parent == null) return imageHeight;
 		return Math.max(parent.bandHeight, imageHeight);
 	}
 
 	int getPreferredWidth(final GC gc) {
 		var width = ParameterExpandItem.TEXT_INSET * 2 + ParameterExpandItem.CHEVRON_SIZE;
-		if (getImage() != null) {
-			width += ParameterExpandItem.TEXT_INSET + imageWidth;
-		}
+		if (getImage() != null) { width += ParameterExpandItem.TEXT_INSET + imageWidth; }
 		if (getText().length() > 0) {
-			gc.setFont(GamaFonts.getExpandfont());
+			// gc.setFont(GamaFonts.getExpandfont());
 			width += gc.stringExtent(getText()).x;
 		}
-		if (control != null) {
-			width += control.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-		}
+		if (control != null) { width += control.computeSize(SWT.DEFAULT, SWT.DEFAULT).x; }
 		return width;
 	}
 
 	void redraw() {
-		if (parent == null) { return; }
+		if (parent == null) return;
 		final var headerHeight = parent.bandHeight;
 		if (imageHeight > headerHeight) {
 			parent.redraw(x + TEXT_INSET, y + headerHeight - imageHeight, imageWidth, imageHeight, false);
@@ -216,13 +209,11 @@ public class ParameterExpandItem extends Item {
 	void setBounds(final int x, final int y, final int width, final int height, final boolean move,
 			final boolean size) {
 		redraw();
-		if (parent == null) { return; }
+		if (parent == null) return;
 		final var headerHeight = parent.bandHeight;
 		var y1 = y;
 		if (move) {
-			if (imageHeight > headerHeight) {
-				y1 += imageHeight - headerHeight;
-			}
+			if (imageHeight > headerHeight) { y1 += imageHeight - headerHeight; }
 			this.x = x;
 			this.y = y1;
 			redraw();
@@ -233,15 +224,11 @@ public class ParameterExpandItem extends Item {
 			redraw();
 		}
 		if (control != null && !control.isDisposed()) {
-			if (move) {
-				control.setLocation(x + BORDER, y + headerHeight);
-			}
+			if (move) { control.setLocation(x + BORDER, y + headerHeight); }
 			if (size) {
 				var w = width - 2 * BORDER;
 				var h = height + BORDER;
-				if (control.getVerticalBar() != null) {
-					w = w - control.getVerticalBar().getSize().x;
-				}
+				if (control.getVerticalBar() != null) { w = w - control.getVerticalBar().getSize().x; }
 				if (control.getHorizontalBar() != null && control.getHorizontalBar().isVisible()) {
 
 					h = h - 2 * control.getHorizontalBar().getSize().y;
@@ -271,12 +258,8 @@ public class ParameterExpandItem extends Item {
 	 */
 	public void setControl(final Composite control) {
 		if (control != null) {
-			if (control.isDisposed()) {
-				SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-			}
-			if (control.getParent() != parent) {
-				SWT.error(SWT.ERROR_INVALID_PARENT);
-			}
+			if (control.isDisposed()) { SWT.error(SWT.ERROR_INVALID_ARGUMENT); }
+			if (control.getParent() != parent) { SWT.error(SWT.ERROR_INVALID_PARENT); }
 		}
 		this.control = control;
 		if (control != null) {
@@ -284,7 +267,7 @@ public class ParameterExpandItem extends Item {
 			final var headerHeight = parent.bandHeight;
 			control.setBounds(x + BORDER, y + headerHeight, Math.max(0, width - 2 * BORDER),
 					Math.max(0, height + BORDER));
-			// control.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+
 		}
 	}
 
@@ -301,7 +284,7 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 */
 	public void setExpanded(final boolean expanded) {
-		if (parent == null) { return; }
+		if (parent == null) return;
 		// checkWidget();
 		this.expanded = expanded;
 		if (onExpandBlock != null) {
@@ -312,9 +295,7 @@ public class ParameterExpandItem extends Item {
 				for (final Control c : control.getChildren()) {
 					c.dispose();
 				}
-				if (control instanceof ScrolledComposite) {
-					((ScrolledComposite) control).setContent(null);
-				}
+				if (control instanceof ScrolledComposite) { ((ScrolledComposite) control).setContent(null); }
 			}
 		}
 		parent.showItem(this);
@@ -346,11 +327,9 @@ public class ParameterExpandItem extends Item {
 	 *            the new height
 	 */
 	public void setHeight(final int height) {
-		if (height < 0) { return; }
+		if (height < 0) return;
 		setBounds(0, 0, width, height, false, true);
-		if (expanded && parent != null) {
-			parent.layoutItems(parent.indexOf(this) + 1, true);
-		}
+		if (expanded && parent != null) { parent.layoutItems(parent.indexOf(this) + 1, true); }
 	}
 
 	@Override
@@ -368,22 +347,22 @@ public class ParameterExpandItem extends Item {
 	}
 
 	public boolean closeRequested(final int x2, final int y2) {
-		if (closePosition == -1) { return false; }
+		if (closePosition == -1) return false;
 		return clickIn(x2, y2, x + closePosition);
 	}
 
 	public boolean pauseRequested(final int x2, final int y2) {
-		if (pausePosition == -1) { return false; }
+		if (pausePosition == -1) return false;
 		return clickIn(x2, y2, x + pausePosition);
 	}
 
 	public boolean visibleRequested(final int x2, final int y2) {
-		if (visiblePosition == -1) { return false; }
+		if (visiblePosition == -1) return false;
 		return clickIn(x2, y2, x + visiblePosition);
 	}
 
 	public boolean selectableRequested(final int x2, final int y2) {
-		if (selectablePosition == -1) { return false; }
+		if (selectablePosition == -1) return false;
 		return clickIn(x2, y2, x + selectablePosition);
 	}
 
@@ -391,9 +370,7 @@ public class ParameterExpandItem extends Item {
 	 * @param itemDisplayColor
 	 */
 	public void setColor(final java.awt.Color color) {
-		if (color != null) {
-			backgroundColor = GamaColors.get(color).color();
-		}
+		if (color != null) { headerColor = GamaColors.get(color).color(); }
 	}
 
 	public void onExpand(final Runnable r) {

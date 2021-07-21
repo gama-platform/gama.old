@@ -161,9 +161,8 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Predicate withAgentCause(final Predicate predicate, final IAgent agent) throws GamaRuntimeException {
-		final Predicate temp = predicate.copy();
-		temp.setAgentCause(agent);
-		return temp;
+		predicate.setAgentCause(agent);
+		return predicate;
 	}
 
 	@operator (
@@ -178,9 +177,8 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Predicate withTruth(final Predicate predicate, final Boolean truth) throws GamaRuntimeException {
-		final Predicate temp = predicate.copy();
-		temp.is_true = truth;
-		return temp;
+		predicate.is_true = truth;
+		return predicate;
 	}
 
 	@operator (
@@ -195,9 +193,8 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Predicate withValues(final Predicate predicate, final IMap values) throws GamaRuntimeException {
-		final Predicate temp = predicate.copy();
-		temp.setValues(values);
-		return temp;
+		predicate.setValues(values);
+		return predicate;
 	}
 
 	@operator (
@@ -212,14 +209,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Predicate addValues(final Predicate predicate, final IMap values) throws GamaRuntimeException {
-		final Predicate temp = predicate.copy();
-		final Map<String, Object> tempValues = temp.getValues();
+		if (values != null && predicate != null)
+			predicate.getValues().putAll(values);
+		return predicate;
+		/*final Predicate temp = predicate.copy();
+		final Map<String, Object> tempValues = predicate.getValues();
 		final Set<String> keys = values.keySet();
 		for (final String k : keys) {
 			tempValues.put(k, values.get(k));
 		}
 		temp.setValues(tempValues);
-		return temp;
+		return temp;*/
 	}
 
 	@operator (
@@ -234,9 +234,8 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Predicate not(final Predicate pred1) {
-		final Predicate tempPred = pred1.copy();
-		tempPred.setIs_True(!pred1.getIs_True());
-		return tempPred;
+		pred1.setIs_True(!pred1.getIs_True());
+		return pred1;
 	}
 
 	@operator (

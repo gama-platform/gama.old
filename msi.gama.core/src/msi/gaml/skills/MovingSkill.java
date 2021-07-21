@@ -1129,7 +1129,7 @@ public class MovingSkill extends Skill {
 		}
 		if (currentLocation.equals(falseTarget)) {
 
-			currentLocation = (GamaPoint) Cast.asPoint(scope, path.getEndVertex());
+			currentLocation = Cast.asPoint(scope, path.getEndVertex());
 			index++;
 		}
 		path.setIndexSegementOf(agent, indexSegment);
@@ -1271,7 +1271,7 @@ public class MovingSkill extends Skill {
 		}
 		if (currentLocation.equals(falseTarget)) {
 
-			currentLocation = (GamaPoint) Cast.asPoint(scope, path.getEndVertex());
+			currentLocation = Cast.asPoint(scope, path.getEndVertex());
 			index++;
 		}
 		path.setIndexSegementOf(agent, indexSegment);

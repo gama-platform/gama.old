@@ -55,7 +55,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return null;
 	}
 
-	private double[] matrix;
+	protected double[] matrix;
 
 	public GamaFloatMatrix(final double[] mat) {
 		super(1, mat.length, Types.FLOAT);
@@ -241,8 +241,6 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	@Override
 	public void _putAll(final IScope scope, final Object o) throws GamaRuntimeException {
-		// TODO Exception if o == null
-		// TODO Verify the type
 		Arrays.fill(getMatrix(), Types.FLOAT.cast(scope, o, null, false));
 
 	}

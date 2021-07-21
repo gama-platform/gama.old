@@ -11,6 +11,13 @@
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
 
+import static org.eclipse.jface.layout.GridDataFactory.swtDefaults;
+import static org.eclipse.jface.layout.GridLayoutFactory.fillDefaults;
+import static org.eclipse.swt.SWT.BEGINNING;
+import static org.eclipse.swt.SWT.DOUBLE_BUFFERED;
+import static org.eclipse.swt.SWT.FILL;
+import static org.eclipse.swt.SWT.NO_BACKGROUND;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +36,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -44,6 +50,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		DEBUG.OFF();
 	}
 	final int thumbWidth = 6;
+	final int thumbHeight = 13;
+	final int panelHeight = 3;
 	final Composite parent;
 	final Thumb thumb;
 
@@ -51,50 +59,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	boolean mouseDown = false;
 	private int sliderHeight;
 	private Double step = null;
-
-	public class Thumb extends Canvas implements PaintListener {
-
-		final Color color;
-
-		public Thumb(final Composite parent, final Color thumbColor) {
-			super(parent, SWT.NO_BACKGROUND);
-			color = thumbColor;
-			addPaintListener(this);
-			final GridData d = new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
-			d.minimumHeight = 13;
-			d.minimumWidth = thumbWidth;
-			d.widthHint = thumbWidth;
-			setLayoutData(d);
-		}
-
-		@Override
-		public boolean forceFocus() {
-			return true;
-		}
-
-		@Override
-		public Rectangle getBounds() {
-			return new Rectangle(0, 0, thumbWidth, 13);
-		}
-
-		@Override
-		public Point computeSize(final int w, final int h) {
-			return new Point(6, 13);
-		}
-
-		@Override
-		public void paintControl(final PaintEvent e) {
-			final GC gc = e.gc;
-			final Rectangle r = getClientArea();
-			gc.setBackground(getParent().getBackground());
-			gc.fillRectangle(r);
-			final int height = parent.getSize().y;
-			final double y = (height - 13d) / 2;
-			gc.setBackground(color);
-			gc.fillRoundRectangle(0, (int) y, thumbWidth, 13, 3, 3);
-		}
-
-	}
 
 	private IToolTipProvider toolTipInterperter;
 	private final List<IPositionChangeListener> positionChangedListeners = new ArrayList<>();
@@ -108,21 +72,11 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	private boolean notify = true;
 	private final IPositionChangeListener popupListener = (slider, position) -> popup.display();
 
-	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor, final Color thumbColor) {
-		this(parent, leftColor, rightColor, thumbColor, true);
-	}
-
 	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor, final Color thumbColor,
 			final boolean withPopup) {
 		super(parent, SWT.DOUBLE_BUFFERED);
 		this.parent = parent;
-		final GridLayout gl = new GridLayout(3, false);
-		gl.horizontalSpacing = 0;
-		gl.verticalSpacing = 0;
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		setLayout(gl);
-
+		fillDefaults().numColumns(3).spacing(0, 0).applyTo(this);
 		leftRegion = new Panel(this, leftColor);
 		leftRegion.addMouseListener(new MouseAdapter() {
 
@@ -138,9 +92,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			}
 		});
 		leftRegion.addMouseMoveListener(e -> {
-			if (mouseDown) {
-				moveThumbHorizontally(e.x - thumbWidth / 2);
-			}
+			if (mouseDown) { moveThumbHorizontally(e.x - thumbWidth / 2); }
 		});
 		thumb = new Thumb(this, thumbColor);
 		thumb.addMouseListener(new MouseAdapter() {
@@ -157,9 +109,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			}
 		});
 		thumb.addMouseMoveListener(e -> {
-			if (mouseDown) {
-				moveThumbHorizontally(leftRegion.getBounds().width + e.x - thumbWidth / 2);
-			}
+			if (mouseDown) { moveThumbHorizontally(leftRegion.getBounds().width + e.x - thumbWidth / 2); }
 		});
 
 		rightRegion = new Panel(this, rightColor, true);
@@ -213,9 +163,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	public void addPositionChangeListener(final IPositionChangeListener listener) {
 		synchronized (positionChangedListeners) {
-			if (!positionChangedListeners.contains(listener)) {
-				positionChangedListeners.add(listener);
-			}
+			if (!positionChangedListeners.contains(listener)) { positionChangedListeners.add(listener); }
 		}
 	}
 
@@ -228,7 +176,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	private void updatePositionListeners(final double perc) {
-		if (!notify) { return; }
+		if (!notify) return;
 		if (Math.abs(perc - previousPosition) > 0.000001) {
 			final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
 			while (iter.hasNext()) {
@@ -241,59 +189,13 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		final int width = getClientArea().width - thumbWidth;
 		int pos = x < 0 ? 0 : x > width ? width : x;
 		double percentage = pos / (double) width;
-
-		if (step != null) {
-			percentage = Math.round(percentage / step) * step;
-		}
+		if (step != null) { percentage = Math.round(percentage / step) * step; }
 		pos = (int) (percentage * width);
 		thumb.setFocus();
 		leftRegion.updatePosition(pos);
 		layout();
 		updatePositionListeners(percentage);
 		previousPosition = percentage;
-
-	}
-
-	private class Panel extends Canvas implements PaintListener {
-
-		private final GridData gd;
-		private final Color color;
-
-		public Panel(final Composite parent, final Color color) {
-			this(parent, color, false);
-		}
-
-		public Panel(final Composite parent, final Color color, final boolean lastFillerRegion) {
-			super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
-			gd = new GridData(lastFillerRegion ? SWT.FILL : SWT.BEGINNING, SWT.BEGINNING, lastFillerRegion, false);
-			gd.minimumHeight = 4;
-			this.color = color;
-			setLayoutData(gd);
-			addPaintListener(this);
-		}
-
-		void updatePosition(final int value) {
-			gd.minimumWidth = value;
-			gd.widthHint = value;
-		}
-
-		/**
-		 * Method paintControl()
-		 *
-		 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-		 */
-		@Override
-		public void paintControl(final PaintEvent e) {
-			final GC gc = e.gc;
-			final Rectangle r = getClientArea();
-			gc.setBackground(getParent().getBackground());
-			gc.fillRectangle(r);
-			gc.setBackground(color);
-			r.y = (int) ((double) parent.getSize().y / 2 - 2d);
-			r.height = 3;
-			gc.fillRoundRectangle(r.x, r.y, r.width, r.height, 3, 3);
-		}
-
 	}
 
 	/**
@@ -303,19 +205,12 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	 *            between 0 and 1 (i.e 0% to 100%)
 	 */
 	public void updateSlider(final double p, final boolean n) {
-		checkWidget();
-
 		double percentage = p;
-		if (step != null) {
-			percentage = Math.round(percentage / step) * step;
-		}
+		if (step != null) { percentage = Math.round(percentage / step) * step; }
 		this.notify = n;
 		if (percentage < 0) {
 			percentage = 0;
-		} else if (percentage > 1) {
-			percentage = 1;
-		}
-
+		} else if (percentage > 1) { percentage = 1; }
 		final int usefulWidth = getClientArea().width - thumbWidth;
 		final int width = (int) Math.round(usefulWidth * percentage);
 		moveThumbHorizontally(width);
@@ -385,9 +280,84 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	public void setStep(final Double realStep) {
-		if (realStep != null && realStep > 0d) {
-			step = realStep;
+		if (realStep != null && realStep > 0d) { step = realStep; }
+	}
+
+	public class Thumb extends Canvas implements PaintListener {
+
+		final Color color;
+
+		public Thumb(final Composite parent, final Color thumbColor) {
+			super(parent, NO_BACKGROUND);
+			color = thumbColor;
+			addPaintListener(this);
+			swtDefaults().hint(thumbWidth, thumbHeight).minSize(thumbWidth, thumbHeight).align(BEGINNING, SWT.FILL)
+					.grab(false, true).applyTo(this);
 		}
+
+		@Override
+		public boolean forceFocus() {
+			return true;
+		}
+
+		@Override
+		public Point computeSize(final int w, final int h) {
+			return new Point(thumbWidth, thumbHeight);
+		}
+
+		@Override
+		public void paintControl(final PaintEvent e) {
+			final GC gc = e.gc;
+			// DEBUG.OUT("Thumb bounds " + getBounds() + " client area: " + getClientArea() + " gc clipping: "
+			// + gc.getClipping());
+			final Rectangle r = gc.getClipping();
+			gc.setBackground(getParent().getBackground());
+			gc.fillRectangle(r);
+			gc.setBackground(color);
+			gc.fillRoundRectangle(0, (r.height - thumbHeight) / 2 + 1, thumbWidth, thumbHeight, 3, 3);
+		}
+	}
+
+	private class Panel extends Canvas implements PaintListener {
+
+		private final GridData gd;
+		private final Color color;
+
+		public Panel(final Composite parent, final Color color) {
+			this(parent, color, false);
+		}
+
+		public Panel(final Composite parent, final Color color, final boolean last) {
+			super(parent, DOUBLE_BUFFERED | NO_BACKGROUND);
+			gd = swtDefaults().minSize(0, panelHeight).align(last ? FILL : BEGINNING, BEGINNING).grab(last, false)
+					.create();
+			this.color = color;
+			setLayoutData(gd);
+			addPaintListener(this);
+		}
+
+		void updatePosition(final int value) {
+			gd.minimumWidth = value;
+			gd.widthHint = value;
+		}
+
+		/**
+		 * Method paintControl()
+		 *
+		 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
+		 */
+		@Override
+		public void paintControl(final PaintEvent e) {
+			final GC gc = e.gc;
+			// DEBUG.OUT("Panel bounds " + getBounds() + " client area: " + getClientArea() + " gc clipping: "
+			// + gc.getClipping() + " parent bounds " + parent.getBounds() + " parent size " + parent.getSize());
+			final Rectangle r = gc.getClipping();
+			gc.setBackground(getParent().getBackground());
+			gc.fillRectangle(r);
+			gc.setBackground(color);
+			gc.fillRoundRectangle(r.x, (int) ((double) r.height / 2 - 1d), r.width, panelHeight, 3, 3);
+		}
+
 	}
 
 }

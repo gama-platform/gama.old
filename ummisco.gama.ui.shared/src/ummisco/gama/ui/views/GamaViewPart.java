@@ -155,13 +155,11 @@ public abstract class GamaViewPart extends ViewPart
 					}
 				}
 			}
-		} else {
-			if (shouldBeClosedWhenNoExperiments()) {
-				WorkbenchHelper.asyncRun(() -> {
-					if (shouldBeClosedWhenNoExperiments()) { close(GAMA.getRuntimeScope()); }
-				});
+		} else if (shouldBeClosedWhenNoExperiments()) {
+			WorkbenchHelper.asyncRun(() -> {
+				if (shouldBeClosedWhenNoExperiments()) { close(GAMA.getRuntimeScope()); }
+			});
 
-			}
 		}
 		addOutput(out);
 	}
@@ -228,13 +226,10 @@ public abstract class GamaViewPart extends ViewPart
 		if (out == null) return;
 		if (!outputs.contains(out)) {
 			outputs.add(out);
-		} else {
-			if (toolbar != null) {
-				toolbar.wipe(SWT.LEFT, true);
-				toolbar.wipe(SWT.RIGHT, true);
-				GamaToolbarFactory.buildToolbar(GamaViewPart.this, toolbar);
-			}
-
+		} else if (toolbar != null) {
+			toolbar.wipe(SWT.LEFT, true);
+			toolbar.wipe(SWT.RIGHT, true);
+			GamaToolbarFactory.buildToolbar(GamaViewPart.this, toolbar);
 		}
 
 	}
@@ -250,9 +245,9 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void dispose() {
-		DEBUG.OUT("+++ Part " + this.getPartName() + " is being disposed");
+		// DEBUG.OUT("+++ Part " + this.getPartName() + " is being disposed");
 		toolbarUpdater = null;
-		WorkbenchHelper.run(() -> super.dispose());
+		WorkbenchHelper.run(super::dispose);
 
 	}
 

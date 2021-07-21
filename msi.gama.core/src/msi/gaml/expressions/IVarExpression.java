@@ -12,6 +12,7 @@ package msi.gaml.expressions;
 
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.variables.VariableExpression;
 
 /**
  * VariableExpression.

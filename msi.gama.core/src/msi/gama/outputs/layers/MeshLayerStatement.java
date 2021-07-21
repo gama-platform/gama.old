@@ -77,9 +77,9 @@ import msi.gaml.types.IType;
 						doc = @doc ("if true displays the field in wireframe using the lines color")),
 				@facet (
 						name = IKeyword.SMOOTH,
-						type = IType.BOOL,
+						type = { IType.BOOL, IType.INT },
 						optional = true,
-						doc = @doc ("Applies a simple convolution (box filter) to smooth out the terrain produced by this field. Does not change the values of course.")),
+						doc = @doc ("Applies a simple convolution (box filter) to smooth out the terrain produced by this field. If true, one pass is done with a simple 3x3 kernel. Otherwise, the user can specify the number of successive passes (up to 4). Specifying 0 is equivalent to passing false")),
 				@facet (
 						name = IKeyword.SOURCE,
 						type = { IType.FILE, IType.MATRIX, IType.SPECIES },
@@ -97,9 +97,9 @@ import msi.gaml.types.IType;
 						doc = @doc ("if true, gives a grey color to each polygon depending on its elevation (false by default). Supersedes 'color' if it is defined.")),
 				@facet (
 						name = IKeyword.COLOR,
-						type = { IType.COLOR, IType.LIST },
+						type = { IType.COLOR, IType.LIST, IType.MAP },
 						optional = true,
-						doc = @doc ("if true, and if neither 'grayscale' or 'texture' are specified, displays the field in the given color")),
+						doc = @doc ("if true, and if neither 'grayscale' or 'texture' are specified, displays the field using the given color or colors. List of colors, palettes (with interpolation), gradients and scales are supported")),
 				@facet (
 						name = IKeyword.TRIANGULATION,
 						type = IType.BOOL,

@@ -19,6 +19,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.IVarDescriptionUser;
+import msi.gaml.expressions.types.TypeExpression;
 import msi.gaml.types.IType;
 
 /**

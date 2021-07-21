@@ -4851,7 +4851,7 @@ public abstract class Spatial {
 				double sumNull = 0;
 				int nbNull = 0;
 				for (final Object obj : points.keySet()) {
-					final GamaPoint pt = (GamaPoint) Cast.asPoint(scope, obj);
+					final GamaPoint pt = Cast.asPoint(scope, obj);
 					final double dist = scope.getTopology().distanceBetween(scope, geom, pt);
 					if (dist == 0) {
 						nbNull++;

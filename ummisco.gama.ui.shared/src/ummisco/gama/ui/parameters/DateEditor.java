@@ -14,8 +14,10 @@ package ummisco.gama.ui.parameters;
 import java.awt.Color;
 import java.time.LocalDateTime;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -29,7 +31,6 @@ import msi.gama.util.GamaDate;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.resources.IGamaColors;
 
 public class DateEditor extends AbstractEditor<GamaDate> {
 
@@ -62,13 +63,16 @@ public class DateEditor extends AbstractEditor<GamaDate> {
 		pointEditorLayout.marginHeight = 0;
 		pointEditorLayout.marginWidth = 0;
 		edit.setLayout(pointEditorLayout);
-		date = new DateTime(edit, SWT.DROP_DOWN | SWT.BORDER | SWT.DATE | SWT.LONG);
-		time = new DateTime(edit, SWT.DROP_DOWN | SWT.BORDER | SWT.TIME | SWT.LONG);
-		date.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		date = new DateTime(edit, SWT.DROP_DOWN | SWT.DATE | SWT.LONG);
+		time = new DateTime(edit, SWT.DROP_DOWN | SWT.TIME | SWT.LONG);
+		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		date.setBackground(parent.getBackground());
 		date.addSelectionListener(this);
-		time.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		date.setLayoutData(data);
+		time.setBackground(parent.getBackground());
 		time.addSelectionListener(this);
-		edit.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
+		time.setLayoutData(GridDataFactory.copyData(data));
+		edit.setBackground(parent.getBackground());
 		displayParameterValue();
 		return edit;
 	}

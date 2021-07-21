@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
@@ -18,13 +18,11 @@ import java.util.List;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.util.FileUtils;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -50,7 +48,7 @@ public class Category extends VirtualContent<WrappedFile> {
 
 	/**
 	 * Method hasChildren()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#hasChildren()
 	 */
 	@Override
@@ -58,10 +56,10 @@ public class Category extends VirtualContent<WrappedFile> {
 		return !fileNames.isEmpty();
 	}
 
-	@Override
-	public Font getFont() {
-		return GamaFonts.getSmallFont(); // by default
-	}
+	// @Override
+	// public Font getFont() {
+	// return GamaFonts.getSmallFont(); // by default
+	// }
 
 	@Override
 	public WrappedFile getParent() {
@@ -70,21 +68,19 @@ public class Category extends VirtualContent<WrappedFile> {
 
 	/**
 	 * Method getNavigatorChildren()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getNavigatorChildren()
 	 */
 	@Override
 	public Object[] getNavigatorChildren() {
-		if (fileNames.isEmpty()) { return EMPTY; }
+		if (fileNames.isEmpty()) return EMPTY;
 		final List<LinkedFile> files = new ArrayList<>();
 		final var file = getParent().getResource();
 		final var filePath = file.getFullPath().toString();
 		final var uri = URI.createURI(filePath, false);
 		for (final String fn : fileNames) {
 			final var s = URI.decode(fn);
-			if (s.startsWith("http")) {
-				continue;
-			}
+			if (s.startsWith("http")) { continue; }
 			final var newFile = FileUtils.getFile(s, uri, true);
 			if (newFile != null) {
 				final var proxy = new LinkedFile(this, newFile, s);
@@ -96,7 +92,7 @@ public class Category extends VirtualContent<WrappedFile> {
 
 	/**
 	 * Method getImage()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
@@ -106,7 +102,7 @@ public class Category extends VirtualContent<WrappedFile> {
 
 	/**
 	 * Method getColor()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getColor()
 	 */
 	@Override

@@ -35,6 +35,7 @@ import msi.gama.util.GamaColor;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -97,7 +98,9 @@ import msi.gaml.variables.Variable;
 						type = IType.NONE,
 						optional = true,
 						doc = @doc (
-								deprecated = "Move the block of statements at the end of the parameter declaration instead",
+								// AD deprecation temporarily removed as this facet is used internally now
+								// deprecated = "Move the block of statements at the end of the parameter declaration
+								// instead",
 								value = "Provides a block of statements that will be executed whenever the value of the parameter changes")),
 				@facet (
 						name = IKeyword.ENABLES,
@@ -113,13 +116,17 @@ import msi.gaml.variables.Variable;
 						name = "slider",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. If no max or min value is defined, setting this facet to true will have no effect")),
+						doc = @doc ("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. "
+								+ "If no max or min value is defined, setting this facet to true will have no effect")),
 				@facet (
 						name = "colors",
 						type = IType.LIST,
 						of = IType.COLOR,
 						optional = true,
-						doc = @doc ("The colors of the control in the UI. An empty list has no effects. Only used for sliders and switches so far. For sliders, 3 colors will allow to specify the color of the left section, the thumb and the right section (in this order); 2 colors will define the left and right sections only (thumb will be dark green); 1 color will define the left section and the thumb. For switches, 2 colors will define the background for respectively the left 'true' and right 'false' sections. 1 color will define both backgrounds")),
+						doc = @doc ("The colors of the control in the UI. An empty list has no effects. Only used for sliders and switches so far. For sliders, "
+								+ "3 colors will allow to specify the color of the left section, the thumb and the right section (in this order); 2 colors will "
+								+ "define the left and right sections only (thumb will be dark green); 1 color will define the left section and the thumb. "
+								+ "For switches, 2 colors will define the background for respectively the left 'true' and right 'false' sections. 1 color will define both backgrounds")),
 				@facet (
 						name = IKeyword.STEP,
 						type = IType.FLOAT,
@@ -134,7 +141,8 @@ import msi.gaml.variables.Variable;
 @symbol (
 		name = { IKeyword.PARAMETER },
 		kind = ISymbolKind.PARAMETER,
-		with_sequence = false,
+		with_sequence = true,
+
 		concept = { IConcept.EXPERIMENT, IConcept.PARAMETER })
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })
@@ -159,7 +167,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
 	private Object value = UNDEFINED;
-	Number minValue, maxValue, stepValue;
+	Object minValue, maxValue;
+	Object stepValue;
 	private List amongValue;
 	final private String[] disables, enables;
 	String varName, title, category, unitLabel;
@@ -167,6 +176,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	boolean isEditable;
 	boolean canBeNull;
 	boolean isDefined = true;
+	// if true, means the target of the parameter is a variable defined in experiment
+	boolean isExperiment = false;
 	final IExpression init, among, min, max, step, slider, onChange;
 	final List<ParameterChangeListener> listeners = new ArrayList<>();
 	ActionStatement action;
@@ -178,10 +189,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		type = desc.getGamlType();
 		title = sd.getName();
 		unitLabel = getLiteral(IKeyword.UNIT);
-		final ModelDescription wd = desc.getModelDescription();
-		final VariableDescription targetedGlobalVar = wd.getAttribute(varName);
-		if (type.equals(Types.NO_TYPE)) { type = targetedGlobalVar.getGamlType(); }
-		setCategory(desc.getLitteral(IKeyword.CATEGORY));
+
 		min = getFacet(IKeyword.MIN);
 		final IScope runtimeScope = GAMA.getRuntimeScope();
 		if (min != null && min.isConst()) { getMinValue(runtimeScope); }
@@ -205,9 +213,24 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		final IExpressionDescription e = type.equals(Types.BOOL) ? getDescription().getFacet(IKeyword.ENABLES) : null;
 		disables = d != null ? d.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
 		enables = e != null ? e.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
+		final VariableDescription targetedGlobalVar = findTargetedVar(sd);
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
-
 		isEditable = !targetedGlobalVar.isNotModifiable();
+		isExperiment = targetedGlobalVar.isDefinedInExperiment();
+
+		setCategory(desc.getLitteral(IKeyword.CATEGORY));
+	}
+
+	private VariableDescription findTargetedVar(final IDescription parameterDescription) {
+		// We look first in the model to make sure that built-in parameters (like seed) are correctly retrieved
+		final ModelDescription wd = parameterDescription.getModelDescription();
+		VariableDescription targetedGlobalVar = wd.getAttribute(varName);
+		if (targetedGlobalVar == null) {
+			final ExperimentDescription ed = (ExperimentDescription) parameterDescription.getEnclosingDescription();
+			targetedGlobalVar = ed.getAttribute(varName);
+			isExperiment = true;
+		}
+		return targetedGlobalVar;
 	}
 
 	public ExperimentParameter(final IScope scope, final IParameter p) {
@@ -263,6 +286,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			setValue(scope, p.getInitialValue(scope));
 		}
 		setEditable(p.isEditable());
+		this.isExperiment = p.isDefinedInExperiment();
 	}
 
 	@Override
@@ -315,28 +339,30 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	public void setAndVerifyValue(final IScope scope, final Object val) {
 		Object newValue = val;
-		if (minValue != null) {
-			if (newValue instanceof Number) {
-				if (((Number) newValue).doubleValue() < minValue.doubleValue()) {
-					if (type.id() == IType.INT) {
-						newValue = minValue.intValue();
-					} else {
-						newValue = minValue.doubleValue();
-					}
-				}
-			}
+		if (newValue instanceof Comparable && minValue instanceof Comparable
+				&& ((Comparable) minValue).compareTo(newValue) > 0) {
+			newValue = minValue;
+		} else
+		// if (minValue != null && newValue instanceof Number
+		// && ((Number) newValue).doubleValue() < minValue.doubleValue()) {
+		// if (type.id() == IType.INT) {
+		// newValue = minValue.intValue();
+		// } else {
+		// newValue = minValue.doubleValue();
+		// }
+		// }
+		if (newValue instanceof Comparable && maxValue instanceof Comparable
+				&& ((Comparable) maxValue).compareTo(newValue) < 0) {
+			newValue = maxValue;
 		}
-		if (maxValue != null) {
-			if (newValue instanceof Number) {
-				if (((Number) newValue).doubleValue() > maxValue.doubleValue()) {
-					if (type.id() == IType.INT) {
-						newValue = maxValue.intValue();
-					} else {
-						newValue = maxValue.doubleValue();
-					}
-				}
-			}
-		}
+		// if (maxValue != null && newValue instanceof Number
+		// && ((Number) newValue).doubleValue() > maxValue.doubleValue()) {
+		// if (type.id() == IType.INT) {
+		// newValue = maxValue.intValue();
+		// } else {
+		// newValue = maxValue.doubleValue();
+		// }
+		// }
 
 		// See #3006
 		// final List among = getAmongValue(scope);
@@ -372,9 +398,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				if (NumberUtil.equalsWithTolerance(d, newDouble, tolerance)) return d;
 			}
 
-		} else {
-			if (amongValue.contains(newValue)) return newValue;
-		}
+		} else if (amongValue.contains(newValue)) return newValue;
 		return amongValue.get(0);
 	}
 
@@ -402,25 +426,27 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	public void tryToInit(final IScope scope) {
-		if (value != UNDEFINED) return;
-		if (init == null) return;
+		if (value != UNDEFINED || init == null) return;
 		setValue(scope, init.value(scope));
 
 	}
 
-	private Number drawRandomValue(final IScope scope) {
-		final double theStep = stepValue == null ? 1.0 : stepValue.doubleValue();
+	// AD TODO Will not work with points and dates for the moment
+	private Comparable drawRandomValue(final IScope scope) {
+		final double theStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
 		if (type.id() == IType.INT) {
-			final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
-			final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
+			final int theMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
+			final int theMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
 			return scope.getRandom().between(theMin, theMax, (int) theStep);
 		}
-		final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
-		final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
+		final double theMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
+		final double theMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
 		return scope.getRandom().between(theMin, theMax, theStep);
 	}
 
 	@Override
+	// AD TODO Will not work with points and dates for the moment
+
 	public Set<Object> neighborValues(final IScope scope) throws GamaRuntimeException {
 		try (Collector.AsSet<Object> neighborValues = Collector.getSet()) {
 			if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
@@ -431,16 +457,16 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				}
 				return neighborValues.items();
 			}
-			final double theStep = stepValue == null ? 1.0 : stepValue.doubleValue();
+			final double theStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
 			if (type.id() == IType.INT) {
-				final int theMin = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
-				final int theMax = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
+				final int theMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
+				final int theMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
 				final int val = Cast.asInt(scope, value(scope));
 				if (val >= theMin + (int) theStep) { neighborValues.add(val - (int) theStep); }
 				if (val <= theMax - (int) theStep) { neighborValues.add(val + (int) theStep); }
 			} else if (type.id() == IType.FLOAT) {
-				final double theMin = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
-				final double theMax = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
+				final double theMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
+				final double theMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
 				final double removeZ = Math.max(100000.0, 1.0 / theStep);
 				final double val = Cast.asFloat(null, value(scope));
 				if (val >= theMin + theStep) {
@@ -468,7 +494,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String getCategory() {
-		return category;
+		return category == null ? IParameter.Batch.super.getCategory() : category;
 	}
 
 	@Override
@@ -483,7 +509,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Object value() {
-		return GAMA.run(scope -> getValue(scope));
+		return GAMA.run(this::getValue);
 
 	}
 
@@ -493,15 +519,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public Number getMinValue(final IScope scope) {
-		if (minValue == null && min != null) { minValue = (Number) min.value(scope); }
-		return minValue;
+	public Comparable getMinValue(final IScope scope) {
+		if (minValue == null && min != null) { minValue = min.value(scope); }
+		return (Comparable) minValue;
 	}
 
 	@Override
-	public Number getMaxValue(final IScope scope) {
-		if (maxValue == null && max != null) { maxValue = (Number) max.value(scope); }
-		return maxValue;
+	public Comparable getMaxValue(final IScope scope) {
+		if (maxValue == null && max != null) { maxValue = max.value(scope); }
+		return (Comparable) maxValue;
 	}
 
 	@Override
@@ -511,9 +537,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public Number getStepValue(final IScope scope) {
-		if (stepValue == null && step != null) { stepValue = (Number) step.value(scope); }
-		return stepValue;
+	public Comparable getStepValue(final IScope scope) {
+		if (stepValue == null && step != null) { stepValue = step.value(scope); }
+		return (Comparable) stepValue;
 	}
 
 	@Override
@@ -567,10 +593,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	private String computeExplorableLabel(final IScope scope) {
 		final List l = getAmongValue(scope);
 		if (l != null) return "among " + l;
-		final Number theMax = getMaxValue(scope);
-		final Number theMin = getMinValue(scope);
-		final Number theStep = getStepValue(scope);
-		return "between " + theMin + " and " + theMax + " every " + theStep;
+		return "between " + getMinValue(scope) + " and " + getMaxValue(scope) + " every " + getStepValue(scope);
 	}
 
 	@Override
@@ -597,6 +620,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public String[] getDisablement() {
 		return this.disables;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		return isExperiment;
 	}
 
 }

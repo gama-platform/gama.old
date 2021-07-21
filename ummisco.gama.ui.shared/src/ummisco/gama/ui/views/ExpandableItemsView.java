@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views;
@@ -22,14 +22,18 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
-public abstract class ExpandableItemsView<T> extends GamaViewPart implements ItemList<T> {
+public abstract class ExpandableItemsView<T> extends GamaViewPart
+		implements ItemList<T>, IToolbarDecoratedView.Expandable {
 
 	private ParameterExpandBar viewer;
 
@@ -40,7 +44,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	}
 
 	public void createViewer(final Composite parent) {
-		if (parent == null) { return; }
+		if (parent == null) return;
 		if (viewer == null) {
 			viewer = new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(), areItemsPausable(), false, false,
 					this);
@@ -49,8 +53,9 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 				final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
 				viewer.setLayoutData(data);
 			}
+			viewer.setBackground(!ThemeHelper.isDark() ? IGamaColors.WHITE.color() : IGamaColors.DARK_GRAY.darker());
 			viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
-			viewer.setSpacing(5);
+			viewer.setSpacing(8);
 		}
 	}
 
@@ -70,12 +75,9 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
 			final Composite control, final ParameterExpandBar bar, final boolean expanded, final GamaUIColor color) {
 		final var i = buildConcreteItem(bar, data, color);
-		if (name != null) {
-			i.setText(name);
-		}
+		if (name != null) { i.setText(name); }
 		control.pack(true);
 		control.layout();
-		// control.setBackground(bar.getBackground());
 		i.setControl(control);
 		i.setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		i.setExpanded(expanded);
@@ -91,16 +93,16 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
 			final Composite control, final boolean expanded, final GamaUIColor color) {
 		createViewer(parent);
-		if (viewer == null) { return null; }
+		if (viewer == null) return null;
 		return createItem(parent, name, data, control, viewer, expanded, color);
 	}
 
 	protected ParameterExpandItem createItem(final Composite parent, final T data, final boolean expanded,
 			final GamaUIColor color) {
 		createViewer(parent);
-		if (viewer == null) { return null; }
+		if (viewer == null) return null;
 		final var control = createItemContentsFor(data);
-		if (control == null) { return null; }
+		if (control == null) return null;
 		return createItem(parent, data, control, expanded, color);
 	}
 
@@ -110,7 +112,6 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		try {
 			if (viewer != null) {
 				WorkbenchHelper.run(() -> viewer.dispose());
-
 				viewer = null;
 			}
 		} catch (final Exception e) {
@@ -132,9 +133,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 
 	@Override
 	public void setFocus() {
-		if (viewer != null) {
-			viewer.setFocus();
-		}
+		if (viewer != null) { viewer.setFocus(); }
 	}
 
 	@Override
@@ -183,7 +182,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				if (!isOpen) { return Status.CANCEL_STATUS; }
+				if (!isOpen) return Status.CANCEL_STATUS;
 				if (getViewer() != null && !getViewer().isDisposed()) {
 					getViewer().updateItemNames();
 					getViewer().updateItemColors();
@@ -199,5 +198,19 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 
 	@Override
 	public abstract void updateItemValues();
+
+	@Override
+	public void collapseAll() {
+		for (final ParameterExpandItem p : getViewer().getItems()) {
+			p.setExpanded(false);
+		}
+	}
+
+	@Override
+	public void expandAll() {
+		for (final ParameterExpandItem p : getViewer().getItems()) {
+			p.setExpanded(true);
+		}
+	}
 
 }

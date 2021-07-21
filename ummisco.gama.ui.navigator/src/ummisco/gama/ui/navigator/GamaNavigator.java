@@ -63,7 +63,8 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 import ummisco.gama.ui.views.toolbar.Selector;
 
-public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
+public class GamaNavigator extends CommonNavigator
+		implements IToolbarDecoratedView, ISelectionChangedListener, IToolbarDecoratedView.Expandable {
 	IAction link;
 	ToolItem linkItem;
 	protected Composite parent;
@@ -77,12 +78,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		getCommonViewer().addPostSelectionChangedListener(this);
 		return manager;
 	}
-
-	final GamaCommand collapseAll = new GamaCommand("action.toolbar.collapse2", "", "Collapse all folders",
-			e -> getCommonViewer().collapseAll());
-
-	final GamaCommand expandAll = new GamaCommand("action.toolbar.expand2", "", "Fully expand current folder(s)",
-			e -> getCommonViewer().expandAll());
 
 	@Override
 	public void createPartControl(final Composite compo) {
@@ -107,8 +102,6 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		linkItem.setSelection(link.isChecked());
 		tb.update(true);
 		tb.insertBefore("toolbar.toggle", byDate.toCheckAction());
-		tb.insertBefore("toolbar.toggle", expandAll.toAction());
-		tb.insertBefore(expandAll.getId(), collapseAll.toAction());
 
 		try {
 			final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
@@ -135,18 +128,16 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 					sb.append("@@");
 				}
 			}
-			if (sb.length() > 2) {
-				sb.setLength(sb.length() - 2);
-			}
+			if (sb.length() > 2) { sb.setLength(sb.length() - 2); }
 			newMemento.putString("EXPANDED_STATE", sb.toString());
 		}
 		super.saveState(newMemento);
 	}
 
 	private void restoreState() {
-		if (memento == null) { return; }
+		if (memento == null) return;
 		final String saved = memento.getString("EXPANDED_STATE");
-		if (saved == null) { return; }
+		if (saved == null) return;
 		if (GamaPreferences.Interface.KEEP_NAVIGATOR_STATE.getValue()) {
 			final List<VirtualContent<?>> contents = new ArrayList<>();
 			final String[] names = saved.split("@@");
@@ -154,14 +145,10 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				if (s.startsWith("/")) {
 					final WrappedResource<?, ?> resource = getInstance().getManager()
 							.findWrappedInstanceOf(getWorkspace().getRoot().findMember(new Path(s)));
-					if (resource != null) {
-						contents.add(resource);
-					}
+					if (resource != null) { contents.add(resource); }
 				} else {
 					final TopLevelFolder folder = getInstance().getFolder(s);
-					if (folder != null) {
-						contents.add(folder);
-					}
+					if (folder != null) { contents.add(folder); }
 				}
 			}
 			final VirtualContent<?>[] sel = contents.toArray(new VirtualContent[0]);
@@ -188,9 +175,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			Object o = ((StructuredSelection) selection).getFirstElement();
 			if (o instanceof IResource) {
 				o = NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(o);
-				if (o != null) {
-					newSelection = new StructuredSelection(o);
-				}
+				if (o != null) { newSelection = new StructuredSelection(o); }
 			}
 		}
 		if (current instanceof WrappedSyntacticContent) {
@@ -202,9 +187,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 				return;
 			}
 		}
-		if (!newSelection.isEmpty()) {
-			super.selectReveal(newSelection);
-		}
+		if (!newSelection.isEmpty()) { super.selectReveal(newSelection); }
 	}
 
 	@Override
@@ -234,9 +217,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 			final CommonViewer tree = getCommonViewer();
 			if (tree.getExpandedState(element)) {
 				final Object[] contents = ((VirtualContent<?>) element).getNavigatorChildren();
-				if (contents.length > 0) {
-					tree.reveal(contents[contents.length - 1]);
-				}
+				if (contents.length > 0) { tree.reveal(contents[contents.length - 1]); }
 			}
 		}
 	}
@@ -283,13 +264,12 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		if (PlatformHelper.isWindows() || PlatformHelper.isLinux()) {
 			tb.sep(24, SWT.RIGHT);
 			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
-			linkItem = tb.check(linkCommand, SWT.RIGHT);
 
 		} else {
 			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));
 			tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-			linkItem = tb.check(linkCommand, SWT.RIGHT);
 		}
+		linkItem = tb.check(linkCommand, SWT.RIGHT);
 	}
 
 	/**
@@ -318,6 +298,18 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		final Selector l = e -> properties.run();
 		final ToolItem t = toolbar.status(image, message, l, color, SWT.LEFT);
 		t.getControl().setToolTipText(tooltip == null ? message : tooltip);
+	}
+
+	@Override
+	public void expandAll() {
+		getCommonViewer().expandAll();
+
+	}
+
+	@Override
+	public void collapseAll() {
+		getCommonViewer().collapseAll();
+
 	}
 
 }

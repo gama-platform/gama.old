@@ -15,7 +15,6 @@ import static javax.imageio.ImageIO.createImageInputStream;
 import static javax.imageio.ImageIO.read;
 import static msi.gama.common.util.ImageUtils.toCompatibleImage;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +41,6 @@ import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.map.GridCoverageLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.renderer.GTRenderer;
-import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.ColorMap;
 import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.RasterSymbolizer;
@@ -111,27 +108,43 @@ public class ImageDataLoader {
 							}
 						}
 					} catch (Exception ex) {
-						AbstractGridCoverage2DReader reader =
-								new GeoTiffReader(file.getLocation().toFile().getAbsolutePath());// format.getReader(file,
-																									// hints);
-						GridCoverage2D grid = reader.read(null);
-						reader.dispose();
-
-						BufferedImage image = new BufferedImage(grid.getGridGeometry().getGridRange2D().width,
-								grid.getGridGeometry().getGridRange2D().height, BufferedImage.TYPE_4BYTE_ABGR);
-
-						MapContent mapContent = new MapContent();
-						mapContent.getViewport().setCoordinateReferenceSystem(grid.getCoordinateReferenceSystem());
-						Layer rasterLayer = new GridCoverageLayer(grid, createStyle(1, -0.4, 0.2));
-						mapContent.addLayer(rasterLayer);
-						GTRenderer draw = new StreamingRenderer();
-						draw.setMapContent(mapContent);
-						Graphics2D graphics = image.createGraphics();
-						draw.paint(graphics, grid.getGridGeometry().getGridRange2D(), mapContent.getMaxBounds());
-						imageData = convertToSWT(image);
-						image.flush();
-						mapContent.dispose();
-						imageData.type = SWT.IMAGE_TIFF;
+						try {
+							AbstractGridCoverage2DReader reader =
+									new GeoTiffReader(file.getLocation().toFile().getAbsolutePath());// format.getReader(file,
+																										// hints);
+							GridCoverage2D grid = reader.read(null);
+							reader.dispose();
+	
+							BufferedImage image = new BufferedImage(grid.getGridGeometry().getGridRange2D().width,
+									grid.getGridGeometry().getGridRange2D().height, BufferedImage.TYPE_4BYTE_ABGR);
+	
+							MapContent mapContent = new MapContent();
+							mapContent.getViewport().setCoordinateReferenceSystem(grid.getCoordinateReferenceSystem());
+							Layer rasterLayer = new GridCoverageLayer(grid, createStyle(1, -0.4, 0.2));
+							mapContent.addLayer(rasterLayer);
+							
+							//TODO: Patrick: I removed these lines to avoid an error with some geotiffs, but no idea of there roles
+							/*	GTRenderer draw = new StreamingRenderer();
+								draw.setMapContent(mapContent);
+								Graphics2D graphics = image.createGraphics();
+								draw.paint(graphics, grid.getGridGeometry().getGridRange2D(), mapContent.getMaxBounds());
+							*/
+								imageData = convertToSWT(image);
+								image.flush();
+								mapContent.dispose();
+								imageData.type = SWT.IMAGE_TIFF;
+						} catch (Exception e)	 {
+							try {
+								final BufferedImage image = toCompatibleImage(
+										read(new File(file.getLocation().toFile().getAbsolutePath())));
+								imageData = convertToSWT(image);
+								image.flush();
+								imageData.type =  SWT.IMAGE_TIFF;
+							} catch (final IOException e1) {
+								e1.printStackTrace();
+							}
+						}
+						
 					}
 
 					// AbstractGridFormat format = GridFormatFinder.findFormat(file);

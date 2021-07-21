@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.AbstractExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
+ * msi.gaml.expressions.AbstractExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8.1)
+ *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -32,7 +32,7 @@ public abstract class AbstractExpression implements IExpression {
 		return type == null ? Types.NO_TYPE : type;
 	}
 
-	protected final static void parenthesize(final StringBuilder sb, final IExpression... exp) {
+	public static void parenthesize(final StringBuilder sb, final IExpression... exp) {
 		if (exp.length == 1 && !exp[0].shouldBeParenthesized()) {
 			sb.append(exp[0].serialize(false));
 		} else {
@@ -40,19 +40,14 @@ public abstract class AbstractExpression implements IExpression {
 		}
 	}
 
-	protected final static String surround(final StringBuilder sb, final char first, final char last,
-			final IExpression... exp) {
+	public static String surround(final StringBuilder sb, final char first, final char last, final IExpression... exp) {
 		sb.append(first);
 		for (int i = 0; i < exp.length; i++) {
-			if (i > 0) {
-				sb.append(',');
-			}
+			if (i > 0) { sb.append(','); }
 			sb.append(exp[i] == null ? "nil" : exp[i].serialize(false));
 		}
 		final int length = sb.length();
-		if (length > 2 && sb.charAt(length - 1) == ' ') {
-			sb.setLength(length - 1);
-		}
+		if (length > 2 && sb.charAt(length - 1) == ' ') { sb.setLength(length - 1); }
 		sb.append(last);
 		// sb.append(' ');
 		return sb.toString();

@@ -720,7 +720,7 @@ public class Stats {
 					b.addValue(p.getBlue());
 				}
 				if (r.getSize() == 0) return new GamaColor(0, 0, 0, 0);
-				return new GamaColor(r.getMedian(), g.getMedian(), b.getMedian(), 0);
+				return new GamaColor((int) r.getMedian(), (int) g.getMedian(), (int) b.getMedian(), 0);
 			default:
 				final DataSet d = new DataSet();
 				for (final Object o : values.iterable(scope)) {

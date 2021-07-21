@@ -58,8 +58,8 @@ public class GamaToolbarFactory {
 	}
 
 	public static GamaComposite findGamaComposite(final Control c) {
-		if (c instanceof Shell) { return null; }
-		if (c instanceof GamaComposite) { return (GamaComposite) c; }
+		if (c instanceof Shell) return null;
+		if (c instanceof GamaComposite) return (GamaComposite) c;
 		return findGamaComposite(c.getParent());
 	}
 
@@ -72,6 +72,32 @@ public class GamaToolbarFactory {
 		}
 
 		protected abstract void setIcon(boolean show);
+
+	}
+
+	public static class ExpandAll extends Action {
+
+		ExpandAll() {
+			super("Expand all items", IAction.AS_PUSH_BUTTON);
+			setIcon();
+		}
+
+		protected void setIcon() {
+			setImageDescriptor(GamaIcons.create("action.toolbar.expand2").descriptor());
+		}
+
+	}
+
+	public static class CollapseAll extends Action {
+
+		CollapseAll() {
+			super("Collapse all items", IAction.AS_PUSH_BUTTON);
+			setIcon();
+		}
+
+		protected void setIcon() {
+			setImageDescriptor(GamaIcons.create("action.toolbar.collapse2").descriptor());
+		}
 
 	}
 
@@ -147,7 +173,7 @@ public class GamaToolbarFactory {
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		layout.marginWidth = 0;
-		final int margin = 0; // REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? -1 : 0;
+		final int margin = 1; // REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? -1 : 0;
 		layout.marginTop = margin;
 		layout.marginBottom = margin;
 		layout.marginHeight = margin;
@@ -200,6 +226,23 @@ public class GamaToolbarFactory {
 		if (site instanceof IViewSite) {
 			final IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();
 			tm.add(toggle);
+			if (view instanceof IToolbarDecoratedView.Expandable) {
+				final Action collapseAll = new CollapseAll() {
+					@Override
+					public void run() {
+						((IToolbarDecoratedView.Expandable) view).collapseAll();
+					}
+				};
+				final Action expandAll = new ExpandAll() {
+					@Override
+					public void run() {
+						((IToolbarDecoratedView.Expandable) view).expandAll();
+					}
+				};
+				tm.add(collapseAll);
+				tm.add(expandAll);
+			}
+
 			if (view instanceof IGamaView.Display) {
 				final Action toggleSideControls = new ToggleSideControls() {
 					@Override
@@ -224,9 +267,7 @@ public class GamaToolbarFactory {
 	}
 
 	public static void disposeToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
-		if (tb != null && !tb.isDisposed()) {
-			tb.dispose();
-		}
+		if (tb != null && !tb.isDisposed()) { tb.dispose(); }
 	}
 
 	public static void buildToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {

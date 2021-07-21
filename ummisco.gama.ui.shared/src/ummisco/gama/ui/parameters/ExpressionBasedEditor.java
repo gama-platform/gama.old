@@ -47,14 +47,14 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 
 	@Override
 	public Text getEditorControl() {
-		if (expression == null) { return null; }
+		if (expression == null) return null;
 		return expression.getControl();
 	}
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
-		expression = new ExpressionControl(getScope(), compo, this, getAgent(), this.getExpectedType(), SWT.BORDER,
-				evaluateExpression());
+		expression = new ExpressionControl(getScope(), compo, this, getAgent(), this.getExpectedType(),
+				SWT.NONE | SWT.FLAT, evaluateExpression());
 		return expression.getControl();
 	}
 

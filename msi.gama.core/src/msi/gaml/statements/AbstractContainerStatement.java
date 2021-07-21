@@ -17,16 +17,18 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.operators.BinaryOperator;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractContainerStatement.ContainerValidator;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -249,7 +251,6 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		final IType<?> t = list.getGamlType();
 		isDirect = t.isContainer();
 		isGraph = t.isTranslatableInto(Types.GRAPH);
-		// containerType = (IContainerType) (isDirect ? t : attributesType);
 	}
 
 	@Override
@@ -274,6 +275,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	protected Object identifyValue(final IScope scope, final IContainer.Modifiable container) {
 		if (item == null) return null;
 		// For the moment, only graphs need to recompute their objects
+		// GamaFloatMatrix and GamaField need too, as GAML happily accepts int ...
+		if (container instanceof GamaFloatMatrix) return Cast.asFloat(scope, item.value(scope));
 		if (isGraph) return buildValue(scope, (IGraph) container);
 		return item.value(scope);
 	}

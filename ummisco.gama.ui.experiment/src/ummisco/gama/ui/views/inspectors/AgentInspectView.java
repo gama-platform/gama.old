@@ -6,10 +6,12 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
+
+import static ummisco.gama.ui.resources.GamaColors.getTextColorForBackground;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -41,9 +43,7 @@ import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.AgentAttributesEditorsList;
 import ummisco.gama.ui.menus.AgentsMenu;
-import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
@@ -60,7 +60,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 			reset();
 			return;
 		}
-		if (!(output instanceof InspectDisplayOutput)) { return; }
+		if (!(output instanceof InspectDisplayOutput)) return;
 		final InspectDisplayOutput out = (InspectDisplayOutput) output;
 		final IAgent[] agents = out.getLastValue();
 		if (agents == null || agents.length == 0) {
@@ -101,11 +101,24 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 		return true;
 	}
 
+	public Label createLeftLabel(final Composite parent, final String title, final String tooltip,
+			final boolean isSubParameter) {
+		final Label label = new Label(parent, SWT.WRAP | SWT.RIGHT);
+		label.setBackground(parent.getBackground());
+		label.setForeground(getTextColorForBackground(parent.getBackground()).color());
+		final GridData d = new GridData(SWT.END, SWT.CENTER, true, true);
+		d.minimumWidth = 70;
+		d.horizontalIndent = isSubParameter ? 30 : 0;
+		label.setLayoutData(d);
+		label.setText(title);
+		label.setToolTipText(tooltip);
+		return label;
+	}
+
 	@Override
 	protected Composite createItemContentsFor(final IAgent agent) {
 		final Composite attributes = super.createItemContentsFor(agent);
-		final Label l = AbstractEditor.createLeftLabel(attributes, "Actions", false);
-		l.setFont(GamaFonts.getExpandfont());
+		createLeftLabel(attributes, "Actions", "", false);
 		final Composite composite = new Composite(attributes, SWT.NONE);
 		composite.setBackground(attributes.getBackground());
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -137,16 +150,12 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 
 	@Override
 	public boolean addItem(final IAgent agent) {
-		if (editors == null) {
-			editors = new AgentAttributesEditorsList();
-		}
+		if (editors == null) { editors = new AgentAttributesEditorsList(); }
 		updatePartName();
 		if (!editors.getCategories().containsKey(agent)) {
 			editors.add(getParametersToInspect(agent), agent);
-			// DEBUG.LOG("Asking to create the item " + agent.getName()
-			// + " in inspector");
 			final ParameterExpandItem item = createItem(getParentComposite(), agent, true, null);
-			if (item == null) { return false; }
+			if (item == null) return false;
 			return true;
 		}
 		return false;
@@ -160,19 +169,20 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 
 	private List<IParameter> getParametersToInspect(final IAgent agent) {
 		final Map<String, String> names = getOutput().getAttributes();
-		if (names == null) { return new ArrayList<IParameter>(agent.getSpecies().getVars()); }
+		if (names == null) return new ArrayList<>(agent.getSpecies().getVars());
 		final List<IParameter> params = new ArrayList<>();
 		for (final String s : names.keySet()) {
-			if (agent.getSpecies().getVar(s) != null)
+			if (agent.getSpecies().getVar(s) != null) {
 				params.add(agent.getSpecies().getVar(s));
-			else
+			} else {
 				params.add(buildAttribute(agent, s, names.get(s)));
+			}
 		}
 		return params;
 	}
 
 	private IParameter buildAttribute(final IAgent agent, final String att, final String t) {
-		final IParameter result = new ParameterAdapter(att, Types.get(t).id()) {
+		return new ParameterAdapter(att, Types.get(t).id()) {
 
 			@Override
 			public void setValue(final IScope scope, final Object value) {
@@ -195,7 +205,6 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 			}
 
 		};
-		return result;
 	}
 
 	@Override
@@ -226,16 +235,14 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 		for (final IOutput o : outputs) {
 			final InspectDisplayOutput out = (InspectDisplayOutput) o;
 			final IAgent a = out.getLastValue()[0];
-			if (a != null) {
-				names.add(a.getName());
-			}
+			if (a != null) { names.add(a.getName()); }
 		}
 		this.setPartName(firstPartName + " " + (names.isEmpty() ? "" : names.toString()));
 	}
 
 	/**
 	 * Method pauseChanged()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#pauseChanged()
 	 */
 	@Override
@@ -243,7 +250,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 
 	/**
 	 * Method synchronizeChanged()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override
@@ -251,7 +258,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 
 	/**
 	 * Method handleMenu()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override

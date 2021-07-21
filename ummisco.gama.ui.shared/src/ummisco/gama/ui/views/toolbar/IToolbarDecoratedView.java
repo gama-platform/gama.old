@@ -30,10 +30,17 @@ public interface IToolbarDecoratedView {
 
 	void createToolItems(GamaToolbar2 tb);
 
-	default void addStateListener(final StateListener listener) {};
+	default void addStateListener(final StateListener listener) {}
 
 	public interface StateListener {
 		void updateToReflectState();
+	}
+
+	public interface Expandable extends IToolbarDecoratedView {
+
+		void expandAll();
+
+		void collapseAll();
 	}
 
 	public interface Pausable extends IToolbarDecoratedView {

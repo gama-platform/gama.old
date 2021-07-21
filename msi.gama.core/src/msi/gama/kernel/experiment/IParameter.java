@@ -30,7 +30,7 @@ public interface IParameter extends IExperimentDisplayable {
 		void changed(IScope scope, Object newValue);
 	}
 
-	String[] EMPTY_STRINGS = new String[0];
+	String[] EMPTY_STRINGS = {};
 
 	void setValue(IScope scope, Object value);
 
@@ -44,9 +44,9 @@ public interface IParameter extends IExperimentDisplayable {
 
 	Object getInitialValue(IScope scope);
 
-	Number getMinValue(IScope scope);
+	Object getMinValue(IScope scope);
 
-	Number getMaxValue(IScope scope);
+	Object getMaxValue(IScope scope);
 
 	@SuppressWarnings ("rawtypes")
 	List getAmongValue(IScope scope);
@@ -57,7 +57,7 @@ public interface IParameter extends IExperimentDisplayable {
 
 	boolean acceptsSlider(IScope scope);
 
-	Number getStepValue(IScope scope);
+	Comparable getStepValue(IScope scope);
 
 	boolean isDefined();
 

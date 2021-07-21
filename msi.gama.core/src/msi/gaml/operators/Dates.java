@@ -61,7 +61,7 @@ import msi.gama.util.GamaDate;
 import msi.gama.util.GamaDateInterval;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.TimeUnitConstantExpression;
+import msi.gaml.expressions.units.TimeUnitConstantExpression;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;

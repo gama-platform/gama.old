@@ -47,7 +47,7 @@ public class Pref<T> implements IParameter {
 	T value, initial;
 	final int type;
 	List<T> values;
-	Number min, max;
+	Comparable min, max;
 	boolean slider = true; // by default
 	String[] enables, disables, refreshes;
 	Set<IPreferenceChangeListener<T>> listeners = new HashSet<>();
@@ -87,7 +87,7 @@ public class Pref<T> implements IParameter {
 		return this;
 	}
 
-	public Pref<T> between(final Number mini, final Number maxi) {
+	public Pref<T> between(final Comparable mini, final Comparable maxi) {
 		this.min = mini;
 		this.max = maxi;
 		return this;
@@ -233,12 +233,12 @@ public class Pref<T> implements IParameter {
 	}
 
 	@Override
-	public Number getMinValue(final IScope scope) {
+	public Comparable getMinValue(final IScope scope) {
 		return min;
 	}
 
 	@Override
-	public Number getMaxValue(final IScope scope) {
+	public Comparable getMaxValue(final IScope scope) {
 		return max;
 	}
 
@@ -261,7 +261,7 @@ public class Pref<T> implements IParameter {
 	public void setDefined(final boolean b) {}
 
 	@Override
-	public Number getStepValue(final IScope scope) {
+	public Comparable getStepValue(final IScope scope) {
 		return null;
 	}
 
@@ -270,7 +270,7 @@ public class Pref<T> implements IParameter {
 	 */
 	public boolean acceptChange(final T newValue) {
 		for (final IPreferenceChangeListener<T> listener : listeners) {
-			if (!listener.beforeValueChange(newValue)) { return false; }
+			if (!listener.beforeValueChange(newValue)) return false;
 		}
 		return true;
 	}
@@ -332,6 +332,11 @@ public class Pref<T> implements IParameter {
 	@Override
 	public List<GamaColor> getColor(final IScope scope) {
 		return null;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		return false;
 	}
 
 }

@@ -15,6 +15,7 @@ import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_
 import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,6 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
-import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -50,7 +50,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void ownCreatePartControl(final Composite view) {
 		final Composite intermediate = new Composite(view, SWT.NONE);
-		intermediate.setBackground(view.getBackground());
+		// intermediate.setBackground(view.getBackground());
 		final GridLayout parentLayout = new GridLayout(1, false);
 		parentLayout.marginWidth = 0;
 		parentLayout.marginHeight = 0;
@@ -65,12 +65,12 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	public void addItem(final IExperimentPlan exp) {
 		if (exp != null) {
 			experiment = exp;
-			if (!exp.hasParametersOrUserCommands()) { return; }
+			if (!exp.hasParametersOrUserCommands()) return;
 			reset();
 			final List<IExperimentDisplayable> params = new ArrayList<>(exp.getParameters().values());
 			params.addAll(exp.getExplorableParameters().values());
 			params.addAll(exp.getUserCommands());
-			params.sort(null);
+			Collections.sort(params);
 			editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
 			final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / "
 					+ StringUtils.capitalize(experiment.getDescription().getTitle());
@@ -81,65 +81,31 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		}
 	}
 
-	// @Override
-	// public void displayItems() {
-	// super.displayItems();
-	// // this.displayCommands();
-	// }
-
-	// protected void displayCommands() {
-	// toolbar.wipe(SWT.LEFT, true);
-	// final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
-	// for (final UserCommandStatement command : userCommands) {
-	// GamaUIColor color = GamaColors.get(command.getColor(GAMA.getRuntimeScope()));
-	// if (color == null)
-	// color = IGamaColors.BLUE;
-	// toolbar.button(color, command.getName(), new SelectionAdapter() {
-	//
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	//
-	// GAMA.getExperiment().getAgent().executeAction(scope -> {
-	// final Object result = command.executeOn(scope);
-	// GAMA.getExperiment().refreshAllOutputs();
-	// return result;
-	// });
-	// }
-	//
-	// }, SWT.LEFT);
-	// toolbar.sep(2, SWT.LEFT);
-	// }
-	// toolbar.refresh(true);
-	//
-	// }
-
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		tb.button(GamaIcons.create(IGamaIcons.SMALL_EXPAND).getCode(), "Collapse All", "Collapse All", e -> {
-			for (final ParameterExpandItem p : getViewer().getItems()) {
-				p.setExpanded(false);
-			}
-		}, SWT.RIGHT);
-		tb.button(GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).getCode(), "Expand All", "Expand All", e -> {
-			for (final ParameterExpandItem p : getViewer().getItems()) {
-				p.setExpanded(true);
-			}
-		}, SWT.RIGHT);
+		// tb.button(GamaIcons.create(IGamaIcons.SMALL_EXPAND).getCode(), "Collapse All", "Collapse All", e -> {
+		// for (final ParameterExpandItem p : getViewer().getItems()) {
+		// p.setExpanded(false);
+		// }
+		// }, SWT.RIGHT);
+		// tb.button(GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).getCode(), "Expand All", "Expand All", e -> {
+		// for (final ParameterExpandItem p : getViewer().getItems()) {
+		// p.setExpanded(true);
+		// }
+		// }, SWT.RIGHT);
 		tb.button(GamaIcons.create(IGamaIcons.ACTION_REVERT).getCode(), "Revert parameter values",
 				"Revert parameters to their initial values", e -> {
 					final EditorsList<?> eds = editors;
-					if (eds != null) {
-						eds.revertToDefaultValue();
-					}
+					if (eds != null) { eds.revertToDefaultValue(); }
 				}, SWT.RIGHT);
 		tb.button("menu.add2", "Add simulation",
 				"Add a new simulation (with the current parameters) to this experiment", e -> {
 					final SimulationAgent sim =
 							GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
-					if (sim == null) { return; }
+					if (sim == null) return;
 					WorkbenchHelper.runInUI("", 0, m -> {
-						if (CORE_DISPLAY_LAYOUT.getValue().equals("None")) {
+						if ("None".equals(CORE_DISPLAY_LAYOUT.getValue())) {
 							ArrangeDisplayViews.execute(IUnits.split);
 						} else {
 							ArrangeDisplayViews.execute(LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));

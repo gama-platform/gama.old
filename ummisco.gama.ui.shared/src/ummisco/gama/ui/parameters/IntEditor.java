@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.kernel.experiment.IParameter;
@@ -40,59 +39,49 @@ public class IntEditor extends NumberEditor<Integer> {
 
 	@Override
 	protected void computeStepValue() {
-		stepValue = param.getStepValue(getScope());
-		if (stepValue == null) {
-			stepValue = 1;
-		}
+		super.computeStepValue();
+		if (stepValue == null) { stepValue = 1; }
 	}
 
 	@Override
 	protected Integer applyPlus() {
-		if (currentValue == null) { return 0; }
+		if (currentValue == null) return 0;
 		final Integer i = currentValue;
-		final Integer newVal = i + stepValue.intValue();
-		return newVal;
+		return i + stepValue.intValue();
 	}
 
 	@Override
 	protected Integer applyMinus() {
-		if (currentValue == null) { return 0; }
+		if (currentValue == null) return 0;
 		final Integer i = currentValue;
-		final Integer newVal = i - stepValue.intValue();
-		return newVal;
+		return i - stepValue.intValue();
 	}
 
 	@Override
-	protected void modifyValue(final Object val) throws GamaRuntimeException {
-		final Integer i = Cast.asInt(getScope(), val);
-		if (minValue != null && i < minValue.intValue()) {
-			throw GamaRuntimeException.error("Value " + i + " should be greater than " + minValue, getScope());
-		}
-		if (maxValue != null && i > maxValue.intValue()) {
+	protected boolean modifyValue(final Object val) throws GamaRuntimeException {
+		final int i = Cast.asInt(getScope(), val);
+		if (getMinValue() != null && i < Cast.asInt(getScope(), getMinValue()))
+			throw GamaRuntimeException.error("Value " + i + " should be greater than " + getMinValue(), getScope());
+		if (maxValue != null && i > Cast.asInt(getScope(), getMaxValue()))
 			throw GamaRuntimeException.error("Value " + i + " should be smaller than " + maxValue, getScope());
-		}
-		super.modifyValue(i);
+		return super.modifyValue(i);
 	}
 
 	@Override
-	protected void checkButtons() {
-		super.checkButtons();
-		final Button plus = items[PLUS];
-		if (plus != null && !plus.isDisposed()) {
-			plus.setEnabled(param.isDefined() && (maxValue == null || applyPlus() < maxValue.intValue()));
-		}
-		final Button minus = items[MINUS];
-		if (minus != null && !minus.isDisposed()) {
-			minus.setEnabled(param.isDefined() && (minValue == null || applyMinus() > minValue.intValue()));
-		}
+	protected void updateToolbar() {
+		super.updateToolbar();
+		toolbar.enable(PLUS,
+				param.isDefined() && (getMaxValue() == null || applyPlus() < Cast.asInt(getScope(), getMaxValue())));
+		toolbar.enable(MINUS,
+				param.isDefined() && (getMinValue() == null || applyMinus() > Cast.asInt(getScope(), getMinValue())));
 	}
 
 	@Override
 	protected Integer normalizeValues() throws GamaRuntimeException {
 		final Integer valueToConsider = getOriginalValue() == null ? 0 : Cast.asInt(getScope(), getOriginalValue());
 		currentValue = getOriginalValue() == null ? null : valueToConsider;
-		minValue = minValue == null ? null : minValue.intValue();
-		maxValue = maxValue == null ? null : maxValue.intValue();
+		minValue = getMinValue() == null ? null : Cast.asInt(getScope(), getMinValue());
+		maxValue = getMaxValue() == null ? null : Cast.asInt(getScope(), getMaxValue());
 		return valueToConsider;
 	}
 

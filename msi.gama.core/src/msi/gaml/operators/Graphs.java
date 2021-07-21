@@ -22,15 +22,18 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.jgrapht.alg.clique.BronKerboschCliqueFinder;
+import org.jgrapht.alg.clustering.GirvanNewmanClustering;
+import org.jgrapht.alg.clustering.KSpanningTreeClustering;
+import org.jgrapht.alg.clustering.LabelPropagationClustering;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.drawing.FRLayoutAlgorithm2D;
 import org.jgrapht.alg.drawing.IndexedFRLayoutAlgorithm2D;
-import org.jgrapht.alg.drawing.MedianGreedyTwoLayeredBipartiteLayout2D;
 import org.jgrapht.alg.drawing.model.Box2D;
 import org.jgrapht.alg.drawing.model.LayoutModel2D;
 import org.jgrapht.alg.drawing.model.MapLayoutModel2D;
 import org.jgrapht.alg.drawing.model.Point2D;
 import org.jgrapht.alg.flow.EdmondsKarpMFImpl;
+import org.jgrapht.alg.interfaces.ClusteringAlgorithm.Clustering;
 import org.jgrapht.alg.interfaces.MaximumFlowAlgorithm.MaximumFlow;
 import org.jgrapht.generate.BarabasiAlbertGraphGenerator;
 import org.jgrapht.generate.ComplementGraphGenerator;
@@ -2913,4 +2916,85 @@ public class Graphs {
 		return generateGraphComplete(scope, nbNodes,directed, (ISpecies)null, (ISpecies)null);
 		
 	}
+	
+
+	@operator (
+			value = "girvan_newman_clustering",
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH })
+	@doc (
+			value = "The Girvan–Newman algorithm is a hierarchical method used to detect communities. It detects communities by progressively removing edges from the original network."
+					+ "It returns a list of list of vertices and takes as operand the graph and the number of clusters")
+	@no_test
+	public static IList GirvanNewmanClustering(final IScope scope, final IGraph graph, final int numCLusters) {
+		if (graph.getVertices().isEmpty() || graph.getEdges().isEmpty()) {
+			IList<IGraph> emptyL = GamaListFactory.create(Types.GRAPH);
+			emptyL.add((IGraph) graph.copy(scope));
+			return emptyL;
+		}
+		
+		GirvanNewmanClustering clustering = new GirvanNewmanClustering(graph, numCLusters);
+		Clustering clusters = clustering.getClustering();
+		IList clustersV = GamaListFactory.create(Types.LIST);
+		for (Object s : clusters.getClusters()) {
+			clustersV.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) s));
+		}
+		return clustersV;
+	}
+	
+	
+	@operator (
+			value = "k_spanning_tree_clustering",
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH })
+	@doc (
+			value = "The algorithm finds a minimum spanning tree T using Prim's algorithm, then executes Kruskal's"
+					+ " algorithm only on the edges of T until k trees are formed. The resulting trees are the final"
+					+ " clusters."
+					+ "It returns a list of list of vertices and takes as operand the graph and the number of clusters")
+	@no_test
+	public static IList KSpanningTreeClusteringAfl(final IScope scope, final IGraph graph, final int numCLusters) {
+		if (graph.getVertices().isEmpty() || graph.getEdges().isEmpty()) {
+			IList<IGraph> emptyL = GamaListFactory.create(Types.GRAPH);
+			emptyL.add((IGraph) graph.copy(scope));
+			return emptyL;
+		}
+		
+		KSpanningTreeClustering clustering = new KSpanningTreeClustering(graph, numCLusters);
+		Clustering clusters = clustering.getClustering();
+		IList clustersV = GamaListFactory.create(Types.LIST);
+		for (Object s : clusters.getClusters()) {
+			clustersV.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) s));
+		}
+		return clustersV;
+	}
+	
+	@operator (
+			value = "label_propagation_clustering",
+			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH })
+	@doc (
+			value = "The algorithm is a near linear time algorithm capable of discovering communities in large graphs."
+					+ " It is described in detail in the following: Raghavan, U. N., Albert, R., and Kumara, S. (2007). Near linear time algorithm to detect\r\n"
+					+ " * community structures in large-scale networks. Physical review E, 76(3), 036106."
+					+ "It returns a list of list of vertices and takes as operand the graph and maximal number of iteration")
+	@no_test
+	public static IList LabelPropagationClusteringAgl(final IScope scope, final IGraph graph, final int maxIteration) {
+		if (graph.getVertices().isEmpty() || graph.getEdges().isEmpty()) {
+			IList<IGraph> emptyL = GamaListFactory.create(Types.GRAPH);
+			emptyL.add((IGraph) graph.copy(scope));
+			return emptyL;
+		}
+		
+		LabelPropagationClustering  clustering= new LabelPropagationClustering(graph, maxIteration, scope.getSimulation().getRandomGenerator().getGenerator());
+		Clustering clusters = clustering.getClustering();
+		IList clustersV = GamaListFactory.create(Types.LIST);
+		for (Object s : clusters.getClusters()) {
+			clustersV.add(GamaListFactory.create(scope, graph.getGamlType().getKeyType(), (Set) s));
+		}
+		return clustersV;
+	}
+	
+	
+
 }

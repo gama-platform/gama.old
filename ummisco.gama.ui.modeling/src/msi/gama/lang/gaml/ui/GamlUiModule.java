@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui;
@@ -172,7 +172,8 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return GamlSemanticHighlightingCalculator.class;
 	}
 
-	@SingletonBinding ()
+	@SingletonBinding (
+			eager = false)
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
 		return GamlHighlightingConfiguration.class;
 	}

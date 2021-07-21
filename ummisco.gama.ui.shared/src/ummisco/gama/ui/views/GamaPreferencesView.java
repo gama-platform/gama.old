@@ -54,7 +54,6 @@ import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -137,21 +136,22 @@ public class GamaPreferencesView {
 		gridLayout.marginWidth = gridLayout.marginHeight = 5;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
 		shell.setLayout(gridLayout);
-		// shell.setBackground(ThemeHelper.isDark() ? IGamaColors.WHITE.color() : IGamaColors.BLACK.color());
+		// shell.setBackground(!ThemeHelper.isDark() ? IGamaColors.LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.color());
 		buildContents();
 	}
 
 	private void buildContents() {
 		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
 		tabFolder.setBorderVisible(true);
-		// tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setMRUVisible(true);
 		tabFolder.setSimple(false); // rounded tabs
 		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
+		// tabFolder.setBackground(!ThemeHelper.isDark() ? IGamaColors.LIGHT_GRAY.color() :
+		// IGamaColors.DARK_GRAY.color());
+
 		final var prefs = GamaPreferences.organizePrefs();
 		for (final String tabName : prefs.keySet()) {
 			final var item = new CTabItem(tabFolder, SWT.NONE);
-			item.setFont(GamaFonts.getNavigHeaderFont());
 			item.setText(tabName);
 			item.setImage(prefs_images.get(tabName));
 			item.setShowClose(false);
@@ -165,7 +165,6 @@ public class GamaPreferencesView {
 		final var viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
 		contents.add(viewer);
 		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		// viewer.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		viewer.setBackground(
 				!ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.darker());
 		viewer.setLayoutData(data);
@@ -177,11 +176,11 @@ public class GamaPreferencesView {
 		for (final String groupName : entries.keySet()) {
 			final var item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
-			// item.setColor(new GamaColor(230, 230, 230, 255));
 			final var compo = new Composite(viewer, SWT.NONE);
 			// compo.setBackground(viewer.getBackground());
-			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
 			item.setControl(compo);
+			// Build the contents *after* setting the control to the item.
+			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			item.setExpanded(true);
 		}
@@ -200,12 +199,10 @@ public class GamaPreferencesView {
 					} else {
 						activations.put(activable, true);
 					}
+				} else if (value instanceof Boolean) {
+					ed.setActive((Boolean) value);
 				} else {
-					if (value instanceof Boolean) {
-						ed.setActive((Boolean) value);
-					} else {
-						ed.setActive(true);
-					}
+					ed.setActive(true);
 				}
 			}
 		}
@@ -234,13 +231,12 @@ public class GamaPreferencesView {
 		GridLayoutFactory.fillDefaults().numColumns(NB_DIVISIONS).spacing(0, 0).equalWidth(true).applyTo(compo);
 		final var comps = new Composite[nbColumns];
 		for (var i = 0; i < nbColumns; i++) {
-			comps[i] = new Composite(compo, SWT.BORDER);
-			// comps[i].setBackground(compo.getBackground());
-			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).equalWidth(false).applyTo(comps[i]);
+			comps[i] = new Composite(compo, SWT.NONE);
+			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).extendedMargins(0, 0, 10, 5).equalWidth(false)
+					.applyTo(comps[i]);
 			GridDataFactory.fillDefaults().grab(true, true).applyTo(comps[i]);
-		}
-		// final int compositeIndex = 0;
 
+		}
 		var i = 0;
 		for (final Pref e : list) {
 			modelValues.put(e.getKey(), e.getValue());
@@ -282,7 +278,7 @@ public class GamaPreferencesView {
 	}
 
 	private static Menu getMenuFor(final Pref e, final AbstractEditor ed) {
-		final var m = new Menu(ed.getLabel());
+		final var m = ed.getLabel().createMenu();
 		final var title = new MenuItem(m, SWT.PUSH);
 		title.setEnabled(false);
 
@@ -316,7 +312,7 @@ public class GamaPreferencesView {
 	private void buildButtons() {
 		final var doc = new Label(shell, SWT.NONE);
 		doc.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
-		doc.setFont(GamaFonts.boldHelpFont);
+		// doc.setFont(GamaFonts.boldHelpFont);
 		doc.setText(
 				"Some preferences can also be set in GAML, using 'gama.pref_name <- new_value;'. 'pref_name' is displayed in the contextual menu of each preference");
 
@@ -454,8 +450,7 @@ public class GamaPreferencesView {
 			@Override
 			public void controlResized(final ControlEvent e) {
 				for (final IParameterEditor ed : editors.values()) {
-					((AbstractEditor) ed).resizeLabel(shell.getSize().x / (NB_DIVISIONS * 2));
-					((AbstractEditor) ed).getLabel().update();
+					((AbstractEditor) ed).getLabel().resize(shell.getSize().x / (NB_DIVISIONS * 2));
 				}
 				for (final ParameterExpandBar bar : contents) {
 					for (final ParameterExpandItem item : bar.getItems()) {

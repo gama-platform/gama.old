@@ -560,12 +560,10 @@ public class GamaPreferences {
 		// "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe"
 		private static String getDefaultRPath() {
 			final var os = System.getProperty("os.name");
-			final var osbit = System.getProperty("os.arch");
 			if (os.startsWith("Mac"))
 				return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
 			else if (os.startsWith("Linux")) return "/usr/local/lib/libjri.so";
 			if (os.startsWith("Windows")) {
-				if (osbit.endsWith("64")) return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 				return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 			}
 			return "";
@@ -611,9 +609,6 @@ public class GamaPreferences {
 
 	public static <T> Pref<T> create(final String key, final String title, final T value, final int type,
 			final boolean inGaml) {
-		// if (key.contains(".") || key.contains(" ")) {
-		// DEBUG.OUT("WARNING. Preference " + key + " cannot be used as a variable");
-		// }
 		final var e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(value);
 		register(e);
 		return e;
@@ -630,9 +625,6 @@ public class GamaPreferences {
 	 */
 	public static <T> Pref<T> create(final String key, final String title, final ValueProvider<T> provider,
 			final int type, final boolean inGaml) {
-		// if (key.contains(".") || key.contains(" ")) {
-		// DEBUG.OUT("WARNING. Preference " + key + " cannot be used as a variable");
-		// }
 		final var e = new Pref<T>(key, type, inGaml).named(title).in(Interface.NAME, "").init(provider);
 		register(e);
 		return e;
@@ -690,11 +682,9 @@ public class GamaPreferences {
 		}
 		// Adds the preferences to the platform species if it is already created
 		final var spec = GamaMetaModel.INSTANCE.getPlatformSpeciesDescription();
-		if (spec != null) {
-			if (!spec.hasAttribute(key)) {
-				spec.addPref(key, gp);
-				spec.validate();
-			}
+		if (spec != null && !spec.hasAttribute(key)) {
+			spec.addPref(key, gp);
+			spec.validate();
 		}
 		// Registers the preferences in the variable of the scope provider
 
@@ -809,7 +799,7 @@ public class GamaPreferences {
 	public static void applyPreferencesFrom(final String path, final Map<String, Object> modelValues) {
 		// DEBUG.OUT("Apply preferences from " + path);
 		try (final var is = new FileInputStream(path);) {
-			store.importPreferences(is);
+			Preferences.importPreferences(is);
 			reloadPreferences(modelValues);
 		} catch (final IOException | InvalidPreferencesFormatException e) {
 			e.printStackTrace();

@@ -395,7 +395,7 @@ public class GamaOsmFile extends GamaGisFile {
 			final Map<String, String> atts = new HashMap<>();
 			if (pt != null) {
 				for (final Tag tg : node.getTags()) {
-					final String key = tg.getKey().split(":")[0];
+					final String key = tg.getKey();
 					final Object val = tg.getValue();
 					if (val != null) { addAttribute(atts, key, val); }
 					pt.setAttribute(key, val);
@@ -447,7 +447,7 @@ public class GamaOsmFile extends GamaGisFile {
 			final Map<String, String> atts = GamaMapFactory.createUnordered();
 
 			for (final Tag tg : way.getTags()) {
-				final String key = tg.getKey().split(":")[0];
+				final String key = tg.getKey();
 				final Object val = tg.getValue();
 				if (val != null) { addAttribute(atts, key, val); }
 				values.put(key, tg.getValue());
@@ -537,7 +537,7 @@ public class GamaOsmFile extends GamaGisFile {
 			final Map<String, Object> values = GamaMapFactory.create();
 
 			for (final Tag tg : relation.getTags()) {
-				final String key = tg.getKey().split(":")[0];
+				final String key = tg.getKey();
 				values.put(key, tg.getValue());
 			}
 

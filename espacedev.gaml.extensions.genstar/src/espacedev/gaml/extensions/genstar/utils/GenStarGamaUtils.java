@@ -14,6 +14,7 @@ import core.metamodel.value.numeric.RangeValue;
 import core.util.data.GSEnumDataType;
 import espacedev.gaml.extensions.genstar.generator.FileBasedGenerator;
 import espacedev.gaml.extensions.genstar.generator.IGenstarGenerator;
+import espacedev.gaml.extensions.genstar.generator.MatrixBasedGenerator;
 import espacedev.gaml.extensions.genstar.type.GamaRange;
 import espacedev.gaml.extensions.genstar.type.GamaRangeType;
 import espacedev.gaml.extensions.genstar.utils.GenStarConstant.GenerationAlgorithm;
@@ -190,7 +191,8 @@ public class GenStarGamaUtils {
 	public static IGenstarGenerator[] getGamaGenerator() {
 		
 		return new IGenstarGenerator[] {
-				FileBasedGenerator.getInstance()
+				FileBasedGenerator.getInstance(),
+				MatrixBasedGenerator.getInstance()
 				};
 	}
 	

@@ -33,14 +33,14 @@ public class MeshLayerData extends LayerData {
 	IField values;
 	Attribute<GamaColor> line;
 	Attribute<GamaImageFile> texture;
-	Attribute<Boolean> smooth;
+	Attribute<Integer> smooth;
 	Attribute<IField> elevation;
 	Attribute<Boolean> triangulation;
 	Attribute<Boolean> grayscale;
 	Attribute<Boolean> text;
 	Attribute<Boolean> wireframe;
 	Attribute<Double> noData;
-	Attribute<GamaColor> color;
+	Attribute<Object> color;
 	Attribute<Double> scale;
 	private GamaPoint cellSize;
 	private final GamaPoint dim = new GamaPoint();
@@ -64,13 +64,19 @@ public class MeshLayerData extends LayerData {
 			return null;
 		}, Types.NO_TYPE, (IField) null, null);
 		triangulation = create(IKeyword.TRIANGULATION, Types.BOOL, false);
-		smooth = create(IKeyword.SMOOTH, Types.BOOL, false);
+		smooth = create(IKeyword.SMOOTH, (scope, exp) -> {
+			final Object result = exp.value(scope);
+			return result instanceof Boolean ? (Boolean) result ? 1 : 0 : Cast.asInt(scope, result);
+		}, Types.INT, 0, (e) -> {
+			Object v = e.getConstValue();
+			return v instanceof Boolean ? (Boolean) v ? 1 : 0 : Cast.asInt(null, v);
+		});
 		grayscale = create(IKeyword.GRAYSCALE, Types.BOOL, false);
 		wireframe = create(IKeyword.WIREFRAME, Types.BOOL, false);
 		text = create(IKeyword.TEXT, Types.BOOL, false);
-		color = create(IKeyword.COLOR, Types.COLOR, null);
+		color = create(IKeyword.COLOR, Types.NO_TYPE, null);
 		scale = create(IKeyword.SCALE, Types.FLOAT, null);
-		noData = create("no_data", Types.FLOAT, null);
+		noData = create("no_data", Types.FLOAT, IField.NO_NO_DATA);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
 			if (result instanceof GamaImageFile)
@@ -87,6 +93,7 @@ public class MeshLayerData extends LayerData {
 		final double height = env2.getHeight();
 		super.compute(scope, g);
 		shouldComputeValues = super.getRefresh();
+		// The size
 		cellSize = new GamaPoint(width / dim.x, height / dim.y);
 	}
 
@@ -138,12 +145,12 @@ public class MeshLayerData extends LayerData {
 		return elevation.get();
 	}
 
-	public GamaColor getColor() {
+	public Object getColor() {
 		// Should be a bit more complex in the future when color scales / palettes are introduced
 		return color.get();
 	}
 
-	public Boolean isSmooth() {
+	public Integer getSmooth() {
 		return smooth.get();
 	}
 
@@ -151,7 +158,7 @@ public class MeshLayerData extends LayerData {
 		return scale.get();
 	}
 
-	public Double getNoDataValue() {
+	public double getNoDataValue() {
 		return noData.get();
 	}
 

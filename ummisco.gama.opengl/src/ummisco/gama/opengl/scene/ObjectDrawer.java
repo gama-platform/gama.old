@@ -18,13 +18,13 @@ import ummisco.gama.opengl.OpenGL;
 
 public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 
-	final OpenGL gl;
+	protected final OpenGL gl;
 
 	public ObjectDrawer(final OpenGL gl) {
 		this.gl = gl;
 	}
 
-	void draw(final T object) {
+	final void draw(final T object) {
 		gl.beginObject(object);
 		_draw(object);
 		gl.endObject(object);

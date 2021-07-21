@@ -146,25 +146,25 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	@Override
 	default V anyValue(final IScope scope) {
 		final int size = length(scope);
-		if (size == 0) { return null; }
+		if (size == 0) return null;
 		final K key = scope.getRandom().oneOf(keySet());
 		return get(key);
 	}
 
 	@Override
 	default V firstValue(final IScope scope) throws GamaRuntimeException {
-		if (length(scope) == 0) { return null; }
+		if (length(scope) == 0) return null;
 		return Iterators.get(values().iterator(), 0);
 	}
 
 	@Override
 	default V lastValue(final IScope scope) throws GamaRuntimeException {
-		if (length(scope) == 0) { return null; }
+		if (length(scope) == 0) return null;
 		return Iterators.getLast(values().iterator());
 	}
 
 	default V valueAt(final int index) {
-		if (size() == 0) { return null; }
+		if (size() == 0) return null;
 		return Iterators.get(values().iterator(), index);
 	}
 
@@ -186,10 +186,10 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	 *
 	 * @see msi.gama.util.IContainer#checkBounds(java.lang.Object, boolean)
 	 */
-	@Override
-	default boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
-		return true;
-	}
+	// @Override
+	// default boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
+	// return true;
+	// }
 
 	/**
 	 * Method removeIndexes()
@@ -213,7 +213,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 		// If we pass a pair to this method, but the content type is not a pair,
 		// then it is is interpreted as a key + a value by addValue()
 		if (object instanceof GamaPair) {
-			if (!getGamlType().getContentType().isTranslatableInto(Types.PAIR)) { return (V) object; }
+			if (!getGamlType().getContentType().isTranslatableInto(Types.PAIR)) return (V) object;
 		}
 		return (V) getGamlType().getContentType().cast(scope, object, null, false);
 	}
@@ -246,7 +246,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 
 	@Override
 	default V getFromIndicesList(final IScope scope, final IList<K> indices) throws GamaRuntimeException {
-		if (indices == null || indices.isEmpty()) { return null; }
+		if (indices == null || indices.isEmpty()) return null;
 		return get(scope, indices.get(0));
 		// We do not consider the case where multiple indices are used. Maybe
 		// could be used in the
@@ -267,11 +267,10 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	@Override
 	default IList<V> listValue(final IScope scope, final IType contentsType, final boolean copy) {
 		if (!GamaType.requiresCasting(contentsType, getGamlType().getContentType())) {
-			if (!copy) { return GamaListFactory.wrap(contentsType, values()); }
+			if (!copy) return GamaListFactory.wrap(contentsType, values());
 			return GamaListFactory.createWithoutCasting(contentsType, values());
-		} else {
+		} else
 			return GamaListFactory.create(scope, contentsType, values());
-		}
 	}
 
 	@Override
@@ -315,9 +314,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 			if (copy) {
 				final IMap result = copy(scope);
 				return result;
-			} else {
+			} else
 				return this;
-			}
 		}
 
 	}
@@ -436,7 +434,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
 		while (it.hasNext()) {
 			final Map.Entry<K, V> entry = it.next();
-			if (!visitor.process(entry.getKey(), entry.getValue())) { return false; }
+			if (!visitor.process(entry.getKey(), entry.getValue())) return false;
 		}
 		return true;
 	}
@@ -447,7 +445,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
 		while (it.hasNext()) {
 			final Map.Entry<K, ? extends V> entry = it.next();
-			if (!visitor.process(entry.getValue())) { return false; }
+			if (!visitor.process(entry.getValue())) return false;
 		}
 		return true;
 	}
@@ -456,7 +454,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
 		while (it.hasNext()) {
 			final Map.Entry<K, V> entry = it.next();
-			if (!visitor.process(entry.getKey())) { return false; }
+			if (!visitor.process(entry.getKey())) return false;
 		}
 		return true;
 	}

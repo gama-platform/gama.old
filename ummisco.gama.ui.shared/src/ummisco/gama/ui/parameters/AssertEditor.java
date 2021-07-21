@@ -4,7 +4,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -39,25 +38,17 @@ public class AssertEditor extends AbstractStatementEditor<AbstractSummary<?>> {
 		return textBox;
 	}
 
-	@Override
-	protected ToolBar createToolbar2() {
-		return null;
-	}
-
 	private GamaUIColor getColor() {
 		GamaUIColor color = GamaColors.get(getStatement().getColor());
-		if (color == null) {
-			color = IGamaColors.NEUTRAL;
-		}
+		if (color == null) { color = IGamaColors.NEUTRAL; }
 		return color;
 	}
 
 	private String getText() {
 		final AbstractSummary<?> summary = getStatement();
 
-		if (summary instanceof AssertionSummary && getStatement().getState() == TestState.ABORTED) {
+		if (summary instanceof AssertionSummary && getStatement().getState() == TestState.ABORTED)
 			return getStatement().getState().toString() + ": " + ((AssertionSummary) getStatement()).getError() + "  ";
-		}
 		return getStatement().getState().toString() + "  ";
 	}
 

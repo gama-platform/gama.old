@@ -23,7 +23,7 @@ public abstract class AbstractRendererHelper {
 		this.renderer = renderer;
 	}
 
-	protected IOpenGLRenderer getRenderer() {
+	public IOpenGLRenderer getRenderer() {
 		return renderer;
 	}
 

@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
@@ -34,6 +34,7 @@ public class DarkHighlightingConfiguration extends DelegateHighlightingConfigura
 	@Override
 	public TextStyle facetTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(243, 159, 62));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
@@ -48,6 +49,7 @@ public class DarkHighlightingConfiguration extends DelegateHighlightingConfigura
 	@Override
 	public TextStyle typeTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(204, 108, 29));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
@@ -63,12 +65,15 @@ public class DarkHighlightingConfiguration extends DelegateHighlightingConfigura
 	public TextStyle variableTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
+		textStyle.setColor(new RGB(94, 198, 163));
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle fieldTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
+		textStyle.setStyle(SWT.BOLD);
+		textStyle.setColor(new RGB(94, 198, 163));
 		return textStyle;
 	}
 
@@ -76,6 +81,7 @@ public class DarkHighlightingConfiguration extends DelegateHighlightingConfigura
 	public TextStyle operatorTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
+		textStyle.setColor(new RGB(163, 230, 34));
 		return textStyle;
 	}
 
@@ -83,25 +89,28 @@ public class DarkHighlightingConfiguration extends DelegateHighlightingConfigura
 	public TextStyle reservedTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.ITALIC);
+		textStyle.setColor(new RGB(166, 166, 166));
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle errorTextStyle() {
-		final var textStyle = defaultTextStyle().copy();
-		return textStyle;
+		return defaultTextStyle().copy();
 	}
 
 	@Override
 	public TextStyle unitTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(166, 166, 166));
 		textStyle.setStyle(SWT.ITALIC);
+
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle numberTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(103, 150, 186));
 		return textStyle;
 	}
 
@@ -109,18 +118,21 @@ public class DarkHighlightingConfiguration extends DelegateHighlightingConfigura
 	public TextStyle keywordTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.NONE);
+		textStyle.setColor(new RGB(204, 108, 29));
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle punctuationTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(180, 180, 180));
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle stringTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(141, 218, 248));
 		return textStyle;
 	}
 
@@ -128,6 +140,7 @@ public class DarkHighlightingConfiguration extends DelegateHighlightingConfigura
 	public TextStyle varDefTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.NONE);
+		textStyle.setColor(new RGB(226, 225, 5));
 		return textStyle;
 	}
 
@@ -135,12 +148,14 @@ public class DarkHighlightingConfiguration extends DelegateHighlightingConfigura
 	public TextStyle taskTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
+		textStyle.setColor(new RGB(128, 128, 128));
 		return textStyle;
 	}
 
 	@Override
 	public TextStyle commentTextStyle() {
 		final var textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(56, 142, 193));
 		return textStyle;
 	}
 

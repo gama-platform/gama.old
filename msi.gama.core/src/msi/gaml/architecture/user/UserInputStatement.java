@@ -142,11 +142,6 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		return null;
 	}
 
-	// @Override
-	// public Integer getDefinitionOrder() {
-	// return order;
-	// }
-
 	@Override
 	public void setValue(final IScope scope, final Object value) {
 		currentValue = value;
@@ -155,9 +150,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		if (!isValued) {
-			if (init != null) {
-				currentValue = initialValue = init.value(scope);
-			}
+			if (init != null) { currentValue = initialValue = init.value(scope); }
 			isValued = true;
 		}
 		return currentValue;
@@ -166,8 +159,8 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	@Override
 	public IType getType() {
 		final IType type = description.getGamlType();
-		if (type != Types.NO_TYPE) { return type; }
-		if (init == null) { return Types.NO_TYPE; }
+		if (type != Types.NO_TYPE) return type;
+		if (init == null) return Types.NO_TYPE;
 		return init.getGamlType();
 	}
 
@@ -177,13 +170,13 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public Number getMinValue(final IScope scope) {
-		return min == null ? null : (Number) min.value(scope);
+	public Comparable getMinValue(final IScope scope) {
+		return min == null ? null : (Comparable) min.value(scope);
 	}
 
 	@Override
-	public Number getMaxValue(final IScope scope) {
-		return max == null ? null : (Number) max.value(scope);
+	public Comparable getMaxValue(final IScope scope) {
+		return max == null ? null : (Comparable) max.value(scope);
 	}
 
 	@Override
@@ -207,7 +200,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public Number getStepValue(final IScope scope) {
+	public Comparable getStepValue(final IScope scope) {
 		return null;
 	}
 
@@ -239,14 +232,19 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	@Override
 	public boolean acceptsSlider(final IScope scope) {
-		if (slider == null) { return true; }
+		if (slider == null) return true;
 		return Cast.asBool(scope, slider.value(scope));
 	}
-	
 
 	@Override
 	public List<GamaColor> getColor(final IScope scope) {
 		return null;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() {
+		// False by default ?
+		return false;
 	}
 
 }

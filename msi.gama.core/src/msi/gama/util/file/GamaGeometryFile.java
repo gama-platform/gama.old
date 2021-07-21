@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaGeometryFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * msi.gama.util.file.GamaGeometryFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -36,6 +36,10 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 		super(scope, pathName);
 	}
 
+	public GamaGeometryFile(final IScope scope, final String pathName, final boolean b) {
+		super(scope, pathName, b);
+	}
+
 	@Override
 	public IContainerType<?> getGamlType() {
 		return Types.FILE.of(Types.INT, Types.GEOMETRY);
@@ -43,7 +47,7 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 
 	/**
 	 * Method computeEnvelope()
-	 * 
+	 *
 	 * @see msi.gama.util.file.IGamaFile#computeEnvelope(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -53,9 +57,7 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 
 	public IShape getGeometry(final IScope scope) {
 		fillBuffer(scope);
-		if (geometry == null) {
-			geometry = buildGeometry(scope);
-		}
+		if (geometry == null) { geometry = buildGeometry(scope); }
 		return geometry;
 	}
 

@@ -82,7 +82,7 @@ public class Cast {
 		final IType<?> type = asType(scope, b);
 		if (type.isAgentType()) {
 			final ISpecies s = scope.getModel().getSpecies(type.getSpeciesName());
-			if (a instanceof IAgent) { return ((IAgent) a).isInstanceOf(s, false); }
+			if (a instanceof IAgent) return ((IAgent) a).isInstanceOf(s, false);
 			return false;
 		}
 		return type.isAssignableFrom(GamaType.of(a));
@@ -100,7 +100,7 @@ public class Cast {
 					isExecutable = false) })
 	@test ("simulation is_skill 'moving' = false")
 	public static Boolean isSkill(final IScope scope, final Object a, final String skill) {
-		if (!(a instanceof IAgent)) { return false; }
+		if (!(a instanceof IAgent)) return false;
 		final ISpecies s = ((IAgent) a).getSpecies();
 		return s.implementsSkill(skill);
 	}
@@ -110,11 +110,10 @@ public class Cast {
 		if (value instanceof String) {
 			final IModel m = scope.getModel();
 			return m.getDescription().getTypeNamed((String) value);
-		} else if (value instanceof ISpecies) {
+		} else if (value instanceof ISpecies)
 			return ((ISpecies) value).getDescription().getGamlType();
-		} else {
+		else
 			return expr.getGamlType();
-		}
 	}
 
 	public static IGraph asGraph(final IScope scope, final Object val) {
@@ -216,11 +215,12 @@ public class Cast {
 		return GamaStringType.staticCast(scope, val, false);
 	}
 
-	public static ILocation asPoint(final IScope scope, final Object val, final boolean copy) {
-		return GamaPointType.staticCast(scope, val, copy);
+	public static GamaPoint asPoint(final IScope scope, final Object val, final boolean copy) {
+		ILocation result = GamaPointType.staticCast(scope, val, copy);
+		return result == null ? null : result.toGamaPoint();
 	}
 
-	public static ILocation asPoint(final IScope scope, final Object val) {
+	public static GamaPoint asPoint(final IScope scope, final Object val) {
 		return asPoint(scope, val, false);
 	}
 
@@ -255,7 +255,7 @@ public class Cast {
 			see = { "int" })
 	public static Integer asInt(final IScope scope, final String string, final Integer radix)
 			throws GamaRuntimeException {
-		if (string == null || string.isEmpty()) { return 0; }
+		if (string == null || string.isEmpty()) return 0;
 		return GamaIntegerType.staticCast(scope, string, radix, false);
 	}
 
@@ -296,7 +296,7 @@ public class Cast {
 			see = { IKeyword.MATRIX, "as_matrix" })
 	@test ("{2,2} matrix_with (1) = matrix([1,1],[1,1])")
 	public static IMatrix matrix_with(final IScope scope, final ILocation size, final IExpression init) {
-		if (size == null) { throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope); }
+		if (size == null) throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope);
 		return GamaMatrixType.with(scope, init, (GamaPoint) size);
 	}
 
@@ -390,11 +390,11 @@ public class Cast {
 							equals = " 1 as node",
 							isExecutable = false) },
 			see = {})
-	@test("to_gaml(true) = 'true'")
-	@test("to_gaml(5::34) = '5::34'")
-	@test("to_gaml([1,5,9,3]) = '[1,5,9,3]'")
-	@test("to_gaml(['a'::345, 'b'::13, 'c'::12]) = \"map([\'a\'::345,\'b\'::13,\'c\'::12])\"")
-	@test("to_gaml([[3,5,7,9],[2,4,6,8]]) = '[[3,5,7,9],[2,4,6,8]]'")
+	@test ("to_gaml(true) = 'true'")
+	@test ("to_gaml(5::34) = '5::34'")
+	@test ("to_gaml([1,5,9,3]) = '[1,5,9,3]'")
+	@test ("to_gaml(['a'::345, 'b'::13, 'c'::12]) = \"map([\'a\'::345,\'b\'::13,\'c\'::12])\"")
+	@test ("to_gaml([[3,5,7,9],[2,4,6,8]]) = '[[3,5,7,9],[2,4,6,8]]'")
 	public static String toGaml(final Object val) {
 		return StringUtils.toGaml(val, false);
 	}

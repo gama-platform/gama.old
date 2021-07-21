@@ -5,9 +5,7 @@ import static msi.gama.common.util.FileUtils.URL_SEPARATOR_REPLACEMENT;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.graphics.Font;
 
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class WrappedLink extends WrappedFile {
@@ -19,10 +17,10 @@ public class WrappedLink extends WrappedFile {
 		isWeb = getResource().getLocation().toString().contains(URL_SEPARATOR_REPLACEMENT);
 	}
 
-	@Override
-	public Font getFont() {
-		return GamaFonts.getNavigLinkFont();
-	}
+	// @Override
+	// public Font getFont() {
+	// return GamaFonts.getNavigLinkFont();
+	// }
 
 	@Override
 	public boolean hasChildren() {
@@ -42,7 +40,7 @@ public class WrappedLink extends WrappedFile {
 
 	@Override
 	public int findMaxProblemSeverity() {
-		if (!getManager().validateLocation(getResource())) { return isWeb ? WEBLINK_BROKEN : LINK_BROKEN; }
+		if (!getManager().validateLocation(getResource())) return isWeb ? WEBLINK_BROKEN : LINK_BROKEN;
 		return isWeb ? WEBLINK_OK : LINK_OK;
 	}
 
@@ -55,9 +53,7 @@ public class WrappedLink extends WrappedFile {
 	public void getSuffix(final StringBuilder sb) {
 		super.getSuffix(sb);
 
-		if (sb.length() > 0) {
-			sb.append(" - ");
-		}
+		if (sb.length() > 0) { sb.append(" - "); }
 		sb.append(reconstructTargetName());
 
 	}

@@ -61,7 +61,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.SpeciesConstantExpression;
+import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;

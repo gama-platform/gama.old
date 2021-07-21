@@ -101,12 +101,14 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		layout.marginWidth = marginWidth;
 		composite.setLayout(layout);
 		composite.setBackground(parent.getBackground());
-		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		// final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.widthHint = widthSize;
 		data.minimumWidth = widthSize;
 		final SimpleSlider slider =
-				new SimpleSlider(composite, sliderColor.color(), sliderColor.color(), IGamaColors.BLUE.color());
+				new SimpleSlider(composite, sliderColor.color(), sliderColor.color(), IGamaColors.BLUE.color(), true);
 		slider.setTooltipInterperter(TOOLTIP_PROVIDER);
+		// data.heightHint = heightSize;
 		slider.setLayoutData(data);
 		slider.setSize(widthSize, heightSize);
 		slider.specifyHeight(heightSize); // fix the problem of wrong position
@@ -132,9 +134,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 			value = a.getMinimumDuration() * 1000;
 			maximum = a.getInitialMinimumDuration() * 1000;
 		}
-		if (maximum > max) {
-			max = maximum;
-		}
+		if (maximum > max) { max = maximum; }
 		return positionFromValue(value);
 	}
 
@@ -143,16 +143,9 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	 */
 	@Override
 	public void setInit(final double i, final boolean notify) {
-		if (i > max) {
-			max = i;
-		}
+		if (i > max) { max = i; }
 		for (final SimpleSlider slider : sliders) {
-			if (slider == null) {
-				continue;
-			}
-			if (slider.isDisposed()) {
-				continue;
-			}
+			if (slider == null || slider.isDisposed()) { continue; }
 			slider.updateSlider(i, notify);
 		}
 	}
@@ -164,9 +157,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		// DEBUG.OUT("Position changed to " + position + " affects sliders: " + sliders);
 		GAMA.getExperiment().getAgent().setMinimumDurationExternal(valueFromPosition(position) / 1000);
 		for (final SimpleSlider slider2 : sliders) {
-			if (slider2 == s) {
-				continue;
-			}
+			if (slider2 == s) { continue; }
 			slider2.updateSlider(position, false);
 		}
 

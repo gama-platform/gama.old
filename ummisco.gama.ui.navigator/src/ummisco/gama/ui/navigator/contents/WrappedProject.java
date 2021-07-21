@@ -8,14 +8,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.runtime.GAMA;
 import msi.gaml.statements.test.AbstractSummary;
 import msi.gaml.statements.test.CompoundSummary;
-import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -67,11 +65,11 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 	public Color getColor() {
 		return ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.GRAY_LABEL.color();
 	}
-
-	@Override
-	public Font getFont() {
-		return GamaFonts.getNavigHeaderFont();
-	}
+	//
+	// @Override
+	// public Font getFont() {
+	// return GamaFonts.getNavigHeaderFont();
+	// }
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {
@@ -80,28 +78,27 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 			return;
 		}
 
-		if (getPlugin() != null && !getPlugin().isEmpty())
-			sb.append(getPlugin()).append(", ");
+		if (getPlugin() != null && !getPlugin().isEmpty()) { sb.append(getPlugin()).append(", "); }
 		if (isTestProject()) {
 			getTestSuffix(sb);
-		} else
+		} else {
 			super.getSuffix(sb);
+		}
 	}
 
 	private void getTestSuffix(final StringBuilder sb) {
 		final var emfURI = org.eclipse.emf.common.util.URI.createPlatformResourceURI(URI.encode(getName()), false);
 		final var result = getSuffixOfTestSummary(emfURI);
-		if (result.isEmpty())
+		if (result.isEmpty()) {
 			super.getSuffix(sb);
-		else {
+		} else {
 			sb.append(result);
 		}
 	}
 
 	public String getSuffixOfTestSummary(final org.eclipse.emf.common.util.URI uri) {
 		final CompoundSummary<?, ?> summary = getManager().getTestsSummary();
-		if (summary == null)
-			return "";
+		if (summary == null) return "";
 		final List<AbstractSummary<?>> list = new ArrayList<>();
 		summary.getSubSummariesBelongingTo(uri, list);
 		final CompoundSummary<?, ?> result = new CompoundSummary<>(list);
@@ -122,8 +119,9 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 			final var data = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
 			if (data != null) {
 				setPlugin(data.getSuffix());
-			} else
+			} else {
 				setPlugin("");
+			}
 		}
 		return plugin;
 	}

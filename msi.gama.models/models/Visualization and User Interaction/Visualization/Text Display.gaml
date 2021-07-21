@@ -21,14 +21,14 @@ experiment Strings {
 
 	output {
 		layout #split;
-		display "With antialias" type: opengl antialias: true synchronized: true draw_env: false show_fps: true {
+		display "Strings" type: opengl  synchronized: true draw_env: false {
 			graphics Strings {
 				draw world.shape wireframe: true color: #black;
 				int y <- 5;
 				float precision <- 0.01;
 			loop p over: anchors.pairs {
 					draw circle(0.5) at: {50, y} color: #red;
-					draw p.key + " ABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890 " at: {50, y} anchor: p.value color: rnd_color(255) font: current_font depth: 8 precision: precision ;
+					draw p.key + " ABCDE...WXYZ 1234567890 precision: "+precision at: {50, y} anchor: p.value color: rnd_color(255) font: current_font depth: 8 precision: precision ;
 					y <- y + y_step;
 					precision <- precision * 2;
 				}

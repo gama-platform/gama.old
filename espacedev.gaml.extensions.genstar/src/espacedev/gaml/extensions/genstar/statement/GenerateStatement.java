@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -42,7 +43,7 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.SpeciesConstantExpression;
+import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatementSequence;
@@ -60,6 +61,7 @@ import one.util.streamex.StreamEx;
 		kind = SEQUENCE_STATEMENT,
 		with_sequence = true,
 		with_args = true,
+		category = { IOperatorCategory.GENSTAR },
 		concept = { IConcept.SPECIES },
 		remote_context = true)
 @inside (
@@ -70,7 +72,8 @@ import one.util.streamex.StreamEx;
 						name = SPECIES,
 						type = { IType.SPECIES, IType.AGENT },
 						optional = true,
-						doc = @doc ("The species of the agents to be created.")),
+						doc = @doc ("The species of the agents to be created.")
+						),
 				@facet (
 						name = FROM,
 						type = IType.NONE,
@@ -80,8 +83,14 @@ import one.util.streamex.StreamEx;
 								+ "  <li>list of csv_file: can be aggregated or micro data</li>\n"
 								+ "  <li>matrix: describe the joint distribution of two attributes</li>\n"
 								+ "  <li>bayesian network: describe a conditional distribution of three or more attributes</li>"
-								+ "</ul>")),
+								+ "</ul>")
+						),
 				@facet (
+						/*
+						 * TODO :  make those attributes like in csv map 
+						 * to directly recognize species' attributes rather than use string
+						 * with potential mispells
+						 */
 						name = GenStarConstant.GSATTRIBUTES,
 						type = { IType.MAP },
 						optional = false,
@@ -93,7 +102,8 @@ import one.util.streamex.StreamEx;
 						optional = true,
 						doc = @doc ("To specify the number of created agents interpreted as an int value. "
 								+ "If facet is ommited or value is 0 or less, generator will treat data used in the 'from' facet as contingencies "
-								+ "(i.e. a count of entities) and infer a number to generate (if distribution is used, then only one entity will be created")),
+								+ "(i.e. a count of entities) and infer a number to generate (if distribution is used, then only one entity will be created")
+						),
 				@facet (
 						name = GenStarConstant.GSGENERATOR,
 						type = { IType.STRING },
@@ -312,6 +322,9 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 				for (final IType genType : types) {
 					found = genType.isAssignableFrom(type);
 					if (found) { break; }
+				}
+				if (type==Types.MATRIX) {
+					// TODO verify that x,y matrix match possible attributes values
 				}
 				if (!found) {
 					description.warning("Facet 'from' expects an expression with one of the following types: " + types,

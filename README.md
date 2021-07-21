@@ -1,4 +1,10 @@
-# GAMA 1.8.2 - alpha version supporting JDK 11 and macOS Big Sur
+# GAMA 1.8.2 - alpha version supporting JDK 15 and macOS Big Sur
+
+This represents the development branch of the next version of GAMA. 
+
+## The recommended configuration for working on this branch is [Eclipse for Java and DSL 2021-06](https://www.eclipse.org/downloads/packages/release/2021-06/r/eclipse-ide-java-and-dsl-developers) and JDK 15.
+
+
 [![Github Travis](https://github.com/gama-platform/gama/actions/workflows/github-travis.yml/badge.svg)](https://github.com/gama-platform/gama/actions/workflows/github-travis.yml)
 [![Language](https://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 [![GitHub issues](https://img.shields.io/github/issues/gama-platform/gama.svg)](https://github.com/gama-platform/gama/issues)

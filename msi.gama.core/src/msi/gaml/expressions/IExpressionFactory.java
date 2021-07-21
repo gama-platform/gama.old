@@ -19,6 +19,8 @@ import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.expressions.types.SpeciesConstantExpression;
+import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
 

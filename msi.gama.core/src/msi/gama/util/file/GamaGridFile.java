@@ -16,9 +16,16 @@ import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
 import static msi.gama.runtime.exceptions.GamaRuntimeException.warning;
 import static org.geotools.util.factory.Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM;
 
+import java.awt.image.BandedSampleModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.Raster;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
@@ -27,19 +34,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
+import org.geotools.coverage.grid.io.AbstractGridCoverageWriter;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.PrjFileReader;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.gce.arcgrid.ArcGridReader;
+import org.geotools.gce.arcgrid.ArcGridWriter;
 import org.geotools.gce.geotiff.GeoTiffReader;
+import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.geometry.DirectPosition2D;
+import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.GeneralEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Envelope;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -51,10 +67,13 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.matrix.GamaField;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -89,6 +108,55 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	GeneralEnvelope genv;
 	Records records;
 
+	@doc (
+			value = "This file constructor allows to read a asc file or a tif (geotif) file",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.asc\");",
+					isExecutable = false) })
+
+	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
+		super(scope, pathName, (Integer) null);
+	}
+
+	@doc (
+			value = "This file constructor allows to read a asc file or a tif (geotif) file, but without converting it into shapes. Only a matrix of float values is created",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.asc\", false);",
+					isExecutable = false) })
+
+	public GamaGridFile(final IScope scope, final String pathName, final boolean asMatrix) throws GamaRuntimeException {
+		super(scope, pathName, (Integer) null);
+	}
+
+	@doc (
+			value = "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code, as an int (epsg code)",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.asc\", 32648);",
+					isExecutable = false) })
+	public GamaGridFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
+		super(scope, pathName, code);
+	}
+
+	@doc (
+			value = "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code (epg,...,), as a string ",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.asc\",\"EPSG:32648\");",
+					isExecutable = false) })
+	public GamaGridFile(final IScope scope, final String pathName, final String code) {
+		super(scope, pathName, code);
+	}
+
+	@doc (
+			value = "This allows to build a writable grid file from the values of a field",
+			examples = { @example (
+					value = "file f <- grid_file(\"file.tif\",my_field); save f;",
+					isExecutable = false) })
+	public GamaGridFile(final IScope scope, final String pathName, final GamaField field) {
+		super(scope, pathName, false);
+		setWritable(scope, true);
+		createCoverage(scope, field);
+	}
+
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
@@ -118,6 +186,52 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 					e1.printStackTrace();
 				}
 			}
+		}
+	}
+
+	private void createCoverage(final IScope scope, final GamaField field) {
+		double[] data = field.getMatrix();
+		DataBuffer buffer = new DataBufferDouble(data, data.length);
+		SampleModel sample = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, field.numCols, field.numRows,
+				field.getBandsNumber(scope));
+		WritableRaster raster = Raster.createWritableRaster(sample, buffer, null);
+		Envelope2D envelope =
+				new Envelope2D(getCRS(scope), 0, 0, scope.getSimulation().getWidth(), scope.getSimulation().getHeight());
+		GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
+		GridCoverage2D cov = factory.create(getName(scope), raster, envelope);
+		coverage = cov;
+	}
+	
+	protected CoordinateReferenceSystem getCRS(final IScope scope) {
+		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
+		CoordinateReferenceSystem crs = null;
+		try {
+			crs = nullProjection ? CRS.decode("EPSG:3857")
+						: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS(scope);
+		} catch (NoSuchAuthorityCodeException e) {
+			e.printStackTrace();
+		} catch (FactoryException e) {
+			e.printStackTrace();
+		}
+		return crs;
+	}
+
+	@Override
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+		if (!writable) return;
+		if (coverage == null) return;
+		try {
+			final File f = getFile(scope);
+			f.setWritable(true);
+			AbstractGridCoverageWriter writer;
+			if (isTiff(scope)) {
+				writer = new GeoTiffWriter(f);
+			} else {
+				writer = new ArcGridWriter(f);
+			}
+			writer.write(coverage, (GeneralParameterValue[]) null);
+		} catch (final IOException e) {
+			throw GamaRuntimeException.create(e, scope);
 		}
 	}
 
@@ -274,44 +388,6 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 
 	}
 
-	@doc (
-			value = "This file constructor allows to read a asc file or a tif (geotif) file",
-			examples = { @example (
-					value = "file f <- grid_file(\"file.asc\");",
-					isExecutable = false) })
-
-	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		super(scope, pathName, (Integer) null);
-	}
-
-	@doc (
-			value = "This file constructor allows to read a asc file or a tif (geotif) file, but without converting it into shapes. Only a matrix of float values is created",
-			examples = { @example (
-					value = "file f <- grid_file(\"file.asc\", false);",
-					isExecutable = false) })
-
-	public GamaGridFile(final IScope scope, final String pathName, final boolean asMatrix) throws GamaRuntimeException {
-		super(scope, pathName, (Integer) null);
-	}
-
-	@doc (
-			value = "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code, as an int (epsg code)",
-			examples = { @example (
-					value = "file f <- grid_file(\"file.asc\", 32648);",
-					isExecutable = false) })
-	public GamaGridFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
-		super(scope, pathName, code);
-	}
-
-	@doc (
-			value = "This file constructor allows to read a asc file or a tif (geotif) file specifying the coordinates system code (epg,...,), as a string ",
-			examples = { @example (
-					value = "file f <- grid_file(\"file.asc\",\"EPSG:32648\");",
-					isExecutable = false) })
-	public GamaGridFile(final IScope scope, final String pathName, final String code) {
-		super(scope, pathName, code);
-	}
-
 	@Override
 	public Envelope3D computeEnvelope(final IScope scope) {
 		if (gis == null) { createCoverage(scope); }
@@ -334,7 +410,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	}
 
 	public boolean isTiff(final IScope scope) {
-		return getExtension(scope).equals("tif");
+		return getExtension(scope).startsWith("tif");
 	}
 
 	@Override

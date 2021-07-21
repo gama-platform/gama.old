@@ -32,7 +32,7 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.StringObject;
+import ummisco.gama.opengl.scene.text.StringObject;
 
 public class AxesLayerObject extends StaticLayerObject.World {
 

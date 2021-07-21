@@ -85,7 +85,7 @@ public class DrawingData extends AttributeHolder {
 		final Function<IExpression, AxisAngle> constRotationCaster = (exp) -> {
 			if (exp.getGamlType().getGamlType() == Types.PAIR) {
 				final GamaPair currentRotation = Cast.asPair(null, exp.getConstValue(), true);
-				return new AxisAngle((GamaPoint) Cast.asPoint(null, currentRotation.value),
+				return new AxisAngle(Cast.asPoint(null, currentRotation.value),
 						Cast.asFloat(null, currentRotation.key));
 			} else
 				return new AxisAngle(Rotation3D.PLUS_K, Cast.asFloat(null, exp.getConstValue()));
@@ -93,13 +93,13 @@ public class DrawingData extends AttributeHolder {
 		this.rotation = create(IKeyword.ROTATE, (scope, exp) -> {
 			if (exp.getGamlType().getGamlType() == Types.PAIR) {
 				final GamaPair currentRotation = Cast.asPair(scope, exp.value(scope), true);
-				return new AxisAngle((GamaPoint) Cast.asPoint(scope, currentRotation.value),
+				return new AxisAngle(Cast.asPoint(scope, currentRotation.value),
 						Cast.asFloat(scope, currentRotation.key));
 			} else
 				return new AxisAngle(Rotation3D.PLUS_K, Cast.asFloat(scope, exp.value(scope)));
 		}, Types.NO_TYPE, null, constRotationCaster);
 		this.anchor = create(IKeyword.ANCHOR, (scope, exp) -> {
-			final GamaPoint p = (GamaPoint) Cast.asPoint(scope, exp.value(scope));
+			final GamaPoint p = Cast.asPoint(scope, exp.value(scope));
 			p.x = Math.min(1d, Math.max(p.x, 0d));
 			p.y = Math.min(1d, Math.max(p.y, 0d));
 			return p;

@@ -28,9 +28,11 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gama.util.matrix.GamaField;
+import msi.gama.util.matrix.IField;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.operators.noisegeneration.OpenSimplexNoise;
-import msi.gaml.operators.noisegeneration.SimplexNoise;
+import msi.gaml.operators.noise.SimplexNoise2;
+import msi.gaml.types.GamaFieldType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -607,47 +609,65 @@ public class Random {
 		return result;
 	}
 
-	@operator (
-			value = "simplex_generator",
-			category = { IOperatorCategory.RANDOM },
-			concept = {})
-	@doc (
-			value = "take a x, y and a bias parameters and gives a value",
-			examples = { @example (
-					value = "simplex_generator(2,3,253)",
-					equals = "0.0976676931220678",
-					test = false) })
-	@test ("simplex_generator(2,3,253) = 0.0976676931220678")
-	public static Double simplex_generator(final IScope scope, final double x, final double y, final double biais) {
-		return SimplexNoise.noise(x, y, biais);
-	}
-
-	// @Deprecated
-	// @operator(value = "improved_generator", category = { IOperatorCategory.RANDOM }, concept = {})
-	// @doc(value = "take a x, y, z and a bias parameters and gives a value", examples = {
-	// @example(value = "improved_generator(2,3,4,253)", equals = "10.2", test = false) },
-	// deprecated = "Deprecated. Does not work")
-	// @no_test
-	// public static Double improved_generator(final IScope scope, final double x, final double y, final double z, final
-	// double biais)
-	// {
-	// return ImprovedNoise.noise(x,y,z,biais);
+	// @operator (
+	// value = "simplex_generator",
+	// category = { IOperatorCategory.RANDOM },
+	// concept = {})
+	// @doc (
+	// value = "take a x, y and a bias parameters and gives a value",
+	// examples = { @example (
+	// value = "simplex_generator(2,3,253)",
+	// equals = "0.0976676931220678",
+	// test = false) })
+	// @test ("simplex_generator(2,3,253) = 0.0976676931220678")
+	// public static Double simplex_generator(final IScope scope, final double x, final double y, final double biais) {
+	// return SimplexNoise.noise(x, y, biais);
 	// }
 
 	@operator (
-			value = "open_simplex_generator",
-			category = { IOperatorCategory.RANDOM },
-			concept = {})
-	@doc (
-			value = "take a x, y and a bias parameters and gives a value",
-			examples = { @example (
-					value = "open_simplex_generator(2,3,253)",
-					equals = "10.2",
-					test = false) })
-	@test ("seed <- 1.0; open_simplex_generator(2,3,253) = -0.053513655103822125")
-	public static Double open_simplex_generator(final IScope scope, final double x, final double y,
-			final double biais) {
-		return OpenSimplexNoise.noise(x, y, biais);
-	}
+			value = "generate_terrain")
+	@doc ("This operator allows to generate a pseudo-terrain using a simplex noise generator. Its usage is kept simple: it takes first a seed (random or not), then the dimensions "
+			+ "(width and height) of the field to generate, then a level (between 0 and 1) of details (which actually determines the number of passes to make)"
+			+ ", then the value (between 0 and 1) of smoothess, with 0 being completely rought and 1 super smooth, and finally the value (between 0 and 1) of "
+			+ "scattering, with 0 building maps in 'one piece' and 1 completely scattered ones.")
+	public static IField generateTerrain(final IScope scope, final int seed, final int width, final int height,
+			final double details, final double smoothness, final double scattering) {
 
+		SimplexNoise2 simplex = new SimplexNoise2(seed);
+
+		// smoothness between 0 (very rough) to 1 (very smooth)
+		double roughness = smoothness <= 0 ? 1 : smoothness >= 1 ? 0 : 1 - smoothness;
+
+		// scattering between 0 (in one piece) to 1 (completely scattered)
+		double scale = scattering <= 0 ? 0.0001 : scattering >= 1 ? 0.01 : scattering / 100d;
+
+		// details between 0 (1 octave) and 1 (10 octaves)
+		int octaves = details < 0.1 ? 1 : details >= 1 ? 10 : (int) (details * 10d);
+
+		GamaField result = (GamaField) GamaFieldType.buildField(scope, width, height);
+		double[] totalNoise = result.getMatrix();
+
+		double layerWeight = 1d;
+		double weightSum = 0d;
+
+		for (int octave = 0; octave < octaves; octave++) {
+			// Calculate single layer/octave of simplex noise, then add it to total noise
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					totalNoise[y * width + x] += simplex.noise(x * scale, y * scale) * layerWeight;
+				}
+			}
+
+			// Increase variables with each incrementing octave
+			scale *= 2;
+			weightSum += layerWeight;
+			layerWeight *= roughness;
+		}
+
+		for (int x = 0; x < totalNoise.length; x++) {
+			totalNoise[x] /= weightSum;
+		}
+
+		return result;
+	}
 }

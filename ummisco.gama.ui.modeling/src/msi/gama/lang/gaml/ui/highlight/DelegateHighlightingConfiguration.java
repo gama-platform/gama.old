@@ -1,6 +1,6 @@
 /**
  * Created by drogoul, 1 déc. 2020
- * 
+ *
  */
 package msi.gama.lang.gaml.ui.highlight;
 
@@ -9,7 +9,6 @@ import static msi.gama.common.preferences.GamaPreferences.create;
 import static msi.gama.lang.gaml.ui.highlight.GamlTextAttributeProvider.getFont;
 import static ummisco.gama.ui.resources.GamaColors.toGamaColor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.graphics.FontData;
@@ -19,9 +18,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor;
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
 
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.GamaPreferences.Modeling;
-import msi.gama.common.preferences.Pref;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
@@ -56,7 +53,7 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	public static final String TASK_ID = HighlightingStyles.TASK_ID;
 
 	String theme;
-	final Map<String, Pref<?>> preferences = new HashMap<>();
+	// final Map<String, Pref<?>> preferences = new HashMap<>();
 	final static Map<String, String> TITLES = Map.ofEntries(entry(KEYWORD_ID, "Statement keyword"),
 			entry(PUNCTUATION_ID, "Punctuation character"), entry(OPERATOR_ID, "Operator & action call"),
 			entry(RESERVED_ID, "Reserved symbol"), entry(COMMENT_ID, "Comment"), entry(STRING_ID, "String"),
@@ -73,13 +70,13 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 			entry(TYPE_ID, typeTextStyle()), entry(ASSIGN_ID, assignTextStyle()), entry(UNIT_ID, unitTextStyle()),
 			entry(TASK_ID, taskTextStyle()), entry(PRAGMA_ID, pragmaTextStyle()), entry(FIELD_ID, fieldTextStyle()));
 
-	TextStyle newStyle(int style, int red, int green, int blue) {
+	TextStyle newStyle(final int style, final int red, final int green, final int blue) {
 		final var textStyle = newStyle(style);
 		textStyle.setColor(new RGB(red, green, blue));
 		return textStyle;
 	}
 
-	TextStyle newStyle(int style) {
+	TextStyle newStyle(final int style) {
 		final var textStyle = newStyle();
 		textStyle.setStyle(style);
 		return textStyle;
@@ -89,12 +86,12 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 		return defaultTextStyle().copy();
 	}
 
-	public DelegateHighlightingConfiguration(String themeName) {
+	public DelegateHighlightingConfiguration(final String themeName) {
 		theme = themeName;
 		configurePreferences();
 	}
 
-	private void configure(final IHighlightingConfigurationAcceptor acceptor, String key) {
+	private void configure(final IHighlightingConfigurationAcceptor acceptor, final String key) {
 		acceptor.acceptDefaultHighlighting(key, TITLES.get(key), styles.get(key));
 	}
 
@@ -106,73 +103,34 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	public void configurePreferences() {
 		// we create and/or read the preferences
 		configure((id, name, style) -> {
-			var key = "pref_" + id + "_font";
-			final var pref = create(key + "_" + theme, theme + " theme " + name + " font", (() -> getFont(style)),
-					IType.FONT, false).hidden().in(Modeling.NAME, "Syntax coloring");
-			preferences.put(key, pref);
-			final var font = pref.getValue();
-			if (font != null)
-				style.setFontData(new FontData(font.getFontName(), font.getSize(), font.getStyle()));
-			key = "pref_" + id + "_color";
-			final var pref2 =
-					create(key + "_" + theme, "... and color", () -> toGamaColor(style.getColor()), IType.COLOR, false)
-							.hidden().in(Modeling.NAME, "Syntax coloring");
-			preferences.put(key, pref2);
+			var key = "pref_" + id + "_font_" + theme;
+			final var pref = create(key, theme + " theme " + name + " font", () -> getFont(style), IType.FONT, false)
+					.in(Modeling.NAME, "Syntax coloring (" + theme + " theme)").onChange(font -> {
+						applyFont(id, name, style, font);
+					});
+			applyFont(id, name, style, pref.getValue());
+			// preferences.put(key, pref);
+			key = "pref_" + id + "_color_" + theme;
+			final var pref2 = create(key, "... and color", () -> toGamaColor(style.getColor()), IType.COLOR, false)
+					.in(Modeling.NAME, "Syntax coloring (" + theme + " theme)").onChange(color -> {
+						applyColor(id, name, style, color);
+					});
+			applyColor(id, name, style, pref2.getValue());
+			// preferences.put(key, pref2);
 			final var color = pref2.getValue();
-			if (color != null)
-				style.setColor(new RGB(color.red(), color.green(), color.blue()));
+			if (color != null) { style.setColor(new RGB(color.red(), color.green(), color.blue())); }
 		});
 
 	}
 
-	public void saveCurrentPreferences() {
-		configure((id, name, style) -> {
-			var key = "pref_" + id + "_font";
-			saveFontPreference(key);
-			key = "pref_" + id + "_color";
-			saveColorPreference(key);
-		});
+	private void applyFont(final String id, final String name, final TextStyle style, final GamaFont font) {
+		if (font != null) { style.setFontData(new FontData(font.getFontName(), font.getSize(), font.getStyle())); }
+		// acceptDefaultHighlighting(id, name, style);
 	}
 
-	private void saveFontPreference(String key) {
-		System.out.println("Preference saved : " + key + "_" + theme);
-		final var value = ((Pref<GamaFont>) GamaPreferences.get(key)).getValue();
-		final var myPref = (Pref<GamaFont>) preferences.get(key);
-		myPref.set(value);
-		myPref.save();
-	}
-
-	private void saveColorPreference(String key) {
-		System.out.println("Preference saved : " + key + "_" + theme);
-		final var value = ((Pref<GamaColor>) GamaPreferences.get(key)).getValue();
-		final var myPref = (Pref<GamaColor>) preferences.get(key);
-		myPref.set(value);
-		myPref.save();
-	}
-
-	public void restoreCurrentPreferences() {
-		configure((id, name, style) -> {
-			var key = "pref_" + id + "_font";
-			restoreFontPreference(key);
-			key = "pref_" + id + "_color";
-			restoreColorPreference(key);
-		});
-	}
-
-	private void restoreFontPreference(String key) {
-		System.out.println("Preference restored : " + key + "_" + theme);
-		final var value = ((Pref<GamaFont>) preferences.get(key)).getValue();
-		final var myPref = (Pref<GamaFont>) GamaPreferences.get(key);
-		myPref.set(value);
-		myPref.save();
-	}
-
-	private void restoreColorPreference(String key) {
-		System.out.println("Preference restored : " + key + "_" + theme);
-		final var value = ((Pref<GamaColor>) preferences.get(key)).getValue();
-		final var myPref = (Pref<GamaColor>) GamaPreferences.get(key);
-		myPref.set(value);
-		myPref.save();
+	private void applyColor(final String id, final String name, final TextStyle style, final GamaColor color) {
+		style.setColor(new RGB(color.red(), color.green(), color.blue()));
+		// acceptDefaultHighlighting(id, name, style);
 	}
 
 	abstract TextStyle facetTextStyle();

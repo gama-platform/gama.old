@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
@@ -29,10 +29,10 @@ public class GamlHighlightingConfiguration implements IHighlightingConfiguration
 		delegate = ThemeHelper.isDark() ? dark : light;
 	}
 
-	public void changeTo(boolean toLight) {
-		delegate.saveCurrentPreferences();
+	public void changeTo(final boolean toLight) {
+		// delegate.saveCurrentPreferences();
 		delegate = toLight ? light : dark;
-		delegate.restoreCurrentPreferences();
+		// delegate.restoreCurrentPreferences();
 	}
 
 	@Override

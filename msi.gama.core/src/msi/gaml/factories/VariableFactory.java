@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -44,21 +45,20 @@ public class VariableFactory extends SymbolFactory {
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
 			final Iterable<IDescription> children, final IDescription enclosing, final SymbolProto proto) {
-		if (keyword.equals(PARAMETER)) {
+		if (PARAMETER.equals(keyword)) {
 
 			final Map<String, FacetProto> possibleFacets = proto.getPossibleFacets();
 			// We copy the relevant facets from the targeted var of the
 			// parameter
-			final VariableDescription targetedVar = enclosing.getModelDescription().getAttribute(facets.getLabel(VAR));
+			VariableDescription targetedVar = enclosing.getModelDescription().getAttribute(facets.getLabel(VAR));
+			if (targetedVar == null && enclosing instanceof ExperimentDescription) {
+				targetedVar = ((ExperimentDescription) enclosing).getAttribute(facets.getLabel(VAR));
+			}
 			if (targetedVar != null) {
 				for (final String key : possibleFacets.keySet()) {
-					if (key.equals(ON_CHANGE)) {
-						continue;
-					}
+					if (ON_CHANGE.equals(key)) { continue; }
 					final IExpressionDescription expr = targetedVar.getFacet(key);
-					if (expr != null) {
-						facets.putIfAbsent(key, expr);
-					}
+					if (expr != null) { facets.putIfAbsent(key, expr); }
 				}
 
 			}
